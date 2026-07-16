@@ -205,7 +205,7 @@ public class DiaryTitleScreen extends Screen {
 
         int cx = rightCol.x + rightCol.w - WATCH_RADIUS - Spacing.GAP_MEDIUM;
         int cy = rightCol.y + WATCH_RADIUS + Spacing.GAP_LARGE;
-        PocketWatchRenderer.draw(g, cx, cy, WATCH_RADIUS, GripeVerdeMod.VERSION);
+        PocketWatchRenderer.draw(g, cx, cy, 0, WATCH_RADIUS, GripeVerdeMod.VERSION);
     }
 
     private void drawPosterRight(GuiGraphics g) {

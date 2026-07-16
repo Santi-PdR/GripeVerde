@@ -6,7 +6,7 @@ plugins {
     id 'org.spongepowered.mixin' version '0.7.+'
 }
 
-version = '0.6.0'
+version = '0.6.1'
 group = 'com.eternalcraft.gripeverde'
 base { archivesName = 'gripeverde' }
 
@@ -45,7 +45,7 @@ tasks.named('processResources', ProcessResources).configure {
         minecraft_version: '1.20.1',
         forge_version: '47.4.20',
         mod_id: 'gripeverde',
-        mod_version: '0.6.0'
+        mod_version: '0.6.1'
     ]
     inputs.properties replaceProperties
     filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
