@@ -248,6 +248,7 @@ public class DiaryPauseScreen extends PauseScreen {
     private void drawPaperTextureMinimal(GuiGraphics g, int x, int y, int w, int h) {
         Random r = new Random(x * 31L + y * 17L);
         for (int i = 0; i < 15; i++) {
+            if (w <= 8 || h <= 8) continue;
             int px = x + 4 + r.nextInt(w - 8);
             int py = y + 4 + r.nextInt(h - 8);
             int alpha = 6 + r.nextInt(8);

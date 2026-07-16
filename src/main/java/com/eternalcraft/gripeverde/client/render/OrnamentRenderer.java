@@ -104,6 +104,7 @@ public class OrnamentRenderer {
         // Manchas de humedad (puntos aleatorios oscuros)
         java.util.Random rng = new java.util.Random((long)(x * 31L + y * 17L + w));
         for (int i = 0; i < 8; i++) {
+            if (w <= 4 || h <= 4) continue;
             int sx = x + rng.nextInt(w - 4);
             int sy = y + rng.nextInt(h - 4);
             int size = 2 + rng.nextInt(3);

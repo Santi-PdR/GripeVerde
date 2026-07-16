@@ -25,6 +25,10 @@ public class AtmosphereRenderer {
     }
 
     public static void renderSky(GuiGraphics g, int w, int h) {
+        // Guard: cuando la ventana pierde foco o se minimiza (Alt+Tab, F11),
+        // w o h pueden ser 0. Random.nextInt(0) lanza IllegalArgumentException
+        // y crashea el juego.
+        if (w <= 0 || h <= 0) return;
         renderSkyGradient(g, w, h);
         renderStars(g, w, h);
         renderMoon(g, w, h);
@@ -40,10 +44,12 @@ public class AtmosphereRenderer {
     }
 
     private static void renderStars(GuiGraphics g, int w, int h) {
+        if (w <= 0 || h <= 0) return;
+        int halfH = Math.max(1, (int)(h * 0.5f));
         java.util.Random rng = new java.util.Random(0xA57C5L);
         for (int i = 0; i < 60; i++) {
             int sx = rng.nextInt(w);
-            int sy = rng.nextInt((int)(h * 0.5f));
+            int sy = rng.nextInt(halfH);
             float twinkle = (float)(Math.sin(time * (0.5f + rng.nextFloat()) + i) * 0.4f + 0.6f);
             int alpha = (int)(twinkle * 120);
             int color = (alpha << 24) | 0xE8DCB4;

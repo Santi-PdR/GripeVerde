@@ -67,6 +67,7 @@ public final class PaperTexture {
         Random rnd = new Random(SEED);
         int stainCount = Math.max(12, (w * h) / 15000);
         for (int i = 0; i < stainCount; i++) {
+            if (w <= 0 || h <= 0) continue;
             int cx = x + rnd.nextInt(w);
             int cy = y + rnd.nextInt(h);
             int radius = 4 + rnd.nextInt(14);
@@ -84,9 +85,12 @@ public final class PaperTexture {
         Random rnd = new Random(SEED + 1);
         int lines = Math.max(5, h / 40);
         for (int i = 0; i < lines; i++) {
+            if (w < 6 || h <= 0) continue;
             int wy = y + rnd.nextInt(h);
-            int startX = x + rnd.nextInt(w / 3);
-            int endX = startX + w / 3 + rnd.nextInt(w / 2);
+            int w3 = Math.max(1, w / 3);
+            int w2 = Math.max(1, w / 2);
+            int startX = x + rnd.nextInt(w3);
+            int endX = startX + w3 + rnd.nextInt(w2);
             if (endX > x + w) endX = x + w;
             int alpha = 30 + rnd.nextInt(35);
             int col = DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, alpha);
@@ -99,6 +103,7 @@ public final class PaperTexture {
         Random rnd = new Random(BLOOD_SEED);
         int drops = Math.max(4, (w * h) / 50000);
         for (int i = 0; i < drops; i++) {
+            if (w <= 0 || h <= 0) continue;
             int cx = x + rnd.nextInt(w);
             int cy = y + rnd.nextInt(h);
             int size = 1 + rnd.nextInt(3);

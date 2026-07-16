@@ -5,7 +5,7 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.6.4** - Fix crítico: se resuelve el congelamiento al salir de un mundo (KI-01 cerrado).
+**v0.6.5** - Fix de estabilidad: se resuelven los crashes al minimizar la ventana o perder foco (Alt+Tab).
 
 ## Caracteristicas principales
 
