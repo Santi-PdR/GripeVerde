@@ -1,6 +1,30 @@
 # Eternal Craft: Gripe Verde
 ## Notas de Actualización
 
+## Version 0.6.2
+
+**El reloj respira.**
+
+Aquel viejo reloj de bolsillo, que durante tanto tiempo parecio un mero adorno, ahora late con un pulso mecanico suave. Cada cinco segundos, cuando el segundero alcanza una de las marcas negras, un chasquido discreto llega al oido — como si el mecanismo, largo tiempo olvidado, hubiese recordado cómo trabajar.
+
+El sonido es apenas audible. Un susurro de bronce y engranajes. Pero una vez que lo adviertes, no puedes ignorarlo: el tiempo ha retomado su marcha.
+
+### Un mecanismo vivo
+- El segundero tickea en perfecta armonía con sus fallos — cuando tropieza, el sonido enmudece.
+- El reloj de bolsillo solo suena cuando esta a la vista. En las ventanas mas pequeñas, descansa en silencio.
+
+---
+
+## Version 0.6.1
+
+**Algo se mueve sobre el escritorio.**
+
+El reloj de bolsillo ha dejado de ser un retrato inmóvil. Ahora cuelga de una cadena larga que desciende desde el mismísimo borde superior del diario, y oscila con un lento pulso pendular, como si una corriente oculta lo acariciase.
+
+Su segundero avanza con precisión mecánica — pero no siempre. De cuando en cuando tropieza: a veces se demora en una marca más de lo debido, a veces salta hacia adelante sin aviso, a veces retrocede un tiempo antes de continuar. El tiempo en esta ciudad, al parecer, también está enfermo.
+
+Un brillo diagonal se desliza lentamente sobre el cristal, como si una lámpara lejana pasara frente a él.
+
 ---
 
 ## Versión 0.6.0

@@ -1,6 +1,30 @@
 # Eternal Craft: Green Flu
 ## Update Notes
 
+## Version 0.6.2
+
+**The clock breathes.**
+
+That old pocket watch, which for so long seemed a mere ornament, now beats with a soft mechanical pulse. Every five seconds, when its second hand reaches one of the black marks, a discreet click reaches the ear — as if the mechanism, long forgotten, remembered how to work.
+
+The sound is barely audible. A whisper of brass and gears. But once you notice it, you cannot ignore it: time has resumed its march.
+
+### A living mechanism
+- The second hand ticks in perfect harmony with its glitches — when it stumbles, the sound falls silent.
+- The pocket watch only sounds when it is visible. On the smallest windows, it rests in silence.
+
+---
+
+## Version 0.6.1
+
+**Something moves upon the workbench.**
+
+The pocket watch has ceased to be a still portrait. Now it hangs from a long chain that descends from the very upper edge of the diary, and swings with a slow pendular breath, as if a hidden draft caressed it.
+
+Its second hand advances with mechanical precision — but not always. Every so often it stumbles: sometimes it lingers on a mark longer than it should, sometimes it leaps forward without warning, sometimes it retreats a beat before continuing. The time in this city, it seems, is also sick.
+
+A diagonal gleam slides slowly across the crystal, as if a lamp far away were passing before it.
+
 ---
 
 ## Version 0.6.0

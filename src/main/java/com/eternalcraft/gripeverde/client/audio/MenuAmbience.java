@@ -14,17 +14,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * MenuAmbience v2 - Sistema de audio ambiental por capas.
+ * MenuAmbience v3 - Sistema de audio ambiental por capas.
  *
- * v0.4.4:
- *   - Capas activas con assets curados del Bloque 2.1
- *   - Bloque 2.3D: trueno agregado + volúmenes de EVENTS bajados para sensación de distancia
+ * Capas:
+ *   BASE   - loops permanentes (viento, lluvia, ciudad)
+ *   EVENTS - sonidos ocasionales (15-40s)
+ *   RARE   - sonidos firma (90-240s)
+ *   TICK   - sincronizado con el segundero del reloj de bolsillo
  *
  * API publica:
- *   MenuAmbience.start()    - llamar al abrir DiaryTitleScreen
- *   MenuAmbience.stop()     - llamar al cerrar DiaryTitleScreen (removed())
- *   MenuAmbience.tick()     - llamar en render() de DiaryTitleScreen
- *   MenuAmbience.isActive() - getter
+ *   MenuAmbience.start()
+ *   MenuAmbience.stop()
+ *   MenuAmbience.tick()
+ *   MenuAmbience.isActive()
+ *   MenuAmbience.setPocketWatchVisible(boolean)
+ *   MenuAmbience.onSecondTick() — llamado por PocketWatchRenderer
  */
 public class MenuAmbience {
 
@@ -32,11 +36,15 @@ public class MenuAmbience {
 
     private static final boolean DEBUG_LOGGING = false;
 
-    // TIMERS - produccion
+    // TIMERS
     private static final long EVENT_MIN_MS = 15_000L;
     private static final long EVENT_MAX_MS = 40_000L;
     private static final long RARE_MIN_MS  = 90_000L;
     private static final long RARE_MAX_MS  = 240_000L;
+
+    private static final float TICK_VOLUME    = 0.025f;
+    private static final float TICK_PITCH_MIN = 0.95f;
+    private static final float TICK_PITCH_MAX = 1.05f;
 
     private static class Entry {
         final RegistryObject<SoundEvent> sound;
@@ -71,18 +79,15 @@ public class MenuAmbience {
     private static final List<Entry>    RARE_LAYER   = new ArrayList<>();
 
     static {
-        // ── CAPA BASE — loops permanentes ────────────────────────────────────
         BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_WIND, 0.06f));
         BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_RAIN, 0.05f));
         BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_CITY, 0.03f));
 
-        // ── CAPA EVENTS — sonidos ocasionales (volúmenes bajos = sensación de distancia) ──
         EVENTS_LAYER.add(new Entry(ModSounds.MENU_FOOTSTEPS,          40, 0.04f, 0.90f, 1.10f));
         EVENTS_LAYER.add(new Entry(ModSounds.MENU_WOOD_CREAK,         35, 0.05f, 0.85f, 1.15f));
         EVENTS_LAYER.add(new Entry(ModSounds.MENU_DOOR,               15, 0.05f, 0.90f, 1.10f));
         EVENTS_LAYER.add(new Entry(ModSounds.MENU_AMBIENT_OCCASIONAL, 10, 0.06f, 0.95f, 1.05f));
 
-        // ── CAPA RARE — sonidos firma ─────────────────────────────────────────
         RARE_LAYER.add(new Entry(ModSounds.MENU_BELL,    40, 0.09f, 0.95f, 1.05f));
         RARE_LAYER.add(new Entry(ModSounds.MENU_THUNDER, 35, 0.10f, 0.95f, 1.05f));
         RARE_LAYER.add(new Entry(ModSounds.MENU_CROWS,   15, 0.07f, 0.90f, 1.10f));
@@ -90,13 +95,46 @@ public class MenuAmbience {
     }
 
     private static boolean active = false;
+    private static boolean pocketWatchVisible = false;
+
     private static long lastEventTriggerMs = 0L;
     private static long nextEventDelayMs   = 0L;
     private static long lastRareTriggerMs  = 0L;
     private static long nextRareDelayMs    = 0L;
+
     private static RegistryObject<SoundEvent> lastEventTriggered = null;
     private static RegistryObject<SoundEvent> lastRareTriggered  = null;
     private static final RandomSource RNG = RandomSource.create();
+
+    public static void setPocketWatchVisible(boolean visible) {
+        pocketWatchVisible = visible;
+    }
+
+    /**
+     * Llamado por PocketWatchRenderer cada vez que el segundero
+     * avanza a una nueva posicion. Si el reloj es visible y el
+     * sistema esta activo, reproduce el tick.
+     */
+    public static void onSecondTick() {
+        if (!active || !pocketWatchVisible) return;
+
+        Minecraft mc = Minecraft.getInstance();
+        if (mc == null) return;
+
+        try {
+            SoundEvent se = ModSounds.MENU_TICK.get();
+            float pitch = randomFloatBetween(TICK_PITCH_MIN, TICK_PITCH_MAX);
+            mc.getSoundManager().play(
+                SimpleSoundInstance.forUI(se, pitch, TICK_VOLUME));
+
+            if (DEBUG_LOGGING) {
+                LOGGER.info("[MenuAmbience] TICK disparado (vol={}, pitch={})",
+                    TICK_VOLUME, pitch);
+            }
+        } catch (Exception e) {
+            if (DEBUG_LOGGING) LOGGER.warn("[MenuAmbience] Tick no disponible: {}", e.getMessage());
+        }
+    }
 
     public static void start() {
         if (active) stop();
@@ -108,6 +146,7 @@ public class MenuAmbience {
         }
 
         active = true;
+        pocketWatchVisible = false;
 
         for (BaseLoop bl : BASE_LOOPS) {
             try {
@@ -130,10 +169,8 @@ public class MenuAmbience {
         lastRareTriggered  = null;
 
         if (DEBUG_LOGGING) {
-            LOGGER.info("[MenuAmbience] Ambient iniciado (BASE:{}, EVENTS:{}, RARE:{}). " +
-                        "Proximo evento en {}ms, proximo raro en {}ms",
-                BASE_LOOPS.size(), EVENTS_LAYER.size(), RARE_LAYER.size(),
-                nextEventDelayMs, nextRareDelayMs);
+            LOGGER.info("[MenuAmbience] Ambient iniciado (BASE:{}, EVENTS:{}, RARE:{}, TICK:sync)",
+                BASE_LOOPS.size(), EVENTS_LAYER.size(), RARE_LAYER.size());
         }
     }
 
@@ -151,6 +188,7 @@ public class MenuAmbience {
         }
 
         active = false;
+        pocketWatchVisible = false;
         lastEventTriggered = null;
         lastRareTriggered  = null;
 

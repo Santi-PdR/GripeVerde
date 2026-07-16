@@ -1,5 +1,6 @@
 package com.eternalcraft.gripeverde.client.render;
 
+import com.eternalcraft.gripeverde.client.audio.MenuAmbience;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -12,6 +13,7 @@ import net.minecraft.util.RandomSource;
  * Manecillas de hora y minuto fijas en 11:52 (la hora del brote).
  * Segundero animado con glitches ocasionales (el tiempo esta enfermo).
  * Brillo de cristal deslizante para sensacion de vidrio pulido.
+ * Notifica a MenuAmbience cada vez que el segundero cambia de posicion.
  */
 public class PocketWatchRenderer {
 
@@ -25,46 +27,34 @@ public class PocketWatchRenderer {
     private static final int COLOR_CHAIN       = 0xFF8A6420;
     private static final int COLOR_CHAIN_DARK  = 0xFF3E2A10;
 
-    // Estado interno para animaciones
     private static final RandomSource RNG = RandomSource.create();
     private static final long START_TIME = System.currentTimeMillis();
 
     // Estado del glitch actual
     private static long nextGlitchAt = 0L;
-    private static int glitchType = 0;      // 0=stutter, 1=skip, 2=rewind
+    private static int glitchType = 0;
     private static long glitchStartMs = 0L;
     private static boolean glitchActive = false;
 
-    /**
-     * Dibuja el reloj colgando desde topY, oscilando alrededor de cxAnchor.
-     * @param g          GuiGraphics
-     * @param cxAnchor   posicion X del punto de anclaje (borde superior)
-     * @param cy         posicion Y del centro del reloj (referencia sin oscilacion)
-     * @param topY       Y del borde superior donde nace la cadena (normalmente 0)
-     * @param radius     radio del reloj
-     * @param version    string de version a mostrar debajo
-     */
+    // Tracking del segundero para notificar cambios
+    private static int lastSecondPos = -1;
+
     public static void draw(GuiGraphics g, int cxAnchor, int cy, int topY, int radius, String version) {
         long now = System.currentTimeMillis();
         long elapsed = now - START_TIME;
 
-        // Oscilacion pendular sutil: +/- 3 pixels en X, periodo 4 segundos
         double swingT = (elapsed % 4000L) / 4000.0 * 2.0 * Math.PI;
         int swingOffset = (int) Math.round(Math.sin(swingT) * 3.0);
         int cx = cxAnchor + swingOffset;
 
-        // Cadena larga desde topY hasta el borde superior del reloj
         drawLongChain(g, cxAnchor, topY, cx, cy - radius);
 
-        // Anillo exterior (marco dorado)
         fillCircle(g, cx, cy, radius, COLOR_BRASS);
         fillCircle(g, cx, cy, radius - 2, COLOR_BRASS_DARK);
         fillCircle(g, cx, cy, radius - 4, COLOR_BRASS);
 
-        // Cara del reloj
         fillCircle(g, cx, cy, radius - 7, COLOR_FACE);
 
-        // 12 marcas horarias
         for (int i = 0; i < 12; i++) {
             double angle = Math.toRadians(i * 30 - 90);
             int outerR = radius - 9;
@@ -76,7 +66,6 @@ public class PocketWatchRenderer {
             drawThickLine(g, x1, y1, x2, y2, COLOR_MARK);
         }
 
-        // Numeros romanos cardinales
         Font font = Minecraft.getInstance().font;
         int textR = radius - 20;
         drawRomanNumeral(g, font, cx, cy - textR, "XII");
@@ -84,11 +73,19 @@ public class PocketWatchRenderer {
         drawRomanNumeral(g, font, cx, cy + textR, "VI");
         drawRomanNumeral(g, font, cx - textR, cy, "IX");
 
-        // ── BRILLO DEL CRISTAL (antes de manecillas para quedar debajo) ─────
         drawGlassShine(g, cx, cy, radius - 7, elapsed);
 
-        // ── SEGUNDERO ANIMADO CON GLITCH ────────────────────────────────────
+        // Segundero animado con glitch + notificacion de audio
         int secondPos = computeSecondPosition(now);
+
+        if (secondPos != lastSecondPos) {
+            // Tick solo cuando cruza una marca horaria (cada 5 segundos)
+            if (lastSecondPos != -1 && secondPos % 5 == 0) {
+                MenuAmbience.onSecondTick();
+            }
+            lastSecondPos = secondPos;
+        }
+
         double secAngle = Math.toRadians(secondPos * 6 - 90);
         int secLen = radius - 10;
         drawThinLine(g,
@@ -97,7 +94,6 @@ public class PocketWatchRenderer {
             (int)(cy + Math.sin(secAngle) * secLen),
             COLOR_SECOND);
 
-        // ── MANECILLAS FIJAS EN 11:52 ───────────────────────────────────────
         double hourAngle = Math.toRadians(11 * 30 + 52 * 0.5 - 90);
         double minAngle  = Math.toRadians(52 * 6 - 90);
 
@@ -116,24 +112,18 @@ public class PocketWatchRenderer {
             (int)(cy + Math.sin(minAngle) * minLen),
             COLOR_HAND);
 
-        // Punto central
         g.fill(cx - 2, cy - 2, cx + 2, cy + 2, COLOR_HAND);
 
-        // Version debajo del reloj (sigue la oscilacion)
         String label = "v" + version;
         int lw = font.width(label);
         g.drawString(font, label, cx - lw / 2, cy + radius + 6, COLOR_TEXT, false);
     }
 
-    /**
-     * Calcula la posicion del segundero (0-59) aplicando glitches ocasionales.
-     * Glitches cada 8-12s, uno de: stutter (se traba 800ms), skip (+3 pos), rewind (retrocede 2 por 800ms).
-     */
     private static int computeSecondPosition(long now) {
         int baseSec = (int)((now / 1000L) % 60L);
 
         if (nextGlitchAt == 0L) {
-            nextGlitchAt = now + 8000L + RNG.nextInt(4000); // 8-12s
+            nextGlitchAt = now + 8000L + RNG.nextInt(4000);
         }
 
         if (!glitchActive && now >= nextGlitchAt) {
@@ -145,17 +135,17 @@ public class PocketWatchRenderer {
         if (glitchActive) {
             long dt = now - glitchStartMs;
             switch (glitchType) {
-                case 0: // STUTTER: se queda quieto 800ms
+                case 0:
                     if (dt < 800L) {
                         return (int)((glitchStartMs / 1000L) % 60L);
                     }
                     break;
-                case 1: // SKIP: salta 3 posiciones instantaneamente
+                case 1:
                     if (dt < 200L) {
                         return (baseSec + 3) % 60;
                     }
                     break;
-                case 2: // REWIND: retrocede 2 ticks durante 800ms
+                case 2:
                     if (dt < 800L) {
                         return (baseSec + 58) % 60;
                     }
@@ -170,10 +160,6 @@ public class PocketWatchRenderer {
         return baseSec;
     }
 
-    /**
-     * Brillo de cristal: banda diagonal semi-transparente que cruza la cara.
-     * Loop de 8 segundos.
-     */
     private static void drawGlassShine(GuiGraphics g, int cx, int cy, int faceRadius, long elapsed) {
         float t = (elapsed % 8000L) / 8000f;
         float bandCenter = t * 2f - 1f;
@@ -190,7 +176,6 @@ public class PocketWatchRenderer {
 
                 if (dist < bandHalfWidth) {
                     float intensity = 1f - (dist / bandHalfWidth);
-                    // Peak visible pero elegante: alpha maximo 90
                     int alpha = (int)(intensity * 90);
                     if (alpha > 4) {
                         int color = (alpha << 24) | 0x00FFF5DC;
@@ -201,11 +186,6 @@ public class PocketWatchRenderer {
         }
     }
 
-    /**
-     * Cadena larga desde el anclaje superior (fixed) hasta la corona del reloj (con swing).
-     * Los eslabones se dibujan como pequeños rectangulos alternados.
-     * La curva se hace interpolando linealmente entre los dos puntos.
-     */
     private static void drawLongChain(GuiGraphics g, int xTop, int yTop, int xBottom, int yBottom) {
         int totalLen = yBottom - yTop;
         if (totalLen < 8) return;
@@ -217,7 +197,6 @@ public class PocketWatchRenderer {
             int x = (int) (xTop + (xBottom - xTop) * t);
             int y = yTop + (int)(t * totalLen);
 
-            // Eslabones alternados: verticales y horizontales
             if (i % 2 == 0) {
                 g.fill(x - 1, y, x + 2, y + 3, COLOR_CHAIN);
                 g.fill(x - 1, y + 1, x, y + 2, COLOR_CHAIN_DARK);
@@ -227,7 +206,6 @@ public class PocketWatchRenderer {
             }
         }
 
-        // Corona (boton de cuerda) sobre el reloj
         g.fill(xBottom - 3, yBottom - 3, xBottom + 3, yBottom, COLOR_BRASS_DARK);
         g.fill(xBottom - 2, yBottom - 4, xBottom + 2, yBottom - 3, COLOR_BRASS);
     }

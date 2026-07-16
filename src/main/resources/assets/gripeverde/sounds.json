@@ -139,5 +139,11 @@
       {"name": "gripeverde:menu/rare/thunder_3", "volume": 1.0}
     ],
     "subtitle": ""
+  },
+  "menu.tick": {
+    "sounds": [
+      {"name": "gripeverde:menu/tick", "volume": 1.0}
+    ],
+    "subtitle": ""
   }
 }

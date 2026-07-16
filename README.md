@@ -5,12 +5,12 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.6.0** - Cierre formal de la fase Title. Baseline estable.
+**v0.6.2** - El reloj cobra vida. Segundero animado, oscilación pendular y sonido mecánico sincronizado con las marcas horarias.
 
 ## Caracteristicas principales
 
 - Menu principal victoriano con framework UI adaptativo.
-- Reloj de bolsillo con manecillas detenidas en 11:52, la hora del brote.
+- Reloj de bolsillo animado con manecillas detenidas en 11:52, segundero mecánico con glitches, oscilación pendular y tic-tac sincronizado con las marcas horarias.
 - Posters institucionales (Quarantine, Wanted: Patient Zero).
 - Firma easter egg de S. Pereira, MDCCCXCVII.
 - Modo minimal automatico para pantallas pequeñas.

@@ -157,6 +157,7 @@ public class DiaryTitleScreen extends Screen {
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         MenuAmbience.tick();
+        MenuAmbience.setPocketWatchVisible(!isMinimalMode());
 
         AtmosphereRenderer.renderSky(g, this.width, this.height);
         VictorianSkyline.renderBackground(g, this.width, this.height);

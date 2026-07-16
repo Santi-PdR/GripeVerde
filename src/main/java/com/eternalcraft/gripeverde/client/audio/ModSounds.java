@@ -76,6 +76,10 @@ public class ModSounds {
     public static final RegistryObject<SoundEvent> MENU_THUNDER =
         reg("menu.thunder");
 
+    // -- AMBIENT TICK -------------------------------------------------
+    public static final RegistryObject<SoundEvent> MENU_TICK =
+        reg("menu.tick");
+
     // ── Helper ───────────────────────────────────────────────────────────────
     private static RegistryObject<SoundEvent> reg(String path) {
         return SOUND_EVENTS.register(path,
