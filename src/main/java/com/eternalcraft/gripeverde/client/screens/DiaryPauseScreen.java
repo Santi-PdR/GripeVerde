@@ -7,6 +7,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.GenericDirtMessageScreen;
 import net.minecraft.client.gui.screens.OptionsScreen;
 import net.minecraft.client.gui.screens.PauseScreen;
+import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.achievement.StatsScreen;
 import net.minecraft.client.gui.screens.advancements.AdvancementsScreen;
 import net.minecraft.client.multiplayer.ClientPacketListener;
@@ -151,20 +152,22 @@ public class DiaryPauseScreen extends PauseScreen {
             return;
         }
 
-        boolean hasSp = this.minecraft.hasSingleplayerServer();
-
-        // Orden CORRECTO segun vanilla PauseScreen:
-        // 1. Cambiar a pantalla de "guardando" ANTES de cualquier otra cosa
+        // En Forge 1.20.1, Minecraft.disconnect() no es publico:
+        // usamos clearLevel() y llamamos setScreen explicitamente al final,
+        // que es lo que faltaba en la version anterior y causaba el freeze.
+        boolean isLocal = this.minecraft.isLocalServer();
         this.minecraft.level.disconnect();
-        if (hasSp) {
+
+        if (isLocal) {
             this.minecraft.clearLevel(new GenericDirtMessageScreen(
                 Component.translatable("menu.savingLevel")));
         } else {
             this.minecraft.clearLevel();
         }
 
-        // 2. Al terminar clearLevel, MC vuelve al TitleScreen automaticamente.
-        // Nuestro ScreenEventHandler lo reemplaza por DiaryTitleScreen.
+        // Forzar la vuelta al TitleScreen explicitamente.
+        // ScreenEventHandler lo intercepta y lo reemplaza por DiaryTitleScreen.
+        this.minecraft.setScreen(new TitleScreen());
     }
 
     @Override

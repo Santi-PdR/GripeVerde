@@ -5,7 +5,7 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.6.3** - El diario respira. La pantalla de pausa se adapta a cualquier escala respetando los bordes de la pantalla.
+**v0.6.4** - Fix crítico: se resuelve el congelamiento al salir de un mundo (KI-01 cerrado).
 
 ## Caracteristicas principales
 
