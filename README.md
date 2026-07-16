@@ -5,7 +5,7 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.6.2** - El reloj cobra vida. Segundero animado, oscilación pendular y sonido mecánico sincronizado con las marcas horarias.
+**v0.6.3** - El diario respira. La pantalla de pausa se adapta a cualquier escala respetando los bordes de la pantalla.
 
 ## Caracteristicas principales
 

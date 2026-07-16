@@ -23,8 +23,31 @@ public class DiaryPauseScreen extends PauseScreen {
     private static final int PAPER_LIGHT     = 0xFFFAF0DA;
     private static final int PAPER_HIGHLIGHT = 0xFFFDF6E3;
 
-    private static final int PANEL_W = 320;
-    private static final int PANEL_H = 360;
+    private static final int PANEL_MAX_W = 320;
+    private static final int PANEL_MAX_H = 360;
+    // Alto minimo para que quepan todos los ornamentos + botones sin superposicion
+    private static final int PANEL_MIN_H = 260;
+    private static final int MARGIN_TOP    = 20;
+    private static final int MARGIN_BOTTOM_IDEAL = 55;  // hotbar completa
+    private static final int MARGIN_BOTTOM_MIN   = 55;  // solo hotbar mesh
+    private static final int MARGIN_SIDE   = 20;
+
+    // Ornamentos internos (offsets relativos)
+    private static final int ORN_TITLE_TOP    = 24;
+    private static final int ORN_SUBTITLE_TOP = 58;
+    private static final int ORN_SEP_TOP      = 80;
+    private static final int ORN_SEP_BOT_FROM_BOT = 48;
+    private static final int ORN_SIGN_FROM_BOT    = 28;
+
+    private int panelW() {
+        int available = this.width - MARGIN_SIDE * 2;
+        return Math.min(PANEL_MAX_W, available);
+    }
+    private int panelH() {
+        // Siempre respetar MARGIN_TOP y MARGIN_BOTTOM_MIN sin excepciones
+        int available = this.height - MARGIN_TOP - MARGIN_BOTTOM_MIN;
+        return Math.max(0, Math.min(PANEL_MAX_H, available));
+    }
 
     private static final int BTN_W = 240;
     private static final int BTN_H = 22;
@@ -36,26 +59,48 @@ public class DiaryPauseScreen extends PauseScreen {
         super(true);
     }
 
-    private int panelX() { return (this.width - PANEL_W) / 2; }
-    private int panelY() { return (this.height - PANEL_H) / 2; }
+    private int panelX() { return (this.width - panelW()) / 2; }
+    private int panelY() {
+        // Pegar el panel al margen superior; si sobra espacio, dejarlo abajo para hotbar
+        return MARGIN_TOP;
+    }
 
     @Override
     protected void init() {
         int px = panelX();
         int py = panelY();
+        int pw = panelW();
+        int ph = panelH();
 
-        int btnStartY = py + 100;
-        int btnX = px + (PANEL_W - BTN_W) / 2;
+        // Zona disponible para los 5 botones (entre los dos separadores)
+        int contentTop = py + ORN_SEP_TOP + 6;
+        int contentBot = py + ph - ORN_SEP_BOT_FROM_BOT - 6;
+        int contentH = Math.max(0, contentBot - contentTop);
+
+        // Calcular altura de boton adaptativa
+        // Formula: 5*bh + 4*gap = contentH  =>  bh = (contentH - 4*gap) / 5
+        int gap = BTN_GAP;
+        int bh = (contentH - gap * 4) / 5;
+        if (bh > BTN_H) bh = BTN_H;         // no crecer mas alla del ideal
+        if (bh < 14)    { bh = 14; gap = 2; } // piso minimo legible
+
+        int totalBtnH = bh * 5 + gap * 4;
+        int btnStartY = contentTop + Math.max(0, (contentH - totalBtnH) / 2);
+        int btnX = px + (pw - BTN_W) / 2;
+
+        // Redefinimos referencia local para el resto del metodo
+        final int BH = bh;
+        final int BG = gap;
 
         this.addRenderableWidget(new DiaryButton(
-            btnX, btnStartY, BTN_W, BTN_H,
+            btnX, btnStartY, BTN_W, BH,
             Component.translatable("gripeverde.pause.btn.resume"),
             DiaryButton.Icon.HAND, DiaryButton.Variant.PRIMARY,
             () -> this.minecraft.setScreen(null)
         ));
 
         DiaryButton recordsBtn = new DiaryButton(
-            btnX, btnStartY + (BTN_H + BTN_GAP), BTN_W, BTN_H,
+            btnX, btnStartY + (BH + BG), BTN_W, BH,
             Component.translatable("gripeverde.pause.btn.records"),
             DiaryButton.Icon.SCROLL, DiaryButton.Variant.SECONDARY,
             () -> {
@@ -69,7 +114,7 @@ public class DiaryPauseScreen extends PauseScreen {
         this.addRenderableWidget(recordsBtn);
 
         DiaryButton statsBtn = new DiaryButton(
-            btnX, btnStartY + (BTN_H + BTN_GAP) * 2, BTN_W, BTN_H,
+            btnX, btnStartY + (BH + BG) * 2, BTN_W, BH,
             Component.translatable("gripeverde.pause.btn.statistics"),
             DiaryButton.Icon.CHART, DiaryButton.Variant.SECONDARY,
             () -> {
@@ -82,14 +127,14 @@ public class DiaryPauseScreen extends PauseScreen {
         this.addRenderableWidget(statsBtn);
 
         this.addRenderableWidget(new DiaryButton(
-            btnX, btnStartY + (BTN_H + BTN_GAP) * 3, BTN_W, BTN_H,
+            btnX, btnStartY + (BH + BG) * 3, BTN_W, BH,
             Component.translatable("gripeverde.pause.btn.adjustments"),
             DiaryButton.Icon.GEAR, DiaryButton.Variant.SECONDARY,
             () -> this.minecraft.setScreen(new OptionsScreen(this, this.minecraft.options))
         ));
 
         this.addRenderableWidget(new DiaryButton(
-            btnX, btnStartY + (BTN_H + BTN_GAP) * 4, BTN_W, BTN_H,
+            btnX, btnStartY + (BH + BG) * 4, BTN_W, BH,
             Component.translatable("gripeverde.pause.btn.leave"),
             DiaryButton.Icon.DOOR, DiaryButton.Variant.DANGER,
             this::onLeave
@@ -131,7 +176,7 @@ public class DiaryPauseScreen extends PauseScreen {
 
         int px = panelX();
         int py = panelY();
-        drawPanel(g, px, py, PANEL_W, PANEL_H);
+        drawPanel(g, px, py, panelW(), panelH());
         drawPanelTitle(g, px, py);
         drawDateStamp(g, px, py);
         drawPanelSeparators(g, px, py);
@@ -142,9 +187,9 @@ public class DiaryPauseScreen extends PauseScreen {
         super.render(g, mouseX, mouseY, partialTick);
 
         // Elementos que van encima de los botones
-        drawCandle(g, px + 20, py + PANEL_H - 32);
+        drawCandle(g, px + 20, py + panelH() - 32);
         drawSignature(g, px, py);
-        drawWaxSeal(g, px + PANEL_W - 28, py + PANEL_H - 26);
+        drawWaxSeal(g, px + panelW() - 28, py + panelH() - 26);
     }
 
     private void drawVignette(GuiGraphics g) {
@@ -268,7 +313,7 @@ public class DiaryPauseScreen extends PauseScreen {
         String title = Component.translatable("gripeverde.pause.title").getString();
         String subtitle = Component.translatable("gripeverde.pause.subtitle").getString();
 
-        int centerX = px + PANEL_W / 2;
+        int centerX = px + panelW() / 2;
         int titleY = py + 24;
         int subtitleY = py + 58;
 
@@ -294,7 +339,7 @@ public class DiaryPauseScreen extends PauseScreen {
     private void drawDateStamp(GuiGraphics g, int px, int py) {
         String date = "23 · III · 1897";
         int dw = this.font.width(date);
-        int dx = px + PANEL_W - dw - 12;
+        int dx = px + panelW() - dw - 12;
         int dy = py + 12;
         g.drawString(this.font, date, dx, dy, DiaryTheme.SEPIA_DARK, false);
     }
@@ -318,13 +363,13 @@ public class DiaryPauseScreen extends PauseScreen {
     }
 
     private void drawPanelSeparators(GuiGraphics g, int px, int py) {
-        int centerX = px + PANEL_W / 2;
-        int sepW = PANEL_W - 60;
+        int centerX = px + panelW() / 2;
+        int sepW = panelW() - 60;
         int lineC = DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 200);
         int accentC = DiaryTheme.BRONZE;
 
-        drawSepLine(g, centerX, py + 80, sepW, lineC, accentC);
-        drawSepLine(g, centerX, py + PANEL_H - 48, sepW, lineC, accentC);
+        drawSepLine(g, centerX, py + ORN_SEP_TOP, sepW, lineC, accentC);
+        drawSepLine(g, centerX, py + panelH() - ORN_SEP_BOT_FROM_BOT, sepW, lineC, accentC);
     }
 
     private void drawSepLine(GuiGraphics g, int cx, int y, int width, int lineC, int accentC) {
@@ -339,9 +384,9 @@ public class DiaryPauseScreen extends PauseScreen {
     private void drawSignature(GuiGraphics g, int px, int py) {
         Component sig = Component.literal("Signed: S. Pereira, U.A.")
             .withStyle(ChatFormatting.ITALIC);
-        int centerX = px + PANEL_W / 2;
+        int centerX = px + panelW() / 2;
         int sw = this.font.width(sig);
-        int sy = py + PANEL_H - 28;
+        int sy = py + panelH() - ORN_SIGN_FROM_BOT;
         g.drawString(this.font, sig, centerX - sw / 2, sy, DiaryTheme.SEPIA_DARK, false);
     }
 
