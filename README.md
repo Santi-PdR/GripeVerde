@@ -5,24 +5,36 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.5.0** - Sistema de historial de cambios integrado al menu principal.
+**v0.6.0** - Cierre formal de la fase Title. Baseline estable.
 
 ## Caracteristicas principales
 
-- Menu principal completamente rediseñado con estetica victoriana.
-- Ambient audio por capas: viento, lluvia, ciudad, eventos ocasionales, presagios.
-- Historial de cambios accesible desde el menu, con contenido localizado por idioma.
+- Menu principal victoriano con framework UI adaptativo.
+- Reloj de bolsillo con manecillas detenidas en 11:52, la hora del brote.
+- Posters institucionales (Quarantine, Wanted: Patient Zero).
+- Firma easter egg de S. Pereira, MDCCCXCVII.
+- Modo minimal automatico para pantallas pequeñas.
+- Sistema de ambiente sonoro por capas: viento, lluvia, ciudad, eventos ocasionales, presagios raros.
+- Historial de cambios in-game con word-wrap real, accesible desde el boton "?".
 - Soporte para 25 variantes de idioma (5 de ingles + 20 de espanol).
+
+## Pantallas implementadas
+
+- **Title** - menu principal victoriano completo
+- **Pause** - diario del superviviente (R14, aprobada)
+- **Changelog** - historial narrativo en pergamino
+- **DebugCanvas** - herramienta interna de desarrollo
+- **SoundLab** - herramienta interna de audio
 
 ## Build
 
-Ejecutar: gradlew.bat build
+Ejecutar: `gradlew.bat build`
 
-El jar se genera en build/libs/gripeverde-VERSION.jar
+El jar se genera en `build/libs/gripeverde-VERSION.jar`
 
 ## Deploy
 
-Ruta de deploy configurable en .deploy (variable DEPLOY_MODS_PATH).
+Ruta de deploy configurable en `.deploy` (no versionado).
 El script de deploy copia el jar generado al directorio de mods indicado.
 
 ## Idiomas soportados
@@ -33,11 +45,12 @@ El script de deploy copia el jar generado al directorio de mods indicado.
 
 ## Documentacion
 
-- CHANGELOG.md - historial narrativo de versiones (orientado a jugadores)
-- KNOWN_ISSUES.md - estado tecnico, decisiones activas, errores documentados
+- `CHANGELOG.md` - historial narrativo de versiones (orientado a jugadores)
+- `KNOWN_ISSUES.md` - estado tecnico, decisiones activas, errores documentados
 
 ## Requisitos
 
 - Minecraft 1.20.1
 - Forge 47.4.20 o superior
 - Java 17
+- Gradle 8.8
