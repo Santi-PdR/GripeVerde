@@ -1,0 +1,30 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="All Rights Reserved"
+issueTrackerURL=""
+
+[[mods]]
+modId="gripeverde"
+version="${mod_version}"
+displayName="Eternal Craft - Gripe Verde"
+displayURL=""
+credits="Santi"
+authors="EternalCraft Team"
+description='''
+Eternal Craft - Gripe Verde
+Etapa 1800x - Sobrevive a la plaga.
+'''
+
+[[dependencies.gripeverde]]
+    modId="forge"
+    mandatory=true
+    versionRange="[47,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.gripeverde]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1,1.21)"
+    ordering="NONE"
+    side="BOTH"

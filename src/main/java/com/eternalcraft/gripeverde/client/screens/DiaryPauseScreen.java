@@ -1,0 +1,503 @@
+package com.eternalcraft.gripeverde.client.screens;
+
+import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.GenericDirtMessageScreen;
+import net.minecraft.client.gui.screens.OptionsScreen;
+import net.minecraft.client.gui.screens.PauseScreen;
+import net.minecraft.client.gui.screens.achievement.StatsScreen;
+import net.minecraft.client.gui.screens.advancements.AdvancementsScreen;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.network.chat.Component;
+
+import java.util.Random;
+
+/**
+ * DiaryPauseScreen v3.5 — papel claro real, cuervo posado y vela animada.
+ * Mano zombi removida (se reserva para Death Screen).
+ */
+public class DiaryPauseScreen extends PauseScreen {
+
+    private static final int PAPER_LIGHT     = 0xFFFAF0DA;
+    private static final int PAPER_HIGHLIGHT = 0xFFFDF6E3;
+
+    private static final int PANEL_W = 320;
+    private static final int PANEL_H = 360;
+
+    private static final int BTN_W = 240;
+    private static final int BTN_H = 22;
+    private static final int BTN_GAP = 4;
+
+    private int animTick = 0;
+
+    public DiaryPauseScreen() {
+        super(true);
+    }
+
+    private int panelX() { return (this.width - PANEL_W) / 2; }
+    private int panelY() { return (this.height - PANEL_H) / 2; }
+
+    @Override
+    protected void init() {
+        int px = panelX();
+        int py = panelY();
+
+        int btnStartY = py + 100;
+        int btnX = px + (PANEL_W - BTN_W) / 2;
+
+        this.addRenderableWidget(new DiaryButton(
+            btnX, btnStartY, BTN_W, BTN_H,
+            Component.translatable("gripeverde.pause.btn.resume"),
+            DiaryButton.Icon.HAND, DiaryButton.Variant.PRIMARY,
+            () -> this.minecraft.setScreen(null)
+        ));
+
+        DiaryButton recordsBtn = new DiaryButton(
+            btnX, btnStartY + (BTN_H + BTN_GAP), BTN_W, BTN_H,
+            Component.translatable("gripeverde.pause.btn.records"),
+            DiaryButton.Icon.SCROLL, DiaryButton.Variant.SECONDARY,
+            () -> {
+                ClientPacketListener conn = this.minecraft.getConnection();
+                if (conn != null) {
+                    this.minecraft.setScreen(new AdvancementsScreen(conn.getAdvancements()));
+                }
+            }
+        );
+        if (this.minecraft.getConnection() == null) recordsBtn.active = false;
+        this.addRenderableWidget(recordsBtn);
+
+        DiaryButton statsBtn = new DiaryButton(
+            btnX, btnStartY + (BTN_H + BTN_GAP) * 2, BTN_W, BTN_H,
+            Component.translatable("gripeverde.pause.btn.statistics"),
+            DiaryButton.Icon.CHART, DiaryButton.Variant.SECONDARY,
+            () -> {
+                if (this.minecraft.player != null) {
+                    this.minecraft.setScreen(new StatsScreen(this, this.minecraft.player.getStats()));
+                }
+            }
+        );
+        if (this.minecraft.player == null) statsBtn.active = false;
+        this.addRenderableWidget(statsBtn);
+
+        this.addRenderableWidget(new DiaryButton(
+            btnX, btnStartY + (BTN_H + BTN_GAP) * 3, BTN_W, BTN_H,
+            Component.translatable("gripeverde.pause.btn.adjustments"),
+            DiaryButton.Icon.GEAR, DiaryButton.Variant.SECONDARY,
+            () -> this.minecraft.setScreen(new OptionsScreen(this, this.minecraft.options))
+        ));
+
+        this.addRenderableWidget(new DiaryButton(
+            btnX, btnStartY + (BTN_H + BTN_GAP) * 4, BTN_W, BTN_H,
+            Component.translatable("gripeverde.pause.btn.leave"),
+            DiaryButton.Icon.DOOR, DiaryButton.Variant.DANGER,
+            this::onLeave
+        ));
+    }
+
+    @Override
+    public void tick() {
+        animTick++;
+    }
+
+    private void onLeave() {
+        if (this.minecraft == null || this.minecraft.level == null) {
+            return;
+        }
+
+        boolean hasSp = this.minecraft.hasSingleplayerServer();
+
+        // Orden CORRECTO segun vanilla PauseScreen:
+        // 1. Cambiar a pantalla de "guardando" ANTES de cualquier otra cosa
+        this.minecraft.level.disconnect();
+        if (hasSp) {
+            this.minecraft.clearLevel(new GenericDirtMessageScreen(
+                Component.translatable("menu.savingLevel")));
+        } else {
+            this.minecraft.clearLevel();
+        }
+
+        // 2. Al terminar clearLevel, MC vuelve al TitleScreen automaticamente.
+        // Nuestro ScreenEventHandler lo reemplaza por DiaryTitleScreen.
+    }
+
+    @Override
+    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        int overlay = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 180);
+        g.fill(0, 0, this.width, this.height, overlay);
+
+        drawVignette(g);
+
+        int px = panelX();
+        int py = panelY();
+        drawPanel(g, px, py, PANEL_W, PANEL_H);
+        drawPanelTitle(g, px, py);
+        drawDateStamp(g, px, py);
+        drawPanelSeparators(g, px, py);
+
+        // Elementos decorativos
+        drawRaven(g, px + 14, py + 22);
+
+        super.render(g, mouseX, mouseY, partialTick);
+
+        // Elementos que van encima de los botones
+        drawCandle(g, px + 20, py + PANEL_H - 32);
+        drawSignature(g, px, py);
+        drawWaxSeal(g, px + PANEL_W - 28, py + PANEL_H - 26);
+    }
+
+    private void drawVignette(GuiGraphics g) {
+        int steps = 40;
+        for (int i = 0; i < steps; i++) {
+            float t = (float)(steps - i) / steps;
+            int a = (int)(t * t * 70);
+            int c = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, a);
+            g.fill(i, 0, i + 1, this.height, c);
+            g.fill(this.width - i - 1, 0, this.width - i, this.height, c);
+            g.fill(0, i, this.width, i + 1, c);
+            g.fill(0, this.height - i - 1, this.width, this.height - i, c);
+        }
+    }
+
+    // ================================================================
+    // PANEL — FIX papel claro real (orden de render corregido)
+    // ================================================================
+
+    private void drawPanel(GuiGraphics g, int x, int y, int w, int h) {
+        // Sombra
+        int shadowColor = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 200);
+        g.fill(x + 5, y + 5, x + w + 5, y + h + 5, shadowColor);
+
+        // Base opaca — papel crema claro
+        g.fill(x, y, x + w, y + h, PAPER_LIGHT);
+
+        // ORDEN NUEVO: manchas primero, brillo despues (brillo debe estar encima)
+
+        // 1. Manchas de sangre — solo 2, sutiles
+        drawBloodSpotWithSplatter(g, x + w - 50, y + h - 90, 6);
+        drawBloodSpotWithSplatter(g, x + w - 30, y + 30, 4);
+
+        // 2. Textura minima (puntitos sepia)
+        drawPaperTextureMinimal(g, x, y, w, h);
+
+        // 3. Capa de brillo AGRESIVA (alpha 200, cubre todo el panel)
+        for (int i = 0; i < h; i++) {
+            float t = 1f - Math.abs(i - h * 0.4f) / (h * 0.7f);
+            if (t < 0) t = 0;
+            int alpha = (int)(t * 140);
+            if (alpha > 0) {
+                int c = DiaryTheme.withAlpha(PAPER_HIGHLIGHT, alpha);
+                g.fill(x + 4, y + i, x + w - 4, y + i + 1, c);
+            }
+        }
+
+        // 4. Marco perimetral (siempre al final para que no lo cubra el brillo)
+        drawDoubleBorder(g, x, y, w, h);
+        drawCornerOrnaments(g, x, y, w, h);
+    }
+
+    private void drawPaperTextureMinimal(GuiGraphics g, int x, int y, int w, int h) {
+        Random r = new Random(x * 31L + y * 17L);
+        for (int i = 0; i < 15; i++) {
+            int px = x + 4 + r.nextInt(w - 8);
+            int py = y + 4 + r.nextInt(h - 8);
+            int alpha = 6 + r.nextInt(8);
+            int color = DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, alpha);
+            g.fill(px, py, px + 1, py + 1, color);
+        }
+    }
+
+    private void drawBloodSpotWithSplatter(GuiGraphics g, int cx, int cy, int r) {
+        for (int dy = -r; dy <= r; dy++) {
+            for (int dx = -r; dx <= r; dx++) {
+                int d2 = dx * dx + dy * dy;
+                if (d2 <= r * r) {
+                    float t = 1f - (float) Math.sqrt(d2) / r;
+                    int alpha = (int)(t * 140);
+                    int c = DiaryTheme.withAlpha(DiaryTheme.BLOOD_DRIED, alpha);
+                    g.fill(cx + dx, cy + dy, cx + dx + 1, cy + dy + 1, c);
+                }
+            }
+        }
+        g.fill(cx - 2, cy - 2, cx + 2, cy + 2, DiaryTheme.BLOOD_DRIED);
+
+        Random r2 = new Random(cx * 7L + cy * 13L);
+        for (int i = 0; i < 10; i++) {
+            int sx = cx + r2.nextInt(r * 3) - r;
+            int sy = cy + r2.nextInt(r * 3) - r;
+            int size = 1 + r2.nextInt(2);
+            int alpha = 100 + r2.nextInt(100);
+            int c = DiaryTheme.withAlpha(DiaryTheme.BLOOD_DRIED, alpha);
+            g.fill(sx, sy, sx + size, sy + size, c);
+        }
+    }
+
+    private void drawDoubleBorder(GuiGraphics g, int x, int y, int w, int h) {
+        int outer = DiaryTheme.SEPIA_DARK;
+        int inner = DiaryTheme.BRONZE_DARK;
+        drawRect(g, x, y, x + w, y + h, outer);
+        drawRect(g, x + 2, y + 2, x + w - 2, y + h - 2, inner);
+    }
+
+    private void drawRect(GuiGraphics g, int x1, int y1, int x2, int y2, int color) {
+        g.fill(x1, y1, x2, y1 + 1, color);
+        g.fill(x1, y2 - 1, x2, y2, color);
+        g.fill(x1, y1, x1 + 1, y2, color);
+        g.fill(x2 - 1, y1, x2, y2, color);
+    }
+
+    private void drawCornerOrnaments(GuiGraphics g, int x, int y, int w, int h) {
+        int size = 10;
+        int c = DiaryTheme.GOLD_TARNISHED;
+        g.fill(x - 1, y - 1, x + size, y + 1, c);
+        g.fill(x - 1, y - 1, x + 1, y + size, c);
+        g.fill(x + w - size, y - 1, x + w + 1, y + 1, c);
+        g.fill(x + w - 1, y - 1, x + w + 1, y + size, c);
+        g.fill(x - 1, y + h - 1, x + size, y + h + 1, c);
+        g.fill(x - 1, y + h - size, x + 1, y + h + 1, c);
+        g.fill(x + w - size, y + h - 1, x + w + 1, y + h + 1, c);
+        g.fill(x + w - 1, y + h - size, x + w + 1, y + h + 1, c);
+    }
+
+    // ================================================================
+    // TITULO / FECHA / SEPARADORES / FIRMA / SELLO
+    // ================================================================
+
+    private void drawPanelTitle(GuiGraphics g, int px, int py) {
+        String title = Component.translatable("gripeverde.pause.title").getString();
+        String subtitle = Component.translatable("gripeverde.pause.subtitle").getString();
+
+        int centerX = px + PANEL_W / 2;
+        int titleY = py + 24;
+        int subtitleY = py + 58;
+
+        int tw = this.font.width(title);
+        g.pose().pushPose();
+        g.pose().translate(centerX, titleY, 0);
+        g.pose().scale(1.75f, 1.75f, 1f);
+        g.drawString(this.font, title, -tw / 2 + 1, 1, DiaryTheme.SEPIA_DARK, false);
+        g.drawString(this.font, title, -tw / 2, 0, DiaryTheme.INK, false);
+        g.pose().popPose();
+
+        int scaledTw = (int)(tw * 1.75f);
+        int ornY = titleY + 5;
+        drawFlourish(g, centerX - scaledTw / 2 - 20, ornY, DiaryTheme.BRONZE, false);
+        drawFlourish(g, centerX + scaledTw / 2 + 4, ornY, DiaryTheme.BRONZE, true);
+
+        int sw = this.font.width(subtitle);
+        g.drawString(this.font, subtitle,
+            centerX - sw / 2, subtitleY,
+            DiaryTheme.SEPIA_MID, false);
+    }
+
+    private void drawDateStamp(GuiGraphics g, int px, int py) {
+        String date = "23 · III · 1897";
+        int dw = this.font.width(date);
+        int dx = px + PANEL_W - dw - 12;
+        int dy = py + 12;
+        g.drawString(this.font, date, dx, dy, DiaryTheme.SEPIA_DARK, false);
+    }
+
+    private void drawFlourish(GuiGraphics g, int x, int y, int color, boolean mirror) {
+        if (!mirror) {
+            g.fill(x,      y + 3, x + 8,  y + 4, color);
+            g.fill(x + 8,  y + 2, x + 10, y + 3, color);
+            g.fill(x + 10, y + 1, x + 12, y + 2, color);
+            g.fill(x + 12, y + 3, x + 14, y + 4, color);
+            g.fill(x + 14, y + 4, x + 16, y + 5, color);
+            g.fill(x + 8, y + 5, x + 10, y + 7, color);
+        } else {
+            g.fill(x + 8,  y + 3, x + 16, y + 4, color);
+            g.fill(x + 6,  y + 2, x + 8,  y + 3, color);
+            g.fill(x + 4,  y + 1, x + 6,  y + 2, color);
+            g.fill(x + 2,  y + 3, x + 4,  y + 4, color);
+            g.fill(x,      y + 4, x + 2,  y + 5, color);
+            g.fill(x + 6, y + 5, x + 8, y + 7, color);
+        }
+    }
+
+    private void drawPanelSeparators(GuiGraphics g, int px, int py) {
+        int centerX = px + PANEL_W / 2;
+        int sepW = PANEL_W - 60;
+        int lineC = DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 200);
+        int accentC = DiaryTheme.BRONZE;
+
+        drawSepLine(g, centerX, py + 80, sepW, lineC, accentC);
+        drawSepLine(g, centerX, py + PANEL_H - 48, sepW, lineC, accentC);
+    }
+
+    private void drawSepLine(GuiGraphics g, int cx, int y, int width, int lineC, int accentC) {
+        int half = width / 2;
+        int gap = 6;
+        g.fill(cx - half, y, cx - gap, y + 1, lineC);
+        g.fill(cx + gap, y, cx + half, y + 1, lineC);
+        g.fill(cx - 2, y - 1, cx + 3, y + 2, accentC);
+        g.fill(cx - 1, y - 2, cx + 2, y + 3, accentC);
+    }
+
+    private void drawSignature(GuiGraphics g, int px, int py) {
+        Component sig = Component.literal("Signed: S. Pereira, U.A.")
+            .withStyle(ChatFormatting.ITALIC);
+        int centerX = px + PANEL_W / 2;
+        int sw = this.font.width(sig);
+        int sy = py + PANEL_H - 28;
+        g.drawString(this.font, sig, centerX - sw / 2, sy, DiaryTheme.SEPIA_DARK, false);
+    }
+
+    private void drawWaxSeal(GuiGraphics g, int cx, int cy) {
+        int r = 14;
+        for (int dy = -r; dy <= r; dy++) {
+            for (int dx = -r; dx <= r; dx++) {
+                if (dx * dx + dy * dy <= r * r) {
+                    g.fill(cx + dx, cy + dy, cx + dx + 1, cy + dy + 1, DiaryTheme.WAX_SEAL);
+                }
+            }
+        }
+        for (int dy = -r; dy <= r; dy++) {
+            for (int dx = -r; dx <= r; dx++) {
+                int d2 = dx * dx + dy * dy;
+                if (d2 <= r * r && d2 >= (r - 2) * (r - 2)) {
+                    g.fill(cx + dx, cy + dy, cx + dx + 1, cy + dy + 1, DiaryTheme.BLOOD_DRIED);
+                }
+            }
+        }
+        g.fill(cx - 7, cy - 7, cx - 3, cy - 4, DiaryTheme.withAlpha(DiaryTheme.PAPER, 90));
+
+        String year = "1897";
+        int tw = this.font.width(year);
+        g.drawString(this.font, year, cx - tw / 2, cy - 3, DiaryTheme.PAPER, false);
+    }
+
+    // ================================================================
+    // CUERVO POSADO — esquina superior izquierda del panel
+    // ================================================================
+
+    private void drawRaven(GuiGraphics g, int x, int y) {
+        // Cuervo pequeño, silueta lateral, mirando a la derecha
+        // Tamaño: ~20x18 px
+
+        int black = 0xFF0A0503;
+        int darkGray = 0xFF1F1408;
+        int highlight = DiaryTheme.SEPIA_DARK;
+        int eye = 0xFFD4941E;  // ojo ambar
+
+        // Cuerpo principal (elipse aproximada)
+        g.fill(x + 2, y + 6, x + 14, y + 14, black);
+        g.fill(x + 3, y + 5, x + 15, y + 6, black);
+        g.fill(x + 4, y + 14, x + 14, y + 15, black);
+        g.fill(x + 5, y + 15, x + 13, y + 16, black);
+
+        // Cabeza (arriba del cuerpo)
+        g.fill(x + 10, y + 2, x + 17, y + 8, black);
+        g.fill(x + 11, y + 1, x + 16, y + 2, black);
+
+        // Pico (apuntando a la derecha)
+        g.fill(x + 17, y + 4, x + 20, y + 6, black);
+        g.fill(x + 18, y + 5, x + 20, y + 5, darkGray);
+
+        // Ojo (punto ambar)
+        g.fill(x + 14, y + 4, x + 15, y + 5, eye);
+
+        // Ala plegada (detalle en el cuerpo)
+        g.fill(x + 5, y + 8, x + 12, y + 9, darkGray);
+        g.fill(x + 6, y + 10, x + 13, y + 11, darkGray);
+
+        // Cola (extremo derecho del cuerpo)
+        g.fill(x, y + 8, x + 4, y + 11, black);
+        g.fill(x - 1, y + 9, x + 2, y + 10, black);
+
+        // Patas (dos lineas cortas debajo)
+        g.fill(x + 6, y + 16, x + 7, y + 18, black);
+        g.fill(x + 10, y + 16, x + 11, y + 18, black);
+        // Garras
+        g.fill(x + 5, y + 18, x + 8, y + 19, black);
+        g.fill(x + 9, y + 18, x + 12, y + 19, black);
+    }
+
+    // ================================================================
+    // VELA CON LLAMA ANIMADA — esquina inferior izquierda del panel
+    // ================================================================
+
+    private void drawCandle(GuiGraphics g, int x, int y) {
+        // Vela de sebo con llama animada
+        // Tamaño total: ~14x28 (candelero + vela + llama + halo)
+        // Coord (x,y) es la base del candelero
+
+        int candleWax = DiaryTheme.CANDLE_WAX;    // amarillento pálido
+        int candleShadow = 0xFFA88B5C;             // sombra de la cera
+        int wick = 0xFF1A0F05;                     // pabilo negro
+        int flameCore = 0xFFFFAA33;                // ámbar brillante
+        int flameOuter = 0xFFD4941E;               // ámbar mediano
+        int flameHalo = DiaryTheme.AMBER_GLOW;     // halo cálido
+        int metalBase = DiaryTheme.BRONZE_DARK;    // base del candelero
+        int metalHighlight = DiaryTheme.BRONZE;
+
+        // BASE DEL CANDELERO (plato metálico)
+        g.fill(x, y + 20, x + 14, y + 24, metalBase);
+        g.fill(x + 1, y + 19, x + 13, y + 20, metalBase);
+        g.fill(x + 2, y + 24, x + 12, y + 26, metalBase);
+        // Highlight en la base
+        g.fill(x + 2, y + 20, x + 8, y + 21, metalHighlight);
+
+        // COLUMNA/PIE del candelero
+        g.fill(x + 5, y + 14, x + 9, y + 20, metalBase);
+        g.fill(x + 6, y + 14, x + 7, y + 20, metalHighlight);
+
+        // CERA DE LA VELA (cuerpo blanco)
+        g.fill(x + 4, y + 6, x + 10, y + 14, candleWax);
+        // Sombra derecha de la cera
+        g.fill(x + 8, y + 6, x + 10, y + 14, candleShadow);
+        // Chorretones de cera (goteos)
+        g.fill(x + 3, y + 10, x + 4, y + 13, candleWax);
+        g.fill(x + 10, y + 12, x + 11, y + 14, candleWax);
+
+        // PABILO (mecha)
+        g.fill(x + 6, y + 4, x + 7, y + 6, wick);
+
+        // LLAMA ANIMADA — parpadeo sutil
+        int flameFrame = (animTick / 4) % 4;
+
+        // Halo (cálido, envuelve todo)
+        int haloAlpha = 60 + (flameFrame * 15);
+        int haloC = DiaryTheme.withAlpha(flameHalo, haloAlpha);
+        // Halo circular grande
+        for (int dy = -8; dy <= 8; dy++) {
+            for (int dx = -8; dx <= 8; dx++) {
+                int d2 = dx * dx + dy * dy;
+                if (d2 <= 64 && d2 >= 25) {
+                    float t = 1f - (float)Math.sqrt(d2) / 8f;
+                    int a = (int)(t * haloAlpha);
+                    g.fill(x + 6 + dx, y + 1 + dy, x + 6 + dx + 1, y + 1 + dy + 1,
+                           DiaryTheme.withAlpha(flameHalo, a));
+                }
+            }
+        }
+
+        // Llama exterior (forma de gota)
+        int flameJitter = (flameFrame == 1 || flameFrame == 3) ? 1 : 0;
+        g.fill(x + 5 + flameJitter, y - 2, x + 8 + flameJitter, y + 4, flameOuter);
+        g.fill(x + 4 + flameJitter, y,     x + 9 + flameJitter, y + 3, flameOuter);
+        g.fill(x + 6 + flameJitter, y - 3, x + 7 + flameJitter, y - 2, flameOuter);
+
+        // Llama interior (nucleo brillante)
+        g.fill(x + 6 + flameJitter, y - 1, x + 7 + flameJitter, y + 3, flameCore);
+        g.fill(x + 5 + flameJitter, y + 1, x + 8 + flameJitter, y + 3, flameCore);
+    }
+
+    @Override
+    public boolean isPauseScreen() {
+        return true;
+    }
+
+    /**
+     * Sobreescribe renderBackground vanilla para que NO dibuje el overlay oscuro
+     * de Screen sobre el mundo. Nosotros ya dibujamos nuestro propio fondo en render().
+     * Sin este override, PauseScreen (super) dibuja un overlay traslucido negro
+     * que oscurece nuestro panel.
+     */
+    @Override
+    public void renderBackground(GuiGraphics g) {
+        // Vacio intencionalmente. Nuestro render() ya maneja el fondo.
+    }
+}
