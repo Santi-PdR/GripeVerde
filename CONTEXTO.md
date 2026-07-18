@@ -245,6 +245,27 @@ Sub-hito siguiente (v0.7.3):
 
 ---
 
+## Hitos futuros planificados
+
+### v0.8.0 - Sistema de musica del Title (pedido externo, diferido)
+Alcance:
+- Agregar 4 pistas de musica al menu principal.
+- Mix musica <-> SFX (ducking automatico con presagios, truenos, campanas).
+- Mix musica <-> musica (crossfade suave entre pistas).
+- No arrancar hasta cerrar KI-03 completo (v0.7.2 y v0.7.3).
+
+Sub-hitos previstos:
+- v0.8.0: 4 pistas + reproduccion basica en loop.
+- v0.8.1: crossfade entre pistas.
+- v0.8.2: ducking con SFX prioritarios.
+- v0.8.3: pulido de curvas de volumen.
+
+Pendiente de definir:
+- Archivos .ogg de las pistas (formato, duracion, estilo).
+- Prioridad final vs otros hitos.
+
+---
+
 ## Deuda tecnica pendiente
 
 - ICON_BTN_MP e ICON_BTN_MODS sin PNG real.
