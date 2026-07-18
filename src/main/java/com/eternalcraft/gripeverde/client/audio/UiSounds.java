@@ -9,28 +9,28 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * UiSounds v4 â€” Sistema de audio custom para Gripe Verde.
+ * UiSounds v4 Ã¢â‚¬â€ Sistema de audio custom para Gripe Verde.
  *
  * API publica:
- *   UiSounds.hover()           â€” roce de cuero/tela
- *   UiSounds.click()           â€” pestillo metalico
- *   UiSounds.clickHeavy()      â€” cerrojo de hierro
- *   UiSounds.back()            â€” papel cerrÃ¡ndose
- *   UiSounds.open()            â€” bisagra de madera
- *   UiSounds.close()           â€” cajon cerrÃ¡ndose
- *   UiSounds.modal()           â€” vidrio de boticario
- *   UiSounds.error()           â€” metal que no encaja
- *   UiSounds.tab()             â€” pagina de libro
- *   UiSounds.scroll()          â€” micro-tick
- *   UiSounds.success()         â€” cerrojo satisfactorio
- *   UiSounds.notification()    â€” nudillo en puerta
- *   UiSounds.clickCreate()     â€” fosforo encendiendose
- *   UiSounds.clickDestroy()    â€” cadena cayendo
- *   UiSounds.respawn()         â€” inhalacion suave
+ *   UiSounds.hover()           Ã¢â‚¬â€ roce de cuero/tela
+ *   UiSounds.click()           Ã¢â‚¬â€ pestillo metalico
+ *   UiSounds.clickHeavy()      Ã¢â‚¬â€ cerrojo de hierro
+ *   UiSounds.back()            Ã¢â‚¬â€ papel cerrÃƒÂ¡ndose
+ *   UiSounds.open()            Ã¢â‚¬â€ bisagra de madera
+ *   UiSounds.close()           Ã¢â‚¬â€ cajon cerrÃƒÂ¡ndose
+ *   UiSounds.modal()           Ã¢â‚¬â€ vidrio de boticario
+ *   UiSounds.error()           Ã¢â‚¬â€ metal que no encaja
+ *   UiSounds.tab()             Ã¢â‚¬â€ pagina de libro
+ *   UiSounds.scroll()          Ã¢â‚¬â€ micro-tick
+ *   UiSounds.success()         Ã¢â‚¬â€ cerrojo satisfactorio
+ *   UiSounds.notification()    Ã¢â‚¬â€ nudillo en puerta
+ *   UiSounds.clickCreate()     Ã¢â‚¬â€ fosforo encendiendose
+ *   UiSounds.clickDestroy()    Ã¢â‚¬â€ cadena cayendo
+ *   UiSounds.respawn()         Ã¢â‚¬â€ inhalacion suave
  */
 public class UiSounds {
 
-    // â”€â”€ Volumenes por categoria â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Ã¢â€â‚¬Ã¢â€â‚¬ Volumenes por categoria Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
     private static final float VOL_HOVER   = 0.12f;
     private static final float VOL_CLICK   = 0.30f;
     private static final float VOL_HEAVY   = 0.35f;
@@ -47,11 +47,11 @@ public class UiSounds {
     private static final float VOL_DESTROY = 0.28f;
     private static final float VOL_RESPAWN = 0.22f;
 
-    // â”€â”€ Pitch base (variacion aleatoria aplicada en play) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Ã¢â€â‚¬Ã¢â€â‚¬ Pitch base (variacion aleatoria aplicada en play) Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
     private static final float PITCH_BASE  = 1.0f;
-    private static final float PITCH_VAR   = 0.05f; // Â±5%
+    private static final float PITCH_VAR   = 0.05f; // Ã‚Â±5%
 
-    // â”€â”€ Cooldowns en ms â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Ã¢â€â‚¬Ã¢â€â‚¬ Cooldowns en ms Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
     private static final Map<String, Long> lastPlayed = new HashMap<>();
     private static final Map<String, Long> COOLDOWNS  = new HashMap<>();
 
@@ -73,24 +73,24 @@ public class UiSounds {
         COOLDOWNS.put("respawn", 500L);
     }
 
-    // â”€â”€ API publica â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    public static void hover()         { play("hover",   ModSounds.UI_HOVER.get(),          VOL_HOVER,   pitchVar()); }
-    public static void click()         { play("click",   ModSounds.UI_CLICK.get(),          VOL_CLICK,   pitchVar()); }
-    public static void clickHeavy()    { play("heavy",   ModSounds.UI_CLICK_HEAVY.get(),    VOL_HEAVY,   pitchVar()); }
-    public static void back()          { play("back",    ModSounds.UI_BACK.get(),            VOL_BACK,    pitchVar()); }
-    public static void open()          { play("open",    ModSounds.UI_OPEN.get(),            VOL_OPEN,    pitchVar()); }
-    public static void close()         { play("close",   ModSounds.UI_CLOSE.get(),           VOL_CLOSE,   pitchVar()); }
-    public static void modal()         { play("modal",   ModSounds.UI_MODAL.get(),           VOL_MODAL,   PITCH_BASE); }
-    public static void error()         { play("error",   ModSounds.UI_ERROR.get(),           VOL_ERROR,   pitchVar()); }
-    public static void tab()           { play("tab",     ModSounds.UI_TAB.get(),             VOL_TAB,     pitchVar()); }
-    public static void scroll()        { play("scroll",  ModSounds.UI_SCROLL.get(),          VOL_SCROLL,  pitchVar()); }
-    public static void success()       { play("success", ModSounds.UI_SUCCESS.get(),         VOL_SUCCESS, PITCH_BASE); }
-    public static void notification()  { play("notif",   ModSounds.UI_NOTIFICATION.get(),    VOL_NOTIF,   PITCH_BASE); }
-    public static void clickCreate()   { play("create",  ModSounds.UI_CLICK_CREATE.get(),    VOL_CREATE,  PITCH_BASE); }
-    public static void clickDestroy()  { play("destroy", ModSounds.UI_CLICK_DESTROY.get(),   VOL_DESTROY, PITCH_BASE); }
-    public static void respawn()       { play("respawn", ModSounds.UI_RESPAWN.get(),         VOL_RESPAWN, PITCH_BASE); }
+    // Ã¢â€â‚¬Ã¢â€â‚¬ API publica Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+    public static void hover()         { safePlay("hover",   ModSounds.UI_HOVER,          VOL_HOVER,   pitchVar()); }
+    public static void click()         { safePlay("click",   ModSounds.UI_CLICK,          VOL_CLICK,   pitchVar()); }
+    public static void clickHeavy()    { safePlay("heavy",   ModSounds.UI_CLICK_HEAVY,    VOL_HEAVY,   pitchVar()); }
+    public static void back()          { safePlay("back",    ModSounds.UI_BACK,           VOL_BACK,    pitchVar()); }
+    public static void open()          { safePlay("open",    ModSounds.UI_OPEN,           VOL_OPEN,    pitchVar()); }
+    public static void close()         { safePlay("close",   ModSounds.UI_CLOSE,          VOL_CLOSE,   pitchVar()); }
+    public static void modal()         { safePlay("modal",   ModSounds.UI_MODAL,          VOL_MODAL,   PITCH_BASE); }
+    public static void error()         { safePlay("error",   ModSounds.UI_ERROR,          VOL_ERROR,   pitchVar()); }
+    public static void tab()           { safePlay("tab",     ModSounds.UI_TAB,            VOL_TAB,     pitchVar()); }
+    public static void scroll()        { safePlay("scroll",  ModSounds.UI_SCROLL,         VOL_SCROLL,  pitchVar()); }
+    public static void success()       { safePlay("success", ModSounds.UI_SUCCESS,       VOL_SUCCESS, PITCH_BASE); }
+    public static void notification()  { safePlay("notif",   ModSounds.UI_NOTIFICATION,  VOL_NOTIF,   PITCH_BASE); }
+    public static void clickCreate()   { safePlay("create",  ModSounds.UI_CLICK_CREATE,  VOL_CREATE,  PITCH_BASE); }
+    public static void clickDestroy()  { safePlay("destroy", ModSounds.UI_CLICK_DESTROY, VOL_DESTROY, PITCH_BASE); }
+    public static void respawn()       { safePlay("respawn", ModSounds.UI_RESPAWN,       VOL_RESPAWN, PITCH_BASE); }
 
-    // â”€â”€ Reproduccion directa sin cooldown (para testing en SoundLab) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Ã¢â€â‚¬Ã¢â€â‚¬ Reproduccion directa sin cooldown (para testing en SoundLab) Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
     public static void playRaw(SoundEvent sound, float volume, float pitch) {
         Minecraft mc = Minecraft.getInstance();
         if (mc == null) return;
@@ -98,7 +98,7 @@ public class UiSounds {
             SimpleSoundInstance.forUI(sound, pitch, volume));
     }
 
-    // â”€â”€ Internos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Ã¢â€â‚¬Ã¢â€â‚¬ Internos Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
     private static void play(String key, SoundEvent sound, float volume, float pitch) {
         long now = System.currentTimeMillis();
         long cd  = COOLDOWNS.getOrDefault(key, 100L);
@@ -111,11 +111,28 @@ public class UiSounds {
             SimpleSoundInstance.forUI(sound, pitch, volume));
     }
 
+    /**
+     * Version defensiva que tolera RegistryObject vacio.
+     * Necesario por incompatibilidad con ModernFix RegistryObjectMixin.
+     */
+    private static void safePlay(String key, net.minecraftforge.registries.RegistryObject<SoundEvent> ro,
+                                 float volume, float pitch) {
+        if (ro == null) return;
+        SoundEvent se;
+        try {
+            se = ro.get();
+        } catch (NullPointerException | IllegalStateException ex) {
+            return;
+        }
+        if (se == null) return;
+        play(key, se, volume, pitch);
+    }
+
     private static float pitchVar() {
         return PITCH_BASE + (float)(Math.random() * 2 - 1) * PITCH_VAR;
     }
 
-    // ── Aliases retrocompatibles (API v3) ─────────────────────────────────
+    // â”€â”€ Aliases retrocompatibles (API v3) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     public static void playHover()  { hover(); }
     public static void playClick()  { click(); }
     public static void playCustom(net.minecraft.sounds.SoundEvent s, float v, float p) { playRaw(s, v, p); }
