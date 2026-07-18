@@ -2,10 +2,7 @@ package com.eternalcraft.gripeverde.client.audio;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
@@ -15,60 +12,36 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * MenuMusic v1 - Reproduccion secuencial de pistas de musica del Title.
+ * MenuMusic v3 - Reproduccion con crossfade + ducking.
  *
- * v0.8.0:
- *   - Playlist de 4 pistas.
- *   - Orden aleatorio (shuffle).
- *   - Cuando termina una pista, arranca la siguiente tras breve pausa.
- *   - Sin crossfade, sin ducking.
- *   - Tolerante a RegistryObject vacio (workaround ModernFix).
- *
- * API:
- *   MenuMusic.start()
- *   MenuMusic.stop()
- *   MenuMusic.tick()
+ * v0.8.2/v0.8.3:
+ *   - Crossfade entre pistas (fade-out de la actual + fade-in de la nueva).
+ *   - Ducking automatico cuando MenuAmbience dispara SFX importantes.
+ *   - Volumen dinamico ajustable en tiempo real via slider.
  */
 public class MenuMusic {
 
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final boolean DEBUG_LOGGING = false;
 
-    // Volumen base multiplicador (0.0 a 1.0). El usuario lo ajusta desde Options.
+    // Volumen base del usuario (0.0 - 1.0), ajustado por el slider.
     private static float userVolume = 0.4f;
     private static final float MAX_VOLUME = 0.8f;
 
-    public static float getUserVolume() { return userVolume; }
-    public static void setUserVolume(float v) {
-        userVolume = Math.max(0f, Math.min(1f, v));
-        // Aplicar volumen a instancia actual sin cortar
-        Minecraft mc = Minecraft.getInstance();
-        if (mc != null && currentInstance != null) {
-            try {
-                mc.getSoundManager().stop(currentInstance);
-                // Restart con nuevo volumen si estamos activos
-                if (active && userVolume > 0f) {
-                    playCurrentTrackFromScratch();
-                }
-            } catch (Exception ignored) {}
-        }
-    }
-
-    private static float computeVolume() {
-        return userVolume * MAX_VOLUME;
-    }
-
-    // Pausa entre pistas (ms)
-    private static final long GAP_MIN_MS = 3_000L;
-    private static final long GAP_MAX_MS = 8_000L;
-
-    // Duraciones reales de cada pista, medidas al convertir (ms)
-    // Sirven de fallback cuando el SoundManager no reporta fin.
-    // music_1: 2:40 = 160s | music_2: 1:30 = 90s
-    // music_3: 2:57 = 177s | music_4: 2:40 = 160s
+    // Duraciones reales de cada pista (ms)
     private static final long[] TRACK_DURATIONS_MS = {
         160_000L, 90_000L, 177_000L, 160_000L
     };
+
+    // Crossfade
+    private static final long CROSSFADE_MS = 4_000L;
+    private static final long GAP_MIN_MS = 2_000L;
+    private static final long GAP_MAX_MS = 5_000L;
+
+    // Ducking
+    private static final float DUCK_FACTOR = 0.35f;     // baja al 35% durante duck
+    private static final long DUCK_ATTACK_MS = 300L;    // tiempo para bajar
+    private static final long DUCK_RELEASE_MS = 1500L;  // tiempo para volver
 
     private static final List<RegistryObject<SoundEvent>> PLAYLIST = new ArrayList<>();
     static {
@@ -81,15 +54,45 @@ public class MenuMusic {
     private static final RandomSource RNG = RandomSource.create();
 
     private static boolean active = false;
-    private static SoundInstance currentInstance = null;
+    private static FadingMusicInstance currentInstance = null;
+    private static FadingMusicInstance previousInstance = null;
     private static int currentIndex = -1;
     private static long currentStartMs = 0L;
     private static long currentDurationMs = 0L;
+
+    private static long crossfadeStartMs = 0L;
+    private static boolean crossfading = false;
+
     private static long nextTrackAtMs = 0L;
     private static boolean waitingForNext = false;
 
+    // Ducking state
+    private static long duckUntilMs = 0L;      // duck activo hasta este momento
+    private static long duckReleaseStartMs = 0L;
+
     private static final List<Integer> shuffledOrder = new ArrayList<>();
     private static int shuffledPos = 0;
+
+    // === API publica ===
+    public static float getUserVolume() { return userVolume; }
+
+    public static void setUserVolume(float v) {
+        userVolume = Math.max(0f, Math.min(1f, v));
+        // El volumen se aplicara en el proximo tick, sin cortar.
+    }
+
+    /**
+     * Llamado por MenuAmbience cuando dispara un SFX importante.
+     * La musica bajara temporalmente para no taparlo.
+     */
+    public static void duckFor(long durationMs) {
+        long now = System.currentTimeMillis();
+        long newUntil = now + durationMs;
+        if (newUntil > duckUntilMs) {
+            duckUntilMs = newUntil;
+            duckReleaseStartMs = 0L;
+        }
+    }
 
     public static void start() {
         if (active) stop();
@@ -101,23 +104,31 @@ public class MenuMusic {
         rebuildShuffle();
         playNextTrack();
 
-        if (DEBUG_LOGGING) LOGGER.info("[MenuMusic] Iniciado");
+        if (DEBUG_LOGGING) LOGGER.info("[MenuMusic v3] Iniciado");
     }
 
     public static void stop() {
         if (!active) return;
 
         Minecraft mc = Minecraft.getInstance();
-        if (mc != null && currentInstance != null) {
-            try { mc.getSoundManager().stop(currentInstance); } catch (Exception ignored) {}
+        if (mc != null) {
+            if (currentInstance != null) {
+                try { mc.getSoundManager().stop(currentInstance); currentInstance.markDone(); } catch (Exception ignored) {}
+            }
+            if (previousInstance != null) {
+                try { mc.getSoundManager().stop(previousInstance); previousInstance.markDone(); } catch (Exception ignored) {}
+            }
         }
 
         active = false;
         currentInstance = null;
+        previousInstance = null;
         currentIndex = -1;
         waitingForNext = false;
+        crossfading = false;
+        duckUntilMs = 0L;
 
-        if (DEBUG_LOGGING) LOGGER.info("[MenuMusic] Detenido");
+        if (DEBUG_LOGGING) LOGGER.info("[MenuMusic v3] Detenido");
     }
 
     public static void tick() {
@@ -125,7 +136,26 @@ public class MenuMusic {
 
         long now = System.currentTimeMillis();
 
-        // Estamos esperando el gap entre pistas
+        // Aplicar volumen (con crossfade + ducking) a instancias activas
+        updateVolumes(now);
+
+        // Gestionar crossfade activo
+        if (crossfading) {
+            long crossElapsed = now - crossfadeStartMs;
+            if (crossElapsed >= CROSSFADE_MS) {
+                // Crossfade termino: eliminar la instancia anterior
+                if (previousInstance != null) {
+                    Minecraft mc = Minecraft.getInstance();
+                    if (mc != null) {
+                        try { mc.getSoundManager().stop(previousInstance); previousInstance.markDone(); } catch (Exception ignored) {}
+                    }
+                    previousInstance = null;
+                }
+                crossfading = false;
+            }
+        }
+
+        // Si estamos esperando el gap y llego el momento, arrancamos la proxima
         if (waitingForNext) {
             if (now >= nextTrackAtMs) {
                 waitingForNext = false;
@@ -134,29 +164,61 @@ public class MenuMusic {
             return;
         }
 
-        // Estamos reproduciendo. Verificar si termino.
-        if (currentInstance == null) {
+        // Si no hay instancia actual, pasamos a la siguiente
+        if (currentInstance == null || currentInstance.isStopped()) {
+            currentInstance = null;
             queueNextWithGap();
             return;
         }
 
-        Minecraft mc = Minecraft.getInstance();
-        if (mc == null) return;
+        // Detectar si debemos iniciar crossfade (faltan pocos ms para el fin)
+        long remaining = currentInstance.getRemainingMs();
+        if (!crossfading && remaining <= CROSSFADE_MS && remaining > 0) {
+            startCrossfadeToNext();
+        }
+    }
 
-        boolean stillPlaying;
-        try {
-            stillPlaying = mc.getSoundManager().isActive(currentInstance);
-        } catch (Exception e) {
-            stillPlaying = false;
+    // === Internos ===
+
+    private static void updateVolumes(long now) {
+        float baseVol = userVolume * MAX_VOLUME;
+
+        // Calcular factor de ducking (0.0 - 1.0, donde 1.0 = normal)
+        float duckMultiplier = computeDuckMultiplier(now);
+        float finalBaseVol = baseVol * duckMultiplier;
+
+        // Crossfade: si esta activo, la nueva sube y la vieja baja
+        if (crossfading && previousInstance != null && currentInstance != null) {
+            long crossElapsed = now - crossfadeStartMs;
+            float t = Math.max(0f, Math.min(1f, (float) crossElapsed / (float) CROSSFADE_MS));
+            currentInstance.setDynamicVolume(finalBaseVol * t);
+            previousInstance.setDynamicVolume(finalBaseVol * (1f - t));
+        } else if (currentInstance != null) {
+            currentInstance.setDynamicVolume(finalBaseVol);
+        }
+    }
+
+    private static float computeDuckMultiplier(long now) {
+        if (duckUntilMs <= 0L) return 1f;
+
+        // Fase attack (baja hacia DUCK_FACTOR)
+        if (now < duckUntilMs) {
+            // Estamos en periodo de duck activo, mantener bajo
+            return DUCK_FACTOR;
         }
 
-        // Doble check por duracion estimada
-        boolean expired = (now - currentStartMs) >= currentDurationMs + 500L;
-
-        if (!stillPlaying || expired) {
-            currentInstance = null;
-            queueNextWithGap();
+        // Fase release (vuelve de DUCK_FACTOR a 1.0)
+        if (duckReleaseStartMs == 0L) {
+            duckReleaseStartMs = duckUntilMs;
         }
+        long releaseElapsed = now - duckReleaseStartMs;
+        if (releaseElapsed >= DUCK_RELEASE_MS) {
+            duckUntilMs = 0L;
+            duckReleaseStartMs = 0L;
+            return 1f;
+        }
+        float t = (float) releaseElapsed / (float) DUCK_RELEASE_MS;
+        return DUCK_FACTOR + (1f - DUCK_FACTOR) * t;
     }
 
     private static void queueNextWithGap() {
@@ -164,25 +226,44 @@ public class MenuMusic {
         nextTrackAtMs = System.currentTimeMillis() + gap;
         waitingForNext = true;
 
-        if (DEBUG_LOGGING) LOGGER.info("[MenuMusic] Proxima pista en {} ms", gap);
+        if (DEBUG_LOGGING) LOGGER.info("[MenuMusic v3] Proxima pista en {} ms", gap);
     }
 
-    private static void playCurrentTrackFromScratch() {
-        if (currentIndex < 0 || currentIndex >= PLAYLIST.size()) return;
-        RegistryObject<SoundEvent> ro = PLAYLIST.get(currentIndex);
+    private static void startCrossfadeToNext() {
+        if (shuffledPos >= shuffledOrder.size()) rebuildShuffle();
+        if (shuffledOrder.isEmpty()) return;
+
+        int nextIndex = shuffledOrder.get(shuffledPos);
+        shuffledPos++;
+
+        RegistryObject<SoundEvent> ro = PLAYLIST.get(nextIndex);
         if (ro == null) return;
+
         SoundEvent se;
         try { se = ro.get(); } catch (Exception e) { return; }
         if (se == null) return;
+
         Minecraft mc = Minecraft.getInstance();
         if (mc == null) return;
+
         try {
-            currentInstance = new SimpleSoundInstance(
-                se.getLocation(), SoundSource.AMBIENT, computeVolume(), 1.0f,
-                RNG, false, 0, SoundInstance.Attenuation.NONE, 0, 0, 0, true);
-            mc.getSoundManager().play(currentInstance);
+            FadingMusicInstance nextInst = new FadingMusicInstance(se, 0f, TRACK_DURATIONS_MS[nextIndex]);
+            mc.getSoundManager().play(nextInst);
+
+            // La actual pasa a "previous", la nueva es "current"
+            previousInstance = currentInstance;
+            currentInstance = nextInst;
+            currentIndex = nextIndex;
             currentStartMs = System.currentTimeMillis();
-        } catch (Exception ignored) {}
+            currentDurationMs = TRACK_DURATIONS_MS[nextIndex];
+
+            crossfadeStartMs = System.currentTimeMillis();
+            crossfading = true;
+
+            if (DEBUG_LOGGING) LOGGER.info("[MenuMusic v3] Crossfade a pista {}", nextIndex + 1);
+        } catch (Exception e) {
+            if (DEBUG_LOGGING) LOGGER.warn("[MenuMusic v3] Error en crossfade: {}", e.getMessage());
+        }
     }
 
     private static void playNextTrack() {
@@ -199,7 +280,7 @@ public class MenuMusic {
         try {
             se = ro.get();
         } catch (NullPointerException | IllegalStateException ex) {
-            if (DEBUG_LOGGING) LOGGER.warn("[MenuMusic] RegistryObject vacio para pista {}", currentIndex + 1);
+            if (DEBUG_LOGGING) LOGGER.warn("[MenuMusic v3] RegistryObject vacio para pista {}", currentIndex + 1);
             queueNextWithGap();
             return;
         }
@@ -209,29 +290,19 @@ public class MenuMusic {
         if (mc == null) return;
 
         try {
-            currentInstance = new SimpleSoundInstance(
-                se.getLocation(),
-                SoundSource.AMBIENT,
-                computeVolume(),
-                1.0f,
-                RNG,
-                false,
-                0,
-                SoundInstance.Attenuation.NONE,
-                0, 0, 0,
-                true
-            );
+            float baseVol = userVolume * MAX_VOLUME;
+            currentInstance = new FadingMusicInstance(se, baseVol, TRACK_DURATIONS_MS[currentIndex]);
             mc.getSoundManager().play(currentInstance);
 
             currentStartMs = System.currentTimeMillis();
             currentDurationMs = TRACK_DURATIONS_MS[currentIndex];
 
             if (DEBUG_LOGGING) {
-                LOGGER.info("[MenuMusic] Pista {}: {} ({} ms)",
+                LOGGER.info("[MenuMusic v3] Pista {}: {} ({} ms)",
                     currentIndex + 1, se.getLocation(), currentDurationMs);
             }
         } catch (Exception e) {
-            if (DEBUG_LOGGING) LOGGER.warn("[MenuMusic] Error al reproducir: {}", e.getMessage());
+            if (DEBUG_LOGGING) LOGGER.warn("[MenuMusic v3] Error al reproducir: {}", e.getMessage());
             currentInstance = null;
             queueNextWithGap();
         }

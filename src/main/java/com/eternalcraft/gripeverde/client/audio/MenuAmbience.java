@@ -28,7 +28,7 @@ import java.util.List;
  *   MenuAmbience.tick()
  *   MenuAmbience.isActive()
  *   MenuAmbience.setPocketWatchVisible(boolean)
- *   MenuAmbience.onSecondTick() — llamado por PocketWatchRenderer
+ *   MenuAmbience.onSecondTick() â€” llamado por PocketWatchRenderer
  */
 public class MenuAmbience {
 
@@ -243,7 +243,11 @@ public class MenuAmbience {
                 SimpleSoundInstance.forUI(se, pitch, chosen.volume));
 
             if (isEventsLayer) lastEventTriggered = chosen.sound;
-            else               lastRareTriggered  = chosen.sound;
+            else {
+                lastRareTriggered  = chosen.sound;
+                // Ducking: bajar musica durante sonidos raros importantes
+                MenuMusic.duckFor(2500L);
+            }
 
             if (DEBUG_LOGGING) {
                 LOGGER.info("[MenuAmbience] {} disparado: {} (vol={}, pitch={})",
