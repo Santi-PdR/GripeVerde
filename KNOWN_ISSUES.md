@@ -1,10 +1,10 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
-Ultima actualizacion: v0.7.1
+Ultima actualizacion: v0.8.3
 Estado: EN DESARROLLO
-Version estable actual: v0.7.1
-Ultimo tag publicado: v0.7.1
-Objetivo reciente: KI-03 dividido en sub-hitos seguros despues de la sesion v0.7.x fallida.
+Version estable actual: v0.8.3
+Ultimo tag publicado: v0.8.3
+Hitos recientes: KI-03 en pausa (v0.7.1); hito v0.8 sistema de musica completo.
 
 ---
 
@@ -12,17 +12,17 @@ Objetivo reciente: KI-03 dividido en sub-hitos seguros despues de la sesion v0.7
 
 - Proyecto: Eternal Craft: Gripe Verde
 - Base: Minecraft Forge 1.20.1
-- Version desplegada: 0.7.1
-- Tipo: mod de interfaz
+- Version desplegada: 0.8.3
+- Tipo: mod de interfaz + audio
 - Ambientacion: ciudad victoriana bajo cuarentena, Green Flu
-- Estado general: compilando limpio, Title estable, calle del fondo definida, postes ocultos temporalmente.
+- Estado general: compilando limpio, sistema de musica del Title operativo con crossfade y ducking.
 
 ---
 
 ## 2. Sistemas activos
 
 ### Title / DiaryTitleScreen
-Pipeline actual de fondo:
+Pipeline de fondo sin cambios desde v0.7.1:
 1. AtmosphereRenderer.renderSky
 2. VictorianSkyline.renderBackground
 3. LivingAtmosphere.renderFogLow
@@ -32,27 +32,34 @@ Pipeline actual de fondo:
 7. LivingAtmosphere.renderFlash
 8. LivingAtmosphere.renderVignette
 
-### LivingAtmosphere
-- Renderiza niebla baja, calle, niebla de suelo, esporas, lluvia, cuervos, rayo y vineta.
-- Desde v0.7.0 incluye renderStreet() adaptativo por escala.
-- La calle esta aprobada visualmente.
-
-### VictorianSkyline
-- Renderiza edificios BG, edificios FG, ventanas, chimeneas y humo.
-- Desde v0.7.1 getLanternPositions() devuelve new int[0][0].
-- Los postes/faroles quedan ocultos temporalmente hasta v0.7.2/v0.7.3.
+### MenuMusic (v0.8.3)
+- 4 pistas registradas: music_title_1..4 (OGG stream)
+- Playback aleatorio (shuffle), sin repeticion hasta completar ciclo
+- Crossfade de 4s entre pistas
+- Ducking automatico (35% durante 2.5s) al reproducir SFX RARE
+- Volumen ajustable en tiempo real via MusicVolumeSlider
+- Idempotente: start() no reinicia si ya suena
+- Auto-stop al detectar mc.level != null (jugador en mundo)
+- Persistencia: sobrevive a apertura de Options y subpantallas
+- FadingMusicInstance: soporta volumen dinamico sin recrear el sample
 
 ### MenuAmbience
-- Sistema de ambiente sonoro activo.
-- Estable.
+- Sin cambios funcionales; integracion nueva: llama a MenuMusic.duckFor(2500L) al disparar sonidos RARE
 
-### Changelog
-- Pantalla in-game activa.
-- Documentacion narrativa principal en CHANGELOG.md.
+### MusicVolumeSlider
+- Widget nuevo en client/widgets
+- Se inyecta en OptionsScreen via ScreenEventHandler.onScreenInitPost
+- Posicion: centrado horizontal, y = screen.height - 25 (pie de pagina, seguro para todas las escalas)
 
-### Framework UI
-- Layout adaptativo funcionando.
-- Modo minimal activo bajo altura efectiva menor a 290.
+### UiSounds
+- Version defensiva con safePlay() que tolera RegistryObject vacio
+- Workaround para incompatibilidad con ModernFix RegistryObjectMixin
+
+### LivingAtmosphere
+- Sin cambios desde v0.7.0 (calle adaptativa)
+
+### VictorianSkyline
+- Sin cambios desde v0.7.1 (postes ocultos)
 
 ---
 
@@ -68,61 +75,93 @@ Accion: no modificar sin evidencia en logs.
 Sintoma: NVAPI + Embeddium + NVIDIA.
 Workaround: Windows + Shift + S.
 
-### KI-03 - Fondo del Title con defectos visuales
-Estado actual tras v0.7.1:
+### KI-03 - Fondo del Title con defectos visuales (EN PAUSA)
+Estado actual (sin cambios desde v0.7.1):
 - Calle definida: RESUELTO en v0.7.0.
-- Postes/faroles flotantes: MITIGADO en v0.7.1 ocultandolos temporalmente.
-- Vacio entre skyline y calle, especialmente escala 1: ACTIVO.
-- Skyline demasiado poblado y sin jerarquia: ACTIVO.
+- Postes/faroles flotantes: MITIGADO en v0.7.1 (ocultos temporalmente).
+- Vacio entre skyline FG y calle en escala 1: ACTIVO.
+- Skyline demasiado poblado / sin jerarquia: ACTIVO.
 - Luna solitaria sin nubes contextuales: ACTIVO.
 
 Decision vigente:
-- No reactivar postes hasta que el skyline/calle los soporte visualmente.
-- No tocar calle en v0.7.2 salvo emergencia.
-- No mezclar reposicion de postes con extension de edificios en el mismo bump.
+- Sub-hito 3 (v0.7.2 = cerrar vacio skyline-calle) diferido tras completar hito v0.8.
+- Se retomara despues del sistema de musica.
+
+### KI-04 - Incompatibilidad con ModernFix RegistryObjectMixin
+Sintoma: NullPointerException en RegistryObject.get() al hoverear botones.
+Causa: mixin de ModernFix sobre net.minecraftforge.registries.RegistryObject.
+Workaround: UiSounds.safePlay() tolera excepcion y omite el sonido sin crashear.
+Estado: MITIGADO.
 
 ### Deuda tecnica activa
 - ICON_BTN_MP e ICON_BTN_MODS sin PNG real.
-- Framework UI subutilizado.
+- Framework UI subutilizado (solo Title lo consume).
 - ThemeManager sin themes registrados.
-- Changelog localizado puede requerir sincronizacion posterior con nuevas versiones.
+- Slider de musica no persiste en disco (se pierde al cerrar juego).
 
 ---
 
 ## 4. Historial relevante reciente
 
-### v0.6.5
-- Base estable confirmada despues de revertir la sesion v0.7.x fallida.
-- Fix de estabilidad al perder foco/minimizar.
+### v0.7.0 - Sub-hito 1 KI-03
+- renderStreet() adaptativo agregado.
 
-### v0.7.0
-- Sub-hito 1 KI-03.
-- Se agrego renderStreet() decorativo/adaptativo en LivingAtmosphere.
-- No se tocaron postes ni edificios.
-- Calle aprobada visualmente.
+### v0.7.1 - Sub-hito 2 KI-03
+- getLanternPositions() devuelve int[0][0].
 
-### v0.7.1
-- Sub-hito 2 KI-03.
-- Se intento reposicionar postes por escala, pero en escalas grandes seguian leyendose mal por falta de soporte del skyline.
-- Decision final: ocultar postes en todas las escalas mediante getLanternPositions() -> new int[0][0].
-- Build, deploy, commit, push y tag completados.
+### v0.8.0 - Sistema de musica base
+- 4 pistas OGG registradas.
+- MenuMusic con playback secuencial shuffle.
+- Fix critico: sounds.json corrupto por append incorrecto.
+- Fix critico: mod_version hardcodeado en build.gradle (E32).
+- Fix critico: UiSounds defensivo contra ModernFix (KI-04).
+
+### v0.8.1 - Slider de volumen
+- MusicVolumeSlider widget.
+- Inyeccion en OptionsScreen via ScreenEventHandler.
+- Reubicado 3 veces por problemas de escala; posicion final: pie de pagina.
+
+### v0.8.2 - Crossfade
+- FadingMusicInstance creado.
+- MenuMusic reescrito para soportar dos instancias simultaneas.
+
+### v0.8.3 - Ducking + persistencia
+- MenuAmbience llama duckFor() en RARE.
+- MenuMusic.start() idempotente.
+- Auto-stop cuando jugador entra a un mundo.
+- Se detecta perdida de instancia al salir de servidor y se reinicia.
 
 ---
 
 ## 5. Reglas vigentes
 
-- Java UTF-8 sin BOM (UTF8Encoding false).
-- PowerShell: bloques cortos; si hay if/else, mantener estructura clara y verificable.
-- Auditar estado real antes de proponer cambios.
-- Un sistema por version.
-- Un cambio por bump cuando sea visualmente sensible.
-- Validar visualmente en las 4 escalas cuando se toque el fondo del Title.
+### Desarrollo
+- UN sistema por version.
+- UN cambio visual sensible por bump.
+- Validacion visual/auditiva en 4 escalas cuando se toque UI/audio.
 - No modificar mas de un renderer por sesion sin plan escrito previo.
-- Build siempre acompanado de deploy.
-- Minimizar cantidad de comandos PowerShell.
-- Usar rutas absolutas si no se esta parado en la raiz del repo.
-- Limpiar jars viejos del deploy path antes de validar.
-- Validar la version visible en el reloj antes de aprobar o rechazar.
+- Auditar estado real antes de proponer cambios.
+- Java UTF-8 sin BOM (UTF8Encoding false).
+- Commit + push tras cada version estable.
+
+### Build y Deploy
+- R-BUILD: Build siempre acompanado de deploy.
+- R-JAR: Limpiar jars gripeverde-*.jar viejos del deploy path antes de validar.
+- R-VER: Validar la version visible en el reloj antes de aprobar o rechazar.
+- R-GRADLE-VER: mod_version en build.gradle debe usar project.version.toString(), nunca hardcodear.
+
+### PowerShell
+- R-PS: Minimizar cantidad de bloques PowerShell.
+- R-PATH: Usar rutas absolutas si no se esta parado en la raiz del repo.
+- R-PATH2: gradlew y git tambien requieren estar en la raiz del repo. Si el bloque falla y estamos en system32, Set-Location primero.
+
+### Validacion
+- R-CACHE: LivingAtmosphere cachea lanternPositions; reiniciar cliente al cambiar GuiScale si hay duda.
+- R-CAP: Capturas pre/post en 4 escalas antes de validar cambios visuales.
+- R-JSON: Validar JSON con ConvertFrom-Json tras cualquier append/edit a sounds.json u otros JSONs criticos.
+
+### Java
+- R-DUP: Cuando se agregan bloques nuevos que declaran variables locales, verificar que no existan ya en scope superior del metodo.
 
 ---
 
@@ -132,7 +171,7 @@ Decision vigente:
 Solucion: usar UTF8Encoding(false) al escribir Java desde PowerShell.
 
 ### E21/E23 - Parseo ingenuo de .deploy
-Solucion: filtrar por DEPLOY_MODS_PATH= y no asumir que la primera linea sirve.
+Solucion: filtrar por DEPLOY_MODS_PATH= y no asumir primera linea.
 
 ### E27 - Replaces multi-cambio simultaneos
 Regla: un replace por vez, verificacion inmediata.
@@ -141,7 +180,7 @@ Regla: un replace por vez, verificacion inmediata.
 Regla: no crear dependencias silenciosas entre renderers.
 
 ### E29 - Sin capturas de referencia
-Regla: capturas pre/post en 4 escalas antes de validar cambios visuales importantes.
+Regla: capturas pre/post en 4 escalas.
 
 ### E30 - Extrapolar entre escalas
 Regla: validar escala por escala.
@@ -149,27 +188,47 @@ Regla: validar escala por escala.
 ### E31 - Sistemas interdependientes en mismo bump
 Regla absoluta: un sistema por version.
 
+### E32 - mod_version hardcodeado en build.gradle
+Sintoma: jar dice v0.7.1 en el nombre pero mods.toml interno decia v0.6.1.
+Causa: build.gradle tenia mod_version: '0.6.1' hardcodeado en vez de project.version.toString().
+Solucion: usar project.version.toString() para que Gradle expanda dinamicamente.
+
+### E33 - JSON append rompio sounds.json
+Sintoma: WARN Invalid sounds.json, todos los sonidos del mod silenciados.
+Causa: append manual con string dejo coma huerfana antes del cierre del JSON.
+Solucion: regenerar el JSON completo desde plantilla + validar con ConvertFrom-Json.
+
+### E34 - Redefinicion de variable local en bloque agregado
+Sintoma: BUILD FAILED, variable mc is already defined in method tick().
+Causa: se agrego "Minecraft mc = Minecraft.getInstance()" al inicio de tick() sin verificar que otro bloque interior ya la definia.
+Solucion: R-DUP.
+
+### E35 - PowerShell corriendo desde system32
+Sintoma: .\gradlew no se encuentra, git fatal not a git repository.
+Causa: bloque no hizo Set-Location al repo antes de comandos de build/git.
+Solucion: R-PATH2. Siempre Set-Location $repo al inicio de bloques con gradlew/git.
+
 ---
 
 ## 7. Plan futuro inmediato
 
-### v0.7.2 - Sub-hito 3 KI-03
-Objetivo: cerrar el vacio entre skyline y calle.
+### v0.8.4+ (opcional, ajustes de musica)
+- Persistencia del volumen en disco (config file).
+- Curva de fade personalizada.
+- Boton skip/next track.
 
-Alcance recomendado:
-- Tocar solo VictorianSkyline.renderForeground / datos FG.
-- No tocar renderStreet().
-- No reactivar postes en el mismo bump salvo que el usuario apruebe explicitamente dividirlo o extender alcance.
-- Validar en 4 escalas.
-- Si se reactivan postes, hacerlo en v0.7.3.
+### v0.7.2 - Retomar KI-03 (sub-hito 3)
+- Objetivo: cerrar el vacio entre skyline FG y calle.
+- Alcance: solo VictorianSkyline (FG_BUILDINGS).
+- No tocar renderStreet(), no reactivar postes en el mismo bump.
 
-### v0.7.3
-- Reactivar postes/faroles por escala cuando el skyline ya los soporte.
+### v0.7.3 - Reactivar postes por escala
+- Solo despues de que el skyline los soporte visualmente.
 
 ### Posterior
 - Mejorar jerarquia del skyline.
 - Agregar nubes/contexto visual cerca de la luna.
-- Sincronizar changelogs localizados si se decide.
+- Sincronizar changelogs localizados.
 
 ---
 
@@ -178,6 +237,6 @@ Alcance recomendado:
 - Repo local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 - Remoto: https://github.com/Santi-PdR/GripeVerde
 - Deploy: D:\Juegos\Minecraft\Instances\Test\mods
-- Ultimo tag: v0.7.1
+- Ultimo tag: v0.8.3
 - Build limpio.
-- Working tree esperado: limpio antes de iniciar v0.7.2.
+- Working tree esperado: limpio antes de proximas sesiones.

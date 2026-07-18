@@ -1,16 +1,73 @@
 # Eternal Craft: Green Flu
 ## Update Notes
 
+## Version 0.8.3
+
+**The music steps aside when the city speaks.**
+
+When distant bells toll, when thunder splits the sky, when the crows take flight â€” the menu music steps aside with discretion. It does not fall silent; it only lowers its voice so that the omens may be heard clearly. Once the moment passes, the melody returns softly to the fore.
+
+Transitions were also polished: entering a world, leaving a server, opening Options, changing scale â€” the music no longer cuts or restarts without reason.
+
+### Menu music system (phase 3)
+- Automatic ducking when bells, thunder, chains, or crows sound.
+- The music survives opening Options and subscreens.
+- Upon entering a world, the music stops on its own. Upon returning, it starts again.
+- Internal compilation fix (duplicated variable).
+
+---
+
+## Version 0.8.2
+
+**The melodies link together without breaking.**
+
+When one piece ends, the next is already beginning to peek out. Both cross for a few seconds â€” one bidding farewell, another arriving â€” and the transition becomes a breath rather than a leap.
+
+### Menu music system (phase 2)
+- Smooth four-second crossfade between consecutive tracks.
+- No abrupt cuts, no prolonged silences.
+- Internal system rewritten to support two simultaneous instances.
+
+---
+
+## Version 0.8.1
+
+**The volume of the music now responds to your hand.**
+
+A new control has appeared on the Options screen, discreet, at the foot of the page. There you may adjust the volume of the menu music without leaving the game, and the melody will respond in real time â€” without cuts, without restarts.
+
+### Menu music system (phase 1)
+- "Menu Music" slider on the Options screen.
+- Real-time adjustment from 0% to 100%.
+- Safe position for all interface scales.
+
+---
+
+## Version 0.8.0
+
+**The city has a soundtrack.**
+
+Four melodies have arrived in the main menu. They play in random order, one after another, mingling with the wind and the rain without covering them. When one ends, another follows after a brief silence.
+
+It is the first time the diary has its own music.
+
+### Menu music system (phase 0)
+- Four ambient music tracks integrated into the Title.
+- Random sequential playback (shuffle).
+- Moderate default volume, coexistence with existing ambient sounds.
+- Prepared for expansion: slider, crossfade, ducking (next versions).
+
+---
 ## Version 0.6.2
 
 **The clock breathes.**
 
-That old pocket watch, which for so long seemed a mere ornament, now beats with a soft mechanical pulse. Every five seconds, when its second hand reaches one of the black marks, a discreet click reaches the ear — as if the mechanism, long forgotten, remembered how to work.
+That old pocket watch, which for so long seemed a mere ornament, now beats with a soft mechanical pulse. Every five seconds, when its second hand reaches one of the black marks, a discreet click reaches the ear â€” as if the mechanism, long forgotten, remembered how to work.
 
 The sound is barely audible. A whisper of brass and gears. But once you notice it, you cannot ignore it: time has resumed its march.
 
 ### A living mechanism
-- The second hand ticks in perfect harmony with its glitches — when it stumbles, the sound falls silent.
+- The second hand ticks in perfect harmony with its glitches â€” when it stumbles, the sound falls silent.
 - The pocket watch only sounds when it is visible. On the smallest windows, it rests in silence.
 
 ---
@@ -21,7 +78,7 @@ The sound is barely audible. A whisper of brass and gears. But once you notice i
 
 The pocket watch has ceased to be a still portrait. Now it hangs from a long chain that descends from the very upper edge of the diary, and swings with a slow pendular breath, as if a hidden draft caressed it.
 
-Its second hand advances with mechanical precision — but not always. Every so often it stumbles: sometimes it lingers on a mark longer than it should, sometimes it leaps forward without warning, sometimes it retreats a beat before continuing. The time in this city, it seems, is also sick.
+Its second hand advances with mechanical precision â€” but not always. Every so often it stumbles: sometimes it lingers on a mark longer than it should, sometimes it leaps forward without warning, sometimes it retreats a beat before continuing. The time in this city, it seems, is also sick.
 
 A diagonal gleam slides slowly across the crystal, as if a lamp far away were passing before it.
 
@@ -31,7 +88,7 @@ A diagonal gleam slides slowly across the crystal, as if a lamp far away were pa
 
 **The chronicle closes one chapter and opens the next.**
 
-The diary has been set in order. Every page, every ornament, every sound — reviewed and sealed. What was scattered is now bound.
+The diary has been set in order. Every page, every ornament, every sound â€” reviewed and sealed. What was scattered is now bound.
 
 The pages now read whole: the longer paragraphs no longer break at the margin. Each line finds its place upon the sheet.
 
@@ -41,7 +98,7 @@ The pages now read whole: the longer paragraphs no longer break at the margin. E
 
 **A clock stopped at eleven fifty-two.**
 
-A pocket watch has appeared in the upper right corner of the diary. Its bronze hands always mark the same hour — the instant when everything stopped.
+A pocket watch has appeared in the upper right corner of the diary. Its bronze hands always mark the same hour â€” the instant when everything stopped.
 
 Below the watch, carved in small letters, the chronicle you carry with you.
 
