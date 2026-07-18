@@ -95,13 +95,19 @@ public class MenuMusic {
     }
 
     public static void start() {
-        // IDEMPOTENTE: si ya esta activo, no reiniciar (evita cortar musica al reabrir Title)
-        if (active) {
-            if (DEBUG_LOGGING) LOGGER.info("[MenuMusic v3] start() ignorado, ya activo");
+        Minecraft mc = Minecraft.getInstance();
+        if (mc == null) return;
+
+        // Si ya esta activo Y la musica esta sonando realmente, ignorar
+        if (active && currentInstance != null && mc.getSoundManager().isActive(currentInstance)) {
+            if (DEBUG_LOGGING) LOGGER.info("[MenuMusic v3] start() ignorado, ya esta sonando");
             return;
         }
 
-        Minecraft mc = Minecraft.getInstance();
+        // Si llegamos aqui es porque o no esta activo, o la instancia murio (ej: al salir de un server)
+        if (DEBUG_LOGGING && active) LOGGER.info("[MenuMusic v3] Reiniciando porque la instancia previa no existe o no suena");
+        
+        stop(); // Limpieza de seguridad
         if (mc == null) return;
 
         active = true;
@@ -136,6 +142,18 @@ public class MenuMusic {
     }
 
     public static void tick() {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc == null) return;
+
+        // Seguridad: si el jugador entro a un mundo, detener musica del menu
+        if (mc.level != null) {
+            if (active) {
+                if (DEBUG_LOGGING) LOGGER.info("[MenuMusic v3] Jugador en mundo, auto-stop");
+                stop();
+            }
+            return;
+        }
+
         if (!active) return;
 
         long now = System.currentTimeMillis();
@@ -149,10 +167,7 @@ public class MenuMusic {
             if (crossElapsed >= CROSSFADE_MS) {
                 // Crossfade termino: eliminar la instancia anterior
                 if (previousInstance != null) {
-                    Minecraft mc = Minecraft.getInstance();
-                    if (mc != null) {
-                        try { mc.getSoundManager().stop(previousInstance); previousInstance.markDone(); } catch (Exception ignored) {}
-                    }
+                    try { mc.getSoundManager().stop(previousInstance); previousInstance.markDone(); } catch (Exception ignored) {}
                     previousInstance = null;
                 }
                 crossfading = false;
