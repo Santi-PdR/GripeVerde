@@ -91,11 +91,11 @@ public class ScreenEventHandler {
         var screen = event.getScreen();
         if (!(screen instanceof OptionsScreen)) return;
 
-        // Posicion: centrado horizontal, con margen sobre la fila de opciones
-        int sliderW = 200;
+        // Posicion: Inferior central, debajo del boton Done. Seguro para todas las escalas.
+        int sliderW = 160;
         int sliderH = 20;
         int sliderX = (screen.width - sliderW) / 2;
-        int sliderY = 72;
+        int sliderY = screen.height - 25;
 
         MusicVolumeSlider slider = new MusicVolumeSlider(sliderX, sliderY, sliderW, sliderH);
         event.addListener(slider);
