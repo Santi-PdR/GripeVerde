@@ -234,12 +234,8 @@ public class VictorianSkyline {
     }
 
     public static int[][] getLanternPositions(int w, int h) {
-        return new int[][] {
-            {(int)(w * 0.10f), (int)(h * 0.82f)},
-            {(int)(w * 0.25f), (int)(h * 0.80f)},
-            {(int)(w * 0.45f), (int)(h * 0.83f)},
-            {(int)(w * 0.65f), (int)(h * 0.81f)},
-            {(int)(w * 0.85f), (int)(h * 0.82f)},
-        };
+        // v0.7.1: postes ocultos en todas las escalas hasta v0.7.2 (cerrar vacio skyline-calle).
+        // El sistema queda listo para reactivarse por escala en el proximo sub-hito.
+        return new int[0][0];
     }
 }
