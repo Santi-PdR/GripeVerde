@@ -32,9 +32,31 @@ import java.util.List;
 public class MenuMusic {
 
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final boolean DEBUG_LOGGING = true;
+    private static final boolean DEBUG_LOGGING = false;
 
-    private static final float MUSIC_VOLUME = 0.6f;
+    // Volumen base multiplicador (0.0 a 1.0). El usuario lo ajusta desde Options.
+    private static float userVolume = 0.4f;
+    private static final float MAX_VOLUME = 0.8f;
+
+    public static float getUserVolume() { return userVolume; }
+    public static void setUserVolume(float v) {
+        userVolume = Math.max(0f, Math.min(1f, v));
+        // Aplicar volumen a instancia actual sin cortar
+        Minecraft mc = Minecraft.getInstance();
+        if (mc != null && currentInstance != null) {
+            try {
+                mc.getSoundManager().stop(currentInstance);
+                // Restart con nuevo volumen si estamos activos
+                if (active && userVolume > 0f) {
+                    playCurrentTrackFromScratch();
+                }
+            } catch (Exception ignored) {}
+        }
+    }
+
+    private static float computeVolume() {
+        return userVolume * MAX_VOLUME;
+    }
 
     // Pausa entre pistas (ms)
     private static final long GAP_MIN_MS = 3_000L;
@@ -145,6 +167,24 @@ public class MenuMusic {
         if (DEBUG_LOGGING) LOGGER.info("[MenuMusic] Proxima pista en {} ms", gap);
     }
 
+    private static void playCurrentTrackFromScratch() {
+        if (currentIndex < 0 || currentIndex >= PLAYLIST.size()) return;
+        RegistryObject<SoundEvent> ro = PLAYLIST.get(currentIndex);
+        if (ro == null) return;
+        SoundEvent se;
+        try { se = ro.get(); } catch (Exception e) { return; }
+        if (se == null) return;
+        Minecraft mc = Minecraft.getInstance();
+        if (mc == null) return;
+        try {
+            currentInstance = new SimpleSoundInstance(
+                se.getLocation(), SoundSource.AMBIENT, computeVolume(), 1.0f,
+                RNG, false, 0, SoundInstance.Attenuation.NONE, 0, 0, 0, true);
+            mc.getSoundManager().play(currentInstance);
+            currentStartMs = System.currentTimeMillis();
+        } catch (Exception ignored) {}
+    }
+
     private static void playNextTrack() {
         if (shuffledPos >= shuffledOrder.size()) rebuildShuffle();
         if (shuffledOrder.isEmpty()) return;
@@ -172,7 +212,7 @@ public class MenuMusic {
             currentInstance = new SimpleSoundInstance(
                 se.getLocation(),
                 SoundSource.AMBIENT,
-                MUSIC_VOLUME,
+                computeVolume(),
                 1.0f,
                 RNG,
                 false,
