@@ -134,6 +134,7 @@ public class LivingAtmosphere {
         if (lanternPositions == null) {
             lanternPositions = VictorianSkyline.getLanternPositions(w, h);
         }
+        renderStreet(g, w, h);
         renderGroundFog(g, w, h);
         for (int i = 0; i < lanternPositions.length; i++) {
             renderGasLantern(g, lanternPositions[i][0], lanternPositions[i][1], i, w, h);
@@ -168,6 +169,120 @@ public class LivingAtmosphere {
             g.fill(0, y,         w, y + 1, AtmosphereRenderer.withAlpha(0x00000000, a));
             g.fill(0, h - y - 1, w, h - y, AtmosphereRenderer.withAlpha(0x00000000, a));
         }
+    }
+
+    private static void renderStreet(GuiGraphics g, int w, int h) {
+        int streetTop;
+        int rowCount;
+        int topCols;
+        int bottomCols;
+        int curbHighlightH;
+        int curbShadowH;
+        int sheenAlpha;
+        int seamAlpha;
+
+        if (h >= 800) {
+            streetTop = (int)(h * 0.839f);
+            rowCount = 6;
+            topCols = 24;
+            bottomCols = 11;
+            curbHighlightH = 2;
+            curbShadowH = 7;
+            sheenAlpha = 38;
+            seamAlpha = 74;
+        } else if (h >= 400) {
+            streetTop = (int)(h * 0.841f);
+            rowCount = 5;
+            topCols = 20;
+            bottomCols = 10;
+            curbHighlightH = 2;
+            curbShadowH = 5;
+            sheenAlpha = 34;
+            seamAlpha = 68;
+        } else if (h >= 260) {
+            streetTop = (int)(h * 0.844f);
+            rowCount = 4;
+            topCols = 16;
+            bottomCols = 9;
+            curbHighlightH = 1;
+            curbShadowH = 4;
+            sheenAlpha = 30;
+            seamAlpha = 62;
+        } else {
+            streetTop = (int)(h * 0.846f);
+            rowCount = 3;
+            topCols = 12;
+            bottomCols = 8;
+            curbHighlightH = 1;
+            curbShadowH = 3;
+            sheenAlpha = 26;
+            seamAlpha = 56;
+        }
+
+        int streetBottom = h;
+        int streetH = streetBottom - streetTop;
+        if (streetH <= 0) return;
+
+        // Masa principal de calle mojada
+        g.fill(0, streetTop, w, streetBottom, 0xFF25180F);
+
+        // Acera lejana / borde de encuentro con el skyline
+        int curbLightEnd = Math.min(streetBottom, streetTop + curbHighlightH);
+        int curbShadowEnd = Math.min(streetBottom, curbLightEnd + curbShadowH);
+        g.fill(0, streetTop, w, curbLightEnd, 0xFF725739);
+        g.fill(0, curbLightEnd, w, curbShadowEnd, 0xFF433020);
+
+        // Banda superior para que la calle no lea como bloque plano
+        int upperBandTop = streetTop + Math.max(2, streetH / 8);
+        int upperBandBot = Math.min(streetBottom, upperBandTop + Math.max(2, streetH / 12));
+        g.fill(0, upperBandTop, w, upperBandBot,
+            AtmosphereRenderer.withAlpha(0x00523A25, 96));
+
+        // Filas de adoquines en perspectiva
+        for (int row = 0; row < rowCount; row++) {
+            int y1 = streetTop + row * streetH / rowCount;
+            int y2 = streetTop + (row + 1) * streetH / rowCount;
+            if (y2 <= y1) continue;
+
+            if (row > 0) {
+                g.fill(0, y1, w, y1 + 1, 0xFF342116);
+            }
+
+            int cols;
+            if (rowCount <= 1) {
+                cols = bottomCols;
+            } else {
+                cols = topCols - ((topCols - bottomCols) * row / (rowCount - 1));
+            }
+            cols = Math.max(6, cols);
+
+            int blockW = Math.max(8, w / cols);
+            int offset = (row % 2 == 0) ? 0 : blockW / 2;
+
+            for (int x = -offset; x < w; x += blockW) {
+                g.fill(x, y1 + 1, x + 1, y2,
+                    AtmosphereRenderer.withAlpha(0x0024140B, seamAlpha));
+            }
+        }
+
+        // Reflejo humedo central
+        int sheenTop = streetTop + streetH / 3;
+        int sheenBottom = Math.min(streetBottom, sheenTop + Math.max(2, streetH / 9));
+        int sheenInset = Math.max(10, w / 9);
+        g.fill(sheenInset, sheenTop, w - sheenInset, sheenBottom,
+            AtmosphereRenderer.withAlpha(0x00927A55, sheenAlpha));
+
+        // Cunetas laterales mas oscuras
+        int gutterW = Math.max(4, w / 18);
+        g.fill(0, curbLightEnd, gutterW, streetBottom,
+            AtmosphereRenderer.withAlpha(0x00000000, 28));
+        g.fill(w - gutterW, curbLightEnd, w, streetBottom,
+            AtmosphereRenderer.withAlpha(0x00000000, 28));
+
+        // Peso visual en la base para rematar el plano
+        int bottomBandTop = streetBottom - Math.max(4, streetH / 7);
+        g.fill(0, bottomBandTop, w, streetBottom,
+            AtmosphereRenderer.withAlpha(0x00130C07, 52));
     }
 
     private static void renderGroundFog(GuiGraphics g, int w, int h) {
