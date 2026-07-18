@@ -32,7 +32,7 @@ import java.util.List;
 public class MenuMusic {
 
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final boolean DEBUG_LOGGING = false;
+    private static final boolean DEBUG_LOGGING = true;
 
     private static final float MUSIC_VOLUME = 0.6f;
 

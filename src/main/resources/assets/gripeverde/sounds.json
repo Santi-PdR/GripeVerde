@@ -161,5 +161,5 @@
   "menu.music_4": {
     "sounds": [{"name": "gripeverde:music/music_title_4", "volume": 1.0, "stream": true}],
     "subtitle": ""
-  },
+  }
 }
