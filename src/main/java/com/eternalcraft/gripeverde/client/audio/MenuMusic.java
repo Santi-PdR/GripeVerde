@@ -34,7 +34,7 @@ public class MenuMusic {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final boolean DEBUG_LOGGING = false;
 
-    private static final float MUSIC_VOLUME = 0.35f;
+    private static final float MUSIC_VOLUME = 0.6f;
 
     // Pausa entre pistas (ms)
     private static final long GAP_MIN_MS = 3_000L;
@@ -171,7 +171,7 @@ public class MenuMusic {
         try {
             currentInstance = new SimpleSoundInstance(
                 se.getLocation(),
-                SoundSource.MUSIC,
+                SoundSource.AMBIENT,
                 MUSIC_VOLUME,
                 1.0f,
                 RNG,
