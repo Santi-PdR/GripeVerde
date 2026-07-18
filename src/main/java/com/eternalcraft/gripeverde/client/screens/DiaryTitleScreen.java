@@ -2,6 +2,7 @@ package com.eternalcraft.gripeverde.client.screens;
 
 import com.eternalcraft.gripeverde.GripeVerdeMod;
 import com.eternalcraft.gripeverde.client.audio.MenuAmbience;
+import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
@@ -58,6 +59,7 @@ public class DiaryTitleScreen extends Screen {
     protected void init() {
         this.ticks = 0;
         MenuAmbience.start();
+        MenuMusic.start();
 
         LayoutRegion leftCol = leftColumn();
 
@@ -141,6 +143,7 @@ public class DiaryTitleScreen extends Screen {
         AtmosphereRenderer.tick(delta);
         VictorianSkyline.tick(delta);
         LivingAtmosphere.tick(delta);
+        MenuMusic.tick();
     }
 
     @Override
@@ -183,6 +186,7 @@ public class DiaryTitleScreen extends Screen {
     @Override
     public void removed() {
         MenuAmbience.stop();
+        MenuMusic.stop();
         super.removed();
     }
 

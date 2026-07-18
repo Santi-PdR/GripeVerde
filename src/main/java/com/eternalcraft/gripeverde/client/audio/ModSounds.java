@@ -9,14 +9,14 @@ import net.minecraftforge.registries.RegistryObject;
 
 /**
  * Registro de todos los SoundEvent custom de Gripe Verde.
- * Generado automaticamente — no editar manualmente.
+ * Generado automaticamente â€” no editar manualmente.
  */
 public class ModSounds {
 
     public static final DeferredRegister<SoundEvent> SOUND_EVENTS =
         DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, GripeVerdeMod.MOD_ID);
 
-    // ── UI ───────────────────────────────────────────────────────────────────
+    // â”€â”€ UI â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     public static final RegistryObject<SoundEvent> UI_HOVER =
         reg("ui.hover");
     public static final RegistryObject<SoundEvent> UI_CLICK =
@@ -48,7 +48,7 @@ public class ModSounds {
     public static final RegistryObject<SoundEvent> UI_RESPAWN =
         reg("ui.respawn");
 
-    // ── AMBIENT BASE (loops) ─────────────────────────────────────────────────
+    // â”€â”€ AMBIENT BASE (loops) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     public static final RegistryObject<SoundEvent> MENU_WIND =
         reg("menu.wind");
     public static final RegistryObject<SoundEvent> MENU_RAIN =
@@ -56,7 +56,7 @@ public class ModSounds {
     public static final RegistryObject<SoundEvent> MENU_CITY =
         reg("menu.city");
 
-    // ── AMBIENT EVENTS ───────────────────────────────────────────────────────
+    // â”€â”€ AMBIENT EVENTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     public static final RegistryObject<SoundEvent> MENU_FOOTSTEPS =
         reg("menu.footsteps");
     public static final RegistryObject<SoundEvent> MENU_WOOD_CREAK =
@@ -66,7 +66,7 @@ public class ModSounds {
     public static final RegistryObject<SoundEvent> MENU_AMBIENT_OCCASIONAL =
         reg("menu.ambient_occasional");
 
-    // ── AMBIENT RARE ─────────────────────────────────────────────────────────
+    // â”€â”€ AMBIENT RARE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     public static final RegistryObject<SoundEvent> MENU_BELL =
         reg("menu.bell");
     public static final RegistryObject<SoundEvent> MENU_CROWS =
@@ -76,11 +76,21 @@ public class ModSounds {
     public static final RegistryObject<SoundEvent> MENU_THUNDER =
         reg("menu.thunder");
 
+    // -- MENU MUSIC ---------------------------------------------------
+    public static final RegistryObject<SoundEvent> MENU_MUSIC_1 =
+        reg("menu.music_1");
+    public static final RegistryObject<SoundEvent> MENU_MUSIC_2 =
+        reg("menu.music_2");
+    public static final RegistryObject<SoundEvent> MENU_MUSIC_3 =
+        reg("menu.music_3");
+    public static final RegistryObject<SoundEvent> MENU_MUSIC_4 =
+        reg("menu.music_4");
+
     // -- AMBIENT TICK -------------------------------------------------
     public static final RegistryObject<SoundEvent> MENU_TICK =
         reg("menu.tick");
 
-    // ── Helper ───────────────────────────────────────────────────────────────
+    // â”€â”€ Helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     private static RegistryObject<SoundEvent> reg(String path) {
         return SOUND_EVENTS.register(path,
             () -> SoundEvent.createVariableRangeEvent(

@@ -145,5 +145,21 @@
       {"name": "gripeverde:menu/tick", "volume": 1.0}
     ],
     "subtitle": ""
-  }
+  },
+  "menu.music_1": {
+    "sounds": [{"name": "gripeverde:music/music_title_1", "volume": 1.0, "stream": true}],
+    "subtitle": ""
+  },
+  "menu.music_2": {
+    "sounds": [{"name": "gripeverde:music/music_title_2", "volume": 1.0, "stream": true}],
+    "subtitle": ""
+  },
+  "menu.music_3": {
+    "sounds": [{"name": "gripeverde:music/music_title_3", "volume": 1.0, "stream": true}],
+    "subtitle": ""
+  },
+  "menu.music_4": {
+    "sounds": [{"name": "gripeverde:music/music_title_4", "volume": 1.0, "stream": true}],
+    "subtitle": ""
+  },
 }
