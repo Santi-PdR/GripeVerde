@@ -186,7 +186,7 @@ public class DiaryTitleScreen extends Screen {
     @Override
     public void removed() {
         MenuAmbience.stop();
-        MenuMusic.stop();
+        // MenuMusic.stop() omitido intencionalmente: musica sobrevive a Options/subpantallas
         super.removed();
     }
 

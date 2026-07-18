@@ -22,7 +22,7 @@ import java.util.List;
 public class MenuMusic {
 
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final boolean DEBUG_LOGGING = false;
+    private static final boolean DEBUG_LOGGING = true;
 
     // Volumen base del usuario (0.0 - 1.0), ajustado por el slider.
     private static float userVolume = 0.4f;
@@ -95,7 +95,11 @@ public class MenuMusic {
     }
 
     public static void start() {
-        if (active) stop();
+        // IDEMPOTENTE: si ya esta activo, no reiniciar (evita cortar musica al reabrir Title)
+        if (active) {
+            if (DEBUG_LOGGING) LOGGER.info("[MenuMusic v3] start() ignorado, ya activo");
+            return;
+        }
 
         Minecraft mc = Minecraft.getInstance();
         if (mc == null) return;
