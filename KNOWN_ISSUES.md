@@ -1,9 +1,10 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
-> Ultima actualizacion: v0.5.7 (sesion cerrada)
-> Estado: EN DESARROLLO
-> Version estable actual: v0.5.7
-> Objetivo cumplido en esta sesion: Framework UI + migracion de Title + reloj victoriano + modo minimal
+Ultima actualizacion: v0.7.1
+Estado: EN DESARROLLO
+Version estable actual: v0.7.1
+Ultimo tag publicado: v0.7.1
+Objetivo reciente: KI-03 dividido en sub-hitos seguros despues de la sesion v0.7.x fallida.
 
 ---
 
@@ -11,137 +12,172 @@
 
 - Proyecto: Eternal Craft: Gripe Verde
 - Base: Minecraft Forge 1.20.1
-- Version desplegada: 0.5.7
+- Version desplegada: 0.7.1
 - Tipo: mod de interfaz
 - Ambientacion: ciudad victoriana bajo cuarentena, Green Flu
-- Estado general: compilando limpio, Title migrado, layout adaptativo funcionando
+- Estado general: compilando limpio, Title estable, calle del fondo definida, postes ocultos temporalmente.
 
 ---
 
 ## 2. Sistemas activos
 
+### Title / DiaryTitleScreen
+Pipeline actual de fondo:
+1. AtmosphereRenderer.renderSky
+2. VictorianSkyline.renderBackground
+3. LivingAtmosphere.renderFogLow
+4. VictorianSkyline.renderForeground
+5. LivingAtmosphere.renderStreetLevel
+6. LivingAtmosphere.renderAir
+7. LivingAtmosphere.renderFlash
+8. LivingAtmosphere.renderVignette
+
+### LivingAtmosphere
+- Renderiza niebla baja, calle, niebla de suelo, esporas, lluvia, cuervos, rayo y vineta.
+- Desde v0.7.0 incluye renderStreet() adaptativo por escala.
+- La calle esta aprobada visualmente.
+
+### VictorianSkyline
+- Renderiza edificios BG, edificios FG, ventanas, chimeneas y humo.
+- Desde v0.7.1 getLanternPositions() devuelve new int[0][0].
+- Los postes/faroles quedan ocultos temporalmente hasta v0.7.2/v0.7.3.
+
 ### MenuAmbience
-- 26 eventos en sounds.json
-- DEBUG_LOGGING = false
-- Estable
+- Sistema de ambiente sonoro activo.
+- Estable.
 
 ### Changelog
-- 25 idiomas sincronizados
-- Fallback a ingles
+- Pantalla in-game activa.
+- Documentacion narrativa principal en CHANGELOG.md.
 
-### Framework UI (v0.6.0)
-- UIComponent, Spacing, ScreenLayout instalados
-- Consumidor activo: DiaryTitleScreen
-
-### DiaryTitleScreen (v0.5.7)
-- Columnas adaptativas con LayoutRegion
-- Reloj de bolsillo victoriano (PocketWatchRenderer)
-- Modo minimal activo bajo altura < 290
-- Botones Options/Quit apilados en modo minimal
-- Firma easter egg en esquina inferior derecha
+### Framework UI
+- Layout adaptativo funcionando.
+- Modo minimal activo bajo altura efectiva menor a 290.
 
 ---
 
-## 3. Problemas conocidos
+## 3. Problemas conocidos activos
 
 ### KI-01 - Freeze al presionar Leave
 Sintoma: puede quedar en "Saving world".
 Estado: no reproducido controladamente.
-Sospecha: entorno (RAM, GPU, Embeddium).
+Sospecha: entorno, RAM, GPU, Embeddium.
 Accion: no modificar sin evidencia en logs.
 
 ### KI-02 - Crash al hacer screenshots F2
 Sintoma: NVAPI + Embeddium + NVIDIA.
 Workaround: Windows + Shift + S.
 
-### KI-03 - Fondo del Title con defectos visuales (pre-existente)
-Sintoma: postes flotando, chimeneas raras, calle poco marcada, halos no siempre en el piso.
-Estado: archivos VictorianSkyline, LivingAtmosphere y AtmosphereRenderer NO fueron modificados en esta sesion.
-Causa: defectos preexistentes a v0.5.0 que se disimulaban con paneles grandes ahora reemplazados.
-Accion: agendado para v0.7.0 como trabajo de arte visual.
+### KI-03 - Fondo del Title con defectos visuales
+Estado actual tras v0.7.1:
+- Calle definida: RESUELTO en v0.7.0.
+- Postes/faroles flotantes: MITIGADO en v0.7.1 ocultandolos temporalmente.
+- Vacio entre skyline y calle, especialmente escala 1: ACTIVO.
+- Skyline demasiado poblado y sin jerarquia: ACTIVO.
+- Luna solitaria sin nubes contextuales: ACTIVO.
+
+Decision vigente:
+- No reactivar postes hasta que el skyline/calle los soporte visualmente.
+- No tocar calle en v0.7.2 salvo emergencia.
+- No mezclar reposicion de postes con extension de edificios en el mismo bump.
 
 ### Deuda tecnica activa
-- ICON_BTN_MP e ICON_BTN_MODS sin PNG real
-- Framework UI subutilizado (solo Title lo consume)
-- ThemeManager sin themes registrados
+- ICON_BTN_MP e ICON_BTN_MODS sin PNG real.
+- Framework UI subutilizado.
+- ThemeManager sin themes registrados.
+- Changelog localizado puede requerir sincronizacion posterior con nuevas versiones.
 
 ---
 
-## 4. Historial de esta sesion
+## 4. Historial relevante reciente
 
-### v0.5.0 (base estable)
-- Punto de partida.
+### v0.6.5
+- Base estable confirmada despues de revertir la sesion v0.7.x fallida.
+- Fix de estabilidad al perder foco/minimizar.
 
-### Fase 0 - Limpieza
-- Backups creados, .bak eliminados, TextureAssets reducido, DiaryDeathScreen eliminado de ThemeManager, TODO residual eliminado.
+### v0.7.0
+- Sub-hito 1 KI-03.
+- Se agrego renderStreet() decorativo/adaptativo en LivingAtmosphere.
+- No se tocaron postes ni edificios.
+- Calle aprobada visualmente.
 
-### Fase 2 - Framework
-- UIComponent, Spacing, ScreenLayout creados.
-
-### Fase 3 - Migracion iterativa
-- 0.5.1: primera migracion con LayoutRegion
-- 0.5.2: layout adaptativo del poster izquierdo
-- 0.5.3: columnas derecha adaptativas + easter egg firma
-- 0.5.4: auto-hide de paneles
-- 0.5.5: reloj de bolsillo victoriano (reemplaza Chronicle)
-- 0.5.6: umbral minimal ajustado a 290
-- 0.5.7: botones Options/Quit apilados verticalmente en modo minimal
+### v0.7.1
+- Sub-hito 2 KI-03.
+- Se intento reposicionar postes por escala, pero en escalas grandes seguian leyendose mal por falta de soporte del skyline.
+- Decision final: ocultar postes en todas las escalas mediante getLanternPositions() -> new int[0][0].
+- Build, deploy, commit, push y tag completados.
 
 ---
 
 ## 5. Reglas vigentes
 
-- Java UTF-8 sin BOM (UTF8Encoding false)
-- No usar exit N en PowerShell interactivo
-- No modificar DiaryPauseScreen (R14)
-- No modificar renderers de fondo sin plan explicito
-- Auditar estado real antes de proponer cambios
-- Cada cambio visible bumpea version
-- Deploy solo tras build exitoso
+- Java UTF-8 sin BOM (UTF8Encoding false).
+- PowerShell: bloques cortos; si hay if/else, mantener estructura clara y verificable.
+- Auditar estado real antes de proponer cambios.
+- Un sistema por version.
+- Un cambio por bump cuando sea visualmente sensible.
+- Validar visualmente en las 4 escalas cuando se toque el fondo del Title.
+- No modificar mas de un renderer por sesion sin plan escrito previo.
+- Build siempre acompanado de deploy.
+- Minimizar cantidad de comandos PowerShell.
+- Usar rutas absolutas si no se esta parado en la raiz del repo.
+- Limpiar jars viejos del deploy path antes de validar.
+- Validar la version visible en el reloj antes de aprobar o rechazar.
 
 ---
 
 ## 6. Errores historicos importantes
 
-(Se mantienen E1 a E19 sin cambios)
-
 ### E20 - Escritura con BOM rompio compilacion
 Solucion: usar UTF8Encoding(false) al escribir Java desde PowerShell.
 
-### E21 - Parseo ingenuo de .deploy
-Solucion: filtrar por CLAVE=VALOR, no tomar primera linea.
+### E21/E23 - Parseo ingenuo de .deploy
+Solucion: filtrar por DEPLOY_MODS_PATH= y no asumir que la primera linea sirve.
 
-### E22 - Umbrales de auto-hide muy permisivos
-Solucion: subir a 290 y agregar modo minimal explicito con reorganizacion de botones.
+### E27 - Replaces multi-cambio simultaneos
+Regla: un replace por vez, verificacion inmediata.
+
+### E28 - Formulas cross-file
+Regla: no crear dependencias silenciosas entre renderers.
+
+### E29 - Sin capturas de referencia
+Regla: capturas pre/post en 4 escalas antes de validar cambios visuales importantes.
+
+### E30 - Extrapolar entre escalas
+Regla: validar escala por escala.
+
+### E31 - Sistemas interdependientes en mismo bump
+Regla absoluta: un sistema por version.
 
 ---
 
-## 7. Plan futuro
+## 7. Plan futuro inmediato
 
-### Cierre formal v0.5.x -> v0.6.0
-- Actualizar CHANGELOG.md
-- Actualizar 25 changelogs localizados
-- Considerar `git init`
-- Bump final a 0.6.0
+### v0.7.2 - Sub-hito 3 KI-03
+Objetivo: cerrar el vacio entre skyline y calle.
 
-### v0.7.0
-- Death Screen
-- Trabajo de arte visual del fondo (KI-03)
-- Crear PNG de ICON_BTN_MP e ICON_BTN_MODS
-- Posible mano zombi desde borde inferior
+Alcance recomendado:
+- Tocar solo VictorianSkyline.renderForeground / datos FG.
+- No tocar renderStreet().
+- No reactivar postes en el mismo bump salvo que el usuario apruebe explicitamente dividirlo o extender alcance.
+- Validar en 4 escalas.
+- Si se reactivan postes, hacerlo en v0.7.3.
 
-### v0.8.0+
-- Bestiario, creditos, notificaciones
-- Nuevas pantallas vanilla si se aprueban
+### v0.7.3
+- Reactivar postes/faroles por escala cuando el skyline ya los soporte.
+
+### Posterior
+- Mejorar jerarquia del skyline.
+- Agregar nubes/contexto visual cerca de la luna.
+- Sincronizar changelogs localizados si se decide.
 
 ---
 
 ## 8. Estado tecnico
 
-- Backups validados en _backups/
-- Deploy operativo a D:\Juegos\Minecraft\Instances\Test\mods
-- Build limpio, sin errores
-- Compilando en 20-30 segundos
-
-v0.5.7 estable y desplegada.
-Proxima sesion: preguntar si cerrar formalmente v0.6.0, atacar KI-03 o empezar v0.7.0.
+- Repo local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
+- Remoto: https://github.com/Santi-PdR/GripeVerde
+- Deploy: D:\Juegos\Minecraft\Instances\Test\mods
+- Ultimo tag: v0.7.1
+- Build limpio.
+- Working tree esperado: limpio antes de iniciar v0.7.2.
