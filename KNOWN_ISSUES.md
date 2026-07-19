@@ -240,3 +240,7 @@ Solucion: R-PATH2. Siempre Set-Location $repo al inicio de bloques con gradlew/g
 - Ultimo tag: v0.8.3
 - Build limpio.
 - Working tree esperado: limpio antes de proximas sesiones.
+### KI-05 (deuda tecnica v0.9.0)
+- Humo de chimeneas y nubes se renderizan como cuadrados obvios porque usan g.fill de rectangulos llenos.
+- Solucion futura: reescribir con blobs suaves estilo PaperTexture.drawSoftBlob (multiples circulos apilados con alpha degradado).
+- Prioridad: media. No rompe nada, solo estetica.
