@@ -217,6 +217,28 @@ public class MenuMusic {
         }
     }
 
+
+    /**
+     * Fuerza crossfade inmediato a la siguiente pista.
+     * Ignora el click si ya hay crossfade en curso o no hay musica activa.
+     */
+    public static void skipToNext() {
+        if (!active || crossfading) return;
+        if (currentInstance == null || currentInstance.isStopped()) {
+            // No hay pista sonando; arrancar una nueva directamente
+            playNextTrack();
+            return;
+        }
+        startCrossfadeToNext();
+        if (DEBUG_LOGGING) LOGGER.info("[MenuMusic v3] Skip manual solicitado");
+    }
+
+    /**
+     * Devuelve true si hay un crossfade en curso (para que la UI ignore clicks).
+     */
+    public static boolean isCrossfading() {
+        return crossfading;
+    }
     // === Internos ===
 
     private static void updateVolumes(long now) {
@@ -286,7 +308,7 @@ public class MenuMusic {
         if (mc == null) return;
 
         try {
-            FadingMusicInstance nextInst = new FadingMusicInstance(se, 0f, TRACK_DURATIONS_MS[nextIndex]);
+            FadingMusicInstance nextInst = new FadingMusicInstance(se, 0.01f, TRACK_DURATIONS_MS[nextIndex]);
             mc.getSoundManager().play(nextInst);
 
             // La actual pasa a "previous", la nueva es "current"

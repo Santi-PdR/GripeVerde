@@ -10,6 +10,7 @@ public final class ClientConfig {
 
     public static final ForgeConfigSpec SPEC;
     public static final ForgeConfigSpec.DoubleValue MUSIC_VOLUME;
+    public static final ForgeConfigSpec.BooleanValue AMBIENCE_ENABLED;
 
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
@@ -17,6 +18,9 @@ public final class ClientConfig {
         MUSIC_VOLUME = b
             .comment("Volumen de la musica del menu principal (0.0 - 1.0).")
             .defineInRange("musicVolume", 0.4, 0.0, 1.0);
+        AMBIENCE_ENABLED = b
+            .comment("Habilitar sonidos ambientales del menu principal.")
+            .define("ambienceEnabled", true);
         b.pop();
         SPEC = b.build();
     }

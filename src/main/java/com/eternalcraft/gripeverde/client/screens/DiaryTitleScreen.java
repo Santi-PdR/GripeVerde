@@ -122,6 +122,36 @@ public class DiaryTitleScreen extends Screen {
         changelogBtn.setTooltip(Tooltip.create(
             Component.translatable("gripeverde.title.button.changelog")));
         this.addRenderableWidget(changelogBtn);
+
+        // --- Audio control buttons (bottom-left, discrete) ---
+        int acY = this.height - 28;
+        int acX = 8;
+        int acW = 36;
+        int acH = 20;
+
+        this.addRenderableWidget(new SlimButton(acX, acY, acW, acH,
+            Component.literal(MenuAmbience.isMuted() ? "AMB" : "AMB"),
+            () -> {
+                MenuAmbience.toggleMute();
+                this.rebuildWidgets();
+            }) {
+            @Override
+            protected void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+                super.renderWidget(g, mouseX, mouseY, partialTick);
+                if (MenuAmbience.isMuted()) {
+                    // Draw strikethrough line to indicate muted
+                    int cx = this.getX();
+                    int cy = this.getY();
+                    int cw = this.width;
+                    int ch = this.height;
+                    g.fill(cx + 4, cy + ch / 2, cx + cw - 4, cy + ch / 2 + 1, 0xFFCC4444);
+                }
+            }
+        });
+
+        this.addRenderableWidget(new SlimButton(acX + acW + 4, acY, acW, acH,
+            Component.literal(">>"),
+            () -> MenuMusic.skipToNext()));
     }
 
     private LayoutRegion leftColumn() {

@@ -7,11 +7,11 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.10.2
-- build.gradle: version = '0.10.2'
-- GripeVerdeMod.VERSION: "0.10.2"
+- Version estable actual: v0.10.3
+- build.gradle: version = '0.10.3'
+- GripeVerdeMod.VERSION: "0.10.3"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
-- Ultimo tag publicado: v0.10.2
+- Ultimo tag publicado: v0.10.3
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
 
@@ -50,7 +50,7 @@ C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 
 - Local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 - Remoto: https://github.com/Santi-PdR/GripeVerde (privado)
-- Ultimo tag: v0.10.2
+- Ultimo tag: v0.10.3
 
 ## Rutas reales verificadas
 
@@ -397,37 +397,54 @@ Riesgo: alto. Requiere diseno previo.
 - ChangelogScreen ya no usa UI vanilla; luce sobre pergamino con textura y contenido diegetico.
 
 ---
+
+---
+## ADDENDUM v0.10.3 (controles de audio del Title)
+
+### Cambios de codigo
+- MenuMusic.java: nuevo metodo publico skipToNext() + isCrossfading(). Fix crossfade inicial 0f -> 0.01f.
+- MenuAmbience.java: campo muted, metodos setMuted/isMuted/toggleMute. start() idempotente. tick() silenciado cuando muted.
+- ClientConfig.java: nueva clave AMBIENCE_ENABLED (boolean, default true).
+- DiaryTitleScreen.java: dos SlimButton [AMB] y [>>] en esquina inferior izquierda.
+
+### Errores encontrados y corregidos
+- E46: MenuAmbience.start() no era idempotente; al volver de subpantallas destruia y recreaba loops, reseteando muted. Fix: early return si active==true.
+- E47: Crossfade manual arrancaba instancia con volumen 0f; SoundManager no la tickeaba. Fix: volumen inicial 0.01f.
+
+### Reglas nuevas
+- Ninguna nueva. Los errores refuerzan la importancia de R-CACHE (idempotencia) ya existente.
+
 ## PROXIMO HITO PLANIFICADO (revisado tras v0.10.1)
 
 ### Candidato C: v0.11.0+ - Contenido de gameplay (Gripe Verde en si)
 Objetivo: primer sistema de gameplay real (enfermedad, sintomas, mecanica de cuarentena).
 Riesgo: alto. Requiere diseno previo escrito.
 
-### Candidato D: v0.10.2 - Mejoras visuales del Title pendientes
+### Candidato D: v0.10.3 - Mejoras visuales del Title pendientes
 Objetivo: contexto atmosferico mas rico alrededor de la luna (halo, jirones de nube que la crucen).
 Riesgo: bajo. Toca solo LivingAtmosphere/AtmosphereRenderer.
 
-### Candidato E: v0.10.2 alternativo - Persistir mas opciones del usuario
+### Candidato E: v0.10.3 alternativo - Persistir mas opciones del usuario
 Objetivo: extender ClientConfig con volumenes de MenuAmbience (wind/rain/city separados), o un toggle "silenciar ambiente".
 Riesgo: bajo. Reutiliza el framework de v0.10.1.
 
 Decision pendiente para proxima sesion.
 
 ---
-## ADDENDUM v0.10.2 (hotfix administrativo)
+## ADDENDUM v0.10.3 (hotfix administrativo)
 
 ### Motivo
 Tras cerrar v0.10.1 se detecto que el jar desplegado no contenia la entrada v0.10.1 en los 25 changelog/*.md in-game. Fue una omision del cierre anterior (violacion inicial de R-CIERRE punto 5).
 
 ### Decision
-- NO se agregan entradas v0.10.1 ni v0.10.2 al changelog in-game: no hay nada observable en la ciudad que reportar.
-- Se bumpea version a v0.10.2 unicamente para que el jar refleje la realidad del codigo.
+- NO se agregan entradas v0.10.1 ni v0.10.3 al changelog in-game: no hay nada observable en la ciudad que reportar.
+- Se bumpea version a v0.10.3 unicamente para que el jar refleje la realidad del codigo.
 - Se formaliza R-CHANGELOG-DISCRECIONAL: el changelog in-game es selectivo, no exhaustivo.
 - Se suaviza R-CIERRE punto 5: los 25 .md solo se actualizan si el hito tiene manifestacion observable.
 
 ### Cambios de codigo
-- build.gradle: 0.10.1 -> 0.10.2
-- GripeVerdeMod.VERSION: 0.10.1 -> 0.10.2
+- build.gradle: 0.10.1 -> 0.10.3
+- GripeVerdeMod.VERSION: 0.10.1 -> 0.10.3
 - Sin otros cambios de codigo.
 
 ### Regla nueva catalogada

@@ -95,6 +95,7 @@ public class MenuAmbience {
     }
 
     private static boolean active = false;
+    private static boolean muted = false;
     private static boolean pocketWatchVisible = false;
 
     private static long lastEventTriggerMs = 0L;
@@ -136,8 +137,66 @@ public class MenuAmbience {
         }
     }
 
+
+    /**
+     * Silencia o reactiva el ambiente. Persiste en ClientConfig.
+     * Internamente detiene o reinicia los loops base.
+     */
+    public static void setMuted(boolean m) {
+        if (muted == m) return;
+        muted = m;
+        try {
+            com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_ENABLED.set(!m);
+            com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_ENABLED.save();
+        } catch (Exception ignored) {}
+
+        if (!active) return;
+
+        Minecraft mc = Minecraft.getInstance();
+        if (mc == null) return;
+
+        if (muted) {
+            // Parar solo los loops base, no tocar timers
+            for (BaseLoop bl : BASE_LOOPS) {
+                if (bl.instance != null) {
+                    mc.getSoundManager().stop(bl.instance);
+                    bl.instance = null;
+                }
+            }
+            if (DEBUG_LOGGING) LOGGER.info("[MenuAmbience] Muteado");
+        } else {
+            // Reiniciar los loops base
+            for (BaseLoop bl : BASE_LOOPS) {
+                try {
+                    SoundEvent se = bl.sound.get();
+                    bl.instance = buildLoopInstance(se, bl.volume);
+                    mc.getSoundManager().play(bl.instance);
+                } catch (Exception e) {
+                    bl.instance = null;
+                }
+            }
+            if (DEBUG_LOGGING) LOGGER.info("[MenuAmbience] Desmuteado");
+        }
+    }
+
+    public static boolean isMuted() {
+        return muted;
+    }
+
+    public static void toggleMute() {
+        setMuted(!muted);
+    }
     public static void start() {
-        if (active) stop();
+        // Cargar estado de mute desde config (siempre, incluso si ya activo)
+        try {
+            muted = !com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_ENABLED.get();
+        } catch (Exception ignored) {}
+
+        // Idempotente: si ya esta activo, no destruir ni reiniciar
+        if (active) {
+            if (DEBUG_LOGGING) LOGGER.info("[MenuAmbience] start() ignorado, ya activo (muted={})", muted);
+            return;
+        }
 
         Minecraft mc = Minecraft.getInstance();
         if (mc == null) {
@@ -148,15 +207,17 @@ public class MenuAmbience {
         active = true;
         pocketWatchVisible = false;
 
-        for (BaseLoop bl : BASE_LOOPS) {
-            try {
-                SoundEvent se = bl.sound.get();
-                bl.instance = buildLoopInstance(se, bl.volume);
-                mc.getSoundManager().play(bl.instance);
-                if (DEBUG_LOGGING) LOGGER.info("[MenuAmbience] Loop iniciado: {}", se.getLocation());
-            } catch (Exception e) {
-                if (DEBUG_LOGGING) LOGGER.warn("[MenuAmbience] Loop no disponible: {}", e.getMessage());
-                bl.instance = null;
+        if (!muted) {
+            for (BaseLoop bl : BASE_LOOPS) {
+                try {
+                    SoundEvent se = bl.sound.get();
+                    bl.instance = buildLoopInstance(se, bl.volume);
+                    mc.getSoundManager().play(bl.instance);
+                    if (DEBUG_LOGGING) LOGGER.info("[MenuAmbience] Loop iniciado: {}", se.getLocation());
+                } catch (Exception e) {
+                    if (DEBUG_LOGGING) LOGGER.warn("[MenuAmbience] Loop no disponible: {}", e.getMessage());
+                    bl.instance = null;
+                }
             }
         }
 
@@ -169,8 +230,8 @@ public class MenuAmbience {
         lastRareTriggered  = null;
 
         if (DEBUG_LOGGING) {
-            LOGGER.info("[MenuAmbience] Ambient iniciado (BASE:{}, EVENTS:{}, RARE:{}, TICK:sync)",
-                BASE_LOOPS.size(), EVENTS_LAYER.size(), RARE_LAYER.size());
+            LOGGER.info("[MenuAmbience] Ambient iniciado (BASE:{}, EVENTS:{}, RARE:{}, TICK:sync, muted:{})",
+                BASE_LOOPS.size(), EVENTS_LAYER.size(), RARE_LAYER.size(), muted);
         }
     }
 
@@ -196,7 +257,7 @@ public class MenuAmbience {
     }
 
     public static void tick() {
-        if (!active) return;
+        if (!active || muted) return;
 
         Minecraft mc = Minecraft.getInstance();
         if (mc == null) return;
