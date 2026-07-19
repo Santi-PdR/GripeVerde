@@ -1,6 +1,11 @@
 # Eternal Craft: Gripe Verde
 ## Notas de Actualización
 
+## Versión 0.10.4 — El Halo de la Luna
+
+Esta noche la luna ha ganado un halo tenue, como si el vapor de las calderas y la humedad del Támesis se le pegaran alrededor. Tres jirones finos la cruzan lentamente, sin llegar a taparla del todo.
+
+
 ## Versión 0.10.0
 
 **El diario se viste con la solemnidad que merece.**
