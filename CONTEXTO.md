@@ -11,7 +11,7 @@ necesaria para retomar el desarrollo sin repetir errores.
 - build.gradle: version = '0.9.0'
 - GripeVerdeMod.VERSION: "0.9.0"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
-- Ultimo tag publicado: v0.8.3
+- Ultimo tag publicado: v0.9.0
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
 
@@ -42,7 +42,7 @@ C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 
 - Local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 - Remoto: https://github.com/Santi-PdR/GripeVerde (privado)
-- Ultimo tag: v0.8.3
+- Ultimo tag: v0.9.0
 
 ## Rutas reales verificadas
 
@@ -288,3 +288,104 @@ Comandos de reentrada:
   Set-Location C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
   git status --short
   git log --oneline -5
+
+---
+
+## ADDENDUM v0.9.0 (post-hito visual)
+
+### Errores nuevos catalogados
+
+- **E38**: [System.IO.File]::ReadAllText / WriteAllText usan el CWD del proceso .NET (normalmente el home del usuario), NO respetan Set-Location de PowerShell. Solucion: usar siempre "$PWD\ruta" absoluta al llamar metodos .NET de archivos.
+
+- **E39**: Here-strings @'...'@ largos en PowerShell inline se cuelgan o cortan por longitud de buffer de consola cuando superan cierto tamano (~4KB). Solucion: para archivos grandes usar base64 decodificado via [Convert]::FromBase64String + WriteAllBytes. Para cambios chicos usar .Replace() sobre contenido leido.
+
+- **E40**: Git en Windows convierte LF->CRLF al hacer add. Los warnings son inofensivos pero verificar que archivos criticos (build.gradle, .java) queden como el original espera. Los .java del proyecto son LF puro (verificado con byte scan).
+
+- **E41**: Al buscar el jar recien compilado con Get-ChildItem sin limpiar antes, se puede tomar un jar viejo de builds previos. Solucion: R-JAR2 (nueva): Remove-Item build\libs\gripeverde-*.jar ANTES de gradlew build. Ya aplicado en el pipeline de deploy.
+
+### Reglas nuevas
+
+- **R-DOTNET-PATH**: Al usar [System.IO.File]::* siempre pasar rutas absolutas con $PWD\... explicito.
+- **R-JAR2**: Limpiar build\libs\gripeverde-*.jar ANTES de compilar, no solo del deploy.
+- **R-EOL**: Antes de reemplazos multilinea con .Replace(), verificar EOL del archivo (CRLF vs LF) con byte scan. Los .java del proyecto son LF puro.
+- **R-ITER-VISUAL**: NO iterar mas de 3 veces sobre un mismo problema visual. Si tras 3 ajustes de parametros el resultado no convence, es problema de tecnica, no de valor. Anotar como deuda y cerrar hito.
+
+### KI-05 (activo, deuda tecnica de v0.9.0)
+- Humo de chimeneas y nubes se renderizan como cuadrados obvios (g.fill de rectangulos llenos).
+- Solucion futura: blobs suaves estilo PaperTexture.drawSoftBlob (multiples circulos apilados con alpha degradado).
+- Prioridad: media. No rompe nada, solo estetica.
+- Ya registrado en KNOWN_ISSUES.md.
+
+### Estado del hito v0.9.0 - lo que quedo bien
+- Ventanas BG diferenciadas de FG (jerarquia visual conseguida)
+- Chimeneas FG ancladas a edificios cercanos
+- Chimeneas BG con humo tenue funcional
+- Cielo limpio sin bandas geometricas de smog
+- Sistema de anclaje chimneys->parent building generalizado (isFg / isBg)
+
+### Estado del hito v0.9.0 - lo que quedo pendiente
+- Humo visualmente cuadrado (KI-05)
+- Nubes aun casi invisibles (revertidas a valores originales por bajo contraste vs efecto rectangulo)
+- Postes/faroles siguen ocultos (KI-03 sub-hito v0.7.3 aun activo)
+
+---
+
+## PROXIMO HITO PLANIFICADO (para el proximo chat)
+
+### Sub-hito A: v0.9.1 - Reactivar postes/faroles
+
+Objetivo: activar los faroles/postes que fueron ocultados en v0.7.1.
+
+Contexto: en v0.7.1 se ocultaron temporalmente porque flotaban en el vacio entre skyline y calle. Ahora el skyline tiene jerarquia visual y las chimeneas FG dan mejor anclaje. Momento adecuado para reintroducirlos.
+
+Archivo clave: VictorianSkyline.getLanternPositions() (actualmente retorna array vacio).
+
+Alcance:
+- Reactivar getLanternPositions con posiciones reales anclados a la calle (LivingAtmosphere.renderStreetLevel).
+- Adaptar tamano/densidad por escala GUI (menos postes en escala 4).
+- Farol con halo suave usando CandleLight.draw (ya existe el helper).
+
+Riesgo: bajo. Los postes viven en su propio helper, no tocan skyline ni cielo.
+
+Validacion: 4 escalas, comparacion pre/post.
+
+### Sub-hito B: v0.9.2 - Fix tecnica humo/nubes (KI-05)
+
+Objetivo: eliminar la apariencia cuadrada del humo y nubes.
+
+Alcance:
+- Reescribir renderSmokeGroup para usar drawSoftBlob (circulos suaves apilados) en vez de g.fill cuadrados.
+- Reescribir renderClouds para nubes con edges suaves (misma tecnica).
+- Considerar tambien mejorar la nube que tapa la luna en renderMoon.
+
+Archivos afectados: VictorianSkyline.java (renderSmokeGroup), AtmosphereRenderer.java (renderClouds, renderMoon).
+
+Riesgo: medio. Cambio de tecnica de dibujo, requiere validacion visual cuidadosa.
+
+Validacion: 4 escalas + comparacion con capturas de v0.9.0.
+
+### Orden sugerido
+
+1. Backup pre v0.9.1 (obligatorio, R-BACKUP).
+2. Sub-hito A completo -> v0.9.1 -> tag -> push.
+3. Backup pre v0.9.2.
+4. Sub-hito B completo -> v0.9.2 -> tag -> push.
+5. Si algo sale mal en B, rollback quirurgico (KI-05 puede quedar activa mas tiempo).
+
+---
+
+## Historial actualizado
+
+- v0.6.5 a v0.8.3: ver seccion Historial reciente arriba.
+- **v0.9.0**: Sub-hito visual. Profundidad del skyline (ventanas BG/FG diferenciadas), chimeneas ancladas a edificios (BG y FG), limpieza de artefactos geometricos en el cielo. Deuda tecnica: KI-05 (humo/nubes cuadrados).
+
+---
+
+## Reentrada rapida
+
+Si el usuario dice "arranquemos" en el proximo chat:
+1. Set-Location C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
+2. git status --short y git log --oneline -5
+3. Confirmar version en reloj (v0.9.0)
+4. Preguntar: Sub-hito A (postes) o Sub-hito B (fix humo/nubes) primero?
+5. Backup ANTES de tocar codigo.
