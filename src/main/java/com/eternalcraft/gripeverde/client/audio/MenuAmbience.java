@@ -28,7 +28,7 @@ import java.util.List;
  *   MenuAmbience.tick()
  *   MenuAmbience.isActive()
  *   MenuAmbience.setPocketWatchVisible(boolean)
- *   MenuAmbience.onSecondTick() â€” llamado por PocketWatchRenderer
+ *   MenuAmbience.onSecondTick() ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â llamado por PocketWatchRenderer
  */
 public class MenuAmbience {
 
@@ -79,19 +79,19 @@ public class MenuAmbience {
     private static final List<Entry>    RARE_LAYER   = new ArrayList<>();
 
     static {
-        BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_WIND, 0.06f));
-        BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_RAIN, 0.05f));
-        BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_CITY, 0.03f));
+        BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_WIND, 0.35f));
+        BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_RAIN, 0.30f));
+        BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_CITY, 0.20f));
 
-        EVENTS_LAYER.add(new Entry(ModSounds.MENU_FOOTSTEPS,          40, 0.04f, 0.90f, 1.10f));
-        EVENTS_LAYER.add(new Entry(ModSounds.MENU_WOOD_CREAK,         35, 0.05f, 0.85f, 1.15f));
-        EVENTS_LAYER.add(new Entry(ModSounds.MENU_DOOR,               15, 0.05f, 0.90f, 1.10f));
-        EVENTS_LAYER.add(new Entry(ModSounds.MENU_AMBIENT_OCCASIONAL, 10, 0.06f, 0.95f, 1.05f));
+        EVENTS_LAYER.add(new Entry(ModSounds.MENU_FOOTSTEPS,          40, 0.25f, 0.90f, 1.10f));
+        EVENTS_LAYER.add(new Entry(ModSounds.MENU_WOOD_CREAK,         35, 0.30f, 0.85f, 1.15f));
+        EVENTS_LAYER.add(new Entry(ModSounds.MENU_DOOR,               15, 0.35f, 0.90f, 1.10f));
+        EVENTS_LAYER.add(new Entry(ModSounds.MENU_AMBIENT_OCCASIONAL, 10, 0.30f, 0.95f, 1.05f));
 
-        RARE_LAYER.add(new Entry(ModSounds.MENU_BELL,    40, 0.09f, 0.95f, 1.05f));
-        RARE_LAYER.add(new Entry(ModSounds.MENU_THUNDER, 35, 0.10f, 0.95f, 1.05f));
-        RARE_LAYER.add(new Entry(ModSounds.MENU_CROWS,   15, 0.07f, 0.90f, 1.10f));
-        RARE_LAYER.add(new Entry(ModSounds.MENU_CHAIN,   10, 0.05f, 0.95f, 1.05f));
+        RARE_LAYER.add(new Entry(ModSounds.MENU_BELL,    40, 0.45f, 0.95f, 1.05f));
+        RARE_LAYER.add(new Entry(ModSounds.MENU_THUNDER, 35, 0.55f, 0.95f, 1.05f));
+        RARE_LAYER.add(new Entry(ModSounds.MENU_CROWS,   15, 0.40f, 0.90f, 1.10f));
+        RARE_LAYER.add(new Entry(ModSounds.MENU_CHAIN,   10, 0.30f, 0.95f, 1.05f));
     }
 
     private static boolean active = false;
