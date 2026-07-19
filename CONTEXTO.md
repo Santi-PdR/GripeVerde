@@ -11,7 +11,7 @@ necesaria para retomar el desarrollo sin repetir errores.
 - build.gradle: version = '0.9.2'
 - GripeVerdeMod.VERSION: "0.9.2"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
-- Ultimo tag publicado: v0.9.0
+- Ultimo tag publicado: v0.9.2
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
 

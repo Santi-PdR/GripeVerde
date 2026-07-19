@@ -5,7 +5,7 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.9.2** - Profundidad visual del skyline: ventanas del fondo diferenciadas de las cercanas, chimeneas ancladas a sus edificios y cielo liberado de artefactos geometricos. La ciudad ahora tiene perspectiva real.
+**v0.9.2** - Los faroles de gas vuelven a arder a lo largo de la avenida, apoyados con firmeza sobre el empedrado. El humo de las chimeneas y las nubes del cielo nocturno abandonan sus bordes cuadrados y se elevan en volutas suaves. La luna se oculta tras un velo redondo.
 
 ## Caracteristicas principales
 
@@ -13,7 +13,7 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 - Framework UI adaptativo con modo minimal automatico para pantallas pequenas.
 - Fondo atmosferico del Title con cielo nocturno, luna, lluvia, niebla ocre, skyline victoriano y calle mojada.
 - Calle decorativa adaptativa por escala (v0.7.0).
-- Postes/faroles temporalmente ocultos desde v0.7.1, reactivacion planificada para v0.9.1.
+- Faroles de gas reactivados en v0.9.1 con anclaje a la calle y densidad adaptativa por escala GUI.
 - Reloj de bolsillo animado con manecillas detenidas en 11:52, segundero mecanico con glitches, oscilacion pendular y tic-tac sincronizado con las marcas horarias.
 - Posters institucionales (Quarantine, Wanted: Patient Zero).
 - Firma easter egg de S. Pereira, MDCCCXCVII.

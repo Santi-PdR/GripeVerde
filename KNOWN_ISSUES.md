@@ -1,10 +1,10 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
-Ultima actualizacion: v0.9.0
+Ultima actualizacion: v0.9.2
 Estado: EN DESARROLLO
-Version estable actual: v0.9.0
-Ultimo tag publicado: v0.9.0
-Hitos recientes: v0.9.0 hito visual (skyline con jerarquia y chimeneas ancladas); KI-03 en progreso (postes pendientes v0.9.1); sistema de musica (v0.8.x) estable.
+Version estable actual: v0.9.2
+Ultimo tag publicado: v0.9.2
+Hitos recientes: v0.9.2 (fix humo/nubes, KI-05 cerrado); v0.9.1 (faroles reactivados, KI-03 cerrado); v0.9.0 hito visual del skyline; sistema de musica (v0.8.x) estable.
 
 ---
 
@@ -12,7 +12,7 @@ Hitos recientes: v0.9.0 hito visual (skyline con jerarquia y chimeneas ancladas)
 
 - Proyecto: Eternal Craft: Gripe Verde
 - Base: Minecraft Forge 1.20.1
-- Version desplegada: 0.9.0
+- Version desplegada: 0.9.2
 - Tipo: mod de interfaz + audio
 - Ambientacion: ciudad victoriana bajo cuarentena, Green Flu
 - Estado general: compilando limpio. Sistema de musica del Title estable (v0.8.x) y mejoras visuales aplicadas en v0.9.0 (skyline/jerarquia/chimeneas).
@@ -75,17 +75,12 @@ Accion: no modificar sin evidencia en logs.
 Sintoma: NVAPI + Embeddium + NVIDIA.
 Workaround: Windows + Shift + S.
 
-### KI-03 - Fondo del Title con defectos visuales (EN PAUSA)
-Estado actual (sin cambios desde v0.7.1):
+### KI-03 - Fondo del Title con defectos visuales (RESUELTO en v0.9.1)
 - Calle definida: RESUELTO en v0.7.0.
-- Postes/faroles flotantes: MITIGADO en v0.7.1 (ocultos temporalmente).
-- Vacio entre skyline FG y calle en escala 1: ACTIVO.
-- Skyline demasiado poblado / sin jerarquia: ACTIVO.
-- Luna solitaria sin nubes contextuales: ACTIVO.
-
-Decision vigente:
-- Sub-hito 3 (v0.7.2 = cerrar vacio skyline-calle) diferido tras completar hito v0.8.
-- Se retomara despues del sistema de musica.
+- Postes/faroles flotantes: RESUELTO en v0.9.1 (reactivados con anclaje a la calle, densidad por escala GUI).
+- Vacio entre skyline FG y calle: ATENUADO por jerarquia visual de v0.9.0.
+- Skyline demasiado poblado / sin jerarquia: RESUELTO en v0.9.0 (BG/FG diferenciados).
+- Luna solitaria: PARCIAL (nube que la tapa ya suave desde v0.9.2, contexto atmosferico mas rico pendiente).
 
 ### KI-04 - Incompatibilidad con ModernFix RegistryObjectMixin
 Sintoma: NullPointerException en RegistryObject.get() al hoverear botones.
@@ -213,19 +208,27 @@ Solucion: R-PATH2. Siempre Set-Location $repo al inicio de bloques con gradlew/g
 
 ## 7. Plan futuro inmediato
 
-- v0.9.1 (KI-03): Reactivar postes/faroles (adaptado por escala GUI).
-- v0.9.2 (KI-05): Redibujo tecnico de humo/nubes para evitar cuadrados (blobs suaves tipo drawSoftBlob).
+- v0.9.1: COMPLETADO (faroles reactivados).
+- v0.9.2: COMPLETADO (humo/nubes con blobs suaves, KI-05 cerrado).
 - (Opcional) v0.10.0: Persistencia del volumen en disco / mejoras de calidad de vida del sistema de musica.
+- Deuda visual pendiente: contexto atmosferico mas rico alrededor de la luna (nubes, halo mayor).
 
 ## 8. Estado tecnico
 
 - Repo local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 - Remoto: https://github.com/Santi-PdR/GripeVerde
 - Deploy: D:\Juegos\Minecraft\Instances\Test\mods
-- Ultimo tag: v0.8.3
+- Ultimo tag: v0.9.2
 - Build limpio.
 - Working tree esperado: limpio antes de proximas sesiones.
-### KI-05 (deuda tecnica v0.9.0)
-- Humo de chimeneas y nubes se renderizan como cuadrados obvios porque usan g.fill de rectangulos llenos.
-- Solucion futura: reescribir con blobs suaves estilo PaperTexture.drawSoftBlob (multiples circulos apilados con alpha degradado).
-- Prioridad: media. No rompe nada, solo estetica.
+### KI-05 (RESUELTO en v0.9.2)
+- Humo de chimeneas, nubes del skyline y nube frente a la luna se dibujaban como rectangulos por g.fill.
+- Solucion aplicada: AtmosphereRenderer.drawSoftBlob con 6 anillos concentricos y alpha cuadratico decreciente.
+- Nubes reducidas a 2 blobs con radio capado a 20px para evitar gasto excesivo en radios grandes.
+
+---
+
+## E43 - System.IO.File con ruta relativa
+
+Sintoma: [System.IO.File]::ReadAllText / WriteAllText con ruta relativa fallan si el CWD del proceso .NET no coincide con Set-Location de PowerShell (ocurre al abrir nueva instancia PS que arranca en C:\\Users\\<user>).
+Solucion: siempre pasar ruta absoluta con $PWD\\... explicito. Cubierto por R-DOTNET-PATH y R-CD.
