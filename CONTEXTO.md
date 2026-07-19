@@ -7,11 +7,11 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.9.2
-- build.gradle: version = '0.9.2'
-- GripeVerdeMod.VERSION: "0.9.2"
+- Version estable actual: v0.10.1
+- build.gradle: version = '0.10.1'
+- GripeVerdeMod.VERSION: "0.10.1"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
-- Ultimo tag publicado: v0.9.2
+- Ultimo tag publicado: v0.10.1
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
 
@@ -50,7 +50,7 @@ C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 
 - Local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 - Remoto: https://github.com/Santi-PdR/GripeVerde (privado)
-- Ultimo tag: v0.9.2
+- Ultimo tag: v0.10.1
 
 ## Rutas reales verificadas
 
@@ -226,6 +226,19 @@ Audio en Title:
 - R-ENCODING: Nunca hacer append textual iterativo a archivos con tildes; el encoding se degrada por cada round-trip. Usar placeholders ASCII ([[oacute]] etc.) y reinyeccion via [System.IO.File]::WriteAllText con UTF-8 sin BOM.
 - R-CHANGELOG: Tono narrativo de diario victoriano. No mencionar UI, sliders, opciones, ni tecnica. Hablar de la ciudad, el observador, la crónica.
 
+### Narrativa (R-DIEGETICO)
+- R-DIEGETICO: Toda narrativa de cara al usuario (CHANGELOG.md raiz, los 25 changelog/*.md in-game, README bloque "Version actual", parrafos descriptivos) debe estar escrita desde la voz del cronista victoriano. Prohibido mencionar: bloques, pixeles, cuadrados, rectangulos, angulos rectos, escalas GUI, sliders, opciones, config, disco, "el observador percibe que", comparaciones tipo "antes se veia mal / ahora bien", ajustes tecnicos, versiones anteriores del software. El cronista narra lo que ocurre esta noche en la ciudad, no un release note.
+- Verificacion rapida: si la frase suena a devlog de un videojuego, esta mal. Si suena a entrada de diario escrita a la luz de una vela, esta bien.
+
+### Cierre de hito (R-CIERRE)
+- R-CIERRE: Al cerrar cualquier hito (bump de version), es OBLIGATORIO actualizar en la misma sesion, antes de commit:
+  1. CONTEXTO.md (version, tag, addendum del hito, actualizar bloque "PROXIMO HITO PLANIFICADO")
+  2. CHANGELOG.md (raiz, entrada narrativa bajo R-DIEGETICO)
+  3. KNOWN_ISSUES.md (metadatos de version/tag, cerrar KIs resueltos, catalogar errores nuevos y reglas nuevas)
+  4. README.md (bloque "Version actual" con parrafo narrativo bajo R-DIEGETICO)
+  5. Los 25 changelog/*.md in-game bajo R-DIEGETICO (si el hito lo amerita)
+  Luego: commit + tag + push. NUNCA cerrar un chat con esos docs desincronizados del codigo.
+
 ---
 
 ## Errores clave a NO repetir
@@ -344,3 +357,53 @@ Riesgo: bajo.
 ### Candidato C: v0.11.0+ - Contenido de gameplay (Gripe Verde en si)
 Objetivo: primer sistema de gameplay real (enfermedad, sintomas, mecanica de cuarentena).
 Riesgo: alto. Requiere diseno previo.
+
+
+---
+## ADDENDUM v0.10.x (Hitos A + B cerrados)
+
+### v0.10.0 - Hito A: ChangelogScreen victoriano (KI-06 cerrado)
+- ChangelogScreen ahora dibuja el panel con PaperTexture.drawClean() (nueva variante sin wrinkles).
+- Wrinkles horizontales suprimidas dentro del panel para no confundirse con lineas de texto al scrollear.
+- Manchas, viñeta y bloodMist se mantienen: dan textura organica al pergamino.
+- Los 25 changelog/*.md fueron reescritos bajo R-DIEGETICO y guardados en UTF-8 puro (mata E37 en esa familia de archivos).
+- SlimButton y DiaryTheme no fueron modificados (ya cumplian).
+
+### v0.10.1 - Hito B: Persistencia del volumen de musica
+- Nueva clase com.eternalcraft.gripeverde.config.ClientConfig usando Forge ForgeConfigSpec.
+- Registrada en GripeVerdeMod como ModConfig.Type.CLIENT con filename gripeverde-client.toml.
+- MenuMusic.getUserVolume() hace lazy-load desde config en primera lectura.
+- MenuMusic.setUserVolume() persiste inmediatamente en disco via .set() + .save().
+- Fix aplicado sobre uso interno: los calculos de baseVol usan getUserVolume() (no acceso directo al campo).
+- MusicVolumeSlider no requirio cambios (ya llamaba a setUserVolume).
+
+### Errores nuevos catalogados
+
+- **E44**: PowerShell -replace con regex greedy sobre CHANGELOG.md inserto las entradas nuevas antes de cada `## Version x.y.z` (multi-match). Solucion: usar .Replace() literal con un ancla exacta y unica (ej: la primera aparicion de "## Version 0.9.2"), no regex. Verificar `$anchorCount == 1` antes de reemplazar.
+- **E45**: Get-Content en PowerShell 5 muestra UTF-8 con mojibake en consola aunque el archivo en disco este correcto. Verificar siempre con [System.IO.File]::ReadAllText + Encoding.UTF8 y byte scan, no con Get-Content directo.
+
+### Reglas nuevas catalogadas
+
+- **R-DIEGETICO**: (ver seccion "Reglas vigentes" arriba). Formalizada tras detectar textos en el ChangelogScreen v0.9.2 que mencionaban "bloques oscuros" y "rectangulos torpes".
+- **R-CIERRE**: (ver seccion "Reglas vigentes" arriba). Formalizada tras notar que hitos previos dejaban docs desincronizados.
+- **R-REGEX-INSERT**: Nunca usar -replace con regex greedy para insertar bloques en documentos con varias secciones similares. Usar .Replace() literal + ancla unica verificable.
+
+### KI-06 (RESUELTO en v0.10.0)
+- ChangelogScreen ya no usa UI vanilla; luce sobre pergamino con textura y contenido diegetico.
+
+---
+## PROXIMO HITO PLANIFICADO (revisado tras v0.10.1)
+
+### Candidato C: v0.11.0+ - Contenido de gameplay (Gripe Verde en si)
+Objetivo: primer sistema de gameplay real (enfermedad, sintomas, mecanica de cuarentena).
+Riesgo: alto. Requiere diseno previo escrito.
+
+### Candidato D: v0.10.2 - Mejoras visuales del Title pendientes
+Objetivo: contexto atmosferico mas rico alrededor de la luna (halo, jirones de nube que la crucen).
+Riesgo: bajo. Toca solo LivingAtmosphere/AtmosphereRenderer.
+
+### Candidato E: v0.10.2 alternativo - Persistir mas opciones del usuario
+Objetivo: extender ClientConfig con volumenes de MenuAmbience (wind/rain/city separados), o un toggle "silenciar ambiente".
+Riesgo: bajo. Reutiliza el framework de v0.10.1.
+
+Decision pendiente para proxima sesion.

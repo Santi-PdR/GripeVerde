@@ -5,7 +5,9 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.9.2** - La ciudad respira mejor esta noche. Los faroles de gas han sido reinstalados a lo largo de la avenida, sus llamas titilan bajo las cupulas de vidrio y devuelven al empedrado un reflejo dorado que hacia tiempo faltaba. El hollin de las chimeneas ya no se recorta contra el cielo como bloques torpes: sube en volutas suaves, se disuelve en la bruma, y las nubes que lo acompanan han perdido sus angulos rectos. Todo lo que ocurre en el firmamento se comporta, por fin, como debe.
+**v0.10.1** - El diario recuerda con que fuerza se le pidio por ultima vez que sonara la calle, y respeta ese ajuste al reabrirlo. Un pequeño acto de cortesia hacia quien lo consulta.
+
+**v0.10.0** - Las paginas del historial lucen por fin como deben: fibra de pergamino autentica bajo los dedos, manchas de vela y de tinta antigua, el peso de un documento oficial. Las cronicas mismas han sido reescritas, depuradas de expresiones impropias de un cronista de calle.
 
 ## Caracteristicas principales
 

@@ -1,5 +1,7 @@
 package com.eternalcraft.gripeverde.client.audio;
 
+
+import com.eternalcraft.gripeverde.config.ClientConfig;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.sounds.SoundEvent;
@@ -26,6 +28,7 @@ public class MenuMusic {
 
     // Volumen base del usuario (0.0 - 1.0), ajustado por el slider.
     private static float userVolume = 0.4f;
+    private static boolean volumeLoadedFromConfig = false;
     private static final float MAX_VOLUME = 0.8f;
 
     // Duraciones reales de cada pista (ms)
@@ -74,10 +77,27 @@ public class MenuMusic {
     private static int shuffledPos = 0;
 
     // === API publica ===
-    public static float getUserVolume() { return userVolume; }
+    public static float getUserVolume() {
+        if (!volumeLoadedFromConfig) {
+            try {
+                userVolume = ClientConfig.MUSIC_VOLUME.get().floatValue();
+                volumeLoadedFromConfig = true;
+            } catch (Exception ignored) {
+                // Config aun no cargada; devolvemos el default
+            }
+        }
+        return userVolume;
+    }
 
     public static void setUserVolume(float v) {
         userVolume = Math.max(0f, Math.min(1f, v));
+        volumeLoadedFromConfig = true;
+        try {
+            ClientConfig.MUSIC_VOLUME.set((double) userVolume);
+            ClientConfig.MUSIC_VOLUME.save();
+        } catch (Exception ignored) {
+            // Config aun no cargada; se persistira en el proximo cambio
+        }
         // El volumen se aplicara en el proximo tick, sin cortar.
     }
 
@@ -200,7 +220,7 @@ public class MenuMusic {
     // === Internos ===
 
     private static void updateVolumes(long now) {
-        float baseVol = userVolume * MAX_VOLUME;
+        float baseVol = getUserVolume() * MAX_VOLUME;
 
         // Calcular factor de ducking (0.0 - 1.0, donde 1.0 = normal)
         float duckMultiplier = computeDuckMultiplier(now);
@@ -309,7 +329,7 @@ public class MenuMusic {
         if (mc == null) return;
 
         try {
-            float baseVol = userVolume * MAX_VOLUME;
+            float baseVol = getUserVolume() * MAX_VOLUME;
             currentInstance = new FadingMusicInstance(se, baseVol, TRACK_DURATIONS_MS[currentIndex]);
             mc.getSoundManager().play(currentInstance);
 

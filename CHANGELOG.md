@@ -1,6 +1,27 @@
 # Eternal Craft: Gripe Verde
 ## Notas de Actualización
 
+## v0.10.1 — La memoria de la mano
+
+Hasta ahora, cada vez que el observador volvía al diario, la ciudad recuperaba su voz al mismo volumen invariable, como si nadie hubiera tocado nunca la clavija. Esta noche eso ha cambiado. El diario recuerda con qué fuerza se le pidió por última vez que sonara la calle, y respeta ese ajuste al reabrirlo. Un pequeño acto de cortesía hacia quien lo consulta.
+
+### Del diario
+- El diario conserva el volumen elegido para el rumor de la ciudad.
+- Ya no vuelve al valor de fábrica al cerrarse la vigilia.
+
+---
+
+## v0.10.0 — El diario se viste con la solemnidad que merece
+
+Durante semanas, las páginas dedicadas al historial de la ciudad tuvieron un aspecto pobre, como notas garabateadas en el reverso de un sobre. Esta noche por fin lucen como deben: fibra de pergamino auténtica bajo los dedos, manchas de vela y de tinta antigua, el peso de un documento oficial. Además, las crónicas mismas han sido reescritas. Antes se colaban en ellas expresiones extrañas, propias de un ingeniero de gabinete y no de un cronista de calle. Han sido depuradas. Ahora todo lo que se lee en el diario es lo que el ojo, la niebla y el gas verían.
+
+### Del diario
+- El historial luce sobre pergamino con textura y viñeta.
+- Se han eliminado descripciones impropias de un caballero observador.
+- Las crónicas antiguas han sido reescritas en un tono más fiel a la ciudad.
+
+---
+
 ## Versión 0.9.2
 
 **El humo ya no corta el cielo.**

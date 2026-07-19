@@ -18,6 +18,15 @@ public final class PaperTexture {
         drawBloodMist(g, x, y, w, h);
     }
 
+    /** Variante sin wrinkles: para paneles con contenido scrolleable donde
+     *  las lineas horizontales se confunden con el texto. */
+    public static void drawClean(GuiGraphics g, int x, int y, int w, int h) {
+        g.fill(x, y, x + w, y + h, DiaryTheme.PAPER);
+        drawVignette(g, x, y, w, h);
+        drawStains(g, x, y, w, h);
+        drawBloodMist(g, x, y, w, h);
+    }
+
     /** Fondo bloody: menos salpicaduras y mas chicas para no lagear. */
     public static void drawBloody(GuiGraphics g, int x, int y, int w, int h) {
         draw(g, x, y, w, h);

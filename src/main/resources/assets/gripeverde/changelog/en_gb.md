@@ -1,16 +1,29 @@
 # Eternal Craft: Gripe Verde
-## Notas de Actualización
+## Update Notes
+
+## Version 0.10.0
+
+**The diary takes on the solemnity it deserves.**
+
+I spent the afternoon retouching the edges of these pages. They are no longer mere loose papers; now the grain of the parchment is felt under the fingertips, and the frame enclosing my notes has the firmness of an official document. Even the texts seem to have found their definitive voice, stripped of strange technicalities that blurred the chronicle. A sick city is not described with engineers' measurements, but with the truth of what the eye perceives while walking.
+
+### From the journal
+- Past chronicles have been rewritten with a tone truer to reality.
+- The diary paper now shows its legitimate texture and weight.
+- Terms improper for an observant gentleman have been removed.
+
+---
 
 ## Version 0.9.2
 
-**The smoke no longer cuts the sky.**
+**The air, at last, breathes.**
 
-Until recently, the plumes rising from the chimneys looked cut with scissors: dark blocks hanging between the rooftops, more fitting for a rushed backdrop than for the heavy air of a living city. Tonight the soot behaves as it should. It climbs in soft curls, dissolves into the mist, and the clouds that drift beside it have lost their right angles. The moon, when the time comes, hides behind a round veil and no longer behind a clumsy rectangle.
+Last night I paused for a moment at the small window. The smoke from the chimneys rose in slow plumes, dissolving into the mist before reaching the neighboring rooftops; the clouds, beyond, crossed the sky with the slowness of a heavy night. The moon appeared halfway, wrapped in a thin halo, and hid again behind a shred of fog. Nothing in the sky felt out of place. Everything obeyed the invisible hand that orders these things.
 
 ### From the journal
-- Chimney smoke rises with soft, natural shapes.
-- The clouds of the night sky have lost their square edges.
-- The veil that covers the moon dissolves with delicacy.
+- Chimney smoke ascends smoothly, dissolving into the air.
+- Clouds cross the firmament with natural and slow shapes.
+- The moon is covered with veils of mist, as befits the season.
 
 ---
 
@@ -18,12 +31,12 @@ Until recently, the plumes rising from the chimneys looked cut with scissors: da
 
 **The lanterns burn again.**
 
-For months, the avenue has remained in shadow: the gas lamps were removed for repairs that never ended, and only the murky light escaping from the windows reached the cobblestones. Tonight the workers have returned. The wrought-iron posts stand once again in their places, one after another along the street, and their flames flicker beneath the glass domes. The puddles on the wet pavement give back a golden reflection that had been missing for too long.
+After months of uncertainty and streets in twilight, the workers have finally returned. I watched as they reinstalled the wrought-iron posts along the avenue, one after another, returning to the pavement that golden reflection I missed so much. Now the flames flicker under the glass domes with firmness, anchored to the ground, defying the fog that devours everything.
 
 ### From the journal
-- The gas lanterns have been reinstalled along the avenue.
-- Their flames rest firmly on the stone, no longer floating in the air.
-- The number of lanterns adjusts discreetly to the observer's eye.
+- Gas lanterns have been reinstalled along the main avenue.
+- Their flames rest firmly upon the stone, illuminating the puddles.
+- The lighting extends as far as the observer's eye can reach.
 
 ---
 
@@ -31,166 +44,9 @@ For months, the avenue has remained in shadow: the gas lamps were removed for re
 
 **The city has gained depth.**
 
-Looking out from the study window, something has changed on the horizon. The lights burning in distant buildings no longer compete with those flickering behind nearby glass: they have become timid points, as if aware of their distance and unwilling to intrude. The chimneys, in turn, have found their proper place at last. They crown the rooftops with firmness, and their plumes of soot rise straight into the heavy sky.
-
-The air has also cleared of those strange grey bands that once crossed the firmament without reason. Only the legitimate haze remains, the one that always belonged to this ailing city.
-
-### From the diary
-- Distant building windows now look different from nearby ones: real depth.
-- Chimneys are anchored to their buildings; no more floating in the void.
-- The sky has been cleared of artifacts that did not belong to it.
-
----
-
-## Versión 0.8.3
-
-**Hay silencios que se guardan por respeto.**
-
-Cuando las campanas de la parroquia doblan a lo lejos, cuando un trueno hiende el cielo o cuando los cuervos alzan vuelo entre los tejados, la música de la ciudad se aparta con discreción. No calla del todo; sólo baja la voz, como quien se descubre la cabeza al paso de un cortejo, y espera. Cuando el presagio se disuelve en la niebla, la melodía regresa al primer plano sin prisa.
-
-También los hilos de la memoria se han vuelto más firmes. Aunque se aparte la mirada del diario un instante o se busquen otros apuntes, la canción de la ciudad ya no se interrumpe sin motivo. Persiste, acompañando al observador en su vigilia.
-
-### Del diario
-- La música se aparta ante las campanas, los truenos y el vuelo de los cuervos.
-- El lamento de la ciudad persiste a través de las páginas.
-- Se detiene sólo cuando el deber llama a salir al mundo.
-
----
-
-## Versión 0.8.2
-
-**Las melodías se entrelazan sin quiebre.**
-
-Antes, cuando una pieza terminaba, el silencio caía de golpe. Ahora es distinto. Antes de que una melodía se apague del todo, la siguiente ya comienza a susurrar por debajo. Ambas conviven unos segundos como dos voces en un mismo cuarto, hasta que una se despide y la otra llega. La costura no se nota.
-
-### Del diario
-- Transiciones suaves entre las canciones de la noche.
-- Sin cortes bruscos ni silencios prolongados.
-
----
-
-## Versión 0.8.1
-
-**Ahora puedes decidir cuánto quieres oír.**
-
-No todos los oídos son iguales. Se ha dispuesto un pequeño control para que quien lee decida con qué fuerza le llega el lamento de la ciudad. Puede acallarlo si el momento pide calma, o dejar que vuele libre si el ánimo lo permite. El ajuste es inmediato y la melodía se acomoda al instante, obedeciendo la mano.
-
----
-
-## Versión 0.8.0
-
-**La ciudad ha encontrado su canción.**
-
-Durante mucho tiempo, la calle sólo hablaba con sus propios ruidos: el viento, la lluvia y el eco de los que caminan. Pero ahora, de alguna parte que no podemos señalar, ha llegado la música. Cuatro melodías se turnan en la noche, mezclándose con la tormenta sin taparla. Es la primera vez que este diario tiene una voz que lo acompaña.
-
----
-
-## Versión 0.7.1
-
-**Las farolas se apagan por prudencia.**
-
-Los viejos postes de gas ya no alumbran la calle del diario. Su luz, antes suspendida sobre un suelo incierto, confundía más de lo que guiaba. Por ahora han sido apagados. No han sido retirados de la ciudad; sólo esperan a que las calles tengan cimientos suficientes para sostenerlos. Es mejor una calle oscura que una mentira iluminada.
-
----
-
-## Versión 0.7.0
-
-**La calle vuelve a existir.**
-
-Bajo la niebla ocre y la lluvia constante, la ciudad recupera algo que parecía perdido: una superficie bajo los pies. No es una avenida clara ni una plaza orgullosa. Es una calle oscura, húmeda, apenas sugerida por adoquines y reflejos. Pero basta. Por primera vez en mucho tiempo, la vista ya no cae al vacío.
-
----
-
-## Versión 0.6.5
-
-**La ventana ya no castiga la mirada que se aparta.**
-
-Se corrigieron los males que hacían tambalear el diario al minimizar la ventana o al apartar el foco de ella. Ahora puede quedar en segundo plano sin precipitar la sesión al desastre.
-
----
-
-## Versión 0.6.2
-
-**El reloj respira.**
-
-Aquel viejo reloj de bolsillo, que durante tanto tiempo pareció un mero adorno, ahora late con un pulso mecánico suave. Cada cinco segundos, cuando el segundero alcanza una de las marcas negras, un chasquido discreto llega al oído, como si el mecanismo, largo tiempo olvidado, hubiese recordado cómo trabajar.
-
-### Un mecanismo vivo
-- El segundero tickea en perfecta armonía con sus fallos.
-- El reloj de bolsillo sólo suena cuando está a la vista. En las ventanas más pequeñas, descansa en silencio.
-
----
-
-## Versión 0.6.1
-
-**Algo se mueve sobre el escritorio.**
-
-El reloj de bolsillo ha dejado de ser un retrato inmóvil. Ahora cuelga de una cadena larga que desciende desde el mismísimo borde superior del diario, y oscila con un lento pulso pendular, como si una corriente oculta lo acariciase.
-
-Su segundero avanza con precisión mecánica, pero no siempre. De cuando en cuando tropieza: a veces se demora en una marca más de lo debido, a veces salta hacia adelante sin aviso, a veces retrocede un tiempo antes de continuar.
-
----
-
-## Versión 0.6.0
-
-**La crónica cierra un capítulo y abre el siguiente.**
-
-El diario ha sido puesto en orden. Cada página, cada adorno, cada sonido: revisado y sellado. Lo que estaba disperso ahora está encuadernado.
-
----
-
-## Versión 0.5.7
-
-**Un reloj se detuvo a las once y cincuenta y dos.**
-
-En la esquina superior derecha del diario ha aparecido un viejo reloj de bolsillo. Sus manecillas de bronce marcan siempre la misma hora: el instante en que todo se detuvo.
-
-### La ciudad respira mejor
-- El diario ahora se ajusta con más gracia a cualquier ventana.
-- Los avisos oficiales y el aviso de recompensa encuentran su lugar sin estorbar.
-- En pantallas más pequeñas, las páginas se simplifican por sí solas, mostrando sólo lo esencial.
-
----
-
-## Versión 0.5.0
-
-**El diario recuerda cada paso del camino.**
-
-Ahora podrás consultar el historial completo de novedades directamente desde el menú principal. Un discreto símbolo aparece en la esquina superior derecha, esperando ser descubierto.
-
----
-
-## Versión 0.4.4
-
-**La ciudad ha cobrado vida.**
-
-Las calles ya no permanecen en silencio. Al asomarte al menú principal podrás oír el pulso de una urbe atrapada por la Gripe Verde.
-
-### Voces de la ciudad
-- El viento recorre las callejuelas empedradas.
-- La lluvia repica sobre los adoquines.
-- Un murmullo distante se alza desde los tejados.
-- Las campanas de la iglesia repican sin razón aparente.
-- Un trueno rompe el cielo cargado de humo.
-- Los cuervos anuncian lo que nadie quiere ver.
-
----
-
-## Versión 0.2.5
-
-**El diario luce más vivo que nunca.**
-
-Las páginas han sido restauradas con esmero. Cada detalle busca transmitir la atmósfera de una ciudad en tinieblas.
-
-- Las velas iluminan con un halo cálido y tembloroso.
-- Las manchas de sangre se muestran con crudeza sobre el papel.
-- Los sellos de cera lucen con relieve y sombra.
-- El papel envejecido cubre las páginas sin cortes ni bordes.
-
----
-
-## Versión 0.1.0
-
-**Todo comienza aquí.**
-
-La ciudad despierta bajo las primeras señales de la Gripe Verde. El diario abre su cubierta por primera vez.
+Looking toward the horizon, something has changed. The lights from distant buildings no longer compete with those burning nearby: they have become timid points, veiled by the distance. The chimneys, for their part, have finally found their place, crowning the rooftops with the firmness of that which is well-built. The air has cleared of those strange shadows that previously crossed the sky without reason.
+
+### From the journal
+- Distant buildings fade into the mist more naturally.
+- Chimneys have been correctly fixed to their roofs.
+- The sky has been cleared of inexplicable anomalies.
