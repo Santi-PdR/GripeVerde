@@ -3,71 +3,70 @@
 
 ## Version 0.8.3
 
-**The music steps aside when the city speaks.**
+**Some silences are kept out of respect.**
 
-When distant bells toll, when thunder splits the sky, when the crows take flight â€” the menu music steps aside with discretion. It does not fall silent; it only lowers its voice so that the omens may be heard clearly. Once the moment passes, the melody returns softly to the fore.
+When the parish bells toll in the distance, when a thunderclap breaks the stillness of the sky, or when the crows take flight above the rooftops, the music of the city steps aside. It does not fall silent entirely. It only lowers its voice, like one who bares his head at the passing of a funeral procession, and waits. Once the omen dissolves into the mist, the melody returns to the fore without haste.
 
-Transitions were also polished: entering a world, leaving a server, opening Options, changing scale â€” the music no longer cuts or restarts without reason.
+The transitions of memory have also grown more faithful: closing the diary, opening it again, looking away for a moment. The song of the city is no longer interrupted by such gestures.
 
-### Menu music system (phase 3)
-- Automatic ducking when bells, thunder, chains, or crows sound.
-- The music survives opening Options and subscreens.
-- Upon entering a world, the music stops on its own. Upon returning, it starts again.
-- Internal compilation fix (duplicated variable).
+### From the diary
+- The music steps aside for bells, thunder, chains, and crows.
+- It returns softly once the omen has passed.
+- It persists through the pages, uninterrupted by leafing.
 
 ---
 
 ## Version 0.8.2
 
-**The melodies link together without breaking.**
+**One melody yields to the next without a break.**
 
-When one piece ends, the next is already beginning to peek out. Both cross for a few seconds â€” one bidding farewell, another arriving â€” and the transition becomes a breath rather than a leap.
+Before, when a piece ended, silence would fall, and then, after a pause, another would begin. It is different now. Before the first fades, the next is already whispering underneath, and both share the room for a few seconds like two voices in the same chamber. One takes its leave. The other arrives. The seam does not show.
 
-### Menu music system (phase 2)
-- Smooth four-second crossfade between consecutive tracks.
-- No abrupt cuts, no prolonged silences.
-- Internal system rewritten to support two simultaneous instances.
+### From the diary
+- The melodies weave together at the end of each piece.
+- Four seconds where both play at once, until the newcomer prevails.
+- No abrupt cuts, no gaps of silence.
 
 ---
 
 ## Version 0.8.1
 
-**The volume of the music now responds to your hand.**
+**Now you may regulate how much you wish to hear.**
 
-A new control has appeared on the Options screen, discreet, at the foot of the page. There you may adjust the volume of the menu music without leaving the game, and the melody will respond in real time â€” without cuts, without restarts.
+Not all ears are alike, nor does every moment call for the same intensity. A small control has been arranged, by which the reader may decide the strength with which the music of the city reaches him. He may silence it altogether if the moment asks for stillness, or leave it in full flight if his spirit will bear it.
 
-### Menu music system (phase 1)
-- "Menu Music" slider on the Options screen.
-- Real-time adjustment from 0% to 100%.
-- Safe position for all interface scales.
+The adjustment responds at once. Nothing needs to be closed, nothing restarted. The melody accommodates itself as it plays, obeying the hand.
+
+### From the diary
+- Control over the intensity of the city's music.
+- Immediate adjustment, without interruption.
 
 ---
 
 ## Version 0.8.0
 
-**The city has a soundtrack.**
+**The city has found its song.**
 
-Four melodies have arrived in the main menu. They play in random order, one after another, mingling with the wind and the rain without covering them. When one ends, another follows after a brief silence.
+For a long time, the street spoke only with its own noises: the wind through the alleys, the rain upon the cobbles, the distant murmur of those who still walk. It was enough, but something was missing. Now, from somewhere that cannot be precisely pointed at, the music has arrived. Four melodies, perhaps escaped from a tavern, perhaps composed by someone who is no longer here, take their turns through the night.
 
-It is the first time the diary has its own music.
+They play in an order that no one decides beforehand. When one ends, after a brief silence, another takes its place. They mingle with the rain and the wind without covering them. It is the first time this diary has had a companion of its own.
 
-### Menu music system (phase 0)
-- Four ambient music tracks integrated into the Title.
-- Random sequential playback (shuffle).
-- Moderate default volume, coexistence with existing ambient sounds.
-- Prepared for expansion: slider, crossfade, ducking (next versions).
+### From the diary
+- Four melodies that alternate at random through the night.
+- They live alongside the sounds of the street, not in their place.
+- Arranged so that none repeats until the cycle is spent.
 
 ---
 ## Version 0.6.2
 
 **The clock breathes.**
 
-That old pocket watch, which for so long seemed a mere ornament, now beats with a soft mechanical pulse. Every five seconds, when its second hand reaches one of the black marks, a discreet click reaches the ear â€” as if the mechanism, long forgotten, remembered how to work.
+That old pocket watch, which for so long seemed a mere ornament, now beats with a soft mechanical pulse. Every five seconds, when its second hand reaches one of the black marks, a discreet click reaches the ear Ã¢â‚¬â€ as if the mechanism, long forgotten, remembered how to work.
 
 The sound is barely audible. A whisper of brass and gears. But once you notice it, you cannot ignore it: time has resumed its march.
 
 ### A living mechanism
-- The second hand ticks in perfect harmony with its glitches â€” when it stumbles, the sound falls silent.
+- The second hand ticks in perfect harmony with its glitches Ã¢â‚¬â€ when it stumbles, the sound falls silent.
 - The pocket watch only sounds when it is visible. On the smallest windows, it rests in silence.
 
 ---
@@ -78,7 +77,7 @@ The sound is barely audible. A whisper of brass and gears. But once you notice i
 
 The pocket watch has ceased to be a still portrait. Now it hangs from a long chain that descends from the very upper edge of the diary, and swings with a slow pendular breath, as if a hidden draft caressed it.
 
-Its second hand advances with mechanical precision â€” but not always. Every so often it stumbles: sometimes it lingers on a mark longer than it should, sometimes it leaps forward without warning, sometimes it retreats a beat before continuing. The time in this city, it seems, is also sick.
+Its second hand advances with mechanical precision Ã¢â‚¬â€ but not always. Every so often it stumbles: sometimes it lingers on a mark longer than it should, sometimes it leaps forward without warning, sometimes it retreats a beat before continuing. The time in this city, it seems, is also sick.
 
 A diagonal gleam slides slowly across the crystal, as if a lamp far away were passing before it.
 
@@ -88,7 +87,7 @@ A diagonal gleam slides slowly across the crystal, as if a lamp far away were pa
 
 **The chronicle closes one chapter and opens the next.**
 
-The diary has been set in order. Every page, every ornament, every sound â€” reviewed and sealed. What was scattered is now bound.
+The diary has been set in order. Every page, every ornament, every sound Ã¢â‚¬â€ reviewed and sealed. What was scattered is now bound.
 
 The pages now read whole: the longer paragraphs no longer break at the margin. Each line finds its place upon the sheet.
 
@@ -98,7 +97,7 @@ The pages now read whole: the longer paragraphs no longer break at the margin. E
 
 **A clock stopped at eleven fifty-two.**
 
-A pocket watch has appeared in the upper right corner of the diary. Its bronze hands always mark the same hour â€” the instant when everything stopped.
+A pocket watch has appeared in the upper right corner of the diary. Its bronze hands always mark the same hour Ã¢â‚¬â€ the instant when everything stopped.
 
 Below the watch, carved in small letters, the chronicle you carry with you.
 
