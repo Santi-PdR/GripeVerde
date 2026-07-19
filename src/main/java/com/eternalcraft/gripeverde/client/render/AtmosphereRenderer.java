@@ -11,8 +11,8 @@ import org.joml.Matrix4f;
 public class AtmosphereRenderer {
 
     private static float time = 0f;
-    private static final float[] CLOUD_OFFSETS = {0f, 0f, 0f, 0f, 0f};
-    private static final float[] CLOUD_SPEEDS  = {0.008f, 0.005f, 0.012f, 0.007f, 0.009f};
+    private static final float[] CLOUD_OFFSETS = {0f, 0f, 0f, 0f, 0f, 0f, 0f};
+    private static final float[] CLOUD_SPEEDS  = {0.008f, 0.005f, 0.012f, 0.007f, 0.009f, 0.003f, 0.004f};
     private static float moonGlowPulse = 0f;
 
     public static void tick(float deltaTime) {
@@ -88,6 +88,7 @@ public class AtmosphereRenderer {
             {0.22f, 0.07f, 0.1f,  0.50f, 0.65f},
             {0.12f, 0.05f, 0.7f,  0.35f, 0.55f},
         };
+        int cloudColor = 0x001A0F08;
         for (int i = 0; i < clouds.length; i++) {
             int y1    = (int)(h * clouds[i][0]);
             int y2    = (int)(h * (clouds[i][0] + clouds[i][1]));
@@ -95,10 +96,10 @@ public class AtmosphereRenderer {
             int x2    = xBase + (int)(w * clouds[i][3]);
             float pulse = (float)(Math.sin(time * 0.3f + i * 1.3f) * 0.1f + clouds[i][4]);
             int alpha = Math.max(0, Math.min(255, (int)(pulse * 180)));
-            g.fill(xBase, y1, x2, y2, withAlpha(0x001A0F08, alpha));
+            g.fill(xBase, y1, x2, y2, withAlpha(cloudColor, alpha));
             int edgeAlpha = alpha / 3;
-            g.fill(xBase - 15, y1 - 3, x2 + 15, y1 + 4, withAlpha(0x001A0F08, edgeAlpha));
-            g.fill(xBase - 10, y2 - 4, x2 + 10, y2 + 3, withAlpha(0x001A0F08, edgeAlpha));
+            g.fill(xBase - 15, y1 - 3, x2 + 15, y1 + 4, withAlpha(cloudColor, edgeAlpha));
+            g.fill(xBase - 10, y2 - 4, x2 + 10, y2 + 3, withAlpha(cloudColor, edgeAlpha));
         }
     }
 

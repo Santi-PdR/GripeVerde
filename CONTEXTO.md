@@ -7,9 +7,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.8.3
-- build.gradle: version = '0.8.3'
-- GripeVerdeMod.VERSION: "0.8.3"
+- Version estable actual: v0.9.0
+- build.gradle: version = '0.9.0'
+- GripeVerdeMod.VERSION: "0.9.0"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.8.3
 - Working tree esperado al retomar: limpio
@@ -23,7 +23,8 @@ necesaria para retomar el desarrollo sin repetir errores.
 - v0.8.0: Sistema de musica del Title (playback base + fixes criticos: E32, E33, KI-04).
 - v0.8.1: Slider de volumen en OptionsScreen.
 - v0.8.2: Crossfade entre pistas.
-- v0.8.3: Ducking automatico + persistencia entre pantallas.
+- v0.8.3: Ducking automatico
+- v0.9.0: Profundidad de skyline (ventanas BG/FG) + anclaje de chimeneas + limpieza de cielo. automatico + persistencia entre pantallas.
 - Post v0.8.3: fixes de persistencia (idempotencia, auto-stop, auto-recovery), ajuste de volumenes ambientales, reescritura completa de changelogs con tono narrativo de diario.
 
 ## KI-03 esta en pausa
