@@ -1,6 +1,11 @@
 # Eternal Craft: Gripe Verde
 ## Update Notes
 
+## Version 0.10.4 — The Moon's Halo
+
+Tonight the moon has gained a faint halo, as if the steam from the boilers and the dampness of the Thames were clinging to it. Three thin wisps slowly cross it, without completely obscuring it.
+
+
 ## Version 0.10.0
 
 **The diary takes on the solemnity it deserves.**
