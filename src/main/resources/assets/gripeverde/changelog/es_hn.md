@@ -1,6 +1,9 @@
 # Eternal Craft: Gripe Verde
 ## Notas de Actualización
 
+## Version 0.11.0
+El gabinete de ajustes tambien luce ahora sobre pergamino. La ciudad sigue viva detras del panel mientras uno acomoda lo que necesite acomodar.
+
 ## Versión 0.10.4 — El Halo de la Luna
 
 Esta noche la luna ha ganado un halo tenue, como si el vapor de las calderas y la humedad del Támesis se le pegaran alrededor. Tres jirones finos la cruzan lentamente, sin llegar a taparla del todo.

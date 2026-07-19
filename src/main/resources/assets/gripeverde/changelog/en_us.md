@@ -1,6 +1,9 @@
 # Eternal Craft: Gripe Verde
 ## Update Notes
 
+## Version 0.11.0
+The cabinet of settings now shows itself on parchment as well. The city keeps breathing behind the panel while one arranges what needs arranging.
+
 ## Version 0.10.4 — The Moon's Halo
 
 Tonight the moon has gained a faint halo, as if the steam from the boilers and the dampness of the Thames were clinging to it. Three thin wisps slowly cross it, without completely obscuring it.
