@@ -9,6 +9,7 @@ public class LivingAtmosphere {
 
     private static float time = 0f;
     private static int[][] lanternPositions = null;
+    private static int lastLanternW = 0, lastLanternH = 0;
 
     private static final float[] FOG_OFFSETS = {0f, 0f, 0f};
     private static final float[] FOG_SPEEDS  = {0.3f, 0.2f, 0.25f};
@@ -131,8 +132,9 @@ public class LivingAtmosphere {
     }
 
     public static void renderStreetLevel(GuiGraphics g, int w, int h) {
-        if (lanternPositions == null) {
+        if (lanternPositions == null || w != lastLanternW || h != lastLanternH) {
             lanternPositions = VictorianSkyline.getLanternPositions(w, h);
+            lastLanternW = w; lastLanternH = h;
         }
         renderStreet(g, w, h);
         renderGroundFog(g, w, h);

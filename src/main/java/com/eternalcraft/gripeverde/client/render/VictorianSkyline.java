@@ -253,6 +253,28 @@ public class VictorianSkyline {
     }
 
     public static int[][] getLanternPositions(int w, int h) {
-        return new int[0][0];
+        int streetTop;
+        float[] xs;
+        if (h >= 800) {
+            streetTop = (int)(h * 0.839f);
+            xs = new float[]{0.09f, 0.24f, 0.40f, 0.57f, 0.73f, 0.89f};
+        } else if (h >= 400) {
+            streetTop = (int)(h * 0.841f);
+            xs = new float[]{0.12f, 0.30f, 0.49f, 0.69f, 0.87f};
+        } else if (h >= 260) {
+            streetTop = (int)(h * 0.844f);
+            xs = new float[]{0.16f, 0.40f, 0.66f, 0.86f};
+        } else {
+            streetTop = (int)(h * 0.848f);
+            xs = new float[]{0.22f, 0.50f, 0.80f};
+        }
+
+        int[][] positions = new int[xs.length][2];
+        for (int i = 0; i < xs.length; i++) {
+            int lx = Math.max(8, Math.min(w - 8, (int)(w * xs[i])));
+            positions[i][0] = lx;
+            positions[i][1] = streetTop;
+        }
+        return positions;
     }
 }
