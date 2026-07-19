@@ -73,11 +73,10 @@ public class AtmosphereRenderer {
         g.fill(cx + 1, cy + 1, cx + 3, cy + 3, 0xFFB8AB88);
         g.fill(cx - 1, cy + 2, cx,     cy + 3, 0xFFB8AB88);
 
-        // Nube que la tapa parcialmente
+        // Nube que la tapa parcialmente (blob suave)
         float cloudCover = (float)(Math.sin(time * 0.15f) * 0.5f + 0.5f);
         int cloudAlpha = (int)(cloudCover * 140);
-        g.fill(cx - radius - 5, cy - radius / 2, cx + radius + 8, cy + radius / 3,
-            withAlpha(0x001A0F08, cloudAlpha));
+        drawSoftBlob(g, cx - 2, cy + 1, radius + 6, cloudAlpha, 0x001A0F08);
     }
 
     private static void renderClouds(GuiGraphics g, int w, int h) {
@@ -90,16 +89,21 @@ public class AtmosphereRenderer {
         };
         int cloudColor = 0x001A0F08;
         for (int i = 0; i < clouds.length; i++) {
-            int y1    = (int)(h * clouds[i][0]);
-            int y2    = (int)(h * (clouds[i][0] + clouds[i][1]));
+            int cy    = (int)(h * (clouds[i][0] + clouds[i][1] * 0.5f));
             int xBase = (int)(w * clouds[i][2]) + (int)(CLOUD_OFFSETS[i]) - 100;
-            int x2    = xBase + (int)(w * clouds[i][3]);
+            int cw    = (int)(w * clouds[i][3]);
+            int ch    = (int)(h * clouds[i][1]);
+            int radius = Math.max(8, ch);
             float pulse = (float)(Math.sin(time * 0.3f + i * 1.3f) * 0.1f + clouds[i][4]);
             int alpha = Math.max(0, Math.min(255, (int)(pulse * 180)));
-            g.fill(xBase, y1, x2, y2, withAlpha(cloudColor, alpha));
-            int edgeAlpha = alpha / 3;
-            g.fill(xBase - 15, y1 - 3, x2 + 15, y1 + 4, withAlpha(cloudColor, edgeAlpha));
-            g.fill(xBase - 10, y2 - 4, x2 + 10, y2 + 3, withAlpha(cloudColor, edgeAlpha));
+            int blobCount = 2;
+            int cappedRadius = Math.min(radius, 20);
+            for (int b = 0; b < blobCount; b++) {
+                float bt = (float) b / (float)(blobCount - 1);
+                int bx = xBase + (int)(cw * bt);
+                int br = cappedRadius + (int)(Math.sin(bt * 3.14159f) * cappedRadius * 0.3f);
+                drawSoftBlob(g, bx, cy, br, alpha, cloudColor);
+            }
         }
     }
 
@@ -125,6 +129,19 @@ public class AtmosphereRenderer {
         buf.vertex(matrix, x1, y1, 0).color(rT, gT, bT, aT).endVertex();
         Tesselator.getInstance().end();
         RenderSystem.disableBlend();
+    }
+
+    /** Blob suave: 6 anillos concentricos con alpha decreciente (optimizado). */
+    public static void drawSoftBlob(GuiGraphics g, int cx, int cy, int radius, int coreAlpha, int colorNoAlpha) {
+        if (radius <= 0 || coreAlpha <= 0) return;
+        int steps = radius < 6 ? radius : 6;
+        for (int s = steps; s >= 1; s--) {
+            int r = Math.max(1, radius * s / steps);
+            float t = (float) s / (float) steps;
+            int a = (int) (coreAlpha * (1f - t) * (1f - t) + coreAlpha * 0.15f * (1f - t));
+            if (a <= 0) continue;
+            fillCircle(g, cx, cy, r, withAlpha(colorNoAlpha, a));
+        }
     }
 
     private static void fillCircle(GuiGraphics g, int cx, int cy, int r, int color) {

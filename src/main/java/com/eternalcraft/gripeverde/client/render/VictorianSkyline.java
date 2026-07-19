@@ -246,8 +246,7 @@ public class VictorianSkyline {
                 int sy = cy1 + (int)(h * p[1]);
                 int sz = (int) p[3];
                 int sA = Math.max(0, Math.min(255, (int)(p[2] * maxAlpha)));
-                g.fill(sx - sz, sy - sz, sx + sz, sy + sz,
-                    AtmosphereRenderer.withAlpha(0x00705F45, sA));
+                AtmosphereRenderer.drawSoftBlob(g, sx, sy, sz, sA, 0x00705F45);
             }
         }
     }
