@@ -253,9 +253,9 @@ Regla:
 ## Documentacion del proyecto
 
 - CONTEXTO.md: este archivo, punto unico de entrada.
-- CHANGELOG.md: historial narrativo completo v0.1.0 a v0.9.0 (tono diario, UTF-8 correcto).
+- CHANGELOG.md: historial narrativo completo v0.1.0 a v0.9.2 (tono diario, UTF-8 correcto).
 - KNOWN_ISSUES.md: estado tecnico completo, bugs, reglas, plan futuro.
-- README.md: portada publica del repo, actualizado a v0.9.0.
+- README.md: portada publica del repo, actualizado a v0.9.2.
 - _backups\LECCIONES_v0.7.x.md: errores catalogados + reglas R-*.
 - assets\gripeverde\changelog\*.md: 25 archivos in-game (5 en_*, 20 es_*).
 
@@ -291,6 +291,8 @@ Comandos de reentrada:
 
 - **E42**: Changelog in-game no se carga por archivos 'v0_x_y_z.md'. ChangelogScreen carga SOLO 'changelog/<lang>.md' (locale). Para agregar una version, insertar una nueva seccion '## Versión X.Y.Z' dentro de los 25 archivos es_*.md / en_*.md (tras '## Notas de Actualización').
 
+- **E43**: [System.IO.File]::ReadAllText / WriteAllText con ruta relativa fallan si el CWD del proceso .NET no coincide con Set-Location de PowerShell (ocurre al abrir nueva instancia PS que arranca en C:\Users\<user>). Solucion: siempre pasar ruta absoluta con $PWD\... explicito. Cubierto por R-DOTNET-PATH y R-CD.
+
 ### Reglas nuevas
 
 - **R-DOTNET-PATH**: Al usar [System.IO.File]::* siempre pasar rutas absolutas con $PWD\... explicito.
@@ -300,25 +302,6 @@ Comandos de reentrada:
 
 - **R-CHANGELOG-LOCALE**: El changelog in-game se mantiene por locale (es_*.md / en_*.md). Para una nueva version: insertar la seccion '## Versión X.Y.Z' en los 25 archivos (despues de '## Notas de Actualización'), rebuild+deploy. No crear archivos separados 'es_v0_x_y_z.md' / 'en_v0_x_y_z.md'.
 
-### KI-05 (activo, deuda tecnica de v0.9.0)
-- Humo de chimeneas y nubes se renderizan como cuadrados obvios (g.fill de rectangulos llenos).
-- Solucion futura: blobs suaves estilo PaperTexture.drawSoftBlob (multiples circulos apilados con alpha degradado).
-- Prioridad: media. No rompe nada, solo estetica.
-- Ya registrado en KNOWN_ISSUES.md.
-
-### Estado del hito v0.9.0 - lo que quedo bien
-- Ventanas BG diferenciadas de FG (jerarquia visual conseguida)
-- Chimeneas FG ancladas a edificios cercanos
-- Chimeneas BG con humo tenue funcional
-- Cielo limpio sin bandas geometricas de smog
-- Sistema de anclaje chimneys->parent building generalizado (isFg / isBg)
-
-### Estado del hito v0.9.0 - lo que quedo pendiente
-- Humo visualmente cuadrado (KI-05)
-- Nubes aun casi invisibles (revertidas a valores originales por bajo contraste vs efecto rectangulo)
-- Postes/faroles siguen ocultos (KI-03 sub-hito v0.7.3 aun activo)
-
----
 
 
 ---
