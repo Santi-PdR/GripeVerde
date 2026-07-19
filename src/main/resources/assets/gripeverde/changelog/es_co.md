@@ -1,6 +1,32 @@
 # Eternal Craft: Gripe Verde
 ## Notas de Actualización
 
+## Versión 0.9.2
+
+**El humo ya no corta el cielo.**
+
+Hasta hace poco, los penachos que ascendían desde las chimeneas parecían recortados con tijeras: bloques oscuros suspendidos entre los tejados, más propios de un decorado apresurado que del aire cargado de una ciudad viva. Esta noche el hollín se comporta como debe. Sube en volutas suaves, se disuelve en la bruma, y las nubes que lo acompañan por el firmamento han perdido sus ángulos rectos. La luna, cuando le corresponde, se oculta tras un velo redondo y no tras un rectángulo torpe.
+
+### Del diario
+- El humo de las chimeneas se eleva con formas suaves y naturales.
+- Las nubes del cielo nocturno han perdido sus bordes cuadrados.
+- El velo que cubre la luna se disuelve con delicadeza.
+
+---
+
+## Versión 0.9.1
+
+**Los faroles vuelven a arder.**
+
+Durante meses, la avenida ha permanecido en penumbra: las farolas de gas fueron retiradas por reformas que nunca terminaron, y sólo la luz turbia que escapaba de las ventanas alcanzaba el empedrado. Esta noche los operarios han regresado. Los postes de hierro forjado están de nuevo en su sitio, uno tras otro a lo largo de la calle, y sus llamas titilan bajo las cúpulas de vidrio. Los charcos de la calzada mojada devuelven un reflejo dorado que hacía tiempo faltaba.
+
+### Del diario
+- Los faroles de gas han sido reinstalados a lo largo de la avenida.
+- Sus llamas apoyan con firmeza sobre la piedra, sin flotar en el aire.
+- El número de faroles se adapta con discreción al ojo del observador.
+
+---
+
 ## Versión 0.9.0
 
 **La ciudad ha ganado profundidad.**

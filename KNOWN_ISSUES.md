@@ -151,6 +151,7 @@ Estado: MITIGADO.
 - R-GRADLE-VER: mod_version en build.gradle debe usar project.version.toString(), nunca hardcodear.
 
 ### PowerShell
+- R-CD: Todo bloque de comandos debe iniciar con Set-Location al repositorio para evitar errores de ruta (E35).
 - R-PS: Minimizar cantidad de bloques PowerShell.
 - R-PATH: Usar rutas absolutas si no se esta parado en la raiz del repo.
 - R-PATH2: gradlew y git tambien requieren estar en la raiz del repo. Si el bloque falla y estamos en system32, Set-Location primero.

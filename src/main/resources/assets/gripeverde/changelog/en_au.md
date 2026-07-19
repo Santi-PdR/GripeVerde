@@ -1,6 +1,32 @@
 # Eternal Craft: Gripe Verde
 ## Notas de Actualización
 
+## Version 0.9.2
+
+**The smoke no longer cuts the sky.**
+
+Until recently, the plumes rising from the chimneys looked cut with scissors: dark blocks hanging between the rooftops, more fitting for a rushed backdrop than for the heavy air of a living city. Tonight the soot behaves as it should. It climbs in soft curls, dissolves into the mist, and the clouds that drift beside it have lost their right angles. The moon, when the time comes, hides behind a round veil and no longer behind a clumsy rectangle.
+
+### From the journal
+- Chimney smoke rises with soft, natural shapes.
+- The clouds of the night sky have lost their square edges.
+- The veil that covers the moon dissolves with delicacy.
+
+---
+
+## Version 0.9.1
+
+**The lanterns burn again.**
+
+For months, the avenue has remained in shadow: the gas lamps were removed for repairs that never ended, and only the murky light escaping from the windows reached the cobblestones. Tonight the workers have returned. The wrought-iron posts stand once again in their places, one after another along the street, and their flames flicker beneath the glass domes. The puddles on the wet pavement give back a golden reflection that had been missing for too long.
+
+### From the journal
+- The gas lanterns have been reinstalled along the avenue.
+- Their flames rest firmly on the stone, no longer floating in the air.
+- The number of lanterns adjusts discreetly to the observer's eye.
+
+---
+
 ## Version 0.9.0
 
 **The city has gained depth.**

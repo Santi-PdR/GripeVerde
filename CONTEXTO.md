@@ -7,9 +7,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.9.0
-- build.gradle: version = '0.9.0'
-- GripeVerdeMod.VERSION: "0.9.0"
+- Version estable actual: v0.9.2
+- build.gradle: version = '0.9.2'
+- GripeVerdeMod.VERSION: "0.9.2"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.9.0
 - Working tree esperado al retomar: limpio
@@ -24,7 +24,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 - v0.8.1: Slider de volumen en OptionsScreen.
 - v0.8.2: Crossfade entre pistas.
 - v0.8.3: Ducking automatico
-- v0.9.0: Profundidad de skyline (ventanas BG/FG diferenciadas) + anclaje de chimeneas a edificios + limpieza de artefactos geometricos en el cielo.
+- v0.9.0: Profundidad de skyline + limpieza de cielo.
+- v0.9.1: Reactivacion de faroles de gas anclados a la calle (Sub-hito A KI-03).
+- v0.9.2: Humo y nubes con tecnica de blobs suaves (fix KI-05).
 - Post v0.8.3: fixes de persistencia (idempotencia, auto-stop, auto-recovery), ajuste de volumenes ambientales, reescritura completa de changelogs con tono narrativo de diario.
 
 ## KI-03 - Estado post v0.9.0
@@ -34,9 +36,9 @@ Sub-hitos completados:
 - v0.7.1: Postes ocultos temporalmente.
 - v0.9.0: Jerarquia visual del skyline (BG/FG diferenciados, chimeneas ancladas).
 
-Sub-hitos pendientes:
-- v0.9.1: Reactivar postes/faroles (planificado, ver seccion 'PROXIMO HITO PLANIFICADO').
-- v0.9.2: Fix tecnica humo/nubes (KI-05, planificado).
+Sub-hitos completados (v0.9.2):
+- v0.9.1: Reactivar postes/faroles.
+- v0.9.2: Fix tecnica humo/nubes (KI-05).
 
 ---
 
@@ -204,6 +206,7 @@ Audio en Title:
 - R-GRADLE-VER: mod_version en build.gradle debe usar project.version.toString().
 
 ### PowerShell
+- R-CD: Todo bloque de comandos debe iniciar con Set-Location al repositorio.
 - R-PS: Minimizar cantidad de bloques.
 - R-PATH: Rutas absolutas si no estamos en la raiz.
 - R-PATH2: gradlew y git requieren Set-Location al repo primero.
@@ -315,62 +318,3 @@ Comandos de reentrada:
 
 ---
 
-## PROXIMO HITO PLANIFICADO (para el proximo chat)
-
-### Sub-hito A: v0.9.1 - Reactivar postes/faroles
-
-Objetivo: activar los faroles/postes que fueron ocultados en v0.7.1.
-
-Contexto: en v0.7.1 se ocultaron temporalmente porque flotaban en el vacio entre skyline y calle. Ahora el skyline tiene jerarquia visual y las chimeneas FG dan mejor anclaje. Momento adecuado para reintroducirlos.
-
-Archivo clave: VictorianSkyline.getLanternPositions() (actualmente retorna array vacio).
-
-Alcance:
-- Reactivar getLanternPositions con posiciones reales anclados a la calle (LivingAtmosphere.renderStreetLevel).
-- Adaptar tamano/densidad por escala GUI (menos postes en escala 4).
-- Farol con halo suave usando CandleLight.draw (ya existe el helper).
-
-Riesgo: bajo. Los postes viven en su propio helper, no tocan skyline ni cielo.
-
-Validacion: 4 escalas, comparacion pre/post.
-
-### Sub-hito B: v0.9.2 - Fix tecnica humo/nubes (KI-05)
-
-Objetivo: eliminar la apariencia cuadrada del humo y nubes.
-
-Alcance:
-- Reescribir renderSmokeGroup para usar drawSoftBlob (circulos suaves apilados) en vez de g.fill cuadrados.
-- Reescribir renderClouds para nubes con edges suaves (misma tecnica).
-- Considerar tambien mejorar la nube que tapa la luna en renderMoon.
-
-Archivos afectados: VictorianSkyline.java (renderSmokeGroup), AtmosphereRenderer.java (renderClouds, renderMoon).
-
-Riesgo: medio. Cambio de tecnica de dibujo, requiere validacion visual cuidadosa.
-
-Validacion: 4 escalas + comparacion con capturas de v0.9.0.
-
-### Orden sugerido
-
-1. Backup pre v0.9.1 (obligatorio, R-BACKUP).
-2. Sub-hito A completo -> v0.9.1 -> tag -> push.
-3. Backup pre v0.9.2.
-4. Sub-hito B completo -> v0.9.2 -> tag -> push.
-5. Si algo sale mal en B, rollback quirurgico (KI-05 puede quedar activa mas tiempo).
-
----
-
-## Historial actualizado
-
-- v0.6.5 a v0.8.3: ver seccion Historial reciente arriba.
-- **v0.9.0**: Sub-hito visual. Profundidad del skyline (ventanas BG/FG diferenciadas), chimeneas ancladas a edificios (BG y FG), limpieza de artefactos geometricos en el cielo. Deuda tecnica: KI-05 (humo/nubes cuadrados).
-
----
-
-## Reentrada rapida
-
-Si el usuario dice "arranquemos" en el proximo chat:
-1. Set-Location C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
-2. git status --short y git log --oneline -5
-3. Confirmar version en reloj (v0.9.0)
-4. Preguntar: Sub-hito A (postes) o Sub-hito B (fix humo/nubes) primero?
-5. Backup ANTES de tocar codigo.

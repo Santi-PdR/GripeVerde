@@ -5,7 +5,7 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.9.0** - Profundidad visual del skyline: ventanas del fondo diferenciadas de las cercanas, chimeneas ancladas a sus edificios y cielo liberado de artefactos geometricos. La ciudad ahora tiene perspectiva real.
+**v0.9.2** - Profundidad visual del skyline: ventanas del fondo diferenciadas de las cercanas, chimeneas ancladas a sus edificios y cielo liberado de artefactos geometricos. La ciudad ahora tiene perspectiva real.
 
 ## Caracteristicas principales
 
