@@ -1,10 +1,10 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
-Ultima actualizacion: v0.8.3
+Ultima actualizacion: v0.9.0
 Estado: EN DESARROLLO
-Version estable actual: v0.8.3
-Ultimo tag publicado: v0.8.3
-Hitos recientes: KI-03 en pausa (v0.7.1); hito v0.8 sistema de musica completo.
+Version estable actual: v0.9.0
+Ultimo tag publicado: v0.9.0
+Hitos recientes: v0.9.0 hito visual (skyline con jerarquia y chimeneas ancladas); KI-03 en progreso (postes pendientes v0.9.1); sistema de musica (v0.8.x) estable.
 
 ---
 
@@ -12,17 +12,17 @@ Hitos recientes: KI-03 en pausa (v0.7.1); hito v0.8 sistema de musica completo.
 
 - Proyecto: Eternal Craft: Gripe Verde
 - Base: Minecraft Forge 1.20.1
-- Version desplegada: 0.8.3
+- Version desplegada: 0.9.0
 - Tipo: mod de interfaz + audio
 - Ambientacion: ciudad victoriana bajo cuarentena, Green Flu
-- Estado general: compilando limpio, sistema de musica del Title operativo con crossfade y ducking.
+- Estado general: compilando limpio. Sistema de musica del Title estable (v0.8.x) y mejoras visuales aplicadas en v0.9.0 (skyline/jerarquia/chimeneas).
 
 ---
 
 ## 2. Sistemas activos
 
 ### Title / DiaryTitleScreen
-Pipeline de fondo sin cambios desde v0.7.1:
+Pipeline de fondo (estructura estable desde v0.7.1; ajustes visuales en v0.9.0):
 1. AtmosphereRenderer.renderSky
 2. VictorianSkyline.renderBackground
 3. LivingAtmosphere.renderFogLow
@@ -212,25 +212,9 @@ Solucion: R-PATH2. Siempre Set-Location $repo al inicio de bloques con gradlew/g
 
 ## 7. Plan futuro inmediato
 
-### v0.8.4+ (opcional, ajustes de musica)
-- Persistencia del volumen en disco (config file).
-- Curva de fade personalizada.
-- Boton skip/next track.
-
-### v0.7.2 - Retomar KI-03 (sub-hito 3)
-- Objetivo: cerrar el vacio entre skyline FG y calle.
-- Alcance: solo VictorianSkyline (FG_BUILDINGS).
-- No tocar renderStreet(), no reactivar postes en el mismo bump.
-
-### v0.7.3 - Reactivar postes por escala
-- Solo despues de que el skyline los soporte visualmente.
-
-### Posterior
-- Mejorar jerarquia del skyline.
-- Agregar nubes/contexto visual cerca de la luna.
-- Sincronizar changelogs localizados.
-
----
+- v0.9.1 (KI-03): Reactivar postes/faroles (adaptado por escala GUI).
+- v0.9.2 (KI-05): Redibujo tecnico de humo/nubes para evitar cuadrados (blobs suaves tipo drawSoftBlob).
+- (Opcional) v0.10.0: Persistencia del volumen en disco / mejoras de calidad de vida del sistema de musica.
 
 ## 8. Estado tecnico
 
