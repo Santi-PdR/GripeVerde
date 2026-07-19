@@ -1,6 +1,21 @@
 # Eternal Craft: Gripe Verde
 ## Notas de Actualización
 
+## Version 0.9.0
+
+**The city has gained depth.**
+
+Looking out from the study window, something has changed on the horizon. The lights burning in distant buildings no longer compete with those flickering behind nearby glass: they have become timid points, as if aware of their distance and unwilling to intrude. The chimneys, in turn, have found their proper place at last. They crown the rooftops with firmness, and their plumes of soot rise straight into the heavy sky.
+
+The air has also cleared of those strange grey bands that once crossed the firmament without reason. Only the legitimate haze remains, the one that always belonged to this ailing city.
+
+### From the diary
+- Distant building windows now look different from nearby ones: real depth.
+- Chimneys are anchored to their buildings; no more floating in the void.
+- The sky has been cleared of artifacts that did not belong to it.
+
+---
+
 ## Versión 0.8.3
 
 **Hay silencios que se guardan por respeto.**

@@ -1,6 +1,21 @@
 # Eternal Craft: Gripe Verde
 ## Notas de Actualización
 
+## Versión 0.9.0
+
+**La ciudad ha ganado profundidad.**
+
+Al mirar por la ventana del despacho, algo ha cambiado en el horizonte. Las luces que arden en los edificios lejanos ya no compiten con las que titilan tras los cristales cercanos: se han vuelto puntos tímidos, como si supieran que están muy lejos y no quisieran molestar. Las chimeneas, en cambio, han encontrado por fin su lugar. Coronan los tejados con firmeza, y sus penachos de hollín suben rectos hacia el cielo cargado.
+
+El aire también se ha despejado de esas franjas grises que antes cruzaban el firmamento sin razón aparente. Ahora sólo queda la bruma legítima, la que siempre estuvo, la que pertenece a esta ciudad enferma.
+
+### Del diario
+- Las ventanas de los edificios lejanos se ven distintas de las cercanas: profundidad real.
+- Las chimeneas están ancladas a sus edificios, ya no flotan en el vacío.
+- El cielo ha quedado limpio de artefactos que no le pertenecían.
+
+---
+
 ## Versión 0.8.3
 
 **Hay silencios que se guardan por respeto.**
