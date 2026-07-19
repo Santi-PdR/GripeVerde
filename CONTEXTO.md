@@ -50,7 +50,7 @@ C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 
 - Local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 - Remoto: https://github.com/Santi-PdR/GripeVerde (privado)
-- Ultimo tag: v0.9.0
+- Ultimo tag: v0.9.2
 
 ## Rutas reales verificadas
 
@@ -306,6 +306,27 @@ Comandos de reentrada:
 
 ---
 
+
+## ADDENDUM v0.9.2 (higiene del repo)
+
+### Auditoria de limpieza realizada
+- _backups reducido a 3 elementos conservados:
+  - LECCIONES_v0.7.x.md
+  - pre_v0.9.1_20260719_130158
+  - pre_v0.9.2_20260719_132207
+- Se eliminaron backups historicos obsoletos (v0.4.4, v0.5.0, v0.6.0, v0.7.x, logs gradle, capturas).
+- Se eliminaron 27 archivos build*.txt de la raiz (logs sueltos, no trackeados).
+- gradlew clean ejecutado con exito; build\ limpio.
+- Auditoria de assets y codigo completada:
+  - 0 OGGs huerfanos respecto de sounds.json
+  - 0 clases Java candidatas a borrado por orfandad
+- git status --short verificado limpio tras la limpieza.
+
+### Nota operativa
+- La limpieza fue de higiene del repositorio, no de ahorro de espacio significativo.
+- Los mayores consumidores de espacio son los assets OGG y el cache global de Gradle (fuera del repo).
+
+---
 ## PROXIMO HITO PLANIFICADO
 
 ### Candidato A: v0.10.0 - Ambientar el menu del Historial de Cambios (KI-06)
