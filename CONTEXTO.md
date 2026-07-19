@@ -345,6 +345,16 @@ Comandos de reentrada:
 - Los mayores consumidores de espacio son los assets OGG y el cache global de Gradle (fuera del repo).
 
 ---
+
+### Errores nuevos catalogados post-v0.10.4
+
+- **E48**: reemplazo global .Replace("v0.10.2", "v0.10.3") sobre CONTEXTO.md piso referencias historicas (ADDENDUM y linea de historial). Fix: reparado con reemplazos exactos. Regla derivada abajo.
+- **E50**: .Replace("0.10.3", "0.10.4") sobre README.md piso el numero de version pero dejo la descripcion vieja adosada (v0.10.4 quedo con texto de v0.10.2). Ademas la entrada real de v0.10.3 nunca se agrego. Fix: reemplazar bloque narrativo completo, no solo el numero.
+
+### Reglas nuevas post-v0.10.4
+
+- **R-REPLACE-VERSION**: nunca hacer .Replace(versionAnterior, versionNueva) en documentos con historial (CONTEXTO.md, README.md, CHANGELOG.md). Reemplazar solo en anclas de cabecera unicas y verificables (ej: "- Version estable actual: vX.Y.Z"). Para agregar entrada narrativa a README.md o CHANGELOG.md, reemplazar el bloque narrativo completo de la version anterior, no el numero suelto.
+
 ## PROXIMO HITO PLANIFICADO
 
 ### Candidato A: v0.10.0 - Ambientar el menu del Historial de Cambios (KI-06)

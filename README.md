@@ -5,9 +5,13 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.10.4** - Ajuste interno del diario. Sin novedades observables en la ciudad.
+**v0.10.4** - Esta noche la luna ha ganado un halo tenue, como si el vapor de las calderas y la humedad del Tamesis se le pegaran alrededor. Tres jirones finos la cruzan lentamente, sin llegar a taparla del todo.
 
-**v0.10.1** - El diario recuerda con que fuerza se le pidio por ultima vez que sonara la calle, y respeta ese ajuste al reabrirlo. Un pequeño acto de cortesia hacia quien lo consulta.
+**v0.10.3** - El cronista ha ganado dos gestos discretos al pie del diario: uno para acallar la calle cuando la vela pide silencio, otro para pedir a la orquesta que pase a la siguiente melodia sin brusquedad.
+
+**v0.10.2** - Ajuste interno del sello del diario, sin novedades observables en la ciudad.
+
+**v0.10.1** - El diario recuerda con que fuerza se le pidio por ultima vez que sonara la calle, y respeta ese ajuste al reabrirlo. Un pequeno acto de cortesia hacia quien lo consulta.
 
 **v0.10.0** - Las paginas del historial lucen por fin como deben: fibra de pergamino autentica bajo los dedos, manchas de vela y de tinta antigua, el peso de un documento oficial. Las cronicas mismas han sido reescritas, depuradas de expresiones impropias de un cronista de calle.
 
