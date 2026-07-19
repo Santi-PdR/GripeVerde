@@ -5,7 +5,7 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.8.3** - Sistema completo de musica del menu: 4 pistas con crossfade, ducking automatico con presagios, slider de volumen en Options, y persistencia entre pantallas.
+**v0.9.0** - Profundidad visual del skyline: ventanas del fondo diferenciadas de las cercanas, chimeneas ancladas a sus edificios y cielo liberado de artefactos geometricos. La ciudad ahora tiene perspectiva real.
 
 ## Caracteristicas principales
 
@@ -13,7 +13,7 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 - Framework UI adaptativo con modo minimal automatico para pantallas pequenas.
 - Fondo atmosferico del Title con cielo nocturno, luna, lluvia, niebla ocre, skyline victoriano y calle mojada.
 - Calle decorativa adaptativa por escala (v0.7.0).
-- Postes/faroles temporalmente ocultos desde v0.7.1 hasta resolver el soporte visual del skyline.
+- Postes/faroles temporalmente ocultos desde v0.7.1, reactivacion planificada para v0.9.1.
 - Reloj de bolsillo animado con manecillas detenidas en 11:52, segundero mecanico con glitches, oscilacion pendular y tic-tac sincronizado con las marcas horarias.
 - Posters institucionales (Quarantine, Wanted: Patient Zero).
 - Firma easter egg de S. Pereira, MDCCCXCVII.

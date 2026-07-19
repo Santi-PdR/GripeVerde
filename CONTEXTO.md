@@ -24,13 +24,19 @@ necesaria para retomar el desarrollo sin repetir errores.
 - v0.8.1: Slider de volumen en OptionsScreen.
 - v0.8.2: Crossfade entre pistas.
 - v0.8.3: Ducking automatico
-- v0.9.0: Profundidad de skyline (ventanas BG/FG) + anclaje de chimeneas + limpieza de cielo. automatico + persistencia entre pantallas.
+- v0.9.0: Profundidad de skyline (ventanas BG/FG diferenciadas) + anclaje de chimeneas a edificios + limpieza de artefactos geometricos en el cielo.
 - Post v0.8.3: fixes de persistencia (idempotencia, auto-stop, auto-recovery), ajuste de volumenes ambientales, reescritura completa de changelogs con tono narrativo de diario.
 
-## KI-03 esta en pausa
+## KI-03 - Estado post v0.9.0
 
-Sub-hitos 3 y 4 (v0.7.2 y v0.7.3) diferidos tras completar hito v0.8.
-Se retomaran despues del sistema de musica.
+Sub-hitos completados:
+- v0.7.0: Calle adaptativa.
+- v0.7.1: Postes ocultos temporalmente.
+- v0.9.0: Jerarquia visual del skyline (BG/FG diferenciados, chimeneas ancladas).
+
+Sub-hitos pendientes:
+- v0.9.1: Reactivar postes/faroles (planificado, ver seccion 'PROXIMO HITO PLANIFICADO').
+- v0.9.2: Fix tecnica humo/nubes (KI-05, planificado).
 
 ---
 
@@ -145,16 +151,21 @@ Audio en Title:
 
 ## Bugs conocidos activos
 
-### KI-03 (EN PAUSA)
+### KI-03 (EN PROGRESO)
 - Calle: RESUELTO en v0.7.0.
-- Postes/faroles: MITIGADO en v0.7.1 (ocultos temporalmente).
-- Vacio entre skyline FG y calle en escala 1: ACTIVO (prioridad futura v0.7.2).
-- Skyline demasiado poblado / sin jerarquia: ACTIVO.
-- Luna solitaria sin nubes contextuales: ACTIVO.
+- Postes/faroles: PENDIENTE, se reactivan en v0.9.1.
+- Vacio entre skyline FG y calle: ATENUADO por jerarquia visual de v0.9.0.
+- Skyline sin jerarquia: RESUELTO en v0.9.0.
+- Luna solitaria: PARCIAL (tiene nube que la tapa, pendiente contexto atmosferico mas rico).
 
 ### KI-04 (MITIGADO)
 - Incompatibilidad con ModernFix RegistryObjectMixin.
 - Workaround: UiSounds.safePlay() tolera NPE silenciosamente.
+
+### KI-05 (deuda tecnica v0.9.0)
+- Humo y nubes se renderizan como cuadrados obvios (g.fill de rectangulos llenos).
+- Solucion planificada: v0.9.2 con blobs suaves tipo drawSoftBlob (multiples circulos apilados con alpha degradado).
+- Prioridad: media. No rompe nada, solo estetica.
 
 ### KI-01 (no reproducido)
 - Freeze al presionar Leave. Posible entorno.
@@ -237,41 +248,11 @@ Regla:
 ## Documentacion del proyecto
 
 - CONTEXTO.md: este archivo, punto unico de entrada.
-- CHANGELOG.md: historial narrativo completo v0.1.0 a v0.8.3 (tono diario, UTF-8 correcto).
+- CHANGELOG.md: historial narrativo completo v0.1.0 a v0.9.0 (tono diario, UTF-8 correcto).
 - KNOWN_ISSUES.md: estado tecnico completo, bugs, reglas, plan futuro.
-- README.md: portada publica del repo, actualizado a v0.8.3.
+- README.md: portada publica del repo, actualizado a v0.9.0.
 - _backups\LECCIONES_v0.7.x.md: errores catalogados + reglas R-*.
 - assets\gripeverde\changelog\*.md: 25 archivos in-game (5 en_*, 20 es_*).
-
----
-
-## Proximo sub-hito
-
-Opciones disponibles:
-
-### Opcion A: Retomar KI-03 (v0.7.2)
-Objetivo:
-- Cerrar el vacio visual entre edificios FG y calle, especialmente escala 1.
-
-Alcance recomendado:
-- Tocar SOLO VictorianSkyline (FG_BUILDINGS).
-- NO tocar LivingAtmosphere.renderStreet().
-- NO reactivar postes en el mismo bump.
-- Validar en 4 escalas.
-
-Sub-hito siguiente (v0.7.3):
-- Reactivar postes/faroles por escala cuando el skyline los soporte.
-
-### Opcion B: Expandir v0.8.4+
-- Persistencia del volumen en disco (config file).
-- Boton skip/next track.
-- Curvas de fade personalizadas.
-- Playlist configurable por el usuario.
-
-### Opcion C: Nuevo hito
-- Pantalla de creditos.
-- Death screen tematica.
-- Bestiario / notas.
 
 ---
 
