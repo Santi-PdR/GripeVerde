@@ -18,7 +18,6 @@ import com.eternalcraft.gripeverde.client.widgets.GreenFluButton;
 import com.eternalcraft.gripeverde.client.widgets.SlimButton;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.screens.OptionsScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
@@ -273,7 +272,7 @@ public class DiaryTitleScreen extends Screen {
     private void onSingleplayer() { this.minecraft.setScreen(new SelectWorldScreen(this)); }
     private void onMultiplayer()  { this.minecraft.setScreen(new JoinMultiplayerScreen(this)); }
     private void onMods()         { this.minecraft.setScreen(new ModListScreen(this)); }
-    private void onOptions()      { this.minecraft.setScreen(new OptionsScreen(this, this.minecraft.options)); }
+    private void onOptions() { this.minecraft.setScreen(new DiaryOptionsScreen(this)); }
 
     @Override public boolean isPauseScreen()    { return false; }
     @Override public boolean shouldCloseOnEsc() { return false; }

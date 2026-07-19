@@ -5,6 +5,8 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
+**v0.11.0** — Esta noche el gabinete de ajustes tambien ha sido incorporado al diario. Sobre el mismo pergamino y con la misma tinta, el observador encuentra ahora dispuestas las opciones de la vigilia. La ciudad sigue viva detras del panel, atenuada, sus faroles latiendo con paciencia mientras uno ajusta lo que necesite ajustar.
+
 **v0.10.4** - Esta noche la luna ha ganado un halo tenue, como si el vapor de las calderas y la humedad del Tamesis se le pegaran alrededor. Tres jirones finos la cruzan lentamente, sin llegar a taparla del todo.
 
 **v0.10.3** - El cronista ha ganado dos gestos discretos al pie del diario: uno para acallar la calle cuando la vela pide silencio, otro para pedir a la orquesta que pase a la siguiente melodia sin brusquedad.
@@ -25,6 +27,7 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 - Reloj de bolsillo animado con manecillas detenidas en 11:52, segundero mecanico con glitches, oscilacion pendular y tic-tac sincronizado con las marcas horarias.
 - Posters institucionales (Quarantine, Wanted: Patient Zero).
 - Firma easter egg de S. Pereira, MDCCCXCVII.
+- Gabinete de ajustes (Opciones) sobre pergamino con Title vivo detras, alcanzable desde el Title y desde la pausa (v0.11.0).
 
 ### Sistema de audio del menu (hito v0.8)
 - 4 pistas de musica del menu con shuffle aleatorio.

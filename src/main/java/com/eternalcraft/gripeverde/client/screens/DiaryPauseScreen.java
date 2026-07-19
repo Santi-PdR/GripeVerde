@@ -5,7 +5,6 @@ import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.GenericDirtMessageScreen;
-import net.minecraft.client.gui.screens.OptionsScreen;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.achievement.StatsScreen;
@@ -131,7 +130,7 @@ public class DiaryPauseScreen extends PauseScreen {
             btnX, btnStartY + (BH + BG) * 3, BTN_W, BH,
             Component.translatable("gripeverde.pause.btn.adjustments"),
             DiaryButton.Icon.GEAR, DiaryButton.Variant.SECONDARY,
-            () -> this.minecraft.setScreen(new OptionsScreen(this, this.minecraft.options))
+            () -> this.minecraft.setScreen(new DiaryOptionsScreen(this))
         ));
 
         this.addRenderableWidget(new DiaryButton(

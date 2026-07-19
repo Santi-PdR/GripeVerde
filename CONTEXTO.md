@@ -7,11 +7,11 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.10.4
-- build.gradle: version = '0.10.4'
-- GripeVerdeMod.VERSION: "0.10.4"
+- Version estable actual: v0.11.0
+- build.gradle: version = '0.11.0'
+- GripeVerdeMod.VERSION: "0.11.0"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
-- Ultimo tag publicado: v0.10.4
+- Ultimo tag publicado: v0.11.0
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
 
@@ -28,6 +28,8 @@ necesaria para retomar el desarrollo sin repetir errores.
 - v0.9.1: Reactivacion de faroles de gas anclados a la calle (Sub-hito A KI-03).
 - v0.9.2: Humo y nubes con tecnica de blobs suaves (fix KI-05).
 - Post v0.8.3: fixes de persistencia (idempotencia, auto-stop, auto-recovery), ajuste de volumenes ambientales, reescritura completa de changelogs con tono narrativo de diario.
+
+- v0.11.0: DiaryOptionsScreen sobre pergamino con Title vivo detras. KI-06 cerrado extendido. KI-07 abierto.
 
 ## KI-03 - Estado post v0.9.0
 
@@ -50,7 +52,7 @@ C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 
 - Local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 - Remoto: https://github.com/Santi-PdR/GripeVerde (privado)
-- Ultimo tag: v0.10.4
+- Ultimo tag: v0.11.0
 
 ## Rutas reales verificadas
 
@@ -451,19 +453,16 @@ Riesgo: alto. Requiere diseno previo.
 ### R-CHANGELOG-DISCRECIONAL
 - SI aplica escribir en changelog in-game: la luna es manifestacion observable en la ciudad. Sin embargo, para reducir carga de trabajo se OMITE en los 25 .md in-game. El CHANGELOG.md raiz si lleva entrada narrativa.
 
-## PROXIMO HITO PLANIFICADO (revisado tras v0.10.1)
+## PROXIMO HITO PLANIFICADO (revisado tras v0.11.0)
 
-### Candidato C: v0.11.0+ - Contenido de gameplay (Gripe Verde en si)
+### Candidato F: v0.11.x - Ambientar subpantallas de Opciones (KI-07)
+Objetivo: reemplazar las subpantallas vanilla (Idioma, Controles, Chat, Mi aspecto, Musica y sonidos, Accesibilidad) por versiones sobre pergamino, una por version.
+Riesgo: bajo por pantalla, pero repetitivo. Cada una toca UI vanilla que reimplementamos.
+Prioridad sugerida: Idioma primero (mas visible), luego Musica y sonidos, luego Controles.
+
+### Candidato C: v0.12.0+ - Contenido de gameplay (Gripe Verde en si)
 Objetivo: primer sistema de gameplay real (enfermedad, sintomas, mecanica de cuarentena).
 Riesgo: alto. Requiere diseno previo escrito.
-
-### Candidato D: v0.10.3 - Mejoras visuales del Title pendientes
-Objetivo: contexto atmosferico mas rico alrededor de la luna (halo, jirones de nube que la crucen).
-Riesgo: bajo. Toca solo LivingAtmosphere/AtmosphereRenderer.
-
-### Candidato E: v0.10.3 alternativo - Persistir mas opciones del usuario
-Objetivo: extender ClientConfig con volumenes de MenuAmbience (wind/rain/city separados), o un toggle "silenciar ambiente".
-Riesgo: bajo. Reutiliza el framework de v0.10.1.
 
 Decision pendiente para proxima sesion.
 
@@ -486,3 +485,53 @@ Tras cerrar v0.10.1 se detecto que el jar desplegado no contenia la entrada v0.1
 
 ### Regla nueva catalogada
 - R-CHANGELOG-DISCRECIONAL: ver seccion "Reglas vigentes".
+
+---
+## ADDENDUM v0.11.0 (DiaryOptionsScreen)
+
+### Cambios de codigo
+- Nueva clase: client/screens/DiaryOptionsScreen.java. Extiende Screen (no OptionsScreen).
+  - Fondo: pipeline del Title vivo (AtmosphereRenderer/VictorianSkyline/LivingAtmosphere) sin renderFlash/renderVignette.
+  - Overlay 0x66000000 para atenuar la escena y dar peso al pergamino.
+  - Panel dimensionado por contenido (no dimension arbitraria).
+  - 11 botones DiaryButton en grid 2x6 + boton Volver con Icon.DOOR + Variant.PRIMARY.
+  - tick() propio que actualiza Atmosphere/Skyline/LivingAtmosphere para mantener la escena viva.
+- DiaryTitleScreen.onOptions(): ahora abre DiaryOptionsScreen (era OptionsScreen vanilla).
+- DiaryPauseScreen: boton AJUSTES redirigido a DiaryOptionsScreen (era OptionsScreen vanilla).
+- 25 archivos lang/*.json: agregadas 13 claves gripeverde.options.*.
+
+### Aperturas de sub-pantallas (firmas correctas 1.20.1)
+- Skin: new SkinCustomizationScreen(this, options).
+- Sound: new SoundOptionsScreen(this, options).
+- Video: reflection a EmbeddiumVideoOptionsScreen con SodiumGameOptionPages.general()/quality()/performance()/advanced(); fallback a VideoSettingsScreen vanilla si Embeddium no esta.
+- Controls: new ControlsScreen(this, options).
+- Language: new LanguageSelectScreen(this, options, minecraft.getLanguageManager()).
+- Chat: new ChatOptionsScreen(this, options).
+- Accessibility: new AccessibilityOptionsScreen(this, options).
+- Telemetry: new TelemetryInfoScreen(this, options) (subpaquete telemetry, requiere Options).
+- Online: OnlineOptionsScreen.createOnlineOptionsScreen(minecraft, this, options) (factory estatico).
+- ResourcePacks: new PackSelectionScreen(repo, callback, dir, title) (4 args, sin Screen parent).
+- Credits: new CreditsAndAttributionScreen(this).
+
+### Errores encontrados y corregidos durante el hito
+- E52: TelemetryInfoScreen no esta en net.minecraft.client.gui.screens sino en subpaquete telemetry. Su firma es (Screen, Options), no (Screen).
+- E53: PackSelectionScreen NO acepta Screen parent como primer argumento en 1.20.1. Firma real: (PackRepository, Consumer, Path, Component). Se vuelve al Options via el Consumer callback.
+- E54: OnlineOptionsScreen no tiene constructor publico (Screen, Options). Se accede via factory estatico createOnlineOptionsScreen(Minecraft, Screen, Options).
+- E55: EmbeddiumVideoOptionsScreen no esta en el classpath de compilacion. Se resuelve por reflection: Class.forName + Constructor.newInstance con List<OptionPage> armada desde SodiumGameOptionPages.
+- E56: SlimButton tiene fondo casi negro (0xFF120A05); sobre pergamino claro se ve mal. Solucion: usar DiaryButton para pantallas que van sobre pergamino.
+- E57: PowerShell interactivo se cierra si un script tiene "exit" (no return). Reglas derivadas: nunca usar "exit" en bloques interactivos.
+
+### Reglas nuevas
+- R-BTN-CONTEXT: elegir la clase de boton segun el contexto de fondo. SlimButton (fondo casi negro) va en pantallas de fondo oscuro (Title, overlays). DiaryButton (fondo papel) va en pantallas de pergamino (Pause, Options, Changelog).
+- R-SIG-VERIFY: al derivar firmas de vanilla desde el bytecode extraido, no fiarse del primer listado alfabetico. Verificar la firma REAL del constructor (<init>) buscando (L...)V. Firmas parecidas pueden ser lambdas internas, no del ctor.
+- R-EMBED-REFLECT: para APIs de mods opcionales (Embeddium, Sodium, Oculus), usar reflection defensiva con try/catch a Throwable + fallback a vanilla. Nunca depender de compilar contra ellos.
+- R-PS-EXIT: nunca usar "exit" en scripts PowerShell interactivos. Usar early return, if/else, o Write-Host + no hacer nada.
+
+### KI-06 (RESUELTO extendido en v0.11.0)
+- El menu de Opciones (raiz) ya no es vanilla: DiaryOptionsScreen sobre pergamino, escena viva atenuada de fondo, botones DiaryButton.
+- Nota: originalmente KI-06 referia solo al ChangelogScreen (cerrado en v0.10.0). En v0.11.0 se extiende el criterio: cualquier pantalla propia del flujo del Title debe estar ambientada.
+
+### KI-07 (ABIERTO en v0.11.0)
+- Las subpantallas alcanzables desde DiaryOptionsScreen siguen siendo vanilla (Idioma, Controles, Chat, Mi aspecto, Musica y sonidos, Accesibilidad, Telemetria, Creditos, Paquetes de recursos, En linea).
+- Estado: funcionales (se abren y vuelven sin crash) pero rompen la estetica.
+- Plan: v0.11.x reemplaza de a una las mas visibles (Idioma primero).

@@ -1,10 +1,10 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
-Ultima actualizacion: v0.10.4
+Ultima actualizacion: v0.11.0
 Estado: EN DESARROLLO
-Version estable actual: v0.10.4
-Ultimo tag publicado: v0.10.4
-Hitos recientes: v0.10.4 (bump administrativo, changelog in-game intencionalmente sin entrada); v0.10.1 (persistencia del volumen de musica); v0.10.0 (ChangelogScreen sobre pergamino + reescritura diegetica de las 25 cronicas, KI-06 cerrado); v0.9.2 (fix humo/nubes, KI-05 cerrado); v0.9.1 (faroles reactivados, KI-03 cerrado completo); v0.9.0 hito visual del skyline; sistema de musica (v0.8.x) estable.
+Version estable actual: v0.11.0
+Ultimo tag publicado: v0.11.0
+Hitos recientes: v0.11.0 (DiaryOptionsScreen sobre pergamino con Title vivo detras, KI-06 cerrado extendido, sub-pantallas vanilla integradas); v0.10.4 (bump administrativo, changelog in-game intencionalmente sin entrada); v0.10.1 (persistencia del volumen de musica); v0.10.0 (ChangelogScreen sobre pergamino + reescritura diegetica de las 25 cronicas, KI-06 cerrado); v0.9.2 (fix humo/nubes, KI-05 cerrado); v0.9.1 (faroles reactivados, KI-03 cerrado completo); v0.9.0 hito visual del skyline; sistema de musica (v0.8.x) estable.
 
 ---
 
@@ -12,7 +12,7 @@ Hitos recientes: v0.10.4 (bump administrativo, changelog in-game intencionalment
 
 - Proyecto: Eternal Craft: Gripe Verde
 - Base: Minecraft Forge 1.20.1
-- Version desplegada: 0.10.2
+- Version desplegada: 0.11.0
 - Tipo: mod de interfaz + audio
 - Ambientacion: ciudad victoriana bajo cuarentena, Green Flu
 - Estado general: compilando limpio. Sistema de musica del Title con persistencia (v0.10.1). ChangelogScreen sobre pergamino y cronicas diegeticas (v0.10.0). Mejoras visuales previas de v0.9.x estables.
@@ -222,12 +222,15 @@ Solucion: R-PATH2. Siempre Set-Location $repo al inicio de bloques con gradlew/g
 - Build limpio.
 - Working tree esperado: limpio antes de proximas sesiones.
 
-### KI-06 - Menu del Historial de Cambios sin ambientacion victoriana (ACTIVO)
-- La pantalla ChangelogScreen usa UI vanilla de Minecraft (fondo dirt, tipografia default, boton "Cerrar" plano).
-- Rompe totalmente la inmersion victoriana establecida por el Title.
-- Solucion propuesta: aplicar pergamino tipo PaperTexture, tipografia acorde, marco decorativo estilo poster, boton al estilo DiaryButton.
-- Prioridad: media-alta. Es la primera pantalla que el jugador abre desde el Title, y actualmente rompe el hechizo.
-- Planificado: v0.10.0 o v0.11.0 (segun prioridad frente a persistencia de volumen).
+### KI-06 - Menu del Historial de Cambios sin ambientacion victoriana (RESUELTO en v0.10.0)
+- ChangelogScreen ya no usa UI vanilla: panel de pergamino, boton al estilo DiaryButton y cronicas reescritas en tono diegetico.
+
+### KI-07 - Subpantallas de Opciones siguen usando UI vanilla (ACTIVO)
+- Desde DiaryOptionsScreen, varias subpantallas siguen siendo las de Minecraft vanilla (fondo dirt, tipografia default).
+- Ejemplos: Idioma, Controles, Chat, Accesibilidad, Mi aspecto, Musica y sonidos.
+- Estado: funcional (se abren y vuelven sin crash), pero rompe la estetica.
+- Plan: ambientar subpantallas de a una en v0.11.x, evitando hooks globales.
+
 ### KI-05 (RESUELTO en v0.9.2)
 - Humo de chimeneas, nubes del skyline y nube frente a la luna se dibujaban como rectangulos por g.fill.
 - Solucion aplicada: AtmosphereRenderer.drawSoftBlob con 6 anillos concentricos y alpha cuadratico decreciente.

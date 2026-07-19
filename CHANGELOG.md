@@ -1,6 +1,15 @@
 # Eternal Craft: Gripe Verde
 ## Notas de Actualización
 
+## v0.11.0 — El gabinete de ajustes
+
+Hasta esta noche, quien buscaba modificar las condiciones bajo las cuales el diario era consultado se topaba con una hoja tosca, escrita a maquina, ajena por completo al espiritu del cuaderno. El contraste era violento: se salia de la vigilia y se caia en una oficina mal iluminada. Esta noche, el gabinete tambien ha sido incorporado. Sobre el mismo pergamino y con la misma tinta, el observador encuentra ahora dispuestas las opciones de la vigilia. La ciudad sigue viva detras del panel, atenuada, sus faroles latiendo con paciencia mientras uno ajusta lo que necesite ajustar.
+
+### Del diario
+- El gabinete de ajustes luce sobre pergamino, con la ciudad viva de fondo.
+- Los ajustes son alcanzables desde la vigilia inicial y tambien desde la pausa nocturna.
+
+---
 ## v0.10.4 — Halo lunar y jirones de niebla
 
 Esta noche la luna ha ganado un halo tenue, como si el vapor de las calderas y la humedad del Támesis se le pegaran alrededor. Tres jirones finos la cruzan lentamente, sin llegar a taparla del todo. La ciudad respira mas honda bajo esa luz enferma.

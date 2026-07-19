@@ -98,5 +98,18 @@
     "gripeverde.pause.btn.records":  "REGISTROS",
     "gripeverde.pause.btn.resume":  "REANUDAR",
     "gripeverde.pause.btn.adjustments":  "AJUSTES",
-    "gripeverde.pause.btn.statistics":  "ESTADISTICAS"
+    "gripeverde.pause.btn.statistics":  "ESTADISTICAS",
+    "gripeverde.options.title":  "Opciones",
+    "gripeverde.options.button.skin":  "Mi aspecto",
+    "gripeverde.options.button.sound":  "Musica y sonidos",
+    "gripeverde.options.button.video":  "Graficos",
+    "gripeverde.options.button.controls":  "Controles",
+    "gripeverde.options.button.language":  "Idioma",
+    "gripeverde.options.button.chat":  "Chat",
+    "gripeverde.options.button.resourcepacks":  "Paquetes de recursos",
+    "gripeverde.options.button.accessibility":  "Accesibilidad",
+    "gripeverde.options.button.telemetry":  "Telemetria",
+    "gripeverde.options.button.credits":  "Creditos y atribuciones",
+    "gripeverde.options.button.online":  "En linea",
+    "gripeverde.options.button.done":  "Volver"
 }
