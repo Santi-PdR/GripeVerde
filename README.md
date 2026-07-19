@@ -5,7 +5,7 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.9.2** - Los faroles de gas vuelven a arder a lo largo de la avenida, apoyados con firmeza sobre el empedrado. El humo de las chimeneas y las nubes del cielo nocturno abandonan sus bordes cuadrados y se elevan en volutas suaves. La luna se oculta tras un velo redondo.
+**v0.9.2** - La ciudad respira mejor esta noche. Los faroles de gas han sido reinstalados a lo largo de la avenida, sus llamas titilan bajo las cupulas de vidrio y devuelven al empedrado un reflejo dorado que hacia tiempo faltaba. El hollin de las chimeneas ya no se recorta contra el cielo como bloques torpes: sube en volutas suaves, se disuelve en la bruma, y las nubes que lo acompanan han perdido sus angulos rectos. Todo lo que ocurre en el firmamento se comporta, por fin, como debe.
 
 ## Caracteristicas principales
 

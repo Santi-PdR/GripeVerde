@@ -4,7 +4,7 @@ Ultima actualizacion: v0.9.2
 Estado: EN DESARROLLO
 Version estable actual: v0.9.2
 Ultimo tag publicado: v0.9.2
-Hitos recientes: v0.9.2 (fix humo/nubes, KI-05 cerrado); v0.9.1 (faroles reactivados, KI-03 cerrado); v0.9.0 hito visual del skyline; sistema de musica (v0.8.x) estable.
+Hitos recientes: v0.9.2 (fix humo/nubes, KI-05 cerrado); v0.9.1 (faroles reactivados, KI-03 cerrado completo); v0.9.0 hito visual del skyline; sistema de musica (v0.8.x) estable. KI-01 y KI-02 no reproducibles, marcados como resueltos.
 
 ---
 
@@ -65,22 +65,22 @@ Pipeline de fondo (estructura estable desde v0.7.1; ajustes visuales en v0.9.0):
 
 ## 3. Problemas conocidos activos
 
-### KI-01 - Freeze al presionar Leave
-Sintoma: puede quedar en "Saving world".
-Estado: no reproducido controladamente.
-Sospecha: entorno, RAM, GPU, Embeddium.
-Accion: no modificar sin evidencia en logs.
+### KI-01 - Freeze al presionar Leave (RESUELTO)
+Sintoma original: podia quedar en "Saving world".
+Estado: no reproducible en v0.9.x. Se marca como cerrado.
+Sospecha historica: entorno, RAM, GPU, Embeddium.
 
-### KI-02 - Crash al hacer screenshots F2
-Sintoma: NVAPI + Embeddium + NVIDIA.
-Workaround: Windows + Shift + S.
+### KI-02 - Crash al hacer screenshots F2 (RESUELTO)
+Sintoma original: NVAPI + Embeddium + NVIDIA.
+Estado: no reproducible en v0.9.x. Se marca como cerrado.
+Buena practica sugerida: usar Windows + Shift + S como alternativa segura.
 
-### KI-03 - Fondo del Title con defectos visuales (RESUELTO en v0.9.1)
+### KI-03 - Fondo del Title con defectos visuales (RESUELTO COMPLETO en v0.9.1)
 - Calle definida: RESUELTO en v0.7.0.
 - Postes/faroles flotantes: RESUELTO en v0.9.1 (reactivados con anclaje a la calle, densidad por escala GUI).
 - Vacio entre skyline FG y calle: ATENUADO por jerarquia visual de v0.9.0.
 - Skyline demasiado poblado / sin jerarquia: RESUELTO en v0.9.0 (BG/FG diferenciados).
-- Luna solitaria: PARCIAL (nube que la tapa ya suave desde v0.9.2, contexto atmosferico mas rico pendiente).
+- Luna solitaria: contexto atmosferico mas rico alrededor de la luna queda como mejora futura opcional (no es bug).
 
 ### KI-04 - Incompatibilidad con ModernFix RegistryObjectMixin
 Sintoma: NullPointerException en RegistryObject.get() al hoverear botones.
@@ -221,6 +221,13 @@ Solucion: R-PATH2. Siempre Set-Location $repo al inicio de bloques con gradlew/g
 - Ultimo tag: v0.9.2
 - Build limpio.
 - Working tree esperado: limpio antes de proximas sesiones.
+
+### KI-06 - Menu del Historial de Cambios sin ambientacion victoriana (ACTIVO)
+- La pantalla ChangelogScreen usa UI vanilla de Minecraft (fondo dirt, tipografia default, boton "Cerrar" plano).
+- Rompe totalmente la inmersion victoriana establecida por el Title.
+- Solucion propuesta: aplicar pergamino tipo PaperTexture, tipografia acorde, marco decorativo estilo poster, boton al estilo DiaryButton.
+- Prioridad: media-alta. Es la primera pantalla que el jugador abre desde el Title, y actualmente rompe el hechizo.
+- Planificado: v0.10.0 o v0.11.0 (segun prioridad frente a persistencia de volumen).
 ### KI-05 (RESUELTO en v0.9.2)
 - Humo de chimeneas, nubes del skyline y nube frente a la luna se dibujaban como rectangulos por g.fill.
 - Solucion aplicada: AtmosphereRenderer.drawSoftBlob con 6 anillos concentricos y alpha cuadratico decreciente.
