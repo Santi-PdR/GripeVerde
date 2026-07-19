@@ -1,6 +1,12 @@
 # Eternal Craft: Gripe Verde
 ## Notas de Actualización
 
+## v0.10.2 — Corrección administrativa
+
+Ajuste interno del diario para que el sello de la edición actual coincida con la última noche registrada. Sin novedades observables en la ciudad.
+
+---
+
 ## v0.10.1 — La memoria de la mano
 
 Hasta ahora, cada vez que el observador volvía al diario, la ciudad recuperaba su voz al mismo volumen invariable, como si nadie hubiera tocado nunca la clavija. Esta noche eso ha cambiado. El diario recuerda con qué fuerza se le pidió por última vez que sonara la calle, y respeta ese ajuste al reabrirlo. Un pequeño acto de cortesía hacia quien lo consulta.

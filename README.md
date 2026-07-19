@@ -5,6 +5,8 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
+**v0.10.2** - Ajuste interno del diario. Sin novedades observables en la ciudad.
+
 **v0.10.1** - El diario recuerda con que fuerza se le pidio por ultima vez que sonara la calle, y respeta ese ajuste al reabrirlo. Un pequeño acto de cortesia hacia quien lo consulta.
 
 **v0.10.0** - Las paginas del historial lucen por fin como deben: fibra de pergamino autentica bajo los dedos, manchas de vela y de tinta antigua, el peso de un documento oficial. Las cronicas mismas han sido reescritas, depuradas de expresiones impropias de un cronista de calle.

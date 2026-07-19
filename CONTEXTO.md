@@ -7,11 +7,11 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.10.1
-- build.gradle: version = '0.10.1'
-- GripeVerdeMod.VERSION: "0.10.1"
+- Version estable actual: v0.10.2
+- build.gradle: version = '0.10.2'
+- GripeVerdeMod.VERSION: "0.10.2"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
-- Ultimo tag publicado: v0.10.1
+- Ultimo tag publicado: v0.10.2
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
 
@@ -50,7 +50,7 @@ C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 
 - Local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 - Remoto: https://github.com/Santi-PdR/GripeVerde (privado)
-- Ultimo tag: v0.10.1
+- Ultimo tag: v0.10.2
 
 ## Rutas reales verificadas
 
@@ -231,12 +231,17 @@ Audio en Title:
 - Verificacion rapida: si la frase suena a devlog de un videojuego, esta mal. Si suena a entrada de diario escrita a la luz de una vela, esta bien.
 
 ### Cierre de hito (R-CIERRE)
+### Discrecionalidad del changelog in-game (R-CHANGELOG-DISCRECIONAL)
+- R-CHANGELOG-DISCRECIONAL: No toda version del codigo requiere entrada en los 25 changelog/*.md in-game. Si el hito es puramente tecnico, administrativo o correctivo sin manifestacion observable en la ciudad, se OMITE. El changelog in-game es una cronica selectiva del cronista, no un log de commits. El cronista solo narra noches significativas.
+- Corolario: el CHANGELOG.md raiz (repo) SI puede llevar la entrada como registro tecnico breve, pero sin forzar prosa narrativa cuando no hay nada real que contar.
+
+### Cierre de hito (R-CIERRE)
 - R-CIERRE: Al cerrar cualquier hito (bump de version), es OBLIGATORIO actualizar en la misma sesion, antes de commit:
   1. CONTEXTO.md (version, tag, addendum del hito, actualizar bloque "PROXIMO HITO PLANIFICADO")
   2. CHANGELOG.md (raiz, entrada narrativa bajo R-DIEGETICO)
   3. KNOWN_ISSUES.md (metadatos de version/tag, cerrar KIs resueltos, catalogar errores nuevos y reglas nuevas)
   4. README.md (bloque "Version actual" con parrafo narrativo bajo R-DIEGETICO)
-  5. Los 25 changelog/*.md in-game bajo R-DIEGETICO (si el hito lo amerita)
+  5. Los 25 changelog/*.md in-game bajo R-DIEGETICO SOLO si el hito tiene manifestacion observable en la ciudad (ver R-CHANGELOG-DISCRECIONAL)
   Luego: commit + tag + push. NUNCA cerrar un chat con esos docs desincronizados del codigo.
 
 ---
@@ -407,3 +412,23 @@ Objetivo: extender ClientConfig con volumenes de MenuAmbience (wind/rain/city se
 Riesgo: bajo. Reutiliza el framework de v0.10.1.
 
 Decision pendiente para proxima sesion.
+
+---
+## ADDENDUM v0.10.2 (hotfix administrativo)
+
+### Motivo
+Tras cerrar v0.10.1 se detecto que el jar desplegado no contenia la entrada v0.10.1 en los 25 changelog/*.md in-game. Fue una omision del cierre anterior (violacion inicial de R-CIERRE punto 5).
+
+### Decision
+- NO se agregan entradas v0.10.1 ni v0.10.2 al changelog in-game: no hay nada observable en la ciudad que reportar.
+- Se bumpea version a v0.10.2 unicamente para que el jar refleje la realidad del codigo.
+- Se formaliza R-CHANGELOG-DISCRECIONAL: el changelog in-game es selectivo, no exhaustivo.
+- Se suaviza R-CIERRE punto 5: los 25 .md solo se actualizan si el hito tiene manifestacion observable.
+
+### Cambios de codigo
+- build.gradle: 0.10.1 -> 0.10.2
+- GripeVerdeMod.VERSION: 0.10.1 -> 0.10.2
+- Sin otros cambios de codigo.
+
+### Regla nueva catalogada
+- R-CHANGELOG-DISCRECIONAL: ver seccion "Reglas vigentes".
