@@ -431,7 +431,7 @@ Riesgo: bajo. Reutiliza el framework de v0.10.1.
 Decision pendiente para proxima sesion.
 
 ---
-## ADDENDUM v0.10.3 (hotfix administrativo)
+## ADDENDUM v0.10.2 (hotfix administrativo)
 
 ### Motivo
 Tras cerrar v0.10.1 se detecto que el jar desplegado no contenia la entrada v0.10.1 en los 25 changelog/*.md in-game. Fue una omision del cierre anterior (violacion inicial de R-CIERRE punto 5).

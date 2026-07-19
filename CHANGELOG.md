@@ -1,6 +1,13 @@
 # Eternal Craft: Gripe Verde
 ## Notas de Actualización
 
+## v0.10.3 — Controles de audio del Title
+
+- Boton `>>` en el menu principal para pasar a la siguiente pista con crossfade.
+- Boton `AMB` en el menu principal para silenciar o reactivar el ambiente.
+- Persistencia del estado de ambiente en `gripeverde-client.toml`.
+- `MenuAmbience.start()` ahora es idempotente.
+- Fix del skip manual: la nueva pista ya no entra muda al iniciar el crossfade.
 ## v0.10.2 — Corrección administrativa
 
 Ajuste interno del diario para que el sello de la edición actual coincida con la última noche registrada. Sin novedades observables en la ciudad.
