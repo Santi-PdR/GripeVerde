@@ -62,21 +62,32 @@ public class AtmosphereRenderer {
         int cy = (int)(h * 0.18f);
         int radius = (int)(w * 0.025f);
 
-        int glowAlpha = (int)(30 + moonGlowPulse * 20);
-        fillCircle(g, cx, cy, radius + 18, withAlpha(0x00D4941E, glowAlpha + 5));
-        fillCircle(g, cx, cy, radius + 12, withAlpha(0x00B8863D, glowAlpha + 10));
-        fillCircle(g, cx, cy, radius + 7,  withAlpha(0x00E8DCB4, glowAlpha + 20));
-        fillCircle(g, cx, cy, radius,       DiaryTheme.MOON_WHITE);
+        // Halo exterior suave (blobs, no anillos duros)
+        int haloAlpha = 18 + (int)(moonGlowPulse * 14);
+        drawSoftBlob(g, cx, cy, radius + 34, haloAlpha,           0x00E8DCB4);
+        drawSoftBlob(g, cx, cy, radius + 22, haloAlpha + 8,       0x00D4C089);
+        drawSoftBlob(g, cx, cy, radius + 12, haloAlpha + 14,      0x00F0E5C0);
 
-        // Manchas de crateres (dan textura de luna real)
+        // Disco lunar
+        fillCircle(g, cx, cy, radius, DiaryTheme.MOON_WHITE);
+
+        // Manchas de crateres
         g.fill(cx - 3, cy - 2, cx - 1, cy,     0xFFB8AB88);
         g.fill(cx + 1, cy + 1, cx + 3, cy + 3, 0xFFB8AB88);
         g.fill(cx - 1, cy + 2, cx,     cy + 3, 0xFFB8AB88);
 
-        // Nube que la tapa parcialmente (blob suave)
-        float cloudCover = (float)(Math.sin(time * 0.15f) * 0.5f + 0.5f);
-        int cloudAlpha = (int)(cloudCover * 140);
-        drawSoftBlob(g, cx - 2, cy + 1, radius + 6, cloudAlpha, 0x001A0F08);
+        // Jirones finos cruzando la luna (delante del disco)
+        int wispAlphaA = 40 + (int)(moonGlowPulse * 15);
+        int wispAlphaB = 32 + (int)(moonGlowPulse * 12);
+        int wispAlphaC = 24 + (int)(moonGlowPulse * 10);
+
+        float driftA = (float)(Math.sin(time * 0.06f) * (radius * 2.5f));
+        float driftB = (float)(Math.sin(time * 0.045f + 1.7f) * (radius * 3.0f));
+        float driftC = (float)(Math.sin(time * 0.035f + 3.2f) * (radius * 2.2f));
+
+        drawMoonWisp(g, cx - radius * 3 + (int)driftA, cy - radius / 2, 3, wispAlphaA, 6, 5, 0x00201810);
+        drawMoonWisp(g, cx - radius * 3 + (int)driftB, cy + 1,           3, wispAlphaB, 7, 5, 0x00241C12);
+        drawMoonWisp(g, cx - radius * 3 + (int)driftC, cy + radius / 2, 3, wispAlphaC, 6, 5, 0x001E1610);
     }
 
     private static void renderClouds(GuiGraphics g, int w, int h) {
@@ -131,6 +142,19 @@ public class AtmosphereRenderer {
         RenderSystem.disableBlend();
     }
 
+    private static void drawMoonWisp(GuiGraphics g, int startX, int cy, int radius,
+                                     int alpha, int blobs, int spacing, int colorNoAlpha) {
+        if (radius <= 0 || alpha <= 0 || blobs <= 0) return;
+
+        for (int i = 0; i < blobs; i++) {
+            float t = blobs <= 1 ? 0f : (float) i / (float) (blobs - 1);
+            int bx = startX + i * spacing;
+            int by = cy + (int)(Math.sin(time * 0.35f + t * 2.8f) * 2f);
+            int br = Math.max(2, radius + (int)(Math.sin(t * 3.14159f) * radius * 0.35f));
+            int ba = Math.max(4, (int)(alpha * (0.55f + 0.45f * Math.sin(t * 3.14159f))));
+            drawSoftBlob(g, bx, by, br, ba, colorNoAlpha);
+        }
+    }
     /** Blob suave: 6 anillos concentricos con alpha decreciente (optimizado). */
     public static void drawSoftBlob(GuiGraphics g, int cx, int cy, int radius, int coreAlpha, int colorNoAlpha) {
         if (radius <= 0 || coreAlpha <= 0) return;

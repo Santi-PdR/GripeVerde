@@ -1,6 +1,9 @@
 # Eternal Craft: Gripe Verde
 ## Notas de Actualización
 
+## v0.10.4 — Halo lunar y jirones de niebla
+
+Esta noche la luna ha ganado un halo tenue, como si el vapor de las calderas y la humedad del Támesis se le pegaran alrededor. Tres jirones finos la cruzan lentamente, sin llegar a taparla del todo. La ciudad respira mas honda bajo esa luz enferma.
 ## v0.10.3 — Controles de audio del Title
 
 - Boton `>>` en el menu principal para pasar a la siguiente pista con crossfade.

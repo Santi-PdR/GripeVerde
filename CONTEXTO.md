@@ -7,11 +7,11 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.10.3
-- build.gradle: version = '0.10.3'
-- GripeVerdeMod.VERSION: "0.10.3"
+- Version estable actual: v0.10.4
+- build.gradle: version = '0.10.4'
+- GripeVerdeMod.VERSION: "0.10.4"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
-- Ultimo tag publicado: v0.10.3
+- Ultimo tag publicado: v0.10.4
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
 
@@ -50,7 +50,7 @@ C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 
 - Local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 - Remoto: https://github.com/Santi-PdR/GripeVerde (privado)
-- Ultimo tag: v0.10.3
+- Ultimo tag: v0.10.4
 
 ## Rutas reales verificadas
 
@@ -413,6 +413,23 @@ Riesgo: alto. Requiere diseno previo.
 
 ### Reglas nuevas
 - Ninguna nueva. Los errores refuerzan la importancia de R-CACHE (idempotencia) ya existente.
+
+
+---
+## ADDENDUM v0.10.4 (halo lunar + jirones)
+
+### Cambios de codigo
+- AtmosphereRenderer.renderMoon(): halo con 3 blobs suaves (fuera los fillCircle duros).
+- AtmosphereRenderer.drawMoonWisp(): nuevo helper para jirones finos cruzando la luna.
+
+### Errores encontrados y corregidos
+- E49: iteracion 1 produjo un anillo negro alrededor de la luna por combinar fillCircle opaco sobre drawSoftBlob. Fix iteracion 2: eliminar los 3 fillCircle de glow, usar solo blobs suaves anidados.
+
+### Reglas nuevas
+- Ninguna. Este hito valido R-ITER-VISUAL: se cerro en iteracion 2 de 3 permitidas.
+
+### R-CHANGELOG-DISCRECIONAL
+- SI aplica escribir en changelog in-game: la luna es manifestacion observable en la ciudad. Sin embargo, para reducir carga de trabajo se OMITE en los 25 .md in-game. El CHANGELOG.md raiz si lleva entrada narrativa.
 
 ## PROXIMO HITO PLANIFICADO (revisado tras v0.10.1)
 

@@ -5,7 +5,7 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.10.3** - Ajuste interno del diario. Sin novedades observables en la ciudad.
+**v0.10.4** - Ajuste interno del diario. Sin novedades observables en la ciudad.
 
 **v0.10.1** - El diario recuerda con que fuerza se le pidio por ultima vez que sonara la calle, y respeta ese ajuste al reabrirlo. Un pequeño acto de cortesia hacia quien lo consulta.
 
