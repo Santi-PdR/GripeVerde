@@ -355,6 +355,16 @@ Comandos de reentrada:
 
 - **R-REPLACE-VERSION**: nunca hacer .Replace(versionAnterior, versionNueva) en documentos con historial (CONTEXTO.md, README.md, CHANGELOG.md). Reemplazar solo en anclas de cabecera unicas y verificables (ej: "- Version estable actual: vX.Y.Z"). Para agregar entrada narrativa a README.md o CHANGELOG.md, reemplazar el bloque narrativo completo de la version anterior, no el numero suelto.
 
+
+### Errores nuevos catalogados post-cierre v0.10.4
+
+- **E51**: script de actualizacion de los 25 changelog/*.md in-game asumio ancla unica "## Notas de Actualizacion" cuando los 5 archivos en_*.md usan "## Update Notes". El script no lanzo error, simplemente no encontro el ancla en ingles y no hizo nada, pero reporto "Actualizado" en pantalla porque el Write-Host se ejecutaba antes de verificar el .Contains(). Resultado: 20/25 archivos modificados en el primer intento; los 5 ingleses quedaron desactualizados. Detectado al comparar el conteo de git ("20 files changed") con el reporte del script ("25 Actualizados"). Fix: segundo pase con ancla "## Update Notes" para en_*.md.
+
+### Reglas nuevas post-cierre v0.10.4
+
+- **R-VERIFY-COUNT**: al hacer batch updates de multiples archivos con potencialmente distintas anclas, verificar SIEMPRE el conteo real post-cambio (ej: contar cuantos contienen el nuevo string) antes de commitear. No confiar en el Write-Host del bucle.
+- **R-CHANGELOG-ANCHOR**: los changelog in-game usan dos anclas distintas segun locale: "## Notas de Actualizacion" (es_*) y "## Update Notes" (en_*). Scripts de batch deben iterar con logica por prefijo de archivo.
+
 ## PROXIMO HITO PLANIFICADO
 
 ### Candidato A: v0.10.0 - Ambientar el menu del Historial de Cambios (KI-06)
