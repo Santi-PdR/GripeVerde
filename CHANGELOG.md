@@ -1,6 +1,16 @@
 # Eternal Craft: Gripe Verde
 ## Notas de Actualización
 
+## v0.11.2 - Protocolos de correspondencia
+
+Esta noche los protocolos de correspondencia tambien han sido acogidos por el diario. La pantalla en que se ordenan las reglas del chat luce ahora sobre pergamino, con las mismas divisas en las esquinas y las mismas rayas de tinta que ordenan el gabinete y el registro de lenguas. Nueve renglones caben con holgura entre los margenes, y el boton de retorno responde al mismo gesto que ya se conoce.
+
+### Del diario
+- Los protocolos de correspondencia se han ordenado sobre pergamino.
+- La pantalla adopta las divisas y renglones del gabinete y del registro de lenguas.
+- Los ajustes internos se conservan intactos; solo la presentacion ha cambiado.
+
+---
 ## v0.11.1 - Lenguas conocidas
 
 El gabinete que ya lucia sobre pergamino se ha ordenado con oficio. Divisas discretas guardan sus cuatro esquinas; dos rayas de tinta separan lo que se lee de lo que se firma; un renglon bajo el titulo anuncia la mano del cronista. Y en su interior, por fin, la lista de lenguas del mundo se ha vuelto legible: cada una en su renglon limpio, sin la mancha vulgar que las tapaba, la elegida marcada con una flecha, las demas esperando su turno. Tambien los edictos de la calle han bajado la voz. Cuarentena y Real Decreto ya no gritan al observador; ahora respiran con el resto del papel.
