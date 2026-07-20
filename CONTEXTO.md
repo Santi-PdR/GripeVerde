@@ -7,11 +7,11 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.11.1
-- build.gradle: version = '0.11.1'
-- GripeVerdeMod.VERSION: "0.11.1"
+- Version estable actual: v0.11.2
+- build.gradle: version = '0.11.2'
+- GripeVerdeMod.VERSION: "0.11.2"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
-- Ultimo tag publicado: v0.11.1
+- Ultimo tag publicado: v0.11.2
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
 
@@ -30,6 +30,8 @@ necesaria para retomar el desarrollo sin repetir errores.
 - Post v0.8.3: fixes de persistencia (idempotencia, auto-stop, auto-recovery), ajuste de volumenes ambientales, reescritura completa de changelogs con tono narrativo de diario.
 
 - v0.11.0: DiaryOptionsScreen sobre pergamino con Title vivo detras. KI-06 cerrado extendido. KI-07 abierto.
+- v0.11.1: DiaryLanguageScreen sobre pergamino. KI-07 parcial. KI-08 abierto (banderas).
+- v0.11.2: DiaryChatOptionsScreen sobre pergamino. KI-07 avanzado. Formalizacion de R-CHANGELOG-AGRUPADO, R-BUILD-DEPLOY, R-VANILLA-LIST-COORDS.
 
 ## KI-03 - Estado post v0.9.0
 
@@ -52,7 +54,7 @@ C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 
 - Local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 - Remoto: https://github.com/Santi-PdR/GripeVerde (privado)
-- Ultimo tag: v0.11.0
+- Ultimo tag: v0.11.2
 
 ## Rutas reales verificadas
 
@@ -601,3 +603,73 @@ Riesgo: medio. Requiere trabajo de arte + configuracion de font providers.
 ### Candidato C: v0.12.0+ - Contenido de gameplay
 Objetivo: primer sistema de gameplay real (Gripe Verde en si).
 Riesgo: alto. Requiere diseno previo escrito.
+
+---
+## ADDENDUM v0.11.2 (DiaryChatOptionsScreen)
+
+### Cambios de codigo
+- Nueva clase: client/screens/DiaryChatOptionsScreen.java. Extiende ChatOptionsScreen (subclase visual, no reimplementacion).
+  - Fondo: pipeline del Title vivo atenuado con overlay 0x66000000.
+  - Panel de pergamino 340x330 px centrado (ancho fijo para coincidir con las filas vanilla que asumen this.width original).
+  - Titulo "Chat..." + subtitulo "- Protocolos de correspondencia -" con sombra translucida.
+  - Divisor superior bajo el subtitulo + divisor inferior antes del boton.
+  - Esquineros victorianos en L en las 4 esquinas (misma gramatica que DiaryOptionsScreen).
+  - Boton Volver estilo DiaryButton Icon.DOOR Variant.PRIMARY con label "gripeverde.options.button.done".
+  - Se oculta el boton Done vanilla moviendolo fuera de pantalla + visible=false + active=false.
+  - Se apagan setRenderBackground(false) y setRenderTopAndBottom(false) en la lista.
+  - IMPORTANTE: NO se cambia this.width de la lista via updateSize (romperia coords internas de los widgets - ver E62).
+- DiaryOptionsScreen.openChat(): ahora abre DiaryChatOptionsScreen (era ChatOptionsScreen vanilla).
+- 25 archivos lang/*.json: agregada clave gripeverde.options.chat.subtitle.
+
+### Errores nuevos catalogados
+
+- **E61**: PowerShell .Replace() con string multilinea que incluia "    @Override\r\n    public void onClose()" NO matcheo porque los espacios/EOL del archivo real diferian del patron construido con backticks. Consecuencia: el archivo NO se modifico pero el script reporto exito y compilo. Solucion: cuando el patron a reemplazar es multilinea o incluye caracteres invisibles, verificar SIEMPRE post-reemplazo con Select-String antes de compilar; o mejor, reescribir el archivo completo con WriteAllText en lugar de .Replace parcial.
+
+- **E62**: OptionsList.Entry crea sus widgets internos con X fija calculada como `this.width/2 - 155` al momento de super.init(). El metodo Entry.render solo llama a AbstractWidget.setY(top) en cada frame, NUNCA a setX. Consecuencia: si se llama updateSize(anchoNuevo, ...) sobre la lista despues del init, los widgets internos MANTIENEN su X original vinculada al this.width viejo. Visualmente puede parecer que la lista se movio, pero las hitboxes de sliders/botones quedan en las coordenadas originales, y los clicks fallan de forma silenciosa (mouseClicked retorna true pero el widget no responde porque el mouse no esta sobre su hitbox real). Fix: NO cambiar el width en updateSize. Pasar this.width (el ancho de la pantalla completa) para preservar la geometria original de los widgets, y solo reposicionar verticalmente con listTop/listBottom.
+
+- **E63**: Los sliders vanilla que quedaron mal posicionados por E62 daban falsa sensacion de estar activos: `list.mouseClicked` retornaba true (porque la lista misma detectaba el click en su area), pero el widget interno NO recibia el evento porque `getEntryAtPosition` calcula por Y pero la propagacion final al widget requiere que el click caiga sobre las coords propias del widget. Lo que se ve pintado no es lo que se toca.
+
+- **E64**: `Expand-Archive` de PowerShell no soporta .jar (rechaza cualquier extension distinta de .zip). Para inspeccionar .jar usar `jar -xf archivo.jar` (viene con JDK). Alternativa mas dura: renombrar temporalmente a .zip.
+
+- **E65**: `System.out.println` en un mod Forge NO escribe en logs/latest.log; va a stdout que Minecraft descarta o redirige. Para logs visibles usar `LogUtils.getLogger()` (SLF4J), que si aparece en latest.log con el logger name de la clase.
+
+### Reglas nuevas formalizadas
+
+- **R-BUILD-DEPLOY**: Todo bloque de PowerShell que ejecute `gradlew build` DEBE incluir el deploy al mods folder en el mismo bloque. Nunca separar build y deploy en dos interacciones. El deploy no requiere confirmacion del usuario, es parte inseparable del build. Refuerza R-BUILD original.
+
+- **R-CHANGELOG-AGRUPADO**: Cuando una serie de versiones tecnicas (v0.X.0, v0.X.1, v0.X.2, ...) forma parte de un mismo hito narrativo (ej: ambientar todos los menus), el changelog in-game (los 25 assets/gripeverde/changelog/*.md) NO lleva una entrada por cada version de codigo. Lleva UNA SOLA entrada agrupada al cerrar el hito completo, con formato "## Version 0.X - 0.X.N" que resume en voz del cronista lo que se logro en toda la serie. El CHANGELOG.md raiz (repo) SI puede llevar entradas por version tecnica (registro dev). Este mecanismo evita saturar al lector in-game con entradas repetitivas del mismo tema. Combina con R-CHANGELOG-DISCRECIONAL: primero se decide si el hito merece entrada in-game, y si la merece, se agrupa toda la serie tecnica en una sola.
+
+- **R-VANILLA-LIST-COORDS**: al heredar o envolver una clase vanilla que usa AbstractSelectionList/ContainerObjectSelectionList (OptionsList, ControlsList, etc.), NUNCA llamar updateSize con un width distinto al original de la pantalla. Los widgets internos de las Entry se crean con coordenadas absolutas al momento del super.init() y el metodo Entry.render solo actualiza Y, no X. Cambiar el width de la lista rompe la correspondencia entre hitbox real y renderizado visual. Solucion: ajustar el ancho del panel visual para que coincida con las coords originales de la lista (~340 px para OptionsList de 2 columnas), no ajustar la lista al panel.
+
+- **R-REPLACE-VERIFY**: cuando se usa PowerShell .Replace() para modificar un archivo Java, verificar SIEMPRE con Select-String -Pattern <patron_esperado> tras la escritura, ANTES de compilar. Si el patron esperado no aparece, el reemplazo no ocurrio y estamos compilando el archivo viejo.
+
+- **R-JAR-INSPECT**: para inspeccionar el contenido de un .jar en PowerShell usar `jar -xf archivo.jar` (viene con JDK), NO Expand-Archive. Deriva de E64.
+
+- **R-LOG-SLF4J**: para debug en runtime de un mod Forge, usar siempre `LogUtils.getLogger()` (SLF4J). System.out.println no aparece en latest.log. Deriva de E65.
+
+### KI-07 (AVANZADO en v0.11.2)
+- Sub-pantalla Chat cerrada con DiaryChatOptionsScreen sobre pergamino.
+- Restantes vanilla: Controles, Accesibilidad, Mi aspecto, Musica y sonidos (peligrosa por sliders de modpack), Telemetria, En linea, Paquetes de recursos, Creditos.
+- Proximo candidato natural para v0.11.3: Accesibilidad (bajo riesgo) o Controles (mas visible, mas complejo).
+
+### Nota sobre "Musica y sonidos"
+- Se descarto como proximo hito porque el modpack agrega un slider externo a esa pantalla. Reimplementar la pantalla podria romper esa integracion. Cuando se aborde eventualmente, requerira estrategia distinta: forrar visualmente la pantalla vanilla en vez de reemplazarla, o auditar que mod agrega el slider y coordinar.
+
+## PROXIMO HITO PLANIFICADO (revisado tras v0.11.2)
+
+### Candidato J: v0.11.3 - DiaryAccessibilityOptionsScreen
+Objetivo: reemplazar AccessibilityOptionsScreen vanilla por version sobre pergamino. Aplicando lo aprendido en E62/R-VANILLA-LIST-COORDS de entrada. Riesgo bajo (mismo patron que Chat).
+
+### Candidato H: v0.11.x - DiaryControlsScreen
+Objetivo: reemplazar ControlsScreen vanilla. Riesgo medio (la lista de keybinds es densa, con interaccion propia de "presionar tecla para asignar"). Requiere auditoria previa mas cuidadosa.
+
+### Candidato K: v0.11.x - DiarySkinCustomizationScreen
+Objetivo: reemplazar SkinCustomizationScreen. Riesgo medio (tiene toggles de partes del cuerpo, mas la mano dominante). Menos denso que Controles.
+
+### Candidato I: v0.11.x - Banderas pixel-art (KI-08)
+Objetivo: font provider propio + PNGs de banderas para cada idioma.
+
+### Candidato C: v0.12.0+ - Contenido de gameplay
+Objetivo: primer sistema de gameplay real (Gripe Verde en si).
+
+Decision pendiente para proxima sesion.

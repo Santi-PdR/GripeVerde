@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.AccessibilityOptionsScreen;
 import net.minecraft.client.gui.screens.ChatOptionsScreen;
+import com.eternalcraft.gripeverde.client.screens.DiaryChatOptionsScreen;
 import net.minecraft.client.gui.screens.OptionsScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.SkinCustomizationScreen;
@@ -248,7 +249,7 @@ public class DiaryOptionsScreen extends Screen {
         ));
     }
     private void openChat() {
-        this.minecraft.setScreen(new ChatOptionsScreen(this, this.minecraft.options));
+        this.minecraft.setScreen(new DiaryChatOptionsScreen(this, this.minecraft.options));
     }
     private void openAccessibility() {
         this.minecraft.setScreen(new AccessibilityOptionsScreen(this, this.minecraft.options));
