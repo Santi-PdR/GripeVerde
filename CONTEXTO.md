@@ -7,11 +7,11 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.11.0
-- build.gradle: version = '0.11.0'
-- GripeVerdeMod.VERSION: "0.11.0"
+- Version estable actual: v0.11.1
+- build.gradle: version = '0.11.1'
+- GripeVerdeMod.VERSION: "0.11.1"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
-- Ultimo tag publicado: v0.11.0
+- Ultimo tag publicado: v0.11.1
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
 
@@ -535,3 +535,69 @@ Tras cerrar v0.10.1 se detecto que el jar desplegado no contenia la entrada v0.1
 - Las subpantallas alcanzables desde DiaryOptionsScreen siguen siendo vanilla (Idioma, Controles, Chat, Mi aspecto, Musica y sonidos, Accesibilidad, Telemetria, Creditos, Paquetes de recursos, En linea).
 - Estado: funcionales (se abren y vuelven sin crash) pero rompen la estetica.
 - Plan: v0.11.x reemplaza de a una las mas visibles (Idioma primero).
+
+---
+## ADDENDUM v0.11.1 (DiaryLanguageScreen + pulido de Options y Posters)
+
+### Cambios de codigo
+- Nueva clase client/screens/DiaryLanguageScreen.java: extiende Screen. Escena viva atenuada + panel de pergamino + lista propia con ObjectSelectionList.
+  - setRenderBackground(false), setRenderTopAndBottom(false), setRenderSelection(false) para matar dirt/barras/seleccion vanilla.
+  - Fade top/bottom pergamino con fillGradient para suavizar el corte de filas al scrollear.
+  - Titulo propio "gripeverde.options.language.title" ("Lenguas conocidas" / "Known tongues") sin dropShadow, con segunda pasada translucida (0x40201409, +1,+1).
+  - Item pendiente prefijado con "> ", item aplicado con "- ", resto sin prefijo. Tres tonos INK (ACTIVE, PENDING, NORMAL).
+  - Force Unicode Font toggle preservado como boton secundario, con label dinamico.
+- DiaryOptionsScreen.java enriquecido:
+  - Subtitulo "gripeverde.options.subtitle" ("- Gabinete del cronista -" / "- The chronicler's cabinet -").
+  - drawInkDivider(): divisor horizontal con fade a los costados (fillGradient), color tinta 0x88422810.
+  - drawCornerOrnaments(): esquineros victorianos en L 8x8 px, color 0xA0422810.
+  - Sombra sutil del titulo propio (0x40201409).
+  - openLanguage() redirige a DiaryLanguageScreen (era LanguageSelectScreen vanilla).
+- PosterRenderer.java suavizado:
+  - QUARANTINE: escala 1.4 -> 1.2, sombra SEPIA_DARK opaca -> 0x40201409 translucida, cursorY +18 (era +20).
+  - ROYAL DECREE: escala 1.2 -> 1.1, misma sombra suavizada, cursorY +18.
+
+### API real 1.20.1 (referencia para futuros hitos)
+- LanguageInfo NO tiene getCode(). El codigo esta en la key del SortedMap de LanguageManager.getLanguages(). Usar entrySet() y almacenar (code, info) en el Entry propio.
+- LanguageInfo.toComponent() existe (m_264517_ mapeado).
+- AbstractSelectionList expone setRenderBackground(boolean), setRenderTopAndBottom(boolean), setRenderSelection(boolean). NO existen renderListBackground/renderListSeparators (nombres inventados en primer intento).
+- Los nombres reales se obtienen inspeccionando el jar mapeado en:
+  C:\Users\santi\.gradle\caches\forge_gradle\minecraft_user_repo\net\minecraftforge\forge\1.20.1-*\forge-1.20.1-*_mapped_official_1.20.1.jar
+
+### Errores nuevos catalogados
+
+- **E58**: Se asumio que AbstractSelectionList exponia renderListBackground / renderListSeparators (inventados). Los reales son setRenderBackground(boolean) y setRenderTopAndBottom(boolean). Regla derivada: R-SIG-VERIFY ya cubria esto; se refuerza que "vanilla vecino hace X con override" NO implica que el override sea publico o exista con ese nombre. Verificar SIEMPRE con javap sobre el jar mapeado antes de proponer overrides.
+- **E59**: Titulos escalados con pose().scale(1.4x) + drawString con sombra opaca SEPIA_DARK generan sombra 1.4 px separada y pesada. Efecto anti-estetico contra fondos claros. Solucion: bajar escala a 1.1-1.2 y usar sombra translucida (alpha ~0x40) del mismo color pergamino oscuro.
+- **E60**: setRenderBackground(false) NO existe en versiones viejas pero SI en 1.20.1. La API cambio; no fiarse de recuerdos de otras versiones.
+
+### Reglas nuevas
+
+- **R-SIG-VERIFY-EXTENDED**: cuando se necesite anular comportamiento de una clase vanilla (fondo, seleccion, separadores), NO inferir el nombre del override por analogia. Buscar en el jar mapeado (mapped_official) todos los metodos setRender*/setDraw* y renderList/renderSelection/renderBackground de la superclase. La API expone setters mas seguido que overrides.
+- **R-SHADOW-STYLE**: los titulos del mod deben usar sombra translucida (0x40201409, +1,+1, dropShadow=false) en vez de dropShadow=true (sombra dura negra opaca vanilla). Aplica a todos los drawString/drawCenteredString del mod. Excepcion: interior de un panel muy oscuro (fondos negros/marrones) donde la sombra dura puede tener sentido.
+
+### KI-07 (PARCIAL en v0.11.1)
+- Sub-pantalla Idioma cerrada con DiaryLanguageScreen sobre pergamino.
+- Restantes vanilla: Controles, Chat, Accesibilidad, Mi aspecto, Musica y sonidos, Telemetria, En linea, Paquetes de recursos, Creditos.
+- Proximo candidato natural para v0.11.2: Musica y sonidos (aprovecha el slider ya existente y el know-how del sistema de audio).
+
+### KI-08 (ABIERTO desde v0.11.1)
+- Deuda: banderas/emojis por idioma en DiaryLanguageScreen.
+- La font vanilla no renderiza regional indicators ni emojis. Force Unicode Font tampoco resuelve.
+- Solucion futura: font provider propio (assets/gripeverde/font/*.json) mapeando code points custom (rango privado U+E000+) a PNGs pixel-art victorianos.
+- No bloqueante. Sub-hito propio cuando se planifique.
+
+## PROXIMO HITO PLANIFICADO (revisado tras v0.11.1)
+
+### Candidato G: v0.11.2 - DiarySoundOptionsScreen
+Objetivo: reemplazar SoundOptionsScreen vanilla por version sobre pergamino. Integrar naturalmente el MusicVolumeSlider ya existente.
+Riesgo: bajo. Aprovecha lo aprendido en Language.
+
+### Candidato H: v0.11.x - DiaryControlsScreen
+Objetivo: reemplazar ControlsScreen vanilla. Riesgo medio (la lista de keybinds es densa y tiene interaccion propia).
+
+### Candidato I: v0.11.x - Banderas pixel-art (KI-08)
+Objetivo: font provider propio + PNGs de banderas para cada idioma.
+Riesgo: medio. Requiere trabajo de arte + configuracion de font providers.
+
+### Candidato C: v0.12.0+ - Contenido de gameplay
+Objetivo: primer sistema de gameplay real (Gripe Verde en si).
+Riesgo: alto. Requiere diseno previo escrito.

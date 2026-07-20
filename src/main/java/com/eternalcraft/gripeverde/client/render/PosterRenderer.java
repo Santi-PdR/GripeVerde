@@ -28,13 +28,14 @@ public class PosterRenderer {
 
         g.pose().pushPose();
         g.pose().translate(cx, cursorY, 0);
-        g.pose().scale(1.4f, 1.4f, 1f);
+        g.pose().scale(1.2f, 1.2f, 1f);
         String q = I18n.get("gripeverde.poster.quarantine.title");
         int qw = font.width(q);
-        g.drawString(font, q, -qw / 2 + 1, 1, DiaryTheme.SEPIA_DARK, false);
+        // Sombra suave translucida en vez de SEPIA_DARK opaco
+        g.drawString(font, q, -qw / 2 + 1, 1, 0x40201409, false);
         g.drawString(font, q, -qw / 2, 0, DiaryTheme.BLOOD_DRIED, false);
         g.pose().popPose();
-        cursorY += 20;
+        cursorY += 18;
 
         drawThinDivider(g, cx, cursorY, w - 30);
         cursorY += 10;
@@ -185,13 +186,14 @@ public class PosterRenderer {
 
         g.pose().pushPose();
         g.pose().translate(cx, cursorY + 4, 0);
-        g.pose().scale(1.2f, 1.2f, 1f);
+        g.pose().scale(1.1f, 1.1f, 1f);
         String title = I18n.get("gripeverde.poster.decree.title");
         int tw = font.width(title);
-        g.drawString(font, title, -tw / 2 + 1, 1, DiaryTheme.SEPIA_DARK, false);
+        // Sombra suave translucida
+        g.drawString(font, title, -tw / 2 + 1, 1, 0x40201409, false);
         g.drawString(font, title, -tw / 2, 0, DiaryTheme.INK, false);
         g.pose().popPose();
-        cursorY += 20;
+        cursorY += 18;
 
         drawThinDivider(g, cx, cursorY, w - 30);
         cursorY += 10;

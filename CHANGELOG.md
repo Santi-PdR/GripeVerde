@@ -1,6 +1,16 @@
 # Eternal Craft: Gripe Verde
 ## Notas de Actualización
 
+## v0.11.1 - Lenguas conocidas
+
+El gabinete que ya lucia sobre pergamino se ha ordenado con oficio. Divisas discretas guardan sus cuatro esquinas; dos rayas de tinta separan lo que se lee de lo que se firma; un renglon bajo el titulo anuncia la mano del cronista. Y en su interior, por fin, la lista de lenguas del mundo se ha vuelto legible: cada una en su renglon limpio, sin la mancha vulgar que las tapaba, la elegida marcada con una flecha, las demas esperando su turno. Tambien los edictos de la calle han bajado la voz. Cuarentena y Real Decreto ya no gritan al observador; ahora respiran con el resto del papel.
+
+### Del diario
+- Las lenguas del mundo se han ordenado sobre pergamino, limpias y legibles.
+- El gabinete recibio divisas en sus esquinas y renglones que dividen sus partes.
+- Los edictos de Cuarentena y Real Decreto se han suavizado en su tipografia.
+
+---
 ## v0.11.0 — El gabinete de ajustes
 
 Hasta esta noche, quien buscaba modificar las condiciones bajo las cuales el diario era consultado se topaba con una hoja tosca, escrita a maquina, ajena por completo al espiritu del cuaderno. El contraste era violento: se salia de la vigilia y se caia en una oficina mal iluminada. Esta noche, el gabinete tambien ha sido incorporado. Sobre el mismo pergamino y con la misma tinta, el observador encuentra ahora dispuestas las opciones de la vigilia. La ciudad sigue viva detras del panel, atenuada, sus faroles latiendo con paciencia mientras uno ajusta lo que necesite ajustar.

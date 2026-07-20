@@ -5,6 +5,8 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
+**v0.11.1** - El gabinete se ha ordenado con oficio: divisas en las cuatro esquinas, renglones de tinta que separan sus partes, un subtitulo que anuncia la mano del cronista. Y dentro de el, las lenguas conocidas del mundo se leen ya sin la mancha vulgar que las tapaba, la elegida marcada con una flecha discreta. Los edictos de la calle, Cuarentena y Real Decreto, tambien han bajado la voz.
+
 **v0.11.0** — Esta noche el gabinete de ajustes tambien ha sido incorporado al diario. Sobre el mismo pergamino y con la misma tinta, el observador encuentra ahora dispuestas las opciones de la vigilia. La ciudad sigue viva detras del panel, atenuada, sus faroles latiendo con paciencia mientras uno ajusta lo que necesite ajustar.
 
 **v0.10.4** - Esta noche la luna ha ganado un halo tenue, como si el vapor de las calderas y la humedad del Tamesis se le pegaran alrededor. Tres jirones finos la cruzan lentamente, sin llegar a taparla del todo.

@@ -1,9 +1,9 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
-Ultima actualizacion: v0.11.0
+Ultima actualizacion: v0.11.1
 Estado: EN DESARROLLO
-Version estable actual: v0.11.0
-Ultimo tag publicado: v0.11.0
+Version estable actual: v0.11.1
+Ultimo tag publicado: v0.11.1
 Hitos recientes: v0.11.0 (DiaryOptionsScreen sobre pergamino con Title vivo detras, KI-06 cerrado extendido, sub-pantallas vanilla integradas); v0.10.4 (bump administrativo, changelog in-game intencionalmente sin entrada); v0.10.1 (persistencia del volumen de musica); v0.10.0 (ChangelogScreen sobre pergamino + reescritura diegetica de las 25 cronicas, KI-06 cerrado); v0.9.2 (fix humo/nubes, KI-05 cerrado); v0.9.1 (faroles reactivados, KI-03 cerrado completo); v0.9.0 hito visual del skyline; sistema de musica (v0.8.x) estable.
 
 ---
@@ -12,7 +12,7 @@ Hitos recientes: v0.11.0 (DiaryOptionsScreen sobre pergamino con Title vivo detr
 
 - Proyecto: Eternal Craft: Gripe Verde
 - Base: Minecraft Forge 1.20.1
-- Version desplegada: 0.11.0
+- Version desplegada: 0.11.1
 - Tipo: mod de interfaz + audio
 - Ambientacion: ciudad victoriana bajo cuarentena, Green Flu
 - Estado general: compilando limpio. Sistema de musica del Title con persistencia (v0.10.1). ChangelogScreen sobre pergamino y cronicas diegeticas (v0.10.0). Mejoras visuales previas de v0.9.x estables.
@@ -218,18 +218,18 @@ Solucion: R-PATH2. Siempre Set-Location $repo al inicio de bloques con gradlew/g
 - Repo local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 - Remoto: https://github.com/Santi-PdR/GripeVerde
 - Deploy: D:\Juegos\Minecraft\Instances\Test\mods
-- Ultimo tag: v0.9.2
+- Ultimo tag: v0.11.1
 - Build limpio.
 - Working tree esperado: limpio antes de proximas sesiones.
 
 ### KI-06 - Menu del Historial de Cambios sin ambientacion victoriana (RESUELTO en v0.10.0)
 - ChangelogScreen ya no usa UI vanilla: panel de pergamino, boton al estilo DiaryButton y cronicas reescritas en tono diegetico.
 
-### KI-07 - Subpantallas de Opciones siguen usando UI vanilla (ACTIVO)
-- Desde DiaryOptionsScreen, varias subpantallas siguen siendo las de Minecraft vanilla (fondo dirt, tipografia default).
-- Ejemplos: Idioma, Controles, Chat, Accesibilidad, Mi aspecto, Musica y sonidos.
-- Estado: funcional (se abren y vuelven sin crash), pero rompe la estetica.
-- Plan: ambientar subpantallas de a una en v0.11.x, evitando hooks globales.
+### KI-07 - Subpantallas de Opciones siguen usando UI vanilla (PARCIAL)
+- v0.11.1: Idioma cerrado (DiaryLanguageScreen sobre pergamino, con lista limpia, sin fondo dirt ni barra de seleccion vanilla).
+- Siguen vanilla: Controles, Chat, Accesibilidad, Mi aspecto, Musica y sonidos, Telemetria, En linea, Paquetes de recursos, Creditos.
+- Estado: funcional (se abren y vuelven sin crash), pero rompe la estetica en las que aun no fueron ambientadas.
+- Plan: continuar de a una en v0.11.x. Musica y sonidos como proximo candidato natural.
 
 ### KI-05 (RESUELTO en v0.9.2)
 - Humo de chimeneas, nubes del skyline y nube frente a la luna se dibujaban como rectangulos por g.fill.
@@ -242,3 +242,11 @@ Solucion: R-PATH2. Siempre Set-Location $repo al inicio de bloques con gradlew/g
 
 Sintoma: [System.IO.File]::ReadAllText / WriteAllText con ruta relativa fallan si el CWD del proceso .NET no coincide con Set-Location de PowerShell (ocurre al abrir nueva instancia PS que arranca en C:\\Users\\<user>).
 Solucion: siempre pasar ruta absoluta con $PWD\\... explicito. Cubierto por R-DOTNET-PATH y R-CD.
+
+
+### KI-08 (ABIERTO)
+- Deuda visual: banderas / emojis por idioma en DiaryLanguageScreen.
+- La font vanilla de Minecraft no renderiza regional indicators (secuencias tipo U+1F1EA U+1F1F8 = ES) ni emojis a color.
+- Force Unicode Font tampoco resuelve: renderiza como cuadros o glifos genericos.
+- Solucion futura: font provider propio del mod (assets/gripeverde/font/*.json) mapeando code points custom a PNGs con banderas dibujadas manualmente en pixel-art victoriano (no fotorealistas).
+- Alcance estimado: sub-hito propio, no bloqueante.

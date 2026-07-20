@@ -1,6 +1,10 @@
 # Eternal Craft: Gripe Verde
 ## Notas de Actualización
 
+
+
+## Version 0.11.1
+El gabinete que ya lucia sobre pergamino se ha ordenado con oficio. Divisas discretas guardan sus cuatro esquinas; dos rayas de tinta separan lo que se lee de lo que se firma; un renglon bajo el titulo anuncia la mano del cronista. Y en su interior, por fin, la lista de lenguas del mundo se ha vuelto legible: cada una en su renglon limpio, sin la mancha vulgar que las tapaba, la elegida marcada con una flecha, las demas esperando su turno. Tambien los edictos de la calle han bajado la voz. Cuarentena y Real Decreto ya no gritan al observador; ahora respiran con el resto del papel.
 ## Version 0.11.0
 El gabinete de ajustes tambien luce ahora sobre pergamino. La ciudad sigue viva detras del panel mientras uno acomoda lo que necesite acomodar.
 

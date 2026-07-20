@@ -1,6 +1,10 @@
 # Eternal Craft: Gripe Verde
 ## Update Notes
 
+
+
+## Version 0.11.1
+The cabinet that already showed itself on parchment has now been ordered with craft. Discreet marks guard its four corners; two lines of ink separate what is read from what is signed; a line beneath the title announces the chronicler's hand. And within it, at last, the list of the world's tongues has become legible: each in its clean line, without the vulgar smudge that covered them, the chosen one marked by an arrow, the rest awaiting their turn. The proclamations of the street have also lowered their voice. Quarantine and Royal Decree no longer shout at the observer; they now breathe with the rest of the paper.
 ## Version 0.11.0
 The cabinet of settings now shows itself on parchment as well. The city keeps breathing behind the panel while one arranges what needs arranging.
 

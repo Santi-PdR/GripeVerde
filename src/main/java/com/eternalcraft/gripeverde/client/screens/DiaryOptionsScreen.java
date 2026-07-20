@@ -10,7 +10,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.AccessibilityOptionsScreen;
 import net.minecraft.client.gui.screens.ChatOptionsScreen;
-import net.minecraft.client.gui.screens.LanguageSelectScreen;
 import net.minecraft.client.gui.screens.OptionsScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.SkinCustomizationScreen;
@@ -42,6 +41,7 @@ public class DiaryOptionsScreen extends Screen {
 
     // Interior del panel
     private static final int PAD_TOP = 16;
+    private static final int SUBTITLE_GAP = 11;
     private static final int TITLE_H = 12;
     private static final int TITLE_GAP = 14;
     private static final int GRID_ROWS = 6;
@@ -64,13 +64,13 @@ public class DiaryOptionsScreen extends Screen {
     protected void init() {
         int gridH = GRID_ROWS * BTN_H + (GRID_ROWS - 1) * GAP_Y;
         panelW = BTN_W * 2 + GAP_X + PAD_SIDES * 2;
-        panelH = PAD_TOP + TITLE_H + TITLE_GAP + gridH + GAP_BEFORE_BACK + BACK_H + PAD_BOTTOM;
+        panelH = PAD_TOP + TITLE_H + SUBTITLE_GAP + TITLE_GAP + gridH + GAP_BEFORE_BACK + BACK_H + PAD_BOTTOM;
 
         panelX = (this.width - panelW) / 2;
         panelY = (this.height - panelH) / 2;
 
         int cx = this.width / 2;
-        int gridTop = panelY + PAD_TOP + TITLE_H + TITLE_GAP;
+        int gridTop = panelY + PAD_TOP + TITLE_H + SUBTITLE_GAP + TITLE_GAP;
 
         int col1X = cx - BTN_W - GAP_X / 2;
         int col2X = cx + GAP_X / 2;
@@ -132,10 +132,69 @@ public class DiaryOptionsScreen extends Screen {
 
         // Titulo en tinta
         int titleY = panelY + PAD_TOP;
-        g.drawCenteredString(this.font, this.title, this.width / 2, titleY, DiaryTheme.INK);
+        {
+            int titleW = this.font.width(this.title);
+            int titleX = (this.width - titleW) / 2;
+            g.drawString(this.font, this.title, titleX + 1, titleY + 1, 0x40201409, false);
+            g.drawString(this.font, this.title, titleX, titleY, DiaryTheme.INK, false);
+
+            // Subtitulo diegetico
+            net.minecraft.network.chat.Component subtitle =
+                    net.minecraft.network.chat.Component.translatable("gripeverde.options.subtitle");
+            int subW = this.font.width(subtitle);
+            int subX = (this.width - subW) / 2;
+            int subY = titleY + TITLE_H + 2;
+            g.drawString(this.font, subtitle, subX, subY, 0xFF6B4A2E, false);
+
+            // Divisor horizontal bajo el subtitulo (con fade a los costados)
+            int divY1 = subY + this.font.lineHeight + 3;
+            drawInkDivider(g, panelX + 24, panelX + panelW - 24, divY1);
+
+            // Divisor horizontal antes del boton Volver
+            int backY = panelY + panelH - PAD_BOTTOM - BACK_H;
+            int divY2 = backY - 8;
+            drawInkDivider(g, panelX + 24, panelX + panelW - 24, divY2);
+
+            // Esquineros victorianos
+            drawCornerOrnaments(g, panelX, panelY, panelW, panelH);
+        }
 
         // Widgets
         super.render(g, mouseX, mouseY, partialTick);
+    }
+
+    // Divisor horizontal con fade a los costados color tinta
+    private static void drawInkDivider(net.minecraft.client.gui.GuiGraphics g, int x1, int x2, int y) {
+        int inkFull  = 0x88422810;
+        int inkClear = 0x00422810;
+        int mid = (x1 + x2) / 2;
+        g.fillGradient(x1, y, mid, y + 1, inkClear, inkFull);
+        g.fillGradient(mid, y, x2, y + 1, inkFull, inkClear);
+    }
+
+    // Esquineros victorianos en L color tinta (8x8 px)
+    private static void drawCornerOrnaments(net.minecraft.client.gui.GuiGraphics g,
+                                            int x, int y, int w, int h) {
+        int ink = 0xA0422810;
+        int len = 8;
+        int th = 1;
+        int m = 4; // margen desde el borde
+
+        // Esquina superior izquierda
+        g.fill(x + m, y + m, x + m + len, y + m + th, ink);
+        g.fill(x + m, y + m, x + m + th, y + m + len, ink);
+
+        // Esquina superior derecha
+        g.fill(x + w - m - len, y + m, x + w - m, y + m + th, ink);
+        g.fill(x + w - m - th, y + m, x + w - m, y + m + len, ink);
+
+        // Esquina inferior izquierda
+        g.fill(x + m, y + h - m - th, x + m + len, y + h - m, ink);
+        g.fill(x + m, y + h - m - len, x + m + th, y + h - m, ink);
+
+        // Esquina inferior derecha
+        g.fill(x + w - m - len, y + h - m - th, x + w - m, y + h - m, ink);
+        g.fill(x + w - m - th, y + h - m - len, x + w - m, y + h - m, ink);
     }
 
     @Override
@@ -182,8 +241,11 @@ public class DiaryOptionsScreen extends Screen {
         this.minecraft.setScreen(new ControlsScreen(this, this.minecraft.options));
     }
     private void openLanguage() {
-        this.minecraft.setScreen(new LanguageSelectScreen(this,
-                this.minecraft.options, this.minecraft.getLanguageManager()));
+        this.minecraft.setScreen(new DiaryLanguageScreen(
+                this,
+                this.minecraft.options,
+                this.minecraft.getLanguageManager()
+        ));
     }
     private void openChat() {
         this.minecraft.setScreen(new ChatOptionsScreen(this, this.minecraft.options));
