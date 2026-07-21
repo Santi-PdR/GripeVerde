@@ -1,6 +1,9 @@
 # Eternal Craft: Gripe Verde
 ## Notas de Actualización
 
+## v0.11.3 (2026-07-XX)
+
+El cronista abre dos nuevas puertas de su gabinete. En una halla ajustes para sus propios sentidos: la brasa que titila, el trueno que sacude, la voz que dicta las palabras impresas. En la otra, las convenciones para dirigirse a otros que caminen la ciudad: la pluma que responde, el papel donde llegan las noticias, el silencio que se guarda. Ambas salas huelen a pergamino, a tinta seca y a lampara de aceite. Los marcos se han labrado con esquineros dobles y los divisores llevan un rombo tipografico en el centro. Bajo cada titulo se ha anotado, con letra tenue, la naturaleza de la sala.
 ## v0.11.2 - Protocolos de correspondencia
 
 Esta noche los protocolos de correspondencia tambien han sido acogidos por el diario. La pantalla en que se ordenan las reglas del chat luce ahora sobre pergamino, con las mismas divisas en las esquinas y las mismas rayas de tinta que ordenan el gabinete y el registro de lenguas. Nueve renglones caben con holgura entre los margenes, y el boton de retorno responde al mismo gesto que ya se conoce.

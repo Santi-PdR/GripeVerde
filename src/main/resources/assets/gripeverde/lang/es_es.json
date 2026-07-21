@@ -115,4 +115,12 @@
     "gripeverde.options.button.done":  "Volver",
   "gripeverde.options.language.title": "Lenguas conocidas",
   "gripeverde.options.subtitle": "- Gabinete del cronista -"
+,
+  "gripeverde.options.accessibility.subtitle": "- Auxilios y percepciones -"
+,
+  "gripeverde.options.accessibility.flavor": "Ajustad los sentidos con prudencia.",
+  "gripeverde.options.chat.flavor": "De la palabra escrita entre extraños.",
+  "gripeverde.options.language.flavor": "Toda ciudad se cuenta en muchas voces."
+,
+  "gripeverde.options.language.subtitle": "- Voces de la ciudad -"
 }

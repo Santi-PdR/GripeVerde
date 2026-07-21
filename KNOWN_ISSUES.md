@@ -1,9 +1,43 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
-Ultima actualizacion: v0.11.2
+## v0.11.3 - DiaryAccessibilityOptionsScreen + pulido de Chat y Lenguas (KI-07 sigue avanzando)
+
+### Cambios
+- Nueva clase DiaryAccessibilityOptionsScreen que hereda de AccessibilityOptionsScreen.
+- Chat y Lenguas ganan: subtitulo, flavor text, esquineros dobles, divisores con rombo tipografico central.
+- Accesibilidad ampliada a PANEL_H=395 para mostrar las 20 opciones sin scroll.
+- Emblemas figurativos (ojo, sobre, fleur, estrella, cruz de Malta) probados y descartados: no leen a escala pixel-art vanilla; se removieron.
+- Sombras vanilla de drawCenteredString eliminadas via drawString con dropShadow=false y centrado manual.
+
+### Errores nuevos catalogados
+- E66: SimpleOptionsSubScreen.render() pinta fondo dirt + titulo vanilla. Al ambientar hay que hacer bypass: NO llamar super.render(), dibujar this.list.render() manualmente y ocultar footer widgets.
+- E67: DiaryButton con Icon+Variant espera Runnable, no Consumer<Button>. Usar this::onClose o () -> ..., no b -> ....
+- E68: list.render() tapa cosmeticos previos dibujados en el area de la lista. Los divisores/esquineros deben ir DESPUES de list.render().
+- E69: [System.IO.File]::WriteAllText con [System.Text.Encoding]::UTF8 escribe BOM en PowerShell 5. Compilar .java con BOM da error illegal character '\ufeff'. Usar new UTF8Encoding(False).
+- E70: drawCenteredString fuerza dropShadow=true de la fuente vanilla. Genera doble contorno feo en subtitulos sobre pergamino claro. Alternativa: drawString(..., dropShadow=false) con centrado manual x - font.width(text)/2.
+- E71: PowerShell 5 queda esperando cierre (>>) cuando hay subexpresiones anidadas $(( ... )) con parentesis + comillas dentro de Write-Host multilinea. Calcular en variables antes de interpolar.
+
+### Reglas nuevas
+- R-NO-DROPSHADOW-CENTERED: para textos en pergamino, usar drawString(..., dropShadow=false) con centrado manual en vez de drawCenteredString.
+- R-EMBLEM-SKIP: no intentar emblemas figurativos (ojo, sobre, flor, estrella) con gfx.fill() a menos de 20px de ancho. A esa escala solo funcionan simbolos geometricos abstractos simples (rombo, cruz, punto).
+- R-PS-NOSUBEXPR-MULTILINE: evitar $((...)) anidados en Write-Host cuando el bloque tiene multiples lineas seguidas. Calcular en variables primero.
+- R-UTF8-NOBOM: siempre usar New-Object System.Text.UTF8Encoding $false para escribir .java. [System.Text.Encoding]::UTF8 incluye BOM y rompe compilacion.
+- R-SUB-SCREEN-STRATEGY: al ambientar una subpantalla vanilla que extiende SimpleOptionsSubScreen, NO llamar super.render(). Dibujar fondo propio, luego this.list.render(), luego cosmeticos superpuestos, luego boton Volver propio. Widgets vanilla del footer (narratorButton, done) se ocultan via visible=false iterando children() en init().
+- R-COSMETIC-ORDER: elementos cosmeticos sobre areas donde luego se dibuja una lista vanilla deben renderizarse DESPUES de la lista.
+
+### KI-07 estado
+- Sub-pantallas Diary implementadas: Idioma (v0.11.1), Chat (v0.11.2), Accesibilidad (v0.11.3).
+- Restantes vanilla: Controles, Mi aspecto, Musica y sonidos, Telemetria, En linea, Paquetes de recursos, Creditos.
+
+### Deuda tecnica
+- Barra de scroll vanilla gris en DiaryLanguageScreen rompe estetica pergamino. Reemplazo por thumb tinta victoriana queda para Fase 6 en hito futuro.
+- Slider vanilla "Duracion de las notificaciones" en Accesibilidad tiene texto que se corta a la derecha por ancho fijo 150px del widget. Limitacion vanilla. Igual que en Chat (Duracion notificaciones), no se corrige.
+
+
+Ultima actualizacion: v0.11.3
 Estado: EN DESARROLLO
-Version estable actual: v0.11.2
-Ultimo tag publicado: v0.11.2
+Version estable actual: v0.11.3
+Ultimo tag publicado: v0.11.3
 Hitos recientes: v0.11.0 (DiaryOptionsScreen sobre pergamino con Title vivo detras, KI-06 cerrado extendido, sub-pantallas vanilla integradas); v0.10.4 (bump administrativo, changelog in-game intencionalmente sin entrada); v0.10.1 (persistencia del volumen de musica); v0.10.0 (ChangelogScreen sobre pergamino + reescritura diegetica de las 25 cronicas, KI-06 cerrado); v0.9.2 (fix humo/nubes, KI-05 cerrado); v0.9.1 (faroles reactivados, KI-03 cerrado completo); v0.9.0 hito visual del skyline; sistema de musica (v0.8.x) estable.
 
 ---
@@ -218,7 +252,7 @@ Solucion: R-PATH2. Siempre Set-Location $repo al inicio de bloques con gradlew/g
 - Repo local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 - Remoto: https://github.com/Santi-PdR/GripeVerde
 - Deploy: D:\Juegos\Minecraft\Instances\Test\mods
-- Ultimo tag: v0.11.2
+- Ultimo tag: v0.11.3
 - Build limpio.
 - Working tree esperado: limpio antes de proximas sesiones.
 
@@ -226,7 +260,7 @@ Solucion: R-PATH2. Siempre Set-Location $repo al inicio de bloques con gradlew/g
 - ChangelogScreen ya no usa UI vanilla: panel de pergamino, boton al estilo DiaryButton y cronicas reescritas en tono diegetico.
 
 ### KI-07 - Subpantallas de Opciones siguen usando UI vanilla (PARCIAL)
-- v0.11.2: Idioma cerrado (DiaryLanguageScreen sobre pergamino, con lista limpia, sin fondo dirt ni barra de seleccion vanilla).
+- v0.11.3: Idioma cerrado (DiaryLanguageScreen sobre pergamino, con lista limpia, sin fondo dirt ni barra de seleccion vanilla).
 - Siguen vanilla: Controles, Chat, Accesibilidad, Mi aspecto, Musica y sonidos, Telemetria, En linea, Paquetes de recursos, Creditos.
 - Estado: funcional (se abren y vuelven sin crash), pero rompe la estetica en las que aun no fueron ambientadas.
 - Plan: continuar de a una en v0.11.x. Musica y sonidos como proximo candidato natural.

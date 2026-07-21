@@ -7,11 +7,11 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.11.2
-- build.gradle: version = '0.11.2'
-- GripeVerdeMod.VERSION: "0.11.2"
+- Version estable actual: v0.11.3
+- build.gradle: version = '0.11.3'
+- GripeVerdeMod.VERSION: "0.11.3"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
-- Ultimo tag publicado: v0.11.2
+- Ultimo tag publicado: v0.11.3
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
 
@@ -54,7 +54,7 @@ C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 
 - Local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 - Remoto: https://github.com/Santi-PdR/GripeVerde (privado)
-- Ultimo tag: v0.11.2
+- Ultimo tag: v0.11.3
 
 ## Rutas reales verificadas
 
@@ -673,3 +673,62 @@ Objetivo: font provider propio + PNGs de banderas para cada idioma.
 Objetivo: primer sistema de gameplay real (Gripe Verde en si).
 
 Decision pendiente para proxima sesion.
+
+---
+## ADDENDUM v0.11.3 (DiaryAccessibilityOptionsScreen + pulido de Chat y Lenguas)
+
+### Cambios de codigo
+- Nueva clase: client/screens/DiaryAccessibilityOptionsScreen.java. Extiende AccessibilityOptionsScreen (subclase visual, no reimplementacion).
+  - Fondo: pipeline del Title vivo atenuado con overlay 0x66000000.
+  - Panel pergamino 340x395. Titulo + subtitulo + flavor con dropShadow=false.
+  - Divisores extendidos con rombo tipografico central. Esquineros dobles (externo 12px + interno 5px).
+  - Boton Volver estilo DiaryButton Icon.DOOR Variant.PRIMARY.
+  - Se apagan setRenderBackground(false) + setRenderTopAndBottom(false) en list.
+  - NO llama super.render() (dibujaria fondo dirt de SimpleOptionsSubScreen). Dibuja this.list.render() manualmente + btnVolver aparte.
+  - PANEL_H=395 permite mostrar las 20 opciones sin scroll.
+- DiaryChatOptionsScreen: agregado subtitulo + flavor + esquineros dobles + rombos en divisores. Sombras eliminadas via drawString/dropShadow=false.
+- DiaryLanguageScreen: agregado subtitulo + flavor + esquineros dobles + rombos + divisor inferior + constantes cosmeticas compartidas.
+- 25 archivos lang/*.json: agregadas claves gripeverde.options.accessibility.subtitle, .flavor, gripeverde.options.chat.flavor, gripeverde.options.language.subtitle, .flavor.
+- DiaryOptionsScreen.openAccessibility(): ahora abre DiaryAccessibilityOptionsScreen.
+
+### Errores nuevos catalogados
+- E66: SimpleOptionsSubScreen.render() pinta fondo dirt + titulo vanilla propio. Al ambientar hay que hacer bypass: NO llamar super.render(); dibujar this.list.render() + btnVolver aparte.
+- E67: DiaryButton con Icon+Variant espera Runnable, no Consumer<Button>.
+- E68: list.render() tapa cosmeticos dibujados antes en su area. Cosmeticos van despues.
+- E69: WriteAllText con [System.Text.Encoding]::UTF8 escribe BOM en PS5. Usar new UTF8Encoding($false).
+- E70: drawCenteredString fuerza dropShadow=true (sombra vanilla hardcodeada). Da doble contorno feo. Usar drawString(..., false) con centrado manual.
+- E71: PS5 queda esperando cierre (>>) con subexpresiones anidadas + comillas en Write-Host multilinea.
+
+### Reglas nuevas formalizadas
+- R-NO-DROPSHADOW-CENTERED: para textos sobre pergamino, usar drawString(..., dropShadow=false) con centrado manual en vez de drawCenteredString.
+- R-EMBLEM-SKIP: no intentar emblemas figurativos con gfx.fill() a menos de 20px. Solo geometricos simples (rombo, cruz, punto) funcionan a pixel-scale.
+- R-PS-NOSUBEXPR-MULTILINE: evitar subexpresiones $(( ... )) anidadas en Write-Host cuando el bloque es multilinea.
+- R-UTF8-NOBOM: siempre new UTF8Encoding($false) para escribir .java desde PS. [System.Text.Encoding]::UTF8 rompe compilacion con BOM.
+- R-SUB-SCREEN-STRATEGY: al extender SimpleOptionsSubScreen, no llamar super.render(). Dibujar fondo propio + list.render() manual + cosmeticos + boton propio. Ocultar footer widgets con visible=false iterando children() en init().
+- R-COSMETIC-ORDER: cosmeticos sobre areas de listas vanilla van DESPUES de list.render().
+
+### KI-07 (SIGUE AVANZANDO en v0.11.3)
+- Sub-pantalla Accesibilidad cerrada con DiaryAccessibilityOptionsScreen sobre pergamino.
+- Chat y Lenguas ganaron consistencia visual con Accesibilidad.
+- Restantes vanilla: Controles, Mi aspecto, Musica y sonidos, Telemetria, En linea, Paquetes de recursos, Creditos.
+
+### Deuda tecnica identificada
+- Barra de scroll vanilla en DiaryLanguageScreen. Requiere override de renderDecorations de AbstractSelectionList. Diferido a hito futuro (Fase 6).
+- Widget vanilla "Duracion de las notificaciones" en Accesibilidad tiene ancho fijo 150px que corta texto largo. Limitacion vanilla, no se corrige.
+
+## PROXIMO HITO PLANIFICADO (revisado tras v0.11.3)
+
+### Candidato H: v0.11.4 - DiaryControlsScreen
+Objetivo: reemplazar ControlsScreen vanilla. Riesgo medio (lista de keybinds densa + interaccion propia para asignar tecla). Ojo con Controlling (mod del pack que ya la modifica).
+
+### Candidato K: v0.11.x - DiarySkinCustomizationScreen
+Objetivo: reemplazar SkinCustomizationScreen. Riesgo medio (toggles de partes del cuerpo + mano dominante).
+
+### Candidato L: v0.11.x - Barra de scroll estilizada (Fase 6 diferida)
+Objetivo: reemplazar la barra gris vanilla de AbstractSelectionList por un thumb en tinta victoriana. Aplicaria a Lenguas + cualquier futura pantalla con lista propia.
+
+### Candidato I: v0.11.x - Banderas pixel-art (KI-08)
+Objetivo: font provider propio + PNGs de banderas para cada idioma.
+
+### Candidato C: v0.12.0+ - Contenido de gameplay (Gripe Verde en si)
+Objetivo: primer sistema de gameplay real. Requiere diseno previo escrito.

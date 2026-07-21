@@ -21,6 +21,10 @@ import java.util.Objects;
 public class DiaryLanguageScreen extends Screen {
 
     private static final int SCENE_OVERLAY = 0x66000000;
+    private static final int INK_TITLE     = 0xFF2A1A0A;
+    private static final int INK_SUBTITLE  = 0xFF6B4226;
+    private static final int INK_DIVIDER   = 0x88422810;
+    private static final int SHADOW_COL    = 0x20201409;
     private static final int PANEL_MAX_W = 420;
     private static final int PANEL_MAX_H = 300;
     private static final int PANEL_PAD = 18;
@@ -74,7 +78,7 @@ public class DiaryLanguageScreen extends Screen {
         int footerY = this.panelY + this.panelH - PANEL_PAD - FOOTER_BTN_H;
 
         this.listX = this.panelX + PANEL_PAD;
-        this.listY = titleY + this.font.lineHeight + TITLE_GAP;
+        this.listY = titleY + 50;  // titulo + subtitulo + flavor + emblema + divisor
         this.listW = this.panelW - PANEL_PAD * 2;
         this.listH = footerY - FOOTER_GAP - this.listY;
 
@@ -128,12 +132,24 @@ public class DiaryLanguageScreen extends Screen {
         PaperTexture.drawClean(g, panelX, panelY, panelW, panelH);
 
         int titleY = this.panelY + PANEL_PAD;
+        int cx = this.width / 2;
         {
             int titleW = this.font.width(this.title);
             int titleX = (this.width - titleW) / 2;
             // Sombra sutil color pergamino oscuro
-            g.drawString(this.font, this.title, titleX + 1, titleY + 1, 0x40201409, false);
-            g.drawString(this.font, this.title, titleX, titleY, DiaryTheme.INK, false);
+            g.drawString(this.font, this.title, titleX + 1, titleY + 1, SHADOW_COL, false);
+            g.drawString(this.font, this.title, titleX, titleY, INK_TITLE, false);
+
+            // Subtitulo
+            Component subtitle = Component.translatable("gripeverde.options.language.subtitle");
+            int subWL = this.font.width(subtitle); g.drawString(this.font, subtitle, cx - subWL / 2, titleY + 12, INK_SUBTITLE, false);
+
+            // Flavor
+            Component flavor = Component.translatable("gripeverde.options.language.flavor");
+            int flvWL = this.font.width(flavor); g.drawString(this.font, flavor, cx - flvWL / 2, titleY + 24, 0xC06B4A2E, false);
+            // Divisor superior (con rombo central)
+            int divY1 = titleY + 42;
+            drawInkDivider(g, this.panelX + 14, this.panelX + this.panelW - 14, divY1);
         }
 
         int frameX = this.listX - 4;
@@ -161,6 +177,11 @@ public class DiaryLanguageScreen extends Screen {
                     this.listX + this.listW, this.listY + this.listH,
                     paperClear, paperFull);
         }
+
+        // Divisor inferior antes de los botones + esquineros externos
+        int divY2 = this.panelY + this.panelH - PANEL_PAD - FOOTER_BTN_H - 6;
+        drawInkDivider(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
+        drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
 
         super.render(g, mouseX, mouseY, partialTick);
     }
@@ -200,6 +221,89 @@ public class DiaryLanguageScreen extends Screen {
 
         this.options.save();
         this.minecraft.setScreen(this.parent);
+    }
+
+    // ─── Cosmeticos compartidos con Accesibilidad / Chat ────────────────────
+
+    private static void drawInkDivider(GuiGraphics g, int x1, int x2, int y) {
+        int inkFull  = INK_DIVIDER;
+        int inkClear = 0x00422810;
+        int mid = (x1 + x2) / 2;
+        int fade = (x2 - x1) / 8;
+        g.fillGradient(x1,        y, x1 + fade,     y + 1, inkClear, inkFull);
+        g.fill        (x1 + fade, y, mid - 6,       y + 1, inkFull);
+        g.fill        (mid + 6,   y, x2 - fade,     y + 1, inkFull);
+        g.fillGradient(x2 - fade, y, x2,            y + 1, inkFull, inkClear);
+        drawDivisorLozenge(g, mid, y);
+    }
+
+    private static void drawDivisorLozenge(GuiGraphics g, int cx, int cy) {
+        int col = 0xC0422810;
+        g.fill(cx,     cy - 2, cx + 1, cy - 1, col);
+        g.fill(cx - 1, cy - 1, cx + 2, cy,     col);
+        g.fill(cx - 2, cy,     cx + 3, cy + 1, col);
+        g.fill(cx - 1, cy + 1, cx + 2, cy + 2, col);
+        g.fill(cx,     cy + 2, cx + 1, cy + 3, col);
+    }
+
+    private static void drawCornerOrnaments(GuiGraphics g, int x, int y, int w, int h) {
+        int colOut = 0xC0422810;
+        int colIn  = 0x80422810;
+        int sOut = 12;
+        int sIn  = 5;
+        int off  = 3;
+
+        // Marco externo
+        g.fill(x,             y,             x + sOut, y + 1,    colOut);
+        g.fill(x,             y,             x + 1,    y + sOut, colOut);
+        g.fill(x + w - sOut,  y,             x + w,    y + 1,    colOut);
+        g.fill(x + w - 1,     y,             x + w,    y + sOut, colOut);
+        g.fill(x,             y + h - 1,     x + sOut, y + h,    colOut);
+        g.fill(x,             y + h - sOut,  x + 1,    y + h,    colOut);
+        g.fill(x + w - sOut,  y + h - 1,     x + w,    y + h,    colOut);
+        g.fill(x + w - 1,     y + h - sOut,  x + w,    y + h,    colOut);
+
+        // Marco interno
+        int ix = x + off;
+        int iy = y + off;
+        int iw = w - off * 2;
+        int ih = h - off * 2;
+        g.fill(ix,             iy,             ix + sIn, iy + 1,    colIn);
+        g.fill(ix,             iy,             ix + 1,   iy + sIn,  colIn);
+        g.fill(ix + iw - sIn,  iy,             ix + iw,  iy + 1,    colIn);
+        g.fill(ix + iw - 1,    iy,             ix + iw,  iy + sIn,  colIn);
+        g.fill(ix,             iy + ih - 1,    ix + sIn, iy + ih,   colIn);
+        g.fill(ix,             iy + ih - sIn,  ix + 1,   iy + ih,   colIn);
+        g.fill(ix + iw - sIn,  iy + ih - 1,    ix + iw,  iy + ih,   colIn);
+        g.fill(ix + iw - 1,    iy + ih - sIn,  ix + iw,  iy + ih,   colIn);
+    }
+
+    // Emblema del gabinete de Lenguas: fleur-de-lis simplificada (9x11)
+    // Simbolo heraldico victoriano de multiples voces
+    private static void drawFleurEmblem(GuiGraphics g, int cx, int cy) {
+        int col = 0xD0422810;
+        int hi  = 0xE01A0A05;
+        // Petalo central superior (punta hacia arriba)
+        g.fill(cx,     cy,     cx + 1, cy + 1, col);
+        g.fill(cx,     cy + 1, cx + 1, cy + 4, col);
+        // Base del petalo central
+        g.fill(cx - 1, cy + 3, cx + 2, cy + 4, col);
+        // Petalos laterales que se abren hacia afuera
+        g.fill(cx - 3, cy + 4, cx - 2, cy + 5, col);
+        g.fill(cx - 4, cy + 5, cx - 3, cy + 6, col);
+        g.fill(cx - 3, cy + 6, cx - 2, cy + 7, col);
+        g.fill(cx + 2, cy + 4, cx + 3, cy + 5, col);
+        g.fill(cx + 3, cy + 5, cx + 4, cy + 6, col);
+        g.fill(cx + 2, cy + 6, cx + 3, cy + 7, col);
+        // Cuerpo central bajo la banda
+        g.fill(cx - 1, cy + 5, cx + 2, cy + 8, col);
+        // Banda horizontal (lazo)
+        g.fill(cx - 3, cy + 7, cx + 4, cy + 8, col);
+        // Tallo inferior
+        g.fill(cx - 1, cy + 8, cx + 2, cy + 10, col);
+        g.fill(cx - 2, cy + 10, cx + 3, cy + 11, col);
+        // Brillo central
+        g.fill(cx,     cy + 6, cx + 1, cy + 7, hi);
     }
 
     private final class LanguageList extends ObjectSelectionList<LanguageEntry> {

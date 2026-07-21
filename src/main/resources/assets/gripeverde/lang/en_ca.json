@@ -115,4 +115,12 @@
     "gripeverde.options.button.done":  "Back",
   "gripeverde.options.language.title": "Known tongues",
   "gripeverde.options.subtitle": "- The chronicler's cabinet -"
+,
+  "gripeverde.options.accessibility.subtitle": "- Aids and perceptions -"
+,
+  "gripeverde.options.accessibility.flavor": "Attune the senses with prudence.",
+  "gripeverde.options.chat.flavor": "Of the written word between strangers.",
+  "gripeverde.options.language.flavor": "Every city is told in many voices."
+,
+  "gripeverde.options.language.subtitle": "- Voices of the city -"
 }

@@ -5,6 +5,8 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
+**v0.11.3** - El cronista abre dos nuevas puertas del gabinete: la de Accesibilidad y la de Chat. Cada una lleva su titulo, un subtitulo que anuncia su naturaleza y una linea tenue que susurra su proposito. Los marcos han sido labrados con esquineros dobles y los divisores llevan un rombo tipografico en el centro. La sala de Accesibilidad se despliega entera, sin necesidad de girar rueda alguna.
+
 **v0.11.2** - Esta noche los protocolos de correspondencia tambien han sido acogidos por el diario. La pantalla en que se ordenan las reglas del chat luce ahora sobre pergamino, con las mismas divisas en las esquinas y las mismas rayas de tinta que ordenan el gabinete y el registro de lenguas. Los ajustes internos siguen respondiendo con la naturalidad de siempre, solo que ahora habitan el papel en vez de la oficina fria.
 
 **v0.11.1** - El gabinete se ha ordenado con oficio: divisas en las cuatro esquinas, renglones de tinta que separan sus partes, un subtitulo que anuncia la mano del cronista. Y dentro de el, las lenguas conocidas del mundo se leen ya sin la mancha vulgar que las tapaba, la elegida marcada con una flecha discreta. Los edictos de la calle, Cuarentena y Real Decreto, tambien han bajado la voz.

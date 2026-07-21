@@ -9,6 +9,7 @@ import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.AccessibilityOptionsScreen;
+import com.eternalcraft.gripeverde.client.screens.DiaryAccessibilityOptionsScreen;
 import net.minecraft.client.gui.screens.ChatOptionsScreen;
 import com.eternalcraft.gripeverde.client.screens.DiaryChatOptionsScreen;
 import net.minecraft.client.gui.screens.OptionsScreen;
@@ -252,7 +253,7 @@ public class DiaryOptionsScreen extends Screen {
         this.minecraft.setScreen(new DiaryChatOptionsScreen(this, this.minecraft.options));
     }
     private void openAccessibility() {
-        this.minecraft.setScreen(new AccessibilityOptionsScreen(this, this.minecraft.options));
+        this.minecraft.setScreen(new DiaryAccessibilityOptionsScreen(this, this.minecraft.options));
     }
         private void openTelemetry() {
         this.minecraft.setScreen(
