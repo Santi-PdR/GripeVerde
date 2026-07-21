@@ -7,22 +7,7 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 **v0.11.3** - El cronista abre dos nuevas puertas del gabinete: la de Accesibilidad y la de Chat. Cada una lleva su titulo, un subtitulo que anuncia su naturaleza y una linea tenue que susurra su proposito. Los marcos han sido labrados con esquineros dobles y los divisores llevan un rombo tipografico en el centro. La sala de Accesibilidad se despliega entera, sin necesidad de girar rueda alguna.
 
-**v0.11.2** - Esta noche los protocolos de correspondencia tambien han sido acogidos por el diario. La pantalla en que se ordenan las reglas del chat luce ahora sobre pergamino, con las mismas divisas en las esquinas y las mismas rayas de tinta que ordenan el gabinete y el registro de lenguas. Los ajustes internos siguen respondiendo con la naturalidad de siempre, solo que ahora habitan el papel en vez de la oficina fria.
-
-**v0.11.1** - El gabinete se ha ordenado con oficio: divisas en las cuatro esquinas, renglones de tinta que separan sus partes, un subtitulo que anuncia la mano del cronista. Y dentro de el, las lenguas conocidas del mundo se leen ya sin la mancha vulgar que las tapaba, la elegida marcada con una flecha discreta. Los edictos de la calle, Cuarentena y Real Decreto, tambien han bajado la voz.
-
-**v0.11.0** — Esta noche el gabinete de ajustes tambien ha sido incorporado al diario. Sobre el mismo pergamino y con la misma tinta, el observador encuentra ahora dispuestas las opciones de la vigilia. La ciudad sigue viva detras del panel, atenuada, sus faroles latiendo con paciencia mientras uno ajusta lo que necesite ajustar.
-
-**v0.10.4** - Esta noche la luna ha ganado un halo tenue, como si el vapor de las calderas y la humedad del Tamesis se le pegaran alrededor. Tres jirones finos la cruzan lentamente, sin llegar a taparla del todo.
-
-**v0.10.3** - El cronista ha ganado dos gestos discretos al pie del diario: uno para acallar la calle cuando la vela pide silencio, otro para pedir a la orquesta que pase a la siguiente melodia sin brusquedad.
-
-**v0.10.2** - Ajuste interno del sello del diario, sin novedades observables en la ciudad.
-
-**v0.10.1** - El diario recuerda con que fuerza se le pidio por ultima vez que sonara la calle, y respeta ese ajuste al reabrirlo. Un pequeno acto de cortesia hacia quien lo consulta.
-
-**v0.10.0** - Las paginas del historial lucen por fin como deben: fibra de pergamino autentica bajo los dedos, manchas de vela y de tinta antigua, el peso de un documento oficial. Las cronicas mismas han sido reescritas, depuradas de expresiones impropias de un cronista de calle.
-
+Historial completo de versiones: ver [CHANGELOG.md](CHANGELOG.md).
 ## Caracteristicas principales
 
 ### Menu principal victoriano
