@@ -7,11 +7,11 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.11.3
-- build.gradle: version = '0.11.3'
-- GripeVerdeMod.VERSION: "0.11.3"
+- Version estable actual: v0.11.4
+- build.gradle: version = '0.11.4'
+- GripeVerdeMod.VERSION: "0.11.4"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
-- Ultimo tag publicado: v0.11.3
+- Ultimo tag publicado: v0.11.4
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
 
@@ -32,6 +32,8 @@ necesaria para retomar el desarrollo sin repetir errores.
 - v0.11.0: DiaryOptionsScreen sobre pergamino con Title vivo detras. KI-06 cerrado extendido. KI-07 abierto.
 - v0.11.1: DiaryLanguageScreen sobre pergamino. KI-07 parcial. KI-08 abierto (banderas).
 - v0.11.2: DiaryChatOptionsScreen sobre pergamino. KI-07 avanzado. Formalizacion de R-CHANGELOG-AGRUPADO, R-BUILD-DEPLOY, R-VANILLA-LIST-COORDS.
+- v0.11.3: DiaryAccessibilityOptionsScreen sobre pergamino + pulido cosmetico de Chat y Lenguas.
+- v0.11.4: DiarySkinCustomizationScreen (hito K) + scroll estilizado y acelerado en Lenguas (hito L) + refactor DiaryChrome (extraccion de helpers cosmeticos compartidos) + panel adaptativo en Accesibilidad para escalas 3/4. KI-09 abierto (scroll estilizado en OptionsList).
 
 ## KI-03 - Estado post v0.9.0
 
@@ -54,7 +56,7 @@ C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 
 - Local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 - Remoto: https://github.com/Santi-PdR/GripeVerde (privado)
-- Ultimo tag: v0.11.3
+- Ultimo tag: v0.11.4
 
 ## Rutas reales verificadas
 
@@ -732,3 +734,106 @@ Objetivo: font provider propio + PNGs de banderas para cada idioma.
 
 ### Candidato C: v0.12.0+ - Contenido de gameplay (Gripe Verde en si)
 Objetivo: primer sistema de gameplay real. Requiere diseno previo escrito.
+
+---
+## ADDENDUM v0.11.4 (K + L + refactor DiaryChrome + panel adaptativo)
+
+### Cambios de codigo
+- Nueva clase: **client/screens/DiarySkinCustomizationScreen.java** (hito K).
+  - Extiende Screen directamente (NO SkinCustomizationScreen).
+  - Reimplementa la pantalla desde cero: 6 DiaryButtons toggles para PlayerModelPart + 1 DiaryButton para HumanoidArm.
+  - Persiste cambios en Options.toggleModelPart() y Options.mainHand().
+  - Grid 2x4 sobre pergamino, panel 340x235.
+  - Escena viva atenuada + esquineros + divisores.
+
+- Modificado: **client/screens/DiaryLanguageScreen.java** (hito L parte 1 + hito L parte 2).
+  - Scroll estilizado: override de LanguageList.render() que llama super + DiaryChrome.drawScrollThumb() encima.
+  - Scroll acelerado: override de mouseScrolled() con delta * LIST_ITEM_H * 2 (4x mas rapido que vanilla).
+  - Refactor: usa DiaryChrome para todos los helpers cosmeticos.
+
+- Nueva clase: **client/render/DiaryChrome.java** (refactor).
+  - Constantes canonicas de tinta (INK_TITLE, INK_SUBTITLE, INK_FLAVOR, INK_DIVIDER, SHADOW_COL, OVERLAY_COL).
+  - Helper drawInkDivider(gfx, x, y, w) + drawInkDividerBetween(gfx, x1, x2, y).
+  - Helper drawDivisorLozenge(gfx, cx, cy).
+  - Helper drawCornerOrnaments(gfx, x, y, w, h).
+  - Helper drawScrollThumb(gfx, scrollLeft, trackY1, trackY2, scrollAmount, maxScroll).
+  - Cualquier tweak visual futuro se hace en 1 archivo, no en 5.
+
+- Migrados a DiaryChrome: 5 pantallas Diary (Options, Chat, Accessibility, Language, Skin).
+  - Balance: 64731 -> 45817 bytes (-29% en pantallas) + 4300 bytes de DiaryChrome = neto -14.5k bytes (-23%).
+  - Eliminados 3 emblemas heredados nunca usados: drawSectionEmblem, drawStarEmblem, drawFleurEmblem.
+
+- Modificado: **client/screens/DiaryAccessibilityOptionsScreen.java** (fix escala 3/4).
+  - Panel adaptativo: PANEL_MAX_W/H con Math.min(this.width/height - SCREEN_MARGIN*2).
+  - Antes: panel 395px hardcoded, se recortaba en escala 3 y 4.
+  - Ahora: se recorta al alto disponible y la lista vanilla scrollea si sobra.
+
+- **NO cambiado**: DiaryOptionsScreen conserva sus helpers cosmeticos propios (mas simples, sin rombo, sin marco doble) porque es la pantalla raiz "indice" y su identidad visual es intencionalmente distinta. Solo se migro la constante SCENE_OVERLAY -> DiaryChrome.OVERLAY_COL.
+
+- Nuevas claves lang (25 archivos): gripeverde.options.skin.subtitle + gripeverde.options.skin.flavor.
+
+### Errores encontrados durante el hito
+
+- **E72**: HumanoidArm.getName() no existe en 1.20.1. Correcto: getCaption() (via OptionEnum default). Fix: reemplazo puntual.
+
+- **E73**: DiarySkinCustomizationScreen iteracion 1 uso super.init() de SkinCustomizationScreen vanilla, que crea CycleButtons con X/Y absolutos hardcoded. Resultado: titulo tapado + botones grises feos sobre pergamino. Fix: reimplementar desde cero con DiaryButtons propios en iteracion 2.
+
+- **E74**: PowerShell interpreto salida de Select-String (numeros de linea seguidos de ":") como cmdlets. Errores gigantes de Get-Process en consola fueron ruido, no fallo de codigo. Leccion: capturar output en variable, inspeccionar con .Contains(), no dejar que PS interprete lineas sueltas.
+
+- **E75**: renderDecorations() override NO tapaba la barra vanilla porque vanilla la dibuja AL FINAL de render(), despues de renderDecorations(). Fix: override render() completo + super.render() + pintar thumb encima.
+
+- **E76**: Thumb estilizado iteracion 1 quedo desplazado a la derecha del track vanilla. Causa: pintar 3px vs los 6px reales del ancho de barra vanilla. Fix: tapar 6px enteros con pergamino antes de pintar el thumb.
+
+- **E77**: Reflection sobre AbstractSelectionList.getDeclaredField("width") falla en runtime porque Forge sirve bytecode con nombres SRG (f_93388_ para width, m_93502_ para getScrollbarPosition), no oficiales. El jar mapeado (_mapped_official_1.20.1.jar) es solo para compilacion. Debug via log confirmo que en runtime todos los campos aparecen como f_XXXXX_.
+
+- **E78**: Intento de subclasear OptionsList con "extends OptionsList" para acceder al getScrollbarPosition() protected fallo porque OptionsList.Entry tambien es protected. El cast "(OptionsList.Entry) entry" desde otro paquete no compila. El nombre corto "(Entry) entry" tampoco compila. La subclasificacion de tipos con inner protected + generics es problematica fuera del paquete original.
+
+- **E79**: Confirmacion de R-UTF8-NOBOM. Sistema.Text.Encoding.UTF8 en PS5 escribe BOM. Uso correcto siempre: new UTF8Encoding($false).
+
+- **E80**: Copy-Item con $jar null (por build fallado) tiraba ParameterArgumentValidationErrorNullNotAllowed. Fix: if ($jar) { Copy-Item }.
+
+### Reglas nuevas / refuerzos
+
+- **R-SRG-RUNTIME**: Al usar reflection contra clases vanilla de Minecraft, recordar que runtime PROD usa nombres SRG (f_XXXXX_ para fields, m_XXXXX_ para methods), NO oficiales. El jar mapeado_official es solo para compilacion. Estrategia recomendada: (a) probar ambos nombres en cascada (official primero, SRG despues); (b) siempre incluir fallback razonable sin reflection; (c) loguear con LogUtils cual candidato resolvio, para diagnostico.
+
+- **R-VANILLA-INNER-PROTECTED**: Subclasear clases vanilla con tipos internos protected desde otro paquete es problematico. Cuando el tipo interno es protected y no se puede calificar Vanilla.Inner desde afuera, considerar alternativas: (a) no subclasear, dibujar encima con reflection; (b) reimplementar completo la clase (sin extends); (c) marcar como deuda tecnica.
+
+- **R-DEBUG-LOG-FIRST**: Antes de intentar reflection compleja contra clases vanilla, hacer una pasada de debug con LogUtils.getLogger() para descubrir nombres reales de fields/methods en runtime. Ahorra 3-5 iteraciones ciegas.
+
+- **R-ITER-VISUAL-STRICT**: Refuerzo de R-ITER-VISUAL. Cuando el bloqueo es tecnico (no visual), la regla sigue aplicando pero ademas debe considerarse "cambio de estrategia obligatorio" en iteracion 3. En esta sesion se violo en Accesibilidad scroll (5+ iteraciones fallidas antes de reversion). Leccion: si iteracion 3 tampoco resuelve, revertir sin excepciones.
+
+### KI-07 (SIGUE AVANZANDO en v0.11.4)
+- Sub-pantalla Mi aspecto cerrada con DiarySkinCustomizationScreen (K).
+- Restantes vanilla: Controles, Musica y sonidos, Telemetria, En linea, Paquetes de recursos, Creditos.
+- Proximo candidato natural: Controles (mas visible, mas complejo).
+
+### KI-09 (ABIERTO en v0.11.4)
+- Scroll estilizado en pantallas que heredan de SimpleOptionsSubScreen (Accesibilidad principalmente).
+- OptionsList vanilla NO puede recibir tratamiento visual completo por combinacion de:
+  - Tipos internos protected (OptionsList.Entry inaccesible desde otro paquete).
+  - Nombres SRG en runtime (reflection fragil, jar mapeado es solo dev).
+- Deuda para hito futuro: reimplementar OptionsList como widget propio (DiaryOptionsList) que NO herede de vanilla, sino que componga sus entries manualmente desde los OptionInstance<?> de la pantalla.
+- Impacto actual: Accesibilidad muestra scroll vanilla gris. No rompe funcionalidad, solo estetica.
+
+### Deuda tecnica identificada
+- Scroll gris vanilla en DiaryAccessibilityOptionsScreen (ver KI-09).
+- DiaryOptionsScreen mantiene helpers cosmeticos propios (drawInkDivider mas simple sin rombo, drawCornerOrnaments en L de 8px sin marco doble) — es DELIBERADO, no deuda.
+
+## PROXIMO HITO PLANIFICADO (revisado tras v0.11.4)
+
+### Candidato H: v0.11.5 - DiaryControlsScreen
+Objetivo: reemplazar ControlsScreen vanilla. Riesgo medio-alto (lista de keybinds densa + interaccion propia para asignar tecla + posible conflicto con Controlling del pack).
+
+### Candidato M: v0.11.x - DiaryOptionsList (KI-09)
+Objetivo: reimplementar OptionsList sin heredar de vanilla, para poder estilizarlo completamente. Habilitaria scroll estilizado en Accesibilidad y cualquier otra pantalla que use lista de opciones.
+
+### Candidato L2: v0.11.x - Persistir volumen y otros settings del mod
+Objetivo: si aparecen mas toggles/sliders propios del mod, persistirlos igual que MenuMusic ya lo hace via ClientConfig.
+
+### Candidato I: v0.11.x - Banderas pixel-art (KI-08)
+Objetivo: font provider propio + PNGs de banderas para cada idioma.
+
+### Candidato C: v0.12.0+ - Contenido de gameplay (Gripe Verde en si)
+Objetivo: primer sistema de gameplay real. Requiere diseno previo escrito.
+
+Decision pendiente para proxima sesion.

@@ -1,6 +1,7 @@
 package com.eternalcraft.gripeverde.client.screens;
 
 import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
+import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
@@ -14,7 +15,7 @@ import net.minecraft.client.gui.screens.ChatOptionsScreen;
 import com.eternalcraft.gripeverde.client.screens.DiaryChatOptionsScreen;
 import net.minecraft.client.gui.screens.OptionsScreen;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.SkinCustomizationScreen;
+import com.eternalcraft.gripeverde.client.screens.DiarySkinCustomizationScreen;
 import net.minecraft.client.gui.screens.SoundOptionsScreen;
 import net.minecraft.client.gui.screens.VideoSettingsScreen;
 import net.minecraft.client.gui.screens.controls.ControlsScreen;
@@ -52,7 +53,6 @@ public class DiaryOptionsScreen extends Screen {
     private static final int PAD_SIDES = 24;
 
     // Overlay que atenua el fondo vivo (para dar peso al pergamino)
-    private static final int SCENE_OVERLAY = 0x66000000; // negro 40%
 
     // Panel calculado
     private int panelX, panelY, panelW, panelH;
@@ -127,7 +127,7 @@ public class DiaryOptionsScreen extends Screen {
         LivingAtmosphere.renderAir(g, this.width, this.height);
 
         // Overlay oscuro para dar peso al pergamino
-        g.fill(0, 0, this.width, this.height, SCENE_OVERLAY);
+        g.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
 
         // Panel pergamino
         PaperTexture.drawClean(g, panelX, panelY, panelW, panelH);
@@ -211,7 +211,7 @@ public class DiaryOptionsScreen extends Screen {
     // ---- Aperturas de sub-pantallas ----
 
     private void openSkin() {
-        this.minecraft.setScreen(new SkinCustomizationScreen(this, this.minecraft.options));
+        this.minecraft.setScreen(new DiarySkinCustomizationScreen(this, this.minecraft.options));
     }
     private void openSound() {
         this.minecraft.setScreen(new SoundOptionsScreen(this, this.minecraft.options));

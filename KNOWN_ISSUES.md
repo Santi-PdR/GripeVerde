@@ -252,7 +252,7 @@ Solucion: R-PATH2. Siempre Set-Location $repo al inicio de bloques con gradlew/g
 - Repo local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 - Remoto: https://github.com/Santi-PdR/GripeVerde
 - Deploy: D:\Juegos\Minecraft\Instances\Test\mods
-- Ultimo tag: v0.11.3
+- Ultimo tag: v0.11.4
 - Build limpio.
 - Working tree esperado: limpio antes de proximas sesiones.
 
@@ -284,3 +284,32 @@ Solucion: siempre pasar ruta absoluta con $PWD\\... explicito. Cubierto por R-DO
 - Force Unicode Font tampoco resuelve: renderiza como cuadros o glifos genericos.
 - Solucion futura: font provider propio del mod (assets/gripeverde/font/*.json) mapeando code points custom a PNGs con banderas dibujadas manualmente en pixel-art victoriano (no fotorealistas).
 - Alcance estimado: sub-hito propio, no bloqueante.
+
+### KI-09 (ABIERTO desde v0.11.4)
+- Scroll estilizado en pantallas que heredan de SimpleOptionsSubScreen (principalmente Accesibilidad).
+- OptionsList vanilla NO puede recibir tratamiento visual completo:
+  - OptionsList.Entry es protected y no se puede calificar desde otro paquete
+  - En runtime PROD los campos y metodos tienen nombres SRG (f_XXXXX_, m_XXXXX_) que dificultan reflection
+- Impacto: Accesibilidad muestra scroll vanilla gris. Funcional, feo.
+- Solucion futura: reimplementar OptionsList como widget propio (DiaryOptionsList) que NO herede de vanilla, componga entries manualmente desde OptionInstance<?>.
+- Sub-hito propio cuando se planifique (Candidato M).
+
+
+### Errores post-v0.11.4
+
+- **E72**: HumanoidArm.getName() no existe en 1.20.1. Correcto: getCaption() via OptionEnum.
+- **E73**: DiarySkinCustomizationScreen iteracion 1 con super.init() vanilla mostro CycleButtons feos tapando titulo. Fix: reimplementar desde cero.
+- **E74**: PowerShell interpreto lineas de Select-String como cmdlets. No es bug de codigo, es ruido de PS. Solucion: capturar output en variable, inspeccionar con .Contains().
+- **E75**: renderDecorations() no tapa scroll vanilla (vanilla lo dibuja despues). Fix: override render() completo.
+- **E76**: Thumb 3px sobre barra vanilla de 6px dejo lineas grises visibles. Fix: tapar 6px enteros con pergamino primero.
+- **E77**: Reflection getDeclaredField("width") falla en runtime porque Forge sirve SRG (f_93388_), no official. Debug via log lo confirmo.
+- **E78**: Subclasear OptionsList con extends fallo por OptionsList.Entry protected. Cast (Entry) desde otro paquete no compila.
+- **E79**: Refuerzo R-UTF8-NOBOM. UTF8Encoding(False) siempre.
+- **E80**: Copy-Item con $jar null tira excepcion. Fix: if ($jar) { Copy-Item }.
+
+### Reglas nuevas post-v0.11.4
+
+- **R-SRG-RUNTIME**: Reflection contra vanilla debe probar nombres official (dev) y SRG (prod) en cascada + fallback siempre + log de resolucion.
+- **R-VANILLA-INNER-PROTECTED**: Subclasear vanilla con inner types protected desde otro paquete es problematico. Alternativas: dibujar encima, reimplementar completo, marcar como deuda.
+- **R-DEBUG-LOG-FIRST**: Antes de reflection compleja, hacer pasada de debug con LogUtils para descubrir nombres reales en runtime. Ahorra iteraciones.
+- **R-ITER-VISUAL-STRICT**: Refuerzo. Si iteracion 3 tampoco resuelve un bloqueo tecnico, revertir sin excepciones. En esta sesion se violo (5+ iteraciones en Accesibilidad scroll) antes de aceptar reversion.

@@ -112,7 +112,9 @@
     "gripeverde.options.button.telemetry":  "Telemetria",
     "gripeverde.options.button.credits":  "Creditos y atribuciones",
     "gripeverde.options.button.online":  "En linea",
-    "gripeverde.options.button.done":  "Volver",
+    "gripeverde.options.skin.subtitle": "- Efigie y porte del cronista -",
+  "gripeverde.options.skin.flavor": "Que vuestra figura sea digna de la cronica.",
+  "gripeverde.options.button.done":  "Volver",
   "gripeverde.options.language.title": "Lenguas conocidas",
   "gripeverde.options.subtitle": "- Gabinete del cronista -"
 ,

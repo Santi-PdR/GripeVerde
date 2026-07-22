@@ -1,15 +1,15 @@
 package com.eternalcraft.gripeverde.client.screens;
 
 import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
+import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
+import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton.Icon;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton.Variant;
-import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.AccessibilityOptionsScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -17,19 +17,19 @@ import net.minecraft.network.chat.Component;
 
 public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen {
 
-    // ── Dimensiones del panel (igual que Chat) ────────────────────────────────
-    private static final int PANEL_W = 340;
-    private static final int PANEL_H = 395;
+    // Panel deseado (se recorta si no cabe en pantalla)
+    private static final int PANEL_MAX_W = 340;
+    private static final int PANEL_MAX_H = 395;
 
-    // ── Colores tinta ─────────────────────────────────────────────────────────
-    private static final int INK_TITLE    = 0xFF2A1A0A;
-    private static final int INK_SUBTITLE = 0xFF6B4226;
-    private static final int INK_DIVIDER  = 0x88422810;
-    private static final int SHADOW_COL   = 0x20201409;
-    private static final int OVERLAY_COL  = 0x66000000;
+    // Margen minimo entre panel y borde de pantalla
+    private static final int SCREEN_MARGIN = 12;
 
-    // ── Botón propio ──────────────────────────────────────────────────────────
+    // Bandas dentro del panel
+    private static final int HEADER_H = 60;   // titulo + subtitulo + flavor + divisor
+    private static final int FOOTER_H = 45;   // divisor + boton Volver
+
     private DiaryButton btnVolver;
+    private int panelW, panelH, panelX, panelY;
 
     public DiaryAccessibilityOptionsScreen(Screen parent, Options options) {
         super(parent, options);
@@ -39,22 +39,24 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
     protected void init() {
         super.init();
 
-        // Panel centrado
-        int panelX = (this.width  - PANEL_W) / 2;
-        int panelY = (this.height - PANEL_H) / 2;
+        // Panel adaptativo
+        this.panelW = Math.min(PANEL_MAX_W, this.width  - SCREEN_MARGIN * 2);
+        this.panelH = Math.min(PANEL_MAX_H, this.height - SCREEN_MARGIN * 2);
+        this.panelX = (this.width  - this.panelW) / 2;
+        this.panelY = (this.height - this.panelH) / 2;
 
-        // ── Suprimir fondo y barras de la lista vanilla ───────────────────────
+        // Suprimir fondo y barras de la lista vanilla
         if (this.list != null) {
             this.list.setRenderBackground(false);
             this.list.setRenderTopAndBottom(false);
             this.list.setRenderSelection(false);
-            // NO cambiar width — R-VANILLA-LIST-COORDS
-            int listTop    = panelY + 60;
-            int listBottom = panelY + PANEL_H - 45;
+            // NO cambiar width - R-VANILLA-LIST-COORDS
+            int listTop    = this.panelY + HEADER_H;
+            int listBottom = this.panelY + this.panelH - FOOTER_H;
             this.list.updateSize(this.width, this.height, listTop, listBottom);
         }
 
-        // ── Ocultar botón Done vanilla ────────────────────────────────────────
+        // Ocultar boton Done vanilla
         for (var child : this.children()) {
             if (child instanceof Button btn) {
                 btn.visible = false;
@@ -63,11 +65,11 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
             }
         }
 
-        // ── Botón Volver propio ───────────────────────────────────────────────
+        // Boton Volver propio
         int btnW = 160;
         int btnH = 20;
         int btnX = (this.width - btnW) / 2;
-        int btnY = panelY + PANEL_H - 28;
+        int btnY = this.panelY + this.panelH - 28;
         this.btnVolver = new DiaryButton(
             btnX, btnY, btnW, btnH,
             Component.translatable("gripeverde.options.button.done"),
@@ -79,7 +81,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
 
     @Override
     public void render(GuiGraphics gfx, int mouseX, int mouseY, float delta) {
-        // ── 1. Escena viva del Title ──────────────────────────────────────────
+        // Escena viva
         AtmosphereRenderer.renderSky(gfx, this.width, this.height);
         VictorianSkyline.renderBackground(gfx, this.width, this.height);
         LivingAtmosphere.renderFogLow(gfx, this.width, this.height);
@@ -87,56 +89,53 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         LivingAtmosphere.renderStreetLevel(gfx, this.width, this.height);
         LivingAtmosphere.renderAir(gfx, this.width, this.height);
 
-        // ── 2. Overlay oscuro ─────────────────────────────────────────────────
-        gfx.fill(0, 0, this.width, this.height, OVERLAY_COL);
+        // Overlay
+        gfx.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
 
-        // ── 3. Panel pergamino ────────────────────────────────────────────────
-        int panelX = (this.width  - PANEL_W) / 2;
-        int panelY = (this.height - PANEL_H) / 2;
-        PaperTexture.drawClean(gfx, panelX, panelY, PANEL_W, PANEL_H);
+        // Panel pergamino
+        PaperTexture.drawClean(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
 
-
-        // ── 5. Título ─────────────────────────────────────────────────────────
+        // Titulo
         int cx = this.width / 2;
-        int titleY = panelY + 12;
-        // sombra translúcida (R-SHADOW-STYLE)
+        int titleY = this.panelY + 12;
         gfx.drawCenteredString(this.font,
             Component.translatable("options.accessibility.title"),
-            cx + 1, titleY + 1, SHADOW_COL);
+            cx + 1, titleY + 1, DiaryChrome.SHADOW_COL);
         gfx.drawCenteredString(this.font,
             Component.translatable("options.accessibility.title"),
-            cx, titleY, INK_TITLE);
+            cx, titleY, DiaryChrome.INK_TITLE);
 
-        // ── 6. Subtítulo ──────────────────────────────────────────────────────
+        // Subtitulo
         int subtitleY = titleY + 12;
         {
             Component subC = Component.translatable("gripeverde.options.accessibility.subtitle");
             int subW = this.font.width(subC);
-            gfx.drawString(this.font, subC, cx - subW / 2, subtitleY, INK_SUBTITLE, false);
+            gfx.drawString(this.font, subC, cx - subW / 2, subtitleY, DiaryChrome.INK_SUBTITLE, false);
         }
 
-        // ── 6b. Flavor text del cronista ──────────────────────────────────────
+        // Flavor
         int flavorY = subtitleY + 13;
         {
             Component flvC = Component.translatable("gripeverde.options.accessibility.flavor");
             int flvW = this.font.width(flvC);
-            gfx.drawString(this.font, flvC, cx - flvW / 2, flavorY, 0xC06B4A2E, false);
+            gfx.drawString(this.font, flvC, cx - flvW / 2, flavorY, DiaryChrome.INK_FLAVOR, false);
         }
 
-        // ── 7. Divisor superior ───────────────────────────────────────────────
+        // Divisor superior
         int divY1 = flavorY + 12;
-        drawInkDivider(gfx, panelX, divY1, PANEL_W);
+        DiaryChrome.drawInkDivider(gfx, this.panelX, divY1, this.panelW);
 
-        // ── 7b. Emblema del gabinete: ojo victoriano bajo el divisor ──────────
-        // ── 9. Dibujar la lista directamente (contiene sus propios entries/widgets)
+        // Lista vanilla (scroll queda vanilla, deuda tecnica documentada)
         if (this.list != null) {
             this.list.render(gfx, mouseX, mouseY, delta);
         }
-        // ── 10. Cosmeticos que van sobre la lista: divisor inferior + esquineros + firma
-        int divY2 = panelY + PANEL_H - 38;
-        drawInkDivider(gfx, panelX, divY2, PANEL_W);
-        drawCornerOrnaments(gfx, panelX, panelY, PANEL_W, PANEL_H);
-        // ── 11. Dibujar solo nuestro boton Volver
+
+        // Cosmeticos
+        int divY2 = this.panelY + this.panelH - 38;
+        DiaryChrome.drawInkDivider(gfx, this.panelX, divY2, this.panelW);
+        DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
+
+        // Boton Volver
         if (this.btnVolver != null) {
             this.btnVolver.render(gfx, mouseX, mouseY, delta);
         }
@@ -149,101 +148,5 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         AtmosphereRenderer.tick(delta);
         VictorianSkyline.tick(delta);
         LivingAtmosphere.tick(delta);
-    }
-
-    // ── Helpers visuales (misma gramática que DiaryOptionsScreen) ─────────────
-
-    private void drawInkDivider(GuiGraphics gfx, int x, int y, int w) {
-        int fade = w / 6;
-        int cx   = x + w / 2;
-        // Dos mitades con hueco central de 6px donde ira el rombo
-        gfx.fillGradient(x,            y, x + fade,     y + 1, 0x00000000, INK_DIVIDER);
-        gfx.fill        (x + fade,     y, cx - 6,       y + 1, INK_DIVIDER);
-        gfx.fill        (cx + 6,       y, x + w - fade, y + 1, INK_DIVIDER);
-        gfx.fillGradient(x + w - fade, y, x + w,        y + 1, INK_DIVIDER, 0x00000000);
-        // Rombo victoriano en el centro
-        drawDivisorLozenge(gfx, cx, y);
-    }
-
-    private void drawCornerOrnaments(GuiGraphics gfx, int x, int y, int w, int h) {
-        int colOut = 0xC0422810; // marco externo mas opaco
-        int colIn  = 0x80422810; // marco interno mas tenue
-        int sOut = 12;           // trazo externo (grueso)
-        int sIn  = 5;            // trazo interno (fino)
-        int off  = 3;            // separacion entre externo e interno
-
-        // === Marco EXTERNO (esquineros grandes) ===
-        // Superior izquierda
-        gfx.fill(x,          y,          x + sOut, y + 1,    colOut);
-        gfx.fill(x,          y,          x + 1,    y + sOut, colOut);
-        // Superior derecha
-        gfx.fill(x + w - sOut, y,        x + w,    y + 1,    colOut);
-        gfx.fill(x + w - 1,    y,        x + w,    y + sOut, colOut);
-        // Inferior izquierda
-        gfx.fill(x,          y + h - 1,  x + sOut, y + h,    colOut);
-        gfx.fill(x,          y + h - sOut, x + 1,  y + h,    colOut);
-        // Inferior derecha
-        gfx.fill(x + w - sOut, y + h - 1, x + w,   y + h,    colOut);
-        gfx.fill(x + w - 1,    y + h - sOut, x + w, y + h,   colOut);
-
-        // === Marco INTERNO (esquineros chicos, desplazados hacia adentro) ===
-        int ix = x + off;
-        int iy = y + off;
-        int iw = w - off * 2;
-        int ih = h - off * 2;
-        // Superior izquierda
-        gfx.fill(ix,          iy,          ix + sIn, iy + 1,   colIn);
-        gfx.fill(ix,          iy,          ix + 1,   iy + sIn, colIn);
-        // Superior derecha
-        gfx.fill(ix + iw - sIn, iy,        ix + iw,  iy + 1,   colIn);
-        gfx.fill(ix + iw - 1,   iy,        ix + iw,  iy + sIn, colIn);
-        // Inferior izquierda
-        gfx.fill(ix,          iy + ih - 1, ix + sIn, iy + ih,  colIn);
-        gfx.fill(ix,          iy + ih - sIn, ix + 1, iy + ih,  colIn);
-        // Inferior derecha
-        gfx.fill(ix + iw - sIn, iy + ih - 1, ix + iw, iy + ih, colIn);
-        gfx.fill(ix + iw - 1,   iy + ih - sIn, ix + iw, iy + ih, colIn);
-    }
-
-    // Rombo tipografico victoriano centrado sobre un divisor
-    private void drawDivisorLozenge(GuiGraphics gfx, int cx, int cy) {
-        int col = 0xC0422810;
-        // rombo 5x5 pixel-art
-        gfx.fill(cx,     cy - 2, cx + 1, cy - 1, col);
-        gfx.fill(cx - 1, cy - 1, cx + 2, cy,     col);
-        gfx.fill(cx - 2, cy,     cx + 3, cy + 1, col);
-        gfx.fill(cx - 1, cy + 1, cx + 2, cy + 2, col);
-        gfx.fill(cx,     cy + 2, cx + 1, cy + 3, col);
-    }
-
-    // Emblema del gabinete de Accesibilidad: estrella cuadruple (guia, orientacion)
-    // Simbolo tipografico victoriano estilo asterisco de sello, 13x13
-    private void drawStarEmblem(GuiGraphics gfx, int cx, int cy) {
-        int col = 0xD0422810;
-        int hi  = 0xE01A0A05;
-        // Punta arriba
-        gfx.fill(cx,     cy,     cx + 1, cy + 1, col);
-        gfx.fill(cx,     cy + 1, cx + 1, cy + 2, col);
-        gfx.fill(cx - 1, cy + 2, cx + 2, cy + 3, col);
-        // Punta abajo (espejo)
-        gfx.fill(cx,     cy + 10, cx + 1, cy + 11, col);
-        gfx.fill(cx,     cy + 9,  cx + 1, cy + 10, col);
-        gfx.fill(cx - 1, cy + 8,  cx + 2, cy + 9,  col);
-        // Punta izquierda
-        gfx.fill(cx - 5, cy + 5,  cx - 4, cy + 6,  col);
-        gfx.fill(cx - 4, cy + 5,  cx - 3, cy + 6,  col);
-        gfx.fill(cx - 3, cy + 4,  cx - 2, cy + 7,  col);
-        // Punta derecha
-        gfx.fill(cx + 5, cy + 5,  cx + 6, cy + 6,  col);
-        gfx.fill(cx + 4, cy + 5,  cx + 5, cy + 6,  col);
-        gfx.fill(cx + 3, cy + 4,  cx + 4, cy + 7,  col);
-        // Nucleo central (rombo)
-        gfx.fill(cx,     cy + 3, cx + 1, cy + 4, col);
-        gfx.fill(cx - 1, cy + 4, cx + 2, cy + 5, col);
-        gfx.fill(cx - 2, cy + 5, cx + 3, cy + 6, col);
-        gfx.fill(cx - 1, cy + 6, cx + 2, cy + 7, col);
-        gfx.fill(cx,     cy + 7, cx + 1, cy + 8, col);
-        // Punto brillante centro
-        gfx.fill(cx,     cy + 5, cx + 1, cy + 6, hi);
     }
 }

@@ -112,7 +112,9 @@
     "gripeverde.options.button.telemetry":  "Telemetry",
     "gripeverde.options.button.credits":  "Credits & Attribution",
     "gripeverde.options.button.online":  "Online",
-    "gripeverde.options.button.done":  "Back",
+    "gripeverde.options.skin.subtitle": "- The chronicler's figure -",
+  "gripeverde.options.skin.flavor": "Let your bearing be worthy of the chronicle.",
+  "gripeverde.options.button.done":  "Back",
   "gripeverde.options.language.title": "Known tongues",
   "gripeverde.options.subtitle": "- The chronicler's cabinet -"
 ,

@@ -5,9 +5,10 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.11.3** - El cronista abre dos nuevas puertas del gabinete: la de Accesibilidad y la de Chat. Cada una lleva su titulo, un subtitulo que anuncia su naturaleza y una linea tenue que susurra su proposito. Los marcos han sido labrados con esquineros dobles y los divisores llevan un rombo tipografico en el centro. La sala de Accesibilidad se despliega entera, sin necesidad de girar rueda alguna.
+### v0.11.4 - El sastre y el marcador de renglones
 
-Historial completo de versiones: ver [CHANGELOG.md](CHANGELOG.md).
+El gabinete del cronista se sigue ordenando por dentro. Frente al espejo de vestir, la efigie ya se compone sobre pergamino propio, con las prendas anotadas en tinta victoriana. En la sala de las lenguas, el marcador de renglones perdio su aspecto de barra de hierro y se volvio una plancha de tinta con relieve y rombo central, ademas de responder con soltura al giro de la rueda. Y en el fondo del escritorio, cinco gabinetes que antes duplicaban sellos, filetes y esquineros ahora comparten una sola caja de sellos: si el cronista decide manana cambiar un grosor, toda la ciudad se acomoda de una sola pincelada.
+
 ## Caracteristicas principales
 
 ### Menu principal victoriano
