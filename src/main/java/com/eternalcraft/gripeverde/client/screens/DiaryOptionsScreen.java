@@ -16,7 +16,7 @@ import com.eternalcraft.gripeverde.client.screens.DiaryChatOptionsScreen;
 import net.minecraft.client.gui.screens.OptionsScreen;
 import net.minecraft.client.gui.screens.Screen;
 import com.eternalcraft.gripeverde.client.screens.DiarySkinCustomizationScreen;
-import net.minecraft.client.gui.screens.SoundOptionsScreen;
+import com.eternalcraft.gripeverde.client.screens.DiarySoundOptionsScreen;
 import net.minecraft.client.gui.screens.VideoSettingsScreen;
 import net.minecraft.client.gui.screens.controls.ControlsScreen;
 import net.minecraft.network.chat.Component;
@@ -47,7 +47,7 @@ public class DiaryOptionsScreen extends Screen {
     private static final int SUBTITLE_GAP = 11;
     private static final int TITLE_H = 12;
     private static final int TITLE_GAP = 14;
-    private static final int GRID_ROWS = 6;
+    private static final int GRID_ROWS = 5;
     private static final int GAP_BEFORE_BACK = 16;
     private static final int PAD_BOTTOM = 16;
     private static final int PAD_SIDES = 24;
@@ -85,9 +85,8 @@ public class DiaryOptionsScreen extends Screen {
         addBtn(col2X, gridTop + row(2), "gripeverde.options.button.chat", this::openChat);
         addBtn(col1X, gridTop + row(3), "gripeverde.options.button.resourcepacks", this::openResourcePacks);
         addBtn(col2X, gridTop + row(3), "gripeverde.options.button.accessibility", this::openAccessibility);
-        addBtn(col1X, gridTop + row(4), "gripeverde.options.button.telemetry", this::openTelemetry);
+        addBtn(col1X, gridTop + row(4), "gripeverde.options.button.online", this::openOnline);
         addBtn(col2X, gridTop + row(4), "gripeverde.options.button.credits", this::openCredits);
-        addBtn(col1X, gridTop + row(5), "gripeverde.options.button.online", this::openOnline);
 
         int backX = cx - BACK_W / 2;
         int backY = panelY + panelH - PAD_BOTTOM - BACK_H;
@@ -214,7 +213,7 @@ public class DiaryOptionsScreen extends Screen {
         this.minecraft.setScreen(new DiarySkinCustomizationScreen(this, this.minecraft.options));
     }
     private void openSound() {
-        this.minecraft.setScreen(new SoundOptionsScreen(this, this.minecraft.options));
+        this.minecraft.setScreen(new DiarySoundOptionsScreen(this, this.minecraft.options));
     }
     private void openVideo() {
         // Intento abrir EmbeddiumVideoOptionsScreen via reflection.

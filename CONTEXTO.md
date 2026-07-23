@@ -7,11 +7,11 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.11.5
+- Version estable actual: v0.11.6
 - build.gradle: version = '0.11.5'
-- GripeVerdeMod.VERSION: "0.11.5"
+- GripeVerdeMod.VERSION: "0.11.6"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
-- Ultimo tag publicado: v0.11.5
+- Ultimo tag publicado: v0.11.6
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
 
@@ -35,6 +35,7 @@ necesaria para retomar el desarrollo sin repetir errores.
 - v0.11.3: DiaryAccessibilityOptionsScreen sobre pergamino + pulido cosmetico de Chat y Lenguas.
 - v0.11.4: DiarySkinCustomizationScreen (hito K) + scroll estilizado y acelerado en Lenguas (hito L) + refactor DiaryChrome (extraccion de helpers cosmeticos compartidos) + panel adaptativo en Accesibilidad para escalas 3/4. KI-09 abierto (scroll estilizado en OptionsList).
 - v0.11.5: Scroll estilizado en Accesibilidad y Chat (hito M-simple). KI-09 cerrado. Panel de Accesibilidad ampliado a 380px. Thumb minimo 32px. KI-10 abierto (tooltips vanilla morados). Controles siguen vanilla (Controlling).
+- v0.11.6: DiarySoundOptionsScreen sobre pergamino (hito K2). Slider "Musica del Cronista" propio integrado en la pantalla. Reordenamiento de DiaryOptionsScreen (grid 2x5 sin Telemetria). Serie de correcciones tecnicas: E85 (javap flags), E86 (updateWidgetNarration public), E87 (SRG f_244146_ real). Compatibilidad con IMP preservada. KI-11 abierto (slider no aplica en vivo durante drag).
 
 ## KI-03 - Estado post v0.9.0
 
@@ -57,7 +58,7 @@ C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 
 - Local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 - Remoto: https://github.com/Santi-PdR/GripeVerde (privado)
-- Ultimo tag: v0.11.5
+- Ultimo tag: v0.11.6
 
 ## Rutas reales verificadas
 
@@ -899,7 +900,77 @@ Antes de decidir se analizaron 3 rutas:
 - Codigo aprendido queda en backup: `_backups\pre_v0.11.5_20260722_155547\`.
 - Cuando se retome (hito futuro), tomar decision de entrada entre: (a) reintentar E aceptando compileOnly, (b) opcion D forrando solo el fondo con widgets vanilla encima, o (c) dejar definitivamente vanilla.
 
-## PROXIMO HITO PLANIFICADO (revisado tras v0.11.5)
+
+
+---
+## ADDENDUM v0.11.6 (DiarySoundOptionsScreen + hito K2)
+
+### Cambios de codigo
+- Nueva clase: **client/screens/DiarySoundOptionsScreen.java**.
+  - Subclase visual de SoundOptionsScreen (estrategia B-reflection acotada).
+  - Se hereda para preservar hooks de mods externos (IMP inyecta su slider IMP Music via ScreenEvent.Init.Post sobre SoundOptionsScreen; al subclasear, IMP sigue disparando).
+  - super.init() se ejecuta normalmente: crea la OptionsList vanilla completa.
+  - Reflection defensiva sobre el field privado `list`: 3 candidatos en cascada (nombre oficial "list" -> SRG "f_244146_" -> scan por tipo OptionsList).
+  - Al resolver el list, se le llama setRenderBackground(false), setRenderTopAndBottom(false) y updateSize(this.width, this.height, listTop, listBottom).
+  - IMPORTANTE: updateSize pasa this.width original (no ancho del panel) para no romper coords internas de widgets (R-VANILLA-LIST-COORDS de v0.11.2).
+  - Bypass total de super.render(): se dibuja escena viva + overlay + pergamino + cosmetica + this.list.render() + scroll estilizado + widgets propios.
+  - Se oculta el boton Done vanilla moviendolo fuera de pantalla + visible=false.
+
+- Nueva clase: **client/widgets/DiaryMusicSlider.java**.
+  - Reemplaza al viejo MusicVolumeSlider (que quedo huerfano en v0.11.0 porque ScreenEventHandler.onScreenInitPost apuntaba a OptionsScreen vanilla ya no usado).
+  - Extiende AbstractSliderButton. renderWidget() dibuja: banda pergamino, track sepia oscuro, thumb con relieves + rombo central (drawDivisorLozenge), texto con sombra suave.
+  - applyValue() persiste inmediatamente via MenuMusic.setUserVolume() -> ClientConfig.MUSIC_VOLUME.
+  - Override de onDrag(): llama applyValue() tambien durante arrastre (vanilla solo llama al soltar). Persistencia inmediata, pero MenuMusic.updateVolumes() aun no se ejecuta durante el arrastre (ver KI-11).
+
+- Modificado: **client/screens/DiaryOptionsScreen.java**.
+  - openSound() ahora abre DiarySoundOptionsScreen (era SoundOptionsScreen vanilla).
+  - Grid reducido de 6 a 5 filas (GRID_ROWS = 5).
+  - Boton Telemetria eliminado del grid. En linea sube a la fila 4, junto a Creditos.
+  - El metodo openTelemetry() queda como huerfano (unused). Java lo tolera.
+
+- Modificado: **client/ScreenEventHandler.java**.
+  - Eliminado hook muerto onScreenInitPost (apuntaba a OptionsScreen vanilla que ya no se usa desde v0.11.0).
+  - Eliminados 2 imports huerfanos: MusicVolumeSlider y OptionsScreen.
+
+- Modificado: **client/screens/DiarySoundOptionsScreen.java, DiaryChatOptionsScreen.java, DiaryAccessibilityOptionsScreen.java, DiaryLanguageScreen.java, DiarySkinCustomizationScreen.java** (fix defensivo).
+  - Se agrega MenuMusic.tick() al tick() de las 5 pantallas Diary derivadas.
+  - Antes: solo DiaryTitleScreen tickeaba MenuMusic. Al entrar a una subpantalla, el crossfade/ducking/aplicacion de volumen se congelaba hasta volver al Title.
+  - Ahora: la musica sigue viva en toda la navegacion de menus.
+
+- Borrado: **client/widgets/MusicVolumeSlider.java** (obsoleto).
+
+- Nuevas claves en 25 archivos lang/*.json: `gripeverde.options.sound.subtitle`, `.flavor`, `gripeverde.options.sound.music_slider`.
+
+### Errores nuevos catalogados
+
+- **E85**: `javap -public -protected` es combinacion invalida ("bad combination of options"). Solo se acepta un modificador de visibilidad a la vez. Solucion: usar `javap -p` (imprime todos, incluyendo privates) para auditoria completa.
+
+- **E86**: `AbstractSliderButton.updateWidgetNarration` es **public**, no protected. Al declarar el override como protected en DiaryMusicSlider, el compilador rechaza "attempting to assign weaker access privileges". Solucion trivial (cambio a public), pero refuerza R-SIG-VERIFY: haber leido el javap NO alcanza si despues se escribe de memoria.
+
+- **E87**: Adivine el numero SRG "f_96741_" para SoundOptionsScreen.list sin verificarlo en el jar srg real. Los SRG numbers no siguen patron predecible ni se pueden inferir de otras versiones. Nombre real: **f_244146_**. Se obtuvo via javap sobre forge-1.20.1-47.4.20-srg.jar (no el _mapped_official).
+
+### Reglas nuevas
+
+- **R-SRG-EXTRACT**: Para obtener nombres SRG reales de fields/metodos usar el jar **-srg.jar** de Forge (NO el `_mapped_official`). El mapped_official contiene nombres oficiales (dev-time); el -srg.jar contiene los nombres que Forge sirve en runtime. Ruta tipica: `~/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/<version>/forge-<version>-srg.jar`. Extraer con `jar -xf` y auditar con `javap -p`.
+
+- **R-JAVAP-FLAGS**: `javap` acepta un solo modificador de visibilidad. Usar `-p` (imprime todos) para auditoria completa; usar `-public`, `-protected` o `-package` para filtrar. Nunca combinar dos flags de visibilidad.
+
+- **R-REFLECTION-CASCADA**: Para acceder a fields privados vanilla, usar cascada defensiva de 3 niveles: (1) nombre oficial ("list"), (2) nombre SRG conocido ("f_244146_"), (3) scan por tipo con `getDeclaredFields()` filtrando por `f.getType().equals(TargetClass.class)`. El scan por tipo es robusto ante futuros renames de Mojang.
+
+- **R-DIARY-TICK-MUSIC**: Toda pantalla Diary que herede de una vanilla y viva sobre el Title (Sound, Chat, Accessibility, Language, Skin, y futuras) debe llamar `MenuMusic.tick()` en su tick(). De lo contrario el crossfade/ducking/aplicacion de volumen se congela durante la navegacion. Este tick es idempotente y economico.
+
+### KI-11 (ABIERTO en v0.11.6)
+- Slider "Musica del Cronista" no aplica volumen en tiempo real durante el arrastre; el cambio se percibe al soltar el mouse.
+- Causa probable: AbstractSliderButton.onDrag() llama applyValue() pero MenuMusic.updateVolumes() no se ejecuta con la frecuencia suficiente (o el SoundManager de MC cachea el volumen de FadingMusicInstance hasta el proximo tick).
+- Impacto: menor. La persistencia funciona (queda guardado en ClientConfig) y el cambio se aplica al proximo tick de MenuMusic, generalmente <=50ms despues del release.
+- No bloqueante. Sub-hito propio si molesta.
+
+### KI-07 (SIGUE AVANZANDO en v0.11.6)
+- Sub-pantalla Musica y sonidos cerrada con DiarySoundOptionsScreen sobre pergamino.
+- Restantes vanilla: Controles, Telemetria (deprecada, ya no accesible desde el grid), En linea, Paquetes de recursos, Creditos.
+- Notablemente cerrado: la mas compleja del set (compatibilidad con IMP preservada, integracion con MenuMusic).
+
+## PROXIMO HITO PLANIFICADO (revisado tras v0.11.6)
 
 ### Candidato N: v0.11.x - Tooltips estilizados (KI-10)
 Objetivo: reemplazar tooltip vanilla morado por uno pergamino oscuro via mixin sobre Screen o TooltipRenderUtil. Aplicaria globalmente a todas las Diary screens. Riesgo medio-alto por complejidad del mixin.

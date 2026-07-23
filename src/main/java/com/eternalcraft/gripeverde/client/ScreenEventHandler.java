@@ -6,8 +6,6 @@ import com.eternalcraft.gripeverde.client.screens.DebugCanvasScreen;
 import com.eternalcraft.gripeverde.client.screens.DiaryPauseScreen;
 import com.eternalcraft.gripeverde.client.screens.DiaryTitleScreen;
 import com.eternalcraft.gripeverde.client.screens.SoundLabScreen;
-import com.eternalcraft.gripeverde.client.widgets.MusicVolumeSlider;
-import net.minecraft.client.gui.screens.OptionsScreen;
 import com.eternalcraft.gripeverde.client.theme.ThemeManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.PauseScreen;
@@ -83,23 +81,6 @@ public class ScreenEventHandler {
         }
     }
 
-    /**
-     * Inyecta el slider de volumen de musica en OptionsScreen.
-     */
-    @SubscribeEvent
-    public static void onScreenInitPost(ScreenEvent.Init.Post event) {
-        var screen = event.getScreen();
-        if (!(screen instanceof OptionsScreen)) return;
-
-        // Posicion: Inferior central, debajo del boton Done. Seguro para todas las escalas.
-        int sliderW = 160;
-        int sliderH = 20;
-        int sliderX = (screen.width - sliderW) / 2;
-        int sliderY = screen.height - 25;
-
-        MusicVolumeSlider slider = new MusicVolumeSlider(sliderX, sliderY, sliderW, sliderH);
-        event.addListener(slider);
-    }
 
     /**
      * Delega el overlay de todas las pantallas al ThemeManager.

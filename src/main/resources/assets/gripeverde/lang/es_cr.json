@@ -122,6 +122,9 @@
 ,
   "gripeverde.options.accessibility.flavor": "Ajustad los sentidos con prudencia.",
   "gripeverde.options.chat.flavor": "De la palabra escrita entre extraños.",
+  "gripeverde.options.sound.subtitle": "Camaras y resonancias",
+  "gripeverde.options.sound.flavor": "De lo que se oye tras la puerta cerrada.",
+  "gripeverde.options.sound.music_slider": "Musica del Cronista",
   "gripeverde.options.language.flavor": "Toda ciudad se cuenta en muchas voces."
 ,
   "gripeverde.options.language.subtitle": "- Voces de la ciudad -"

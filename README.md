@@ -5,13 +5,11 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-### v0.11.5 - El escriba afila su pluma
+### v0.11.6 - La camara de musica del gabinete
 
-La sala de accesibilidad y la de protocolos de correspondencia comparten esta noche un pequeno hallazgo: cuando el lector desliza el pergamino con la rueda, el marcador de renglones ya no es una plancha de hierro grisacea, sino una lengueta de tinta con su rombo central, como el que se estreno en el registro de lenguas. Es un detalle menor y sin embargo, cuando uno recorre las opciones de arriba a abajo, la ciudad se siente mas de una sola pieza. El gabinete de accesibilidad se ha ensanchado un poco para dar mas aire a los widgets que se apretujaban contra los bordes.
+Anoche la puerta que decia "Musica y sonidos" dejo de conducir a una sala prestada de otra casa. Detras de ella se abre ahora un ala propia, tapizada del mismo pergamino que el resto del gabinete, con sus divisores en filete y sus esquineros dobles. Al pie del panel hay un tirador nuevo, empotrado en laton, con una marca de tinta victoriana en el centro: el cronista lo llama Musica del Cronista, y con el ajusta el volumen del organillo lejano que lo acompana en las horas de escritura. El valor elegido queda anotado en el diario de configuraciones para que no se pierda al cerrar la sala.
 
-### v0.11.4 - El sastre y el marcador de renglones
-
-El gabinete del cronista se sigue ordenando por dentro. Frente al espejo de vestir, la efigie ya se compone sobre pergamino propio, con las prendas anotadas en tinta victoriana. En la sala de las lenguas, el marcador de renglones perdio su aspecto de barra de hierro y se volvio una plancha de tinta con relieve y rombo central, ademas de responder con soltura al giro de la rueda. Y en el fondo del escritorio, cinco gabinetes que antes duplicaban sellos, filetes y esquineros ahora comparten una sola caja de sellos: si el cronista decide manana cambiar un grosor, toda la ciudad se acomoda de una sola pincelada.
+En el mismo movimiento, el vestibulo mayor se acomodo. La placa de Telemetria fue retirada sin ceremonia; los diez tiradores restantes se acomodaron en cinco filas simetricas, con Correspondencia en linea subiendo a compartir la ultima fila con Autores y agradecimientos.
 
 ## Caracteristicas principales
 

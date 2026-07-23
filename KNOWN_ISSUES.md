@@ -1,6 +1,6 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
-## v0.11.5 - Scroll estilizado en OptionsList (KI-09 cerrado)
+## v0.11.6 - Scroll estilizado en OptionsList (KI-09 cerrado)
 
 ### Cambios
 - DiaryChrome: nuevos helpers publicos getOptionsListScrollbarX() y drawStyledScrollThumbForOptionsList().
@@ -20,7 +20,7 @@
 - R-DOC-VERIFY: comentarios que documentan limitaciones deben verificarse contra bytecode antes de aceptarse.
 - R-VERIFY-JAR-CASE: nombres de artifacts maven case-sensitive; verificar via HTTP GET al maven repo.
 
-### KI-10 (ABIERTO en v0.11.5)
+### KI-10 (ABIERTO en v0.11.6)
 - Tooltips vanilla morados sobre pergamino rompen la estetica.
 - En 1.20.1 el sistema deferred (Screen.renderWithTooltip es final) impide override directo desde subclase.
 - Solucion futura: mixin sobre Screen.renderWithTooltip o TooltipRenderUtil.
@@ -30,7 +30,7 @@
 ### Hito H (DiaryControlsScreen) - postpuesto
 - Estrategia E (router + Controlling compileOnly + wrapper reflection) funciono tecnicamente.
 - Revertido antes de validar visual por decision de scope: no depender de Controlling ni siquiera opcionalmente.
-- Codigo en `_backups\pre_v0.11.5_20260722_155547\`.
+- Codigo en `_backups\pre_v0.11.6_20260722_155547\`.
 - Retomar en hito futuro con decision de scope tomada de entrada.
 
 ### Deuda tecnica actualizada
@@ -73,10 +73,10 @@
 - Slider vanilla "Duracion de las notificaciones" en Accesibilidad tiene texto que se corta a la derecha por ancho fijo 150px del widget. Limitacion vanilla. Igual que en Chat (Duracion notificaciones), no se corrige.
 
 
-Ultima actualizacion: v0.11.5
+Ultima actualizacion: v0.11.6
 Estado: EN DESARROLLO
-Version estable actual: v0.11.5
-Ultimo tag publicado: v0.11.5
+Version estable actual: v0.11.6
+Ultimo tag publicado: v0.11.6
 Hitos recientes: v0.11.0 (DiaryOptionsScreen sobre pergamino con Title vivo detras, KI-06 cerrado extendido, sub-pantallas vanilla integradas); v0.10.4 (bump administrativo, changelog in-game intencionalmente sin entrada); v0.10.1 (persistencia del volumen de musica); v0.10.0 (ChangelogScreen sobre pergamino + reescritura diegetica de las 25 cronicas, KI-06 cerrado); v0.9.2 (fix humo/nubes, KI-05 cerrado); v0.9.1 (faroles reactivados, KI-03 cerrado completo); v0.9.0 hito visual del skyline; sistema de musica (v0.8.x) estable.
 
 ---
@@ -324,7 +324,7 @@ Solucion: siempre pasar ruta absoluta con $PWD\\... explicito. Cubierto por R-DO
 - Solucion futura: font provider propio del mod (assets/gripeverde/font/*.json) mapeando code points custom a PNGs con banderas dibujadas manualmente en pixel-art victoriano (no fotorealistas).
 - Alcance estimado: sub-hito propio, no bloqueante.
 
-### KI-09 (CERRADO en v0.11.5)
+### KI-09 (CERRADO en v0.11.6)
 - Scroll estilizado en pantallas que heredan de SimpleOptionsSubScreen (principalmente Accesibilidad).
 - OptionsList vanilla NO puede recibir tratamiento visual completo:
   - OptionsList.Entry es protected y no se puede calificar desde otro paquete
@@ -352,3 +352,24 @@ Solucion: siempre pasar ruta absoluta con $PWD\\... explicito. Cubierto por R-DO
 - **R-VANILLA-INNER-PROTECTED**: Subclasear vanilla con inner types protected desde otro paquete es problematico. Alternativas: dibujar encima, reimplementar completo, marcar como deuda.
 - **R-DEBUG-LOG-FIRST**: Antes de reflection compleja, hacer pasada de debug con LogUtils para descubrir nombres reales en runtime. Ahorra iteraciones.
 - **R-ITER-VISUAL-STRICT**: Refuerzo. Si iteracion 3 tampoco resuelve un bloqueo tecnico, revertir sin excepciones. En esta sesion se violo (5+ iteraciones en Accesibilidad scroll) antes de aceptar reversion.
+
+
+---
+
+## KI-11 (ABIERTO en v0.11.6) - Slider del Cronista no aplica en vivo
+
+**Estado**: activo. Impacto menor.
+
+**Sintoma**: al arrastrar el slider "Musica del Cronista" dentro de DiarySoundOptionsScreen, el volumen no cambia audiblemente durante el drag. El cambio se percibe al soltar el mouse (o al proximo tick de MenuMusic, tipicamente <=50ms despues).
+
+**Comportamiento correcto**: el valor SI se persiste inmediatamente en ClientConfig.MUSIC_VOLUME (el override de onDrag llama applyValue en cada frame de arrastre). El bug es solamente que el audible no se sincroniza con el visual.
+
+**Causa probable**:
+- AbstractSliderButton.onDrag() llama applyValue() correctamente.
+- applyValue() persiste via MenuMusic.setUserVolume().
+- MenuMusic.updateVolumes() lee getUserVolume() y aplica al currentInstance via setDynamicVolume().
+- Pero updateVolumes() solo se llama desde MenuMusic.tick(), y aunque la screen tiquea MenuMusic (v0.11.6 fix), SoundManager de MC puede estar cacheando el volumen del SoundInstance hasta el proximo audio buffer swap.
+
+**Plan**: sub-hito K3 en v0.11.x. Investigar si hay que forzar refresh del SoundManager o si MenuMusic necesita un pulso adicional en cada frame (no solo en tick).
+
+**No bloqueante**.

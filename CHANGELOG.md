@@ -1,6 +1,21 @@
 # Eternal Craft: Gripe Verde
 ## Notas de Actualización
 
+## v0.11.6 - La camara de musica del gabinete
+
+Anoche la puerta que decia "Musica y sonidos" dejo de conducir a una sala prestada de otra casa. Detras de ella se abre ahora un ala propia, tapizada del mismo pergamino que el resto del gabinete, con sus divisores en filete y sus esquineros dobles. Los antiguos tiradores de piedra siguen alli, ordenados como siempre, y entre ellos permanece la lampara que ilumina las noches de escritura. Pero al pie del panel hay un tirador nuevo, empotrado en laton, con una marca de tinta victoriana en el centro. El cronista lo llama Musica del Cronista, y con el ajusta a su gusto el volumen del organillo lejano. El valor elegido queda anotado en el diario de configuraciones, para que no se pierda al cerrar la sala.
+
+En el mismo movimiento, el vestibulo mayor se acomodo. La placa que decia "Telemetria" nunca perteneció del todo a esta casa: era un aviso oficial, redactado en otro idioma, que hablaba de datos y medidas ajenas a la ciudad. Fue retirada sin ceremonia. Los diez tiradores restantes se acomodaron en cinco filas simetricas, y la placa de "Correspondencia en linea" subio a compartir la ultima fila con la de "Autores y agradecimientos", cerrando el conjunto con simetria.
+
+### Del diario
+- Se abrio un ala propia para la camara de musica, sobre pergamino.
+- Un tirador de laton nuevo, la Musica del Cronista, permite ajustar el organillo lejano.
+- El valor del tirador queda escrito en el diario de configuraciones.
+- La placa de Telemetria fue retirada del vestibulo mayor.
+- Los diez tiradores restantes se acomodaron en cinco filas simetricas.
+
+---
+
 ## v0.11.5 - El escriba afila su pluma
 
 La sala de accesibilidad y la de protocolos de correspondencia comparten esta noche un pequeno hallazgo: cuando el lector desliza el pergamino con la rueda, el marcador de renglones ya no es una plancha de hierro grisacea, sino una lengueta de tinta con su rombo central, como el que se estreno en el registro de lenguas. Es un detalle menor y sin embargo, cuando uno recorre las opciones de arriba a abajo, la ciudad se siente mas de una sola pieza. El gabinete de accesibilidad se ha ensanchado un poco para dar mas aire a los widgets que se apretujaban contra los bordes.
