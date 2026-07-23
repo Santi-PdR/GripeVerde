@@ -153,4 +153,25 @@ public final class DiaryChrome {
 
         drawScrollThumb(gfx, scrollLeft, trackY1, trackY2, list.getScrollAmount(), maxScroll);
     }
+
+    // ---------------------------------------------------------------
+    // Fondo cuero oscuro para pantallas de trabajo (Grupo B v0.11.7):
+    // KeyBinds (Atajos), PackSelection (Paquetes de recursos) y
+    // Embeddium (via mixin, v0.11.8). Reemplaza el dirt vanilla por
+    // una tapa de libro sepia con vinieta arriba y abajo.
+    //
+    // Sin escena viva detras: en pantallas densas la escena distrae.
+    // Barato: 1 fill base + 2 gradientes de vinieta.
+    // ---------------------------------------------------------------
+    public static final int LEATHER_BASE = 0xFF1F1408;
+
+    public static void drawDarkLeatherBackground(GuiGraphics gfx, int screenW, int screenH) {
+        // Base uniforme: cuero sepia muy oscuro
+        gfx.fill(0, 0, screenW, screenH, LEATHER_BASE);
+
+        // Vinieta superior e inferior (fade a negro semitransparente)
+        int fade = Math.max(60, Math.min(screenW, screenH) / 4);
+        gfx.fillGradient(0, 0, screenW, fade, 0x60000000, 0x00000000);
+        gfx.fillGradient(0, screenH - fade, screenW, screenH, 0x00000000, 0x60000000);
+    }
 }

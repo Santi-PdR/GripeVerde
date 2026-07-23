@@ -7,11 +7,11 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.11.6
-- build.gradle: version = '0.11.5'
-- GripeVerdeMod.VERSION: "0.11.6"
+- Version estable actual: v0.11.7
+- build.gradle: version = '0.11.7'
+- GripeVerdeMod.VERSION: "0.11.7"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
-- Ultimo tag publicado: v0.11.6
+- Ultimo tag publicado: v0.11.7
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
 
@@ -58,7 +58,7 @@ C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 
 - Local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 - Remoto: https://github.com/Santi-PdR/GripeVerde (privado)
-- Ultimo tag: v0.11.6
+- Ultimo tag: v0.11.7
 
 ## Rutas reales verificadas
 
@@ -986,3 +986,139 @@ Objetivo: font provider propio + PNGs de banderas para cada idioma.
 
 ### Candidato C: v0.12.0+ - Contenido de gameplay
 Objetivo: primer sistema de gameplay real (Gripe Verde en si). Requiere diseno previo escrito.
+
+---
+## ADDENDUM v0.11.7 (DiaryControlsScreen + DiaryCreditsScreen + primer intento mixin)
+
+### Cambios de codigo
+- Nueva clase: **client/screens/DiaryControlsScreen.java**.
+  - Reimplementacion desde Screen (NO subclasea ControlsScreen).
+  - Motivo: los widgets vanilla de ControlsScreen tienen coordenadas
+    hardcoded incompatibles con panel pergamino chico. Reimplementar
+    es mas simple que reposicionar widgets vanilla.
+  - Contenido: 2 sub-hubs (Mouse, Atajos) como DiaryButton + 4 toggles
+    vanilla generados con OptionInstance.createButton (toggleCrouch,
+    toggleSprint, autoJump, operatorItemsTab) + boton Volver Diary.
+  - Panel 340x260, escena viva atenuada + esquineros + divisores.
+  - Los sub-hubs abren pantallas VANILLA (no Diary) porque el intento
+    con subclases minimal fallo (ver deuda tecnica abajo).
+
+- Nueva clase: **client/screens/DiaryCreditsScreen.java**.
+  - Extiende Screen. Reimplementacion desde cero (3 botones + Volver).
+  - Motivo: CreditsAndAttributionScreen vanilla es un hub simple con
+    3 botones, mas simple reimplementar que subclasear.
+  - Panel 300x200. Solo 1 boton "Creditos" que lanza WinScreen vanilla.
+    Los subhubs "Atribuciones" y "Licencias" NO existen en 1.20.1 con
+    nombres estables, se omiten.
+
+- Modificado: **client/screens/DiaryOptionsScreen.java**.
+  - openControls() -> DiaryControlsScreen (era ControlsScreen vanilla).
+  - openCredits() -> DiaryCreditsScreen (era CreditsAndAttributionScreen).
+  - openResourcePacks() sigue abriendo PackSelectionScreen VANILLA
+    (ver deuda tecnica).
+  - openOnline() sigue abriendo OnlineOptionsScreen VANILLA (mismo motivo).
+
+- 25 archivos lang/*.json: agregadas 5 claves:
+  - gripeverde.options.controls.subtitle / .flavor
+  - gripeverde.options.credits.title / .subtitle / .flavor
+
+### Errores nuevos catalogados
+
+- **E88**: DiaryControlsScreen iteracion 1 (subclase de ControlsScreen)
+  iteraba this.children() y modificaba el mismo children() con
+  addRenderableWidget() dentro del loop. Java tiro
+  ConcurrentModificationException al primer click. Fix aplicado en
+  iteracion 2: separar en 2 fases (recolectar botones a modificar +
+  aplicar cambios fuera del iterator).
+  Fix definitivo en iteracion 3: reimplementar desde Screen sin
+  subclasear ControlsScreen, eliminando el problema de raiz.
+
+- **E89**: Pantallas de "trabajo" (Mouse, KeyBinds, PackSelection,
+  Embeddium, Online) NO respetan el hook renderBackground() de Screen
+  en 1.20.1. Bytecode analizado: PackSelectionScreen.render() llama
+  invokevirtual renderDirtBackground DIRECTAMENTE como primera
+  instruccion, saltando el hook completo. Consecuencia: subclase
+  minimal con solo @Override renderBackground NO cambia el fondo.
+  Confirmado tambien en MouseSettingsScreen y KeyBindsScreen por
+  simetria (mismo patron vanilla).
+
+- **E90**: Primer mixin del mod (PackSelectionScreenMixin con
+  @Redirect sobre Screen.renderDirtBackground) fallo con
+  "Critical injection failure: (0/1) succeeded. Scanned 1 target(s)".
+  El refmap probablemente no tradujo correctamente el owner del
+  metodo en runtime SRG. Este fallo bloquea todo el mod al primer
+  click en Options (Mixin transforma clases relacionadas). Fix
+  aplicado: revertir mixin completo, dejar dirt vanilla, postponer
+  a v0.11.8 (hito mixin dedicado) con investigacion mas profunda.
+
+### Reglas nuevas
+
+- **R-VANILLA-BG-BYPASS**: En 1.20.1 muchas pantallas de "trabajo"
+  (MouseSettings, KeyBinds, PackSelection, Embeddium, Online, etc.)
+  pintan renderDirtBackground DIRECTAMENTE desde su render() sin
+  pasar por el hook renderBackground(). Consecuencia: subclase
+  minimal con override renderBackground NO alcanza para cambiar el
+  fondo. Requiere mixin (@Redirect o @Inject HEAD cancellable).
+  Verificar SIEMPRE el bytecode del render() antes de proponer
+  subclase minimal como solucion "solo fondo".
+
+- **R-MIXIN-BLOCKS-ALL**: Un mixin que falle al aplicarse bloquea la
+  carga de TODA clase relacionada, incluso las que no dependen del
+  mixin directamente. Consecuencia: un mixin roto puede crashear el
+  mod entero al primer uso indirecto. Estrategia defensiva:
+  desarrollar mixins con "required=false" en la anotacion o en un
+  hito dedicado para no arruinar features estables del mismo release.
+
+- **R-REIMPL-VS-SUBCLASS**: Cuando una pantalla vanilla tiene widgets
+  con coordenadas hardcoded incompatibles con nuestro panel, preferir
+  reimplementar desde Screen (patron Credits, Controls) antes que
+  reposicionar widgets vanilla ocultos+recreados. Menos frags-friction,
+  mas robusto, y evita el problema de "widgets fantasma" en las
+  coords originales.
+
+### Deuda tecnica identificada (v0.11.8)
+
+- **KI-12 (nuevo)**: 4 pantallas siguen vanilla dirt sin ambientar:
+  MouseSettings, KeyBinds, PackSelection, Online. Todas requieren
+  mixin para reemplazar el fondo (ver E89, R-VANILLA-BG-BYPASS).
+  Ademas: Embeddium (pantalla de video) tambien vanilla dirt/tema
+  propio, requerira mixin ajeno.
+  Plan v0.11.8: hito mixin dedicado con investigacion de refmap.
+
+- **Sub-hubs vanilla en Controles**: los botones Mouse y Atajos
+  redirigen a vanilla. Si en v0.11.8 se logra ambientar Mouse y
+  KeyBinds via mixin, quedan ambientados automaticamente sin tocar
+  DiaryControlsScreen.
+
+### KI-07 (SIGUE AVANZANDO en v0.11.7)
+- Sub-pantallas Controles y Creditos ambientadas con Diary completo.
+- Restantes vanilla: Mouse, Atajos, Packs, Online (KI-12).
+- Otras vanilla ya cubiertas: Idioma, Chat, Accesibilidad, Skin, Sonido.
+
+### KI-12 (ABIERTO en v0.11.7)
+- Fondos dirt vanilla en pantallas que bypasean renderBackground.
+- Requiere mixin. Hito dedicado v0.11.8.
+
+## PROXIMO HITO PLANIFICADO (revisado tras v0.11.7)
+
+### Candidato O: v0.11.8 - Hito Mixin (KI-12 + parte de KI-07)
+Objetivo: reemplazar el fondo dirt de 4 pantallas via mixin dedicado.
+- PackSelectionScreen (dirt -> cuero via @Redirect o @Inject)
+- MouseSettingsScreen (misma tecnica)
+- KeyBindsScreen (misma tecnica, respetando Controlling)
+- OnlineOptionsScreen (misma tecnica)
+- Opcional: Embeddium (mixin ajeno, riesgo medio)
+Investigacion previa: entender por que fallo el refmap en v0.11.7
+E90. Probar variantes: @Inject HEAD cancellable, @Redirect con
+owner=Object, remap=false + firma SRG explicita.
+Riesgo medio. Requiere hito dedicado.
+
+### Candidato N: v0.11.x - Tooltips estilizados (KI-10)
+Igual que antes. Mixin sobre Screen o TooltipRenderUtil.
+
+### Candidato I: v0.11.x - Banderas pixel-art (KI-08)
+Igual que antes.
+
+### Candidato C: v0.12.0+ - Contenido de gameplay
+Igual que antes.
+

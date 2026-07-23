@@ -1,6 +1,6 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
-## v0.11.6 - Scroll estilizado en OptionsList (KI-09 cerrado)
+## v0.11.7 - Scroll estilizado en OptionsList (KI-09 cerrado)
 
 ### Cambios
 - DiaryChrome: nuevos helpers publicos getOptionsListScrollbarX() y drawStyledScrollThumbForOptionsList().
@@ -20,7 +20,7 @@
 - R-DOC-VERIFY: comentarios que documentan limitaciones deben verificarse contra bytecode antes de aceptarse.
 - R-VERIFY-JAR-CASE: nombres de artifacts maven case-sensitive; verificar via HTTP GET al maven repo.
 
-### KI-10 (ABIERTO en v0.11.6)
+### KI-10 (ABIERTO en v0.11.7)
 - Tooltips vanilla morados sobre pergamino rompen la estetica.
 - En 1.20.1 el sistema deferred (Screen.renderWithTooltip es final) impide override directo desde subclase.
 - Solucion futura: mixin sobre Screen.renderWithTooltip o TooltipRenderUtil.
@@ -30,7 +30,7 @@
 ### Hito H (DiaryControlsScreen) - postpuesto
 - Estrategia E (router + Controlling compileOnly + wrapper reflection) funciono tecnicamente.
 - Revertido antes de validar visual por decision de scope: no depender de Controlling ni siquiera opcionalmente.
-- Codigo en `_backups\pre_v0.11.6_20260722_155547\`.
+- Codigo en `_backups\pre_v0.11.7_20260722_155547\`.
 - Retomar en hito futuro con decision de scope tomada de entrada.
 
 ### Deuda tecnica actualizada
@@ -73,10 +73,10 @@
 - Slider vanilla "Duracion de las notificaciones" en Accesibilidad tiene texto que se corta a la derecha por ancho fijo 150px del widget. Limitacion vanilla. Igual que en Chat (Duracion notificaciones), no se corrige.
 
 
-Ultima actualizacion: v0.11.6
+Ultima actualizacion: v0.11.7
 Estado: EN DESARROLLO
-Version estable actual: v0.11.6
-Ultimo tag publicado: v0.11.6
+Version estable actual: v0.11.7
+Ultimo tag publicado: v0.11.7
 Hitos recientes: v0.11.0 (DiaryOptionsScreen sobre pergamino con Title vivo detras, KI-06 cerrado extendido, sub-pantallas vanilla integradas); v0.10.4 (bump administrativo, changelog in-game intencionalmente sin entrada); v0.10.1 (persistencia del volumen de musica); v0.10.0 (ChangelogScreen sobre pergamino + reescritura diegetica de las 25 cronicas, KI-06 cerrado); v0.9.2 (fix humo/nubes, KI-05 cerrado); v0.9.1 (faroles reactivados, KI-03 cerrado completo); v0.9.0 hito visual del skyline; sistema de musica (v0.8.x) estable.
 
 ---
@@ -324,7 +324,7 @@ Solucion: siempre pasar ruta absoluta con $PWD\\... explicito. Cubierto por R-DO
 - Solucion futura: font provider propio del mod (assets/gripeverde/font/*.json) mapeando code points custom a PNGs con banderas dibujadas manualmente en pixel-art victoriano (no fotorealistas).
 - Alcance estimado: sub-hito propio, no bloqueante.
 
-### KI-09 (CERRADO en v0.11.6)
+### KI-09 (CERRADO en v0.11.7)
 - Scroll estilizado en pantallas que heredan de SimpleOptionsSubScreen (principalmente Accesibilidad).
 - OptionsList vanilla NO puede recibir tratamiento visual completo:
   - OptionsList.Entry es protected y no se puede calificar desde otro paquete
@@ -356,7 +356,7 @@ Solucion: siempre pasar ruta absoluta con $PWD\\... explicito. Cubierto por R-DO
 
 ---
 
-## KI-11 (ABIERTO en v0.11.6) - Slider del Cronista no aplica en vivo
+## KI-11 (ABIERTO en v0.11.7) - Slider del Cronista no aplica en vivo
 
 **Estado**: activo. Impacto menor.
 
@@ -368,8 +368,27 @@ Solucion: siempre pasar ruta absoluta con $PWD\\... explicito. Cubierto por R-DO
 - AbstractSliderButton.onDrag() llama applyValue() correctamente.
 - applyValue() persiste via MenuMusic.setUserVolume().
 - MenuMusic.updateVolumes() lee getUserVolume() y aplica al currentInstance via setDynamicVolume().
-- Pero updateVolumes() solo se llama desde MenuMusic.tick(), y aunque la screen tiquea MenuMusic (v0.11.6 fix), SoundManager de MC puede estar cacheando el volumen del SoundInstance hasta el proximo audio buffer swap.
+- Pero updateVolumes() solo se llama desde MenuMusic.tick(), y aunque la screen tiquea MenuMusic (v0.11.7 fix), SoundManager de MC puede estar cacheando el volumen del SoundInstance hasta el proximo audio buffer swap.
 
 **Plan**: sub-hito K3 en v0.11.x. Investigar si hay que forzar refresh del SoundManager o si MenuMusic necesita un pulso adicional en cada frame (no solo en tick).
 
 **No bloqueante**.
+
+## KI-12 (ABIERTO en v0.11.7)
+
+Fondos dirt vanilla persisten en pantallas de trabajo:
+- MouseSettingsScreen (Controles -> Mouse)
+- KeyBindsScreen (Controles -> Atajos)
+- PackSelectionScreen (Options -> Paquetes de recursos)
+- OnlineOptionsScreen (Options -> En linea)
+
+Causa: en 1.20.1, estas pantallas pintan renderDirtBackground
+DIRECTAMENTE desde su render() sin pasar por el hook renderBackground.
+Un override simple en subclase no funciona (ver E89).
+
+Solucion: mixin @Redirect o @Inject sobre esas pantallas.
+
+Plan: v0.11.8 hito mixin dedicado. Investigar previamente por que
+fallo el refmap en el intento de v0.11.7 (E90).
+
+No bloqueante. Las pantallas funcionan, solo lucen vanilla.

@@ -5,6 +5,10 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
+**v0.11.7** — Dos salas mas del gabinete recibieron papel: la de Controles
+y la de Menciones. Cuatro habitaciones tecnicas siguen a oscuras y esperan
+su turno en la proxima entrega.
+
 ### v0.11.6 - La camara de musica del gabinete
 
 Anoche la puerta que decia "Musica y sonidos" dejo de conducir a una sala prestada de otra casa. Detras de ella se abre ahora un ala propia, tapizada del mismo pergamino que el resto del gabinete, con sus divisores en filete y sus esquineros dobles. Al pie del panel hay un tirador nuevo, empotrado en laton, con una marca de tinta victoriana en el centro: el cronista lo llama Musica del Cronista, y con el ajusta el volumen del organillo lejano que lo acompana en las horas de escritura. El valor elegido queda anotado en el diario de configuraciones para que no se pierda al cerrar la sala.

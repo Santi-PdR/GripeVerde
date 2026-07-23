@@ -1,0 +1,174 @@
+package com.eternalcraft.gripeverde.client.screens;
+
+import com.eternalcraft.gripeverde.client.audio.MenuMusic;
+import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
+import com.eternalcraft.gripeverde.client.render.DiaryChrome;
+import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
+import com.eternalcraft.gripeverde.client.render.PaperTexture;
+import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
+import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
+import net.minecraft.client.OptionInstance;
+import net.minecraft.client.Options;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.CycleButton;
+import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+
+/**
+ * Version Diary de ControlsScreen (pantalla "Controles" hub).
+ *
+ * Estrategia Grupo A v0.11.7 (rediseno post-crash E88):
+ * REIMPLEMENTACION desde Screen. NO subclasea ControlsScreen porque
+ * los widgets vanilla tienen coordenadas hardcoded incompatibles con
+ * nuestro panel pergamino.
+ *
+ * Contenido:
+ *   - Sub-hub "Mouse..."          -> DiaryMouseSettingsScreen
+ *   - Sub-hub "Atajos..."         -> DiaryKeyBindsScreen
+ *   - Toggle "Agacharse"          -> Options.toggleCrouch()
+ *   - Toggle "Correr"             -> Options.toggleSprint()
+ *   - Toggle "Salto automatico"   -> Options.autoJump()
+ *   - Toggle "Pestana admin"      -> Options.operatorItemsTab()
+ *   - Boton Volver
+ *
+ * Los CycleButton se generan a partir de OptionInstance<Boolean> con
+ * OptionInstance.createButton, respetando las traducciones vanilla.
+ */
+public class DiaryControlsScreen extends Screen {
+
+    private static final int PANEL_W = 340;
+    private static final int PANEL_H = 260;
+
+    private final Screen lastScreen;
+    private final Options options;
+    private int panelX, panelY, panelW, panelH;
+
+    public DiaryControlsScreen(Screen parent, Options options) {
+        super(Component.translatable("controls.title"));
+        this.lastScreen = parent;
+        this.options = options;
+    }
+
+    @Override
+    protected void init() {
+        this.panelW = Math.min(PANEL_W, this.width - 40);
+        this.panelH = Math.min(PANEL_H, this.height - 30);
+        this.panelX = (this.width - this.panelW) / 2;
+        this.panelY = (this.height - this.panelH) / 2;
+
+        // Grid 2 columnas x 3 filas dentro del panel
+        int gridTop = this.panelY + 50;
+        int rowH = 24;
+        int btnW = 150;
+        int btnH = 20;
+        int col1X = this.panelX + (this.panelW / 2) - btnW - 4;
+        int col2X = this.panelX + (this.panelW / 2) + 4;
+
+        // Fila 0: Mouse... | Atajos...
+        this.addRenderableWidget(new DiaryButton(
+            col1X, gridTop, btnW, btnH,
+            Component.translatable("options.mouse_settings"),
+            DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
+            () -> this.minecraft.setScreen(new net.minecraft.client.gui.screens.MouseSettingsScreen(this, this.options))
+        ));
+        this.addRenderableWidget(new DiaryButton(
+            col2X, gridTop, btnW, btnH,
+            Component.translatable("controls.keybinds"),
+            DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
+            () -> this.minecraft.setScreen(new net.minecraft.client.gui.screens.controls.KeyBindsScreen(this, this.options))
+        ));
+
+        // Fila 1: toggleCrouch | toggleSprint
+        addOption(this.options.toggleCrouch(), col1X, gridTop + rowH, btnW, btnH);
+        addOption(this.options.toggleSprint(), col2X, gridTop + rowH, btnW, btnH);
+
+        // Fila 2: autoJump | operatorItemsTab
+        addOption(this.options.autoJump(), col1X, gridTop + rowH * 2, btnW, btnH);
+        addOption(this.options.operatorItemsTab(), col2X, gridTop + rowH * 2, btnW, btnH);
+
+        // Boton Volver Diary
+        int backW = 120;
+        int backY = this.panelY + this.panelH - 30;
+        this.addRenderableWidget(new DiaryButton(
+            (this.width - backW) / 2, backY, backW, btnH,
+            Component.translatable("gripeverde.options.button.done"),
+            DiaryButton.Icon.DOOR,
+            DiaryButton.Variant.PRIMARY,
+            () -> this.onClose()
+        ));
+    }
+
+    private void addOption(OptionInstance<?> opt, int x, int y, int w, int h) {
+        AbstractWidget widget = opt.createButton(this.options, x, y, w);
+        widget.setHeight(h);
+        this.addRenderableWidget(widget);
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        float delta = 1.0f / 20.0f;
+        AtmosphereRenderer.tick(delta);
+        VictorianSkyline.tick(delta);
+        LivingAtmosphere.tick(delta);
+        MenuMusic.tick();
+    }
+
+    @Override
+    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        // Escena viva
+        AtmosphereRenderer.renderSky(g, this.width, this.height);
+        VictorianSkyline.renderBackground(g, this.width, this.height);
+        LivingAtmosphere.renderFogLow(g, this.width, this.height);
+        VictorianSkyline.renderForeground(g, this.width, this.height);
+        LivingAtmosphere.renderStreetLevel(g, this.width, this.height);
+        LivingAtmosphere.renderAir(g, this.width, this.height);
+
+        // Overlay
+        g.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
+
+        // Pergamino
+        PaperTexture.drawClean(g, this.panelX, this.panelY, this.panelW, this.panelH);
+
+        // Titulo
+        String titleStr = this.title.getString();
+        int titleX = this.width / 2;
+        int titleY = this.panelY + 10;
+        g.drawCenteredString(this.font, titleStr, titleX + 1, titleY + 1, DiaryChrome.SHADOW_COL);
+        g.drawCenteredString(this.font, titleStr, titleX, titleY, DiaryChrome.INK_TITLE);
+
+        // Subtitulo
+        String subtitle = "- " + Component.translatable("gripeverde.options.controls.subtitle").getString() + " -";
+        int subWC = this.font.width(subtitle);
+        g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
+
+        // Flavor
+        String flavor = Component.translatable("gripeverde.options.controls.flavor").getString();
+        int flvWC = this.font.width(flavor);
+        g.drawString(this.font, flavor, (this.width - flvWC) / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
+
+        // Divisores + esquineros
+        int divY1 = titleY + 42;
+        DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY1);
+        int divY2 = this.panelY + this.panelH - 38;
+        DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
+        DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
+
+        // Widgets
+        for (Renderable r : this.renderables) {
+            r.render(g, mouseX, mouseY, partialTick);
+        }
+    }
+
+    @Override
+    public void renderBackground(GuiGraphics g) {
+        // Bypass
+    }
+
+    @Override
+    public void onClose() {
+        this.minecraft.setScreen(this.lastScreen);
+    }
+}

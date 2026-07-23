@@ -127,5 +127,10 @@
   "gripeverde.options.sound.music_slider": "Musica del Cronista",
   "gripeverde.options.language.flavor": "Toda ciudad se cuenta en muchas voces."
 ,
-  "gripeverde.options.language.subtitle": "- Voces de la ciudad -"
+  "gripeverde.options.language.subtitle": "- Voces de la ciudad -",
+  "gripeverde.options.controls.subtitle": "- Bitacora de comandos -",
+  "gripeverde.options.controls.flavor": "Las manos del cronista, disciplinadas.",
+  "gripeverde.options.credits.title": "Creditos y atribuciones",
+  "gripeverde.options.credits.subtitle": "- Menciones y agradecimientos -",
+  "gripeverde.options.credits.flavor": "A quienes hicieron posible esta cronica."
 }

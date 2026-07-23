@@ -127,5 +127,10 @@
   "gripeverde.options.sound.music_slider": "Chronicler's Music",
   "gripeverde.options.language.flavor": "Every city is told in many voices."
 ,
-  "gripeverde.options.language.subtitle": "- Voices of the city -"
+  "gripeverde.options.language.subtitle": "- Voices of the city -",
+  "gripeverde.options.controls.subtitle": "- Ledger of commands -",
+  "gripeverde.options.controls.flavor": "The chronicler's hands, disciplined.",
+  "gripeverde.options.credits.title": "Credits and attributions",
+  "gripeverde.options.credits.subtitle": "- Mentions and thanks -",
+  "gripeverde.options.credits.flavor": "To those who made this chronicle possible."
 }

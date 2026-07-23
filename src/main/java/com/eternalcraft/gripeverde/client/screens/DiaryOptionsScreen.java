@@ -239,7 +239,7 @@ public class DiaryOptionsScreen extends Screen {
         }
     }
     private void openControls() {
-        this.minecraft.setScreen(new ControlsScreen(this, this.minecraft.options));
+        this.minecraft.setScreen(new DiaryControlsScreen(this, this.minecraft.options));
     }
     private void openLanguage() {
         this.minecraft.setScreen(new DiaryLanguageScreen(
@@ -287,7 +287,7 @@ public class DiaryOptionsScreen extends Screen {
     }
         private void openCredits() {
         this.minecraft.setScreen(
-            new net.minecraft.client.gui.screens.CreditsAndAttributionScreen(this)
+            new DiaryCreditsScreen(this)
         );
     }
 }
