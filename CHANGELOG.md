@@ -1,6 +1,21 @@
 # Eternal Craft: Gripe Verde
 ## Notas de Actualización
 
+## v0.11.7 - Dos salas mas del gabinete
+
+Dos habitaciones mas del gabinete recibieron la mano del cronista.
+
+La sala de Controles amanecio ordenada sobre pergamino: los dos porticos que llevan al cuidado del raton y a las llaves de la casa quedan alli mismo, junto a las cuatro pequenas voluntades sobre agacharse, correr, saltar y la pestana del administrador. El divisor y los angulos ya son como los del resto del gabinete.
+
+Las Menciones y agradecimientos tambien se disponen ahora sobre papel, en su hoja propia, y desde ahi se llega a la larga secuencia de nombres que hicieron posible la cronica.
+
+Cuatro puertas siguen abriendo a habitaciones oscuras: las opciones del raton, el tomo de atajos, la seleccion de paquetes y las opciones en linea. El cronista las visitara con calma en la proxima entrega.
+
+### Del diario
+- La sala de Controles se acomodo sobre pergamino, con sus divisores y esquineros.
+- Las Menciones y agradecimientos ganaron hoja propia sobre papel.
+- Los dos porticos de Controles llevan al raton y a las llaves de la casa.
+- Cuatro puertas del gabinete siguen conduciendo a habitaciones oscuras, en espera.
 ## v0.11.6 - La camara de musica del gabinete
 
 Anoche la puerta que decia "Musica y sonidos" dejo de conducir a una sala prestada de otra casa. Detras de ella se abre ahora un ala propia, tapizada del mismo pergamino que el resto del gabinete, con sus divisores en filete y sus esquineros dobles. Los antiguos tiradores de piedra siguen alli, ordenados como siempre, y entre ellos permanece la lampara que ilumina las noches de escritura. Pero al pie del panel hay un tirador nuevo, empotrado en laton, con una marca de tinta victoriana en el centro. El cronista lo llama Musica del Cronista, y con el ajusta a su gusto el volumen del organillo lejano. El valor elegido queda anotado en el diario de configuraciones, para que no se pierda al cerrar la sala.
