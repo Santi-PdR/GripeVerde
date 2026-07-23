@@ -18,7 +18,7 @@ import net.minecraft.network.chat.Component;
 public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen {
 
     // Panel deseado (se recorta si no cabe en pantalla)
-    private static final int PANEL_MAX_W = 340;
+    private static final int PANEL_MAX_W = 380;
     private static final int PANEL_MAX_H = 395;
 
     // Margen minimo entre panel y borde de pantalla
@@ -125,9 +125,10 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         int divY1 = flavorY + 12;
         DiaryChrome.drawInkDivider(gfx, this.panelX, divY1, this.panelW);
 
-        // Lista vanilla (scroll queda vanilla, deuda tecnica documentada)
+        // Lista vanilla + scroll estilizado encima (KI-09 cerrado en v0.11.5)
         if (this.list != null) {
             this.list.render(gfx, mouseX, mouseY, delta);
+            DiaryChrome.drawStyledScrollThumbForOptionsList(gfx, this.list, this.width);
         }
 
         // Cosmeticos

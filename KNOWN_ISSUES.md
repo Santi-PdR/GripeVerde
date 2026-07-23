@@ -1,5 +1,44 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.11.5 - Scroll estilizado en OptionsList (KI-09 cerrado)
+
+### Cambios
+- DiaryChrome: nuevos helpers publicos getOptionsListScrollbarX() y drawStyledScrollThumbForOptionsList().
+- DiaryChrome: thumb minimo aumentado de 20 a 32px.
+- DiaryChrome: comentario obsoleto sobre "OptionsList final" corregido.
+- DiaryAccessibilityOptionsScreen: panel ampliado a 380px, scroll estilizado activo.
+- DiaryChatOptionsScreen: scroll estilizado activo.
+- Intento de Hito H (DiaryControlsScreen via router + Controlling compileOnly) revertido por decision de scope. Codigo aprendido queda en backup.
+
+### Errores nuevos catalogados
+- E81: Comentario en DiaryChrome afirmaba "OptionsList es final" pero era falso. Verificar con javap antes de aceptar comentarios como verdad.
+- E82: renderTooltip NO existe en Screen 1.20.1. Sistema deferred con renderWithTooltip final. Interceptar requiere mixin.
+- E83: .Replace multilinea con \r\n explicitos puede fallar por diferencias de EOL sutiles. Fallback: ReadAllLines + Where-Object filter por linea.
+- E84: Nombres de artifacts en maven BlameJared son case-sensitive (Searchables con S mayuscula, no searchables).
+
+### Reglas nuevas
+- R-DOC-VERIFY: comentarios que documentan limitaciones deben verificarse contra bytecode antes de aceptarse.
+- R-VERIFY-JAR-CASE: nombres de artifacts maven case-sensitive; verificar via HTTP GET al maven repo.
+
+### KI-10 (ABIERTO en v0.11.5)
+- Tooltips vanilla morados sobre pergamino rompen la estetica.
+- En 1.20.1 el sistema deferred (Screen.renderWithTooltip es final) impide override directo desde subclase.
+- Solucion futura: mixin sobre Screen.renderWithTooltip o TooltipRenderUtil.
+- Aplicaria globalmente a todas las Diary screens con tooltips.
+- No bloqueante.
+
+### Hito H (DiaryControlsScreen) - postpuesto
+- Estrategia E (router + Controlling compileOnly + wrapper reflection) funciono tecnicamente.
+- Revertido antes de validar visual por decision de scope: no depender de Controlling ni siquiera opcionalmente.
+- Codigo en `_backups\pre_v0.11.5_20260722_155547\`.
+- Retomar en hito futuro con decision de scope tomada de entrada.
+
+### Deuda tecnica actualizada
+- Widget "Duracion de las notificaciones" en Accesibilidad sigue con texto cortado. Widget vanilla 150px hardcoded. Panel a 380px alivia pero no resuelve. Limitacion vanilla ya catalogada, no se corrige.
+- Tooltips morados vanilla (KI-10).
+
+---
+
 ## v0.11.3 - DiaryAccessibilityOptionsScreen + pulido de Chat y Lenguas (KI-07 sigue avanzando)
 
 ### Cambios
@@ -34,10 +73,10 @@
 - Slider vanilla "Duracion de las notificaciones" en Accesibilidad tiene texto que se corta a la derecha por ancho fijo 150px del widget. Limitacion vanilla. Igual que en Chat (Duracion notificaciones), no se corrige.
 
 
-Ultima actualizacion: v0.11.3
+Ultima actualizacion: v0.11.5
 Estado: EN DESARROLLO
-Version estable actual: v0.11.3
-Ultimo tag publicado: v0.11.3
+Version estable actual: v0.11.5
+Ultimo tag publicado: v0.11.5
 Hitos recientes: v0.11.0 (DiaryOptionsScreen sobre pergamino con Title vivo detras, KI-06 cerrado extendido, sub-pantallas vanilla integradas); v0.10.4 (bump administrativo, changelog in-game intencionalmente sin entrada); v0.10.1 (persistencia del volumen de musica); v0.10.0 (ChangelogScreen sobre pergamino + reescritura diegetica de las 25 cronicas, KI-06 cerrado); v0.9.2 (fix humo/nubes, KI-05 cerrado); v0.9.1 (faroles reactivados, KI-03 cerrado completo); v0.9.0 hito visual del skyline; sistema de musica (v0.8.x) estable.
 
 ---
@@ -285,7 +324,7 @@ Solucion: siempre pasar ruta absoluta con $PWD\\... explicito. Cubierto por R-DO
 - Solucion futura: font provider propio del mod (assets/gripeverde/font/*.json) mapeando code points custom a PNGs con banderas dibujadas manualmente en pixel-art victoriano (no fotorealistas).
 - Alcance estimado: sub-hito propio, no bloqueante.
 
-### KI-09 (ABIERTO desde v0.11.4)
+### KI-09 (CERRADO en v0.11.5)
 - Scroll estilizado en pantallas que heredan de SimpleOptionsSubScreen (principalmente Accesibilidad).
 - OptionsList vanilla NO puede recibir tratamiento visual completo:
   - OptionsList.Entry es protected y no se puede calificar desde otro paquete

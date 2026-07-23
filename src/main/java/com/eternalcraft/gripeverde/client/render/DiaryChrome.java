@@ -1,6 +1,7 @@
 package com.eternalcraft.gripeverde.client.render;
 
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractSelectionList;
 
 /**
  * Helpers cosmeticos compartidos por todas las pantallas Diary (Options,
@@ -85,8 +86,8 @@ public final class DiaryChrome {
 
     // ── Barra de scroll estilizada en tinta victoriana ──────────────────────
     // Repinta encima de la barra vanilla. Requiere pasar geometria explicita
-    // porque las listas vanilla tienen campos protected/final variados segun
-    // subclase (OptionsList es final, no se puede subclasear).
+    // porque las listas vanilla exponen distinta API segun subclase.
+    // Para OptionsList existe drawStyledScrollThumbForOptionsList() abajo.
     //
     // Parametros:
     //  scrollLeft: X izquierda de la barra (6px de ancho)
@@ -109,7 +110,7 @@ public final class DiaryChrome {
 
         // Thumb: posicion y altura proporcional al scroll
         double scrollFrac = scrollAmount / (double) maxScroll;
-        int thumbH = Math.max(20, (int)(trackH * trackH / (double)(trackH + maxScroll)));
+        int thumbH = Math.max(32, (int)(trackH * trackH / (double)(trackH + maxScroll)));
         int thumbY = trackY1 + (int)((trackH - thumbH) * scrollFrac);
 
         // Thumb tinta victoriana: relleno + relieve claro izq + relieve oscuro der
@@ -125,5 +126,31 @@ public final class DiaryChrome {
         gfx.fill(midX - 2, midY,     midX + 3, midY + 1, 0xE0F3E9CE);
         gfx.fill(midX - 1, midY + 1, midX + 2, midY + 2, 0xE0F3E9CE);
         gfx.fill(midX,     midY + 2, midX + 1, midY + 3, 0xE0F3E9CE);
+    }
+    // -- Scroll estilizado especifico para OptionsList vanilla ------------
+    // OptionsList es subclase de ContainerObjectSelectionList y su scrollbar
+    // vive en X = width/2 + 156 (formula fija del bytecode 1.20.1):
+    //   AbstractSelectionList.getScrollbarPosition() = width/2 + 124
+    //   OptionsList.getScrollbarPosition()           = super + 32
+    // La barra es de 6px de ancho, alineada al centro del screen.
+    // Ver ADDENDUM v0.11.5 y KI-09 en CONTEXTO.md.
+    //
+    // Uso: llamar DESPUES de list.render() en el render del screen.
+    public static int getOptionsListScrollbarX(int screenWidth) {
+        return screenWidth / 2 + 156;
+    }
+
+    public static void drawStyledScrollThumbForOptionsList(GuiGraphics gfx,
+                                                            AbstractSelectionList<?> list,
+                                                            int screenWidth) {
+        if (list == null) return;
+        int maxScroll = list.getMaxScroll();
+        if (maxScroll <= 0) return;
+
+        int scrollLeft = getOptionsListScrollbarX(screenWidth);
+        int trackY1 = list.getTop();
+        int trackY2 = list.getBottom();
+
+        drawScrollThumb(gfx, scrollLeft, trackY1, trackY2, list.getScrollAmount(), maxScroll);
     }
 }

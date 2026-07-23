@@ -7,11 +7,11 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.11.4
-- build.gradle: version = '0.11.4'
-- GripeVerdeMod.VERSION: "0.11.4"
+- Version estable actual: v0.11.5
+- build.gradle: version = '0.11.5'
+- GripeVerdeMod.VERSION: "0.11.5"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
-- Ultimo tag publicado: v0.11.4
+- Ultimo tag publicado: v0.11.5
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
 
@@ -34,6 +34,7 @@ necesaria para retomar el desarrollo sin repetir errores.
 - v0.11.2: DiaryChatOptionsScreen sobre pergamino. KI-07 avanzado. Formalizacion de R-CHANGELOG-AGRUPADO, R-BUILD-DEPLOY, R-VANILLA-LIST-COORDS.
 - v0.11.3: DiaryAccessibilityOptionsScreen sobre pergamino + pulido cosmetico de Chat y Lenguas.
 - v0.11.4: DiarySkinCustomizationScreen (hito K) + scroll estilizado y acelerado en Lenguas (hito L) + refactor DiaryChrome (extraccion de helpers cosmeticos compartidos) + panel adaptativo en Accesibilidad para escalas 3/4. KI-09 abierto (scroll estilizado en OptionsList).
+- v0.11.5: Scroll estilizado en Accesibilidad y Chat (hito M-simple). KI-09 cerrado. Panel de Accesibilidad ampliado a 380px. Thumb minimo 32px. KI-10 abierto (tooltips vanilla morados). Controles siguen vanilla (Controlling).
 
 ## KI-03 - Estado post v0.9.0
 
@@ -56,7 +57,7 @@ C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 
 - Local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 - Remoto: https://github.com/Santi-PdR/GripeVerde (privado)
-- Ultimo tag: v0.11.4
+- Ultimo tag: v0.11.5
 
 ## Rutas reales verificadas
 
@@ -837,3 +838,80 @@ Objetivo: font provider propio + PNGs de banderas para cada idioma.
 Objetivo: primer sistema de gameplay real. Requiere diseno previo escrito.
 
 Decision pendiente para proxima sesion.
+---
+## ADDENDUM v0.11.5 (Scroll estilizado en OptionsList - KI-09 cerrado)
+
+### Contexto de la sesion
+Sesion larga. Inicialmente se intento cerrar Hito H (DiaryControlsScreen) con estrategia E (router + wrapper Controlling via compileOnly). Tecnicamente funciono: build exitoso, deploy exitoso, Controlling detectado y wrapper cargado correctamente. Se revirtio antes de validar visualmente por decision del usuario: preferencia por no depender ni siquiera opcionalmente de Controlling y por dejar el look de Controles vanilla como estaba, en lugar de forrarlo parcialmente (opcion D).
+
+Se pivoteo a hito M (DiaryOptionsList / KI-09) que estaba en el backlog y era menos riesgoso.
+
+### Cambios de codigo v0.11.5
+- **DiaryChrome.java**:
+  - Nuevo helper publico `getOptionsListScrollbarX(int screenWidth)`: devuelve `screenWidth / 2 + 156` (formula fija del bytecode 1.20.1: AbstractSelectionList.getScrollbarPosition() + OptionsList override).
+  - Nuevo helper publico `drawStyledScrollThumbForOptionsList(GuiGraphics, AbstractSelectionList<?>, int)`: envuelve `drawScrollThumb` extrayendo geometria de la instancia via metodos publicos (getMaxScroll, getScrollAmount, getTop, getBottom). Sin reflection.
+  - Comentario obsoleto corregido: "OptionsList es final" era incorrecto (OptionsList NO es final; simplemente decidimos no subclasear por otras razones).
+  - Thumb minimo aumentado de 20 a 32px para mejor legibilidad visual.
+- **DiaryAccessibilityOptionsScreen.java**:
+  - Panel ancho aumentado de 340 a 380px (mas aire lateral para widgets vanilla de 150px hardcoded).
+  - Llamada a `DiaryChrome.drawStyledScrollThumbForOptionsList(gfx, this.list, this.width)` despues de `this.list.render(...)`.
+- **DiaryChatOptionsScreen.java**:
+  - Misma llamada al helper despues del render de la lista. Cero costo, misma ganancia visual.
+- **Sin nuevos widgets**. La solucion M-simple no crea `DiaryOptionsList` subclase de OptionsList; usa 2 helpers estaticos en DiaryChrome que se aplican via composicion sobre la instancia vanilla.
+
+### Estrategia final: M-simple
+Antes de decidir se analizaron 3 rutas:
+- **M-original**: subclasear OptionsList y sustituir instancia en `renderables/children/narratables`. Descartada por riesgo (romper referencias vanilla) y complejidad no justificada.
+- **M-simple** (elegida): helpers estaticos que dibujan encima. Cero cambios en instancias vanilla. Reutiliza `drawScrollThumb` que ya existia.
+- **M-reflection**: acceder a getScrollbarPosition via reflection. Descartada por E77 (nombres SRG en runtime).
+
+### Errores nuevos catalogados
+
+- **E81**: Comentario en DiaryChrome L88-89 afirmaba "OptionsList es final, no se puede subclasear" pero era falso. javap confirmo `public class OptionsList` sin `final`. Regla derivada: R-DOC-VERIFY.
+
+- **E82**: Intento de override `renderTooltip(GuiGraphics, List<FormattedCharSequence>, int, int)` en 1.20.1 falla porque el metodo NO existe en Screen. En 1.20.1 el sistema de tooltips migro a un patron deferred: los widgets llaman `setTooltipForNextRenderPass(...)`, luego `Screen.renderWithTooltip()` (final, no overrideable) dibuja el tooltip acumulado usando `deferredTooltipRendering` privado. Interceptar el render real requiere mixin sobre Screen o reflection.
+
+- **E83**: `.Replace($oldMultilineBlock, $newBlock)` sobre imports Java multilinea con `\r\n` explicitos NO matcheo aunque el archivo tenia esos EOL. Los imports quedaron en el archivo (sin uso, Java lo tolera). Fallback: filtrar por linea con ReadAllLines + Where-Object.
+
+- **E84**: Nombre de artifact Maven de Searchables era `Searchables-forge-1.20.1` (S mayuscula), no `searchables-forge-1.20.1`. BlameJared maven es case-sensitive. Descubierto durante audit del hito H (revertido). Documentado por si retomamos H.
+
+### Reglas nuevas
+
+- **R-DOC-VERIFY**: Los comentarios en codigo que documentan limitaciones ("X es final", "no se puede overridear", "SRG obligatorio") deben verificarse con javap/bytecode antes de aceptarlos como verdad. Los comentarios envejecen mal cuando se copian entre versiones de Minecraft o cuando se documenta lo que se creyo, no lo que era.
+
+- **R-VERIFY-JAR-CASE**: Al agregar dependencias Maven (compileOnly, implementation, runtimeOnly), verificar el nombre exacto del artifact via HTTP GET al maven, NO asumir minusculas. Muchos maven repos son case-sensitive.
+
+### KI-09 (CERRADO en v0.11.5)
+- Scroll estilizado en Accesibilidad y Chat resuelto con estrategia M-simple.
+- El thumb luce con rombo pergamino central, relieves de tinta victoriana y responde al scroll.
+- La formula X = width/2 + 156 es fija segun 1.20.1; si vanilla la cambiara en una version futura, actualizar la constante.
+
+### KI-10 (ABIERTO en v0.11.5)
+- Los tooltips vanilla morados sobre pergamino rompen la estetica.
+- En 1.20.1 el sistema deferred impide un override directo desde subclase (E82).
+- Solucion futura: mixin sobre `Screen.renderWithTooltip` o sobre `TooltipRenderUtil` para reemplazar el renderer global.
+- Alcance: aplicaria a TODAS las Diary screens con tooltips, no solo Accesibilidad. Hito propio.
+- No bloqueante.
+
+### Hito H (DiaryControlsScreen) - postpuesto
+- Se intento con estrategia E y funciono tecnicamente.
+- Revertido por decision de scope del usuario.
+- Codigo aprendido queda en backup: `_backups\pre_v0.11.5_20260722_155547\`.
+- Cuando se retome (hito futuro), tomar decision de entrada entre: (a) reintentar E aceptando compileOnly, (b) opcion D forrando solo el fondo con widgets vanilla encima, o (c) dejar definitivamente vanilla.
+
+## PROXIMO HITO PLANIFICADO (revisado tras v0.11.5)
+
+### Candidato N: v0.11.x - Tooltips estilizados (KI-10)
+Objetivo: reemplazar tooltip vanilla morado por uno pergamino oscuro via mixin sobre Screen o TooltipRenderUtil. Aplicaria globalmente a todas las Diary screens. Riesgo medio-alto por complejidad del mixin.
+
+### Candidato H (retomado): v0.11.x - DiaryControlsScreen
+Objetivo: retomar Controles con decision de scope tomada de entrada. Ver opciones D/E arriba.
+
+### Candidato K2: v0.11.x - DiarySoundOptionsScreen
+Objetivo: reemplazar SoundOptionsScreen. Requiere estrategia especial por integracion de IMPR (slider externo). Ver ADDENDUM v0.11.2.
+
+### Candidato I: v0.11.x - Banderas pixel-art (KI-08)
+Objetivo: font provider propio + PNGs de banderas para cada idioma.
+
+### Candidato C: v0.12.0+ - Contenido de gameplay
+Objetivo: primer sistema de gameplay real (Gripe Verde en si). Requiere diseno previo escrito.

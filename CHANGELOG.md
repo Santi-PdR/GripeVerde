@@ -1,6 +1,16 @@
 # Eternal Craft: Gripe Verde
 ## Notas de Actualización
 
+## v0.11.5 - El escriba afila su pluma
+
+La sala de accesibilidad y la de protocolos de correspondencia comparten esta noche un pequeno hallazgo: cuando el lector desliza el pergamino con la rueda, el marcador de renglones ya no es una plancha de hierro grisacea, sino una lengueta de tinta con su rombo central, como el que se estreno en el registro de lenguas. Es un detalle menor y sin embargo, cuando uno recorre las opciones de arriba a abajo, la ciudad se siente mas de una sola pieza. El gabinete de accesibilidad se ha ensanchado un poco para dar mas aire a los widgets que se apretujaban contra los bordes.
+
+### Del diario
+- El marcador de renglones se ha vestido de tinta en la sala de accesibilidad.
+- La sala de correspondencia recibio el mismo cambio, sin ceremonia.
+- El pergamino de accesibilidad se ha ensanchado; los renglones respiran mejor.
+
+---
 ## v0.11.3 (2026-07-XX)
 
 El cronista abre dos nuevas puertas de su gabinete. En una halla ajustes para sus propios sentidos: la brasa que titila, el trueno que sacude, la voz que dicta las palabras impresas. En la otra, las convenciones para dirigirse a otros que caminen la ciudad: la pluma que responde, el papel donde llegan las noticias, el silencio que se guarda. Ambas salas huelen a pergamino, a tinta seca y a lampara de aceite. Los marcos se han labrado con esquineros dobles y los divisores llevan un rombo tipografico en el centro. Bajo cada titulo se ha anotado, con letra tenue, la naturaleza de la sala.

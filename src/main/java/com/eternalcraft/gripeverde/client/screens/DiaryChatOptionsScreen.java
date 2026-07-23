@@ -123,9 +123,10 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
         DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
 
-        // Lista vanilla
+        // Lista vanilla + scroll estilizado encima (KI-09 cerrado en v0.11.5)
         if (this.list != null) {
             this.list.render(g, mouseX, mouseY, partialTick);
+            DiaryChrome.drawStyledScrollThumbForOptionsList(g, this.list, this.width);
         }
 
         // Widgets propios
