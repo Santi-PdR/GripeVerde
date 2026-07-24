@@ -7,11 +7,11 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.11.7
-- build.gradle: version = '0.11.7'
-- GripeVerdeMod.VERSION: "0.11.7"
+- Version estable actual: v0.11.8
+- build.gradle: version = '0.11.8'
+- GripeVerdeMod.VERSION: "0.11.8"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
-- Ultimo tag publicado: v0.11.7
+- Ultimo tag publicado: v0.11.8
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
 
@@ -58,7 +58,7 @@ C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 
 - Local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 - Remoto: https://github.com/Santi-PdR/GripeVerde (privado)
-- Ultimo tag: v0.11.7
+- Ultimo tag: v0.11.8
 
 ## Rutas reales verificadas
 
@@ -1121,4 +1121,196 @@ Igual que antes.
 
 ### Candidato C: v0.12.0+ - Contenido de gameplay
 Igual que antes.
+
+
+---
+## ADDENDUM v0.11.8 (DiaryMultiplayer + subpantallas de servidor + KI-12 parcial)
+
+### Alcance del hito
+Cierre completo del flujo multijugador (B3 del plan original). Ambientadas 4
+pantallas nuevas y agregada infraestructura reutilizable de confirmacion.
+
+### Cambios de codigo
+- Nueva clase: **client/screens/DiaryConfirmScreen.java**.
+  - Subclase de ConfirmScreen. Reemplaza fondo dirt vanilla + botones grises
+    por pergamino + DiaryButtons.
+  - Reutilizable para: Delete server, futuras confirmaciones (Delete pack, etc.).
+  - Reflection cascada al field exitButtons (oficial -> SRG f_169251_ -> scan por tipo List).
+  - Guarda mensaje/multilineMessage como fields propios (los vanilla son private).
+  - Bypass total de super.render(): pipeline propio (escena viva + overlay +
+    pergamino + cosmetica + widgets Diary).
+  - tick() incluye MenuMusic.tick() (R-DIARY-TICK-MUSIC).
+
+- Nueva clase: **client/screens/DiaryEditServerScreen.java**.
+  - Reimplementacion completa desde Screen (patron DiaryCreditsScreen).
+  - 2 EditBox (name + IP) + 2 DiaryButton (Done + Cancel).
+  - Callback BooleanConsumer recibido igual que vanilla.
+  - Panel 340x220 con cosmetica Diary completa.
+
+- Nueva clase: **client/screens/DiaryDirectJoinScreen.java**.
+  - Reimplementacion desde Screen. Solo 1 EditBox (IP) + 2 DiaryButton.
+  - Persiste lastMpIp en Options.
+  - Panel 340x180.
+
+- Nueva clase: **client/screens/DiaryMultiplayerScreen.java** (la principal).
+  - Subclase de JoinMultiplayerScreen para preservar ServerSelectionList
+    completo (favicons, ping, LAN scan, MOTD, tooltips).
+  - Reflection cascada al field serverSelectionList (oficial + SRG f_99673_).
+  - Reflection tambien para servers, selectButton, editButton, deleteButton.
+  - 7 DiaryButtons custom en 2 filas balanceadas DENTRO del pergamino:
+    - Fila superior: Join (PRIMARY) / Direct / Add
+    - Fila inferior: Edit / Delete (DANGER) / Refresh / Cancel
+  - Anchos calculados con this.font.width() para evitar truncado (E88 evitado).
+  - hideVanillaButtons() de doble pase: renderables + children() para atrapar
+    Button + EditBox + CycleButton vanilla (fix cursores fantasma).
+  - Server pinneado "Ghoul Outbreak Official" siempre presente. Se agrega
+    en init() via ensurePinnedServer() si no existe; se actualiza si la IP
+    cambio; se re-inyecta al ServerSelectionList via reflection al metodo
+    updateOnlineServers (oficial + SRG m_99797_).
+  - LAN header oculto visualmente cuando hay >=1 server real via scissor
+    (computeVisibleBottom + gfx.enableScissor).
+  - Banda sepia oscura semi-transparente detras de cada server (contraste
+    para el texto blanco vanilla hardcoded). Fade lateral con fillGradient.
+  - Subrayado tinta sutil con fade a los costados bajo cada server (look
+    "tarjeta de biblioteca victoriana").
+  - Divisor con rombo entre lista y botones (DiaryChrome.drawDivisorLozenge).
+  - Vineta sepia perimetral (marco interno del pergamino) con inset 3px.
+
+- Modificado: **client/screens/DiaryTitleScreen.java**.
+  - onMultiplayer() redirige a DiaryMultiplayerScreen (era JoinMultiplayerScreen vanilla).
+  - Import de JoinMultiplayerScreen removido.
+
+- Nuevas claves lang (25 archivos): 3 subtitulos narrativos para Multiplayer,
+  Edit y Direct.
+
+### Errores nuevos catalogados
+
+- **E88**: DiaryButton no hace text wrapping ni ellipsis - textos largos se
+  truncan visualmente con clipping duro. Fix: calcular ancho por boton con
+  font.width(label) + padding fijo.
+
+- **E89**: ConfirmScreen tiene message y multilineMessage como PRIVATE. Al
+  subclasear no se pueden usar this.message ni this.multilineMessage. Fix:
+  guardar copia propia (ownMessage) en el constructor.
+
+- **E90**: OnlineServerEntry.render() dibuja el nombre del server en blanco
+  (0xFFFFFF) hardcoded. Sobre pergamino claro el texto se pierde. Fix: dibujar
+  banda sepia oscura detras del entry como fondo (contraste). Mixin al render
+  seria mas limpio pero es scope de hito futuro (KI-10 territory).
+
+- **E91**: return dentro de un if en PowerShell interactivo NO aborta el
+  script; solo aborta la subexpresion. Los comandos siguientes SIGUEN
+  ejecutandose. Solucion documentada como R-PS-THROW.
+
+- **E92**: WriteAllText desde PowerShell con [System.Text.Encoding]::UTF8
+  puede escribir BOM en PS5. Ya cubierto por R-UTF8-NOBOM.
+
+- **E93**: Get-ChildItem -Filter con extensiones no-.zip. Expand-Archive
+  rechaza .jar. Ya cubierto por R-JAR-INSPECT.
+
+- **E94**: [System.IO.File]::ReadAllBytes usa CWD del proceso .NET (~home),
+  NO respecta Set-Location de PowerShell. Ya cubierto por R-DOTNET-PATH y E38.
+
+- **E95**: AbstractSelectionList.getItemHeight() NO existe como metodo publico.
+  El campo itemHeight es protected final. Acceso via reflection cascada.
+
+- **E96**: AbstractSelectionList.getRowTop(int) es PROTECTED - no llamable
+  desde otro paquete. Fix: recalcular manualmente con formula vanilla real
+  (y0 + 4 - scrollAmount + i*itemHeight + headerHeight).
+
+- **E97**: SRG naming NO sigue orden secuencial predecible. Guess de
+  f_93396_ para headerHeight fallo; el real es f_93395_ (el numero anterior
+  se salteo). Regla derivada: R-SRG-VERIFY-ORDER.
+
+- **E98**: Los assets vanilla (lang/*.json) NO estan en el jar mapeado
+  (_mapped_official). Estan en client.jar en ~/.gradle/caches/forge_gradle/
+  minecraft_repo/versions/1.20.1/client.jar. Documentado en R-VANILLA-ASSETS.
+
+- **E99**: Windows page file saturado puede tirar OpenJDK
+  os::commit_memory failed. Fix: --no-daemon + GRADLE_OPTS con -Xmx1024m.
+
+### Reglas nuevas / refuerzos
+
+- **R-PS-THROW**: en scripts PowerShell interactivos usar `throw "msg"` en
+  vez de `return` para abortar. `return` solo aborta la subexpresion.
+
+- **R-VERIFY-DISK**: la verificacion de reemplazos de texto debe hacerse
+  leyendo del disco post-write con Get-Content + Select-String, NO
+  comparando strings in-memory (`$new -eq $content` puede dar falso positivo
+  por diferencias sutiles de EOL/encoding).
+
+- **R-SRG-VERIFY-ORDER**: los SRG numbers de fields NO siguen orden
+  secuencial estricto. Pueden saltarse numeros. Nunca adivinar por
+  proximidad numerica; siempre verificar en el jar SRG real con javap -p.
+
+- **R-VANILLA-ASSETS**: los assets vanilla (lang, textures, etc.) NO estan
+  en el jar mapeado de Forge. Ruta real:
+  `~/.gradle/caches/forge_gradle/minecraft_repo/versions/1.20.1/client.jar`.
+  Para inspeccion de traducciones extraer desde ahi.
+
+- **R-JAR-CLEAN-BEFORE-BUILD**: refuerzo de R-JAR2. Limpiar SIEMPRE
+  build/libs/gripeverde-*.jar antes de compilar, no solo el deploy. Cuando
+  el build reporta OK pero el jar no tiene los cambios esperados, verificar
+  primero que no haya jar viejo residual.
+
+- **R-BUILD-MEM-LIMIT**: para builds en sistemas con page file limitado usar
+  `--no-daemon` + `$env:GRADLE_OPTS = "-Xmx1024m"` para reducir presion de RAM.
+
+- **R-VANILLA-TEXT-COLOR**: cuando se subclasea una vanilla Screen que
+  renderiza texto en colores hardcoded para fondo dirt (blanco/verde/gris),
+  el texto sera poco legible sobre pergamino. Solucion sin mixin: dibujar
+  banda de contraste (sepia oscura) DETRAS del texto vanilla. Aplicable a
+  cualquier subpantalla que reuse widgets vanilla con colores propios.
+
+- **R-VANILLA-METHOD-PRIVATE**: metodos protected/private de AbstractSelectionList
+  (getRowTop, getRowBottom, etc.) NO son llamables desde otro paquete aunque
+  subclasees a distancia. Fix: reflection o recalcular manualmente con la
+  formula vanilla real (usando reflection sobre fields protected).
+
+### KI-07 (SIGUE AVANZANDO en v0.11.8)
+- Multijugador cerrado con DiaryMultiplayerScreen + DiaryEditServerScreen +
+  DiaryDirectJoinScreen + DiaryConfirmScreen sobre pergamino.
+- Restantes vanilla: MouseSettings, KeyBinds, PackSelection, Online (todos
+  cubiertos por KI-12 pendiente que requiere mixin).
+
+### KI-12 (parcial en v0.11.8)
+- Multiplayer NO estaba originalmente en KI-12 (KI-12 son las que usan
+  bypass de renderBackground para dirt).
+- Multiplayer fue subclase limpia sin necesidad de mixin. Excelente noticia.
+
+### KI-13 (NUEVO en v0.11.8)
+- Server pinneado no puede editarse "por siempre" sin bloqueo. Si el usuario
+  cambia su IP o nombre, ensurePinnedServer lo restaurara al proximo init.
+- Actualmente NO se lanza ConfirmScreen antes de borrarlo, y NO hay bloqueo
+  visual en el boton Borrar cuando el server pinneado esta seleccionado.
+- Prioridad baja. Sub-hito opcional.
+
+### KI-14 (NUEVO en v0.11.8)
+- La banda sepia detras del server usa color 0xB0281608 que a veces se ve
+  muy oscuro contra faviconones con marcos claros. Solucion futura:
+  detectar si el favicon es "brillante" y ajustar opacidad de la banda.
+- Prioridad baja.
+
+### Notas sobre el flujo de desarrollo
+Fue un hito con muchas iteraciones (11+ fixes) debido a que combinamos 4
+subpantallas nuevas + integraciones profundas con la API vanilla de
+ServerSelectionList (reflection extensiva). Cada iteracion aporto un
+aprendizaje catalogado en errores/reglas arriba.
+
+## PROXIMO HITO PLANIFICADO (revisado tras v0.11.8)
+
+### Candidato P: v0.11.9 - Hito Mods
+Objetivo: ambientar ModListScreen de Forge. Ver auditoria previa
+(bytecode ya extraido en _backups/bytecode_v0.11.8).
+Complejidad: MEDIA-ALTA. No es vanilla puro (Forge). Panel derecho con
+descripcion+logo+autores requiere composicion mas rica.
+
+### Candidato O: v0.11.9 alternativo - Hito Mixin (KI-12)
+Objetivo: mixin sobre renderDirtBackground para 4 pantallas restantes
+(MouseSettings, KeyBinds, PackSelection, Online). Investigar refmap
+(fallo en v0.11.7 E90).
+
+### Candidato N: v0.11.x - Tooltips estilizados (KI-10)
+### Candidato I: v0.11.x - Banderas pixel-art (KI-08)
+### Candidato C: v0.12.0+ - Contenido de gameplay
 

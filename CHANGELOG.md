@@ -1,4 +1,26 @@
 # Eternal Craft: Gripe Verde
+
+## v0.11.8 - El atlas de puertos ajenos
+
+En esta noche el cronista ha completado el capitulo dedicado a la
+correspondencia con ciudades distantes. El atlas de puertos ajenos ya
+no se despliega sobre paneles ordinarios de fabrica: cada mapa, cada
+apunte de asentamiento nuevo, cada travesia hacia un puerto sin
+cartografiar se abre ahora sobre pergamino, envuelto en la misma
+paciencia con que se anota una carta a la luz de una vela.
+
+La entrada del observatorio oficial de la Gripe Verde ha quedado
+grabada en el atlas por siempre. Cualquier viajero que consulte
+estas paginas encontrara alli el nombre y las coordenadas del
+observatorio principal, incluso si trata de arrancarlo del papel.
+
+Las senales de balizamiento lejanas y los ecos de puertos cercanos
+han sido apartados a otra pagina, para que el ojo no se distraiga
+cuando ya hay ciudades reconocidas en el atlas.
+
+Bajo cada asentamiento reposa ahora una tarjeta sepia con su nombre
+y descripcion, y una linea de tinta tenue a modo de firma.
+
 ## Notas de Actualización
 
 ## v0.11.7 - Dos salas mas del gabinete

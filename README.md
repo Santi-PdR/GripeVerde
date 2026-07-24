@@ -5,7 +5,7 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.11.7** — Dos salas mas del gabinete recibieron papel: la de Controles
+**v0.11.8** — Dos salas mas del gabinete recibieron papel: la de Controles
 y la de Menciones. Cuatro habitaciones tecnicas siguen a oscuras y esperan
 su turno en la proxima entrega.
 

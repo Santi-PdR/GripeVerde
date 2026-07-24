@@ -19,7 +19,7 @@ import com.eternalcraft.gripeverde.client.widgets.SlimButton;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
+import com.eternalcraft.gripeverde.client.screens.DiaryMultiplayerScreen;
 import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.gui.ModListScreen;
@@ -270,7 +270,7 @@ public class DiaryTitleScreen extends Screen {
     }
 
     private void onSingleplayer() { this.minecraft.setScreen(new SelectWorldScreen(this)); }
-    private void onMultiplayer()  { this.minecraft.setScreen(new JoinMultiplayerScreen(this)); }
+    private void onMultiplayer()  { this.minecraft.setScreen(new DiaryMultiplayerScreen(this)); }
     private void onMods()         { this.minecraft.setScreen(new ModListScreen(this)); }
     private void onOptions() { this.minecraft.setScreen(new DiaryOptionsScreen(this)); }
 
