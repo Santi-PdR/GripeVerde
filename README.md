@@ -5,14 +5,17 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.11.14 - Banderas de las voces**
+**v0.12.0 - Cierre del ciclo del gabinete**
 
-Cada lengua que la ciudad reconoce lleva ahora su ensena junto al
-nombre. Franjas, cruces, estrellas y lunas ondean al costado de cada
-linea, como los pendones alineados en el frente de un consulado. La
-mirada aprende antes por el color que por el trazo. Las voces sin
-patria fija se anuncian con un rombo de tinta anonimo, sello digno
-de quienes hablan sin bandera.
+Version administrativa que cierra el ciclo largo del gabinete
+pergamino (v0.10 - v0.11). El changelog in-game se consolida bajo la
+entrada unica "Una casa de papel", narrando de una sola vez todo lo
+que ocurrio en esas noches: el gabinete pintado a mano, las
+subpantallas convertidas en despachos, la coherencia final del papel,
+la musica sensible al gesto, y las banderas junto a cada lengua.
+
+Con esto cierra la fase de interfaz. Lo que venga a partir de aqui
+sera contenido de gameplay: la Gripe Verde en si misma.
 
 ## Caracteristicas principales
 

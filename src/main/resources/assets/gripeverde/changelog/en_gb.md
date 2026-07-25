@@ -2,56 +2,65 @@
 ## Update Notes
 
 
+## Version 0.10 - 0.11 - A house of paper
 
-## Version 0.11.10 - 0.11.13
+For many nights the cabinet was mute. Dark earth doors, factory-grey
+buttons, foreign purples that peeked out when one passed a hand over
+a word. A public building, not a study. Now, at last, everything
+around the chronicler has been turned to paper: worn parchment, sepia
+ink, borders with discreet corner marks. The Victorian city has
+eaten the walls.
 
-In five brief nights the cabinet has gained its last coherences.
+The changes came little by little. First was the History itself, that
+book one opens when one wishes to remember where one comes from: it
+left its vulgar frame behind and learned to be read on parchment.
+The moon, that same night, gained a faint halo and three wisps of
+mist crossing it without dimming it, as if the steam of the boilers
+and the damp of the river had stuck to the disk.
 
-The correspondence books and the aids and perceptions no longer cut
-their content with a hard edge but with a parchment fade. In the atlas
-of cities, the alarming red of unreachable ports has been softened by
-a sepia shadow that rests behind the ping.
+Then came the cabinet of settings, the main door. A paper panel with
+the living city breathing behind, dimmed only slightly so as not to
+distract. And from that door, one by one, its own doors began to
+open: the tongues of the world, arranged in clean lines; the
+correspondence and its protocols; the aids and perceptions for
+whoever needs another scale of notice; one's own aspect, with its
+garments that one turns on or off; the music and sounds, with the
+chronicler's dial placed at the side; the controls, with their
+strokes and shortcuts; the notes of hand from those who made this
+possible.
 
-In the ledger of commands, the conduct switches - sneak, sprint,
-auto-jump and operator items tab - have left behind their factory
-metallic tone and now wear an ochre paper strip, with a filled dot
-when active and hollow when at rest. Text that exceeds the box is
-trimmed with a discreet ellipsis.
+And then the multiplayer, always the densest one: a list of known
+places, an edict for adding a new one, a passage to enter directly
+into an uncharted port, and even a sheet of confirmation for whoever
+is about to erase an entry from the ledger. All on parchment. All
+with the same shade of ink.
 
-The notes on new settlements and passages to uncharted ports are now
-written on parchment: the old black text capture rectangles have been
-replaced by paper bands with ink borders, blinking ink cursor and
-sepia selection.
-
-And above all, every margin note that the cabinet whispers when the
-cursor passes over - once windows of a foreign purple hue - now wears
-parchment with ink border, coherent with the rest of the city.
+With the screens resolved came the lesser coherences, those that
+cannot be seen one by one but that hold the whole together. The
+books that no longer cut their content with a hard edge but with a
+paper fade. The scroll bars with sepia beads instead of the usual
+grey strip. The conduct switches with a filled dot when active and
+hollow when at rest. The fields where one writes, with a blinking
+ink cursor. And above all: every margin note the cabinet whispers
+when the cursor passes over - once windows of foreign purple - now
+wears parchment with an ink border. There is no longer a single
+foreign corner in the house.
 
 The chronicler's music, moreover, now obeys at once when the hand
-caresses the dial. There is no more need to wait for the needle to be
-released for the volume to bend to the gesture.
-## Version 0.11.1
-The cabinet that already showed itself on parchment has now been ordered with craft. Discreet marks guard its four corners; two lines of ink separate what is read from what is signed; a line beneath the title announces the chronicler's hand. And within it, at last, the list of the world's tongues has become legible: each in its clean line, without the vulgar smudge that covered them, the chosen one marked by an arrow, the rest awaiting their turn. The proclamations of the street have also lowered their voice. Quarantine and Royal Decree no longer shout at the observer; they now breathe with the rest of the paper.
-## Version 0.11.0
-The cabinet of settings now shows itself on parchment as well. The city keeps breathing behind the panel while one arranges what needs arranging.
+caresses the dial, without waiting for the needle to be released.
+A small detail that is appreciated every time one uses it.
 
-## Version 0.10.4 — The Moon's Halo
+And lastly, a few nights ago, the tongues themselves gained a face:
+every language the city acknowledges now bears its little banner
+beside the name. Stripes, crosses, stars and moons at the side of
+each line, like the pennants aligned before a consulate. The eye
+learns faster by color than by stroke. And voices with no fixed
+homeland - old cants, inland dialects, inventions of the street -
+are announced by a simple ink lozenge, anonymous seal worthy of
+those who speak with no banner.
 
-Tonight the moon has gained a faint halo, as if the steam from the boilers and the dampness of the Thames were clinging to it. Three thin wisps slowly cross it, without completely obscuring it.
-
-
-## Version 0.10.0
-
-**The diary takes on the solemnity it deserves.**
-
-I spent the afternoon retouching the edges of these pages. They are no longer mere loose papers; now the grain of the parchment is felt under the fingertips, and the frame enclosing my notes has the firmness of an official document. Even the texts seem to have found their definitive voice, stripped of strange technicalities that blurred the chronicle. A sick city is not described with engineers' measurements, but with the truth of what the eye perceives while walking.
-
-### From the journal
-- Past chronicles have been rewritten with a tone truer to reality.
-- The diary paper now shows its legitimate texture and weight.
-- Terms improper for an observant gentleman have been removed.
-
----
+With this a long cycle closes. The house is finished. What comes
+now shall be what happens inside.
 
 ## Version 0.9.2
 

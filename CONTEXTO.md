@@ -7,11 +7,11 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.11.14
-- build.gradle: version = '0.11.14'
-- GripeVerdeMod.VERSION: "0.11.14"
+- Version estable actual: v0.12.0
+- build.gradle: version = '0.12.0'
+- GripeVerdeMod.VERSION: "0.12.0"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
-- Ultimo tag publicado: v0.11.14
+- Ultimo tag publicado: v0.12.0
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
 
@@ -69,7 +69,7 @@ C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 
 - Local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 - Remoto: https://github.com/Santi-PdR/GripeVerde (privado)
-- Ultimo tag: v0.11.14
+- Ultimo tag: v0.12.0
 
 ## Rutas reales verificadas
 
@@ -1624,3 +1624,53 @@ Riesgo: MEDIO. Historial de fallo (E90). Infra mixin ya armada v0.11.13.
 ### Candidato C: v0.12.0+ - Contenido de gameplay
 Objetivo: primer sistema real de gameplay (Gripe Verde en si).
 Requiere diseno previo escrito.
+
+
+---
+## ADDENDUM v0.12.0 (cierre administrativo del ciclo gabinete)
+
+### Alcance
+Version sin codigo. Solo:
+1. Reescritura completa del changelog in-game bajo entrada unica
+   "Version 0.10 - 0.11 - Una casa de papel" (25 archivos).
+2. Bump v0.11.14 -> v0.12.0 para senalar cierre de fase UI.
+3. Reversion del intento mixin fallido de v0.11.14 (KI-12 pendiente).
+
+### Errores catalogados
+- **E111**: @Inject/@Redirect no funcionan sobre metodos heredados. En
+  MouseSettingsScreen, el mixin sobre renderBackground fallo porque
+  ese metodo esta definido en Screen, no en MouseSettingsScreen. Para
+  interceptar hay que hacer mixin sobre Screen + filtro instanceof, o
+  usar @At INVOKE con owner concreto para @Redirect. 4 iteraciones
+  ciegas antes de identificar la raiz. Revertido antes de commit.
+
+### Reglas nuevas
+- **R-MIXIN-INHERITED-METHODS**: @Inject y @Redirect NO alcanzan
+  metodos heredados por defecto. Alternativas: (a) mixin sobre la
+  clase que define el metodo con filtro instanceof; (b) @Redirect con
+  target owner = subclase concreta para interceptar llamada especifica;
+  (c) @Inject sobre metodo que la subclase SI overridea.
+
+### KI-12 (sigue ABIERTO)
+- Dirt bypass pendiente. Ruta correcta identificada:
+  mixin sobre Screen.renderBackground + filtro instanceof por las 4
+  pantallas target. Postpuesto a hito dedicado (v0.12.x tal vez, o
+  posterior). No bloquea gameplay.
+
+## PROXIMO HITO PLANIFICADO (revisado tras v0.12.0)
+
+### Candidato C: v0.12.1+ - Contenido de gameplay (Gripe Verde en si)
+Objetivo: primer sistema real de gameplay. Con la fase UI cerrada,
+la casa esta lista para tener contenido adentro.
+
+Sub-hitos a definir en diseno previo (a escribir antes de tocar codigo):
+- Sistema de enfermedad: sintomas, progreso, contagio
+- Cuarentena: zonas seguras vs zonas infectadas
+- NPCs: enfermos, sanos, personal medico
+- Items: mascaras, medicinas, alcohol, agua limpia
+- Mecanicas ambientales: humo verde, ratas, cadaveres
+
+Riesgo: ALTO. Requiere diseno previo escrito antes de codigo.
+
+### Candidato O: v0.12.x - Mixin dirt bypass (KI-12) [pendiente sin urgencia]
+Ruta correcta ya identificada. Se puede hacer cuando quede tiempo.

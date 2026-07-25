@@ -2,58 +2,65 @@
 ## Notas de Actualización
 
 
+## Version 0.10 - 0.11 - Una casa de papel
 
-## Version 0.11.10 - 0.11.13
+Durante muchas noches el gabinete estuvo mudo. Puertas de tierra
+oscura, botones grises de fabrica, morados extranjeros que asomaban
+al pasar la mano por encima de una palabra. Un edificio publico, no
+un despacho. Ahora, por fin, todo lo que rodea al cronista se ha
+hecho papel: pergamino gastado, tinta sepia, bordes con esquineros
+discretos. La ciudad victoriana se ha comido las paredes.
 
-En cinco noches breves el gabinete ha ganado sus ultimas coherencias.
+Los cambios llegaron de a poco. Primero fue el Historial mismo, ese
+libro que se abre cuando uno quiere recordar de donde viene: dejo
+atras su marco vulgar y aprendio a leerse sobre pergamino. La luna,
+esa misma noche, gano un halo tenue y tres jirones de niebla que la
+cruzan sin apagarla, como si el vapor de las calderas y la humedad
+del rio se le hubieran pegado al disco.
 
-Los libros de correspondencia y los auxilios y percepciones ya no
-recortan su contenido con arista dura sino con desvanecido de
-pergamino. En el atlas de ciudades, el rojo alarmante de los puertos
-inalcanzables ha sido atenuado por una sombra sepia que descansa
-detras del ping.
+Despues vino el gabinete de ajustes, la puerta principal. Un panel
+de papel con la ciudad viva latiendo detras, atenuada apenas para no
+distraer. Y de esa puerta empezaron a abrirse las suyas, una por una:
+las lenguas del mundo, ordenadas en renglones limpios; la
+correspondencia y sus protocolos; los auxilios y percepciones para
+quien necesita otra escala de aviso; el aspecto propio, con sus
+piezas de vestir que uno enciende o apaga; la musica y los sonidos,
+con el regulador del cronista dispuesto al costado; los mandos, con
+sus pulsaciones y atajos; los apuntes de mano de quienes hicieron
+posible esto.
 
-En la bitacora de comandos, los interruptores de conducta - agacharse,
-correr, salto automatico y pestana de administrador - dejaron atras
-su tono metalico de fabrica y visten hoy tira de papel ocre, con
-circulillo relleno cuando estan activos y hueco cuando descansan. Los
-textos que exceden la caja se recortan con puntos suspensivos.
+Y luego el multijugador, que es siempre lo mas denso: una lista de
+plazas conocidas, un edicto para agregar plaza nueva, un pasaje para
+entrar directo a un puerto sin cartografiar, y hasta una hoja de
+confirmacion para quien esta a punto de borrar un asiento del
+cuaderno. Todo en pergamino. Todo con el mismo tono de tinta.
 
-Los apuntes de asentamiento nuevo y las travesias hacia puertos sin
-cartografiar se escriben ahora sobre pergamino: los antiguos
-rectangulos negros de captura de texto han sido reemplazados por
-bandas de papel con borde de tinta, cursor de tinta parpadeante y
-seleccion sepia.
-
-Y por sobre todo, cada nota al margen que el gabinete susurra al
-pasar el cursor - antes ventanas de un morado extranjero - viste hoy
-pergamino con borde tinta, coherente con el resto de la ciudad.
+Con las pantallas resueltas vinieron las coherencias menores, esas
+que no se ven una por una pero que sostienen el conjunto. Los libros
+que ya no cortan su contenido con arista dura sino con desvanecido
+de papel. Las barras de scroll con cuentas de sepia en lugar de la
+tira gris de siempre. Los interruptores de conducta con circulillo
+relleno cuando estan activos y hueco cuando descansan. Los campos
+donde uno escribe, con cursor de tinta parpadeante. Y sobre todo:
+cada nota al margen que el gabinete susurra al pasar el cursor -
+antes ventanas de un morado extranjero - viste hoy pergamino con
+borde tinta. Ya no hay una sola esquina extranjera en la casa.
 
 La musica del cronista, ademas, obedece ahora al instante cuando la
-mano acaricia el regulador. Ya no hay que esperar a soltar la aguja
-para que el volumen se pliegue al gesto.
-## Version 0.11.1
-El gabinete que ya lucia sobre pergamino se ha ordenado con oficio. Divisas discretas guardan sus cuatro esquinas; dos rayas de tinta separan lo que se lee de lo que se firma; un renglon bajo el titulo anuncia la mano del cronista. Y en su interior, por fin, la lista de lenguas del mundo se ha vuelto legible: cada una en su renglon limpio, sin la mancha vulgar que las tapaba, la elegida marcada con una flecha, las demas esperando su turno. Tambien los edictos de la calle han bajado la voz. Cuarentena y Real Decreto ya no gritan al observador; ahora respiran con el resto del papel.
-## Version 0.11.0
-El gabinete de ajustes tambien luce ahora sobre pergamino. La ciudad sigue viva detras del panel mientras uno acomoda lo que necesite acomodar.
+mano acaricia el regulador, sin esperar a que se suelte la aguja.
+Un pequeno detalle que se agradece cada vez que uno lo usa.
 
-## Versión 0.10.4 — El Halo de la Luna
+Y por ultimo, hace unas noches, las lenguas mismas ganaron su cara:
+cada idioma que la ciudad reconoce lleva ahora su bandera pequenita
+junto al nombre. Franjas, cruces, estrellas y lunas al costado de
+cada renglon, como los pendones alineados frente a un consulado. La
+mirada aprende antes por el color que por el trazo. Y las voces sin
+patria fija - viejas jergas, dialectos del interior, inventos de la
+calle - se anuncian con un simple rombo de tinta, sello anonimo
+digno de quien habla sin bandera.
 
-Esta noche la luna ha ganado un halo tenue, como si el vapor de las calderas y la humedad del Támesis se le pegaran alrededor. Tres jirones finos la cruzan lentamente, sin llegar a taparla del todo.
-
-
-## Versión 0.10.0
-
-**El diario se viste con la solemnidad que merece.**
-
-He pasado la tarde retocando los bordes de estas páginas. Ya no son meros papeles sueltos; ahora la fibra del pergamino se siente bajo los dedos, y el marco que encierra mis notas tiene la firmeza de un documento oficial. Incluso los textos parecen haber encontrado su voz definitiva, despojados de tecnicismos extraños que empañaban la crónica. Una ciudad enferma no se describe con medidas de ingenieros, sino con la verdad de lo que el ojo percibe al caminar.
-
-### Del diario
-- Las crónicas del pasado han sido reescritas con un tono más fiel a la realidad.
-- El papel del diario muestra ahora su textura y peso legítimos.
-- Se han eliminado términos impropios de un caballero observador.
-
----
+Con esto se cierra un ciclo largo. La casa esta terminada. Lo que
+venga ahora sera lo que ocurra adentro.
 
 ## Versión 0.9.2
 

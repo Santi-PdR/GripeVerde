@@ -1,5 +1,37 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.12.0 - Cierre del ciclo del gabinete (administrativo)
+
+Version sin cambios de codigo. Solo:
+- Reagrupamiento del changelog in-game: se borran las entradas sueltas
+  de v0.10.4, v0.11.0, v0.11.1, v0.11.10-13 y v0.11.14. Se reemplazan
+  por UNA sola entrada "Version 0.10 - 0.11 - Una casa de papel" que
+  narra el ciclo completo del gabinete pergamino.
+- Salto de version v0.11.14 -> v0.12.0 para senalar cierre de fase UI
+  y arranque de fase de gameplay.
+
+### Errores catalogados durante v0.11.14 -> v0.12.0
+- **E111**: Intento de mixin en v0.11.14 sobre MouseSettingsScreen fallo
+  4 iteraciones consecutivas (Redirect no matcheaba porque el metodo
+  esta heredado de Screen, no definido en la subclase). Fix definitivo:
+  mixin sobre Screen con filtro instanceof - postpuesto a hito dedicado.
+  Los cambios se revirtieron; v0.11.14 quedo estable con solo banderas.
+  Refuerza R-ITER-VISUAL-STRICT: cambio de estrategia obligatorio en
+  iteracion 3.
+
+### Reglas nuevas
+- **R-MIXIN-INHERITED-METHODS**: @Inject y @Redirect NO funcionan
+  directamente sobre metodos heredados. Para interceptar renderBackground
+  en una subclase (MouseSettingsScreen) hay que hacer mixin sobre la
+  clase que define el metodo (Screen) y filtrar con instanceof.
+
+### KI-12 (sigue ABIERTO)
+- Dirt bypass en MouseSettingsScreen, KeyBindsScreen, PackSelectionScreen,
+  OnlineOptionsScreen. Ruta correcta identificada (mixin sobre Screen +
+  instanceof) pero pendiente hito dedicado. Prioridad baja - no bloquea
+  el arranque de gameplay.
+
+---
 ## v0.11.14 - Banderas pixel-art (KI-08 CERRADO)
 
 Se agrega bandera 16x11 px a la izquierda de cada entrada en DiaryLanguageScreen.
@@ -188,9 +220,9 @@ Cinco versiones cortas encadenadas cierran los ultimos hitos visuales del gabine
 - KI-13 (server pinneado sin proteccion). Prioridad baja.
 - KI-14 (banda multiplayer vs faviconones brillantes). Prioridad baja.
 
-Ultima actualizacion: v0.11.14
+Ultima actualizacion: v0.12.0
 Estado: EN DESARROLLO
-Version estable actual: v0.11.14
+Version estable actual: v0.12.0
 Ultimo tag publicado: v0.11.13
 
 ---
@@ -343,9 +375,9 @@ Cinco versiones cortas encadenadas cierran los ultimos hitos visuales del gabine
 - KI-13 (server pinneado sin proteccion). Prioridad baja.
 - KI-14 (banda multiplayer vs faviconones brillantes). Prioridad baja.
 
-Ultima actualizacion: v0.11.14
+Ultima actualizacion: v0.12.0
 Estado: EN DESARROLLO
-Version estable actual: v0.11.14
+Version estable actual: v0.12.0
 Ultimo tag publicado: v0.11.13
 
 ---
