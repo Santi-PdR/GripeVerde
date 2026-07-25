@@ -42,6 +42,10 @@ necesaria para retomar el desarrollo sin repetir errores.
 - v0.11.10: Polish visual (KI-15 fades + KI-16 scrollbar respirada + banda multiplayer atenuada).
 - v0.11.11: DiaryTextField (widget de texto sobre pergamino, en Edit y Direct).
 - v0.11.12: DiaryToggle (widget de interruptor sobre pergamino, en Controls).
+- v0.11.13: Tooltips estilizados pergamino globalmente (KI-10 cerrado, via RenderTooltipEvent.Color).
+- v0.11.10: Polish visual (KI-15 fades + KI-16 scrollbar respirada + banda multiplayer atenuada).
+- v0.11.11: DiaryTextField (widget de texto sobre pergamino, en Edit y Direct).
+- v0.11.12: DiaryToggle (widget de interruptor sobre pergamino, en Controls).
 - v0.11.13: Tooltips estilizados pergamino globalmente (KI-10 cerrado, via RenderTooltipEvent.Color). Fixes de KI-11 (musica se congelaba al navegar), clamp de paneles chicos, ESC cancela idioma, unificacion de cabeceras y sombras, banda de servidor suavizada, textura de pergamino en lista de lenguas, sombra proyectada del panel, DiaryButton diferenciado del panel, scrollbar alineada al panel. KI-11 cerrado. KI-15 y KI-16 abiertos (fade inferior y respiracion de scrollbar).
 
 ## KI-03 - Estado post v0.9.0
@@ -1442,6 +1446,52 @@ llama vanilla.
 
 ### Candidato C: v0.12.0+ - Contenido de gameplay (Gripe Verde en si)
 Objetivo: primer sistema real de gameplay. Requiere diseno previo escrito.
+
+---
+## ADDENDUM v0.11.10 a v0.11.13 (Ciclo pergamino cerrado)
+
+Ver KNOWN_ISSUES.md seccion "v0.11.10 a v0.11.13" para detalle completo. Resumen:
+
+### Sistema
+- 3 widgets nuevos: DiaryTextField, DiaryToggle, TooltipEventHandler.
+- 1 helper nuevo en DiaryChrome: drawListFades.
+- Infraestructura mixin armada aunque sin mixins activos (client:[] vacio).
+- 4 KIs cerrados: KI-10, KI-15, KI-16, y avance en KI-07.
+
+### Codigo nuevo
+- client/widgets/DiaryTextField.java
+- client/widgets/DiaryToggle.java
+- client/TooltipEventHandler.java
+
+### Codigo modificado
+- render/DiaryChrome.java (drawListFades + drawStyledScrollThumbInPanel condicional)
+- screens/DiaryAccessibilityOptionsScreen.java (fades)
+- screens/DiaryChatOptionsScreen.java (fades)
+- screens/DiarySoundOptionsScreen.java (fades)
+- screens/DiaryMultiplayerScreen.java (banda atenuada)
+- screens/DiaryEditServerScreen.java (DiaryTextField)
+- screens/DiaryDirectJoinScreen.java (DiaryTextField)
+- screens/DiaryControlsScreen.java (DiaryToggle x4)
+
+### Errores catalogados
+- E101 a E107 (mixin compat, event bus, reflection tipada, widget overflow).
+
+### Reglas nuevas
+- R-MIXIN-COMPAT: compatibilityLevel JAVA_8 con Mixin 0.8.5.
+- R-MODS-TOML-MIXIN: bloque [[mixins]] obligatorio en mods.toml.
+- R-FORGE-EVENTS-FIRST: buscar evento Forge nativo antes de escribir mixin.
+- R-WIDGET-OVERFLOW-3TIER: layout adaptativo de 3 niveles para widgets con contenido dinamico.
+- R-REFLECTION-TYPED: filtrar por tipo esperado, no solo por nombre.
+- R-MIXIN-SELF-CONTAINED: mixin sin imports del propio mod.
+- R-MIXIN-VERIFY-TARGET: verificar en bytecode del caller que el metodo target sea el path real.
+
+### Decisiones de diseno
+- Tooltips: descartado mixin en favor de RenderTooltipEvent.Color. Mucho mas
+  limpio y robusto.
+- DiaryTextField: heredar de EditBox y override renderWidget preserva toda la
+  logica de edicion nativa (Ctrl+C/V, Shift+arrows, filter, responder, etc.).
+- DiaryToggle: envolver OptionInstance<Boolean> es mas limpio que reimplementar
+  el binding manual. Permite reutilizar la logica de persistencia vanilla.
 
 ---
 ## ADDENDUM v0.11.10 a v0.11.13 (Ciclo pergamino cerrado)

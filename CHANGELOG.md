@@ -35,6 +35,41 @@ pasar el cursor - antes ventanas de un morado extranjero - viste hoy
 pergamino con borde tinta. La ciudad victoriana ha ganado sus ultimas
 esquinas.
 
+## v0.11.13 - El gabinete se ajusta a la mano
+
+En esta noche cuatro cosas menores ganan el gabinete. La primera es
+de peso: la musica del cronista responde ahora al instante cuando la
+mano acaricia el regulador. Ya no hay que esperar a soltar la aguja
+para que el volumen obedezca; el sonido se pliega al gesto como debe
+plegarse.
+
+Las tarjetas del atlas de ciudades respiran ahora con contornos mas
+suaves; el rojo alarmante de los puertos inalcanzables ha sido
+atenuado por una sombra sepia oscura que descansa detras del ping,
+sin agredir al pergamino ni ocultar el aviso.
+
+Los libros de correspondencia y los auxilios y percepciones
+recibieron un desvanecido pergamino en su ribete superior e inferior,
+de modo que el contenido no se corta con arista dura sino que se
+desvanece contra los margenes como tinta seca.
+
+En la bitacora de comandos, los interruptores de conducta -
+agacharse, correr, salto automatico, pestana de administrador - dejan
+atras su tono metalico de fabrica y visten hoy tira de papel ocre,
+con circulillo relleno cuando la conducta esta activa y hueco cuando
+descansa. Textos que exceden la caja se recortan con puntos
+suspensivos discretos.
+
+Los apuntes de asentamiento nuevo y las travesias directas se
+escriben ahora sobre papel: los antiguos rectangulos negros de
+captura de texto fueron reemplazados por bandas de pergamino con
+borde de tinta, cursor de tinta parpadeante y seleccion sepia.
+
+Y por sobre todo, cada nota al margen que el gabinete susurra al
+pasar el cursor - antes ventanas de un morado extranjero - viste hoy
+pergamino con borde tinta. La ciudad victoriana ha ganado sus ultimas
+esquinas.
+
 ## v0.11.9 - Coherencia del gabinete
 
 En esta noche el gabinete respira una sola tinta. Todas las hojas que
