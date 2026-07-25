@@ -5,11 +5,11 @@
 ## Version 0.10 - 0.11 - Una casa de papel
 
 Durante muchas noches el gabinete estuvo mudo. Puertas de tierra
-oscura, botones grises de fabrica, morados extranjeros que asomaban
-al pasar la mano por encima de una palabra. Un edificio publico, no
-un despacho. Ahora, por fin, todo lo que rodea al cronista se ha
-hecho papel: pergamino gastado, tinta sepia, bordes con esquineros
-discretos. La ciudad victoriana se ha comido las paredes.
+oscura, tiradores grises de fabrica, resplandores forasteros que
+asomaban al posar la mano sobre una palabra. Un edificio publico,
+no un despacho. Ahora, por fin, todo lo que rodea al cronista se ha
+hecho papel: pergamino gastado, tinta sepia, esquineros discretos.
+La ciudad victoriana se ha comido las paredes.
 
 Los cambios llegaron de a poco. Primero fue el Historial mismo, ese
 libro que se abre cuando uno quiere recordar de donde viene: dejo
@@ -18,37 +18,40 @@ esa misma noche, gano un halo tenue y tres jirones de niebla que la
 cruzan sin apagarla, como si el vapor de las calderas y la humedad
 del rio se le hubieran pegado al disco.
 
-Despues vino el gabinete de ajustes, la puerta principal. Un panel
-de papel con la ciudad viva latiendo detras, atenuada apenas para no
-distraer. Y de esa puerta empezaron a abrirse las suyas, una por una:
-las lenguas del mundo, ordenadas en renglones limpios; la
-correspondencia y sus protocolos; los auxilios y percepciones para
-quien necesita otra escala de aviso; el aspecto propio, con sus
-piezas de vestir que uno enciende o apaga; la musica y los sonidos,
-con el regulador del cronista dispuesto al costado; los mandos, con
-sus pulsaciones y atajos; los apuntes de mano de quienes hicieron
-posible esto.
+Despues vino el gabinete de ajustes, la puerta principal. Un
+despacho de papel, con la ciudad viva latiendo detras, atenuada
+apenas para no distraer. Y de esa puerta empezaron a abrirse las
+suyas, una por una: las lenguas del mundo, ordenadas en renglones
+limpios; la correspondencia y sus protocolos; las ayudas a la vista
+y al oido para quien necesita otra escala de aviso; el aspecto
+propio, con sus prendas que uno se pone y se quita; las voces y los
+sonidos, con la clavija del cronista dispuesta al costado; los
+mandos, con sus pulsaciones y atajos; los apuntes de mano de
+quienes hicieron posible esto.
 
-Y luego el multijugador, que es siempre lo mas denso: una lista de
-plazas conocidas, un edicto para agregar plaza nueva, un pasaje para
-entrar directo a un puerto sin cartografiar, y hasta una hoja de
-confirmacion para quien esta a punto de borrar un asiento del
-cuaderno. Todo en pergamino. Todo con el mismo tono de tinta.
+Y luego el registro de las hospederias, ese cuaderno donde el
+cronista anota las casas ajenas: una lista de plazas conocidas, un
+edicto para agregar plaza nueva, un pasaje para entrar directo a un
+puerto sin cartografiar, y hasta una hoja de confirmacion para
+quien esta a punto de tachar un asiento del cuaderno. Todo en
+pergamino. Todo con el mismo tono de tinta.
 
-Con las pantallas resueltas vinieron las coherencias menores, esas
-que no se ven una por una pero que sostienen el conjunto. Los libros
-que ya no cortan su contenido con arista dura sino con desvanecido
-de papel. Las barras de scroll con cuentas de sepia en lugar de la
+Con los despachos resueltos vinieron las coherencias menores, esas
+que no se ven una por una pero que sostienen el conjunto. Los
+libros que ya no cortan su contenido con arista dura sino con
+desvanecido de papel. Las cintas laterales para pasar la vista por
+los renglones lejanos, ahora con cuentas de sepia en lugar de la
 tira gris de siempre. Los interruptores de conducta con circulillo
 relleno cuando estan activos y hueco cuando descansan. Los campos
-donde uno escribe, con cursor de tinta parpadeante. Y sobre todo:
-cada nota al margen que el gabinete susurra al pasar el cursor -
-antes ventanas de un morado extranjero - viste hoy pergamino con
-borde tinta. Ya no hay una sola esquina extranjera en la casa.
+donde uno escribe, con tinta que parpadea a la espera de la mano.
+Y sobre todo: cada nota al margen que el gabinete susurra al pasar
+la mano sobre una palabra - antes rectangulos de un morado
+extranjero - viste hoy pergamino con borde tinta. Ya no hay una
+sola esquina extranjera en la casa.
 
-La musica del cronista, ademas, obedece ahora al instante cuando la
-mano acaricia el regulador, sin esperar a que se suelte la aguja.
-Un pequeno detalle que se agradece cada vez que uno lo usa.
+La voz de la ciudad, ademas, obedece ahora al instante cuando la
+mano acaricia su clavija, sin esperar a que se suelte la aguja. Un
+pequeno detalle que se agradece cada vez que uno lo usa.
 
 Y por ultimo, hace unas noches, las lenguas mismas ganaron su cara:
 cada idioma que la ciudad reconoce lleva ahora su bandera pequenita

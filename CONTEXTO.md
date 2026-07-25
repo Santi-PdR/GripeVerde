@@ -1674,3 +1674,54 @@ Riesgo: ALTO. Requiere diseno previo escrito antes de codigo.
 
 ### Candidato O: v0.12.x - Mixin dirt bypass (KI-12) [pendiente sin urgencia]
 Ruta correcta ya identificada. Se puede hacer cuando quede tiempo.
+
+
+---
+## ADDENDUM v0.12.0 (cierre administrativo del ciclo gabinete)
+
+### Alcance
+Version sin codigo. Solo:
+1. Reescritura completa del changelog in-game bajo entrada unica
+   "Version 0.10 - 0.11 - Una casa de papel" (25 archivos).
+2. Correccion R-DIEGETICO sobre la entrada agrupada (primera version
+   tenia palabras UI que rompian el pacto narrativo).
+3. Bump v0.11.14 -> v0.12.0 para senalar cierre de fase UI.
+4. Reversion del intento mixin fallido de v0.11.14 (KI-12 pendiente).
+
+### Errores catalogados
+- **E111**: @Inject/@Redirect no funcionan sobre metodos heredados.
+  Mixin sobre renderBackground de MouseSettingsScreen fallo porque
+  ese metodo esta definido en Screen, no en la subclase. 4 iteraciones
+  ciegas antes de identificar la raiz. Revertido antes de commit.
+- **E112**: Primera version de la entrada agrupada in-game usaba
+  vocabulario UI/gaming (panel, cursor, scroll, multijugador,
+  pantallas, regulador). El cronista victoriano no conoce esos
+  terminos. Fix: reescritura completa con vocabulario de epoca.
+  Refuerza R-DIEGETICO con audit automatico de palabras prohibidas.
+
+### Reglas nuevas
+- **R-MIXIN-INHERITED-METHODS**: @Inject y @Redirect NO alcanzan
+  metodos heredados por defecto.
+- **R-DIEGETICO-VOCAB**: Vocabulario prohibido/aceptado en changelog
+  in-game. Verificar con audit automatico antes de publicar.
+
+### KI-12 (sigue ABIERTO)
+- Dirt bypass pendiente. Ruta correcta identificada. Sin urgencia.
+
+## PROXIMO HITO PLANIFICADO (revisado tras v0.12.0)
+
+### Candidato C: v0.12.1+ - Contenido de gameplay (Gripe Verde en si)
+Objetivo: primer sistema real de gameplay. La casa esta lista para
+tener contenido adentro.
+
+Sub-hitos a definir en diseno previo (escribir antes de tocar codigo):
+- Sistema de enfermedad: sintomas, progreso, contagio
+- Cuarentena: zonas seguras vs zonas infectadas
+- NPCs: enfermos, sanos, personal medico
+- Items: mascaras, medicinas, alcohol, agua limpia
+- Mecanicas ambientales: humo verde, ratas, cadaveres
+
+Riesgo: ALTO. Requiere diseno previo escrito antes de codigo.
+
+### Candidato O: v0.12.x - Mixin dirt bypass (KI-12) [pendiente sin urgencia]
+Ruta correcta identificada. Se puede hacer cuando quede tiempo.

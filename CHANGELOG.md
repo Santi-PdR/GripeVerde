@@ -10,6 +10,16 @@ papel", y salto de version para senalar que la fase de UI esta cerrada.
 Lo que venga a partir de aqui sera contenido de gameplay: la Gripe Verde
 en si misma, con sus sintomas, sus cuarentenas y sus mecanicas de
 sobrevivencia.
+## v0.12.0 - Cierre del ciclo del gabinete
+
+Version administrativa que marca el cierre del ciclo largo v0.10 - v0.11
+(el gabinete pergamino). Sin codigo nuevo: solo consolidacion narrativa,
+reagrupamiento del changelog in-game bajo la entrada unica "Una casa de
+papel", y salto de version para senalar que la fase de UI esta cerrada.
+
+Lo que venga a partir de aqui sera contenido de gameplay: la Gripe Verde
+en si misma, con sus sintomas, sus cuarentenas y sus mecanicas de
+sobrevivencia.
 ## v0.11.14 - Banderas de las voces
 
 Cada lengua que la ciudad reconoce lleva ahora su ensena junto al nombre.

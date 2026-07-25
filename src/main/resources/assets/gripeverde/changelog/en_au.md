@@ -5,49 +5,51 @@
 ## Version 0.10 - 0.11 - A house of paper
 
 For many nights the cabinet was mute. Dark earth doors, factory-grey
-buttons, foreign purples that peeked out when one passed a hand over
-a word. A public building, not a study. Now, at last, everything
-around the chronicler has been turned to paper: worn parchment, sepia
-ink, borders with discreet corner marks. The Victorian city has
-eaten the walls.
+handles, foreign glows that peeked out when one rested a hand on a
+word. A public building, not a study. Now, at last, everything
+around the chronicler has been turned to paper: worn parchment,
+sepia ink, discreet corner marks. The Victorian city has eaten the
+walls.
 
-The changes came little by little. First was the History itself, that
-book one opens when one wishes to remember where one comes from: it
-left its vulgar frame behind and learned to be read on parchment.
-The moon, that same night, gained a faint halo and three wisps of
-mist crossing it without dimming it, as if the steam of the boilers
-and the damp of the river had stuck to the disk.
+The changes came little by little. First was the History itself,
+that book one opens when one wishes to remember where one comes
+from: it left its vulgar frame behind and learned to be read on
+parchment. The moon, that same night, gained a faint halo and three
+wisps of mist crossing it without dimming it, as if the steam of
+the boilers and the damp of the river had stuck to the disk.
 
-Then came the cabinet of settings, the main door. A paper panel with
-the living city breathing behind, dimmed only slightly so as not to
-distract. And from that door, one by one, its own doors began to
-open: the tongues of the world, arranged in clean lines; the
-correspondence and its protocols; the aids and perceptions for
-whoever needs another scale of notice; one's own aspect, with its
-garments that one turns on or off; the music and sounds, with the
-chronicler's dial placed at the side; the controls, with their
-strokes and shortcuts; the notes of hand from those who made this
-possible.
+Then came the cabinet of settings, the main door. A paper study,
+with the living city breathing behind, dimmed only slightly so as
+not to distract. And from that door, one by one, its own doors
+began to open: the tongues of the world, arranged in clean lines;
+the correspondence and its protocols; the aids to sight and hearing
+for whoever needs another scale of notice; one's own aspect, with
+its garments one puts on and takes off; the voices and sounds,
+with the chronicler's tuning key placed at the side; the controls,
+with their strokes and shortcuts; the notes of hand from those who
+made this possible.
 
-And then the multiplayer, always the densest one: a list of known
-places, an edict for adding a new one, a passage to enter directly
-into an uncharted port, and even a sheet of confirmation for whoever
-is about to erase an entry from the ledger. All on parchment. All
+And then the register of the lodgings, that ledger where the
+chronicler notes the houses of others: a list of known places, an
+edict for adding a new one, a passage to enter directly into an
+uncharted port, and even a sheet of confirmation for whoever is
+about to strike an entry from the ledger. All on parchment. All
 with the same shade of ink.
 
-With the screens resolved came the lesser coherences, those that
+With the studies resolved came the lesser coherences, those that
 cannot be seen one by one but that hold the whole together. The
 books that no longer cut their content with a hard edge but with a
-paper fade. The scroll bars with sepia beads instead of the usual
-grey strip. The conduct switches with a filled dot when active and
-hollow when at rest. The fields where one writes, with a blinking
-ink cursor. And above all: every margin note the cabinet whispers
-when the cursor passes over - once windows of foreign purple - now
-wears parchment with an ink border. There is no longer a single
+paper fade. The side ribbons for casting the eye over distant
+lines, now with sepia beads instead of the usual grey strip. The
+conduct switches with a filled dot when active and hollow when at
+rest. The fields where one writes, with ink that blinks awaiting
+the hand. And above all: every margin note the cabinet whispers
+when the hand passes over a word - once foreign purple rectangles -
+now wears parchment with an ink border. There is no longer a single
 foreign corner in the house.
 
-The chronicler's music, moreover, now obeys at once when the hand
-caresses the dial, without waiting for the needle to be released.
+The voice of the city, moreover, now obeys at once when the hand
+caresses its key, without waiting for the needle to be released.
 A small detail that is appreciated every time one uses it.
 
 And lastly, a few nights ago, the tongues themselves gained a face:

@@ -32,6 +32,58 @@ Version sin cambios de codigo. Solo:
   el arranque de gameplay.
 
 ---
+## v0.12.0 - Cierre del ciclo del gabinete (administrativo)
+
+Version sin cambios de codigo. Solo:
+- Reagrupamiento del changelog in-game: se borran las entradas sueltas
+  de v0.10.4, v0.11.0, v0.11.1, v0.11.10-13 y v0.11.14. Se reemplazan
+  por UNA sola entrada "Version 0.10 - 0.11 - Una casa de papel" que
+  narra el ciclo completo del gabinete pergamino.
+- Correccion R-DIEGETICO: primera version de la entrada agrupada usaba
+  palabras que rompian la ambientacion (panel, cursor, scroll,
+  multijugador, pantallas, regulador). Reescrita con vocabulario 100%
+  diegetico (despacho, cintas laterales, registro de hospederias,
+  clavija, tiradores).
+- Salto de version v0.11.14 -> v0.12.0 para senalar cierre de fase UI
+  y arranque de fase de gameplay.
+
+### Errores catalogados durante v0.11.14 -> v0.12.0
+- **E111**: Intento de mixin en v0.11.14 sobre MouseSettingsScreen fallo
+  4 iteraciones consecutivas. Raiz: @Redirect y @Inject NO alcanzan
+  metodos heredados; renderBackground esta definido en Screen, no en
+  la subclase. Los cambios se revirtieron; v0.11.14 quedo estable con
+  solo banderas. Refuerza R-ITER-VISUAL-STRICT.
+- **E112**: Primera version de la entrada agrupada in-game contenia
+  palabras UI/gaming que violaban R-DIEGETICO: "panel", "cursor",
+  "scroll", "multijugador", "pantallas", "regulador", "auxilios". El
+  cronista victoriano no conoce esos terminos. Fix: reescritura completa
+  con vocabulario de epoca ("despacho", "cintas laterales", "registro
+  de hospederias", "clavija", "tiradores", "ayudas a la vista y al
+  oido").
+
+### Reglas nuevas
+- **R-MIXIN-INHERITED-METHODS**: @Inject y @Redirect NO alcanzan
+  metodos heredados por defecto. Para interceptar renderBackground en
+  una subclase (MouseSettingsScreen) hay que: (a) mixin sobre la
+  clase que define el metodo (Screen) con filtro instanceof; (b)
+  @Redirect con owner concreto para interceptar llamada especifica;
+  (c) @Inject sobre metodo que la subclase SI overridea.
+- **R-DIEGETICO-VOCAB**: Formalizacion de vocabulario prohibido en
+  changelog in-game. Rechazadas: pantalla/screen, cursor, scroll,
+  panel, boton/button, menu, click, multijugador/multiplayer, ventana,
+  interfaz, sistema, mod, version, update, patch, GUI, HUD. Aceptadas:
+  papel, pergamino, tinta, despacho, cuaderno, registro, edicto,
+  cintas, cinta lateral, clavija, aguja, cronista, mano, palabra,
+  renglon, hoja, folio. Verificar con audit automatico antes de
+  publicar cada entrada.
+
+### KI-12 (sigue ABIERTO)
+- Dirt bypass pendiente. Ruta correcta identificada: mixin sobre
+  Screen.renderBackground + filtro instanceof por las 4 pantallas
+  target. Postpuesto a hito dedicado. No bloquea el arranque de
+  gameplay.
+
+---
 ## v0.11.14 - Banderas pixel-art (KI-08 CERRADO)
 
 Se agrega bandera 16x11 px a la izquierda de cada entrada en DiaryLanguageScreen.
