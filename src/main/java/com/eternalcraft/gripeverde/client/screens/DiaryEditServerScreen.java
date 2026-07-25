@@ -12,6 +12,7 @@ import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
+import com.eternalcraft.gripeverde.client.widgets.DiaryTextField;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.network.chat.Component;
@@ -56,7 +57,7 @@ public class DiaryEditServerScreen extends Screen {
 
         // Name field
         int nameY = panelY + 62;
-        this.nameEdit = new EditBox(this.font, fieldX, nameY, fieldW, fieldH, Component.translatable("addServer.enterName"));
+        this.nameEdit = new DiaryTextField(this.font, fieldX, nameY, fieldW, fieldH, Component.translatable("addServer.enterName"));
         this.nameEdit.setMaxLength(64);
         this.nameEdit.setValue(this.serverData.name != null ? this.serverData.name : "");
         this.nameEdit.setResponder(s -> this.updateDoneButton());
@@ -65,7 +66,7 @@ public class DiaryEditServerScreen extends Screen {
 
         // IP field
         int ipY = panelY + 108;
-        this.ipEdit = new EditBox(this.font, fieldX, ipY, fieldW, fieldH, Component.translatable("addServer.enterIp"));
+        this.ipEdit = new DiaryTextField(this.font, fieldX, ipY, fieldW, fieldH, Component.translatable("addServer.enterIp"));
         this.ipEdit.setMaxLength(128);
         this.ipEdit.setValue(this.serverData.ip != null ? this.serverData.ip : "");
         this.ipEdit.setResponder(s -> this.updateDoneButton());

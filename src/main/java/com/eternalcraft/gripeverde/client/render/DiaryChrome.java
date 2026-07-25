@@ -206,14 +206,32 @@ public final class DiaryChrome {
         int trackY1 = list.getTop();
         int trackY2 = list.getBottom();
 
-        // Tapar SIEMPRE la scrollbar vanilla (aunque no haya scroll)
+        // Tapar la scrollbar vanilla solo si cae dentro del panel visible.
         int vanillaBarX = (net.minecraft.client.Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2) + 156;
-        gfx.fill(vanillaBarX - 2, trackY1, vanillaBarX + 8, trackY2, 0xFFE8DCB4);
+        int scrollLeft = panelRightEdge - 18;
+        if (vanillaBarX < panelRightEdge - 4) {
+            gfx.fill(vanillaBarX - 2, trackY1, vanillaBarX + 8, trackY2, 0xFFE8DCB4);
+        }
 
         int maxScroll = list.getMaxScroll();
         if (maxScroll <= 0) return;
 
-        int scrollLeft = panelRightEdge - 14;
         drawScrollThumb(gfx, scrollLeft, trackY1, trackY2, list.getScrollAmount(), maxScroll);
+    }
+
+    // ---------------------------------------------------------------
+    // Fade superior e inferior para listas vanilla sobre pergamino.
+    // Dibuja gradientes pergamino->transparente que suavizan el corte
+    // duro donde la lista se recorta contra el panel.
+    // Llamar DESPUES de list.render() y ANTES de drawScrollThumb.
+    // ---------------------------------------------------------------
+    public static void drawListFades(GuiGraphics gfx, int listLeft, int listRight,
+                                     int listTop, int listBottom, int fadeH) {
+        int paperFull  = 0xFFF3E9CE;  // pergamino opaco
+        int paperClear = 0x00F3E9CE;  // pergamino transparente
+        // Fade superior: pergamino -> transparente (de arriba hacia abajo)
+        gfx.fillGradient(listLeft, listTop, listRight, listTop + fadeH, paperFull, paperClear);
+        // Fade inferior: transparente -> pergamino (de arriba hacia abajo)
+        gfx.fillGradient(listLeft, listBottom - fadeH, listRight, listBottom, paperClear, paperFull);
     }
 }

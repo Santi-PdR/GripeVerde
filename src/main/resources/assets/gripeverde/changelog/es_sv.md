@@ -3,6 +3,35 @@
 
 
 
+## Version 0.11.10 - 0.11.13
+
+En cinco noches breves el gabinete ha ganado sus ultimas coherencias.
+
+Los libros de correspondencia y los auxilios y percepciones ya no
+recortan su contenido con arista dura sino con desvanecido de
+pergamino. En el atlas de ciudades, el rojo alarmante de los puertos
+inalcanzables ha sido atenuado por una sombra sepia que descansa
+detras del ping.
+
+En la bitacora de comandos, los interruptores de conducta - agacharse,
+correr, salto automatico y pestana de administrador - dejaron atras
+su tono metalico de fabrica y visten hoy tira de papel ocre, con
+circulillo relleno cuando estan activos y hueco cuando descansan. Los
+textos que exceden la caja se recortan con puntos suspensivos.
+
+Los apuntes de asentamiento nuevo y las travesias hacia puertos sin
+cartografiar se escriben ahora sobre pergamino: los antiguos
+rectangulos negros de captura de texto han sido reemplazados por
+bandas de papel con borde de tinta, cursor de tinta parpadeante y
+seleccion sepia.
+
+Y por sobre todo, cada nota al margen que el gabinete susurra al
+pasar el cursor - antes ventanas de un morado extranjero - viste hoy
+pergamino con borde tinta, coherente con el resto de la ciudad.
+
+La musica del cronista, ademas, obedece ahora al instante cuando la
+mano acaricia el regulador. Ya no hay que esperar a soltar la aguja
+para que el volumen se pliegue al gesto.
 ## Version 0.11.1
 El gabinete que ya lucia sobre pergamino se ha ordenado con oficio. Divisas discretas guardan sus cuatro esquinas; dos rayas de tinta separan lo que se lee de lo que se firma; un renglon bajo el titulo anuncia la mano del cronista. Y en su interior, por fin, la lista de lenguas del mundo se ha vuelto legible: cada una en su renglon limpio, sin la mancha vulgar que las tapaba, la elegida marcada con una flecha, las demas esperando su turno. Tambien los edictos de la calle han bajado la voz. Cuarentena y Real Decreto ya no gritan al observador; ahora respiran con el resto del papel.
 ## Version 0.11.0

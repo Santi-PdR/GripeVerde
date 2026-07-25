@@ -197,9 +197,11 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         int divY1 = titleY + 42;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY1);
 
-        // --- Lista vanilla ---
+        // --- Lista vanilla + fades ---
         if (this.reflectedList != null) {
             this.reflectedList.render(g, mouseX, mouseY, partialTick);
+            DiaryChrome.drawListFades(g, this.panelX + 6, this.panelX + this.panelW - 6,
+                this.reflectedList.getTop(), this.reflectedList.getBottom(), 12);
             DiaryChrome.drawStyledScrollThumbInPanel(g,
                 (AbstractSelectionList<?>) this.reflectedList, this.panelX + this.panelW);
         }

@@ -12,6 +12,7 @@ import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
+import com.eternalcraft.gripeverde.client.widgets.DiaryTextField;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.network.chat.Component;
@@ -30,7 +31,7 @@ public class DiaryDirectJoinScreen extends Screen {
     private final BooleanConsumer callback;
     private final ServerData serverData;
 
-    private EditBox ipEdit;
+    private DiaryTextField ipEdit;
     private DiaryButton selectButton;
 
     public DiaryDirectJoinScreen(Screen parent, BooleanConsumer callback, ServerData serverData) {
@@ -53,7 +54,7 @@ public class DiaryDirectJoinScreen extends Screen {
         int ipY = panelY + 76;
 
         // IP field
-        this.ipEdit = new EditBox(this.font, fieldX, ipY, fieldW, fieldH, ENTER_IP_LABEL);
+        this.ipEdit = new DiaryTextField(this.font, fieldX, ipY, fieldW, fieldH, ENTER_IP_LABEL);
         this.ipEdit.setMaxLength(128);
         String initial = (this.serverData != null && this.serverData.ip != null) ? this.serverData.ip : "";
         // Vanilla usa "lastServer" del options, aca vamos con lo que traiga ServerData

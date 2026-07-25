@@ -28,3 +28,6 @@ Etapa 1800x - Sobrevive a la plaga.
     versionRange="[1.20.1,1.21)"
     ordering="NONE"
     side="BOTH"
+
+[[mixins]]
+    config="gripeverde.mixins.json"

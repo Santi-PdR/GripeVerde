@@ -536,8 +536,8 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 if (drawBottom <= drawTop) continue;
 
                 // Banda sepia semi-transparente (contraste sin agredir al pergamino)
-                int bandColor = 0x703A2416;
-                int bandEdge  = 0x203A2416;
+                int bandColor = 0x583A2416;
+                int bandEdge  = 0x183A2416;
                 // Extension lateral para envolver bien el favicon
                 int extL = 8;
                 int extR = 4;

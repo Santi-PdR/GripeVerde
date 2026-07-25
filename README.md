@@ -3,19 +3,20 @@
 Mod de interfaz para Minecraft Forge 1.20.1.
 Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
-## Versión actual
+## Version actual
 
-**v0.11.9 — Coherencia del gabinete**
+**v0.11.13 - El gabinete se ajusta a la mano**
 
-Todas las hojas que se abren desde las Opciones respiran hoy la misma
-caligrafía. Encabezados unificados, sombras suaves iguales, divisores
-con lozanga central, cabeceras respiradas, subtítulos envueltos por el
-mismo par de guiones. Los pergaminos proyectan ahora sombra sepia sobre
-la escena atenuada y los botones se apoyan como tiras de papel ocre
-distinguibles del fondo. La lista de lenguas dejó atrás su cartulina
-lisa; la banda tras el asentamiento del atlas se aligeró; la barra de
-lectura corre ahora contra el borde del pergamino. La música del
-cronista sigue viva por todos los pasillos del gabinete.
+La musica del cronista obedece ahora al instante cuando la mano
+acaricia el regulador. Las tarjetas del atlas de ciudades han visto
+suavizar el rojo alarmante de sus puertos inalcanzables. Los libros
+de correspondencia y los auxilios y percepciones ganan un desvanecido
+pergamino en sus ribetes. En la bitacora de comandos, los
+interruptores de conducta visten hoy tira de papel ocre con circulillo
+indicador. Los apuntes de asentamiento nuevo y las travesias directas
+se escriben ahora sobre papel, con cursor de tinta parpadeante. Y cada
+nota al margen que el gabinete susurra al pasar el cursor viste hoy
+pergamino con borde tinta.
 
 ## Caracteristicas principales
 

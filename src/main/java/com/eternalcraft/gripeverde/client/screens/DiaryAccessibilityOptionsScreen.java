@@ -130,6 +130,8 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         // Lista vanilla + scroll estilizado encima (KI-09 cerrado en v0.11.5)
         if (this.list != null) {
             this.list.render(gfx, mouseX, mouseY, delta);
+            DiaryChrome.drawListFades(gfx, this.panelX + 6, this.panelX + this.panelW - 6,
+                this.list.getTop(), this.list.getBottom(), 12);
             DiaryChrome.drawStyledScrollThumbInPanel(gfx, this.list, this.panelX + this.panelW);
         }
 

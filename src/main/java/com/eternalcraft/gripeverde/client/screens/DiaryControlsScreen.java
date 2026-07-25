@@ -7,6 +7,7 @@ import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
+import com.eternalcraft.gripeverde.client.widgets.DiaryToggle;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
@@ -81,12 +82,22 @@ public class DiaryControlsScreen extends Screen {
         ));
 
         // Fila 1: toggleCrouch | toggleSprint
-        addOption(this.options.toggleCrouch(), col1X, gridTop + rowH, btnW, btnH);
-        addOption(this.options.toggleSprint(), col2X, gridTop + rowH, btnW, btnH);
+        addDiaryToggle(this.options.toggleCrouch(),
+            Component.translatable("key.sneak"),
+            v -> Component.translatable(v ? "options.key.toggle" : "options.key.hold"),
+            col1X, gridTop + rowH, btnW, btnH);
+        addDiaryToggle(this.options.toggleSprint(),
+            Component.translatable("key.sprint"),
+            v -> Component.translatable(v ? "options.key.toggle" : "options.key.hold"),
+            col2X, gridTop + rowH, btnW, btnH);
 
         // Fila 2: autoJump | operatorItemsTab
-        addOption(this.options.autoJump(), col1X, gridTop + rowH * 2, btnW, btnH);
-        addOption(this.options.operatorItemsTab(), col2X, gridTop + rowH * 2, btnW, btnH);
+        addDiaryToggle(this.options.autoJump(),
+            Component.translatable("options.autoJump"),
+            col1X, gridTop + rowH * 2, btnW, btnH);
+        addDiaryToggle(this.options.operatorItemsTab(),
+            Component.translatable("options.operatorItemsTab"),
+            col2X, gridTop + rowH * 2, btnW, btnH);
 
         // Boton Volver Diary
         int backW = 120;
@@ -100,10 +111,17 @@ public class DiaryControlsScreen extends Screen {
         ));
     }
 
-    private void addOption(OptionInstance<?> opt, int x, int y, int w, int h) {
-        AbstractWidget widget = opt.createButton(this.options, x, y, w);
-        widget.setHeight(h);
-        this.addRenderableWidget(widget);
+    /** Toggle Diary generico con etiqueta base + On/Off por defecto. */
+    private void addDiaryToggle(OptionInstance<Boolean> opt, Component baseLabel,
+                                int x, int y, int w, int h) {
+        this.addRenderableWidget(new DiaryToggle(x, y, w, h, opt, baseLabel));
+    }
+
+    /** Toggle Diary con formatter custom para valores (ej: Hold/Toggle). */
+    private void addDiaryToggle(OptionInstance<Boolean> opt, Component baseLabel,
+                                java.util.function.Function<Boolean, Component> fmt,
+                                int x, int y, int w, int h) {
+        this.addRenderableWidget(new DiaryToggle(x, y, w, h, opt, baseLabel, fmt, null));
     }
 
     @Override

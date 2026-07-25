@@ -1,5 +1,160 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.11.10 a v0.11.13 - Cierre del ciclo del gabinete
+
+Cinco versiones cortas encadenadas cierran los ultimos hitos visuales del gabinete pergamino. Se agrupa aqui porque forman un mismo ciclo narrativo.
+
+### v0.11.10 - Polish: fades, scrollbar y multiplayer
+- KI-15 (fades inferiores) CERRADO. Nuevo helper DiaryChrome.drawListFades()
+  aplicado en Accessibility, Chat y Sound. Fade pergamino->transparente en top y
+  bottom de la lista suaviza el corte duro.
+- KI-16 (scrollbar respirada) CERRADO. drawStyledScrollThumbInPanel ahora
+  usa panelRightEdge-18 (antes 14). Ademas la tapa sobre la barra vanilla es
+  condicional: solo se dibuja si la barra cae dentro del panel visible, para no
+  generar columnas fantasma en paneles anchos.
+- Multiplayer: banda sepia detras de los servers atenuada de 0x70 a 0x58 alpha.
+  El rojo neon "Offline" se lee mejor sin agredir al pergamino.
+
+### v0.11.11 - DiaryTextField (KI nuevo M-widget)
+- Nuevo widget: DiaryTextField extiende EditBox vanilla. Preserva TODA la
+  logica de edicion (cursor, seleccion, Ctrl+C/V, filter, responder, formatter,
+  hint) y solo overridea renderWidget para dibujar sobre pergamino.
+- Fondo PAPER_STAINED con borde tinta que se aviva a rojo victoriano al focus.
+  Cursor tinta parpadeante. Seleccion en banda sepia semi. Hint sepia claro
+  cuando el campo esta vacio.
+- Aplicado en DiaryEditServerScreen y DiaryDirectJoinScreen.
+- Reflection defensiva con scan por tipo dentro de EditBox.class (sin herencia)
+  para descubrir highlightPos, frame, displayPos, isEditable, hint, formatter.
+
+### v0.11.12 - DiaryToggle
+- Nuevo widget: DiaryToggle envuelve un OptionInstance<Boolean>. Persiste
+  inmediatamente al cambiar via Options.save().
+- Layout: label izquierda + separador + valor derecha + circulillo indicador
+  (relleno si ON, hueco si OFF).
+- Layout adaptativo: si el texto excede el ancho, primero omite el indicador,
+  luego trunca el label con puntos suspensivos.
+- Aplicado en DiaryControlsScreen para los 4 toggles booleanos: Sneak (Hold/
+  Toggle), Sprint (Hold/Toggle), Auto-Jump (On/Off), Operator Items Tab (On/Off).
+- Formatter custom via Function<Boolean, Component>: Sneak/Sprint muestran
+  Hold/Toggle en vez de On/Off.
+
+### v0.11.13 - Tooltips estilizados (KI-10 CERRADO)
+- KI-10 CERRADO. Fondo pergamino con borde tinta en TODOS los tooltips
+  del juego: Chat, Options, Inventario, botones Diary, item tooltips, etc.
+- Estrategia final: TooltipEventHandler suscrito a RenderTooltipEvent.Color
+  de Forge, con EventPriority.LOWEST para ejecutar despues de otros mods.
+- NO usa mixin. Forge expone hook nativo que reemplaza los 4 colores del
+  tooltip (backgroundStart, backgroundEnd, borderStart, borderEnd).
+- Camino previo (mixin sobre TooltipRenderUtil.renderTooltipBackground)
+  fue descartado tras confirmar que ese metodo NO es el que dibuja los
+  tooltips reales de Forge en 1.20.1 - lo hace un lambda interno en
+  GuiGraphics.renderTooltipInternal.
+- Infraestructura mixin queda armada aunque sin mixins activos, lista para
+  futuros hitos (ej: KI-12).
+
+### Errores nuevos catalogados
+
+- **E101**: Mixin 0.8.5 rechaza silenciosamente compatibilityLevel JAVA_17.
+  Log dice "Compatibility level JAVA_17 specified by X.mixins.json is higher
+  than the maximum level supported by this version of mixin (JAVA_13)". El
+  config se ignora pero no crashea. Fix: usar JAVA_8 en gripeverde.mixins.json.
+
+- **E102**: Aunque el compatLevel sea JAVA_8, si el .class del mixin se compila
+  como Java 17 target (class version 61), Mixin lo rechaza con "Class version
+  61 required is higher than the class version supported by the current version
+  of Mixin (JAVA_8 supports class version 52)". Requiere compilar el mixin
+  aparte con --release 8. Se intento con task mixinCompatibility en build.gradle
+  pero se abandono al descubrir la solucion via event bus.
+
+- **E103**: TooltipRenderUtil.renderTooltipBackground NO es el metodo real que
+  dibuja tooltips en Forge 1.20.1. GuiGraphics.renderTooltipInternal tiene un
+  lambda propio que llama fillGradient con colores tomados del
+  RenderTooltipEvent.Color de Forge. Un mixin sobre TooltipRenderUtil se aplica
+  sin errores pero no tiene efecto visual.
+
+- **E104**: mods.toml requiere seccion [[mixins]] explicita en Forge 1.20.1
+  para que el config sea reconocido por Mixin loader. El atributo MixinConfigs
+  en MANIFEST.MF NO alcanza. Sin [[mixins]] en toml, Mixin ni siquiera menciona
+  el config en logs.
+
+- **E105**: readField<T> generico con cast implicito puede tirar
+  ClassCastException si el field name pega en un field del tipo equivocado
+  (ej: FIELD_VALUE "value" mapeo a un Boolean vez de String). Fix: usar
+  reflection tipada (findIntField, findBoolField, findObjField con
+  expected.isAssignableFrom check).
+
+- **E106**: DiaryToggle iteracion 1 no chequeaba si el texto entraba en la
+  caja. Textos largos ("Pestana de administrador: NO") se salian del boton.
+  Fix: layout adaptativo de 3 niveles (con indicador -> sin indicador ->
+  label truncado con ellipsis).
+
+- **E107**: build.gradle task JavaCompile custom no incluye el output de
+  compileJava en su classpath por defecto. Si el mixin importa clases del
+  propio mod (DiaryTheme), la task de recompile aislada falla con "package
+  does not exist". Fix: eliminar dependencias del mixin al codigo propio
+  (hardcodear colores).
+
+### Reglas nuevas
+
+- **R-MIXIN-COMPAT**: Con Mixin 0.8.5 usar SIEMPRE compatibilityLevel JAVA_8.
+  Los levels JAVA_16/17 son rechazados. Si el mod usa Java 17 features en el
+  resto del codigo, el mixin especificamente debe estar limitado a sintaxis
+  Java 8 O compilarse con --release 8.
+
+- **R-MODS-TOML-MIXIN**: En Forge 1.20.1 es OBLIGATORIO declarar el bloque
+  [[mixins]] config="X.mixins.json" en META-INF/mods.toml. El atributo
+  MixinConfigs del manifest NO alcanza para que Forge se lo pase al Mixin
+  subsystem. Sin ese bloque, el config es silenciosamente ignorado.
+
+- **R-FORGE-EVENTS-FIRST**: Antes de escribir un mixin sobre codigo vanilla,
+  verificar si Forge expone un evento propio para lo mismo. Los eventos son
+  hooks oficiales, no rompen con updates, y no requieren refmap/compat level.
+  RenderTooltipEvent.Color es un ejemplo perfecto: retematiza tooltips sin
+  tocar bytecode.
+
+- **R-WIDGET-OVERFLOW-3TIER**: Widgets con contenido dinamico (labels, valores,
+  iconos) deben tener layout adaptativo de 3 niveles: (1) todo el contenido
+  ideal, (2) omitir elementos opcionales si no cabe, (3) truncar texto con
+  ellipsis si sigue sin caber. Usar font.plainSubstrByWidth() para truncar.
+
+- **R-REFLECTION-TYPED**: Reflection para leer fields privados debe SIEMPRE
+  filtrar por tipo esperado, no solo por nombre. findIntField, findBoolField,
+  findObjField con expected.isAssignableFrom check evita colisiones cuando
+  distintos fields comparten nombre en la jerarquia.
+
+- **R-MIXIN-SELF-CONTAINED**: Las clases mixin no deben importar codigo del
+  propio mod. Hardcodear constantes/colores directamente en la clase. Esto
+  permite recompilar el mixin aislado con --release 8 sin arrastrar
+  dependencias.
+
+- **R-MIXIN-VERIFY-TARGET**: Antes de escribir un mixin, VERIFICAR con javap
+  y grep del bytecode del caller que el metodo target sea realmente el que
+  se ejecuta en el path de interes. TooltipRenderUtil existe pero no es
+  usado por Forge; GuiGraphics.renderTooltipInternal usa su propio lambda.
+
+### KIs cerrados en este ciclo
+- KI-10 (tooltips morados) CERRADO en v0.11.13.
+- KI-15 (fade inferior listas) CERRADO en v0.11.10.
+- KI-16 (scrollbar respirada) CERRADO en v0.11.10.
+
+### KIs abiertos que siguen
+- KI-07 (parcial): sub-hits vanilla restantes (MouseSettings, KeyBinds,
+  PackSelection, Online). Cubiertos parcialmente por KI-12.
+- KI-08 (banderas pixel-art en Language). No abordado en este ciclo.
+- KI-12 (dirt bypass en 4 pantallas de trabajo). Requiere mixin, ahora
+  posible con infraestructura preparada.
+- KI-13 (server pinneado sin proteccion). Prioridad baja.
+- KI-14 (banda multiplayer vs faviconones brillantes). Prioridad baja.
+
+Ultima actualizacion: v0.11.13
+Estado: EN DESARROLLO
+Version estable actual: v0.11.13
+Ultimo tag publicado: v0.11.13
+
+---
+
+# KNOWN_ISSUES - Eternal Craft: Gripe Verde
+
 ## v0.11.9 - Coherencia del gabinete (KI-11 cerrado)
 
 ### Cambios
