@@ -5,6 +5,7 @@ import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
 import com.eternalcraft.gripeverde.client.audio.MenuMusic;
+import com.eternalcraft.gripeverde.client.render.FlagRenderer;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
@@ -28,6 +29,7 @@ public class DiaryLanguageScreen extends Screen {
     private static final int FOOTER_BTN_H = 22;
     private static final int FOOTER_BTN_GAP = 10;
     private static final int LIST_ITEM_H = 20;
+    private static final int FLAG_SLOT    = 22; // px reservados a la izquierda para bandera
 
     // Tonos de tinta especificos de la lista de idiomas (no van al DiaryChrome
     // porque solo tienen sentido aqui)
@@ -293,6 +295,7 @@ public class DiaryLanguageScreen extends Screen {
             boolean isPending = Objects.equals(DiaryLanguageScreen.this.pendingLanguageCode, this.code);
             boolean isApplied = Objects.equals(DiaryLanguageScreen.this.appliedLanguageCode, this.code);
 
+            // Fondo de fila seleccionada / hover
             int fill;
             if (isPending) {
                 fill = 0x66422810;
@@ -301,11 +304,16 @@ public class DiaryLanguageScreen extends Screen {
             } else {
                 fill = 0x00000000;
             }
-
             if (fill != 0) {
                 g.fill(left + 2, top + 1, left + rowWidth - 2, top + rowHeight - 2, fill);
             }
 
+            // ── Bandera ──────────────────────────────────────────────────────
+            int flagX = left + 3;
+            int flagY = top + (rowHeight - FlagRenderer.FLAG_H) / 2;
+            FlagRenderer.draw(g, this.code, flagX, flagY);
+
+            // ── Texto (centrado en la zona derecha del slot de bandera) ──────
             int textColor;
             if (isPending) {
                 textColor = INK_ACTIVE;
@@ -326,9 +334,12 @@ public class DiaryLanguageScreen extends Screen {
 
             Component label = Component.literal(prefix).append(this.info.toComponent());
 
-            int textW = DiaryLanguageScreen.this.font.width(label);
-            int textX = left + (rowWidth - textW) / 2;
-            int textY = top + (rowHeight - DiaryLanguageScreen.this.font.lineHeight) / 2;
+            // Zona de texto: desde left+FLAG_SLOT hasta left+rowWidth
+            int textZoneLeft  = left + FLAG_SLOT;
+            int textZoneWidth = rowWidth - FLAG_SLOT;
+            int textW  = DiaryLanguageScreen.this.font.width(label);
+            int textX  = textZoneLeft + (textZoneWidth - textW) / 2;
+            int textY  = top + (rowHeight - DiaryLanguageScreen.this.font.lineHeight) / 2;
 
             g.drawString(DiaryLanguageScreen.this.font, label, textX, textY, textColor, false);
         }

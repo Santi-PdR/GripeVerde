@@ -7,11 +7,11 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.11.13
-- build.gradle: version = '0.11.13'
-- GripeVerdeMod.VERSION: "0.11.13"
+- Version estable actual: v0.11.14
+- build.gradle: version = '0.11.14'
+- GripeVerdeMod.VERSION: "0.11.14"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
-- Ultimo tag publicado: v0.11.13
+- Ultimo tag publicado: v0.11.14
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
 
@@ -69,7 +69,7 @@ C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 
 - Local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 - Remoto: https://github.com/Santi-PdR/GripeVerde (privado)
-- Ultimo tag: v0.11.9
+- Ultimo tag: v0.11.14
 
 ## Rutas reales verificadas
 
@@ -1538,3 +1538,89 @@ Ver KNOWN_ISSUES.md seccion "v0.11.10 a v0.11.13" para detalle completo. Resumen
   logica de edicion nativa (Ctrl+C/V, Shift+arrows, filter, responder, etc.).
 - DiaryToggle: envolver OptionInstance<Boolean> es mas limpio que reimplementar
   el binding manual. Permite reutilizar la logica de persistencia vanilla.
+
+
+---
+## ADDENDUM v0.11.14 (Banderas pixel-art - KI-08)
+
+### Alcance
+Hito I del backlog. Se agrega bandera 16x11 px a la izquierda de cada
+entrada en DiaryLanguageScreen. Idiomas sin bandera mapeada muestran
+rombo tinta como fallback.
+
+### Cambios de codigo
+- **Nuevo**: client/render/FlagRenderer.java (~700 lineas)
+  - Registro Map<String, int[][]> con ~90 codigos de idioma
+  - Helpers: hBands, vBands, h2, nordicCross para bandas comunes
+  - Cada bandera: metodo estatico privado que devuelve int[11][16]
+  - API publica: draw(gfx, code, x, y) + has(code)
+  - Fallback drawFallback con rombo tinta 5x5
+- **Modificado**: client/screens/DiaryLanguageScreen.java
+  - Import FlagRenderer + constante FLAG_SLOT=22
+  - Entry.render() dibuja bandera en left+3, y centrada
+  - Texto centrado en zona derecha [left+FLAG_SLOT..left+rowWidth]
+
+### Cobertura de idiomas
+- 7 variantes de ingles (US, UK, CA, AU, NZ, Pirate, upside-down)
+- 22 variantes de espanol (ES, MX, AR, CL, UY, VE, EC, 419, AN, CO,
+  PE, BO, PY, CR, DO, GT, HN, NI, PA, SV, PR, CU)
+- Portugues (BR, PT), Frances (FR, CA/Quebec)
+- Aleman (DE, AT, CH), Italiano, Neerlandes, Belga, Irlandes
+- Nordicos completos (SE, DK, NO x3, FI, IS, FO)
+- Este europeo, Baltico, Griego, Turco
+- Asia oriental (JA, KO, ZH x3), Sudeste (VI, TH, ID, FIL, MS)
+- Otros (HE, AR, FA, ZA, GE, AM, AZ, KZ, MN)
+- Regionales (CA/Cataluna, EU/Vasco, GL/Galicia, CY/Wales, GD/Scotland)
+
+### Errores catalogados
+- **E108**: PowerShell interactivo pego "pri" suelto y basura "───────" al
+  final de una linea al usar here-string @'...'@ largo. Similar a E39.
+  Fix: pos-limpieza con .Replace() puntual. Verificacion visual mostro
+  falso positivo de "───" (existe en comentario decorativo, no en codigo).
+- **E109**: Ancla "## Version 0.11.13" no existia en CHANGELOG.md; la
+  convencion real es "## v0.11.13" (sin la palabra "Version"). El script
+  con throw dentro de if NO abortaba PowerShell interactivo (R-PS-THROW
+  aplicado a medias). Consecuencia: .Replace() con ancla inexistente hace
+  no-op silencioso y compila el archivo sin cambios. Refuerza R-VERIFY-DISK.
+- **E110**: El client.jar vanilla 1.20.1 solo trae en_us.json. Los otros
+  idiomas se descargan como assets con hash desde el asset index. Auditar
+  la lista de idiomas por el jar es imposible. Alternativas: (a) captura
+  visual del usuario, (b) trust en la lista canonica documentada de
+  Minecraft, (c) probar todos los codigos posibles y verificar en runtime
+  con Minecraft.getInstance().getLanguageManager().getLanguages().
+
+### Reglas nuevas
+- **R-CHANGELOG-ANCHOR-CONVENTION**: verificar la convencion real del
+  archivo antes de asumir el ancla. CHANGELOG.md usa "## v0.X.Y" para
+  v0.10+ y "## Version 0.X.Y" para v0.9-. No mezclar. Preferir IndexOf()
+  con validacion explicita antes que Replace() con contains implicito.
+- **R-VANILLA-LANGS-1.20**: en Minecraft 1.20+ los idiomas NO estan en el
+  client.jar. Solo en_us.json esta ahi. Los demas se descargan por asset
+  index. Para auditar codigos usar reflection en runtime o lista canonica
+  documentada externamente.
+
+### KI-08 (CERRADO en v0.11.14)
+- Banderas pixel-art hardcoded implementadas. Fallback rombo para idiomas
+  no mapeados.
+- Deuda visual menor:
+  - Iteracion 1 tuvo Uruguay y Mexico incorrectos (fix v0.11.14 mismo)
+  - Iteracion 2 tuvo Ecuador con proporciones incorrectas (fix mismo)
+  - Iteracion 2 tuvo Vasco parecida a cruz nordica (fix mismo)
+- Cerrada tras 3 iteraciones dentro del mismo release, respetando
+  R-ITER-VISUAL.
+
+## PROXIMO HITO PLANIFICADO (revisado tras v0.11.14)
+
+### Candidato O: v0.11.15 - Hito Mixin dirt bypass (KI-12)
+Objetivo: mixin sobre las 4 pantallas que bypasean renderBackground:
+MouseSettingsScreen, KeyBindsScreen, PackSelectionScreen,
+OnlineOptionsScreen. Reemplazar dirt por escena viva atenuada + pergamino.
+Estrategia: mixins individuales por pantalla (NO global sobre Screen)
+con @Inject HEAD cancellable. required=false por seguridad. Verificar
+target con javap sobre jar SRG antes de escribir cada uno.
+Orden sugerido: MouseSettings -> KeyBinds -> PackSelection -> Online.
+Riesgo: MEDIO. Historial de fallo (E90). Infra mixin ya armada v0.11.13.
+
+### Candidato C: v0.12.0+ - Contenido de gameplay
+Objetivo: primer sistema real de gameplay (Gripe Verde en si).
+Requiere diseno previo escrito.

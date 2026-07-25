@@ -1,5 +1,15 @@
 # Eternal Craft: Gripe Verde
 
+## v0.11.14 - Banderas de las voces
+
+Cada lengua que la ciudad reconoce lleva ahora su ensena junto al nombre.
+Franjas, cruces, estrellas y lunas: pequenos estandartes que ondean al
+costado de cada linea, como los pendones alineados en el frente de un
+consulado. La mirada aprende antes por el color que por el trazo.
+
+No todas las voces tienen bandera propia. Algunas viejas jergas, dialectos
+del interior o inventos de la calle se anuncian con un simple rombo de
+tinta: un sello anonimo, digno de quienes hablan sin patria fija.
 ## v0.11.13 - El gabinete se ajusta a la mano
 
 En esta noche cuatro cosas menores ganan el gabinete. La primera es

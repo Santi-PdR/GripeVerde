@@ -1,5 +1,47 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.11.14 - Banderas pixel-art (KI-08 CERRADO)
+
+Se agrega bandera 16x11 px a la izquierda de cada entrada en DiaryLanguageScreen.
+Idiomas sin bandera mapeada muestran rombo tinta como fallback.
+
+### Cambios
+- **Nuevo**: client/render/FlagRenderer.java (~700 lineas). Registro Map<String, int[][]>
+  con ~90 codigos de idioma. Helpers hBands, vBands, h2, nordicCross. API publica draw() + has().
+- **Modificado**: client/screens/DiaryLanguageScreen.java. FLAG_SLOT=22 reservados a la
+  izquierda. Bandera en left+3, y centrada. Texto centrado en zona derecha.
+
+### Cobertura
+- Ingles: 7 variantes (US, UK, CA, AU, NZ, Pirate, upside-down).
+- Espanol: 22 variantes (todas las hispanas americanas + ES + AN + 419).
+- Portugues, Frances, Aleman (3), Italiano, Neerlandes, Belga, Irlandes.
+- Nordicos completos, Este europeo, Baltico, Griego, Turco.
+- Asia oriental (JA/KO/ZH x3), Sudeste (VI/TH/ID/FIL/MS).
+- Israel, Arabia, Iran, Sudafrica, Georgia, Armenia, Azerbaiyan, Kazajistan, Mongolia.
+- Regionales: Cataluna, Vasco, Galicia, Wales, Scotland.
+
+### Errores catalogados
+- **E108**: PowerShell interactivo pego "pri" suelto + basura "───────" en here-string
+  largo. Similar a E39. Fix: pos-limpieza puntual con .Replace().
+- **E109**: Ancla asumida "## Version 0.11.13" no existia; el CHANGELOG usa "## v0.11.13"
+  (sin la palabra "Version"). El throw dentro de if en PS interactivo no aborta.
+  Refuerza R-PS-THROW y R-VERIFY-DISK.
+- **E110**: client.jar de 1.20.1 solo trae en_us.json. Los demas idiomas se descargan
+  como assets con hash. No se pueden auditar los codigos por bytecode.
+
+### Reglas nuevas
+- **R-CHANGELOG-ANCHOR-CONVENTION**: verificar la convencion real del archivo antes de
+  asumir el ancla. CHANGELOG usa "## v0.X.Y" para v0.10+ y "## Version 0.X.Y" para v0.9-.
+  Preferir IndexOf() con validacion explicita.
+- **R-VANILLA-LANGS-1.20**: en Minecraft 1.20+ los idiomas NO estan en el client.jar.
+  Solo en_us. Para auditar codigos usar reflection en runtime.
+
+### KI-08 (CERRADO en v0.11.14)
+- Banderas pixel-art hardcoded implementadas. Fallback rombo tinta para no mapeados.
+- Deuda visual menor resuelta en el mismo release (Uruguay, Mexico, Ecuador, Vasco).
+- Cerrada tras 3 iteraciones, respetando R-ITER-VISUAL.
+
+---
 ## v0.11.10 a v0.11.13 - Cierre del ciclo del gabinete
 
 Cinco versiones cortas encadenadas cierran los ultimos hitos visuales del gabinete pergamino. Se agrupa aqui porque forman un mismo ciclo narrativo.
@@ -146,9 +188,9 @@ Cinco versiones cortas encadenadas cierran los ultimos hitos visuales del gabine
 - KI-13 (server pinneado sin proteccion). Prioridad baja.
 - KI-14 (banda multiplayer vs faviconones brillantes). Prioridad baja.
 
-Ultima actualizacion: v0.11.13
+Ultima actualizacion: v0.11.14
 Estado: EN DESARROLLO
-Version estable actual: v0.11.13
+Version estable actual: v0.11.14
 Ultimo tag publicado: v0.11.13
 
 ---
@@ -301,9 +343,9 @@ Cinco versiones cortas encadenadas cierran los ultimos hitos visuales del gabine
 - KI-13 (server pinneado sin proteccion). Prioridad baja.
 - KI-14 (banda multiplayer vs faviconones brillantes). Prioridad baja.
 
-Ultima actualizacion: v0.11.13
+Ultima actualizacion: v0.11.14
 Estado: EN DESARROLLO
-Version estable actual: v0.11.13
+Version estable actual: v0.11.14
 Ultimo tag publicado: v0.11.13
 
 ---
