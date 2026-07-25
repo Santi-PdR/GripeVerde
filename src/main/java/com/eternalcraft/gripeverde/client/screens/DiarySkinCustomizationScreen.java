@@ -3,6 +3,7 @@ package com.eternalcraft.gripeverde.client.screens;
 import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
+import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
@@ -22,8 +23,8 @@ import java.util.Map;
 public class DiarySkinCustomizationScreen extends Screen {
 
     // 6 partes del cuerpo + 1 mano principal = 7 toggles en grid 2x4
-    private static final int PANEL_W = 340;
-    private static final int PANEL_H = 235;
+    private static final int PANEL_MAX_W = 340;
+    private static final int PANEL_MAX_H = 235;
 
     private static final int BTN_W = 152;
     private static final int BTN_H = 20;
@@ -46,11 +47,13 @@ public class DiarySkinCustomizationScreen extends Screen {
 
     @Override
     protected void init() {
-        this.panelX = (this.width  - PANEL_W) / 2;
-        this.panelY = (this.height - PANEL_H) / 2;
+        int panelW = Math.min(PANEL_MAX_W, this.width - 40);
+        int panelH = Math.min(PANEL_MAX_H, this.height - 30);
+        this.panelX = (this.width  - panelW) / 2;
+        this.panelY = (this.height - panelH) / 2;
 
         int gridTop = this.panelY + 74;  // titulo + subtitulo + flavor + divisor
-        int col1X   = this.panelX + (PANEL_W - (BTN_W * 2 + BTN_GAP_X)) / 2;
+        int col1X   = this.panelX + (PANEL_MAX_W - (BTN_W * 2 + BTN_GAP_X)) / 2;
         int col2X   = col1X + BTN_W + BTN_GAP_X;
 
         PlayerModelPart[] parts = PlayerModelPart.values();
@@ -89,7 +92,7 @@ public class DiarySkinCustomizationScreen extends Screen {
         // Boton Volver
         int btnW = 160;
         int btnX = (this.width - btnW) / 2;
-        int btnY = this.panelY + PANEL_H - 28;
+        int btnY = this.panelY + PANEL_MAX_H - 28;
         this.addRenderableWidget(new DiaryButton(
             btnX, btnY, btnW, BTN_H,
             Component.translatable("gripeverde.options.button.done"),
@@ -138,6 +141,7 @@ public class DiarySkinCustomizationScreen extends Screen {
         AtmosphereRenderer.tick(delta);
         VictorianSkyline.tick(delta);
         LivingAtmosphere.tick(delta);
+        MenuMusic.tick();
     }
 
     @Override
@@ -154,7 +158,10 @@ public class DiarySkinCustomizationScreen extends Screen {
         gfx.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
 
         // Pergamino
-        PaperTexture.drawClean(gfx, this.panelX, this.panelY, PANEL_W, PANEL_H);
+        int panelW = Math.min(PANEL_MAX_W, this.width - 40);
+        int panelH = Math.min(PANEL_MAX_H, this.height - 30);
+        DiaryChrome.drawPanelShadow(gfx, this.panelX, this.panelY, panelW, panelH);
+        PaperTexture.drawClean(gfx, this.panelX, this.panelY, panelW, panelH);
 
         // Titulo
         int cx = this.width / 2;
@@ -168,7 +175,7 @@ public class DiarySkinCustomizationScreen extends Screen {
         // Subtitulo
         int subtitleY = titleY + 12;
         {
-            Component subC = Component.translatable("gripeverde.options.skin.subtitle");
+            String subC = "- " + Component.translatable("gripeverde.options.skin.subtitle").getString() + " -";
             int sw = this.font.width(subC);
             gfx.drawString(this.font, subC, cx - sw / 2, subtitleY, DiaryChrome.INK_SUBTITLE, false);
         }
@@ -183,15 +190,15 @@ public class DiarySkinCustomizationScreen extends Screen {
 
         // Divisor superior
         int divY1 = flavorY + 12;
-        DiaryChrome.drawInkDivider(gfx, this.panelX, divY1, PANEL_W);
+        DiaryChrome.drawInkDivider(gfx, this.panelX, divY1, panelW);
 
         // Widgets (DiaryButtons propios)
         super.render(gfx, mouseX, mouseY, delta);
 
         // Divisor inferior + esquineros
-        int divY2 = this.panelY + PANEL_H - 38;
-        DiaryChrome.drawInkDivider(gfx, this.panelX, divY2, PANEL_W);
-        DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, PANEL_W, PANEL_H);
+        int divY2 = this.panelY + PANEL_MAX_H - 38;
+        DiaryChrome.drawInkDivider(gfx, this.panelX, divY2, panelW);
+        DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, panelW, panelH);
     }
 
     @Override

@@ -97,14 +97,18 @@ public class DiaryCreditsScreen extends Screen {
         g.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
 
         // Pergamino
+        DiaryChrome.drawPanelShadow(g, this.panelX, this.panelY, this.panelW, this.panelH);
         PaperTexture.drawClean(g, this.panelX, this.panelY, this.panelW, this.panelH);
 
         // Titulo
         String titleStr = this.title.getString();
         int titleX = this.width / 2;
         int titleY = this.panelY + 10;
-        g.drawCenteredString(this.font, titleStr, titleX + 1, titleY + 1, DiaryChrome.SHADOW_COL);
-        g.drawCenteredString(this.font, titleStr, titleX, titleY, DiaryChrome.INK_TITLE);
+        {
+        int _tw = this.font.width(titleStr);
+        g.drawString(this.font, titleStr, titleX - _tw / 2 + 1, titleY + 1, DiaryChrome.SHADOW_COL, false);
+        g.drawString(this.font, titleStr, titleX - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
+        }
 
         // Subtitulo
         String subtitle = "- " + Component.translatable("gripeverde.options.credits.subtitle").getString() + " -";

@@ -3,17 +3,19 @@
 Mod de interfaz para Minecraft Forge 1.20.1.
 Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
-## Version actual
+## Versión actual
 
-**v0.11.8** — Dos salas mas del gabinete recibieron papel: la de Controles
-y la de Menciones. Cuatro habitaciones tecnicas siguen a oscuras y esperan
-su turno en la proxima entrega.
+**v0.11.9 — Coherencia del gabinete**
 
-### v0.11.6 - La camara de musica del gabinete
-
-Anoche la puerta que decia "Musica y sonidos" dejo de conducir a una sala prestada de otra casa. Detras de ella se abre ahora un ala propia, tapizada del mismo pergamino que el resto del gabinete, con sus divisores en filete y sus esquineros dobles. Al pie del panel hay un tirador nuevo, empotrado en laton, con una marca de tinta victoriana en el centro: el cronista lo llama Musica del Cronista, y con el ajusta el volumen del organillo lejano que lo acompana en las horas de escritura. El valor elegido queda anotado en el diario de configuraciones para que no se pierda al cerrar la sala.
-
-En el mismo movimiento, el vestibulo mayor se acomodo. La placa de Telemetria fue retirada sin ceremonia; los diez tiradores restantes se acomodaron en cinco filas simetricas, con Correspondencia en linea subiendo a compartir la ultima fila con Autores y agradecimientos.
+Todas las hojas que se abren desde las Opciones respiran hoy la misma
+caligrafía. Encabezados unificados, sombras suaves iguales, divisores
+con lozanga central, cabeceras respiradas, subtítulos envueltos por el
+mismo par de guiones. Los pergaminos proyectan ahora sombra sepia sobre
+la escena atenuada y los botones se apoyan como tiras de papel ocre
+distinguibles del fondo. La lista de lenguas dejó atrás su cartulina
+lisa; la banda tras el asentamiento del atlas se aligeró; la barra de
+lectura corre ahora contra el borde del pergamino. La música del
+cronista sigue viva por todos los pasillos del gabinete.
 
 ## Caracteristicas principales
 

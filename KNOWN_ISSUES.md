@@ -1,5 +1,90 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.11.9 - Coherencia del gabinete (KI-11 cerrado)
+
+### Cambios
+- MenuMusic.tick() agregado en 6 pantallas Diary que no lo tenian
+  (Accessibility, Chat, Language, Skin, Sound, Options). La musica
+  ya no se congela al navegar por las subpantallas.
+- Clamp adaptativo en 4 paneles hardcoded (Confirm, DirectJoin,
+  EditServer, Skin): Math.min(PANEL_MAX_W, this.width - N) evita
+  que el pergamino se salga en GuiScale 3/4.
+- DiaryLanguageScreen.onClose() ahora CANCELA en vez de aplicar.
+  ESC descarta el idioma pendiente, coherente con la distincion
+  entre appliedLanguageCode y pendingLanguageCode.
+- drawCenteredString reemplazado por drawString(..., false) con
+  centrado manual en 5 pantallas (Access, Chat, Controls, Credits,
+  Sound). Elimina el doble contorno negro vanilla sobre pergamino.
+- 25 lang files normalizados: 9 claves *.subtitle sin guiones
+  decorativos ("- valor -" -> "valor"). La decoracion vive en el
+  codigo, no en los strings.
+- 7 pantallas migradas para envolver el subtitle con "- ... -" a
+  la hora de renderizar. Todas las Diary respiran hoy el mismo
+  patron de cabecera (title / "- subtitle -" / flavor).
+- DiaryLanguageScreen: el fondo interno de la lista de idiomas
+  ahora usa PaperTexture.drawClean(). Antes era un fill oscuro
+  0x24100804 que se veia como cartulina pegada.
+- DiaryMultiplayerScreen: banda tras el server suavizada de
+  0xB0281608 (69% marron opaco) a 0x703A2416 (44% sepia claro).
+  Contrasta con el texto blanco vanilla sin agredir al pergamino.
+- DiaryChrome.drawPanelShadow(): nuevo helper. Sombra proyectada
+  del panel abajo-derecha con offset 6px, color sepia oscuro y
+  4 capas concentricas. Aplicado en 12 pantallas Diary.
+- DiaryButton: fondo diferenciado del panel. Base PAPER_STAINED
+  (mas oscuro que el pergamino PAPER del panel), hover ocre sucio,
+  sombra externa proyectada, highlight superior. Los botones se
+  leen ahora como tiras de papel apoyadas, no como parte del panel.
+- DiaryChrome.drawStyledScrollThumbInPanel(): nuevo helper que
+  ancla la scrollbar al borde derecho del panel y TAPA la barra
+  vanilla (width/2+156) con pergamino antes de dibujar la nuestra.
+  Migradas Chat, Accessibility, Sound.
+
+### Errores nuevos catalogados
+- E100: return dentro de if en PowerShell interactivo NO aborta
+  el script; solo aborta la subexpresion. Combinado con IndexOf
+  que devuelve -1, terminamos calculando bodyStart = -1 + longitud
+  del string y reemplazamos un rango arbitrario, corrompiendo
+  DiaryChrome.java (queda a 1562 bytes de 11627). Fix: restaurar
+  con git checkout HEAD -- <archivo> y reinsertar. Refuerza
+  R-PS-THROW: usar throw en vez de return, y validar IndexOf con
+  guard antes de calcular offsets.
+
+### Reglas reforzadas
+- R-PS-THROW: reforzada. Cuando IndexOf/LastIndexOf puede devolver
+  -1, chequear con if ($idx -lt 0) { throw "..." } explicito. No
+  confiar en return dentro de bloques interactivos.
+- R-INSERT-BEFORE-CLOSE: para agregar metodos al final de una
+  clase Java, usar $c.LastIndexOf('}') y reemplazar solo el
+  ultimo caracter. Robusto contra cualquier EOL/whitespace,
+  a diferencia de bloques multilinea que fallan por diferencias
+  sutiles de indentacion.
+
+### KI-11 (CERRADO en v0.11.9)
+- Slider "Musica del Cronista" ya aplica volumen en tiempo real
+  durante el arrastre.
+- Causa raiz: no era del slider ni del SoundManager. Era que
+  DiarySoundOptionsScreen.tick() NO llamaba MenuMusic.tick(), asi
+  que MenuMusic.updateVolumes() nunca corria mientras el slider
+  se movia. Un fix de una linea (mas 5 pantallas hermanas que
+  tenian el mismo problema silencioso: la musica se congelaba
+  al navegar por las subpantallas).
+
+### KI-15 (ABIERTO en v0.11.9)
+- Bandas inferiores de las listas vanilla (Accesibilidad, Chat,
+  Sonido) recortan el contenido de la ultima fila visible sin
+  fade suave, dando efecto de "corte duro". La ausencia de fade
+  se notaba menos antes cuando habia doble scrollbar; ahora al
+  quedar sola una barra estilizada, el corte es mas visible.
+- Solucion futura: fade blur inferior en el area de la lista
+  simulando que el contenido se sale de la vista, similar al
+  gradient de fade que ya usa DiaryLanguageScreen.
+- Prioridad baja. Cosmetico.
+
+### KI-16 (ABIERTO en v0.11.9)
+- Barra sepia estilizada esta pegada al MARCO exterior del panel
+  en Accesibilidad/Chat/Sonido (0px de margen interno). Podria
+  respirar 4-6px hacia adentro.
+- Prioridad muy baja. Cosmetico.
 ## v0.11.8 - Scroll estilizado en OptionsList (KI-09 cerrado)
 
 ### Cambios
@@ -356,7 +441,7 @@ Solucion: siempre pasar ruta absoluta con $PWD\\... explicito. Cubierto por R-DO
 
 ---
 
-## KI-11 (ABIERTO en v0.11.8) - Slider del Cronista no aplica en vivo
+## KI-11 (CERRADO en v0.11.9) - Slider del Cronista no aplica en vivo
 
 **Estado**: activo. Impacto menor.
 
@@ -410,5 +495,4 @@ No bloqueante. Las pantallas funcionan, solo lucen vanilla.
 - KI-07 (parcial): faltan MouseSettings, KeyBinds, PackSelection, Online
 - KI-08: banderas pixel-art
 - KI-10: tooltips morados vanilla
-- KI-11: slider Musica del Cronista sin aplicar volumen en vivo
 - KI-12: 4 pantallas con dirt bypass (Mouse, KeyBinds, PackSelection, Online)

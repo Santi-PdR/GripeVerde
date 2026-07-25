@@ -174,4 +174,46 @@ public final class DiaryChrome {
         gfx.fillGradient(0, 0, screenW, fade, 0x60000000, 0x00000000);
         gfx.fillGradient(0, screenH - fade, screenW, screenH, 0x00000000, 0x60000000);
     }
+
+    // ---------------------------------------------------------------
+    // Sombra proyectada del panel de pergamino.
+    // Dibujar ANTES de PaperTexture.drawClean(). Da peso material.
+    // Color sepia oscuro para leerse sobre overlay 0x66000000.
+    // ---------------------------------------------------------------
+    public static void drawPanelShadow(GuiGraphics gfx, int x, int y, int w, int h) {
+        int offset = 6;
+        int col1 = 0x40100600;
+        int col2 = 0x70100600;
+        int col3 = 0xA0100600;
+        int col4 = 0xC0080300;
+        gfx.fill(x + offset - 3, y + offset - 3, x + w + offset + 3, y + h + offset + 3, col1);
+        gfx.fill(x + offset - 1, y + offset - 1, x + w + offset + 1, y + h + offset + 1, col2);
+        gfx.fill(x + offset,     y + offset,     x + w + offset,     y + h + offset,     col3);
+        gfx.fill(x + offset + 1, y + offset + 1, x + w + offset - 1, y + h + offset - 1, col4);
+    }
+
+    // ---------------------------------------------------------------
+    // Scrollbar estilizada alineada al borde derecho del panel.
+    // Tapa la barra vanilla (que vive en width/2+156) con pergamino
+    // antes de dibujar la nuestra en la posicion del panel.
+    // panelRightEdge = panelX + panelW.
+    // ---------------------------------------------------------------
+    public static void drawStyledScrollThumbInPanel(GuiGraphics gfx,
+                                                     AbstractSelectionList<?> list,
+                                                     int panelRightEdge) {
+        if (list == null) return;
+
+        int trackY1 = list.getTop();
+        int trackY2 = list.getBottom();
+
+        // Tapar SIEMPRE la scrollbar vanilla (aunque no haya scroll)
+        int vanillaBarX = (net.minecraft.client.Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2) + 156;
+        gfx.fill(vanillaBarX - 2, trackY1, vanillaBarX + 8, trackY2, 0xFFE8DCB4);
+
+        int maxScroll = list.getMaxScroll();
+        if (maxScroll <= 0) return;
+
+        int scrollLeft = panelRightEdge - 14;
+        drawScrollThumb(gfx, scrollLeft, trackY1, trackY2, list.getScrollAmount(), maxScroll);
+    }
 }

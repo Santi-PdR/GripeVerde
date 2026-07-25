@@ -4,6 +4,7 @@ import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
+import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
@@ -113,6 +114,7 @@ public class DiaryLanguageScreen extends Screen {
         AtmosphereRenderer.tick(delta);
         VictorianSkyline.tick(delta);
         LivingAtmosphere.tick(delta);
+        MenuMusic.tick();
     }
 
     @Override
@@ -125,6 +127,7 @@ public class DiaryLanguageScreen extends Screen {
         LivingAtmosphere.renderAir(g, this.width, this.height);
 
         g.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
+        DiaryChrome.drawPanelShadow(g, panelX, panelY, panelW, panelH);
         PaperTexture.drawClean(g, panelX, panelY, panelW, panelH);
 
         int titleY = this.panelY + PANEL_PAD;
@@ -135,7 +138,7 @@ public class DiaryLanguageScreen extends Screen {
             g.drawString(this.font, this.title, titleX + 1, titleY + 1, DiaryChrome.SHADOW_COL, false);
             g.drawString(this.font, this.title, titleX, titleY, DiaryChrome.INK_TITLE, false);
 
-            Component subtitle = Component.translatable("gripeverde.options.language.subtitle");
+            String subtitle = "- " + Component.translatable("gripeverde.options.language.subtitle").getString() + " -";
             int subWL = this.font.width(subtitle);
             g.drawString(this.font, subtitle, cx - subWL / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
@@ -152,7 +155,9 @@ public class DiaryLanguageScreen extends Screen {
         int frameW = this.listW + 8;
         int frameH = this.listH + 8;
 
-        g.fill(frameX, frameY, frameX + frameW, frameY + frameH, 0x24100804);
+        // Fondo interno con textura de pergamino (evita cartulina lisa)
+        PaperTexture.drawClean(g, frameX, frameY, frameW, frameH);
+        // Marco tinta 1px
         g.fill(frameX, frameY, frameX + frameW, frameY + 1, 0x5A3A2416);
         g.fill(frameX, frameY + frameH - 1, frameX + frameW, frameY + frameH, 0x5A3A2416);
         g.fill(frameX, frameY, frameX + 1, frameY + frameH, 0x5A3A2416);
@@ -181,7 +186,9 @@ public class DiaryLanguageScreen extends Screen {
 
     @Override
     public void onClose() {
-        applyAndClose();
+        // ESC cancela sin aplicar el idioma pendiente
+        this.options.save();
+        this.minecraft.setScreen(this.parent);
     }
 
     private void toggleUnicode() {

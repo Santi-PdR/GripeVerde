@@ -85,17 +85,30 @@ public class DiaryButton extends AbstractButton {
         float t = hoverAnim.getEased();
 
         // -------------------- FONDO --------------------
-        // Fondo base: papel claro. En hover, papel manchado (mas saturado).
-        int bg = hoverAnim.lerpColor(DiaryTheme.PAPER, DiaryTheme.PAPER_STAINED);
+        // Sombra externa (proyectada bajo el boton) - PRIMERO para que quede abajo
+        int outerShadow = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 110);
+        g.fill(x + 2, y + h, x + w + 1, y + h + 2, outerShadow);
+        int outerShadowSoft = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 50);
+        g.fill(x + 3, y + h + 1, x + w + 2, y + h + 3, outerShadowSoft);
+
+        // Fondo base: mas oscuro que el pergamino del panel (PAPER)
+        // para que el boton se lea como "tira aplicada sobre el papel".
+        // Base = PAPER_STAINED (0xFFC9B78A); hover = tono aun mas oscuro
+        int bgHover = 0xFFB09668; // ocre sucio
+        int bg = hoverAnim.lerpColor(DiaryTheme.PAPER_STAINED, bgHover);
         g.fill(x, y, x + w, y + h, bg);
 
-        // Sombra interna sutil arriba (papel arrugado)
-        int innerShadow = DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 40);
-        g.fill(x, y, x + w, y + 1, innerShadow);
+        // Highlight superior (papel iluminado desde arriba)
+        int topHighlight = DiaryTheme.withAlpha(0x00FFEECC, 90);
+        g.fill(x + 1, y + 1, x + w - 1, y + 2, topHighlight);
 
-        // Sombra externa abajo (papel apoyado)
-        int outerShadow = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 60);
-        g.fill(x + 1, y + h, x + w + 1, y + h + 1, outerShadow);
+        // Sombra interna arriba (grieta del borde)
+        int innerShadowTop = DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 70);
+        g.fill(x, y, x + w, y + 1, innerShadowTop);
+
+        // Sombra interna abajo (papel apoyado, arruga)
+        int innerShadowBot = DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 100);
+        g.fill(x, y + h - 2, x + w, y + h - 1, innerShadowBot);
 
         // -------------------- BORDE --------------------
         int borderColor = hoverAnim.lerpColor(

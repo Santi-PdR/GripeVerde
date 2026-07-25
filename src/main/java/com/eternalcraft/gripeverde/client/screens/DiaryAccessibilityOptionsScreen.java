@@ -3,6 +3,7 @@ package com.eternalcraft.gripeverde.client.screens;
 import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
+import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
@@ -93,22 +94,23 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         gfx.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
 
         // Panel pergamino
+        DiaryChrome.drawPanelShadow(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
         PaperTexture.drawClean(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
 
         // Titulo
         int cx = this.width / 2;
         int titleY = this.panelY + 12;
-        gfx.drawCenteredString(this.font,
-            Component.translatable("options.accessibility.title"),
-            cx + 1, titleY + 1, DiaryChrome.SHADOW_COL);
-        gfx.drawCenteredString(this.font,
-            Component.translatable("options.accessibility.title"),
-            cx, titleY, DiaryChrome.INK_TITLE);
+        {
+        var _title = Component.translatable("options.accessibility.title");
+        int _tw = this.font.width(_title);
+        gfx.drawString(this.font, _title, cx - _tw / 2 + 1, titleY + 1, DiaryChrome.SHADOW_COL, false);
+        gfx.drawString(this.font, _title, cx - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
+        }
 
         // Subtitulo
         int subtitleY = titleY + 12;
         {
-            Component subC = Component.translatable("gripeverde.options.accessibility.subtitle");
+            String subC = "- " + Component.translatable("gripeverde.options.accessibility.subtitle").getString() + " -";
             int subW = this.font.width(subC);
             gfx.drawString(this.font, subC, cx - subW / 2, subtitleY, DiaryChrome.INK_SUBTITLE, false);
         }
@@ -128,7 +130,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         // Lista vanilla + scroll estilizado encima (KI-09 cerrado en v0.11.5)
         if (this.list != null) {
             this.list.render(gfx, mouseX, mouseY, delta);
-            DiaryChrome.drawStyledScrollThumbForOptionsList(gfx, this.list, this.width);
+            DiaryChrome.drawStyledScrollThumbInPanel(gfx, this.list, this.panelX + this.panelW);
         }
 
         // Cosmeticos
@@ -149,5 +151,6 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         AtmosphereRenderer.tick(delta);
         VictorianSkyline.tick(delta);
         LivingAtmosphere.tick(delta);
+        MenuMusic.tick();
     }
 }

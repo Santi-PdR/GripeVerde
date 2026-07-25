@@ -3,6 +3,7 @@ package com.eternalcraft.gripeverde.client.screens;
 import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
+import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
@@ -79,6 +80,7 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         AtmosphereRenderer.tick(delta);
         VictorianSkyline.tick(delta);
         LivingAtmosphere.tick(delta);
+        MenuMusic.tick();
     }
 
     @Override
@@ -95,14 +97,18 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         g.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
 
         // Pergamino
+        DiaryChrome.drawPanelShadow(g, this.panelX, this.panelY, this.panelW, this.panelH);
         PaperTexture.drawClean(g, this.panelX, this.panelY, this.panelW, this.panelH);
 
         // Titulo
         String titleStr = Component.translatable("options.chat.title").getString();
         int titleX = this.width / 2;
         int titleY = this.panelY + 10;
-        g.drawCenteredString(this.font, titleStr, titleX + 1, titleY + 1, DiaryChrome.SHADOW_COL);
-        g.drawCenteredString(this.font, titleStr, titleX, titleY, DiaryChrome.INK_TITLE);
+        {
+        int _tw = this.font.width(titleStr);
+        g.drawString(this.font, titleStr, titleX - _tw / 2 + 1, titleY + 1, DiaryChrome.SHADOW_COL, false);
+        g.drawString(this.font, titleStr, titleX - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
+        }
 
         // Subtitulo
         String subtitle = "- " + Component.translatable("gripeverde.options.chat.subtitle").getString() + " -";
@@ -126,7 +132,7 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         // Lista vanilla + scroll estilizado encima (KI-09 cerrado en v0.11.5)
         if (this.list != null) {
             this.list.render(g, mouseX, mouseY, partialTick);
-            DiaryChrome.drawStyledScrollThumbForOptionsList(g, this.list, this.width);
+            DiaryChrome.drawStyledScrollThumbInPanel(g, this.list, this.panelX + this.panelW);
         }
 
         // Widgets propios

@@ -426,6 +426,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         int panelY = PANEL_MARGIN_V;
         int panelW = this.width - PANEL_MARGIN_H * 2;
         int panelH = this.height - PANEL_MARGIN_V * 2;
+        DiaryChrome.drawPanelShadow(gfx, panelX, panelY, panelW, panelH);
         PaperTexture.drawClean(gfx, panelX, panelY, panelW, panelH);
         DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, panelW, panelH);
 
@@ -437,7 +438,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         gfx.drawString(this.font, titleStr, (this.width - titleW) / 2, titleY, DiaryChrome.INK_TITLE, false);
 
         // Subtitulo
-        String subtitle = Component.translatable("gripeverde.multiplayer.subtitle").getString();
+        String subtitle = "- " + Component.translatable("gripeverde.multiplayer.subtitle").getString() + " -";
         int subW = this.font.width(subtitle);
         gfx.drawString(this.font, subtitle, (this.width - subW) / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
@@ -534,9 +535,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 int drawBottom = Math.min(entryBottom, listBottom);
                 if (drawBottom <= drawTop) continue;
 
-                // Banda sepia oscura semi-transparente (contraste + look tarjeta)
-                int bandColor = 0xB0281608;
-                int bandEdge  = 0x30281608;
+                // Banda sepia semi-transparente (contraste sin agredir al pergamino)
+                int bandColor = 0x703A2416;
+                int bandEdge  = 0x203A2416;
                 // Extension lateral para envolver bien el favicon
                 int extL = 8;
                 int extR = 4;

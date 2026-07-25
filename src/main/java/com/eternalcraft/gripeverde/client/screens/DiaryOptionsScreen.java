@@ -4,6 +4,7 @@ import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
+import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
@@ -113,6 +114,7 @@ public class DiaryOptionsScreen extends Screen {
         AtmosphereRenderer.tick(delta);
         VictorianSkyline.tick(delta);
         LivingAtmosphere.tick(delta);
+        MenuMusic.tick();
     }
 
     @Override
@@ -129,6 +131,7 @@ public class DiaryOptionsScreen extends Screen {
         g.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
 
         // Panel pergamino
+        DiaryChrome.drawPanelShadow(g, panelX, panelY, panelW, panelH);
         PaperTexture.drawClean(g, panelX, panelY, panelW, panelH);
 
         // Titulo en tinta
@@ -140,8 +143,7 @@ public class DiaryOptionsScreen extends Screen {
             g.drawString(this.font, this.title, titleX, titleY, DiaryTheme.INK, false);
 
             // Subtitulo diegetico
-            net.minecraft.network.chat.Component subtitle =
-                    net.minecraft.network.chat.Component.translatable("gripeverde.options.subtitle");
+            String subtitle = "- " + net.minecraft.network.chat.Component.translatable("gripeverde.options.subtitle").getString() + " -";
             int subW = this.font.width(subtitle);
             int subX = (this.width - subW) / 2;
             int subY = titleY + TITLE_H + 2;

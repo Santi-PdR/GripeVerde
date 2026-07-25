@@ -7,11 +7,11 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.11.8
-- build.gradle: version = '0.11.8'
-- GripeVerdeMod.VERSION: "0.11.8"
+- Version estable actual: v0.11.9
+- build.gradle: version = '0.11.9'
+- GripeVerdeMod.VERSION: "0.11.9"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
-- Ultimo tag publicado: v0.11.8
+- Ultimo tag publicado: v0.11.9
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
 
@@ -36,6 +36,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 - v0.11.4: DiarySkinCustomizationScreen (hito K) + scroll estilizado y acelerado en Lenguas (hito L) + refactor DiaryChrome (extraccion de helpers cosmeticos compartidos) + panel adaptativo en Accesibilidad para escalas 3/4. KI-09 abierto (scroll estilizado en OptionsList).
 - v0.11.5: Scroll estilizado en Accesibilidad y Chat (hito M-simple). KI-09 cerrado. Panel de Accesibilidad ampliado a 380px. Thumb minimo 32px. KI-10 abierto (tooltips vanilla morados). Controles siguen vanilla (Controlling).
 - v0.11.6: DiarySoundOptionsScreen sobre pergamino (hito K2). Slider "Musica del Cronista" propio integrado en la pantalla. Reordenamiento de DiaryOptionsScreen (grid 2x5 sin Telemetria). Serie de correcciones tecnicas: E85 (javap flags), E86 (updateWidgetNarration public), E87 (SRG f_244146_ real). Compatibilidad con IMP preservada. KI-11 abierto (slider no aplica en vivo durante drag).
+- v0.11.7: DiaryControlsScreen + DiaryCreditsScreen (hitos H + Credits del Grupo A). KI-12 abierto (fondos dirt en pantallas de trabajo requieren mixin). Primer intento de mixin revertido por fallo de refmap (E90).
+- v0.11.8: DiaryMultiplayerScreen + DiaryEditServerScreen + DiaryDirectJoinScreen + DiaryConfirmScreen (hito B3, flujo multijugador completo). Server pinneado "Ghoul Outbreak Official". KI-13 y KI-14 abiertos (server pinneado sin proteccion, banda oscura del server).
+- v0.11.9: Coherencia del gabinete. Fixes de KI-11 (musica se congelaba al navegar), clamp de paneles chicos, ESC cancela idioma, unificacion de cabeceras y sombras, banda de servidor suavizada, textura de pergamino en lista de lenguas, sombra proyectada del panel, DiaryButton diferenciado del panel, scrollbar alineada al panel. KI-11 cerrado. KI-15 y KI-16 abiertos (fade inferior y respiracion de scrollbar).
 
 ## KI-03 - Estado post v0.9.0
 
@@ -58,7 +61,7 @@ C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 
 - Local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 - Remoto: https://github.com/Santi-PdR/GripeVerde (privado)
-- Ultimo tag: v0.11.8
+- Ultimo tag: v0.11.9
 
 ## Rutas reales verificadas
 
@@ -1314,3 +1317,134 @@ Objetivo: mixin sobre renderDirtBackground para 4 pantallas restantes
 ### Candidato I: v0.11.x - Banderas pixel-art (KI-08)
 ### Candidato C: v0.12.0+ - Contenido de gameplay
 
+---
+## ADDENDUM v0.11.9 (Coherencia del gabinete)
+
+### Alcance del hito
+Pasada de coherencia visual y fixes funcionales sobre todas las pantallas
+Diary ambientadas hasta v0.11.8. Sin subpantallas nuevas: se pulio lo
+existente y se cerro KI-11.
+
+### Cambios de codigo
+- **Fase 1A (fix funcional grande)**: MenuMusic.tick() agregado en el
+  tick() de 6 pantallas Diary que no lo tenian (Accessibility, Chat,
+  Language, Skin, Sound, Options). Antes la musica del cronista se
+  congelaba en cuanto uno entraba a cualquier subpantalla, y el slider
+  de volumen no aplicaba en tiempo real durante el arrastre (KI-11).
+  Ahora la musica sigue viva por todos los pasillos del gabinete.
+
+- **Fase 1B (fixes de comportamiento)**:
+  - Clamp adaptativo con Math.min(PANEL_MAX_W, this.width - N) en
+    DiaryConfirmScreen, DiaryDirectJoinScreen, DiaryEditServerScreen y
+    DiarySkinCustomizationScreen. Antes los paneles fijos se recortaban
+    en GuiScale 3/4.
+  - DiaryLanguageScreen.onClose() ahora cancela sin aplicar. ESC ya no
+    aplica el idioma pendiente por accidente.
+  - drawCenteredString reemplazado por drawString(..., false) con
+    centrado manual en Access, Chat, Controls, Credits y Sound. Elimina
+    el doble contorno negro vanilla sobre pergamino.
+
+- **Coherencia textual**:
+  - 25 lang files limpios: se removieron los guiones decorativos
+    "- valor -" de 9 claves .subtitle. Los strings quedan puros; la
+    decoracion decorativa vive solo en el codigo.
+  - 7 pantallas Diary migradas para envolver el subtitle con
+    "- ... -" en el render (Access, Language, Skin, Options,
+    Multiplayer, Edit, Direct). Todas las Diary usan hoy el mismo
+    patron: title / "- subtitle -" / flavor.
+
+- **Ambientacion visual (materialidad y peso)**:
+  - DiaryLanguageScreen: el fondo interno del marco de la lista usa
+    PaperTexture.drawClean(), en vez del fill oscuro 0x24100804 que
+    daba efecto de "cartulina lisa pegada encima". Ahora hereda las
+    manchas del pergamino grande.
+  - DiaryMultiplayerScreen: la banda tras los servers se aligero de
+    0xB0281608 (69% marron opaco) a 0x703A2416 (44% sepia claro).
+    Sigue dando contraste al texto blanco vanilla, pero deja ver el
+    pergamino atras.
+  - DiaryChrome.drawPanelShadow(): nuevo helper. Sombra proyectada
+    abajo-derecha con offset 6px, color sepia oscuro (0x100600) en
+    4 capas concentricas. Aplicado en 12 pantallas Diary. Los
+    pergaminos se sienten ahora apoyados sobre la escena, no pegados.
+  - DiaryButton: rework del fondo. Base PAPER_STAINED (un tono mas
+    oscuro que PAPER que usa el panel), hover ocre sucio 0xFFB09668,
+    sombra externa proyectada, highlight superior sutil, sombra interna
+    abajo. Los botones se leen ahora como tiras de papel apoyadas
+    sobre el pergamino, no como parte de el.
+  - DiaryChrome.drawStyledScrollThumbInPanel(): nuevo helper que
+    ancla la scrollbar al borde derecho del panel de pergamino
+    (panelRightEdge - 14) en vez de al centro de pantalla. Tapa la
+    barra vanilla (width/2+156) con pergamino antes de dibujar la
+    sepia. Migradas Chat, Accessibility, Sound.
+
+### Errores nuevos catalogados
+- **E100**: return dentro de if en bloques interactivos de PowerShell
+  NO aborta el script; solo aborta la subexpresion. Combinado con
+  IndexOf() devolviendo -1 y calculando offsets a partir de -1,
+  DiaryChrome.java quedo corrupto a 1562 bytes (de 11627). Fix:
+  git checkout HEAD -- DiaryChrome.java + reinsertar helpers con
+  LastIndexOf('}'). Refuerza R-PS-THROW.
+
+### Reglas reforzadas
+- **R-PS-THROW-STRICT**: cuando IndexOf/LastIndexOf puede devolver -1,
+  siempre validar con `if ($idx -lt 0) { throw "msg" }` explicito
+  antes de calcular offsets. return dentro de if en interactivo no
+  aborta, solo termina la subexpresion.
+- **R-INSERT-BEFORE-CLOSE**: para agregar metodos al final de una
+  clase Java, usar `$c.LastIndexOf('}')` y reemplazar solo el ultimo
+  caracter. Es robusto contra diferencias de EOL/whitespace, a
+  diferencia de bloques multilinea que fallan silenciosamente por
+  indentacion sutil.
+
+### KI-11 (CERRADO en v0.11.9)
+- El slider "Musica del Cronista" ya aplica volumen en tiempo real.
+- Causa raiz: no era del slider ni del SoundManager. Era que 6
+  pantallas Diary no llamaban MenuMusic.tick() en su tick propio,
+  asi que MenuMusic.updateVolumes() nunca corria mientras el slider
+  se movia. Fix de una linea en cada pantalla.
+
+### KI-15 (ABIERTO en v0.11.9)
+- Bandas inferiores de las listas vanilla (Accesibilidad, Chat,
+  Sonido) recortan el contenido sin fade suave, dando "corte duro".
+  Con la doble scrollbar antes se disimulaba; ahora que hay una sola
+  barra estilizada, el corte es mas visible.
+- Solucion futura: fade gradient inferior similar al de Language.
+- Prioridad baja.
+
+### KI-16 (ABIERTO en v0.11.9)
+- Barra sepia estilizada pegada al marco exterior en Accesibilidad,
+  Chat y Sonido. Podria respirar 4-6px hacia adentro.
+- Prioridad muy baja.
+
+### Nota sobre R-CHANGELOG-DISCRECIONAL
+No se agregaron entradas a los 25 changelog/*.md in-game. Este hito
+es coherencia tecnica y polish, sin manifestacion narrativa nueva que
+amerite contarle al cronista mas alla del CHANGELOG.md raiz.
+
+## PROXIMO HITO PLANIFICADO (revisado tras v0.11.9)
+
+### Candidato Q: v0.11.10 - Polish visual + primer widget propio
+Objetivo: cerrar los cosmeticos menores pendientes y empezar a
+reemplazar los widgets vanilla mas agresivos.
+1. KI-15 (fade inferior de listas vanilla).
+2. KI-16 (respirar la scrollbar).
+3. Rojo vanilla "Can't connect" en Multiplayer, menos neon.
+4. DiaryTextField (reemplazo del EditBox negro en Edit/Direct).
+5. DiaryToggle (reemplazo del CycleButton gris en Controls y donde
+   sea toggle booleano simple).
+
+Riesgo: bajo-medio. Los widgets custom pueden romper el binding con
+OptionInstance si no se hace con cuidado.
+
+### Candidato N: v0.11.x - Tooltips estilizados (KI-10)
+Sigue pendiente. Mixin sobre Screen.renderWithTooltip.
+
+### Candidato I: v0.11.x - Banderas pixel-art (KI-08)
+Sigue pendiente. Font provider propio.
+
+### Candidato O: v0.11.x - Hito Mixin (KI-12)
+Sigue pendiente. Fondos dirt de MouseSettings, KeyBinds, PackSelection,
+Online. Requiere investigacion de refmap (fallo en v0.11.7 E90).
+
+### Candidato C: v0.12.0+ - Contenido de gameplay
+Sigue pendiente. Primer sistema real de gameplay.

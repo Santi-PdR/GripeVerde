@@ -22,8 +22,8 @@ import net.minecraft.network.chat.Component;
  */
 public class DiaryDirectJoinScreen extends Screen {
 
-    private static final int PANEL_W = 340;
-    private static final int PANEL_H = 180;
+    private static final int PANEL_MAX_W = 340;
+    private static final int PANEL_MAX_H = 180;
     private static final Component ENTER_IP_LABEL = Component.translatable("addServer.enterIp");
 
     private final Screen parent;
@@ -42,10 +42,12 @@ public class DiaryDirectJoinScreen extends Screen {
 
     @Override
     protected void init() {
-        int panelX = (this.width - PANEL_W) / 2;
-        int panelY = (this.height - PANEL_H) / 2;
+        int panelW = Math.min(PANEL_MAX_W, this.width - 40);
+        int panelH = Math.min(PANEL_MAX_H, this.height - 30);
+        int panelX = (this.width - panelW) / 2;
+        int panelY = (this.height - panelH) / 2;
 
-        int fieldW = PANEL_W - 60;
+        int fieldW = PANEL_MAX_W - 60;
         int fieldX = panelX + 30;
         int fieldH = 20;
         int ipY = panelY + 76;
@@ -67,7 +69,7 @@ public class DiaryDirectJoinScreen extends Screen {
         // Botones inferiores
         int btnW = 100;
         int btnH = 20;
-        int btnY = panelY + PANEL_H - btnH - 16;
+        int btnY = panelY + PANEL_MAX_H - btnH - 16;
         int gap = 12;
         int totalW = btnW * 2 + gap;
         int startX = (this.width - totalW) / 2;
@@ -145,12 +147,15 @@ public class DiaryDirectJoinScreen extends Screen {
         gfx.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
 
         // Panel pergamino
-        int panelX = (this.width - PANEL_W) / 2;
-        int panelY = (this.height - PANEL_H) / 2;
-        PaperTexture.drawClean(gfx, panelX, panelY, PANEL_W, PANEL_H);
+        int panelW = Math.min(PANEL_MAX_W, this.width - 40);
+        int panelH = Math.min(PANEL_MAX_H, this.height - 30);
+        int panelX = (this.width - panelW) / 2;
+        int panelY = (this.height - panelH) / 2;
+        DiaryChrome.drawPanelShadow(gfx, panelX, panelY, panelW, panelH);
+        PaperTexture.drawClean(gfx, panelX, panelY, panelW, panelH);
 
         // Cosmetica
-        DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, PANEL_W, PANEL_H);
+        DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, panelW, panelH);
 
         // Titulo
         int titleY = panelY + 18;
@@ -160,12 +165,12 @@ public class DiaryDirectJoinScreen extends Screen {
         gfx.drawString(this.font, titleStr, (this.width - titleW) / 2, titleY, DiaryChrome.INK_TITLE, false);
 
         // Subtitulo
-        String subtitle = Component.translatable("gripeverde.direct.subtitle").getString();
+        String subtitle = "- " + Component.translatable("gripeverde.direct.subtitle").getString() + " -";
         int subW = this.font.width(subtitle);
         gfx.drawString(this.font, subtitle, (this.width - subW) / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
         // Divisor con rombo
-        DiaryChrome.drawInkDivider(gfx, panelX + 24, titleY + 26, PANEL_W - 48);
+        DiaryChrome.drawInkDivider(gfx, panelX + 24, titleY + 26, panelW - 48);
         DiaryChrome.drawDivisorLozenge(gfx, this.width / 2, titleY + 26);
 
         // Label IP

@@ -27,8 +27,8 @@ import java.util.List;
  */
 public class DiaryConfirmScreen extends ConfirmScreen {
 
-    private static final int PANEL_W = 340;
-    private static final int PANEL_H = 180;
+    private static final int PANEL_MAX_W = 340;
+    private static final int PANEL_MAX_H = 180;
 
     private final Screen parent;
     // Guardamos el mensaje propio porque ConfirmScreen.message es private
@@ -80,8 +80,8 @@ public class DiaryConfirmScreen extends ConfirmScreen {
         // Botones Diary propios
         int btnW = 100;
         int btnH = 20;
-        int panelY = (this.height - PANEL_H) / 2;
-        int btnY = panelY + PANEL_H - btnH - 16;
+        int panelY = (this.height - PANEL_MAX_H) / 2;
+        int btnY = panelY + PANEL_MAX_H - btnH - 16;
         int gap = 12;
         int totalW = btnW * 2 + gap;
         int startX = (this.width - totalW) / 2;
@@ -122,12 +122,15 @@ public class DiaryConfirmScreen extends ConfirmScreen {
         gfx.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
 
         // Panel pergamino
-        int panelX = (this.width - PANEL_W) / 2;
-        int panelY = (this.height - PANEL_H) / 2;
-        PaperTexture.drawClean(gfx, panelX, panelY, PANEL_W, PANEL_H);
+        int panelW = Math.min(PANEL_MAX_W, this.width - 40);
+        int panelH = Math.min(PANEL_MAX_H, this.height - 30);
+        int panelX = (this.width - panelW) / 2;
+        int panelY = (this.height - panelH) / 2;
+        DiaryChrome.drawPanelShadow(gfx, panelX, panelY, panelW, panelH);
+        PaperTexture.drawClean(gfx, panelX, panelY, panelW, panelH);
 
         // Cosmetica
-        DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, PANEL_W, PANEL_H);
+        DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, panelW, panelH);
 
         // Titulo
         int titleY = panelY + 18;
@@ -137,12 +140,12 @@ public class DiaryConfirmScreen extends ConfirmScreen {
         gfx.drawString(this.font, titleStr, (this.width - titleW) / 2, titleY, DiaryChrome.INK_TITLE, false);
 
         // Divisor con rombo
-        DiaryChrome.drawInkDivider(gfx, panelX + 24, titleY + 14, PANEL_W - 48);
+        DiaryChrome.drawInkDivider(gfx, panelX + 24, titleY + 14, panelW - 48);
         DiaryChrome.drawDivisorLozenge(gfx, this.width / 2, titleY + 14);
 
         // Mensaje multilinea (propio, no toco el vanilla)
         if (this.ownMultilineMessage == null && this.ownMessage != null) {
-            this.ownMultilineMessage = MultiLineLabel.create(this.font, this.ownMessage, PANEL_W - 40);
+            this.ownMultilineMessage = MultiLineLabel.create(this.font, this.ownMessage, PANEL_MAX_W - 40);
         }
         if (this.ownMultilineMessage != null) {
             int msgY = titleY + 28;

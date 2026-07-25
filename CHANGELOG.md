@@ -1,5 +1,32 @@
 # Eternal Craft: Gripe Verde
 
+## v0.11.9 - Coherencia del gabinete
+
+En esta noche el gabinete respira una sola tinta. Todas las hojas que
+se abren desde las Opciones - las lenguas conocidas, las camaras y
+resonancias, los protocolos de correspondencia, los auxilios y
+percepciones, la efigie y porte del cronista, la bitacora de comandos,
+las menciones y agradecimientos, el atlas de ciudades - llevan hoy la
+misma caligrafia en sus encabezados, el mismo trazo bajo los titulos,
+la misma lozanga entre los divisores.
+
+Los pergaminos, antes livianos como recortes pegados al aire, proyectan
+ahora sombra sobre la escena atenuada. Las tiras de papel que sirven de
+botones descansan claramente sobre el fondo, con un tono ocre mas
+oscuro que las distingue del pergamino sobre el que se apoyan.
+
+La lista de lenguas dejo atras su cartulina lisa y ahora comparte la
+textura de manchas del gran pergamino. La banda tras el asentamiento
+listado en el atlas se aligero: ya no es un parche marron sino una
+sombra sepia que da lectura sin agredir. La barra por la que se corren
+las hojas largas corre ahora contra el borde del pergamino, no en el
+medio de la escena.
+
+La musica del cronista, que antes se detenia en cuanto uno cruzaba
+hacia una sub-hoja, sigue viva ahora por todos los pasillos del
+gabinete. Y en la hoja de lenguas, retirarse con la tecla de escape
+descarta el cambio, como corresponde a quien se arrepiente de haber
+elegido otra voz.
 ## v0.11.8 - El atlas de puertos ajenos
 
 En esta noche el cronista ha completado el capitulo dedicado a la
