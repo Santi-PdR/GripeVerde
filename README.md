@@ -5,17 +5,23 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.12.0 - Cierre del ciclo del gabinete**
+**v0.12.1 - La ciudad se acuerda de respirar**
 
-Version administrativa que cierra el ciclo largo del gabinete
-pergamino (v0.10 - v0.11). El changelog in-game se consolida bajo la
-entrada unica "Una casa de papel", narrando de una sola vez todo lo
-que ocurrio en esas noches: el gabinete pintado a mano, las
-subpantallas convertidas en despachos, la coherencia final del papel,
-la musica sensible al gesto, y las banderas junto a cada lengua.
+Muchos detalles menores que juntos cambian el pulso del gabinete: las
+estrellas del cielo ahora parpadean cada una a su propio compas, una
+ventana perdida en el skyline se enciende y se apaga sola cada tantos
+minutos, un farol tiembla de pronto con luz erratica, y cada tanto una
+silueta pequena cruza la calle abajo.
 
-Con esto cierra la fase de interfaz. Lo que venga a partir de aqui
-sera contenido de gameplay: la Gripe Verde en si misma.
+Bajo el nombre del proyecto aparecen ahora apuntes del cronista
+(dia 47, dia 118, dia 210...) que rotan al azar y cambian solos con
+el tiempo. La firma al pie tambien alterna entre cuatro manos.
+
+El gabinete de ajustes gano frases rotativas del cronista bajo el
+subtitulo, y los botones se sienten con mas peso al presionar. El
+historial de cambios muestra capitulares decorativas en los titulos,
+separadores con rombo entre secciones, y recuerda la posicion del
+scroll al reabrirse.
 
 ## Caracteristicas principales
 

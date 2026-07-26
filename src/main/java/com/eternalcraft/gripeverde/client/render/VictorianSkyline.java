@@ -49,10 +49,34 @@ public class VictorianSkyline {
     private static final float[][] smokeParticles = new float[TOTAL_CHIMNEYS * 4][4];
     private static boolean smokeInit = false;
 
+    // Animated window: one FG window toggles on/off with smooth transition
+    private static float animWindowPhase = 0f;  // 0..1 smooth, >0.5 = on
+    private static float animWindowTimer = 0f;  // countdown to next toggle
+    private static boolean animWindowOn = false;
+    private static final int ANIM_WINDOW_BUILDING = 2;  // FG_BUILDINGS index
+    private static final int ANIM_WINDOW_ROW = 1;
+    private static final int ANIM_WINDOW_COL = 1;
+
     public static void tick(float deltaTime) {
         time += deltaTime;
         initSmoke();
         tickSmoke(deltaTime);
+
+        // Animate one window: smooth transition between on/off
+        animWindowTimer -= deltaTime;
+        if (animWindowTimer <= 0f) {
+            animWindowOn = !animWindowOn;
+            // Random interval: 8-15 seconds
+            animWindowTimer = 8f + (float)(Math.random() * 7.0);
+        }
+        // Smooth lerp toward target (on=1, off=0), speed ~2/sec
+        float target = animWindowOn ? 1f : 0f;
+        float speed = 2f * deltaTime;
+        if (animWindowPhase < target) {
+            animWindowPhase = Math.min(target, animWindowPhase + speed);
+        } else {
+            animWindowPhase = Math.max(target, animWindowPhase - speed);
+        }
     }
 
     public static void renderBackground(GuiGraphics g, int w, int h) {
@@ -127,6 +151,29 @@ public class VictorianSkyline {
                     int wx = bx1 + (col * bWidth / cols) + (bWidth / cols / 2) - winW / 2;
                     int wy = by1 + (row * bHeight / rows) + (bHeight / rows / 2) - winH / 2 + 3;
                     int roll = rng.nextInt(10);
+
+                    // Animated window override: smooth on/off for one specific FG window
+                    boolean isAnimWindow = !isBg
+                        && bi == ANIM_WINDOW_BUILDING
+                        && row == ANIM_WINDOW_ROW
+                        && col == ANIM_WINDOW_COL;
+                    if (isAnimWindow) {
+                        // Draw with animWindowPhase controlling alpha
+                        int amber = (int)(animWindowPhase * 160);
+                        if (amber > 2) {
+                            g.fill(wx - 1, wy - 1, wx + winW + 1, wy + winH + 1, 0xFF1A0F05);
+                            g.fill(wx, wy, wx + winW, wy + winH,
+                                AtmosphereRenderer.withAlpha(0x00D4941E, amber));
+                            g.fill(wx + winW/2, wy, wx + winW/2 + 1, wy + winH, 0xFF3D2E1A);
+                            g.fill(wx, wy + winH/2, wx + winW, wy + winH/2 + 1, 0xFF3D2E1A);
+                            g.fill(wx - 2, wy - 2, wx + winW + 2, wy + winH + 2,
+                                AtmosphereRenderer.withAlpha(0x00D4941E, amber / 6));
+                        } else {
+                            g.fill(wx, wy, wx + winW, wy + winH, 0xFF050302);
+                            g.fill(wx, wy, wx + winW, wy + 1, 0xFF1A1008);
+                        }
+                        continue;
+                    }
 
                     if (roll < offOnThreshold) {
                         g.fill(wx, wy, wx + winW, wy + winH, 0xFF050302);

@@ -261,8 +261,17 @@ public class DiaryTitleScreen extends Screen {
         LogoRenderer.draw(g, this.width / 2, 30);
     }
 
+    // Rotating signature pool, synced with LogoRenderer year via yearIndex
+    private static final String[] SIGNATURE_POOL = {
+        "Firmado: S. Pereira",
+        "Firmado: R. Da Rosa",
+        "Firmado: G. Bandeira",
+        "Firmado: A. Focco"
+    };
+
     private void drawSignature(GuiGraphics g) {
-        String signature = "Signed: S. Pereira - MDCCCXCVII";
+        int idx = com.eternalcraft.gripeverde.client.render.LogoRenderer.getYearIndex();
+        String signature = SIGNATURE_POOL[idx % SIGNATURE_POOL.length];
         int sw = this.font.width(signature);
         g.drawString(this.font, signature,
             this.width - sw - 6, this.height - 12,

@@ -68,7 +68,7 @@ public class DiaryToggle extends AbstractButton {
 
     @Override
     public void playDownSound(SoundManager sm) {
-        UiSounds.playClick();
+        UiSounds.clickHeavy();
     }
 
     @Override

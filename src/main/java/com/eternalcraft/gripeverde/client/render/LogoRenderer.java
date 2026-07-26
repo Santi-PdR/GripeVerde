@@ -10,6 +10,56 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class LogoRenderer {
 
+    // Rotating year pool: shown as the "publication date" of the diary.
+    // Rotates on session start + every 3 minutes.
+    private static final String[] YEAR_POOL = {
+        "~ Dia 47 ~ Aun no encuentro respuestas ~",
+        "~ Dia 62 ~ Sobrevivir es todo lo que queda ~",
+        "~ Dia 83 ~ La ciudad respira apenas ~",
+        "~ Dia 91 ~ Ya no cuento a los muertos ~",
+        "~ Dia 104 ~ El silencio pesa mas que el humo ~",
+        "~ Dia 118 ~ Aun no cede la fiebre ~",
+        "~ Dia 133 ~ Escribo para no olvidar ~",
+        "~ Dia 147 ~ El aire sabe a hierro ~",
+        "~ Dia 162 ~ Nadie llama a las puertas ~",
+        "~ Dia 178 ~ Persisto ~",
+        "~ Dia 195 ~ Otro invierno adentro ~",
+        "~ Dia 210 ~ La pluma aun obedece ~"
+    };
+    private static int yearIndex = -1;
+    private static long lastYearRotateMs = 0L;
+    private static long YEAR_ROTATE_MS = 60_000L;  // Regenerated each rotation, 30-120s range
+    private static void rerollRotateInterval() {
+        YEAR_ROTATE_MS = 30_000L + (long)(YEAR_RNG.nextDouble() * 90_000L);
+    }
+
+    private static final java.util.Random YEAR_RNG = new java.util.Random();
+
+    private static String getCurrentYear() {
+        long now = System.currentTimeMillis();
+        if (yearIndex < 0 || (now - lastYearRotateMs) >= YEAR_ROTATE_MS) {
+            // Truly random: pick any entry that is NOT the current one
+            int prev = yearIndex;
+            int next;
+            if (YEAR_POOL.length <= 1) {
+                next = 0;
+            } else {
+                do {
+                    next = YEAR_RNG.nextInt(YEAR_POOL.length);
+                } while (next == prev);
+            }
+            yearIndex = next;
+            lastYearRotateMs = now;
+            rerollRotateInterval();
+        }
+        return YEAR_POOL[yearIndex];
+    }
+
+    /** Public accessor so DiaryTitleScreen can sync signature rotation. */
+    public static int getYearIndex() {
+        return yearIndex < 0 ? 0 : yearIndex;
+    }
+
     public static void draw(GuiGraphics g, int cx, int topY) {
         Font font = Minecraft.getInstance().font;
 
@@ -36,7 +86,7 @@ public class LogoRenderer {
         g.drawString(font, subtitle, -sw / 2, 0, DiaryTheme.PLAGUE_TOXIC, false);
         g.pose().popPose();
 
-        String year = I18n.get("gripeverde.brand.year");
+        String year = getCurrentYear();
         int yw = font.width(year);
         g.drawString(font, year, cx - yw / 2, topY + 128, DiaryTheme.SEPIA_LIGHT, false);
     }

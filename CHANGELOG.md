@@ -1,5 +1,44 @@
 # Eternal Craft: Gripe Verde
 
+## v0.12.1 - La ciudad se acuerda de respirar
+
+Muchos detalles menores que juntos cambian el pulso del gabinete.
+
+En el cielo, algunas estrellas pesan mas que otras: unas parpadean con
+prisa, otras arden lentas y firmes. Cada una tiene su propio compas. Una
+ventana perdida en algun piso alto se enciende y se apaga sin razon
+aparente, cada tantos minutos, como si alguien no pudiera decidirse a
+dormir. Un farol del extremo derecho comienza de pronto a temblar
+erraticamente, tres o cuatro segundos de convulsion amarilla, y luego
+vuelve a su cadencia mansa. Cada tanto una silueta pequena cruza la
+calle abajo, rapida, oscura: probablemente una rata.
+
+Bajo el nombre del proyecto, donde antes descansaba una fecha en cifras
+romanas, ahora aparece una linea distinta cada vez: apuntes del que
+escribe, contando dias, midiendo silencios. "Dia 47. Aun no encuentro
+respuestas." "Dia 118. Aun no cede la fiebre." "Dia 178. Persisto."
+Cada tantos minutos cambia; cada arranque del juego elige una nueva al
+azar. Al pie de la pagina, la firma tambien rota entre cuatro manos:
+S. Pereira, R. Da Rosa, G. Bandeira, A. Focco.
+
+El gabinete de ajustes gano una frase rotativa del cronista bajo el
+subtitulo, distinta cada vez que se abre. Los botones se sienten con
+mas peso: al presionar se hunden apenas un pixel, la sombra debajo se
+achica, el color se oscurece. El hover ganó suavidad: ya no cambia de
+golpe, se acomoda. Los interruptores tienen un click mas grave y
+mecanico que los botones normales.
+
+El historial de cambios luce mejor: cada titulo grande empieza con una
+capital destacada en tinta oscura, y entre secciones hay un divisor con
+rombo central y lineas que se desvanecen a los costados, como en una
+carta antigua. Ademas recuerda la posicion en la que quedaste, para no
+tener que buscarla al volver.
+
+En Lenguas, la lista tambien recuerda el scroll. En los cuadros de
+confirmacion suena una campanilla al aparecer. Y cuando alguna pantalla
+del gabinete queda a medio dibujar, ya no aparecen restos del despacho
+anterior encima.
+
 ## v0.12.0 - Cierre del ciclo del gabinete
 
 Version administrativa que marca el cierre del ciclo largo v0.10 - v0.11
@@ -10,16 +49,7 @@ papel", y salto de version para senalar que la fase de UI esta cerrada.
 Lo que venga a partir de aqui sera contenido de gameplay: la Gripe Verde
 en si misma, con sus sintomas, sus cuarentenas y sus mecanicas de
 sobrevivencia.
-## v0.12.0 - Cierre del ciclo del gabinete
 
-Version administrativa que marca el cierre del ciclo largo v0.10 - v0.11
-(el gabinete pergamino). Sin codigo nuevo: solo consolidacion narrativa,
-reagrupamiento del changelog in-game bajo la entrada unica "Una casa de
-papel", y salto de version para senalar que la fase de UI esta cerrada.
-
-Lo que venga a partir de aqui sera contenido de gameplay: la Gripe Verde
-en si misma, con sus sintomas, sus cuarentenas y sus mecanicas de
-sobrevivencia.
 ## v0.11.14 - Banderas de las voces
 
 Cada lengua que la ciudad reconoce lleva ahora su ensena junto al nombre.

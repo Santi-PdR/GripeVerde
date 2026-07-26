@@ -31,6 +31,20 @@ import net.minecraft.network.chat.Component;
  */
 public class DiaryOptionsScreen extends Screen {
 
+    // Rotating flavor quotes from the chronicler
+    private static final String[] FLAVOR_POOL = {
+        "Esta noche el gas arde bajo.",
+        "Los registros guardan m\u00e1s de lo que muestran.",
+        "El viento trae rumores del este.",
+        "Alguien ha movido las cortinas del tercer piso.",
+        "La tinta a\u00fan no se ha secado.",
+        "Hay un olor nuevo en el aire, dulce y enfermo.",
+        "Los relojes del barrio no coinciden.",
+        "Otra p\u00e1gina en blanco espera."
+    };
+    private static int flavorIndex = -1;
+    private String currentFlavor;
+
     private final Screen parent;
 
     // Botones del grid
@@ -65,6 +79,10 @@ public class DiaryOptionsScreen extends Screen {
 
     @Override
     protected void init() {
+        // Rotate flavor quote each time options screen opens
+        flavorIndex = (flavorIndex + 1) % FLAVOR_POOL.length;
+        currentFlavor = FLAVOR_POOL[flavorIndex];
+
         int gridH = GRID_ROWS * BTN_H + (GRID_ROWS - 1) * GAP_Y;
         panelW = BTN_W * 2 + GAP_X + PAD_SIDES * 2;
         panelH = PAD_TOP + TITLE_H + SUBTITLE_GAP + TITLE_GAP + gridH + GAP_BEFORE_BACK + BACK_H + PAD_BOTTOM;
@@ -120,6 +138,8 @@ public class DiaryOptionsScreen extends Screen {
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         // Fondo vivo: mismo pipeline del Title, sin flash/vignette (no compiten con el pergamino).
+        // Clear framebuffer + transition fade
+        g.fill(0, 0, this.width, this.height, 0xFF000000);
         AtmosphereRenderer.renderSky(g, this.width, this.height);
         VictorianSkyline.renderBackground(g, this.width, this.height);
         LivingAtmosphere.renderFogLow(g, this.width, this.height);
@@ -149,8 +169,22 @@ public class DiaryOptionsScreen extends Screen {
             int subY = titleY + TITLE_H + 2;
             g.drawString(this.font, subtitle, subX, subY, 0xFF6B4A2E, false);
 
-            // Divisor horizontal bajo el subtitulo (con fade a los costados)
-            int divY1 = subY + this.font.lineHeight + 3;
+            // Rotating flavor quote
+            if (currentFlavor != null) {
+                int flavorW = this.font.width(currentFlavor);
+                int flavorX = (this.width - flavorW) / 2;
+                int flavorY = subY + this.font.lineHeight + 1;
+                g.drawString(this.font, currentFlavor, flavorX, flavorY, 0xC06B4A2E, false);
+            }
+
+            // Divisor horizontal DEBAJO del flavor (no del subtitulo)
+            int divY1;
+            if (currentFlavor != null) {
+                int flavorY = subY + this.font.lineHeight + 1;
+                divY1 = flavorY + this.font.lineHeight + 3;
+            } else {
+                divY1 = subY + this.font.lineHeight + 3;
+            }
             drawInkDivider(g, panelX + 24, panelX + panelW - 24, divY1);
 
             // Divisor horizontal antes del boton Volver

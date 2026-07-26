@@ -36,7 +36,7 @@ public class DiaryButton extends AbstractButton {
     private final Runnable onClick;
     private final Icon icon;
     private final Variant variant;
-    private final EasedValue hoverAnim = new EasedValue(6f);
+    private final EasedValue hoverAnim = new EasedValue(4f);
     private boolean wasHovered = false;
 
     // Constructor completo
@@ -73,6 +73,13 @@ public class DiaryButton extends AbstractButton {
 
         boolean hovered = this.isHoveredOrFocused() && this.active;
 
+        // Detect pressed state: mouse button held while hovered
+        boolean pressed = hovered && this.active
+            && com.mojang.blaze3d.platform.InputConstants.isKeyDown(
+                   org.lwjgl.glfw.GLFW.glfwGetCurrentContext(),
+                   com.mojang.blaze3d.platform.InputConstants.Type.MOUSE.getOrCreate(
+                       org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT).getValue());
+
         // Sonido de hover una sola vez al entrar
         if (hovered && !wasHovered) {
             UiSounds.playHover();
@@ -84,18 +91,29 @@ public class DiaryButton extends AbstractButton {
         hoverAnim.tick(partialTick / 20f);
         float t = hoverAnim.getEased();
 
-        // -------------------- FONDO --------------------
-        // Sombra externa (proyectada bajo el boton) - PRIMERO para que quede abajo
-        int outerShadow = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 110);
-        g.fill(x + 2, y + h, x + w + 1, y + h + 2, outerShadow);
-        int outerShadowSoft = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 50);
-        g.fill(x + 3, y + h + 1, x + w + 2, y + h + 3, outerShadowSoft);
+        // Pressed offset: button sinks 1px down when clicked
+        int pressedOffset = pressed ? 1 : 0;
+        y += pressedOffset;
 
-        // Fondo base: mas oscuro que el pergamino del panel (PAPER)
-        // para que el boton se lea como "tira aplicada sobre el papel".
-        // Base = PAPER_STAINED (0xFFC9B78A); hover = tono aun mas oscuro
+        // -------------------- FONDO --------------------
+        // Sombra externa: smaller when pressed (button sinks into paper)
+        if (!pressed) {
+            int outerShadow = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 110);
+            g.fill(x + 2, y + h, x + w + 1, y + h + 2, outerShadow);
+            int outerShadowSoft = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 50);
+            g.fill(x + 3, y + h + 1, x + w + 2, y + h + 3, outerShadowSoft);
+        } else {
+            int outerShadow = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 60);
+            g.fill(x + 1, y + h, x + w, y + h + 1, outerShadow);
+        }
+
+        // Fondo base: darker when pressed for tactile feel
         int bgHover = 0xFFB09668; // ocre sucio
-        int bg = hoverAnim.lerpColor(DiaryTheme.PAPER_STAINED, bgHover);
+        int bgPressed = 0xFFA08858; // aun mas oscuro
+        int bgTarget = pressed ? bgPressed : bgHover;
+        int bg = pressed
+            ? bgPressed
+            : hoverAnim.lerpColor(DiaryTheme.PAPER_STAINED, bgHover);
         g.fill(x, y, x + w, y + h, bg);
 
         // Highlight superior (papel iluminado desde arriba)

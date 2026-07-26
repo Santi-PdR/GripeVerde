@@ -1,5 +1,81 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.12.1 - Detalles vivos del gabinete
+
+Version con 16 mejoras de UI y atmosfera, distribuidas en 6 bloques
+sucesivos de desarrollo. Sin nuevos KIs criticos. Codigo estable.
+
+### Mejoras aplicadas
+- **Estrellas parpadeantes** (AtmosphereRenderer): 15 de 60 estrellas
+  brillantes 2x2 con borde suave; frecuencia y fase propias por estrella.
+- **Ventana animada** (VictorianSkyline): una ventana FG alterna on/off
+  con transicion suave cada 8-15s.
+- **Farol erratico** (LivingAtmosphere): farol index 2 oscila
+  caoticamente 3-5s cada 30-60s.
+- **Rata cruzando** (LivingAtmosphere): sprite 8x4 cruza la calle
+  cada 40-80s, direccion aleatoria.
+- **DiaryButton pressed + hover suave**: offset Y+1 al click, sombra
+  reducida, bg mas oscuro; EasedValue de 6->4 para hover organico.
+- **DiaryToggle sonido distinto**: clickHeavy en vez de click.
+- **Frases del cronista** en LogoRenderer: pool de 12 apuntes ("Dia 47.
+  Aun no encuentro respuestas.", etc.) rotando aleatoriamente cada
+  30-120s, con Random.nextInt (no incremental).
+- **Firma rotativa** en DiaryTitleScreen: pool de 4 nombres (S. Pereira,
+  R. Da Rosa, G. Bandeira, A. Focco).
+- **Citas rotativas** en DiaryOptionsScreen: pool de 8 frases flavor
+  bajo el subtitulo, cambia al abrir la pantalla.
+- **Separadores con rombo** en ChangelogScreen: lineas con fade lateral
+  y lozenge central 5x5 entre secciones.
+- **Capitular decorativa** en ChangelogScreen: primera letra de H1
+  escalada 1.6x en tinta oscura.
+- **Scroll recordado** en DiaryLanguageScreen y ChangelogScreen (campos
+  estaticos lastScrollAmount / lastScrollY).
+- **Campanilla en DiaryConfirmScreen** al init: UiSounds.notification().
+- **Divisor de Options movido debajo del flavor** (bug fix v0.12.1).
+- **Fill negro inicial** en DiaryChat/Controls/Credits/Language/
+  Options/Sound: para evitar residuo del framebuffer.
+
+### Bugs identificados y revertidos
+- **Fade de transicion** (2 bloques atras): overlay negro 200ms al
+  entrar. Revertido por feedback del usuario: se percibia como flash
+  no como transicion suave.
+- **UiSounds.open() al abrir subpantallas**: revertido por sonar
+  "pesimo" segun feedback.
+- **Parallax con el mouse**: revertido tras causar 2 bugs criticos
+  (piso desaparecia por translate excesivo, y pergamino residual al
+  volver de Options por bordes sin cubrir).
+- **Fill negro en DiaryTitleScreen**: revertido - oscurecia las
+  ventanas amarillas del skyline.
+- **YEAR_POOL con romanos** (Anno Domini MDCCCXCVII): revertido por
+  feedback, reemplazado por apuntes del cronista.
+
+### Errores catalogados
+- **E113**: parallax con `pushPose/translate` en render() causa que
+  elementos se desplacen fuera del area visible cuando el mouse esta
+  lejos del centro. Ademas rompe el ciclo de framebuffer cuando la
+  pantalla cambia. Regla derivada: R-NO-GLOBAL-TRANSLATE-RENDER.
+- **E114**: `g.fill(0,0,w,h, 0xFF000000)` al inicio del Title
+  oscurece las ventanas iluminadas del skyline aunque teoricamente
+  renderSky las tape. Blend issue con capas transparentes. Fix:
+  no usar fill negro en el Title, aceptar el residuo minimo.
+- **E115**: Cloth Config v11.1.136 + IMPR 3.23.3 tuvieron un crash
+  esporadico ("Config IMPConfig has not been registered"). No es
+  culpa del mod nuestro. Fix: borrar
+  config/iammusicplayer.toml y reiniciar. Documentado por si vuelve.
+
+### Reglas nuevas
+- **R-NO-GLOBAL-TRANSLATE-RENDER**: nunca aplicar `pushPose/translate`
+  sobre bloques de render que dibujen escena viva. El offset saca
+  contenido del framebuffer visible y causa bugs de superposicion
+  cuando cambia la pantalla.
+- **R-FRAMEBUFFER-CLEAR-TITLE**: NO llamar `g.fill(0,0,w,h, opaco)`
+  en el render del Title. Los blends de capas dependen del framebuffer
+  base. Si hay residuo del frame anterior, se acepta.
+- **R-CONFIG-RESIDUAL-EXTMOD**: cuando otro mod (IMP, Cloth Config,
+  etc.) falla al arranque con "Config not registered", la solucion
+  primera es borrar su .toml del folder config/ y reiniciar. No es
+  bug nuestro.
+
 ## v0.12.0 - Cierre del ciclo del gabinete (administrativo)
 
 Version sin cambios de codigo. Solo:

@@ -1,5 +1,6 @@
 package com.eternalcraft.gripeverde.client.screens;
 
+import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
@@ -51,6 +52,7 @@ public class DiaryConfirmScreen extends ConfirmScreen {
     @Override
     protected void init() {
         super.init();
+        UiSounds.notification();
 
         // Ocultar botones vanilla via reflection sobre exitButtons
         try {

@@ -32,6 +32,20 @@ public class LivingAtmosphere {
 
     private static float vignettePulse = 0f;
 
+    // Street rat: sprite 8x4 crossing horizontally every 40-80s
+    private static float ratX = -0.2f;       // 0..1 normalized screen X
+    private static float ratSpeed = 0f;       // per-second, negative = right-to-left
+    private static float ratTimer = 10f;
+    private static float ratNextEvent = 30f;
+    private static boolean ratActive = false;
+
+    // Erratic lantern: one specific lantern flickers wildly every 30-60s
+    private static final int ERRATIC_LANTERN_INDEX = 2;
+    private static float erraticTimer = 20f;
+    private static float erraticNextEvent = 30f;
+    private static float erraticIntensity = 0f;  // 0=normal, 1=full erratic
+    private static float erraticDuration = 0f;
+
     public static void tick(float deltaTime) {
         time += deltaTime;
         initAll();
@@ -77,6 +91,44 @@ public class LivingAtmosphere {
             nextLightning  = 15f + (float)(Math.random() * 25f);
         }
         vignettePulse = (float)(Math.sin(time * 0.5f) * 0.5f + 0.5f);
+
+        // Erratic lantern timer
+        erraticTimer += deltaTime;
+        if (erraticIntensity > 0f) {
+            erraticDuration -= deltaTime;
+            if (erraticDuration <= 0f) {
+                erraticIntensity = 0f;
+                erraticNextEvent = 30f + (float)(Math.random() * 30.0);
+                erraticTimer = 0f;
+            }
+        } else if (erraticTimer >= erraticNextEvent) {
+            erraticIntensity = 1f;
+            erraticDuration = 3f + (float)(Math.random() * 2.0);
+        }
+
+        // Street rat: crossing logic
+        if (ratActive) {
+            ratX += ratSpeed * deltaTime;
+            // Off-screen either side
+            if (ratX < -0.1f || ratX > 1.1f) {
+                ratActive = false;
+                ratTimer = 0f;
+                ratNextEvent = 40f + (float)(Math.random() * 40.0);
+            }
+        } else {
+            ratTimer += deltaTime;
+            if (ratTimer >= ratNextEvent) {
+                ratActive = true;
+                // 50/50 direction
+                if (Math.random() < 0.5) {
+                    ratX = -0.05f;
+                    ratSpeed = 0.15f + (float)(Math.random() * 0.10);  // left to right
+                } else {
+                    ratX = 1.05f;
+                    ratSpeed = -(0.15f + (float)(Math.random() * 0.10));  // right to left
+                }
+            }
+        }
     }
 
     private static void initAll() {
@@ -142,6 +194,7 @@ public class LivingAtmosphere {
             renderGasLantern(g, lanternPositions[i][0], lanternPositions[i][1], i, w, h);
         }
         renderSpores(g, w, h);
+        renderRat(g, w, h);
     }
 
     public static void renderAir(GuiGraphics g, int w, int h) {
@@ -325,7 +378,16 @@ public class LivingAtmosphere {
             Math.sin(time * 7.1f + index * 2.7f) * 0.15f +
             0.85f
         );
-        flicker = Math.max(0.5f, Math.min(1.2f, flicker));
+        // Erratic override for one lantern: wild high-frequency oscillation
+        if (index == ERRATIC_LANTERN_INDEX && erraticIntensity > 0f) {
+            float chaos = (float)(
+                Math.sin(time * 23f) * 0.3f +
+                Math.sin(time * 37f + 1.7f) * 0.2f +
+                Math.sin(time * 53f + 3.1f) * 0.15f
+            );
+            flicker = flicker + chaos * erraticIntensity;
+        }
+        flicker = Math.max(0.15f, Math.min(1.2f, flicker));
 
         int lanternY = ly - postH;
 
@@ -385,6 +447,33 @@ public class LivingAtmosphere {
             // Esporas verde-oliva desaturado
             g.fill(sx - sz, sy - sz, sx + sz, sy + sz,
                 AtmosphereRenderer.withAlpha(0x005A7038, alpha));
+        }
+    }
+
+    private static void renderRat(GuiGraphics g, int w, int h) {
+        if (!ratActive) return;
+        int rx = (int)(ratX * w);
+        // Street level Y: use same reference as lanterns (h*0.84 approx)
+        int ry = (int)(h * 0.90f);
+        // Body: 8x4 dark grey
+        int body = 0xFF0F0805;
+        int belly = 0xFF1A0F08;
+        // Direction determines orientation
+        boolean rightward = ratSpeed > 0;
+        if (rightward) {
+            g.fill(rx, ry, rx + 8, ry + 3, body);       // body
+            g.fill(rx, ry + 3, rx + 7, ry + 4, belly);  // belly
+            g.fill(rx + 7, ry + 1, rx + 9, ry + 2, body); // head
+            g.fill(rx + 8, ry + 3, rx + 9, ry + 4, body); // front leg
+            g.fill(rx + 1, ry + 3, rx + 2, ry + 4, body); // back leg
+            g.fill(rx - 3, ry + 1, rx, ry + 2, body);     // tail
+        } else {
+            g.fill(rx, ry, rx + 8, ry + 3, body);
+            g.fill(rx + 1, ry + 3, rx + 8, ry + 4, belly);
+            g.fill(rx - 1, ry + 1, rx + 1, ry + 2, body); // head
+            g.fill(rx, ry + 3, rx + 1, ry + 4, body);
+            g.fill(rx + 6, ry + 3, rx + 7, ry + 4, body);
+            g.fill(rx + 8, ry + 1, rx + 11, ry + 2, body); // tail
         }
     }
 

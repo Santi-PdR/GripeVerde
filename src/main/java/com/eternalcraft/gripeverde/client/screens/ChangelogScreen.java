@@ -47,6 +47,7 @@ public class ChangelogScreen extends Screen {
     private final List<Row> rows = new ArrayList<>();
     private boolean loadError = false;
     private int scrollY = 0;
+    private static int lastScrollY = 0;  // Remembered across reopens
     private int maxScroll = 0;
     private int lastContentW = -1;
 
@@ -58,7 +59,7 @@ public class ChangelogScreen extends Screen {
     @Override
     protected void init() {
         this.clearWidgets();
-        this.scrollY = 0;
+        this.scrollY = lastScrollY;
         this.loadError = false;
         this.rows.clear();
         this.lastContentW = -1;
@@ -234,9 +235,25 @@ public class ChangelogScreen extends Screen {
         if (row.type == LT.GAP) return;
 
         if (row.type == LT.SEPARATOR) {
-            int lineY = y + 3;
-            g.fill(x + 20, lineY, x + maxW - 20, lineY + 1,
-                DiaryTheme.withAlpha(DiaryTheme.BRONZE, 90));
+            int lineY = y + 5;
+            int sepX1 = x + 20;
+            int sepX2 = x + maxW - 20;
+            int sepCx = (sepX1 + sepX2) / 2;
+            int sepMid = (sepX1 + sepX2) / 2;
+            int inkSep = DiaryTheme.withAlpha(DiaryTheme.BRONZE, 110);
+            // Left line with fade
+            g.fillGradient(sepX1, lineY, sepMid - 6, lineY + 1,
+                DiaryTheme.withAlpha(DiaryTheme.BRONZE, 20), inkSep);
+            // Right line with fade
+            g.fillGradient(sepMid + 6, lineY, sepX2, lineY + 1,
+                inkSep, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 20));
+            // Central lozenge (diamond 5x5)
+            int lz = DiaryTheme.withAlpha(DiaryTheme.BRONZE, 160);
+            g.fill(sepCx,     lineY - 2, sepCx + 1, lineY - 1, lz);
+            g.fill(sepCx - 1, lineY - 1, sepCx + 2, lineY,     lz);
+            g.fill(sepCx - 2, lineY,     sepCx + 3, lineY + 1, lz);
+            g.fill(sepCx - 1, lineY + 1, sepCx + 2, lineY + 2, lz);
+            g.fill(sepCx,     lineY + 2, sepCx + 1, lineY + 3, lz);
             return;
         }
 
@@ -260,6 +277,29 @@ public class ChangelogScreen extends Screen {
             int ly = y;
             for (FormattedCharSequence fcs : wrapped) {
                 g.drawString(this.font, fcs, x + indent + prefixW, ly, color, false);
+                ly += lh;
+            }
+        } else if (row.type == LT.H1 && row.text.length() > 1) {
+            // Drop cap: first letter drawn larger in dark ink
+            String firstLetter = row.text.substring(0, 1);
+            String rest = row.text.substring(1);
+            int capColor = DiaryTheme.INK;
+
+            g.pose().pushPose();
+            float capScale = 1.6f;
+            g.pose().translate(x + indent, y - 1, 0);
+            g.pose().scale(capScale, capScale, 1f);
+            g.drawString(this.font, firstLetter, 0, 0, capColor, false);
+            g.pose().popPose();
+
+            int capW = (int)(this.font.width(firstLetter) * capScale) + 2;
+            int available = Math.max(20, maxW - indent - capW);
+            List<FormattedCharSequence> wrapped =
+                this.font.split(Component.literal(rest), available);
+            int ly = y;
+            for (int wi = 0; wi < wrapped.size(); wi++) {
+                int lx = (wi == 0) ? x + indent + capW : x + indent;
+                g.drawString(this.font, wrapped.get(wi), lx, ly, color, false);
                 ly += lh;
             }
         } else {
@@ -299,4 +339,10 @@ public class ChangelogScreen extends Screen {
 
     @Override public boolean isPauseScreen()    { return false; }
     @Override public boolean shouldCloseOnEsc() { return false; }
+
+    @Override
+    public void onClose() {
+        lastScrollY = this.scrollY;
+        super.onClose();
+    }
 }

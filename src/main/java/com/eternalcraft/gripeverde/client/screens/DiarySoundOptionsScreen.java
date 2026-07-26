@@ -159,6 +159,8 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         // --- Escena viva atenuada ---
+        // Clear framebuffer + transition fade
+        g.fill(0, 0, this.width, this.height, 0xFF000000);
         AtmosphereRenderer.renderSky(g, this.width, this.height);
         VictorianSkyline.renderBackground(g, this.width, this.height);
         LivingAtmosphere.renderFogLow(g, this.width, this.height);

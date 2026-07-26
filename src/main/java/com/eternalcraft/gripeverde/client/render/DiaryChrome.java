@@ -234,4 +234,6 @@ public final class DiaryChrome {
         // Fade inferior: transparente -> pergamino (de arriba hacia abajo)
         gfx.fillGradient(listLeft, listBottom - fadeH, listRight, listBottom, paperClear, paperFull);
     }
+
+
 }

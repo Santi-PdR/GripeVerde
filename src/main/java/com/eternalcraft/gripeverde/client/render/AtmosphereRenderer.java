@@ -50,10 +50,28 @@ public class AtmosphereRenderer {
         for (int i = 0; i < 60; i++) {
             int sx = rng.nextInt(w);
             int sy = rng.nextInt(halfH);
-            float twinkle = (float)(Math.sin(time * (0.5f + rng.nextFloat()) + i) * 0.4f + 0.6f);
-            int alpha = (int)(twinkle * 120);
+            // Each star gets its own frequency and phase for organic twinkle
+            float freq = 0.3f + rng.nextFloat() * 1.2f;
+            float phase = rng.nextFloat() * 6.28f;
+            float twinkle = (float)(Math.sin(time * freq + phase) * 0.5f + 0.5f);
+            // Bright stars (first 15): larger, brighter, wider twinkle range
+            boolean bright = (i < 15);
+            int baseAlpha = bright ? 60 : 30;
+            int peakAlpha = bright ? 200 : 120;
+            int alpha = baseAlpha + (int)(twinkle * (peakAlpha - baseAlpha));
             int color = (alpha << 24) | 0xE8DCB4;
-            g.fill(sx, sy, sx + 1, sy + 1, color);
+            if (bright) {
+                // 2x2 star with softer edge
+                int edgeAlpha = Math.max(0, alpha / 3);
+                int edgeColor = (edgeAlpha << 24) | 0xE8DCB4;
+                g.fill(sx, sy, sx + 2, sy + 2, color);
+                g.fill(sx - 1, sy, sx, sy + 2, edgeColor);
+                g.fill(sx + 2, sy, sx + 3, sy + 2, edgeColor);
+                g.fill(sx, sy - 1, sx + 2, sy, edgeColor);
+                g.fill(sx, sy + 2, sx + 2, sy + 3, edgeColor);
+            } else {
+                g.fill(sx, sy, sx + 1, sy + 1, color);
+            }
         }
     }
 

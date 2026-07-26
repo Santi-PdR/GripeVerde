@@ -29,7 +29,10 @@ public class DiaryLanguageScreen extends Screen {
     private static final int FOOTER_BTN_H = 22;
     private static final int FOOTER_BTN_GAP = 10;
     private static final int LIST_ITEM_H = 20;
-    private static final int FLAG_SLOT    = 22; // px reservados a la izquierda para bandera
+    private static final int FLAG_SLOT    = 22;
+
+    // Remember scroll position across reopens
+    private static double lastScrollAmount = 0.0; // px reservados a la izquierda para bandera
 
     // Tonos de tinta especificos de la lista de idiomas (no van al DiaryChrome
     // porque solo tienen sentido aqui)
@@ -83,6 +86,10 @@ public class DiaryLanguageScreen extends Screen {
 
         this.languageList = new LanguageList(this.minecraft, this.listX, this.listY, this.listW, this.listH);
         this.addWidget(this.languageList);
+        // Restore previous scroll position
+        if (lastScrollAmount > 0) {
+            this.languageList.setScrollAmount(lastScrollAmount);
+        }
 
         int footerW = this.panelW - PANEL_PAD * 2;
         int leftBtnW = (footerW - FOOTER_BTN_GAP) / 2;
@@ -121,6 +128,8 @@ public class DiaryLanguageScreen extends Screen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        // Clear framebuffer + transition fade
+        g.fill(0, 0, this.width, this.height, 0xFF000000);
         AtmosphereRenderer.renderSky(g, this.width, this.height);
         VictorianSkyline.renderBackground(g, this.width, this.height);
         LivingAtmosphere.renderFogLow(g, this.width, this.height);
@@ -188,6 +197,10 @@ public class DiaryLanguageScreen extends Screen {
 
     @Override
     public void onClose() {
+        // Save scroll position for next open
+        if (this.languageList != null) {
+            lastScrollAmount = this.languageList.getScrollAmount();
+        }
         // ESC cancela sin aplicar el idioma pendiente
         this.options.save();
         this.minecraft.setScreen(this.parent);

@@ -7,11 +7,11 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.12.0
+- Version estable actual: v0.12.1
 - build.gradle: version = '0.12.0'
-- GripeVerdeMod.VERSION: "0.12.0"
+- GripeVerdeMod.VERSION: "0.12.1"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
-- Ultimo tag publicado: v0.12.0
+- Ultimo tag publicado: v0.12.1
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
 
@@ -69,7 +69,7 @@ C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 
 - Local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 - Remoto: https://github.com/Santi-PdR/GripeVerde (privado)
-- Ultimo tag: v0.12.0
+- Ultimo tag: v0.12.1
 
 ## Rutas reales verificadas
 
@@ -1725,3 +1725,80 @@ Riesgo: ALTO. Requiere diseno previo escrito antes de codigo.
 
 ### Candidato O: v0.12.x - Mixin dirt bypass (KI-12) [pendiente sin urgencia]
 Ruta correcta identificada. Se puede hacer cuando quede tiempo.
+
+
+---
+## ADDENDUM v0.12.1 (detalles vivos del gabinete)
+
+### Alcance
+Version de polish visual y atmosferico. 16 mejoras aplicadas en 6 bloques
+de desarrollo iterativo con feedback en vivo del usuario. Bugs
+introducidos por mejoras experimentales fueron revertidos limpiamente.
+
+### Cambios de codigo
+- **AtmosphereRenderer.renderStars()**: 15 estrellas brillantes 2x2
+  con borde suave; frecuencia y fase propias por estrella (organic
+  twinkle).
+- **VictorianSkyline**: nueva ventana animada FG (index 2/1/1) que
+  alterna on/off con transicion suave cada 8-15s. Campos
+  animWindowPhase/Timer/On + logica en tick() + override en
+  renderWindowsOnBuildings.
+- **LivingAtmosphere**: farol erratico (index 2) con oscilacion
+  caotica 3-5s cada 30-60s. Campos erraticTimer/NextEvent/Intensity/
+  Duration.
+- **LivingAtmosphere**: rata cruzando (sprite 8x4, direccion aleatoria)
+  cada 40-80s. Campos ratX/Speed/Timer/NextEvent/Active + renderRat.
+- **DiaryButton**: pressed state (offset Y+1, sombra reducida a 60
+  alpha, bg 0xFFA08858); hover speed 6->4 (EasedValue mas suave).
+- **DiaryToggle**: playDownSound cambia de playClick() a clickHeavy().
+- **LogoRenderer**: pool de 12 frases del cronista con Random.nextInt
+  no repetitivo. Timer YEAR_ROTATE_MS variable 30-120s con
+  rerollRotateInterval() en cada rotacion.
+- **DiaryTitleScreen**: pool de 4 firmas rotativas (SIGNATURE_POOL)
+  sincronizadas con yearIndex.
+- **DiaryOptionsScreen**: pool de 8 flavors rotativas + campo estatico
+  flavorIndex + currentFlavor. Divisor superior movido debajo del
+  flavor con branching if/else.
+- **ChangelogScreen**: capitular decorativa (drop cap 1.6x en INK oscura)
+  + separadores con rombo (lozenge 5x5 + fillGradient lateral) +
+  lastScrollY estatico + override onClose.
+- **DiaryLanguageScreen**: lastScrollAmount estatico + setScrollAmount
+  restore en init + save en onClose.
+- **DiaryConfirmScreen**: UiSounds.notification() al init.
+- **DiaryChat/Controls/Credits/Options/Sound + Language**: fill negro
+  inicial `g.fill(0,0,w,h, 0xFF000000)` para prevenir residuo del
+  framebuffer al cambiar de pantalla.
+
+### Cambios revertidos durante desarrollo
+- Fade de transicion 200ms al entrar a Diary screens (percibido como
+  flash, no como transicion).
+- UiSounds.open() al abrir subpantallas (sonaba mal).
+- Parallax con mouse en Title (piso desaparecia, pergamino residual).
+- Fill negro en DiaryTitleScreen (oscurecia ventanas iluminadas).
+- YEAR_POOL con anos romanos (Anno Domini MDCCCXCVII) reemplazado
+  por apuntes del cronista.
+
+### Errores catalogados
+Ver KNOWN_ISSUES.md v0.12.1: E113 (parallax overshoot), E114 (fill
+negro en Title rompe blend), E115 (Cloth Config + IMPR crash externo).
+
+### Reglas nuevas formalizadas
+- **R-NO-GLOBAL-TRANSLATE-RENDER**: no aplicar pushPose/translate sobre
+  escena viva en render().
+- **R-FRAMEBUFFER-CLEAR-TITLE**: no llamar fill negro opaco en Title.
+- **R-CONFIG-RESIDUAL-EXTMOD**: crash de mod externo por config no
+  registrada = borrar .toml y reiniciar.
+
+## PROXIMO HITO PLANIFICADO (revisado tras v0.12.1)
+
+### Candidato NEXT: v0.12.2 - Otras 30-40 mejoras de polish
+El usuario confirmo que quiere seguir con 30-40 cambios mas de UI/
+atmosfera. Del backlog de 50 mejoras original quedan pendientes:
+transiciones (con estrategia distinta al fade rechazado), variantes
+nocturnas del Title, gramofono completo, breadcrumb, cursor de pluma,
+hover con feedback sonoro diferenciado, humo verde intermitente,
+carruaje cruzando, relampago con silueta, entre otros.
+
+### Candidato KI-12: hito mixin dirt bypass (pendiente sin urgencia).
+
+### Candidato C: v0.13.0+ - Contenido de gameplay (Gripe Verde en si).
