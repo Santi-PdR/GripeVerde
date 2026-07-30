@@ -38,6 +38,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
 
     @Override
     protected void init() {
+        accFlavorIndex = ACC_RNG.nextInt(ACC_FLAVOR_POOL.length);
         super.init();
 
         // Panel adaptativo
@@ -118,7 +119,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         // Flavor
         int flavorY = subtitleY + 13;
         {
-            Component flvC = Component.translatable("gripeverde.options.accessibility.flavor");
+            Component flvC = Component.literal(getRotatingAccFlavor());
             int flvW = this.font.width(flvC);
             gfx.drawString(this.font, flvC, cx - flvW / 2, flavorY, DiaryChrome.INK_FLAVOR, false);
         }
@@ -154,5 +155,25 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         VictorianSkyline.tick(delta);
         LivingAtmosphere.tick(delta);
         MenuMusic.tick();
+    }
+
+    // Rotating flavor quotes for accessibility options
+    private static final String[] ACC_FLAVOR_POOL = {
+        "Ajustad los sentidos con prudencia.",
+        "No todos ven la ciudad con los mismos ojos.",
+        "Algunos oidos ya no escuchan las campanas.",
+        "La vista se cansa antes que la fiebre.",
+        "Cada sentido cuenta cuando falta uno.",
+        "Que nadie quede fuera de la cronica.",
+        "Las manos tambien saben leer."
+    };
+    private static int accFlavorIndex = -1;
+    private static final java.util.Random ACC_RNG = new java.util.Random();
+
+    private static String getRotatingAccFlavor() {
+        if (accFlavorIndex < 0) {
+            accFlavorIndex = ACC_RNG.nextInt(ACC_FLAVOR_POOL.length);
+        }
+        return ACC_FLAVOR_POOL[accFlavorIndex];
     }
 }

@@ -93,9 +93,7 @@ public class DiaryCreditsScreen extends Screen {
         LivingAtmosphere.renderFogLow(g, this.width, this.height);
         VictorianSkyline.renderForeground(g, this.width, this.height);
         LivingAtmosphere.renderStreetLevel(g, this.width, this.height);
-        LivingAtmosphere.renderAir(g, this.width, this.height);
-
-        // Overlay
+                // Overlay
         g.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
 
         // Pergamino

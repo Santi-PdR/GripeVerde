@@ -12,15 +12,172 @@ public class AtmosphereRenderer {
 
     private static float time = 0f;
     private static final float[] CLOUD_OFFSETS = {0f, 0f, 0f, 0f, 0f, 0f, 0f};
-    private static final float[] CLOUD_SPEEDS  = {0.008f, 0.005f, 0.012f, 0.007f, 0.009f, 0.003f, 0.004f};
+    private static final float[] CLOUD_SPEEDS = new float[7];
+    private static boolean cloudSpeedsInit = false;
+
+    private static void initCloudSpeeds() {
+        if (cloudSpeedsInit) return;
+        // Velocidades base con variacion +-30% por sesion
+        float[] base = {0.008f, 0.005f, 0.012f, 0.007f, 0.009f, 0.003f, 0.004f};
+        java.util.Random rng = new java.util.Random();
+        for (int i = 0; i < base.length; i++) {
+            float variation = 0.7f + rng.nextFloat() * 0.6f;  // 0.7 .. 1.3
+            CLOUD_SPEEDS[i] = base[i] * variation;
+        }
+        cloudSpeedsInit = true;
+    }
     private static float moonGlowPulse = 0f;
 
+    // Moon phases: 0=new, 1=waxing crescent, 2=first quarter, 3=waxing gibbous,
+    // 4=full, 5=waning gibbous, 6=last quarter, 7=waning crescent
+    private static int moonPhaseIndex = -1;
+    private static long lastMoonPhaseRotateMs = 0L;
+    private static long MOON_PHASE_ROTATE_MS = 300_000L;
+    private static final java.util.Random MOON_RNG = new java.util.Random();
+
+    // Shooting star: single star crossing every 30-90s
+    private static float shootStarX = -0.2f;
+    private static float shootStarY = 0.1f;
+    private static float shootStarSpeedX = 0f;
+    private static float shootStarSpeedY = 0f;
+    private static float shootStarTimer = 20f;
+    private static float shootStarNextEvent = 40f;
+    private static boolean shootStarActive = false;
+    /** Mensaje breve visible cuando aparece una estrella fugaz. Se limpia automaticamente. */
+    public static String shootStarMessage = null;
+    public static long shootStarMessageUntilMs = 0L;
+
+    private static final String[] SHOOT_STAR_MESSAGES = {
+        "Un deseo cae del cielo",
+        "Algo cruzo la noche",
+        "Una senal fugaz",
+        "El cielo parpadea"
+    };
+    // Trail: guardamos las ultimas 8 posiciones para la estela
+    private static final int TRAIL_LEN = 12;
+    private static final float[][] shootStarTrail = new float[12][2];
+
+    // Birds flock: 3-4 siluetas cruzando el cielo cada 90-180s
+    private static final int BIRDS_COUNT = 4;
+    private static final float[][] birds = new float[BIRDS_COUNT][4];  // x, y, wingPhase, active
+    private static float birdsTimer = 30f;
+    private static float birdsNextEvent = 90f;
+    private static boolean birdsActive = false;
+    private static float birdsSpeedX = 0f;
+
     public static void tick(float deltaTime) {
+        initCloudSpeeds();
         time += deltaTime;
         moonGlowPulse = (float)(Math.sin(time * 0.4f) * 0.5f + 0.5f);
         for (int i = 0; i < CLOUD_OFFSETS.length; i++) {
             CLOUD_OFFSETS[i] += CLOUD_SPEEDS[i] * deltaTime * 60f;
             if (CLOUD_OFFSETS[i] > 400f) CLOUD_OFFSETS[i] = -300f;
+        }
+
+        // Moon phase rotation
+        long now = System.currentTimeMillis();
+        if (moonPhaseIndex < 0 || (now - lastMoonPhaseRotateMs) >= MOON_PHASE_ROTATE_MS) {
+            int prev = moonPhaseIndex;
+            int next;
+            do { next = MOON_RNG.nextInt(8); } while (next == prev);
+            moonPhaseIndex = next;
+            lastMoonPhaseRotateMs = now;
+            MOON_PHASE_ROTATE_MS = 240_000L + (long)(MOON_RNG.nextDouble() * 240_000L);
+        }
+
+        // Shooting star
+        if (shootStarActive) {
+            // Shift trail
+            for (int i = TRAIL_LEN - 1; i > 0; i--) {
+                shootStarTrail[i][0] = shootStarTrail[i-1][0];
+                shootStarTrail[i][1] = shootStarTrail[i-1][1];
+            }
+            shootStarTrail[0][0] = shootStarX;
+            shootStarTrail[0][1] = shootStarY;
+            shootStarX += shootStarSpeedX * deltaTime;
+            shootStarY += shootStarSpeedY * deltaTime;
+            if (shootStarX < -0.15f || shootStarX > 1.15f
+                || shootStarY < -0.05f || shootStarY > 0.6f) {
+                shootStarActive = false;
+                shootStarTimer = 0f;
+                shootStarNextEvent = 60f + (float)(MOON_RNG.nextDouble() * 120.0);
+            }
+        } else {
+            shootStarTimer += deltaTime;
+            if (shootStarTimer >= shootStarNextEvent) {
+                shootStarActive = true;
+                // Frase al aparecer
+                shootStarMessage = SHOOT_STAR_MESSAGES[MOON_RNG.nextInt(SHOOT_STAR_MESSAGES.length)];
+                shootStarMessageUntilMs = System.currentTimeMillis() + 3000L;
+                // Sonido sutil al pasar
+                try {
+                    net.minecraft.client.Minecraft.getInstance().getSoundManager().play(
+                        net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(
+                            com.eternalcraft.gripeverde.client.audio.ModSounds.UI_SCROLL.get(),
+                            0.8f, 0.15f));
+                } catch (Throwable ignored) {}
+                // Start desde borde superior aleatorio
+                if (MOON_RNG.nextBoolean()) {
+                    shootStarX = -0.1f;
+                    shootStarSpeedX = 0.4f + (float)(MOON_RNG.nextDouble() * 0.3);
+                } else {
+                    shootStarX = 1.1f;
+                    shootStarSpeedX = -(0.4f + (float)(MOON_RNG.nextDouble() * 0.3));
+                }
+                shootStarY = 0.05f + (float)(MOON_RNG.nextDouble() * 0.15);
+                shootStarSpeedY = 0.1f + (float)(MOON_RNG.nextDouble() * 0.15);
+                // Reset trail
+                for (int i = 0; i < TRAIL_LEN; i++) {
+                    shootStarTrail[i][0] = shootStarX;
+                    shootStarTrail[i][1] = shootStarY;
+                }
+            }
+        }
+
+        // Birds flock
+        if (birdsActive) {
+            for (int i = 0; i < BIRDS_COUNT; i++) {
+                if (birds[i][3] > 0f) {  // active
+                    birds[i][0] += birdsSpeedX * deltaTime;
+                    birds[i][2] += deltaTime * 6f;  // wing phase
+                }
+            }
+            // Check if flock is off-screen
+            boolean anyOnScreen = false;
+            for (int i = 0; i < BIRDS_COUNT; i++) {
+                if (birds[i][3] > 0f && birds[i][0] > -0.1f && birds[i][0] < 1.1f) {
+                    anyOnScreen = true; break;
+                }
+            }
+            if (!anyOnScreen) {
+                birdsActive = false;
+                birdsTimer = 0f;
+                birdsNextEvent = 90f + (float)(MOON_RNG.nextDouble() * 90.0);
+            }
+        } else {
+            birdsTimer += deltaTime;
+            if (birdsTimer >= birdsNextEvent) {
+                birdsActive = true;
+                boolean rightward = MOON_RNG.nextBoolean();
+                birdsSpeedX = rightward ? 0.06f + (float)(MOON_RNG.nextDouble() * 0.04)
+                                        : -(0.06f + (float)(MOON_RNG.nextDouble() * 0.04));
+                float startX = rightward ? -0.1f : 1.1f;
+                float baseY = 0.08f + (float)(MOON_RNG.nextDouble() * 0.15);
+                // Formacion en V o linea
+                int count = 3 + MOON_RNG.nextInt(2);  // 3 o 4
+                for (int i = 0; i < BIRDS_COUNT; i++) {
+                    if (i < count) {
+                        // Spacing
+                        float offset = (float)i * 0.035f * (rightward ? -1 : 1);
+                        birds[i][0] = startX + offset;
+                        birds[i][1] = baseY + (float)i * 0.008f;  // ligera diferencia en Y
+                        birds[i][2] = MOON_RNG.nextFloat() * 6.28f;
+                        birds[i][3] = 1f;  // active
+                    } else {
+                        birds[i][3] = 0f;
+                    }
+                }
+            }
         }
     }
 
@@ -31,7 +188,9 @@ public class AtmosphereRenderer {
         if (w <= 0 || h <= 0) return;
         renderSkyGradient(g, w, h);
         renderStars(g, w, h);
+        renderShootingStar(g, w, h);
         renderMoon(g, w, h);
+        renderBirds(g, w, h);
         renderClouds(g, w, h);
     }
 
@@ -41,6 +200,19 @@ public class AtmosphereRenderer {
         fillGradientV(g, 0, 0,     w, stop1, DiaryTheme.NIGHT_TOP,   DiaryTheme.NIGHT_UPPER);
         fillGradientV(g, 0, stop1, w, stop2, DiaryTheme.NIGHT_UPPER, DiaryTheme.NIGHT_MID);
         fillGradientV(g, 0, stop2, w, h,     DiaryTheme.NIGHT_MID,   DiaryTheme.NIGHT_HORIZON);
+
+        // Efecto vela al marcar las 12: overlay muy sutil que parpadea
+        try {
+            if (com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.isNearNoon()) {
+                float flicker = (float)(Math.sin(time * 4.0f) * 0.5f + 0.5f);
+                float chaos = (float)(Math.sin(time * 11.3f) * 0.4f + 0.6f);
+                float intensity = flicker * chaos;
+                int alpha = (int)(intensity * 15);
+                if (alpha > 1) {
+                    g.fill(0, 0, w, h, (alpha << 24) | 0x2A1608);
+                }
+            }
+        } catch (Throwable ignored) {}
     }
 
     private static void renderStars(GuiGraphics g, int w, int h) {
@@ -80,32 +252,193 @@ public class AtmosphereRenderer {
         int cy = (int)(h * 0.18f);
         int radius = (int)(w * 0.025f);
 
-        // Halo exterior suave (blobs, no anillos duros)
-        int haloAlpha = 18 + (int)(moonGlowPulse * 14);
-        drawSoftBlob(g, cx, cy, radius + 34, haloAlpha,           0x00E8DCB4);
-        drawSoftBlob(g, cx, cy, radius + 22, haloAlpha + 8,       0x00D4C089);
-        drawSoftBlob(g, cx, cy, radius + 12, haloAlpha + 14,      0x00F0E5C0);
+        int phase = moonPhaseIndex < 0 ? 4 : moonPhaseIndex;  // fallback full
 
-        // Disco lunar
-        fillCircle(g, cx, cy, radius, DiaryTheme.MOON_WHITE);
+        // Halo: solo en fases con iluminacion significativa (>50%)
+        float phaseIntensity = getPhaseIlluminationFactor(phase);
+        if (phaseIntensity > 0.4f) {
+            int haloAlpha = (int)((12 + (int)(moonGlowPulse * 10)) * phaseIntensity);
+            drawSoftBlob(g, cx, cy, radius + 24, haloAlpha,       0x00E8DCB4);
+            drawSoftBlob(g, cx, cy, radius + 14, haloAlpha + 5,   0x00D4C089);
+            drawSoftBlob(g, cx, cy, radius + 8,  haloAlpha + 8,   0x00F0E5C0);
+        }
 
-        // Manchas de crateres
-        g.fill(cx - 3, cy - 2, cx - 1, cy,     0xFFB8AB88);
-        g.fill(cx + 1, cy + 1, cx + 3, cy + 3, 0xFFB8AB88);
-        g.fill(cx - 1, cy + 2, cx,     cy + 3, 0xFFB8AB88);
+        // Luna: solo dibujar la parte iluminada segun la fase.
+        // NO dibujamos disco oscuro base (queda transparente sobre el cielo).
+        if (phase == 0) {
+            // Nueva: solo halo muy tenue
+            int newMoonHint = AtmosphereRenderer.withAlpha(0x00E8DCB4, 8);
+            fillCircle(g, cx, cy, radius, newMoonHint);
+        } else {
+            // Recorte iluminado sin disco oscuro atras
+            renderMoonPhase(g, cx, cy, radius, phase);
+        }
 
-        // Jirones finos cruzando la luna (delante del disco)
-        int wispAlphaA = 40 + (int)(moonGlowPulse * 15);
-        int wispAlphaB = 32 + (int)(moonGlowPulse * 12);
-        int wispAlphaC = 24 + (int)(moonGlowPulse * 10);
+        // Jirones finos (solo si hay algo iluminado)
+        if (phase != 0) {  // no en luna nueva
+            int wispAlphaA = 40 + (int)(moonGlowPulse * 15);
+            int wispAlphaB = 32 + (int)(moonGlowPulse * 12);
+            int wispAlphaC = 24 + (int)(moonGlowPulse * 10);
 
-        float driftA = (float)(Math.sin(time * 0.06f) * (radius * 2.5f));
-        float driftB = (float)(Math.sin(time * 0.045f + 1.7f) * (radius * 3.0f));
-        float driftC = (float)(Math.sin(time * 0.035f + 3.2f) * (radius * 2.2f));
+            float driftA = (float)(Math.sin(time * 0.06f) * (radius * 2.5f));
+            float driftB = (float)(Math.sin(time * 0.045f + 1.7f) * (radius * 3.0f));
+            float driftC = (float)(Math.sin(time * 0.035f + 3.2f) * (radius * 2.2f));
 
-        drawMoonWisp(g, cx - radius * 3 + (int)driftA, cy - radius / 2, 3, wispAlphaA, 6, 5, 0x00201810);
-        drawMoonWisp(g, cx - radius * 3 + (int)driftB, cy + 1,           3, wispAlphaB, 7, 5, 0x00241C12);
-        drawMoonWisp(g, cx - radius * 3 + (int)driftC, cy + radius / 2, 3, wispAlphaC, 6, 5, 0x001E1610);
+            drawMoonWisp(g, cx - radius * 3 + (int)driftA, cy - radius / 2, 3, wispAlphaA, 6, 5, 0x00201810);
+            drawMoonWisp(g, cx - radius * 3 + (int)driftB, cy + 1,           3, wispAlphaB, 7, 5, 0x00241C12);
+            drawMoonWisp(g, cx - radius * 3 + (int)driftC, cy + radius / 2, 3, wispAlphaC, 6, 5, 0x001E1610);
+        }
+    }
+
+    /** Factor de iluminacion de la luna segun fase (0..1). */
+    private static float getPhaseIlluminationFactor(int phase) {
+        switch (phase) {
+            case 0: return 0.15f;  // new
+            case 1: case 7: return 0.30f;  // crescent
+            case 2: case 6: return 0.55f;  // quarter
+            case 3: case 5: return 0.80f;  // gibbous
+            case 4: return 1.0f;   // full
+            default: return 1.0f;
+        }
+    }
+
+    /** Dibuja SOLO la parte iluminada del disco lunar segun la fase.
+     *  NO dibuja disco oscuro (queda transparente sobre el cielo). */
+    private static void renderMoonPhase(GuiGraphics g, int cx, int cy, int radius, int phase) {
+        int moonLight = DiaryTheme.MOON_WHITE;
+
+        switch (phase) {
+            case 0: // new: nada iluminado (manejado fuera)
+                break;
+            case 4: // full: disco completo + crateres
+                fillCircle(g, cx, cy, radius, moonLight);
+                g.fill(cx - 3, cy - 2, cx - 1, cy,     0xFFB8AB88);
+                g.fill(cx + 1, cy + 1, cx + 3, cy + 3, 0xFFB8AB88);
+                g.fill(cx - 1, cy + 2, cx,     cy + 3, 0xFFB8AB88);
+                break;
+            case 2: // first quarter: mitad derecha iluminada
+                // Solo dibujar los pixels de la mitad derecha
+                for (int dy = -radius; dy <= radius; dy++) {
+                    int dx = (int) Math.sqrt(radius * radius - dy * dy);
+                    g.fill(cx, cy + dy, cx + dx + 1, cy + dy + 1, moonLight);
+                }
+                break;
+            case 6: // last quarter: mitad izquierda iluminada
+                for (int dy = -radius; dy <= radius; dy++) {
+                    int dx = (int) Math.sqrt(radius * radius - dy * dy);
+                    g.fill(cx - dx, cy + dy, cx, cy + dy + 1, moonLight);
+                }
+                break;
+            case 1: // waxing crescent: solo el arco derecho iluminado
+                // Iluminacion = disco derecho - disco desplazado a la izq
+                for (int dy = -radius; dy <= radius; dy++) {
+                    int dxOuter = (int) Math.sqrt(radius * radius - dy * dy);
+                    int rShadow = radius;
+                    int cxShadow = cx - radius / 2;
+                    int dyLocal = cy + dy - cy;
+                    int shadowD2 = rShadow * rShadow - dyLocal * dyLocal;
+                    // Para cada pixel en dx = [-dxOuter, dxOuter], comprobar si esta fuera de la sombra
+                    for (int dx = -dxOuter; dx <= dxOuter; dx++) {
+                        int px = cx + dx;
+                        int distFromShadow = (px - cxShadow) * (px - cxShadow) + dyLocal * dyLocal;
+                        if (distFromShadow > shadowD2) {
+                            g.fill(px, cy + dy, px + 1, cy + dy + 1, moonLight);
+                        }
+                    }
+                }
+                break;
+            case 7: // waning crescent: solo el arco izquierdo iluminado
+                for (int dy = -radius; dy <= radius; dy++) {
+                    int dxOuter = (int) Math.sqrt(radius * radius - dy * dy);
+                    int rShadow = radius;
+                    int cxShadow = cx + radius / 2;
+                    int dyLocal = cy + dy - cy;
+                    int shadowD2 = rShadow * rShadow - dyLocal * dyLocal;
+                    for (int dx = -dxOuter; dx <= dxOuter; dx++) {
+                        int px = cx + dx;
+                        int distFromShadow = (px - cxShadow) * (px - cxShadow) + dyLocal * dyLocal;
+                        if (distFromShadow > shadowD2) {
+                            g.fill(px, cy + dy, px + 1, cy + dy + 1, moonLight);
+                        }
+                    }
+                }
+                break;
+            case 3: // waxing gibbous: casi llena, sombra sutil en izquierda
+                for (int dy = -radius; dy <= radius; dy++) {
+                    int dxOuter = (int) Math.sqrt(radius * radius - dy * dy);
+                    int rShadow = radius;
+                    int cxShadow = cx - radius - 1;
+                    int shadowD2 = rShadow * rShadow - dy * dy;
+                    for (int dx = -dxOuter; dx <= dxOuter; dx++) {
+                        int px = cx + dx;
+                        int distFromShadow = (px - cxShadow) * (px - cxShadow) + dy * dy;
+                        if (distFromShadow > shadowD2) {
+                            g.fill(px, cy + dy, px + 1, cy + dy + 1, moonLight);
+                        }
+                    }
+                }
+                break;
+            case 5: // waning gibbous: casi llena, sombra sutil en derecha
+                for (int dy = -radius; dy <= radius; dy++) {
+                    int dxOuter = (int) Math.sqrt(radius * radius - dy * dy);
+                    int rShadow = radius;
+                    int cxShadow = cx + radius + 1;
+                    int shadowD2 = rShadow * rShadow - dy * dy;
+                    for (int dx = -dxOuter; dx <= dxOuter; dx++) {
+                        int px = cx + dx;
+                        int distFromShadow = (px - cxShadow) * (px - cxShadow) + dy * dy;
+                        if (distFromShadow > shadowD2) {
+                            g.fill(px, cy + dy, px + 1, cy + dy + 1, moonLight);
+                        }
+                    }
+                }
+                break;
+        }
+    }
+
+    /** Publico: devuelve el indice de fase actual (0-7). */
+    public static int getMoonPhaseIndex() {
+        return moonPhaseIndex < 0 ? 4 : moonPhaseIndex;
+    }
+
+    /** Renderiza la estrella fugaz con trail (llamado desde renderSky). */
+    private static void renderShootingStar(GuiGraphics g, int w, int h) {
+        if (!shootStarActive) return;
+        int sx = (int)(shootStarX * w);
+        int sy = (int)(shootStarY * h);
+
+        // Trail: puntos con alpha decreciente
+        for (int i = 0; i < TRAIL_LEN; i++) {
+            int tx = (int)(shootStarTrail[i][0] * w);
+            int ty = (int)(shootStarTrail[i][1] * h);
+            int alpha = (int)(160 * (1f - (float)i / TRAIL_LEN));
+            if (alpha > 5) {
+                int col = (alpha << 24) | 0xE8DCB4;
+                g.fill(tx, ty, tx + 1, ty + 1, col);
+            }
+        }
+
+        // Cabeza brillante (mas discreta)
+        g.fill(sx, sy, sx + 2, sy + 2, 0xE0F0E5C0);
+        g.fill(sx - 1, sy, sx, sy + 2, 0x80D4C089);
+        g.fill(sx + 2, sy, sx + 3, sy + 2, 0x80D4C089);
+    }
+
+    /** Renderiza la bandada de pajaros. */
+    private static void renderBirds(GuiGraphics g, int w, int h) {
+        if (!birdsActive) return;
+        int birdColor = 0xFF0A0705;
+        for (int i = 0; i < BIRDS_COUNT; i++) {
+            if (birds[i][3] <= 0f) continue;
+            int bx = (int)(birds[i][0] * w);
+            int by = (int)(birds[i][1] * h);
+            float wingAng = (float) Math.sin(birds[i][2]);
+            int wingH = (int)(wingAng * 2);
+            // Silueta minima: 3px cuerpo + 2 alas
+            g.fill(bx - 1, by, bx + 2, by + 1, birdColor);         // cuerpo
+            g.fill(bx - 3, by - wingH, bx - 1, by - wingH + 1, birdColor);  // ala izq
+            g.fill(bx + 2, by + wingH, bx + 4, by + wingH + 1, birdColor);  // ala der
+        }
     }
 
     private static void renderClouds(GuiGraphics g, int w, int h) {

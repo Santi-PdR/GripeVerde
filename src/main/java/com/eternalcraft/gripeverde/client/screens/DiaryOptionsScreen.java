@@ -34,13 +34,13 @@ public class DiaryOptionsScreen extends Screen {
     // Rotating flavor quotes from the chronicler
     private static final String[] FLAVOR_POOL = {
         "Esta noche el gas arde bajo.",
-        "Los registros guardan m\u00e1s de lo que muestran.",
+        "Los registros guardan mas de lo que muestran.",
         "El viento trae rumores del este.",
-        "Alguien ha movido las cortinas del tercer piso.",
-        "La tinta a\u00fan no se ha secado.",
+        "Alguien movio las cortinas del tercer piso.",
+        "La tinta todavia no seco.",
         "Hay un olor nuevo en el aire, dulce y enfermo.",
         "Los relojes del barrio no coinciden.",
-        "Otra p\u00e1gina en blanco espera."
+        "Otra pagina en blanco espera."
     };
     private static int flavorIndex = -1;
     private String currentFlavor;
@@ -79,6 +79,7 @@ public class DiaryOptionsScreen extends Screen {
 
     @Override
     protected void init() {
+        com.eternalcraft.gripeverde.client.render.PaperTexture.incrementOpenCount();
         // Rotate flavor quote each time options screen opens
         flavorIndex = (flavorIndex + 1) % FLAVOR_POOL.length;
         currentFlavor = FLAVOR_POOL[flavorIndex];
@@ -145,9 +146,7 @@ public class DiaryOptionsScreen extends Screen {
         LivingAtmosphere.renderFogLow(g, this.width, this.height);
         VictorianSkyline.renderForeground(g, this.width, this.height);
         LivingAtmosphere.renderStreetLevel(g, this.width, this.height);
-        LivingAtmosphere.renderAir(g, this.width, this.height);
-
-        // Overlay oscuro para dar peso al pergamino
+                // Overlay oscuro para dar peso al pergamino
         g.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
 
         // Panel pergamino
@@ -296,10 +295,7 @@ public class DiaryOptionsScreen extends Screen {
         );
     }
         private void openOnline() {
-        this.minecraft.setScreen(
-            net.minecraft.client.gui.screens.OnlineOptionsScreen
-                .createOnlineOptionsScreen(this.minecraft, this, this.minecraft.options)
-        );
+        this.minecraft.setScreen(new DiaryOnlineOptionsScreen(this, this.minecraft.options));
     }
         private void openResourcePacks() {
         net.minecraft.server.packs.repository.PackRepository repo =

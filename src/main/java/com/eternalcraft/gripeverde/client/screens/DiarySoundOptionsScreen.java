@@ -8,6 +8,7 @@ import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import com.eternalcraft.gripeverde.client.widgets.DiaryMusicSlider;
+import com.eternalcraft.gripeverde.client.widgets.DiaryAmbienceSlider;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
@@ -49,6 +50,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     private int panelX, panelY, panelW, panelH;
     private OptionsList reflectedList;
     private DiaryMusicSlider musicSlider;
+    private DiaryAmbienceSlider ambienceSlider;
 
     public DiarySoundOptionsScreen(Screen parent, Options options) {
         super(parent, options);
@@ -70,7 +72,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             this.reflectedList.setRenderTopAndBottom(false);
 
             int listTop = this.panelY + 45;
-            int listBottom = this.panelY + this.panelH - 75; // deja hueco para slider + divisor + boton
+            int listBottom = this.panelY + this.panelH - 100; // deja hueco para 2 sliders + divisor + boton
             this.reflectedList.updateSize(this.width, this.height, listTop, listBottom);
         }
 
@@ -91,9 +93,17 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         // Slider propio de musica del mod, debajo de la lista
         int sliderW = this.panelW - 40;
         int sliderX = this.panelX + 20;
-        int sliderY = this.panelY + this.panelH - 60;
+        int sliderY = this.panelY + this.panelH - 82;
         this.musicSlider = new DiaryMusicSlider(sliderX, sliderY, sliderW, SLIDER_H);
         this.addRenderableWidget(this.musicSlider);
+
+        // Slider de ambiente: mas pequeno, debajo del de musica
+        int ambSliderH = 14;
+        int ambSliderW = sliderW * 3 / 4;  // 75% del ancho del principal
+        int ambSliderX = sliderX + (sliderW - ambSliderW) / 2;
+        int ambSliderY = sliderY + SLIDER_H + 2;
+        this.ambienceSlider = new DiaryAmbienceSlider(ambSliderX, ambSliderY, ambSliderW, ambSliderH);
+        this.addRenderableWidget(this.ambienceSlider);
 
         // Boton Volver estilo diario
         int btnW = 120;
@@ -166,9 +176,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         LivingAtmosphere.renderFogLow(g, this.width, this.height);
         VictorianSkyline.renderForeground(g, this.width, this.height);
         LivingAtmosphere.renderStreetLevel(g, this.width, this.height);
-        LivingAtmosphere.renderAir(g, this.width, this.height);
-
-        // --- Overlay oscuro ---
+                // --- Overlay oscuro ---
         g.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
 
         // --- Pergamino ---
@@ -209,7 +217,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         }
 
         // --- Divisor entre lista y slider ---
-        int divY2 = this.panelY + this.panelH - 65;
+        int divY2 = this.panelY + this.panelH - 88;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
 
         // --- Divisor inferior + esquineros ---

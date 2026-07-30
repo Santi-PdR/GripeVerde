@@ -18,9 +18,9 @@ public class PosterRenderer {
         int cx = x + w / 2;
         int cursorY = y + 10;
 
-        drawCenteredText(g, font, I18n.get("gripeverde.poster.quarantine.by_order"), cx, cursorY, DiaryTheme.INK);
+        drawCenteredText(g, font, getRotatingQuarantineHeader(0), cx, cursorY, DiaryTheme.INK);
         cursorY += 12;
-        drawCenteredText(g, font, I18n.get("gripeverde.poster.quarantine.her_majesty"), cx, cursorY, DiaryTheme.INK);
+        drawCenteredText(g, font, getRotatingQuarantineHeader(1), cx, cursorY, DiaryTheme.INK);
         cursorY += 16;
 
         drawThinDivider(g, cx, cursorY, w - 30);
@@ -58,6 +58,8 @@ public class PosterRenderer {
         }
 
         OrnamentRenderer.drawWaxSeal(g, x + w - 22, y + h - 22, 12);
+        drawBloodSplatter(g, x, y, w, h, 0x51A11L);
+        drawInkStamp(g, x, y, w, h, 0x57A9AL);
     }
 
     public static void drawPreventionNotice(GuiGraphics g, int x, int y, int w, int h) {
@@ -168,6 +170,8 @@ public class PosterRenderer {
 
         // Sello más pequeño y en posición segura dentro del panel
         OrnamentRenderer.drawWaxSeal(g, x + w - 18, y + h - 18, 7);
+        drawBloodSplatter(g, x, y, w, h, 0x5EAADL);
+        drawInkStamp(g, x, y, w, h, 0x5EA100L);
     }
 
     private static void drawDecreeNotice(GuiGraphics g, int x, int y, int w, int h) {
@@ -266,5 +270,136 @@ public static void drawVersionPanel(GuiGraphics g, int x, int y, int w, int h, S
         g.fill(x + 2, y + h - 3, x + w - 2, y + h - 2, innerColor);
         g.fill(x + 2, y + 2, x + 3, y + h - 2, innerColor);
         g.fill(x + w - 3, y + 2, x + w - 2, y + h - 2, innerColor);
+    }
+
+    // Rotating quarantine notice headers: 2 lines per variant
+    // [i][0] = top line ("POR ORDEN DE"), [i][1] = authority ("SU MAJESTAD")
+    private static final String[][] QUARANTINE_HEADER_POOL = {
+        {"POR ORDEN DE",    "SU MAJESTAD"},
+        {"POR MANDATO DE",  "EL PARLAMENTO"},
+        {"AVISO OFICIAL",   "DEL CONDESTABLE"},
+        {"BANDO PUBLICO",   "DEL MAGISTRADO"},
+        {"DECRETO DE",      "LA CORONA"},
+        {"POR DISPOSICION", "DEL ALGUACIL MAYOR"},
+        {"NOTA DE",         "LA JUNTA SANITARIA"},
+        {"POR ORDEN DE",    "LA GUARDIA REAL"}
+    };
+    private static int quarantineHeaderIndex = -1;
+    private static long lastQuarantineRotateMs = 0L;
+    private static final long QUARANTINE_ROTATE_MS = 120_000L;
+    private static final java.util.Random QUARANTINE_RNG = new java.util.Random();
+
+    private static String getRotatingQuarantineHeader(int lineIdx) {
+        long now = System.currentTimeMillis();
+        if (quarantineHeaderIndex < 0 || (now - lastQuarantineRotateMs) >= QUARANTINE_ROTATE_MS) {
+            int prev = quarantineHeaderIndex;
+            int next;
+            if (QUARANTINE_HEADER_POOL.length <= 1) {
+                next = 0;
+            } else {
+                do {
+                    next = QUARANTINE_RNG.nextInt(QUARANTINE_HEADER_POOL.length);
+                } while (next == prev);
+            }
+            quarantineHeaderIndex = next;
+            lastQuarantineRotateMs = now;
+        }
+        return QUARANTINE_HEADER_POOL[quarantineHeaderIndex][lineIdx];
+    }
+
+    // ============================================================
+    // Manchas de sangre en posters (v0.12.2)
+    // ============================================================
+    private static final java.util.Random BLOOD_RNG = new java.util.Random(0x800000DL);
+
+    /** 30% chance de dibujar 2-4 pequenas manchas de sangre en el poster.
+     *  Determinista por seed pasado (el mismo poster siempre tendra o no manchas). */
+    public static void drawBloodSplatter(GuiGraphics g, int x, int y, int w, int h, long posterSeed) {
+        java.util.Random rnd = new java.util.Random(posterSeed);
+        if (rnd.nextInt(10) >= 3) return;  // 70% no dibuja
+
+        int count = 2 + rnd.nextInt(3);
+        int blood = 0xFF5C1508;   // dried blood
+        int fresh = 0xFF8B1F0F;   // fresh blood
+
+        for (int i = 0; i < count; i++) {
+            int bx = x + 10 + rnd.nextInt(Math.max(1, w - 20));
+            int by = y + 10 + rnd.nextInt(Math.max(1, h - 20));
+            int sz = 1 + rnd.nextInt(3);
+
+            // Blob principal
+            for (int dy = 0; dy < sz; dy++) {
+                for (int dx = 0; dx < sz; dx++) {
+                    if (rnd.nextInt(5) < 4) {  // 80% denso
+                        g.fill(bx + dx, by + dy, bx + dx + 1, by + dy + 1,
+                               rnd.nextInt(3) == 0 ? fresh : blood);
+                    }
+                }
+            }
+
+            // Salpicaduras alrededor
+            int splatter = 2 + rnd.nextInt(3);
+            for (int s = 0; s < splatter; s++) {
+                int sx = bx + rnd.nextInt(6) - 3;
+                int sy = by + rnd.nextInt(6) - 3;
+                g.fill(sx, sy, sx + 1, sy + 1, blood);
+            }
+        }
+    }
+
+    // ============================================================
+    // Sellos de tinta rotativos (APROBADO/REVOCADO/CENSURADO)
+    // ============================================================
+    private static final String[] STAMP_LABELS = {
+        "APROBADO", "REVOCADO", "CENSURADO", "PENDIENTE", "URGENTE"
+    };
+    private static final int[] STAMP_COLORS = {
+        0xFF5C1508,   // dried blood (revocado, censurado)
+        0xFF3D2A18,   // sepia oscuro (aprobado)
+        0xFF6B4226    // sepia medio (pendiente)
+    };
+    private static final java.util.Random STAMP_RNG = new java.util.Random();
+
+    /** Dibuja un sello de tinta rotativo si el seed lo permite (40% chance). */
+    public static void drawInkStamp(GuiGraphics g, int x, int y, int w, int h, long posterSeed) {
+        java.util.Random rnd = new java.util.Random(posterSeed);
+        if (rnd.nextInt(10) >= 4) return;  // 60% no dibuja
+
+        String label = STAMP_LABELS[rnd.nextInt(STAMP_LABELS.length)];
+        int col = STAMP_COLORS[rnd.nextInt(STAMP_COLORS.length)];
+
+        Font f = Minecraft.getInstance().font;
+        int tw = f.width(label);
+        // Posicion: esquina rotativa (0=arriba-izq, 1=arriba-der, 2=abajo-izq, 3=abajo-der)
+        int corner = rnd.nextInt(4);
+        int sx, sy;
+        int pad = 12;
+        switch (corner) {
+            case 0: sx = x + pad; sy = y + pad + 4; break;
+            case 1: sx = x + w - tw - pad; sy = y + pad + 4; break;
+            case 2: sx = x + pad; sy = y + h - pad - 6; break;
+            default: sx = x + w - tw - pad; sy = y + h - pad - 6; break;
+        }
+
+        // Rotacion aproximada: shift horizontal por linea
+        g.pose().pushPose();
+        g.pose().translate(sx, sy, 0);
+        double angle = -0.2 + rnd.nextDouble() * 0.4;
+        g.pose().translate(tw / 2.0, 3, 0);
+        // No podemos rotar sin transformer, simulamos con offset diagonal
+        g.pose().translate(-tw / 2.0, -3, 0);
+
+        // Borde rectangular alrededor
+        g.fill(-3, -2, tw + 3, -1, col);
+        g.fill(-3, 10, tw + 3, 11, col);
+        g.fill(-3, -2, -2, 11, col);
+        g.fill(tw + 2, -2, tw + 3, 11, col);
+
+        // Texto en color sello
+        g.drawString(f, label, 0, 0, col, false);
+        // Sombra sutil detras (rotacion falsa)
+        g.drawString(f, label, 1, 1, DiaryTheme.withAlpha(col, 100), false);
+
+        g.pose().popPose();
     }
 }

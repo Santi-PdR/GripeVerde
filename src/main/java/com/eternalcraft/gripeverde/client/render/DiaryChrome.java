@@ -236,4 +236,29 @@ public final class DiaryChrome {
     }
 
 
+
+    /** Cursor de pluma pixelart al lado del mouse.
+     *  Llamar al FINAL del render() de una Diary screen cuando el mouse
+     *  este sobre el panel de pergamino. */
+    public static void drawQuillCursor(net.minecraft.client.gui.GuiGraphics g, int mouseX, int mouseY) {
+        // Pluma diagonal de arriba-derecha a abajo-izquierda, ~10x10
+        // Solo dibujamos si el mouse esta en pantalla
+        int inkDark = 0xFF1A0F08;
+        int inkLight = 0xFF3D2E1A;
+        int feather = 0xFF6B4226;
+
+        // Vastago (linea diagonal 8px)
+        int sx = mouseX + 6;
+        int sy = mouseY + 2;
+        for (int i = 0; i < 8; i++) {
+            g.fill(sx + i, sy + i, sx + i + 1, sy + i + 1, inkDark);
+        }
+        // Punta (abajo izquierda)
+        g.fill(sx - 1, sy + 8, sx, sy + 9, inkDark);
+        g.fill(sx, sy + 9, sx + 1, sy + 10, inkDark);
+        // Plumas (arriba derecha, 3 pequenas)
+        g.fill(sx + 6, sy - 1, sx + 8, sy + 1, feather);
+        g.fill(sx + 8, sy - 2, sx + 10, sy, feather);
+        g.fill(sx + 7, sy + 1, sx + 9, sy + 2, inkLight);
+    }
 }

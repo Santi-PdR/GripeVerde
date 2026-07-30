@@ -271,10 +271,31 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     }
 
     private void onJoin() {
-        // Delegar al boton vanilla que ya sabe la logica
+        // Scan dinamico por Component message (mas robusto que reflection stale)
+        Button real = findVanillaButtonByLabel("selectServer.select");
+        if (real != null && real.active) {
+            real.onPress();
+            return;
+        }
+        // Fallback a reflection si el scan falla
         if (this.vanillaSelectBtn != null && this.vanillaSelectBtn.active) {
             this.vanillaSelectBtn.onPress();
         }
+    }
+
+    /** Busca un boton vanilla iterando children() y comparando el Component message.
+     *  Mas robusto que reflection porque siempre tiene la referencia fresca. */
+    private Button findVanillaButtonByLabel(String translationKey) {
+        String expected = Component.translatable(translationKey).getString();
+        for (var child : this.children()) {
+            if (child instanceof Button b) {
+                String label = b.getMessage().getString();
+                if (label.equals(expected)) {
+                    return b;
+                }
+            }
+        }
+        return null;
     }
 
     private void onDirect() {

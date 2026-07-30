@@ -28,6 +28,7 @@ import org.lwjgl.glfw.GLFW;
 public class DiaryTitleScreen extends Screen {
 
     private long ticks = 0;
+    private static boolean openCountIncremented = false;
 
     private static final int BTN_W = 300;
     private static final int BTN_H = 40;
@@ -57,6 +58,15 @@ public class DiaryTitleScreen extends Screen {
     @Override
     protected void init() {
         this.ticks = 0;
+        // Incrementar contador de aperturas (solo una vez por sesion)
+        try {
+            if (!openCountIncremented) {
+                int cur = com.eternalcraft.gripeverde.config.ClientConfig.OPEN_COUNT.get();
+                com.eternalcraft.gripeverde.config.ClientConfig.OPEN_COUNT.set(cur + 1);
+                com.eternalcraft.gripeverde.config.ClientConfig.OPEN_COUNT.save();
+                openCountIncremented = true;
+            }
+        } catch (Throwable ignored) {}
         MenuAmbience.start();
         MenuMusic.start();
 
@@ -70,7 +80,7 @@ public class DiaryTitleScreen extends Screen {
         this.addRenderableWidget(new GreenFluButton(
             btnX, btnY, BTN_W, BTN_H,
             Component.translatable("gripeverde.title.button.multiplayer"),
-            Component.translatable("gripeverde.title.subtitle.multiplayer"),
+            Component.literal(pickRotatingSubtitle(MULTIPLAYER_SUBTITLES)),
             TextureAssets.ICON_BTN_MP,
             this::onMultiplayer
         ));
@@ -78,7 +88,7 @@ public class DiaryTitleScreen extends Screen {
         this.addRenderableWidget(new GreenFluButton(
             btnX, btnY + BTN_H + Spacing.GAP_MEDIUM, BTN_W, BTN_H,
             Component.translatable("gripeverde.title.button.mods"),
-            Component.translatable("gripeverde.title.subtitle.mods"),
+            Component.literal(pickRotatingSubtitle(MODS_SUBTITLES)),
             TextureAssets.ICON_BTN_MODS,
             this::onMods
         ));
@@ -123,32 +133,12 @@ public class DiaryTitleScreen extends Screen {
         this.addRenderableWidget(changelogBtn);
 
         // --- Audio control buttons (bottom-left, discrete) ---
-        int acY = this.height - 28;
-        int acX = 8;
-        int acW = 36;
-        int acH = 20;
-
-        this.addRenderableWidget(new SlimButton(acX, acY, acW, acH,
-            Component.literal(MenuAmbience.isMuted() ? "AMB" : "AMB"),
-            () -> {
-                MenuAmbience.toggleMute();
-                this.rebuildWidgets();
-            }) {
-            @Override
-            protected void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-                super.renderWidget(g, mouseX, mouseY, partialTick);
-                if (MenuAmbience.isMuted()) {
-                    // Draw strikethrough line to indicate muted
-                    int cx = this.getX();
-                    int cy = this.getY();
-                    int cw = this.width;
-                    int ch = this.height;
-                    g.fill(cx + 4, cy + ch / 2, cx + cw - 4, cy + ch / 2 + 1, 0xFFCC4444);
-                }
-            }
-        });
-
-        this.addRenderableWidget(new SlimButton(acX + acW + 4, acY, acW, acH,
+        // Boton >> (skip musica) queda solo (AMB removido, ahora en Sonidos)
+        int skipY = this.height - 28;
+        int skipX = 8;
+        int skipW = 36;
+        int skipH = 20;
+        this.addRenderableWidget(new SlimButton(skipX, skipY, skipW, skipH,
             Component.literal(">>"),
             () -> MenuMusic.skipToNext()));
     }
@@ -210,6 +200,19 @@ public class DiaryTitleScreen extends Screen {
         drawSignature(g);
 
         super.render(g, mouseX, mouseY, partialTick);
+
+        // Overlays interactivos (arriba de todo)
+        drawEasterEggMessage(g);
+        // Easter egg: relampago verde
+        if (System.currentTimeMillis() < easterLightningUntilMs) {
+            long rem = easterLightningUntilMs - System.currentTimeMillis();
+            int a = (int)(50 * rem / 300L);
+            if (a > 2) {
+                g.fill(0, 0, this.width, this.height, (a << 24) | 0x3A5028);
+            }
+        }
+
+        drawShootStarMessage(g);
     }
 
     @Override
@@ -258,24 +261,91 @@ public class DiaryTitleScreen extends Screen {
     }
 
     private void drawLogo(GuiGraphics g) {
-        LogoRenderer.draw(g, this.width / 2, 30);
+        long now = System.currentTimeMillis();
+        int shakeX = 0, shakeY = 0;
+        if (now < skullShakeUntilMs) {
+            long remain = skullShakeUntilMs - now;
+            float intensity = (float) remain / 600f;
+            shakeX = (int)(Math.sin(now / 40.0) * 3 * intensity);
+            shakeY = (int)(Math.cos(now / 30.0) * 2 * intensity);
+        }
+        LogoRenderer.draw(g, this.width / 2 + shakeX, 30 + shakeY);
+
+        // Renderizar particulas verdes cayendo
+        if (now < eggParticlesUntilMs) {
+            float dt = 0.05f;
+            for (int p = 0; p < EGG_PARTICLE_COUNT; p++) {
+                if (eggParticles[p][4] <= 0f) continue;
+                eggParticles[p][0] += eggParticles[p][2] * dt * 60;
+                eggParticles[p][1] += eggParticles[p][3] * dt * 60;
+                eggParticles[p][4] -= 0.008f;  // fade
+                if (eggParticles[p][4] < 0f) eggParticles[p][4] = 0f;
+
+                int alpha = (int)(eggParticles[p][4] * 200);
+                if (alpha > 3) {
+                    int col = (alpha << 24) | 0x5A7038;  // verde toxico
+                    int px = (int) eggParticles[p][0];
+                    int py = (int) eggParticles[p][1];
+                    g.fill(px, py, px + 2, py + 2, col);
+                }
+            }
+        }
     }
 
     // Rotating signature pool, synced with LogoRenderer year via yearIndex
     private static final String[] SIGNATURE_POOL = {
-        "Firmado: S. Pereira",
-        "Firmado: R. Da Rosa",
-        "Firmado: G. Bandeira",
-        "Firmado: A. Focco"
+        "Dr. S. Pereira",
+        "Cronista R. Da Rosa",
+        "Cap. G. Bandeira",
+        "Prof. A. Focco"
     };
 
     private void drawSignature(GuiGraphics g) {
         int idx = com.eternalcraft.gripeverde.client.render.LogoRenderer.getYearIndex();
         String signature = SIGNATURE_POOL[idx % SIGNATURE_POOL.length];
+        // Nombre viejo tachado: el anterior del pool
+        int oldIdx = (idx + SIGNATURE_POOL.length - 1) % SIGNATURE_POOL.length;
+        String oldSig = SIGNATURE_POOL[oldIdx];
+
         int sw = this.font.width(signature);
+        int oldSw = this.font.width(oldSig);
+        int y = this.height - 12;
+
+        // ORDEN NUEVO: nombre nuevo a la izquierda, nombre viejo tachado a la derecha
+        // Esto se lee mejor: "el nuevo cronista, el anterior tachado"
+
+        // Firma nueva (izquierda) con temblor sutil
+        double jitterX = Math.sin(System.currentTimeMillis() / 250.0) * 0.5
+                       + Math.sin(System.currentTimeMillis() / 87.0) * 0.3;
+        double jitterY = Math.cos(System.currentTimeMillis() / 310.0) * 0.4;
+        int newX = this.width - sw - oldSw - 16 + (int)Math.round(jitterX);
+        int newY = y + (int)Math.round(jitterY);
         g.drawString(this.font, signature,
-            this.width - sw - 6, this.height - 12,
+            newX, newY,
             DiaryTheme.SEPIA_LIGHT, false);
+
+        // Nombre viejo tachado (derecha, mas tenue)
+        int oldX = this.width - oldSw - 6;
+        int oldColor = com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
+            com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_LIGHT, 100);
+        g.drawString(this.font, oldSig, oldX, y, oldColor, false);
+
+        // Tachadura sobre nombre viejo
+        int strikeY = y + 4;
+        g.fill(oldX - 1, strikeY, oldX + oldSw + 1, strikeY + 1,
+            com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0x00000000, 180));
+        g.fill(oldX + 2, strikeY - 1, oldX + oldSw - 1, strikeY,
+            com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0x00000000, 90));
+
+        // Mensaje del dia real (arriba de todo, alineado a la derecha del nombre viejo)
+        String dayMsg = getDayMessage();
+        if (!dayMsg.isEmpty()) {
+            int dmw = this.font.width(dayMsg);
+            int dmAlpha = com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
+                com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_LIGHT, 90);
+            g.drawString(this.font, dayMsg,
+                this.width - dmw - 6, y - 10, dmAlpha, false);
+        }
     }
 
     private void onSingleplayer() { this.minecraft.setScreen(new SelectWorldScreen(this)); }
@@ -285,4 +355,198 @@ public class DiaryTitleScreen extends Screen {
 
     @Override public boolean isPauseScreen()    { return false; }
     @Override public boolean shouldCloseOnEsc() { return false; }
+
+    // Rotating subtitles for GreenFluButtons (multiplayer + mods)
+    private static final String[] MULTIPLAYER_SUBTITLES = {
+        "Luchen junto a sus hermanos",
+        "El regimiento los espera",
+        "Nadie sobrevive en soledad",
+        "Que su sangre sea la ultima",
+        "Marchen al frente"
+    };
+    private static final String[] MODS_SUBTITLES = {
+        "Preparen su equipamiento",
+        "Revisen los arsenales",
+        "El acero no descansa",
+        "Que instrumentos tenemos hoy",
+        "Reservas de la ultima campana"
+    };
+    private static final java.util.Random SUB_RNG = new java.util.Random();
+
+    // Cache: elegir subtitulo UNA vez por sesion (no reelegir en cada init)
+    private static String cachedMultiSubtitle = null;
+    private static String cachedModsSubtitle = null;
+
+    private static String pickRotatingSubtitle(String[] pool) {
+        if (pool == MULTIPLAYER_SUBTITLES) {
+            if (cachedMultiSubtitle == null) {
+                cachedMultiSubtitle = pool[SUB_RNG.nextInt(pool.length)];
+            }
+            return cachedMultiSubtitle;
+        }
+        if (pool == MODS_SUBTITLES) {
+            if (cachedModsSubtitle == null) {
+                cachedModsSubtitle = pool[SUB_RNG.nextInt(pool.length)];
+            }
+            return cachedModsSubtitle;
+        }
+        return pool[SUB_RNG.nextInt(pool.length)];
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        // Zona del logo: rectangulo central superior
+        int logoCx = this.width / 2;
+        boolean overLogo = mouseX >= logoCx - 100 && mouseX <= logoCx + 100
+                        && mouseY >= 30 && mouseY <= 130;
+        if (overLogo && button == 0) {
+            handleLogoClick();
+            // No consumir el evento, dejar pasar al super
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+    // Easter egg: doble-click en el logo -> mensaje aleatorio
+    private static final String[] LOGO_EASTER_EGGS = {
+        "El cronista los observa.",
+        "No abran mas puertas esta noche.",
+        "Han golpeado tres veces.",
+        "El gato del tejado sabe algo.",
+        "La ventana del tercer piso vuelve a encenderse.",
+        "Dicen que hoy la campana sono sola.",
+        "Los faroles arden mas de lo habitual.",
+        "El aire hoy sabe a metal."
+    };
+    private long lastLogoClickMs = 0L;
+    private String easterEggMessage = null;
+    private long easterEggUntilMs = 0L;
+    private long easterFlashUntilMs = 0L;
+    private long skullShakeUntilMs = 0L;
+    private long easterLightningUntilMs = 0L;
+    // Particulas verdes cayendo del logo tras easter egg
+    private static final int EGG_PARTICLE_COUNT = 20;
+    private final float[][] eggParticles = new float[EGG_PARTICLE_COUNT][5];  // x, y, vx, vy, alpha
+    private long eggParticlesUntilMs = 0L;
+    private static final java.util.Random EASTER_RNG = new java.util.Random();
+
+    private void handleLogoClick() {
+        long now = System.currentTimeMillis();
+        if (now - lastLogoClickMs < 500L) {
+            // Doble-click detectado
+            easterEggMessage = LOGO_EASTER_EGGS[EASTER_RNG.nextInt(LOGO_EASTER_EGGS.length)];
+            easterEggUntilMs = now + 5000L;
+            skullShakeUntilMs = now + 600L;
+            easterLightningUntilMs = now + 300L;
+            // Forzar un relampago instantaneo en la atmosfera
+            try {
+                java.lang.reflect.Field flashField = com.eternalcraft.gripeverde.client.render.LivingAtmosphere.class.getDeclaredField("lightningFlash");
+                flashField.setAccessible(true);
+                flashField.setFloat(null, 1f);
+            } catch (Throwable ignored) {}
+            eggParticlesUntilMs = now + 2000L;
+            // Inicializar particulas cayendo desde el skull
+            int logoCx = this.width / 2;
+            int logoCy = 45;
+            for (int p = 0; p < EGG_PARTICLE_COUNT; p++) {
+                eggParticles[p][0] = logoCx + (float)(Math.random() * 30 - 15);
+                eggParticles[p][1] = logoCy + (float)(Math.random() * 10);
+                eggParticles[p][2] = (float)(Math.random() * 2 - 1);   // vx
+                eggParticles[p][3] = (float)(Math.random() * 1 + 1);   // vy (positivo = cae)
+                eggParticles[p][4] = 1.0f;  // alpha
+            }
+            // Sonido + flash coordinado
+            try {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                    com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_CROWS.get(),
+                    0.6f, 1.2f);
+            } catch (Throwable ignored) {}
+            easterFlashUntilMs = now + 400L;
+        }
+        lastLogoClickMs = now;
+    }
+
+    private void drawEasterEggMessage(net.minecraft.client.gui.GuiGraphics g) {
+        long now = System.currentTimeMillis();
+
+        // Flash amber breve al momento del doble-click
+        if (now < easterFlashUntilMs) {
+            long remainFlash = easterFlashUntilMs - now;
+            int flashAlpha = (int)(80 * remainFlash / 400L);
+            if (flashAlpha > 2) {
+                g.fill(0, 0, this.width, this.height,
+                    (flashAlpha << 24) | 0xD4941E);
+            }
+        }
+
+        if (easterEggMessage == null || now >= easterEggUntilMs) return;
+        // Fade out en los ultimos 1000ms
+        long remain = easterEggUntilMs - now;
+        int alpha = remain < 1000L ? (int)(255 * remain / 1000L) : 255;
+        int color = (alpha << 24) | 0xD4941E;
+        int shadowCol = (alpha << 24) | 0x000000;
+
+        // Texto escalado 2x, centrado en pantalla
+        int w = this.font.width(easterEggMessage);
+        int cx = this.width / 2;
+        int cy = this.height / 2 + 20;
+        g.pose().pushPose();
+        g.pose().translate(cx, cy, 0);
+        g.pose().scale(2.0f, 2.0f, 1f);
+        g.drawString(this.font, easterEggMessage, -w / 2 + 1, 1, shadowCol, false);
+        g.drawString(this.font, easterEggMessage, -w / 2, 0, color, false);
+        g.pose().popPose();
+    }
+
+    // Cache del mensaje del dia: solo se recalcula si cambio la fecha
+    private static String cachedDayMsg = null;
+    private static java.time.LocalDate cachedDayMsgDate = null;
+
+    /** Mensaje del cronista segun el dia real de la semana + mes especial (cacheado). */
+    private static String getDayMessage() {
+        java.time.LocalDate today = java.time.LocalDate.now();
+        if (cachedDayMsg != null && today.equals(cachedDayMsgDate)) {
+            return cachedDayMsg;
+        }
+        cachedDayMsgDate = today;
+        int month = today.getMonthValue();
+        int dow = today.getDayOfWeek().getValue();
+
+        // Mensajes especiales por mes
+        String monthBonus = "";
+        if (month == 10) monthBonus = " ~ los muertos caminan";
+        else if (month == 12) monthBonus = " ~ noche de Adviento";
+        else if (month == 1) monthBonus = " ~ ano nuevo, misma peste";
+
+        String base;
+        switch (dow) {
+            case 1: base = "Lunes ~ otra semana en cuarentena"; break;
+            case 2: base = "Martes ~ dia de lluvia fina"; break;
+            case 3: base = "Miercoles ~ sin correspondencia"; break;
+            case 4: base = "Jueves ~ el mercado cerro"; break;
+            case 5: base = "Viernes ~ que Dios se apiade"; break;
+            case 6: base = "Sabado ~ descanso obligado"; break;
+            case 7: base = "Domingo ~ las campanas suenan solas"; break;
+            default: base = "";
+        }
+        cachedDayMsg = base + monthBonus;
+        return cachedDayMsg;
+    }
+
+
+    private void drawShootStarMessage(net.minecraft.client.gui.GuiGraphics g) {
+        String ssm = com.eternalcraft.gripeverde.client.render.AtmosphereRenderer.shootStarMessage;
+        long untilMs = com.eternalcraft.gripeverde.client.render.AtmosphereRenderer.shootStarMessageUntilMs;
+        if (ssm == null) return;
+        long now = System.currentTimeMillis();
+        if (now >= untilMs) return;
+        long remain = untilMs - now;
+        int alpha = remain < 800L ? (int)(220 * remain / 800L) : 220;
+        int col = (alpha << 24) | 0xE8DCB4;
+        int shadowCol = (alpha << 24) | 0x000000;
+        int w = this.font.width(ssm);
+        // Posicion: arriba del logo (y ~200 para que sea visible)
+        int cx = this.width / 2 - w / 2;
+        int cy = this.height / 3;
+        g.drawString(this.font, ssm, cx + 1, cy + 1, shadowCol, false);
+        g.drawString(this.font, ssm, cx, cy, col, false);
+    }
 }

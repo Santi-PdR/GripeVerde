@@ -46,36 +46,51 @@ public class VictorianSkyline {
     private static final long WINDOW_SEED_BG = 0xCAFEBABEL;
 
     private static final int TOTAL_CHIMNEYS = CHIMNEYS_BG.length + CHIMNEYS_FG.length;
-    private static final float[][] smokeParticles = new float[TOTAL_CHIMNEYS * 4][4];
+    private static final float[][] smokeParticles = new float[TOTAL_CHIMNEYS * 8][4];
     private static boolean smokeInit = false;
 
-    // Animated window: one FG window toggles on/off with smooth transition
-    private static float animWindowPhase = 0f;  // 0..1 smooth, >0.5 = on
-    private static float animWindowTimer = 0f;  // countdown to next toggle
-    private static boolean animWindowOn = false;
-    private static final int ANIM_WINDOW_BUILDING = 2;  // FG_BUILDINGS index
-    private static final int ANIM_WINDOW_ROW = 1;
-    private static final int ANIM_WINDOW_COL = 1;
+    // Animated windows: 5 FG windows toggling on/off with distinct timers
+    private static final int ANIM_COUNT = 5;
+    private static final float[] animPhase = new float[ANIM_COUNT];
+    private static final float[] animTimer = new float[ANIM_COUNT];
+    private static final boolean[] animOn = new boolean[ANIM_COUNT];
+    // Positions: [building][row][col] for each animated window
+    private static final int[][] ANIM_WINDOWS = {
+        {2, 1, 1},  // original
+        {0, 2, 0},
+        {1, 0, 1},
+        {3, 1, 2},
+        {2, 3, 0}
+    };
+    private static boolean animWindowsInit = false;
 
     public static void tick(float deltaTime) {
         time += deltaTime;
         initSmoke();
         tickSmoke(deltaTime);
 
-        // Animate one window: smooth transition between on/off
-        animWindowTimer -= deltaTime;
-        if (animWindowTimer <= 0f) {
-            animWindowOn = !animWindowOn;
-            // Random interval: 8-15 seconds
-            animWindowTimer = 8f + (float)(Math.random() * 7.0);
+        // Animate multiple windows with distinct timers
+        if (!animWindowsInit) {
+            for (int i = 0; i < ANIM_COUNT; i++) {
+                animTimer[i] = (float)(Math.random() * 15.0);
+                animOn[i] = Math.random() > 0.5;
+                animPhase[i] = animOn[i] ? 1f : 0f;
+            }
+            animWindowsInit = true;
         }
-        // Smooth lerp toward target (on=1, off=0), speed ~2/sec
-        float target = animWindowOn ? 1f : 0f;
         float speed = 2f * deltaTime;
-        if (animWindowPhase < target) {
-            animWindowPhase = Math.min(target, animWindowPhase + speed);
-        } else {
-            animWindowPhase = Math.max(target, animWindowPhase - speed);
+        for (int i = 0; i < ANIM_COUNT; i++) {
+            animTimer[i] -= deltaTime;
+            if (animTimer[i] <= 0f) {
+                animOn[i] = !animOn[i];
+                animTimer[i] = 6f + (float)(Math.random() * 12.0);
+            }
+            float target = animOn[i] ? 1f : 0f;
+            if (animPhase[i] < target) {
+                animPhase[i] = Math.min(target, animPhase[i] + speed);
+            } else {
+                animPhase[i] = Math.max(target, animPhase[i] - speed);
+            }
         }
     }
 
@@ -120,6 +135,8 @@ public class VictorianSkyline {
         renderWindowsOnBuildings(g, w, h, FG_BUILDINGS, false);
         renderChimneys(g, w, h, CHIMNEYS_FG, FG_BUILDINGS, true);
         renderSmoke(g, w, h);
+        renderCrack(g, w, h);
+        renderRoofCat(g, w, h);
     }
 
     private static void renderWindowsOnBuildings(GuiGraphics g, int w, int h, float[][] buildings, boolean isBg) {
@@ -152,14 +169,21 @@ public class VictorianSkyline {
                     int wy = by1 + (row * bHeight / rows) + (bHeight / rows / 2) - winH / 2 + 3;
                     int roll = rng.nextInt(10);
 
-                    // Animated window override: smooth on/off for one specific FG window
-                    boolean isAnimWindow = !isBg
-                        && bi == ANIM_WINDOW_BUILDING
-                        && row == ANIM_WINDOW_ROW
-                        && col == ANIM_WINDOW_COL;
-                    if (isAnimWindow) {
-                        // Draw with animWindowPhase controlling alpha
-                        int amber = (int)(animWindowPhase * 160);
+                    // Animated windows override: check if this position is in the anim list
+                    int animIdx = -1;
+                    if (!isBg) {
+                        for (int aw = 0; aw < ANIM_COUNT; aw++) {
+                            if (ANIM_WINDOWS[aw][0] == bi
+                                && ANIM_WINDOWS[aw][1] == row
+                                && ANIM_WINDOWS[aw][2] == col) {
+                                animIdx = aw;
+                                break;
+                            }
+                        }
+                    }
+                    if (animIdx >= 0) {
+                        // Draw with animPhase[animIdx] controlling alpha
+                        int amber = (int)(animPhase[animIdx] * 160);
                         if (amber > 2) {
                             g.fill(wx - 1, wy - 1, wx + winW + 1, wy + winH + 1, 0xFF1A0F05);
                             g.fill(wx, wy, wx + winW, wy + winH,
@@ -266,8 +290,10 @@ public class VictorianSkyline {
     }
 
     private static void renderSmoke(GuiGraphics g, int w, int h) {
-        float windX = (float)(Math.sin(time * 0.2f) * 8f);
-        renderSmokeGroup(g, w, h, CHIMNEYS_BG, BG_BUILDINGS, 0, windX, 160);
+        // Wind variable: sinusoidal principal + segunda componente lenta
+        float windX = (float)(Math.sin(time * 0.2f) * 8f + Math.sin(time * 0.07f) * 4f);
+        renderSmokeGroup(g, w, h, CHIMNEYS_BG, BG_BUILDINGS, 0, windX, 90);
+        renderSmokeGroup(g, w, h, CHIMNEYS_FG, FG_BUILDINGS, CHIMNEYS_BG.length, windX * 1.5f, 110);
     }
 
     private static void renderSmokeGroup(GuiGraphics g, int w, int h, float[][] chimneys, float[][] parents,
@@ -286,14 +312,17 @@ public class VictorianSkyline {
             int cw  = (int)(w * c[2]);
             int cy1 = py1 - (int)(h * c[3]);
             for (int pi = 0; pi < 4; pi++) {
-                int pIdx = (baseIdx + ci) * 4 + pi;
+                int pIdx = (baseIdx + ci) * 8 + pi;
                 if (pIdx >= smokeParticles.length) break;
                 float[] p = smokeParticles[pIdx];
-                int sx = cx1 + (int)(cw * p[0]) + (int)(windX * Math.abs(p[1]) * 2f);
+                // Wind variable: componente sinusoidal principal + drift secundario
+                float windDeep = (float)(Math.sin(time * 0.13f + ci * 0.5f) * 3f);
+                int sx = cx1 + (int)(cw * p[0]) + (int)(windX * Math.abs(p[1]) * 2f) + (int)(windDeep * p[1] * 4f);
                 int sy = cy1 + (int)(h * p[1]);
-                int sz = (int) p[3];
+                int sz = (int)(p[3] * 1.2f);  // 20% mas grande (bajado de 40%)
                 int sA = Math.max(0, Math.min(255, (int)(p[2] * maxAlpha)));
-                AtmosphereRenderer.drawSoftBlob(g, sx, sy, sz, sA, 0x00705F45);
+                // Color mas oscuro: 0x00403020 en vez de 0x00705F45 (evita blanco por saturacion)
+                AtmosphereRenderer.drawSoftBlob(g, sx, sy, sz, sA, 0x00403020);
             }
         }
     }
@@ -323,4 +352,116 @@ public class VictorianSkyline {
         }
         return positions;
     }
+
+    // ============================================================
+    // Decoraciones del skyline (v0.12.2)
+    // ============================================================
+
+    /** Gato sobre tejado del edificio FG index 5. Version chica (4x2). */
+    private static void renderRoofCat(GuiGraphics g, int w, int h) {
+        float[] b = FG_BUILDINGS[5];
+        int bx1 = (int)(w * b[0]);
+        int by2 = (int)(h * b[1]);
+        int bw = (int)(w * b[2]);
+        int bh = (int)(h * b[3]);
+        int by1 = by2 - bh;
+        int cx = bx1 + (int)(bw * 0.65f);
+        int cy = by1 - 3;
+
+        int catColor = 0xFF0A0503;
+        int eyeColor = 0xFFD4941E;
+
+        double headTimer = Math.floor(time / 5.0);
+        boolean headRight = (((long)headTimer) % 2L) == 0L;
+
+        // Cuerpo: 4x2
+        g.fill(cx, cy - 1, cx + 4, cy + 1, catColor);
+        // Patas
+        g.fill(cx, cy + 1, cx + 1, cy + 2, catColor);
+        g.fill(cx + 3, cy + 1, cx + 4, cy + 2, catColor);
+        // Cola larga curva
+        g.fill(cx - 1, cy - 2, cx, cy - 1, catColor);
+        g.fill(cx - 2, cy - 3, cx - 1, cy - 2, catColor);
+        // Cabeza
+        if (headRight) {
+            g.fill(cx + 4, cy - 2, cx + 6, cy, catColor);
+            g.fill(cx + 4, cy - 3, cx + 5, cy - 2, catColor);
+            g.fill(cx + 5, cy - 3, cx + 6, cy - 2, catColor);
+            g.fill(cx + 5, cy - 1, cx + 6, cy, eyeColor);
+        } else {
+            g.fill(cx - 2, cy - 2, cx, cy, catColor);
+            g.fill(cx - 2, cy - 3, cx - 1, cy - 2, catColor);
+            g.fill(cx - 1, cy - 3, cx, cy - 2, catColor);
+            g.fill(cx - 2, cy - 1, cx - 1, cy, eyeColor);
+        }
+    }
+
+    /** Grieta pixel-art en el edificio FG index 5 (mas ancho, mas visible). */
+    private static void renderCrack(GuiGraphics g, int w, int h) {
+        // Edificio 5: {0.56f, 0.78f, 0.14f, 0.22f} - el mas ancho y alto
+        // Pero ahi esta el gato. Uso el 1: {0.13f, 0.79f, 0.10f, 0.21f}
+        float[] b = FG_BUILDINGS[1];
+        int bx1 = (int)(w * b[0]);
+        int by2 = (int)(h * b[1]);
+        int bw = (int)(w * b[2]);
+        int bh = (int)(h * b[3]);
+        int by1 = by2 - bh;
+
+        // Highlight de color mas claro para destacar sobre el edificio oscuro
+        int crackColor = 0xFF2A1608;   // marron oscuro visible
+        int highlight = 0xFF5A3820;    // borde ambar claro
+
+        // Grieta zigzag mas grande, 2px de ancho
+        int startX = bx1 + (int)(bw * 0.55f);
+        int startY = by1 + (int)(bh * 0.15f);
+        int endY = by1 + (int)(bh * 0.75f);
+        int totalH = endY - startY;
+        int h1 = totalH / 3;
+        int h2 = totalH / 3;
+        int h3 = totalH - h1 - h2;
+
+        // Segmento 1 vertical (2px ancho)
+        for (int y = startY; y < startY + h1; y++) {
+            g.fill(startX, y, startX + 2, y + 1, crackColor);
+        }
+        // Zigzag 1: diagonal derecha
+        int x2 = startX + 3;
+        int y2start = startY + h1;
+        for (int y = y2start; y < y2start + h2; y++) {
+            g.fill(x2, y, x2 + 2, y + 1, crackColor);
+        }
+        // Zigzag 2: vuelve a la izquierda
+        int x3 = x2 - 4;
+        int y3start = y2start + h2;
+        for (int y = y3start; y < endY; y++) {
+            g.fill(x3, y, x3 + 2, y + 1, crackColor);
+        }
+
+        // Ramificaciones diagonales pequenas (grietas menores)
+        for (int i = 0; i < 3; i++) {
+            int by = startY + (i * totalH / 3) + 3;
+            int bxOffset = (i % 2 == 0) ? -2 : 2;
+            int bxSeg = startX + (i * 3 * (i % 2 == 0 ? -1 : 1) / 3);
+            g.fill(startX + bxOffset, by, startX + bxOffset + 1, by + 1, crackColor);
+            g.fill(startX + bxOffset * 2, by + 1, startX + bxOffset * 2 + 1, by + 2, crackColor);
+        }
+
+        // Highlight sutil al lado derecho de la grieta (efecto 3D)
+        g.fill(startX + 2, startY, startX + 3, startY + h1, highlight);
+        g.fill(x2 + 2, y2start, x2 + 3, y2start + h2, highlight);
+        g.fill(x3 + 2, y3start, x3 + 3, endY, highlight);
+
+        // Vela dentro del edificio: ventana amber tenue que parpadea suave
+        // Posicion: cerca de la parte inferior del edificio, lado opuesto a la grieta
+        float candleFlicker = (float)(Math.sin(time * 3.7f) * 0.15f + 0.85f);
+        int candleAlpha = (int)(candleFlicker * 100);
+        int candleColor = AtmosphereRenderer.withAlpha(0x00FFB84C, candleAlpha);
+        int candleX = bx1 + (int)(bw * 0.25f);
+        int candleY = by1 + (int)(bh * 0.55f);
+        g.fill(candleX, candleY, candleX + 3, candleY + 4, candleColor);
+        // Halo suave alrededor de la vela
+        int haloColor = AtmosphereRenderer.withAlpha(0x00D4941E, candleAlpha / 3);
+        g.fill(candleX - 1, candleY - 1, candleX + 4, candleY + 5, haloColor);
+    }
+
 }

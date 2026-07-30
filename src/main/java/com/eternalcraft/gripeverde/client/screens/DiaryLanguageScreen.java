@@ -135,9 +135,7 @@ public class DiaryLanguageScreen extends Screen {
         LivingAtmosphere.renderFogLow(g, this.width, this.height);
         VictorianSkyline.renderForeground(g, this.width, this.height);
         LivingAtmosphere.renderStreetLevel(g, this.width, this.height);
-        LivingAtmosphere.renderAir(g, this.width, this.height);
-
-        g.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
+                g.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
         DiaryChrome.drawPanelShadow(g, panelX, panelY, panelW, panelH);
         PaperTexture.drawClean(g, panelX, panelY, panelW, panelH);
 

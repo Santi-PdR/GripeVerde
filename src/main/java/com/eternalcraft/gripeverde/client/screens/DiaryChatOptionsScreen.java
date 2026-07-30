@@ -30,6 +30,7 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
 
     @Override
     protected void init() {
+        chatFlavorIndex = CHAT_RNG.nextInt(CHAT_FLAVOR_POOL.length);
         super.init();
 
         this.panelW = Math.min(PANEL_W, this.width - 40);
@@ -93,9 +94,7 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         LivingAtmosphere.renderFogLow(g, this.width, this.height);
         VictorianSkyline.renderForeground(g, this.width, this.height);
         LivingAtmosphere.renderStreetLevel(g, this.width, this.height);
-        LivingAtmosphere.renderAir(g, this.width, this.height);
-
-        // Overlay
+                // Overlay
         g.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
 
         // Pergamino
@@ -117,8 +116,8 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         int subWC = this.font.width(subtitle);
         g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
-        // Flavor
-        String flavor = Component.translatable("gripeverde.options.chat.flavor").getString();
+        // Flavor rotativo
+        String flavor = getRotatingChatFlavor();
         int flvWC = this.font.width(flavor);
         g.drawString(this.font, flavor, (this.width - flvWC) / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
 
@@ -152,5 +151,25 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
     @Override
     public void onClose() {
         this.minecraft.setScreen(this.lastScreen);
+    }
+
+    // Rotating flavor quotes for chat options
+    private static final String[] CHAT_FLAVOR_POOL = {
+        "De la palabra escrita entre extranos.",
+        "Todo mensaje llega tarde en tiempos de peste.",
+        "Los rumores viajan mas rapido que la fiebre.",
+        "Hablad bajo, las paredes escuchan.",
+        "El silencio tambien es una forma de correspondencia.",
+        "Las cartas se pierden, los gritos no.",
+        "Cuidad vuestra tinta; escasea."
+    };
+    private static int chatFlavorIndex = -1;
+    private static final java.util.Random CHAT_RNG = new java.util.Random();
+
+    private static String getRotatingChatFlavor() {
+        if (chatFlavorIndex < 0) {
+            chatFlavorIndex = CHAT_RNG.nextInt(CHAT_FLAVOR_POOL.length);
+        }
+        return CHAT_FLAVOR_POOL[chatFlavorIndex];
     }
 }

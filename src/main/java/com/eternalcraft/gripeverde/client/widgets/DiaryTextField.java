@@ -214,4 +214,14 @@ public class DiaryTextField extends EditBox {
         } catch (Throwable ignored) {}
         return FormattedCharSequence.forward(text, Style.EMPTY);
     }
+
+    @Override
+    public boolean charTyped(char c, int modifiers) {
+        boolean handled = super.charTyped(c, modifiers);
+        if (handled) {
+            // Sonido sutil de pluma al escribir
+            com.eternalcraft.gripeverde.client.audio.UiSounds.scroll();
+        }
+        return handled;
+    }
 }

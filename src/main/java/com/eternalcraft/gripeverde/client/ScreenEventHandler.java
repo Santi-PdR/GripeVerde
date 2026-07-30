@@ -34,6 +34,13 @@ public class ScreenEventHandler {
 
     @SubscribeEvent
     public static void onScreenOpening(ScreenEvent.Opening event) {
+        // Sonido de puerta al abrir DiaryOptionsScreen
+        try {
+            var openingScreen = event.getNewScreen();
+            if (openingScreen instanceof com.eternalcraft.gripeverde.client.screens.DiaryOptionsScreen) {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.close();
+            }
+        } catch (Throwable ignored) {}
         if (redirecting) return;
 
         var newScreen = event.getNewScreen();

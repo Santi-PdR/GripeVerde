@@ -30,6 +30,40 @@ public class PocketWatchRenderer {
     private static final RandomSource RNG = RandomSource.create();
     private static final long START_TIME = System.currentTimeMillis();
 
+    // Rotating "hour of the outbreak" pool - rotates on session start + every 5 min
+    private static final int[][] HOUR_POOL = {
+        {11, 52},  // The original
+        { 3, 17},  // Dead of night
+        { 4, 44},  // Cursed number
+        { 2, 33},  // Predawn
+        {23, 11},  // Just before midnight
+        { 5, 27},  // Grey dawn
+        { 1, 13},  // Bad luck hour
+        {22, 48}   // Late shift
+    };
+    private static int hourIndex = -1;
+    private static long lastHourRotateMs = 0L;
+    private static long HOUR_ROTATE_MS = 300_000L;  // 5 min
+
+    private static int[] getCurrentHour() {
+        long now = System.currentTimeMillis();
+        if (hourIndex < 0 || (now - lastHourRotateMs) >= HOUR_ROTATE_MS) {
+            int prev = hourIndex;
+            int next;
+            if (HOUR_POOL.length <= 1) {
+                next = 0;
+            } else {
+                do {
+                    next = RNG.nextInt(HOUR_POOL.length);
+                } while (next == prev);
+            }
+            hourIndex = next;
+            lastHourRotateMs = now;
+            HOUR_ROTATE_MS = 180_000L + (long)(RNG.nextDouble() * 300_000L);
+        }
+        return HOUR_POOL[hourIndex];
+    }
+
     // Estado del glitch actual
     private static long nextGlitchAt = 0L;
     private static int glitchType = 0;
@@ -43,8 +77,8 @@ public class PocketWatchRenderer {
         long now = System.currentTimeMillis();
         long elapsed = now - START_TIME;
 
-        double swingT = (elapsed % 4000L) / 4000.0 * 2.0 * Math.PI;
-        int swingOffset = (int) Math.round(Math.sin(swingT) * 3.0);
+        double swingT = (elapsed % 5000L) / 5000.0 * 2.0 * Math.PI;
+        int swingOffset = (int) Math.round(Math.sin(swingT) * 6.0);
         int cx = cxAnchor + swingOffset;
 
         drawLongChain(g, cxAnchor, topY, cx, cy - radius);
@@ -94,8 +128,11 @@ public class PocketWatchRenderer {
             (int)(cy + Math.sin(secAngle) * secLen),
             COLOR_SECOND);
 
-        double hourAngle = Math.toRadians(11 * 30 + 52 * 0.5 - 90);
-        double minAngle  = Math.toRadians(52 * 6 - 90);
+        int[] currentHour = getCurrentHour();
+        int hh = currentHour[0];
+        int mm = currentHour[1];
+        double hourAngle = Math.toRadians(hh * 30 + mm * 0.5 - 90);
+        double minAngle  = Math.toRadians(mm * 6 - 90);
 
         int hourLen = radius - 18;
         int minLen  = radius - 12;
@@ -248,5 +285,19 @@ public class PocketWatchRenderer {
             if (e2 > -dy) { err -= dy; x += sx; }
             if (e2 <  dx) { err += dx; y += sy; }
         }
+    }
+
+    /** Devuelve true si la hora actual del reloj esta cerca de las 12 (11:52-12:08).
+     *  Usado por LivingAtmosphere/AtmosphereRenderer para efecto vela. */
+    public static boolean isNearNoon() {
+        if (hourIndex < 0) return false;
+        int[] hour = HOUR_POOL[hourIndex];
+        int hh = hour[0];
+        int mm = hour[1];
+        // Convertir a minutos totales
+        int totalMin = (hh % 12) * 60 + mm;
+        int distanceToNoon = Math.min(totalMin, 720 - totalMin);
+        // Cerca de las 12 = <=10 minutos de diferencia (real time o high noon)
+        return distanceToNoon <= 10;
     }
 }

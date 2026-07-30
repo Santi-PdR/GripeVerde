@@ -137,6 +137,16 @@ public class DiaryButton extends AbstractButton {
         // Borde exterior
         drawBorder(g, x, y, w, h, borderColor);
 
+        // Focus por teclado: borde dorado sutil ADICIONAL (solo cuando isFocused, no hover)
+        if (this.isFocused() && !this.isMouseOver(mouseX, mouseY) && this.active) {
+            int focusGold = 0xFFC88A2E;
+            // Borde exterior 1px afuera del boton
+            g.fill(x - 1, y - 1, x + w + 1, y,         focusGold);
+            g.fill(x - 1, y + h, x + w + 1, y + h + 1, focusGold);
+            g.fill(x - 1, y - 1, x,         y + h + 1, focusGold);
+            g.fill(x + w, y - 1, x + w + 1, y + h + 1, focusGold);
+        }
+
         // -------------------- CONTENIDO --------------------
         Font font = Minecraft.getInstance().font;
         String text = this.getMessage().getString();

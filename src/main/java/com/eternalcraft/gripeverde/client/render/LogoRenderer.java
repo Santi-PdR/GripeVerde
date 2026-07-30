@@ -63,7 +63,10 @@ public class LogoRenderer {
     public static void draw(GuiGraphics g, int cx, int topY) {
         Font font = Minecraft.getInstance().font;
 
-        drawTopHatSkull(g, cx, topY + 6);
+        // Pulso sutil del logo (skull)
+        float logoPulse = (float)(Math.sin(System.currentTimeMillis() / 800.0) * 0.5 + 0.5);
+        int skullY = topY + 6 + (logoPulse > 0.7f ? 1 : 0);
+        drawTopHatSkull(g, cx, skullY);
         drawDecorativeLine(g, cx, topY + 46, 180);
 
         String title = I18n.get("gripeverde.brand.name");

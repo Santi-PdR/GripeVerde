@@ -6,6 +6,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class LivingAtmosphere {
+    private static final org.slf4j.Logger LOGGER = com.mojang.logging.LogUtils.getLogger();
+    private static final boolean DEBUG_EVENTS = true;
 
     private static float time = 0f;
     private static int[][] lanternPositions = null;
@@ -14,7 +16,7 @@ public class LivingAtmosphere {
     private static final float[] FOG_OFFSETS = {0f, 0f, 0f};
     private static final float[] FOG_SPEEDS  = {0.3f, 0.2f, 0.25f};
 
-    private static final int SPORE_COUNT = 30;
+    private static final int SPORE_COUNT = 15;
     private static final float[][] spores = new float[SPORE_COUNT][4];
     private static boolean sporesInit = false;
 
@@ -22,13 +24,13 @@ public class LivingAtmosphere {
     private static final float[][] crows = new float[CROW_COUNT][5];
     private static boolean crowsInit = false;
 
-    private static final int RAIN_COUNT = 80;
+    private static final int RAIN_COUNT = 40;
     private static final float[][] rain = new float[RAIN_COUNT][3];
     private static boolean rainInit = false;
 
     private static float lightningTimer = 20f;
     private static float lightningFlash = 0f;
-    private static float nextLightning  = 25f;
+    private static float nextLightning  = 12f;
 
     private static float vignettePulse = 0f;
 
@@ -38,6 +40,10 @@ public class LivingAtmosphere {
     private static float ratTimer = 10f;
     private static float ratNextEvent = 30f;
     private static boolean ratActive = false;
+
+    // Lightning silhouette flag: durante flash inicial, dibujar silueta
+    // (usa lightningFlash como fuente)
+
 
     // Erratic lantern: one specific lantern flickers wildly every 30-60s
     private static final int ERRATIC_LANTERN_INDEX = 2;
@@ -63,9 +69,12 @@ public class LivingAtmosphere {
                 spores[i][3] = 1f + (float)(Math.random() * 2f);
             }
         }
+        // Boost de velocidad si acaban de sonar los cuervos (coordinacion visual/audio)
+        float crowSpeedMult = com.eternalcraft.gripeverde.client.audio.MenuAmbience.isCrowsRecentlyTriggered() ? 3.5f : 1f;
+        float crowWingMult = com.eternalcraft.gripeverde.client.audio.MenuAmbience.isCrowsRecentlyTriggered() ? 2.5f : 1f;
         for (int i = 0; i < CROW_COUNT; i++) {
-            crows[i][0] += crows[i][2] * deltaTime * 60f;
-            crows[i][3] += deltaTime * 8f;
+            crows[i][0] += crows[i][2] * deltaTime * 60f * crowSpeedMult;
+            crows[i][3] += deltaTime * 8f * crowWingMult;
             if (crows[i][0] > 1.1f) {
                 crows[i][0] = -0.1f;
                 crows[i][1] = 0.1f + (float)(Math.random() * 0.3f);
@@ -88,7 +97,8 @@ public class LivingAtmosphere {
         if (lightningTimer >= nextLightning) {
             lightningTimer = 0f;
             lightningFlash = 1f;
-            nextLightning  = 15f + (float)(Math.random() * 25f);
+            nextLightning  = 8f + (float)(Math.random() * 12f);
+            if (DEBUG_EVENTS) LOGGER.info("[GripeVerde] Relampago DISPARADO, proximo en {}s", nextLightning);
         }
         vignettePulse = (float)(Math.sin(time * 0.5f) * 0.5f + 0.5f);
 
@@ -109,7 +119,6 @@ public class LivingAtmosphere {
         // Street rat: crossing logic
         if (ratActive) {
             ratX += ratSpeed * deltaTime;
-            // Off-screen either side
             if (ratX < -0.1f || ratX > 1.1f) {
                 ratActive = false;
                 ratTimer = 0f;
@@ -119,16 +128,16 @@ public class LivingAtmosphere {
             ratTimer += deltaTime;
             if (ratTimer >= ratNextEvent) {
                 ratActive = true;
-                // 50/50 direction
                 if (Math.random() < 0.5) {
                     ratX = -0.05f;
-                    ratSpeed = 0.15f + (float)(Math.random() * 0.10);  // left to right
+                    ratSpeed = 0.15f + (float)(Math.random() * 0.10);
                 } else {
                     ratX = 1.05f;
-                    ratSpeed = -(0.15f + (float)(Math.random() * 0.10));  // right to left
+                    ratSpeed = -(0.15f + (float)(Math.random() * 0.10));
                 }
             }
         }
+
     }
 
     private static void initAll() {
@@ -162,18 +171,23 @@ public class LivingAtmosphere {
     }
 
     public static void renderFogLow(GuiGraphics g, int w, int h) {
-        // Niebla OCRE (no verde)
+        // Niebla OCRE (no verde) que RESPIRA a 0.3Hz
         float[][] bands = {
             {0.68f, 0.06f, 0.45f},
             {0.72f, 0.05f, 0.60f},
             {0.76f, 0.04f, 0.35f},
         };
+        // Respiracion lenta global: 0.3Hz = periodo ~3.3s
+        // Amplitud +-25% del alpha base
+        float breath = (float)(Math.sin(time * 0.3f * 2.0 * Math.PI) * 0.25f + 1f);
         for (int i = 0; i < bands.length; i++) {
             int y1 = (int)(h * bands[i][0]);
             int y2 = (int)(h * (bands[i][0] + bands[i][1]));
             int offset = (int)(FOG_OFFSETS[i % FOG_OFFSETS.length]);
+            // Pulse local (variacion rapida) + breath global (respiracion lenta)
             float pulse = (float)(Math.sin(time * 0.4f + i * 1.2f) * 0.1f + bands[i][2]);
-            int alpha = Math.max(0, Math.min(255, (int)(pulse * 160)));
+            float finalPulse = pulse * breath;
+            int alpha = Math.max(0, Math.min(255, (int)(finalPulse * 160)));
             // Niebla marron-ocre (miasma victoriano)
             int fogColor = AtmosphereRenderer.withAlpha(0x004A3820, alpha);
             int startX = -100 + (offset % w) - w;
@@ -207,22 +221,35 @@ public class LivingAtmosphere {
         int alpha = (int)(lightningFlash * 50);
         // Flash calido (no verde)
         g.fill(0, 0, w, h, AtmosphereRenderer.withAlpha(0x00FFEECC, alpha));
+        // Silueta de chimeneas en el pico del flash
+        renderLightningSilhouette(g, w, h);
     }
 
     public static void renderVignette(GuiGraphics g, int w, int h) {
+        // Real system hour: if between 20-06, add extra dark overlay
+        int realHour = java.time.LocalTime.now().getHour();
+        boolean isNightIRL = realHour >= 20 || realHour < 6;
+        if (isNightIRL) {
+            // Overlay sepia muy oscuro sobre todo
+            int nightOverlayAlpha = 40;
+            g.fill(0, 0, w, h,
+                AtmosphereRenderer.withAlpha(0x00000C08, nightOverlayAlpha));
+        }
+
         int vigAlpha = Math.min(255, (int)(200 + vignettePulse * 30));
-        int margin = (int)(Math.min(w, h) * 0.28f);
-        for (int x = 0; x < margin; x++) {
+        int margin = (int)(Math.min(w, h) * 0.20f);  // reducido para performance
+        // Step de 2 pixeles para reducir fills a la mitad (imperceptible visualmente)
+        for (int x = 0; x < margin; x += 2) {
             float t = 1f - (float) x / margin;
             int a = (int)(t * t * vigAlpha);
-            g.fill(x,         0, x + 1, h, AtmosphereRenderer.withAlpha(0x00000000, a));
-            g.fill(w - x - 1, 0, w - x, h, AtmosphereRenderer.withAlpha(0x00000000, a));
+            g.fill(x,         0, x + 2, h, AtmosphereRenderer.withAlpha(0x00000000, a));
+            g.fill(w - x - 2, 0, w - x, h, AtmosphereRenderer.withAlpha(0x00000000, a));
         }
-        for (int y = 0; y < margin; y++) {
+        for (int y = 0; y < margin; y += 2) {
             float t = 1f - (float) y / margin;
             int a = (int)(t * t * vigAlpha);
-            g.fill(0, y,         w, y + 1, AtmosphereRenderer.withAlpha(0x00000000, a));
-            g.fill(0, h - y - 1, w, h - y, AtmosphereRenderer.withAlpha(0x00000000, a));
+            g.fill(0, y,         w, y + 2, AtmosphereRenderer.withAlpha(0x00000000, a));
+            g.fill(0, h - y - 2, w, h - y, AtmosphereRenderer.withAlpha(0x00000000, a));
         }
     }
 
@@ -474,6 +501,23 @@ public class LivingAtmosphere {
             g.fill(rx, ry + 3, rx + 1, ry + 4, body);
             g.fill(rx + 6, ry + 3, rx + 7, ry + 4, body);
             g.fill(rx + 8, ry + 1, rx + 11, ry + 2, body); // tail
+        }
+    }
+
+    private static void renderLightningSilhouette(GuiGraphics g, int w, int h) {
+        if (lightningFlash <= 0.7f) return;  // solo pico del flash
+        // Silueta blanca semi-transparente sobre las chimeneas FG
+        float intensity = (lightningFlash - 0.7f) / 0.3f;  // 0..1 en pico
+        int alpha = (int)(intensity * 60);
+        int silhouette = AtmosphereRenderer.withAlpha(0x00FFEEDD, alpha);
+        // Aproximacion: rectangulos delgados sobre las 3 chimeneas FG
+        float[] cxs = {0.25f, 0.55f, 0.80f};
+        for (float cxF : cxs) {
+            int cx = (int)(w * cxF);
+            int cy = (int)(h * 0.63f);
+            g.fill(cx - 3, cy - 20, cx + 3, cy, silhouette);
+            // Puff de humo iluminado tambien
+            g.fill(cx - 6, cy - 24, cx + 6, cy - 20, silhouette);
         }
     }
 

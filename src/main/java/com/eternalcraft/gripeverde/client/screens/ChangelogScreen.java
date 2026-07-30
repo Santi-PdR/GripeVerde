@@ -52,7 +52,7 @@ public class ChangelogScreen extends Screen {
     private int lastContentW = -1;
 
     public ChangelogScreen(Screen parent) {
-        super(Component.translatable("gripeverde.changelog.title"));
+        super(Component.literal(pickChangelogTitle()));
         this.parent = parent;
     }
 
@@ -285,6 +285,10 @@ public class ChangelogScreen extends Screen {
             String rest = row.text.substring(1);
             int capColor = DiaryTheme.INK;
 
+            // Nota al margen: asterisco decorativo a la izquierda del H1
+            int marginColor = DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180);
+            g.drawString(this.font, "*", x + indent - 10, y + 4, marginColor, false);
+
             g.pose().pushPose();
             float capScale = 1.6f;
             g.pose().translate(x + indent, y - 1, 0);
@@ -314,9 +318,17 @@ public class ChangelogScreen extends Screen {
         }
     }
 
+    private long lastScrollSoundMs = 0L;
+
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
         scrollBy((int)(-Math.signum(delta) * SCROLL_SPD));
+        // Sonido de pagina: throttle 200ms entre scrolls consecutivos
+        long now = System.currentTimeMillis();
+        if (now - lastScrollSoundMs > 200L) {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.scroll();
+            lastScrollSoundMs = now;
+        }
         return true;
     }
 
@@ -344,5 +356,19 @@ public class ChangelogScreen extends Screen {
     public void onClose() {
         lastScrollY = this.scrollY;
         super.onClose();
+    }
+
+    // Rotating titles for the changelog screen
+    private static final String[] CHANGELOG_TITLES = {
+        "Historial de Cambios",
+        "Cronicas del Cronista",
+        "Bitacora de la Ciudad",
+        "Diario del Superviviente",
+        "Registro de Noches"
+    };
+    private static final java.util.Random CHANGELOG_RNG = new java.util.Random();
+
+    private static String pickChangelogTitle() {
+        return CHANGELOG_TITLES[CHANGELOG_RNG.nextInt(CHANGELOG_TITLES.length)];
     }
 }
