@@ -243,6 +243,11 @@ public class MenuAmbience {
     private static float lastAppliedVolume = -1f;
     private static void updateLoopVolumes() {
         float vol = getUserVolume();
+        if (lastAppliedVolume < 0f) {
+            // Primera llamada: solo inicializar sin reconstruir (loops ya estan corriendo)
+            lastAppliedVolume = vol;
+            return;
+        }
         if (Math.abs(vol - lastAppliedVolume) < 0.02f) return;
         lastAppliedVolume = vol;
         if (!active || muted) return;
@@ -317,7 +322,8 @@ public class MenuAmbience {
         lastRareTriggered  = null;
 
         if (DEBUG_LOGGING) {
-            LOGGER.info("[MenuAmbience] Ambient iniciado (BASE:{}, EVENTS:{}, RARE:{}, TICK:sync, muted:{})",
+            lastAppliedVolume = getUserVolume();  // Evitar rebuild inmediato en tick
+        LOGGER.info("[MenuAmbience] Ambient iniciado (BASE:{}, EVENTS:{}, RARE:{}, TICK:sync, muted:{})",
                 BASE_LOOPS.size(), EVENTS_LAYER.size(), RARE_LAYER.size(), muted);
         }
     }
