@@ -143,9 +143,7 @@ public class DiaryOptionsScreen extends Screen {
         g.fill(0, 0, this.width, this.height, 0xFF000000);
         AtmosphereRenderer.renderSky(g, this.width, this.height);
         VictorianSkyline.renderBackground(g, this.width, this.height);
-        LivingAtmosphere.renderFogLow(g, this.width, this.height);
         VictorianSkyline.renderForeground(g, this.width, this.height);
-        LivingAtmosphere.renderStreetLevel(g, this.width, this.height);
                 // Overlay oscuro para dar peso al pergamino
         g.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
 

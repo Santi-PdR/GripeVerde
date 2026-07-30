@@ -112,11 +112,8 @@ public class DiaryConfirmScreen extends ConfirmScreen {
         try {
             AtmosphereRenderer.renderSky(gfx, this.width, this.height);
             VictorianSkyline.renderBackground(gfx, this.width, this.height);
-            LivingAtmosphere.renderFogLow(gfx, this.width, this.height);
-            VictorianSkyline.renderForeground(gfx, this.width, this.height);
-            LivingAtmosphere.renderStreetLevel(gfx, this.width, this.height);
-            LivingAtmosphere.renderAir(gfx, this.width, this.height);
-        } catch (Throwable ignored) {
+                VictorianSkyline.renderForeground(gfx, this.width, this.height);
+                } catch (Throwable ignored) {
             // Si algo del pipeline falla, seguimos con overlay negro
         }
 

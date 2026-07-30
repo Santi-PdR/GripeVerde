@@ -433,11 +433,8 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         try {
             AtmosphereRenderer.renderSky(gfx, this.width, this.height);
             VictorianSkyline.renderBackground(gfx, this.width, this.height);
-            LivingAtmosphere.renderFogLow(gfx, this.width, this.height);
-            VictorianSkyline.renderForeground(gfx, this.width, this.height);
-            LivingAtmosphere.renderStreetLevel(gfx, this.width, this.height);
-            LivingAtmosphere.renderAir(gfx, this.width, this.height);
-        } catch (Throwable ignored) {}
+                VictorianSkyline.renderForeground(gfx, this.width, this.height);
+                } catch (Throwable ignored) {}
 
         // Overlay atenuador
         gfx.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);

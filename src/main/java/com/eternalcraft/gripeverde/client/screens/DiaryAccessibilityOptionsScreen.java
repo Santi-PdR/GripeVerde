@@ -86,10 +86,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         // Escena viva
         AtmosphereRenderer.renderSky(gfx, this.width, this.height);
         VictorianSkyline.renderBackground(gfx, this.width, this.height);
-        LivingAtmosphere.renderFogLow(gfx, this.width, this.height);
         VictorianSkyline.renderForeground(gfx, this.width, this.height);
-        LivingAtmosphere.renderStreetLevel(gfx, this.width, this.height);
-        LivingAtmosphere.renderAir(gfx, this.width, this.height);
 
         // Overlay
         gfx.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
