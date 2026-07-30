@@ -82,6 +82,7 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         VictorianSkyline.tick(delta);
         LivingAtmosphere.tick(delta);
         MenuMusic.tick();
+        com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick();
     }
 
     @Override

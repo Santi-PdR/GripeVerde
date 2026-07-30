@@ -153,6 +153,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         VictorianSkyline.tick(delta);
         LivingAtmosphere.tick(delta);
         MenuMusic.tick();
+        com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick();
     }
 
     // Rotating flavor quotes for accessibility options
