@@ -239,6 +239,33 @@ public class MenuAmbience {
         if (DEBUG_LOGGING) LOGGER.info("[MenuAmbience] userVolume set a {} (loops rebuilt)", userVolume);
     }
 
+    /** Reconstruye loops si el volumen cambio (slider en tiempo real). */
+    private static float lastAppliedVolume = -1f;
+    private static void updateLoopVolumes() {
+        float vol = getUserVolume();
+        if (Math.abs(vol - lastAppliedVolume) < 0.02f) return;
+        lastAppliedVolume = vol;
+        if (!active || muted) return;
+        Minecraft mc = Minecraft.getInstance();
+        if (mc == null) return;
+        for (BaseLoop bl : BASE_LOOPS) {
+            try {
+                if (bl.instance != null) {
+                    mc.getSoundManager().stop(bl.instance);
+                }
+                float finalVol = bl.volume * vol;
+                if (finalVol > 0.001f) {
+                    bl.instance = buildLoopInstance(bl.sound.get(), finalVol);
+                    mc.getSoundManager().play(bl.instance);
+                } else {
+                    bl.instance = null;
+                }
+            } catch (Exception e) {
+                bl.instance = null;
+            }
+        }
+    }
+
     public static boolean isMuted() {
         return muted;
     }
