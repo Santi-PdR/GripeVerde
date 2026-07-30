@@ -92,6 +92,7 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         AtmosphereRenderer.renderSky(g, this.width, this.height);
         VictorianSkyline.renderBackground(g, this.width, this.height);
         VictorianSkyline.renderForeground(g, this.width, this.height);
+        LivingAtmosphere.renderStreet(g, this.width, this.height);
                 // Overlay
         g.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
 

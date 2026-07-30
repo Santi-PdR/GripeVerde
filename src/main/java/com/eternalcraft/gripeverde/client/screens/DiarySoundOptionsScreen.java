@@ -44,7 +44,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     private static final Logger LOG = LogUtils.getLogger();
 
     private static final int PANEL_W = 340;
-    private static final int PANEL_H = 340;
+    private static final int PANEL_H = 380;
     private static final int SLIDER_H = 20;
 
     private int panelX, panelY, panelW, panelH;
@@ -174,6 +174,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         AtmosphereRenderer.renderSky(g, this.width, this.height);
         VictorianSkyline.renderBackground(g, this.width, this.height);
         VictorianSkyline.renderForeground(g, this.width, this.height);
+        LivingAtmosphere.renderStreet(g, this.width, this.height);
                 // --- Overlay oscuro ---
         g.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
 

@@ -253,7 +253,7 @@ public class LivingAtmosphere {
         }
     }
 
-    private static void renderStreet(GuiGraphics g, int w, int h) {
+    public static void renderStreet(GuiGraphics g, int w, int h) {
         int streetTop;
         int rowCount;
         int topCols;

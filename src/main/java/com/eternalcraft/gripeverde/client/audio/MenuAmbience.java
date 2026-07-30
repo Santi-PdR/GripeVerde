@@ -318,7 +318,24 @@ public class MenuAmbience {
 
     public static void tick() {
         // Si el userVolume es 0, no tickear eventos sonoros (silencio total)
-        if (getUserVolume() < 0.01f) return;
+        float ambVol = getUserVolume();
+        if (ambVol < 0.01f) {
+            // Silenciar loops si estan activos
+            if (active && !muted) {
+                Minecraft mc = Minecraft.getInstance();
+                if (mc != null) {
+                    for (BaseLoop bl : BASE_LOOPS) {
+                        if (bl.instance != null) {
+                            mc.getSoundManager().stop(bl.instance);
+                            bl.instance = null;
+                        }
+                    }
+                }
+            }
+            return;
+        }
+        // Actualizar volumen de loops activos si cambio el userVolume
+        updateLoopVolumes();
         if (!active || muted) return;
 
         Minecraft mc = Minecraft.getInstance();

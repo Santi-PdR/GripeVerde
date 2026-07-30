@@ -484,13 +484,14 @@ public class DiaryTitleScreen extends Screen {
         int color = (alpha << 24) | 0xD4941E;
         int shadowCol = (alpha << 24) | 0x000000;
 
-        // Texto escalado 2x, centrado en pantalla
+        // Texto escalado adaptativo (menos en escalas altas para no salirse)
         int w = this.font.width(easterEggMessage);
+        float eeScale = this.width < 500 ? 1.0f : (this.width < 800 ? 1.3f : 1.8f);
         int cx = this.width / 2;
-        int cy = this.height / 2 + 20;
+        int cy = this.height / 2;
         g.pose().pushPose();
         g.pose().translate(cx, cy, 0);
-        g.pose().scale(2.0f, 2.0f, 1f);
+        g.pose().scale(eeScale, eeScale, 1f);
         g.drawString(this.font, easterEggMessage, -w / 2 + 1, 1, shadowCol, false);
         g.drawString(this.font, easterEggMessage, -w / 2, 0, color, false);
         g.pose().popPose();
