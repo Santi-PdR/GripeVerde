@@ -203,6 +203,7 @@ public class MenuAmbience {
     }
 
     public static void setUserVolume(float v) {
+        if (DEBUG_LOGGING) LOGGER.info("[MenuAmbience] setUserVolume({}) called", v);
         userVolume = Math.max(0f, Math.min(1f, v));
         userVolumeLoadedFromConfig = true;
         try {
@@ -244,13 +245,18 @@ public class MenuAmbience {
     private static void updateLoopVolumes() {
         float vol = getUserVolume();
         if (lastAppliedVolume < 0f) {
-            // Primera llamada: solo inicializar sin reconstruir (loops ya estan corriendo)
             lastAppliedVolume = vol;
+            if (DEBUG_LOGGING) LOGGER.info("[MenuAmbience] updateLoopVolumes: init lastApplied={}", vol);
             return;
         }
-        if (Math.abs(vol - lastAppliedVolume) < 0.02f) return;
+        float diff = Math.abs(vol - lastAppliedVolume);
+        if (diff < 0.02f) return;
+        if (DEBUG_LOGGING) LOGGER.info("[MenuAmbience] updateLoopVolumes: vol={} lastApplied={} diff={} -> REBUILDING", vol, lastAppliedVolume, diff);
         lastAppliedVolume = vol;
-        if (!active || muted) return;
+        if (!active || muted) {
+            if (DEBUG_LOGGING) LOGGER.info("[MenuAmbience] updateLoopVolumes: skip rebuild (active={} muted={})", active, muted);
+            return;
+        }
         Minecraft mc = Minecraft.getInstance();
         if (mc == null) return;
         for (BaseLoop bl : BASE_LOOPS) {
