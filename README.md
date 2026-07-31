@@ -5,23 +5,14 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.12.1 - La ciudad se acuerda de respirar**
+**v0.12.3 - Hotfixes y optimizaciones**
 
-Muchos detalles menores que juntos cambian el pulso del gabinete: las
-estrellas del cielo ahora parpadean cada una a su propio compas, una
-ventana perdida en el skyline se enciende y se apaga sola cada tantos
-minutos, un farol tiembla de pronto con luz erratica, y cada tanto una
-silueta pequena cruza la calle abajo.
-
-Bajo el nombre del proyecto aparecen ahora apuntes del cronista
-(dia 47, dia 118, dia 210...) que rotan al azar y cambian solos con
-el tiempo. La firma al pie tambien alterna entre cuatro manos.
-
-El gabinete de ajustes gano frases rotativas del cronista bajo el
-subtitulo, y los botones se sienten con mas peso al presionar. El
-historial de cambios muestra capitulares decorativas en los titulos,
-separadores con rombo entre secciones, y recuerda la posicion del
-scroll al reabrirse.
+Hotfixes criticos sobre v0.12.2: el ambiente del cronista persiste
+al navegar entre pantallas, nuevo slider de volumen ambiente en
+Sonidos, optimizacion de subpantallas (sin niebla/faroles/lluvia
+detras del pergamino), luna sin disco negro, easter egg adaptativo
+a escalas GUI, y reduccion general de particulas para mejor
+rendimiento sin perder atmosfera.
 
 ## Caracteristicas principales
 

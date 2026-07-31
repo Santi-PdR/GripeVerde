@@ -1,5 +1,29 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.12.3 - Hotfixes y optimizaciones
+
+Fixes criticos post-v0.12.2:
+- **FIX**: MenuAmbience.stop() removido de Title.removed() - ambiente
+  persiste al navegar entre pantallas (como musica).
+- **FIX**: MenuAmbience.tick() agregado en 13 subpantallas Diary.
+- **FIX**: setUserVolume no reconstruye loops (delegado a
+  updateLoopVolumes en tick, evita saturacion del SoundManager).
+- **FIX**: updateLoopVolumes no reconstruye en primera llamada
+  (evita matar loops recien creados por start()).
+- **FIX**: renderStreet publico + llamado en 13 subpantallas
+  (calle visible sin faroles/esporas/rata).
+- **FIX**: Easter egg texto escala adaptativa (1.0x-1.8x segun
+  ancho de pantalla).
+- **FIX**: Panel sonidos PANEL_H 340->380.
+- **PERF**: Subpantallas sin renderFogLow/renderStreetLevel/renderAir.
+- **PERF**: Estrellas 60->40, brillantes 15->10.
+- **PERF**: Nubes 7->5.
+- **PERF**: RAIN_COUNT 80->40, SPORE_COUNT 30->15.
+- **PERF**: Humo FG desactivado (solo BG).
+- **PERF**: Vignette margin 0.28->0.20, step 2px.
+- **PERF**: drawSoftBlob menos steps + alpha threshold.
+- **PERF**: Stains/fibers/coffee reducidos en PaperTexture.
+
 ## v0.12.1 - Detalles vivos del gabinete
 
 Version con 16 mejoras de UI y atmosfera, distribuidas en 6 bloques

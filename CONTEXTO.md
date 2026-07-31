@@ -7,11 +7,11 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.12.1
+- Version estable actual: v0.12.3
 - build.gradle: version = '0.12.0'
-- GripeVerdeMod.VERSION: "0.12.1"
+- GripeVerdeMod.VERSION: "0.12.3"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
-- Ultimo tag publicado: v0.12.1
+- Ultimo tag publicado: v0.12.3
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
 
@@ -69,7 +69,7 @@ C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 
 - Local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 - Remoto: https://github.com/Santi-PdR/GripeVerde (privado)
-- Ultimo tag: v0.12.1
+- Ultimo tag: v0.12.3
 
 ## Rutas reales verificadas
 

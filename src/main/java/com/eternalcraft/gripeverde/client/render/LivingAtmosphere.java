@@ -7,7 +7,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class LivingAtmosphere {
     private static final org.slf4j.Logger LOGGER = com.mojang.logging.LogUtils.getLogger();
-    private static final boolean DEBUG_EVENTS = true;
+    private static final boolean DEBUG_EVENTS = false;
 
     private static float time = 0f;
     private static int[][] lanternPositions = null;

@@ -34,7 +34,7 @@ public class MenuAmbience {
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    private static final boolean DEBUG_LOGGING = true;
+    private static final boolean DEBUG_LOGGING = false;
 
     // TIMERS
     private static final long EVENT_MIN_MS = 15_000L;

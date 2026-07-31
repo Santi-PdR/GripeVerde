@@ -24,7 +24,7 @@ import java.util.List;
 public class MenuMusic {
 
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final boolean DEBUG_LOGGING = true;
+    private static final boolean DEBUG_LOGGING = false;
 
     // Volumen base del usuario (0.0 - 1.0), ajustado por el slider.
     private static float userVolume = 0.4f;
