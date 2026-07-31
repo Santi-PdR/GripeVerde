@@ -1789,16 +1789,226 @@ negro en Title rompe blend), E115 (Cloth Config + IMPR crash externo).
 - **R-CONFIG-RESIDUAL-EXTMOD**: crash de mod externo por config no
   registrada = borrar .toml y reiniciar.
 
-## PROXIMO HITO PLANIFICADO (revisado tras v0.12.1)
+---
+## ADDENDUM v0.12.2 (escena viva mejorada + easter eggs + widgets nuevos)
 
-### Candidato NEXT: v0.12.2 - Otras 30-40 mejoras de polish
-El usuario confirmo que quiere seguir con 30-40 cambios mas de UI/
-atmosfera. Del backlog de 50 mejoras original quedan pendientes:
-transiciones (con estrategia distinta al fade rechazado), variantes
-nocturnas del Title, gramofono completo, breadcrumb, cursor de pluma,
-hover con feedback sonoro diferenciado, humo verde intermitente,
-carruaje cruzando, relampago con silueta, entre otros.
+### Alcance
+Version masiva con 60+ mejoras de UI, atmosfera, contenido rotativo,
+easter eggs y widgets nuevos. 31 archivos, 1947 inserciones, 5 clases
+nuevas (DiaryOnlineOptionsScreen, DiaryAmbienceSlider, DiarySlider,
+DiaryProgressBar, DiarySeparator).
 
-### Candidato KI-12: hito mixin dirt bypass (pendiente sin urgencia).
+### Escena viva del Title
+- **Luna con 8 fases**: nueva, creciente, cuarto, gibosa, llena y
+  menguantes. Pool rotativo aleatorio cada 4-8 min. renderMoonPhase
+  con recorte pixel a pixel (sin disco oscuro base).
+- **Estrellas fugaces**: trail 12px con fade + sonido sutil + mensaje
+  flotante ("Un deseo cae del cielo"). Cada 60-180s.
+- **Bandada de pajaros**: 3-4 siluetas cruzando el cielo cada 90-180s.
+  Velocidad + formacion aleatoria.
+- **5 ventanas parpadeantes** (era 1): array ANIM_WINDOWS con 5
+  posiciones [building][row][col], timers independientes.
+- **Efecto vela al marcar las 12**: overlay sepia sutil cuando el
+  reloj marca hora cercana a noon. Helper PocketWatchRenderer.isNearNoon().
+- **Humo mas denso**: particulas x2 (luego bajado a 4 por chimenea),
+  wind variable con componente sinusoidal lenta, humo en chimeneas FG
+  (luego desactivado para performance).
+- **Niebla que respira**: pulso lento 0.3Hz sobre renderFogLow.
+- **Gato en tejado**: sprite 4x2 pixel-art en edificio FG index 5,
+  gira cabeza cada 5s.
+- **Grieta en edificio**: zigzag pixel-art en edificio FG index 1,
+  con vela parpadeante amber dentro.
+- **Rata cruzando la calle**: sprite 8x4 cada 40-80s.
+- **Relampago con silueta**: renderLightningSilhouette dibuja contornos
+  blancos de chimeneas durante el pico del flash.
+- **Cuervos coordinados con audio**: flag crowsPlayingUntilMs en
+  MenuAmbience, aceleracion 3.5x cuando suena el sonido crows.
+- **Nubes con velocidades variadas**: initCloudSpeeds con Random +/-30%.
 
-### Candidato C: v0.13.0+ - Contenido de gameplay (Gripe Verde en si).
+### Contenido rotativo
+- **Pool subtitulos del logo**: 12 apuntes del cronista ("Dia 47 ~
+  Aun no encuentro respuestas", etc.) con Random.nextInt, intervalo
+  variable 30-120s via rerollRotateInterval().
+- **Firmas rotativas**: pool de 4 ("Dr. S. Pereira", "Cronista R. Da
+  Rosa", "Cap. G. Bandeira", "Prof. A. Focco") sincronizadas con
+  yearIndex. Con tachadura del nombre anterior.
+- **Horas rotativas del reloj**: pool de 8 horas en
+  PocketWatchRenderer.HOUR_POOL con timer 3-8 min.
+- **Headers quarantine rotativos**: 8 combos (autoridad + entidad).
+- **Flavors rotativas** en DiaryOptionsScreen (8 frases), DiaryChatOptionsScreen
+  (7 frases), DiaryAccessibilityOptionsScreen (7 frases).
+- **Subtitulos botones**: GreenFluButton con pickRotatingSubtitle()
+  cacheado por sesion (5 variantes multiplayer, 5 variantes mods).
+- **Titulo changelog rotativo**: 5 variantes.
+
+### Easter eggs
+- **Doble-click en logo**: skull sacudida 600ms + 20 particulas verdes
+  cayendo 2s + sonido menu.crows (pitch 1.2) + flash amber 400ms +
+  relampago instantaneo forzado + overlay verde 300ms + mensaje
+  2x centrado con fade 5s. 8 frases random en espanol neutro.
+- **Firma con temblor**: jitter sutil via sin()/cos() con frecuencias
+  altas (mano cansada del cronista).
+- **Mensaje dia real**: getDayMessage() con LocalDate.now() + bonus
+  mensual (oct=muertos, dic=Adviento, ene=misma peste).
+- **Hora real**: overlay sepia oscuro si hora real 20-06.
+- **Detector de mes**: octubre/diciembre/enero con frase bonus.
+- **Pulso del skull**: logoPulse via sin(ms/800) levanta 1px.
+
+### Widgets nuevos
+- DiarySlider: generico con DoubleConsumer + DoubleFunction.
+- DiaryProgressBar: barra pergamino con label opcional.
+- DiarySeparator: draw, drawWithLozenge, drawDouble, drawVertical.
+- DiaryAmbienceSlider: slider para volumen ambiente del cronista.
+- DiaryOnlineOptionsScreen: subclase de SimpleOptionsSubScreen.
+
+### Polish del pergamino (PaperTexture)
+- drawCoffeeStain: 1 mancha cafe con halo.
+- drawWaxSeal: sello cera roja esquina inferior derecha.
+- drawTornEdges: muescas irregulares en 4 esquinas.
+- drawPaperFibers: puntos sepia dispersos.
+- drawWatermark: "EC" muy sutil en el centro.
+- Papel envejece con el uso: openCount aumenta stains (max +15).
+
+### Posters
+- drawBloodSplatter: 30% chance de manchas sangre en Cuarentena/Reward.
+- drawInkStamp: 40% chance de sello APROBADO/REVOCADO/CENSURADO/etc.
+
+### Audio
+- Susurros lejanos: AMBIENT_OCCASIONAL pitch 0.55-0.75 como evento RARE.
+- Tos seca: MENU_CHAIN pitch 0.40 como evento RARE.
+- Sonido de puerta (UiSounds.close) al abrir DiaryOptionsScreen.
+- Sonido al escribir en DiaryTextField (UiSounds.scroll).
+- Sonido al scrollear changelog (throttle 200ms).
+- Volumen hover reducido: VOL_HOVER 0.12->0.06.
+
+### UX
+- Botones Title subtitulos cacheados por sesion (fix re-sort al tocar AMB).
+- Boton AMB removido del Title (controlado desde slider en Sonidos).
+- Focus visual dorado en DiaryButton cuando isFocused por teclado.
+- Fix boton Join multiplayer: scan dinamico por Component message.
+- Scroll recordado en DiaryLanguageScreen y ChangelogScreen.
+- Campanilla en DiaryConfirmScreen al init.
+- Capitulares decorativas en changelog (drop cap H1 1.6x).
+- Separadores con rombo en changelog.
+- Asterisco * al margen de H1 en changelog.
+
+### Config
+- AMBIENCE_VOLUME: ForgeConfigSpec.DoubleValue persistente.
+- OPEN_COUNT: ForgeConfigSpec.IntValue persistente (contador aperturas).
+- MenuAmbience.getUserVolume() / setUserVolume() con lazy-load config.
+
+### Espanol neutro
+- Todos los pools hardcoded reescritos: "ustedes"/"su" en vez de
+  "vosotros"/"vuestra". Aplica a subtitulos, easter eggs, dias,
+  flavors de Options/Chat/Accessibility.
+
+### Cambios revertidos durante v0.12.2
+- Humo verde intermitente (sacado, no quedaba bien).
+- Carruaje cruzando (parecia tren, sacado).
+- Ropa colgada entre edificios (posicionamiento malo, sacado).
+- Gato version grande 2x (volvio a 4x2 original).
+- Parallax con mouse (causaba bugs de framebuffer).
+- Fill negro en Title (oscurecia ventanas).
+- Subtitulo rotativo del logo "GRIPE VERDE" (usuario quiere fijo).
+- UiSounds.open() al abrir subpantallas (sonaba mal).
+- Fade de transicion 200ms (percibido como flash).
+- Nombres rotativo del server pinneado (confuso).
+- FPS indicator (removido por pedido del usuario).
+- Cursor de pluma custom (confuso).
+
+### Errores catalogados v0.12.2
+- **E116**: parallax con pushPose/translate en render() causa que
+  el piso desaparezca y deje residuo del framebuffer.
+- **E117**: g.fill(0,0,w,h,0xFF000000) al inicio del Title
+  oscurece las ventanas iluminadas del skyline.
+- **E118**: Cloth Config + IMPR crash esporadico por config no
+  registrada (bug externo, fix = borrar .toml).
+- **E119**: drawSoftBlob con 8 particulas de humo superpuestas
+  produce blancura por saturacion de alpha.
+- **E120**: renderMoonPhase usa disco oscuro como mascara que
+  se ve como circulo negro en fases parciales.
+- **E121**: updateLoopVolumes se ejecuta antes de que start()
+  termine, mata los loops recien creados.
+- **E122**: setUserVolume + onDrag + updateLoopVolumes = 3
+  rebuilds por frame, satura SoundManager.
+- **E123**: MenuAmbience.stop() en Title.removed() mata el
+  ambiente al navegar a subpantallas.
+- **E124**: MenuAmbience.tick() faltaba en 13 subpantallas.
+
+### Reglas nuevas v0.12.2
+- **R-NO-GLOBAL-TRANSLATE-RENDER** (reforzada): no usar pushPose/
+  translate sobre escena viva en render().
+- **R-FRAMEBUFFER-CLEAR-TITLE**: no llamar fill negro opaco en Title.
+- **R-CONFIG-RESIDUAL-EXTMOD**: crash de mod externo por config no
+  registrada = borrar .toml y reiniciar.
+- **R-SOUND-REBUILD-ONCE-PER-TICK**: nunca reconstruir loops de audio
+  mas de 1 vez por tick. setUserVolume solo guarda el valor, el
+  rebuild real lo hace updateLoopVolumes en tick().
+- **R-AMBIENCE-PERSIST**: MenuAmbience NO se para al navegar entre
+  pantallas del menu. Solo se auto-detiene cuando mc.level != null.
+
+---
+## ADDENDUM v0.12.3 (hotfixes y optimizaciones)
+
+### Alcance
+Hotfixes criticos sobre v0.12.2. 22 archivos, 133 inserciones.
+
+### Fixes de audio
+- MenuAmbience.stop() removido de Title.removed() — ambiente persiste.
+- MenuAmbience.tick() agregado en 13 subpantallas Diary.
+- setUserVolume NO reconstruye loops (delegado a updateLoopVolumes
+  en tick, evita saturacion del SoundManager por 3+ rebuilds/frame).
+- updateLoopVolumes no reconstruye en primera llamada (evita matar
+  loops recien creados por start()).
+- start() setea lastAppliedVolume post-init.
+- getUserVolume() aplicado a triggerFrom + onSecondTick + desmute.
+- tick() skipea si getUserVolume() < 0.01f.
+
+### Fixes visuales
+- renderStreet hecho public + llamado en 13 subpantallas (calle
+  visible sin faroles/esporas/rata).
+- Luna creciente: disco oscuro base eliminado, solo se dibuja la
+  parte iluminada con pixel loop.
+- Halo lunar: solo en fases >40% iluminacion, radios reducidos.
+- Easter egg texto escala adaptativa (1.0x-1.8x segun this.width).
+- Panel sonidos PANEL_H 340->380.
+
+### Optimizaciones de performance
+- 13 subpantallas sin renderFogLow/renderStreetLevel/renderAir
+  (mantiene renderSky + skyline BG + skyline FG + renderStreet).
+- Estrellas 60->40, brillantes 15->10.
+- Nubes 7->5.
+- RAIN_COUNT 80->40.
+- SPORE_COUNT 30->15.
+- Humo FG desactivado (solo BG, alpha 90).
+- Vignette margin 0.28->0.20, step 2px.
+- drawSoftBlob: menos steps para blobs chicos + alpha threshold.
+- PaperTexture: stains divisor 15000->30000, fibers 500->1500,
+  coffee max 1.
+- DEBUG_LOGGING desactivado en MenuAmbience, MenuMusic,
+  LivingAtmosphere.
+
+### Estado del proyecto post-v0.12.3
+- 71 clases Java.
+- 39 archivos modificados entre v0.12.1 y v0.12.3.
+- 2055 inserciones netas.
+- 5 clases nuevas: DiaryOnlineOptionsScreen, DiaryAmbienceSlider,
+  DiarySlider, DiaryProgressBar, DiarySeparator.
+
+## PROXIMO HITO PLANIFICADO (revisado tras v0.12.3)
+
+### Pendientes identificados
+- Fix luna creciente pixel loop puede ser lento en resoluciones altas.
+- Verificar que slider AMB funciona correctamente post-restart.
+- KI-12: mixin dirt bypass para 4 pantallas vanilla restantes.
+
+### Candidato C: v0.13.0+ - Contenido de gameplay (Gripe Verde en si)
+Objetivo: primer sistema real de gameplay. Con la fase UI cerrada
+y optimizada, la casa esta lista para tener contenido adentro.
+
+Sub-hitos a definir en diseno previo:
+- Sistema de enfermedad: sintomas, progreso, contagio
+- Cuarentena: zonas seguras vs zonas infectadas
+- NPCs: enfermos, sanos, personal medico
+- Items: mascaras, medicinas, alcohol, agua limpia
+- Mecanicas ambientales: humo verde, ratas, cadaveres
