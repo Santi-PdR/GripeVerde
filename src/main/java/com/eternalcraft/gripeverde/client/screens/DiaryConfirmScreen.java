@@ -103,7 +103,8 @@ public class DiaryConfirmScreen extends ConfirmScreen {
     public void tick() {
         super.tick();
         // R-DIARY-TICK-MUSIC: mantener musica del cronista viva en subpantallas
-        try { MenuMusic.tick(); } catch (Throwable ignored) {}
+        try { MenuMusic.tick();
+ com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick(); } catch (Throwable ignored) {}
     }
 
     @Override

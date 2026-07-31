@@ -424,7 +424,8 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     public void tick() {
         super.tick();
         updateDiaryButtonStates();
-        try { MenuMusic.tick(); } catch (Throwable ignored) {}
+        try { MenuMusic.tick();
+ com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick(); } catch (Throwable ignored) {}
     }
 
     @Override

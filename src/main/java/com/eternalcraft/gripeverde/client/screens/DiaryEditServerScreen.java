@@ -115,7 +115,8 @@ public class DiaryEditServerScreen extends Screen {
     public void tick() {
         this.nameEdit.tick();
         this.ipEdit.tick();
-        try { MenuMusic.tick(); } catch (Throwable ignored) {}
+        try { MenuMusic.tick();
+ com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick(); } catch (Throwable ignored) {}
     }
 
     @Override

@@ -122,7 +122,8 @@ public class DiaryDirectJoinScreen extends Screen {
     @Override
     public void tick() {
         if (this.ipEdit != null) this.ipEdit.tick();
-        try { MenuMusic.tick(); } catch (Throwable ignored) {}
+        try { MenuMusic.tick();
+ com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick(); } catch (Throwable ignored) {}
     }
 
     @Override
