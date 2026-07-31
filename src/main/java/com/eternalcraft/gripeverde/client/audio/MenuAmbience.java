@@ -210,34 +210,9 @@ public class MenuAmbience {
             com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_VOLUME.set((double) userVolume);
             com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_VOLUME.save();
         } catch (Exception ignored) {}
-        // Rebuild loops con nuevo volumen (incluso si no esta active, actualizamos volumenes base)
-        Minecraft mc = Minecraft.getInstance();
-        if (mc == null) return;
-        if (muted) return;
-        // Force stop + rebuild de todos los loops
-        for (BaseLoop bl : BASE_LOOPS) {
-            try {
-                if (bl.instance != null) {
-                    mc.getSoundManager().stop(bl.instance);
-                    bl.instance = null;
-                }
-            } catch (Exception ignored) {}
-        }
-        // Solo re-play si estamos active
-        if (!active) return;
-        for (BaseLoop bl : BASE_LOOPS) {
-            try {
-                SoundEvent se = bl.sound.get();
-                float finalVol = bl.volume * userVolume;
-                if (finalVol > 0.001f) {
-                    bl.instance = buildLoopInstance(se, finalVol);
-                    mc.getSoundManager().play(bl.instance);
-                }
-            } catch (Exception e) {
-                bl.instance = null;
-            }
-        }
-        if (DEBUG_LOGGING) LOGGER.info("[MenuAmbience] userVolume set a {} (loops rebuilt)", userVolume);
+        // NO reconstruir loops aqui. updateLoopVolumes() en tick() se encarga.
+        // Esto evita 3+ rebuilds por frame al arrastrar el slider.
+        if (DEBUG_LOGGING) LOGGER.info("[MenuAmbience] userVolume set a {} (rebuild delegado a tick)", userVolume);
     }
 
     /** Reconstruye loops si el volumen cambio (slider en tiempo real). */
