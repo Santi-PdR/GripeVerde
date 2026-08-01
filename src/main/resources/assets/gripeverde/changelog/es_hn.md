@@ -1,6 +1,18 @@
 # Eternal Craft: Gripe Verde
 ## Notas de Actualización
 
+## Version 0.12 - Detalles en la Penumbra
+
+La ciudad respira, o quizás exhala su último aliento. He notado que la luna ya no es un disco estático; ahora mengua y crece como el ánimo de los supervivientes. Las ratas, envalentonadas por el silencio, cruzan las calles a plena luz de las antorchas, y hasta los gatos parecen juzgarnos desde los tejados con una fijeza antinatural.
+
+Al revisar los viejos registros del gabinete, he encontrado las firmas de aquellos que me precedieron: Pereira, Da Rosa, Bandeira... sus nombres aparecen y desaparecen en los documentos como fantasmas de una burocracia moribunda. Incluso el escudo de la ciudad, al ser tocado con insistencia, parece reaccionar con un eco de cuervos y relámpagos verdes, como si la misma peste tuviera conciencia.
+
+Las estrellas fugaces ahora surcan el cielo con más frecuencia. Dicen que son deseos, pero aquí abajo sabemos que son solo cenizas de un mundo que se apaga.
+
+
+
+
+
 
 ## Version 0.10 - 0.11 - Una casa de papel
 

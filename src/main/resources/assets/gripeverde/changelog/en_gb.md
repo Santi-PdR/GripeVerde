@@ -1,6 +1,15 @@
 # Eternal Craft: Gripe Verde
 ## Update Notes
 
+## Version 0.12 - Details in the Gloom
+
+The city breathes, or perhaps exhales its final breath. I have noticed the moon is no longer a static disc; it now wanes and waxes like the spirits of the survivors. Rats, emboldened by the silence, cross the streets in plain torchlight, and even the cats seem to judge us from the rooftops with unnatural steadiness.
+
+While reviewing the old cabinet records, I have found the signatures of those who preceded me: Pereira, Da Rosa, Bandeira... their names appear and disappear in the documents like ghosts of a dying bureaucracy. Even the city crest, when touched repeatedly, seems to react with an echo of crows and green lightning, as if the plague itself had a conscience.
+
+Shooting stars now streak across the sky more frequently. They say they are wishes, but down here we know they are just ashes of a world going out.
+
+
 
 ## Version 0.10 - 0.11 - A house of paper
 
