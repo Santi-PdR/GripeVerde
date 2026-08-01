@@ -4,12 +4,10 @@ import com.eternalcraft.gripeverde.GripeVerdeMod;
 import com.eternalcraft.gripeverde.client.screens.ChangelogScreen;
 import com.eternalcraft.gripeverde.client.screens.DebugCanvasScreen;
 import com.eternalcraft.gripeverde.client.screens.DiaryPauseScreen;
-import com.eternalcraft.gripeverde.client.screens.DiaryDeathScreen;
 import com.eternalcraft.gripeverde.client.screens.DiaryTitleScreen;
 import com.eternalcraft.gripeverde.client.screens.SoundLabScreen;
 import com.eternalcraft.gripeverde.client.theme.ThemeManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.DeathScreen;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraftforge.api.distmarker.Dist;
@@ -68,44 +66,6 @@ public class ScreenEventHandler {
                 event.setNewScreen(new DiaryPauseScreen());
             } catch (Throwable t) {
                 LOG.error("Failed to replace PauseScreen", t);
-            } finally {
-                redirecting = false;
-            }
-            return;
-        }
-
-        // Intercept: DeathScreen vanilla -> DiaryDeathScreen custom
-        if (newScreen instanceof DeathScreen && !(newScreen instanceof DiaryDeathScreen)) {
-            redirecting = true;
-            try {
-                // Extraer causeOfDeath y hardcore via reflection
-                net.minecraft.network.chat.Component cause = null;
-                boolean hardcore = false;
-                try {
-                    var field = DeathScreen.class.getDeclaredField("causeOfDeath");
-                    field.setAccessible(true);
-                    cause = (net.minecraft.network.chat.Component) field.get(newScreen);
-                } catch (Throwable ignored) {
-                    try {
-                        var field = DeathScreen.class.getDeclaredField("f_95907_");
-                        field.setAccessible(true);
-                        cause = (net.minecraft.network.chat.Component) field.get(newScreen);
-                    } catch (Throwable ignored2) {}
-                }
-                try {
-                    var field = DeathScreen.class.getDeclaredField("hardcore");
-                    field.setAccessible(true);
-                    hardcore = field.getBoolean(newScreen);
-                } catch (Throwable ignored) {
-                    try {
-                        var field = DeathScreen.class.getDeclaredField("f_95908_");
-                        field.setAccessible(true);
-                        hardcore = field.getBoolean(newScreen);
-                    } catch (Throwable ignored2) {}
-                }
-                event.setNewScreen(new DiaryDeathScreen(cause, hardcore));
-            } catch (Throwable t) {
-                LOG.error("Failed to replace DeathScreen", t);
             } finally {
                 redirecting = false;
             }
