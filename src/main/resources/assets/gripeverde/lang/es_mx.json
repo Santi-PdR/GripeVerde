@@ -133,4 +133,17 @@
   "gripeverde.multiplayer.subtitle": "Atlas de ciudades del cronista",
   "gripeverde.edit.subtitle": "Notas sobre un asentamiento ajeno",
   "gripeverde.direct.subtitle": "Paso a un puerto sin cartografiar"
+,
+  "gripeverde.death.title": "Acta de Defunción",
+"gripeverde.death.title_hardcore": "Acta de Defunción Definitiva",
+"gripeverde.death.field.cause": "Causa presunta: ",
+"gripeverde.death.field.date": "Fecha del deceso: ",
+"gripeverde.death.field.time": "Hora consignada: ",
+"gripeverde.death.field.witness": "Testigo del suceso: ",
+"gripeverde.death.field.wealth": "Bienes al momento: ",
+"gripeverde.death.field.annotation": "Anotación técnica del gabinete:",
+"gripeverde.death.currency": "chelines",
+"gripeverde.death.button.respawn": "Volver a la vida",
+"gripeverde.death.button.title": "Regresar al gabinete",
+"gripeverde.death.button.delete_world": "Enterrar el mundo"
 }

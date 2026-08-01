@@ -133,4 +133,17 @@
   "gripeverde.multiplayer.subtitle": "The chronicler's atlas of cities",
   "gripeverde.edit.subtitle": "Notes on a foreign settlement",
   "gripeverde.direct.subtitle": "Passage to an unmapped port"
+,
+  "gripeverde.death.title": "Certificate of Demise",
+"gripeverde.death.title_hardcore": "Final Certificate of Demise",
+"gripeverde.death.field.cause": "Presumed cause: ",
+"gripeverde.death.field.date": "Date of decease: ",
+"gripeverde.death.field.time": "Time recorded: ",
+"gripeverde.death.field.witness": "Witness to the event: ",
+"gripeverde.death.field.wealth": "Goods at the moment: ",
+"gripeverde.death.field.annotation": "Cabinet's technical annotation:",
+"gripeverde.death.currency": "shillings",
+"gripeverde.death.button.respawn": "Return to life",
+"gripeverde.death.button.title": "Back to the cabinet",
+"gripeverde.death.button.delete_world": "Bury the world"
 }
