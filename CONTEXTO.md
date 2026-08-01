@@ -7,11 +7,11 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.12.3
-- build.gradle: version = '0.12.0'
-- GripeVerdeMod.VERSION: "0.12.3"
+- Version estable actual: v0.13.2
+- build.gradle: version = '0.13.2'
+- GripeVerdeMod.VERSION: "0.13.2"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
-- Ultimo tag publicado: v0.12.3
+- Ultimo tag publicado: v0.13.2
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
 
@@ -69,7 +69,7 @@ C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 
 - Local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 - Remoto: https://github.com/Santi-PdR/GripeVerde (privado)
-- Ultimo tag: v0.12.3
+- Ultimo tag: v0.13.2
 
 ## Rutas reales verificadas
 
@@ -2012,3 +2012,87 @@ Sub-hitos a definir en diseno previo:
 - NPCs: enfermos, sanos, personal medico
 - Items: mascaras, medicinas, alcohol, agua limpia
 - Mecanicas ambientales: humo verde, ratas, cadaveres
+
+---
+## ADDENDUM v0.13.0 a v0.13.2 (ciclo pergamino aplicado al mundo)
+
+### Alcance
+- v0.13.0: intento fallido DiaryDeathScreen (revertido en v0.13.1).
+- v0.13.1: rollback administrativo, otro mod cubrira death screen.
+- v0.13.2: primer resource pack built-in del mod (inventory.png), abre
+  camino para reemplazar mas texturas vanilla en versiones siguientes.
+
+### Codigo nuevo
+- client/ResourcePackHandler.java (registra pack built-in en AddPackFindersEvent).
+- resourcepacks/gripeverde_theme/pack.mcmeta
+- resourcepacks/gripeverde_theme/pack.png
+- resourcepacks/gripeverde_theme/assets/minecraft/textures/gui/container/inventory.png
+
+### Codigo eliminado (v0.13.1)
+- client/screens/DiaryDeathScreen.java (nunca funcionara correctamente por
+  el loop de respawn en singleplayer).
+- client/ClientTickHandler.java (solo servia para tickear el lock del
+  respawn, ya no necesario).
+
+### Errores catalogados
+- E113: PathPackResources en 1.20.1 tiene firma (String, boolean, Path),
+  no (String, Path, boolean) como en versiones previas.
+- E114: LocalPlayer.respawn() en singleplayer con /kill dispara un
+  ClientboundPlayerCombatKillPacket que reabre DeathScreen inmediatamente.
+  El intento de bloquear con flag estatico + ClientTickHandler no fue
+  suficiente. Fix real requiere mixin sobre ClientPacketListener.
+  handleRespawn o similar (fuera de scope aceptable).
+- E115: Los assets del namespace "minecraft" DENTRO de un mod jar NO
+  sobrescriben vanilla. Requieren un resource pack built-in con
+  AddPackFindersEvent para funcionar.
+
+### Reglas nuevas
+- R-RESOURCEPACK-BUILTIN: Para sobrescribir texturas vanilla desde un
+  mod, usar SIEMPRE resource pack built-in registrado via
+  AddPackFindersEvent. Nunca poner assets/minecraft/ dentro del jar
+  esperando que anulen vanilla; no funciona.
+- R-RESPAWN-NOT-INTERCEPT: No intentar reemplazar DeathScreen sin mixin
+  sobre ClientPacketListener.handleRespawn. El flujo de respawn es
+  asincrono y cualquier intento de bloquear reapertura via flags
+  fallara en algun escenario.
+
+### KI-13 (ABIERTO en v0.13.2, prioridad baja)
+- El inventory.png reemplaza solo la textura, no cambia comportamiento.
+  Cofres, hornos, mesa de crafting, yunque, etc. siguen vanilla. Plan:
+  M1 en el proximo ciclo (v0.13.3+) extender pack a mas containers.
+
+### KI-14 (ABIERTO en v0.13.2, prioridad media)
+- Hotbar (widgets.png) sigue vanilla gris feo. Plan: M2 en v0.13.4 o
+  cuando encaje.
+
+## PROXIMO HITO PLANIFICADO (revisado tras v0.13.2)
+
+### Candidato M1: v0.13.3+ - Extender resource pack a containers
+Objetivo: agregar texturas pergamino para generic_54, furnace,
+crafting_table, anvil, enchanting_table, beacon, etc. Un container por
+version. Riesgo bajo (mismo patron que inventory.png), alto impacto
+visual acumulado.
+
+### Candidato M2: v0.13.4-6 - Hotbar y otros widgets siempre visibles
+Objetivo: widgets.png pergamino, quiza icons.png (barras) SI se decide
+tocarlas.
+
+### Candidato M5: v0.13.x - Tooltips de items estilizados
+Objetivo: extender el fix de tooltips vanilla (KI-10) a los tooltips
+de items del inventario. Mixin o RenderTooltipEvent.Color extendido.
+
+### Candidato M9: v0.14.0 - Hito Mixin dirt bypass (KI-12)
+Objetivo: reemplazar dirt background de MouseSettings, KeyBinds,
+PackSelection, OnlineOptions. Investigar refmap fallido en E90/E111.
+
+### Candidato M10: v0.13.x - Actualizar changelog in-game
+Objetivo: agregar entrada agrupada v0.13 en los 25 archivos
+changelog/*.md que refleje inventario + resource pack. Solo si el
+ciclo v0.13.x termina con mas manifestacion observable.
+
+### Candidato M11: v0.13.x - Deprecations Forge
+Objetivo: migrar FMLJavaModLoadingContext.get() y ResourceLocation
+(String,String) a las APIs no-deprecated. No urgente en 1.20.1 estable.
+
+### Candidato M7: v0.14.0+ - Contenido de gameplay (Gripe Verde)
+Objetivo: primer sistema real de gameplay. Requiere diseno previo escrito.

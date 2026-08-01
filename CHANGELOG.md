@@ -1,5 +1,64 @@
 # Eternal Craft: Gripe Verde
 
+## v0.13.2 - Un inventario de pergamino
+
+El gabinete del cronista ha empezado a expandirse mas alla del vestibulo.
+El inventario del jugador, hasta ahora una mesa gris de fabrica, se ha
+convertido en una carpeta de pergamino con marco doble, esquineros
+victorianos y pequenos rombos ornamentales en cada lado. Los espacios
+donde uno guarda sus enseres se ven ahora como casillas de tinta hundida,
+como si el catalogo estuviera esperando el sello del funcionario. La
+crafting mesa 2x2, la armadura, el escudo: todo mantiene la posicion
+que uno ya conocia, solo que ahora todo parece pertenecer al mismo libro.
+
+Aviso practico: el paquete de recursos "Gripe Verde - Tema Victoriano"
+se activa por defecto, pero cualquiera puede desactivarlo desde Ajustes
+si prefiere volver a la mesa gris.
+
+## v0.13.1 - Reversion del acta
+
+El intento de escribir un acta de defuncion para cada muerte no llego
+a buen puerto. Otros gabinetes se ocuparan de ese oficio. La pantalla
+al morir vuelve a ser la vanilla, y este mod deja el terreno libre para
+que otro haga el trabajo con mas cuidado.
+
+## v0.13.0 - Un acta que no llegó a ser (revertido)
+
+Version experimental. Se genero una pantalla de acta de defuncion
+victoriana al morir el jugador, pero durante las pruebas aparecieron
+problemas de bucle infinito al respawnear y decidimos revertir el
+sistema completo en v0.13.1.
+
+## v0.12.4 - Cronica al dia
+
+Actualizacion administrativa: la cronica in-game (los 25 archivos de
+changelog en cada lengua) recibio la entrada "Detalles en la Penumbra",
+que recoge los cambios visuales acumulados durante toda la serie v0.12.
+
+## v0.12.3 - Hotfixes y optimizaciones
+
+Correcciones criticas sobre v0.12.2. El ambiente ya no se congela al
+navegar entre pantallas del menu, el slider de ambiente responde en
+tiempo real, la calle se dibuja tambien en las subpantallas del menu,
+y varias pasadas de optimizacion reducen la carga grafica en escalas
+altas del GUI.
+
+## v0.12.2 - Detalles vivos del gabinete
+
+La escena viva del Title recibe una explosion de contenido: la luna
+tiene ocho fases que rotan cada varios minutos, aparecen estrellas
+fugaces con estelas cortas, bandadas de pajaros cruzan el cielo, se
+encienden y apagan cinco ventanas independientes, hay un gato en el
+tejado, una grieta con vela dentro de un edificio, ratas cruzando la
+calle, y varios pools rotativos de textos: subtitulos del logo, firmas
+del cronista, horas del reloj, cabeceras de posters, flavors de opciones.
+Ademas hay un easter egg al hacer doble-click en el logo, con efectos
+visuales y sonoros dramaticos.
+
+Se introducen widgets nuevos (DiarySlider, DiaryProgressBar,
+DiarySeparator, DiaryOnlineOptionsScreen, DiaryAmbienceSlider), y el
+pergamino envejece con el uso a traves de un contador de aperturas
+persistido en la configuracion.
 ## v0.12.1 - La ciudad se acuerda de respirar
 
 Muchos detalles menores que juntos cambian el pulso del gabinete.

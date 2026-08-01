@@ -1,8 +1,8 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
-## v0.12.3 - Hotfixes y optimizaciones
+## v0.13.2 - Hotfixes y optimizaciones
 
-Fixes criticos post-v0.12.2:
+Fixes criticos post-v0.13.2:
 - **FIX**: MenuAmbience.stop() removido de Title.removed() - ambiente
   persiste al navegar entre pantallas (como musica).
 - **FIX**: MenuAmbience.tick() agregado en 13 subpantallas Diary.

@@ -5,7 +5,18 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.12.3 - Hotfixes y optimizaciones**
+**v0.13.2 - Un inventario de pergamino**
+
+El gabinete del cronista se extendio esta noche hasta la mesa donde
+uno guarda sus enseres. El inventario, que antes era una carpeta gris
+de fabrica, es ahora una hoja de pergamino con marco doble, esquineros
+en L y pequenos rombos ornamentales en cada lado del panel. Cada espacio
+donde uno acomoda un objeto se ve ahora como una casilla de tinta
+hundida, esperando el sello del catalogo.
+
+El paquete de recursos que trae este aspecto se activa solo al instalar
+el mod, y cualquiera puede desactivarlo desde Ajustes si prefiere el
+aspecto vanilla.
 
 Hotfixes criticos sobre v0.12.2: el ambiente del cronista persiste
 al navegar entre pantallas, nuevo slider de volumen ambiente en
