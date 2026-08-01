@@ -1,6 +1,25 @@
 # Eternal Craft: Gripe Verde
 ## Notas de Actualización
 
+## Version 0.13 - El gabinete se llena de maquinas
+
+Durante siete noches, el gabinete se extendio hasta abarcar los talleres
+que rodeaban al despacho del cronista. La mesa de trabajo, los arcones de
+almacen, los hornos de la fragua, el yunque del herrero, la piedra de
+amolar, la mesa arcana donde los libros susurran nombres antiguos, y hasta
+la torre de baliza que corona los tejados de la ciudad: todo lo que hasta
+hoy era carpinteria comun se ha transformado en hierro forjado, remaches
+de laton y placas de acero pulido.
+
+Cada estacion mantiene su propio caracter. Los hornos brillan con un tinte
+cobrizo; la fragua respira el gris azulado del acero frio; la mesa arcana
+se cubre de purpura profundo; la torre de baliza descansa sobre fondo
+dorado como una joya en su vitrina.
+
+El pergamino sigue reinando en los despachos y la correspondencia. El
+acero remachado ha tomado el mando en los talleres del oficio.
+
+
 ## Version 0.12 - Detalles en la Penumbra
 
 La ciudad respira, o quizás exhala su último aliento. He notado que la luna ya no es un disco estático; ahora mengua y crece como el ánimo de los supervivientes. Las ratas, envalentonadas por el silencio, cruzan las calles a plena luz de las antorchas, y hasta los gatos parecen juzgarnos desde los tejados con una fijeza antinatural.

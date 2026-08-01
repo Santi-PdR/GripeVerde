@@ -1,6 +1,25 @@
 # Eternal Craft: Gripe Verde
 ## Update Notes
 
+## Version 0.13 - The cabinet fills with machines
+
+For seven nights, the cabinet extended to encompass the workshops that
+surrounded the chronicler's office. The workbench, the storage chests,
+the forge furnaces, the blacksmith's anvil, the grindstone, the arcane
+table where books whisper ancient names, and even the beacon tower
+crowning the city rooftops: everything that until today was common
+carpentry has transformed into wrought iron, brass rivets and polished
+steel plates.
+
+Each station keeps its own character. The furnaces glow with a coppery
+tint; the forge breathes the blue-grey of cold steel; the arcane table
+is draped in deep purple; the beacon tower rests on a golden background
+like a jewel in its display case.
+
+Parchment still reigns in offices and correspondence. Riveted steel has
+taken command in the workshops of the trade.
+
+
 ## Version 0.12 - Details in the Gloom
 
 The city breathes, or perhaps exhales its final breath. I have noticed the moon is no longer a static disc; it now wanes and waxes like the spirits of the survivors. Rats, emboldened by the silence, cross the streets in plain torchlight, and even the cats seem to judge us from the rooftops with unnatural steadiness.

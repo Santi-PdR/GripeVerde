@@ -5,18 +5,16 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.13.2 - Un inventario de pergamino**
+**v0.13.9 - El gabinete se llena de maquinas**
 
-El gabinete del cronista se extendio esta noche hasta la mesa donde
-uno guarda sus enseres. El inventario, que antes era una carpeta gris
-de fabrica, es ahora una hoja de pergamino con marco doble, esquineros
-en L y pequenos rombos ornamentales en cada lado del panel. Cada espacio
-donde uno acomoda un objeto se ve ahora como una casilla de tinta
-hundida, esperando el sello del catalogo.
+El resource pack del mod crecio esta semana desde una sola pantalla hasta
+abarcar toda la trastienda del jugador: mesas de trabajo, arcones, hornos,
+yunques, piedras de amolar, mesas arcanas y torres de baliza recibieron
+el tratamiento steel victoriano. Cada estacion conserva su rol pero ahora
+todas comparten el mismo lenguaje de hierro forjado, remaches y latón.
 
-El paquete de recursos que trae este aspecto se activa solo al instalar
-el mod, y cualquiera puede desactivarlo desde Ajustes si prefiere el
-aspecto vanilla.
+El paquete se activa por defecto al instalar el mod y puede desactivarse
+desde Ajustes si el jugador prefiere el aspecto vanilla.
 
 Hotfixes criticos sobre v0.12.2: el ambiente del cronista persiste
 al navegar entre pantallas, nuevo slider de volumen ambiente en

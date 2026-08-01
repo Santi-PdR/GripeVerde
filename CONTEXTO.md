@@ -7,11 +7,11 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.13.2
-- build.gradle: version = '0.13.2'
-- GripeVerdeMod.VERSION: "0.13.2"
+- Version estable actual: v0.13.9
+- build.gradle: version = '0.13.9'
+- GripeVerdeMod.VERSION: "0.13.9"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
-- Ultimo tag publicado: v0.13.2
+- Ultimo tag publicado: v0.13.9
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
 
@@ -69,7 +69,7 @@ C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 
 - Local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 - Remoto: https://github.com/Santi-PdR/GripeVerde (privado)
-- Ultimo tag: v0.13.2
+- Ultimo tag: v0.13.9
 
 ## Rutas reales verificadas
 
@@ -2093,6 +2093,118 @@ ciclo v0.13.x termina con mas manifestacion observable.
 ### Candidato M11: v0.13.x - Deprecations Forge
 Objetivo: migrar FMLJavaModLoadingContext.get() y ResourceLocation
 (String,String) a las APIs no-deprecated. No urgente en 1.20.1 estable.
+
+### Candidato M7: v0.14.0+ - Contenido de gameplay (Gripe Verde)
+Objetivo: primer sistema real de gameplay. Requiere diseno previo escrito.
+
+---
+## ADDENDUM v0.13.3 a v0.13.9 (ciclo M1 - resource pack expandido)
+
+### Alcance
+Extension del resource pack built-in de un solo container (inventory) a
+siete containers principales bajo un mismo lenguaje visual "steel
+victoriano" (hierro forjado + remaches + placas de laton), con acentos
+tematicos distintos por tipo de container:
+- v0.13.3: inventory.png rework a steel (Alex pidio steel, no pergamino).
+- v0.13.4: crafting_table.png (mesa 3x3).
+- v0.13.5: generic_54.png (cofres, cofre doble, shulker box, barril).
+- v0.13.6: furnace.png con tinte cobrizo (horno + smoker + blast furnace).
+- v0.13.7: anvil.png + grindstone.png con tinte acero frio (herreria).
+- v0.13.8: enchanting_table.png con tinte purpura arcano.
+- v0.13.9: beacon.png con tinte dorado (baliza, cierre ciclo).
+
+### Assets nuevos
+Todos en: resourcepacks/gripeverde_theme/assets/minecraft/textures/gui/container/
+- inventory.png (rework)
+- crafting_table.png
+- generic_54.png
+- furnace.png
+- anvil.png
+- grindstone.png
+- enchanting_table.png
+- beacon.png
+
+### Codigo nuevo
+Ninguno (todo es assets + ResourcePackHandler ya existente de v0.13.2).
+
+### Errores catalogados
+- E116: PowerShell param([int]$slotPositions) rechaza arrays. Debe ser
+  [array]. Detectado en v0.13.7 cuando la funcion New-SteelPanel fallo
+  silenciosamente para anvil + grindstone (Write-Host "OK" impreso pero
+  archivos NO generados). Fix aplicado con commit --amend.
+- E117: Arrays anidados en PowerShell requieren sintaxis con coma prefija
+  ",@(...)" para evitar que se aplanen automaticamente. Sin la coma, un
+  array de arrays 3-elementos se aplana a un array de 9 enteros.
+
+### Reglas nuevas formalizadas
+
+- **R-CICLO-AGRUPADO**: Cuando un hito (ej: M1) se compone de multiples
+  bumps chicos del mismo patron (ej: reemplazar N texturas del mismo
+  estilo), se permite ciclo agrupado:
+  1. Bumps intermedios llevan commit simple sin tag ni actualizacion de
+     docs.
+  2. Al terminar el ciclo completo, un unico bloque de cierre R-CIERRE
+     actualiza CONTEXTO/CHANGELOG/README/KNOWN_ISSUES + tag + push.
+  3. La entrada del changelog (raiz + in-game) es agrupada narrativamente
+     ("El gabinete se llena de maquinas") en vez de N entradas
+     fragmentadas.
+  Condicion: el ciclo debe compartir un tema/patron claro. Si un bump
+  intermedio introduce cambio significativo distinto (nuevo sistema, fix
+  critico), rompe el ciclo agrupado y se cierra con R-CIERRE puntual.
+
+- **R-VERIFY-COUNT-STRICT**: Refuerzo de R-VERIFY-COUNT. Cuando una
+  funcion genera archivos, la verificacion post-generacion debe hacerse
+  con Test-Path + throw si falta cualquier archivo. Nunca confiar en
+  Write-Host "OK" que se ejecuto antes de la I/O real. Detectado en E116.
+
+- **R-POWERSHELL-ARRAY-PARAM**: En funciones PowerShell que reciben
+  arrays anidados, declarar el parametro como [array] (NO [int]) y usar
+  sintaxis ",@(...)" con coma prefija al construir el array para evitar
+  auto-aplanado.
+
+### KI-13 (CERRADO en v0.13.9)
+- El resource pack cubre ahora todos los containers principales del juego
+  vanilla. Solo quedan containers menores/raros: brewing_stand, hopper,
+  dispenser, dropper, loom, cartography_table, stonecutter, smithing,
+  villager trading, horse. Estos son deuda opcional de futura extension.
+
+### KI-14 (SIGUE ABIERTO)
+- Hotbar (widgets.png) sigue vanilla. Plan: M2 en ciclo futuro cuando
+  encaje.
+
+### KI-15 (NUEVO en v0.13.9)
+- Containers menores no cubiertos por M1: brewing_stand, hopper, dispenser,
+  dropper, loom, cartography_table, stonecutter, smithing, villager,
+  horse. Deuda opcional. Bajo impacto (uso poco frecuente).
+
+## PROXIMO HITO PLANIFICADO (revisado tras v0.13.9)
+
+### Candidato M1.2: v0.13.10+ - Containers menores restantes
+Objetivo: extender el pack a brewing_stand, hopper, dispenser, dropper,
+loom, cartography_table, stonecutter, smithing, villager, horse. Ciclo
+opcional, bajo impacto, alto costo relativo. Podria hacerse en un solo
+bump agrupado si Alex/usuario lo pide.
+
+### Candidato M2: v0.13.x - Hotbar (widgets.png)
+Objetivo: hotbar pergamino/steel. Duda pendiente: mantener pergamino
+victoriano (coherente con menus) o steel (coherente con containers).
+Requiere decision de scope de arte.
+
+### Candidato M5: v0.13.x - Tooltips de items estilizados
+Objetivo: extender fix de tooltips (KI-10) a tooltips de items en el
+inventario. Mixin o RenderTooltipEvent.Color extendido.
+
+### Candidato M9: v0.14.0 - Hito Mixin dirt bypass (KI-12)
+Objetivo: reemplazar dirt background de MouseSettings, KeyBinds,
+PackSelection, OnlineOptions. Ruta identificada, hito dedicado.
+
+### Candidato M10: v0.13.x - Changelog in-game agrupado v0.13
+Objetivo: agregar entrada agrupada "El gabinete se llena de maquinas"
+en los 25 archivos changelog/*.md in-game. INCLUIDO en este cierre.
+
+### Candidato M11: v0.13.x - Deprecations Forge
+Objetivo: migrar FMLJavaModLoadingContext.get() y ResourceLocation
+(String,String) a APIs no-deprecated. No urgente en 1.20.1 estable.
 
 ### Candidato M7: v0.14.0+ - Contenido de gameplay (Gripe Verde)
 Objetivo: primer sistema real de gameplay. Requiere diseno previo escrito.

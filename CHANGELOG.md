@@ -1,5 +1,26 @@
 # Eternal Craft: Gripe Verde
 
+## v0.13.3 - v0.13.9 - El gabinete se llena de maquinas
+
+Durante siete noches, el gabinete se extendio hasta abarcar los talleres
+que rodeaban al despacho del cronista. La mesa de trabajo, los arcones de
+almacen, los hornos de la fragua, el yunque del herrero, la piedra de
+amolar, la mesa arcana donde los libros susurran nombres antiguos, y hasta
+la torre de baliza que corona los tejados de la ciudad: todo lo que hasta
+hoy era carpinteria comun de madera anonima se ha transformado en hierro
+forjado, remaches de latón y placas de acero pulido. Cada compartimento
+lleva ahora la forma de un hueco troquelado en la plancha, y los mas
+importantes estan bordeados por un halo dorado que anuncia su oficio.
+
+Cada estacion mantiene su propio caracter dentro de la misma fabrica. Los
+hornos brillan con un tinte cobrizo que recuerda al metal recien recocido;
+la fragua del yunque respira el gris azulado del acero frio; la mesa de
+encantamientos se cubre de un purpura profundo, casi ceremonial; y la
+torre de baliza descansa sobre un fondo dorado como una joya en su vitrina.
+
+El pergamino victoriano sigue reinando en los despachos, la correspondencia
+y las lenguas conocidas. El acero remachado toma ahora el mando en cada
+lugar donde el jugador trabaja con sus manos.
 ## v0.13.2 - Un inventario de pergamino
 
 El gabinete del cronista ha empezado a expandirse mas alla del vestibulo.
