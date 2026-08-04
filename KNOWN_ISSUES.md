@@ -1,5 +1,11 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+### Documento no tecnico de traspaso
+
+- `MODMENU_RESUMEN_IA.md` describe el Mod Menu y la experiencia visible para otra IA o colaborador sin requerir contexto tecnico.
+- Mantener ese documento actualizado si cambia la identidad visible del mod, las pantallas principales, el resource pack o la politica de sonidos.
+
+
 ## Estado actual para continuidad (commit 45fa59e)
 
 ### Cerrado en esta linea de trabajo

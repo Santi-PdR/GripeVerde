@@ -15,6 +15,8 @@
 
 ## Objetivo del proyecto
 
+Resumen no tecnico del Mod Menu y de la experiencia visible: ver `MODMENU_RESUMEN_IA.md`.
+
 Gripe Verde es un mod client-side de identidad visual, sonora y de navegacion para Minecraft Forge. El objetivo actual no es agregar gameplay, sino convertir la experiencia de menus, pantallas y resource pack en una interfaz victoriana profesional, coherente y compatible con modpacks.
 
 El tono del proyecto es diegetico: cuarentena victoriana, cronista, ciudad enferma, gabinete, pergamino, acero gris y sonido de mecanismos/latches. Evitar textos que suenen a devlog dentro del juego.

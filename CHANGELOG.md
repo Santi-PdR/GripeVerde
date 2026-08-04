@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## v0.13.10 RC - Resumen no tecnico del Mod Menu
+
+Se agrego una hoja de traspaso pensada para explicar la experiencia visible del mod sin entrar en codigo: que cambia el menu principal, como se organiza el gabinete de opciones, que pantallas se transforman, que aporta el paquete visual, que lugar ocupa el audio y que limites deben respetarse para no romper la familiaridad de Minecraft.
+
+
 ## v0.13.10 RC - Registro de traspaso IA
 
 El gabinete queda preparado para ser retomado por otra mano sin perder el

@@ -2,6 +2,8 @@
 
 ## Addendum operativo - handoff IA (commit 45fa59e)
 
+- Resumen no tecnico del Mod Menu: `MODMENU_RESUMEN_IA.md`.
+
 - Rama fija de Arena: `arena/019fbe66-gripeverde`.
 - Commit actual remoto: `45fa59e fix: categorizar sonidos de botones`.
 - Version: `0.13.10`.

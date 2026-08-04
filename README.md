@@ -100,6 +100,8 @@ Reglas actuales:
 
 ## Documentacion
 
+- `MODMENU_RESUMEN_IA.md` - resumen no tecnico del Mod Menu, experiencia y cambios visibles para traspaso a otra IA.
+
 - `CONTEXTO.md` - contexto maestro actual para retomar sesiones.
 - `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores.
 - `KNOWN_ISSUES.md` - estado tecnico, decisiones activas, errores documentados.
