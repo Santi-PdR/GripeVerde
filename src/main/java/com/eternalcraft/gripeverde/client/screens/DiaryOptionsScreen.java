@@ -191,7 +191,7 @@ public class DiaryOptionsScreen extends Screen {
             int subW = this.font.width(subtitle);
             int subX = (this.width - subW) / 2;
             int subY = titleY + TITLE_H + 2;
-            g.drawString(this.font, subtitle, subX, subY, DiaryTheme.INK_SUBTITLE, false);
+            g.drawString(this.font, subtitle, subX, subY, DiaryChrome.INK_SUBTITLE, false);
 
             // Rotating flavor quote - tinta muy suave
             if (currentFlavor != null) {
