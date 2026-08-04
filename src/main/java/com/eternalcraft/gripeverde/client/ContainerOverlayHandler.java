@@ -110,14 +110,8 @@ public final class ContainerOverlayHandler {
             drawLabel(gfx, font, screen.getTitle(), left + titleX, top + titleY);
         }
 
-        if (isEnderChestTitle(screen.getTitle())) {
-            drawEnderChestDetails(gfx, left, top, state.imageHeight);
-        }
-
-        if (isEnchantmentScreen(screen)) {
-            drawEnchantmentTextWithShadow(gfx, font, container, left, top);
-            drawEnchantingSparkles(gfx, left, top);
-        }
+        // Fase 4: pure resource pack - no code decorations, texturas contienen detalles
+        // Ender chest motes y enchanting sparkles ahora viven en PNGs
 
     }
 
