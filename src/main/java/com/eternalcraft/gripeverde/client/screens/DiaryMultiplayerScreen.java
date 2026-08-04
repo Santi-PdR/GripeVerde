@@ -464,14 +464,10 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     public void render(GuiGraphics gfx, int mouseX, int mouseY, float partial) {
         // Fondo escena viva
         try {
-            AtmosphereRenderer.renderSky(gfx, this.width, this.height);
-            VictorianSkyline.renderBackground(gfx, this.width, this.height);
-                VictorianSkyline.renderForeground(gfx, this.width, this.height);
-        LivingAtmosphere.renderStreet(gfx, this.width, this.height);
+            com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(gfx, this.width, this.height);
                 } catch (Throwable ignored) {}
 
         // Overlay atenuador
-        gfx.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
 
         // Panel pergamino que ocupa casi toda la pantalla
         int panelX = PANEL_MARGIN_H;
@@ -479,7 +475,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         int panelW = this.width - PANEL_MARGIN_H * 2;
         int panelH = this.height - PANEL_MARGIN_V * 2;
         DiaryChrome.drawPanelShadow(gfx, panelX, panelY, panelW, panelH);
-        PaperTexture.drawClean(gfx, panelX, panelY, panelW, panelH);
+        PaperTexture.drawClean(gfx, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
         DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, panelW, panelH);
 
         // Titulo

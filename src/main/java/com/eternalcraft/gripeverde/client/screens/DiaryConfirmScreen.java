@@ -111,16 +111,12 @@ public class DiaryConfirmScreen extends ConfirmScreen {
     public void render(GuiGraphics gfx, int mouseX, int mouseY, float partial) {
         // Fondo: escena viva del Title
         try {
-            AtmosphereRenderer.renderSky(gfx, this.width, this.height);
-            VictorianSkyline.renderBackground(gfx, this.width, this.height);
-                VictorianSkyline.renderForeground(gfx, this.width, this.height);
-        LivingAtmosphere.renderStreet(gfx, this.width, this.height);
+            com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(gfx, this.width, this.height);
                 } catch (Throwable ignored) {
             // Si algo del pipeline falla, seguimos con overlay negro
         }
 
         // Overlay para atenuar la escena
-        gfx.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
 
         // Panel pergamino
         int panelW = Math.min(PANEL_MAX_W, this.width - 40);
@@ -128,7 +124,7 @@ public class DiaryConfirmScreen extends ConfirmScreen {
         int panelX = (this.width - panelW) / 2;
         int panelY = (this.height - panelH) / 2;
         DiaryChrome.drawPanelShadow(gfx, panelX, panelY, panelW, panelH);
-        PaperTexture.drawClean(gfx, panelX, panelY, panelW, panelH);
+        PaperTexture.drawClean(gfx, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
 
         // Cosmetica
         DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, panelW, panelH);

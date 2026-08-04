@@ -172,11 +172,7 @@ public class DiaryTitleScreen extends Screen {
     @Override
     public void tick() {
         this.ticks++;
-        float delta = 1f / 20f;
-        AtmosphereRenderer.tick(delta);
-        VictorianSkyline.tick(delta);
-        LivingAtmosphere.tick(delta);
-        MenuMusic.tick();
+        com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.tick(1f / 20f);
         if (this.skipMusicButton != null) {
             boolean ready = !MenuMusic.isCrossfading();
             this.skipMusicButton.active = ready;
@@ -200,14 +196,8 @@ public class DiaryTitleScreen extends Screen {
         MenuAmbience.tick();
         MenuAmbience.setPocketWatchVisible(!isMinimalMode());
 
-        AtmosphereRenderer.renderSky(g, this.width, this.height);
-        VictorianSkyline.renderBackground(g, this.width, this.height);
-        LivingAtmosphere.renderFogLow(g, this.width, this.height);
-        VictorianSkyline.renderForeground(g, this.width, this.height);
-        LivingAtmosphere.renderStreetLevel(g, this.width, this.height);
-        LivingAtmosphere.renderAir(g, this.width, this.height);
-        LivingAtmosphere.renderFlash(g, this.width, this.height);
-        LivingAtmosphere.renderVignette(g, this.width, this.height);
+        // Professional centralized scene renderer
+        com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderTitleScene(g, this.width, this.height);
         drawGlassPatina(g);
 
         if (!cinematicMode) {

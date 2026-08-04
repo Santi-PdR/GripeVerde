@@ -110,14 +110,8 @@ public final class ContainerOverlayHandler {
             drawLabel(gfx, font, screen.getTitle(), left + titleX, top + titleY);
         }
 
-        if (isEnderChestTitle(screen.getTitle())) {
-            drawEnderChestDetails(gfx, left, top, state.imageHeight);
-        }
-
-        if (isEnchantmentScreen(screen)) {
-            drawEnchantmentTextWithShadow(gfx, font, container, left, top);
-            drawEnchantingSparkles(gfx, left, top);
-        }
+        // Fase 4: pure resource pack - no code decorations, texturas contienen detalles
+        // Ender chest motes y enchanting sparkles ahora viven en PNGs
 
     }
 
@@ -152,7 +146,19 @@ public final class ContainerOverlayHandler {
     }
 
 
+    // Cached field lookups for performance (avoid reflection scan each frame)
+    private static final Map<Class<?>, Field[]> CLASS_FIELD_CACHE = new java.util.concurrent.ConcurrentHashMap<>();
+
     private static Field findIntField(Class<?> type, String... names) {
+        // Check cache first for common vanilla screens
+        Field[] cached = CLASS_FIELD_CACHE.get(type);
+        if (cached != null) {
+            for (String name : names) {
+                for (Field f : cached) {
+                    if (f != null && f.getName().equals(name) && f.getType() == int.class) return f;
+                }
+            }
+        }
         for (String name : names) {
             Class<?> c = type;
             while (c != null) {
@@ -160,15 +166,23 @@ public final class ContainerOverlayHandler {
                     Field f = c.getDeclaredField(name);
                     if (f.getType() == int.class) {
                         f.setAccessible(true);
+                        cacheFields(type, new Field[]{f});
                         return f;
                     }
-                } catch (Throwable ignored) {
-                    // Try superclass / next candidate.
-                }
+                } catch (Throwable ignored) {}
                 c = c.getSuperclass();
             }
         }
         return null;
+    }
+
+    private static void cacheFields(Class<?> type, Field[] fields) {
+        CLASS_FIELD_CACHE.merge(type, fields, (a,b)-> {
+            Field[] merged = new Field[a.length + b.length];
+            System.arraycopy(a,0,merged,0,a.length);
+            System.arraycopy(b,0,merged,a.length,b.length);
+            return merged;
+        });
     }
 
     private static Field findInventoryTitleField(Class<?> type, Object target) {
@@ -180,11 +194,10 @@ public final class ContainerOverlayHandler {
                     f.setAccessible(true);
                     Object value = f.get(target);
                     if (value instanceof Component component && isInventoryTitle(component)) {
+                        cacheFields(type, new Field[]{f});
                         return f;
                     }
-                } catch (Throwable ignored) {
-                    // Try next field.
-                }
+                } catch (Throwable ignored) {}
             }
             c = c.getSuperclass();
         }

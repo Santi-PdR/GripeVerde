@@ -96,16 +96,7 @@ public final class DiaryChrome {
         gfx.fill(x + w - 7, y + h - 7, x + w - 5, y + h - 5, dot);
     }
 
-    // ── Barra de scroll estilizada en tinta victoriana ──────────────────────
-    // Repinta encima de la barra vanilla. Requiere pasar geometria explicita
-    // porque las listas vanilla exponen distinta API segun subclase.
-    // Para OptionsList existe drawStyledScrollThumbForOptionsList() abajo.
-    //
-    // Parametros:
-    //  scrollLeft: X izquierda de la barra (6px de ancho)
-    //  trackY1..trackY2: rango vertical del track (top/bottom de la lista)
-    //  scrollAmount: valor actual de scroll (0 a maxScroll)
-    //  maxScroll: cuanto puede scrollear la lista (0 = todo visible)
+    // Barra de scroll victoriana profesional: pergamino tapado + thumb bronce
     public static void drawScrollThumb(GuiGraphics gfx, int scrollLeft,
                                        int trackY1, int trackY2,
                                        double scrollAmount, int maxScroll) {
@@ -113,33 +104,31 @@ public final class DiaryChrome {
 
         int scrollRight = scrollLeft + 6;
         int trackH = trackY2 - trackY1;
-
-        // Tapar barra vanilla con pergamino
         gfx.fill(scrollLeft, trackY1, scrollRight, trackY2, 0xFFF0E5C8);
+        gfx.fill(scrollLeft + 2, trackY1, scrollRight - 2, trackY2, 0x30422810);
 
-        // Track: linea tenue color pergamino oscuro
-        gfx.fill(scrollLeft + 1, trackY1, scrollRight - 1, trackY2, 0x40422810);
-
-        // Thumb: posicion y altura proporcional al scroll
         double scrollFrac = scrollAmount / (double) maxScroll;
-        int thumbH = Math.max(32, (int)(trackH * trackH / (double)(trackH + maxScroll)));
+        int thumbH = Math.max(28, Math.min(trackH - 8, (int)(trackH * trackH / (double)(trackH + maxScroll * 1.2))));
         int thumbY = trackY1 + (int)((trackH - thumbH) * scrollFrac);
 
-        // Thumb tinta victoriana: relleno + relieve claro izq + relieve oscuro der
-        gfx.fill(scrollLeft,     thumbY, scrollRight,     thumbY + thumbH, 0xB8422810);
-        gfx.fill(scrollLeft,     thumbY, scrollLeft + 2,  thumbY + thumbH, 0xA0703020);
-        gfx.fill(scrollRight - 2, thumbY, scrollRight,    thumbY + thumbH, 0x60200E05);
+        // Thumb: steel + parchment highlight + bronze rivets
+        gfx.fill(scrollLeft, thumbY, scrollRight, thumbY + thumbH, 0xBB6B4A2E);
+        gfx.fill(scrollLeft, thumbY, scrollLeft + 2, thumbY + thumbH, 0xD0A67A5A);
+        gfx.fill(scrollRight - 2, thumbY, scrollRight, thumbY + thumbH, 0x702E1E12);
         gfx.fill(scrollLeft, thumbY, scrollRight, thumbY + 1, 0xD08E6A35);
-        gfx.fill(scrollLeft, thumbY + thumbH - 1, scrollRight, thumbY + thumbH, 0x80200E05);
+        gfx.fill(scrollLeft, thumbY + thumbH - 1, scrollRight, thumbY + thumbH, 0x70200E05);
 
-        // Marca central (rombo pergamino)
         int midY = thumbY + thumbH / 2;
         int midX = scrollLeft + 3;
-        gfx.fill(midX,     midY - 2, midX + 1, midY - 1, 0xE0F3E9CE);
-        gfx.fill(midX - 1, midY - 1, midX + 2, midY,     0xE0F3E9CE);
-        gfx.fill(midX - 2, midY,     midX + 3, midY + 1, 0xE0F3E9CE);
-        gfx.fill(midX - 1, midY + 1, midX + 2, midY + 2, 0xE0F3E9CE);
-        gfx.fill(midX,     midY + 2, midX + 1, midY + 3, 0xE0F3E9CE);
+        // Lozenge central parchment
+        gfx.fill(midX, midY - 2, midX + 1, midY - 1, 0xE8F3E9CE);
+        gfx.fill(midX - 1, midY - 1, midX + 2, midY, 0xE8F3E9CE);
+        gfx.fill(midX - 2, midY, midX + 3, midY + 1, 0xE8F3E9CE);
+        gfx.fill(midX - 1, midY + 1, midX + 2, midY + 2, 0xE8F3E9CE);
+        gfx.fill(midX, midY + 2, midX + 1, midY + 3, 0xE8F3E9CE);
+        // Rivet top/bottom
+        gfx.fill(midX, thumbY + 3, midX + 1, thumbY + 4, DiaryTheme.withAlpha(0x00FFFFFF, 48));
+        gfx.fill(midX, thumbY + thumbH - 4, midX + 1, thumbY + thumbH - 3, DiaryTheme.withAlpha(0x00000000, 60));
     }
     // -- Scroll estilizado especifico para OptionsList vanilla ------------
     // OptionsList es subclase de ContainerObjectSelectionList y su scrollbar
@@ -189,21 +178,17 @@ public final class DiaryChrome {
         gfx.fillGradient(0, screenH - fade, screenW, screenH, 0x00000000, 0x60000000);
     }
 
-    // ---------------------------------------------------------------
-    // Sombra proyectada del panel de pergamino.
-    // Dibujar ANTES de PaperTexture.drawClean(). Da peso material.
-    // Color sepia oscuro para leerse sobre overlay 0x66000000.
-    // ---------------------------------------------------------------
+    // Sombra proyectada profesional: 3 capas soft + inner bevel
     public static void drawPanelShadow(GuiGraphics gfx, int x, int y, int w, int h) {
-        int offset = 6;
-        int col1 = 0x30100600;
-        int col2 = 0x58100600;
-        int col3 = 0x88100600;
-        int col4 = 0xA8080300;
-        gfx.fill(x + offset - 3, y + offset - 3, x + w + offset + 3, y + h + offset + 3, col1);
-        gfx.fill(x + offset - 1, y + offset - 1, x + w + offset + 1, y + h + offset + 1, col2);
-        gfx.fill(x + offset,     y + offset,     x + w + offset,     y + h + offset,     col3);
-        gfx.fill(x + offset + 1, y + offset + 1, x + w + offset - 1, y + h + offset - 1, col4);
+        int offset = 7;
+        // Outer soft penumbra
+        gfx.fill(x + offset - 4, y + offset - 4, x + w + offset + 4, y + h + offset + 4, 0x18100600);
+        gfx.fill(x + offset - 2, y + offset - 2, x + w + offset + 2, y + h + offset + 2, 0x3A100600);
+        gfx.fill(x + offset, y + offset, x + w + offset, y + h + offset, 0x6E100600);
+        // Inner contact shadow darker
+        gfx.fill(x + offset + 1, y + offset + 1, x + w + offset - 1, y + h + offset - 1, 0x8C080300);
+        // Subtle highlight top-left of shadow to simulate paper lift
+        gfx.fill(x + 2, y + 2, x + w - 2, y + 3, DiaryTheme.withAlpha(0x00FFFFFF, 10));
     }
 
     // ---------------------------------------------------------------

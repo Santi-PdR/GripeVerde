@@ -162,12 +162,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     @Override
     public void tick() {
         super.tick();
-        float delta = 1.0f / 20.0f;
-        AtmosphereRenderer.tick(delta);
-        VictorianSkyline.tick(delta);
-        LivingAtmosphere.tick(delta);
-        MenuMusic.tick();
-        com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick();
+        com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.tick(1.0f / 20.0f);
         this.smoothScroll.tick(this.reflectedList);
     }
 
@@ -188,16 +183,12 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         // --- Escena viva atenuada ---
         // Clear framebuffer + transition fade
         g.fill(0, 0, this.width, this.height, 0xFF000000);
-        AtmosphereRenderer.renderSky(g, this.width, this.height);
-        VictorianSkyline.renderBackground(g, this.width, this.height);
-        VictorianSkyline.renderForeground(g, this.width, this.height);
-        LivingAtmosphere.renderStreet(g, this.width, this.height);
+        com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
                 // --- Overlay oscuro ---
-        g.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
 
         // --- Pergamino ---
         DiaryChrome.drawPanelShadow(g, this.panelX, this.panelY, this.panelW, this.panelH);
-        PaperTexture.drawClean(g, this.panelX, this.panelY, this.panelW, this.panelH);
+        PaperTexture.drawClean(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.LEDGER);
 
         // --- Titulo ---
         String titleStr = Component.translatable("options.sounds.title").getString();

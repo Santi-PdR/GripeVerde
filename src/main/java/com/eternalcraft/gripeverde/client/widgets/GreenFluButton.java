@@ -22,174 +22,177 @@ public class GreenFluButton extends AbstractButton {
     private final ResourceLocation iconTexture;
     private final Runnable onClick;
     private boolean wasHovered = false;
+    private final EasedValue hoverAnim = new EasedValue(5.5f);
+    private int pressTicks = 0;
+    private final int wearSeed;
 
-    // Hover suave (0.0 apagado -> 1.0 encendido)
-    private final EasedValue hoverAnim = new EasedValue(6f); // 6.0 = ~170ms
+    public GreenFluButton(int x,int y,int w,int h, Component title, Component subtitle, ResourceLocation icon, Runnable onClick){
+        super(x,y,w,h,title);
+        this.title=title; this.subtitle=subtitle; this.iconTexture=icon; this.onClick=onClick;
+        this.wearSeed = (x*29 + y*19 + title.getString().hashCode()) & 0x7fffffff;
+    }
 
-    public GreenFluButton(int x, int y, int w, int h,
-                          Component title, Component subtitle,
-                          ResourceLocation iconTexture,
-                          Runnable onClick) {
-        super(x, y, w, h, title);
-        this.title = title;
-        this.subtitle = subtitle;
-        this.iconTexture = iconTexture;
-        this.onClick = onClick;
+    @Override public void onPress(){ UiSounds.playClick(); onClick.run(); }
+    @Override public void playDownSound(SoundManager sm){}
+    @Override public boolean mouseClicked(double mx,double my,int btn){
+        if(active&&visible&&clicked(mx,my)) pressTicks=7;
+        return super.mouseClicked(mx,my,btn);
     }
 
     @Override
-    public void onPress() {
-        UiSounds.playClick();
-        this.onClick.run();
-    }
-
-    @Override
-    public void playDownSound(SoundManager soundManager) {
-        // Silencia vanilla - UiSounds ya maneja el click
-    }
-
-    @Override
-    protected void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        boolean hovered = this.isHovered();
-
-        // Sonido solo cuando ENTRA hovered
-        if (hovered && !wasHovered) UiSounds.playHover();
-        wasHovered = hovered;
-
-        // Actualizar animacion (partialTick esta en ticks 1/20s)
+    protected void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTick){
+        boolean hovered=isHovered();
+        if(hovered&&!wasHovered) UiSounds.playHover();
+        wasHovered=hovered;
         hoverAnim.setTarget(hovered);
-        hoverAnim.tick(partialTick / 20f);
-        float t = hoverAnim.getEased();
+        hoverAnim.tick(partialTick/20f);
+        float t=hoverAnim.getEased();
+        boolean pressed=pressTicks>0&&active;
+        if(pressTicks>0) pressTicks--;
 
-        int x = this.getX();
-        int y = this.getY();
-        int w = this.width;
-        int h = this.height;
+        int x=getX(), y=getY(), w=width, h=height;
+        int yDraw=y+(pressed?1:0);
 
-        // Fondo: lerp entre oscuro y ligeramente iluminado, con presion tactil.
-        boolean pressed = hovered && this.active
-            && com.mojang.blaze3d.platform.InputConstants.isKeyDown(
-                org.lwjgl.glfw.GLFW.glfwGetCurrentContext(),
-                com.mojang.blaze3d.platform.InputConstants.Type.MOUSE.getOrCreate(
-                    org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT).getValue());
-        int pressOffset = pressed ? 1 : 0;
-        y += pressOffset;
-
-        if (!pressed) {
-            g.fill(x + 2, y + h, x + w + 1, y + h + 2, DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 120));
-        }
-        int bgColor = pressed ? 0xFF24140C : hoverAnim.lerpColor(0xFF15100A, 0xFF2A1810);
-        g.fill(x, y, x + w, y + h, bgColor);
-
-        // Brillo horizontal superior y velo rojizo en hover.
-        g.fill(x + 1, y + 1, x + w - 1, y + 2, DiaryTheme.withAlpha(0x00FFE8C0, 28 + (int)(t * 45)));
-        if (t > 0.05f) {
-            int glow = DiaryTheme.withAlpha(DiaryTheme.REDCOAT, (int)(t * 32));
-            g.fill(x + 1, y + 2, x + w - 1, y + h - 2, glow);
+        // Shadow
+        if(active && !pressed){
+            g.fill(x+2,yDraw+h,x+w+1,yDraw+h+2,DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 88));
+            g.fill(x+3,yDraw+h+1,x+w+2,yDraw+h+3,DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 32));
         }
 
-        // Borde: lerp entre bronce oscuro y rojo britanico
-        int borderColor = hoverAnim.lerpColor(DiaryTheme.BRONZE_DARK, DiaryTheme.REDCOAT);
-        g.fill(x, y,         x + w, y + 1,     borderColor);
-        g.fill(x, y + h - 1, x + w, y + h,     borderColor);
-        g.fill(x, y,         x + 1, y + h,     borderColor);
-        g.fill(x + w - 1, y, x + w, y + h,     borderColor);
+        // Background steel dark with subtle green plague tint
+        int bgDark = 0xFF18100C;
+        int bgHover = 0xFF2E1E18;
+        int bgPressed = 0xFF201410;
+        int bg = !active ? 0xFF1C1816 : pressed ? bgPressed : hoverAnim.lerpColor(bgDark, bgHover);
+        g.fill(x,yDraw,x+w,yDraw+h,bg);
 
-        // Esquinas remachadas/minutas para leer mas "placa" que boton plano.
-        int corner = hoverAnim.lerpColor(DiaryTheme.BRONZE_DARK, DiaryTheme.GOLD_TARNISHED);
-        g.fill(x + 4, y + 4, x + 6, y + 6, corner);
-        g.fill(x + w - 6, y + 4, x + w - 4, y + 6, corner);
+        // Top brass edge + inner highlight
+        int topEdge = hoverAnim.lerpColor(DiaryTheme.BRONZE_DARK, DiaryTheme.REDCOAT);
+        g.fill(x,yDraw,x+w,yDraw+1,topEdge);
+        g.fill(x+1,yDraw+1,x+w-1,yDraw+2,DiaryTheme.withAlpha(0x00FFE8C0, 22+(int)(t*28)));
 
-        // Barra lateral: crece con easing (de 3px de alto minimo a full)
-        int barColor = hoverAnim.lerpColor(DiaryTheme.SEPIA_DARK, DiaryTheme.REDCOAT_BRIGHT);
-        int barTopReduction = (int) ((1f - t) * ((h - 4) / 2));
-        g.fill(x + 2, y + 2 + barTopReduction, x + 5, y + h - 2 - barTopReduction, barColor);
-        if (t > 0.2f) {
-            int sparkY = y + h / 2 + (int)(Math.sin(System.currentTimeMillis() / 160.0) * (h / 4.0));
-            g.fill(x + 6, sparkY, x + 8, sparkY + 1, DiaryTheme.withAlpha(DiaryTheme.AMBER_FLAME, (int)(t * 180)));
+        // Bottom burnish
+        g.fill(x+1,yDraw+h-2,x+w-1,yDraw+h-1,DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 62));
+
+        // Hover red veil
+        if(t>0.04f){
+            int veil = DiaryTheme.withAlpha(DiaryTheme.REDCOAT, (int)(t*28));
+            g.fill(x+1,yDraw+2,x+w-1,yDraw+h-2,veil);
         }
 
-        // Icono a mano: regiment/arsenal. Los ResourceLocation quedan como
-        // selector semantico aunque el PNG no exista en disco.
-        Font font = Minecraft.getInstance().font;
-        int iconX = x + 14;
-        int iconY = y + 10;
-        int iconColor = hoverAnim.lerpColor(DiaryTheme.SEPIA_LIGHT, DiaryTheme.AMBER_FLAME);
-        drawButtonIcon(g, iconX, iconY, iconColor, t);
-        int sepCol = DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 135);
-        g.fill(x + 36, y + 6, x + 37, y + h - 6, sepCol);
-        g.fill(x + w - 12, y + 7, x + w - 10, y + 9, DiaryTheme.withAlpha(DiaryTheme.GOLD_TARNISHED, 130));
-        g.fill(x + w - 12, y + h - 9, x + w - 10, y + h - 7, DiaryTheme.withAlpha(DiaryTheme.GOLD_TARNISHED, 95));
-        g.fill(x + 44, y + h - 7, x + w - 18, y + h - 6, DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 70));
+        // Border
+        int border = hoverAnim.lerpColor(DiaryTheme.BRONZE_DARK, DiaryTheme.REDCOAT);
+        if(!active) border = DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 70);
+        g.fill(x,yDraw,x+w,yDraw+1,border);
+        g.fill(x,yDraw+h-1,x+w,yDraw+h,border);
+        g.fill(x,yDraw,x+1,yDraw+h,border);
+        g.fill(x+w-1,yDraw,x+w,yDraw+h,border);
 
-        // Textos: lerp de color + sombra + ellipsis para idiomas largos.
-        int textX = x + 44;
-        int maxTextW = Math.max(20, w - 52);
-        String titleText = ellipsize(font, this.title.getString(), maxTextW);
-        String subtitleText = ellipsize(font, this.subtitle.getString(), maxTextW);
-        int titleColor = hoverAnim.lerpColor(DiaryTheme.BONE_WHITE, DiaryTheme.PAPER);
-        int subColor   = hoverAnim.lerpColor(DiaryTheme.SEPIA_LIGHT, DiaryTheme.OCHRE);
+        // Rivets
+        int rivet = hoverAnim.lerpColor(DiaryTheme.BRONZE_DARK, DiaryTheme.GOLD_TARNISHED);
+        int rivetOff = DiaryTheme.withAlpha(rivet, 90);
+        g.fill(x+4,yDraw+4,x+6,yDraw+6,rivet);
+        g.fill(x+w-6,yDraw+4,x+w-4,yDraw+6,rivet);
+        g.fill(x+4,yDraw+h-6,x+6,yDraw+h-4,rivetOff);
+        g.fill(x+w-6,yDraw+h-6,x+w-4,yDraw+h-4,rivetOff);
 
-        g.drawString(font, titleText, textX, y + 8, titleColor, false);
-        g.drawString(font, subtitleText, textX, y + 22, subColor, false);
+        // Side bar with easing growth
+        int barCol = hoverAnim.lerpColor(DiaryTheme.SEPIA_DARK, DiaryTheme.REDCOAT_BRIGHT);
+        int barRed = (int)((1f-t)*((h-6)/2));
+        g.fill(x+2,yDraw+2+barRed,x+5,yDraw+h-2-barRed,barCol);
+        // Spark on side bar when hover high
+        if(t>0.28f){
+            int sparkY = yDraw+h/2 + (int)(Math.sin(System.currentTimeMillis()/160.0)*(h/4.2));
+            int sparkCol = DiaryTheme.withAlpha(DiaryTheme.AMBER_FLAME, (int)(t*165));
+            g.fill(x+6,sparkY,x+8,sparkY+1,sparkCol);
+            g.fill(x+6,sparkY+1,x+7,sparkY+2,DiaryTheme.withAlpha(sparkCol&0x00FFFFFF, (int)(t*80)));
+        }
 
-        if (this.isFocused() && !this.isMouseOver(mouseX, mouseY) && this.active) {
-            g.fill(x - 1, y - 1, x + w + 1, y, DiaryTheme.GOLD_TARNISHED);
-            g.fill(x - 1, y + h, x + w + 1, y + h + 1, DiaryTheme.GOLD_TARNISHED);
-            g.fill(x - 1, y - 1, x, y + h + 1, DiaryTheme.GOLD_TARNISHED);
-            g.fill(x + w, y - 1, x + w + 1, y + h + 1, DiaryTheme.GOLD_TARNISHED);
+        // Separator
+        int sep = DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 118);
+        g.fill(x+36,yDraw+6,x+37,yDraw+h-6,sep);
+        // Small brass screws on separator line
+        g.fill(x+35,yDraw+7,x+38,yDraw+8,DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 60));
+        g.fill(x+35,yDraw+h-8,x+38,yDraw+h-7,DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 60));
+
+        // Icon with shadow + color lerped
+        Font font=Minecraft.getInstance().font;
+        int iconX=x+13, iconY=yDraw+10;
+        int iconCol = hoverAnim.lerpColor(DiaryTheme.SEPIA_LIGHT, DiaryTheme.AMBER_FLAME);
+        int iconShadow = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 150);
+        drawButtonIcon(g,iconX+1,iconY+1,iconShadow,0f);
+        drawButtonIcon(g,iconX,iconY,iconCol,t);
+
+        // Text
+        int textX=x+44, maxW=Math.max(20,w-54);
+        String tTitle=ellipsize(font,title.getString(),maxW);
+        String tSub=ellipsize(font,subtitle.getString(),maxW);
+        int titleCol = hoverAnim.lerpColor(DiaryTheme.BONE_WHITE, DiaryTheme.PAPER);
+        int subCol = hoverAnim.lerpColor(DiaryTheme.SEPIA_LIGHT, DiaryTheme.OCHRE);
+        if(!active){ titleCol=DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID,90); subCol=DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID,70); }
+        // Shadow 1px for title
+        if(active) g.drawString(font,tTitle,textX+1,yDraw+9,DiaryTheme.withAlpha(DiaryTheme.INK_BLACK,70),false);
+        g.drawString(font,tTitle,textX,yDraw+8,titleCol,false);
+        g.drawString(font,tSub,textX,yDraw+22,subCol,false);
+
+        // Bottom micro line (steel wear)
+        g.fill(x+44,yDraw+h-7,x+w-18,yDraw+h-6,DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 54));
+        // Wear dots
+        if(active){
+            java.util.Random wr = new java.util.Random(wearSeed);
+            int wearCol = DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, 28);
+            for(int i=0;i<2;i++){
+                if(wr.nextInt(100)<40){
+                    int wx=x+48+wr.nextInt(Math.max(1,w-66));
+                    int wy=yDraw+8+wr.nextInt(Math.max(1,h-16));
+                    g.fill(wx,wy,wx+1,wy+1,wearCol);
+                }
+            }
+        }
+
+        // Focus ring
+        if(isFocused() && !isMouseOver(mouseX,mouseY) && active){
+            int gold=DiaryTheme.GOLD_TARNISHED;
+            g.fill(x-1,yDraw-1,x+w+1,yDraw,gold);
+            g.fill(x-1,yDraw+h,x+w+1,yDraw+h+1,gold);
+            g.fill(x-1,yDraw-1,x,yDraw+h+1,gold);
+            g.fill(x+w,yDraw-1,x+w+1,yDraw+h+1,gold);
+        }
+
+        // Disabled diagonal
+        if(!active){
+            int diag=DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID,18);
+            for(int dx=x+8;dx<x+w-8;dx+=12) g.fill(dx,yDraw+4,dx+1,yDraw+h-4,diag);
         }
     }
 
-    private void drawButtonIcon(GuiGraphics g, int x, int y, int color, float hoverT) {
-        String path = this.iconTexture == null ? "" : this.iconTexture.getPath();
-        int shadow = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 170);
-        if (path.contains("mods")) {
-            drawArsenalIcon(g, x + 1, y + 1, shadow);
-            drawArsenalIcon(g, x, y, color);
+    private void drawButtonIcon(GuiGraphics g,int x,int y,int col,float hoverT){
+        String path = iconTexture==null?"":iconTexture.getPath();
+        if(path.contains("mods")){
+            drawArsenalIcon(g,x,y,col);
         } else {
-            drawRegimentIcon(g, x + 1, y + 1, shadow);
-            drawRegimentIcon(g, x, y, color);
+            drawRegimentIcon(g,x,y,col);
         }
-        if (hoverT > 0.35f) {
-            g.fill(x - 2, y + 18, x + 18, y + 19,
-                DiaryTheme.withAlpha(DiaryTheme.AMBER_FLAME, (int)(hoverT * 90)));
+        if(hoverT>0.32f){
+            g.fill(x-2,y+18,x+18,y+19,DiaryTheme.withAlpha(DiaryTheme.AMBER_FLAME,(int)(hoverT*72)));
         }
     }
-
-    private void drawRegimentIcon(GuiGraphics g, int x, int y, int color) {
-        // Crossed sabre / banner in 18x18.
-        for (int i = 0; i < 13; i++) {
-            g.fill(x + 2 + i, y + 14 - i, x + 3 + i, y + 15 - i, color);
-            g.fill(x + 4 + i, y + 3 + i, x + 5 + i, y + 4 + i, color);
-        }
-        g.fill(x + 1, y + 14, x + 5, y + 16, color);
-        g.fill(x + 13, y + 14, x + 17, y + 16, color);
-        g.fill(x + 8, y + 1, x + 10, y + 7, color);
-        g.fill(x + 5, y + 2, x + 13, y + 5, DiaryTheme.withAlpha(color, 150));
+    private void drawRegimentIcon(GuiGraphics g,int x,int y,int col){
+        for(int i=0;i<13;i++){ g.fill(x+2+i,y+14-i,x+3+i,y+15-i,col); g.fill(x+4+i,y+3+i,x+5+i,y+4+i,col); }
+        g.fill(x+1,y+14,x+5,y+16,col); g.fill(x+13,y+14,x+17,y+16,col);
+        g.fill(x+8,y+1,x+10,y+7,col); g.fill(x+5,y+2,x+13,y+5,DiaryTheme.withAlpha(col,140));
     }
-
-    private void drawArsenalIcon(GuiGraphics g, int x, int y, int color) {
-        // Crate + gear tooth hint in 18x18.
-        g.fill(x + 2, y + 6, x + 15, y + 16, color);
-        g.fill(x + 3, y + 7, x + 14, y + 15, DiaryTheme.withAlpha(color, 120));
-        g.fill(x + 2, y + 6, x + 15, y + 7, color);
-        g.fill(x + 2, y + 11, x + 15, y + 12, color);
-        g.fill(x + 8, y + 7, x + 9, y + 16, color);
-        g.fill(x + 5, y + 2, x + 12, y + 4, color);
-        g.fill(x + 6, y, x + 8, y + 2, color);
-        g.fill(x + 10, y, x + 12, y + 2, color);
+    private void drawArsenalIcon(GuiGraphics g,int x,int y,int col){
+        g.fill(x+2,y+6,x+15,y+16,col);
+        g.fill(x+3,y+7,x+14,y+15,DiaryTheme.withAlpha(col,110));
+        g.fill(x+2,y+6,x+15,y+7,col); g.fill(x+2,y+11,x+15,y+12,col);
+        g.fill(x+8,y+7,x+9,y+16,col); g.fill(x+5,y+2,x+12,y+4,col);
+        g.fill(x+6,y,x+8,y+2,col); g.fill(x+10,y,x+12,y+2,col);
     }
-
-    private static String ellipsize(Font font, String text, int maxWidth) {
-        if (font.width(text) <= maxWidth) return text;
-        String ellipsis = "...";
-        int room = Math.max(0, maxWidth - font.width(ellipsis));
-        return font.plainSubstrByWidth(text, room) + ellipsis;
+    private static String ellipsize(Font f,String txt,int maxW){
+        if(f.width(txt)<=maxW) return txt;
+        String ell="..."; int room=Math.max(0,maxW-f.width(ell));
+        return f.plainSubstrByWidth(txt,room)+ell;
     }
-
-    @Override
-    protected void updateWidgetNarration(NarrationElementOutput out) {
-        this.defaultButtonNarrationText(out);
-    }
+    @Override protected void updateWidgetNarration(NarrationElementOutput out){defaultButtonNarrationText(out);}
 }

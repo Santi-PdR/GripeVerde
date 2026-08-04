@@ -275,7 +275,7 @@ public class ChangelogScreen extends Screen {
 
         g.fill(0, 0, this.width, this.height, 0xD0100D08);
 
-        com.eternalcraft.gripeverde.client.render.PaperTexture.drawClean(g, px, py, pw, ph);
+        com.eternalcraft.gripeverde.client.render.PaperTexture.drawClean(g, px, py, pw, ph, com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.ARCHIVE);
         g.fill(px,          py,          px + pw, py + 1,      DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
         g.fill(px,          py + ph - 1, px + pw, py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
         g.fill(px,          py,          px + 1,  py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
@@ -321,44 +321,68 @@ public class ChangelogScreen extends Screen {
 
     private void drawLedgerDetails(GuiGraphics g, int px, int py, int pw, int ph,
                                    int cx, int cy, int cw, int ch) {
-        int inkSoft = DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 58);
-        int bronzeSoft = DiaryTheme.withAlpha(DiaryTheme.BRONZE, 95);
-        int redSeal = DiaryTheme.withAlpha(DiaryTheme.BLOOD_DRIED, 150);
+        int bronzeSoft = DiaryTheme.withAlpha(DiaryTheme.BRONZE, 85);
+        int inkSoft = DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 48);
+        int redSeal = DiaryTheme.withAlpha(DiaryTheme.BLOOD_DRIED, 140);
 
-        // Binding strip and punched filing marks.
-        int stripX = px + 10;
-        g.fill(stripX, py + 12, stripX + 7, py + ph - 12, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 38));
-        for (int y = py + 30; y < py + ph - 18; y += 34) {
-            g.fill(stripX + 2, y, stripX + 5, y + 3, bronzeSoft);
-            g.fill(stripX + 3, y + 3, stripX + 4, y + 5, inkSoft);
+        // ── Binding strip with brass rivets ──
+        int stripX = px + 9;
+        g.fill(stripX, py + 10, stripX + 6, py + ph - 10, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 32));
+        g.fill(stripX + 1, py + 10, stripX + 2, py + ph - 10, DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 60));
+        for (int y = py + 28; y < py + ph - 22; y += 38) {
+            g.fill(stripX + 1, y, stripX + 4, y + 2, bronzeSoft);
+            int rivet = DiaryTheme.withAlpha(DiaryTheme.GOLD_TARNISHED, 110);
+            g.fill(stripX + 2, y + 1, stripX + 3, y + 2, rivet);
         }
 
-        // Marginal rule and archival ticks.
-        int ruleX = cx + 5;
-        g.fill(ruleX, cy - 4, ruleX + 1, cy + ch + 4, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 82));
-        for (int y = cy + 8; y < cy + ch; y += 26) {
-            g.fill(ruleX - 3, y, ruleX + 4, y + 1, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 65));
+        // ── Marginal rule with archival ticks every 26px ──
+        int ruleX = cx + 6;
+        g.fill(ruleX, cy - 6, ruleX + 1, cy + ch + 6, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 70));
+        for (int y = cy + 10; y < cy + ch; y += 28) {
+            g.fill(ruleX - 4, y, ruleX + 5, y + 1, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 55));
         }
 
-        // Discreet quarantine stamp that stays away from the scroll bar.
-        int stampW = 84;
-        int stampX = px + pw - stampW - 24;
-        int stampY = py + 24;
+        // ── Top archival reference line ──
+        boolean en = isEnglishSelected();
+        String ref = en ? "ARCHIVE EC-QV/1897 - FOLIO " + (scrollY / 120 + 1) : "ARCHIVO EC-QV/1897 - FOLIO " + (scrollY / 120 + 1);
+        int refW = this.font.width(ref);
+        int refX = px + pw - refW - 22;
+        int refY = py + 6;
+        if (pw > 260) {
+            g.drawString(this.font, ref, refX, refY, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 95), false);
+        }
+
+        // ── Quarantine stamp (official, slightly rotated feel via offset shadow) ──
+        int stampW = 96;
+        int stampX = px + pw - stampW - 20;
+        int stampY = py + 26;
+        // Shadow
+        g.fill(stampX + 2, stampY + 2, stampX + stampW + 2, stampY + 18, DiaryTheme.withAlpha(0x00000000, 55));
+        // Border
         g.fill(stampX, stampY, stampX + stampW, stampY + 1, redSeal);
-        g.fill(stampX, stampY + 16, stampX + stampW, stampY + 17, redSeal);
-        g.fill(stampX, stampY, stampX + 1, stampY + 17, redSeal);
-        g.fill(stampX + stampW - 1, stampY, stampX + stampW, stampY + 17, redSeal);
-        String stamp = isEnglishSelected() ? "FILED UNDER SEAL" : "BAJO SELLO";
+        g.fill(stampX, stampY + 17, stampX + stampW, stampY + 18, redSeal);
+        g.fill(stampX, stampY, stampX + 1, stampY + 18, redSeal);
+        g.fill(stampX + stampW - 1, stampY, stampX + stampW, stampY + 18, redSeal);
+        // Inner double line
+        g.fill(stampX + 3, stampY + 3, stampX + stampW - 3, stampY + 4, DiaryTheme.withAlpha(DiaryTheme.BLOOD_DRIED, 80));
+        g.fill(stampX + 3, stampY + 14, stampX + stampW - 3, stampY + 15, DiaryTheme.withAlpha(DiaryTheme.BLOOD_DRIED, 80));
+        String stamp = en ? "FILED UNDER SEAL" : "BAJO SELLO";
         int sw = this.font.width(stamp);
-        g.drawString(this.font, stamp, stampX + (stampW - sw) / 2, stampY + 5,
-            DiaryTheme.withAlpha(DiaryTheme.BLOOD_DRIED, 190), false);
+        g.drawString(this.font, stamp, stampX + (stampW - sw) / 2, stampY + 6,
+            DiaryTheme.withAlpha(DiaryTheme.BLOOD_DRIED, 175), false);
 
-        // Bottom ledger line: gives the page a material end without adding clutter.
-        int bottomY = py + ph - 30;
-        g.fillGradient(px + 30, bottomY, px + pw / 2, bottomY + 1,
-            DiaryTheme.withAlpha(DiaryTheme.BRONZE, 0), DiaryTheme.withAlpha(DiaryTheme.BRONZE, 95));
-        g.fillGradient(px + pw / 2, bottomY, px + pw - 30, bottomY + 1,
-            DiaryTheme.withAlpha(DiaryTheme.BRONZE, 95), DiaryTheme.withAlpha(DiaryTheme.BRONZE, 0));
+        // ── Bottom pagination & ledger fade ──
+        int bottomY = py + ph - 28;
+        g.fillGradient(px + 28, bottomY, px + pw / 2, bottomY + 1,
+            DiaryTheme.withAlpha(DiaryTheme.BRONZE, 0), DiaryTheme.withAlpha(DiaryTheme.BRONZE, 85));
+        g.fillGradient(px + pw / 2, bottomY, px + pw - 28, bottomY + 1,
+            DiaryTheme.withAlpha(DiaryTheme.BRONZE, 85), DiaryTheme.withAlpha(DiaryTheme.BRONZE, 0));
+        // Small page mark
+        if (pw > 200) {
+            String folio = en ? "~ folio ~" : "~ folio ~";
+            int fw = this.font.width(folio);
+            g.drawString(this.font, folio, px + (pw - fw) / 2, bottomY + 6, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 75), false);
+        }
     }
 
     private static boolean isEnglishSelected() {

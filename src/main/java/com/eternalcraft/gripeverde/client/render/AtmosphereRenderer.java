@@ -352,12 +352,12 @@ public class AtmosphereRenderer {
     }
 
     /** Dibuja SOLO la parte iluminada del disco lunar segun la fase.
-     *  NO dibuja disco oscuro (queda transparente sobre el cielo). */
+     *  Optimizado: usa intervalos por scanline en vez de loops por pixel (reduce de O(r^2) a O(r)). */
     private static void renderMoonPhase(GuiGraphics g, int cx, int cy, int radius, int phase) {
         int moonLight = DiaryTheme.MOON_WHITE;
 
         switch (phase) {
-            case 0: // new: nada iluminado (manejado fuera)
+            case 0: // new: nada iluminado
                 break;
             case 4: // full: disco completo + crateres
                 fillCircle(g, cx, cy, radius, moonLight);
@@ -365,83 +365,76 @@ public class AtmosphereRenderer {
                 g.fill(cx + 1, cy + 1, cx + 3, cy + 3, 0xFFB8AB88);
                 g.fill(cx - 1, cy + 2, cx,     cy + 3, 0xFFB8AB88);
                 break;
-            case 2: // first quarter: mitad derecha iluminada
-                // Solo dibujar los pixels de la mitad derecha
+            case 2: // first quarter: mitad derecha
                 for (int dy = -radius; dy <= radius; dy++) {
-                    int dx = (int) Math.sqrt(radius * radius - dy * dy);
+                    int dx = (int) Math.sqrt((double)radius * radius - (double)dy * dy);
+                    if (dx < 0) continue;
                     g.fill(cx, cy + dy, cx + dx + 1, cy + dy + 1, moonLight);
                 }
                 break;
-            case 6: // last quarter: mitad izquierda iluminada
+            case 6: // last quarter: mitad izquierda
                 for (int dy = -radius; dy <= radius; dy++) {
-                    int dx = (int) Math.sqrt(radius * radius - dy * dy);
+                    int dx = (int) Math.sqrt((double)radius * radius - (double)dy * dy);
+                    if (dx < 0) continue;
                     g.fill(cx - dx, cy + dy, cx, cy + dy + 1, moonLight);
                 }
                 break;
-            case 1: // waxing crescent: solo el arco derecho iluminado
-                // Iluminacion = disco derecho - disco desplazado a la izq
-                for (int dy = -radius; dy <= radius; dy++) {
-                    int dxOuter = (int) Math.sqrt(radius * radius - dy * dy);
-                    int rShadow = radius;
-                    int cxShadow = cx - radius / 2;
-                    int dyLocal = cy + dy - cy;
-                    int shadowD2 = rShadow * rShadow - dyLocal * dyLocal;
-                    // Para cada pixel en dx = [-dxOuter, dxOuter], comprobar si esta fuera de la sombra
-                    for (int dx = -dxOuter; dx <= dxOuter; dx++) {
-                        int px = cx + dx;
-                        int distFromShadow = (px - cxShadow) * (px - cxShadow) + dyLocal * dyLocal;
-                        if (distFromShadow > shadowD2) {
-                            g.fill(px, cy + dy, px + 1, cy + dy + 1, moonLight);
-                        }
-                    }
-                }
+            case 1: // waxing crescent: arco derecho
+                renderMoonPhaseDifference(g, cx, cy, radius, cx - radius / 2, radius);
                 break;
-            case 7: // waning crescent: solo el arco izquierdo iluminado
-                for (int dy = -radius; dy <= radius; dy++) {
-                    int dxOuter = (int) Math.sqrt(radius * radius - dy * dy);
-                    int rShadow = radius;
-                    int cxShadow = cx + radius / 2;
-                    int dyLocal = cy + dy - cy;
-                    int shadowD2 = rShadow * rShadow - dyLocal * dyLocal;
-                    for (int dx = -dxOuter; dx <= dxOuter; dx++) {
-                        int px = cx + dx;
-                        int distFromShadow = (px - cxShadow) * (px - cxShadow) + dyLocal * dyLocal;
-                        if (distFromShadow > shadowD2) {
-                            g.fill(px, cy + dy, px + 1, cy + dy + 1, moonLight);
-                        }
-                    }
-                }
+            case 7: // waning crescent: arco izquierdo
+                renderMoonPhaseDifference(g, cx, cy, radius, cx + radius / 2, radius);
                 break;
-            case 3: // waxing gibbous: casi llena, sombra sutil en izquierda
-                for (int dy = -radius; dy <= radius; dy++) {
-                    int dxOuter = (int) Math.sqrt(radius * radius - dy * dy);
-                    int rShadow = radius;
-                    int cxShadow = cx - radius - 1;
-                    int shadowD2 = rShadow * rShadow - dy * dy;
-                    for (int dx = -dxOuter; dx <= dxOuter; dx++) {
-                        int px = cx + dx;
-                        int distFromShadow = (px - cxShadow) * (px - cxShadow) + dy * dy;
-                        if (distFromShadow > shadowD2) {
-                            g.fill(px, cy + dy, px + 1, cy + dy + 1, moonLight);
-                        }
-                    }
-                }
+            case 3: // waxing gibbous: casi llena, sombra izquierda
+                renderMoonPhaseDifference(g, cx, cy, radius, cx - radius - 1, radius);
                 break;
-            case 5: // waning gibbous: casi llena, sombra sutil en derecha
-                for (int dy = -radius; dy <= radius; dy++) {
-                    int dxOuter = (int) Math.sqrt(radius * radius - dy * dy);
-                    int rShadow = radius;
-                    int cxShadow = cx + radius + 1;
-                    int shadowD2 = rShadow * rShadow - dy * dy;
-                    for (int dx = -dxOuter; dx <= dxOuter; dx++) {
-                        int px = cx + dx;
-                        int distFromShadow = (px - cxShadow) * (px - cxShadow) + dy * dy;
-                        if (distFromShadow > shadowD2) {
-                            g.fill(px, cy + dy, px + 1, cy + dy + 1, moonLight);
-                        }
-                    }
-                }
+            case 5: // waning gibbous: casi llena, sombra derecha
+                renderMoonPhaseDifference(g, cx, cy, radius, cx + radius + 1, radius);
                 break;
+        }
+    }
+
+    /** Dibuja full circle minus shadow circle usando intervalos scanline (O(r) fills). */
+    private static void renderMoonPhaseDifference(GuiGraphics g, int cx, int cy, int radius, int cxShadow, int rShadow) {
+        int moonLight = DiaryTheme.MOON_WHITE;
+        int r2 = radius * radius;
+        int rs2 = rShadow * rShadow;
+        for (int dy = -radius; dy <= radius; dy++) {
+            int dy2 = dy * dy;
+            if (dy2 > r2) continue;
+            int dxOuter = (int) Math.sqrt(r2 - dy2);
+            int fullL = cx - dxOuter;
+            int fullR = cx + dxOuter;
+
+            // Shadow interval on this scanline
+            if (dy2 > rs2) {
+                // No shadow overlap in Y, draw full
+                g.fill(fullL, cy + dy, fullR + 1, cy + dy + 1, moonLight);
+                continue;
+            }
+            int dxShadow = (int) Math.sqrt(rs2 - dy2);
+            int shL = cxShadow - dxShadow;
+            int shR = cxShadow + dxShadow;
+
+            if (fullR < shL || fullL > shR) {
+                // No overlap
+                g.fill(fullL, cy + dy, fullR + 1, cy + dy + 1, moonLight);
+            } else if (shL <= fullL && shR >= fullR) {
+                // Fully shadowed
+                continue;
+            } else if (shL <= fullL) {
+                // Shadow covers left part
+                int nl = shR + 1;
+                if (nl <= fullR) g.fill(nl, cy + dy, fullR + 1, cy + dy + 1, moonLight);
+            } else if (shR >= fullR) {
+                // Shadow covers right part
+                int nr = shL - 1;
+                if (fullL <= nr) g.fill(fullL, cy + dy, nr + 1, cy + dy + 1, moonLight);
+            } else {
+                // Shadow in middle -> two caps
+                if (fullL <= shL - 1) g.fill(fullL, cy + dy, shL, cy + dy + 1, moonLight);
+                if (shR + 1 <= fullR) g.fill(shR + 1, cy + dy, fullR + 1, cy + dy + 1, moonLight);
+            }
         }
     }
 

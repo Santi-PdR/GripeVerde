@@ -18,11 +18,11 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = GripeVerdeMod.MOD_ID, value = Dist.CLIENT)
 public class TooltipEventHandler {
 
-    // Paleta pergamino victoriano
-    private static final int BG_TOP    = 0xF2E8DCB4; // pergamino claro
-    private static final int BG_BOTTOM = 0xF2C9B78A; // pergamino oscuro
-    private static final int BORDER_TOP    = 0xFF6B4226; // tinta media
-    private static final int BORDER_BOTTOM = 0xFF422810; // tinta oscura
+    // Paleta pergamino victoriana profesional: mejor contraste y profundidad
+    private static final int BG_TOP    = 0xF8EFE0C8; // ligeramente mas claro para legibilidad
+    private static final int BG_BOTTOM = 0xF0D4A98A; // mas cálido
+    private static final int BORDER_TOP    = 0xFF7A5A32; // bronze medio
+    private static final int BORDER_BOTTOM = 0xFF3D2310; // tinta quemada
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onTooltipColor(RenderTooltipEvent.Color event) {

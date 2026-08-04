@@ -33,10 +33,12 @@ public class ResourcePackHandler {
         var modFile = ModList.get().getModFileById(GripeVerdeMod.MOD_ID).getFile();
         Path packPath = modFile.findResource("resourcepacks/" + PACK_ID);
 
+        // required=false para que sea desactivable y respete prioridad normal
+        // Position.TOP para que inicie arriba (override vanilla) pero el usuario puede moverlo abajo para volver a vanilla
         var pack = Pack.readMetaAndCreate(
             PACK_ID,
             Component.literal(PACK_NAME),
-            true, // required=true => activado por defecto
+            false,
             (id) -> new PathPackResources(id, true, packPath),
             PackType.CLIENT_RESOURCES,
             Pack.Position.TOP,

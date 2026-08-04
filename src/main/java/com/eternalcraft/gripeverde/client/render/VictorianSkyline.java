@@ -144,6 +144,11 @@ public class VictorianSkyline {
         java.util.Random rng = new java.util.Random(seed);
         int offOnThreshold = isBg ? 8 : 7;
         int amberThreshold  = 9;
+        // LOD: reduce density on large resolutions to save fill calls
+        int lodSkip = 1;
+        if (w > 1600) lodSkip = isBg ? 2 : 2;
+        else if (w > 1200) lodSkip = isBg ? 2 : 1;
+        else if (h < 400) lodSkip = 2;
         for (int bi = 0; bi < buildings.length; bi++) {
             float[] b = buildings[bi];
             int bx1 = (int)(w * b[0]);
@@ -154,9 +159,28 @@ public class VictorianSkyline {
             int bHeight = by2 - by1;
             int cols = Math.max(1, bWidth  / (isBg ? 10 : 14));
             int rows = Math.max(1, bHeight / (isBg ? 12 : 16));
+            if (isBg && w > 1400) {
+                cols = Math.max(1, cols / 2);
+                rows = Math.max(1, rows / 2);
+            }
 
             for (int row = 0; row < rows; row++) {
                 for (int col = 0; col < cols; col++) {
+                    // LOD skip
+                    boolean isAnimPos = false;
+                    if (!isBg) {
+                        for (int aw = 0; aw < ANIM_COUNT; aw++) {
+                            if (ANIM_WINDOWS[aw][0] == bi && ANIM_WINDOWS[aw][1] == row && ANIM_WINDOWS[aw][2] == col) { isAnimPos = true; break; }
+                        }
+                    }
+                    if (!isAnimPos && lodSkip > 1 && ((row + col) % lodSkip != 0)) {
+                        // Still consume RNG to keep determinism
+                        rng.nextInt(2); // winW
+                        rng.nextInt(2); // winH
+                        rng.nextInt(10); // roll
+                        if (!isBg) { rng.nextInt(3); rng.nextInt(3); }
+                        continue;
+                    }
                     int winW, winH;
                     if (isBg) {
                         winW = 2 + rng.nextInt(2);

@@ -127,12 +127,7 @@ public class DiaryControlsScreen extends Screen {
     @Override
     public void tick() {
         super.tick();
-        float delta = 1.0f / 20.0f;
-        AtmosphereRenderer.tick(delta);
-        VictorianSkyline.tick(delta);
-        LivingAtmosphere.tick(delta);
-        MenuMusic.tick();
-        com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick();
+        com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.tick(1.0f / 20.0f);
     }
 
     @Override
@@ -140,16 +135,12 @@ public class DiaryControlsScreen extends Screen {
         // Escena viva
         // Clear framebuffer + transition fade
         g.fill(0, 0, this.width, this.height, 0xFF000000);
-        AtmosphereRenderer.renderSky(g, this.width, this.height);
-        VictorianSkyline.renderBackground(g, this.width, this.height);
-        VictorianSkyline.renderForeground(g, this.width, this.height);
-        LivingAtmosphere.renderStreet(g, this.width, this.height);
+        com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
                 // Overlay
-        g.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
 
         // Pergamino
         DiaryChrome.drawPanelShadow(g, this.panelX, this.panelY, this.panelW, this.panelH);
-        PaperTexture.drawClean(g, this.panelX, this.panelY, this.panelW, this.panelH);
+        PaperTexture.drawClean(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.TECHNICAL);
 
         // Titulo
         String titleStr = this.title.getString();

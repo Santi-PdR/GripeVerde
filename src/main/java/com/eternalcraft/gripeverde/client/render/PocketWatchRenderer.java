@@ -198,26 +198,30 @@ public class PocketWatchRenderer {
     }
 
     private static void drawGlassShine(GuiGraphics g, int cx, int cy, int faceRadius, long elapsed) {
+        // Optimized: diagonal reflective band via 5 translucent strips instead of per-pixel scan
         float t = (elapsed % 8000L) / 8000f;
-        float bandCenter = t * 2f - 1f;
-        float bandHalfWidth = 0.22f;
+        // Band position from -1 to 1 diagonally
+        float bandCenter = t * 2.4f - 1.2f;
+        if (bandCenter < -1.1f || bandCenter > 1.1f) return; // off-screen, skip
 
         int r = faceRadius;
-        int r2 = r * r;
-
-        for (int dy = -r; dy <= r; dy++) {
-            int dxMax = (int) Math.sqrt(r2 - dy * dy);
-            for (int dx = -dxMax; dx <= dxMax; dx++) {
-                float proj = (dx + dy) / (float)(r * 2);
-                float dist = Math.abs(proj - bandCenter);
-
-                if (dist < bandHalfWidth) {
-                    float intensity = 1f - (dist / bandHalfWidth);
-                    int alpha = (int)(intensity * 90);
-                    if (alpha > 4) {
-                        int color = (alpha << 24) | 0x00FFF5DC;
-                        g.fill(cx + dx, cy + dy, cx + dx + 1, cy + dy + 1, color);
-                    }
+        // Convert bandCenter (-1..1) to offset in pixels along diagonal
+        int offset = (int)(bandCenter * r * 1.2f);
+        // Draw 5 parallel thin strips with fading alpha to simulate soft reflection
+        // Strip direction: diagonal top-left to bottom-right, thickness 2px each
+        int baseAlpha = 70;
+        for (int strip = -2; strip <= 2; strip++) {
+            int stripOffset = offset + strip * 3;
+            int alpha = baseAlpha - Math.abs(strip) * 14;
+            if (alpha <= 6) continue;
+            int color = (alpha << 24) | 0xFFF5DC;
+            // For each y in circle, x = y + stripOffset (diagonal)
+            for (int dy = -r; dy <= r; dy++) {
+                int dxMax = (int)Math.sqrt(Math.max(0, r * r - dy * dy));
+                int xLine = dy + stripOffset; // diagonal: x proportional to y
+                if (xLine >= -dxMax && xLine <= dxMax) {
+                    // Draw 2px thick along X
+                    g.fill(cx + xLine, cy + dy, cx + xLine + 2, cy + dy + 1, color);
                 }
             }
         }

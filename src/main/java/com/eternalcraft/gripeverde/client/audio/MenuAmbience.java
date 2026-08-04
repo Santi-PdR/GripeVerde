@@ -14,29 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * MenuAmbience v3 - Sistema de audio ambiental por capas.
- *
- * Capas:
- *   BASE   - loops permanentes (viento, lluvia, ciudad)
- *   EVENTS - sonidos ocasionales (15-40s)
- *   RARE   - sonidos firma (90-240s)
- *   TICK   - sincronizado con el segundero del reloj de bolsillo
- *
- * API publica:
- *   MenuAmbience.start()
- *   MenuAmbience.stop()
- *   MenuAmbience.tick()
- *   MenuAmbience.isActive()
- *   MenuAmbience.setPocketWatchVisible(boolean)
- *   MenuAmbience.onSecondTick() ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â llamado por PocketWatchRenderer
+ * MenuAmbience v4 - loops con volumen dinámico fluido sin cortes
+ * Slider ambiente ahora se comporta igual que música: setDynamicVolume continuo
  */
 public class MenuAmbience {
 
     private static final Logger LOGGER = LogUtils.getLogger();
-
     private static final boolean DEBUG_LOGGING = false;
 
-    // TIMERS
     private static final long EVENT_MIN_MS = 15_000L;
     private static final long EVENT_MAX_MS = 40_000L;
     private static final long RARE_MIN_MS  = 30_000L;
@@ -50,447 +35,217 @@ public class MenuAmbience {
         final RegistryObject<SoundEvent> sound;
         final int weight;
         final float volume;
-        final float pitchMin;
-        final float pitchMax;
-
-        Entry(RegistryObject<SoundEvent> sound, int weight, float volume,
-              float pitchMin, float pitchMax) {
-            this.sound = sound;
-            this.weight = weight;
-            this.volume = volume;
-            this.pitchMin = pitchMin;
-            this.pitchMax = pitchMax;
-        }
+        final float pitchMin, pitchMax;
+        Entry(RegistryObject<SoundEvent> s,int w,float vol,float pMin,float pMax){sound=s;weight=w;volume=vol;pitchMin=pMin;pitchMax=pMax;}
     }
 
     private static class BaseLoop {
         final RegistryObject<SoundEvent> sound;
-        final float volume;
-        SoundInstance instance;
-
-        BaseLoop(RegistryObject<SoundEvent> sound, float volume) {
-            this.sound = sound;
-            this.volume = volume;
-        }
+        final float baseVolume;
+        LoopingAmbienceInstance instance;
+        BaseLoop(RegistryObject<SoundEvent> s,float vol){sound=s;baseVolume=vol;}
     }
 
-    private static final List<BaseLoop> BASE_LOOPS   = new ArrayList<>();
-    private static final List<Entry>    EVENTS_LAYER = new ArrayList<>();
-    private static final List<Entry>    RARE_LAYER   = new ArrayList<>();
+    private static final List<BaseLoop> BASE_LOOPS = new ArrayList<>();
+    private static final List<Entry> EVENTS_LAYER = new ArrayList<>();
+    private static final List<Entry> RARE_LAYER = new ArrayList<>();
 
     static {
         BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_WIND, 0.35f));
         BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_RAIN, 0.30f));
         BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_CITY, 0.20f));
 
-        EVENTS_LAYER.add(new Entry(ModSounds.MENU_FOOTSTEPS,          40, 0.25f, 0.90f, 1.10f));
-        EVENTS_LAYER.add(new Entry(ModSounds.MENU_WOOD_CREAK,         35, 0.30f, 0.85f, 1.15f));
-        EVENTS_LAYER.add(new Entry(ModSounds.MENU_DOOR,               15, 0.35f, 0.90f, 1.10f));
-        EVENTS_LAYER.add(new Entry(ModSounds.MENU_AMBIENT_OCCASIONAL, 10, 0.30f, 0.95f, 1.05f));
+        EVENTS_LAYER.add(new Entry(ModSounds.MENU_FOOTSTEPS, 40,0.25f,0.90f,1.10f));
+        EVENTS_LAYER.add(new Entry(ModSounds.MENU_WOOD_CREAK,35,0.30f,0.85f,1.15f));
+        EVENTS_LAYER.add(new Entry(ModSounds.MENU_DOOR,15,0.35f,0.90f,1.10f));
+        EVENTS_LAYER.add(new Entry(ModSounds.MENU_AMBIENT_OCCASIONAL,10,0.30f,0.95f,1.05f));
 
-        RARE_LAYER.add(new Entry(ModSounds.MENU_BELL,    40, 0.45f, 0.95f, 1.05f));
-        RARE_LAYER.add(new Entry(ModSounds.MENU_THUNDER, 35, 0.55f, 0.95f, 1.05f));
-        RARE_LAYER.add(new Entry(ModSounds.MENU_CROWS,   40, 0.55f, 0.90f, 1.10f));
-        RARE_LAYER.add(new Entry(ModSounds.MENU_CHAIN,   10, 0.30f, 0.95f, 1.05f));
-        // Susurros lejanos: usa AMBIENT_OCCASIONAL con pitch bajo para efecto de voz distante
-        RARE_LAYER.add(new Entry(ModSounds.MENU_AMBIENT_OCCASIONAL, 20, 0.25f, 0.55f, 0.75f));
-        // Tos lejana: usa WOOD_CREAK con pitch bajo como tos seca
-        RARE_LAYER.add(new Entry(ModSounds.MENU_CHAIN, 25, 0.40f, 0.40f, 0.55f));  // tos seca (chain pitch bajo)
+        RARE_LAYER.add(new Entry(ModSounds.MENU_BELL,40,0.45f,0.95f,1.05f));
+        RARE_LAYER.add(new Entry(ModSounds.MENU_THUNDER,35,0.55f,0.95f,1.05f));
+        RARE_LAYER.add(new Entry(ModSounds.MENU_CROWS,40,0.55f,0.90f,1.10f));
+        RARE_LAYER.add(new Entry(ModSounds.MENU_CHAIN,10,0.30f,0.95f,1.05f));
+        RARE_LAYER.add(new Entry(ModSounds.MENU_AMBIENT_OCCASIONAL,20,0.25f,0.55f,0.75f));
+        RARE_LAYER.add(new Entry(ModSounds.MENU_CHAIN,25,0.40f,0.40f,0.55f));
     }
 
-    private static boolean active = false;
-    private static boolean muted = false;
-    private static boolean pocketWatchVisible = false;
-
-    private static long lastEventTriggerMs = 0L;
-    private static long nextEventDelayMs   = 0L;
-    private static long lastRareTriggerMs  = 0L;
-    private static long nextRareDelayMs    = 0L;
-
-    private static RegistryObject<SoundEvent> lastEventTriggered = null;
-    private static RegistryObject<SoundEvent> lastRareTriggered  = null;
-
-    // Flag: true durante ~4s despues de que sonaron los cuervos (para coordinar visual)
-    private static long crowsPlayingUntilMs = 0L;
-    public static boolean isCrowsRecentlyTriggered() {
-        return System.currentTimeMillis() < crowsPlayingUntilMs;
-    }
+    private static boolean active=false, muted=false, pocketWatchVisible=false;
+    private static long lastEventTriggerMs=0L, nextEventDelayMs=0L, lastRareTriggerMs=0L, nextRareDelayMs=0L;
+    private static RegistryObject<SoundEvent> lastEventTriggered=null, lastRareTriggered=null;
+    private static long crowsPlayingUntilMs=0L;
+    public static boolean isCrowsRecentlyTriggered(){return System.currentTimeMillis()<crowsPlayingUntilMs;}
     private static final RandomSource RNG = RandomSource.create();
 
-    /**
-     * Resource reloads can invalidate active SoundInstances while the menu stays
-     * open. Rebuild the base loops without requiring the player to leave the UI.
-     */
-    public static void recoverAfterResourceReload() {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc == null || mc.level != null) return;
-        for (BaseLoop bl : BASE_LOOPS) {
-            bl.instance = null;
-        }
-        active = false;
-        lastAppliedVolume = -1f;
-        start();
+    public static void recoverAfterResourceReload(){
+        Minecraft mc=Minecraft.getInstance(); if(mc==null||mc.level!=null) return;
+        for(BaseLoop bl:BASE_LOOPS) bl.instance=null;
+        active=false; lastAppliedVolume=-1f; start();
+    }
+    public static void setPocketWatchVisible(boolean v){pocketWatchVisible=v;}
+    public static void onSecondTick(){
+        if(!active||!pocketWatchVisible) return;
+        Minecraft mc=Minecraft.getInstance(); if(mc==null) return;
+        try{
+            SoundEvent se=ModSounds.MENU_TICK.get();
+            float pitch=randomFloatBetween(TICK_PITCH_MIN,TICK_PITCH_MAX);
+            mc.getSoundManager().play(SimpleSoundInstance.forUI(se,pitch,TICK_VOLUME*getUserVolume()));
+        }catch(Exception e){ if(DEBUG_LOGGING) LOGGER.warn("[MenuAmbience] Tick no disponible"); }
     }
 
-    public static void setPocketWatchVisible(boolean visible) {
-        pocketWatchVisible = visible;
-    }
-
-    /**
-     * Llamado por PocketWatchRenderer cada vez que el segundero
-     * avanza a una nueva posicion. Si el reloj es visible y el
-     * sistema esta activo, reproduce el tick.
-     */
-    public static void onSecondTick() {
-        if (!active || !pocketWatchVisible) return;
-
-        Minecraft mc = Minecraft.getInstance();
-        if (mc == null) return;
-
-        try {
-            SoundEvent se = ModSounds.MENU_TICK.get();
-            float pitch = randomFloatBetween(TICK_PITCH_MIN, TICK_PITCH_MAX);
-            mc.getSoundManager().play(
-                SimpleSoundInstance.forUI(se, pitch, TICK_VOLUME * getUserVolume()));
-
-            if (DEBUG_LOGGING) {
-                LOGGER.info("[MenuAmbience] TICK disparado (vol={}, pitch={})",
-                    TICK_VOLUME, pitch);
-            }
-        } catch (Exception e) {
-            if (DEBUG_LOGGING) LOGGER.warn("[MenuAmbience] Tick no disponible: {}", e.getMessage());
-        }
-    }
-
-
-    /**
-     * Silencia o reactiva el ambiente. Persiste en ClientConfig.
-     * Internamente detiene o reinicia los loops base.
-     */
-    public static void setMuted(boolean m) {
-        if (muted == m) return;
-        muted = m;
-        try {
-            com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_ENABLED.set(!m);
-            com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_ENABLED.save();
-        } catch (Exception ignored) {}
-
-        if (!active) return;
-
-        Minecraft mc = Minecraft.getInstance();
-        if (mc == null) return;
-
-        if (muted) {
-            // Parar solo los loops base, no tocar timers
-            for (BaseLoop bl : BASE_LOOPS) {
-                if (bl.instance != null) {
-                    mc.getSoundManager().stop(bl.instance);
-                    bl.instance = null;
-                }
-            }
-            if (DEBUG_LOGGING) LOGGER.info("[MenuAmbience] Muteado");
-        } else {
-            // Reiniciar los loops base
-            for (BaseLoop bl : BASE_LOOPS) {
-                try {
-                    SoundEvent se = bl.sound.get();
-                    bl.instance = buildLoopInstance(se, bl.volume * getUserVolume());
+    public static void setMuted(boolean m){
+        if(muted==m) return; muted=m;
+        try{ com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_ENABLED.set(!m); com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_ENABLED.save(); }catch(Exception ignored){}
+        if(!active) return;
+        Minecraft mc=Minecraft.getInstance(); if(mc==null) return;
+        if(muted){
+            for(BaseLoop bl:BASE_LOOPS){ if(bl.instance!=null){ mc.getSoundManager().stop(bl.instance); bl.instance=null; } }
+        }else{
+            for(BaseLoop bl:BASE_LOOPS){
+                try{
+                    SoundEvent se=bl.sound.get();
+                    bl.instance=buildLoopInstance(se, bl.baseVolume*getUserVolume());
                     mc.getSoundManager().play(bl.instance);
-                } catch (Exception e) {
-                    bl.instance = null;
-                }
+                }catch(Exception e){ bl.instance=null; }
             }
-            if (DEBUG_LOGGING) LOGGER.info("[MenuAmbience] Desmuteado");
         }
     }
 
-    private static float userVolume = 1.0f;
-    private static boolean userVolumeLoadedFromConfig = false;
-
-    public static float getUserVolume() {
-        if (!userVolumeLoadedFromConfig) {
-            try {
-                userVolume = com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_VOLUME.get().floatValue();
-                userVolumeLoadedFromConfig = true;
-            } catch (Exception ignored) {}
+    private static float userVolume=1.0f;
+    private static boolean userVolumeLoadedFromConfig=false;
+    public static float getUserVolume(){
+        if(!userVolumeLoadedFromConfig){
+            try{ userVolume=com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_VOLUME.get().floatValue(); userVolumeLoadedFromConfig=true; }catch(Exception ignored){}
         }
         return userVolume;
     }
-
-    public static void setUserVolume(float v) {
-        if (DEBUG_LOGGING) LOGGER.info("[MenuAmbience] setUserVolume({}) called", v);
-        userVolume = Math.max(0f, Math.min(1f, v));
-        userVolumeLoadedFromConfig = true;
-        try {
-            com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_VOLUME.set((double) userVolume);
-            com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_VOLUME.save();
-        } catch (Exception ignored) {}
-        // NO reconstruir loops aqui. updateLoopVolumes() en tick() se encarga.
-        // Esto evita 3+ rebuilds por frame al arrastrar el slider.
-        if (DEBUG_LOGGING) LOGGER.info("[MenuAmbience] userVolume set a {} (rebuild delegado a tick)", userVolume);
+    public static void setUserVolume(float v){
+        userVolume=Math.max(0f,Math.min(1f,v)); userVolumeLoadedFromConfig=true;
+        try{ com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_VOLUME.set((double)userVolume); com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_VOLUME.save(); }catch(Exception ignored){}
+        // No rebuild aquí, updateLoopVolumes lo hace fluido
     }
 
-    /** Reconstruye loops si el volumen cambio (slider en tiempo real). */
-    private static float lastAppliedVolume = -1f;
-    private static void updateLoopVolumes() {
-        float vol = getUserVolume();
-        if (lastAppliedVolume < 0f) {
-            lastAppliedVolume = vol;
-            if (DEBUG_LOGGING) LOGGER.info("[MenuAmbience] updateLoopVolumes: init lastApplied={}", vol);
-            return;
-        }
-        float diff = Math.abs(vol - lastAppliedVolume);
-        if (diff < 0.02f) return;
-        if (DEBUG_LOGGING) LOGGER.info("[MenuAmbience] updateLoopVolumes: vol={} lastApplied={} diff={} -> REBUILDING", vol, lastAppliedVolume, diff);
-        lastAppliedVolume = vol;
-        if (!active || muted) {
-            if (DEBUG_LOGGING) LOGGER.info("[MenuAmbience] updateLoopVolumes: skip rebuild (active={} muted={})", active, muted);
-            return;
-        }
-        Minecraft mc = Minecraft.getInstance();
-        if (mc == null) return;
-        for (BaseLoop bl : BASE_LOOPS) {
-            try {
-                if (bl.instance != null) {
-                    mc.getSoundManager().stop(bl.instance);
+    // Volumen fluido sin cortes
+    private static float lastAppliedVolume=-1f;
+    private static void updateLoopVolumes(){
+        float vol=getUserVolume();
+        if(lastAppliedVolume<0f){ lastAppliedVolume=vol; return; }
+        float diff=Math.abs(vol-lastAppliedVolume);
+        // Actualizar dinámicamente si cambio >1% sin reconstruir
+        if(diff>0.005f){
+            lastAppliedVolume=vol;
+            if(!active||muted) return;
+            for(BaseLoop bl:BASE_LOOPS){
+                if(bl.instance!=null){
+                    float finalVol=bl.baseVolume*vol;
+                    bl.instance.setDynamicVolume(finalVol);
                 }
-                float finalVol = bl.volume * vol;
-                if (finalVol > 0.001f) {
-                    bl.instance = buildLoopInstance(bl.sound.get(), finalVol);
+            }
+        }
+    }
+
+    public static boolean isMuted(){return muted;}
+    public static void toggleMute(){setMuted(!muted);}
+
+    public static void start(){
+        try{ muted=!com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_ENABLED.get(); }catch(Exception ignored){}
+        if(active){ if(DEBUG_LOGGING) LOGGER.info("[MenuAmbience] start ignorado ya activo"); return; }
+        Minecraft mc=Minecraft.getInstance(); if(mc==null) return;
+        active=true; pocketWatchVisible=false;
+        if(!muted){
+            for(BaseLoop bl:BASE_LOOPS){
+                try{
+                    SoundEvent se=bl.sound.get();
+                    bl.instance=buildLoopInstance(se, bl.baseVolume*getUserVolume());
                     mc.getSoundManager().play(bl.instance);
-                } else {
-                    bl.instance = null;
-                }
-            } catch (Exception e) {
-                bl.instance = null;
+                }catch(Exception e){ bl.instance=null; }
             }
         }
+        long now=System.currentTimeMillis();
+        lastEventTriggerMs=now; nextEventDelayMs=randomBetween(EVENT_MIN_MS,EVENT_MAX_MS);
+        lastRareTriggerMs=now; nextRareDelayMs=randomBetween(RARE_MIN_MS,RARE_MAX_MS);
+        lastEventTriggered=null; lastRareTriggered=null;
+        lastAppliedVolume=getUserVolume();
     }
 
-    public static boolean isMuted() {
-        return muted;
+    public static void stop(){
+        if(!active) return;
+        Minecraft mc=Minecraft.getInstance(); if(mc==null) return;
+        for(BaseLoop bl:BASE_LOOPS){ if(bl.instance!=null){ mc.getSoundManager().stop(bl.instance); bl.instance=null; } }
+        active=false; pocketWatchVisible=false; lastEventTriggered=null; lastRareTriggered=null;
     }
 
-    public static void toggleMute() {
-        setMuted(!muted);
-    }
-    public static void start() {
-        // Cargar estado de mute desde config (siempre, incluso si ya activo)
-        try {
-            muted = !com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_ENABLED.get();
-        } catch (Exception ignored) {}
-
-        // Idempotente: si ya esta activo, no destruir ni reiniciar
-        if (active) {
-            if (DEBUG_LOGGING) LOGGER.info("[MenuAmbience] start() ignorado, ya activo (muted={})", muted);
-            return;
-        }
-
-        Minecraft mc = Minecraft.getInstance();
-        if (mc == null) {
-            if (DEBUG_LOGGING) LOGGER.warn("[MenuAmbience] Minecraft null, abortando start()");
-            return;
-        }
-
-        active = true;
-        pocketWatchVisible = false;
-
-        if (!muted) {
-            for (BaseLoop bl : BASE_LOOPS) {
-                try {
-                    SoundEvent se = bl.sound.get();
-                    bl.instance = buildLoopInstance(se, bl.volume * getUserVolume());
-                    mc.getSoundManager().play(bl.instance);
-                    if (DEBUG_LOGGING) LOGGER.info("[MenuAmbience] Loop iniciado: {}", se.getLocation());
-                } catch (Exception e) {
-                    if (DEBUG_LOGGING) LOGGER.warn("[MenuAmbience] Loop no disponible: {}", e.getMessage());
-                    bl.instance = null;
-                }
-            }
-        }
-
-        long now = System.currentTimeMillis();
-        lastEventTriggerMs = now;
-        nextEventDelayMs   = randomBetween(EVENT_MIN_MS, EVENT_MAX_MS);
-        lastRareTriggerMs  = now;
-        nextRareDelayMs    = randomBetween(RARE_MIN_MS, RARE_MAX_MS);
-        lastEventTriggered = null;
-        lastRareTriggered  = null;
-
-        if (DEBUG_LOGGING) {
-            lastAppliedVolume = getUserVolume();  // Evitar rebuild inmediato en tick
-        LOGGER.info("[MenuAmbience] Ambient iniciado (BASE:{}, EVENTS:{}, RARE:{}, TICK:sync, muted:{})",
-                BASE_LOOPS.size(), EVENTS_LAYER.size(), RARE_LAYER.size(), muted);
-        }
-    }
-
-    public static void stop() {
-        if (!active) return;
-
-        Minecraft mc = Minecraft.getInstance();
-        if (mc == null) return;
-
-        for (BaseLoop bl : BASE_LOOPS) {
-            if (bl.instance != null) {
-                mc.getSoundManager().stop(bl.instance);
-                bl.instance = null;
-            }
-        }
-
-        active = false;
-        pocketWatchVisible = false;
-        lastEventTriggered = null;
-        lastRareTriggered  = null;
-
-        if (DEBUG_LOGGING) LOGGER.info("[MenuAmbience] Ambient detenido");
-    }
-
-    public static void tick() {
-        // Si el userVolume es 0, no tickear eventos sonoros (silencio total)
-        float ambVol = getUserVolume();
-        if (ambVol < 0.01f) {
-            // Silenciar loops si estan activos
-            if (active && !muted) {
-                Minecraft mc = Minecraft.getInstance();
-                if (mc != null) {
-                    for (BaseLoop bl : BASE_LOOPS) {
-                        if (bl.instance != null) {
-                            mc.getSoundManager().stop(bl.instance);
-                            bl.instance = null;
-                        }
-                    }
-                }
+    public static void tick(){
+        float ambVol=getUserVolume();
+        if(ambVol<0.01f){
+            if(active&&!muted){
+                Minecraft mc=Minecraft.getInstance();
+                if(mc!=null){ for(BaseLoop bl:BASE_LOOPS){ if(bl.instance!=null){ mc.getSoundManager().stop(bl.instance); bl.instance=null; } } }
             }
             return;
         }
-        // Actualizar volumen de loops activos si cambio el userVolume
         updateLoopVolumes();
-        if (!active || muted) return;
-
-        Minecraft mc = Minecraft.getInstance();
-        if (mc == null) return;
+        if(!active||muted) return;
+        Minecraft mc=Minecraft.getInstance(); if(mc==null) return;
         ensureBaseLoopsAlive(mc, ambVol);
-
-        long now = System.currentTimeMillis();
-
-        if (now - lastEventTriggerMs >= nextEventDelayMs) {
-            triggerFrom(mc, EVENTS_LAYER, true);
-            lastEventTriggerMs = now;
-            nextEventDelayMs   = randomBetween(EVENT_MIN_MS, EVENT_MAX_MS);
-        }
-
-        if (now - lastRareTriggerMs >= nextRareDelayMs) {
-            triggerFrom(mc, RARE_LAYER, false);
-            lastRareTriggerMs = now;
-            nextRareDelayMs   = randomBetween(RARE_MIN_MS, RARE_MAX_MS);
-        }
+        long now=System.currentTimeMillis();
+        if(now-lastEventTriggerMs>=nextEventDelayMs){ triggerFrom(mc,EVENTS_LAYER,true); lastEventTriggerMs=now; nextEventDelayMs=randomBetween(EVENT_MIN_MS,EVENT_MAX_MS); }
+        if(now-lastRareTriggerMs>=nextRareDelayMs){ triggerFrom(mc,RARE_LAYER,false); lastRareTriggerMs=now; nextRareDelayMs=randomBetween(RARE_MIN_MS,RARE_MAX_MS); }
     }
 
-    public static boolean isActive() { return active; }
+    public static boolean isActive(){return active;}
 
-    private static void ensureBaseLoopsAlive(Minecraft mc, float ambVol) {
-        if (!active || muted || ambVol < 0.01f) return;
-        for (BaseLoop bl : BASE_LOOPS) {
-            try {
-                boolean missing = bl.instance == null || !mc.getSoundManager().isActive(bl.instance);
-                if (missing) {
-                    float finalVol = bl.volume * ambVol;
-                    if (finalVol > 0.001f) {
-                        bl.instance = buildLoopInstance(bl.sound.get(), finalVol);
+    private static void ensureBaseLoopsAlive(Minecraft mc,float ambVol){
+        if(!active||muted||ambVol<0.01f) return;
+        for(BaseLoop bl:BASE_LOOPS){
+            try{
+                boolean missing=bl.instance==null||!mc.getSoundManager().isActive(bl.instance);
+                if(missing){
+                    float finalVol=bl.baseVolume*ambVol;
+                    if(finalVol>0.001f){
+                        bl.instance=buildLoopInstance(bl.sound.get(), finalVol);
                         mc.getSoundManager().play(bl.instance);
                     }
                 }
-            } catch (Throwable ignored) {
-                bl.instance = null;
-            }
+            }catch(Throwable ignored){ bl.instance=null; }
         }
     }
 
-    private static void triggerFrom(Minecraft mc, List<Entry> layer, boolean isEventsLayer) {
-        if (layer.isEmpty()) return;
-
-        RegistryObject<SoundEvent> lastTriggered = isEventsLayer ? lastEventTriggered : lastRareTriggered;
-        List<Entry> candidates;
-        if (layer.size() == 1 || lastTriggered == null) {
-            candidates = layer;
-        } else {
-            candidates = new ArrayList<>();
-            for (Entry e : layer) {
-                if (e.sound != lastTriggered) candidates.add(e);
-            }
-            if (candidates.isEmpty()) candidates = layer;
+    private static void triggerFrom(Minecraft mc,List<Entry> layer,boolean isEvents){
+        if(layer.isEmpty()) return;
+        RegistryObject<SoundEvent> last=isEvents?lastEventTriggered:lastRareTriggered;
+        List<Entry> cands;
+        if(layer.size()==1||last==null) cands=layer;
+        else{
+            cands=new ArrayList<>();
+            for(Entry e:layer) if(e.sound!=last) cands.add(e);
+            if(cands.isEmpty()) cands=layer;
         }
-
-        Entry chosen = weightedRandom(candidates);
-        if (chosen == null) return;
-
-        try {
-            SoundEvent se = chosen.sound.get();
-            float pitch = randomFloatBetween(chosen.pitchMin, chosen.pitchMax);
-            float ambVol = getUserVolume();
-            mc.getSoundManager().play(
-                SimpleSoundInstance.forUI(se, pitch, chosen.volume * ambVol));
-
-            if (isEventsLayer) lastEventTriggered = chosen.sound;
-            else {
-                lastRareTriggered  = chosen.sound;
-                // Ducking: bajar musica durante sonidos raros importantes
+        Entry chosen=weightedRandom(cands); if(chosen==null) return;
+        try{
+            SoundEvent se=chosen.sound.get();
+            float pitch=randomFloatBetween(chosen.pitchMin,chosen.pitchMax);
+            mc.getSoundManager().play(SimpleSoundInstance.forUI(se,pitch,chosen.volume*getUserVolume()));
+            if(isEvents) lastEventTriggered=chosen.sound;
+            else{
+                lastRareTriggered=chosen.sound;
                 MenuMusic.duckFor(2500L);
-                // Flag visual: si sono crows, marcar por 4s para coordinar animacion
-                if (chosen.sound == ModSounds.MENU_CROWS) {
-                    crowsPlayingUntilMs = System.currentTimeMillis() + 4000L;
-                } else if (chosen.sound == ModSounds.MENU_THUNDER) {
-                    com.eternalcraft.gripeverde.client.render.LivingAtmosphere.triggerLightningFlash(1.0f);
-                }
+                if(chosen.sound==ModSounds.MENU_CROWS) crowsPlayingUntilMs=System.currentTimeMillis()+4000L;
+                else if(chosen.sound==ModSounds.MENU_THUNDER) com.eternalcraft.gripeverde.client.render.LivingAtmosphere.triggerLightningFlash(1.0f);
             }
-
-            if (DEBUG_LOGGING) {
-                LOGGER.info("[MenuAmbience] {} disparado: {} (vol={}, pitch={})",
-                    isEventsLayer ? "EVENT" : "RARE",
-                    se.getLocation(), chosen.volume, pitch);
-            }
-        } catch (Exception e) {
-            if (DEBUG_LOGGING) LOGGER.warn("[MenuAmbience] Sonido no disponible, saltando: {}", e.getMessage());
-        }
+        }catch(Exception e){ if(DEBUG_LOGGING) LOGGER.warn("[MenuAmbience] Sonido no disponible"); }
     }
 
-    private static Entry weightedRandom(List<Entry> entries) {
-        if (entries.isEmpty()) return null;
-        int total = 0;
-        for (Entry e : entries) total += e.weight;
-        if (total <= 0) return entries.get(0);
-
-        int roll = RNG.nextInt(total);
-        int acc  = 0;
-        for (Entry e : entries) {
-            acc += e.weight;
-            if (roll < acc) return e;
-        }
-        return entries.get(entries.size() - 1);
+    private static Entry weightedRandom(List<Entry> entries){
+        if(entries.isEmpty()) return null;
+        int total=0; for(Entry e:entries) total+=e.weight;
+        if(total<=0) return entries.get(0);
+        int roll=RNG.nextInt(total); int acc=0;
+        for(Entry e:entries){ acc+=e.weight; if(roll<acc) return e; }
+        return entries.get(entries.size()-1);
     }
+    private static long randomBetween(long min,long max){ if(max<=min) return min; return min+(long)(RNG.nextDouble()*(max-min)); }
+    private static float randomFloatBetween(float min,float max){ if(max<=min) return min; return min+RNG.nextFloat()*(max-min); }
 
-    private static long randomBetween(long min, long max) {
-        if (max <= min) return min;
-        return min + (long)(RNG.nextDouble() * (max - min));
-    }
-
-    private static float randomFloatBetween(float min, float max) {
-        if (max <= min) return min;
-        return min + RNG.nextFloat() * (max - min);
-    }
-
-    private static SoundInstance buildLoopInstance(SoundEvent sound, float volume) {
-        return new SimpleSoundInstance(
-            sound.getLocation(),
-            SoundSource.AMBIENT,
-            volume,
-            1.0f,
-            RNG,
-            true,
-            0,
-            SoundInstance.Attenuation.NONE,
-            0, 0, 0,
-            true
-        );
+    private static LoopingAmbienceInstance buildLoopInstance(SoundEvent sound,float volume){
+        return new LoopingAmbienceInstance(sound.getLocation(), volume);
     }
 }
