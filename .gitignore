@@ -22,3 +22,5 @@ _backups/
 .deploy
 build_*.txt
 /*.jar
+/*.zip
+/silver_steel_viewer.html
