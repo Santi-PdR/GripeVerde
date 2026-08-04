@@ -54,31 +54,35 @@ public class UiSounds {
         COOLDOWNS.put("destroy", 300L);
         COOLDOWNS.put("respawn", 500L);
         COOLDOWNS.put("clean",    70L);
+        COOLDOWNS.put("button_main", 90L);
+        COOLDOWNS.put("button_section", 110L);
         COOLDOWNS.put("option",  120L);
         COOLDOWNS.put("page",    100L);
     }
 
     public static void hover()         { /* hover button sounds disabled */ }
-    public static void click()         { cleanClick(); }
-    public static void clickHeavy()    { cleanClick(); }
-    public static void back()          { cleanClick(); }
-    public static void open()          { cleanClick(); }
-    public static void close()         { cleanClick(); }
-    public static void modal()         { cleanClick(); }
-    public static void error()         { cleanClick(); }
-    public static void tab()           { cleanClick(); }
+    public static void click()         { buttonMain(); }
+    public static void clickHeavy()    { buttonSection(); }
+    public static void back()          { safePlay("back", ModSounds.UI_BACK, 0.16f, 0.98f + (float)(Math.random() * 0.03f)); }
+    public static void open()          { buttonSection(); }
+    public static void close()         { back(); }
+    public static void modal()         { buttonSection(); }
+    public static void error()         { buttonSection(); }
+    public static void tab()           { buttonMain(); }
     public static void scroll()        { safePlay("scroll",  ModSounds.UI_SCROLL,         VOL_SCROLL,  pitchVar()); }
-    public static void success()       { cleanClick(); }
-    public static void notification()  { cleanClick(); }
-    public static void clickCreate()   { cleanClick(); }
-    public static void clickDestroy()  { cleanClick(); }
-    public static void respawn()       { cleanClick(); }
+    public static void success()       { buttonSection(); }
+    public static void notification()  { buttonSection(); }
+    public static void clickCreate()   { buttonMain(); }
+    public static void clickDestroy()  { back(); }
+    public static void respawn()       { buttonSection(); }
 
-    /** Clean selected custom click for all buttons; avoids the noisy click/open variants. */
-    public static void cleanClick()    { safePlay("clean", ModSounds.UI_BUTTON_CLEAN, 0.18f, 0.98f + (float)(Math.random() * 0.04f)); }
+    public static void cleanClick()    { buttonMain(); }
 
-    public static void optionOpen()    { cleanClick(); }
-    public static void optionPage()    { cleanClick(); }
+    public static void buttonMain()    { safePlay("button_main", ModSounds.UI_BUTTON_MAIN, 0.18f, 0.98f + (float)(Math.random() * 0.04f)); }
+    public static void buttonSection() { safePlay("button_section", ModSounds.UI_BUTTON_SECTION, 0.16f, 1.00f); }
+
+    public static void optionOpen()    { buttonSection(); }
+    public static void optionPage()    { buttonSection(); }
 
     public static void playRaw(SoundEvent sound, float volume, float pitch) {
         Minecraft mc = Minecraft.getInstance();
