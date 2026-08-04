@@ -168,6 +168,7 @@ public final class FlagRenderer {
 
     // ── render interno ───────────────────────────────────────────────────────
     private static void drawGrid(GuiGraphics gfx, int[][] grid, int ox, int oy) {
+        // Base flag pixels
         for (int r = 0; r < FLAG_H; r++) {
             for (int c = 0; c < FLAG_W; c++) {
                 int color = grid[r][c];
@@ -175,11 +176,20 @@ public final class FlagRenderer {
                 gfx.fill(ox + c, oy + r, ox + c + 1, oy + r + 1, color);
             }
         }
-        int border = 0x60000000;
-        gfx.fill(ox,           oy,            ox + FLAG_W,     oy + 1,          border);
-        gfx.fill(ox,           oy + FLAG_H-1, ox + FLAG_W,     oy + FLAG_H,     border);
-        gfx.fill(ox,           oy,            ox + 1,          oy + FLAG_H,     border);
-        gfx.fill(ox + FLAG_W-1, oy,           ox + FLAG_W,     oy + FLAG_H,     border);
+        // Embossed archival border: outer shadow + inner parchment highlight
+        int outer = 0x80000000; // deep
+        int innerLight = DiaryTheme.withAlpha(0x00FFFFFF, 28);
+        int innerDark = DiaryTheme.withAlpha(0x00000000, 52);
+        // Outer
+        gfx.fill(ox-1, oy-1, ox+FLAG_W+1, oy, outer);
+        gfx.fill(ox-1, oy+FLAG_H, ox+FLAG_W+1, oy+FLAG_H+1, outer);
+        gfx.fill(ox-1, oy-1, ox, oy+FLAG_H+1, outer);
+        gfx.fill(ox+FLAG_W, oy-1, ox+FLAG_W+1, oy+FLAG_H+1, outer);
+        // Inner bevel
+        gfx.fill(ox, oy, ox+FLAG_W, oy+1, innerLight);
+        gfx.fill(ox, oy+FLAG_H-1, ox+FLAG_W, oy+FLAG_H, innerDark);
+        // Micro fold bottom right
+        gfx.fill(ox+FLAG_W-2, oy+FLAG_H-2, ox+FLAG_W-1, oy+FLAG_H-1, DiaryTheme.withAlpha(0x00FFFFFF, 38));
     }
 
     private static void drawFallback(GuiGraphics gfx, int x, int y) {

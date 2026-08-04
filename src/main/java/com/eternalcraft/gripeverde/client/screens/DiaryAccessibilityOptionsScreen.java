@@ -88,17 +88,11 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
     @Override
     public void render(GuiGraphics gfx, int mouseX, int mouseY, float delta) {
         // Escena viva
-        AtmosphereRenderer.renderSky(gfx, this.width, this.height);
-        VictorianSkyline.renderBackground(gfx, this.width, this.height);
-        VictorianSkyline.renderForeground(gfx, this.width, this.height);
-        LivingAtmosphere.renderStreet(gfx, this.width, this.height);
-
-        // Overlay
-        gfx.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
+        com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(gfx, this.width, this.height);
 
         // Panel pergamino
         DiaryChrome.drawPanelShadow(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
-        PaperTexture.drawClean(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
+        PaperTexture.drawClean(gfx, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.OFFICIAL);
 
         // Titulo
         int cx = this.width / 2;
@@ -149,12 +143,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
     @Override
     public void tick() {
         super.tick();
-        float delta = 1.0f / 20.0f;
-        AtmosphereRenderer.tick(delta);
-        VictorianSkyline.tick(delta);
-        LivingAtmosphere.tick(delta);
-        MenuMusic.tick();
-        com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick();
+        com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.tick(1.0f / 20.0f);
         this.smoothScroll.tick(this.list);
     }
 

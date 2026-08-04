@@ -139,30 +139,19 @@ public class DiarySkinCustomizationScreen extends Screen {
     @Override
     public void tick() {
         super.tick();
-        float delta = 1.0f / 20.0f;
-        AtmosphereRenderer.tick(delta);
-        VictorianSkyline.tick(delta);
-        LivingAtmosphere.tick(delta);
-        MenuMusic.tick();
-        com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick();
+        com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.tick(1.0f / 20.0f);
     }
 
     @Override
     public void render(GuiGraphics gfx, int mouseX, int mouseY, float delta) {
         // Escena viva
-        AtmosphereRenderer.renderSky(gfx, this.width, this.height);
-        VictorianSkyline.renderBackground(gfx, this.width, this.height);
-        VictorianSkyline.renderForeground(gfx, this.width, this.height);
-        LivingAtmosphere.renderStreet(gfx, this.width, this.height);
-
-        // Overlay
-        gfx.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
+        com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(gfx, this.width, this.height);
 
         // Pergamino
         int panelW = Math.min(PANEL_MAX_W, this.width - 40);
         int panelH = Math.min(PANEL_MAX_H, this.height - 30);
         DiaryChrome.drawPanelShadow(gfx, this.panelX, this.panelY, panelW, panelH);
-        PaperTexture.drawClean(gfx, this.panelX, this.panelY, panelW, panelH);
+        PaperTexture.drawClean(gfx, this.panelX, this.panelY, panelW, panelH, PaperTexture.PaperKind.MEDICAL);
 
         // Titulo
         int cx = this.width / 2;

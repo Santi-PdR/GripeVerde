@@ -129,12 +129,7 @@ public class DiaryLanguageScreen extends Screen {
     @Override
     public void tick() {
         super.tick();
-        float delta = 1.0f / 20.0f;
-        AtmosphereRenderer.tick(delta);
-        VictorianSkyline.tick(delta);
-        LivingAtmosphere.tick(delta);
-        MenuMusic.tick();
-        com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick();
+        com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.tick(1.0f / 20.0f);
         this.smoothScroll.tick(this.languageList);
     }
 
@@ -142,13 +137,9 @@ public class DiaryLanguageScreen extends Screen {
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         // Clear framebuffer + transition fade
         g.fill(0, 0, this.width, this.height, 0xFF000000);
-        AtmosphereRenderer.renderSky(g, this.width, this.height);
-        VictorianSkyline.renderBackground(g, this.width, this.height);
-        VictorianSkyline.renderForeground(g, this.width, this.height);
-        LivingAtmosphere.renderStreet(g, this.width, this.height);
-                g.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
+        com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
         DiaryChrome.drawPanelShadow(g, panelX, panelY, panelW, panelH);
-        PaperTexture.drawClean(g, panelX, panelY, panelW, panelH);
+        PaperTexture.drawClean(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.ARCHIVE);
 
         int titleY = this.panelY + PANEL_PAD;
         int cx = this.width / 2;

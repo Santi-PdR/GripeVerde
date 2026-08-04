@@ -223,8 +223,7 @@ public class DiaryTextField extends EditBox {
     public boolean charTyped(char c, int modifiers) {
         boolean handled = super.charTyped(c, modifiers);
         if (handled) {
-            // Sonido sutil de pluma al escribir
-            com.eternalcraft.gripeverde.client.audio.UiSounds.scroll();
+            com.eternalcraft.gripeverde.client.audio.UiSounds.type();
         }
         return handled;
     }

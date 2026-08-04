@@ -168,30 +168,16 @@ public class DiaryOptionsScreen extends Screen {
     @Override
     public void tick() {
         super.tick();
-        // Mantener la atmosfera viva mientras esta pantalla esta abierta.
-        float delta = 1.0f / 20.0f;
-        AtmosphereRenderer.tick(delta);
-        VictorianSkyline.tick(delta);
-        LivingAtmosphere.tick(delta);
-        MenuMusic.tick();
-        com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick();
+        com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.tick(1.0f / 20.0f);
     }
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        // Fondo vivo: mismo pipeline del Title, sin flash/vignette (no compiten con el pergamino).
-        // Clear framebuffer + transition fade
-        g.fill(0, 0, this.width, this.height, 0xFF000000);
-        AtmosphereRenderer.renderSky(g, this.width, this.height);
-        VictorianSkyline.renderBackground(g, this.width, this.height);
-        VictorianSkyline.renderForeground(g, this.width, this.height);
-        LivingAtmosphere.renderStreet(g, this.width, this.height);
-                // Overlay oscuro para dar peso al pergamino
-        g.fill(0, 0, this.width, this.height, DiaryChrome.OVERLAY_COL);
+        com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
 
         // Panel pergamino
         DiaryChrome.drawPanelShadow(g, panelX, panelY, panelW, panelH);
-        PaperTexture.drawClean(g, panelX, panelY, panelW, panelH);
+        PaperTexture.drawClean(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.LEDGER);
         drawCabinetPlate(g);
 
         // Titulo en tinta
