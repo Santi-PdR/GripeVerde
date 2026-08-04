@@ -77,11 +77,13 @@ tasks.register('verifyGripeVerdeThemeAssets') {
     description = 'Verifies the built-in Gripe Verde steel resource pack has the expected GUI textures.'
     doLast {
         def base = file('src/main/resources/resourcepacks/gripeverde_theme/assets/minecraft/textures/gui/container')
+        // Nota: vanilla 1.20.1 NO tiene dropper.png (el dropper reutiliza
+        // dispenser.png). El pack reproduce exactamente el set de vanilla.
         def expected = [
             'inventory.png', 'crafting_table.png', 'generic_54.png', 'furnace.png',
             'smoker.png', 'blast_furnace.png', 'shulker_box.png', 'anvil.png',
             'grindstone.png', 'enchanting_table.png', 'beacon.png', 'brewing_stand.png',
-            'hopper.png', 'dispenser.png', 'dropper.png', 'loom.png',
+            'hopper.png', 'dispenser.png', 'loom.png',
             'cartography_table.png', 'stonecutter.png', 'smithing.png', 'horse.png',
             'villager2.png'
         ]
