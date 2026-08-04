@@ -53,8 +53,10 @@ public class DiarySkinCustomizationScreen extends Screen {
         this.panelY = (this.height - panelH) / 2;
 
         int gridTop = this.panelY + 74;  // titulo + subtitulo + flavor + divisor
-        int col1X   = this.panelX + (PANEL_MAX_W - (BTN_W * 2 + BTN_GAP_X)) / 2;
-        int col2X   = col1X + BTN_W + BTN_GAP_X;
+        int availableGridW = Math.max(BTN_W, panelW - 28);
+        int effectiveBtnW = Math.min(BTN_W, Math.max(110, (availableGridW - BTN_GAP_X) / 2));
+        int col1X   = this.panelX + (panelW - (effectiveBtnW * 2 + BTN_GAP_X)) / 2;
+        int col2X   = col1X + effectiveBtnW + BTN_GAP_X;
 
         PlayerModelPart[] parts = PlayerModelPart.values();
 
@@ -66,7 +68,7 @@ public class DiarySkinCustomizationScreen extends Screen {
             int y = gridTop + row * (BTN_H + BTN_GAP_Y);
 
             DiaryButton btn = new DiaryButton(
-                x, y, BTN_W, BTN_H,
+                x, y, effectiveBtnW, BTN_H,
                 buildPartLabel(part),
                 Icon.NONE, Variant.SECONDARY,
                 () -> togglePart(part)
@@ -82,7 +84,7 @@ public class DiarySkinCustomizationScreen extends Screen {
         int armX = (col == 0) ? col1X : col2X;
         int armY = gridTop + row * (BTN_H + BTN_GAP_Y);
         this.armButton = new DiaryButton(
-            armX, armY, BTN_W, BTN_H,
+            armX, armY, effectiveBtnW, BTN_H,
             buildArmLabel(),
             Icon.NONE, Variant.SECONDARY,
             this::toggleArm
@@ -92,7 +94,7 @@ public class DiarySkinCustomizationScreen extends Screen {
         // Boton Volver
         int btnW = 160;
         int btnX = (this.width - btnW) / 2;
-        int btnY = this.panelY + PANEL_MAX_H - 28;
+        int btnY = this.panelY + panelH - 28;
         this.addRenderableWidget(new DiaryButton(
             btnX, btnY, btnW, BTN_H,
             Component.translatable("gripeverde.options.button.done"),
@@ -167,7 +169,6 @@ public class DiarySkinCustomizationScreen extends Screen {
         int titleY = this.panelY + 12;
         {
             int tw = this.font.width(this.title);
-            gfx.drawString(this.font, this.title, cx - tw / 2 + 1, titleY + 1, DiaryChrome.SHADOW_COL, false);
             gfx.drawString(this.font, this.title, cx - tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
         }
 
@@ -195,7 +196,7 @@ public class DiarySkinCustomizationScreen extends Screen {
         super.render(gfx, mouseX, mouseY, delta);
 
         // Divisor inferior + esquineros
-        int divY2 = this.panelY + PANEL_MAX_H - 38;
+        int divY2 = this.panelY + panelH - 38;
         DiaryChrome.drawInkDivider(gfx, this.panelX, divY2, panelW);
         DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, panelW, panelH);
     }

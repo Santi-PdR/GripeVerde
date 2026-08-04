@@ -11,6 +11,7 @@ import net.minecraft.client.gui.screens.achievement.StatsScreen;
 import net.minecraft.client.gui.screens.advancements.AdvancementsScreen;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.chat.Component;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.Random;
 
@@ -96,19 +97,14 @@ public class DiaryPauseScreen extends PauseScreen {
             btnX, btnStartY, BTN_W, BH,
             Component.translatable("gripeverde.pause.btn.resume"),
             DiaryButton.Icon.HAND, DiaryButton.Variant.PRIMARY,
-            () -> this.minecraft.setScreen(null)
+            this::resumeGame
         ));
 
         DiaryButton recordsBtn = new DiaryButton(
             btnX, btnStartY + (BH + BG), BTN_W, BH,
             Component.translatable("gripeverde.pause.btn.records"),
             DiaryButton.Icon.SCROLL, DiaryButton.Variant.SECONDARY,
-            () -> {
-                ClientPacketListener conn = this.minecraft.getConnection();
-                if (conn != null) {
-                    this.minecraft.setScreen(new AdvancementsScreen(conn.getAdvancements()));
-                }
-            }
+            this::openRecords
         );
         if (this.minecraft.getConnection() == null) recordsBtn.active = false;
         this.addRenderableWidget(recordsBtn);
@@ -117,11 +113,7 @@ public class DiaryPauseScreen extends PauseScreen {
             btnX, btnStartY + (BH + BG) * 2, BTN_W, BH,
             Component.translatable("gripeverde.pause.btn.statistics"),
             DiaryButton.Icon.CHART, DiaryButton.Variant.SECONDARY,
-            () -> {
-                if (this.minecraft.player != null) {
-                    this.minecraft.setScreen(new StatsScreen(this, this.minecraft.player.getStats()));
-                }
-            }
+            this::openStats
         );
         if (this.minecraft.player == null) statsBtn.active = false;
         this.addRenderableWidget(statsBtn);
@@ -130,7 +122,7 @@ public class DiaryPauseScreen extends PauseScreen {
             btnX, btnStartY + (BH + BG) * 3, BTN_W, BH,
             Component.translatable("gripeverde.pause.btn.adjustments"),
             DiaryButton.Icon.GEAR, DiaryButton.Variant.SECONDARY,
-            () -> this.minecraft.setScreen(new DiaryOptionsScreen(this))
+            this::openAdjustments
         ));
 
         this.addRenderableWidget(new DiaryButton(
@@ -141,9 +133,39 @@ public class DiaryPauseScreen extends PauseScreen {
         ));
     }
 
-    @Override
+
     public void tick() {
         animTick++;
+    }
+
+    private void resumeGame() {
+        this.minecraft.setScreen(null);
+    }
+
+    private void openRecords() {
+        ClientPacketListener conn = this.minecraft.getConnection();
+        if (conn != null) {
+            this.minecraft.setScreen(new AdvancementsScreen(conn.getAdvancements()));
+        }
+    }
+
+    private void openStats() {
+        if (this.minecraft.player != null) {
+            this.minecraft.setScreen(new StatsScreen(this, this.minecraft.player.getStats()));
+        }
+    }
+
+    private void openAdjustments() {
+        this.minecraft.setScreen(new DiaryOptionsScreen(this));
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if ((modifiers & GLFW.GLFW_MOD_CONTROL) != 0 && keyCode == GLFW.GLFW_KEY_0) {
+            onLeave();
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     private void onLeave() {
@@ -385,12 +407,24 @@ public class DiaryPauseScreen extends PauseScreen {
     }
 
     private void drawSignature(GuiGraphics g, int px, int py) {
-        Component sig = Component.literal("Signed: S. Pereira, U.A.")
+        Component sig = Component.literal(isEnglishSelected()
+                ? "Signed: S. Pereira, M.D."
+                : "Firmado: S. Pereira, Medico")
             .withStyle(ChatFormatting.ITALIC);
         int centerX = px + panelW() / 2;
         int sw = this.font.width(sig);
         int sy = py + panelH() - ORN_SIGN_FROM_BOT;
+        g.drawString(this.font, sig, centerX - sw / 2 + 1, sy + 1, DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 90), false);
         g.drawString(this.font, sig, centerX - sw / 2, sy, DiaryTheme.SEPIA_DARK, false);
+    }
+
+    private static boolean isEnglishSelected() {
+        try {
+            String lang = net.minecraft.client.Minecraft.getInstance().getLanguageManager().getSelected();
+            return lang == null || lang.startsWith("en_") || lang.equals("en_us");
+        } catch (Throwable ignored) {
+            return false;
+        }
     }
 
     private void drawWaxSeal(GuiGraphics g, int cx, int cy) {

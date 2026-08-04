@@ -21,6 +21,12 @@ public class ModSounds {
         reg("ui.hover");
     public static final RegistryObject<SoundEvent> UI_CLICK =
         reg("ui.click");
+    public static final RegistryObject<SoundEvent> UI_BUTTON_CLEAN =
+        reg("ui.button_clean");
+    public static final RegistryObject<SoundEvent> UI_BUTTON_MAIN =
+        reg("ui.button_main");
+    public static final RegistryObject<SoundEvent> UI_BUTTON_SECTION =
+        reg("ui.button_section");
     public static final RegistryObject<SoundEvent> UI_CLICK_HEAVY =
         reg("ui.click_heavy");
     public static final RegistryObject<SoundEvent> UI_BACK =

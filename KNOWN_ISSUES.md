@@ -1,5 +1,55 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## Estado actual de pulido RC
+
+### Criterios activos
+- Sonidos de boton separados por categoria funcional.
+- No conservar archivos temporales de traspaso dentro del repo.
+- No reintroducir bandejas o sombras que ensucien listas de opciones.
+- Mantener layouts vanilla de containers y pantallas densas.
+- Revisar cada nuevo recurso contra `sounds.json` antes de compilar.
+
+
+## Estado actual para continuidad
+
+### Cerrado en esta linea de trabajo
+- Sonidos UI categorizados por uso (`ui.button_main`, `ui.button_section`, `ui.back`).
+- `sounds.json` no referencia los OGG rechazados por el usuario.
+- Carpeta de pruebas de botones reducida al candidato aceptado y notas de seleccion.
+
+### Riesgos activos
+- Validar auditivamente en cliente real que `modal.ogg` funcione bien como sonido de apertura de seccion.
+- Si se agregan sonidos nuevos, primero colocarlos en carpeta de prueba y pedir seleccion del usuario antes de conectarlos a `sounds.json`.
+- No tocar layouts vanilla de containers salvo paleta/estetica; slots y zonas interactivas deben permanecer familiares.
+- Mantener `ContainerOverlayHandler` restringido a pantallas vanilla para no romper mochilas o containers de mods.
+
+### Regla operativa nueva
+- Luego de cualquier cambio, entregar PowerShell completo de build/deploy a Test; no entregar solo el hash.
+
+
+## v0.13.10 - Acero bajo la lluvia
+
+### Cambios cerrados
+- Resource pack steel extendido y verificado para containers menores:
+  smoker, blast furnace, shulker box, brewing stand, hopper, dispenser,
+  dropper, loom, cartography table, stonecutter, smithing, horse y
+  villager trading.
+- ContainerOverlayHandler agrega sombra a titulos principales y oculta
+  labels vanilla conflictivos cuando es posible.
+- Enchanting table gana tratamiento arcano: fondo purpura, lineas de
+  lectura y particulas discretas.
+- Title gana polish atmosferico: polillas, salpicaduras, ondas en charcos,
+  reflejos de farol, papeles al viento, rafagas, lluvia diagonal, sombras
+  de ramas, relampagos ramificados e icono nuevo del resource pack.
+- Nueva task Gradle `verifyGripeVerdeThemeAssets` para detectar assets
+  faltantes antes de empaquetar.
+
+### Estado / deuda
+- Las pantallas vanilla muy complejas pueden requerir ajustes visuales
+  puntuales por idioma o por mods externos que alteren layout.
+- La familia de containers queda lista para validacion de Alex antes de
+  cerrar un ciclo mayor.
+
 ## v0.13.9 - Hotfixes y optimizaciones
 
 Fixes criticos post-v0.13.9:
@@ -231,7 +281,7 @@ Idiomas sin bandera mapeada muestran rombo tinta como fallback.
 Cinco versiones cortas encadenadas cierran los ultimos hitos visuales del gabinete pergamino. Se agrupa aqui porque forman un mismo ciclo narrativo.
 
 ### v0.11.10 - Polish: fades, scrollbar y multiplayer
-- KI-15 (fades inferiores) CERRADO. Nuevo helper DiaryChrome.drawListFades()
+- KI-15 (fades inferiores) CERRADO. Helper de fades retirado en RC para evitar velos sobre listas
   aplicado en Accessibility, Chat y Sound. Fade pergamino->transparente en top y
   bottom de la lista suaviza el corte duro.
 - KI-16 (scrollbar respirada) CERRADO. drawStyledScrollThumbInPanel ahora
@@ -386,7 +436,7 @@ Ultimo tag publicado: v0.11.13
 Cinco versiones cortas encadenadas cierran los ultimos hitos visuales del gabinete pergamino. Se agrupa aqui porque forman un mismo ciclo narrativo.
 
 ### v0.11.10 - Polish: fades, scrollbar y multiplayer
-- KI-15 (fades inferiores) CERRADO. Nuevo helper DiaryChrome.drawListFades()
+- KI-15 (fades inferiores) CERRADO. Helper de fades retirado en RC para evitar velos sobre listas
   aplicado en Accessibility, Chat y Sound. Fade pergamino->transparente en top y
   bottom de la lista suaviza el corte duro.
 - KI-16 (scrollbar respirada) CERRADO. drawStyledScrollThumbInPanel ahora

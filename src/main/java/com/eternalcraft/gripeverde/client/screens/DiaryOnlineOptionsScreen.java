@@ -2,11 +2,11 @@ package com.eternalcraft.gripeverde.client.screens;
 
 import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
-import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
 import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
+import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.Options;
@@ -28,7 +28,7 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
     private static final int PANEL_W = 340;
     private static final int PANEL_H = 240;
 
-    private final long screenOpenMs = System.currentTimeMillis();
+    private final SmoothScroll smoothScroll = new SmoothScroll(0.50D, 0.24D);
     private int panelX, panelY, panelW, panelH;
 
     public DiaryOnlineOptionsScreen(Screen parent, Options options) {
@@ -57,6 +57,7 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
             int listTop = this.panelY + 55;
             int listBottom = this.panelY + this.panelH - 45;
             this.list.updateSize(this.width, this.height, listTop, listBottom);
+            this.smoothScroll.snapToCurrent(this.list);
         }
 
         // Ocultar el boton Done vanilla
@@ -92,6 +93,18 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
         LivingAtmosphere.tick(delta);
         MenuMusic.tick();
         com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick();
+        this.smoothScroll.tick(this.list);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+        if (this.list != null && mouseY >= this.list.getTop() && mouseY <= this.list.getBottom()) {
+            if (this.smoothScroll.wheel(this.list, delta, 34.0D)) {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.scroll();
+                return true;
+            }
+        }
+        return super.mouseScrolled(mouseX, mouseY, delta);
     }
 
     @Override
@@ -114,16 +127,18 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
         int titleX = this.width / 2;
         int titleY = this.panelY + 12;
         int tw = this.font.width(titleStr);
-        g.drawString(this.font, titleStr, titleX - tw / 2 + 1, titleY + 1, DiaryChrome.SHADOW_COL, false);
         g.drawString(this.font, titleStr, titleX - tw / 2, titleY, DiaryChrome.INK_TITLE, false);
 
         // Subtitulo diegetico
-        String subtitle = "- Comunicaciones a distancia -";
+        String subtitle = "- " + Component.translatable("gripeverde.options.online.subtitle").getString() + " -";
         int subW = this.font.width(subtitle);
         g.drawString(this.font, subtitle, titleX - subW / 2, titleY + 14, DiaryChrome.INK_SUBTITLE, false);
+        String flavor = Component.translatable("gripeverde.options.online.flavor").getString();
+        int flavorW = this.font.width(flavor);
+        g.drawString(this.font, flavor, titleX - flavorW / 2, titleY + 26, DiaryChrome.INK_FLAVOR, false);
 
         // Divisor
-        int divY = titleY + 26;
+        int divY = titleY + 40;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY);
 
         // Divisor inferior + esquineros

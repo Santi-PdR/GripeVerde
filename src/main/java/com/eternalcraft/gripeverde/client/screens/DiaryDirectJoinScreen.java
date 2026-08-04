@@ -161,7 +161,6 @@ public class DiaryDirectJoinScreen extends Screen {
         int titleY = panelY + 18;
         String titleStr = this.title.getString();
         int titleW = this.font.width(titleStr);
-        gfx.drawString(this.font, titleStr, (this.width - titleW) / 2 + 1, titleY + 1, DiaryChrome.SHADOW_COL, false);
         gfx.drawString(this.font, titleStr, (this.width - titleW) / 2, titleY, DiaryChrome.INK_TITLE, false);
 
         // Subtitulo

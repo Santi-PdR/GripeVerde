@@ -85,6 +85,9 @@ public class SoundLabScreen extends Screen {
 
         entries.add(new Entry(CAT_UI, "ui.hover",          ModSounds.UI_HOVER,          TEST_VOL_UI));
         entries.add(new Entry(CAT_UI, "ui.click",          ModSounds.UI_CLICK,          TEST_VOL_UI));
+        entries.add(new Entry(CAT_UI, "ui.button_clean",   ModSounds.UI_BUTTON_CLEAN,   TEST_VOL_UI));
+        entries.add(new Entry(CAT_UI, "ui.button_main",    ModSounds.UI_BUTTON_MAIN,    TEST_VOL_UI));
+        entries.add(new Entry(CAT_UI, "ui.button_section", ModSounds.UI_BUTTON_SECTION, TEST_VOL_UI));
         entries.add(new Entry(CAT_UI, "ui.click_heavy",    ModSounds.UI_CLICK_HEAVY,    TEST_VOL_UI));
         entries.add(new Entry(CAT_UI, "ui.back",           ModSounds.UI_BACK,           TEST_VOL_UI));
         entries.add(new Entry(CAT_UI, "ui.open",           ModSounds.UI_OPEN,           TEST_VOL_UI));

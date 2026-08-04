@@ -1,5 +1,24 @@
 # Eternal Craft: Gripe Verde
 
+## v0.13.10 RC - Pulido de gabinete y sonidos
+
+El gabinete recibio una limpieza de oficio: los pestillos sonoros quedaron separados por funcion, los registros abandonaron herramientas temporales y las notas de continuidad fueron devueltas a los documentos centrales. La cronica publica conserva solo aquello que pertenece al viajero y al cronista.
+
+
+## v0.13.10 - Acero bajo la lluvia
+
+La ciudad ha recibido una mano mas firme sobre sus maquinas. Los hornos,
+las cajas menores, la afiladora, el yunque, la mesa de corte, la mesa de
+herreria, los registros de comercio y las caballerizas comparten ahora un
+mismo acero gris, sobrio y remachado. La mesa arcana conserva su purpura,
+pero sus renglones respiran entre particulas y brillos discretos.
+
+Tambien la calle aprendio nuevos gestos: la lluvia salpica el empedrado,
+los charcos forman ondas, los faroles dejan reflejos ambar, las polillas
+orbitan las llamas y los papeles de cuarentena cruzan el suelo cuando
+sopla el viento. En las alturas, ramas oscuras ensucian el vidrio y los
+relampagos cortan la noche con trazos mas vivos.
+
 ## v0.13.3 - v0.13.9 - El gabinete se llena de maquinas
 
 Durante siete noches, el gabinete se extendio hasta abarcar los talleres

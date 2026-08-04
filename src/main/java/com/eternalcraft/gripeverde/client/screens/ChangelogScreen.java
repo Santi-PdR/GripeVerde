@@ -26,7 +26,7 @@ public class ChangelogScreen extends Screen {
     private static final int PAD_Y      = 26;
     private static final int CLOSE_W    = 130;
     private static final int CLOSE_H    = 28;
-    private static final int SCROLL_SPD = 14;
+    private static final int SCROLL_SPD = 28;
 
     private static final int LINE_H    = 11;
     private static final int H1_LINE_H = 16;
@@ -47,9 +47,12 @@ public class ChangelogScreen extends Screen {
     private final List<Row> rows = new ArrayList<>();
     private boolean loadError = false;
     private int scrollY = 0;
+    private double smoothScrollY = 0.0D;
+    private double targetScrollY = 0.0D;
     private static int lastScrollY = 0;  // Remembered across reopens
     private int maxScroll = 0;
     private int lastContentW = -1;
+    private boolean draggingScrollbar = false;
 
     public ChangelogScreen(Screen parent) {
         super(Component.literal(pickChangelogTitle()));
@@ -60,6 +63,8 @@ public class ChangelogScreen extends Screen {
     protected void init() {
         this.clearWidgets();
         this.scrollY = lastScrollY;
+        this.smoothScrollY = lastScrollY;
+        this.targetScrollY = lastScrollY;
         this.loadError = false;
         this.rows.clear();
         this.lastContentW = -1;
@@ -71,7 +76,7 @@ public class ChangelogScreen extends Screen {
         int by = this.height - CLOSE_H - 10;
         this.addRenderableWidget(new SlimButton(bx, by, CLOSE_W, CLOSE_H,
             Component.translatable("gripeverde.changelog.button.close"),
-            () -> this.minecraft.setScreen(this.parent)));
+            this::onClose));
     }
 
     private void loadAndParse() {
@@ -163,11 +168,84 @@ public class ChangelogScreen extends Screen {
     }
 
     private void clampScroll() {
-        if (scrollY < 0) scrollY = 0;
-        if (scrollY > maxScroll) scrollY = maxScroll;
+        if (targetScrollY < 0.0D) targetScrollY = 0.0D;
+        if (targetScrollY > maxScroll) targetScrollY = maxScroll;
+        if (smoothScrollY < 0.0D) smoothScrollY = 0.0D;
+        if (smoothScrollY > maxScroll) smoothScrollY = maxScroll;
+        scrollY = (int)Math.round(smoothScrollY);
     }
 
-    private void scrollBy(int d) { scrollY += d; clampScroll(); }
+    private void setScrollTarget(double value, boolean snap) {
+        targetScrollY = Math.max(0.0D, Math.min(maxScroll, value));
+        if (snap) {
+            smoothScrollY = targetScrollY;
+        }
+        scrollY = (int)Math.round(smoothScrollY);
+    }
+
+    private void tickSmoothScroll() {
+        double diff = targetScrollY - smoothScrollY;
+        if (Math.abs(diff) < 0.35D) {
+            smoothScrollY = targetScrollY;
+        } else {
+            smoothScrollY += diff * 0.46D;
+        }
+        clampScroll();
+    }
+
+    private void scrollToSection(boolean next) {
+        int cw = contentW();
+        int pos = 0;
+        int currentTarget = (int)Math.round(targetScrollY);
+        int candidate = next ? maxScroll : 0;
+        for (Row r : rows) {
+            if (r.type == LT.H1) {
+                if (next && pos > currentTarget + 4) {
+                    candidate = pos;
+                    break;
+                }
+                if (!next && pos < currentTarget - 4) {
+                    candidate = pos;
+                }
+            }
+            pos += rowHeight(r, cw);
+        }
+        setScrollTarget(candidate, false);
+    }
+
+    private void scrollToTopOrBottom(boolean bottom) {
+        setScrollTarget(bottom ? maxScroll : 0, false);
+    }
+
+    private void scrollBy(int d) { setScrollTarget(targetScrollY + d, false); }
+
+    private void scrollByWithSound(int d) {
+        double before = targetScrollY;
+        scrollBy(d);
+        if (Math.abs(before - targetScrollY) > 0.1D) {
+            long now = System.currentTimeMillis();
+            if (now - lastScrollSoundMs > 120L) {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.scroll();
+                lastScrollSoundMs = now;
+            }
+        }
+    }
+
+    private boolean overScrollbar(double mouseX, double mouseY) {
+        if (maxScroll <= 0) return false;
+        int px = panelX(), pw = panelW();
+        int cy = contentY(), ch = contentH();
+        int bx = px + pw - 8;
+        return mouseX >= bx - 3 && mouseX <= bx + 8 && mouseY >= cy && mouseY <= cy + ch;
+    }
+
+    private void setScrollFromMouse(double mouseY) {
+        if (maxScroll <= 0) return;
+        int cy = contentY(), ch = contentH();
+        int th = Math.max(20, ch * ch / (ch + maxScroll));
+        double t = (mouseY - cy - th / 2.0) / Math.max(1.0, ch - th);
+        setScrollTarget(Math.max(0.0, Math.min(1.0, t)) * maxScroll, true);
+    }
 
     private int panelX() { return PANEL_MX; }
     private int panelY() { return PANEL_TOP; }
@@ -177,6 +255,14 @@ public class ChangelogScreen extends Screen {
     private int contentY() { return panelY() + PAD_Y + 10; }
     private int contentW() { return Math.max(40, panelW() - PAD_X * 2 - 8); }
     private int contentH() { return Math.max(20, panelH() - PAD_Y * 2 - 10); }
+
+    @Override
+    public void tick() {
+        super.tick();
+        tickSmoothScroll();
+        com.eternalcraft.gripeverde.client.audio.MenuMusic.tick();
+        com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick();
+    }
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
@@ -194,6 +280,7 @@ public class ChangelogScreen extends Screen {
         g.fill(px,          py + ph - 1, px + pw, py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
         g.fill(px,          py,          px + 1,  py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
         g.fill(px + pw - 1, py,          px + pw, py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
+        drawLedgerDetails(g, px, py, pw, ph, cx, cy, cw, ch);
 
         int tw = this.font.width(this.title);
         int tx = (this.width - tw) / 2;
@@ -226,9 +313,59 @@ public class ChangelogScreen extends Screen {
             int ty2 = cy + (bh - th) * scrollY / maxScroll;
             g.fill(bx2, cy,  bx2 + 3, cy + bh, DiaryTheme.withAlpha(DiaryTheme.PAPER_STAINED, 110));
             g.fill(bx2, ty2, bx2 + 3, ty2 + th, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 190));
+
         }
 
         super.render(g, mouseX, mouseY, partialTick);
+    }
+
+    private void drawLedgerDetails(GuiGraphics g, int px, int py, int pw, int ph,
+                                   int cx, int cy, int cw, int ch) {
+        int inkSoft = DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 58);
+        int bronzeSoft = DiaryTheme.withAlpha(DiaryTheme.BRONZE, 95);
+        int redSeal = DiaryTheme.withAlpha(DiaryTheme.BLOOD_DRIED, 150);
+
+        // Binding strip and punched filing marks.
+        int stripX = px + 10;
+        g.fill(stripX, py + 12, stripX + 7, py + ph - 12, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 38));
+        for (int y = py + 30; y < py + ph - 18; y += 34) {
+            g.fill(stripX + 2, y, stripX + 5, y + 3, bronzeSoft);
+            g.fill(stripX + 3, y + 3, stripX + 4, y + 5, inkSoft);
+        }
+
+        // Marginal rule and archival ticks.
+        int ruleX = cx + 5;
+        g.fill(ruleX, cy - 4, ruleX + 1, cy + ch + 4, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 82));
+        for (int y = cy + 8; y < cy + ch; y += 26) {
+            g.fill(ruleX - 3, y, ruleX + 4, y + 1, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 65));
+        }
+
+        // Discreet quarantine stamp that stays away from the scroll bar.
+        int stampW = 84;
+        int stampX = px + pw - stampW - 24;
+        int stampY = py + 24;
+        g.fill(stampX, stampY, stampX + stampW, stampY + 1, redSeal);
+        g.fill(stampX, stampY + 16, stampX + stampW, stampY + 17, redSeal);
+        g.fill(stampX, stampY, stampX + 1, stampY + 17, redSeal);
+        g.fill(stampX + stampW - 1, stampY, stampX + stampW, stampY + 17, redSeal);
+        String stamp = isEnglishSelected() ? "FILED UNDER SEAL" : "BAJO SELLO";
+        int sw = this.font.width(stamp);
+        g.drawString(this.font, stamp, stampX + (stampW - sw) / 2, stampY + 5,
+            DiaryTheme.withAlpha(DiaryTheme.BLOOD_DRIED, 190), false);
+
+        // Bottom ledger line: gives the page a material end without adding clutter.
+        int bottomY = py + ph - 30;
+        g.fillGradient(px + 30, bottomY, px + pw / 2, bottomY + 1,
+            DiaryTheme.withAlpha(DiaryTheme.BRONZE, 0), DiaryTheme.withAlpha(DiaryTheme.BRONZE, 95));
+        g.fillGradient(px + pw / 2, bottomY, px + pw - 30, bottomY + 1,
+            DiaryTheme.withAlpha(DiaryTheme.BRONZE, 95), DiaryTheme.withAlpha(DiaryTheme.BRONZE, 0));
+    }
+
+    private static boolean isEnglishSelected() {
+        String lang = "en_us";
+        try { lang = Minecraft.getInstance().getLanguageManager().getSelected(); }
+        catch (Throwable ignored) {}
+        return lang == null || lang.startsWith("en_") || lang.equals("en_us");
     }
 
     private void renderRow(GuiGraphics g, Row row, int x, int y, int maxW) {
@@ -321,6 +458,34 @@ public class ChangelogScreen extends Screen {
     private long lastScrollSoundMs = 0L;
 
     @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == 0 && overScrollbar(mouseX, mouseY)) {
+            this.draggingScrollbar = true;
+            setScrollFromMouse(mouseY);
+            return true;
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        if (this.draggingScrollbar) {
+            setScrollFromMouse(mouseY);
+            return true;
+        }
+        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (this.draggingScrollbar) {
+            this.draggingScrollbar = false;
+            return true;
+        }
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
         scrollBy((int)(-Math.signum(delta) * SCROLL_SPD));
         // Sonido de pagina: throttle 200ms entre scrolls consecutivos
@@ -335,14 +500,14 @@ public class ChangelogScreen extends Screen {
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         switch (keyCode) {
-            case GLFW.GLFW_KEY_UP        -> { scrollBy(-SCROLL_SPD);     return true; }
-            case GLFW.GLFW_KEY_DOWN      -> { scrollBy( SCROLL_SPD);     return true; }
-            case GLFW.GLFW_KEY_PAGE_UP   -> { scrollBy(-contentH() / 2); return true; }
-            case GLFW.GLFW_KEY_PAGE_DOWN -> { scrollBy( contentH() / 2); return true; }
-            case GLFW.GLFW_KEY_HOME      -> { scrollY = 0;                return true; }
-            case GLFW.GLFW_KEY_END       -> { scrollY = maxScroll;        return true; }
+            case GLFW.GLFW_KEY_UP        -> { scrollByWithSound(-SCROLL_SPD);     return true; }
+            case GLFW.GLFW_KEY_DOWN      -> { scrollByWithSound( SCROLL_SPD);     return true; }
+            case GLFW.GLFW_KEY_PAGE_UP   -> { scrollByWithSound(-contentH() / 2); return true; }
+            case GLFW.GLFW_KEY_PAGE_DOWN -> { scrollByWithSound( contentH() / 2); return true; }
+            case GLFW.GLFW_KEY_HOME      -> { scrollToTopOrBottom(false); return true; }
+            case GLFW.GLFW_KEY_END       -> { scrollToTopOrBottom(true);  return true; }
             case GLFW.GLFW_KEY_ESCAPE    -> {
-                this.minecraft.setScreen(this.parent);
+                this.onClose();
                 return true;
             }
         }
@@ -354,21 +519,35 @@ public class ChangelogScreen extends Screen {
 
     @Override
     public void onClose() {
-        lastScrollY = this.scrollY;
+        lastScrollY = (int)Math.round(this.targetScrollY);
         super.onClose();
     }
 
-    // Rotating titles for the changelog screen
-    private static final String[] CHANGELOG_TITLES = {
+    // Rotating titles for the changelog screen, localized so an English client
+    // does not open a Spanish chronicle title.
+    private static final String[] CHANGELOG_TITLES_ES = {
         "Historial de Cambios",
         "Cronicas del Cronista",
         "Bitacora de la Ciudad",
         "Diario del Superviviente",
         "Registro de Noches"
     };
+    private static final String[] CHANGELOG_TITLES_EN = {
+        "Change History",
+        "The Chronicler's Notes",
+        "City Ledger",
+        "Survivor's Journal",
+        "Register of Nights"
+    };
     private static final java.util.Random CHANGELOG_RNG = new java.util.Random();
 
     private static String pickChangelogTitle() {
-        return CHANGELOG_TITLES[CHANGELOG_RNG.nextInt(CHANGELOG_TITLES.length)];
+        String lang = "en_us";
+        try {
+            lang = Minecraft.getInstance().getLanguageManager().getSelected();
+        } catch (Throwable ignored) {}
+        boolean english = lang == null || lang.startsWith("en_") || lang.equals("en_us");
+        String[] pool = english ? CHANGELOG_TITLES_EN : CHANGELOG_TITLES_ES;
+        return pool[CHANGELOG_RNG.nextInt(pool.length)];
     }
 }

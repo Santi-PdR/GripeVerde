@@ -117,6 +117,21 @@ public class MenuAmbience {
     }
     private static final RandomSource RNG = RandomSource.create();
 
+    /**
+     * Resource reloads can invalidate active SoundInstances while the menu stays
+     * open. Rebuild the base loops without requiring the player to leave the UI.
+     */
+    public static void recoverAfterResourceReload() {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc == null || mc.level != null) return;
+        for (BaseLoop bl : BASE_LOOPS) {
+            bl.instance = null;
+        }
+        active = false;
+        lastAppliedVolume = -1f;
+        start();
+    }
+
     public static void setPocketWatchVisible(boolean visible) {
         pocketWatchVisible = visible;
     }
@@ -354,6 +369,7 @@ public class MenuAmbience {
 
         Minecraft mc = Minecraft.getInstance();
         if (mc == null) return;
+        ensureBaseLoopsAlive(mc, ambVol);
 
         long now = System.currentTimeMillis();
 
@@ -371,6 +387,24 @@ public class MenuAmbience {
     }
 
     public static boolean isActive() { return active; }
+
+    private static void ensureBaseLoopsAlive(Minecraft mc, float ambVol) {
+        if (!active || muted || ambVol < 0.01f) return;
+        for (BaseLoop bl : BASE_LOOPS) {
+            try {
+                boolean missing = bl.instance == null || !mc.getSoundManager().isActive(bl.instance);
+                if (missing) {
+                    float finalVol = bl.volume * ambVol;
+                    if (finalVol > 0.001f) {
+                        bl.instance = buildLoopInstance(bl.sound.get(), finalVol);
+                        mc.getSoundManager().play(bl.instance);
+                    }
+                }
+            } catch (Throwable ignored) {
+                bl.instance = null;
+            }
+        }
+    }
 
     private static void triggerFrom(Minecraft mc, List<Entry> layer, boolean isEventsLayer) {
         if (layer.isEmpty()) return;
@@ -405,6 +439,8 @@ public class MenuAmbience {
                 // Flag visual: si sono crows, marcar por 4s para coordinar animacion
                 if (chosen.sound == ModSounds.MENU_CROWS) {
                     crowsPlayingUntilMs = System.currentTimeMillis() + 4000L;
+                } else if (chosen.sound == ModSounds.MENU_THUNDER) {
+                    com.eternalcraft.gripeverde.client.render.LivingAtmosphere.triggerLightningFlash(1.0f);
                 }
             }
 

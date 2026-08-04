@@ -6,6 +6,7 @@ import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
+import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 
 import net.minecraft.client.gui.GuiGraphics;
@@ -62,6 +63,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     private DiaryButton diaryDelete;
     private DiaryButton diaryRefresh;
     private DiaryButton diaryCancel;
+    private final SmoothScroll smoothScroll = new SmoothScroll();
 
     public DiaryMultiplayerScreen(Screen parent) {
         super(parent);
@@ -88,6 +90,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 int listTop = PANEL_MARGIN_V + LIST_TOP_OFFSET;
                 int listBottom = this.height - PANEL_MARGIN_V - LIST_BOTTOM_OFFSET;
                 this.vanillaList.updateSize(this.width, this.height, listTop, listBottom);
+                this.smoothScroll.snapToCurrent(this.vanillaList);
             } catch (Throwable ignored) {}
         }
 
@@ -190,56 +193,63 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         int topRowY    = bottomRowY - btnH - rowGap;      // fila superior arriba
 
         // ---- FILA SUPERIOR: Join / Direct / Add ----
-        Component labelJoin   = Component.translatable("selectServer.select");
-        Component labelDirect = Component.translatable("selectServer.direct");
-        Component labelAdd    = Component.translatable("selectServer.add");
+        Component labelJoin   = cleanLabel("selectServer.select");
+        Component labelDirect = cleanLabel("selectServer.direct");
+        Component labelAdd    = cleanLabel("selectServer.add");
 
-        int wJoin   = this.font.width(labelJoin) + 14;
-        int wDirect = this.font.width(labelDirect) + 14;
-        int wAdd    = this.font.width(labelAdd) + 14;
+        int wJoin   = this.font.width(labelJoin) + 28;
+        int wDirect = this.font.width(labelDirect) + 28;
+        int wAdd    = this.font.width(labelAdd) + 28;
 
         int topTotalW = wJoin + wDirect + wAdd + gap * 2;
         int topStartX = (this.width - topTotalW) / 2;
 
         this.diarySelect = new DiaryButton(topStartX, topRowY, wJoin, btnH,
                 labelJoin, DiaryButton.Icon.NONE, DiaryButton.Variant.PRIMARY,
-                this::onJoin);
+                DiaryButton.SoundProfile.CLEAN,
+                this::onJoin).noEllipsis();
         this.diaryDirect = new DiaryButton(topStartX + wJoin + gap, topRowY, wDirect, btnH,
                 labelDirect, DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
-                this::onDirect);
+                DiaryButton.SoundProfile.CLEAN,
+                this::onDirect).noEllipsis();
         this.diaryAdd = new DiaryButton(topStartX + wJoin + gap + wDirect + gap, topRowY, wAdd, btnH,
                 labelAdd, DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
-                this::onAdd);
+                DiaryButton.SoundProfile.CLEAN,
+                this::onAdd).noEllipsis();
         this.addRenderableWidget(this.diarySelect);
         this.addRenderableWidget(this.diaryDirect);
         this.addRenderableWidget(this.diaryAdd);
 
         // ---- FILA INFERIOR: Edit / Delete / Refresh / Cancel ----
-        Component labelEdit    = Component.translatable("selectServer.edit");
-        Component labelDelete  = Component.translatable("selectServer.delete");
-        Component labelRefresh = Component.translatable("selectServer.refresh");
-        Component labelCancel  = Component.translatable("gui.cancel");
+        Component labelEdit    = cleanLabel("selectServer.edit");
+        Component labelDelete  = cleanLabel("selectServer.delete");
+        Component labelRefresh = cleanLabel("selectServer.refresh");
+        Component labelCancel  = cleanLabel("gui.cancel");
 
-        int wEdit    = this.font.width(labelEdit) + 14;
-        int wDelete  = this.font.width(labelDelete) + 14;
-        int wRefresh = this.font.width(labelRefresh) + 14;
-        int wCancel  = this.font.width(labelCancel) + 14;
+        int wEdit    = this.font.width(labelEdit) + 28;
+        int wDelete  = this.font.width(labelDelete) + 28;
+        int wRefresh = this.font.width(labelRefresh) + 28;
+        int wCancel  = this.font.width(labelCancel) + 28;
 
         int bottomTotalW = wEdit + wDelete + wRefresh + wCancel + gap * 3;
         int bottomStartX = (this.width - bottomTotalW) / 2;
 
         this.diaryEdit = new DiaryButton(bottomStartX, bottomRowY, wEdit, btnH,
                 labelEdit, DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
-                this::onEdit);
+                DiaryButton.SoundProfile.CLEAN,
+                this::onEdit).noEllipsis();
         this.diaryDelete = new DiaryButton(bottomStartX + wEdit + gap, bottomRowY, wDelete, btnH,
                 labelDelete, DiaryButton.Icon.NONE, DiaryButton.Variant.DANGER,
-                this::onDelete);
+                DiaryButton.SoundProfile.CLEAN,
+                this::onDelete).noEllipsis();
         this.diaryRefresh = new DiaryButton(bottomStartX + wEdit + gap + wDelete + gap, bottomRowY, wRefresh, btnH,
                 labelRefresh, DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
-                this::onRefresh);
+                DiaryButton.SoundProfile.CLEAN,
+                this::onRefresh).noEllipsis();
         this.diaryCancel = new DiaryButton(bottomStartX + wEdit + gap + wDelete + gap + wRefresh + gap, bottomRowY, wCancel, btnH,
                 labelCancel, DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
-                this::onCancel);
+                DiaryButton.SoundProfile.BACK,
+                this::onCancel).noEllipsis();
         this.addRenderableWidget(this.diaryEdit);
         this.addRenderableWidget(this.diaryDelete);
         this.addRenderableWidget(this.diaryRefresh);
@@ -249,6 +259,15 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
 
         // Segunda pasada defensiva
         hideVanillaButtons();
+    }
+
+    private Component cleanLabel(String translationKey) {
+        String text = Component.translatable(translationKey).getString().trim();
+        while (text.endsWith("...") || text.endsWith("…")) {
+            if (text.endsWith("...")) text = text.substring(0, text.length() - 3).trim();
+            else text = text.substring(0, text.length() - 1).trim();
+        }
+        return Component.literal(text);
     }
 
     private void updateDiaryButtonStates() {
@@ -424,8 +443,21 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     public void tick() {
         super.tick();
         updateDiaryButtonStates();
+        this.smoothScroll.tick(this.vanillaList);
         try { MenuMusic.tick();
  com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick(); } catch (Throwable ignored) {}
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+        if (this.vanillaList != null
+                && mouseY >= this.vanillaList.getTop() && mouseY <= this.vanillaList.getBottom()) {
+            if (this.smoothScroll.wheel(this.vanillaList, delta, 42.0D)) {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.scroll();
+                return true;
+            }
+        }
+        return super.mouseScrolled(mouseX, mouseY, delta);
     }
 
     @Override
@@ -454,7 +486,6 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         int titleY = panelY + 14;
         String titleStr = this.title.getString();
         int titleW = this.font.width(titleStr);
-        gfx.drawString(this.font, titleStr, (this.width - titleW) / 2 + 1, titleY + 1, DiaryChrome.SHADOW_COL, false);
         gfx.drawString(this.font, titleStr, (this.width - titleW) / 2, titleY, DiaryChrome.INK_TITLE, false);
 
         // Subtitulo

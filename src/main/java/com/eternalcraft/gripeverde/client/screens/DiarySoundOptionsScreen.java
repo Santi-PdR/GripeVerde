@@ -6,6 +6,7 @@ import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
 import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
+import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import com.eternalcraft.gripeverde.client.widgets.DiaryMusicSlider;
 import com.eternalcraft.gripeverde.client.widgets.DiaryAmbienceSlider;
@@ -49,6 +50,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
 
     private int panelX, panelY, panelW, panelH;
     private OptionsList reflectedList;
+    private final SmoothScroll smoothScroll = new SmoothScroll();
     private DiaryMusicSlider musicSlider;
     private DiaryAmbienceSlider ambienceSlider;
 
@@ -74,6 +76,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             int listTop = this.panelY + 45;
             int listBottom = this.panelY + this.panelH - 100; // deja hueco para 2 sliders + divisor + boton
             this.reflectedList.updateSize(this.width, this.height, listTop, listBottom);
+            this.smoothScroll.snapToCurrent(this.reflectedList);
         }
 
         // Ocultar boton Done vanilla (SoundOptionsScreen lo agrega en init con lambda)
@@ -165,6 +168,19 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         LivingAtmosphere.tick(delta);
         MenuMusic.tick();
         com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick();
+        this.smoothScroll.tick(this.reflectedList);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+        if (this.reflectedList != null
+                && mouseY >= this.reflectedList.getTop() && mouseY <= this.reflectedList.getBottom()) {
+            if (this.smoothScroll.wheel(this.reflectedList, delta, 34.0D)) {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.scroll();
+                return true;
+            }
+        }
+        return super.mouseScrolled(mouseX, mouseY, delta);
     }
 
     @Override
@@ -189,7 +205,6 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         int titleY = this.panelY + 10;
         {
         int _tw = this.font.width(titleStr);
-        g.drawString(this.font, titleStr, titleX - _tw / 2 + 1, titleY + 1, DiaryChrome.SHADOW_COL, false);
         g.drawString(this.font, titleStr, titleX - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
         }
 
@@ -207,11 +222,9 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         int divY1 = titleY + 42;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY1);
 
-        // --- Lista vanilla + fades ---
+        // --- Lista vanilla sin gradientes blancos ni bandejas extra ---
         if (this.reflectedList != null) {
             this.reflectedList.render(g, mouseX, mouseY, partialTick);
-            DiaryChrome.drawListFades(g, this.panelX + 6, this.panelX + this.panelW - 6,
-                this.reflectedList.getTop(), this.reflectedList.getBottom(), 12);
             DiaryChrome.drawStyledScrollThumbInPanel(g,
                 (AbstractSelectionList<?>) this.reflectedList, this.panelX + this.panelW);
         }

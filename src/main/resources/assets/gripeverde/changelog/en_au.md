@@ -1,130 +1,109 @@
 # Eternal Craft: Gripe Verde
-## Update Notes
+## Chronicle under seal
 
-## Version 0.13 - The cabinet fills with machines
+## Version 0.13.10 - Steel beneath the rain
 
-For seven nights, the cabinet extended to encompass the workshops that
-surrounded the chronicler's office. The workbench, the storage chests,
-the forge furnaces, the blacksmith's anvil, the grindstone, the arcane
-table where books whisper ancient names, and even the beacon tower
-crowning the city rooftops: everything that until today was common
-carpentry has transformed into wrought iron, brass rivets and polished
-steel plates.
+The latest shipment arrived before dawn, covered in wet canvas and signed by
+hands no one recognised. Inside the crates lay grey steel plates, clean rivets
+and dark fittings for the work of a sickened city. From furnaces to lesser
+boxes, from anvils to cutting tables, every trade received a sterner surface,
+as if the cabinet had chosen to endure one more season of plague.
 
-Each station keeps its own character. The furnaces glow with a coppery
-tint; the forge breathes the blue-grey of cold steel; the arcane table
-is draped in deep purple; the beacon tower rests on a golden background
-like a jewel in its display case.
+The correspondence rooms were revised as well. Headings lost needless stains,
+lists were given room to breathe, and the pages no longer shone like white
+glass beneath the lamp. Each latch and button was tuned with restraint: no
+shriek, no trickery, only wood, paper and metal moving inside a closed house.
 
-Parchment still reigns in offices and correspondence. Riveted steel has
-taken command in the workshops of the trade.
-
-
-## Version 0.12 - Details in the Gloom
-
-The city breathes, or perhaps exhales its final breath. I have noticed the moon is no longer a static disc; it now wanes and waxes like the spirits of the survivors. Rats, emboldened by the silence, cross the streets in plain torchlight, and even the cats seem to judge us from the rooftops with unnatural steadiness.
-
-While reviewing the old cabinet records, I have found the signatures of those who preceded me: Pereira, Da Rosa, Bandeira... their names appear and disappear in the documents like ghosts of a dying bureaucracy. Even the city crest, when touched repeatedly, seems to react with an echo of crows and green lightning, as if the plague itself had a conscience.
-
-Shooting stars now streak across the sky more frequently. They say they are wishes, but down here we know they are just ashes of a world going out.
-
-
-
-## Version 0.10 - 0.11 - A house of paper
-
-For many nights the cabinet was mute. Dark earth doors, factory-grey
-handles, foreign glows that peeked out when one rested a hand on a
-word. A public building, not a study. Now, at last, everything
-around the chronicler has been turned to paper: worn parchment,
-sepia ink, discreet corner marks. The Victorian city has eaten the
-walls.
-
-The changes came little by little. First was the History itself,
-that book one opens when one wishes to remember where one comes
-from: it left its vulgar frame behind and learned to be read on
-parchment. The moon, that same night, gained a faint halo and three
-wisps of mist crossing it without dimming it, as if the steam of
-the boilers and the damp of the river had stuck to the disk.
-
-Then came the cabinet of settings, the main door. A paper study,
-with the living city breathing behind, dimmed only slightly so as
-not to distract. And from that door, one by one, its own doors
-began to open: the tongues of the world, arranged in clean lines;
-the correspondence and its protocols; the aids to sight and hearing
-for whoever needs another scale of notice; one's own aspect, with
-its garments one puts on and takes off; the voices and sounds,
-with the chronicler's tuning key placed at the side; the controls,
-with their strokes and shortcuts; the notes of hand from those who
-made this possible.
-
-And then the register of the lodgings, that ledger where the
-chronicler notes the houses of others: a list of known places, an
-edict for adding a new one, a passage to enter directly into an
-uncharted port, and even a sheet of confirmation for whoever is
-about to strike an entry from the ledger. All on parchment. All
-with the same shade of ink.
-
-With the studies resolved came the lesser coherences, those that
-cannot be seen one by one but that hold the whole together. The
-books that no longer cut their content with a hard edge but with a
-paper fade. The side ribbons for casting the eye over distant
-lines, now with sepia beads instead of the usual grey strip. The
-conduct switches with a filled dot when active and hollow when at
-rest. The fields where one writes, with ink that blinks awaiting
-the hand. And above all: every margin note the cabinet whispers
-when the hand passes over a word - once foreign purple rectangles -
-now wears parchment with an ink border. There is no longer a single
-foreign corner in the house.
-
-The voice of the city, moreover, now obeys at once when the hand
-caresses its key, without waiting for the needle to be released.
-A small detail that is appreciated every time one uses it.
-
-And lastly, a few nights ago, the tongues themselves gained a face:
-every language the city acknowledges now bears its little banner
-beside the name. Stripes, crosses, stars and moons at the side of
-each line, like the pennants aligned before a consulate. The eye
-learns faster by color than by stroke. And voices with no fixed
-homeland - old cants, inland dialects, inventions of the street -
-are announced by a simple ink lozenge, anonymous seal worthy of
-those who speak with no banner.
-
-With this a long cycle closes. The house is finished. What comes
-now shall be what happens inside.
-
-## Version 0.9.2
-
-**The air, at last, breathes.**
-
-Last night I paused for a moment at the small window. The smoke from the chimneys rose in slow plumes, dissolving into the mist before reaching the neighboring rooftops; the clouds, beyond, crossed the sky with the slowness of a heavy night. The moon appeared halfway, wrapped in a thin halo, and hid again behind a shred of fog. Nothing in the sky felt out of place. Everything obeyed the invisible hand that orders these things.
-
-### From the journal
-- Chimney smoke ascends smoothly, dissolving into the air.
-- Clouds cross the firmament with natural and slow shapes.
-- The moon is covered with veils of mist, as befits the season.
+On the front ledger, the skull of the emblem no longer merely shivers. It now
+hands out brief sealed files, difficult to explain, and leaves them in a safe
+part of the desk where no button or notice can cover the reading. If the seal
+appears, read it before the ink cools.
 
 ---
 
-## Version 0.9.1
+## Version 0.13 - The cabinet of machines
 
-**The lanterns burn again.**
+For several nights the workshops around the office were measured by cord,
+ruler and candle. The carpenter wished to keep the wood; the smith demanded
+steel; the chronicler, tired of argument, chose order. Thus came reinforced
+tables, stricter furnace mouths and drawers that seem to have left the same
+municipal factory.
 
-After months of uncertainty and streets in twilight, the workers have finally returned. I watched as they reinstalled the wrought-iron posts along the avenue, one after another, returning to the pavement that golden reflection I missed so much. Now the flames flicker under the glass domes with firmness, anchored to the ground, defying the fog that devours everything.
-
-### From the journal
-- Gas lanterns have been reinstalled along the main avenue.
-- Their flames rest firmly upon the stone, illuminating the puddles.
-- The lighting extends as far as the observer's eye can reach.
+The arcane table kept its purple vigil, though it now behaves less like
+furniture and more like a relic. Its lines breathe tiny motes, an electric ash
+that rises and vanishes before staining the fingers.
 
 ---
 
-## Version 0.9.0
+## Version 0.12 - Details in the gloom
 
-**The city has gained depth.**
+The city began to move when no one watched. The moon learned phases, clouds
+crossed its face, and small creatures claimed the streets without permission:
+rats by the drains, cats on the cornices, moths circling the gas. They were
+not ornaments; they were proof that the night was still at work.
 
-Looking toward the horizon, something has changed. The lights from distant buildings no longer compete with those burning nearby: they have become timid points, veiled by the distance. The chimneys, for their part, have finally found their place, crowning the rooftops with the firmness of that which is well-built. The air has cleared of those strange shadows that previously crossed the sky without reason.
+Signatures also appeared beneath the papers. Old names, some struck through,
+others barely legible, as though every chronicler had left a mark to warn the
+next that the office never fully belongs to whoever occupies it.
 
-### From the journal
-- Distant buildings fade into the mist more naturally.
-- Chimneys have been correctly fixed to their roofs.
-- The sky has been cleared of inexplicable anomalies.
+---
+
+## Version 0.10 - 0.11 - The house of paper
+
+The cabinet finally abandoned its borrowed walls. Dirt-brown doors, soulless
+frames and lights from another world were covered by parchment, sepia and worn
+ink. Every room learned to resemble a page torn from a Victorian archive:
+settings, tongues, sounds, controls, letters, credits and warnings all came
+under the same lamp.
+
+The register of lodgings was bound as well. Known houses, direct harbours, new
+entries and painful removals came to live in a ledger, with seals, margins and
+bureaucratic caution.
+
+Sliders, writing fields and marginal notes stopped shouting. They began to
+whisper. That was the true change: not a new door, but the correct silence
+around each door.
+
+---
+
+## Version 0.9.2 - The ink learns obedience
+
+The office received its first rules of reading. Pages stopped cutting lines
+harshly, side bars gained their own ink, and small notices found a proper
+border. The chronicler could turn the pages without feeling another trade had
+invaded the desk.
+
+---
+
+## Version 0.9.1 - Bells of correction
+
+There was a night of crossings-out. Repeated names, crooked seals and drawers
+that would not close were revised until the minute lay clean. No one
+celebrated: in quarantine, a proper correction is noticed precisely because it
+stops troubling the eye.
+
+---
+
+## Version 0.9.0 - The chronicler's first office
+
+Here the house first became recognisable. The main register received its
+buttons, its discreet shadows and a period voice. Nails still showed in a few
+places, but the room no longer felt temporary: it felt as though it was
+waiting for a reader.
+
+---
+
+## Version 0.8.x - Lamps in the street
+
+Before the complete cabinet came the city. Dark backdrop, gas lamps, rain,
+distant sounds and the suspicion of buildings beyond the glass. The front page
+stopped being a simple door and became a specific night.
+
+---
+
+## Version 0.7.x - First quarantine reports
+
+The first papers were modest: notices, marks, seal tests and a name written
+with an uncertain hand. There was no great archive yet, but there was a
+promise: every improvement should feel like a document found in the middle of
+the fever.

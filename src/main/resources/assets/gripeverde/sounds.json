@@ -1,165 +1,367 @@
 {
   "ui.hover": {
     "sounds": [
-      {"name": "gripeverde:ui/hover1", "volume": 1.0},
-      {"name": "gripeverde:ui/hover2", "volume": 1.0},
-      {"name": "gripeverde:ui/hover3", "volume": 1.0}
+      {
+        "name": "gripeverde:ui/hover1",
+        "volume": 1.0
+      },
+      {
+        "name": "gripeverde:ui/hover2",
+        "volume": 1.0
+      },
+      {
+        "name": "gripeverde:ui/hover3",
+        "volume": 1.0
+      }
     ],
     "subtitle": ""
   },
   "ui.click": {
     "sounds": [
-      {"name": "gripeverde:ui/click1", "volume": 1.0},
-      {"name": "gripeverde:ui/click2", "volume": 1.0},
-      {"name": "gripeverde:ui/click3", "volume": 1.0}
+      {
+        "name": "gripeverde:ui/click1",
+        "volume": 1.0
+      },
+      {
+        "name": "gripeverde:ui/click2",
+        "volume": 1.0
+      },
+      {
+        "name": "gripeverde:ui/click3",
+        "volume": 1.0
+      }
+    ],
+    "subtitle": ""
+  },
+  "ui.button_clean": {
+    "sounds": [
+      {
+        "name": "gripeverde:ui/button_clean_03_brass_latch",
+        "volume": 1.0
+      }
     ],
     "subtitle": ""
   },
   "ui.click_heavy": {
     "sounds": [
-      {"name": "gripeverde:ui/click_heavy1", "volume": 1.0},
-      {"name": "gripeverde:ui/click_heavy2", "volume": 1.0}
+      {
+        "name": "gripeverde:ui/click_heavy1",
+        "volume": 1.0
+      },
+      {
+        "name": "gripeverde:ui/click_heavy2",
+        "volume": 1.0
+      }
     ],
     "subtitle": ""
   },
   "ui.back": {
     "sounds": [
-      {"name": "gripeverde:ui/back1", "volume": 1.0},
-      {"name": "gripeverde:ui/back2", "volume": 1.0}
+      {
+        "name": "gripeverde:ui/back1",
+        "volume": 1.0
+      },
+      {
+        "name": "gripeverde:ui/back2",
+        "volume": 1.0
+      }
     ],
     "subtitle": ""
   },
   "ui.open": {
     "sounds": [
-      {"name": "gripeverde:ui/open1", "volume": 1.0},
-      {"name": "gripeverde:ui/open2", "volume": 1.0}
+      {
+        "name": "gripeverde:ui/modal",
+        "volume": 1.0
+      }
     ],
     "subtitle": ""
   },
   "ui.close": {
     "sounds": [
-      {"name": "gripeverde:ui/close1", "volume": 1.0},
-      {"name": "gripeverde:ui/close2", "volume": 1.0}
+      {
+        "name": "gripeverde:ui/close1",
+        "volume": 1.0
+      },
+      {
+        "name": "gripeverde:ui/close2",
+        "volume": 1.0
+      }
     ],
     "subtitle": ""
   },
   "ui.modal": {
-    "sounds": [{"name": "gripeverde:ui/modal", "volume": 1.0}],
+    "sounds": [
+      {
+        "name": "gripeverde:ui/modal",
+        "volume": 1.0
+      }
+    ],
     "subtitle": ""
   },
   "ui.error": {
     "sounds": [
-      {"name": "gripeverde:ui/error1", "volume": 1.0},
-      {"name": "gripeverde:ui/error2", "volume": 1.0}
+      {
+        "name": "gripeverde:ui/modal",
+        "volume": 1.0
+      }
     ],
     "subtitle": ""
   },
   "ui.tab": {
     "sounds": [
-      {"name": "gripeverde:ui/tab1", "volume": 1.0},
-      {"name": "gripeverde:ui/tab2", "volume": 1.0}
+      {
+        "name": "gripeverde:ui/tab1",
+        "volume": 1.0
+      },
+      {
+        "name": "gripeverde:ui/tab2",
+        "volume": 1.0
+      }
     ],
     "subtitle": ""
   },
   "ui.scroll": {
     "sounds": [
-      {"name": "gripeverde:ui/scroll1", "volume": 1.0},
-      {"name": "gripeverde:ui/scroll2", "volume": 1.0}
+      {
+        "name": "gripeverde:ui/scroll1",
+        "volume": 1.0
+      },
+      {
+        "name": "gripeverde:ui/scroll2",
+        "volume": 1.0
+      }
     ],
     "subtitle": ""
   },
   "ui.success": {
-    "sounds": [{"name": "gripeverde:ui/success", "volume": 1.0}],
+    "sounds": [
+      {
+        "name": "gripeverde:ui/success",
+        "volume": 1.0
+      }
+    ],
     "subtitle": ""
   },
   "ui.notification": {
-    "sounds": [{"name": "gripeverde:ui/notification", "volume": 1.0}],
+    "sounds": [
+      {
+        "name": "gripeverde:ui/notification",
+        "volume": 1.0
+      }
+    ],
     "subtitle": ""
   },
   "ui.click_create": {
-    "sounds": [{"name": "gripeverde:ui/click_create", "volume": 1.0}],
+    "sounds": [
+      {
+        "name": "gripeverde:ui/click_create",
+        "volume": 1.0
+      }
+    ],
     "subtitle": ""
   },
   "ui.click_destroy": {
-    "sounds": [{"name": "gripeverde:ui/click_destroy", "volume": 1.0}],
+    "sounds": [
+      {
+        "name": "gripeverde:ui/click_destroy",
+        "volume": 1.0
+      }
+    ],
     "subtitle": ""
   },
   "ui.respawn": {
-    "sounds": [{"name": "gripeverde:ui/respawn", "volume": 1.0}],
+    "sounds": [
+      {
+        "name": "gripeverde:ui/success",
+        "volume": 1.0
+      }
+    ],
     "subtitle": ""
   },
   "menu.wind": {
-    "sounds": [{"name": "gripeverde:menu/loops/wind_urban_loop", "volume": 1.0, "stream": true}],
+    "sounds": [
+      {
+        "name": "gripeverde:menu/loops/wind_urban_loop",
+        "volume": 1.0,
+        "stream": true
+      }
+    ],
     "subtitle": ""
   },
   "menu.rain": {
-    "sounds": [{"name": "gripeverde:menu/loops/rain_cobblestone_loop", "volume": 1.0, "stream": true}],
+    "sounds": [
+      {
+        "name": "gripeverde:menu/loops/rain_cobblestone_loop",
+        "volume": 1.0,
+        "stream": true
+      }
+    ],
     "subtitle": ""
   },
   "menu.city": {
-    "sounds": [{"name": "gripeverde:menu/loops/city_ambient_loop", "volume": 1.0, "stream": true}],
+    "sounds": [
+      {
+        "name": "gripeverde:menu/loops/city_ambient_loop",
+        "volume": 1.0,
+        "stream": true
+      }
+    ],
     "subtitle": ""
   },
   "menu.footsteps": {
     "sounds": [
-      {"name": "gripeverde:menu/events/footsteps_distant_1", "volume": 1.0},
-      {"name": "gripeverde:menu/events/footsteps_distant_2", "volume": 1.0},
-      {"name": "gripeverde:menu/events/footsteps_distant_3", "volume": 1.0}
+      {
+        "name": "gripeverde:menu/events/footsteps_distant_1",
+        "volume": 1.0
+      },
+      {
+        "name": "gripeverde:menu/events/footsteps_distant_2",
+        "volume": 1.0
+      },
+      {
+        "name": "gripeverde:menu/events/footsteps_distant_3",
+        "volume": 1.0
+      }
     ],
     "subtitle": ""
   },
   "menu.wood_creak": {
-    "sounds": [{"name": "gripeverde:menu/events/wood_creak", "volume": 1.0}],
+    "sounds": [
+      {
+        "name": "gripeverde:menu/events/wood_creak",
+        "volume": 1.0
+      }
+    ],
     "subtitle": ""
   },
   "menu.door": {
-    "sounds": [{"name": "gripeverde:menu/events/door_creak", "volume": 1.0}],
+    "sounds": [
+      {
+        "name": "gripeverde:menu/events/door_creak",
+        "volume": 1.0
+      }
+    ],
     "subtitle": ""
   },
   "menu.ambient_occasional": {
-    "sounds": [{"name": "gripeverde:menu/events/ambient_occasional", "volume": 1.0}],
+    "sounds": [
+      {
+        "name": "gripeverde:menu/events/ambient_occasional",
+        "volume": 1.0
+      }
+    ],
     "subtitle": ""
   },
   "menu.bell": {
-    "sounds": [{"name": "gripeverde:menu/rare/church_bell_distant", "volume": 1.0}],
+    "sounds": [
+      {
+        "name": "gripeverde:menu/rare/church_bell_distant",
+        "volume": 1.0
+      }
+    ],
     "subtitle": ""
   },
   "menu.crows": {
-    "sounds": [{"name": "gripeverde:menu/rare/crows", "volume": 1.0}],
+    "sounds": [
+      {
+        "name": "gripeverde:menu/rare/crows",
+        "volume": 1.0
+      }
+    ],
     "subtitle": ""
   },
   "menu.chain": {
-    "sounds": [{"name": "gripeverde:menu/rare/chains", "volume": 1.0}],
+    "sounds": [
+      {
+        "name": "gripeverde:menu/rare/chains",
+        "volume": 1.0
+      }
+    ],
     "subtitle": ""
   },
   "menu.thunder": {
     "sounds": [
-      {"name": "gripeverde:menu/rare/thunder_1", "volume": 1.0},
-      {"name": "gripeverde:menu/rare/thunder_2", "volume": 1.0},
-      {"name": "gripeverde:menu/rare/thunder_3", "volume": 1.0}
+      {
+        "name": "gripeverde:menu/rare/thunder_1",
+        "volume": 1.0
+      },
+      {
+        "name": "gripeverde:menu/rare/thunder_2",
+        "volume": 1.0
+      },
+      {
+        "name": "gripeverde:menu/rare/thunder_3",
+        "volume": 1.0
+      }
     ],
     "subtitle": ""
   },
   "menu.tick": {
     "sounds": [
-      {"name": "gripeverde:menu/tick", "volume": 1.0}
+      {
+        "name": "gripeverde:menu/tick",
+        "volume": 1.0
+      }
     ],
     "subtitle": ""
   },
   "menu.music_1": {
-    "sounds": [{"name": "gripeverde:music/music_title_1", "volume": 1.0, "stream": true}],
+    "sounds": [
+      {
+        "name": "gripeverde:music/music_title_1",
+        "volume": 1.0,
+        "stream": true
+      }
+    ],
     "subtitle": ""
   },
   "menu.music_2": {
-    "sounds": [{"name": "gripeverde:music/music_title_2", "volume": 1.0, "stream": true}],
+    "sounds": [
+      {
+        "name": "gripeverde:music/music_title_2",
+        "volume": 1.0,
+        "stream": true
+      }
+    ],
     "subtitle": ""
   },
   "menu.music_3": {
-    "sounds": [{"name": "gripeverde:music/music_title_3", "volume": 1.0, "stream": true}],
+    "sounds": [
+      {
+        "name": "gripeverde:music/music_title_3",
+        "volume": 1.0,
+        "stream": true
+      }
+    ],
     "subtitle": ""
   },
   "menu.music_4": {
-    "sounds": [{"name": "gripeverde:music/music_title_4", "volume": 1.0, "stream": true}],
+    "sounds": [
+      {
+        "name": "gripeverde:music/music_title_4",
+        "volume": 1.0,
+        "stream": true
+      }
+    ],
+    "subtitle": ""
+  },
+  "ui.button_main": {
+    "sounds": [
+      {
+        "name": "gripeverde:ui/button_clean_03_brass_latch",
+        "volume": 1.0
+      }
+    ],
+    "subtitle": ""
+  },
+  "ui.button_section": {
+    "sounds": [
+      {
+        "name": "gripeverde:ui/modal",
+        "volume": 1.0
+      }
+    ],
     "subtitle": ""
   }
 }

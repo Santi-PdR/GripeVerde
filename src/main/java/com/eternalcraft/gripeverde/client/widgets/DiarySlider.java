@@ -78,10 +78,20 @@ public class DiarySlider extends AbstractSliderButton {
         g.fill(x, y, x + 1, y + h, 0x60422810);
         g.fill(x + w - 1, y, x + w, y + h, 0x60422810);
 
-        // Track interno
+        // Track interno + progreso tintado para lectura inmediata.
         int trackY1 = y + h / 2 - 1;
         int trackY2 = y + h / 2 + 1;
-        g.fill(x + 3, trackY1, x + w - 3, trackY2, 0x60422810);
+        int trackX1 = x + 5;
+        int trackX2 = x + w - 5;
+        int progressX = trackX1 + (int)(this.value * Math.max(1, trackX2 - trackX1));
+        g.fill(trackX1, trackY1, trackX2, trackY2, 0x60422810);
+        g.fill(trackX1, trackY1, progressX, trackY2, 0xA06B4A2E);
+        g.fill(trackX1 - 1, trackY1 - 1, trackX1 + 1, trackY2 + 1, 0x90422810);
+        g.fill(trackX2 - 1, trackY1 - 1, trackX2 + 1, trackY2 + 1, 0x90422810);
+        for (int i = 1; i < 4; i++) {
+            int tx = trackX1 + (trackX2 - trackX1) * i / 4;
+            g.fill(tx, trackY1 - 2, tx + 1, trackY2 + 2, 0x70422810);
+        }
 
         // Thumb
         int thumbW = 8;
@@ -98,11 +108,17 @@ public class DiarySlider extends AbstractSliderButton {
 
         // Texto
         int textColor = this.isHovered() ? DiaryTheme.INK_BLACK : DiaryTheme.INK;
-        String msg = this.getMessage().getString();
+        String msg = ellipsize(Minecraft.getInstance().font, this.getMessage().getString(), Math.max(8, w - 12));
         int textX = x + w / 2 - Minecraft.getInstance().font.width(msg) / 2;
         int textY = y + (h - 8) / 2;
-        g.drawString(Minecraft.getInstance().font, msg, textX + 1, textY + 1, DiaryChrome.SHADOW_COL, false);
         g.drawString(Minecraft.getInstance().font, msg, textX, textY, textColor, false);
+    }
+
+    private static String ellipsize(net.minecraft.client.gui.Font font, String text, int maxWidth) {
+        if (font.width(text) <= maxWidth) return text;
+        String ellipsis = "...";
+        int room = Math.max(0, maxWidth - font.width(ellipsis));
+        return font.plainSubstrByWidth(text, room) + ellipsis;
     }
 
     @Override
