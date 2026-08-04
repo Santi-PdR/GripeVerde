@@ -133,7 +133,7 @@ public class PosterRenderer {
         int cursorY = y + 10;
 
         // Encabezado pequeño
-        String header = "WANTED";
+        String header = isEnglish() ? "WANTED" : "SE BUSCA";
         int hw = font.width(header);
         g.drawString(font, header, cx - hw / 2, cursorY, DiaryTheme.INK, false);
         cursorY += 11;
@@ -272,9 +272,9 @@ public static void drawVersionPanel(GuiGraphics g, int x, int y, int w, int h, S
         g.fill(x + w - 3, y + 2, x + w - 2, y + h - 2, innerColor);
     }
 
-    // Rotating quarantine notice headers: 2 lines per variant
-    // [i][0] = top line ("POR ORDEN DE"), [i][1] = authority ("SU MAJESTAD")
-    private static final String[][] QUARANTINE_HEADER_POOL = {
+    // Rotating quarantine notice headers: 2 lines per variant.
+    // Localized here because they are flavour variants, not fixed lang keys.
+    private static final String[][] QUARANTINE_HEADER_POOL_ES = {
         {"POR ORDEN DE",    "SU MAJESTAD"},
         {"POR MANDATO DE",  "EL PARLAMENTO"},
         {"AVISO OFICIAL",   "DEL CONDESTABLE"},
@@ -284,6 +284,16 @@ public static void drawVersionPanel(GuiGraphics g, int x, int y, int w, int h, S
         {"NOTA DE",         "LA JUNTA SANITARIA"},
         {"POR ORDEN DE",    "LA GUARDIA REAL"}
     };
+    private static final String[][] QUARANTINE_HEADER_POOL_EN = {
+        {"BY ORDER OF",     "HER MAJESTY"},
+        {"BY MANDATE OF",   "PARLIAMENT"},
+        {"OFFICIAL NOTICE", "OF THE CONSTABLE"},
+        {"PUBLIC NOTICE",   "OF THE MAGISTRATE"},
+        {"DECREE OF",       "THE CROWN"},
+        {"BY DIRECTION",    "OF THE HIGH BAILIFF"},
+        {"NOTICE FROM",     "THE SANITARY BOARD"},
+        {"BY ORDER OF",     "THE ROYAL GUARD"}
+    };
     private static int quarantineHeaderIndex = -1;
     private static long lastQuarantineRotateMs = 0L;
     private static final long QUARANTINE_ROTATE_MS = 120_000L;
@@ -291,20 +301,31 @@ public static void drawVersionPanel(GuiGraphics g, int x, int y, int w, int h, S
 
     private static String getRotatingQuarantineHeader(int lineIdx) {
         long now = System.currentTimeMillis();
-        if (quarantineHeaderIndex < 0 || (now - lastQuarantineRotateMs) >= QUARANTINE_ROTATE_MS) {
+        String[][] pool = isEnglish() ? QUARANTINE_HEADER_POOL_EN : QUARANTINE_HEADER_POOL_ES;
+        if (quarantineHeaderIndex < 0 || quarantineHeaderIndex >= pool.length
+                || (now - lastQuarantineRotateMs) >= QUARANTINE_ROTATE_MS) {
             int prev = quarantineHeaderIndex;
             int next;
-            if (QUARANTINE_HEADER_POOL.length <= 1) {
+            if (pool.length <= 1) {
                 next = 0;
             } else {
                 do {
-                    next = QUARANTINE_RNG.nextInt(QUARANTINE_HEADER_POOL.length);
+                    next = QUARANTINE_RNG.nextInt(pool.length);
                 } while (next == prev);
             }
             quarantineHeaderIndex = next;
             lastQuarantineRotateMs = now;
         }
-        return QUARANTINE_HEADER_POOL[quarantineHeaderIndex][lineIdx];
+        return pool[quarantineHeaderIndex][lineIdx];
+    }
+
+    private static boolean isEnglish() {
+        try {
+            String lang = Minecraft.getInstance().getLanguageManager().getSelected();
+            return lang == null || lang.startsWith("en_") || lang.equals("en_us");
+        } catch (Throwable ignored) {
+            return false;
+        }
     }
 
     // ============================================================
@@ -350,8 +371,11 @@ public static void drawVersionPanel(GuiGraphics g, int x, int y, int w, int h, S
     // ============================================================
     // Sellos de tinta rotativos (APROBADO/REVOCADO/CENSURADO)
     // ============================================================
-    private static final String[] STAMP_LABELS = {
+    private static final String[] STAMP_LABELS_ES = {
         "APROBADO", "REVOCADO", "CENSURADO", "PENDIENTE", "URGENTE"
+    };
+    private static final String[] STAMP_LABELS_EN = {
+        "APPROVED", "REVOKED", "CENSORED", "PENDING", "URGENT"
     };
     private static final int[] STAMP_COLORS = {
         0xFF5C1508,   // dried blood (revocado, censurado)
@@ -365,7 +389,8 @@ public static void drawVersionPanel(GuiGraphics g, int x, int y, int w, int h, S
         java.util.Random rnd = new java.util.Random(posterSeed);
         if (rnd.nextInt(10) >= 4) return;  // 60% no dibuja
 
-        String label = STAMP_LABELS[rnd.nextInt(STAMP_LABELS.length)];
+        String[] labels = isEnglish() ? STAMP_LABELS_EN : STAMP_LABELS_ES;
+        String label = labels[rnd.nextInt(labels.length)];
         int col = STAMP_COLORS[rnd.nextInt(STAMP_COLORS.length)];
 
         Font f = Minecraft.getInstance().font;

@@ -58,12 +58,25 @@ public class SlimButton extends AbstractButton {
         g.fill(x, y + h - 1, x + w, y + h,     border);
         g.fill(x, y,         x + 1, y + h,     border);
         g.fill(x + w - 1, y, x + w, y + h,     border);
+        g.fill(x + 3, y + 3, x + w - 3, y + 4, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 48));
+        g.fill(x + 3, y + h - 4, x + w - 3, y + h - 3, DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 80));
+        g.fill(x + 4, y + 4, x + 5, y + 5, DiaryTheme.withAlpha(DiaryTheme.GOLD_TARNISHED, 120));
+        g.fill(x + w - 5, y + 4, x + w - 4, y + 5, DiaryTheme.withAlpha(DiaryTheme.GOLD_TARNISHED, 120));
 
         Font font = Minecraft.getInstance().font;
-        Component label = this.getMessage();
+        String label = ellipsize(font, this.getMessage().getString(), Math.max(8, w - 12));
         int tw = font.width(label);
         int textColor = hoverAnim.lerpColor(DiaryTheme.BONE_WHITE, DiaryTheme.PAPER);
-        g.drawString(font, label, x + (w - tw) / 2, y + (h - 8) / 2, textColor, false);
+        int tx = x + (w - tw) / 2;
+        int ty = y + (h - 8) / 2;
+        g.drawString(font, label, tx, ty, textColor, false);
+    }
+
+    private static String ellipsize(Font font, String text, int maxWidth) {
+        if (font.width(text) <= maxWidth) return text;
+        String ellipsis = "...";
+        int room = Math.max(0, maxWidth - font.width(ellipsis));
+        return font.plainSubstrByWidth(text, room) + ellipsis;
     }
 
     @Override

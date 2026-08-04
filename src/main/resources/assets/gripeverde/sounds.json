@@ -15,6 +15,14 @@
     ],
     "subtitle": ""
   },
+  "ui.button_clean": {
+    "sounds": [
+      {"name": "gripeverde:ui/button_clean_03_brass_latch", "volume": 1.0},
+      {"name": "gripeverde:ui/button_clean_02_wooden_key", "volume": 1.0},
+      {"name": "gripeverde:ui/button_clean_01_paper_tick", "volume": 1.0}
+    ],
+    "subtitle": ""
+  },
   "ui.click_heavy": {
     "sounds": [
       {"name": "gripeverde:ui/click_heavy1", "volume": 1.0},

@@ -7,7 +7,7 @@ public final class PaperTexture {
 
     private static final long SEED = 189011974L;
     private static int openCount = 0;
-    public static void incrementOpenCount() { openCount++; }
+    public static void incrementOpenCount() { if (openCount < 12) openCount++; }
     public static int getOpenCount() { return openCount; }
     private static final long BLOOD_SEED = 66613337L;
 
@@ -31,8 +31,74 @@ public final class PaperTexture {
         drawStains(g, x, y, w, h);
         drawCoffeeStain(g, x, y, w, h);
         drawBloodMist(g, x, y, w, h);
+        drawFaintRuledMargins(g, x, y, w, h);
+        drawCornerPinholes(g, x, y, w, h);
+        drawBottomTeaTint(g, x, y, w, h);
+        drawPageEdgeBurnish(g, x, y, w, h);
+        drawSubtleBindingFibers(g, x, y, w, h);
+        drawFaintRegistryNotches(g, x, y, w, h);
         drawTornEdges(g, x, y, w, h);
         drawWaxSeal(g, x, y, w, h);
+    }
+
+    private static void drawFaintRuledMargins(GuiGraphics g, int x, int y, int w, int h) {
+        if (w < 130 || h < 90) return;
+        int line = DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 26);
+        int line2 = DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, 18);
+        g.fill(x + 18, y + 22, x + w - 18, y + 23, line);
+        g.fill(x + 18, y + h - 24, x + w - 18, y + h - 23, line2);
+        g.fill(x + 22, y + 18, x + 23, y + h - 18, line2);
+        g.fill(x + w - 23, y + 18, x + w - 22, y + h - 18, line2);
+    }
+
+    private static void drawCornerPinholes(GuiGraphics g, int x, int y, int w, int h) {
+        if (w < 90 || h < 70) return;
+        int pin = DiaryTheme.withAlpha(DiaryTheme.INK, 35);
+        int shine = DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, 20);
+        int[][] pts = {{x + 12, y + 12}, {x + w - 13, y + 12}, {x + 12, y + h - 13}, {x + w - 13, y + h - 13}};
+        for (int[] pt : pts) {
+            g.fill(pt[0], pt[1], pt[0] + 2, pt[1] + 2, pin);
+            g.fill(pt[0] + 2, pt[1] + 1, pt[0] + 3, pt[1] + 2, shine);
+        }
+    }
+
+    private static void drawBottomTeaTint(GuiGraphics g, int x, int y, int w, int h) {
+        if (h < 80) return;
+        int tintTop = 0x00000000;
+        int tintBottom = DiaryTheme.withAlpha(0x006B4A2E, 28);
+        int tintH = Math.max(18, h / 5);
+        g.fillGradient(x, y + h - tintH, x + w, y + h, tintTop, tintBottom);
+    }
+
+    private static void drawPageEdgeBurnish(GuiGraphics g, int x, int y, int w, int h) {
+        if (w < 80 || h < 70) return;
+        int warm = DiaryTheme.withAlpha(0x00806030, 22);
+        int cool = DiaryTheme.withAlpha(0x00FFFFFF, 18);
+        g.fill(x + 2, y + 2, x + w - 2, y + 3, cool);
+        g.fill(x + 3, y + h - 4, x + w - 3, y + h - 3, warm);
+        g.fill(x + 2, y + 3, x + 3, y + h - 3, cool);
+        g.fill(x + w - 4, y + 3, x + w - 3, y + h - 3, warm);
+    }
+
+    private static void drawSubtleBindingFibers(GuiGraphics g, int x, int y, int w, int h) {
+        if (w < 120 || h < 100) return;
+        Random rnd = new Random(SEED ^ 0xB1D1L);
+        int col = DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 18);
+        int left = x + 10;
+        for (int i = 0; i < Math.max(8, h / 22); i++) {
+            int yy = y + 18 + rnd.nextInt(Math.max(1, h - 36));
+            g.fill(left, yy, left + 7 + rnd.nextInt(6), yy + 1, col);
+        }
+    }
+
+    private static void drawFaintRegistryNotches(GuiGraphics g, int x, int y, int w, int h) {
+        if (w < 160 || h < 120) return;
+        int col = DiaryTheme.withAlpha(DiaryTheme.INK, 22);
+        for (int i = 0; i < 3; i++) {
+            int yy = y + h / 4 + i * h / 6;
+            g.fill(x + w - 12, yy, x + w - 7, yy + 1, col);
+            g.fill(x + w - 9, yy + 1, x + w - 7, yy + 3, col);
+        }
     }
 
     /** Fondo bloody: menos salpicaduras y mas chicas para no lagear. */
@@ -65,7 +131,7 @@ public final class PaperTexture {
     }
 
     private static void drawVignette(GuiGraphics g, int x, int y, int w, int h) {
-        int band = 20;
+        int band = Math.max(6, Math.min(16, Math.min(w, h) / 12));
         for (int i = 0; i < band; i++) {
             int alpha = (int)(80 * (1f - (float)i / band));
             int col = DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, alpha);
@@ -82,7 +148,7 @@ public final class PaperTexture {
 
     private static void drawStains(GuiGraphics g, int x, int y, int w, int h) {
         Random rnd = new Random(SEED);
-        int stainCount = Math.max(12, (w * h) / 15000) + Math.min(30, openCount);
+        int stainCount = Math.min(18, Math.max(6, (w * h) / 22000) + Math.min(6, openCount));
         for (int i = 0; i < stainCount; i++) {
             if (w <= 0 || h <= 0) continue;
             int cx = x + rnd.nextInt(w);
@@ -118,7 +184,7 @@ public final class PaperTexture {
 
     private static void drawBloodMist(GuiGraphics g, int x, int y, int w, int h) {
         Random rnd = new Random(BLOOD_SEED);
-        int drops = Math.max(4, (w * h) / 50000);
+        int drops = Math.min(8, Math.max(2, (w * h) / 70000));
         for (int i = 0; i < drops; i++) {
             if (w <= 0 || h <= 0) continue;
             int cx = x + rnd.nextInt(w);
@@ -134,10 +200,11 @@ public final class PaperTexture {
 
     public static void drawSoftBlob(GuiGraphics g, int cx, int cy, int radius, int col) {
         if (radius <= 0) return;
+        int radiusSq = radius * radius;
         for (int dy = -radius; dy <= radius; dy++) {
             for (int dx = -radius; dx <= radius; dx++) {
                 int distSq = dx * dx + dy * dy;
-                if (distSq <= radius * radius) {
+                if (distSq <= radiusSq) {
                     float dist = (float) Math.sqrt(distSq);
                     float pct = 1f - (dist / radius);
                     int a = (int)((col >>> 24) * pct * pct);
@@ -150,9 +217,10 @@ public final class PaperTexture {
 
     public static void drawSolidBlob(GuiGraphics g, int cx, int cy, int radius, int col) {
         if (radius <= 0) return;
+        int radiusSq = radius * radius;
         for (int dy = -radius; dy <= radius; dy++) {
             for (int dx = -radius; dx <= radius; dx++) {
-                if (dx * dx + dy * dy <= radius * radius) {
+                if (dx * dx + dy * dy <= radiusSq) {
                     g.fill(cx + dx, cy + dy, cx + dx + 1, cy + dy + 1, col);
                 }
             }

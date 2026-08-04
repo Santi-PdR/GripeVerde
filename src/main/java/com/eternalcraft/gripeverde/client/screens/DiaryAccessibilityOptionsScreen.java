@@ -6,6 +6,7 @@ import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
 import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
+import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton.Icon;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton.Variant;
@@ -30,6 +31,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
     private static final int FOOTER_H = 45;   // divisor + boton Volver
 
     private DiaryButton btnVolver;
+    private final SmoothScroll smoothScroll = new SmoothScroll();
     private int panelW, panelH, panelX, panelY;
 
     public DiaryAccessibilityOptionsScreen(Screen parent, Options options) {
@@ -38,7 +40,8 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
 
     @Override
     protected void init() {
-        accFlavorIndex = ACC_RNG.nextInt(ACC_FLAVOR_POOL.length);
+        String[] flavorPool = getAccFlavorPool();
+        accFlavorIndex = ACC_RNG.nextInt(flavorPool.length);
         super.init();
 
         // Panel adaptativo
@@ -56,6 +59,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
             int listTop    = this.panelY + HEADER_H;
             int listBottom = this.panelY + this.panelH - FOOTER_H;
             this.list.updateSize(this.width, this.height, listTop, listBottom);
+            this.smoothScroll.snapToCurrent(this.list);
         }
 
         // Ocultar boton Done vanilla
@@ -102,7 +106,6 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         {
         var _title = Component.translatable("options.accessibility.title");
         int _tw = this.font.width(_title);
-        gfx.drawString(this.font, _title, cx - _tw / 2 + 1, titleY + 1, DiaryChrome.SHADOW_COL, false);
         gfx.drawString(this.font, _title, cx - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
         }
 
@@ -126,11 +129,9 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         int divY1 = flavorY + 12;
         DiaryChrome.drawInkDivider(gfx, this.panelX, divY1, this.panelW);
 
-        // Lista vanilla + scroll estilizado encima (KI-09 cerrado en v0.11.5)
+        // Lista vanilla sin gradientes blancos ni bandejas extra
         if (this.list != null) {
             this.list.render(gfx, mouseX, mouseY, delta);
-            DiaryChrome.drawListFades(gfx, this.panelX + 6, this.panelX + this.panelW - 6,
-                this.list.getTop(), this.list.getBottom(), 12);
             DiaryChrome.drawStyledScrollThumbInPanel(gfx, this.list, this.panelX + this.panelW);
         }
 
@@ -154,10 +155,22 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         LivingAtmosphere.tick(delta);
         MenuMusic.tick();
         com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick();
+        this.smoothScroll.tick(this.list);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+        if (this.list != null && mouseY >= this.list.getTop() && mouseY <= this.list.getBottom()) {
+            if (this.smoothScroll.wheel(this.list, delta, 34.0D)) {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.scroll();
+                return true;
+            }
+        }
+        return super.mouseScrolled(mouseX, mouseY, delta);
     }
 
     // Rotating flavor quotes for accessibility options
-    private static final String[] ACC_FLAVOR_POOL = {
+    private static final String[] ACC_FLAVOR_POOL_ES = {
         "Ajustad los sentidos con prudencia.",
         "No todos ven la ciudad con los mismos ojos.",
         "Algunos oidos ya no escuchan las campanas.",
@@ -166,13 +179,30 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         "Que nadie quede fuera de la cronica.",
         "Las manos tambien saben leer."
     };
+    private static final String[] ACC_FLAVOR_POOL_EN = {
+        "Attune the senses with prudence.",
+        "Not all see the city with the same eyes.",
+        "Some ears no longer hear the bells.",
+        "The eyes tire before the fever does.",
+        "Every sense counts when one is missing.",
+        "Let no one be left outside the chronicle.",
+        "The hands know how to read as well."
+    };
     private static int accFlavorIndex = -1;
     private static final java.util.Random ACC_RNG = new java.util.Random();
 
     private static String getRotatingAccFlavor() {
-        if (accFlavorIndex < 0) {
-            accFlavorIndex = ACC_RNG.nextInt(ACC_FLAVOR_POOL.length);
+        String[] pool = getAccFlavorPool();
+        if (accFlavorIndex < 0 || accFlavorIndex >= pool.length) {
+            accFlavorIndex = ACC_RNG.nextInt(pool.length);
         }
-        return ACC_FLAVOR_POOL[accFlavorIndex];
+        return pool[accFlavorIndex];
     }
+
+    private static String[] getAccFlavorPool() {
+        String lang = net.minecraft.client.Minecraft.getInstance().getLanguageManager().getSelected();
+        boolean english = lang == null || lang.startsWith("en_") || lang.equals("en_us");
+        return english ? ACC_FLAVOR_POOL_EN : ACC_FLAVOR_POOL_ES;
+    }
+
 }

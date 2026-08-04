@@ -20,12 +20,12 @@ public final class DiaryChrome {
     private DiaryChrome() {}
 
     // ── Paleta canonica ─────────────────────────────────────────────────────
-    public static final int INK_TITLE     = 0xFF2A1A0A;
-    public static final int INK_SUBTITLE  = 0xFF6B4226;
-    public static final int INK_FLAVOR    = 0xC06B4A2E;
-    public static final int INK_DIVIDER   = 0x88422810;
+    public static final int INK_TITLE     = 0xFF241608;
+    public static final int INK_SUBTITLE  = 0xFF654025;
+    public static final int INK_FLAVOR    = 0xB864482C;
+    public static final int INK_DIVIDER   = 0x7A422810;
     public static final int SHADOW_COL    = 0x20201409;
-    public static final int OVERLAY_COL   = 0x66000000;
+    public static final int OVERLAY_COL   = 0x5E000000;
 
     // ── Divisor horizontal con fade + rombo central ─────────────────────────
     // Firma centrada en (x, y, w): divisor de ancho w dibujado desde x.
@@ -36,6 +36,11 @@ public final class DiaryChrome {
         gfx.fill        (x + fade,     y, cx - 6,       y + 1, INK_DIVIDER);
         gfx.fill        (cx + 6,       y, x + w - fade, y + 1, INK_DIVIDER);
         gfx.fillGradient(x + w - fade, y, x + w,        y + 1, INK_DIVIDER, 0x00000000);
+        int cap = 0x60422810;
+        gfx.fill(x + fade - 2, y - 1, x + fade, y + 2, cap);
+        gfx.fill(x + w - fade, y - 1, x + w - fade + 2, y + 2, cap);
+        gfx.fill(cx - w / 4, y - 1, cx - w / 4 + 1, y + 2, 0x48422810);
+        gfx.fill(cx + w / 4, y - 1, cx + w / 4 + 1, y + 2, 0x48422810);
         drawDivisorLozenge(gfx, cx, y);
     }
 
@@ -53,6 +58,7 @@ public final class DiaryChrome {
         gfx.fill(cx - 2, cy,     cx + 3, cy + 1, col);
         gfx.fill(cx - 1, cy + 1, cx + 2, cy + 2, col);
         gfx.fill(cx,     cy + 2, cx + 1, cy + 3, col);
+        gfx.fill(cx,     cy,     cx + 1, cy + 1, 0x70F3E9CE);
     }
 
     // ── Esquineros victorianos dobles ───────────────────────────────────────
@@ -82,6 +88,29 @@ public final class DiaryChrome {
         gfx.fill(ix,             iy + ih - sIn,  ix + 1,     iy + ih,  colIn);
         gfx.fill(ix + iw - sIn,  iy + ih - 1,    ix + iw,    iy + ih,  colIn);
         gfx.fill(ix + iw - 1,    iy + ih - sIn,  ix + iw,    iy + ih,  colIn);
+
+        int dot = 0x70422810;
+        gfx.fill(x + 5, y + 5, x + 7, y + 7, dot);
+        gfx.fill(x + w - 7, y + 5, x + w - 5, y + 7, dot);
+        gfx.fill(x + 5, y + h - 7, x + 7, y + h - 5, dot);
+        gfx.fill(x + w - 7, y + h - 7, x + w - 5, y + h - 5, dot);
+    }
+
+    public static void drawListMatte(GuiGraphics gfx, int x, int y, int w, int h) {
+        int paper = 0xD8D7C79E;
+        int paperDeep = 0x9A9B7A4A;
+        int edge = 0x8A422810;
+        int pin = 0xB08E6A35;
+        gfx.fill(x, y, x + w, y + h, paper);
+        gfx.fill(x + 2, y + 2, x + w - 2, y + h - 2, paperDeep);
+        gfx.fill(x, y, x + w, y + 1, edge);
+        gfx.fill(x, y + h - 1, x + w, y + h, edge);
+        gfx.fill(x, y, x + 1, y + h, edge);
+        gfx.fill(x + w - 1, y, x + w, y + h, edge);
+        gfx.fill(x + 4, y + 4, x + 6, y + 5, pin);
+        gfx.fill(x + w - 6, y + 4, x + w - 4, y + 5, pin);
+        gfx.fill(x + 4, y + h - 5, x + 6, y + h - 4, pin);
+        gfx.fill(x + w - 6, y + h - 5, x + w - 4, y + h - 4, pin);
     }
 
     // ── Barra de scroll estilizada en tinta victoriana ──────────────────────
@@ -103,7 +132,7 @@ public final class DiaryChrome {
         int trackH = trackY2 - trackY1;
 
         // Tapar barra vanilla con pergamino
-        gfx.fill(scrollLeft, trackY1, scrollRight, trackY2, 0xFFEFE3C2);
+        gfx.fill(scrollLeft, trackY1, scrollRight, trackY2, 0xFFF0E5C8);
 
         // Track: linea tenue color pergamino oscuro
         gfx.fill(scrollLeft + 1, trackY1, scrollRight - 1, trackY2, 0x40422810);
@@ -114,9 +143,11 @@ public final class DiaryChrome {
         int thumbY = trackY1 + (int)((trackH - thumbH) * scrollFrac);
 
         // Thumb tinta victoriana: relleno + relieve claro izq + relieve oscuro der
-        gfx.fill(scrollLeft,     thumbY, scrollRight,     thumbY + thumbH, 0xC0422810);
+        gfx.fill(scrollLeft,     thumbY, scrollRight,     thumbY + thumbH, 0xB8422810);
         gfx.fill(scrollLeft,     thumbY, scrollLeft + 2,  thumbY + thumbH, 0xA0703020);
         gfx.fill(scrollRight - 2, thumbY, scrollRight,    thumbY + thumbH, 0x60200E05);
+        gfx.fill(scrollLeft, thumbY, scrollRight, thumbY + 1, 0xD08E6A35);
+        gfx.fill(scrollLeft, thumbY + thumbH - 1, scrollRight, thumbY + thumbH, 0x80200E05);
 
         // Marca central (rombo pergamino)
         int midY = thumbY + thumbH / 2;
@@ -182,10 +213,10 @@ public final class DiaryChrome {
     // ---------------------------------------------------------------
     public static void drawPanelShadow(GuiGraphics gfx, int x, int y, int w, int h) {
         int offset = 6;
-        int col1 = 0x40100600;
-        int col2 = 0x70100600;
-        int col3 = 0xA0100600;
-        int col4 = 0xC0080300;
+        int col1 = 0x30100600;
+        int col2 = 0x58100600;
+        int col3 = 0x88100600;
+        int col4 = 0xA8080300;
         gfx.fill(x + offset - 3, y + offset - 3, x + w + offset + 3, y + h + offset + 3, col1);
         gfx.fill(x + offset - 1, y + offset - 1, x + w + offset + 1, y + h + offset + 1, col2);
         gfx.fill(x + offset,     y + offset,     x + w + offset,     y + h + offset,     col3);

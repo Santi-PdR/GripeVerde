@@ -31,11 +31,15 @@ public class DiaryButton extends AbstractButton {
 
     public enum Variant { PRIMARY, SECONDARY, DANGER }
 
-    public enum Icon { NONE, HAND, SCROLL, CHART, GEAR, DOOR }
+    public enum SoundProfile { DEFAULT, CLEAN, OPTION_OPEN, OPTION_PAGE, BACK, NONE }
+
+    public enum Icon { NONE, HAND, SCROLL, CHART, GEAR, DOOR, PALETTE, SOUND, EYE, CONTROLS, LANGUAGE, CHAT, PACK, ACCESS, ONLINE, CREDITS }
 
     private final Runnable onClick;
     private final Icon icon;
     private final Variant variant;
+    private final SoundProfile soundProfile;
+    private boolean allowEllipsis = true;
     private final EasedValue hoverAnim = new EasedValue(4f);
     private boolean wasHovered = false;
 
@@ -43,15 +47,29 @@ public class DiaryButton extends AbstractButton {
     public DiaryButton(int x, int y, int w, int h,
                        Component label, Icon icon, Variant variant,
                        Runnable onClick) {
+        this(x, y, w, h, label, icon, variant, SoundProfile.DEFAULT, onClick);
+    }
+
+    // Constructor completo con perfil sonoro
+    public DiaryButton(int x, int y, int w, int h,
+                       Component label, Icon icon, Variant variant,
+                       SoundProfile soundProfile,
+                       Runnable onClick) {
         super(x, y, w, h, label);
         this.icon    = icon    != null ? icon    : Icon.NONE;
         this.variant = variant != null ? variant : Variant.SECONDARY;
+        this.soundProfile = soundProfile != null ? soundProfile : SoundProfile.DEFAULT;
         this.onClick = onClick;
     }
 
     // Constructor simple (sin icono, secundario)
     public DiaryButton(int x, int y, int w, int h, Component label, Runnable onClick) {
         this(x, y, w, h, label, Icon.NONE, Variant.SECONDARY, onClick);
+    }
+
+    public DiaryButton noEllipsis() {
+        this.allowEllipsis = false;
+        return this;
     }
 
     @Override
@@ -61,7 +79,14 @@ public class DiaryButton extends AbstractButton {
 
     @Override
     public void playDownSound(SoundManager soundManager) {
-        UiSounds.playClick();
+        switch (this.soundProfile) {
+            case CLEAN -> UiSounds.cleanClick();
+            case OPTION_OPEN -> UiSounds.optionOpen();
+            case OPTION_PAGE -> UiSounds.optionPage();
+            case BACK -> UiSounds.back();
+            case NONE -> { }
+            case DEFAULT -> UiSounds.playClick();
+        }
     }
 
     @Override
@@ -136,6 +161,12 @@ public class DiaryButton extends AbstractButton {
 
         // Borde exterior
         drawBorder(g, x, y, w, h, borderColor);
+        int pin = DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 95);
+        g.fill(x + 3, y + 3, x + 5, y + 4, pin);
+        g.fill(x + w - 5, y + 3, x + w - 3, y + 4, pin);
+        g.fill(x + 3, y + h - 4, x + 5, y + h - 3, pin);
+        g.fill(x + w - 5, y + h - 4, x + w - 3, y + h - 3, pin);
+        g.fill(x + 6, y + h - 3, x + w - 6, y + h - 2, DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, 45));
 
         // Focus por teclado: borde dorado sutil ADICIONAL (solo cuando isFocused, no hover)
         if (this.isFocused() && !this.isMouseOver(mouseX, mouseY) && this.active) {
@@ -157,8 +188,10 @@ public class DiaryButton extends AbstractButton {
             textColor = DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 120);
         }
 
-        // Layout interno: icono a la izquierda si existe
+        // Layout interno: icono a la izquierda si existe. Textos largos se
+        // recortan con ellipsis para que idiomas largos no invadan el borde.
         int textStartX;
+        int maxTextW;
         int contentY = y + (h - font.lineHeight) / 2;
 
         if (this.icon != Icon.NONE) {
@@ -166,13 +199,15 @@ public class DiaryButton extends AbstractButton {
             int iconY = y + (h - 10) / 2;
             drawIcon(g, iconX, iconY, textColor);
             textStartX = iconX + 12 + 6; // icono (12) + gap (6)
+            maxTextW = Math.max(8, x + w - 8 - textStartX);
         } else {
-            // Sin icono: texto centrado
+            maxTextW = Math.max(8, w - 16);
+            text = fitText(font, text, maxTextW);
             int tw = font.width(text);
             textStartX = x + (w - tw) / 2;
         }
 
-        // Texto
+        text = fitText(font, text, maxTextW);
         g.drawString(font, text, textStartX, contentY, textColor, false);
 
         // Subrayado en hover
@@ -183,6 +218,16 @@ public class DiaryButton extends AbstractButton {
             int underlineColor = DiaryTheme.withAlpha(getVariantAccent(), underlineAlpha);
             g.fill(textStartX, underlineY, textStartX + tw, underlineY + 1, underlineColor);
         }
+    }
+
+    private String fitText(Font font, String text, int maxWidth) {
+        if (font.width(text) <= maxWidth) return text;
+        if (!this.allowEllipsis) {
+            return font.plainSubstrByWidth(text, Math.max(0, maxWidth));
+        }
+        String ellipsis = "...";
+        int room = Math.max(0, maxWidth - font.width(ellipsis));
+        return font.plainSubstrByWidth(text, room) + ellipsis;
     }
 
     // ------------------------------------------------------------
@@ -239,8 +284,18 @@ public class DiaryButton extends AbstractButton {
             case HAND:   drawHand(g, x, y, color);   break;
             case SCROLL: drawScroll(g, x, y, color); break;
             case CHART:  drawChart(g, x, y, color);  break;
-            case GEAR:   drawGear(g, x, y, color);   break;
-            case DOOR:   drawDoor(g, x, y, color);   break;
+            case GEAR:     drawGear(g, x, y, color);       break;
+            case DOOR:     drawDoor(g, x, y, color);       break;
+            case PALETTE:  drawPalette(g, x, y, color);    break;
+            case SOUND:    drawSound(g, x, y, color);      break;
+            case EYE:      drawEye(g, x, y, color);        break;
+            case CONTROLS: drawControls(g, x, y, color);   break;
+            case LANGUAGE: drawLanguage(g, x, y, color);   break;
+            case CHAT:     drawChat(g, x, y, color);       break;
+            case PACK:     drawPack(g, x, y, color);       break;
+            case ACCESS:   drawAccess(g, x, y, color);     break;
+            case ONLINE:   drawOnline(g, x, y, color);     break;
+            case CREDITS:  drawCredits(g, x, y, color);    break;
             case NONE:
             default: break;
         }
@@ -312,6 +367,76 @@ public class DiaryButton extends AbstractButton {
         g.fill(x + 4, y + 4, x + 8, y + 9, DiaryTheme.withAlpha(color, 100));
         // Pomo
         g.fill(x + 8, y + 6, x + 9, y + 7, color);
+    }
+
+    private void drawPalette(GuiGraphics g, int x, int y, int color) {
+        g.fill(x + 2, y + 2, x + 10, y + 8, color);
+        g.fill(x + 4, y, x + 8, y + 2, color);
+        g.fill(x + 8, y + 6, x + 12, y + 9, color);
+        g.fill(x + 4, y + 4, x + 6, y + 6, DiaryTheme.PAPER);
+    }
+
+    private void drawSound(GuiGraphics g, int x, int y, int color) {
+        g.fill(x + 1, y + 4, x + 4, y + 7, color);
+        g.fill(x + 4, y + 2, x + 7, y + 9, color);
+        g.fill(x + 8, y + 3, x + 9, y + 8, color);
+        g.fill(x + 10, y + 1, x + 11, y + 10, DiaryTheme.withAlpha(color, 150));
+    }
+
+    private void drawEye(GuiGraphics g, int x, int y, int color) {
+        g.fill(x + 1, y + 4, x + 11, y + 6, color);
+        g.fill(x + 3, y + 2, x + 9, y + 8, DiaryTheme.withAlpha(color, 120));
+        g.fill(x + 5, y + 4, x + 7, y + 6, DiaryTheme.INK_BLACK);
+    }
+
+    private void drawControls(GuiGraphics g, int x, int y, int color) {
+        g.fill(x + 1, y + 3, x + 11, y + 8, color);
+        g.fill(x + 2, y + 2, x + 5, y + 3, color);
+        g.fill(x + 7, y + 2, x + 10, y + 3, color);
+        g.fill(x + 3, y + 5, x + 5, y + 7, DiaryTheme.PAPER);
+        g.fill(x + 8, y + 5, x + 10, y + 7, DiaryTheme.PAPER);
+    }
+
+    private void drawLanguage(GuiGraphics g, int x, int y, int color) {
+        g.fill(x + 1, y + 2, x + 11, y + 9, color);
+        g.fill(x + 2, y + 3, x + 10, y + 4, DiaryTheme.PAPER);
+        g.fill(x + 3, y + 5, x + 8, y + 6, DiaryTheme.PAPER);
+        g.fill(x + 3, y + 7, x + 9, y + 8, DiaryTheme.withAlpha(DiaryTheme.PAPER, 180));
+    }
+
+    private void drawChat(GuiGraphics g, int x, int y, int color) {
+        g.fill(x + 1, y + 2, x + 11, y + 8, color);
+        g.fill(x + 3, y + 8, x + 5, y + 10, color);
+        g.fill(x + 3, y + 4, x + 9, y + 5, DiaryTheme.PAPER);
+        g.fill(x + 3, y + 6, x + 7, y + 7, DiaryTheme.PAPER);
+    }
+
+    private void drawPack(GuiGraphics g, int x, int y, int color) {
+        g.fill(x + 2, y + 2, x + 10, y + 9, color);
+        g.fill(x + 1, y + 4, x + 9, y + 10, DiaryTheme.withAlpha(color, 130));
+        g.fill(x + 4, y + 3, x + 8, y + 4, DiaryTheme.PAPER);
+    }
+
+    private void drawAccess(GuiGraphics g, int x, int y, int color) {
+        g.fill(x + 5, y + 1, x + 7, y + 3, color);
+        g.fill(x + 2, y + 4, x + 10, y + 5, color);
+        g.fill(x + 5, y + 5, x + 7, y + 10, color);
+        g.fill(x + 3, y + 8, x + 5, y + 10, color);
+        g.fill(x + 7, y + 8, x + 9, y + 10, color);
+    }
+
+    private void drawOnline(GuiGraphics g, int x, int y, int color) {
+        g.fill(x + 5, y + 1, x + 7, y + 10, color);
+        g.fill(x + 1, y + 4, x + 11, y + 6, color);
+        g.fill(x + 2, y + 2, x + 10, y + 3, DiaryTheme.withAlpha(color, 120));
+        g.fill(x + 2, y + 7, x + 10, y + 8, DiaryTheme.withAlpha(color, 120));
+    }
+
+    private void drawCredits(GuiGraphics g, int x, int y, int color) {
+        g.fill(x + 3, y + 1, x + 9, y + 9, color);
+        g.fill(x + 2, y + 2, x + 10, y + 8, DiaryTheme.withAlpha(color, 100));
+        g.fill(x + 5, y + 3, x + 7, y + 6, DiaryTheme.PAPER);
+        g.fill(x + 5, y + 7, x + 7, y + 8, DiaryTheme.PAPER);
     }
 
     @Override

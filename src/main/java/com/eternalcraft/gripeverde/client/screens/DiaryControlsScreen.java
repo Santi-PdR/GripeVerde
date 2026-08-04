@@ -157,7 +157,6 @@ public class DiaryControlsScreen extends Screen {
         int titleY = this.panelY + 10;
         {
         int _tw = this.font.width(titleStr);
-        g.drawString(this.font, titleStr, titleX - _tw / 2 + 1, titleY + 1, DiaryChrome.SHADOW_COL, false);
         g.drawString(this.font, titleStr, titleX - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
         }
 

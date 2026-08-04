@@ -7,11 +7,11 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.13.9
-- build.gradle: version = '0.13.9'
-- GripeVerdeMod.VERSION: "0.13.9"
+- Version estable actual: v0.13.10
+- build.gradle: version = '0.13.10'
+- GripeVerdeMod.VERSION: "0.13.10"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
-- Ultimo tag publicado: v0.13.9
+- Ultimo tag publicado: v0.13.10
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
 
@@ -2208,3 +2208,35 @@ Objetivo: migrar FMLJavaModLoadingContext.get() y ResourceLocation
 
 ### Candidato M7: v0.14.0+ - Contenido de gameplay (Gripe Verde)
 Objetivo: primer sistema real de gameplay. Requiere diseno previo escrito.
+---
+## ADDENDUM v0.13.10 (acero bajo la lluvia)
+
+### Alcance
+Version de entrega para Alex. Cierra una pasada amplia de polish sin agregar
+gameplay: containers steel menores, textos principales con sombra, icono del
+resource pack renovado y vida extra en el Title.
+
+### Cambios de codigo
+- Nuevo client/ContainerOverlayHandler.java: oculta labels vanilla conflictivos
+y redibuja titulos principales con sombra; agrega detalles dinamicos a mesa
+arcana y Ender Chest.
+- LivingAtmosphere.java: polillas cerca de faroles, salpicaduras de lluvia,
+ondas en charcos, reflejos ambar, papeles arrastrados, rafagas de viento,
+lluvia diagonal, sombras de ramas y relampagos ramificados.
+- AtmosphereRenderer.java: mas frases de estrella fugaz y resplandor industrial
+bajo en horizonte.
+- DiaryTitleScreen.java: tooltip del boton de musica, patina/vidrio sucio y
+retiro del subtitulo QUARANTINE IN FORCE bajo el logo.
+- LogoRenderer.java: mas apuntes del cronista y pulso verde en el ojo del skull.
+- build.gradle: task verifyGripeVerdeThemeAssets.
+
+### Assets
+- pack.png renovado.
+- Nuevos/retocados containers steel: smoker, blast_furnace, shulker_box,
+brewing_stand, hopper, dispenser, dropper, loom, cartography_table,
+stonecutter, smithing, horse, villager2, furnace, anvil, grindstone,
+enchanting_table.
+
+### Nota
+No se agrega gameplay. Todo es presentacion, atmosfera, resource pack y
+validacion de assets.

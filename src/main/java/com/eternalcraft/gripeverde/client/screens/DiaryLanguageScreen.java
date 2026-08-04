@@ -8,6 +8,7 @@ import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.render.FlagRenderer;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
+import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
@@ -18,6 +19,8 @@ import net.minecraft.client.resources.language.LanguageInfo;
 import net.minecraft.client.resources.language.LanguageManager;
 import net.minecraft.network.chat.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class DiaryLanguageScreen extends Screen {
@@ -45,7 +48,12 @@ public class DiaryLanguageScreen extends Screen {
     private final LanguageManager languageManager;
 
     private LanguageList languageList;
+    private final List<LanguageEntry> languageEntries = new ArrayList<>();
     private DiaryButton unicodeButton;
+    private final SmoothScroll smoothScroll = new SmoothScroll(0.58D, 0.22D);
+    private boolean applyingLanguage = false;
+    private String searchBuffer = "";
+    private long searchBufferUntilMs = 0L;
 
     private String appliedLanguageCode;
     private String pendingLanguageCode;
@@ -83,6 +91,7 @@ public class DiaryLanguageScreen extends Screen {
         this.listY = titleY + 50;
         this.listW = this.panelW - PANEL_PAD * 2;
         this.listH = footerY - FOOTER_GAP - this.listY;
+        this.languageEntries.clear();
 
         this.languageList = new LanguageList(this.minecraft, this.listX, this.listY, this.listW, this.listH);
         this.addWidget(this.languageList);
@@ -90,6 +99,7 @@ public class DiaryLanguageScreen extends Screen {
         if (lastScrollAmount > 0) {
             this.languageList.setScrollAmount(lastScrollAmount);
         }
+        this.smoothScroll.snapToCurrent(this.languageList);
 
         int footerW = this.panelW - PANEL_PAD * 2;
         int leftBtnW = (footerW - FOOTER_BTN_GAP) / 2;
@@ -125,6 +135,7 @@ public class DiaryLanguageScreen extends Screen {
         LivingAtmosphere.tick(delta);
         MenuMusic.tick();
         com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick();
+        this.smoothScroll.tick(this.languageList);
     }
 
     @Override
@@ -144,7 +155,6 @@ public class DiaryLanguageScreen extends Screen {
         {
             int titleW = this.font.width(this.title);
             int titleX = (this.width - titleW) / 2;
-            g.drawString(this.font, this.title, titleX + 1, titleY + 1, DiaryChrome.SHADOW_COL, false);
             g.drawString(this.font, this.title, titleX, titleY, DiaryChrome.INK_TITLE, false);
 
             String subtitle = "- " + Component.translatable("gripeverde.options.language.subtitle").getString() + " -";
@@ -174,16 +184,6 @@ public class DiaryLanguageScreen extends Screen {
 
         if (this.languageList != null) {
             this.languageList.render(g, mouseX, mouseY, partialTick);
-
-            int fadeH = 10;
-            int paperFull  = 0xFFF3E9CE;
-            int paperClear = 0x00F3E9CE;
-            g.fillGradient(this.listX, this.listY,
-                    this.listX + this.listW, this.listY + fadeH,
-                    paperFull, paperClear);
-            g.fillGradient(this.listX, this.listY + this.listH - fadeH,
-                    this.listX + this.listW, this.listY + this.listH,
-                    paperClear, paperFull);
         }
 
         int divY2 = this.panelY + this.panelH - PANEL_PAD - FOOTER_BTN_H - 6;
@@ -191,6 +191,106 @@ public class DiaryLanguageScreen extends Screen {
         DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
 
         super.render(g, mouseX, mouseY, partialTick);
+
+        drawSearchBuffer(g);
+        if (this.applyingLanguage) {
+            drawApplyingOverlay(g);
+        }
+    }
+
+    private void drawSearchBuffer(GuiGraphics g) {
+        if (this.searchBuffer.isEmpty() || System.currentTimeMillis() > this.searchBufferUntilMs) return;
+        String lang = this.languageManager.getSelected();
+        boolean english = lang == null || lang.startsWith("en_") || lang.equals("en_us");
+        String msg = (english ? "Search: " : "Buscar: ") + this.searchBuffer;
+        int w = this.font.width(msg) + 14;
+        int x = this.panelX + this.panelW - w - PANEL_PAD;
+        int y = this.listY - 16;
+        g.fill(x, y, x + w, y + 12, 0xAA2A1810);
+        g.fill(x, y + 11, x + w, y + 12, 0xAA8E6A35);
+        g.drawString(this.font, msg, x + 7, y + 2, 0xFFE8DCB4, false);
+    }
+
+    private void drawApplyingOverlay(GuiGraphics g) {
+        String lang = this.languageManager.getSelected();
+        boolean english = lang == null || lang.startsWith("en_") || lang.equals("en_us");
+        String msg = english ? "Applying language..." : "Aplicando idioma...";
+        int boxW = Math.max(150, this.font.width(msg) + 34);
+        int boxH = 34;
+        int bx = (this.width - boxW) / 2;
+        int by = (this.height - boxH) / 2;
+        g.fill(0, 0, this.width, this.height, 0x66000000);
+        g.fill(bx, by, bx + boxW, by + boxH, 0xFFE8D9B4);
+        g.fill(bx, by, bx + boxW, by + 1, DiaryChrome.INK_DIVIDER);
+        g.fill(bx, by + boxH - 1, bx + boxW, by + boxH, DiaryChrome.INK_DIVIDER);
+        g.fill(bx, by, bx + 1, by + boxH, DiaryChrome.INK_DIVIDER);
+        g.fill(bx + boxW - 1, by, bx + boxW, by + boxH, DiaryChrome.INK_DIVIDER);
+        int mx = bx + (boxW - this.font.width(msg)) / 2;
+        int my = by + (boxH - this.font.lineHeight) / 2;
+        g.drawString(this.font, msg, mx, my, DiaryChrome.INK_TITLE, false);
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (this.applyingLanguage) return true;
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean charTyped(char codePoint, int modifiers) {
+        if (this.applyingLanguage) return true;
+        char needle = Character.toLowerCase(codePoint);
+        if (!Character.isLetterOrDigit(needle) && needle != '_' && needle != '-') {
+            return super.charTyped(codePoint, modifiers);
+        }
+        long now = System.currentTimeMillis();
+        if (now > this.searchBufferUntilMs) {
+            this.searchBuffer = "";
+        }
+        this.searchBuffer += Character.toLowerCase(codePoint);
+        this.searchBufferUntilMs = now + 1500L;
+        if (selectFirstMatchingLanguage(this.searchBuffer)) {
+            UiSounds.playClick();
+            return true;
+        }
+        // If the longer query misses, retry with just the last typed character.
+        this.searchBuffer = Character.toString(needle);
+        this.searchBufferUntilMs = now + 1500L;
+        if (selectFirstMatchingLanguage(this.searchBuffer)) {
+            UiSounds.playClick();
+            return true;
+        }
+        return super.charTyped(codePoint, modifiers);
+    }
+
+    private boolean selectFirstMatchingLanguage(String query) {
+        String q = query.toLowerCase(java.util.Locale.ROOT);
+        for (LanguageEntry entry : this.languageEntries) {
+            String name = entry.info.toComponent().getString().toLowerCase(java.util.Locale.ROOT);
+            String code = entry.code.toLowerCase(java.util.Locale.ROOT);
+            if (name.startsWith(q) || code.startsWith(q) || name.contains(q)) {
+                this.pendingLanguageCode = entry.code;
+                this.languageList.selectAndCenter(entry);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (this.applyingLanguage) return true;
+        if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_BACKSPACE && !this.searchBuffer.isEmpty()) {
+            this.searchBuffer = this.searchBuffer.substring(0, this.searchBuffer.length() - 1);
+            this.searchBufferUntilMs = System.currentTimeMillis() + 1500L;
+            return true;
+        }
+        if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER
+                || keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_KP_ENTER) {
+            this.applyAndClose();
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override
@@ -225,11 +325,26 @@ public class DiaryLanguageScreen extends Screen {
     }
 
     private void applyAndClose() {
+        if (this.applyingLanguage) return;
+        if (this.languageList != null) {
+            lastScrollAmount = this.languageList.getScrollAmount();
+        }
+
         if (this.pendingLanguageCode != null
                 && !Objects.equals(this.pendingLanguageCode, this.languageManager.getSelected())) {
-            this.languageManager.setSelected(this.pendingLanguageCode);
+            this.applyingLanguage = true;
             this.options.languageCode = this.pendingLanguageCode;
-            this.minecraft.reloadResourcePacks();
+            this.languageManager.setSelected(this.pendingLanguageCode);
+            this.options.save();
+            UiSounds.success();
+            this.minecraft.reloadResourcePacks().thenRun(() ->
+                this.minecraft.execute(() -> {
+                    com.eternalcraft.gripeverde.client.audio.MenuAmbience.recoverAfterResourceReload();
+                    com.eternalcraft.gripeverde.client.audio.MenuMusic.recoverAfterResourceReload();
+                    this.minecraft.setScreen(this.parent);
+                })
+            );
+            return;
         }
 
         this.options.save();
@@ -251,6 +366,7 @@ public class DiaryLanguageScreen extends Screen {
 
             for (java.util.Map.Entry<String, LanguageInfo> mapEntry : DiaryLanguageScreen.this.languageManager.getLanguages().entrySet()) {
                 LanguageEntry entry = new LanguageEntry(mapEntry.getKey(), mapEntry.getValue());
+                DiaryLanguageScreen.this.languageEntries.add(entry);
                 this.addEntry(entry);
 
                 if (Objects.equals(mapEntry.getKey(), DiaryLanguageScreen.this.pendingLanguageCode)) {
@@ -283,9 +399,17 @@ public class DiaryLanguageScreen extends Screen {
 
         @Override
         public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-            // Vanilla usa itemH/2 = 10px por tick, muy lento. Aceleramos 4x.
-            this.setScrollAmount(this.getScrollAmount() - delta * LIST_ITEM_H * 2);
-            return true;
+            boolean moved = DiaryLanguageScreen.this.smoothScroll.wheel(this, delta, LIST_ITEM_H * 3.4D);
+            if (moved) {
+                UiSounds.scroll();
+            }
+            return moved;
+        }
+
+        private void selectAndCenter(LanguageEntry entry) {
+            this.setSelected(entry);
+            this.centerScrollOn(entry);
+            DiaryLanguageScreen.this.smoothScroll.snapToCurrent(this);
         }
     }
 
@@ -293,6 +417,7 @@ public class DiaryLanguageScreen extends Screen {
 
         private final String code;
         private final LanguageInfo info;
+        private long lastClickMs = 0L;
 
         private LanguageEntry(String code, LanguageInfo info) {
             this.code = code;
@@ -353,14 +478,37 @@ public class DiaryLanguageScreen extends Screen {
             int textY  = top + (rowHeight - DiaryLanguageScreen.this.font.lineHeight) / 2;
 
             g.drawString(DiaryLanguageScreen.this.font, label, textX, textY, textColor, false);
+
+            if (isApplied) {
+                int markColor = 0xAA422810;
+                g.fill(left + rowWidth - 12, top + 5, left + rowWidth - 11, top + 12, markColor);
+                g.fill(left + rowWidth - 11, top + 11, left + rowWidth - 7, top + 12, markColor);
+            }
+
+            if (hovered || isPending) {
+                String codeText = this.code.toUpperCase(java.util.Locale.ROOT);
+                int codeW = DiaryLanguageScreen.this.font.width(codeText);
+                int codeX = left + rowWidth - codeW - 16;
+                if (codeX > textZoneLeft + textW + 8) {
+                    int codeColor = isPending ? 0xAA1A0F08 : 0x886B4A2E;
+                    g.drawString(DiaryLanguageScreen.this.font, codeText, codeX, textY, codeColor, false);
+                }
+            }
         }
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             if (button == 0) {
+                long now = System.currentTimeMillis();
+                boolean doubleClick = Objects.equals(DiaryLanguageScreen.this.pendingLanguageCode, this.code)
+                    && now - this.lastClickMs < 420L;
+                this.lastClickMs = now;
                 DiaryLanguageScreen.this.pendingLanguageCode = this.code;
                 DiaryLanguageScreen.this.languageList.setSelected(this);
                 UiSounds.playClick();
+                if (doubleClick) {
+                    DiaryLanguageScreen.this.applyAndClose();
+                }
                 return true;
             }
             return false;

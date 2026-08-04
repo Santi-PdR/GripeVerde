@@ -1,5 +1,28 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.13.10 - Acero bajo la lluvia
+
+### Cambios cerrados
+- Resource pack steel extendido y verificado para containers menores:
+  smoker, blast furnace, shulker box, brewing stand, hopper, dispenser,
+  dropper, loom, cartography table, stonecutter, smithing, horse y
+  villager trading.
+- ContainerOverlayHandler agrega sombra a titulos principales y oculta
+  labels vanilla conflictivos cuando es posible.
+- Enchanting table gana tratamiento arcano: fondo purpura, lineas de
+  lectura y particulas discretas.
+- Title gana polish atmosferico: polillas, salpicaduras, ondas en charcos,
+  reflejos de farol, papeles al viento, rafagas, lluvia diagonal, sombras
+  de ramas, relampagos ramificados e icono nuevo del resource pack.
+- Nueva task Gradle `verifyGripeVerdeThemeAssets` para detectar assets
+  faltantes antes de empaquetar.
+
+### Estado / deuda
+- Las pantallas vanilla muy complejas pueden requerir ajustes visuales
+  puntuales por idioma o por mods externos que alteren layout.
+- La familia de containers queda lista para validacion de Alex antes de
+  cerrar un ciclo mayor.
+
 ## v0.13.9 - Hotfixes y optimizaciones
 
 Fixes criticos post-v0.13.9:

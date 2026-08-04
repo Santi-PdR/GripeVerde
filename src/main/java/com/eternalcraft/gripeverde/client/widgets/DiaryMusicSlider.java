@@ -68,6 +68,10 @@ public class DiaryMusicSlider extends AbstractSliderButton {
         int trackY1 = y + h / 2 - 1;
         int trackY2 = y + h / 2 + 1;
         g.fill(x + 3, trackY1, x + w - 3, trackY2, 0x60422810);
+        for (int i = 1; i < 4; i++) {
+            int tx = x + 3 + (w - 6) * i / 4;
+            g.fill(tx, trackY1 - 2, tx + 1, trackY2 + 2, 0x70422810);
+        }
 
         // Thumb: rombo tinta victoriana
         int thumbW = 8;
@@ -91,7 +95,6 @@ public class DiaryMusicSlider extends AbstractSliderButton {
         String msg = this.getMessage().getString();
         int textX = x + w / 2 - Minecraft.getInstance().font.width(msg) / 2;
         int textY = y + (h - 8) / 2;
-        g.drawString(Minecraft.getInstance().font, msg, textX + 1, textY + 1, DiaryChrome.SHADOW_COL, false);
         g.drawString(Minecraft.getInstance().font, msg, textX, textY, textColor, false);
     }
 

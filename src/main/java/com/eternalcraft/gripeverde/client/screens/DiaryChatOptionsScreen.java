@@ -6,6 +6,7 @@ import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
 import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
+import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
@@ -23,6 +24,7 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
     private static final int PANEL_H = 330;
 
     private int panelX, panelY, panelW, panelH;
+    private final SmoothScroll smoothScroll = new SmoothScroll();
 
     public DiaryChatOptionsScreen(Screen parent, Options options) {
         super(parent, options);
@@ -30,7 +32,8 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
 
     @Override
     protected void init() {
-        chatFlavorIndex = CHAT_RNG.nextInt(CHAT_FLAVOR_POOL.length);
+        String[] flavorPool = getChatFlavorPool();
+        chatFlavorIndex = CHAT_RNG.nextInt(flavorPool.length);
         super.init();
 
         this.panelW = Math.min(PANEL_W, this.width - 40);
@@ -44,6 +47,7 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
             int listTop = this.panelY + 45;
             int listBottom = this.panelY + this.panelH - 45;
             this.list.updateSize(this.width, this.height, listTop, listBottom);
+            this.smoothScroll.snapToCurrent(this.list);
         }
 
         // Ocultar el boton Done vanilla
@@ -83,6 +87,18 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         LivingAtmosphere.tick(delta);
         MenuMusic.tick();
         com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick();
+        this.smoothScroll.tick(this.list);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+        if (this.list != null && mouseY >= this.list.getTop() && mouseY <= this.list.getBottom()) {
+            if (this.smoothScroll.wheel(this.list, delta, 34.0D)) {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.scroll();
+                return true;
+            }
+        }
+        return super.mouseScrolled(mouseX, mouseY, delta);
     }
 
     @Override
@@ -107,7 +123,6 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         int titleY = this.panelY + 10;
         {
         int _tw = this.font.width(titleStr);
-        g.drawString(this.font, titleStr, titleX - _tw / 2 + 1, titleY + 1, DiaryChrome.SHADOW_COL, false);
         g.drawString(this.font, titleStr, titleX - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
         }
 
@@ -130,11 +145,9 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
         DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
 
-        // Lista vanilla + fades + scroll estilizado encima
+        // Lista vanilla sin gradientes blancos ni bandejas extra
         if (this.list != null) {
             this.list.render(g, mouseX, mouseY, partialTick);
-            DiaryChrome.drawListFades(g, this.panelX + 6, this.panelX + this.panelW - 6,
-                this.list.getTop(), this.list.getBottom(), 12);
             DiaryChrome.drawStyledScrollThumbInPanel(g, this.list, this.panelX + this.panelW);
         }
 
@@ -154,7 +167,7 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
     }
 
     // Rotating flavor quotes for chat options
-    private static final String[] CHAT_FLAVOR_POOL = {
+    private static final String[] CHAT_FLAVOR_POOL_ES = {
         "De la palabra escrita entre extranos.",
         "Todo mensaje llega tarde en tiempos de peste.",
         "Los rumores viajan mas rapido que la fiebre.",
@@ -163,13 +176,30 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         "Las cartas se pierden, los gritos no.",
         "Cuidad vuestra tinta; escasea."
     };
+    private static final String[] CHAT_FLAVOR_POOL_EN = {
+        "Of the written word between strangers.",
+        "Every message arrives late in plague time.",
+        "Rumours travel faster than fever.",
+        "Speak softly; the walls listen.",
+        "Silence is also a form of correspondence.",
+        "Letters get lost; screams do not.",
+        "Guard your ink; it is scarce."
+    };
     private static int chatFlavorIndex = -1;
     private static final java.util.Random CHAT_RNG = new java.util.Random();
 
     private static String getRotatingChatFlavor() {
-        if (chatFlavorIndex < 0) {
-            chatFlavorIndex = CHAT_RNG.nextInt(CHAT_FLAVOR_POOL.length);
+        String[] pool = getChatFlavorPool();
+        if (chatFlavorIndex < 0 || chatFlavorIndex >= pool.length) {
+            chatFlavorIndex = CHAT_RNG.nextInt(pool.length);
         }
-        return CHAT_FLAVOR_POOL[chatFlavorIndex];
+        return pool[chatFlavorIndex];
     }
+
+    private static String[] getChatFlavorPool() {
+        String lang = net.minecraft.client.Minecraft.getInstance().getLanguageManager().getSelected();
+        boolean english = lang == null || lang.startsWith("en_") || lang.equals("en_us");
+        return english ? CHAT_FLAVOR_POOL_EN : CHAT_FLAVOR_POOL_ES;
+    }
+
 }

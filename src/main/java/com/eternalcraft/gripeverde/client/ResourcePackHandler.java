@@ -16,7 +16,7 @@ import java.nio.file.Path;
 
 /**
  * Registra el resource pack built-in "gripeverde_theme" que reemplaza
- * texturas vanilla (por ahora solo inventory.png).
+ * texturas vanilla de interfaces y containers.
  *
  * Activado por defecto pero desactivable desde Options > Resource Packs.
  */

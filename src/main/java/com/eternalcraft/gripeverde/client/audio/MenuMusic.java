@@ -71,6 +71,7 @@ public class MenuMusic {
 
     // Ducking state
     private static long duckUntilMs = 0L;      // duck activo hasta este momento
+    private static long duckStartMs = 0L;
     private static long duckReleaseStartMs = 0L;
 
     private static final List<Integer> shuffledOrder = new ArrayList<>();
@@ -109,9 +110,17 @@ public class MenuMusic {
         long now = System.currentTimeMillis();
         long newUntil = now + durationMs;
         if (newUntil > duckUntilMs) {
+            if (duckUntilMs <= now) duckStartMs = now;
             duckUntilMs = newUntil;
             duckReleaseStartMs = 0L;
         }
+    }
+
+    /** Rebuilds menu music after resource reloads without leaving the menu. */
+    public static void recoverAfterResourceReload() {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc == null || mc.level != null) return;
+        start();
     }
 
     public static void start() {
@@ -157,6 +166,8 @@ public class MenuMusic {
         waitingForNext = false;
         crossfading = false;
         duckUntilMs = 0L;
+        duckStartMs = 0L;
+        duckReleaseStartMs = 0L;
 
         if (DEBUG_LOGGING) LOGGER.info("[MenuMusic v3] Detenido");
     }
@@ -262,9 +273,13 @@ public class MenuMusic {
     private static float computeDuckMultiplier(long now) {
         if (duckUntilMs <= 0L) return 1f;
 
-        // Fase attack (baja hacia DUCK_FACTOR)
+        // Fase attack (baja hacia DUCK_FACTOR) con rampa corta, no golpe seco.
         if (now < duckUntilMs) {
-            // Estamos en periodo de duck activo, mantener bajo
+            long attackElapsed = Math.max(0L, now - duckStartMs);
+            if (attackElapsed < DUCK_ATTACK_MS) {
+                float t = (float) attackElapsed / (float) DUCK_ATTACK_MS;
+                return 1f + (DUCK_FACTOR - 1f) * t;
+            }
             return DUCK_FACTOR;
         }
 

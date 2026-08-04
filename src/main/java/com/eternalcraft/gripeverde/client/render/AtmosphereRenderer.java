@@ -28,6 +28,14 @@ public class AtmosphereRenderer {
     }
     private static float moonGlowPulse = 0f;
 
+    private static final int STAR_COUNT = 60;
+    private static final int[] STAR_X = new int[STAR_COUNT];
+    private static final int[] STAR_Y = new int[STAR_COUNT];
+    private static final float[] STAR_FREQ = new float[STAR_COUNT];
+    private static final float[] STAR_PHASE = new float[STAR_COUNT];
+    private static int starCacheW = -1;
+    private static int starCacheH = -1;
+
     // Moon phases: 0=new, 1=waxing crescent, 2=first quarter, 3=waxing gibbous,
     // 4=full, 5=waning gibbous, 6=last quarter, 7=waning crescent
     private static int moonPhaseIndex = -1;
@@ -47,12 +55,38 @@ public class AtmosphereRenderer {
     public static String shootStarMessage = null;
     public static long shootStarMessageUntilMs = 0L;
 
-    private static final String[] SHOOT_STAR_MESSAGES = {
+    private static final String[] SHOOT_STAR_MESSAGES_ES = {
         "Un deseo cae del cielo",
         "Algo cruzo la noche",
         "Una senal fugaz",
-        "El cielo parpadea"
+        "El cielo parpadea",
+        "Una brasa cruza el firmamento",
+        "La noche firma con fuego",
+        "El cronista pidio un augurio",
+        "La peste tambien mira hacia arriba",
+        "Una cicatriz breve en las nubes",
+        "El cielo deja caer una astilla"
     };
+    private static final String[] SHOOT_STAR_MESSAGES_EN = {
+        "A wish falls from the sky",
+        "Something crossed the night",
+        "A fleeting omen",
+        "The sky blinks",
+        "An ember crosses the firmament",
+        "The night signs with fire",
+        "The chronicler asked for an omen",
+        "The plague looks upward too",
+        "A brief scar among the clouds",
+        "The sky drops a splinter"
+    };
+
+    private static String pickShootStarMessage() {
+        String lang = net.minecraft.client.Minecraft.getInstance().getLanguageManager().getSelected();
+        boolean english = lang == null || lang.startsWith("en_") || lang.equals("en_us");
+        String[] pool = english ? SHOOT_STAR_MESSAGES_EN : SHOOT_STAR_MESSAGES_ES;
+        return pool[MOON_RNG.nextInt(pool.length)];
+    }
+
     // Trail: guardamos las ultimas 8 posiciones para la estela
     private static final int TRAIL_LEN = 12;
     private static final float[][] shootStarTrail = new float[12][2];
@@ -107,7 +141,7 @@ public class AtmosphereRenderer {
             if (shootStarTimer >= shootStarNextEvent) {
                 shootStarActive = true;
                 // Frase al aparecer
-                shootStarMessage = SHOOT_STAR_MESSAGES[MOON_RNG.nextInt(SHOOT_STAR_MESSAGES.length)];
+                shootStarMessage = pickShootStarMessage();
                 shootStarMessageUntilMs = System.currentTimeMillis() + 3000L;
                 // Sonido sutil al pasar
                 try {
@@ -152,7 +186,7 @@ public class AtmosphereRenderer {
             if (!anyOnScreen) {
                 birdsActive = false;
                 birdsTimer = 0f;
-                birdsNextEvent = 90f + (float)(MOON_RNG.nextDouble() * 90.0);
+                birdsNextEvent = 70f + (float)(MOON_RNG.nextDouble() * 90.0);
             }
         } else {
             birdsTimer += deltaTime;
@@ -201,6 +235,12 @@ public class AtmosphereRenderer {
         fillGradientV(g, 0, stop1, w, stop2, DiaryTheme.NIGHT_UPPER, DiaryTheme.NIGHT_MID);
         fillGradientV(g, 0, stop2, w, h,     DiaryTheme.NIGHT_MID,   DiaryTheme.NIGHT_HORIZON);
 
+        // Resplandor industrial bajo: chimeneas y gas de la ciudad respirando en el horizonte.
+        int glowTop = Math.max(0, (int)(h * 0.58f));
+        int glowBot = Math.min(h, glowTop + Math.max(12, h / 12));
+        int glowAlpha = 18 + (int)(Math.sin(time * 0.22f) * 5f);
+        g.fill(0, glowTop, w, glowBot, withAlpha(0x004A2E18, glowAlpha));
+
         // Efecto vela al marcar las 12: overlay muy sutil que parpadea
         try {
             if (com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.isNearNoon()) {
@@ -217,23 +257,17 @@ public class AtmosphereRenderer {
 
     private static void renderStars(GuiGraphics g, int w, int h) {
         if (w <= 0 || h <= 0) return;
-        int halfH = Math.max(1, (int)(h * 0.5f));
-        java.util.Random rng = new java.util.Random(0xA57C5L);
-        for (int i = 0; i < 60; i++) {
-            int sx = rng.nextInt(w);
-            int sy = rng.nextInt(halfH);
-            // Each star gets its own frequency and phase for organic twinkle
-            float freq = 0.3f + rng.nextFloat() * 1.2f;
-            float phase = rng.nextFloat() * 6.28f;
-            float twinkle = (float)(Math.sin(time * freq + phase) * 0.5f + 0.5f);
-            // Bright stars (first 15): larger, brighter, wider twinkle range
+        ensureStarCache(w, h);
+        for (int i = 0; i < STAR_COUNT; i++) {
+            int sx = STAR_X[i];
+            int sy = STAR_Y[i];
+            float twinkle = (float)(Math.sin(time * STAR_FREQ[i] + STAR_PHASE[i]) * 0.5f + 0.5f);
             boolean bright = (i < 15);
             int baseAlpha = bright ? 60 : 30;
             int peakAlpha = bright ? 200 : 120;
             int alpha = baseAlpha + (int)(twinkle * (peakAlpha - baseAlpha));
             int color = (alpha << 24) | 0xE8DCB4;
             if (bright) {
-                // 2x2 star with softer edge
                 int edgeAlpha = Math.max(0, alpha / 3);
                 int edgeColor = (edgeAlpha << 24) | 0xE8DCB4;
                 g.fill(sx, sy, sx + 2, sy + 2, color);
@@ -246,6 +280,21 @@ public class AtmosphereRenderer {
             }
         }
     }
+
+    private static void ensureStarCache(int w, int h) {
+        if (starCacheW == w && starCacheH == h) return;
+        starCacheW = w;
+        starCacheH = h;
+        int halfH = Math.max(1, (int)(h * 0.5f));
+        java.util.Random rng = new java.util.Random(0xA57C5L ^ ((long)w << 16) ^ h);
+        for (int i = 0; i < STAR_COUNT; i++) {
+            STAR_X[i] = rng.nextInt(Math.max(1, w));
+            STAR_Y[i] = rng.nextInt(halfH);
+            STAR_FREQ[i] = 0.3f + rng.nextFloat() * 1.2f;
+            STAR_PHASE[i] = rng.nextFloat() * 6.28f;
+        }
+    }
+
 
     private static void renderMoon(GuiGraphics g, int w, int h) {
         int cx = (int)(w * 0.75f);

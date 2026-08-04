@@ -28,6 +28,28 @@ public class LivingAtmosphere {
     private static final float[][] rain = new float[RAIN_COUNT][3];
     private static boolean rainInit = false;
 
+    private static final int SPLASH_COUNT = 14;
+    private static final float[][] splashes = new float[SPLASH_COUNT][3];
+    private static boolean splashesInit = false;
+
+    private static final int MOTH_COUNT = 9;
+    private static final float[][] moths = new float[MOTH_COUNT][5];
+    private static boolean mothsInit = false;
+
+    private static final int RIPPLE_COUNT = 7;
+    private static final float[][] ripples = new float[RIPPLE_COUNT][4];
+    private static boolean ripplesInit = false;
+
+    private static final int PAPER_SCRAP_COUNT = 5;
+    private static final float[][] paperScraps = new float[PAPER_SCRAP_COUNT][5];
+    private static boolean paperScrapsInit = false;
+
+    private static float windGustTimer = 0f;
+    private static float windGustNext = 22f;
+    private static float windGustDuration = 0f;
+    private static float windGustIntensity = 0f;
+    private static float branchSway = 0f;
+
     private static float lightningTimer = 20f;
     private static float lightningFlash = 0f;
     private static float nextLightning  = 12f;
@@ -51,6 +73,12 @@ public class LivingAtmosphere {
     private static float erraticNextEvent = 30f;
     private static float erraticIntensity = 0f;  // 0=normal, 1=full erratic
     private static float erraticDuration = 0f;
+
+    public static void triggerLightningFlash(float intensity) {
+        lightningTimer = 0f;
+        lightningFlash = Math.max(lightningFlash, Math.max(0.15f, Math.min(1.0f, intensity)));
+        nextLightning = 8f + (float)(Math.random() * 12f);
+    }
 
     public static void tick(float deltaTime) {
         time += deltaTime;
@@ -89,6 +117,42 @@ public class LivingAtmosphere {
                 rain[i][1] = -0.05f;
             }
         }
+        for (int i = 0; i < SPLASH_COUNT; i++) {
+            splashes[i][2] += deltaTime * (0.9f + i * 0.03f);
+            if (splashes[i][2] > 1f) {
+                splashes[i][0] = (float) Math.random();
+                splashes[i][1] = 0.84f + (float)(Math.random() * 0.12f);
+                splashes[i][2] = 0f;
+            }
+        }
+        for (int i = 0; i < MOTH_COUNT; i++) {
+            moths[i][1] += moths[i][3] * deltaTime;
+            if (moths[i][1] > Math.PI * 2f) moths[i][1] -= (float)(Math.PI * 2f);
+        }
+        for (int i = 0; i < RIPPLE_COUNT; i++) {
+            ripples[i][2] += deltaTime * ripples[i][3];
+            if (ripples[i][2] > 1f) {
+                resetRipple(i);
+            }
+        }
+        for (int i = 0; i < PAPER_SCRAP_COUNT; i++) {
+            paperScraps[i][0] += (paperScraps[i][2] + windGustIntensity * 0.018f) * deltaTime;
+            paperScraps[i][3] += deltaTime * (5f + windGustIntensity * 6f);
+            if (paperScraps[i][0] < -0.08f || paperScraps[i][0] > 1.08f) {
+                resetPaperScrap(i);
+            }
+        }
+        windGustTimer += deltaTime;
+        if (windGustDuration > 0f) {
+            windGustDuration -= deltaTime;
+            windGustIntensity = Math.max(0f, windGustDuration / 3.2f);
+        } else if (windGustTimer >= windGustNext) {
+            windGustTimer = 0f;
+            windGustDuration = 2.4f + (float)(Math.random() * 1.8f);
+            windGustNext = 18f + (float)(Math.random() * 28f);
+            windGustIntensity = 1f;
+        }
+        branchSway += deltaTime * (0.55f + windGustIntensity * 0.8f);
         lightningTimer += deltaTime;
         if (lightningFlash > 0f) {
             lightningFlash -= deltaTime * 3f;
@@ -168,6 +232,48 @@ public class LivingAtmosphere {
                 rain[i][2] = 0.008f + (float)(Math.random() * 0.006f);
             }
         }
+        if (!splashesInit) {
+            splashesInit = true;
+            for (int i = 0; i < SPLASH_COUNT; i++) {
+                splashes[i][0] = (float) Math.random();
+                splashes[i][1] = 0.84f + (float)(Math.random() * 0.12f);
+                splashes[i][2] = (float) Math.random();
+            }
+        }
+        if (!mothsInit) {
+            mothsInit = true;
+            for (int i = 0; i < MOTH_COUNT; i++) {
+                moths[i][0] = i;
+                moths[i][1] = (float)(Math.random() * Math.PI * 2.0);
+                moths[i][2] = 5f + (float)(Math.random() * 8f);
+                moths[i][3] = 0.7f + (float)(Math.random() * 1.3f);
+                moths[i][4] = (float)Math.random();
+            }
+        }
+        if (!ripplesInit) {
+            ripplesInit = true;
+            for (int i = 0; i < RIPPLE_COUNT; i++) resetRipple(i);
+        }
+        if (!paperScrapsInit) {
+            paperScrapsInit = true;
+            for (int i = 0; i < PAPER_SCRAP_COUNT; i++) resetPaperScrap(i);
+        }
+    }
+
+    private static void resetRipple(int i) {
+        ripples[i][0] = (float)Math.random();
+        ripples[i][1] = 0.84f + (float)(Math.random() * 0.12f);
+        ripples[i][2] = (float)(Math.random() * 0.15f);
+        ripples[i][3] = 0.35f + (float)(Math.random() * 0.45f);
+    }
+
+    private static void resetPaperScrap(int i) {
+        boolean leftToRight = Math.random() < 0.5;
+        paperScraps[i][0] = leftToRight ? -0.05f : 1.05f;
+        paperScraps[i][1] = 0.84f + (float)(Math.random() * 0.12f);
+        paperScraps[i][2] = (leftToRight ? 1f : -1f) * (0.035f + (float)(Math.random() * 0.05f));
+        paperScraps[i][3] = (float)(Math.random() * Math.PI * 2.0);
+        paperScraps[i][4] = 0.5f + (float)Math.random();
     }
 
     public static void renderFogLow(GuiGraphics g, int w, int h) {
@@ -203,15 +309,20 @@ public class LivingAtmosphere {
             lastLanternW = w; lastLanternH = h;
         }
         renderStreet(g, w, h);
+        renderPuddleRipples(g, w, h);
+        renderLanternReflections(g, w, h);
+        renderPaperScraps(g, w, h);
         renderGroundFog(g, w, h);
         for (int i = 0; i < lanternPositions.length; i++) {
             renderGasLantern(g, lanternPositions[i][0], lanternPositions[i][1], i, w, h);
         }
+        renderMoths(g, w, h);
         renderSpores(g, w, h);
         renderRat(g, w, h);
     }
 
     public static void renderAir(GuiGraphics g, int w, int h) {
+        renderBranchShadows(g, w, h);
         renderRain(g, w, h);
         renderCrows(g, w, h);
     }
@@ -223,6 +334,7 @@ public class LivingAtmosphere {
         g.fill(0, 0, w, h, AtmosphereRenderer.withAlpha(0x00FFEECC, alpha));
         // Silueta de chimeneas en el pico del flash
         renderLightningSilhouette(g, w, h);
+        renderLightningForks(g, w, h);
     }
 
     public static void renderVignette(GuiGraphics g, int w, int h) {
@@ -367,6 +479,56 @@ public class LivingAtmosphere {
             AtmosphereRenderer.withAlpha(0x00130C07, 52));
     }
 
+    private static void renderPuddleRipples(GuiGraphics g, int w, int h) {
+        if (h < 260) return;
+        for (int i = 0; i < RIPPLE_COUNT; i++) {
+            float age = ripples[i][2];
+            int x = (int)(ripples[i][0] * w);
+            int y = (int)(ripples[i][1] * h);
+            int rx = 3 + (int)(age * 18f);
+            int alpha = (int)((1f - age) * 34f);
+            if (alpha <= 2) continue;
+            int col = AtmosphereRenderer.withAlpha(0x00B8B0A0, alpha);
+            g.fill(x - rx, y, x + rx, y + 1, col);
+            g.fill(x - rx / 2, y - 1, x + rx / 2, y, AtmosphereRenderer.withAlpha(0x00E0D8C8, alpha / 2));
+        }
+    }
+
+    private static void renderLanternReflections(GuiGraphics g, int w, int h) {
+        if (lanternPositions == null) return;
+        for (int i = 0; i < lanternPositions.length; i++) {
+            int lx = lanternPositions[i][0];
+            int ly = lanternPositions[i][1];
+            float flicker = (float)(Math.sin(time * 3.2f + i * 1.5f) * 0.2f + 0.8f);
+            int alpha = (int)(22 * flicker);
+            int col = AtmosphereRenderer.withAlpha(0x00D49A3A, alpha);
+            int top = Math.min(h, ly + 6);
+            int bot = Math.min(h, ly + Math.max(12, h / 14));
+            for (int r = 0; r < 4; r++) {
+                int ww = 10 + r * 8;
+                int yy = top + r * 5;
+                if (yy > bot) break;
+                g.fill(lx - ww, yy, lx + ww, yy + 1, col);
+            }
+        }
+    }
+
+    private static void renderPaperScraps(GuiGraphics g, int w, int h) {
+        for (int i = 0; i < PAPER_SCRAP_COUNT; i++) {
+            int x = (int)(paperScraps[i][0] * w);
+            int baseY = (int)(paperScraps[i][1] * h);
+            int y = baseY + (int)(Math.sin(paperScraps[i][3]) * 4f);
+            int tone = (i & 1) == 0 ? 0x00B29A75 : 0x00836C4A;
+            int alpha = (int)(90 * paperScraps[i][4]);
+            int col = AtmosphereRenderer.withAlpha(tone, alpha);
+            if (((int)(paperScraps[i][3] * 10) & 1) == 0) {
+                g.fill(x, y, x + 5, y + 2, col);
+            } else {
+                g.fill(x, y, x + 3, y + 4, col);
+            }
+        }
+    }
+
     private static void renderGroundFog(GuiGraphics g, int w, int h) {
         int fogY = (int)(h * 0.78f);
         for (int layer = 0; layer < 5; layer++) {
@@ -463,6 +625,51 @@ public class LivingAtmosphere {
         }
     }
 
+    private static void renderBranchShadows(GuiGraphics g, int w, int h) {
+        if (w < 320 || h < 240) return;
+        int alpha = 34 + (int)(windGustIntensity * 18f);
+        int col = AtmosphereRenderer.withAlpha(0x00000000, alpha);
+        int sway = (int)(Math.sin(branchSway) * (5 + windGustIntensity * 5));
+        drawBranch(g, -20 + sway, 34, 155 + sway, 16, col, 2);
+        drawBranch(g, -10 + sway / 2, 62, 115 + sway, 49, col, 1);
+        drawBranch(g, w + 18 - sway, 38, w - 125 - sway, 24, col, 2);
+        drawBranch(g, w + 12 - sway / 2, 78, w - 92 - sway, 67, col, 1);
+        // Twigs: short broken lines so they read like moving tree shadows.
+        drawBranch(g, 48 + sway, 28, 70 + sway, 45, col, 1);
+        drawBranch(g, w - 60 - sway, 30, w - 82 - sway, 48, col, 1);
+    }
+
+    private static void drawBranch(GuiGraphics g, int x1, int y1, int x2, int y2, int color, int thickness) {
+        int steps = Math.max(1, Math.max(Math.abs(x2 - x1), Math.abs(y2 - y1)) / 4);
+        for (int i = 0; i <= steps; i++) {
+            float t = (float)i / (float)steps;
+            int x = x1 + (int)((x2 - x1) * t);
+            int y = y1 + (int)((y2 - y1) * t);
+            g.fill(x, y, x + thickness + 1, y + thickness, color);
+        }
+    }
+
+    private static void renderMoths(GuiGraphics g, int w, int h) {
+        if (lanternPositions == null || lanternPositions.length == 0) return;
+        int postH = (int)(h * 0.13f);
+        for (int i = 0; i < MOTH_COUNT; i++) {
+            int idx = ((int)moths[i][0]) % lanternPositions.length;
+            int lx = lanternPositions[idx][0];
+            int ly = lanternPositions[idx][1] - postH - 2;
+            float angle = moths[i][1];
+            float radius = moths[i][2];
+            int mx = lx + (int)(Math.cos(angle) * radius);
+            int my = ly + (int)(Math.sin(angle * 1.7f + moths[i][4] * 6f) * radius * 0.45f);
+            int alpha = 120 + (int)(Math.sin(time * 4.0f + i) * 45f);
+            alpha = Math.max(35, Math.min(170, alpha));
+            int color = AtmosphereRenderer.withAlpha(0x00FFD06A, alpha);
+            g.fill(mx, my, mx + 1, my + 1, color);
+            if ((i & 1) == 0) {
+                g.fill(mx + 1, my, mx + 2, my + 1, AtmosphereRenderer.withAlpha(0x00FFE8A6, alpha / 2));
+            }
+        }
+    }
+
     private static void renderSpores(GuiGraphics g, int w, int h) {
         for (int i = 0; i < SPORE_COUNT; i++) {
             int sx = (int)(spores[i][0] * w);
@@ -504,6 +711,39 @@ public class LivingAtmosphere {
         }
     }
 
+    private static void renderLightningForks(GuiGraphics g, int w, int h) {
+        if (lightningFlash <= 0.82f || w < 300 || h < 220) return;
+        int alpha = (int)((lightningFlash - 0.82f) / 0.18f * 95f);
+        int col = AtmosphereRenderer.withAlpha(0x00F8F0D0, Math.max(0, Math.min(95, alpha)));
+        int seedShift = ((int)(time * 10f)) & 3;
+        drawBolt(g, (int)(w * 0.72f), 0, (int)(w * 0.63f) + seedShift, (int)(h * 0.24f), col);
+        drawBolt(g, (int)(w * 0.72f), 0, (int)(w * 0.80f) - seedShift, (int)(h * 0.19f), col);
+    }
+
+    private static void drawBolt(GuiGraphics g, int x1, int y1, int x2, int y2, int color) {
+        int segments = 7;
+        int px = x1;
+        int py = y1;
+        for (int i = 1; i <= segments; i++) {
+            float t = (float)i / (float)segments;
+            int nx = x1 + (int)((x2 - x1) * t) + (int)(Math.sin(time * 11f + i * 2.1f) * 6f);
+            int ny = y1 + (int)((y2 - y1) * t);
+            drawJaggedLine(g, px, py, nx, ny, color);
+            px = nx;
+            py = ny;
+        }
+    }
+
+    private static void drawJaggedLine(GuiGraphics g, int x1, int y1, int x2, int y2, int color) {
+        int steps = Math.max(1, Math.max(Math.abs(x2 - x1), Math.abs(y2 - y1)) / 3);
+        for (int i = 0; i <= steps; i++) {
+            float t = (float)i / (float)steps;
+            int x = x1 + (int)((x2 - x1) * t);
+            int y = y1 + (int)((y2 - y1) * t);
+            g.fill(x, y, x + 2, y + 2, color);
+        }
+    }
+
     private static void renderLightningSilhouette(GuiGraphics g, int w, int h) {
         if (lightningFlash <= 0.7f) return;  // solo pico del flash
         // Silueta blanca semi-transparente sobre las chimeneas FG
@@ -539,7 +779,27 @@ public class LivingAtmosphere {
         for (int i = 0; i < RAIN_COUNT; i++) {
             int rx = (int)(rain[i][0] * w);
             int ry = (int)(rain[i][1] * h);
-            g.fill(rx, ry, rx + 1, ry + 6, DiaryTheme.RAIN_LINE);
+            int slant = 1 + (int)(windGustIntensity * 5f);
+            g.fill(rx, ry, rx + 1, ry + 4, DiaryTheme.RAIN_LINE);
+            g.fill(rx + slant, ry + 4, rx + slant + 1, ry + 8, DiaryTheme.RAIN_LINE);
+        }
+        renderRainSplashes(g, w, h);
+    }
+
+    private static void renderRainSplashes(GuiGraphics g, int w, int h) {
+        if (h < 260) return;
+        for (int i = 0; i < SPLASH_COUNT; i++) {
+            float age = splashes[i][2];
+            if (age < 0.15f || age > 0.92f) continue;
+            int sx = (int)(splashes[i][0] * w);
+            int sy = (int)(splashes[i][1] * h);
+            int half = 1 + (int)(age * 4f);
+            int alpha = (int)((1f - age) * (70f + windGustIntensity * 25f));
+            int color = AtmosphereRenderer.withAlpha(0x00A0A8B0, alpha);
+            g.fill(sx - half, sy, sx + half, sy + 1, color);
+            if (age > 0.45f) {
+                g.fill(sx - half / 2, sy - 1, sx + half / 2, sy, AtmosphereRenderer.withAlpha(0x00D0D8D8, alpha / 2));
+            }
         }
     }
 }

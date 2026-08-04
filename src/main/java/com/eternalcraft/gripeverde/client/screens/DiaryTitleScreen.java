@@ -29,6 +29,9 @@ public class DiaryTitleScreen extends Screen {
 
     private long ticks = 0;
     private static boolean openCountIncremented = false;
+    private SlimButton skipMusicButton;
+    private static boolean cinematicMode = false;
+    private static long cinematicHintUntilMs = 0L;
 
     private static final int BTN_W = 300;
     private static final int BTN_H = 40;
@@ -46,6 +49,13 @@ public class DiaryTitleScreen extends Screen {
 
     // Umbral: por debajo de esta altura efectiva, ocultamos TODO lo decorativo
     private static final int MINIMAL_MODE_THRESHOLD = 290;
+
+    private static final int PATINA_COUNT = 26;
+    private static final int[] PATINA_X = new int[PATINA_COUNT];
+    private static final int[] PATINA_Y = new int[PATINA_COUNT];
+    private static final int[] PATINA_KIND = new int[PATINA_COUNT];
+    private static int patinaW = -1;
+    private static int patinaH = -1;
 
     public DiaryTitleScreen() {
         super(Component.translatable("gripeverde.title.window"));
@@ -80,7 +90,7 @@ public class DiaryTitleScreen extends Screen {
         this.addRenderableWidget(new GreenFluButton(
             btnX, btnY, BTN_W, BTN_H,
             Component.translatable("gripeverde.title.button.multiplayer"),
-            Component.literal(pickRotatingSubtitle(MULTIPLAYER_SUBTITLES)),
+            Component.literal(pickRotatingSubtitle(true)),
             TextureAssets.ICON_BTN_MP,
             this::onMultiplayer
         ));
@@ -88,7 +98,7 @@ public class DiaryTitleScreen extends Screen {
         this.addRenderableWidget(new GreenFluButton(
             btnX, btnY + BTN_H + Spacing.GAP_MEDIUM, BTN_W, BTN_H,
             Component.translatable("gripeverde.title.button.mods"),
-            Component.literal(pickRotatingSubtitle(MODS_SUBTITLES)),
+            Component.literal(pickRotatingSubtitle(false)),
             TextureAssets.ICON_BTN_MODS,
             this::onMods
         ));
@@ -138,9 +148,13 @@ public class DiaryTitleScreen extends Screen {
         int skipX = 8;
         int skipW = 36;
         int skipH = 20;
-        this.addRenderableWidget(new SlimButton(skipX, skipY, skipW, skipH,
+        this.skipMusicButton = new SlimButton(skipX, skipY, skipW, skipH,
             Component.literal(">>"),
-            () -> MenuMusic.skipToNext()));
+            () -> MenuMusic.skipToNext());
+        this.skipMusicButton.setTooltip(Tooltip.create(Component.literal(isEnglishSelected()
+            ? "Change the chronicler's piece"
+            : "Cambiar la pieza del cronista")));
+        this.addRenderableWidget(this.skipMusicButton);
     }
 
     private LayoutRegion leftColumn() {
@@ -163,16 +177,21 @@ public class DiaryTitleScreen extends Screen {
         VictorianSkyline.tick(delta);
         LivingAtmosphere.tick(delta);
         MenuMusic.tick();
+        if (this.skipMusicButton != null) {
+            boolean ready = !MenuMusic.isCrossfading();
+            this.skipMusicButton.active = ready;
+            this.skipMusicButton.setTooltip(Tooltip.create(Component.literal(
+                ready
+                    ? (isEnglishSelected() ? "Change the chronicler's piece" : "Cambiar la pieza del cronista")
+                    : (isEnglishSelected() ? "The gramophone is turning" : "El gramofono esta girando")
+            )));
+        }
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         boolean ctrl = (modifiers & GLFW.GLFW_MOD_CONTROL) != 0;
         if (ctrl && keyCode == GLFW.GLFW_KEY_S) { onSingleplayer(); return true; }
-        if (ctrl && keyCode == GLFW.GLFW_KEY_T) {
-            this.minecraft.setScreen(new DebugCanvasScreen(this));
-            return true;
-        }
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
@@ -189,17 +208,21 @@ public class DiaryTitleScreen extends Screen {
         LivingAtmosphere.renderAir(g, this.width, this.height);
         LivingAtmosphere.renderFlash(g, this.width, this.height);
         LivingAtmosphere.renderVignette(g, this.width, this.height);
+        drawGlassPatina(g);
 
-        if (!isMinimalMode()) {
-            drawPosterLeft(g);
-            drawPosterRight(g);
-            drawPocketWatch(g);
+        if (!cinematicMode) {
+            if (!isMinimalMode()) {
+                drawPosterLeft(g);
+                drawPosterRight(g);
+                drawPocketWatch(g);
+            }
+
+            drawLogo(g);
+            drawSignature(g);
+            super.render(g, mouseX, mouseY, partialTick);
+        } else {
+            drawCinematicHint(g);
         }
-
-        drawLogo(g);
-        drawSignature(g);
-
-        super.render(g, mouseX, mouseY, partialTick);
 
         // Overlays interactivos (arriba de todo)
         drawEasterEggMessage(g);
@@ -221,6 +244,53 @@ public class DiaryTitleScreen extends Screen {
         // MenuMusic.stop() omitido intencionalmente: musica sobrevive a Options/subpantallas
         super.removed();
     }
+
+    private void drawCinematicHint(GuiGraphics g) {
+        if (this.width < 420 || System.currentTimeMillis() > cinematicHintUntilMs) return;
+        String lang = net.minecraft.client.Minecraft.getInstance().getLanguageManager().getSelected();
+        boolean english = lang == null || lang.startsWith("en_") || lang.equals("en_us");
+        String hint = english ? "F10 to return" : "F10 para volver";
+        int x = this.width - this.font.width(hint) - 10;
+        int y = this.height - 16;
+        int col = com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
+            com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_LIGHT, 100);
+        g.drawString(this.font, hint, x, y, col, false);
+    }
+
+    private void drawGlassPatina(GuiGraphics g) {
+        if (this.width < 360 || this.height < 240) return;
+        ensurePatinaPoints();
+        long frame = System.currentTimeMillis() / 120L;
+        for (int i = 0; i < PATINA_COUNT; i++) {
+            int x = PATINA_X[i];
+            int y = PATINA_Y[i];
+            int alpha = 10 + (int)((Math.sin((frame + i * 13) * 0.17) + 1.0) * 7.0);
+            int col = (alpha << 24) | 0xC0A06A;
+            if (PATINA_KIND[i] == 0) g.fill(x, y, x + 1, y + 4, col);
+            else g.fill(x, y, x + 1, y + 1, col);
+        }
+        for (int i = 0; i < 6; i++) {
+            int x = 18 + (i * 97) % Math.max(32, this.width - 36);
+            int y = 18 + (i * 53) % Math.max(32, this.height - 70);
+            int a = 20 + (int)(Math.sin(System.currentTimeMillis() / 900.0 + i) * 9.0);
+            int col = (Math.max(8, a) << 24) | 0xD8D8C8;
+            g.fill(x, y, x + 2, y + 5, col);
+            g.fill(x + 1, y + 5, x + 2, y + 8, (Math.max(4, a / 2) << 24) | 0xD8D8C8);
+        }
+    }
+
+    private void ensurePatinaPoints() {
+        if (patinaW == this.width && patinaH == this.height) return;
+        patinaW = this.width;
+        patinaH = this.height;
+        java.util.Random rng = new java.util.Random(0x5A11EEDL ^ (long)this.width * 31L ^ (long)this.height * 17L);
+        for (int i = 0; i < PATINA_COUNT; i++) {
+            PATINA_X[i] = rng.nextInt(Math.max(1, this.width));
+            PATINA_Y[i] = rng.nextInt(Math.max(1, this.height));
+            PATINA_KIND[i] = rng.nextInt(4) == 0 ? 0 : 1;
+        }
+    }
+
 
     private void drawPosterLeft(GuiGraphics g) {
         LayoutRegion leftCol = leftColumn();
@@ -292,20 +362,32 @@ public class DiaryTitleScreen extends Screen {
         }
     }
 
-    // Rotating signature pool, synced with LogoRenderer year via yearIndex
-    private static final String[] SIGNATURE_POOL = {
+    // Rotating signature pool, synced with LogoRenderer year via yearIndex.
+    // Role titles are localized to avoid "Cronista" appearing in English.
+    private static final String[] SIGNATURE_POOL_ES = {
         "Dr. S. Pereira",
         "Cronista R. Da Rosa",
         "Cap. G. Bandeira",
         "Prof. A. Focco"
     };
+    private static final String[] SIGNATURE_POOL_EN = {
+        "Dr. S. Pereira",
+        "Chronicler R. Da Rosa",
+        "Capt. G. Bandeira",
+        "Prof. A. Focco"
+    };
+
+    private static String signatureFor(int idx) {
+        String[] pool = isEnglishSelected() ? SIGNATURE_POOL_EN : SIGNATURE_POOL_ES;
+        return pool[idx % pool.length];
+    }
 
     private void drawSignature(GuiGraphics g) {
         int idx = com.eternalcraft.gripeverde.client.render.LogoRenderer.getYearIndex();
-        String signature = SIGNATURE_POOL[idx % SIGNATURE_POOL.length];
+        String signature = signatureFor(idx);
         // Nombre viejo tachado: el anterior del pool
-        int oldIdx = (idx + SIGNATURE_POOL.length - 1) % SIGNATURE_POOL.length;
-        String oldSig = SIGNATURE_POOL[oldIdx];
+        int oldIdx = (idx + SIGNATURE_POOL_ES.length - 1) % SIGNATURE_POOL_ES.length;
+        String oldSig = signatureFor(oldIdx);
 
         int sw = this.font.width(signature);
         int oldSw = this.font.width(oldSig);
@@ -356,41 +438,82 @@ public class DiaryTitleScreen extends Screen {
     @Override public boolean isPauseScreen()    { return false; }
     @Override public boolean shouldCloseOnEsc() { return false; }
 
-    // Rotating subtitles for GreenFluButtons (multiplayer + mods)
-    private static final String[] MULTIPLAYER_SUBTITLES = {
+    // Rotating subtitles for GreenFluButtons (multiplayer + mods).
+    // Keep them language-aware so the Title does not mix Spanish subtitles with
+    // English buttons after changing language.
+    private static final String[] MULTIPLAYER_SUBTITLES_ES = {
         "Luchen junto a sus hermanos",
         "El regimiento los espera",
         "Nadie sobrevive en soledad",
         "Que su sangre sea la ultima",
-        "Marchen al frente"
+        "Marchen al frente",
+        "Que nadie cruce solo la niebla",
+        "La guardia acepta nuevos nombres",
+        "Hay luces en otros barrios",
+        "Compartan el pan y la fiebre"
     };
-    private static final String[] MODS_SUBTITLES = {
+    private static final String[] MULTIPLAYER_SUBTITLES_EN = {
+        "Fight beside your brothers",
+        "The regiment awaits",
+        "No one survives alone",
+        "May your blood be the last",
+        "March to the front",
+        "No one crosses the fog alone",
+        "The guard accepts new names",
+        "There are lights in other districts",
+        "Share the bread and the fever"
+    };
+    private static final String[] MODS_SUBTITLES_ES = {
         "Preparen su equipamiento",
         "Revisen los arsenales",
         "El acero no descansa",
         "Que instrumentos tenemos hoy",
-        "Reservas de la ultima campana"
+        "Reservas de la ultima campana",
+        "Inventario de instrumentos prohibidos",
+        "Las cajas del sanatorio",
+        "Herramientas para una ciudad enferma",
+        "Que piezas sostienen esta noche"
+    };
+    private static final String[] MODS_SUBTITLES_EN = {
+        "Prepare your equipment",
+        "Inspect the arsenals",
+        "Steel does not rest",
+        "What instruments do we have tonight",
+        "Stores from the last bell",
+        "Inventory of forbidden instruments",
+        "The sanatorium crates",
+        "Tools for a sickened city",
+        "What pieces hold this night together"
     };
     private static final java.util.Random SUB_RNG = new java.util.Random();
 
-    // Cache: elegir subtitulo UNA vez por sesion (no reelegir en cada init)
     private static String cachedMultiSubtitle = null;
     private static String cachedModsSubtitle = null;
+    private static String cachedSubtitleLang = null;
 
-    private static String pickRotatingSubtitle(String[] pool) {
-        if (pool == MULTIPLAYER_SUBTITLES) {
-            if (cachedMultiSubtitle == null) {
-                cachedMultiSubtitle = pool[SUB_RNG.nextInt(pool.length)];
-            }
+    private static boolean isEnglishSelected() {
+        String lang = net.minecraft.client.Minecraft.getInstance().getLanguageManager().getSelected();
+        return lang == null || lang.startsWith("en_") || lang.equals("en_us");
+    }
+
+    private static String pickRotatingSubtitle(boolean multiplayer) {
+        String lang = net.minecraft.client.Minecraft.getInstance().getLanguageManager().getSelected();
+        if (lang == null) lang = "en_us";
+        boolean english = isEnglishSelected();
+        if (!java.util.Objects.equals(cachedSubtitleLang, lang)) {
+            cachedSubtitleLang = lang;
+            cachedMultiSubtitle = null;
+            cachedModsSubtitle = null;
+        }
+        String[] pool = multiplayer
+            ? (english ? MULTIPLAYER_SUBTITLES_EN : MULTIPLAYER_SUBTITLES_ES)
+            : (english ? MODS_SUBTITLES_EN : MODS_SUBTITLES_ES);
+        if (multiplayer) {
+            if (cachedMultiSubtitle == null) cachedMultiSubtitle = pool[SUB_RNG.nextInt(pool.length)];
             return cachedMultiSubtitle;
         }
-        if (pool == MODS_SUBTITLES) {
-            if (cachedModsSubtitle == null) {
-                cachedModsSubtitle = pool[SUB_RNG.nextInt(pool.length)];
-            }
-            return cachedModsSubtitle;
-        }
-        return pool[SUB_RNG.nextInt(pool.length)];
+        if (cachedModsSubtitle == null) cachedModsSubtitle = pool[SUB_RNG.nextInt(pool.length)];
+        return cachedModsSubtitle;
     }
 
     @Override
@@ -405,19 +528,32 @@ public class DiaryTitleScreen extends Screen {
         }
         return super.mouseClicked(mouseX, mouseY, button);
     }
-    // Easter egg: doble-click en el logo -> mensaje aleatorio
-    private static final String[] LOGO_EASTER_EGGS = {
-        "El cronista los observa.",
-        "No abran mas puertas esta noche.",
-        "Han golpeado tres veces.",
-        "El gato del tejado sabe algo.",
-        "La ventana del tercer piso vuelve a encenderse.",
-        "Dicen que hoy la campana sono sola.",
-        "Los faroles arden mas de lo habitual.",
-        "El aire hoy sabe a metal."
+    // Easter egg: click en el logo -> expediente sellado aleatorio
+    private static final String[] LOGO_EASTER_EGGS_ES = {
+        "El reloj del ministerio acaba de marcar una hora que no existe.",
+        "Una carta sin sello respira dentro del cajon del cronista.",
+        "La ventana del tercer piso respondio con una luz verde.",
+        "Las ratas dejaron una flecha perfecta apuntando al rio.",
+        "El nombre del ultimo testigo aparecio escrito antes de llegar.",
+        "La campana conto a los ausentes, no a los vivos.",
+        "Hay barro fresco bajo una puerta que nadie ha abierto.",
+        "El gato del tejado pronuncio un apellido y salto a la niebla."
     };
+    private static final String[] LOGO_EASTER_EGGS_EN = {
+        "The ministry clock has just struck an hour that does not exist.",
+        "An unsealed letter is breathing inside the chronicler's drawer.",
+        "The third-floor window answered with a green light.",
+        "The rats left a perfect arrow pointing toward the river.",
+        "The last witness's name appeared before the witness arrived.",
+        "The bell counted the missing, not the living.",
+        "Fresh mud waits beneath a door no one has opened.",
+        "The rooftop cat spoke a surname and leapt into the fog."
+    };
+
     private long lastLogoClickMs = 0L;
     private String easterEggMessage = null;
+    private String easterEggCaseCode = "";
+    private long easterEggStartedMs = 0L;
     private long easterEggUntilMs = 0L;
     private long easterFlashUntilMs = 0L;
     private long skullShakeUntilMs = 0L;
@@ -430,103 +566,183 @@ public class DiaryTitleScreen extends Screen {
 
     private void handleLogoClick() {
         long now = System.currentTimeMillis();
-        if (now - lastLogoClickMs < 500L) {
-            // Doble-click detectado
-            easterEggMessage = LOGO_EASTER_EGGS[EASTER_RNG.nextInt(LOGO_EASTER_EGGS.length)];
-            easterEggUntilMs = now + 5000L;
-            skullShakeUntilMs = now + 600L;
-            easterLightningUntilMs = now + 300L;
-            // Forzar un relampago instantaneo en la atmosfera
-            try {
-                java.lang.reflect.Field flashField = com.eternalcraft.gripeverde.client.render.LivingAtmosphere.class.getDeclaredField("lightningFlash");
-                flashField.setAccessible(true);
-                flashField.setFloat(null, 1f);
-            } catch (Throwable ignored) {}
-            eggParticlesUntilMs = now + 2000L;
-            // Inicializar particulas cayendo desde el skull
-            int logoCx = this.width / 2;
-            int logoCy = 45;
-            for (int p = 0; p < EGG_PARTICLE_COUNT; p++) {
-                eggParticles[p][0] = logoCx + (float)(Math.random() * 30 - 15);
-                eggParticles[p][1] = logoCy + (float)(Math.random() * 10);
-                eggParticles[p][2] = (float)(Math.random() * 2 - 1);   // vx
-                eggParticles[p][3] = (float)(Math.random() * 1 + 1);   // vy (positivo = cae)
-                eggParticles[p][4] = 1.0f;  // alpha
-            }
-            // Sonido + flash coordinado
-            try {
-                com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
-                    com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_CROWS.get(),
-                    0.6f, 1.2f);
-            } catch (Throwable ignored) {}
-            easterFlashUntilMs = now + 400L;
-        }
+        if (now - lastLogoClickMs < 260L) return;
         lastLogoClickMs = now;
+
+        String[] eggPool = isEnglishSelected() ? LOGO_EASTER_EGGS_EN : LOGO_EASTER_EGGS_ES;
+        int caseNo = 17 + EASTER_RNG.nextInt(80);
+        char letter = (char)('A' + EASTER_RNG.nextInt(6));
+        easterEggCaseCode = String.format(java.util.Locale.ROOT, "%02d-%c", caseNo, letter);
+        easterEggMessage = eggPool[EASTER_RNG.nextInt(eggPool.length)];
+        easterEggStartedMs = now;
+        easterEggUntilMs = now + 5200L;
+        skullShakeUntilMs = now + 520L;
+        easterLightningUntilMs = now + 280L;
+
+        // Forzar un relampago instantaneo en la atmosfera
+        try {
+            java.lang.reflect.Field flashField = com.eternalcraft.gripeverde.client.render.LivingAtmosphere.class.getDeclaredField("lightningFlash");
+            flashField.setAccessible(true);
+            flashField.setFloat(null, 1f);
+        } catch (Throwable ignored) {}
+
+        eggParticlesUntilMs = now + 2600L;
+        int logoCx = this.width / 2;
+        int logoCy = 45;
+        for (int p = 0; p < EGG_PARTICLE_COUNT; p++) {
+            eggParticles[p][0] = logoCx + (float)(Math.random() * 34 - 17);
+            eggParticles[p][1] = logoCy + (float)(Math.random() * 12);
+            eggParticles[p][2] = (float)(Math.random() * 1.6 - 0.8);
+            eggParticles[p][3] = (float)(Math.random() * 0.9 + 0.8);
+            eggParticles[p][4] = 1.0f;
+        }
+
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_CHAIN.get(),
+                0.32f, 0.92f);
+            com.eternalcraft.gripeverde.client.audio.UiSounds.notification();
+        } catch (Throwable ignored) {}
+        easterFlashUntilMs = now + 400L;
     }
 
     private void drawEasterEggMessage(net.minecraft.client.gui.GuiGraphics g) {
         long now = System.currentTimeMillis();
 
-        // Flash amber breve al momento del doble-click
         if (now < easterFlashUntilMs) {
             long remainFlash = easterFlashUntilMs - now;
-            int flashAlpha = (int)(80 * remainFlash / 400L);
+            int flashAlpha = (int)(54 * remainFlash / 400L);
             if (flashAlpha > 2) {
-                g.fill(0, 0, this.width, this.height,
-                    (flashAlpha << 24) | 0xD4941E);
+                g.fill(0, 0, this.width, this.height, (flashAlpha << 24) | 0x4A6428);
             }
         }
 
         if (easterEggMessage == null || now >= easterEggUntilMs) return;
-        // Fade out en los ultimos 1000ms
-        long remain = easterEggUntilMs - now;
-        int alpha = remain < 1000L ? (int)(255 * remain / 1000L) : 255;
-        int color = (alpha << 24) | 0xD4941E;
-        int shadowCol = (alpha << 24) | 0x000000;
 
-        // Texto escalado adaptativo (menos en escalas altas para no salirse)
-        int w = this.font.width(easterEggMessage);
-        float eeScale = this.width < 500 ? 1.0f : (this.width < 800 ? 1.3f : 1.8f);
-        int cx = this.width / 2;
-        int cy = this.height / 2;
-        g.pose().pushPose();
-        g.pose().translate(cx, cy, 0);
-        g.pose().scale(eeScale, eeScale, 1f);
-        g.drawString(this.font, easterEggMessage, -w / 2 + 1, 1, shadowCol, false);
-        g.drawString(this.font, easterEggMessage, -w / 2, 0, color, false);
-        g.pose().popPose();
+        long remain = easterEggUntilMs - now;
+        int alpha = remain < 900L ? (int)(230 * remain / 900L) : 230;
+        alpha = Math.max(0, Math.min(230, alpha));
+
+        int elapsedChars = (int)Math.min(easterEggMessage.length(), Math.max(0, (now - easterEggStartedMs) / 22L));
+        String visibleMessage = easterEggMessage.substring(0, elapsedChars);
+
+        int boxW = Math.max(220, Math.min(330, this.width - 96));
+        java.util.List<net.minecraft.util.FormattedCharSequence> lines =
+            this.font.split(Component.literal(visibleMessage), boxW - 34);
+        int lineCount = Math.max(1, Math.min(3, lines.size()));
+        int boxH = 31 + lineCount * this.font.lineHeight;
+
+        int buttonTop = estimateFirstButtonTop();
+        int safeTop = isMinimalMode() ? 76 : 166;
+        int safeBottom = Math.max(safeTop + boxH + 8, buttonTop - 16);
+        int boxX = (this.width - boxW) / 2;
+        int boxY = safeTop + Math.max(0, (safeBottom - safeTop - boxH) / 2);
+        if (boxY + boxH > buttonTop - 10) boxY = Math.max(8, buttonTop - boxH - 10);
+        if (boxY < safeTop) boxY = Math.max(8, safeTop);
+
+        int paper = (alpha << 24) | 0xE6D2A6;
+        int ink = (alpha << 24) | 0x241608;
+        int bronze = (Math.min(205, alpha) << 24) | 0x8E6A35;
+        int green = (Math.min(180, alpha) << 24) | 0x5A7038;
+        int red = (Math.min(210, alpha) << 24) | 0x6E1F16;
+        int shadow = (Math.min(80, alpha / 2) << 24) | 0x000000;
+
+        // Thin telegram slip: sits between logo and lower buttons, never over controls.
+        g.fill(boxX + 3, boxY + 4, boxX + boxW + 4, boxY + boxH + 5, shadow);
+        g.fill(boxX, boxY, boxX + boxW, boxY + boxH, paper);
+        g.fill(boxX, boxY, boxX + boxW, boxY + 1, bronze);
+        g.fill(boxX, boxY + boxH - 1, boxX + boxW, boxY + boxH, bronze);
+        g.fill(boxX, boxY, boxX + 1, boxY + boxH, bronze);
+        g.fill(boxX + boxW - 1, boxY, boxX + boxW, boxY + boxH, bronze);
+        g.fill(boxX + 8, boxY + 7, boxX + 20, boxY + 8, green);
+        g.fill(boxX + boxW - 20, boxY + 7, boxX + boxW - 8, boxY + 8, green);
+
+        String stamp = isEnglishSelected() ? "CASE " + easterEggCaseCode : "CASO " + easterEggCaseCode;
+        g.drawString(this.font, stamp, boxX + 13, boxY + 8, red, false);
+        String seal = isEnglishSelected() ? "UNDER SEAL" : "BAJO SELLO";
+        int sealW = this.font.width(seal);
+        g.drawString(this.font, seal, boxX + boxW - sealW - 13, boxY + 8, DiaryTheme.withAlpha(0xFF241608, alpha), false);
+        g.fill(boxX + 12, boxY + 19, boxX + boxW - 12, boxY + 20, (Math.min(115, alpha) << 24) | 0x422810);
+
+        int textY = boxY + 25;
+        for (int i = 0; i < lineCount; i++) {
+            g.drawString(this.font, lines.get(i), boxX + 15, textY + i * this.font.lineHeight, ink, false);
+        }
+
+        int pulse = 80 + (int)(Math.sin(now / 120.0) * 45.0);
+        int dot = (Math.min(alpha, Math.max(30, pulse)) << 24) | 0x5A7038;
+        g.fill(boxX + boxW - 10, boxY + boxH - 10, boxX + boxW - 6, boxY + boxH - 6, dot);
+        if (elapsedChars < easterEggMessage.length()) {
+            int cx = boxX + 15 + this.font.width(this.font.plainSubstrByWidth(visibleMessage, boxW - 44));
+            g.fill(Math.min(boxX + boxW - 18, cx + 2), boxY + boxH - 13,
+                Math.min(boxX + boxW - 16, cx + 4), boxY + boxH - 5, green);
+        }
+    }
+
+    private int estimateFirstButtonTop() {
+        try {
+            LayoutRegion leftCol = leftColumn();
+            int totalBtnH = BTN_H * 2 + Spacing.GAP_MEDIUM;
+            return leftCol.anchorY(Anchor.BOT_LEFT, totalBtnH) - Spacing.GAP_LARGE;
+        } catch (Throwable ignored) {
+            return this.height - 96;
+        }
     }
 
     // Cache del mensaje del dia: solo se recalcula si cambio la fecha
     private static String cachedDayMsg = null;
     private static java.time.LocalDate cachedDayMsgDate = null;
+    private static String cachedDayMsgLang = null;
 
     /** Mensaje del cronista segun el dia real de la semana + mes especial (cacheado). */
     private static String getDayMessage() {
         java.time.LocalDate today = java.time.LocalDate.now();
-        if (cachedDayMsg != null && today.equals(cachedDayMsgDate)) {
+        String lang = net.minecraft.client.Minecraft.getInstance().getLanguageManager().getSelected();
+        if (lang == null) lang = "en_us";
+        if (cachedDayMsg != null && today.equals(cachedDayMsgDate)
+                && java.util.Objects.equals(lang, cachedDayMsgLang)) {
             return cachedDayMsg;
         }
         cachedDayMsgDate = today;
+        cachedDayMsgLang = lang;
+        boolean english = isEnglishSelected();
         int month = today.getMonthValue();
         int dow = today.getDayOfWeek().getValue();
 
-        // Mensajes especiales por mes
         String monthBonus = "";
-        if (month == 10) monthBonus = " ~ los muertos caminan";
-        else if (month == 12) monthBonus = " ~ noche de Adviento";
-        else if (month == 1) monthBonus = " ~ ano nuevo, misma peste";
+        if (english) {
+            if (month == 10) monthBonus = " ~ the dead walk";
+            else if (month == 12) monthBonus = " ~ Advent night";
+            else if (month == 1) monthBonus = " ~ new year, same plague";
+        } else {
+            if (month == 10) monthBonus = " ~ los muertos caminan";
+            else if (month == 12) monthBonus = " ~ noche de Adviento";
+            else if (month == 1) monthBonus = " ~ ano nuevo, misma peste";
+        }
 
         String base;
-        switch (dow) {
-            case 1: base = "Lunes ~ otra semana en cuarentena"; break;
-            case 2: base = "Martes ~ dia de lluvia fina"; break;
-            case 3: base = "Miercoles ~ sin correspondencia"; break;
-            case 4: base = "Jueves ~ el mercado cerro"; break;
-            case 5: base = "Viernes ~ que Dios se apiade"; break;
-            case 6: base = "Sabado ~ descanso obligado"; break;
-            case 7: base = "Domingo ~ las campanas suenan solas"; break;
-            default: base = "";
+        if (english) {
+            switch (dow) {
+                case 1: base = "Monday ~ another week in quarantine"; break;
+                case 2: base = "Tuesday ~ thin rain"; break;
+                case 3: base = "Wednesday ~ no correspondence"; break;
+                case 4: base = "Thursday ~ the market closed"; break;
+                case 5: base = "Friday ~ may God have mercy"; break;
+                case 6: base = "Saturday ~ compulsory rest"; break;
+                case 7: base = "Sunday ~ the bells ring alone"; break;
+                default: base = "";
+            }
+        } else {
+            switch (dow) {
+                case 1: base = "Lunes ~ otra semana en cuarentena"; break;
+                case 2: base = "Martes ~ dia de lluvia fina"; break;
+                case 3: base = "Miercoles ~ sin correspondencia"; break;
+                case 4: base = "Jueves ~ el mercado cerro"; break;
+                case 5: base = "Viernes ~ que Dios se apiade"; break;
+                case 6: base = "Sabado ~ descanso obligado"; break;
+                case 7: base = "Domingo ~ las campanas suenan solas"; break;
+                default: base = "";
+            }
         }
         cachedDayMsg = base + monthBonus;
         return cachedDayMsg;

@@ -5,23 +5,23 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.13.9 - El gabinete se llena de maquinas**
+**v0.13.10 - Acero bajo la lluvia**
 
-El resource pack del mod crecio esta semana desde una sola pantalla hasta
-abarcar toda la trastienda del jugador: mesas de trabajo, arcones, hornos,
-yunques, piedras de amolar, mesas arcanas y torres de baliza recibieron
-el tratamiento steel victoriano. Cada estacion conserva su rol pero ahora
-todas comparten el mismo lenguaje de hierro forjado, remaches y latón.
+El gabinete vuelve a abrir sus maquinas con una disciplina mas severa:
+los hornos, cajas menores, mesas de oficio, inventarios de caballeriza y
+libros de intercambio obedecen ahora al mismo acero gris, remachado y
+sobrio. La mesa arcana conserva su purpura de vigilia, pero sus renglones
+respiran entre chispas y destellos, como si cada palabra hubiese sido
+escrita con una aguja cargada de electricidad.
+
+Afuera, la noche tambien gano oficio. La lluvia ya no cae sin dejar
+memoria: salpica la calle, dibuja ondas en los charcos y se inclina cuando
+el viento arrecia. Los faroles proyectan reflejos ambar sobre el empedrado,
+pequenas polillas los rondan, y papeles de cuarentena se arrastran por la
+avenida mientras las ramas ensucian el vidrio con sombras moviles.
 
 El paquete se activa por defecto al instalar el mod y puede desactivarse
 desde Ajustes si el jugador prefiere el aspecto vanilla.
-
-Hotfixes criticos sobre v0.12.2: el ambiente del cronista persiste
-al navegar entre pantallas, nuevo slider de volumen ambiente en
-Sonidos, optimizacion de subpantallas (sin niebla/faroles/lluvia
-detras del pergamino), luna sin disco negro, easter egg adaptativo
-a escalas GUI, y reduccion general de particulas para mejor
-rendimiento sin perder atmosfera.
 
 ## Caracteristicas principales
 

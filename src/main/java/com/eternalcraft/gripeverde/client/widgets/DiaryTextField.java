@@ -128,6 +128,10 @@ public class DiaryTextField extends EditBox {
         g.fill(x, y, x + 1, y + h, borderColor);
         g.fill(x + w - 1, y, x + w, y + h, borderColor);
 
+        g.fill(x + 4, y + h - 4, x + w - 4, y + h - 3, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 38));
+        g.fill(x + 3, y + 4, x + 4, y + h - 4, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 45));
+        g.fill(x + w - 4, y + 4, x + w - 3, y + h - 4, DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, 55));
+
         // ---- LECTURA DE ESTADO ----
         Font font = net.minecraft.client.Minecraft.getInstance().font;
         String value       = this.getValue();               // publico

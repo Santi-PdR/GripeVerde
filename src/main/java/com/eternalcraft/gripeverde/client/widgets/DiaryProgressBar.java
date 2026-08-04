@@ -44,12 +44,16 @@ public final class DiaryProgressBar {
             g.fill(x + 2, y + h - 3, x + 2 + fillW, y + h - 2, 0x80301608);
         }
 
+        for (int i = 1; i < 5; i++) {
+            int tx = x + 2 + (w - 4) * i / 5;
+            g.fill(tx, y + 2, tx + 1, y + h - 2, DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 45));
+        }
+
         // Label centrado sobre la barra
         if (label != null && !label.isEmpty()) {
             int lw = Minecraft.getInstance().font.width(label);
             int lx = x + (w - lw) / 2;
             int ly = y + (h - 8) / 2;
-            g.drawString(Minecraft.getInstance().font, label, lx + 1, ly + 1, DiaryChrome.SHADOW_COL, false);
             g.drawString(Minecraft.getInstance().font, label, lx, ly, DiaryTheme.INK, false);
         }
     }
