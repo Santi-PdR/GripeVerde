@@ -1,22 +1,5 @@
 # Eternal Craft: Gripe Verde
 
-## v0.13.10 RC - Resumen no tecnico del Mod Menu
-
-Se agrego una hoja de traspaso pensada para explicar la experiencia visible del mod sin entrar en codigo: que cambia el menu principal, como se organiza el gabinete de opciones, que pantallas se transforman, que aporta el paquete visual, que lugar ocupa el audio y que limites deben respetarse para no romper la familiaridad de Minecraft.
-
-
-## v0.13.10 RC - Registro de traspaso IA
-
-El gabinete queda preparado para ser retomado por otra mano sin perder el
-hilo: la rama de trabajo, el commit de referencia, las rutas locales, las
-reglas del usuario, las validaciones y los riesgos activos quedan reunidos
-en `AI_HANDOFF.md`.
-
-La mesa de sonido queda ordenada por categorias de uso. Los botones
-principales, las puertas de seccion y los regresos tienen familias sonoras
-separadas, con los tonos rechazados retirados de las referencias del mod.
-
-
 ## v0.13.10 - Acero bajo la lluvia
 
 La ciudad ha recibido una mano mas firme sobre sus maquinas. Los hornos,

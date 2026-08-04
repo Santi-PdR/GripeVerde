@@ -1,26 +1,5 @@
 # Eternal Craft: Gripe Verde
 
-## Estado para traspaso IA (commit 45fa59e)
-
-- Version actual: `0.13.10`.
-- Rama de trabajo fija: `arena/019fbe66-gripeverde`.
-- Commit de referencia: `45fa59e fix: categorizar sonidos de botones`.
-- Objetivo activo: polish visual/sonoro/UI client-side; no gameplay.
-- Build objetivo: Minecraft `1.20.1`, Forge `47.4.20`, Java `17`.
-- Deploy Test del usuario: `D:\Juegos\Minecraft\Instances\Test\mods`.
-- Documento de traspaso detallado: `AI_HANDOFF.md`.
-
-### Audio UI vigente
-
-Los botones usan categorias sonoras separadas:
-
-- `ui.button_main`: botones principales y entrada general, usando `button_clean_03_brass_latch.ogg`.
-- `ui.button_section`: botones que abren secciones del gabinete, usando `modal.ogg`.
-- `ui.back`: volver/cerrar/salir, usando `back1.ogg` y `back2.ogg`.
-
-No reintroducir los sonidos rechazados: `button_clean_01`, `button_clean_02`, `error1`, `error2`, `open1`, `open2`, `respawn`.
-
-
 Mod de interfaz para Minecraft Forge 1.20.1.
 Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
@@ -99,8 +78,6 @@ Reglas actuales:
 **Espanol:** es_es, es_mx, es_ar, es_419, es_bo, es_cl, es_co, es_cr, es_do, es_ec, es_gt, es_hn, es_ni, es_pa, es_pe, es_pr, es_py, es_sv, es_uy, es_ve
 
 ## Documentacion
-
-- `MODMENU_RESUMEN_IA.md` - resumen no tecnico del Mod Menu, experiencia y cambios visibles para traspaso a otra IA.
 
 - `CONTEXTO.md` - contexto maestro actual para retomar sesiones.
 - `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores.

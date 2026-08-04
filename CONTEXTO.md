@@ -1,13 +1,9 @@
 # Eternal Craft: Gripe Verde - Contexto maestro
 
-## Addendum operativo - handoff IA (commit 45fa59e)
-
-- Resumen no tecnico del Mod Menu: `MODMENU_RESUMEN_IA.md`.
+## Addendum operativo actual
 
 - Rama fija de Arena: `arena/019fbe66-gripeverde`.
-- Commit actual remoto: `45fa59e fix: categorizar sonidos de botones`.
 - Version: `0.13.10`.
-- Documento de traspaso: `AI_HANDOFF.md`.
 - Ultima regla explicita del usuario: despues de hacer cambios, pasar siempre PowerShell completo para enviar a Test.
 
 ### Estado sonoro de botones
@@ -19,11 +15,10 @@
 
 ### Instrucciones para otra IA
 
-1. Leer `AI_HANDOFF.md` antes de tocar codigo.
-2. No cambiar de branch.
-3. No agregar gameplay.
-4. Validar JSON y referencias de sonidos antes de commit.
-5. Entregar siempre PW completo de build/deploy al finalizar.
+1. No cambiar de branch.
+2. No agregar gameplay.
+3. Validar JSON y referencias de sonidos antes de commit.
+4. Entregar siempre PW completo de build/deploy al finalizar.
 
 
 Lee este documento COMPLETO antes de responder. Contiene toda la informacion

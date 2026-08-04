@@ -1,18 +1,11 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
-### Documento no tecnico de traspaso
-
-- `MODMENU_RESUMEN_IA.md` describe el Mod Menu y la experiencia visible para otra IA o colaborador sin requerir contexto tecnico.
-- Mantener ese documento actualizado si cambia la identidad visible del mod, las pantallas principales, el resource pack o la politica de sonidos.
-
-
-## Estado actual para continuidad (commit 45fa59e)
+## Estado actual para continuidad
 
 ### Cerrado en esta linea de trabajo
 - Sonidos UI categorizados por uso (`ui.button_main`, `ui.button_section`, `ui.back`).
 - `sounds.json` no referencia los OGG rechazados por el usuario.
 - Carpeta de pruebas de botones reducida al candidato aceptado y notas de seleccion.
-- `AI_HANDOFF.md` creado como resumen operativo para otra IA.
 
 ### Riesgos activos
 - Validar auditivamente en cliente real que `modal.ogg` funcione bien como sonido de apertura de seccion.
