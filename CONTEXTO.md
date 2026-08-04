@@ -2,8 +2,8 @@
 
 ## Addendum operativo actual
 
-- Rama fija de Arena: `arena/019fbe66-gripeverde`.
-- Version: `0.13.10`.
+- Rama fija de Arena: `arena/019fcf10-gripeverde`.
+- Version: `0.14.4`.
 - Ultima regla explicita del usuario: despues de hacer cambios, pasar siempre PowerShell completo para enviar a Test.
 
 ### Estado sonoro de botones
@@ -28,11 +28,11 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.13.10
-- build.gradle: version = '0.13.10'
-- GripeVerdeMod.VERSION: "0.13.10"
+- Version estable actual: v0.14.4
+- build.gradle: version = '0.14.4'
+- GripeVerdeMod.VERSION: "0.14.4"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
-- Ultimo tag publicado: v0.13.10
+- Ultimo tag publicado: v0.14.4 (pendiente de tag en origin tras merge del PR #3)
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
 
@@ -2244,3 +2244,75 @@ enchanting_table.
 ### Nota
 No se agrega gameplay. Todo es presentacion, atmosfera, resource pack y
 validacion de assets.
+
+---
+
+## ADDENDUM v0.14.4 (acero plateado de Silver Steel)
+
+### Alcance
+Cierre del ciclo de containers y reescritura completa del resource pack built-in
+sobre las texturas vanilla de 1.20.1. Se conserva byte a byte la disposicion de
+slots, iconos funcionales y mascaras de alfa; cambia solo la piel del metal.
+
+### Cambios de codigo
+- `ResourcePackHandler.java`: `PACK_NAME = "Eternal Craft - Silver Steel"`.
+- `ContainerOverlayHandler.java`: `TEXT_LIGHT = 0xFFDDE5EE` (acero frio; antes
+  `0xFFECE6D2`).
+- `build.gradle`: `verifyGripeVerdeThemeAssets` lista los 20 assets del pack.
+  `dropper.png` se retira del pack (vanilla 1.20.1 no lo incluye; el dispenser
+  cubre la textura del dropper).
+
+### Resource pack reconstruido
+20 texturas en `src/main/resources/resourcepacks/gripeverde_theme/assets/minecraft/textures/gui/container/`
+(256x256, `villager2.png` 512x256, igual que vanilla):
+anvil, beacon, blast_furnace, brewing_stand, cartography_table,
+crafting_table, dispenser, enchanting_table, furnace, generic_54, grindstone,
+hopper, horse, inventory, loom, shulker_box, smithing, smoker, stonecutter,
+villager2.
+
+Scripts y artefactos en `tools/silver_steel/`:
+- `steelkit.py` (helpers), `build1.py`..`build4.py` (pipeline deterministico
+  con semillas fijas), `verify.py` (20/20 OK: alfa identico, iconos verbatim,
+  estructura preservada), `cells_report.txt` (reporte de veredicto por celda),
+  `README.md` (uso de variables `STEEL_VANILLA` y `STEEL_OUT`).
+- `EternalCraft-SilverSteel-1.20.1.zip`: pack standalone para probar sin el mod.
+- `silver_steel_viewer.html`: visor vanilla vs nuevo (autocontenido).
+- `silver_steel_contact_sheet.png`: las 20 texturas a 2x.
+
+### Decisiones de diseno (no se pierden)
+- Paleta silver steel fria (saturacion < 8%, hue ~210): `ED 0x232A33`, `S2 0x2E3540`,
+  `S1 0x3B4450`, `M2 0x4C5562`, `M1 0x5F6976`, `B 0x8A94A2`, `B2 0x99A3B1`,
+  `L1 0xABB5C2`, `L2 0xC2CBD6`, `L3 0xD6DDE6`, `HL 0xE9EFF6`,
+  `SI 0x646E7B` (interior de slot rehundido).
+- Acentos muy desaturados por container: enchanting `0x8E7FAD` (amatista),
+  beacon/villager `0xBCAB84` (dorado palido), brewing `0x86A2A0` (teal),
+  furnace/smoker/blast `0xC8683E` (ascua mate).
+- Identidad por container (detalles grabados unicos en cada uno) preservada.
+- Material: grano cepillado con semillas fijas, bisel 1px, juntas de placa con
+  brillo, remaches 3px, tornillos, detalles grabados (linea oscura + luz 1px
+  abajo-derecha). Layouts reales verificados (hopper, brewing, smithing,
+  enchanting, anvil, villager, beacon).
+
+### Compatibilidad
+Ver `resourcepacks/gripeverde_theme/COMPATIBILITY.md`. Compatibilidad verificada
+con mods que reusan texturas vanilla o extienden GUIs: Curios, Backpacked /
+Backpacks, JEI, EMI, Sophisticated Backpacks, Iron Chests, Tinkers Construct,
+Patchouli, etc.
+
+### Razon de la version 0.14.4
+El bump `0.13.10 -> 0.14.4` se hizo en la rama de transferencia
+`arena/019fcec7-gripeverde` y quedo pendiente de R-CIERRE completo hasta este
+addendum. El CHANGELOG.md, README.md, KNOWN_ISSUES.md y la entrada in-game se
+sincronizan en este commit.
+
+### Pendientes externos (no bloquean)
+- Build + deploy en PC del usuario (Java 17) con el bloque PowerShell
+  oficial (R-BUILD-DEPLOY) y validacion visual en cliente Test (R-CAP, R-VER).
+- Imagen de referencia original (nunca llego al sandbox); si se reenvia,
+  ajustar paleta contra ella. El resto del diseno no deberia cambiar.
+- Feedback visual por contenedor; regenerar es inmediato con `verify.py`.
+
+### Referencia completa
+`CONTEXTO_TRANSFERENCIA.md` (en la raiz del repo) contiene el contexto de la
+sesion anterior, decisiones de diseno, paths exactos, comandos de
+regeneracion y la lista detallada de pendientes.

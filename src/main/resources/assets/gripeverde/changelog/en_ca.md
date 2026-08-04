@@ -1,6 +1,29 @@
 # Eternal Craft: Gripe Verde
 ## Chronicle under seal
 
+## Version 0.14.4 - The plated steel of Silver Steel
+
+A new shipment of grey plates arrived at the cabinet's workshops,
+wrapped in waxed canvas and signed by hands the smith did not
+recognise. Beneath the wrappings lay polished surfaces, clean rivets
+and joints cut to a fresh line, meant to endure one more season of
+plague. Every trade received the same language: the inventory, the
+chests, the furnaces, the smoker, the high furnace's forge, the
+crafting table, the brewing stand, the anvil, the grindstone, the
+smithing table, the stonecutter, the loom, the cartography table, the
+shulker boxes, the dispenser, the hopper, the merchant ledgers and
+the stables. Even the arcane table, which kept its purple vigil, was
+reviewed so its lines might keep breathing with order.
+
+What did not move: not one functional icon, not one chest from its
+place, not one slot of the inventory. The muscle memory had nothing
+new to learn; it only had to accept that the metal, now, looked as
+though it had come from the same municipal factory.
+
+Parchment still reigns in the offices, the known tongues and the
+correspondence. The riveted steel has at last taken command in every
+place where the reader works with their hands.
+
 ## Version 0.13.10 - Steel beneath the rain
 
 The latest shipment arrived before dawn, covered in wet canvas and signed by

@@ -1,6 +1,30 @@
 # Eternal Craft: Gripe Verde
 ## Cronica bajo sello
 
+## Version 0.14.4 - El acero plateado de Silver Steel
+
+Una nueva remesa de planchas grises llego a los talleres del gabinete,
+cubierta con lonas enceradas y firmada por manos que el herrero no
+reconocio. Al destaparla aparecieron superficies pulidas, remaches
+limpios y juntas de placa recien cortadas, pensadas para resistir
+una temporada mas de peste. Cada oficio recibio el mismo lenguaje:
+el inventario, los arcones, los hornos, el ahumador, la fragua del
+alto horno, la mesa de crafteo, el soporte de pociones, el yunque,
+la afiladora, la mesa de herreria, la cortapiedra, el telar, la mesa
+de cartografia, los cofres de shulker, el dispenser, la tolva, los
+registros de comercio y las caballerizas. Hasta la mesa arcana, que
+conservo su vigilia purpura, fue revisada para que sus renglones
+siguieran respirando con orden.
+
+Lo que no se movio: ni un icono funcional, ni un cajon de su sitio, ni
+una ranura del inventario. La memoria de los dedos no tuvo que
+aprender nada nuevo; solo tuvo que aceptar que el metal, ahora,
+lucia como salido de la misma factoria municipal.
+
+El pergamino sigue reinando en los despachos, las lenguas conocidas y
+la correspondencia. El acero remachado tomo por fin el mando en cada
+lugar donde el lector trabaja con sus manos.
+
 ## Version 0.13.10 - Acero bajo la lluvia
 
 La ultima remesa llego de madrugada, cubierta con lonas humedas y firmada

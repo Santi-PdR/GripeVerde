@@ -1,5 +1,21 @@
 # Eternal Craft: Gripe Verde
 
+## v0.14.4 - El acero plateado de Silver Steel
+
+El pack de recursos del mod se reconstruyo desde cero, dejando atras la primera
+remesa de planchas grises. Las veinte superficies del trabajo cotidiano
+(inventario, cofres, hornos, ahumador, alto horno, mesa de crafteo, mesa
+arcana, soporte de pociones, yunque, afiladora, mesa de herreria, cortapiedra,
+telar, mesa de cartografia, shulker, dispenser, tolva, herreria de aldeano y
+caballeriza) se reescribieron sobre las texturas vanilla de 1.20.1, conservando
+byte a byte la posicion de slots, iconos funcionales y mascaras de alfa. Solo
+cambia la piel del metal: el mismo acero, mas sobrio, mas remachado, mas
+victoriano. Verificacion pixel a pixel: 20/20 texturas, 0 fallos.
+
+Script de regeneracion deterministico (semillas fijas) en `tools/silver_steel/`,
+mas visor HTML comparativo y contact sheet para revisar el conjunto sin
+abrir Minecraft.
+
 ## v0.13.10 RC - Pulido de gabinete y sonidos
 
 El gabinete recibio una limpieza de oficio: los pestillos sonoros quedaron separados por funcion, los registros abandonaron herramientas temporales y las notas de continuidad fueron devueltas a los documentos centrales. La cronica publica conserva solo aquello que pertenece al viajero y al cronista.

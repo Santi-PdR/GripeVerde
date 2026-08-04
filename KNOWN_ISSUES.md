@@ -1,5 +1,31 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## Estado actual de pulido RC (v0.14.4 - Silver Steel)
+
+### Version
+- v0.14.4 (bump desde v0.13.10). build.gradle y GripeVerdeMod.VERSION
+  sincronizados. Pendiente: tag v0.14.4 en origin tras merge del PR #3.
+- Resource pack built-in reconstruido desde cero sobre vanilla 1.20.1
+  ("Eternal Craft - Silver Steel"). 20/20 texturas verificadas con
+  verify.py: 0 fails, alfa identico, iconos verbatim, estructura
+  preservada en las mismas coordenadas.
+
+### Criterios activos
+- Sonidos de boton separados por categoria funcional.
+- No conservar archivos temporales de traspaso dentro del repo.
+- No reintroducir bandejas o sombras que ensucien listas de opciones.
+- Mantener layouts vanilla de containers y pantallas densas.
+- Revisar cada nuevo recurso contra `sounds.json` antes de compilar.
+- Mantener memoria muscular: layouts vanilla de containers NO se tocan,
+  solo paleta y estetica. Slots, iconos funcionales y mascaras de alfa
+  se preservan byte a byte.
+
+### Documentacion
+- CHANGELOG.md, README.md, CONTEXTO.md y los 25 changelog/*.md in-game
+  actualizados a v0.14.4 (R-CIERRE + R-DIEGETICO).
+- CONTEXTO_TRANSFERENCIA.md (en la raiz) conserva el contexto completo
+  de la sesion anterior y la lista de pendientes externos.
+
 ## Estado actual de pulido RC
 
 ### Criterios activos

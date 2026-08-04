@@ -5,20 +5,20 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.13.10 - Acero bajo la lluvia**
+**v0.14.4 - El acero plateado de Silver Steel**
 
-El gabinete vuelve a abrir sus maquinas con una disciplina mas severa:
-los hornos, cajas menores, mesas de oficio, inventarios de caballeriza y
-libros de intercambio obedecen ahora al mismo acero gris, remachado y
-sobrio. La mesa arcana conserva su purpura de vigilia, pero sus renglones
-respiran entre chispas y destellos, como si cada palabra hubiese sido
-escrita con una aguja cargada de electricidad.
+Una nueva remesa de planchas grises llego a los talleres del gabinete.
+Las veinte superficies del trabajo cotidiano se reescribieron sobre las
+texturas de origen, sin mover un solo icono de su sitio, sin cambiar la
+memoria de los dedos. Solo cambia la piel del metal: el mismo acero, mas
+sobrio, mas remachado, mas victoriano.
 
-Afuera, la noche tambien gano oficio. La lluvia ya no cae sin dejar
-memoria: salpica la calle, dibuja ondas en los charcos y se inclina cuando
-el viento arrecia. Los faroles proyectan reflejos ambar sobre el empedrado,
-pequenas polillas los rondan, y papeles de cuarentena se arrastran por la
-avenida mientras las ramas ensucian el vidrio con sombras moviles.
+Los hornos, las cajas menores, la afiladora, el yunque, la mesa de
+corte, la mesa de herreria, la mesa arcana, los registros de comercio,
+las caballerizas, el soporte de pociones, el telar, la mesa de
+cartografia, el cortapiedra, las shulker y el inventario obedecen ahora
+al mismo lenguaje: acero pulido, remaches de laton, juntas de placa y
+detalles unicos por oficio que la memoria reconoce sin equivoco.
 
 El paquete se activa por defecto al instalar el mod y puede desactivarse
 desde Ajustes si el jugador prefiere el aspecto vanilla.
