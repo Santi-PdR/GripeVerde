@@ -31,7 +31,7 @@ import java.util.Map;
 @Mod.EventBusSubscriber(modid = GripeVerdeMod.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class ContainerOverlayHandler {
 
-    private static final int TEXT_LIGHT = 0xFFECE6D2;
+    private static final int TEXT_LIGHT = 0xFFDDE5EE;  // acero frio (Silver Steel)
     private static final int HIDDEN_POS = -10000;
     private static final int ENDER_PURPLE = 0xFF9B43D6;
     private static final int ENDER_GREEN = 0xFF56D6A0;

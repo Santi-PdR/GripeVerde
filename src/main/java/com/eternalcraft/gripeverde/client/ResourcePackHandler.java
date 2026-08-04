@@ -24,7 +24,7 @@ import java.nio.file.Path;
 public class ResourcePackHandler {
 
     private static final String PACK_ID = "gripeverde_theme";
-    private static final String PACK_NAME = "Gripe Verde - Tema Victoriano";
+    private static final String PACK_NAME = "Eternal Craft - Silver Steel";
 
     @SubscribeEvent
     public static void onAddPackFinders(AddPackFindersEvent event) {
