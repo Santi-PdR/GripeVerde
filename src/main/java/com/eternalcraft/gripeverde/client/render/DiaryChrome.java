@@ -96,23 +96,6 @@ public final class DiaryChrome {
         gfx.fill(x + w - 7, y + h - 7, x + w - 5, y + h - 5, dot);
     }
 
-    public static void drawListMatte(GuiGraphics gfx, int x, int y, int w, int h) {
-        int paper = 0xD8D7C79E;
-        int paperDeep = 0x9A9B7A4A;
-        int edge = 0x8A422810;
-        int pin = 0xB08E6A35;
-        gfx.fill(x, y, x + w, y + h, paper);
-        gfx.fill(x + 2, y + 2, x + w - 2, y + h - 2, paperDeep);
-        gfx.fill(x, y, x + w, y + 1, edge);
-        gfx.fill(x, y + h - 1, x + w, y + h, edge);
-        gfx.fill(x, y, x + 1, y + h, edge);
-        gfx.fill(x + w - 1, y, x + w, y + h, edge);
-        gfx.fill(x + 4, y + 4, x + 6, y + 5, pin);
-        gfx.fill(x + w - 6, y + 4, x + w - 4, y + 5, pin);
-        gfx.fill(x + 4, y + h - 5, x + 6, y + h - 4, pin);
-        gfx.fill(x + w - 6, y + h - 5, x + w - 4, y + h - 4, pin);
-    }
-
     // ── Barra de scroll estilizada en tinta victoriana ──────────────────────
     // Repinta encima de la barra vanilla. Requiere pasar geometria explicita
     // porque las listas vanilla exponen distinta API segun subclase.
@@ -249,23 +232,6 @@ public final class DiaryChrome {
 
         drawScrollThumb(gfx, scrollLeft, trackY1, trackY2, list.getScrollAmount(), maxScroll);
     }
-
-    // ---------------------------------------------------------------
-    // Fade superior e inferior para listas vanilla sobre pergamino.
-    // Dibuja gradientes pergamino->transparente que suavizan el corte
-    // duro donde la lista se recorta contra el panel.
-    // Llamar DESPUES de list.render() y ANTES de drawScrollThumb.
-    // ---------------------------------------------------------------
-    public static void drawListFades(GuiGraphics gfx, int listLeft, int listRight,
-                                     int listTop, int listBottom, int fadeH) {
-        int paperFull  = 0xFFF3E9CE;  // pergamino opaco
-        int paperClear = 0x00F3E9CE;  // pergamino transparente
-        // Fade superior: pergamino -> transparente (de arriba hacia abajo)
-        gfx.fillGradient(listLeft, listTop, listRight, listTop + fadeH, paperFull, paperClear);
-        // Fade inferior: transparente -> pergamino (de arriba hacia abajo)
-        gfx.fillGradient(listLeft, listBottom - fadeH, listRight, listBottom, paperClear, paperFull);
-    }
-
 
 
     /** Cursor de pluma pixelart al lado del mouse.

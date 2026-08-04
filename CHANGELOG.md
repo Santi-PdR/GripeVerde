@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## v0.13.10 RC - Pulido de gabinete y sonidos
+
+El gabinete recibio una limpieza de oficio: los pestillos sonoros quedaron separados por funcion, los registros abandonaron herramientas temporales y las notas de continuidad fueron devueltas a los documentos centrales. La cronica publica conserva solo aquello que pertenece al viajero y al cronista.
+
+
 ## v0.13.10 - Acero bajo la lluvia
 
 La ciudad ha recibido una mano mas firme sobre sus maquinas. Los hornos,

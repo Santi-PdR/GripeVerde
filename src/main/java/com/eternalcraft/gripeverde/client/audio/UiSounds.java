@@ -82,7 +82,6 @@ public class UiSounds {
     public static void buttonSection() { safePlay("button_section", ModSounds.UI_BUTTON_SECTION, 0.16f, 1.00f); }
 
     public static void optionOpen()    { buttonSection(); }
-    public static void optionPage()    { buttonSection(); }
 
     public static void playRaw(SoundEvent sound, float volume, float pitch) {
         Minecraft mc = Minecraft.getInstance();

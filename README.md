@@ -23,6 +23,12 @@ avenida mientras las ramas ensucian el vidrio con sombras moviles.
 El paquete se activa por defecto al instalar el mod y puede desactivarse
 desde Ajustes si el jugador prefiere el aspecto vanilla.
 
+## Resumen visible del Mod Menu
+
+Eternal Craft: Gripe Verde convierte los menus de Minecraft en un gabinete victoriano bajo cuarentena. El menu principal muestra una ciudad oscura con lluvia, niebla, reloj de bolsillo, carteles oficiales, musica y ambiente propio. El gabinete de opciones organiza las secciones como registros del cronista: apariencia, sonido, video, controles, idioma, chat, paquetes, accesibilidad, online y creditos.
+
+El paquete visual integrado transforma containers vanilla con acero gris, tinta, pergamino y bronce envejecido, manteniendo siempre la memoria muscular: los slots y layouts importantes permanecen reconocibles. El mod es client-side y no agrega gameplay.
+
 ## Caracteristicas principales
 
 ### Menu principal victoriano

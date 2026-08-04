@@ -90,7 +90,7 @@ C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 
 - Local: C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde
 - Remoto: https://github.com/Santi-PdR/GripeVerde (privado)
-- Ultimo tag: v0.13.9
+- Ultimo tag: v0.13.10
 
 ## Rutas reales verificadas
 
@@ -212,10 +212,8 @@ Audio en Title:
 ### KI-05 (RESUELTO en v0.9.2)
 - Humo, nubes y velo lunar dibujados con drawSoftBlob (6 anillos concentricos, alpha cuadratico).
 
-### KI-06 (ACTIVO)
-- Menu del Historial de Cambios usa UI vanilla de Minecraft (fondo dirt, tipografia default).
-- Rompe la ambientacion victoriana del Title.
-- Planificado para v0.10.x u v0.11.x.
+### KI-06 (CERRADO)
+- Changelog in-game usa pantalla propia sobre pergamino, con lectura narrativa y scroll estilizado.
 
 ---
 
@@ -1475,7 +1473,7 @@ Ver KNOWN_ISSUES.md seccion "v0.11.10 a v0.11.13" para detalle completo. Resumen
 
 ### Sistema
 - 3 widgets nuevos: DiaryTextField, DiaryToggle, TooltipEventHandler.
-- 1 helper nuevo en DiaryChrome: drawListFades.
+- Helper de fades de lista retirado en RC; se conserva scroll estilizado sin velo.
 - Infraestructura mixin armada aunque sin mixins activos (client:[] vacio).
 - 4 KIs cerrados: KI-10, KI-15, KI-16, y avance en KI-07.
 
@@ -1485,7 +1483,7 @@ Ver KNOWN_ISSUES.md seccion "v0.11.10 a v0.11.13" para detalle completo. Resumen
 - client/TooltipEventHandler.java
 
 ### Codigo modificado
-- render/DiaryChrome.java (drawListFades + drawStyledScrollThumbInPanel condicional)
+- render/DiaryChrome.java (scrollbars estilizadas; fades de lista retirados)
 - screens/DiaryAccessibilityOptionsScreen.java (fades)
 - screens/DiaryChatOptionsScreen.java (fades)
 - screens/DiarySoundOptionsScreen.java (fades)
@@ -1521,7 +1519,7 @@ Ver KNOWN_ISSUES.md seccion "v0.11.10 a v0.11.13" para detalle completo. Resumen
 
 ### Sistema
 - 3 widgets nuevos: DiaryTextField, DiaryToggle, TooltipEventHandler.
-- 1 helper nuevo en DiaryChrome: drawListFades.
+- Helper de fades de lista retirado en RC; se conserva scroll estilizado sin velo.
 - Infraestructura mixin armada aunque sin mixins activos (client:[] vacio).
 - 4 KIs cerrados: KI-10, KI-15, KI-16, y avance en KI-07.
 
@@ -1531,7 +1529,7 @@ Ver KNOWN_ISSUES.md seccion "v0.11.10 a v0.11.13" para detalle completo. Resumen
 - client/TooltipEventHandler.java
 
 ### Codigo modificado
-- render/DiaryChrome.java (drawListFades + drawStyledScrollThumbInPanel condicional)
+- render/DiaryChrome.java (scrollbars estilizadas; fades de lista retirados)
 - screens/DiaryAccessibilityOptionsScreen.java (fades)
 - screens/DiaryChatOptionsScreen.java (fades)
 - screens/DiarySoundOptionsScreen.java (fades)
@@ -2193,42 +2191,27 @@ Ninguno (todo es assets + ResourcePackHandler ya existente de v0.13.2).
 - Hotbar (widgets.png) sigue vanilla. Plan: M2 en ciclo futuro cuando
   encaje.
 
-### KI-15 (NUEVO en v0.13.9)
-- Containers menores no cubiertos por M1: brewing_stand, hopper, dispenser,
-  dropper, loom, cartography_table, stonecutter, smithing, villager,
-  horse. Deuda opcional. Bajo impacto (uso poco frecuente).
+### KI-15 (CERRADO en v0.13.10)
+- Containers menores cubiertos por el resource pack steel.
+- Stonecutter, Loom y Smithing conservan layout vanilla para memoria muscular.
 
-## PROXIMO HITO PLANIFICADO (revisado tras v0.13.9)
+## PROXIMO HITO PLANIFICADO (revisado tras RC v0.13.10)
 
-### Candidato M1.2: v0.13.10+ - Containers menores restantes
-Objetivo: extender el pack a brewing_stand, hopper, dispenser, dropper,
-loom, cartography_table, stonecutter, smithing, villager, horse. Ciclo
-opcional, bajo impacto, alto costo relativo. Podria hacerse en un solo
-bump agrupado si Alex/usuario lo pide.
+### Candidato Q1 - Validacion visual final en cliente
+Objetivo: revisar Title, Options, Language, Sound, Chat, Accessibility, Multiplayer, Changelog y containers en GUI scales principales.
 
-### Candidato M2: v0.13.x - Hotbar (widgets.png)
-Objetivo: hotbar pergamino/steel. Duda pendiente: mantener pergamino
-victoriano (coherente con menus) o steel (coherente con containers).
-Requiere decision de scope de arte.
+### Candidato Q2 - Audio UI fino
+Objetivo: confirmar en cliente real que `ui.button_main`, `ui.button_section` y `ui.back` no saturan ni se pisan con musica/ambiente.
 
-### Candidato M5: v0.13.x - Tooltips de items estilizados
-Objetivo: extender fix de tooltips (KI-10) a tooltips de items en el
-inventario. Mixin o RenderTooltipEvent.Color extendido.
+### Candidato M2 - Hotbar (widgets.png)
+Objetivo: decidir si la hotbar debe seguir lenguaje pergamino o acero gris.
 
-### Candidato M9: v0.14.0 - Hito Mixin dirt bypass (KI-12)
-Objetivo: reemplazar dirt background de MouseSettings, KeyBinds,
-PackSelection, OnlineOptions. Ruta identificada, hito dedicado.
+### Candidato M5 - Tooltips de items estilizados
+Objetivo: extender el tratamiento de tooltips sin romper compatibilidad de mods.
 
-### Candidato M10: v0.13.x - Changelog in-game agrupado v0.13
-Objetivo: agregar entrada agrupada "El gabinete se llena de maquinas"
-en los 25 archivos changelog/*.md in-game. INCLUIDO en este cierre.
+### Candidato M11 - Deprecations Forge
+Objetivo: migrar APIs marcadas como deprecated cuando se cierre la RC.
 
-### Candidato M11: v0.13.x - Deprecations Forge
-Objetivo: migrar FMLJavaModLoadingContext.get() y ResourceLocation
-(String,String) a APIs no-deprecated. No urgente en 1.20.1 estable.
-
-### Candidato M7: v0.14.0+ - Contenido de gameplay (Gripe Verde)
-Objetivo: primer sistema real de gameplay. Requiere diseno previo escrito.
 ---
 ## ADDENDUM v0.13.10 (acero bajo la lluvia)
 

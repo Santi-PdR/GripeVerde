@@ -1,5 +1,15 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## Estado actual de pulido RC
+
+### Criterios activos
+- Sonidos de boton separados por categoria funcional.
+- No conservar archivos temporales de traspaso dentro del repo.
+- No reintroducir bandejas o sombras que ensucien listas de opciones.
+- Mantener layouts vanilla de containers y pantallas densas.
+- Revisar cada nuevo recurso contra `sounds.json` antes de compilar.
+
+
 ## Estado actual para continuidad
 
 ### Cerrado en esta linea de trabajo
@@ -271,7 +281,7 @@ Idiomas sin bandera mapeada muestran rombo tinta como fallback.
 Cinco versiones cortas encadenadas cierran los ultimos hitos visuales del gabinete pergamino. Se agrupa aqui porque forman un mismo ciclo narrativo.
 
 ### v0.11.10 - Polish: fades, scrollbar y multiplayer
-- KI-15 (fades inferiores) CERRADO. Nuevo helper DiaryChrome.drawListFades()
+- KI-15 (fades inferiores) CERRADO. Helper de fades retirado en RC para evitar velos sobre listas
   aplicado en Accessibility, Chat y Sound. Fade pergamino->transparente en top y
   bottom de la lista suaviza el corte duro.
 - KI-16 (scrollbar respirada) CERRADO. drawStyledScrollThumbInPanel ahora
@@ -426,7 +436,7 @@ Ultimo tag publicado: v0.11.13
 Cinco versiones cortas encadenadas cierran los ultimos hitos visuales del gabinete pergamino. Se agrupa aqui porque forman un mismo ciclo narrativo.
 
 ### v0.11.10 - Polish: fades, scrollbar y multiplayer
-- KI-15 (fades inferiores) CERRADO. Nuevo helper DiaryChrome.drawListFades()
+- KI-15 (fades inferiores) CERRADO. Helper de fades retirado en RC para evitar velos sobre listas
   aplicado en Accessibility, Chat y Sound. Fade pergamino->transparente en top y
   bottom de la lista suaviza el corte duro.
 - KI-16 (scrollbar respirada) CERRADO. drawStyledScrollThumbInPanel ahora

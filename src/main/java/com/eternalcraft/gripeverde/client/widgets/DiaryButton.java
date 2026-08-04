@@ -31,7 +31,7 @@ public class DiaryButton extends AbstractButton {
 
     public enum Variant { PRIMARY, SECONDARY, DANGER }
 
-    public enum SoundProfile { DEFAULT, CLEAN, OPTION_OPEN, OPTION_PAGE, BACK, NONE }
+    public enum SoundProfile { DEFAULT, CLEAN, OPTION_OPEN, BACK, NONE }
 
     public enum Icon { NONE, HAND, SCROLL, CHART, GEAR, DOOR, PALETTE, SOUND, EYE, CONTROLS, LANGUAGE, CHAT, PACK, ACCESS, ONLINE, CREDITS }
 
@@ -82,7 +82,6 @@ public class DiaryButton extends AbstractButton {
         switch (this.soundProfile) {
             case CLEAN -> UiSounds.cleanClick();
             case OPTION_OPEN -> UiSounds.optionOpen();
-            case OPTION_PAGE -> UiSounds.optionPage();
             case BACK -> UiSounds.back();
             case NONE -> { }
             case DEFAULT -> UiSounds.playClick();
