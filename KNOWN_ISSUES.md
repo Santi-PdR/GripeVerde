@@ -1,5 +1,23 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## Estado actual para continuidad (commit 45fa59e)
+
+### Cerrado en esta linea de trabajo
+- Sonidos UI categorizados por uso (`ui.button_main`, `ui.button_section`, `ui.back`).
+- `sounds.json` no referencia los OGG rechazados por el usuario.
+- Carpeta de pruebas de botones reducida al candidato aceptado y notas de seleccion.
+- `AI_HANDOFF.md` creado como resumen operativo para otra IA.
+
+### Riesgos activos
+- Validar auditivamente en cliente real que `modal.ogg` funcione bien como sonido de apertura de seccion.
+- Si se agregan sonidos nuevos, primero colocarlos en carpeta de prueba y pedir seleccion del usuario antes de conectarlos a `sounds.json`.
+- No tocar layouts vanilla de containers salvo paleta/estetica; slots y zonas interactivas deben permanecer familiares.
+- Mantener `ContainerOverlayHandler` restringido a pantallas vanilla para no romper mochilas o containers de mods.
+
+### Regla operativa nueva
+- Luego de cualquier cambio, entregar PowerShell completo de build/deploy a Test; no entregar solo el hash.
+
+
 ## v0.13.10 - Acero bajo la lluvia
 
 ### Cambios cerrados

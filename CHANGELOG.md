@@ -1,5 +1,17 @@
 # Eternal Craft: Gripe Verde
 
+## v0.13.10 RC - Registro de traspaso IA
+
+El gabinete queda preparado para ser retomado por otra mano sin perder el
+hilo: la rama de trabajo, el commit de referencia, las rutas locales, las
+reglas del usuario, las validaciones y los riesgos activos quedan reunidos
+en `AI_HANDOFF.md`.
+
+La mesa de sonido queda ordenada por categorias de uso. Los botones
+principales, las puertas de seccion y los regresos tienen familias sonoras
+separadas, con los tonos rechazados retirados de las referencias del mod.
+
+
 ## v0.13.10 - Acero bajo la lluvia
 
 La ciudad ha recibido una mano mas firme sobre sus maquinas. Los hornos,
