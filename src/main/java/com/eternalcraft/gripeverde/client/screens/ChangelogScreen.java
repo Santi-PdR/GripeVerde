@@ -275,7 +275,7 @@ public class ChangelogScreen extends Screen {
 
         g.fill(0, 0, this.width, this.height, 0xD0100D08);
 
-        com.eternalcraft.gripeverde.client.render.PaperTexture.drawClean(g, px, py, pw, ph, PaperTexture.PaperKind.ARCHIVE);
+        com.eternalcraft.gripeverde.client.render.PaperTexture.drawClean(g, px, py, pw, ph, com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.ARCHIVE);
         g.fill(px,          py,          px + pw, py + 1,      DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
         g.fill(px,          py + ph - 1, px + pw, py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
         g.fill(px,          py,          px + 1,  py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));

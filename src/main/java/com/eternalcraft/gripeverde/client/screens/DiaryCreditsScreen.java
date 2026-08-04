@@ -124,7 +124,7 @@ public class DiaryCreditsScreen extends Screen {
         // Official note
         String note = isEnglish() ? "Sealed under quarantine act 1897" : "Sellado bajo acta de cuarentena 1897";
         int nw = this.font.width(note);
-        g.drawString(this.font, note, panelX + (panelW - nw) / 2, y, DiaryChrome.withAlpha(DiaryTheme.SEPIA_MID, 130), false);
+        g.drawString(this.font, note, panelX + (panelW - nw) / 2, y, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 130), false);
     }
 
     private int drawSection(GuiGraphics g, int x, int y, String label, String value) {
