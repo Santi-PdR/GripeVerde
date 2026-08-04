@@ -37,22 +37,7 @@ public class DiaryCreditsScreen extends Screen {
         this.panelY = (this.height - this.panelH) / 2;
         this.clearWidgets();
 
-        int btnW = 220;
-        int btnH = 22;
-        int btnX = (this.width - btnW) / 2;
-        int btnY0 = this.panelY + 92;
-
-        addRenderableWidget(new DiaryButton(
-            btnX, btnY0, btnW, btnH,
-            Component.translatable("credits_and_attribution.button.credits"),
-            DiaryButton.Icon.SCROLL, DiaryButton.Variant.SECONDARY, DiaryButton.SoundProfile.OPTION_OPEN,
-            () -> this.minecraft.setScreen(new WinScreen(false, () -> this.minecraft.setScreen(this)))
-        ));
-
-        // Official registry sections as non-interactive labels rendered in render()
-        // Second row: Attributions as info only (vanilla licenses screen is separate)
-        // We keep only one actionable button + back to respect vanilla transparency.
-
+        // Ya no hay boton "Créditos" - esta pantalla ES los créditos
         int backW = 130;
         int backH = 22;
         int backY = this.panelY + this.panelH - 32;

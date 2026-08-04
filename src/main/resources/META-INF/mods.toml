@@ -6,12 +6,18 @@ issueTrackerURL=""
 [[mods]]
 modId="gripeverde"
 version="${mod_version}"
-displayName="Eternal Craft - Gripe Verde"
-displayURL=""
-credits="Santi"
-authors="EternalCraft Team"
+displayName="Eternal Craft: Gripe Verde"
+displayURL="https://discord.gg/qrBCgYuwWb"
+credits="Documento oficial bajo sello EC-QV/1897 - Cronista S. Pereira"
+authors="Santipdr"
 description='''
-Eternal Craft - Gripe Verde
+Eternal Craft: Gripe Verde
+Un gabinete victoriano bajo cuarentena.
+
+Autor: Santipdr
+Usuario: Mi Usuario Es Santipdr
+Homepage: https://discord.gg/qrBCgYuwWb
+
 Etapa 1800x - Sobrevive a la plaga.
 '''
 

@@ -178,115 +178,88 @@ public class DiaryOptionsScreen extends Screen {
         // Panel pergamino
         DiaryChrome.drawPanelShadow(g, panelX, panelY, panelW, panelH);
         PaperTexture.drawClean(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.LEDGER);
-        drawCabinetPlate(g);
 
-        // Titulo en tinta
+        // Titulo en tinta - limpio, sin placa que corte
         int titleY = panelY + PAD_TOP;
         {
             int titleW = this.font.width(this.title);
             int titleX = (this.width - titleW) / 2;
             g.drawString(this.font, this.title, titleX, titleY, DiaryTheme.INK, false);
 
-            // Subtitulo diegetico
+            // Subtitulo diegetico - sin sombra que divida
             String subtitle = "- " + net.minecraft.network.chat.Component.translatable("gripeverde.options.subtitle").getString() + " -";
             int subW = this.font.width(subtitle);
             int subX = (this.width - subW) / 2;
             int subY = titleY + TITLE_H + 2;
-            g.drawString(this.font, subtitle, subX, subY, 0xFF6B4A2E, false);
+            g.drawString(this.font, subtitle, subX, subY, DiaryTheme.INK_SUBTITLE, false);
 
-            // Rotating flavor quote
+            // Rotating flavor quote - tinta muy suave
             if (currentFlavor != null) {
                 int flavorW = this.font.width(currentFlavor);
                 int flavorX = (this.width - flavorW) / 2;
                 int flavorY = subY + this.font.lineHeight + 1;
-                g.drawString(this.font, currentFlavor, flavorX, flavorY, 0xC06B4A2E, false);
+                g.drawString(this.font, currentFlavor, flavorX, flavorY, DiaryChrome.INK_FLAVOR, false);
             }
 
-            // Divisor horizontal DEBAJO del flavor (no del subtitulo)
+            // Unico divisor horizontal DEBAJO del flavor (no entre titulo y subtitulo)
             int divY1;
             if (currentFlavor != null) {
                 int flavorY = subY + this.font.lineHeight + 1;
-                divY1 = flavorY + this.font.lineHeight + 3;
+                divY1 = flavorY + this.font.lineHeight + 4;
             } else {
-                divY1 = subY + this.font.lineHeight + 3;
+                divY1 = subY + this.font.lineHeight + 4;
             }
-            drawInkDivider(g, panelX + 24, panelX + panelW - 24, divY1);
+            DiaryChrome.drawInkDivider(g, panelX + 24, divY1, panelW - 48);
 
             // Divisor horizontal antes del boton Volver
             int backY = panelY + panelH - PAD_BOTTOM - BACK_H;
-            int divY2 = backY - 8;
-            drawInkDivider(g, panelX + 24, panelX + panelW - 24, divY2);
+            int divY2 = backY - 10;
+            DiaryChrome.drawInkDivider(g, panelX + 24, divY2, panelW - 48);
 
             drawRowBands(g, this.gridTop, this.col1X, this.col2X);
 
-            // Esquineros victorianos
-            drawCornerOrnaments(g, panelX, panelY, panelW, panelH);
+            // Esquineros victorianos sutiles
+            DiaryChrome.drawCornerOrnaments(g, panelX, panelY, panelW, panelH);
         }
 
         // Widgets
         super.render(g, mouseX, mouseY, partialTick);
     }
 
-    private void drawCabinetPlate(GuiGraphics g) {
-        int headerY = panelY + 8;
-        int footerY = panelY + panelH - 42;
-        int left = panelX + 18;
-        int right = panelX + panelW - 18;
-        int plate = 0x1E422810;
-        int edge = 0x60422810;
-        g.fill(left, headerY, right, headerY + 28, plate);
-        g.fill(left, headerY, right, headerY + 1, edge);
-        g.fill(left, headerY + 27, right, headerY + 28, edge);
-        g.fill(left, footerY, right, footerY + 30, 0x14422810);
-        g.fill(left, footerY, right, footerY + 1, 0x50422810);
-        g.fill(panelX + 10, panelY + 18, panelX + 16, panelY + 56, 0x22422810);
-        g.fill(panelX + panelW - 16, panelY + 18, panelX + panelW - 10, panelY + 56, 0x22422810);
-        g.fill(panelX + 11, panelY + 22, panelX + 15, panelY + 23, 0x78422810);
-        g.fill(panelX + panelW - 15, panelY + 22, panelX + panelW - 11, panelY + 23, 0x78422810);
-    }
-
     private void drawRowBands(GuiGraphics g, int gridTop, int col1X, int col2X) {
         int rowW = BTN_W * 2 + GAP_X;
-        int x = col1X - 8;
-        int w = rowW + 16;
+        int x = col1X - 6;
+        int w = rowW + 12;
         for (int i = 0; i < GRID_ROWS; i++) {
-            int y = gridTop + row(i) - 3;
-            int alpha = (i % 2 == 0) ? 0x16000000 : 0x0E000000;
-            g.fill(x, y, x + w, y + BTN_H + 6, alpha);
-            g.fill(x + rowW / 2 + 7, y + 4, x + rowW / 2 + 8, y + BTN_H + 2, 0x30422810);
+            int y = gridTop + row(i) - 2;
+            // Banda muy sutil, casi imperceptible, solo para agrupar visualmente
+            int alpha = (i % 2 == 0) ? 0x0A000000 : 0x05000000;
+            g.fill(x, y, x + w, y + BTN_H + 4, alpha);
         }
     }
 
-    // Divisor horizontal con fade a los costados color tinta
+    // Divisor horizontal con fade a los costados color tinta - limpio
     private static void drawInkDivider(net.minecraft.client.gui.GuiGraphics g, int x1, int x2, int y) {
-        int inkFull  = 0x88422810;
+        int inkFull  = 0x66422810;
         int inkClear = 0x00422810;
         int mid = (x1 + x2) / 2;
         g.fillGradient(x1, y, mid, y + 1, inkClear, inkFull);
         g.fillGradient(mid, y, x2, y + 1, inkFull, inkClear);
     }
 
-    // Esquineros victorianos en L color tinta (8x8 px)
+    // Esquineros victorianos en L color tinta sutil
     private static void drawCornerOrnaments(net.minecraft.client.gui.GuiGraphics g,
                                             int x, int y, int w, int h) {
-        int ink = 0xA0422810;
-        int len = 8;
+        int ink = 0x70422810;
+        int len = 10;
         int th = 1;
-        int m = 4; // margen desde el borde
-
-        // Esquina superior izquierda
+        int m = 6;
         g.fill(x + m, y + m, x + m + len, y + m + th, ink);
         g.fill(x + m, y + m, x + m + th, y + m + len, ink);
-
-        // Esquina superior derecha
         g.fill(x + w - m - len, y + m, x + w - m, y + m + th, ink);
         g.fill(x + w - m - th, y + m, x + w - m, y + m + len, ink);
-
-        // Esquina inferior izquierda
         g.fill(x + m, y + h - m - th, x + m + len, y + h - m, ink);
         g.fill(x + m, y + h - m - len, x + m + th, y + h - m, ink);
-
-        // Esquina inferior derecha
         g.fill(x + w - m - len, y + h - m - th, x + w - m, y + h - m, ink);
         g.fill(x + w - m - th, y + h - m - len, x + w - m, y + h - m, ink);
     }

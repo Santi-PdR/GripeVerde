@@ -119,22 +119,6 @@ public final class ContainerOverlayHandler {
             drawEnchantingSparkles(gfx, left, top);
         }
 
-        // Micro rivets on steel containers (extreme polish)
-        drawContainerRivets(gfx, left, top, state.imageHeight);
-
-    }
-
-    private static void drawContainerRivets(GuiGraphics gfx, int left, int top, int imgH) {
-        // 4 brass rivets in corners of main panel, very subtle, same manufacturer feel
-        int rivet = 0xFF6B4A2E;
-        int highlight = 0xFFC89A68;
-        int[][] pts = {{left+5, top+5},{left+170, top+5},{left+5, top+imgH-7},{left+170, top+imgH-7}};
-        for (int[] p: pts){
-            gfx.fill(p[0], p[1], p[0]+2, p[1]+2, rivet);
-            gfx.fill(p[0], p[1], p[0]+1, p[1]+1, highlight);
-        }
-        // Small wear scratch near top edge (1px)
-        gfx.fill(left+22, top+4, left+36, top+5, 0x1A000000);
     }
 
     private static boolean isEnderChestTitle(Component title) {

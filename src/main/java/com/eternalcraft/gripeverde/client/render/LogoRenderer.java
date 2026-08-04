@@ -103,33 +103,27 @@ public class LogoRenderer {
         String title = I18n.get("gripeverde.brand.name");
         g.pose().pushPose();
         g.pose().translate(cx, topY + 60, 0);
-        g.pose().scale(2.2f, 2.2f, 1f);
+        g.pose().scale(1.9f, 1.9f, 1f);
         int tw = font.width(title);
-        // Shadow
-        g.drawString(font, title, -tw / 2 + 1, 1, DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 120), false);
+        g.drawString(font, title, -tw / 2 + 1, 1, DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 85), false);
         g.drawString(font, title, -tw / 2, 0, DiaryTheme.PAPER, false);
         g.pose().popPose();
 
         String subtitle = I18n.get("gripeverde.brand.subtitle");
         g.pose().pushPose();
         g.pose().translate(cx, topY + 98, 0);
-        g.pose().scale(1.75f, 1.75f, 1f);
+        g.pose().scale(1.45f, 1.45f, 1f);
         int sw = font.width(subtitle);
-        g.drawString(font, subtitle, -sw / 2 + 1, 1, DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 90), false);
+        g.drawString(font, subtitle, -sw / 2 + 1, 1, DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 65), false);
         g.drawString(font, subtitle, -sw / 2, 0, DiaryTheme.PLAGUE_TOXIC, false);
         g.pose().popPose();
 
         String year = getCurrentYear();
         int yw = font.width(year);
-        int yearY = topY + 124;
-        // Year plaque: subtle parchment strip
-        int stripPad = 10;
-        g.fill(cx - yw / 2 - stripPad, yearY - 2, cx + yw / 2 + stripPad, yearY + 10, DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, 38));
-        g.drawString(font, year, cx - yw / 2, yearY, DiaryTheme.SEPIA_LIGHT, false);
-        // Ink blot under year for character
-        int blotX = cx + yw / 2 + 6;
-        int blotY = yearY + 2;
-        g.fill(blotX, blotY, blotX + 2, blotY + 2, DiaryTheme.withAlpha(DiaryTheme.INK, 55));
+        int yearY = topY + 122;
+        int stripPad = 8;
+        g.fill(cx - yw / 2 - stripPad, yearY - 1, cx + yw / 2 + stripPad, yearY + 9, DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, 28));
+        g.drawString(font, year, cx - yw / 2, yearY, DiaryTheme.withAlpha(DiaryTheme.SEPIA_LIGHT, 200), false);
     }
 
     private static void drawTopHatSkull(GuiGraphics g, int cx, int topY) {
