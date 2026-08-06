@@ -26,10 +26,28 @@
 ### Riesgos activos
 - Validar en cliente real que ningun container muestre texturas residuales
   del pack (el zip de prueba in-game debe retirarse de resourcepacks).
-- `ContainerOverlayHandler` sigue activo (titulos con sombra); verificar que
-  no dependa de texturas del pack (por analisis no depende).
 - KIs del pack (steel/silver steel/fresadora): CERRADOS. No retomar sin
   instruccion explicita del usuario.
+
+
+## v0.15.1 - La segunda mano (restos del retiro)
+
+### Cambios cerrados
+- Eliminado `client/ContainerOverlayHandler.java`: re-dibujaba los titulos
+  de los contenedores con color pergamino y sombra ("letras personalizadas"
+  que el usuario seguia viendo). Titulos ahora vanilla puro.
+- Agregado slider de campo de vision (FOV) al gabinete de opciones
+  (DiaryOptionsScreen, fila 6 del grid, estilo DiarySlider, rango 30-110,
+  default 70, vinculado a `options.fov()`). Vanilla lo tiene en OptionsScreen
+  y habia quedado fuera del reemplazo victoriano.
+- Version bump: 0.15.0 -> 0.15.1.
+
+### Riesgos activos
+- Validar en cliente real: (1) el FOV se ajusta desde Opciones; (2) los
+  titulos de contenedores son blancos vanilla sin sombra pergamino.
+- `TooltipEventHandler` sigue recoloreando tooltips (pergamino); si el
+  usuario pide vanilla total, revisar tambien.
+- `ThemeManager` no dibuja nada (sin themes registrados) - inerte.
 
 
 ## Estado actual para continuidad

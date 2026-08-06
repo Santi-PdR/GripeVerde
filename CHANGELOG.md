@@ -1,5 +1,14 @@
 # Eternal Craft: Gripe Verde
 
+## v0.15.1 - La segunda mano
+
+La misma noche, una mano mas fina volvio sobre el gabinete. La mesa de
+opciones recupero el campo de vision, que habia quedado fuera de alcance
+desde la ultima reorganizacion, y las ultimas letras escritas a mano sobre
+los muebles de trabajo fueron borradas. Ningun rotulo propio queda ya
+sobre las cajas: solo las palabras que el oficio original escribe.
+
+
 ## v0.15.0 - El oficio vuelve a su madera
 
 El gabinete retiro las planchas de acero que cubrian las mesas de trabajo.

@@ -3,7 +3,7 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/019fd42f-gripeverde`.
-- Version: `0.15.0`.
+- Version: `0.15.1`.
 - Ultima regla explicita del usuario: despues de hacer cambios, pasar siempre PowerShell completo para enviar a Test.
 
 ### DECISION 2026-08-05: retiro del resource pack de contenedores
@@ -16,8 +16,22 @@ Orden: "reinicies desde 0 con las interfaces vanilla". Ejecutado en v0.15.0:
 - Eliminado `client/ResourcePackHandler.java` (registro del pack via AddPackFindersEvent).
 - Eliminada la task `verifyGripeVerdeThemeAssets` de build.gradle y su dependsOn en processResources.
 - Eliminado `tools/` (pipeline de generacion del pack: kit.py, build_*.py, verify.py, vanilla/ y export/).
-- Los contenedores del juego vuelven a ser 100% vanilla. El mod conserva Title, diario, opciones, sonidos, overlay de titulos con sombra (ContainerOverlayHandler no depende del pack).
+- Los contenedores del juego vuelven a ser 100% vanilla. El mod conserva Title, diario, opciones, sonidos.
 - KIs del pack cerrados. No retomar el pack sin nueva instruccion explicita del usuario.
+
+### v0.15.1 - Segunda mano (2026-08-05)
+
+El usuario reporto dos restos tras probar v0.15.0:
+1. Faltaba el slider de campo de vision (FOV) en el gabinete de opciones
+   (vanilla lo tiene en OptionsScreen). Agregado como fila 6 del grid con
+   `DiarySlider`, rango 30-110, default 70, vinculado a `options.fov()`.
+2. Seguian apareciendo letras personalizadas sobre los contenedores:
+   era `ContainerOverlayHandler` (re-dibujaba los titulos con color
+   pergamino y sombra). ELIMINADO. Los titulos de contenedores ahora son
+   vanilla puro.
+
+NOTA: `ThemeManager` no dibuja nada (sin themes registrados), y
+`TooltipEventHandler` solo recolorea tooltips (pergamino) - no letras.
 
 ### NOTA plataforma: adjuntos del usuario
 
@@ -47,14 +61,16 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.15.0
-- build.gradle: version = '0.15.0'
-- GripeVerdeMod.VERSION: "0.15.0"
+- Version estable actual: v0.15.1
+- build.gradle: version = '0.15.1'
+- GripeVerdeMod.VERSION: "0.15.1"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
 - Resource pack built-in: ELIMINADO (v0.15.0). Contenedores 100% vanilla.
+- ContainerOverlayHandler: ELIMINADO (v0.15.1). Titulos de contenedores vanilla.
+- Slider FOV: agregado al gabinete de opciones (v0.15.1).
 
 ## Historial reciente
 
