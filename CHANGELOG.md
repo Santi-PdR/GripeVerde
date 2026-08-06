@@ -1,5 +1,18 @@
 # Eternal Craft: Gripe Verde
 
+## v0.15.0 - El oficio vuelve a su madera
+
+El gabinete retiro las planchas de acero que cubrian las mesas de trabajo.
+Los hornos, los cajones, el yunque y las mesas de oficio recuperan el
+aspecto que tuvieron siempre: el gris claro de la fabrica comun, sin
+remaches, sin molduras, sin sellos. Cada espacio vuelve a reconocerse de
+un vistazo, como en los dias anteriores a la peste.
+
+La decision fue firme: la casa conserva su voz, su musica y sus registros,
+pero el trabajo manual vuelve a manos del oficio original de Minecraft.
+Ningun mueble lleva ya el nombre de la casa; todos llevan el suyo propio.
+
+
 ## v0.13.10 RC - Pulido de gabinete y sonidos
 
 El gabinete recibio una limpieza de oficio: los pestillos sonoros quedaron separados por funcion, los registros abandonaron herramientas temporales y las notas de continuidad fueron devueltas a los documentos centrales. La cronica publica conserva solo aquello que pertenece al viajero y al cronista.

@@ -1,6 +1,20 @@
 # Eternal Craft: Gripe Verde
 ## Chronicle under seal
 
+## Version 0.15 - The craft returns to its wood
+
+The steel plates that covered the workbenches have been removed. Furnaces,
+chests, anvils and craft tables recover their old appearance: the plain
+light grey of the common workshop, without rivets, without mouldings,
+without seals. Every space is recognised at a glance again, as in the days
+before the plague.
+
+The house keeps its voice, its music and its records. Only the manual work
+returns to the hands of the original craft.
+
+---
+
+
 ## Version 0.13.10 - Steel beneath the rain
 
 The latest shipment arrived before dawn, covered in wet canvas and signed by

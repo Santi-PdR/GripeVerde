@@ -10,6 +10,28 @@
 - Revisar cada nuevo recurso contra `sounds.json` antes de compilar.
 
 
+## v0.15.0 - El oficio vuelve a su madera (retiro del resource pack)
+
+### Cambios cerrados
+- Eliminado `src/main/resources/resourcepacks/gripeverde_theme/` completo
+  (21 texturas de contenedores, pack.mcmeta, pack.png, COMPATIBILITY.md).
+- Eliminado `client/ResourcePackHandler.java` (registro via AddPackFindersEvent).
+- Eliminada la task `verifyGripeVerdeThemeAssets` y su dependsOn en
+  `processResources` (build.gradle).
+- Eliminado `tools/` (pipeline de generacion del pack: kit.py, build_*.py,
+  verify.py, vanilla/ y export/).
+- Los contenedores del juego vuelven a ser 100% vanilla.
+- Version bump: 0.14.4 -> 0.15.0.
+
+### Riesgos activos
+- Validar en cliente real que ningun container muestre texturas residuales
+  del pack (el zip de prueba in-game debe retirarse de resourcepacks).
+- `ContainerOverlayHandler` sigue activo (titulos con sombra); verificar que
+  no dependa de texturas del pack (por analisis no depende).
+- KIs del pack (steel/silver steel/fresadora): CERRADOS. No retomar sin
+  instruccion explicita del usuario.
+
+
 ## Estado actual para continuidad
 
 ### Cerrado en esta linea de trabajo
