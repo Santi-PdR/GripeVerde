@@ -1,5 +1,20 @@
 # Eternal Craft: Gripe Verde
 
+## v0.16.0 - El renacer del acero victoriano
+
+En los talleres de la ciudad en cuarentena, las planchas de acero laminado
+en frio volvieron a forjarse desde cero. Veintiun muebles de oficio y
+contenedores visten ahora un metal industrial sobrio, con biseles
+mecanizados de precision y diales de bronce antiguo. Las ranuras de trabajo
+conservan su profundidad exacta y su contraste natural, garantizando que
+todo material —sea carbon sombrio o diamante resplandeciente— conserve su
+claridad absoluta.
+
+El paquete vive ahora bajo la regla del oficio nativo: colocado sobre el
+registro comun, viste los talleres con el acero de 1897; desplazado
+debajo, devuelve el aspecto original sin dejar rastro de tinta.
+
+
 ## v0.15.2 - La cifra del campo
 
 La mesa de opciones enseno al campo de vision a decir su numero en voz

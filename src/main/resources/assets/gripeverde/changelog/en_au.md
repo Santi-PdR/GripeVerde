@@ -1,6 +1,12 @@
 # Eternal Craft: Gripe Verde
 ## Chronicle under seal
 
+## Version 0.16.0 - The rebirth of Victorian steel
+
+In the quarantine city workshops, the cold-rolled steel plates were forged afresh from a clean slate. Twenty-one craft workbenches and containers now bear a sober industrial metal, with precision-machined bevels and antique bronze dials. The working slots preserve their exact depth and natural contrast, ensuring that every material — from sombre coal to gleaming diamond — maintains absolute clarity.
+
+The pack now lives under the native craft rule: placed above the common ledger, it clothes the workshops in the steel of 1897; moved below, it returns to the original appearance without leaving a trace of ink.
+
 ## Version 0.15 - 0.15.2 - The craft returns to its wood
 
 The steel plates that covered the workbenches have been removed. Furnaces,

@@ -1,5 +1,23 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.16.0 - El renacer del acero victoriano
+
+### Cambios cerrados
+- Reincorporado el Resource Pack built-in "Gripe Verde - Acero Victoriano"
+  vía `ResourcePackHandler.java` (`AddPackFindersEvent`, `PackSource.BUILT_IN`,
+  `required = false`, `Position.TOP`).
+- Generadas las 21 texturas de contenedores desde una hoja en blanco con
+  identidad visual de acero laminado en frío, hierro forjado y bronce antiguo.
+- Contraste de slots calibrado para alta legibilidad de ítems claros y oscuros.
+- Task de verificación `verifyGripeVerdeThemeAssets` añadida a `build.gradle`.
+- Limpieza de métodos huérfanos en `DiaryOptionsScreen.java`.
+- Version bump: 0.15.2 -> 0.16.0.
+
+### Riesgos activos
+- Probar in-game en cliente real el cambio instantáneo entre Acero Victoriano
+  y Vanilla moviendo el pack arriba y abajo de *Default* en Paquetes de recursos.
+
+
 ## Estado actual de pulido RC
 
 ### Criterios activos

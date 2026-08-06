@@ -6,7 +6,7 @@ plugins {
     id 'org.spongepowered.mixin' version '0.7.+'
 }
 
-version = '0.15.2'
+version = '0.16.0'
 group = 'com.eternalcraft.gripeverde'
 base { archivesName = 'gripeverde' }
 
@@ -126,4 +126,31 @@ tasks.register('verifyGripeVerdeSoundAssets') {
 
 tasks.named('processResources').configure {
     dependsOn tasks.named('verifyGripeVerdeSoundAssets')
+}
+
+tasks.register('verifyGripeVerdeThemeAssets') {
+    group = 'verification'
+    description = 'Verifies all 21 Victorian steel container textures exist in the built-in pack.'
+    doLast {
+        def packDir = file('src/main/resources/resourcepacks/gripeverde_theme/assets/minecraft/textures/gui/container')
+        def requiredContainers = [
+            'anvil.png', 'beacon.png', 'blast_furnace.png', 'brewing_stand.png',
+            'cartography_table.png', 'crafting_table.png', 'dispenser.png', 'dropper.png',
+            'enchanting_table.png', 'furnace.png', 'generic_54.png', 'grindstone.png',
+            'hopper.png', 'horse.png', 'inventory.png', 'loom.png', 'shulker_box.png',
+            'smithing.png', 'smoker.png', 'stonecutter.png', 'villager2.png'
+        ]
+        def missing = requiredContainers.findAll { !new File(packDir, it).isFile() }
+        if (!missing.isEmpty()) {
+            throw new GradleException("Missing container theme textures:\n" + missing.join('\n'))
+        }
+        def mcmeta = file('src/main/resources/resourcepacks/gripeverde_theme/pack.mcmeta')
+        if (!mcmeta.isFile()) throw new GradleException('Missing resourcepacks/gripeverde_theme/pack.mcmeta')
+        def packPng = file('src/main/resources/resourcepacks/gripeverde_theme/pack.png')
+        if (!packPng.isFile()) throw new GradleException('Missing resourcepacks/gripeverde_theme/pack.png')
+    }
+}
+
+tasks.named('processResources').configure {
+    dependsOn tasks.named('verifyGripeVerdeThemeAssets')
 }

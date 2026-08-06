@@ -2,11 +2,22 @@
 
 ## Addendum operativo actual
 
-- Rama fija de Arena: `arena/019fd42f-gripeverde`.
-- Version: `0.15.2`.
+- Rama fija de Arena: `arena/019fd52b-gripeverde`.
+- Version: `0.16.0`.
 - Ultima regla explicita del usuario: despues de hacer cambios, pasar siempre PowerShell completo para enviar a Test.
 
-### DECISION 2026-08-05: retiro del resource pack de contenedores
+### v0.16.0 - El renacer del acero victoriano (2026-08-06)
+
+Reconstruccion completa del Resource Pack integrado desde una hoja en blanco:
+- Reincorporado `src/main/java/com/eternalcraft/gripeverde/client/ResourcePackHandler.java`
+  con `AddPackFindersEvent` (`PackSource.BUILT_IN`, `required = false`, `Position.TOP`).
+- Creada estructura `src/main/resources/resourcepacks/gripeverde_theme/` con `pack.mcmeta` (formato 15) y `pack.png` (64x64 pixel art).
+- Generadas las 21 texturas oficiales de contenedores en acero laminado en frio (#4E535B), silueta de hierro forjado (#181A1E), slots 3D calibrados (#3A3E45) e indicadores en bronce antiguo (#6A5236) y laton (#D4A24E).
+- Cero overlays por codigo Java sobre contenedores: prioridad nativa de Minecraft 100% respetada.
+- Agregada task Gradle `verifyGripeVerdeThemeAssets` y suite en `tools/` (`png_codec.py`, `build_pack.py`, `verify_pack.py`).
+- Limpieza de metodos privados duplicados en `DiaryOptionsScreen.java`.
+
+### DECISION 2026-08-05: retiro del resource pack de contenedores (historico v0.15.0)
 
 El usuario descarto por completo el resource pack tematico de contenedores
 (steel v0.13.x, silver steel v0.14.x y la muestra "fresadora" v0.15-dev).

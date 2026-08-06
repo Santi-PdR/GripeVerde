@@ -254,32 +254,6 @@ public class DiaryOptionsScreen extends Screen {
         }
     }
 
-    // Divisor horizontal con fade a los costados color tinta - limpio
-    private static void drawInkDivider(net.minecraft.client.gui.GuiGraphics g, int x1, int x2, int y) {
-        int inkFull  = 0x66422810;
-        int inkClear = 0x00422810;
-        int mid = (x1 + x2) / 2;
-        g.fillGradient(x1, y, mid, y + 1, inkClear, inkFull);
-        g.fillGradient(mid, y, x2, y + 1, inkFull, inkClear);
-    }
-
-    // Esquineros victorianos en L color tinta sutil
-    private static void drawCornerOrnaments(net.minecraft.client.gui.GuiGraphics g,
-                                            int x, int y, int w, int h) {
-        int ink = 0x70422810;
-        int len = 10;
-        int th = 1;
-        int m = 6;
-        g.fill(x + m, y + m, x + m + len, y + m + th, ink);
-        g.fill(x + m, y + m, x + m + th, y + m + len, ink);
-        g.fill(x + w - m - len, y + m, x + w - m, y + m + th, ink);
-        g.fill(x + w - m - th, y + m, x + w - m, y + m + len, ink);
-        g.fill(x + m, y + h - m - th, x + m + len, y + h - m, ink);
-        g.fill(x + m, y + h - m - len, x + m + th, y + h - m, ink);
-        g.fill(x + w - m - len, y + h - m - th, x + w - m, y + h - m, ink);
-        g.fill(x + w - m - th, y + h - m - len, x + w - m, y + h - m, ink);
-    }
-
     @Override
     public void onClose() {
         Minecraft.getInstance().setScreen(this.parent);

@@ -5,14 +5,9 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.15.2 - La cifra del campo**
+**v0.16.0 - El renacer del acero victoriano**
 
-Tras el retiro de las planchas de acero, una mano mas fina volvio sobre el
-gabinete. La mesa de opciones recupero el campo de vision, que habia
-quedado fuera de alcance, y las ultimas letras escritas a mano sobre los
-muebles de trabajo fueron borradas. El campo de vision dice ahora su
-numero en voz alta: cada posicion del deslizador se lee con su cifra
-exacta.
+En los talleres de la ciudad en cuarentena, las planchas de acero laminado en frio volvieron a forjarse desde cero. Veintiun muebles de oficio y contenedores visten ahora un metal industrial sobrio, con biseles mecanizados de precision y diales de bronce antiguo. Las ranuras de trabajo conservan su profundidad exacta y su contraste natural, garantizando que todo material conserve su claridad absoluta. El resource pack integrado respeta la prioridad nativa de Minecraft al 100%.
 
 ## Resumen visible del Mod Menu
 
