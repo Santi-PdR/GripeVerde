@@ -1,7 +1,7 @@
 # Eternal Craft: Gripe Verde
 ## Chronicle under seal
 
-## Version 0.15 - 0.15.1 - The craft returns to its wood
+## Version 0.15 - 0.15.2 - The craft returns to its wood
 
 The steel plates that covered the workbenches have been removed. Furnaces,
 chests, anvils and craft tables recover their old appearance: the plain
@@ -17,6 +17,11 @@ regained the field of view, which had slipped out of reach during the last
 reorganisation, and the last hand-written letters over the work furniture
 were erased. No label of our own remains over the boxes: only the words
 the original craft writes.
+
+The field of view, newly recovered, learned to state its number aloud:
+every position of the slider now reads with its exact figure, as the craft
+requires.
+
 
 
 ---

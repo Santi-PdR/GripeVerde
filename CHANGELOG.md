@@ -1,5 +1,12 @@
 # Eternal Craft: Gripe Verde
 
+## v0.15.2 - La cifra del campo
+
+La mesa de opciones enseno al campo de vision a decir su numero en voz
+alta. Cada posicion del deslizador se lee ahora con su cifra exacta,
+como manda el oficio.
+
+
 ## v0.15.1 - La segunda mano
 
 La misma noche, una mano mas fina volvio sobre el gabinete. La mesa de

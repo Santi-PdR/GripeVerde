@@ -42,6 +42,13 @@
   y habia quedado fuera del reemplazo victoriano.
 - Version bump: 0.15.0 -> 0.15.1.
 
+### v0.15.2 - Fix label del slider FOV
+- La clave vanilla `options.fov` es solo "FOV" (sin placeholder %s), por lo
+  que `Component.translatable("options.fov", valor)` devolvia "FOV" sin el
+  numero. Ahora el label se construye explicitamente: "FOV: N" /
+  "Campo de vision: N" (se agrega ": " + numero a la clave traducida).
+- Version bump: 0.15.1 -> 0.15.2.
+
 ### Riesgos activos
 - Validar en cliente real: (1) el FOV se ajusta desde Opciones; (2) los
   titulos de contenedores son blancos vanilla sin sombra pergamino.

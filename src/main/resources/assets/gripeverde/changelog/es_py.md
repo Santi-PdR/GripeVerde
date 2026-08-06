@@ -1,7 +1,7 @@
 # Eternal Craft: Gripe Verde
 ## Cronica bajo sello
 
-## Version 0.15 - 0.15.1 - El oficio vuelve a su madera
+## Version 0.15 - 0.15.2 - El oficio vuelve a su madera
 
 Las planchas de acero que cubrian las mesas de trabajo fueron retiradas.
 Los hornos, los cajones, el yunque y las mesas de oficio recuperan el
@@ -17,6 +17,11 @@ opciones recupero el campo de vision, que habia quedado fuera de alcance
 desde la ultima reorganizacion, y las ultimas letras escritas a mano sobre
 los muebles de trabajo fueron borradas. Ningun rotulo propio queda ya sobre
 las cajas: solo las palabras que el oficio original escribe.
+
+El campo de vision, recien recuperado, aprendio a decir su numero en voz
+alta: cada posicion del deslizador se lee ahora con su cifra exacta, como
+manda el oficio.
+
 
 
 ---

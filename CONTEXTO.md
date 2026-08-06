@@ -3,7 +3,7 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/019fd42f-gripeverde`.
-- Version: `0.15.1`.
+- Version: `0.15.2`.
 - Ultima regla explicita del usuario: despues de hacer cambios, pasar siempre PowerShell completo para enviar a Test.
 
 ### DECISION 2026-08-05: retiro del resource pack de contenedores
@@ -27,7 +27,9 @@ El usuario reporto dos restos tras probar v0.15.0:
    `DiarySlider`, rango 30-110, default 70, vinculado a `options.fov()`.
 2. Seguian apareciendo letras personalizadas sobre los contenedores:
    era `ContainerOverlayHandler` (re-dibujaba los titulos con color
-   pergamino y sombra). ELIMINADO. Los titulos de contenedores ahora son
+   pergamino y sombra). ELIMINADO. Fix v0.15.2: el label del slider FOV no
+   mostraba el numero porque la clave vanilla "options.fov" no tiene
+   placeholder (es solo "FOV"); ahora se construye "FOV: N" explicito. Los titulos de contenedores ahora son
    vanilla puro.
 
 NOTA: `ThemeManager` no dibuja nada (sin themes registrados), y
@@ -61,16 +63,19 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.15.1
-- build.gradle: version = '0.15.1'
-- GripeVerdeMod.VERSION: "0.15.1"
+- Version estable actual: v0.15.2
+- build.gradle: version = '0.15.2'
+- GripeVerdeMod.VERSION: "0.15.2"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
 - Resource pack built-in: ELIMINADO (v0.15.0). Contenedores 100% vanilla.
 - ContainerOverlayHandler: ELIMINADO (v0.15.1). Titulos de contenedores vanilla.
-- Slider FOV: agregado al gabinete de opciones (v0.15.1).
+- Slider FOV: agregado al gabinete de opciones (v0.15.1) y arreglado el
+  label para que muestre el numero (v0.15.2): la clave vanilla "options.fov"
+  es solo "FOV" (sin placeholder), asi que el numero se agrega explicito:
+  "FOV: 70" / "Campo de vision: 70".
 
 ## Historial reciente
 

@@ -5,13 +5,14 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.15.1 - La segunda mano**
+**v0.15.2 - La cifra del campo**
 
 Tras el retiro de las planchas de acero, una mano mas fina volvio sobre el
 gabinete. La mesa de opciones recupero el campo de vision, que habia
 quedado fuera de alcance, y las ultimas letras escritas a mano sobre los
-muebles de trabajo fueron borradas. Ningun rotulo propio queda ya sobre
-las cajas: solo las palabras que el oficio original escribe.
+muebles de trabajo fueron borradas. El campo de vision dice ahora su
+numero en voz alta: cada posicion del deslizador se lee con su cifra
+exacta.
 
 ## Resumen visible del Mod Menu
 

@@ -129,14 +129,19 @@ public class DiaryOptionsScreen extends Screen {
         addBtn(this.col2X, this.gridTop + row(4), "gripeverde.options.button.credits", DiaryButton.Icon.CREDITS, DiaryButton.SoundProfile.OPTION_OPEN, this::openCredits);
 
         // Slider de campo de vision (como el de OptionsScreen vanilla: 30-110, por defecto 70)
+        // OJO: la clave vanilla "options.fov" es solo "FOV" (sin placeholder), por eso el
+        // numero se agrega explicitamente al label: "FOV: 70" / "Campo de vision: 70".
         var mcOptions = Minecraft.getInstance().options;
         int fovX = this.col1X;
         int fovW = BTN_W * 2 + GAP_X;
         int fovY = this.gridTop + row(5) + (BTN_H - 20) / 2;
         double fovNorm = (mcOptions.fov().get() - 30.0) / 80.0;
         this.addRenderableWidget(new DiarySlider(fovX, fovY, fovW, 20, fovNorm,
-                v -> Component.translatable("options.fov", (int) (30.0 + v * 80.0)).getString(),
-                v -> mcOptions.fov().set((int) (30.0 + v * 80.0))));
+                v -> {
+                    int fov = (int) Math.round(30.0 + v * 80.0);
+                    return Component.translatable("options.fov").getString() + ": " + fov;
+                },
+                v -> mcOptions.fov().set((int) Math.round(30.0 + v * 80.0))));
 
         int backX = cx - BACK_W / 2;
         int backY = panelY + panelH - PAD_BOTTOM - BACK_H;
