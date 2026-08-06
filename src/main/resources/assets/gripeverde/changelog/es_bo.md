@@ -1,6 +1,32 @@
 # Eternal Craft: Gripe Verde
 ## Cronica bajo sello
 
+## Version 0.15 - 0.15.2 - El oficio vuelve a su madera
+
+Las planchas de acero que cubrian las mesas de trabajo fueron retiradas.
+Los hornos, los cajones, el yunque y las mesas de oficio recuperan el
+aspecto de siempre: el gris claro de la fabrica comun, sin remaches, sin
+molduras, sin sellos. Cada espacio vuelve a reconocerse de un vistazo,
+como en los dias anteriores a la peste.
+
+La casa conserva su voz, su musica y sus registros. Solo el trabajo manual
+vuelve a manos del oficio original.
+
+La misma noche, una mano mas fina volvio sobre el gabinete. La mesa de
+opciones recupero el campo de vision, que habia quedado fuera de alcance
+desde la ultima reorganizacion, y las ultimas letras escritas a mano sobre
+los muebles de trabajo fueron borradas. Ningun rotulo propio queda ya sobre
+las cajas: solo las palabras que el oficio original escribe.
+
+El campo de vision, recien recuperado, aprendio a decir su numero en voz
+alta: cada posicion del deslizador se lee ahora con su cifra exacta, como
+manda el oficio.
+
+
+
+---
+
+
 ## Version 0.13.10 - Acero bajo la lluvia
 
 La ultima remesa llego de madrugada, cubierta con lonas humedas y firmada

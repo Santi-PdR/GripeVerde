@@ -10,6 +10,53 @@
 - Revisar cada nuevo recurso contra `sounds.json` antes de compilar.
 
 
+## v0.15.0 - El oficio vuelve a su madera (retiro del resource pack)
+
+### Cambios cerrados
+- Eliminado `src/main/resources/resourcepacks/gripeverde_theme/` completo
+  (21 texturas de contenedores, pack.mcmeta, pack.png, COMPATIBILITY.md).
+- Eliminado `client/ResourcePackHandler.java` (registro via AddPackFindersEvent).
+- Eliminada la task `verifyGripeVerdeThemeAssets` y su dependsOn en
+  `processResources` (build.gradle).
+- Eliminado `tools/` (pipeline de generacion del pack: kit.py, build_*.py,
+  verify.py, vanilla/ y export/).
+- Los contenedores del juego vuelven a ser 100% vanilla.
+- Version bump: 0.14.4 -> 0.15.0.
+
+### Riesgos activos
+- Validar en cliente real que ningun container muestre texturas residuales
+  del pack (el zip de prueba in-game debe retirarse de resourcepacks).
+- KIs del pack (steel/silver steel/fresadora): CERRADOS. No retomar sin
+  instruccion explicita del usuario.
+
+
+## v0.15.1 - La segunda mano (restos del retiro)
+
+### Cambios cerrados
+- Eliminado `client/ContainerOverlayHandler.java`: re-dibujaba los titulos
+  de los contenedores con color pergamino y sombra ("letras personalizadas"
+  que el usuario seguia viendo). Titulos ahora vanilla puro.
+- Agregado slider de campo de vision (FOV) al gabinete de opciones
+  (DiaryOptionsScreen, fila 6 del grid, estilo DiarySlider, rango 30-110,
+  default 70, vinculado a `options.fov()`). Vanilla lo tiene en OptionsScreen
+  y habia quedado fuera del reemplazo victoriano.
+- Version bump: 0.15.0 -> 0.15.1.
+
+### v0.15.2 - Fix label del slider FOV
+- La clave vanilla `options.fov` es solo "FOV" (sin placeholder %s), por lo
+  que `Component.translatable("options.fov", valor)` devolvia "FOV" sin el
+  numero. Ahora el label se construye explicitamente: "FOV: N" /
+  "Campo de vision: N" (se agrega ": " + numero a la clave traducida).
+- Version bump: 0.15.1 -> 0.15.2.
+
+### Riesgos activos
+- Validar en cliente real: (1) el FOV se ajusta desde Opciones; (2) los
+  titulos de contenedores son blancos vanilla sin sombra pergamino.
+- `TooltipEventHandler` sigue recoloreando tooltips (pergamino); si el
+  usuario pide vanilla total, revisar tambien.
+- `ThemeManager` no dibuja nada (sin themes registrados) - inerte.
+
+
 ## Estado actual para continuidad
 
 ### Cerrado en esta linea de trabajo

@@ -2,9 +2,44 @@
 
 ## Addendum operativo actual
 
-- Rama fija de Arena: `arena/019fbe66-gripeverde`.
-- Version: `0.13.10`.
+- Rama fija de Arena: `arena/019fd42f-gripeverde`.
+- Version: `0.15.2`.
 - Ultima regla explicita del usuario: despues de hacer cambios, pasar siempre PowerShell completo para enviar a Test.
+
+### DECISION 2026-08-05: retiro del resource pack de contenedores
+
+El usuario descarto por completo el resource pack tematico de contenedores
+(steel v0.13.x, silver steel v0.14.x y la muestra "fresadora" v0.15-dev).
+Orden: "reinicies desde 0 con las interfaces vanilla". Ejecutado en v0.15.0:
+
+- Eliminado `src/main/resources/resourcepacks/gripeverde_theme/` (pack built-in completo: 21 texturas + pack.mcmeta + pack.png + COMPATIBILITY.md).
+- Eliminado `client/ResourcePackHandler.java` (registro del pack via AddPackFindersEvent).
+- Eliminada la task `verifyGripeVerdeThemeAssets` de build.gradle y su dependsOn en processResources.
+- Eliminado `tools/` (pipeline de generacion del pack: kit.py, build_*.py, verify.py, vanilla/ y export/).
+- Los contenedores del juego vuelven a ser 100% vanilla. El mod conserva Title, diario, opciones, sonidos.
+- KIs del pack cerrados. No retomar el pack sin nueva instruccion explicita del usuario.
+
+### v0.15.1 - Segunda mano (2026-08-05)
+
+El usuario reporto dos restos tras probar v0.15.0:
+1. Faltaba el slider de campo de vision (FOV) en el gabinete de opciones
+   (vanilla lo tiene en OptionsScreen). Agregado como fila 6 del grid con
+   `DiarySlider`, rango 30-110, default 70, vinculado a `options.fov()`.
+2. Seguian apareciendo letras personalizadas sobre los contenedores:
+   era `ContainerOverlayHandler` (re-dibujaba los titulos con color
+   pergamino y sombra). ELIMINADO. Fix v0.15.2: el label del slider FOV no
+   mostraba el numero porque la clave vanilla "options.fov" no tiene
+   placeholder (es solo "FOV"); ahora se construye "FOV: N" explicito. Los titulos de contenedores ahora son
+   vanilla puro.
+
+NOTA: `ThemeManager` no dibuja nada (sin themes registrados), y
+`TooltipEventHandler` solo recolorea tooltips (pergamino) - no letras.
+
+### NOTA plataforma: adjuntos del usuario
+
+`/home/user/uploads/` NO existe en el sandbox aunque el sistema reporte archivos
+adjuntos. Verificar con `ls` antes de intentar leer; si falta, pedir al usuario
+que describa la imagen o la suba por otra via.
 
 ### Estado sonoro de botones
 
@@ -28,13 +63,19 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.13.10
-- build.gradle: version = '0.13.10'
-- GripeVerdeMod.VERSION: "0.13.10"
+- Version estable actual: v0.15.2
+- build.gradle: version = '0.15.2'
+- GripeVerdeMod.VERSION: "0.15.2"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
+- Resource pack built-in: ELIMINADO (v0.15.0). Contenedores 100% vanilla.
+- ContainerOverlayHandler: ELIMINADO (v0.15.1). Titulos de contenedores vanilla.
+- Slider FOV: agregado al gabinete de opciones (v0.15.1) y arreglado el
+  label para que muestre el numero (v0.15.2): la clave vanilla "options.fov"
+  es solo "FOV" (sin placeholder), asi que el numero se agrega explicito:
+  "FOV: 70" / "Campo de vision: 70".
 
 ## Historial reciente
 

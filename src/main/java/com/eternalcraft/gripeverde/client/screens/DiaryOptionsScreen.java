@@ -8,6 +8,7 @@ import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
+import com.eternalcraft.gripeverde.client.widgets.DiarySlider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.AccessibilityOptionsScreen;
@@ -74,7 +75,7 @@ public class DiaryOptionsScreen extends Screen {
     private static final int SUBTITLE_GAP = 11;
     private static final int TITLE_H = 12;
     private static final int TITLE_GAP = 14;
-    private static final int GRID_ROWS = 5;
+    private static final int GRID_ROWS = 6;
     private static final int GAP_BEFORE_BACK = 16;
     private static final int PAD_BOTTOM = 18;
     private static final int PAD_SIDES = 28;
@@ -126,6 +127,21 @@ public class DiaryOptionsScreen extends Screen {
         addBtn(this.col2X, this.gridTop + row(3), "gripeverde.options.button.accessibility", DiaryButton.Icon.ACCESS, DiaryButton.SoundProfile.OPTION_OPEN, this::openAccessibility);
         addBtn(this.col1X, this.gridTop + row(4), "gripeverde.options.button.online", DiaryButton.Icon.ONLINE, DiaryButton.SoundProfile.OPTION_OPEN, this::openOnline);
         addBtn(this.col2X, this.gridTop + row(4), "gripeverde.options.button.credits", DiaryButton.Icon.CREDITS, DiaryButton.SoundProfile.OPTION_OPEN, this::openCredits);
+
+        // Slider de campo de vision (como el de OptionsScreen vanilla: 30-110, por defecto 70)
+        // OJO: la clave vanilla "options.fov" es solo "FOV" (sin placeholder), por eso el
+        // numero se agrega explicitamente al label: "FOV: 70" / "Campo de vision: 70".
+        var mcOptions = Minecraft.getInstance().options;
+        int fovX = this.col1X;
+        int fovW = BTN_W * 2 + GAP_X;
+        int fovY = this.gridTop + row(5) + (BTN_H - 20) / 2;
+        double fovNorm = (mcOptions.fov().get() - 30.0) / 80.0;
+        this.addRenderableWidget(new DiarySlider(fovX, fovY, fovW, 20, fovNorm,
+                v -> {
+                    int fov = (int) Math.round(30.0 + v * 80.0);
+                    return Component.translatable("options.fov").getString() + ": " + fov;
+                },
+                v -> mcOptions.fov().set((int) Math.round(30.0 + v * 80.0))));
 
         int backX = cx - BACK_W / 2;
         int backY = panelY + panelH - PAD_BOTTOM - BACK_H;
