@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """
-Eternal Craft: Gripe Verde — Master Resource Pack Generator (Design System Edition)
+Eternal Craft: Gripe Verde — Master Resource Pack Generator (Commercial Design System Edition)
 Reconstructs all 21 vanilla container textures based on the validated Master Steel Design System.
 
-Design Principles:
+Core Foundations:
   - Lighter, clean, modern-industrial rolled steel (#909398) with subtle 1px bevels
   - Relational palette with perfect text readability (#404040 labels have 3.33:1 contrast)
-  - 100% pristine clean 3D stamped-metal slots (#606368) without dirty shadows
+  - 100% pristine clean 3D stamped-metal slots (#606368) without dirty shadows or dithered noise
   - Bronze ONLY on functional moving indicators (arrows, needles, capillary pipes)
   - Zero fake drawings, zero artificial clutter, zero scanlines
-  - 100% vanilla coordinates, dimensions, and alpha channel preservation
+  - 100% exact vanilla coordinates, dimensions, and alpha channel preservation
 """
 
 import os
