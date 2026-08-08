@@ -21,11 +21,11 @@
   con pitch/volumen).
 
 ### Riesgos activos / KI nuevos
-- **KI-17 (validacion de build)**: el sandbox del pase no tiene JDK ni
-  acceso a maven.minecraftforge.net; `gradlew build` NO se ejecuto aqui.
-  El codigo nuevo usa exclusivamente APIs verificadas en el propio repo,
-  pero el build real en la maquina del usuario es obligatorio antes de
-  validar nada.
+- **KI-17 (validacion de build) - CERRADO**: el sandbox del pase no tiene JDK
+  ni acceso a maven; el build se ejecuto en la maquina del usuario.
+  Primer build: 1 error (duckFor llamado en la clase equivocada, fix
+  db61d86). Segundo build: BUILD SUCCESSFUL (57s, solo 4 warnings de
+  deprecaciones preexistentes). Deployado a Test como gripeverde-0.16.0.jar.
 - **KI-18 (escala 4)**: la Sala de consulta usa panel de 440x404 con
   clamp a pantalla-32; en GUI 4 puede quedar justa de alto. El clamp
   minimo es 280x240; las fichas se dibujan igualmente. Validar.

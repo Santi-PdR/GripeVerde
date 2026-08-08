@@ -2400,12 +2400,10 @@ contenedores ni layouts vanilla. Sin resource pack. Sin mixins nuevos.
   KNOWN_ISSUES.md y 25 changelog in-game actualizados.
 
 ### Validacion en este entorno
-- NO hay JDK instalable ni acceso a maven.minecraftforge.net en el sandbox:
-  el build NO pudo ejecutarse aqui. Se compilo "por construccion": solo se
-  usaron APIs ya presentes en el repo (GuiGraphics.fill/drawString/
-  fillGradient, pose, OptionInstance, ObjectSelectionList.children(),
-  SimpleSoundInstance.forUI, FMLPaths, Gson) con patrones copiados de
-  codigo existente verificado. El usuario debe ejecutar `gradlew build`
-  en su maquina.
+- El sandbox del pase no tiene JDK instalable ni acceso a
+  maven.minecraftforge.net: el build se hizo en la maquina del usuario.
+  Resultado: primer intento con 1 error (duckFor llamado en MenuAmbience
+  en vez de MenuMusic; fix db61d86), segundo intento BUILD SUCCESSFUL
+  (57s, solo deprecation warnings preexistentes). v0.16.0 deployado a Test.
 - Regla derivada E125: sin javac disponible, todo codigo nuevo debe
   limitarse a APIs verificadas en el propio repo; nada de firmas recordadas.
