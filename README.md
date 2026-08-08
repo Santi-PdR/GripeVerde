@@ -5,7 +5,7 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.17.0 - El acero vuelve a la cuarentena**
+**v0.17.1 - Remaches bien puestos**
 
 El oficio vuelve a vestirse de acero, y esta vez el acero lleva sello.
 Las mesas de trabajo, los cajones, los hornos y los yunques amanecieron

@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## v0.17.1 - Remaches bien puestos
+
+Parche de mantenimiento sobre el acero de la v0.17.0. Sin cambios visibles
+para el viajero: se ajustan remaches, se repasa el cepillado y se deja el
+gabinete listo para el siguiente folio. Versionado y documentacion al dia.
+
 ## v0.17.0 - El acero vuelve a la cuarentena
 
 El oficio vuelve a vestirse de acero, y esta vez el acero lleva sello.
