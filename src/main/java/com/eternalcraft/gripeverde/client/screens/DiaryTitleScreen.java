@@ -33,6 +33,17 @@ public class DiaryTitleScreen extends Screen {
     private static boolean cinematicMode = false;
     private static long cinematicHintUntilMs = 0L;
 
+    // ── v0.16.0: la memoria de la vigilia ───────────────────────────────────
+    private static boolean memorySessionBegun = false;
+    private long sessionStartMs = System.currentTimeMillis();
+    private long lastInteractionMs = System.currentTimeMillis();
+    private boolean dustThisSession = false;
+    private boolean dawnActive = false;
+    private static long greetingShownUntilMs = 0L;
+    private static String greetingText = null;
+    private long wantedPressStartMs = 0L;
+    private boolean wantedPressing = false;
+
     private static final int BTN_W = 300;
     private static final int BTN_H = 40;
 
@@ -77,6 +88,42 @@ public class DiaryTitleScreen extends Screen {
                 openCountIncremented = true;
             }
         } catch (Throwable ignored) {}
+
+        // ── v0.16.0: la sesion entra en la memoria del gabinete ──
+        // (solo una vez por sesion; init() corre de nuevo en cada resize)
+        try {
+            if (!memorySessionBegun) {
+                memorySessionBegun = true;
+                com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.beginSession();
+                int kind = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.sessionGreetingKind();
+                boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+                long absence = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.sessionAbsenceDays();
+                if (kind == 1) {
+                    greetingText = en ? "The cabinet opens for the first time." : "El gabinete abre por primera vez.";
+                    com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                        com.eternalcraft.gripeverde.client.lore.Marginalia.N_FIRST_NIGHT);
+                } else if (kind == 2 && absence >= 7L) {
+                    greetingText = en ? "The dust did not ask why you returned." : "El polvo no pregunto por que volvias.";
+                    dustThisSession = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.consumeDust();
+                    com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                        com.eternalcraft.gripeverde.client.lore.Discoveries.DUST);
+                    com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                        com.eternalcraft.gripeverde.client.lore.Marginalia.N_DUST);
+                } else if (kind == 2) {
+                    greetingText = en ? "The cabinet remembers your hand." : "El gabinete recuerda tu mano.";
+                } else if (kind == 3) {
+                    greetingText = en ? "Another vigil in the same night." : "Otra vigilia en la misma noche.";
+                }
+                if (greetingText != null) greetingShownUntilMs = System.currentTimeMillis() + 12_000L;
+                if (com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.consumeAnniversary()) {
+                    com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                        com.eternalcraft.gripeverde.client.lore.Discoveries.ANNIVERSARY);
+                    com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                        com.eternalcraft.gripeverde.client.lore.Marginalia.N_ANNIVERSARY);
+                }
+            }
+        } catch (Throwable ignored) {}
+
         MenuAmbience.start();
         MenuMusic.start();
 
@@ -173,6 +220,31 @@ public class DiaryTitleScreen extends Screen {
     public void tick() {
         this.ticks++;
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.tick(1f / 20f);
+        try {
+            com.eternalcraft.gripeverde.client.lore.HiddenCipher.tick();
+
+            // El tiempo enferma: el segundero ya no disimula.
+            if (com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.isTimeSick()) {
+                com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                    com.eternalcraft.gripeverde.client.lore.Discoveries.TIME_SICK);
+            }
+            // Una noche entera frente al papel: el alba enferma aparece.
+            long sessionMin = (System.currentTimeMillis() - sessionStartMs) / 60_000L;
+            if (sessionMin >= 20L && !dawnActive) {
+                dawnActive = true;
+                com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                    com.eternalcraft.gripeverde.client.lore.Discoveries.NIGHT_WHOLE);
+                com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                    com.eternalcraft.gripeverde.client.lore.Marginalia.N_NIGHT);
+            }
+            // Diez hallazgos: el cronista deja de escribir solo.
+            if (com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.discoveredCount() >= 10
+                    && com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("reader10_marked") == 0) {
+                com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.setCounter("reader10_marked", 1);
+                com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                    com.eternalcraft.gripeverde.client.lore.Marginalia.N_READER10);
+            }
+        } catch (Throwable ignored) {}
         if (this.skipMusicButton != null) {
             boolean ready = !MenuMusic.isCrossfading();
             this.skipMusicButton.active = ready;
@@ -186,9 +258,22 @@ public class DiaryTitleScreen extends Screen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        lastInteractionMs = System.currentTimeMillis();
         boolean ctrl = (modifiers & GLFW.GLFW_MOD_CONTROL) != 0;
         if (ctrl && keyCode == GLFW.GLFW_KEY_S) { onSingleplayer(); return true; }
         return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public boolean charTyped(char codePoint, int modifiers) {
+        lastInteractionMs = System.currentTimeMillis();
+        // v0.16.0: el telegrafo oculto oye lo que el lector escribe en la vigilia.
+        try {
+            if (com.eternalcraft.gripeverde.client.lore.HiddenCipher.onCharTyped(codePoint)) {
+                return true;
+            }
+        } catch (Throwable ignored) {}
+        return super.charTyped(codePoint, modifiers);
     }
 
     @Override
@@ -199,14 +284,24 @@ public class DiaryTitleScreen extends Screen {
         // Professional centralized scene renderer
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderTitleScene(g, this.width, this.height);
         drawGlassPatina(g);
+        drawDawnIfDue(g);
 
         if (!cinematicMode) {
+            // v0.16.0: el reloj sostenido en la mano ocupa la vigilia entera.
+            if (com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.isInspecting()) {
+                com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.drawInspection(
+                    g, this.width, this.height, GripeVerdeMod.VERSION);
+                com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
+                return;
+            }
+
             if (!isMinimalMode()) {
                 drawPosterLeft(g);
                 drawPosterRight(g);
                 drawPocketWatch(g);
             }
 
+            com.eternalcraft.gripeverde.client.render.LogoRenderer.setWatchedMouse(mouseX, mouseY);
             drawLogo(g);
             drawSignature(g);
             super.render(g, mouseX, mouseY, partialTick);
@@ -226,6 +321,79 @@ public class DiaryTitleScreen extends Screen {
         }
 
         drawShootStarMessage(g);
+
+        // ── v0.16.0: capas nuevas de la vigilia ──
+        try {
+            com.eternalcraft.gripeverde.client.lore.HiddenCipher.drawBuffer(g, this.width, this.height);
+            com.eternalcraft.gripeverde.client.lore.HiddenCipher.drawTelegram(g, this.width, this.height);
+            com.eternalcraft.gripeverde.client.lore.HiddenCipher.drawPereiraFlash(g, this.width, this.height);
+            com.eternalcraft.gripeverde.client.lore.Herald.draw(g, this.width, this.height);
+            drawDustIfDue(g);
+            drawGreeting(g);
+            drawVigilLine(g);
+            com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
+            com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, this.height - 60);
+            com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
+        } catch (Throwable ignored) {}
+    }
+
+    /** El alba enferma: solo si el lector paso la noche entera. */
+    private void drawDawnIfDue(GuiGraphics g) {
+        if (!dawnActive) return;
+        long t = System.currentTimeMillis();
+        float breath = (float)(Math.sin(t / 9000.0) * 0.5 + 0.5);
+        int a = (int)(10 + breath * 10);
+        int top = (int)(this.height * 0.62f);
+        int bot = this.height;
+        g.fill(0, top, this.width, top + Math.max(8, this.height / 10),
+            (a << 24) | 0x3A5028);
+        g.fill(0, top + this.height / 10, this.width, bot,
+            ((a / 2) << 24) | 0x2A3A20);
+    }
+
+    /** Polvo por ausencia larga: solo la primera vigilia del regreso. */
+    private void drawDustIfDue(GuiGraphics g) {
+        if (!dustThisSession) return;
+        java.util.Random rng = new java.util.Random(0xD05E7L ^ (long)this.width);
+        for (int i = 0; i < 40; i++) {
+            int x = rng.nextInt(Math.max(1, this.width));
+            int y = rng.nextInt(Math.max(1, this.height));
+            int al = 14 + rng.nextInt(16);
+            g.fill(x, y, x + 1, y + 1, (al << 24) | 0x9A938A);
+        }
+    }
+
+    /** Saludo del gabinete al iniciar la sesion (12 segundos). */
+    private void drawGreeting(GuiGraphics g) {
+        if (greetingText == null) return;
+        long now = System.currentTimeMillis();
+        if (now >= greetingShownUntilMs) { greetingText = null; return; }
+        long remain = greetingShownUntilMs - now;
+        long age = greetingShownUntilMs - 12_000L;
+        int alpha = 150;
+        if (now - age < 1200L) alpha = (int)(150 * (now - age) / 1200L);
+        else if (remain < 1500L) alpha = (int)(150 * remain / 1500L);
+        if (alpha <= 4) return;
+        int wTxt = this.font.width(greetingText);
+        g.drawString(this.font, greetingText, this.width / 2 - wTxt / 2, 148,
+            (alpha << 24) | 0xB8A888, false);
+    }
+
+    /** La vigilia nota cuando el lector se queda quieto demasiado tiempo. */
+    private void drawVigilLine(GuiGraphics g) {
+        long idle = System.currentTimeMillis() - lastInteractionMs;
+        if (idle < 60_000L) return;
+        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+        String line;
+        if (idle < 150_000L) {
+            line = en ? "...are you still there?" : "...¿sigue ahi?";
+        } else {
+            line = en ? "Do not blink. The fog counts blinks." : "No parpadee. La niebla cuenta los parpadeos.";
+        }
+        int pulse = (int)(Math.sin(System.currentTimeMillis() / 700.0) * 22 + 60);
+        int wTxt = this.font.width(line);
+        g.drawString(this.font, line, this.width / 2 - wTxt / 2, this.height / 3 + 24,
+            (Math.max(20, pulse) << 24) | 0xA8B890, false);
     }
 
     @Override
@@ -291,6 +459,25 @@ public class DiaryTitleScreen extends Screen {
 
         int posterH = Math.min(POSTER_H_MAX, maxPosterH);
         PosterRenderer.drawQuarantineNotice(g, leftCol.x, leftCol.y, POSTER_W, posterH);
+
+        // v0.16.0: tras despegar la esquina, el edicto revela lo que tapaba.
+        try {
+            if (com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("poster_peeled") > 0) {
+                int x2 = leftCol.x + POSTER_W;
+                int y2 = leftCol.y + posterH;
+                // La esquina doblada
+                g.fill(x2 - 26, y2 - 26, x2, y2, 0xFFC9B78A);
+                g.fill(x2 - 26, y2 - 26, x2 - 24, y2, 0xFF8E7A55);
+                g.fill(x2 - 26, y2 - 26, x2, y2 - 24, 0xFF8E7A55);
+                g.fill(x2 - 20, y2 - 20, x2 - 4, y2 - 4, 0xFFD8CAB0);
+                // Lo que hay debajo: un nombre
+                boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+                String hidden = en ? "E. Holloway, M.D." : "E. Holloway, medico";
+                int hw = this.font.width(hidden);
+                g.drawString(this.font, hidden, x2 - 8 - hw, y2 - 12,
+                    com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0xFF3D2A18, 170), false);
+            }
+        } catch (Throwable ignored) {}
     }
 
     private void drawPocketWatch(GuiGraphics g) {
@@ -375,6 +562,14 @@ public class DiaryTitleScreen extends Screen {
     private void drawSignature(GuiGraphics g) {
         int idx = com.eternalcraft.gripeverde.client.render.LogoRenderer.getYearIndex();
         String signature = signatureFor(idx);
+        // v0.16.0: tras oir su nombre en voz alta, el cronista firma a su manera.
+        try {
+            if (idx == 0 && com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("pereira_offended") > 0) {
+                signature = isEnglishSelected()
+                    ? "Dr. S. Pereira (you again?)"
+                    : "Dr. S. Pereira (¿otra vez tu?)";
+            }
+        } catch (Throwable ignored) {}
         // Nombre viejo tachado: el anterior del pool
         int oldIdx = (idx + SIGNATURE_POOL_ES.length - 1) % SIGNATURE_POOL_ES.length;
         String oldSig = signatureFor(oldIdx);
@@ -508,6 +703,116 @@ public class DiaryTitleScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        lastInteractionMs = System.currentTimeMillis();
+
+        if (button == 0) {
+            try {
+                // ── v0.16.0: la vigilia responde ──
+                // Un gesto mientras el susurro sigue en el aire: alguien contesta.
+                com.eternalcraft.gripeverde.client.audio.MenuAmbience.answerWhisper();
+
+                // El reloj en la mano se cierra con cualquier gesto.
+                if (com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.isInspecting()) {
+                    com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.closeInspection();
+                    return true;
+                }
+                // El Heraldo se pliega al tocarlo.
+                if (com.eternalcraft.gripeverde.client.lore.Herald.isViewing()) {
+                    com.eternalcraft.gripeverde.client.lore.Herald.close();
+                    return true;
+                }
+
+                int w = this.width, h = this.height;
+
+                // El ojo del emblema no esta pintado: mira.
+                int logoCx = w / 2;
+                if (mouseX >= logoCx + 1 && mouseX <= logoCx + 9 && mouseY >= 52 && mouseY <= 60) {
+                    com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                        com.eternalcraft.gripeverde.client.lore.Discoveries.SKULL_WATCHES);
+                }
+
+                // El reloj de bolsillo: detenerlo revela la inscripcion.
+                LayoutRegion rightCol = rightColumn();
+                int watchCx = rightCol.x + rightCol.w - WATCH_RADIUS - Spacing.GAP_MEDIUM;
+                int watchCy = rightCol.y + WATCH_RADIUS + Spacing.GAP_LARGE;
+                if (!isMinimalMode()
+                        && mouseX >= watchCx - WATCH_RADIUS - 10 && mouseX <= watchCx + WATCH_RADIUS + 10
+                        && mouseY >= watchCy - WATCH_RADIUS - 14 && mouseY <= watchCy + WATCH_RADIUS + 22) {
+                    handleWatchClick();
+                    return true;
+                }
+
+                // El edicto de cuarentena esta pegado sobre algo.
+                LayoutRegion leftCol = leftColumn();
+                int totalBtnH = BTN_H * 2 + Spacing.GAP_MEDIUM;
+                int maxPosterH = leftCol.h - totalBtnH - Spacing.GAP_LARGE * 2;
+                if (!isMinimalMode() && maxPosterH >= 140
+                        && mouseX >= leftCol.x && mouseX <= leftCol.x + POSTER_W
+                        && mouseY >= leftCol.y && mouseY <= leftCol.y + Math.min(POSTER_H_MAX, maxPosterH)) {
+                    handlePosterPeel();
+                    return true;
+                }
+
+                // El cartel del buscado: sostenerle la mirada.
+                if (isWantedPosterShowing()) {
+                    int[] rr = wantedPosterRect();
+                    if (rr != null && mouseX >= rr[0] && mouseX <= rr[0] + rr[2]
+                            && mouseY >= rr[1] && mouseY <= rr[1] + rr[3]) {
+                        wantedPressing = true;
+                        wantedPressStartMs = System.currentTimeMillis();
+                    }
+                }
+
+                // Los faroles de la avenida se apagan y se encienden a mano.
+                int li = com.eternalcraft.gripeverde.client.render.LivingAtmosphere.lanternIndexAt(mouseX, mouseY, w, h);
+                if (li >= 0) {
+                    int[][] lp = com.eternalcraft.gripeverde.client.render.VictorianSkyline.getLanternPositions(w, h);
+                    boolean allOut = com.eternalcraft.gripeverde.client.render.LivingAtmosphere.toggleLantern(li, lp.length);
+                    if (allOut) {
+                        boolean first = com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                            com.eternalcraft.gripeverde.client.lore.Discoveries.AVENUE_DARK);
+                        if (first) {
+                            com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.setCounter("avenue_darkened", 1);
+                            com.eternalcraft.gripeverde.client.audio.MenuAmbience.duckFor(2200L);
+                        }
+                    }
+                    return true;
+                }
+
+                // El gato del tejado cobra sus deudas despacio.
+                int[] catR = com.eternalcraft.gripeverde.client.render.VictorianSkyline.catRect(w, h);
+                if (!isMinimalMode() && mouseX >= catR[0] && mouseX <= catR[0] + catR[2]
+                        && mouseY >= catR[1] && mouseY <= catR[1] + catR[3]) {
+                    handleCatClick();
+                    return true;
+                }
+
+                // La rata que se detuvo.
+                if (com.eternalcraft.gripeverde.client.render.LivingAtmosphere.ratHit(mouseX, mouseY, w, h)) {
+                    if (com.eternalcraft.gripeverde.client.render.LivingAtmosphere.isRatStanding()) {
+                        com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                            com.eternalcraft.gripeverde.client.lore.Discoveries.RAT_PAUSE);
+                    }
+                    com.eternalcraft.gripeverde.client.render.LivingAtmosphere.scareRat();
+                    return true;
+                }
+
+                // La ventana del atico espera respuesta.
+                int[] sw = com.eternalcraft.gripeverde.client.render.VictorianSkyline.signalWindowRect(w, h);
+                if (mouseX >= sw[0] - 2 && mouseX <= sw[0] + sw[2] + 2
+                        && mouseY >= sw[1] - 2 && mouseY <= sw[1] + sw[3] + 2) {
+                    com.eternalcraft.gripeverde.client.render.VictorianSkyline.signalWindowClicked();
+                    return true;
+                }
+
+                // El kiosco guarda el Heraldo del dia.
+                if (com.eternalcraft.gripeverde.client.render.LivingAtmosphere.heraldHit(mouseX, mouseY, w, h)) {
+                    com.eternalcraft.gripeverde.client.lore.Herald.openToday();
+                    return true;
+                }
+            } catch (Throwable ignored) {}
+        }
+
         // Zona del logo: rectangulo central superior
         int logoCx = this.width / 2;
         boolean overLogo = mouseX >= logoCx - 100 && mouseX <= logoCx + 100
@@ -517,6 +822,108 @@ public class DiaryTitleScreen extends Screen {
             // No consumir el evento, dejar pasar al super
         }
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        lastInteractionMs = System.currentTimeMillis();
+        if (wantedPressing && button == 0) {
+            wantedPressing = false;
+            long held = System.currentTimeMillis() - wantedPressStartMs;
+            if (held >= 1400L) {
+                try {
+                    boolean first = com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                        com.eternalcraft.gripeverde.client.lore.Discoveries.WANTED_EYES);
+                    if (first) {
+                        com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.setCounter("wanted_eyes", 1);
+                    }
+                    com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                        com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_AMBIENT_OCCASIONAL.get(),
+                        0.16f, 0.66f);
+                } catch (Throwable ignored) {}
+            }
+        }
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    // ── v0.16.0: interacciones de la vigilia ────────────────────────────────
+
+    private void handleWatchClick() {
+        int clicks = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.bump("watchClicks");
+        if (clicks == 1) {
+            com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                com.eternalcraft.gripeverde.client.lore.Discoveries.WATCH_INSCRIPTION);
+            com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                com.eternalcraft.gripeverde.client.lore.Marginalia.N_KEY_HINT);
+            com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.toggleInspection();
+            return;
+        }
+        if (clicks >= 5 && !com.eternalcraft.gripeverde.client.lore.ChroniclerMemory
+                .hasCollectible(com.eternalcraft.gripeverde.client.lore.Discoveries.ITEM_KEY)) {
+            com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.addCollectible(
+                com.eternalcraft.gripeverde.client.lore.Discoveries.ITEM_KEY);
+            com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                com.eternalcraft.gripeverde.client.lore.Discoveries.WATCH_KEY);
+            com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                com.eternalcraft.gripeverde.client.lore.Marginalia.N_DRAWER_HINT);
+            try {
+                // La llave cae y suena contra la piedra.
+                com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                    com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_TICK.get(), 0.22f, 2.2f);
+                com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                    com.eternalcraft.gripeverde.client.audio.ModSounds.UI_CLICK_HEAVY.get(), 0.18f, 1.4f);
+            } catch (Throwable ignored) {}
+            return;
+        }
+        com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.toggleInspection();
+    }
+
+    private void handlePosterPeel() {
+        boolean first = com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+            com.eternalcraft.gripeverde.client.lore.Discoveries.POSTER_PEEL);
+        if (first) {
+            com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.setCounter("poster_peeled", 1);
+        }
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                com.eternalcraft.gripeverde.client.audio.ModSounds.UI_SCROLL.get(), 0.20f, 0.58f);
+        } catch (Throwable ignored) {}
+    }
+
+    private void handleCatClick() {
+        int n = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.bump("catClicks");
+        try {
+            // El gato protesta, a su manera.
+            com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_AMBIENT_OCCASIONAL.get(),
+                0.14f, 1.65f);
+        } catch (Throwable ignored) {}
+        if (n >= 7 && !com.eternalcraft.gripeverde.client.lore.ChroniclerMemory
+                .hasCollectible(com.eternalcraft.gripeverde.client.lore.Discoveries.ITEM_SCRAP)) {
+            com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.addCollectible(
+                com.eternalcraft.gripeverde.client.lore.Discoveries.ITEM_SCRAP);
+            com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                com.eternalcraft.gripeverde.client.lore.Discoveries.CAT_SCRAP);
+        }
+    }
+
+    /** El cartel derecho rota a diario; solo el del buscado acepta miradas largas. */
+    private boolean isWantedPosterShowing() {
+        long day = System.currentTimeMillis() / 86_400_000L;
+        return (int)(Math.abs(day) % 3) == 1;
+    }
+
+    private int[] wantedPosterRect() {
+        if (isMinimalMode()) return null;
+        LayoutRegion rightCol = rightColumn();
+        int topReserved = (WATCH_RADIUS * 2) + 30 + Spacing.GAP_LARGE;
+        int botReserved = BTN_SLIM_H + Spacing.GAP_LARGE * 2;
+        int available = rightCol.h - topReserved - botReserved;
+        if (available < 120) return null;
+        int posterH = Math.min(POSTER_R_H_MAX, available);
+        int posterX = rightCol.x + rightCol.w - POSTER_R_W;
+        int posterY = rightCol.y + topReserved;
+        return new int[]{ posterX, posterY, POSTER_R_W, posterH };
     }
     // Easter egg: click en el logo -> expediente sellado aleatorio
     private static final String[] LOGO_EASTER_EGGS_ES = {

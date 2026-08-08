@@ -1,6 +1,27 @@
 # Eternal Craft: Gripe Verde
 ## Cronica bajo sello
 
+
+## Version 0.16 - La sala de consulta
+
+El gabinete ha dejado de ser un mueble. Ahora recuerda.
+
+Desde esta noche, todo lo que el lector encuentre queda escrito en una
+memoria que no se borra al cerrar los ojos: las fichas halladas, los
+objetos pequenos, las noches seguidas, las ausencias largas. El polvo se
+acumula cuando nadie vuelve, y la mesa sabe cuantas manos la abrieron.
+
+El cronista ya no escribe solo. Deja notas al margen cuando algo lo
+contraria, corrige su propia letra, saluda al que regresa y calla cuando
+conviene. Hay quien jura que la madera devolvio tres golpes.
+
+La calle tambien se deja tocar. Los faroles se apagan a mano, el gato del
+tejado paga sus deudas despacio, y cuando doblan las campanas conviene
+esperar: algo cruza despues, muy despacio, tirando de un carro.
+
+Detras del ultimo folio de la cronica hay una sala nueva. Cuarenta y tres
+fichas. Las que faltan siguen ahi fuera.
+
 ## Version 0.15 - 0.15.2 - El oficio vuelve a su madera
 
 Las planchas de acero que cubrian las mesas de trabajo fueron retiradas.

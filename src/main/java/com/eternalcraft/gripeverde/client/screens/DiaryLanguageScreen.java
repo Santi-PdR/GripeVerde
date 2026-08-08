@@ -187,6 +187,13 @@ public class DiaryLanguageScreen extends Screen {
         if (this.applyingLanguage) {
             drawApplyingOverlay(g);
         }
+
+        // v0.16.0
+        try {
+            com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
+            com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, this.panelY - 12);
+            com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
+        } catch (Throwable ignored) {}
     }
 
     private void drawSearchBuffer(GuiGraphics g) {
@@ -328,6 +335,11 @@ public class DiaryLanguageScreen extends Screen {
             this.languageManager.setSelected(this.pendingLanguageCode);
             this.options.save();
             UiSounds.success();
+            // v0.16.0: el cronista nota el cambio de lengua.
+            try {
+                com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                    com.eternalcraft.gripeverde.client.lore.Marginalia.N_LANGUAGE);
+            } catch (Throwable ignored) {}
             this.minecraft.reloadResourcePacks().thenRun(() ->
                 this.minecraft.execute(() -> {
                     com.eternalcraft.gripeverde.client.audio.MenuAmbience.recoverAfterResourceReload();
@@ -369,6 +381,19 @@ public class DiaryLanguageScreen extends Screen {
                 this.setSelected(selectedEntry);
                 this.centerScrollOn(selectedEntry);
             }
+
+            // v0.16.0: para quien ya encontro bastante, existe una lengua mas.
+            // Solo una vez por dia; se esfuma al tocarla.
+            try {
+                boolean worthy = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.discoveredCount() >= 6;
+                long today = java.time.LocalDate.now().toEpochDay();
+                boolean taken = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("fog_tongue_day") == (int)today;
+                if (worthy && !taken) {
+                    LanguageEntry fog = new LanguageEntry();
+                    int pos = Math.min(7, this.children().size());
+                    this.children().add(pos, fog);
+                }
+            } catch (Throwable ignored) {}
         }
 
         @Override
@@ -408,16 +433,48 @@ public class DiaryLanguageScreen extends Screen {
 
         private final String code;
         private final LanguageInfo info;
+        private final boolean fogTongue;
         private long lastClickMs = 0L;
 
         private LanguageEntry(String code, LanguageInfo info) {
             this.code = code;
             this.info = info;
+            this.fogTongue = false;
+        }
+
+        private LanguageEntry() {
+            // v0.16.0: la lengua imposible.
+            this.code = "fog";
+            this.info = null;
+            this.fogTongue = true;
         }
 
         @Override
         public void render(GuiGraphics g, int index, int top, int left, int rowWidth, int rowHeight,
                            int mouseX, int mouseY, boolean hovered, float partialTick) {
+
+            if (this.fogTongue) {
+                // Una lengua que ningun consulado reconoce.
+                if (hovered) {
+                    g.fill(left + 2, top + 1, left + rowWidth - 2, top + rowHeight - 2, 0x22384028);
+                }
+                String name = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+                    ? "Tongue of the Fog" : "Lengua de la Niebla";
+                int pulse = 90 + (int)(Math.sin(System.currentTimeMillis() / 600.0) * 40);
+                int w2 = DiaryLanguageScreen.this.font.width(name);
+                g.drawString(DiaryLanguageScreen.this.font, name,
+                    left + FLAG_SLOT + (rowWidth - FLAG_SLOT - w2) / 2,
+                    top + (rowHeight - DiaryLanguageScreen.this.font.lineHeight) / 2,
+                    (Math.max(30, pulse) << 24) | 0x7A9060, false);
+                // Rombo de tinta en lugar de bandera
+                int dx = left + 8, dy = top + rowHeight / 2;
+                g.fill(dx, dy - 2, dx + 1, dy - 1, 0x885A7038);
+                g.fill(dx - 1, dy - 1, dx + 2, dy, 0x885A7038);
+                g.fill(dx - 2, dy, dx + 3, dy + 1, 0x885A7038);
+                g.fill(dx - 1, dy + 1, dx + 2, dy + 2, 0x885A7038);
+                g.fill(dx, dy + 2, dx + 1, dy + 3, 0x885A7038);
+                return;
+            }
 
             boolean isPending = Objects.equals(DiaryLanguageScreen.this.pendingLanguageCode, this.code);
             boolean isApplied = Objects.equals(DiaryLanguageScreen.this.appliedLanguageCode, this.code);
@@ -490,6 +547,20 @@ public class DiaryLanguageScreen extends Screen {
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             if (button == 0) {
+                if (this.fogTongue) {
+                    // v0.16.0: la lengua imposible no se habla: se esfuma.
+                    try {
+                        boolean first = com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                            com.eternalcraft.gripeverde.client.lore.Discoveries.FOG_TONGUE);
+                        long today = java.time.LocalDate.now().toEpochDay();
+                        com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.setCounter("fog_tongue_day", (int)today);
+                        com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                            com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_AMBIENT_OCCASIONAL.get(),
+                            0.24f, first ? 0.55f : 0.70f);
+                        DiaryLanguageScreen.this.languageList.children().remove(this);
+                    } catch (Throwable ignored) {}
+                    return true;
+                }
                 long now = System.currentTimeMillis();
                 boolean doubleClick = Objects.equals(DiaryLanguageScreen.this.pendingLanguageCode, this.code)
                     && now - this.lastClickMs < 420L;
@@ -507,6 +578,7 @@ public class DiaryLanguageScreen extends Screen {
 
         @Override
         public Component getNarration() {
+            if (this.fogTongue) return Component.literal("...");
             return this.info.toComponent();
         }
     }

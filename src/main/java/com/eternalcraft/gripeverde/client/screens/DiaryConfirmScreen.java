@@ -90,7 +90,21 @@ public class DiaryConfirmScreen extends ConfirmScreen {
 
         DiaryButton diaryYes = new DiaryButton(startX, btnY, btnW, btnH,
                 this.yesButton, DiaryButton.Icon.NONE, DiaryButton.Variant.PRIMARY,
-                () -> this.callback.accept(true));
+                () -> {
+                    // v0.16.0: el gabinete cuenta lo que el lector destruye.
+                    try {
+                        int n = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.bump("destroys");
+                        com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                            com.eternalcraft.gripeverde.client.audio.ModSounds.UI_CLICK_DESTROY.get(), 0.26f, 0.72f);
+                        if (n >= 3) {
+                            com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                                com.eternalcraft.gripeverde.client.lore.Discoveries.DESTROYER);
+                            com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                                com.eternalcraft.gripeverde.client.lore.Marginalia.N_DESTROY);
+                        }
+                    } catch (Throwable ignored) {}
+                    this.callback.accept(true);
+                });
         DiaryButton diaryNo = new DiaryButton(startX + btnW + gap, btnY, btnW, btnH,
                 this.noButton, DiaryButton.Icon.DOOR, DiaryButton.Variant.SECONDARY,
                 () -> this.callback.accept(false));
@@ -147,6 +161,19 @@ public class DiaryConfirmScreen extends ConfirmScreen {
             int msgY = titleY + 28;
             this.ownMultilineMessage.renderCentered(gfx, this.width / 2, msgY, this.font.lineHeight + 2, DiaryChrome.INK_SUBTITLE);
         }
+
+        // v0.16.0: recordatorio para quien destruye demasiado.
+        try {
+            if (com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("destroys") >= 3) {
+                String line = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+                    ? "The cabinet remembers what you destroy."
+                    : "El gabinete recuerda lo que destruyes.";
+                int lw = this.font.width(line);
+                gfx.drawString(this.font, line, (this.width - lw) / 2, panelY + panelH - 42,
+                    com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0xFF6E1F16, 150), false);
+            }
+            com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(gfx, this.width);
+        } catch (Throwable ignored) {}
 
         // Widgets propios (botones Diary y cualquier otro visible)
         for (var w : this.renderables) {

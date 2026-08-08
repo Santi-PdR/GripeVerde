@@ -96,9 +96,27 @@ public class DiaryDirectJoinScreen extends Screen {
         }
     }
 
+    private long unmappedWarnUntilMs = 0L;
+
     private void onSelect() {
-        this.serverData.ip = this.ipEdit.getValue();
-        this.minecraft.options.lastMpIp = this.ipEdit.getValue();
+        String ip = this.ipEdit.getValue() == null ? "" : this.ipEdit.getValue().trim();
+        // v0.16.0: la direccion que no esta en ningun mapa.
+        if ("13.13.13.13".equals(ip)) {
+            this.unmappedWarnUntilMs = System.currentTimeMillis() + 6000L;
+            try {
+                boolean first = com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                    com.eternalcraft.gripeverde.client.lore.Discoveries.ADDRESS_13);
+                com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                    com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_BELL.get(), 0.20f, 0.50f);
+                if (first) {
+                    com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                        com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_AMBIENT_OCCASIONAL.get(), 0.20f, 0.58f);
+                }
+            } catch (Throwable ignored) {}
+            return;
+        }
+        this.serverData.ip = ip;
+        this.minecraft.options.lastMpIp = ip;
         this.minecraft.options.save();
         this.callback.accept(true);
     }
@@ -178,6 +196,21 @@ public class DiaryDirectJoinScreen extends Screen {
                 w.render(gfx, mouseX, mouseY, partial);
             }
         }
+
+        // v0.16.0: aviso de la direccion sin mapa
+        try {
+            if (System.currentTimeMillis() < this.unmappedWarnUntilMs) {
+                String warn = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+                    ? "That address is on no map. The door is not there anymore."
+                    : "Esa direccion no esta en ningun mapa. La puerta ya no esta ahi.";
+                int ww = this.font.width(warn);
+                long remain = this.unmappedWarnUntilMs - System.currentTimeMillis();
+                int alpha = remain < 900L ? (int)(210 * remain / 900L) : 210;
+                gfx.drawString(this.font, warn, (this.width - ww) / 2, panelY + panelH + 10,
+                    (alpha << 24) | 0xB8A888, false);
+            }
+            com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(gfx, this.width);
+        } catch (Throwable ignored) {}
     }
 
     @Override

@@ -159,11 +159,40 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         return null;
     }
 
+    // v0.16.0: el silencio escucha
+    private long silenceStartMs = 0L;
+    private boolean silenceHeard = false;
+
     @Override
     public void tick() {
         super.tick();
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.tick(1.0f / 20.0f);
         this.smoothScroll.tick(this.reflectedList);
+
+        // Si el gramofono queda del todo en cero y el lector se queda, algo late.
+        try {
+            if (!silenceHeard && com.eternalcraft.gripeverde.client.audio.MenuMusic.getUserVolume() <= 0.004f) {
+                long now = System.currentTimeMillis();
+                if (silenceStartMs == 0L) silenceStartMs = now;
+                if (now - silenceStartMs >= 3000L) {
+                    silenceHeard = true;
+                    boolean first = com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                        com.eternalcraft.gripeverde.client.lore.Discoveries.SILENCE_LISTENS);
+                    if (first) {
+                        com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                            com.eternalcraft.gripeverde.client.lore.Marginalia.N_SILENCE);
+                    }
+                    // Un latido grave, tres veces.
+                    for (int i = 0; i < 3; i++) {
+                        com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                            com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_CHAIN.get(),
+                            0.10f, 0.34f + i * 0.02f);
+                    }
+                }
+            } else if (!silenceHeard) {
+                silenceStartMs = 0L;
+            }
+        } catch (Throwable ignored) {}
     }
 
     @Override
@@ -233,6 +262,13 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         for (Renderable r : this.renderables) {
             r.render(g, mouseX, mouseY, partialTick);
         }
+
+        // v0.16.0
+        try {
+            com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
+            com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, this.panelY - 12);
+            com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
+        } catch (Throwable ignored) {}
     }
 
     @Override

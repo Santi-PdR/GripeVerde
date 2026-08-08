@@ -56,6 +56,17 @@ public class DiaryPauseScreen extends PauseScreen {
 
     private int animTick = 0;
 
+    // ── v0.16.0: la pausa responde ──
+    private boolean candleOut = false;
+    private long candleSmokeUntilMs = 0L;
+    private static long nextBreathMs = System.currentTimeMillis() + 20_000L;
+    private static long breathUntilMs = 0L;
+    private static long breathStartMs = 0L;
+    private static int breathCx = 0, breathCy = 0;
+    private static long nextShadowMs = 0L;
+    private static long shadowUntilMs = 0L;
+    private static long shadowStartMs = 0L;
+
     public DiaryPauseScreen() {
         super(true);
     }
@@ -136,6 +147,80 @@ public class DiaryPauseScreen extends PauseScreen {
 
     public void tick() {
         animTick++;
+        // v0.16.0: el aliento del otro lado del vidrio.
+        try {
+            long now = System.currentTimeMillis();
+            if (breathUntilMs == 0L && now >= nextBreathMs) {
+                breathStartMs = now;
+                breathUntilMs = now + 4600L;
+                breathCx = panelX() + 24 + new java.util.Random(now).nextInt(Math.max(10, panelW() - 48));
+                breathCy = panelY() + 20 + new java.util.Random(now + 7).nextInt(Math.max(10, panelH() - 60));
+                nextBreathMs = now + 26_000L + new java.util.Random(now).nextLong() % 20_000L;
+                if (nextBreathMs < now) nextBreathMs = now + 30_000L;
+                com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                    com.eternalcraft.gripeverde.client.lore.Discoveries.BREATH);
+            }
+            if (breathUntilMs > 0L && now >= breathUntilMs) breathUntilMs = 0L;
+
+            // La segunda sombra: solo para quien ya encontro bastante.
+            if (com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.discoveredCount() >= 12) {
+                if (shadowUntilMs == 0L && nextShadowMs > 0L && now >= nextShadowMs) {
+                    shadowStartMs = now;
+                    shadowUntilMs = now + 2400L;
+                    nextShadowMs = 0L;
+                    com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                        com.eternalcraft.gripeverde.client.lore.Discoveries.READER_SHADOW);
+                }
+                if (shadowUntilMs > 0L && now >= shadowUntilMs) {
+                    shadowUntilMs = 0L;
+                    nextShadowMs = now + 90_000L + (long)(Math.random() * 120_000L);
+                }
+                if (nextShadowMs == 0L && shadowUntilMs == 0L) {
+                    nextShadowMs = now + 60_000L + (long)(Math.random() * 90_000L);
+                }
+            }
+        } catch (Throwable ignored) {}
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == 0) {
+            try {
+                int px = panelX(), py = panelY();
+                // La vela: apagarla revela lo que lee la oscuridad.
+                int candleX = px + 20, candleY = py + panelH() - 32;
+                if (mouseX >= candleX - 6 && mouseX <= candleX + 20 && mouseY >= candleY - 14 && mouseY <= candleY + 28) {
+                    candleOut = !candleOut;
+                    if (candleOut) {
+                        candleSmokeUntilMs = System.currentTimeMillis() + 2600L;
+                        com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                            com.eternalcraft.gripeverde.client.lore.Discoveries.CANDLE_DARK);
+                        com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                            com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_WOOD_CREAK.get(), 0.13f, 1.6f);
+                    } else {
+                        com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                            com.eternalcraft.gripeverde.client.audio.ModSounds.UI_CLICK_HEAVY.get(), 0.12f, 1.2f);
+                    }
+                    return true;
+                }
+                // El cuervo cobra su peaje.
+                int ravenX = px + 14, ravenY = py + 22;
+                if (mouseX >= ravenX - 4 && mouseX <= ravenX + 24 && mouseY >= ravenY - 4 && mouseY <= ravenY + 22) {
+                    int n = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.bump("ravenClicks");
+                    com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                        com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_CROWS.get(), 0.22f, 1.45f);
+                    if (n >= 5 && !com.eternalcraft.gripeverde.client.lore.ChroniclerMemory
+                            .hasCollectible(com.eternalcraft.gripeverde.client.lore.Discoveries.ITEM_FEATHER)) {
+                        com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.addCollectible(
+                            com.eternalcraft.gripeverde.client.lore.Discoveries.ITEM_FEATHER);
+                        com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                            com.eternalcraft.gripeverde.client.lore.Discoveries.RAVEN_FEATHER);
+                    }
+                    return true;
+                }
+            } catch (Throwable ignored) {}
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     private void resumeGame() {
@@ -214,6 +299,57 @@ public class DiaryPauseScreen extends PauseScreen {
         drawCandle(g, px + 20, py + panelH() - 32);
         drawSignature(g, px, py);
         drawWaxSeal(g, px + panelW() - 28, py + panelH() - 26);
+
+        // ── v0.16.0: lo que trae la oscuridad ──
+        try {
+            if (candleOut) {
+                // El panel queda en penumbra
+                g.fill(px + 2, py + 2, px + panelW() - 2, py + panelH() - 2,
+                    DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 96));
+                // Solo a oscuras se lee esto
+                long now = System.currentTimeMillis();
+                int pulse = 60 + (int)(Math.sin(now / 650.0) * 24);
+                boolean en = isEnglishSelected();
+                String dark = en ? "the darkness reads too" : "la oscuridad tambien lee";
+                int dw = this.font.width(dark);
+                g.drawString(this.font, dark, px + (panelW() - dw) / 2, py + panelH() / 2,
+                    (pulse << 24) | 0x8A9A70, false);
+            }
+            // El aliento en el vidrio
+            long now = System.currentTimeMillis();
+            if (breathUntilMs > now) {
+                long age = now - breathStartMs;
+                long remain = breathUntilMs - now;
+                int a = 26;
+                if (age < 1400L) a = (int)(26 * age / 1400L);
+                else if (remain < 1400L) a = (int)(26 * remain / 1400L);
+                if (a > 1) {
+                    for (int r = 12; r > 2; r -= 3) {
+                        int alpha = a * (13 - r) / 10;
+                        if (alpha < 1) continue;
+                        int col = (alpha << 24) | 0xD8E0D8;
+                        g.fill(breathCx - r, breathCy - r / 2, breathCx + r, breathCy + r / 2, col);
+                    }
+                }
+            }
+            // La segunda sombra
+            if (shadowUntilMs > now) {
+                long age = now - shadowStartMs;
+                int a = 40;
+                if (age < 500L) a = (int)(40 * age / 500L);
+                else if (shadowUntilMs - now < 500L) a = (int)(40 * (shadowUntilMs - now) / 500L);
+                int sx = px + panelW() - 46;
+                int sy = py + 30;
+                int col = (a << 24) | 0x000000;
+                // Silueta: cabeza + hombros, inclinada sobre algo
+                g.fill(sx + 6, sy, sx + 14, sy + 8, col);
+                g.fill(sx, sy + 8, sx + 22, sy + 26, col);
+                g.fill(sx + 2, sy + 26, sx + 20, sy + 30, col);
+            }
+            com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
+            com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, py - 12);
+            com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
+        } catch (Throwable ignored) {}
     }
 
     private void drawVignette(GuiGraphics g) {
@@ -416,6 +552,15 @@ public class DiaryPauseScreen extends PauseScreen {
         int sy = py + panelH() - ORN_SIGN_FROM_BOT;
         g.drawString(this.font, sig, centerX - sw / 2 + 1, sy + 1, DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 90), false);
         g.drawString(this.font, sig, centerX - sw / 2, sy, DiaryTheme.SEPIA_DARK, false);
+        // v0.16.0: tras bastantes hallazgos, la firma reconoce al lector.
+        try {
+            if (com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.discoveredCount() >= 10) {
+                String add = isEnglishSelected() ? "- and of whoever reads -" : "- y de quien lee -";
+                int aw = this.font.width(add);
+                g.drawString(this.font, add, centerX - aw / 2, sy - 10,
+                    DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 130), false);
+            }
+        } catch (Throwable ignored) {}
     }
 
     private static boolean isEnglishSelected() {
@@ -536,6 +681,23 @@ public class DiaryPauseScreen extends PauseScreen {
 
         // PABILO (mecha)
         g.fill(x + 6, y + 4, x + 7, y + 6, wick);
+
+        // v0.16.0: vela apagada = humo breve, nada de llama.
+        if (candleOut) {
+            long nowSmoke = System.currentTimeMillis();
+            if (nowSmoke < candleSmokeUntilMs) {
+                float t = (nowSmoke % 700L) / 700f;
+                int sx = x + 6 + (int)(Math.sin(nowSmoke / 210.0) * 2);
+                int a = (int)(46 * (1f - t));
+                for (int i = 0; i < 4; i++) {
+                    g.fill(sx + i, y - 4 - i * 3 - (int)(t * 6), sx + i + 1, y - 2 - i * 3 - (int)(t * 6),
+                        (Math.max(4, a - i * 8) << 24) | 0x909090);
+                }
+            }
+            // Mecha negra sin llama
+            g.fill(x + 6, y + 3, x + 7, y + 5, wick);
+            return;
+        }
 
         // LLAMA ANIMADA — parpadeo sutil
         int flameFrame = (animTick / 4) % 4;

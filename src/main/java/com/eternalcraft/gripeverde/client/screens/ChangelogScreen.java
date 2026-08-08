@@ -51,8 +51,15 @@ public class ChangelogScreen extends Screen {
     private double targetScrollY = 0.0D;
     private static int lastScrollY = 0;  // Remembered across reopens
     private int maxScroll = 0;
+    private int contentTotalH = 0;
     private int lastContentW = -1;
     private boolean draggingScrollbar = false;
+
+    // v0.16.0: las marcas del encuadernador y el folio escondido
+    private final List<int[]> asteriskRects = new ArrayList<>();
+    private static int binderMarksLit = 0;
+    private static long binderGlowUntilMs = 0L;
+    private int[] hiddenFolioRect = null;
 
     public ChangelogScreen(Screen parent) {
         super(Component.literal(pickChangelogTitle()));
@@ -162,8 +169,10 @@ public class ChangelogScreen extends Screen {
         this.lastContentW = cw;
         int total = 0;
         for (Row r : rows) total += rowHeight(r, cw);
+        this.contentTotalH = total;
         int visible = contentH();
-        this.maxScroll = Math.max(0, total - visible);
+        // v0.16.0: un poco mas alla del ultimo renglon hay sitio para un folio.
+        this.maxScroll = Math.max(0, total - visible) + 28;
         clampScroll();
     }
 
@@ -287,6 +296,8 @@ public class ChangelogScreen extends Screen {
         g.drawString(this.font, this.title, tx, py + 8, DiaryTheme.AMBER_FLAME, false);
         g.fill(tx - 4, py + 18, tx + tw + 4, py + 19, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 150));
 
+        this.asteriskRects.clear();
+        this.hiddenFolioRect = null;
         g.enableScissor(cx, cy, cx + cw, cy + ch);
 
         if (loadError) {
@@ -301,6 +312,20 @@ public class ChangelogScreen extends Screen {
                     renderRow(g, row, cx, y, cw);
                 }
                 y += h;
+            }
+            // v0.16.0: despues del ultimo renglon, un folio que no figura en la cronica.
+            int fy = cy - scrollY + this.contentTotalH + 8;
+            if (fy >= cy - 12 && fy <= cy + ch + 4) {
+                boolean en = isEnglishSelected();
+                String hidden = en ? "~ there is a room behind the last folio ~"
+                                   : "~ hay una sala detras del ultimo folio ~";
+                int hw = this.font.width(hidden);
+                int hx = cx + (cw - hw) / 2;
+                long pulse = System.currentTimeMillis();
+                int alpha = 120 + (int)(Math.sin(pulse / 640.0) * 40);
+                g.drawString(this.font, hidden, hx, fy, (alpha << 24) | 0x8E6A35, false);
+                g.fill(hx, fy + 11, hx + hw, fy + 12, (Math.min(120, alpha) << 24) | 0x8E6A35);
+                this.hiddenFolioRect = new int[]{ hx - 4, fy - 3, hw + 8, 18 };
             }
         }
 
@@ -317,6 +342,12 @@ public class ChangelogScreen extends Screen {
         }
 
         super.render(g, mouseX, mouseY, partialTick);
+
+        try {
+            com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
+            com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, py - 12);
+            com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
+        } catch (Throwable ignored) {}
     }
 
     private void drawLedgerDetails(GuiGraphics g, int px, int py, int pw, int ph,
@@ -329,10 +360,15 @@ public class ChangelogScreen extends Screen {
         int stripX = px + 9;
         g.fill(stripX, py + 10, stripX + 6, py + ph - 10, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 32));
         g.fill(stripX + 1, py + 10, stripX + 2, py + ph - 10, DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 60));
+        boolean glowActive = System.currentTimeMillis() < binderGlowUntilMs;
         for (int y = py + 28; y < py + ph - 22; y += 38) {
             g.fill(stripX + 1, y, stripX + 4, y + 2, bronzeSoft);
-            int rivet = DiaryTheme.withAlpha(DiaryTheme.GOLD_TARNISHED, 110);
+            int rivetAlpha = glowActive ? 235 : 110;
+            int rivet = DiaryTheme.withAlpha(DiaryTheme.GOLD_TARNISHED, rivetAlpha);
             g.fill(stripX + 2, y + 1, stripX + 3, y + 2, rivet);
+            if (glowActive) {
+                g.fill(stripX, y - 1, stripX + 5, y + 3, DiaryTheme.withAlpha(DiaryTheme.AMBER_FLAME, 46));
+            }
         }
 
         // ── Marginal rule with archival ticks every 26px ──
@@ -449,6 +485,8 @@ public class ChangelogScreen extends Screen {
             // Nota al margen: asterisco decorativo a la izquierda del H1
             int marginColor = DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180);
             g.drawString(this.font, "*", x + indent - 10, y + 4, marginColor, false);
+            // v0.16.0: el encuadernador marco algunos con proposito.
+            this.asteriskRects.add(new int[]{ x + indent - 12, y + 2, 8, 10 });
 
             g.pose().pushPose();
             float capScale = 1.6f;
@@ -487,6 +525,36 @@ public class ChangelogScreen extends Screen {
             this.draggingScrollbar = true;
             setScrollFromMouse(mouseY);
             return true;
+        }
+        if (button == 0) {
+            try {
+                // v0.16.0: las marcas del encuadernador
+                for (int[] r : this.asteriskRects) {
+                    if (mouseX >= r[0] && mouseX <= r[0] + r[2] && mouseY >= r[1] && mouseY <= r[1] + r[3]) {
+                        binderMarksLit++;
+                        com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                            com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_TICK.get(), 0.12f, 1.9f);
+                        if (binderMarksLit >= 3) {
+                            binderMarksLit = 0;
+                            boolean first = com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                                com.eternalcraft.gripeverde.client.lore.Discoveries.BINDER_MARKS);
+                            if (first) binderGlowUntilMs = System.currentTimeMillis() + 5000L;
+                            com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                                com.eternalcraft.gripeverde.client.audio.ModSounds.UI_NOTIFICATION.get(), 0.16f, 0.80f);
+                        }
+                        return true;
+                    }
+                }
+                // v0.16.0: el folio escondido abre la Sala de consulta
+                if (this.hiddenFolioRect != null) {
+                    int[] r = this.hiddenFolioRect;
+                    if (mouseX >= r[0] && mouseX <= r[0] + r[2] && mouseY >= r[1] && mouseY <= r[1] + r[3]) {
+                        com.eternalcraft.gripeverde.client.audio.UiSounds.back();
+                        this.minecraft.setScreen(new DiaryArchiveScreen(this));
+                        return true;
+                    }
+                }
+            } catch (Throwable ignored) {}
         }
         return super.mouseClicked(mouseX, mouseY, button);
     }

@@ -1,5 +1,59 @@
 # Eternal Craft: Gripe Verde
 
+## v0.16.0 - La sala de consulta
+
+El gabinete ha dejado de ser un mueble. Esta noche aprendio a recordar.
+
+Todo lo que el lector encuentra queda escrito en una memoria que no se
+borra al cerrar los ojos: las fichas halladas, los objetos pequenos, las
+noches seguidas, las ausencias largas. El polvo se acumula sobre los
+papeles cuando nadie vuelve durante dias, y la mesa de trabajo sabe ya
+cuantas manos la abrieron. El gabinete saluda al que llega por primera
+vez, reconoce al que regresa, y si alguien se queda demasiado quieto
+frente a los folios, pregunta en voz baja si sigue ahi.
+
+El cronista ya no escribe solo. Deja notas al margen que responden a lo
+que el lector hace, corrige su propia letra cuando algo lo contraria, y
+firma distinto cuando oye su nombre dicho en voz alta. Hay quien jura que
+la madera devolvio tres golpes.
+
+La calle se deja tocar: los faroles se apagan y se encienden a mano, y si
+la avenida entera queda a oscuras, algo cambia para siempre. El gato del
+tejado paga sus deudas despacio, a razon de un jiron por visita. La rata,
+a veces, se detiene a mirar. Cuando doblan las campanas conviene esperar:
+un carro cruza despues, muy despacio, y nadie lo conduce con prisa. Una
+veleta nueva obedece al viento sobre el tejado mas alto, y cada dia el
+kiosco guarda un Heraldo distinto, escrito con las noticias que la ciudad
+se atreve a decir.
+
+El reloj de bolsillo se puede detener en la mano. Tiene una inscripcion.
+Y quien lo visita suficiente descubre que el tiempo guarda cosas pequenas
+que se caen si uno insiste.
+
+Hay codigos que abren puertas: el ano de la peste, la hora del brote, el
+nombre del medico del elixir, el nombre del propio cronista. Cada uno
+deja algo distinto: un telegrama, trece campanadas y una luz donde no hay
+piso, una confesion que mancha el cartel del elixir para siempre, una
+firma ofendida. El gramofono, girado mas alla de su ultima pieza, trae lo
+que nadie grabo.
+
+Cada sala del gabinete guarda ahora algo suyo: un cajon cerrado que acepta
+una llave pequena, una senal de contrabando escrita en las costumbres de
+las manos, un espejo que muestra como te ve la niebla, un buzon que
+acumula cartas sin respuesta, un ojo que sigue al que mira, una lengua
+que ningun consulado reconoce, un sello que nadie debia romper, un libro
+de visitas para el atlas de hospederias, una direccion que no esta en
+ningun mapa, y un silencio que, si uno se queda quieto, late.
+
+En la pausa, la vela puede apagarse, y entonces se lee lo que la
+oscuridad lee. El cuervo cobra su peaje. Algo respira del otro lado del
+vidrio, y quien ha encontrado bastante llega a ver una segunda sombra.
+
+Y detras del ultimo folio de la cronica, pasado el renglon final, hay una
+sala nueva: la Sala de consulta. Cuarenta y tres fichas. Las que faltan
+siguen ahi fuera.
+
+
 ## v0.15.2 - La cifra del campo
 
 La mesa de opciones enseno al campo de vision a decir su numero en voz

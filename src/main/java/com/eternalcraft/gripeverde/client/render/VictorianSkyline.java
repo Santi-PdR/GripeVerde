@@ -111,6 +111,70 @@ public class VictorianSkyline {
         renderChimneys(g, w, h, CHIMNEYS_BG, BG_BUILDINGS, false);
     }
 
+    // ── v0.16.0: la ventana que responde (atico del edificio 5) ────────────
+    private static int signalResponseCount = 0;
+    private static long signalRespondUntilMs = 0L;
+
+    /** Rect de la ventana-senal del atico (edificio FG 5). */
+    public static int[] signalWindowRect(int w, int h) {
+        float[] b = FG_BUILDINGS[5];
+        int bx1 = (int)(w * b[0]);
+        int by2 = (int)(h * b[1]);
+        int bw = (int)(w * b[2]);
+        int bh = (int)(h * b[3]);
+        int by1 = by2 - bh;
+        int wx = bx1 + (int)(bw * 0.28f);
+        int wy = by1 + Math.max(3, bh / 9);
+        return new int[]{ wx, wy, 6, 8 };
+    }
+
+    public static boolean isSignalWindowLit(float t) {
+        long now = System.currentTimeMillis();
+        if (now < signalRespondUntilMs) {
+            // Doble parpadeo rapido de respuesta
+            return ((now / 160L) % 2L) == 0L;
+        }
+        return (t % 4.2f) < 1.35f;
+    }
+
+    /** El lector senala la ventana. Devuelve true si la ventana respondio. */
+    public static boolean signalWindowClicked() {
+        long now = System.currentTimeMillis();
+        boolean curtainsClosed = false;
+        try {
+            curtainsClosed = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("curtains_closed") > 0;
+        } catch (Throwable ignored) {}
+        if (curtainsClosed) return false;
+        if (!isSignalWindowLit(time)) return false;
+        signalResponseCount++;
+        signalRespondUntilMs = now + 1500L;
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_TICK.get(), 0.10f, 1.8f);
+        } catch (Throwable ignored) {}
+        if (signalResponseCount >= 3) {
+            try {
+                com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.setCounter("curtains_closed", 1);
+                com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                    com.eternalcraft.gripeverde.client.lore.Discoveries.SIGNAL_WINDOW);
+            } catch (Throwable ignored) {}
+        }
+        return true;
+    }
+
+    /** Rect del gato del tejado (edificio FG 5). */
+    public static int[] catRect(int w, int h) {
+        float[] b = FG_BUILDINGS[5];
+        int bx1 = (int)(w * b[0]);
+        int by2 = (int)(h * b[1]);
+        int bw = (int)(w * b[2]);
+        int bh = (int)(h * b[3]);
+        int by1 = by2 - bh;
+        int cx = bx1 + (int)(bw * 0.65f);
+        int cy = by1 - 3;
+        return new int[]{ cx - 3, cy - 4, 10, 7 };
+    }
+
     public static void renderForeground(GuiGraphics g, int w, int h) {
         int colorFg = 0xFF0F0805;
         for (float[] b : FG_BUILDINGS) {
@@ -133,10 +197,102 @@ public class VictorianSkyline {
                 AtmosphereRenderer.withAlpha(0x00D4941E, 60));
         }
         renderWindowsOnBuildings(g, w, h, FG_BUILDINGS, false);
+        renderSignalWindow(g, w, h);
+        renderThirteenthFloor(g, w, h);
         renderChimneys(g, w, h, CHIMNEYS_FG, FG_BUILDINGS, true);
         renderSmoke(g, w, h);
         renderCrack(g, w, h);
         renderRoofCat(g, w, h);
+        renderWeathervane(g, w, h);
+    }
+
+    /** La ventana del atico que parpadea esperando respuesta. */
+    private static void renderSignalWindow(GuiGraphics g, int w, int h) {
+        int[] r = signalWindowRect(w, h);
+        int wx = r[0], wy = r[1], ww = r[2], wh = r[3];
+        boolean closed;
+        try {
+            closed = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("curtains_closed") > 0;
+        } catch (Throwable t) { closed = false; }
+        if (closed) {
+            // Cortinas echadas para siempre
+            g.fill(wx - 1, wy - 1, wx + ww + 1, wy + wh + 1, 0xFF1A0F05);
+            g.fill(wx, wy, wx + ww, wy + wh, 0xFF141008);
+            g.fill(wx, wy + wh / 2, wx + ww, wy + wh / 2 + 1, 0xFF2A1E10);
+            g.fill(wx + ww / 2, wy, wx + ww / 2 + 1, wy + wh, 0xFF2A1E10);
+            return;
+        }
+        boolean lit = isSignalWindowLit(time);
+        g.fill(wx - 1, wy - 1, wx + ww + 1, wy + wh + 1, 0xFF1A0F05);
+        if (lit) {
+            int amber = 170;
+            g.fill(wx, wy, wx + ww, wy + wh, AtmosphereRenderer.withAlpha(0x00D4941E, amber));
+            g.fill(wx + ww / 2, wy, wx + ww / 2 + 1, wy + wh, 0xFF3D2E1A);
+            g.fill(wx, wy + wh / 2, wx + ww, wy + wh / 2 + 1, 0xFF3D2E1A);
+            g.fill(wx - 2, wy - 2, wx + ww + 2, wy + wh + 2,
+                AtmosphereRenderer.withAlpha(0x00D4941E, amber / 7));
+        } else {
+            g.fill(wx, wy, wx + ww, wy + wh, 0xFF050302);
+            g.fill(wx, wy, wx + ww, wy + 1, 0xFF1A1008);
+        }
+    }
+
+    /** Consecuencia permanente: la ventana del piso que no existe. */
+    private static void renderThirteenthFloor(GuiGraphics g, int w, int h) {
+        boolean lit;
+        try {
+            lit = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("thirteenth_window") > 0;
+        } catch (Throwable t) { lit = false; }
+        if (!lit) return;
+        float[] b = FG_BUILDINGS[1];
+        int bx1 = (int)(w * b[0]);
+        int by2 = (int)(h * b[1]);
+        int bw = (int)(w * b[2]);
+        int bh = (int)(h * b[3]);
+        int by1 = by2 - bh;
+        // Un piso mas arriba de la cornisa, donde no hay pared.
+        int wx = bx1 + (int)(bw * 0.55f);
+        int wy = by1 - 12;
+        float fl = (float)(Math.sin(time * 0.9f) * 0.2f + 0.8f);
+        int amber = (int)(120 * fl);
+        g.fill(wx - 1, wy - 1, wx + 6, wy + 8, AtmosphereRenderer.withAlpha(0x001A0F05, 180));
+        g.fill(wx, wy, wx + 5, wy + 7, AtmosphereRenderer.withAlpha(0x00C8A83E, amber));
+        g.fill(wx + 2, wy, wx + 3, wy + 7, 0xFF1A1008);
+        g.fill(wx - 3, wy - 3, wx + 8, wy + 10, AtmosphereRenderer.withAlpha(0x00C8A83E, amber / 8));
+    }
+
+    /** Veleta sobre el edificio mas alto: obedece al viento. */
+    private static void renderWeathervane(GuiGraphics g, int w, int h) {
+        float[] b = FG_BUILDINGS[5];
+        int bx1 = (int)(w * b[0]);
+        int by2 = (int)(h * b[1]);
+        int bw = (int)(w * b[2]);
+        int bh = (int)(h * b[3]);
+        int by1 = by2 - bh;
+        int vx = bx1 + (int)(bw * 0.12f);
+        int vy = by1 - 4;
+        // Mástil
+        g.fill(vx, vy - 12, vx + 1, vy, 0xFF1F1408);
+        g.fill(vx - 2, vy - 1, vx + 3, vy + 1, 0xFF1F1408);
+        // La flecha gira con el viento (mas rapido durante las rafagas)
+        float gust = LivingAtmosphere.getWindGustIntensity();
+        double angle = time * (0.25f + gust * 2.6f);
+        int dx = (int)(Math.cos(angle) * 5);
+        int dy = (int)(Math.sin(angle) * 1.6);
+        int ay = vy - 12;
+        g.fill(vx - dx, ay - dy, vx + dx + 1, ay - dy + 1, 0xFF3D2E1A);
+        g.fill(vx + dx, ay - dy - 2, vx + dx + 2, ay - dy, 0xFF5A4028); // punta
+        g.fill(vx, ay - 1, vx + 1, ay + 1, 0xFF8E6A35); // eje
+        // Descubrimiento: ver la veleta obedecer a una rafaga fuerte
+        if (gust > 0.62f) {
+            long nowMs = System.currentTimeMillis();
+            if (nowMs - LivingAtmosphere.streetLevelRenderMs() < 400L) {
+                try {
+                    com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                        com.eternalcraft.gripeverde.client.lore.Discoveries.WEATHERVANE);
+                } catch (Throwable ignored) {}
+            }
+        }
     }
 
     private static void renderWindowsOnBuildings(GuiGraphics g, int w, int h, float[][] buildings, boolean isBg) {

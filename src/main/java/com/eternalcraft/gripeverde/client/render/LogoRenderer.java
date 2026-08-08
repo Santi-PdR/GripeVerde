@@ -89,6 +89,12 @@ public class LogoRenderer {
         return yearIndex < 0 ? 0 : yearIndex;
     }
 
+    // v0.16.0: el ojo del emblema no esta pintado: sigue al lector.
+    private static double watchedMx = -1, watchedMy = -1;
+    public static void setWatchedMouse(double mx, double my) {
+        watchedMx = mx; watchedMy = my;
+    }
+
     public static void draw(GuiGraphics g, int cx, int topY) {
         Font font = Minecraft.getInstance().font;
 
@@ -140,7 +146,15 @@ public class LogoRenderer {
         g.fill(cx + 4, topY + 19, cx + 5, topY + 20, DiaryTheme.PLAGUE_TOXIC);
         int eyePulse = 90 + (int)(Math.sin(System.currentTimeMillis() / 420.0) * 45.0);
         g.fill(cx + 3, topY + 18, cx + 7, topY + 22, (Math.max(20, eyePulse) << 24) | 0x5A7038);
-        g.fill(cx + 4, topY + 19, cx + 5, topY + 20, DiaryTheme.PLAGUE_TOXIC);
+        // v0.16.0: la pupila mira hacia el lector (maximo 1px de sesgo).
+        int px = 0, py = 0;
+        if (watchedMx >= 0) {
+            double dx = watchedMx - (cx + 4.5);
+            double dy = watchedMy - (topY + 19.5);
+            if (Math.abs(dx) > 30) px = dx > 0 ? 1 : -1;
+            if (Math.abs(dy) > 30) py = dy > 0 ? 1 : -1;
+        }
+        g.fill(cx + 4 + px, topY + 19 + py, cx + 5 + px, topY + 20 + py, DiaryTheme.PLAGUE_TOXIC);
         g.fill(cx, topY + 22, cx + 1, topY + 24, DiaryTheme.INK);
         g.fill(cx - 1, topY + 24, cx + 2, topY + 25, DiaryTheme.INK);
         g.fill(cx - 4, topY + 27, cx + 5, topY + 30, DiaryTheme.PAPER);
