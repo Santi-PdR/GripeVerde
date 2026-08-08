@@ -27,8 +27,5 @@ public class GripeVerdeMod {
 
         // Eventos de pantalla
         MinecraftForge.EVENT_BUS.register(new ScreenEventHandler());
-
-        // Resource Pack Master Steel (built-in, opcional, solo registra pack, no overlay)
-        com.eternalcraft.gripeverde.client.ResourcePackHandler.register();
     }
 }
