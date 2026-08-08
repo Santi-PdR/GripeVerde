@@ -2,6 +2,27 @@
 ## Chronicle under seal
 
 
+## Version 0.17 - The Steel Returns to Quarantine
+
+This night the workshop dresses in steel once more, and this time the steel
+carries a seal.
+
+The workbenches, the chests, the furnaces and the anvils woke with plates of
+cold metal, brushed by hand, with their grooves and their rivets. The hollows
+where things are kept are deeper and darker, like wells; every container can
+be told apart from its neighbour: the furnace smells of hot copper, the
+enchantment table of ink and old iron, the brewing stand of the clinic, the
+beacon of a signal machine. The great storerooms wear a green quarantine
+ribbon and rivets on all four corners.
+
+The chronicler's cabinet has changed as well: its corners are now held by
+steel brackets, and every sheet bears a small plate with its registry number.
+Even the room of material packs is now a cabinet archive, with its inventory
+sheet.
+
+The seal reads: EC-QV/1897. Whoever opens a drawer will know, at a glance,
+that they are in the house of the plague.
+
 ## Version 0.16 - The Reading Room
 
 The cabinet is no longer a piece of furniture. It remembers.

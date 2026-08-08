@@ -5,20 +5,29 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.16.0 - La sala de consulta**
+**v0.17.0 - El acero vuelve a la cuarentena**
 
-El gabinete ha dejado de ser un mueble: ahora recuerda. Todo lo que el
-lector encuentra queda escrito en una memoria que no se borra al cerrar
-los ojos. El cronista deja notas al margen que responden a lo que el
-lector hace, la calle se deja tocar, los codigos abren puertas, y detras
-del ultimo folio de la cronica hay una sala nueva con cuarenta y tres
-fichas. Las que faltan siguen ahi fuera.
+El oficio vuelve a vestirse de acero, y esta vez el acero lleva sello.
+Las mesas de trabajo, los cajones, los hornos y los yunques amanecieron
+con planchas de metal frio, cepillado a mano, con sus ranuras y sus
+remaches. Los huecos donde descansa lo que se guarda son mas hondos y
+oscuros, como pozos; cada contenedor se distingue del vecino: el horno
+huele a cobre caliente, la mesa de encantamientos a tinta y hierro viejo,
+el alambique a clinica, la baliza a maquina de senales. Los grandes
+almacenes llevan una cinta verde de cuarentena y remaches en sus cuatro
+esquinas.
+
+El gabinete del cronista tambien cambio: sus esquinas se sujetan ahora
+con escuadras de acero, y cada hoja lleva una chapa con su numero de
+registro. Hasta la sala de los paquetes de materiales es hoy un archivo
+del gabinete, con su hoja de inventario y su sello EC-QV/1897. Quien abra
+un cajon sabra, de un vistazo, que esta en la casa de la plaga.
 
 ## Resumen visible del Mod Menu
 
-Eternal Craft: Gripe Verde convierte los menus de Minecraft en un gabinete victoriano bajo cuarentena. El menu principal muestra una ciudad oscura con lluvia, niebla, reloj de bolsillo, carteles oficiales, musica y ambiente propio. El gabinete de opciones organiza las secciones como registros del cronista: apariencia, sonido, video, controles, idioma, chat, paquetes, accesibilidad, online y creditos.
+Eternal Craft: Gripe Verde convierte los menus de Minecraft en un gabinete victoriano bajo cuarentena. El menu principal muestra una ciudad oscura con lluvia, niebla, reloj de bolsillo, carteles oficiales, musica y ambiente propio. El gabinete de opciones organiza las secciones como registros del cronista: apariencia, sonido, video, controles, idioma, chat, paquetes, accesibilidad, online y creditos. La pantalla de paquetes de recursos es ahora un archivo del gabinete.
 
-Los contenedores del juego conservan su aspecto vanilla original; el mod no altera las texturas de los contenedores. El mod es client-side y no agrega gameplay.
+Los contenedores del juego llevan el resource pack built-in "Acero de Cuarentena": paneles de acero cepillado, slots hundidos, juntas con remaches y sellos de cuarentena, con variantes por oficio (horno, herreria, encantamientos, alambique, baliza...). Es puramente visual: la geometria, los slots y el comportamiento son vanilla exactos. El mod es client-side y no agrega gameplay.
 
 ## Caracteristicas principales
 
@@ -55,7 +64,8 @@ Los contenedores del juego conservan su aspecto vanilla original; el mod no alte
 - **Title** - menu principal victoriano completo con musica y ambiente sonoro.
 - **Pause** - diario del superviviente (R14, aprobada).
 - **Changelog** - historial narrativo en pergamino.
-- **Options** - pantalla vanilla extendida con slider de musica del menu.
+- **Options** - gabinete central con slider de musica del menu.
+- **ResourcePacks** - archivador de materiales (sobre la pantalla vanilla).
 - **DebugCanvas** - herramienta interna de desarrollo.
 - **SoundLab** - herramienta interna de audio.
 

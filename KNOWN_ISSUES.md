@@ -49,6 +49,68 @@
 
 ---
 
+## v0.17.0 - Acero de cuarentena (pase de interfaz e identidad visual)
+
+### Cambios cerrados
+- Nuevo resource pack built-in `gripeverde_steel` (REQUIRED=true, siempre
+  activo): 20 contenedores + 4 fondos creativos + sprites de contenedores
+  (hornos, alambique, baliza, yunque, encantamientos, caballos, creativo) +
+  widgets vanilla (button/slider/text_field/checkbox/scroller) + boton del
+  libro de recetas. Todo 1:1 sobre geometria vanilla (alpha identica,
+  slots 18x18 en posiciones vanilla exactas).
+- Nuevo `client/ResourcePackHandler.java` (registro via AddPackFindersEvent,
+  `Pack.readMetaAndCreate` con required=true — patron v0.13.2, no el de
+  Master Steel required=false).
+- Nueva task `verifyGripeVerdeThemeAssets` en build.gradle (dimensiones,
+  pack_format 15, pack.png 128x128, ausencia de huerfanas dropper/villager2,
+  .mcmeta de 9-slices presentes). Dependencia de processResources.
+- Nuevo pipeline `tools/steel_pack/` (build_steel_pack.py + steel_pack_lib.py):
+  regenera el pack desde vanilla y valida alpha/slots.
+- DiaryChrome: esquineros ahora son escuadras de acero con remache (todas
+  las pantallas Diary); nueva chapa de registro `drawRegistryTag`
+  (REG. I..XV) arriba a la derecha de cada panel; variante izquierda en
+  Skin (el espejo ocupa la derecha).
+- Nueva `DiaryPackSelectionScreen` (archivador de materiales): envuelve la
+  pantalla vanilla de Resource Packs — escena viva + pergamino de archivo +
+  marco de acero + sello EC-QV/1897 + chapa REG. XV. Las listas vanilla
+  conservan su logica; se les quita el fondo dirt via reflexion acotada
+  (mismo patron que DiarySoundOptionsScreen). Scrollbars quedan en acero
+  via el pack (widget/scroller.png).
+- Nueva clave `gripeverde.options.packs.subtitle` en los 25 lang files.
+- Changelogs in-game (25) + CHANGELOG.md raiz con entrada narrativa v0.17.
+- Version bump: 0.16.0 -> 0.17.0.
+
+### Riesgos activos / KI nuevos
+- **KI-20 (validacion en cliente real) - ABIERTO**: el sandbox no tiene JDK
+  ni maven de Forge; no se pudo compilar ni ejecutar. Pendiente en la
+  maquina del usuario: build, deploy y revision visual en 4 escalas GUI.
+  Puntos de atencion: (1) el pack REQUIRED no aparece para desactivar
+  (a proposito); (2) la chapa de registro se omite si panelW<330 (escala 4
+  en paneles chicos); (3) la pantalla de paquetes: verificar que las listas
+  no dibujen doble fondo si la reflexion falla (fallback = fondo vanilla);
+  (4) en pantallas de mods que usan botones vanilla, el pack los estiliza
+  en acero (comportamiento esperado).
+- **KI-21 (sprites no cubiertos)**: quedan vanilla por no confirmarse en
+  1.20.1: sprites de villager (flechas de comercio, barras de experiencia),
+  loom (patrones), stonecutter (recetas), cartography (mapas), smithing
+  (error). Si en 1.20.1 existen, se ven vanilla sobre el panel de acero;
+  extension futura opcional.
+- **KI-22 (scrollbars Diary)**: DiaryChrome.drawScrollThumb ya usaba acero
+  + bronce (v0.11.x); sin cambios.
+- El pack no toca: hotbar (widgets.png), HUD, tooltips, ni contenedores de
+  mods (Curios, mochilas) — esos usan sus propias texturas; la estetica de
+  slots se hereda del pack solo cuando el container dibuja las de vanilla.
+
+### Reglas nuevas
+- **R-STEEL-GEOMETRY**: el resource pack NUNCA puede cambiar dimensiones,
+  alpha, posiciones de slots ni proporciones vanilla. Verificado por
+  build_steel_pack.py (hash de alpha) y por verifyGripeVerdeThemeAssets.
+- **R-PACK-REQUIRED**: el pack de identidad del mod es REQUIRED=true;
+  no depende de activacion manual. Si en el futuro se quiere opcional,
+  cambiar a required=false y documentar que hay que activarlo en pantalla.
+
+---
+
 ## Estado actual de pulido RC
 
 ### Criterios activos

@@ -177,6 +177,7 @@ public class DiaryControlsScreen extends Screen {
         int divY2 = this.panelY + this.panelH - 38;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
         DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
+        DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. III");
 
         // Widgets
         for (Renderable r : this.renderables) {
