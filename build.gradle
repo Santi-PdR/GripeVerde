@@ -6,7 +6,7 @@ plugins {
     id 'org.spongepowered.mixin' version '0.7.+'
 }
 
-version = '0.17.0'
+version = '0.17.2'
 group = 'com.eternalcraft.gripeverde'
 base { archivesName = 'gripeverde' }
 
@@ -164,7 +164,7 @@ tasks.register('verifyGripeVerdeThemeAssets') {
                 badDim << "${name}: ${img.getWidth()}x${img.getHeight()} expected ${expW}x256"
         }
         def creativeDir = new File(containerDir, 'creative_inventory')
-        ['tabs.png','tab_inventory.png','tab_items.png','tab_item_search.png'].each { name ->
+        ['tab_inventory.png','tab_items.png','tab_item_search.png'].each { name ->
             def f = new File(creativeDir, name)
             if (!f.isFile()) { missing << "creative_inventory/${name}"; return }
             def img = javax.imageio.ImageIO.read(f)
@@ -184,9 +184,10 @@ tasks.register('verifyGripeVerdeThemeAssets') {
         if (!missingMcmeta.isEmpty())
             throw new GradleException("Missing 9-slice mcmeta: ${missingMcmeta.join(', ')}")
 
-        // Prohibido: texturas muertas de packs anteriores
+        // Prohibido: texturas muertas de packs anteriores (v0.17.2: tabs.png removido)
         def orphans = ['dropper.png','villager2.png','inventory_backup.png']
         def found = orphans.findAll { new File(containerDir, it).isFile() }
+        if (new File(creativeDir, 'tabs.png').isFile()) found << 'creative_inventory/tabs.png'
         if (!found.isEmpty()) throw new GradleException("Orphan textures present: ${found.join(', ')}")
 
         println "verifyGripeVerdeThemeAssets: OK — 20 containers + 4 creative + sprites + pack.png 128x128 + pack_format 15"

@@ -1,5 +1,25 @@
 # Eternal Craft: Gripe Verde
 
+## v0.17.2 - Las bandejas de la mesa y la moneda del trato
+
+Las mesas recuperaron su medida justa: donde antes el pozo era un
+cuadro de dieciocho, ahora es una bandeja de veintiseis. El pan cabe
+sin desbordar, el hierro no muerde el borde. Los oficios del telar,
+la cantera, la cartografia y el trato con los forasteros recibieron
+el mismo arreglo, y cada moneda y cada sello del trato vuelve a
+respirar su acero.
+
+El taller repaso ademas todos los papeles y restauro sus transparencias
+una a una, para que ningun velo se vuelva muro. El archivo de telas y
+la sala de mapas estrenan sus sellos, y el gabinete de pestañas creativas
+vuelve a ordenar sus fichas sin tapas muertas.
+
+## v0.17.1 - Remaches bien puestos
+
+Parche de mantenimiento sobre el acero de la v0.17.0. Sin cambios visibles
+para el viajero: se ajustan remaches, se repasa el cepillado y se deja el
+gabinete listo para el siguiente folio. Versionado y documentacion al dia.
+
 ## v0.17.0 - El acero vuelve a la cuarentena
 
 El oficio vuelve a vestirse de acero, y esta vez el acero lleva sello.
