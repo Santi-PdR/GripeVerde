@@ -75,6 +75,37 @@ public class MenuAmbience {
     public static boolean isCrowsRecentlyTriggered(){return System.currentTimeMillis()<crowsPlayingUntilMs;}
     private static final RandomSource RNG = RandomSource.create();
 
+    // ── v0.16.0: interacciones de oido ──────────────────────────────────────
+    // Ventana en la que un susurro puede responderse con un gesto.
+    private static long whisperRespondableUntilMs=0L;
+    // Momento en que doblaron las campanas (el coche del sepulturero sale despues).
+    private static long lastBellMs=0L;
+
+    public static boolean isWhisperOpen(){ return System.currentTimeMillis()<whisperRespondableUntilMs; }
+
+    /** El lector responde al susurro (click en la vigilia dentro de la ventana). */
+    public static void answerWhisper(){
+        if(!isWhisperOpen()) return;
+        whisperRespondableUntilMs=0L;
+        Minecraft mc=Minecraft.getInstance(); if(mc==null) return;
+        try{
+            // El susurro responde: dos voces, una mas grave.
+            mc.getSoundManager().play(SimpleSoundInstance.forUI(ModSounds.MENU_AMBIENT_OCCASIONAL.get(),0.50f,0.20f*getUserVolume()));
+            mc.getSoundManager().play(SimpleSoundInstance.forUI(ModSounds.MENU_AMBIENT_OCCASIONAL.get(),0.38f,0.16f*getUserVolume()));
+        }catch(Exception ignored){}
+        try{
+            int n = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.bump("whisperAnswers");
+            com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                com.eternalcraft.gripeverde.client.lore.Discoveries.WHISPER_ANSWER);
+            if(n>=3){
+                com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                    com.eternalcraft.gripeverde.client.lore.Marginalia.N_WHISPER3);
+            }
+        }catch(Throwable ignored){}
+    }
+
+    public static long lastBellMs(){ return lastBellMs; }
+
     public static void recoverAfterResourceReload(){
         Minecraft mc=Minecraft.getInstance(); if(mc==null||mc.level!=null) return;
         for(BaseLoop bl:BASE_LOOPS) bl.instance=null;
@@ -230,6 +261,11 @@ public class MenuAmbience {
                 MenuMusic.duckFor(2500L);
                 if(chosen.sound==ModSounds.MENU_CROWS) crowsPlayingUntilMs=System.currentTimeMillis()+4000L;
                 else if(chosen.sound==ModSounds.MENU_THUNDER) com.eternalcraft.gripeverde.client.render.LivingAtmosphere.triggerLightningFlash(1.0f);
+                else if(chosen.sound==ModSounds.MENU_BELL) lastBellMs=System.currentTimeMillis();
+                else if(chosen.sound==ModSounds.MENU_AMBIENT_OCCASIONAL && chosen.pitchMax<0.8f){
+                    // Un susurro: puede responderse durante unos segundos.
+                    whisperRespondableUntilMs=System.currentTimeMillis()+3000L;
+                }
             }
         }catch(Exception e){ if(DEBUG_LOGGING) LOGGER.warn("[MenuAmbience] Sonido no disponible"); }
     }

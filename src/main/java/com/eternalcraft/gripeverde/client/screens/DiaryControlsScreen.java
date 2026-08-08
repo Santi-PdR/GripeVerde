@@ -45,11 +45,21 @@ public class DiaryControlsScreen extends Screen {
     private final Screen lastScreen;
     private final Options options;
     private int panelX, panelY, panelW, panelH;
+    private boolean smugglerSeen = false;
 
     public DiaryControlsScreen(Screen parent, Options options) {
         super(Component.translatable("controls.title"));
         this.lastScreen = parent;
         this.options = options;
+        // v0.16.0: tras tres visitas sin senal, el cronista deja la pista.
+        try {
+            int visits = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.bump("controlsVisits");
+            if (visits >= 3 && !com.eternalcraft.gripeverde.client.lore.ChroniclerMemory
+                    .isDiscovered(com.eternalcraft.gripeverde.client.lore.Discoveries.SMUGGLER_SIGNAL)) {
+                com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                    com.eternalcraft.gripeverde.client.lore.Marginalia.N_SMUGGLER_HINT);
+            }
+        } catch (Throwable ignored) {}
     }
 
     @Override
@@ -172,6 +182,29 @@ public class DiaryControlsScreen extends Screen {
         for (Renderable r : this.renderables) {
             r.render(g, mouseX, mouseY, partialTick);
         }
+
+        // v0.16.0: la senal del contrabandista.
+        // Agacharse y correr en "alternar"; el resto, quieto.
+        try {
+            if (!smugglerSeen
+                    && this.options.toggleCrouch().get()
+                    && this.options.toggleSprint().get()
+                    && !this.options.autoJump().get()
+                    && !this.options.operatorItemsTab().get()) {
+                smugglerSeen = true;
+                boolean first = com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                    com.eternalcraft.gripeverde.client.lore.Discoveries.SMUGGLER_SIGNAL);
+                if (first) {
+                    com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.addCollectible(
+                        com.eternalcraft.gripeverde.client.lore.Discoveries.ITEM_NOTE);
+                    com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                        com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_DOOR.get(), 0.18f, 0.62f);
+                }
+            }
+            com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
+            com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, this.panelY - 12);
+            com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
+        } catch (Throwable ignored) {}
     }
 
     @Override

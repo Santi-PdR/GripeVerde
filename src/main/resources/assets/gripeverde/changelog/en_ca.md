@@ -1,6 +1,28 @@
 # Eternal Craft: Gripe Verde
 ## Chronicle under seal
 
+
+## Version 0.16 - The Reading Room
+
+The cabinet is no longer a piece of furniture. It remembers.
+
+From this night on, whatever the reader finds is written in a memory that
+does not fade when the eyes close: the cards recovered, the small objects,
+the nights in a row, the long absences. Dust gathers when no one returns,
+and the desk knows how many hands opened it.
+
+The chronicler no longer writes alone. He leaves notes in the margins when
+something crosses him, corrects his own hand, greets the one who returns,
+and keeps quiet when it suits him. Some swear the wood knocked back three
+times.
+
+The street can now be touched as well. The lamps go out by hand, the roof
+cat pays its debts slowly, and when the bells toll it is wise to wait:
+something crosses afterwards, very slowly, pulling a cart.
+
+Behind the last folio of the chronicle there is a new room. Forty-three
+cards. The missing ones are still out there.
+
 ## Version 0.15 - 0.15.2 - The craft returns to its wood
 
 The steel plates that covered the workbenches have been removed. Furnaces,

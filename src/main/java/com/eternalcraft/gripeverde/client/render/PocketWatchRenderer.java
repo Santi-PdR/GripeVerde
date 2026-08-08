@@ -73,12 +73,97 @@ public class PocketWatchRenderer {
     // Tracking del segundero para notificar cambios
     private static int lastSecondPos = -1;
 
+    // ── v0.16.0: el reloj en la mano ────────────────────────────────────────
+    private static boolean inspectionMode = false;
+    private static long inspectionStartMs = 0L;
+    private static final long SESSION_START = System.currentTimeMillis();
+
+    public static boolean isInspecting() { return inspectionMode; }
+
+    /** Abre o cierra la inspeccion del reloj. */
+    public static void toggleInspection() {
+        inspectionMode = !inspectionMode;
+        inspectionStartMs = System.currentTimeMillis();
+    }
+
+    public static void closeInspection() { inspectionMode = false; }
+
+    /** El tiempo de sesion enferma al segundero: glitches mas frecuentes. */
+    private static long sessionMinutes() {
+        return (System.currentTimeMillis() - SESSION_START) / 60_000L;
+    }
+
+    public static boolean isTimeSick() { return sessionMinutes() >= 8L; }
+
+    /** Dibuja el reloj sostenido en la mano, con su inscripcion. */
+    public static void drawInspection(GuiGraphics g, int w, int h, String version) {
+        // Fondo: la vigilia se atenúa
+        g.fill(0, 0, w, h, 0xB0060402);
+        int cx = w / 2;
+        int cy = Math.max(120, h / 2 - 30);
+        int radius = Math.min(72, Math.min(w, h) / 3);
+        // Cadena corta hacia arriba
+        drawLongChain(g, cx, Math.max(0, cy - radius - 90), cx, cy - radius);
+        fillCircle(g, cx, cy, radius, COLOR_BRASS);
+        fillCircle(g, cx, cy, radius - 3, COLOR_BRASS_DARK);
+        fillCircle(g, cx, cy, radius - 5, COLOR_BRASS);
+        fillCircle(g, cx, cy, radius - 9, COLOR_FACE);
+        for (int i = 0; i < 12; i++) {
+            double angle = Math.toRadians(i * 30 - 90);
+            int outerR = radius - 12;
+            int innerR = radius - 17;
+            int x1 = (int)(cx + Math.cos(angle) * outerR);
+            int y1 = (int)(cy + Math.sin(angle) * outerR);
+            int x2 = (int)(cx + Math.cos(angle) * innerR);
+            int y2 = (int)(cy + Math.sin(angle) * innerR);
+            drawThickLine(g, x1, y1, x2, y2, COLOR_MARK);
+        }
+        Font font = Minecraft.getInstance().font;
+        int textR = radius - 26;
+        drawRomanNumeral(g, font, cx, cy - textR, "XII");
+        drawRomanNumeral(g, font, cx + textR, cy, "III");
+        drawRomanNumeral(g, font, cx, cy + textR, "VI");
+        drawRomanNumeral(g, font, cx - textR, cy, "IX");
+        // Manecillas clavadas en la hora del brote
+        int[] hour = getCurrentHour();
+        double hourAngle = Math.toRadians(hour[0] * 30 + hour[1] * 0.5 - 90);
+        double minAngle = Math.toRadians(hour[1] * 6 - 90);
+        drawThickLine(g, cx, cy, (int)(cx + Math.cos(hourAngle) * (radius - 26)), (int)(cy + Math.sin(hourAngle) * (radius - 26)), COLOR_HAND);
+        drawThickLine(g, cx, cy, (int)(cx + Math.cos(minAngle) * (radius - 17)), (int)(cy + Math.sin(minAngle) * (radius - 17)), COLOR_HAND);
+        g.fill(cx - 2, cy - 2, cx + 2, cy + 2, COLOR_HAND);
+
+        // La inscripcion grabada en la tapa
+        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+        long age = System.currentTimeMillis() - inspectionStartMs;
+        int chars = (int)Math.min(40, age / 60L);
+        String l1 = en ? "S.P. - 11:52" : "S.P. - 11:52";
+        String l2 = en ? "may time be gentle with you" : "que el tiempo te sea leve";
+        int a1 = Math.min(200, chars * 8);
+        if (a1 > 8) {
+            int w1 = font.width(l1);
+            g.drawString(font, l1, cx - w1 / 2, cy + radius + 14, (a1 << 24) | 0xB89A6E, false);
+        }
+        if (chars > 14) {
+            int shown = Math.min(l2.length(), chars - 14);
+            String part = l2.substring(0, shown);
+            int w2 = font.width(part);
+            g.drawString(font, part, cx - w2 / 2, cy + radius + 28, (Math.min(160, (chars - 14) * 8) << 24) | 0x8E7A55, false);
+        }
+        String hint = en ? "~ click anywhere to let it swing again ~" : "~ pulsa en cualquier parte para que vuelva a oscilar ~";
+        int wh2 = font.width(hint);
+        g.drawString(font, hint, cx - wh2 / 2, h - 26, 0x60B89A6E, false);
+    }
+
     public static void draw(GuiGraphics g, int cxAnchor, int cy, int topY, int radius, String version) {
         long now = System.currentTimeMillis();
         long elapsed = now - START_TIME;
 
         double swingT = (elapsed % 5000L) / 5000.0 * 2.0 * Math.PI;
         int swingOffset = (int) Math.round(Math.sin(swingT) * 6.0);
+        // v0.16.0: cuando la campana cuenta trece, el reloj tiembla.
+        if (com.eternalcraft.gripeverde.client.lore.HiddenCipher.isChiming()) {
+            swingOffset += (int)(Math.sin(now / 34.0) * 2.4);
+        }
         int cx = cxAnchor + swingOffset;
 
         drawLongChain(g, cxAnchor, topY, cx, cy - radius);
@@ -159,8 +244,12 @@ public class PocketWatchRenderer {
     private static int computeSecondPosition(long now) {
         int baseSec = (int)((now / 1000L) % 60L);
 
+        // v0.16.0: el tiempo enferma con la sesion: glitches cada vez mas cerca.
+        long minGap = Math.max(2800L, 9000L - sessionMinutes() * 600L);
+        long maxGap = minGap + 4000L;
+
         if (nextGlitchAt == 0L) {
-            nextGlitchAt = now + 8000L + RNG.nextInt(4000);
+            nextGlitchAt = now + minGap + RNG.nextInt((int)(maxGap - minGap));
         }
 
         if (!glitchActive && now >= nextGlitchAt) {
@@ -190,7 +279,7 @@ public class PocketWatchRenderer {
             }
             if (dt > 900L) {
                 glitchActive = false;
-                nextGlitchAt = now + 8000L + RNG.nextInt(4000);
+                nextGlitchAt = now + minGap + RNG.nextInt((int)(maxGap - minGap));
             }
         }
 

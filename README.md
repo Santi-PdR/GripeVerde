@@ -5,14 +5,14 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.15.2 - La cifra del campo**
+**v0.16.0 - La sala de consulta**
 
-Tras el retiro de las planchas de acero, una mano mas fina volvio sobre el
-gabinete. La mesa de opciones recupero el campo de vision, que habia
-quedado fuera de alcance, y las ultimas letras escritas a mano sobre los
-muebles de trabajo fueron borradas. El campo de vision dice ahora su
-numero en voz alta: cada posicion del deslizador se lee con su cifra
-exacta.
+El gabinete ha dejado de ser un mueble: ahora recuerda. Todo lo que el
+lector encuentra queda escrito en una memoria que no se borra al cerrar
+los ojos. El cronista deja notas al margen que responden a lo que el
+lector hace, la calle se deja tocar, los codigos abren puertas, y detras
+del ultimo folio de la cronica hay una sala nueva con cuarenta y tres
+fichas. Las que faltan siguen ahi fuera.
 
 ## Resumen visible del Mod Menu
 
@@ -39,6 +39,12 @@ Los contenedores del juego conservan su aspecto vanilla original; el mod no alte
 - Slider de volumen "Menu Music" en la pantalla de Opciones, ajustable en tiempo real.
 - Persistencia: la musica sobrevive a Options y subpantallas, se detiene sola al entrar a un mundo, y arranca de nuevo al volver.
 - Sistema de ambiente sonoro por capas: viento, lluvia, ciudad, eventos ocasionales, presagios raros.
+
+### La memoria del gabinete (v0.16.0)
+- Memoria persistente propia (descubrimientos, objetos, noches seguidas, ausencias) separada del ajuste de audio.
+- 43 descubrimientos con fichas, sellos y pistas encadenadas; algunas consecuencias son permanentes.
+- Marginalia contextual del cronista: notas que responden a lo que el lector hace.
+- La Sala de consulta: detras del ultimo folio de la cronica, un archivo con las fichas halladas y documentos recuperados.
 
 ### Otros
 - Historial de cambios in-game con word-wrap real, accesible desde el boton "?".

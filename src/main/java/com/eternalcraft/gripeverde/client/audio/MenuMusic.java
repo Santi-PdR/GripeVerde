@@ -77,6 +77,12 @@ public class MenuMusic {
     private static final List<Integer> shuffledOrder = new ArrayList<>();
     private static int shuffledPos = 0;
 
+    // v0.16.0 - La pieza fantasma: quien hace girar el gramofono mas alla de su
+    // ultima pieza oye lo que el cronista nunca grabo.
+    private static int manualSkipsThisSession = 0;
+    private static boolean ghostPlayedThisSession = false;
+    private static long ghostWhisperAtMs = 0L;
+
     // === API publica ===
     public static float getUserVolume() {
         if (!volumeLoadedFromConfig) {
@@ -140,6 +146,9 @@ public class MenuMusic {
         if (mc == null) return;
 
         active = true;
+        manualSkipsThisSession = 0;
+        ghostPlayedThisSession = false;
+        ghostWhisperAtMs = 0L;
         rebuildShuffle();
         playNextTrack();
 
@@ -189,6 +198,15 @@ public class MenuMusic {
 
         long now = System.currentTimeMillis();
 
+        // Susurro diferido de la pieza fantasma
+        if (ghostWhisperAtMs > 0L && now >= ghostWhisperAtMs) {
+            ghostWhisperAtMs = 0L;
+            try {
+                UiSounds.playCustom(ModSounds.MENU_AMBIENT_OCCASIONAL.get(), 0.18f, 0.44f);
+                UiSounds.playCustom(ModSounds.MENU_TICK.get(), 0.06f, 0.40f);
+            } catch (Throwable ignored) {}
+        }
+
         // Aplicar volumen (con crossfade + ducking) a instancias activas
         updateVolumes(now);
 
@@ -235,6 +253,14 @@ public class MenuMusic {
      */
     public static void skipToNext() {
         if (!active || crossfading) return;
+        manualSkipsThisSession++;
+        // La pieza fantasma: tras agotar las cuatro piezas, la quinta vuelta
+        // del gramofono trae lo que el cronista nunca grabo.
+        if (manualSkipsThisSession >= 5 && !ghostPlayedThisSession) {
+            ghostPlayedThisSession = true;
+            playGhostPiece();
+            return;
+        }
         if (currentInstance == null || currentInstance.isStopped()) {
             // No hay pista sonando; arrancar una nueva directamente
             playNextTrack();
@@ -242,6 +268,37 @@ public class MenuMusic {
         }
         startCrossfadeToNext();
         if (DEBUG_LOGGING) LOGGER.info("[MenuMusic v3] Skip manual solicitado");
+    }
+
+    /**
+     * La pieza fantasma. Silencio deliberado + un susurro unico, marcado como
+     * descubrimiento. Luego el gramofono vuelve a su cauce.
+     */
+    private static void playGhostPiece() {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc == null) return;
+        // Detener la pieza actual de golpe: el gramofono se queda sin cuerda.
+        if (currentInstance != null) {
+            try { mc.getSoundManager().stop(currentInstance); currentInstance.markDone(); } catch (Exception ignored) {}
+        }
+        currentInstance = null;
+        previousInstance = null;
+        crossfading = false;
+
+        try {
+            com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                com.eternalcraft.gripeverde.client.lore.Discoveries.GHOST_TRACK);
+        } catch (Throwable ignored) {}
+
+        // Susurro unico, muy bajo, un poco desafinado.
+        try {
+            UiSounds.playCustom(ModSounds.MENU_AMBIENT_OCCASIONAL.get(), 0.22f, 0.52f);
+        } catch (Throwable ignored) {}
+
+        // Marcar el susurro diferido y volver a pista normal tras una pausa larga.
+        ghostWhisperAtMs = System.currentTimeMillis() + 1500L;
+        nextTrackAtMs = System.currentTimeMillis() + 7000L;
+        waitingForNext = true;
     }
 
     /**

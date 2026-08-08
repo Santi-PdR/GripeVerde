@@ -2,9 +2,9 @@
 
 ## Addendum operativo actual
 
-- Rama fija de Arena: `arena/019fd42f-gripeverde`.
-- Version: `0.15.2`.
-- Ultima regla explicita del usuario: despues de hacer cambios, pasar siempre PowerShell completo para enviar a Test.
+- Rama fija de Arena: `arena/019fdf6a-gripeverde`.
+- Version: `0.16.0`.
+- Ultima regla explicita del usuario: pase profundo de 50+ experiencias nuevas, sin reciclar features existentes, un unico commit.
 
 ### DECISION 2026-08-05: retiro del resource pack de contenedores
 
@@ -63,9 +63,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.15.2
-- build.gradle: version = '0.15.2'
-- GripeVerdeMod.VERSION: "0.15.2"
+- Version estable actual: v0.16.0
+- build.gradle: version = '0.16.0'
+- GripeVerdeMod.VERSION: "0.16.0"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10
 - Working tree esperado al retomar: limpio
@@ -2285,3 +2285,125 @@ enchanting_table.
 ### Nota
 No se agrega gameplay. Todo es presentacion, atmosfera, resource pack y
 validacion de assets.
+
+---
+
+## ADDENDUM v0.16.0 (La sala de consulta — pase profundo)
+
+### Alcance
+Pase profundo de 50+ experiencias perceptibles nuevas, centrado en
+memoria, descubrimiento y consecuencias. Sin gameplay. Sin tocar
+contenedores ni layouts vanilla. Sin resource pack. Sin mixins nuevos.
+
+### Nota de auditoria previa (importante)
+- En este snapshot NO existen las clases ExpedientHeader ni AnomalyRenderer
+  (verificado por grep). El easter egg existente es el telegrama de "caso
+  sellado" del logo. Todo lo nuevo se diseno contra el estado real del
+  codigo, no contra la documentacion historica.
+- El resource pack fue retirado en v0.15.0 por orden del usuario. No se
+  reintrodujo.
+- Features revertidas en el pasado (parallax, cursor de pluma, fade de
+  transicion, carruaje, humo verde, ropa colgada) NO se reintrodujeron.
+  El coche del sepulturero es una carretilla lenta a mano, no el carruaje
+  revertido (que parecia un tren).
+
+### Codigo nuevo (paquete client/lore)
+- `ChroniclerMemory.java`: memoria persistente JSON en
+  `config/gripeverde-memory.json` via Gson + FMLPaths.CONFIGDIR.
+  Campos: firstVisitDay, lastVisitDay, visitCount, streak, dustPending,
+  anniversaryPending, discovered[], collectibles[], pendingNotes[],
+  counters{}, guestbook[]. API: beginSession(), discover/mark, bump,
+  counter, addCollectible, consumeDust/Anniversary. Tolerante a archivo
+  corrupto.
+- `Discoveries.java`: registro de 43 descubrimientos (ids, nombres ES/EN,
+  pistas ES/EN). discover() = memoria + toast + sonido de archivo.
+  drawToast() pinta el sello arriba a la derecha.
+- `Marginalia.java`: cola persistente de notas contextuales del cronista
+  (19 ids de nota). queue/queueOnce + poll + draw/drawHorizontal.
+  Las notas son REACCIONES, no frases aleatorias.
+- `HiddenCipher.java`: telegrafo oculto del Title. Buffer de letras
+  visibles como tinta tenue. Codigos: 1897 (telegrama), 1152 (13
+  campanadas + ventana del piso 13 persistente), HOLLOWAY (informe medico
+  + sello FRAUDE permanente), PEREIRA (reaccion + firma ofendida).
+- `Herald.java`: periodico diario procedural (semilla por dia real),
+  kiosco en la calle, lectura marcada por dia.
+- `screens/DiaryArchiveScreen.java`: la Sala de consulta. Grilla de 43
+  fichas (hallada/vacia con pista), sello de estado PENDIENTE/EN
+  CURSO/COMPLETO, documentos sueltos (telegrama, informe Holloway, ficha
+  negra a 38+ fichas). Entrada: folio escondido del Changelog o codigo
+  HOLLOWAY.
+
+### Sistemas nuevos
+- Descubrimiento -> ficha -> toast -> memoria (ciclo completo).
+- Consecuencias permanentes (contadores de memoria leidos por renderers):
+  `thirteenth_window` (luz donde no hay piso), `fraude_stamp` (sello FRAUDE
+  permanente sobre el poster del elixir, dibujado por PosterRenderer los
+  dias que ese cartel esta en la calle), `curtains_closed` (ventana del atico con
+  cortinas para siempre), `avenue_darkened` (farol enfermo debilitado para
+  siempre), `seal_broken`, `pereira_offended`, `wanted_eyes`.
+- Objetos del cajon (5): llave (reloj, 5 visitas), pluma (cuervo, 5
+  toques), jiron (gato, 7 toques), sello roto (creditos), nota
+  (contrabandista). Cajon del gabinete de opciones: cerrado sin llave,
+  vitrina con siluetas al abrir. Completo = ficha final.
+- Cadenas conectadas: poster despegado -> nombre Holloway -> codigo ->
+  informe -> marginalia del cronista arrepentido -> correccion de su
+  propia frase de la tinta. Susurro respondido x3 -> pista de los tres
+  golpes. Controles x3 visitas sin senal -> pista del contrabandista.
+
+### Modificaciones por pantalla
+- Title: inspeccion del reloj (click), llave del reloj, poster despejado,
+  faroles apagables (todas apagadas = ficha + consecuencia), ventana-senal
+  del atico (3 respuestas -> cortinas), gato (7 toques = jiron), rata que
+  se detiene, kiosco/Heraldo, coche del sepulturero (tras campanas),
+  veleta (rafagas), ojo del emblema que sigue al mouse + ficha por mirarlo,
+  saludo de sesion (primera vez/regreso/mismo dia), polvo por ausencia,
+  aniversario (365 dias), vigilia por inactividad (60s/150s), alba tras
+  20 min de sesion (NIGHT_WHOLE), tiempo enfermo (glitches escalan tras
+  8 min), telegrafo oculto + 4 codigos, respuesta al susurro ambiental,
+  marginalia + toast.
+- Pause: vela apagable (texto en la oscuridad), cuervo (5 toques = pluma),
+  aliento en el vidrio (auto), segunda sombra (12+ fichas, auto), firma
+  extendida "y de quien lee" (10+ fichas).
+- Options: cajon con llave + vitrina de objetos, tres golpes en la madera
+  (respuesta), bisagra (25 aperturas = ficha + creak grave + marginalia),
+  correccion de la frase de la tinta tras leer a Holloway, marginalia.
+- Controls: senal del contrabandista (sneak+sprint toggle, autojump+optab
+  off) = nota + ficha; pista tras 3 visitas.
+- Skin: espejo de la niebla (silueta 3s + ficha).
+- Chat: buzon (5 cartas = ficha + carta sellada + marginalia).
+- Accessibility: ojo de la percepcion que sigue al mouse (+ ficha).
+- Language: lengua de la niebla (entrada fantasma con 6+ fichas, una vez
+  por dia, se esfuma al tocarla); marginalia al cambiar idioma.
+- Sound: el silencio escucha (musica a 0 durante 3s = latido + ficha).
+- Multiplayer: libro de visitas persistente (nombre + fecha).
+- Credits: sello del registro rompible (objeto + linea oculta).
+- Confirm: contador de destrucciones (3 = ficha + recordatorio permanente).
+- DirectJoin: 13.13.13.13 = aviso de direccion sin mapa + ficha.
+- Changelog: marcas del encuadernador (3 asteriscos = remaches dorados),
+  folio escondido tras el ultimo renglon -> Sala de consulta.
+
+### Audio (sin assets nuevos; reuso con pitch/volumen)
+- Pieza fantasma: 5 skips por sesion -> silencio + crepitar + susurro.
+- Trece campanadas (codigo 1152) con pitch descendente.
+- Respuesta al susurro: doble voz grave.
+- Golpes y respuesta (madera grave), bisagra quejosa, latido del silencio,
+  clac de telegrafo por letra, croar del cuervo (crows agudo), protesta
+  del gato, buzon, sello roto.
+
+### Config/persistencia
+- gripeverde-client.toml: sin cambios (audio + openCount).
+- gripeverde-memory.json: nuevo, independiente, tolerante a corrupcion.
+
+### Version
+- 0.15.2 -> 0.16.0 (build.gradle + GripeVerdeMod.VERSION).
+- Docs R-CIERRE: CHANGELOG.md raiz, README.md, CONTEXTO.md,
+  KNOWN_ISSUES.md y 25 changelog in-game actualizados.
+
+### Validacion en este entorno
+- El sandbox del pase no tiene JDK instalable ni acceso a
+  maven.minecraftforge.net: el build se hizo en la maquina del usuario.
+  Resultado: primer intento con 1 error (duckFor llamado en MenuAmbience
+  en vez de MenuMusic; fix db61d86), segundo intento BUILD SUCCESSFUL
+  (57s, solo deprecation warnings preexistentes). v0.16.0 deployado a Test.
+- Regla derivada E125: sin javac disponible, todo codigo nuevo debe
+  limitarse a APIs verificadas en el propio repo; nada de firmas recordadas.

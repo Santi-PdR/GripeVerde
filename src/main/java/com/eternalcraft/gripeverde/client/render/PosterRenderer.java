@@ -110,6 +110,23 @@ public class PosterRenderer {
             drawCenteredText(g, font, line, cx, cursorY, DiaryTheme.INK_FADED);
             cursorY += 10;
         }
+
+        // v0.16.0: consecuencia permanente. Quien leyo el informe del medico
+        // ve desde entonces la verdad estampada sobre el elixir.
+        try {
+            if (com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("fraude_stamp") > 0) {
+                String stamp = "FRAUDE";
+                int tw2 = font.width(stamp);
+                int sx = cx - tw2 / 2;
+                int sy = y + h - 46;
+                g.fill(sx - 4, sy - 3, sx + tw2 + 4, sy - 2, 0xFF5C1508);
+                g.fill(sx - 4, sy + 10, sx + tw2 + 4, sy + 11, 0xFF5C1508);
+                g.fill(sx - 4, sy - 3, sx - 3, sy + 11, 0xFF5C1508);
+                g.fill(sx + tw2 + 3, sy - 3, sx + tw2 + 4, sy + 11, 0xFF5C1508);
+                g.drawString(font, stamp, sx, sy, 0xFF5C1508, false);
+                g.drawString(font, stamp, sx + 1, sy + 1, DiaryTheme.withAlpha(0xFF5C1508, 90), false);
+            }
+        } catch (Throwable ignored) {}
     }
 
     
@@ -153,7 +170,14 @@ public class PosterRenderer {
         cursorY += 18;
 
         drawThinDivider(g, cx, cursorY, w - 30);
-        cursorY += 8;
+        cursorY += 6;
+
+        // v0.16.0: el retrato del buscado. Quien le sostiene la mirada
+        // descubre que el dibujo tambien mira. Solo si el cartel es alto.
+        if (h >= 150) {
+            drawWantedPortrait(g, cx, cursorY, w);
+            cursorY += 30;
+        }
 
         drawCenteredText(g, font, I18n.get("gripeverde.poster.reward.body.1"), cx, cursorY, DiaryTheme.INK_FADED);
         cursorY += 10;
@@ -218,6 +242,35 @@ public class PosterRenderer {
         g.drawString(font, warn, -ww / 2 + 1, 1, DiaryTheme.SEPIA_DARK, false);
         g.drawString(font, warn, -ww / 2, 0, DiaryTheme.BLOOD_DRIED, false);
         g.pose().popPose();
+    }
+
+    /** Retrato somero del buscado; sus ojos se mueven si el lector lo sabe. */
+    private static void drawWantedPortrait(GuiGraphics g, int cx, int topY, int w) {
+        int pw = 26, ph = 30;
+        int x = cx - pw / 2;
+        int y = topY;
+        // Marco del retrato
+        g.fill(x - 2, y - 2, x + pw + 2, y + ph + 2, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 190));
+        g.fill(x, y, x + pw, y + ph, 0xFFD8CAB0);
+        // Silueta encapuchada
+        g.fill(x + 7, y + 12, x + 19, y + 28, 0xFF2A1E10);
+        g.fill(x + 9, y + 6, x + 17, y + 14, 0xFF2A1E10);
+        g.fill(x + 10, y + 4, x + 16, y + 7, 0xFF2A1E10);
+        g.fill(x + 5, y + 16, x + 8, y + 26, 0xFF241810);
+        g.fill(x + 18, y + 16, x + 21, y + 26, 0xFF241810);
+        // Los ojos: se desplazan solos cada tantos segundos si ya lo sabe.
+        boolean knows = false;
+        try {
+            knows = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("wanted_eyes") > 0;
+        } catch (Throwable ignored) {}
+        int shift = 0;
+        if (knows) {
+            long seg = System.currentTimeMillis() / 2600L;
+            shift = (int)(seg % 3L) - 1; // -1, 0, 1
+        }
+        int eye = knows ? 0xFFD4941E : 0xFF141008;
+        g.fill(x + 11 + shift, y + 10, x + 12 + shift, y + 11, eye);
+        g.fill(x + 14 + shift, y + 10, x + 15 + shift, y + 11, eye);
     }
 
 public static void drawVersionPanel(GuiGraphics g, int x, int y, int w, int h, String version) {

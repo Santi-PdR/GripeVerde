@@ -534,6 +534,79 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 db.render(gfx, mouseX, mouseY, partial);
             }
         }
+
+        // v0.16.0: el libro de visitas del atlas de hospederias
+        try {
+            drawGuestbook(gfx, panelX, panelY, panelW, mouseX, mouseY);
+            com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(gfx, this.width);
+        } catch (Throwable ignored) {}
+    }
+
+    private int guestbookX() { return this.width - PANEL_MARGIN_H - 150; }
+    private int guestbookY() { return this.height - PANEL_MARGIN_V + 12; }
+
+    private void drawGuestbook(GuiGraphics gfx, int panelX, int panelY, int panelW, int mouseX, int mouseY) {
+        int x = guestbookX();
+        int y = guestbookY();
+        boolean hover = mouseX >= x - 2 && mouseX <= x + 148 && mouseY >= y - 3 && mouseY <= y + 12;
+        // Pluma y renglon: el lector puede firmar (fuera del pergamino, sobre la escena)
+        int ink = hover ? 0xFFD8CAB0 : 0xFF8E7A55;
+        String label = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+            ? "~ sign the visitor's book ~" : "~ firmar el libro de visitas ~";
+        gfx.drawString(this.font, label, x, y, ink, false);
+        gfx.fill(x, y + 11, x + this.font.width(label), y + 12,
+            com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0xFF8E6A35, hover ? 180 : 90));
+
+        // La ultima firma conocida, apenas visible
+        var mem = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.get();
+        if (!mem.guestbook.isEmpty()) {
+            String last = mem.guestbook.get(mem.guestbook.size() - 1);
+            if (this.font.width(last) > 200) last = this.font.plainSubstrByWidth(last, 196) + "...";
+            gfx.drawString(this.font, last, x, y + 16,
+                com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0xFFB8A888, 90), false);
+        }
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == 0) {
+            int x = guestbookX();
+            int y = guestbookY();
+            if (mouseX >= x - 2 && mouseX <= x + 150 && mouseY >= y - 3 && mouseY <= y + 12) {
+                try {
+                    signGuestbook();
+                } catch (Throwable ignored) {}
+                return true;
+            }
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    private void signGuestbook() {
+        var mem = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.get();
+        String name;
+        try {
+            name = this.minecraft.getUser().getName();
+        } catch (Throwable t) {
+            name = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "a stranger" : "un desconocido";
+        }
+        String line = name + " - " + java.time.LocalDate.now();
+        boolean already = false;
+        for (String s : mem.guestbook) {
+            if (s.startsWith(name + " - ")) { already = true; break; }
+        }
+        if (!already) {
+            mem.guestbook.add(line);
+            while (mem.guestbook.size() > 24) mem.guestbook.remove(0);
+            com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.save();
+            com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                com.eternalcraft.gripeverde.client.lore.Discoveries.GUESTBOOK);
+            com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                com.eternalcraft.gripeverde.client.audio.ModSounds.UI_SCROLL.get(), 0.18f, 0.70f);
+        } else {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                com.eternalcraft.gripeverde.client.audio.ModSounds.UI_SCROLL.get(), 0.12f, 0.55f);
+        }
     }
 
     @Override

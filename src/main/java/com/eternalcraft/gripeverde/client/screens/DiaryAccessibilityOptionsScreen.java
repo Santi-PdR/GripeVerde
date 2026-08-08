@@ -138,6 +138,61 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         if (this.btnVolver != null) {
             this.btnVolver.render(gfx, mouseX, mouseY, delta);
         }
+
+        // v0.16.0: el ojo de la percepcion, que mira a quien mira
+        try {
+            drawPerceptionEye(gfx, mouseX, mouseY);
+            com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
+            com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(gfx, this.width / 2, this.panelY - 12);
+            com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(gfx, this.width);
+        } catch (Throwable ignored) {}
+    }
+
+    private int eyeX() { return this.panelX + 22; }
+    private int eyeY() { return this.panelY + 16; }
+
+    private void drawPerceptionEye(GuiGraphics gfx, int mouseX, int mouseY) {
+        int ex = eyeX(), ey = eyeY();
+        boolean hover = mouseX >= ex - 8 && mouseX <= ex + 8 && mouseY >= ey - 6 && mouseY <= ey + 6;
+        // Contorno almendrado
+        int lid = hover ? 0xFF3D2A18 : 0xFF654025;
+        gfx.fill(ex - 6, ey - 1, ex + 6, ey + 1, 0xFFF0E5C8);
+        gfx.fill(ex - 4, ey - 3, ex + 4, ey - 2, lid);
+        gfx.fill(ex - 4, ey + 2, ex + 4, ey + 3, lid);
+        gfx.fill(ex - 7, ey - 1, ex - 6, ey + 1, lid);
+        gfx.fill(ex + 6, ey - 1, ex + 7, ey + 1, lid);
+        // Parpadeo ocasional
+        long now = System.currentTimeMillis();
+        boolean blink = (now % 6200L) < 180L;
+        if (blink) {
+            gfx.fill(ex - 6, ey - 2, ex + 6, ey + 2, lid);
+            return;
+        }
+        // Iris que sigue al lector
+        double dx = mouseX - ex, dy = mouseY - ey;
+        int px = 0, py = 0;
+        if (Math.abs(dx) > 12) px = dx > 0 ? 2 : -2;
+        else if (Math.abs(dx) > 4) px = dx > 0 ? 1 : -1;
+        if (Math.abs(dy) > 12) py = dy > 0 ? 1 : -1;
+        gfx.fill(ex - 2 + px, ey - 2 + py, ex + 2 + px, ey + 2 + py, 0xFF8E6A35);
+        gfx.fill(ex - 1 + px, ey - 1 + py, ex + 1 + px, ey + 1 + py, 0xFF1A0F05);
+        gfx.fill(ex - 2 + px, ey - 2 + py, ex - 1 + px, ey - 1 + py, 0xFFD8CAB0);
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == 0 && mouseX >= eyeX() - 8 && mouseX <= eyeX() + 8
+                && mouseY >= eyeY() - 6 && mouseY <= eyeY() + 6) {
+            try {
+                boolean first = com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                    com.eternalcraft.gripeverde.client.lore.Discoveries.EYE_FOLLOWS);
+                com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                    com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_AMBIENT_OCCASIONAL.get(),
+                    0.18f, first ? 0.62f : 0.80f);
+            } catch (Throwable ignored) {}
+            return true;
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override

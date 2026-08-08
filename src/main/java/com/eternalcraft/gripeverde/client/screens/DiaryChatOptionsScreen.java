@@ -146,6 +146,62 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         for (Renderable r : this.renderables) {
             r.render(g, mouseX, mouseY, partialTick);
         }
+
+        // v0.16.0: el buzon del barrio que no responde
+        try {
+            drawMailbox(g, mouseX, mouseY);
+            com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
+            com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, this.panelY - 12);
+            com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
+        } catch (Throwable ignored) {}
+    }
+
+    private int mailboxX() { return this.panelX + this.panelW - 40; }
+    private int mailboxY() { return this.panelY + 14; }
+
+    private void drawMailbox(GuiGraphics g, int mouseX, int mouseY) {
+        int x = mailboxX(), y = mailboxY();
+        boolean hover = mouseX >= x - 2 && mouseX <= x + 24 && mouseY >= y - 2 && mouseY <= y + 20;
+        int wood = hover ? 0xFF7A5A2E : 0xFF6B4A2E;
+        // Caja de madera con ranura
+        g.fill(x, y, x + 22, y + 14, wood);
+        g.fill(x, y, x + 22, y + 2, 0xFF8E6A35);
+        g.fill(x, y + 12, x + 22, y + 14, 0xFF3D2A18);
+        g.fill(x + 5, y + 6, x + 17, y + 8, 0xFF1A0F05);
+        g.fill(x + 2, y + 14, x + 4, y + 19, 0xFF3D2E1A);
+        g.fill(x + 18, y + 14, x + 20, y + 19, 0xFF3D2E1A);
+        // Cartas depositadas: marcas de conteo
+        int letters = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("letters");
+        for (int i = 0; i < Math.min(8, letters); i++) {
+            g.fill(x + 2 + i * 2, y - 4, x + 3 + i * 2, y - 1, 0xFFD8CAB0);
+        }
+        // La respuesta sellada que nadie abrira
+        if (letters >= 5) {
+            g.fill(x + 4, y + 2, x + 14, y + 9, 0xFFE6D2A6);
+            g.fill(x + 8, y + 4, x + 10, y + 6, 0xFF7A1F18);
+        }
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == 0 && mouseX >= mailboxX() - 2 && mouseX <= mailboxX() + 24
+                && mouseY >= mailboxY() - 2 && mouseY <= mailboxY() + 20) {
+            try {
+                int n = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.bump("letters");
+                com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                    com.eternalcraft.gripeverde.client.audio.ModSounds.UI_SCROLL.get(), 0.18f, 0.66f);
+                if (n >= 5) {
+                    boolean first = com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                        com.eternalcraft.gripeverde.client.lore.Discoveries.LETTERS);
+                    if (first) {
+                        com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                            com.eternalcraft.gripeverde.client.lore.Marginalia.N_LETTERS);
+                    }
+                }
+            } catch (Throwable ignored) {}
+            return true;
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override

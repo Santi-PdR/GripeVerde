@@ -1,5 +1,54 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.16.0 - La sala de consulta (pase profundo)
+
+### Cambios cerrados
+- Sistema de memoria persistente nuevo: `config/gripeverde-memory.json`
+  (descubrimientos, objetos, notas pendientes, contadores, libro de
+  visitas). Independiente del TOML de audio; tolerante a corrupcion.
+- 43 descubrimientos registrados con fichas, pistas y sello de toast.
+- Sala de consulta (DiaryArchiveScreen) accesible desde el folio escondido
+  del historial y desde el codigo HOLLOWAY.
+- Marginalia contextual del cronista (19 notas, todas con causa).
+- Telegrafo oculto del Title con 4 codigos (1897, 1152, HOLLOWAY, PEREIRA).
+- 7 consecuencias permanentes por contador de memoria (ventana del piso 13,
+  sello FRAUDE, cortinas del atico, farol enfermo, sello roto, firma
+  ofendida, ojos del retrato).
+- Cada pantalla del gabinete recibio al menos una interaccion propia nueva
+  (ver CONTEXTO.md ADDENDUM v0.16.0).
+- Sin cambios en contenedores, slots, layouts vanilla ni resource packs.
+- Sin mixins nuevos (client:[] vacio). Sin assets nuevos (sonidos reusados
+  con pitch/volumen).
+
+### Riesgos activos / KI nuevos
+- **KI-17 (validacion de build) - CERRADO**: el sandbox del pase no tiene JDK
+  ni acceso a maven; el build se ejecuto en la maquina del usuario.
+  Primer build: 1 error (duckFor llamado en la clase equivocada, fix
+  db61d86). Segundo build: BUILD SUCCESSFUL (57s, solo 4 warnings de
+  deprecaciones preexistentes). Deployado a Test como gripeverde-0.16.0.jar.
+- **KI-18 (escala 4)**: la Sala de consulta usa panel de 440x404 con
+  clamp a pantalla-32; en GUI 4 puede quedar justa de alto. El clamp
+  minimo es 280x240; las fichas se dibujan igualmente. Validar.
+- **KI-19 (lista de lenguas)**: la lengua de la niebla se inserta via
+  `children().add(pos, entry)` en la ObjectSelectionList propia. El
+  scrollbar y el smooth scroll usan getMaxScroll, que se recalcula;
+  validar que no haya salto al aparecer la entrada.
+- El Heraldo dibuja sobre la calle; en modo minimal (altura < 290) el
+  kiosco no se dibuja ni se puede tocar (chequeo h < 300).
+- El coche del sepulturero solo aparece si el lector esta mirando el
+  Title (chequeo de render reciente); en subpantallas no aparece.
+
+### Reglas nuevas
+- **R-LORE-DISJOINT**: la memoria narrativa vive en su propio JSON; nunca
+  guardar descubrimientos en el TOML de audio.
+- **R-CONSEQUENCE-COUNTER**: toda consecuencia permanente se implementa
+  como contador entero en memoria leido por el renderer; nunca como flag
+  estatica en el renderer (se perderia entre sesiones).
+- **E125**: sin javac disponible en el entorno, solo se usan APIs ya
+  verificadas en el codigo del repo; nada de firmas recordadas de memoria.
+
+---
+
 ## Estado actual de pulido RC
 
 ### Criterios activos

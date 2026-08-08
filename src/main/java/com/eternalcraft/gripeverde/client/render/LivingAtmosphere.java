@@ -74,6 +74,91 @@ public class LivingAtmosphere {
     private static float erraticIntensity = 0f;  // 0=normal, 1=full erratic
     private static float erraticDuration = 0f;
 
+    // ── v0.16.0: la avenida interactiva ─────────────────────────────────────
+    // Faroles que el lector puede apagar/encender (por sesion).
+    private static final boolean[] lanternOut = new boolean[8];
+    private static long lastStreetLevelRenderMs = 0L;
+
+    // La rata que a veces se detiene.
+    private static boolean ratWillStand = false;
+    private static boolean ratStanding = false;
+    private static float ratStandTimer = 0f;
+
+    // El coche del sepulturero (sale cuando doblan las campanas).
+    private static boolean hearseActive = false;
+    private static float hearseX = -0.2f;
+    private static long lastHearseMs = 0L;
+
+    public static long streetLevelRenderMs() { return lastStreetLevelRenderMs; }
+
+    public static float getWindGustIntensity() { return windGustIntensity; }
+
+    /** Alterna un farol. Devuelve true si ahora estan TODOS apagados. */
+    public static boolean toggleLantern(int index, int count) {
+        if (index < 0 || index >= lanternOut.length) return false;
+        lanternOut[index] = !lanternOut[index];
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                com.eternalcraft.gripeverde.client.audio.ModSounds.UI_CLICK_HEAVY.get(),
+                lanternOut[index] ? 0.16f : 0.14f,
+                lanternOut[index] ? 0.55f : 0.75f);
+        } catch (Throwable ignored) {}
+        if (count <= 0) return false;
+        for (int i = 0; i < count; i++) {
+            if (!lanternOut[i]) return false;
+        }
+        return true;
+    }
+
+    public static boolean isLanternOut(int index) {
+        return index >= 0 && index < lanternOut.length && lanternOut[index];
+    }
+
+    /** Hit-test del farol i (poste completo). */
+    public static boolean lanternHit(int i, double mx, double my, int w, int h) {
+        if (lanternPositions == null || i < 0 || i >= lanternPositions.length) return false;
+        int lx = lanternPositions[i][0];
+        int ly = lanternPositions[i][1];
+        int postH = (int)(h * 0.13f);
+        return mx >= lx - 7 && mx <= lx + 8 && my >= ly - postH - 12 && my <= ly + 3;
+    }
+
+    /** Devuelve el indice del farol bajo el cursor, o -1. */
+    public static int lanternIndexAt(double mx, double my, int w, int h) {
+        if (lanternPositions == null) return -1;
+        for (int i = 0; i < lanternPositions.length; i++) {
+            if (lanternHit(i, mx, my, w, h)) return i;
+        }
+        return -1;
+    }
+
+    /** Hit-test de la rata (solo si esta activa). */
+    public static boolean ratHit(double mx, double my, int w, int h) {
+        if (!ratActive) return false;
+        int rx = (int)(ratX * w);
+        int ry = (int)(h * 0.90f);
+        return mx >= rx - 4 && mx <= rx + 12 && my >= ry - (ratStanding ? 8 : 2) && my <= ry + 6;
+    }
+
+    /** La rata se asusta y huye (tras ser descubierta). */
+    public static void scareRat() {
+        ratStanding = false;
+        ratSpeed = ratSpeed >= 0 ? 0.55f : -0.55f;
+    }
+
+    public static boolean isRatStanding() { return ratStanding; }
+
+    // ── Kiosco del Heraldo ──
+    public static int heraldKioskX(int w) { return (int)(w * 0.345f); }
+    public static int heraldKioskY(int h) { return (int)(h * 0.842f); }
+
+    public static boolean heraldHit(double mx, double my, int w, int h) {
+        if (h < 300) return false;
+        int kx = heraldKioskX(w);
+        int ky = heraldKioskY(h);
+        return mx >= kx - 10 && mx <= kx + 14 && my >= ky - 24 && my <= ky + 2;
+    }
+
     public static void triggerLightningFlash(float intensity) {
         lightningTimer = 0f;
         lightningFlash = Math.max(lightningFlash, Math.max(0.15f, Math.min(1.0f, intensity)));
@@ -180,11 +265,25 @@ public class LivingAtmosphere {
             erraticDuration = 3f + (float)(Math.random() * 2.0);
         }
 
-        // Street rat: crossing logic
+        // Street rat: crossing logic (+ v0.16.0: la rata que a veces se detiene)
         if (ratActive) {
-            ratX += ratSpeed * deltaTime;
+            if (ratStanding) {
+                ratStandTimer -= deltaTime;
+                if (ratStandTimer <= 0f) {
+                    ratStanding = false;
+                    ratSpeed = ratSpeed >= 0 ? 0.30f : -0.30f; // huye mas rapido
+                }
+            } else {
+                ratX += ratSpeed * deltaTime;
+                if (ratWillStand && ratX > 0.42f && ratX < 0.58f) {
+                    ratStanding = true;
+                    ratStandTimer = 2.6f;
+                    ratWillStand = false;
+                }
+            }
             if (ratX < -0.1f || ratX > 1.1f) {
                 ratActive = false;
+                ratStanding = false;
                 ratTimer = 0f;
                 ratNextEvent = 40f + (float)(Math.random() * 40.0);
             }
@@ -192,6 +291,7 @@ public class LivingAtmosphere {
             ratTimer += deltaTime;
             if (ratTimer >= ratNextEvent) {
                 ratActive = true;
+                ratWillStand = Math.random() < 0.12; // solo a veces se detiene
                 if (Math.random() < 0.5) {
                     ratX = -0.05f;
                     ratSpeed = 0.15f + (float)(Math.random() * 0.10);
@@ -200,6 +300,26 @@ public class LivingAtmosphere {
                     ratSpeed = -(0.15f + (float)(Math.random() * 0.10));
                 }
             }
+        }
+
+        // v0.16.0: el coche del sepulturero. Sale unos segundos despues de que
+        // doblen las campanas, solo si el lector esta mirando la calle.
+        if (!hearseActive) {
+            long bellMs = com.eternalcraft.gripeverde.client.audio.MenuAmbience.lastBellMs();
+            long nowMs = System.currentTimeMillis();
+            if (bellMs > lastHearseMs && nowMs - bellMs > 5000L
+                    && nowMs - lastStreetLevelRenderMs < 600L) {
+                lastHearseMs = nowMs;
+                hearseActive = true;
+                hearseX = -0.18f;
+                try {
+                    com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                        com.eternalcraft.gripeverde.client.lore.Discoveries.COFFIN_CART);
+                } catch (Throwable ignored) {}
+            }
+        } else {
+            hearseX += 0.048f * deltaTime;
+            if (hearseX > 1.2f) hearseActive = false;
         }
 
     }
@@ -308,17 +428,86 @@ public class LivingAtmosphere {
             lanternPositions = VictorianSkyline.getLanternPositions(w, h);
             lastLanternW = w; lastLanternH = h;
         }
+        lastStreetLevelRenderMs = System.currentTimeMillis();
         renderStreet(g, w, h);
         renderPuddleRipples(g, w, h);
         renderLanternReflections(g, w, h);
         renderPaperScraps(g, w, h);
         renderGroundFog(g, w, h);
+        renderHeraldKiosk(g, w, h);
         for (int i = 0; i < lanternPositions.length; i++) {
             renderGasLantern(g, lanternPositions[i][0], lanternPositions[i][1], i, w, h);
         }
         renderMoths(g, w, h);
         renderSpores(g, w, h);
         renderRat(g, w, h);
+        renderHearse(g, w, h);
+    }
+
+    /** Kiosco de madera con el Heraldo del dia (si nadie lo recogio aun). */
+    private static void renderHeraldKiosk(GuiGraphics g, int w, int h) {
+        if (h < 300) return;
+        int kx = heraldKioskX(w);
+        int ky = heraldKioskY(h);
+        boolean taken = false;
+        try {
+            long today = java.time.LocalDate.now().toEpochDay();
+            taken = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("herald_day") == today;
+        } catch (Throwable ignored) {}
+
+        // Patas y caja del kiosco
+        g.fill(kx - 8, ky - 14, kx + 12, ky - 2, 0xFF1F1408);
+        g.fill(kx - 7, ky - 13, kx + 11, ky - 3, 0xFF2A1C10);
+        g.fill(kx - 7, ky - 2, kx - 5, ky + 2, 0xFF140C06);
+        g.fill(kx + 9, ky - 2, kx + 11, ky + 2, 0xFF140C06);
+        // Tejadillo
+        g.fill(kx - 10, ky - 17, kx + 14, ky - 14, 0xFF120A05);
+        g.fill(kx - 9, ky - 18, kx + 13, ky - 17, 0xFF241608);
+        if (!taken) {
+            // Pila de periodicos
+            g.fill(kx - 5, ky - 8, kx + 9, ky - 6, 0xFFC9B78A);
+            g.fill(kx - 4, ky - 10, kx + 8, ky - 8, 0xFFD8CAB0);
+            g.fill(kx - 3, ky - 11, kx + 7, ky - 10, 0xFFE6D2A6);
+            g.fill(kx - 2, ky - 10, kx + 5, ky - 9, 0xFF3D2A18); // titular
+            // El de arriba, ligeramente desplegado
+            float lift = (float)(Math.sin(time * 1.3f) * 0.5f + 0.5f);
+            int la = (int)(120 + lift * 60);
+            g.fill(kx - 1, ky - 13, kx + 5, ky - 11, AtmosphereRenderer.withAlpha(0x00E6D2A6, la));
+        }
+    }
+
+    /** El coche del sepulturero: carretilla lenta con ataud, tras las campanas. */
+    private static void renderHearse(GuiGraphics g, int w, int h) {
+        if (!hearseActive || h < 260) return;
+        int hx = (int)(hearseX * w);
+        int hy = (int)(h * 0.885f);
+        int dark = 0xFF0C0704;
+        int darker = 0xFF070402;
+        // El tirador: figura encorvada
+        int lean = (int)(Math.sin(time * 2.2f) * 1f);
+        g.fill(hx - 14 + lean, hy - 10, hx - 11 + lean, hy - 3, dark);   // cuerpo
+        g.fill(hx - 13 + lean, hy - 13, hx - 11 + lean, hy - 10, dark);  // cabeza
+        g.fill(hx - 13, hy - 3, hx - 12, hy, dark);                      // piernas
+        g.fill(hx - 11, hy - 3, hx - 10, hy, dark);
+        g.fill(hx - 11 + lean, hy - 8, hx - 6, hy - 7, dark);            // brazos al carro
+        // El carro
+        g.fill(hx - 6, hy - 8, hx + 12, hy - 2, darker);
+        g.fill(hx - 6, hy - 9, hx + 12, hy - 8, dark);
+        // El ataud encima, con tapa
+        g.fill(hx - 4, hy - 13, hx + 10, hy - 9, 0xFF1A0F08);
+        g.fill(hx - 3, hy - 14, hx + 9, hy - 13, 0xFF241608);
+        g.fill(hx + 2, hy - 13, hx + 3, hy - 9, 0xFF3D2E1A); // cruz de la tapa
+        g.fill(hx + 1, hy - 12, hx + 4, hy - 11, 0xFF3D2E1A);
+        // Ruedas
+        g.fill(hx - 3, hy - 2, hx + 1, hy + 2, dark);
+        g.fill(hx + 6, hy - 2, hx + 10, hy + 2, dark);
+        g.fill(hx - 2, hy - 1, hx, hy + 1, darker);
+        g.fill(hx + 7, hy - 1, hx + 9, hy + 1, darker);
+        // Farolillo del carro: ambar muy tenue
+        float fl = (float)(Math.sin(time * 5.1f) * 0.25f + 0.75f);
+        int la = (int)(90 * fl);
+        g.fill(hx + 11, hy - 11, hx + 13, hy - 8, AtmosphereRenderer.withAlpha(0x00FFAA33, la));
+        g.fill(hx + 10, hy - 12, hx + 14, hy - 7, AtmosphereRenderer.withAlpha(0x00FFAA33, la / 4));
     }
 
     public static void renderAir(GuiGraphics g, int w, int h) {
@@ -498,6 +687,7 @@ public class LivingAtmosphere {
     private static void renderLanternReflections(GuiGraphics g, int w, int h) {
         if (lanternPositions == null) return;
         for (int i = 0; i < lanternPositions.length; i++) {
+            if (isLanternOut(i)) continue; // apagado: sin reflejo
             int lx = lanternPositions[i][0];
             int ly = lanternPositions[i][1];
             float flicker = (float)(Math.sin(time * 3.2f + i * 1.5f) * 0.2f + 0.8f);
@@ -550,6 +740,7 @@ public class LivingAtmosphere {
     /**
      * Farol de gas victoriano: poste ornamental + cabezal 4 vidrios + llama danzante
      * Optimized: halo con gradient, no 12+ fills por farol
+     * v0.16.0: el lector puede apagarlos; el farol enfermo no se recupera igual.
      */
     private static void renderGasLantern(GuiGraphics g, int lx, int ly, int index, int w, int h) {
         int postH = (int)(h * 0.13f);
@@ -559,6 +750,8 @@ public class LivingAtmosphere {
         g.fill(lx - 4, ly,         lx + 5, ly + 2,    0xFF0A0503);
         g.fill(lx - 1, ly - postH, lx + 2, ly - 2,    0xFF2A1810);
         g.fill(lx - 2, ly - postH/2, lx + 3, ly - postH/2 + 3, 0xFF3D2E1A);
+
+        boolean out = isLanternOut(index);
 
         float flicker = (float)(
             Math.sin(time * 3.7f + index * 1.3f) * 0.25f +
@@ -573,7 +766,17 @@ public class LivingAtmosphere {
             );
             flicker = flicker + chaos * erraticIntensity;
         }
+        // Consecuencia permanente: tras apagar la avenida, el farol enfermo
+        // nunca vuelve a arder del todo.
+        boolean sickDim = false;
+        if (index == ERRATIC_LANTERN_INDEX) {
+            try {
+                sickDim = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("avenue_darkened") > 0;
+            } catch (Throwable ignored) {}
+        }
+        if (sickDim && !out) flicker = Math.min(flicker, 0.38f);
         flicker = Math.max(0.15f, Math.min(1.2f, flicker));
+        if (out) flicker = 0f;
 
         int lanternY = ly - postH;
 
@@ -593,6 +796,15 @@ public class LivingAtmosphere {
         g.fill(lx, lanternY - 3, lx + 1, lanternY + boxSize, 0xFF2A1810);
         g.fill(lx - boxSize, lanternY + 1, lx + boxSize, lanternY + 2, 0xFF2A1810);
         g.fill(lx - boxSize - 1, lanternY + boxSize + 1, lx + boxSize + 1, lanternY + boxSize + 3, 0xFF1A1108);
+
+        if (out) {
+            // Vidrio frio y un hilo de humo apagandose
+            g.fill(lx - boxSize, lanternY - 3, lx + boxSize, lanternY + boxSize,
+                AtmosphereRenderer.withAlpha(0x00101820, 60));
+            float wispA = (float)(Math.sin(time * 0.9f + index) * 0.5f + 0.5f) * 26f;
+            g.fill(lx, lanternY - 10, lx + 1, lanternY - 6, AtmosphereRenderer.withAlpha(0x00909090, (int)wispA));
+            return;
+        }
 
         // Optimized halos: 2 gradients instead of 12+ fills
         int haloR = (int)(28 * flicker);
@@ -634,6 +846,7 @@ public class LivingAtmosphere {
         int postH = (int)(h * 0.13f);
         for (int i = 0; i < MOTH_COUNT; i++) {
             int idx = ((int)moths[i][0]) % lanternPositions.length;
+            if (isLanternOut(idx)) continue; // sin llama: las polillas se dispersan
             int lx = lanternPositions[idx][0];
             int ly = lanternPositions[idx][1] - postH - 2;
             float angle = moths[i][1];
@@ -672,6 +885,22 @@ public class LivingAtmosphere {
         // Body: 8x4 dark grey
         int body = 0xFF0F0805;
         int belly = 0xFF1A0F08;
+
+        if (ratStanding) {
+            // La rata que se detuvo: erguida, mirando alrededor.
+            int twitch = (int)(Math.sin(time * 6.3f) * 1f);
+            g.fill(rx + 2, ry - 5, rx + 6, ry + 3, body);          // cuerpo erguido
+            g.fill(rx + 2, ry - 8, rx + 6, ry - 5, body);          // cabeza arriba
+            g.fill(rx + 3, ry - 9, rx + 4, ry - 8, body);          // oreja
+            g.fill(rx + 5, ry - 9, rx + 6, ry - 8, body);          // oreja
+            g.fill(rx + 3 + twitch, ry - 7, rx + 4 + twitch, ry - 6, 0xFFD4941E); // ojo
+            g.fill(rx + 1, ry + 1, rx + 3, ry + 3, body);          // patas
+            g.fill(rx + 5, ry + 1, rx + 7, ry + 3, body);
+            g.fill(rx + 6, ry - 3, rx + 9, ry - 2, body);          // cola apoyada
+            g.fill(rx, ry - 4 + twitch, rx + 1, ry - 3 + twitch, body); // bigote/mano
+            return;
+        }
+
         // Direction determines orientation
         boolean rightward = ratSpeed > 0;
         if (rightward) {
