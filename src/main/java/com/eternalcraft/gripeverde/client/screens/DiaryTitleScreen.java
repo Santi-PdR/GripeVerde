@@ -773,7 +773,7 @@ public class DiaryTitleScreen extends Screen {
                             com.eternalcraft.gripeverde.client.lore.Discoveries.AVENUE_DARK);
                         if (first) {
                             com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.setCounter("avenue_darkened", 1);
-                            com.eternalcraft.gripeverde.client.audio.MenuAmbience.duckFor(2200L);
+                            com.eternalcraft.gripeverde.client.audio.MenuMusic.duckFor(2200L);
                         }
                     }
                     return true;
