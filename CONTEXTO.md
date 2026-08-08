@@ -2,9 +2,65 @@
 
 ## Addendum operativo actual
 
-- Rama fija de Arena: `arena/019fdf6a-gripeverde`.
-- Version: `0.16.0`.
-- Ultima regla explicita del usuario: pase profundo de 50+ experiencias nuevas, sin reciclar features existentes, un unico commit.
+- Rama fija de Arena: `arena/019fe1c5-gripeverde`.
+- Version: `0.17.0`.
+- Ultima regla explicita del usuario: gran pase de calidad de interfaz y
+  identidad visual (resource pack + containers + pantallas del mod), un unico commit.
+
+### DECISION 2026-08-08: Acero de cuarentena (v0.17.0)
+
+El usuario pidio un pase distinto a los anteriores: NO easter eggs, sino
+identidad visual profesional. Se creo desde cero el resource pack built-in
+`gripeverde_steel` ("Acero de Cuarentena"), REQUIRED=true (siempre activo),
+que reemplaza la presentacion (no la geometria) de los contenedores vanilla:
+
+- 20 fondos de contenedores (inventory, generic_54, crafting_table, furnace,
+  smoker, blast_furnace, anvil, grindstone, smithing, enchanting_table,
+  brewing_stand, hopper, dispenser, beacon, horse, villager 512x256, loom,
+  cartography_table, stonecutter, shulker_box) + 4 fondos de inventario
+  creativo (tabs.png + 3 variantes).
+- Sprites: slot universal, progresos de horno/ahumador/altos-hornos
+  (llama ambar + flecha acero), brewing (flecha/burbujas/combustible),
+  beacon (botones/cancelar/confirmar), anvil (error + campo de texto),
+  enchanting (slot + numeros I/II/III), grindstone (error), horse
+  (armor_slot, chest_slots), scroller creativo, botones/sliders/campos/
+  checkboxes/scroller de widgets vanilla, boton del libro de recetas.
+- 9-slice .mcmeta conservados intactos (button/slider/text_field/scroller).
+- NO se incluyen texturas muertas: dropper.png y villager2.png NO existen en
+  1.20.1 (eran huerfanas del pack Master Steel).
+
+Diferencias vs packs anteriores (steel v0.13, silver v0.14, Master Steel):
+- Geometria 1:1 verificada: alpha masks identicas a vanilla (comparadas contra
+  el espejo 1.20.2 == 1.20.1, validado contra Master Steel) y slots 18x18 en
+  las posiciones vanilla exactas (tabla hardcodeada por textura).
+- El pack es REQUIRED (siempre visible) — no depende de que el jugador lo
+  active en Resource Packs.
+- Paleta unica de acero frio #9A9EA8 (sin bronce dominante), cepillado
+  horizontal controlado (sin ruido aleatorio), slots hundidos, juntas con
+  remaches de laton, cinta verde de cuarentena en almacenes, tintes por
+  familia (horno cobrizo, encantamiento arcano, alambique clinico, baliza
+  ambar).
+- Pipeline regenerable: `tools/steel_pack/build_steel_pack.py` +
+  `steel_pack_lib.py` (genera y valida alpha/slots).
+
+UI del mod (identidad del gabinete):
+- DiaryChrome.drawCornerOrnaments -> escuadras de acero con remache (todas
+  las pantallas Diary automaticamente).
+- Chapa de registro "REG. I..XV" arriba a la derecha de cada panel del
+  gabinete (drawRegistryTag); Skin usa variante izquierda por el espejo.
+- DiaryPackSelectionScreen: la pantalla vanilla de Resource Packs ahora es
+  un archivo del gabinete (pergamino de archivo + marco de acero + sello
+  EC-QV/1897 + chapa REG. XV). Las listas vanilla conservan su logica;
+  las scrollbars quedan en acero via el resource pack (widget/scroller.png).
+- Lang: nueva clave `gripeverde.options.packs.subtitle` en los 25 idiomas.
+
+Version: 0.16.0 -> 0.17.0 (build.gradle + GripeVerdeMod.VERSION).
+
+Validacion en este entorno: sin JDK ni maven de Forge en el sandbox. Se
+valido programaticamente: dimensiones, alpha masks 1:1 vs vanilla, posicion
+de slots, existencia de .mcmeta, ausencia de huerfanas (tarea Gradle
+verifyGripeVerdeThemeAssets). NO se pudo compilar ni correr el juego: el
+build debe hacerse en la maquina del usuario (regla E125).
 
 ### DECISION 2026-08-05: retiro del resource pack de contenedores
 
@@ -63,14 +119,14 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.16.0
-- build.gradle: version = '0.16.0'
-- GripeVerdeMod.VERSION: "0.16.0"
+- Version estable actual: v0.17.0
+- build.gradle: version = '0.17.0'
+- GripeVerdeMod.VERSION: "0.17.0"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
-- Resource pack built-in: ELIMINADO (v0.15.0). Contenedores 100% vanilla.
+- Resource pack built-in: NUEVO "gripeverde_steel" (v0.17.0), REQUIRED, contenedores con acero de cuarentena (presentacion 1:1, geometria vanilla intacta).
 - ContainerOverlayHandler: ELIMINADO (v0.15.1). Titulos de contenedores vanilla.
 - Slider FOV: agregado al gabinete de opciones (v0.15.1) y arreglado el
   label para que muestre el numero (v0.15.2): la clave vanilla "options.fov"

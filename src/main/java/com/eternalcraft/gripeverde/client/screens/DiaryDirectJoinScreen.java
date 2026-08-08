@@ -170,6 +170,7 @@ public class DiaryDirectJoinScreen extends Screen {
 
         // Cosmetica
         DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, panelW, panelH);
+        DiaryChrome.drawRegistryTag(gfx, panelX, panelY, panelW, panelH, "REG. XII");
 
         // Titulo
         int titleY = panelY + 18;

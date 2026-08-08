@@ -6,7 +6,7 @@ plugins {
     id 'org.spongepowered.mixin' version '0.7.+'
 }
 
-version = '0.16.0'
+version = '0.17.0'
 group = 'com.eternalcraft.gripeverde'
 base { archivesName = 'gripeverde' }
 
@@ -126,4 +126,73 @@ tasks.register('verifyGripeVerdeSoundAssets') {
 
 tasks.named('processResources').configure {
     dependsOn tasks.named('verifyGripeVerdeSoundAssets')
+}
+
+tasks.register('verifyGripeVerdeThemeAssets') {
+    group = 'verification'
+    description = 'Verifies the gripeverde_steel built-in resource pack (sizes, mcmeta, no orphans).'
+    doLast {
+        def packRoot = file('src/main/resources/resourcepacks/gripeverde_steel')
+        if (!packRoot.isDirectory()) throw new GradleException("Missing pack dir: ${packRoot}")
+
+        def mcmeta = new File(packRoot, 'pack.mcmeta')
+        if (!mcmeta.isFile()) throw new GradleException('Missing pack.mcmeta')
+        def parsed = new groovy.json.JsonSlurper().parse(mcmeta)
+        if (parsed?.pack?.pack_format != 15) throw new GradleException('pack.mcmeta pack_format must be 15 (1.20.1)')
+
+        def packPng = new File(packRoot, 'pack.png')
+        if (!packPng.isFile()) throw new GradleException('Missing pack.png')
+        def pp = javax.imageio.ImageIO.read(packPng)
+        if (pp == null || pp.getWidth() != 128 || pp.getHeight() != 128)
+            throw new GradleException('pack.png must be 128x128')
+
+        def containerDir = new File(packRoot, 'assets/minecraft/textures/gui/container')
+        // Solo texturas reales de 1.20.1 (sin dropper.png ni villager2.png, que no existen)
+        def required = ['inventory.png','generic_54.png','crafting_table.png','furnace.png','blast_furnace.png',
+                        'smoker.png','shulker_box.png','anvil.png','grindstone.png','enchanting_table.png',
+                        'beacon.png','brewing_stand.png','hopper.png','dispenser.png','loom.png',
+                        'cartography_table.png','stonecutter.png','smithing.png','horse.png','villager.png']
+        def missing = required.findAll { !new File(containerDir, it).isFile() }
+        if (!missing.isEmpty()) throw new GradleException("Missing container PNGs: ${missing.join(', ')}")
+        def badDim = []
+        required.each { name ->
+            def f = new File(containerDir, name)
+            def img = javax.imageio.ImageIO.read(f)
+            if (img == null) { badDim << "${name}: unreadable"; return }
+            def expW = name.startsWith('villager') ? 512 : 256
+            if (img.getWidth() != expW || img.getHeight() != 256)
+                badDim << "${name}: ${img.getWidth()}x${img.getHeight()} expected ${expW}x256"
+        }
+        def creativeDir = new File(containerDir, 'creative_inventory')
+        ['tabs.png','tab_inventory.png','tab_items.png','tab_item_search.png'].each { name ->
+            def f = new File(creativeDir, name)
+            if (!f.isFile()) { missing << "creative_inventory/${name}"; return }
+            def img = javax.imageio.ImageIO.read(f)
+            if (img == null || img.getWidth() != 256 || img.getHeight() != 256)
+                badDim << "creative_inventory/${name}"
+        }
+        if (!missing.isEmpty()) throw new GradleException("Missing PNGs: ${missing.join(', ')}")
+        if (!badDim.isEmpty()) throw new GradleException("Bad dimensions:\n" + badDim.join('\n'))
+
+        // Sprites con 9-slice deben conservar su .mcmeta
+        def spritesDir = new File(packRoot, 'assets/minecraft/textures/gui/sprites')
+        def needMcmeta = ['widget/button.png','widget/button_disabled.png','widget/button_highlighted.png',
+                          'widget/slider.png','widget/slider_highlighted.png','widget/slider_handle.png',
+                          'widget/slider_handle_highlighted.png','widget/text_field.png',
+                          'widget/text_field_highlighted.png','widget/scroller.png']
+        def missingMcmeta = needMcmeta.findAll { !new File(spritesDir, "${it}.mcmeta").isFile() }
+        if (!missingMcmeta.isEmpty())
+            throw new GradleException("Missing 9-slice mcmeta: ${missingMcmeta.join(', ')}")
+
+        // Prohibido: texturas muertas de packs anteriores
+        def orphans = ['dropper.png','villager2.png','inventory_backup.png']
+        def found = orphans.findAll { new File(containerDir, it).isFile() }
+        if (!found.isEmpty()) throw new GradleException("Orphan textures present: ${found.join(', ')}")
+
+        println "verifyGripeVerdeThemeAssets: OK — 20 containers + 4 creative + sprites + pack.png 128x128 + pack_format 15"
+    }
+}
+
+tasks.named('processResources').configure {
+    dependsOn tasks.named('verifyGripeVerdeThemeAssets')
 }

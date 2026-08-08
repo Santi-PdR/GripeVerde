@@ -85,6 +85,7 @@ public class DiaryCreditsScreen extends Screen {
         int divY2 = panelY + panelH - 40;
         DiaryChrome.drawInkDividerBetween(g, panelX + 18, panelX + panelW - 18, divY2);
         DiaryChrome.drawCornerOrnaments(g, panelX, panelY, panelW, panelH);
+        DiaryChrome.drawRegistryTag(g, panelX, panelY, panelW, panelH, "REG. IX");
 
         for (Renderable r : this.renderables) {
             r.render(g, mouseX, mouseY, partialTick);

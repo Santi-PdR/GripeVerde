@@ -180,6 +180,7 @@ public class DiaryLanguageScreen extends Screen {
         int divY2 = this.panelY + this.panelH - PANEL_PAD - FOOTER_BTN_H - 6;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
         DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
+        DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. IV");
 
         super.render(g, mouseX, mouseY, partialTick);
 

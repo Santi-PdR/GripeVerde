@@ -133,6 +133,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         int divY2 = this.panelY + this.panelH - 38;
         DiaryChrome.drawInkDivider(gfx, this.panelX, divY2, this.panelW);
         DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
+        DiaryChrome.drawRegistryTag(gfx, this.panelX, this.panelY, this.panelW, this.panelH, "REG. VI");
 
         // Boton Volver
         if (this.btnVolver != null) {

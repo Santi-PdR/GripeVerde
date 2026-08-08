@@ -134,5 +134,6 @@
     "gripeverde.edit.subtitle": "Corrections to a foreign address",
     "gripeverde.direct.subtitle": "A door opened without a map",
     "gripeverde.options.online.subtitle": "Distant notices and public listings",
-    "gripeverde.options.online.flavor": "Decide which signals may leave the district."
+    "gripeverde.options.online.flavor": "Decide which signals may leave the district.",
+    "gripeverde.options.packs.subtitle": "Material archive"
 }

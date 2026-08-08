@@ -1,5 +1,6 @@
 package com.eternalcraft.gripeverde.client.render;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSelectionList;
 
@@ -61,24 +62,31 @@ public final class DiaryChrome {
         gfx.fill(cx,     cy,     cx + 1, cy + 1, 0x70F3E9CE);
     }
 
-    // ── Esquineros victorianos dobles ───────────────────────────────────────
-    // Marco externo (12px, opaco) + marco interno (5px, tenue) desplazado 3px.
+    // ── Esquineros victorianos + herrajes de acero ─────────────────────────
+    // El gabinete del cronista se ata al acero de cuarentena: cada esquina del
+    // pergamino lleva una escuadra de acero (placa en L con remache) y la tinta
+    // interior queda enmarcada por ella. Misma familia visual que el resource
+    // pack "gripeverde_steel" (acero cepillado #9A9EA8, remaches, verde plaga).
+    public static final int STEEL_LIGHT = 0xFFB6BAC4;
+    public static final int STEEL_MID   = 0xFF9A9EA8;
+    public static final int STEEL_NEAR  = 0xFFA6AAB4;
+    public static final int STEEL_DARK  = 0xFF7C808A;
+    public static final int STEEL_DEEP  = 0xFF5E626C;
+    public static final int STEEL_EDGE  = 0xFF464A52;
+    public static final int PLAGUE      = 0xFF6A8A48;
+
     public static void drawCornerOrnaments(GuiGraphics gfx, int x, int y, int w, int h) {
-        int colOut = 0xC0422810;
-        int colIn  = 0x80422810;
-        int sOut = 12, sIn = 5, off = 3;
+        int colIn = 0x80422810;
+        int sOut = 12, sIn = 5, off = 12;
 
-        // Marco EXTERNO
-        gfx.fill(x,             y,             x + sOut,    y + 1,    colOut);
-        gfx.fill(x,             y,             x + 1,       y + sOut, colOut);
-        gfx.fill(x + w - sOut,  y,             x + w,       y + 1,    colOut);
-        gfx.fill(x + w - 1,     y,             x + w,       y + sOut, colOut);
-        gfx.fill(x,             y + h - 1,     x + sOut,    y + h,    colOut);
-        gfx.fill(x,             y + h - sOut,  x + 1,       y + h,    colOut);
-        gfx.fill(x + w - sOut,  y + h - 1,     x + w,       y + h,    colOut);
-        gfx.fill(x + w - 1,     y + h - sOut,  x + w,       y + h,    colOut);
+        // ── Escuadras de acero (4 esquinas) ──
+        // Cuerpo oscuro en L + bisel claro interior + remache 2x2.
+        drawSteelBracket(gfx, x, y, 1, 1);
+        drawSteelBracket(gfx, x + w - sOut, y, -1, 1);
+        drawSteelBracket(gfx, x, y + h - sOut, 1, -1);
+        drawSteelBracket(gfx, x + w - sOut, y + h - sOut, -1, -1);
 
-        // Marco INTERNO
+        // ── Marco interno de tinta (5px, tenue) desplazado 12px ──
         int ix = x + off, iy = y + off, iw = w - off * 2, ih = h - off * 2;
         gfx.fill(ix,             iy,             ix + sIn,   iy + 1,   colIn);
         gfx.fill(ix,             iy,             ix + 1,     iy + sIn, colIn);
@@ -88,12 +96,73 @@ public final class DiaryChrome {
         gfx.fill(ix,             iy + ih - sIn,  ix + 1,     iy + ih,  colIn);
         gfx.fill(ix + iw - sIn,  iy + ih - 1,    ix + iw,    iy + ih,  colIn);
         gfx.fill(ix + iw - 1,    iy + ih - sIn,  ix + iw,    iy + ih,  colIn);
+    }
 
-        int dot = 0x70422810;
-        gfx.fill(x + 5, y + 5, x + 7, y + 7, dot);
-        gfx.fill(x + w - 7, y + 5, x + w - 5, y + 7, dot);
-        gfx.fill(x + 5, y + h - 7, x + 7, y + h - 5, dot);
-        gfx.fill(x + w - 7, y + h - 7, x + w - 5, y + h - 5, dot);
+    /** Escuadra de acero de 12x12 en una esquina (sx/sy = direccion: ±1). */
+    private static void drawSteelBracket(GuiGraphics gfx, int x, int y, int sx, int sy) {
+        int len = 12;
+        int b = 2;
+        // Normalizar a coordenadas top-left del bracket (la esquina dada es la
+        // punta exterior; el bracket crece hacia el interior del panel).
+        int tlX = sx > 0 ? x : x - len + 1;
+        int tlY = sy > 0 ? y : y - len + 1;
+        // Cuerpo en L: 2px de grosor, 12px de brazo
+        gfx.fill(tlX, tlY, tlX + len, tlY + b, STEEL_DARK);
+        gfx.fill(tlX, tlY, tlX + b, tlY + len, STEEL_DARK);
+        // Bisel interior 1px (luz de cepillado)
+        gfx.fill(tlX + b, tlY + b, tlX + len - b + 1, tlY + b + 1, STEEL_NEAR);
+        gfx.fill(tlX + b, tlY + b, tlX + b + 1, tlY + len - b + 1, STEEL_NEAR);
+        // Remache 2x2 (cabeza clara, sombra abajo-derecha)
+        int rx = tlX + 4;
+        int ry = tlY + 4;
+        gfx.fill(rx, ry, rx + 1, ry + 1, STEEL_LIGHT);
+        gfx.fill(rx + 1, ry, rx + 2, ry + 1, STEEL_EDGE);
+        gfx.fill(rx, ry + 1, rx + 1, ry + 2, STEEL_EDGE);
+        gfx.fill(rx + 1, ry + 1, rx + 2, ry + 2, STEEL_DEEP);
+    }
+
+    // ── Chapa de registro (identidad del gabinete) ─────────────────────────
+    // Pequena placa de acero con el codigo de registro del expediente,
+    // colocada arriba a la derecha del panel. Texto en tinta oscura sobre
+    // acero cepillado, con dos remaches y una marca de cuarentena.
+    public static void drawRegistryTag(GuiGraphics gfx, int panelX, int panelY, int panelW,
+                                       int panelH, String regCode) {
+        if (panelW < 330) return; // paneles muy chicos: se omite para no chocar
+        drawRegistryTagAt(gfx, panelX + panelW - 66, panelY + 6, regCode);
+    }
+
+    /** Variante para paneles cuyo borde derecho ya tiene contenido (ej: Skin). */
+    public static void drawRegistryTagLeft(GuiGraphics gfx, int panelX, int panelY, String regCode) {
+        drawRegistryTagAt(gfx, panelX + 8, panelY + 6, regCode);
+    }
+
+    /** Chapa de acero con codigo de registro, en coordenadas absolutas. */
+    public static void drawRegistryTagAt(GuiGraphics gfx, int x, int y, String regCode) {
+        int w = 58;
+        int h = 13;
+
+        // base de acero cepillado
+        for (int i = 0; i < h; i++) {
+            int v = STEEL_MID + (i % 3 == 0 ? 4 : (i % 3 == 1 ? -2 : 0));
+            gfx.fill(x + 1, y + i, x + w - 1, y + i + 1, v);
+        }
+        // borde
+        gfx.fill(x, y, x + w, y + 1, STEEL_EDGE);
+        gfx.fill(x, y + h - 1, x + w, y + h, STEEL_EDGE);
+        gfx.fill(x, y, x + 1, y + h, STEEL_EDGE);
+        gfx.fill(x + w - 1, y, x + w, y + h, STEEL_EDGE);
+        // biseles interiores
+        gfx.fill(x + 1, y + 1, x + w - 1, y + 2, STEEL_NEAR);
+        gfx.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, STEEL_DEEP);
+        // marca de cuarentena (verde plaga) en el borde izquierdo
+        gfx.fill(x + 1, y + 2, x + 2, y + h - 2, PLAGUE);
+        // remaches
+        gfx.fill(x + 4, y + 2, x + 6, y + 4, STEEL_DEEP);
+        gfx.fill(x + w - 6, y + 2, x + w - 4, y + 4, STEEL_DEEP);
+        // texto del registro
+        int tw = gfx.drawString(Minecraft.getInstance().font, regCode, x + 2, y + 3,
+                DiaryTheme.withAlpha(0x002A2620, 235), false);
+        gfx.fill(x + 2 + tw + 2, y + 4, x + 2 + tw + 4, y + 5, STEEL_EDGE);
     }
 
     // Barra de scroll victoriana profesional: pergamino tapado + thumb bronce

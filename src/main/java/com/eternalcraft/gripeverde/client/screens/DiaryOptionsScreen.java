@@ -278,6 +278,7 @@ public class DiaryOptionsScreen extends Screen {
 
             // Esquineros victorianos sutiles
             DiaryChrome.drawCornerOrnaments(g, panelX, panelY, panelW, panelH);
+            DiaryChrome.drawRegistryTag(g, panelX, panelY, panelW, panelH, "REG. I");
         }
 
         // Widgets
@@ -569,7 +570,7 @@ public class DiaryOptionsScreen extends Screen {
                 net.minecraft.network.chat.Component.translatable("resourcePack.title");
 
         this.minecraft.setScreen(
-                new net.minecraft.client.gui.screens.packs.PackSelectionScreen(
+                new DiaryPackSelectionScreen(
                         repo, callback, dir, title
                 )
         );
