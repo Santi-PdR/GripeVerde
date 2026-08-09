@@ -2,25 +2,18 @@
 ## Cronica bajo sello
 
 
-## Version 0.17 - El acero vuelve a la cuarentena
+## Version 0.18 - 0.19 - El gabinete aprende modales definitivos
 
-Esta noche el oficio vuelve a vestirse de acero, y esta vez el acero lleva sello.
+La casa del cronista se presenta ahora con mas orden y menos ruido. La
+mesa central, la sala de instrumentos, la oficina de correspondencia, el
+archivo de lenguas y los registros de mando ya no parecen hojas prestadas
+puestas sobre la misma tabla. Cada sala conserva su propio porte, y aun
+asi todas pertenecen a una misma oficina nocturna.
 
-Las mesas de trabajo, los cajones, los hornos y los yunques amanecieron con
-planchas de metal frio, cepillado a mano, con sus ranuras y sus remaches. Los
-huecos donde descansa lo que se guarda son mas hondos y oscuros, como pozos;
-cada contenedor se distingue del vecino: el horno huele a cobre caliente, la
-mesa de encantamientos a tinta y hierro viejo, el alambique a clinica, la
-baliza a maquina de senales. Los grandes almacenes llevan una cinta verde de
-cuarentena y remaches en sus cuatro esquinas.
+Reglas, agujas, placas, rieles de tinta y papeles montados unos sobre
+otros ensenan al ojo donde debe descansar. El gabinete no cambio de voz:
+aprendio a guardarla.
 
-El gabinete del cronista tambien cambio: sus esquinas se sujetan ahora con
-escuadras de acero, y cada hoja lleva una chapa con su numero de registro.
-Hasta la sala de los paquetes de materiales es hoy un archivo del gabinete,
-con su hoja de inventario.
-
-El sello dice: EC-QV/1897. Quien abra un cajon sabra, de un vistazo, que esta
-en la casa de la plaga.
 
 ## Version 0.16 - La sala de consulta
 

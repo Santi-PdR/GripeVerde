@@ -289,6 +289,7 @@ public class DiaryPauseScreen extends PauseScreen {
         drawPanelTitle(g, px, py);
         drawDateStamp(g, px, py);
         drawPanelSeparators(g, px, py);
+        drawPauseLedger(g, px, py);
 
         // Elementos decorativos
         drawRaven(g, px + 14, py + 22);
@@ -469,6 +470,30 @@ public class DiaryPauseScreen extends PauseScreen {
     // ================================================================
     // TITULO / FECHA / SEPARADORES / FIRMA / SELLO
     // ================================================================
+
+    private void drawPauseLedger(GuiGraphics g, int px, int py) {
+        String docket = isEnglishSelected() ? "FIELD DOSSIER" : "DOSIER DE CAMPO";
+        g.drawString(this.font, docket, px + 14, py + 12, DiaryTheme.SEPIA_MID, false);
+
+        String state;
+        if (this.minecraft.hasSingleplayerServer()) state = isEnglishSelected() ? "LOCAL WATCH" : "VIGILIA LOCAL";
+        else state = isEnglishSelected() ? "REMOTE WATCH" : "VIGILIA REMOTA";
+        int sw = this.font.width(state);
+        int sx = px + panelW() - sw - 18;
+        g.fill(sx - 6, py + 11, sx + sw + 6, py + 24, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 28));
+        g.fill(sx - 6, py + 11, sx + sw + 6, py + 12, DiaryTheme.BRONZE_DARK);
+        g.drawString(this.font, state, sx, py + 15, DiaryTheme.INK, false);
+
+        long minutes = (System.currentTimeMillis() - sessionStartMs) / 60000L;
+        float calm = Math.max(0f, Math.min(1f, 1f - minutes / 20f));
+        int barX = px + 18;
+        int barY = py + panelH() - 54;
+        int barW = panelW() - 36;
+        com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar.draw(g, barX, barY, barW, 12,
+            calm,
+            isEnglishSelected() ? ("stillness · " + minutes + "m") : ("quietud · " + minutes + "m"),
+            com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar.Style.STEEL);
+    }
 
     private void drawPanelTitle(GuiGraphics g, int px, int py) {
         String title = Component.translatable("gripeverde.pause.title").getString();

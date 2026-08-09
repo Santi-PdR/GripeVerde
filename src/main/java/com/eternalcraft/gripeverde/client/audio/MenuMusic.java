@@ -307,6 +307,28 @@ public class MenuMusic {
     public static boolean isCrossfading() {
         return crossfading;
     }
+
+    public static boolean isActive() {
+        return active;
+    }
+
+    public static boolean isDucking() {
+        long now = System.currentTimeMillis();
+        return duckUntilMs > now || (duckReleaseStartMs > 0L && now - duckReleaseStartMs < DUCK_RELEASE_MS);
+    }
+
+    /** 0..1 donde 1 = volumen normal y 0 = completamente apagado. */
+    public static float getVisualMixLevel() {
+        if (!active) return 0f;
+        return Math.max(0f, Math.min(1f, getUserVolume() * computeDuckMultiplier(System.currentTimeMillis())));
+    }
+
+    /** 0..1 del progreso del crossfade actual, util para UI. */
+    public static float getCrossfadeVisual() {
+        if (!crossfading) return 0f;
+        long elapsed = System.currentTimeMillis() - crossfadeStartMs;
+        return Math.max(0f, Math.min(1f, elapsed / (float) CROSSFADE_MS));
+    }
     // === Internos ===
 
     private static void updateVolumes(long now) {

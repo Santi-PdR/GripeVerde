@@ -2,12 +2,15 @@ package com.eternalcraft.gripeverde.client.screens;
 
 import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
+import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
 import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
 import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
+import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
 import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
+import com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
@@ -25,11 +28,12 @@ import net.minecraft.network.chat.Component;
  */
 public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
 
-    private static final int PANEL_W = 340;
-    private static final int PANEL_H = 240;
+    private static final int PANEL_W = 440;
+    private static final int PANEL_H = 248;
 
     private final SmoothScroll smoothScroll = new SmoothScroll(0.50D, 0.24D);
     private int panelX, panelY, panelW, panelH;
+    private long openedAtMs = 0L;
 
     public DiaryOnlineOptionsScreen(Screen parent, Options options) {
         super(parent,
@@ -82,6 +86,7 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
             Component.translatable("gripeverde.options.button.done"),
             DiaryButton.Icon.DOOR, DiaryButton.Variant.PRIMARY,
             () -> this.onClose()));
+        this.openedAtMs = System.currentTimeMillis();
     }
 
     @Override
@@ -104,46 +109,45 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        // Escena viva
         g.fill(0, 0, this.width, this.height, 0xFF000000);
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
-                // Overlay
 
-        // Pergamino
-        DiaryChrome.drawPanelShadow(g, this.panelX, this.panelY, this.panelW, this.panelH);
+        float reveal = DiaryChrome.reveal(this.openedAtMs, 240L);
+        DiaryChrome.drawPanelScaffold(g, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.BRONZE);
         PaperTexture.drawClean(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.OFFICIAL);
-
-        // Titulo
-        String titleStr = this.title.getString();
-        int titleX = this.width / 2;
-        int titleY = this.panelY + 12;
-        int tw = this.font.width(titleStr);
-        g.drawString(this.font, titleStr, titleX - tw / 2, titleY, DiaryChrome.INK_TITLE, false);
-
-        // Subtitulo diegetico
-        String subtitle = "- " + Component.translatable("gripeverde.options.online.subtitle").getString() + " -";
-        int subW = this.font.width(subtitle);
-        g.drawString(this.font, subtitle, titleX - subW / 2, titleY + 14, DiaryChrome.INK_SUBTITLE, false);
-        String flavor = Component.translatable("gripeverde.options.online.flavor").getString();
-        int flavorW = this.font.width(flavor);
-        g.drawString(this.font, flavor, titleX - flavorW / 2, titleY + 26, DiaryChrome.INK_FLAVOR, false);
-
-        // Divisor
-        int divY = titleY + 40;
-        DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY);
-
-        // Divisor inferior + esquineros
-        int divY2 = this.panelY + this.panelH - 40;
-        DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
         DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
-        DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. VIII");
 
-        // Lista vanilla
+        int headerBottom = ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW,
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT VIII" : "EXPEDIENTE VIII",
+            this.title,
+            "- " + Component.translatable("gripeverde.options.online.subtitle").getString() + " -",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · SIGNAL OFFICE" : "EC-QV/1897 · OFICINA DE SENALES",
+            Component.translatable("gripeverde.options.online.flavor").getString(),
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "PUBLIC LIST" : "LISTA PUBLICA",
+            DiaryTheme.BRONZE,
+            reveal);
+
+        DiaryChrome.drawInsetCard(g, this.font, this.panelX + this.panelW - 150, headerBottom, 132, 78,
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "DISTRICT GATE" : "PUERTA DEL DISTRITO",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Outbound signals" : "Senales salientes",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "These options control what may leave the cabinet and what stays sealed inside." : "Estas opciones deciden que puede salir del gabinete y que queda sellado adentro.",
+            DiaryTheme.BRONZE);
+        DiaryProgressBar.draw(g, this.panelX + this.panelW - 140, headerBottom + 58, 112, 12,
+            0.5f, com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Route" : "Ruta", DiaryProgressBar.Style.STEEL);
+
         if (this.list != null) {
-            this.list.render(g, mouseX, mouseY, partialTick);
+            if (reveal < 0.995f) {
+                int revealBottom = this.panelY + Math.max(28, (int)(this.panelH * reveal));
+                g.enableScissor(this.panelX - 2, this.panelY - 2, this.panelX + this.panelW + 2, revealBottom);
+                this.list.render(g, mouseX, mouseY, partialTick);
+                g.disableScissor();
+            } else {
+                this.list.render(g, mouseX, mouseY, partialTick);
+            }
         }
 
-        // Widgets propios (boton Volver)
+        int divY2 = this.panelY + this.panelH - 40;
+        DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
         for (Renderable r : this.renderables) {
             r.render(g, mouseX, mouseY, partialTick);
         }

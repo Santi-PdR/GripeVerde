@@ -95,7 +95,6 @@ public class DiaryArchiveScreen extends Screen {
         DiaryChrome.drawPanelShadow(g, panelX, panelY, panelW, panelH);
         PaperTexture.drawClean(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.ARCHIVE);
         DiaryChrome.drawCornerOrnaments(g, panelX, panelY, panelW, panelH);
-        DiaryChrome.drawRegistryTag(g, panelX, panelY, panelW, panelH, "REG. XIV");
 
         boolean en = Discoveries.isEnglish();
         int cx = panelX + panelW / 2;

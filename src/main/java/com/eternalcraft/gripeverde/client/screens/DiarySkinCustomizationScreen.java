@@ -192,7 +192,6 @@ public class DiarySkinCustomizationScreen extends Screen {
         int divY2 = this.panelY + panelH - 38;
         DiaryChrome.drawInkDivider(gfx, this.panelX, divY2, panelW);
         DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, panelW, panelH);
-        DiaryChrome.drawRegistryTagLeft(gfx, this.panelX, this.panelY, "REG. VII");
 
         // v0.16.0: el espejo pequeno, arriba a la derecha del panel
         try {

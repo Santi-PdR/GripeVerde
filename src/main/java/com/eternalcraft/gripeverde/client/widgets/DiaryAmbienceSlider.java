@@ -47,37 +47,36 @@ public class DiaryAmbienceSlider extends AbstractSliderButton {
         int y = this.getY();
         int w = this.getWidth();
         int h = this.getHeight();
+        boolean hovered = this.isHoveredOrFocused() && this.active;
 
-        g.fill(x, y, x + w, y + h, 0xFFC9B78A);
-        g.fill(x, y, x + w, y + 1, 0x60422810);
-        g.fill(x, y + h - 1, x + w, y + h, 0x60422810);
-        g.fill(x, y, x + 1, y + h, 0x60422810);
-        g.fill(x + w - 1, y, x + w, y + h, 0x60422810);
+        g.fill(x + 1, y + 1, x + w + 1, y + h + 1, 0x14000000);
+        g.fill(x, y, x + w, y + h, 0xFFD2C49F);
+        g.fill(x, y, x + w, y + 1, 0x88422810);
+        g.fill(x, y + h - 1, x + w, y + h, 0x88422810);
+        g.fill(x, y, x + 1, y + h, 0x88422810);
+        g.fill(x + w - 1, y, x + w, y + h, 0x88422810);
 
-        int trackY1 = y + h / 2 - 1;
-        int trackY2 = y + h / 2 + 1;
-        g.fill(x + 3, trackY1, x + w - 3, trackY2, 0x60422810);
-        for (int i = 1; i < 4; i++) {
-            int tx = x + 3 + (w - 6) * i / 4;
-            g.fill(tx, trackY1 - 2, tx + 1, trackY2 + 2, 0x70422810);
+        int trackX1 = x + 10;
+        int trackX2 = x + w - 10;
+        int trackY = y + h - 5;
+        g.fill(trackX1, trackY, trackX2, trackY + 2, 0x88422810);
+        for (int i = 0; i <= 8; i++) {
+            int tx = trackX1 + (trackX2 - trackX1) * i / 8;
+            int ht = (i % 4 == 0) ? 5 : 3;
+            g.fill(tx, trackY - ht, tx + 1, trackY, 0x705A7038);
         }
+        int progressX = trackX1 + (int)(this.value * Math.max(1, trackX2 - trackX1));
+        g.fill(trackX1, trackY, progressX, trackY + 2, hovered ? 0xD07A9A48 : 0xB05A7038);
 
-        int thumbW = 8;
-        int thumbX = x + (int) (this.value * (w - thumbW));
-        int thumbY = y + 2;
-        int thumbH = h - 4;
+        int thumbX = progressX - 4;
+        g.fill(thumbX + 3, y + 4, thumbX + 5, trackY + 4, 0xFF3D2E1A);
+        g.fill(thumbX + 1, y + 3, thumbX + 7, y + 8, hovered ? 0xFFD8E0B8 : 0xFFCAD6A8);
+        DiaryChrome.drawDivisorLozenge(g, thumbX + 4, y + 5);
 
-        g.fill(thumbX, thumbY, thumbX + thumbW, thumbY + thumbH, 0xC0422810);
-        g.fill(thumbX, thumbY, thumbX + 2, thumbY + thumbH, 0xA0703020);
-        g.fill(thumbX + thumbW - 2, thumbY, thumbX + thumbW, thumbY + thumbH, 0x80200E05);
-        int cx = thumbX + thumbW / 2;
-        int cy = thumbY + thumbH / 2;
-        DiaryChrome.drawDivisorLozenge(g, cx, cy);
-
-        int textColor = this.isHovered() ? DiaryTheme.INK_BLACK : DiaryTheme.INK;
+        int textColor = hovered ? DiaryTheme.INK_BLACK : DiaryTheme.INK;
         String msg = this.getMessage().getString();
         int textX = x + w / 2 - Minecraft.getInstance().font.width(msg) / 2;
-        int textY = y + (h - 8) / 2;
+        int textY = y + 2;
         g.drawString(Minecraft.getInstance().font, msg, textX, textY, textColor, false);
     }
 

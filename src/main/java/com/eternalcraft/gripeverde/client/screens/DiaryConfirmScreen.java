@@ -142,7 +142,6 @@ public class DiaryConfirmScreen extends ConfirmScreen {
 
         // Cosmetica
         DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, panelW, panelH);
-        DiaryChrome.drawRegistryTag(gfx, panelX, panelY, panelW, panelH, "REG. XIII");
 
         // Titulo
         int titleY = panelY + 18;

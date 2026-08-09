@@ -4,10 +4,13 @@ import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
 import com.eternalcraft.gripeverde.client.audio.MenuMusic;
+import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
+import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
 import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
+import com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -20,11 +23,13 @@ import net.minecraft.network.chat.Component;
 
 public class DiaryChatOptionsScreen extends ChatOptionsScreen {
 
-    private static final int PANEL_W = 340;
-    private static final int PANEL_H = 330;
+    private static final int PANEL_W = 520;
+    private static final int PANEL_H = 336;
+    private static final int RAIL_W = 150;
 
     private int panelX, panelY, panelW, panelH;
     private final SmoothScroll smoothScroll = new SmoothScroll();
+    private long openedAtMs = 0L;
 
     public DiaryChatOptionsScreen(Screen parent, Options options) {
         super(parent, options);
@@ -76,6 +81,7 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
             DiaryButton.Variant.PRIMARY,
             () -> this.onClose()
         ));
+        this.openedAtMs = System.currentTimeMillis();
     }
 
     @Override
@@ -98,57 +104,64 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        // Escena viva
-        // Clear framebuffer + transition fade
         g.fill(0, 0, this.width, this.height, 0xFF000000);
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
-                // Overlay
 
-        // Pergamino
-        DiaryChrome.drawPanelShadow(g, this.panelX, this.panelY, this.panelW, this.panelH);
+        float reveal = DiaryChrome.reveal(this.openedAtMs, 240L);
+        DiaryChrome.drawPanelScaffold(g, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.BRONZE);
         PaperTexture.drawClean(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.CORRESPONDENCE);
+        DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
 
-        // Titulo
-        String titleStr = Component.translatable("options.chat.title").getString();
-        int titleX = this.width / 2;
-        int titleY = this.panelY + 10;
-        {
-        int _tw = this.font.width(titleStr);
-        g.drawString(this.font, titleStr, titleX - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
+        int headerBottom = ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW,
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT V" : "EXPEDIENTE V",
+            Component.translatable("options.chat.title"),
+            "- " + Component.translatable("gripeverde.options.chat.subtitle").getString() + " -",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · CORRESPONDENCE" : "EC-QV/1897 · CORRESPONDENCIA",
+            getRotatingChatFlavor(),
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "OPEN CHANNEL" : "CANAL ABIERTO",
+            DiaryTheme.BRONZE,
+            reveal);
+
+        int railX = this.panelX + this.panelW - RAIL_W - 18;
+        DiaryChrome.drawInsetCard(g, this.font, railX, headerBottom, RAIL_W, 84,
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "DISTRICT MAIL" : "CORREO DEL DISTRITO",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Public notices" : "Avisos publicos",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "The mailbox keeps unanswered letters apart from the public chat settings." : "El buzon conserva las cartas sin respuesta aparte de los ajustes publicos.",
+            DiaryTheme.BRONZE);
+        DiaryChrome.drawInsetCard(g, this.font, railX, headerBottom + 92, RAIL_W, 90,
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "DELIVERY RATE" : "RITMO DE ENTREGA",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Readability" : "Legibilidad",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Chat options remain vanilla, but the chamber now separates message controls from the archive surface." : "Las opciones siguen siendo vanilla, pero la camara separa los controles del papel de archivo.",
+            DiaryTheme.PLAGUE_SICK);
+        DiaryProgressBar.draw(g, railX + 10, headerBottom + 132, RAIL_W - 20, 14,
+            Math.min(1f, com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("letters") / 5f),
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Mail" : "Cartas",
+            DiaryProgressBar.Style.INK);
+
+        int listFrameX = this.panelX + 18;
+        int listFrameW = railX - listFrameX - 16;
+        DiaryChrome.drawInnerRail(g, listFrameX, headerBottom - 2, listFrameW, this.panelH - 138, DiaryTheme.BRONZE);
+
+        if (this.list != null) {
+            if (reveal < 0.995f) {
+                int revealBottom = this.panelY + Math.max(28, (int)(this.panelH * reveal));
+                g.enableScissor(this.panelX - 2, this.panelY - 2, this.panelX + this.panelW + 2, revealBottom);
+                this.list.render(g, mouseX, mouseY, partialTick);
+                DiaryChrome.drawStyledScrollThumbInPanel(g, this.list, railX - 8);
+                g.disableScissor();
+            } else {
+                this.list.render(g, mouseX, mouseY, partialTick);
+                DiaryChrome.drawStyledScrollThumbInPanel(g, this.list, railX - 8);
+            }
         }
 
-        // Subtitulo
-        String subtitle = "- " + Component.translatable("gripeverde.options.chat.subtitle").getString() + " -";
-        int subWC = this.font.width(subtitle);
-        g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
-
-        // Flavor rotativo
-        String flavor = getRotatingChatFlavor();
-        int flvWC = this.font.width(flavor);
-        g.drawString(this.font, flavor, (this.width - flvWC) / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
-
-        // Divisor superior
-        int divY1 = titleY + 42;
-        DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY1);
-
-        // Divisor inferior + esquineros
         int divY2 = this.panelY + this.panelH - 38;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
-        DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
-        DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. V");
 
-        // Lista vanilla sin gradientes blancos ni bandejas extra
-        if (this.list != null) {
-            this.list.render(g, mouseX, mouseY, partialTick);
-            DiaryChrome.drawStyledScrollThumbInPanel(g, this.list, this.panelX + this.panelW);
-        }
-
-        // Widgets propios
         for (Renderable r : this.renderables) {
             r.render(g, mouseX, mouseY, partialTick);
         }
 
-        // v0.16.0: el buzon del barrio que no responde
         try {
             drawMailbox(g, mouseX, mouseY);
             com.eternalcraft.gripeverde.client.lore.Marginalia.poll();

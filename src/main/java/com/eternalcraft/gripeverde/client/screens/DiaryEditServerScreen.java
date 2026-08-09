@@ -147,7 +147,6 @@ public class DiaryEditServerScreen extends Screen {
 
         // Cosmetica
         DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, panelW, panelH);
-        DiaryChrome.drawRegistryTag(gfx, panelX, panelY, panelW, panelH, "REG. XI");
 
         // Titulo
         int titleY = panelY + 18;

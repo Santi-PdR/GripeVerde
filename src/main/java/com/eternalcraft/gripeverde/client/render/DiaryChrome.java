@@ -1,20 +1,20 @@
 package com.eternalcraft.gripeverde.client.render;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSelectionList;
+import net.minecraft.network.chat.Component;
+
+import java.util.List;
 
 /**
- * Helpers cosmeticos compartidos por todas las pantallas Diary (Options,
- * Chat, Accessibility, Language, SkinCustomization, ...).
+ * Helpers cosmeticos compartidos por todas las pantallas Diary.
  *
  * Centraliza:
- *  - Paleta de tinta victoriana (INK_*, SHADOW_COL, OVERLAY_COL)
- *  - Divisor horizontal con fade a los costados + rombo central
- *  - Marco de esquineros dobles (externo grueso + interno fino)
- *
- * Cualquier tweak visual (color, grosor, forma del rombo) se hace UNA VEZ
- * aqui y se propaga a las 5 pantallas.
+ *  - paleta canonica de tinta / sombra / metales
+ *  - sistema de paneles, tarjetas, separadores y capsulas de estado
+ *  - scrollbars, sombras y pequenas piezas de interfaz reutilizables
  */
 public final class DiaryChrome {
 
@@ -28,10 +28,49 @@ public final class DiaryChrome {
     public static final int SHADOW_COL    = 0x20201409;
     public static final int OVERLAY_COL   = 0x5E000000;
 
+    public static final int STEEL_LIGHT = 0xFFB6BAC4;
+    public static final int STEEL_MID   = 0xFF9A9EA8;
+    public static final int STEEL_NEAR  = 0xFFA6AAB4;
+    public static final int STEEL_DARK  = 0xFF7C808A;
+    public static final int STEEL_DEEP  = 0xFF5E626C;
+    public static final int STEEL_EDGE  = 0xFF464A52;
+    public static final int PLAGUE      = 0xFF6A8A48;
+
+    public static final int CARD_BASE   = 0xF0E4D1AE;
+    public static final int CARD_SHADE  = 0x8A3D2A18;
+    public static final int CARD_BORDER = 0xA06B4A2E;
+
+    // ── Interpolacion / reveal ──────────────────────────────────────────────
+    public static float reveal(long openedAtMs, long durationMs) {
+        if (openedAtMs <= 0L || durationMs <= 0L) return 1f;
+        long elapsed = Math.max(0L, System.currentTimeMillis() - openedAtMs);
+        if (elapsed >= durationMs) return 1f;
+        float t = elapsed / (float) durationMs;
+        return 1f - (float) Math.pow(1f - t, 3);
+    }
+
+    public static int fadeColor(int color, float factor) {
+        factor = Math.max(0f, Math.min(1f, factor));
+        int a = (int) (((color >>> 24) & 0xFF) * factor);
+        return (a << 24) | (color & 0x00FFFFFF);
+    }
+
+    public static int lerpColor(int colorA, int colorB, float t) {
+        t = Math.max(0f, Math.min(1f, t));
+        int a = lerpChannel((colorA >>> 24) & 0xFF, (colorB >>> 24) & 0xFF, t);
+        int r = lerpChannel((colorA >>> 16) & 0xFF, (colorB >>> 16) & 0xFF, t);
+        int g = lerpChannel((colorA >>> 8) & 0xFF, (colorB >>> 8) & 0xFF, t);
+        int b = lerpChannel(colorA & 0xFF, colorB & 0xFF, t);
+        return (a << 24) | (r << 16) | (g << 8) | b;
+    }
+
+    private static int lerpChannel(int a, int b, float t) {
+        return (int) (a + (b - a) * t);
+    }
+
     // ── Divisor horizontal con fade + rombo central ─────────────────────────
-    // Firma centrada en (x, y, w): divisor de ancho w dibujado desde x.
     public static void drawInkDivider(GuiGraphics gfx, int x, int y, int w) {
-        int fade = w / 6;
+        int fade = Math.max(8, w / 6);
         int cx   = x + w / 2;
         gfx.fillGradient(x,            y, x + fade,     y + 1, 0x00000000, INK_DIVIDER);
         gfx.fill        (x + fade,     y, cx - 6,       y + 1, INK_DIVIDER);
@@ -45,13 +84,20 @@ public final class DiaryChrome {
         drawDivisorLozenge(gfx, cx, y);
     }
 
-    // Firma alternativa (x1, x2, y): divisor entre dos coordenadas absolutas.
-    // Usada por pantallas cuyo layout piensa en bordes izq/der del panel.
     public static void drawInkDividerBetween(GuiGraphics gfx, int x1, int x2, int y) {
         drawInkDivider(gfx, x1, y, x2 - x1);
     }
 
-    // Rombo tipografico victoriano centrado sobre un divisor (5x5)
+    public static void drawVerticalDivider(GuiGraphics gfx, int x, int y, int h) {
+        int fade = Math.max(8, h / 6);
+        int cy = y + h / 2;
+        gfx.fillGradient(x, y, x + 1, y + fade, 0x00000000, INK_DIVIDER);
+        gfx.fill(x, y + fade, x + 1, cy - 6, INK_DIVIDER);
+        gfx.fill(x, cy + 6, x + 1, y + h - fade, INK_DIVIDER);
+        gfx.fillGradient(x, y + h - fade, x + 1, y + h, INK_DIVIDER, 0x00000000);
+        drawDivisorLozenge(gfx, x, cy);
+    }
+
     public static void drawDivisorLozenge(GuiGraphics gfx, int cx, int cy) {
         int col = 0xC0422810;
         gfx.fill(cx,     cy - 2, cx + 1, cy - 1, col);
@@ -62,31 +108,21 @@ public final class DiaryChrome {
         gfx.fill(cx,     cy,     cx + 1, cy + 1, 0x70F3E9CE);
     }
 
-    // ── Esquineros victorianos + herrajes de acero ─────────────────────────
-    // El gabinete del cronista se ata al acero de cuarentena: cada esquina del
-    // pergamino lleva una escuadra de acero (placa en L con remache) y la tinta
-    // interior queda enmarcada por ella. Misma familia visual que el resource
-    // pack "gripeverde_steel" (acero cepillado #9A9EA8, remaches, verde plaga).
-    public static final int STEEL_LIGHT = 0xFFB6BAC4;
-    public static final int STEEL_MID   = 0xFF9A9EA8;
-    public static final int STEEL_NEAR  = 0xFFA6AAB4;
-    public static final int STEEL_DARK  = 0xFF7C808A;
-    public static final int STEEL_DEEP  = 0xFF5E626C;
-    public static final int STEEL_EDGE  = 0xFF464A52;
-    public static final int PLAGUE      = 0xFF6A8A48;
-
+    // ── Esquineros victorianos dobles ───────────────────────────────────────
     public static void drawCornerOrnaments(GuiGraphics gfx, int x, int y, int w, int h) {
-        int colIn = 0x80422810;
-        int sOut = 12, sIn = 5, off = 12;
+        int colOut = 0xC0422810;
+        int colIn  = 0x80422810;
+        int sOut = 12, sIn = 5, off = 3;
 
-        // ── Escuadras de acero (4 esquinas) ──
-        // Cuerpo oscuro en L + bisel claro interior + remache 2x2.
-        drawSteelBracket(gfx, x, y, 1, 1);
-        drawSteelBracket(gfx, x + w - sOut, y, -1, 1);
-        drawSteelBracket(gfx, x, y + h - sOut, 1, -1);
-        drawSteelBracket(gfx, x + w - sOut, y + h - sOut, -1, -1);
+        gfx.fill(x,             y,             x + sOut,    y + 1,    colOut);
+        gfx.fill(x,             y,             x + 1,       y + sOut, colOut);
+        gfx.fill(x + w - sOut,  y,             x + w,       y + 1,    colOut);
+        gfx.fill(x + w - 1,     y,             x + w,       y + sOut, colOut);
+        gfx.fill(x,             y + h - 1,     x + sOut,    y + h,    colOut);
+        gfx.fill(x,             y + h - sOut,  x + 1,       y + h,    colOut);
+        gfx.fill(x + w - sOut,  y + h - 1,     x + w,       y + h,    colOut);
+        gfx.fill(x + w - 1,     y + h - sOut,  x + w,       y + h,    colOut);
 
-        // ── Marco interno de tinta (5px, tenue) desplazado 12px ──
         int ix = x + off, iy = y + off, iw = w - off * 2, ih = h - off * 2;
         gfx.fill(ix,             iy,             ix + sIn,   iy + 1,   colIn);
         gfx.fill(ix,             iy,             ix + 1,     iy + sIn, colIn);
@@ -96,76 +132,101 @@ public final class DiaryChrome {
         gfx.fill(ix,             iy + ih - sIn,  ix + 1,     iy + ih,  colIn);
         gfx.fill(ix + iw - sIn,  iy + ih - 1,    ix + iw,    iy + ih,  colIn);
         gfx.fill(ix + iw - 1,    iy + ih - sIn,  ix + iw,    iy + ih,  colIn);
+
+        int dot = 0x70422810;
+        gfx.fill(x + 5, y + 5, x + 7, y + 7, dot);
+        gfx.fill(x + w - 7, y + 5, x + w - 5, y + 7, dot);
+        gfx.fill(x + 5, y + h - 7, x + 7, y + h - 5, dot);
+        gfx.fill(x + w - 7, y + h - 7, x + w - 5, y + h - 5, dot);
     }
 
-    /** Escuadra de acero de 12x12 en una esquina (sx/sy = direccion: ±1). */
-    private static void drawSteelBracket(GuiGraphics gfx, int x, int y, int sx, int sy) {
-        int len = 12;
-        int b = 2;
-        // Normalizar a coordenadas top-left del bracket (la esquina dada es la
-        // punta exterior; el bracket crece hacia el interior del panel).
-        int tlX = sx > 0 ? x : x - len + 1;
-        int tlY = sy > 0 ? y : y - len + 1;
-        // Cuerpo en L: 2px de grosor, 12px de brazo
-        gfx.fill(tlX, tlY, tlX + len, tlY + b, STEEL_DARK);
-        gfx.fill(tlX, tlY, tlX + b, tlY + len, STEEL_DARK);
-        // Bisel interior 1px (luz de cepillado)
-        gfx.fill(tlX + b, tlY + b, tlX + len - b + 1, tlY + b + 1, STEEL_NEAR);
-        gfx.fill(tlX + b, tlY + b, tlX + b + 1, tlY + len - b + 1, STEEL_NEAR);
-        // Remache 2x2 (cabeza clara, sombra abajo-derecha)
-        int rx = tlX + 4;
-        int ry = tlY + 4;
-        gfx.fill(rx, ry, rx + 1, ry + 1, STEEL_LIGHT);
-        gfx.fill(rx + 1, ry, rx + 2, ry + 1, STEEL_EDGE);
-        gfx.fill(rx, ry + 1, rx + 1, ry + 2, STEEL_EDGE);
-        gfx.fill(rx + 1, ry + 1, rx + 2, ry + 2, STEEL_DEEP);
+    // ── Capsulas y tarjetas de sistema ──────────────────────────────────────
+    public static void drawStatusPill(GuiGraphics gfx, Font font, int x, int y, String text,
+                                      int bgColor, int borderColor, int textColor) {
+        int tw = font.width(text);
+        int w = tw + 18;
+        int h = 14;
+        gfx.fill(x + 2, y + 2, x + w + 2, y + h + 2, 0x18000000);
+        gfx.fill(x, y, x + w, y + h, bgColor);
+        gfx.fill(x, y, x + w, y + 1, borderColor);
+        gfx.fill(x, y + h - 1, x + w, y + h, DiaryTheme.withAlpha(borderColor, 220));
+        gfx.fill(x, y, x + 1, y + h, borderColor);
+        gfx.fill(x + w - 1, y, x + w, y + h, borderColor);
+        gfx.fill(x + 4, y + 3, x + 6, y + h - 3, borderColor);
+        gfx.fill(x + 8, y + 3, x + w - 4, y + 4, DiaryTheme.withAlpha(0x00FFF2D2, 52));
+        gfx.drawString(font, text, x + 10, y + 3, textColor, false);
     }
 
-    // ── Chapa de registro (identidad del gabinete) ─────────────────────────
-    // Pequena placa de acero con el codigo de registro del expediente,
-    // colocada arriba a la derecha del panel. Texto en tinta oscura sobre
-    // acero cepillado, con dos remaches y una marca de cuarentena.
-    public static void drawRegistryTag(GuiGraphics gfx, int panelX, int panelY, int panelW,
-                                       int panelH, String regCode) {
-        if (panelW < 330) return; // paneles muy chicos: se omite para no chocar
-        drawRegistryTagAt(gfx, panelX + panelW - 66, panelY + 6, regCode);
-    }
+    public static void drawInsetCard(GuiGraphics gfx, Font font, int x, int y, int w, int h,
+                                     String kicker, String title, String body, int accent) {
+        gfx.fill(x + 3, y + 3, x + w + 3, y + h + 3, 0x14000000);
+        gfx.fill(x + 1, y + 1, x + w + 1, y + h + 1, 0x0E000000);
+        gfx.fill(x, y, x + w, y + h, CARD_BASE);
+        gfx.fill(x + 1, y + 1, x + w - 1, y + 2, DiaryTheme.withAlpha(0x00FFF4DB, 76));
+        gfx.fill(x, y, x + w, y + 1, accent);
+        gfx.fill(x, y + h - 1, x + w, y + h, CARD_BORDER);
+        gfx.fill(x, y, x + 1, y + h, CARD_BORDER);
+        gfx.fill(x + w - 1, y, x + w, y + h, CARD_BORDER);
 
-    /** Variante para paneles cuyo borde derecho ya tiene contenido (ej: Skin). */
-    public static void drawRegistryTagLeft(GuiGraphics gfx, int panelX, int panelY, String regCode) {
-        drawRegistryTagAt(gfx, panelX + 8, panelY + 6, regCode);
-    }
+        // pestaña superior derecha y lomo izquierdo para evitar look de dashboard
+        gfx.fill(x + w - 22, y - 2, x + w - 6, y + 2, DiaryTheme.withAlpha(accent, 120));
+        gfx.fill(x + 5, y + 5, x + 7, y + h - 5, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 52));
+        gfx.fill(x + 8, y + 5, x + 9, y + h - 5, DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, 28));
+        gfx.fill(x + 12, y + h - 11, x + w - 12, y + h - 10, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 30));
+        gfx.fill(x + 12, y + h - 7, x + w - 20, y + h - 6, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 20));
 
-    /** Chapa de acero con codigo de registro, en coordenadas absolutas. */
-    public static void drawRegistryTagAt(GuiGraphics gfx, int x, int y, String regCode) {
-        int w = 58;
-        int h = 13;
-
-        // base de acero cepillado
-        for (int i = 0; i < h; i++) {
-            int v = STEEL_MID + (i % 3 == 0 ? 4 : (i % 3 == 1 ? -2 : 0));
-            gfx.fill(x + 1, y + i, x + w - 1, y + i + 1, v);
+        if (kicker != null && !kicker.isEmpty()) {
+            gfx.drawString(font, kicker, x + 12, y + 6, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 185), false);
         }
-        // borde
-        gfx.fill(x, y, x + w, y + 1, STEEL_EDGE);
-        gfx.fill(x, y + h - 1, x + w, y + h, STEEL_EDGE);
-        gfx.fill(x, y, x + 1, y + h, STEEL_EDGE);
-        gfx.fill(x + w - 1, y, x + w, y + h, STEEL_EDGE);
-        // biseles interiores
-        gfx.fill(x + 1, y + 1, x + w - 1, y + 2, STEEL_NEAR);
-        gfx.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, STEEL_DEEP);
-        // marca de cuarentena (verde plaga) en el borde izquierdo
-        gfx.fill(x + 1, y + 2, x + 2, y + h - 2, PLAGUE);
-        // remaches
-        gfx.fill(x + 4, y + 2, x + 6, y + 4, STEEL_DEEP);
-        gfx.fill(x + w - 6, y + 2, x + w - 4, y + 4, STEEL_DEEP);
-        // texto del registro
-        int tw = gfx.drawString(Minecraft.getInstance().font, regCode, x + 2, y + 3,
-                DiaryTheme.withAlpha(0x002A2620, 235), false);
-        gfx.fill(x + 2 + tw + 2, y + 4, x + 2 + tw + 4, y + 5, STEEL_EDGE);
+        if (title != null && !title.isEmpty()) {
+            gfx.drawString(font, title, x + 12, y + 17, INK_TITLE, false);
+        }
+        if (body != null && !body.isEmpty()) {
+            int bodyY = y + 29;
+            List<net.minecraft.util.FormattedCharSequence> lines = font.split(Component.literal(body), Math.max(20, w - 22));
+            int maxLines = Math.max(1, Math.min(lines.size(), Math.max(1, (h - 36) / (font.lineHeight + 1))));
+            for (int i = 0; i < maxLines; i++) {
+                gfx.drawString(font, lines.get(i), x + 12, bodyY + i * (font.lineHeight + 1), INK_FLAVOR, false);
+            }
+        }
     }
 
-    // Barra de scroll victoriana profesional: pergamino tapado + thumb bronce
+    public static void drawValueRow(GuiGraphics gfx, Font font, int x, int y, int w,
+                                    String label, String value, int accent) {
+        gfx.drawString(font, label, x, y, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 190), false);
+        int vw = font.width(value);
+        gfx.drawString(font, value, x + w - vw, y, accent, false);
+        gfx.fill(x, y + 10, x + w, y + 11, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 48));
+        gfx.fill(x, y + 11, x + Math.min(w, 18), y + 12, DiaryTheme.withAlpha(accent, 52));
+    }
+
+    public static void drawPanelScaffold(GuiGraphics gfx, int x, int y, int w, int h, int accent) {
+        drawPanelShadow(gfx, x, y, w, h);
+        gfx.fill(x + 6, y + 6, x + w - 6, y + h - 6, DiaryTheme.withAlpha(0x00FFFFFF, 4));
+        gfx.fill(x + 10, y + 10, x + w - 10, y + h - 10, DiaryTheme.withAlpha(accent, 7));
+        gfx.fill(x + 14, y + 14, x + w - 14, y + 15, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 24));
+        gfx.fill(x + 14, y + h - 15, x + w - 14, y + h - 14, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 24));
+        // guias editoriales sutiles, no marco cerrado
+        gfx.fill(x + 18, y + 18, x + 32, y + 19, DiaryTheme.withAlpha(accent, 46));
+        gfx.fill(x + w - 32, y + 18, x + w - 18, y + 19, DiaryTheme.withAlpha(accent, 46));
+        gfx.fill(x + 18, y + h - 19, x + 32, y + h - 18, DiaryTheme.withAlpha(accent, 30));
+        gfx.fill(x + w - 32, y + h - 19, x + w - 18, y + h - 18, DiaryTheme.withAlpha(accent, 30));
+    }
+
+    public static void drawInnerRail(GuiGraphics gfx, int x, int y, int w, int h, int accent) {
+        gfx.fill(x, y, x + w, y + h, DiaryTheme.withAlpha(accent, 10));
+        gfx.fill(x, y, x + w, y + 1, DiaryTheme.withAlpha(accent, 54));
+        gfx.fill(x, y + h - 1, x + w, y + h, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 74));
+        gfx.fill(x, y, x + 1, y + h, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 66));
+        gfx.fill(x + w - 1, y, x + w, y + h, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 44));
+        // rail incompleto con marcas de registro
+        for (int ty = y + 14; ty < y + h - 10; ty += 18) {
+            gfx.fill(x + 4, ty, x + 10, ty + 1, DiaryTheme.withAlpha(accent, 40));
+        }
+        gfx.fill(x + 10, y + 10, x + w - 10, y + 11, DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, 12));
+    }
+
+    // ── Scrollbars ───────────────────────────────────────────────────────────
     public static void drawScrollThumb(GuiGraphics gfx, int scrollLeft,
                                        int trackY1, int trackY2,
                                        double scrollAmount, int maxScroll) {
@@ -175,46 +236,38 @@ public final class DiaryChrome {
         int trackH = trackY2 - trackY1;
         gfx.fill(scrollLeft, trackY1, scrollRight, trackY2, 0xFFF0E5C8);
         gfx.fill(scrollLeft + 2, trackY1, scrollRight - 2, trackY2, 0x30422810);
+        gfx.fill(scrollLeft - 1, trackY1 - 1, scrollRight + 1, trackY1, DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 90));
+        gfx.fill(scrollLeft - 1, trackY2, scrollRight + 1, trackY2 + 1, DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 90));
 
         double scrollFrac = scrollAmount / (double) maxScroll;
-        int thumbH = Math.max(28, Math.min(trackH - 8, (int)(trackH * trackH / (double)(trackH + maxScroll * 1.2))));
-        int thumbY = trackY1 + (int)((trackH - thumbH) * scrollFrac);
+        int thumbH = Math.max(28, Math.min(trackH - 8, (int) (trackH * trackH / (double) (trackH + maxScroll * 1.2))));
+        int thumbY = trackY1 + (int) ((trackH - thumbH) * scrollFrac);
 
-        // Thumb: steel + parchment highlight + bronze rivets
         gfx.fill(scrollLeft, thumbY, scrollRight, thumbY + thumbH, 0xBB6B4A2E);
         gfx.fill(scrollLeft, thumbY, scrollLeft + 2, thumbY + thumbH, 0xD0A67A5A);
         gfx.fill(scrollRight - 2, thumbY, scrollRight, thumbY + thumbH, 0x702E1E12);
         gfx.fill(scrollLeft, thumbY, scrollRight, thumbY + 1, 0xD08E6A35);
         gfx.fill(scrollLeft, thumbY + thumbH - 1, scrollRight, thumbY + thumbH, 0x70200E05);
+        gfx.fill(scrollLeft - 1, thumbY + 1, scrollLeft, thumbY + thumbH - 1, DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 70));
+        gfx.fill(scrollRight, thumbY + 1, scrollRight + 1, thumbY + thumbH - 1, DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 40));
 
         int midY = thumbY + thumbH / 2;
         int midX = scrollLeft + 3;
-        // Lozenge central parchment
-        gfx.fill(midX, midY - 2, midX + 1, midY - 1, 0xE8F3E9CE);
-        gfx.fill(midX - 1, midY - 1, midX + 2, midY, 0xE8F3E9CE);
-        gfx.fill(midX - 2, midY, midX + 3, midY + 1, 0xE8F3E9CE);
-        gfx.fill(midX - 1, midY + 1, midX + 2, midY + 2, 0xE8F3E9CE);
-        gfx.fill(midX, midY + 2, midX + 1, midY + 3, 0xE8F3E9CE);
-        // Rivet top/bottom
+        drawDivisorLozenge(gfx, midX, midY);
         gfx.fill(midX, thumbY + 3, midX + 1, thumbY + 4, DiaryTheme.withAlpha(0x00FFFFFF, 48));
         gfx.fill(midX, thumbY + thumbH - 4, midX + 1, thumbY + thumbH - 3, DiaryTheme.withAlpha(0x00000000, 60));
+        for (int i = thumbY + 7; i < thumbY + thumbH - 6; i += 8) {
+            gfx.fill(scrollLeft + 1, i, scrollRight - 1, i + 1, DiaryTheme.withAlpha(DiaryTheme.PAPER, 48));
+        }
     }
-    // -- Scroll estilizado especifico para OptionsList vanilla ------------
-    // OptionsList es subclase de ContainerObjectSelectionList y su scrollbar
-    // vive en X = width/2 + 156 (formula fija del bytecode 1.20.1):
-    //   AbstractSelectionList.getScrollbarPosition() = width/2 + 124
-    //   OptionsList.getScrollbarPosition()           = super + 32
-    // La barra es de 6px de ancho, alineada al centro del screen.
-    // Ver ADDENDUM v0.11.5 y KI-09 en CONTEXTO.md.
-    //
-    // Uso: llamar DESPUES de list.render() en el render del screen.
+
     public static int getOptionsListScrollbarX(int screenWidth) {
         return screenWidth / 2 + 156;
     }
 
     public static void drawStyledScrollThumbForOptionsList(GuiGraphics gfx,
-                                                            AbstractSelectionList<?> list,
-                                                            int screenWidth) {
+                                                           AbstractSelectionList<?> list,
+                                                           int screenWidth) {
         if (list == null) return;
         int maxScroll = list.getMaxScroll();
         if (maxScroll <= 0) return;
@@ -222,60 +275,37 @@ public final class DiaryChrome {
         int scrollLeft = getOptionsListScrollbarX(screenWidth);
         int trackY1 = list.getTop();
         int trackY2 = list.getBottom();
-
         drawScrollThumb(gfx, scrollLeft, trackY1, trackY2, list.getScrollAmount(), maxScroll);
     }
 
-    // ---------------------------------------------------------------
-    // Fondo cuero oscuro para pantallas de trabajo (Grupo B v0.11.7):
-    // KeyBinds (Atajos), PackSelection (Paquetes de recursos) y
-    // Embeddium (via mixin, v0.11.8). Reemplaza el dirt vanilla por
-    // una tapa de libro sepia con vinieta arriba y abajo.
-    //
-    // Sin escena viva detras: en pantallas densas la escena distrae.
-    // Barato: 1 fill base + 2 gradientes de vinieta.
-    // ---------------------------------------------------------------
+    // ── Fondo cuero oscuro para pantallas de trabajo ────────────────────────
     public static final int LEATHER_BASE = 0xFF1F1408;
 
     public static void drawDarkLeatherBackground(GuiGraphics gfx, int screenW, int screenH) {
-        // Base uniforme: cuero sepia muy oscuro
         gfx.fill(0, 0, screenW, screenH, LEATHER_BASE);
-
-        // Vinieta superior e inferior (fade a negro semitransparente)
         int fade = Math.max(60, Math.min(screenW, screenH) / 4);
         gfx.fillGradient(0, 0, screenW, fade, 0x60000000, 0x00000000);
         gfx.fillGradient(0, screenH - fade, screenW, screenH, 0x00000000, 0x60000000);
     }
 
-    // Sombra proyectada profesional: 3 capas soft + inner bevel
+    // ── Sombra proyectada profesional ───────────────────────────────────────
     public static void drawPanelShadow(GuiGraphics gfx, int x, int y, int w, int h) {
         int offset = 7;
-        // Outer soft penumbra
         gfx.fill(x + offset - 4, y + offset - 4, x + w + offset + 4, y + h + offset + 4, 0x18100600);
         gfx.fill(x + offset - 2, y + offset - 2, x + w + offset + 2, y + h + offset + 2, 0x3A100600);
         gfx.fill(x + offset, y + offset, x + w + offset, y + h + offset, 0x6E100600);
-        // Inner contact shadow darker
         gfx.fill(x + offset + 1, y + offset + 1, x + w + offset - 1, y + h + offset - 1, 0x8C080300);
-        // Subtle highlight top-left of shadow to simulate paper lift
         gfx.fill(x + 2, y + 2, x + w - 2, y + 3, DiaryTheme.withAlpha(0x00FFFFFF, 10));
     }
 
-    // ---------------------------------------------------------------
-    // Scrollbar estilizada alineada al borde derecho del panel.
-    // Tapa la barra vanilla (que vive en width/2+156) con pergamino
-    // antes de dibujar la nuestra en la posicion del panel.
-    // panelRightEdge = panelX + panelW.
-    // ---------------------------------------------------------------
     public static void drawStyledScrollThumbInPanel(GuiGraphics gfx,
-                                                     AbstractSelectionList<?> list,
-                                                     int panelRightEdge) {
+                                                    AbstractSelectionList<?> list,
+                                                    int panelRightEdge) {
         if (list == null) return;
 
         int trackY1 = list.getTop();
         int trackY2 = list.getBottom();
-
-        // Tapar la scrollbar vanilla solo si cae dentro del panel visible.
-        int vanillaBarX = (net.minecraft.client.Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2) + 156;
+        int vanillaBarX = (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2) + 156;
         int scrollLeft = panelRightEdge - 18;
         if (vanillaBarX < panelRightEdge - 4) {
             gfx.fill(vanillaBarX - 2, trackY1, vanillaBarX + 8, trackY2, 0xFFE8DCB4);
@@ -283,31 +313,22 @@ public final class DiaryChrome {
 
         int maxScroll = list.getMaxScroll();
         if (maxScroll <= 0) return;
-
         drawScrollThumb(gfx, scrollLeft, trackY1, trackY2, list.getScrollAmount(), maxScroll);
     }
 
-
-    /** Cursor de pluma pixelart al lado del mouse.
-     *  Llamar al FINAL del render() de una Diary screen cuando el mouse
-     *  este sobre el panel de pergamino. */
-    public static void drawQuillCursor(net.minecraft.client.gui.GuiGraphics g, int mouseX, int mouseY) {
-        // Pluma diagonal de arriba-derecha a abajo-izquierda, ~10x10
-        // Solo dibujamos si el mouse esta en pantalla
+    // ── Cursor de pluma ─────────────────────────────────────────────────────
+    public static void drawQuillCursor(GuiGraphics g, int mouseX, int mouseY) {
         int inkDark = 0xFF1A0F08;
         int inkLight = 0xFF3D2E1A;
         int feather = 0xFF6B4226;
 
-        // Vastago (linea diagonal 8px)
         int sx = mouseX + 6;
         int sy = mouseY + 2;
         for (int i = 0; i < 8; i++) {
             g.fill(sx + i, sy + i, sx + i + 1, sy + i + 1, inkDark);
         }
-        // Punta (abajo izquierda)
         g.fill(sx - 1, sy + 8, sx, sy + 9, inkDark);
         g.fill(sx, sy + 9, sx + 1, sy + 10, inkDark);
-        // Plumas (arriba derecha, 3 pequenas)
         g.fill(sx + 6, sy - 1, sx + 8, sy + 1, feather);
         g.fill(sx + 8, sy - 2, sx + 10, sy, feather);
         g.fill(sx + 7, sy + 1, sx + 9, sy + 2, inkLight);

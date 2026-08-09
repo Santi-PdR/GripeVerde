@@ -2,65 +2,73 @@
 
 ## Addendum operativo actual
 
-- Rama fija de Arena: `arena/019fe1c5-gripeverde`.
-- Version: `0.17.0`.
-- Ultima regla explicita del usuario: gran pase de calidad de interfaz y
-  identidad visual (resource pack + containers + pantallas del mod), un unico commit.
+- Rama fija de Arena: `arena/019fe23e-gripeverde`.
+- Version: `0.19.0`.
+- Ultima regla explicita del usuario: pase exclusivamente dedicado a refinar visualmente las interfaces, sin resourcepacks y sin vender mas contenido narrativo como novedad.
 
-### DECISION 2026-08-08: Acero de cuarentena (v0.17.0)
+### DECISION 2026-08-09: interface overhaul / visual polish (v0.19.0)
 
-El usuario pidio un pase distinto a los anteriores: NO easter eggs, sino
-identidad visual profesional. Se creo desde cero el resource pack built-in
-`gripeverde_steel` ("Acero de Cuarentena"), REQUIRED=true (siempre activo),
-que reemplaza la presentacion (no la geometria) de los contenedores vanilla:
+Se audito el resultado real del pase documental anterior y se detecto una
+segunda necesidad: la UI ya tenia sistema, pero todavia mostraba rigidez de
+"dashboard de pergamino" en varias pantallas. La consigna de esta sesion fue
+refinar composicion, jerarquia, profundidad y widgets, no sumar mas contenido.
 
-- 20 fondos de contenedores (inventory, generic_54, crafting_table, furnace,
-  smoker, blast_furnace, anvil, grindstone, smithing, enchanting_table,
-  brewing_stand, hopper, dispenser, beacon, horse, villager 512x256, loom,
-  cartography_table, stonecutter, shulker_box) + 4 fondos de inventario
-  creativo (tabs.png + 3 variantes).
-- Sprites: slot universal, progresos de horno/ahumador/altos-hornos
-  (llama ambar + flecha acero), brewing (flecha/burbujas/combustible),
-  beacon (botones/cancelar/confirmar), anvil (error + campo de texto),
-  enchanting (slot + numeros I/II/III), grindstone (error), horse
-  (armor_slot, chest_slots), scroller creativo, botones/sliders/campos/
-  checkboxes/scroller de widgets vanilla, boton del libro de recetas.
-- 9-slice .mcmeta conservados intactos (button/slider/text_field/scroller).
-- NO se incluyen texturas muertas: dropper.png y villager2.png NO existen en
-  1.20.1 (eran huerfanas del pack Master Steel).
+Ajustes rectores del pase:
+- `ExpedientHeader` se conserva, pero con uso mas sobrio y mejor jerarquia.
+- `DiaryChrome` evoluciona hacia un lenguaje menos cuadrado: railes
+  incompletos, tarjetas menos rigidas, capsulas mas discretas, scrollbars mas
+  fisicas y scaffolds con lectura editorial.
+- `DiarySlider`, `DiaryMusicSlider`, `DiaryAmbienceSlider` y `DiaryToggle`
+  reciben tratamiento de instrumento/placa mecanica en vez de barra o switch
+  generico.
+- `DiaryOptionsScreen`, `DiarySoundOptionsScreen`, `DiaryControlsScreen`,
+  `DiaryChatOptionsScreen`, `DiaryAccessibilityOptionsScreen`,
+  `DiaryLanguageScreen`, `DiaryOnlineOptionsScreen`, `DiaryCreditsScreen`,
+  `DiaryMultiplayerScreen`, `DiaryPauseScreen` y `DiaryTitleScreen` se pulen
+  para que parezcan salas del mismo gabinete, pero no el mismo template.
+- `DiaryVideoSettingsScreen` se mantiene como pantalla propia y se integra al
+  tono final del gabinete.
 
-Diferencias vs packs anteriores (steel v0.13, silver v0.14, Master Steel):
-- Geometria 1:1 verificada: alpha masks identicas a vanilla (comparadas contra
-  el espejo 1.20.2 == 1.20.1, validado contra Master Steel) y slots 18x18 en
-  las posiciones vanilla exactas (tabla hardcodeada por textura).
-- El pack es REQUIRED (siempre visible) — no depende de que el jugador lo
-  active en Resource Packs.
-- Paleta unica de acero frio #9A9EA8 (sin bronce dominante), cepillado
-  horizontal controlado (sin ruido aleatorio), slots hundidos, juntas con
-  remaches de laton, cinta verde de cuarentena en almacenes, tintes por
-  familia (horno cobrizo, encantamiento arcano, alambique clinico, baliza
-  ambar).
-- Pipeline regenerable: `tools/steel_pack/build_steel_pack.py` +
-  `steel_pack_lib.py` (genera y valida alpha/slots).
+Se mantiene la regla absoluta de no usar resourcepacks ni texturas vanilla
+modificadas para identidad visual.
 
-UI del mod (identidad del gabinete):
-- DiaryChrome.drawCornerOrnaments -> escuadras de acero con remache (todas
-  las pantallas Diary automaticamente).
-- Chapa de registro "REG. I..XV" arriba a la derecha de cada panel del
-  gabinete (drawRegistryTag); Skin usa variante izquierda por el espejo.
-- DiaryPackSelectionScreen: la pantalla vanilla de Resource Packs ahora es
-  un archivo del gabinete (pergamino de archivo + marco de acero + sello
-  EC-QV/1897 + chapa REG. XV). Las listas vanilla conservan su logica;
-  las scrollbars quedan en acero via el resource pack (widget/scroller.png).
-- Lang: nueva clave `gripeverde.options.packs.subtitle` en los 25 idiomas.
+### DECISION 2026-08-08: pase mayor de interfaces (v0.18.0)
 
-Version: 0.16.0 -> 0.17.0 (build.gradle + GripeVerdeMod.VERSION).
+Se hizo un pase transversal de interfaz sobre la linea limpia posterior al
+retiro del resource pack. La directiva del usuario fue explicita: nada de
+`gripeverde_steel`, nada de `tools/steel_pack`, nada de texturas vanilla
+modificadas y nada de vender easter eggs viejos como novedades. El objetivo
+fue profesionalizar las pantallas propias del mod con un design system de
+cabeceras documentales, railes de estado, tarjetas laterales, medidores,
+revelado de paneles y composicion por capas, manteniendo intacta la logica
+vanilla de opciones/listas/sliders.
 
-Validacion en este entorno: sin JDK ni maven de Forge en el sandbox. Se
-valido programaticamente: dimensiones, alpha masks 1:1 vs vanilla, posicion
-de slots, existencia de .mcmeta, ausencia de huerfanas (tarea Gradle
-verifyGripeVerdeThemeAssets). NO se pudo compilar ni correr el juego: el
-build debe hacerse en la maquina del usuario (regla E125).
+Piezas nuevas o ampliadas de esta sesion:
+- `client/render/ExpedientHeader.java`: cabecera reutilizable con expediente,
+  referencia, estado y flavor.
+- `client/render/DiaryChrome.java`: ampliado con reveal, capsulas de estado,
+  tarjetas, railes internos y scaffolding de profundidad.
+- `client/widgets/DiaryProgressBar.java`: estilos multiples + marcas.
+- `client/screens/DiaryVideoSettingsScreen.java`: nueva consola tecnica para
+  VideoSettingsScreen sobre presentacion propia.
+- Rework fuerte de `DiaryOptionsScreen`, `DiarySoundOptionsScreen`,
+  `DiaryControlsScreen`, `DiaryChatOptionsScreen`,
+  `DiaryAccessibilityOptionsScreen`, `DiaryLanguageScreen`,
+  `DiaryOnlineOptionsScreen`, `DiaryCreditsScreen`,
+  `DiaryMultiplayerScreen`, `DiaryPauseScreen` y `DiaryTitleScreen`.
+
+Regla reafirmada: el salto visual de UI debe venir del propio mod. La
+presentacion se rehace con Java/render/widgets, no con overlays de
+resourcepacks.
+
+### DECISION 2026-08-08: reversion de la linea v0.17.x
+
+Se retiro nuevamente la reintroduccion del resource pack `gripeverde_steel`
+y de la identidad visual asociada en codigo/documentacion. El usuario pidio
+volver al estado anterior a su incorporacion; los documentos confirman que
+ese punto estable es **v0.16.0** (la linea v0.17.0 es la que vuelve a
+introducir el pack). Esta sesion deja el repo otra vez alineado con
+contenedores vanilla y sin pipeline/registro del pack.
 
 ### DECISION 2026-08-05: retiro del resource pack de contenedores
 
@@ -119,14 +127,14 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.17.0
-- build.gradle: version = '0.17.0'
-- GripeVerdeMod.VERSION: "0.17.0"
+- Version estable actual: v0.19.0
+- build.gradle: version = '0.19.0'
+- GripeVerdeMod.VERSION: "0.19.0"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
-- Resource pack built-in: NUEVO "gripeverde_steel" (v0.17.0), REQUIRED, contenedores con acero de cuarentena (presentacion 1:1, geometria vanilla intacta).
+- Resource pack built-in: ELIMINADO (v0.15.0). Contenedores 100% vanilla.
 - ContainerOverlayHandler: ELIMINADO (v0.15.1). Titulos de contenedores vanilla.
 - Slider FOV: agregado al gabinete de opciones (v0.15.1) y arreglado el
   label para que muestre el numero (v0.15.2): la clave vanilla "options.fov"
