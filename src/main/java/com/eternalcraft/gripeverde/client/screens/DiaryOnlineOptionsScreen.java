@@ -28,10 +28,12 @@ import net.minecraft.network.chat.Component;
  */
 public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
 
-    private static final int PANEL_W = 440;
-    private static final int PANEL_H = 248;
+    private static final int PANEL_W = 500;
+    private static final int PANEL_H = 258;
+    private static final int STATION_W = 164;
 
     private final SmoothScroll smoothScroll = new SmoothScroll(0.50D, 0.24D);
+    private final Options ownOptions;
     private int panelX, panelY, panelW, panelH;
     private long openedAtMs = 0L;
 
@@ -43,6 +45,7 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
                   options.realmsNotifications(),
                   options.allowServerListing()
               });
+        this.ownOptions = options;
     }
 
     @Override
@@ -58,8 +61,8 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
         if (this.list != null) {
             this.list.setRenderBackground(false);
             this.list.setRenderTopAndBottom(false);
-            int listTop = this.panelY + 55;
-            int listBottom = this.panelY + this.panelH - 45;
+            int listTop = this.panelY + 92;
+            int listBottom = this.panelY + this.panelH - 52;
             this.list.updateSize(this.width, this.height, listTop, listBottom);
             this.smoothScroll.snapToCurrent(this.list);
         }
@@ -117,32 +120,37 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
         PaperTexture.drawClean(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.OFFICIAL);
         DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
 
+        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
         int headerBottom = ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT VIII" : "EXPEDIENTE VIII",
+            en ? "EXPEDIENT VIII" : "EXPEDIENTE VIII",
             this.title,
             "- " + Component.translatable("gripeverde.options.online.subtitle").getString() + " -",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · SIGNAL OFFICE" : "EC-QV/1897 · OFICINA DE SENALES",
+            en ? "EC-QV/1897 · SIGNAL OFFICE" : "EC-QV/1897 · OFICINA DE SENALES",
             Component.translatable("gripeverde.options.online.flavor").getString(),
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "PUBLIC LIST" : "LISTA PUBLICA",
+            en ? "RELAY OPEN" : "RELE ABIERTO",
             DiaryTheme.BRONZE,
             reveal);
 
-        DiaryChrome.drawInsetCard(g, this.font, this.panelX + this.panelW - 150, headerBottom, 132, 78,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "DISTRICT GATE" : "PUERTA DEL DISTRITO",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Outbound signals" : "Senales salientes",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "These options control what may leave the cabinet and what stays sealed inside." : "Estas opciones deciden que puede salir del gabinete y que queda sellado adentro.",
-            DiaryTheme.BRONZE);
-        DiaryProgressBar.draw(g, this.panelX + this.panelW - 140, headerBottom + 58, 112, 12,
-            0.5f, com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Route" : "Ruta", DiaryProgressBar.Style.STEEL);
+        int stationX = this.panelX + this.panelW - STATION_W - 18;
+        int stationY = headerBottom - 2;
+        drawSignalStation(g, stationX, stationY, STATION_W, this.panelH - 122);
+
+        int boardX = this.panelX + 18;
+        int boardW = stationX - boardX - 14;
+        DiaryChrome.drawInnerRail(g, boardX, headerBottom - 2, boardW, this.panelH - 122, DiaryTheme.BRONZE);
+        g.drawString(this.font, en ? "COMMUNICATION BOARD" : "TABLERO DE COMUNICACION", boardX + 10, headerBottom + 6, DiaryTheme.BRONZE, false);
+        g.drawString(this.font, en ? "What leaves the district and what remains sealed." : "Lo que sale del distrito y lo que permanece sellado.", boardX + 10, headerBottom + 18, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 148), false);
 
         if (this.list != null) {
             if (reveal < 0.995f) {
                 int revealBottom = this.panelY + Math.max(28, (int)(this.panelH * reveal));
                 g.enableScissor(this.panelX - 2, this.panelY - 2, this.panelX + this.panelW + 2, revealBottom);
                 this.list.render(g, mouseX, mouseY, partialTick);
+                DiaryChrome.drawStyledScrollThumbInPanel(g, this.list, stationX - 8);
                 g.disableScissor();
             } else {
                 this.list.render(g, mouseX, mouseY, partialTick);
+                DiaryChrome.drawStyledScrollThumbInPanel(g, this.list, stationX - 8);
             }
         }
 
@@ -151,5 +159,36 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
         for (Renderable r : this.renderables) {
             r.render(g, mouseX, mouseY, partialTick);
         }
+    }
+
+    private void drawSignalStation(GuiGraphics g, int x, int y, int w, int h) {
+        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+        DiaryChrome.drawInnerRail(g, x, y, w, h, DiaryTheme.PLAGUE_SICK);
+        g.drawString(this.font, en ? "RELAY STATION" : "ESTACION DE RELE", x + 10, y + 8, DiaryTheme.BRONZE, false);
+        g.drawString(this.font, en ? "public / private" : "publico / privado", x + 10, y + 20, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 150), false);
+
+        // poste y lineas de señal
+        int mastX = x + w - 28;
+        g.fill(mastX, y + 34, mastX + 3, y + h - 18, 0xFF3D2E1A);
+        g.fill(mastX - 10, y + 42, mastX + 11, y + 43, 0xFF8E6A35);
+        g.fill(mastX - 14, y + 58, mastX + 15, y + 59, 0xFF6B4A2E);
+        g.fill(mastX - 18, y + 76, mastX + 19, y + 77, DiaryTheme.withAlpha(DiaryTheme.PLAGUE_SICK, 120));
+
+        DiaryChrome.drawValueRow(g, this.font, x + 10, y + 44, w - 44,
+            en ? "notices" : "avisos", this.ownOptions.realmsNotifications().get() ? (en ? "open" : "abiertos") : (en ? "closed" : "cerrados"), DiaryTheme.BRONZE);
+        DiaryChrome.drawValueRow(g, this.font, x + 10, y + 64, w - 44,
+            en ? "listing" : "listado", this.ownOptions.allowServerListing().get() ? (en ? "public" : "publico") : (en ? "sealed" : "sellado"), DiaryTheme.PLAGUE_SICK);
+        DiaryProgressBar.draw(g, x + 10, y + h - 38, w - 20, 14,
+            computePublicSignal(), en ? "signal spread" : "alcance", DiaryProgressBar.Style.STEEL);
+        g.drawString(this.font,
+            en ? "district traffic remains under your hand" : "el trafico del distrito permanece bajo vuestra mano",
+            x + 10, y + h - 20, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 132), false);
+    }
+
+    private float computePublicSignal() {
+        float v = 0f;
+        if (this.ownOptions.realmsNotifications().get()) v += 0.5f;
+        if (this.ownOptions.allowServerListing().get()) v += 0.5f;
+        return v;
     }
 }

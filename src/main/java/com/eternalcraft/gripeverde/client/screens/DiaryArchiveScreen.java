@@ -123,10 +123,19 @@ public class DiaryArchiveScreen extends Screen {
             reveal);
 
         int progressBoxX = panelX + panelW - 162;
+        String archiveBody = en
+            ? "Every recovered card remains indexed in the reading room."
+            : "Cada ficha recuperada permanece indexada en la sala de consulta.";
+        if (hoverCard >= 0) {
+            String id = Discoveries.ALL[hoverCard];
+            archiveBody = ChroniclerMemory.isDiscovered(id)
+                ? Discoveries.nameFor(id)
+                : Discoveries.hintFor(id);
+        }
         DiaryChrome.drawInsetCard(g, this.font, progressBoxX, headerBottom, 142, 84,
             en ? "ARCHIVE STATE" : "ESTADO DEL ARCHIVO",
             found + " / " + total,
-            en ? "Every recovered card remains indexed in the reading room." : "Cada ficha recuperada permanece indexada en la sala de consulta.",
+            archiveBody,
             DiaryTheme.BRONZE);
         DiaryProgressBar.draw(g, progressBoxX + 10, headerBottom + 54, 122, 14,
             total <= 0 ? 0f : (found / (float) total),
@@ -164,6 +173,7 @@ public class DiaryArchiveScreen extends Screen {
         }
 
         int docsY = infoY + 18;
+        g.drawString(this.font, en ? "RECOVERED PAPERS" : "PAPELES RECUPERADOS", panelX + 24, docsY - 18, DiaryTheme.BRONZE, false);
         DiaryChrome.drawInkDivider(g, panelX + 22, docsY - 4, panelW - 44);
         int dx = panelX + 24;
         if (ChroniclerMemory.isDiscovered(Discoveries.CODE_1897)) {

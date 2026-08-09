@@ -3,32 +3,31 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/019fe23e-gripeverde`.
-- Version: `0.20.0`.
-- Ultima regla explicita del usuario: nuevo pase importante de identidad visual sobre las interfaces, con auditoria real previa, sin resourcepacks ni nuevas mecanicas.
+- Version: `0.21.0`.
+- Ultima regla explicita del usuario: cerrar la brecha entre pantallas A/B y las C/D, priorizando cohesion e identidad sobre las salas secundarias sin volver a un rediseño global.
+
+### DECISION 2026-08-09: cohesion y cierre de interfaces secundarias (v0.21.0)
+
+Con el nucleo principal del gabinete ya fuerte, este pase se concentro en las
+salas que seguian mas cerca de una screen vanilla tematizada que de una pieza
+propia de Gripe Verde. La guia del usuario fue explicita: no volver a tocar las
+A como `Title`, `Pause`, `Sound`, `Language` o `Multiplayer`, y concentrar el
+esfuerzo en terminar las C/D y consolidar las B.
+
+Prioridades ejecutadas en esta sesion:
+- `DiaryChatOptionsScreen` -> oficina de correspondencia mas clara.
+- `DiaryOnlineOptionsScreen` -> estacion de comunicaciones con identidad.
+- `DiarySkinCustomizationScreen` -> polish final, sin reconstruccion total.
+- `DiaryArchiveScreen` y `ChangelogScreen` -> mejor cierre entre consulta y
+  registro de revisiones.
+- `DiaryDirectJoinScreen`, `DiaryEditServerScreen`, `DiaryConfirmScreen` ->
+  refinamiento de formularios y autorizaciones.
+
+Regla reforzada para continuidad:
+- si una pantalla ya esta en B, primero simplificar o reordenar antes de
+  agregar otra capa visual.
 
 ### DECISION 2026-08-09: identidad de interfaz (v0.20.0)
-
-Se hizo una auditoria pantalla por pantalla del estado post-v0.19.0 y se
-confirmo que el sistema visual ya existia, pero algunas salas aun parecian
-formularios vanilla tematizados. La decision de esta sesion fue atacar esas
-pantallas debiles en vez de volver a sumar estructura al hub principal.
-
-Pantallas priorizadas por debilidad visual:
-- `DiarySkinCustomizationScreen`
-- `DiaryArchiveScreen`
-- `DiaryDirectJoinScreen`
-- `DiaryEditServerScreen`
-- `DiaryConfirmScreen`
-- `ChangelogScreen`
-
-Criterio rector del pase:
-- menos apariencia de dashboard documental
-- mas identidad de formulario, folio, acta o archivo segun cada caso
-- mantener `ExpedientHeader`/`DiaryChrome`, pero usarlos con mas composicion y
-  menos acumulacion de cajas
-- reforzar que cada pantalla responda a una pieza fisica del gabinete
-
-### DECISION 2026-08-09: interface overhaul / visual polish (v0.19.0)
 
 Se audito el resultado real del pase documental anterior y se detecto una
 segunda necesidad: la UI ya tenia sistema, pero todavia mostraba rigidez de
@@ -149,9 +148,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.20.0
-- build.gradle: version = '0.20.0'
-- GripeVerdeMod.VERSION: "0.20.0"
+- Version estable actual: v0.21.0
+- build.gradle: version = '0.21.0'
+- GripeVerdeMod.VERSION: "0.21.0"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10
 - Working tree esperado al retomar: limpio

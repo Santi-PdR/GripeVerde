@@ -1,46 +1,44 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
-## v0.20.0 - Identidad de interfaz / pase de consolidacion
+## v0.21.0 - Cohesion y cierre de interfaces secundarias
 
 ### Cambios cerrados
-- Auditoria completa del estado post-v0.19.0: se clasificaron pantallas por
-  madurez visual y se priorizaron las que aun se sentian mas cercanas a una
-  pantalla vanilla tematizada que a una interfaz propia.
-- Rework de pantallas debiles de formulario y archivo:
-  `DiarySkinCustomizationScreen`, `DiaryArchiveScreen`, `DiaryDirectJoinScreen`,
-  `DiaryEditServerScreen`, `DiaryConfirmScreen` y `ChangelogScreen`.
-- `DiaryChrome` refinado otra vez: tarjetas con menos rigidez de dashboard,
-  railes con marcas de registro, status pills mas sobrias y scrollbar mas
-  fisica.
-- `DiarySlider`, `DiaryMusicSlider`, `DiaryAmbienceSlider` y `DiaryToggle`
-  recibieron una lectura aun mas material: instrumentos y placas en vez de
-  simples controles decorados.
-- Se mantuvo la linea documental de `ExpedientHeader`, pero ampliada a varias
-  pantallas que aun no la usaban.
-- Sigue prohibido y ausente todo resourcepack / textura vanilla modificada /
-  handler de packs.
-- Version bump: 0.19.0 -> 0.20.0.
+- `DiaryChatOptionsScreen` deja la logica correcta pero gana cierre visual de
+  oficina de correspondencia: casillero, correo del distrito y tablero publico
+  mejor separados.
+- `DiaryOnlineOptionsScreen` pasa de hoja con opciones a estacion de
+  comunicaciones: tablero, rele y trafico del distrito con identidad propia.
+- `DiarySkinCustomizationScreen` recibe un polish final y se acerca al estado B
+  sin otra reconstruccion completa.
+- `DiaryArchiveScreen` gana mejor lectura de catalogo y preview del contenido,
+  reforzando la jerarquia de consulta.
+- `ChangelogScreen` se acerca a Archive como libro de revisiones archivado,
+  con footer y lectura mas consistente.
+- `DiaryDirectJoinScreen`, `DiaryEditServerScreen` y `DiaryConfirmScreen`
+  reciben refinamiento adicional de formulario/permiso y quedan mas cerca del
+  estado B que del D original.
+- Version bump: 0.20.0 -> 0.21.0.
 
 ### Riesgos activos / KI nuevos
 - **KI-20 (runtime GUI scale)**: sigue pendiente validacion real en GUI Scale
-  1-4. Las pantallas de formulario y archivo cambiaron de composicion y deben
-  probarse en cliente.
-- **KI-21 (Video + mods externos)**: sin cambios de logica respecto a v0.19,
-  pero sigue pendiente verificacion real con mods que extiendan la pantalla de
-  video.
-- **KI-23 (Archive density)**: la Sala de consulta gano presentacion nueva;
-  conviene validar que la grilla de fichas siga leyendose bien en escalas altas.
+  1-4. Esta vez las pantallas afectadas fueron sobre todo Chat, Online,
+  Archive, Changelog y formularios.
+- **KI-21 (Video + mods externos)**: sin cambios en esta sesion; sigue la
+  necesidad de validar `DiaryVideoSettingsScreen` con mods externos.
+- **KI-24 (formularios chicos)**: `DirectJoin`, `EditServer` y `Confirm`
+  quedaron mas compuestos visualmente; verificar en ventanas pequenas que los
+  labels y botones no respiren de menos.
 
 ### Reglas nuevas
-- **R-FORM-SCREENS-NOT-VANILLA**: pantallas de formulario (join directo,
-  edicion, confirmacion) no deben resolverse como un titulo + dos campos +
-  botones sobre pergamino; deben leerse como documentos oficiales completos.
-- **R-ARCHIVE-SCREENS-IDENTITY**: Changelog y Archive necesitan una identidad
-  de libro/folio/consulta propia, no solo compartir piezas de Options.
+- **R-SUBSCREEN-CLOSURE**: cuando las pantallas principales ya estan fuertes,
+  los siguientes pases deben concentrarse en las salas secundarias para evitar
+  que el sistema parezca inconsistente por periferia debil.
+- **R-SIMPLIFY-BEFORE-ADDING**: si una pantalla ya esta en B, primero se prueba
+  simplificar o reordenar antes de agregar nuevas piezas visuales.
 
 ---
 
-## v0.19.0 - Interface overhaul / visual polish
+## v0.20.0 - Identidad de interfaz / pase de consolidacion
 
 ### Cambios cerrados
 - Auditoria del pase documental anterior: se conservaron `ExpedientHeader`,

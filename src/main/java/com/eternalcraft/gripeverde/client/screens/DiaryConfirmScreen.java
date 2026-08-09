@@ -154,10 +154,15 @@ public class DiaryConfirmScreen extends ConfirmScreen {
         if (this.ownMultilineMessage == null && this.ownMessage != null) {
             this.ownMultilineMessage = MultiLineLabel.create(this.font, this.ownMessage, this.panelW - 74);
         }
+        int msgY = headerBottom + 8;
         if (this.ownMultilineMessage != null) {
-            int msgY = headerBottom + 8;
             this.ownMultilineMessage.renderCentered(gfx, this.width / 2, msgY, this.font.lineHeight + 2, DiaryChrome.INK_SUBTITLE);
         }
+        int signY = this.panelY + this.panelH - 62;
+        gfx.drawString(this.font,
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "authorising hand" : "mano autorizante",
+            this.panelX + 26, signY - 10, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 135), false);
+        gfx.fill(this.panelX + 24, signY, this.panelX + this.panelW - 24, signY + 1, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 58));
 
         DiaryChrome.drawInsetCard(gfx, this.font, this.panelX + this.panelW - 138, headerBottom + 2, 118, 62,
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "ORDER" : "ORDEN",

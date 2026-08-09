@@ -161,13 +161,14 @@ public class DiarySkinCustomizationScreen extends Screen {
         PaperTexture.drawClean(gfx, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.MEDICAL);
         DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
 
+        float visibleRatio = computeVisibleRatio();
         int headerBottom = ExpedientHeader.draw(gfx, this.font, this.panelX, this.panelY, this.panelW,
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT VII" : "EXPEDIENTE VII",
             this.title,
             "- " + Component.translatable("gripeverde.options.skin.subtitle").getString() + " -",
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · OBSERVATION MIRROR" : "EC-QV/1897 · ESPEJO DE OBSERVACION",
             Component.translatable("gripeverde.options.skin.flavor").getString(),
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "VISIBLE" : "VISIBLE",
+            visibleRatio >= 0.75f ? (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "COMPLETE VIEW" : "VISTA COMPLETA") : (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "PARTIAL VIEW" : "VISTA PARCIAL"),
             DiaryTheme.PLAGUE_SICK,
             reveal);
 
@@ -178,7 +179,7 @@ public class DiarySkinCustomizationScreen extends Screen {
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Garments and exposed features are presented as a field note, not a vanilla checklist." : "Prendas y rasgos expuestos se presentan como nota de campo, no como simple lista vanilla.",
             DiaryTheme.PLAGUE_SICK);
         DiaryProgressBar.draw(gfx, railX + 10, headerBottom + 62, 114, 14,
-            computeVisibleRatio(),
+            visibleRatio,
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "presence" : "presencia",
             DiaryProgressBar.Style.PLAGUE);
 
@@ -196,6 +197,7 @@ public class DiarySkinCustomizationScreen extends Screen {
 
         int divY2 = this.panelY + this.panelH - 38;
         DiaryChrome.drawInkDivider(gfx, this.panelX, divY2, this.panelW);
+        drawSpecimenFooter(gfx, workX, divY2 - 18, workW);
 
         try {
             drawMirror(gfx, mouseX, mouseY);
@@ -226,6 +228,13 @@ public class DiarySkinCustomizationScreen extends Screen {
             com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(gfx, this.width / 2, this.panelY - 12);
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(gfx, this.width);
         } catch (Throwable ignored) {}
+    }
+
+    private void drawSpecimenFooter(GuiGraphics gfx, int x, int y, int w) {
+        String note = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+            ? "Observed parts may be hidden without altering the patient."
+            : "Las partes observadas pueden ocultarse sin alterar al paciente.";
+        gfx.drawString(this.font, note, x + 10, y, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 132), false);
     }
 
     private float computeVisibleRatio() {

@@ -5,20 +5,18 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.20.0 - El gabinete encuentra su propia mano**
+**v0.21.0 - La oficina aprende a cerrar filas**
 
-Tras ordenar su estructura y aprender modales de imprenta, el gabinete dio
-un paso mas: varias pantallas que aun se sentian como formularios vanilla
-vestidos sobre papel fueron rehechas como piezas propias del mismo mundo.
-La sala de consulta, el registro de revisiones, las fichas de conexion, el
-espejo de observacion y los formularios de autorizacion ya no parecen
-pantallas sueltas con un marco tematico, sino partes de una oficina comun,
-con composicion mas fisica, mejor jerarquia y una identidad visual mas
-convincente.
+Con el gabinete principal ya asentado, este pase se concentro en las salas
+que aun se sentian mas cercanas a un formulario vanilla vestido sobre papel.
+Correspondencia, comunicaciones, consulta, revisiones y fichas de entrada
+recibieron un cierre de composicion: menos apariencia de dashboard, mas
+identidad de oficina real, mejor jerarquia y mejor lectura de cada funcion.
+El resultado no añade mas ruido; ordena mejor lo que ya existia.
 
 ## Resumen visible del Mod Menu
 
-Eternal Craft: Gripe Verde convierte los menus de Minecraft en un gabinete victoriano bajo cuarentena. El menu principal muestra una ciudad oscura con lluvia, niebla, reloj de bolsillo, carteles oficiales, musica y ambiente propio, mientras que cada sala del gabinete adopta una identidad concreta: Options como mesa central, Sound como sala instrumental, Video como aparato de observacion, Controls como manual operativo, Language como archivo linguistico, Chat como correspondencia, Accessibility como expediente de percepcion, Multiplayer como registro de hospedajes, Credits como acta final y las pantallas de formulario como documentos oficiales. El objetivo ya no es solo tematizar vanilla, sino hacer que la interfaz parezca realmente propia de Gripe Verde.
+Eternal Craft: Gripe Verde convierte los menus de Minecraft en un gabinete victoriano bajo cuarentena. El menu principal muestra una ciudad oscura con lluvia, niebla, reloj de bolsillo, carteles oficiales, musica y ambiente propio, mientras que cada sala del gabinete adopta una identidad concreta: Options como mesa central, Sound como sala instrumental, Video como aparato de observacion, Controls como manual operativo, Language como archivo linguistico, Chat como oficina de correspondencia, Accessibility como expediente de percepcion, Online como estacion de comunicaciones, Multiplayer como registro de hospedajes, Credits como acta final, Archive como sala de consulta y las pantallas de formulario como documentos oficiales. El objetivo ya no es solo tematizar vanilla, sino hacer que la interfaz parezca realmente propia de Gripe Verde.
 
 Los contenedores del juego conservan su aspecto vanilla original; el mod no altera las texturas de los contenedores ni usa resourcepacks. El mod es client-side y no agrega gameplay.
 

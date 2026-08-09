@@ -2,6 +2,14 @@
 ## Cronica bajo sello
 
 
+## Version 0.21 - La oficina cierra filas
+
+Las salas que aun se sentian mas prestadas quedaron ahora mas cerca del resto
+del gabinete. Correspondencia, consulta, revisiones y formularios de entrada
+hablan con una mano mas firme, de modo que cada oficina se reconozca por su
+oficio y no solo por su cabecera.
+
+
 ## Version 0.20 - El gabinete encuentra su propia mano
 
 Varias hojas que antes parecian apenas vestidas para la ocasion fueron

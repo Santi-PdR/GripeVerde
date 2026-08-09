@@ -2,6 +2,14 @@
 ## Chronicle under seal
 
 
+## Version 0.21 - The office closes its ranks
+
+The rooms that still felt most borrowed have now been brought nearer to the
+rest of the cabinet. Correspondence, consultation, revisions and the forms
+of entry now speak with a steadier hand, so that each office may be known by
+its duty and not only by its heading.
+
+
 ## Version 0.20 - The cabinet finds its own hand
 
 Several leaves that once felt merely dressed for the occasion have now

@@ -1,21 +1,20 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.0 - La oficina aprende a cerrar filas
+
+No todas las salas del gabinete habian alcanzado la misma madurez. Algunas,
+aun bajo buena tinta, seguian recordando demasiado a un formulario prestado.
+Esta noche se corrigio ese desajuste. La oficina de correspondencia, la
+estacion de comunicaciones, la sala de consulta, el registro de revisiones y
+las fichas de entrada fueron ordenadas con una mano mas firme, de modo que
+cada una se reconozca al instante por su oficio y no solo por su titulo.
+
+Hay menos rigidez de tablero y mas disciplina de archivo. Las hojas de ruta
+se llenan como formularios verdaderos; la correspondencia se reparte como en
+un casillero de oficina; las senales del distrito se leen como trafico de
+estacion; y las fichas de consulta muestran mejor su peso dentro del mueble.
+
 ## v0.20.0 - El gabinete encuentra su propia mano
-
-La oficina del cronista ha dejado atras el ultimo resto de disfraz. Hasta
-anoche aun habia hojas que, por mas limpias que estuvieran, se sentian
-prestadas: formularios de ruta, actas de autorizacion, fichas de registro,
-la sala misma donde se consultan las pruebas y el gran registro de
-revisiones. Esta noche todos esos papeles fueron rehechos con una mano mas
-segura. Ahora parecen nacidos del mismo mueble.
-
-La sala de consulta clasifica mejor sus fichas; el libro de revisiones se
-abre como un folio realmente archivado; las entradas a servidores y las
-ordenes de confirmacion se llenan como formularios sellados; el espejo de
-observacion ofrece su propia placa, y el conjunto entero respira con menos
-rigidez de tablero y mas oficio de imprenta.
-
-## v0.19.0 - La interfaz aprende modales de imprenta
 
 El gabinete ya tenia su estructura; esta noche aprendio a comportarse como
 una obra terminada. Las cabeceras dejaron de alzar tanto la voz, los paneles

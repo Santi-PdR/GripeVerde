@@ -167,13 +167,14 @@ public class DiaryDirectJoinScreen extends Screen {
         PaperTexture.drawClean(gfx, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.OFFICIAL);
         DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
 
+        boolean ready = this.selectButton != null && this.selectButton.active;
         int headerBottom = ExpedientHeader.draw(gfx, this.font, this.panelX, this.panelY, this.panelW,
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT XII" : "EXPEDIENTE XII",
             this.title,
             "- " + Component.translatable("gripeverde.direct.subtitle").getString() + " -",
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · UNMAPPED DOOR" : "EC-QV/1897 · PUERTA SIN MAPA",
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Enter a foreign address as if filling a sealed field form." : "Ingrese una direccion extranjera como quien llena un formulario sellado.",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "MANUAL" : "MANUAL",
+            ready ? (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "READY" : "LISTO") : (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "DRAFT" : "BORRADOR"),
             DiaryTheme.BRONZE,
             reveal);
 
