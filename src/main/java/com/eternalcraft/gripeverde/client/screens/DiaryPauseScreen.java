@@ -55,6 +55,7 @@ public class DiaryPauseScreen extends PauseScreen {
     private static final int BTN_GAP = 4;
 
     private int animTick = 0;
+    private long pauseOpenedAtMs = 0L;
 
     // ── v0.16.0: la pausa responde ──
     private boolean candleOut = false;
@@ -79,6 +80,7 @@ public class DiaryPauseScreen extends PauseScreen {
 
     @Override
     protected void init() {
+        this.pauseOpenedAtMs = System.currentTimeMillis();
         int px = panelX();
         int py = panelY();
         int pw = panelW();
@@ -484,7 +486,7 @@ public class DiaryPauseScreen extends PauseScreen {
         g.fill(sx - 6, py + 11, sx + sw + 6, py + 12, DiaryTheme.BRONZE_DARK);
         g.drawString(this.font, state, sx, py + 15, DiaryTheme.INK, false);
 
-        long minutes = (System.currentTimeMillis() - sessionStartMs) / 60000L;
+        long minutes = (System.currentTimeMillis() - pauseOpenedAtMs) / 60000L;
         float calm = Math.max(0f, Math.min(1f, 1f - minutes / 20f));
         int barX = px + 18;
         int barY = py + panelH() - 54;
