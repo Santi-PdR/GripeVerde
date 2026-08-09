@@ -1,5 +1,45 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.20.0 - Identidad de interfaz / pase de consolidacion
+
+### Cambios cerrados
+- Auditoria completa del estado post-v0.19.0: se clasificaron pantallas por
+  madurez visual y se priorizaron las que aun se sentian mas cercanas a una
+  pantalla vanilla tematizada que a una interfaz propia.
+- Rework de pantallas debiles de formulario y archivo:
+  `DiarySkinCustomizationScreen`, `DiaryArchiveScreen`, `DiaryDirectJoinScreen`,
+  `DiaryEditServerScreen`, `DiaryConfirmScreen` y `ChangelogScreen`.
+- `DiaryChrome` refinado otra vez: tarjetas con menos rigidez de dashboard,
+  railes con marcas de registro, status pills mas sobrias y scrollbar mas
+  fisica.
+- `DiarySlider`, `DiaryMusicSlider`, `DiaryAmbienceSlider` y `DiaryToggle`
+  recibieron una lectura aun mas material: instrumentos y placas en vez de
+  simples controles decorados.
+- Se mantuvo la linea documental de `ExpedientHeader`, pero ampliada a varias
+  pantallas que aun no la usaban.
+- Sigue prohibido y ausente todo resourcepack / textura vanilla modificada /
+  handler de packs.
+- Version bump: 0.19.0 -> 0.20.0.
+
+### Riesgos activos / KI nuevos
+- **KI-20 (runtime GUI scale)**: sigue pendiente validacion real en GUI Scale
+  1-4. Las pantallas de formulario y archivo cambiaron de composicion y deben
+  probarse en cliente.
+- **KI-21 (Video + mods externos)**: sin cambios de logica respecto a v0.19,
+  pero sigue pendiente verificacion real con mods que extiendan la pantalla de
+  video.
+- **KI-23 (Archive density)**: la Sala de consulta gano presentacion nueva;
+  conviene validar que la grilla de fichas siga leyendose bien en escalas altas.
+
+### Reglas nuevas
+- **R-FORM-SCREENS-NOT-VANILLA**: pantallas de formulario (join directo,
+  edicion, confirmacion) no deben resolverse como un titulo + dos campos +
+  botones sobre pergamino; deben leerse como documentos oficiales completos.
+- **R-ARCHIVE-SCREENS-IDENTITY**: Changelog y Archive necesitan una identidad
+  de libro/folio/consulta propia, no solo compartir piezas de Options.
+
+---
+
 ## v0.19.0 - Interface overhaul / visual polish
 
 ### Cambios cerrados

@@ -1,5 +1,20 @@
 # Eternal Craft: Gripe Verde
 
+## v0.20.0 - El gabinete encuentra su propia mano
+
+La oficina del cronista ha dejado atras el ultimo resto de disfraz. Hasta
+anoche aun habia hojas que, por mas limpias que estuvieran, se sentian
+prestadas: formularios de ruta, actas de autorizacion, fichas de registro,
+la sala misma donde se consultan las pruebas y el gran registro de
+revisiones. Esta noche todos esos papeles fueron rehechos con una mano mas
+segura. Ahora parecen nacidos del mismo mueble.
+
+La sala de consulta clasifica mejor sus fichas; el libro de revisiones se
+abre como un folio realmente archivado; las entradas a servidores y las
+ordenes de confirmacion se llenan como formularios sellados; el espejo de
+observacion ofrece su propia placa, y el conjunto entero respira con menos
+rigidez de tablero y mas oficio de imprenta.
+
 ## v0.19.0 - La interfaz aprende modales de imprenta
 
 El gabinete ya tenia su estructura; esta noche aprendio a comportarse como

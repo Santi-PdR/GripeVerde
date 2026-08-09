@@ -3,8 +3,30 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/019fe23e-gripeverde`.
-- Version: `0.19.0`.
-- Ultima regla explicita del usuario: pase exclusivamente dedicado a refinar visualmente las interfaces, sin resourcepacks y sin vender mas contenido narrativo como novedad.
+- Version: `0.20.0`.
+- Ultima regla explicita del usuario: nuevo pase importante de identidad visual sobre las interfaces, con auditoria real previa, sin resourcepacks ni nuevas mecanicas.
+
+### DECISION 2026-08-09: identidad de interfaz (v0.20.0)
+
+Se hizo una auditoria pantalla por pantalla del estado post-v0.19.0 y se
+confirmo que el sistema visual ya existia, pero algunas salas aun parecian
+formularios vanilla tematizados. La decision de esta sesion fue atacar esas
+pantallas debiles en vez de volver a sumar estructura al hub principal.
+
+Pantallas priorizadas por debilidad visual:
+- `DiarySkinCustomizationScreen`
+- `DiaryArchiveScreen`
+- `DiaryDirectJoinScreen`
+- `DiaryEditServerScreen`
+- `DiaryConfirmScreen`
+- `ChangelogScreen`
+
+Criterio rector del pase:
+- menos apariencia de dashboard documental
+- mas identidad de formulario, folio, acta o archivo segun cada caso
+- mantener `ExpedientHeader`/`DiaryChrome`, pero usarlos con mas composicion y
+  menos acumulacion de cajas
+- reforzar que cada pantalla responda a una pieza fisica del gabinete
 
 ### DECISION 2026-08-09: interface overhaul / visual polish (v0.19.0)
 
@@ -127,9 +149,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.19.0
-- build.gradle: version = '0.19.0'
-- GripeVerdeMod.VERSION: "0.19.0"
+- Version estable actual: v0.20.0
+- build.gradle: version = '0.20.0'
+- GripeVerdeMod.VERSION: "0.20.0"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10
 - Working tree esperado al retomar: limpio

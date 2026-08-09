@@ -5,21 +5,20 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.19.0 - La interfaz aprende modales de imprenta**
+**v0.20.0 - El gabinete encuentra su propia mano**
 
-Tras el pase estructural anterior, el gabinete recibio una nueva mano de
-pulido dedicada ya no a sumar mas bloques, sino a refinar su presencia.
-Las cabeceras documentales se vuelven mas sobrias, las tarjetas y railes
-pierden rigidez de tablero, los deslizadores pasan a leerse como
-instrumentos de medicion y los toggles como pequenas piezas mecanicas.
-Title, Pause, Options, Sound, Video, Controls, Chat, Accessibility,
-Language, Online, Credits y Multiplayer quedan mas cohesionados entre si,
-con mejor jerarquia, profundidad y respuesta visual sin tocar ninguna
-textura vanilla ni recurrir a resourcepacks.
+Tras ordenar su estructura y aprender modales de imprenta, el gabinete dio
+un paso mas: varias pantallas que aun se sentian como formularios vanilla
+vestidos sobre papel fueron rehechas como piezas propias del mismo mundo.
+La sala de consulta, el registro de revisiones, las fichas de conexion, el
+espejo de observacion y los formularios de autorizacion ya no parecen
+pantallas sueltas con un marco tematico, sino partes de una oficina comun,
+con composicion mas fisica, mejor jerarquia y una identidad visual mas
+convincente.
 
 ## Resumen visible del Mod Menu
 
-Eternal Craft: Gripe Verde convierte los menus de Minecraft en un gabinete victoriano bajo cuarentena. El menu principal muestra una ciudad oscura con lluvia, niebla, reloj de bolsillo, carteles oficiales, musica y ambiente propio, con una composicion editorial mas clara y menos apariencia de menu vanilla decorado. El gabinete de opciones funciona como mesa central; sonido como sala instrumental; video como consola de observacion; controles como manual operativo; idioma como archivo linguistico; chat como correspondencia; accesibilidad como expediente de percepcion; online y multiplayer como registros de conexion; creditos como acta final. Todo comparte un mismo lenguaje visual, pero sin caer en el mismo template repetido.
+Eternal Craft: Gripe Verde convierte los menus de Minecraft en un gabinete victoriano bajo cuarentena. El menu principal muestra una ciudad oscura con lluvia, niebla, reloj de bolsillo, carteles oficiales, musica y ambiente propio, mientras que cada sala del gabinete adopta una identidad concreta: Options como mesa central, Sound como sala instrumental, Video como aparato de observacion, Controls como manual operativo, Language como archivo linguistico, Chat como correspondencia, Accessibility como expediente de percepcion, Multiplayer como registro de hospedajes, Credits como acta final y las pantallas de formulario como documentos oficiales. El objetivo ya no es solo tematizar vanilla, sino hacer que la interfaz parezca realmente propia de Gripe Verde.
 
 Los contenedores del juego conservan su aspecto vanilla original; el mod no altera las texturas de los contenedores ni usa resourcepacks. El mod es client-side y no agrega gameplay.
 

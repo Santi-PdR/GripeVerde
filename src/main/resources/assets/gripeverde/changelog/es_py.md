@@ -2,6 +2,15 @@
 ## Cronica bajo sello
 
 
+## Version 0.20 - El gabinete encuentra su propia mano
+
+Varias hojas que antes parecian apenas vestidas para la ocasion fueron
+reescritas con la mano propia del gabinete. La sala de consulta, el
+registro de revisiones, los formularios de entrada y autorizacion, y el
+pequeno espejo de observacion pertenecen ahora con mas claridad a una
+mismo oficina, con mejor orden, mejor peso y menos ademan prestado.
+
+
 ## Version 0.18 - 0.19 - El gabinete aprende modales definitivos
 
 La casa del cronista se presenta ahora con mas orden y menos ruido. La

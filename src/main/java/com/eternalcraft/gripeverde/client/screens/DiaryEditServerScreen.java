@@ -3,6 +3,8 @@ package com.eternalcraft.gripeverde.client.screens;
 import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
+import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
 import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
@@ -24,8 +26,8 @@ import net.minecraft.network.chat.Component;
  */
 public class DiaryEditServerScreen extends Screen {
 
-    private static final int PANEL_MAX_W = 340;
-    private static final int PANEL_MAX_H = 220;
+    private static final int PANEL_MAX_W = 452;
+    private static final int PANEL_MAX_H = 232;
     private static final Component NAME_LABEL = Component.translatable("addServer.enterName");
     private static final Component IP_LABEL = Component.translatable("addServer.enterIp");
 
@@ -36,6 +38,8 @@ public class DiaryEditServerScreen extends Screen {
     private EditBox nameEdit;
     private EditBox ipEdit;
     private DiaryButton doneButton;
+    private int panelX, panelY, panelW, panelH;
+    private long openedAtMs = 0L;
 
     public DiaryEditServerScreen(Screen parent, BooleanConsumer callback, ServerData serverData) {
         super(Component.translatable("addServer.title"));
@@ -46,17 +50,17 @@ public class DiaryEditServerScreen extends Screen {
 
     @Override
     protected void init() {
-        int panelW = Math.min(PANEL_MAX_W, this.width - 40);
-        int panelH = Math.min(PANEL_MAX_H, this.height - 30);
-        int panelX = (this.width - panelW) / 2;
-        int panelY = (this.height - panelH) / 2;
+        this.panelW = Math.min(PANEL_MAX_W, this.width - 34);
+        this.panelH = Math.min(PANEL_MAX_H, this.height - 28);
+        this.panelX = (this.width - panelW) / 2;
+        this.panelY = (this.height - panelH) / 2;
 
-        int fieldW = PANEL_MAX_W - 60;
-        int fieldX = panelX + 30;
+        int fieldW = this.panelW - 176;
+        int fieldX = this.panelX + 24;
         int fieldH = 20;
 
         // Name field
-        int nameY = panelY + 62;
+        int nameY = this.panelY + 98;
         this.nameEdit = new DiaryTextField(this.font, fieldX, nameY, fieldW, fieldH, Component.translatable("addServer.enterName"));
         this.nameEdit.setMaxLength(64);
         this.nameEdit.setValue(this.serverData.name != null ? this.serverData.name : "");
@@ -65,7 +69,7 @@ public class DiaryEditServerScreen extends Screen {
         this.setInitialFocus(this.nameEdit);
 
         // IP field
-        int ipY = panelY + 108;
+        int ipY = this.panelY + 144;
         this.ipEdit = new DiaryTextField(this.font, fieldX, ipY, fieldW, fieldH, Component.translatable("addServer.enterIp"));
         this.ipEdit.setMaxLength(128);
         this.ipEdit.setValue(this.serverData.ip != null ? this.serverData.ip : "");
@@ -75,7 +79,7 @@ public class DiaryEditServerScreen extends Screen {
         // Botones inferiores
         int btnW = 100;
         int btnH = 20;
-        int btnY = panelY + PANEL_MAX_H - btnH - 16;
+        int btnY = this.panelY + this.panelH - btnH - 16;
         int gap = 12;
         int totalW = btnW * 2 + gap;
         int startX = (this.width - totalW) / 2;
@@ -93,6 +97,7 @@ public class DiaryEditServerScreen extends Screen {
         this.addRenderableWidget(cancel);
 
         this.updateDoneButton();
+        this.openedAtMs = System.currentTimeMillis();
     }
 
     private void updateDoneButton() {
@@ -130,47 +135,37 @@ public class DiaryEditServerScreen extends Screen {
 
     @Override
     public void render(GuiGraphics gfx, int mouseX, int mouseY, float partial) {
-        // Fondo: escena viva del Title
         try {
             com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(gfx, this.width, this.height);
-                } catch (Throwable ignored) {}
+        } catch (Throwable ignored) {}
 
-        // Overlay atenuador
+        float reveal = DiaryChrome.reveal(this.openedAtMs, 220L);
+        DiaryChrome.drawPanelScaffold(gfx, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.BRONZE);
+        PaperTexture.drawClean(gfx, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.OFFICIAL);
+        DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
 
-        // Panel pergamino
-        int panelW = Math.min(PANEL_MAX_W, this.width - 40);
-        int panelH = Math.min(PANEL_MAX_H, this.height - 30);
-        int panelX = (this.width - panelW) / 2;
-        int panelY = (this.height - panelH) / 2;
-        DiaryChrome.drawPanelShadow(gfx, panelX, panelY, panelW, panelH);
-        PaperTexture.drawClean(gfx, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
+        int headerBottom = ExpedientHeader.draw(gfx, this.font, this.panelX, this.panelY, this.panelW,
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT XI" : "EXPEDIENTE XI",
+            this.title,
+            "- " + Component.translatable("gripeverde.edit.subtitle").getString() + " -",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · FOREIGN ENTRY" : "EC-QV/1897 · ENTRADA EXTRANJERA",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "A server ledger written by hand and archived under one seal." : "Una ficha de servidor escrita a mano y archivada bajo un mismo sello.",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "FORM" : "FORMULARIO",
+            DiaryTheme.BRONZE,
+            reveal);
 
-        // Cosmetica
-        DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, panelW, panelH);
+        int noteX = this.panelX + this.panelW - 142;
+        DiaryChrome.drawInsetCard(gfx, this.font, noteX, headerBottom, 122, 94,
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "ENTRY" : "FICHA",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Registry card" : "Tarjeta de registro",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Name and address remain on the same sheet, as every foreign lodging ought to." : "Nombre y direccion permanecen en la misma hoja, como corresponde a todo hospedaje extranjero.",
+            DiaryTheme.BRONZE);
 
-        // Titulo
-        int titleY = panelY + 18;
-        String titleStr = this.title.getString();
-        int titleW = this.font.width(titleStr);
-        gfx.drawString(this.font, titleStr, (this.width - titleW) / 2, titleY, DiaryChrome.INK_TITLE, false);
+        gfx.drawString(this.font, NAME_LABEL.getString(), this.panelX + 24, headerBottom + 10, DiaryChrome.INK_SUBTITLE, false);
+        gfx.fill(this.panelX + 24, headerBottom + 24, noteX - 12, headerBottom + 25, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 42));
+        gfx.drawString(this.font, IP_LABEL.getString(), this.panelX + 24, headerBottom + 56, DiaryChrome.INK_SUBTITLE, false);
+        gfx.fill(this.panelX + 24, headerBottom + 70, noteX - 12, headerBottom + 71, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 24));
 
-        // Subtitulo
-        String subtitle = "- " + Component.translatable("gripeverde.edit.subtitle").getString() + " -";
-        int subW = this.font.width(subtitle);
-        gfx.drawString(this.font, subtitle, (this.width - subW) / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
-
-        // Divisor con rombo
-        DiaryChrome.drawInkDivider(gfx, panelX + 24, titleY + 26, panelW - 48);
-        DiaryChrome.drawDivisorLozenge(gfx, this.width / 2, titleY + 26);
-
-        // Labels de los EditBox
-        String nameLbl = NAME_LABEL.getString();
-        gfx.drawString(this.font, nameLbl, panelX + 30, panelY + 48, DiaryChrome.INK_SUBTITLE, false);
-
-        String ipLbl = IP_LABEL.getString();
-        gfx.drawString(this.font, ipLbl, panelX + 30, panelY + 94, DiaryChrome.INK_SUBTITLE, false);
-
-        // Widgets (EditBox + botones Diary)
         for (var w : this.renderables) {
             if (w instanceof AbstractWidget aw && aw.visible) {
                 w.render(gfx, mouseX, mouseY, partial);

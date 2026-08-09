@@ -2,6 +2,15 @@
 ## Chronicle under seal
 
 
+## Version 0.20 - The cabinet finds its own hand
+
+Several leaves that once felt merely dressed for the occasion have now
+been rewritten in the cabinet's own hand. The consultation room, the
+register of revisions, the forms of entry and authorisation, and the
+small mirror of observation now belong more clearly to the same office,
+with better order, better weight, and less borrowed manner.
+
+
 ## Version 0.18 - 0.19 - The cabinet learns its final manners
 
 The house of the chronicler now presents itself with greater order and

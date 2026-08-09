@@ -7,9 +7,11 @@ import com.eternalcraft.gripeverde.client.lore.ChroniclerMemory;
 import com.eternalcraft.gripeverde.client.lore.Discoveries;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
+import com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -40,6 +42,7 @@ public class DiaryArchiveScreen extends Screen {
     private String viewingDoc = DOC_NONE;
     private int hoverCard = -1;
     private int lastMouseX = -1, lastMouseY = -1;
+    private long openedAtMs = 0L;
 
     private static final int COLS = 5;
     private static final int CARD_H = 22;
@@ -75,6 +78,7 @@ public class DiaryArchiveScreen extends Screen {
             if (allowed) viewingDoc = initialDoc;
             initialDoc = DOC_NONE;
         }
+        this.openedAtMs = System.currentTimeMillis();
     }
 
     @Override
@@ -92,12 +96,15 @@ public class DiaryArchiveScreen extends Screen {
         this.lastMouseY = mouseY;
         QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
 
-        DiaryChrome.drawPanelShadow(g, panelX, panelY, panelW, panelH);
+        float reveal = DiaryChrome.reveal(this.openedAtMs, 260L);
+        DiaryChrome.drawPanelScaffold(g, panelX, panelY, panelW, panelH, DiaryTheme.BRONZE);
         PaperTexture.drawClean(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.ARCHIVE);
         DiaryChrome.drawCornerOrnaments(g, panelX, panelY, panelW, panelH);
 
         boolean en = Discoveries.isEnglish();
         int cx = panelX + panelW / 2;
+        int found = ChroniclerMemory.discoveredCount();
+        int total = Discoveries.ALL.length;
 
         if (!DOC_NONE.equals(viewingDoc)) {
             renderDocument(g, en);
@@ -105,40 +112,31 @@ public class DiaryArchiveScreen extends Screen {
             return;
         }
 
-        // Cabecera
-        String titleStr = en ? "Reading Room" : "Sala de consulta";
-        int tw = this.font.width(titleStr);
-        g.drawString(this.font, titleStr, cx - tw / 2, panelY + 10, DiaryChrome.INK_TITLE, false);
-        String sub = en ? "- The chronicler's cards -" : "- Las fichas del cronista -";
-        int sw = this.font.width(sub);
-        g.drawString(this.font, sub, cx - sw / 2, panelY + 23, DiaryChrome.INK_SUBTITLE, false);
-        DiaryChrome.drawInkDivider(g, panelX + 18, panelY + 37, panelW - 36);
+        int headerBottom = ExpedientHeader.draw(g, this.font, panelX, panelY, panelW,
+            en ? "EXPEDIENT XIV" : "EXPEDIENTE XIV",
+            Component.literal(en ? "Reading Room" : "Sala de consulta"),
+            en ? "- the chronicler's cards -" : "- las fichas del cronista -",
+            en ? "EC-QV/1897 · CONSULTATION FILE" : "EC-QV/1897 · FICHA DE CONSULTA",
+            en ? "Recovered observations filed by the same diseased office." : "Observaciones recuperadas y archivadas por la misma oficina enferma.",
+            found >= total ? (en ? "COMPLETE" : "COMPLETO") : (en ? "CATALOGUED" : "CATALOGADO"),
+            DiaryTheme.BRONZE,
+            reveal);
 
-        // Progreso + sello de estado
-        int found = ChroniclerMemory.discoveredCount();
-        int total = Discoveries.ALL.length;
-        String prog = en ? ("cards found: " + found + " of " + total)
-                         : ("fichas halladas: " + found + " de " + total);
-        g.drawString(this.font, prog, panelX + 20, panelY + 44, DiaryChrome.INK_FLAVOR, false);
+        int progressBoxX = panelX + panelW - 162;
+        DiaryChrome.drawInsetCard(g, this.font, progressBoxX, headerBottom, 142, 84,
+            en ? "ARCHIVE STATE" : "ESTADO DEL ARCHIVO",
+            found + " / " + total,
+            en ? "Every recovered card remains indexed in the reading room." : "Cada ficha recuperada permanece indexada en la sala de consulta.",
+            DiaryTheme.BRONZE);
+        DiaryProgressBar.draw(g, progressBoxX + 10, headerBottom + 54, 122, 14,
+            total <= 0 ? 0f : (found / (float) total),
+            en ? "catalogue" : "catalogo",
+            DiaryProgressBar.Style.INK);
 
-        String stampTxt;
-        int stampCol;
-        if (found <= 0) { stampTxt = en ? "PENDING" : "PENDIENTE"; stampCol = 0xFF6B4226; }
-        else if (found >= total) { stampTxt = en ? "COMPLETE" : "COMPLETO"; stampCol = 0xFF3D5A28; }
-        else { stampTxt = en ? "IN PROGRESS" : "EN CURSO"; stampCol = 0xFF6E1F16; }
-        int stw = this.font.width(stampTxt);
-        int sx = panelX + panelW - stw - 34;
-        int sy = panelY + 42;
-        g.fill(sx - 5, sy - 2, sx + stw + 5, sy + 11, DiaryTheme.withAlpha(stampCol, 36));
-        g.fill(sx - 5, sy - 2, sx + stw + 5, sy - 1, stampCol);
-        g.fill(sx - 5, sy + 10, sx + stw + 5, sy + 11, stampCol);
-        g.drawString(this.font, stampTxt, sx, sy, stampCol, false);
-
-        // Grilla de fichas
-        int gridX = panelX + 20;
-        int innerW = panelW - 40;
-        int cw = (innerW - (COLS - 1) * CARD_GAP) / COLS;
-        int gridY = panelY + 60;
+        int gridX = panelX + 18;
+        int gridW = progressBoxX - gridX - 10;
+        int cw = (gridW - (COLS - 1) * CARD_GAP) / COLS;
+        int gridY = headerBottom;
         hoverCard = -1;
         for (int i = 0; i < Discoveries.ALL.length; i++) {
             int col = i % COLS;
@@ -149,33 +147,10 @@ public class DiaryArchiveScreen extends Screen {
             boolean disc = ChroniclerMemory.isDiscovered(id);
             boolean hover = mouseX >= x && mouseX < x + cw && mouseY >= y && mouseY < y + CARD_H;
             if (hover) hoverCard = i;
-
-            if (disc) {
-                g.fill(x, y + 1, x + cw, y + CARD_H + 1, DiaryTheme.withAlpha(0x00000000, 38));
-                g.fill(x, y, x + cw, y + CARD_H, hover ? 0xFFDCCBA0 : 0xFFD2BE8E);
-                g.fill(x, y, x + cw, y + 1, 0xFF8E6A35);
-                g.fill(x, y + CARD_H - 1, x + cw, y + CARD_H, 0xFF8E6A35);
-                g.fill(x, y, x + 1, y + CARD_H, 0xFF8E6A35);
-                g.fill(x + cw - 1, y, x + cw, y + CARD_H, 0xFF8E6A35);
-                // marca de lacre
-                g.fill(x + 3, y + 3, x + 7, y + 7, 0xFF6E1F16);
-                String name = Discoveries.nameFor(id);
-                String fit = truncate(name, cw - 12);
-                g.drawString(this.font, fit, x + 9, y + 8, DiaryTheme.INK, false);
-            } else {
-                g.fill(x, y, x + cw, y + CARD_H, DiaryTheme.withAlpha(0x003D2A18, hover ? 30 : 16));
-                g.fill(x, y, x + cw, y + 1, DiaryTheme.withAlpha(0x008E6A35, 70));
-                g.fill(x, y + CARD_H - 1, x + cw, y + CARD_H, DiaryTheme.withAlpha(0x008E6A35, 70));
-                g.fill(x, y, x + 1, y + CARD_H, DiaryTheme.withAlpha(0x008E6A35, 70));
-                g.fill(x + cw - 1, y, x + cw, y + CARD_H, DiaryTheme.withAlpha(0x008E6A35, 70));
-                String q = "?";
-                int qw = this.font.width(q);
-                g.drawString(this.font, q, x + (cw - qw) / 2, y + 7, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, hover ? 150 : 70), false);
-            }
+            drawArchiveCard(g, x, y, cw, id, disc, hover, i + 1);
         }
 
-        // Texto de la ficha bajo el cursor
-        int infoY = gridY + ((Discoveries.ALL.length + COLS - 1) / COLS) * (CARD_H + CARD_GAP) + 6;
+        int infoY = gridY + ((Discoveries.ALL.length + COLS - 1) / COLS) * (CARD_H + CARD_GAP) + 10;
         if (hoverCard >= 0) {
             String id = Discoveries.ALL[hoverCard];
             if (ChroniclerMemory.isDiscovered(id)) {
@@ -188,10 +163,9 @@ public class DiaryArchiveScreen extends Screen {
                 cx, infoY, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 120));
         }
 
-        // Papeles sueltos (documentos recuperados)
-        int docsY = infoY + 16;
-        DiaryChrome.drawInkDivider(g, panelX + 26, docsY - 4, panelW - 52);
-        int dx = panelX + 26;
+        int docsY = infoY + 18;
+        DiaryChrome.drawInkDivider(g, panelX + 22, docsY - 4, panelW - 44);
+        int dx = panelX + 24;
         if (ChroniclerMemory.isDiscovered(Discoveries.CODE_1897)) {
             drawPaperDoc(g, dx, docsY + 4, en ? "The night of the outbreak" : "La noche del brote", mouseX, mouseY);
             dx += 130;
@@ -205,29 +179,61 @@ public class DiaryArchiveScreen extends Screen {
         }
 
         super.render(g, mouseX, mouseY, partialTick);
-
-        // Marginalia del cronista
         com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
         com.eternalcraft.gripeverde.client.lore.Marginalia.draw(g, panelX, panelY, panelW, panelH);
         Discoveries.drawToast(g, this.width);
     }
 
+    private void drawArchiveCard(GuiGraphics g, int x, int y, int w, String id, boolean discovered, boolean hover, int folio) {
+        int tabX = x + w - 16;
+        if (discovered) {
+            g.fill(x + 1, y + 1, x + w + 1, y + CARD_H + 1, 0x14000000);
+            g.fill(x, y, x + w, y + CARD_H, hover ? 0xFFE0CFAB : 0xFFD5C298);
+            g.fill(x, y, x + w, y + 1, 0xFF8E6A35);
+            g.fill(x, y + CARD_H - 1, x + w, y + CARD_H, 0xFF8E6A35);
+            g.fill(x, y, x + 1, y + CARD_H, 0xFF8E6A35);
+            g.fill(x + w - 1, y, x + w, y + CARD_H, 0xFF8E6A35);
+            g.fill(tabX, y - 2, tabX + 12, y + 2, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 120));
+            g.fill(x + 5, y + 4, x + 11, y + 10, 0xFF6E1F16);
+            String fit = truncate(Discoveries.nameFor(id), w - 22);
+            g.drawString(this.font, fit, x + 15, y + 7, DiaryTheme.INK, false);
+            String folioTxt = String.valueOf(folio);
+            int fw = this.font.width(folioTxt);
+            g.drawString(this.font, folioTxt, x + w - fw - 5, y + 7, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 150), false);
+        } else {
+            g.fill(x, y, x + w, y + CARD_H, DiaryTheme.withAlpha(0x003D2A18, hover ? 28 : 14));
+            g.fill(x, y, x + w, y + 1, DiaryTheme.withAlpha(0x008E6A35, 60));
+            g.fill(x + 4, y + 10, x + w - 4, y + 11, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 20));
+            String q = "?";
+            int qw = this.font.width(q);
+            g.drawString(this.font, q, x + (w - qw) / 2, y + 7, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, hover ? 150 : 70), false);
+        }
+    }
+
     private void drawPaperDoc(GuiGraphics g, int x, int y, String label, int mx, int my) {
         boolean hover = mx >= x && mx < x + 124 && my >= y && my < y + 18;
+        g.fill(x + 1, y + 1, x + 125, y + 19, 0x12000000);
         g.fill(x, y, x + 124, y + 18, hover ? 0xFFDCCBA0 : 0xFFCFB98C);
         g.fill(x, y, x + 124, y + 1, 0xFF8E6A35);
         g.fill(x, y + 17, x + 124, y + 18, 0xFF8E6A35);
         g.fill(x, y, x + 1, y + 18, 0xFF8E6A35);
         g.fill(x + 123, y, x + 124, y + 18, 0xFF8E6A35);
-        String fit = truncate(label, 114);
+        g.fill(x + 103, y - 2, x + 116, y + 2, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 110));
+        String fit = truncate(label, 108);
         g.drawString(this.font, fit, x + 5, y + 5, DiaryTheme.INK, false);
     }
 
     private void renderDocument(GuiGraphics g, boolean en) {
         int tx = panelX + 34;
-        int ty = panelY + 22;
+        int ty = panelY + 34;
         int maxW = panelW - 68;
         int lh = 12;
+
+        DiaryChrome.drawInsetCard(g, this.font, panelX + 18, panelY + 12, panelW - 36, panelH - 70,
+            en ? "RECOVERED PAPER" : "PAPEL RECUPERADO",
+            en ? "sealed transcript" : "transcripcion sellada",
+            en ? "The reading room isolates each recovered document from the general catalogue." : "La sala de consulta separa cada documento recuperado del catalogo general.",
+            DiaryTheme.BRONZE);
 
         if (DOC_TELEGRAM.equals(viewingDoc)) {
             ty = drawWrapped(g, textColor(0xFF6E1F16), ty, maxW, tx,
