@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.1 - Correccion del registro sonoro
+
+La oficina no cambio de aspecto esta noche, pero si de disciplina interna.
+Los sonidos del gabinete quedaron registrados de una manera mas segura para
+que el archivo pueda abrirse sin tropezar al comienzo de la vigilia.
+
 ## v0.21.0 - La oficina aprende a cerrar filas
 
 No todas las salas del gabinete habian alcanzado la misma madurez. Algunas,

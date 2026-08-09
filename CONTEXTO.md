@@ -3,8 +3,16 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/019fe23e-gripeverde`.
-- Version: `0.21.0`.
-- Ultima regla explicita del usuario: cerrar la brecha entre pantallas A/B y las C/D, priorizando cohesion e identidad sobre las salas secundarias sin volver a un rediseño global.
+- Version: `0.21.1`.
+- Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks.
+
+### DECISION 2026-08-09: hotfix de arranque (v0.21.1)
+
+Tras probar el jar real en cliente, aparecio un `NoSuchMethodError` en
+`ModSounds`: el runtime de Forge 1.20.1 no estaba resolviendo
+`SoundEvent.createVariableRangeEvent(ResourceLocation)` como en dev-time.
+Se corrigio el registro para construir `SoundEvent` de forma compatible via
+reflection/constructores conocidos, evitando el bloqueo de arranque.
 
 ### DECISION 2026-08-09: cohesion y cierre de interfaces secundarias (v0.21.0)
 
@@ -148,9 +156,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.21.0
-- build.gradle: version = '0.21.0'
-- GripeVerdeMod.VERSION: "0.21.0"
+- Version estable actual: v0.21.1
+- build.gradle: version = '0.21.1'
+- GripeVerdeMod.VERSION: "0.21.1"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10
 - Working tree esperado al retomar: limpio

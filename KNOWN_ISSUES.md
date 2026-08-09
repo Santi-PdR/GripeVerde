@@ -1,5 +1,21 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.21.1 - Hotfix de SoundEvent / arranque
+
+### Cambios cerrados
+- Corregido `client/audio/ModSounds.java`: el registro ya no depende
+  ciegamente de `SoundEvent.createVariableRangeEvent(...)`, que en el runtime
+  real estaba provocando `NoSuchMethodError` durante el arranque del cliente.
+- Hotfix sin cambios visuales ni de gameplay. Solo arranque/compat runtime.
+- Version bump: 0.21.0 -> 0.21.1.
+
+### Riesgos activos / KI
+- **KI-25 (build local del usuario)**: si reaparece un crash distinto al
+  iniciar, revisar primero el nuevo jar `gripeverde-0.21.1.jar` y confirmar
+  que no quede mezclado con jars viejos del mod en `mods/`.
+
+---
+
 ## v0.21.0 - Cohesion y cierre de interfaces secundarias
 
 ### Cambios cerrados

@@ -5,14 +5,12 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.21.0 - La oficina aprende a cerrar filas**
+**v0.21.1 - Correccion del registro sonoro**
 
-Con el gabinete principal ya asentado, este pase se concentro en las salas
-que aun se sentian mas cercanas a un formulario vanilla vestido sobre papel.
-Correspondencia, comunicaciones, consulta, revisiones y fichas de entrada
-recibieron un cierre de composicion: menos apariencia de dashboard, mas
-identidad de oficina real, mejor jerarquia y mejor lectura de cada funcion.
-El resultado no añade mas ruido; ordena mejor lo que ya existia.
+Hotfix tecnico sobre la linea v0.21.0. Se corrigio el registro de
+`SoundEvent` del mod para que el jar no falle al iniciar en el runtime real
+de Forge 1.20.1. No cambia la direccion visual del gabinete: corrige un
+bloqueo de arranque y mantiene intacta la interfaz ya entregada.
 
 ## Resumen visible del Mod Menu
 
