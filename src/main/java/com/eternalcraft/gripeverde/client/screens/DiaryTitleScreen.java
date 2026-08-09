@@ -285,7 +285,6 @@ public class DiaryTitleScreen extends Screen {
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderTitleScene(g, this.width, this.height);
         drawGlassPatina(g);
         drawDawnIfDue(g);
-        drawTitleCommandDeck(g);
 
         if (!cinematicMode) {
             // v0.16.0: el reloj sostenido en la mano ocupa la vigilia entera.
@@ -395,62 +394,6 @@ public class DiaryTitleScreen extends Screen {
         int wTxt = this.font.width(line);
         g.drawString(this.font, line, this.width / 2 - wTxt / 2, this.height / 3 + 24,
             (Math.max(20, pulse) << 24) | 0xA8B890, false);
-    }
-
-    private void drawTitleCommandDeck(GuiGraphics g) {
-        if (cinematicMode) return;
-        LayoutRegion leftCol = leftColumn();
-        int btnX = leftCol.x;
-        int totalBtnH = BTN_H * 2 + Spacing.GAP_MEDIUM;
-        int btnY = leftCol.anchorY(Anchor.BOT_LEFT, totalBtnH) - Spacing.GAP_LARGE;
-
-        int deckX = btnX - 18;
-        int deckY = btnY - 18;
-        int deckW = BTN_W + 36;
-        int deckH = totalBtnH + 36;
-        g.fill(deckX + 4, deckY + 4, deckX + deckW + 4, deckY + deckH + 4, 0x18000000);
-        g.fill(deckX, deckY, deckX + deckW, deckY + deckH, 0xA018100C);
-        g.fill(deckX, deckY, deckX + deckW, deckY + 2, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 170));
-        g.fill(deckX, deckY + deckH - 1, deckX + deckW, deckY + deckH, DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 210));
-        g.fill(deckX, deckY, deckX + 1, deckY + deckH, DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 210));
-        g.fill(deckX + deckW - 1, deckY, deckX + deckW, deckY + deckH, DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 210));
-        g.drawString(this.font,
-            isEnglishSelected() ? "OFFICIAL ROUTES" : "RUTAS OFICIALES",
-            deckX + 12, deckY + 8, DiaryTheme.BONE_WHITE, false);
-        g.drawString(this.font,
-            isEnglishSelected() ? "line and arsenal" : "cordon y arsenal",
-            deckX + 12, deckY + 20, DiaryTheme.SEPIA_LIGHT, false);
-
-        LayoutRegion rightCol = rightColumn();
-        int quitX = rightCol.x + rightCol.w - BTN_SLIM_W;
-        int controlY = isMinimalMode()
-            ? rightCol.anchorY(Anchor.BOT_LEFT, BTN_SLIM_H) - Spacing.GAP_LARGE - BTN_SLIM_H - Spacing.GAP_SMALL
-            : rightCol.anchorY(Anchor.BOT_LEFT, BTN_SLIM_H) - Spacing.GAP_LARGE;
-        int controlX = isMinimalMode() ? quitX : quitX - BTN_SLIM_W - Spacing.GAP_SMALL;
-        int controlW = isMinimalMode() ? BTN_SLIM_W : BTN_SLIM_W * 2 + Spacing.GAP_SMALL;
-        int controlDeckX = controlX - 12;
-        int controlDeckY = controlY - 16;
-        int controlDeckH = isMinimalMode() ? BTN_SLIM_H * 2 + Spacing.GAP_SMALL + 28 : BTN_SLIM_H + 28;
-        g.fill(controlDeckX, controlDeckY, controlDeckX + controlW + 24, controlDeckY + controlDeckH, 0x8A120A05);
-        g.fill(controlDeckX, controlDeckY, controlDeckX + controlW + 24, controlDeckY + 2, DiaryTheme.withAlpha(DiaryTheme.REDCOAT_DARK, 180));
-        g.drawString(this.font,
-            isEnglishSelected() ? "CABINET COMMAND" : "MANDO DEL GABINETE",
-            controlDeckX + 10, controlDeckY + 8, DiaryTheme.BONE_WHITE, false);
-
-        int footerY = this.height - 22;
-        int footerX = 12;
-        int footerW = Math.max(180, this.width - 24);
-        if (footerX + footerW > this.width - 4) footerW = this.width - footerX - 4;
-        g.fill(footerX, footerY - 2, footerX + footerW, footerY + 12, 0x8A120A05);
-        g.fill(footerX, footerY - 2, footerX + footerW, footerY - 1, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 160));
-        String left = isEnglishSelected() ? "EC-QV/1897 · Main registry" : "EC-QV/1897 · Registro principal";
-        String center = isEnglishSelected() ? (MenuMusic.isCrossfading() ? "Gramophone transitioning" : "Gramophone steady") : (MenuMusic.isCrossfading() ? "Gramofono en transicion" : "Gramofono estable");
-        String right = "v" + GripeVerdeMod.VERSION;
-        g.drawString(this.font, left, footerX + 8, footerY + 1, DiaryTheme.SEPIA_LIGHT, false);
-        int cw = this.font.width(center);
-        g.drawString(this.font, center, this.width / 2 - cw / 2, footerY + 1, DiaryTheme.BONE_WHITE, false);
-        int rw = this.font.width(right);
-        g.drawString(this.font, right, this.width - rw - 18, footerY + 1, DiaryTheme.SEPIA_LIGHT, false);
     }
 
     @Override
