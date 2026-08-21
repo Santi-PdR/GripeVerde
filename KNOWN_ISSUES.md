@@ -1,5 +1,38 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.21.7 - El gabinete sin peso muerto (2026-08-21)
+
+### Cambios cerrados
+- 9 clases eliminadas: `VictorianFrame`, `AbstractDiaryScreen`,
+  `DebugCanvasScreen`, `SoundLabScreen`, `DiaryDecorator`, `CandleLight`,
+  `InkEffects`, `DiaryMusicSlider`, `DiaryAmbienceSlider` (los dos sliders
+  combinados en `DiarySlider` generico con label/callback).
+- `DiaryChrome.renderPanelBase` nuevo y aplicado en 14 pantallas; eliminados
+  `drawQuillCursor`, `drawVerticalDivider`, `drawDarkLeatherBackground` y
+  `LEATHER_BASE` (muertos). Conservadas las decoraciones propias de
+  Changelog (encuadernado) y Credits (marco oficial).
+- Eliminados metodos muertos: `PaperTexture.getOpenCount`/`drawSolidBlob`,
+  `AtmosphereRenderer.getMoonPhaseIndex`, `PosterRenderer.drawVersionPanel`.
+- Lang: 57 claves huerfanas eliminadas de los 25 idiomas (137 -> 80);
+  nueva clave `gripeverde.options.sound.ambience_slider` en los 25 (slider
+  de ambiente localizado, antes hardcodeado en espanol).
+- Conteos: 59 clases Java, 25 lang (80 claves), 35 eventos, 42 OGG,
+  0 PNG. sounds.json <-> ModSounds <-> OGG consistentes (35/35).
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL (hito
+  tecnico; unico cambio visible: look unificado del regulador de ambiente).
+- Version bump: 0.21.6 -> 0.21.7 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-32 (v0.21.7)**: validar en cliente — sala de sonido con los dos
+  reguladores unificados (funcion y aspecto), resto de pantallas Diary sin
+  cambios visuales, y que nada referencie las clases eliminadas (el build
+  con `verifyGripeVerdeNoDeadCode` no falla).
+- KI-27 (v0.21.3), KI-28 (v0.21.4), KI-30 (v0.21.5) y KI-31 (v0.21.6)
+  siguen pendientes de validacion en cliente. KI-29 (2 pistas MenuMusic)
+  requiere OGGs del usuario. KI-20/21/24/25 sin cambios.
+
+---
+
 ## v0.21.6 - El heraldo cuenta la limpieza (2026-08-21)
 
 ### Cambios cerrados

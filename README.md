@@ -5,14 +5,17 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.21.6 - El heraldo cuenta la limpieza**
+**v0.21.7 - El gabinete sin peso muerto**
 
-El Heraldo de la Cuarentena gana noticias nuevas sembradas con el dia real:
-el gabinete vaciado de papeles viejos, un farol del tejado que se apaga
-solo, el gato del kiosco que no roba nada — y la segunda linea del
-periodico varia entre cuatro avisos. El telegrafo oculto acepta la palabra
-`ARCHIVE`, que abre la Sala de consulta para quien quiera ver las fichas
-que faltan. Documentacion sincronizada y version 0.21.6.
+Consolidacion interna: 9 clases eliminadas (marco victoriano sin uso, base
+de pantalla nunca extendida, herramientas de desarrollo inalcanzables, tinta
+decorativa huerfana, y los dos sliders de sonido combinados en el
+`DiarySlider` generico). El pipeline de las 14 pantallas Diary comparte un
+nuevo `DiaryChrome.renderPanelBase` (scaffold + pergamino + esquineros), se
+eliminaron 7 metodos muertos y 57 claves de idioma sin uso (los 25 lang
+quedan en 80 claves). El slider de ambiente de la sala de sonido ahora usa
+clave localizada. 59 clases Java, 25 idiomas, 35 eventos de sonido, 42 OGG,
+0 PNG de contenedores. Documentacion sincronizada y version 0.21.7.
 
 ## Resumen visible del Mod Menu
 
@@ -96,8 +99,8 @@ Reglas actuales:
 
 ## Documentacion
 
-- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.6.
-- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.6).
+- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.7.
+- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.7).
 - `KNOWN_ISSUES.md` - estado tecnico, decisiones activas, errores documentados, KIs.
 - `README.md` - esta portada.
 

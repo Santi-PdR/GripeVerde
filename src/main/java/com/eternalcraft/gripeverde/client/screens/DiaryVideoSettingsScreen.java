@@ -127,9 +127,7 @@ public class DiaryVideoSettingsScreen extends VideoSettingsScreen {
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
         float reveal = DiaryChrome.reveal(this.openedAtMs, 240L);
-        DiaryChrome.drawPanelScaffold(g, this.panelX, this.panelY, this.panelW, this.panelH, DiaryChrome.STEEL_MID);
-        PaperTexture.drawClean(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.TECHNICAL);
-        DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
+        DiaryChrome.renderPanelBase(g, this.panelX, this.panelY, this.panelW, this.panelH, DiaryChrome.STEEL_MID, PaperTexture.PaperKind.TECHNICAL);
 
         int headerBottom = ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW,
             isEnglish() ? "EXPEDIENT VII" : "EXPEDIENTE VII",

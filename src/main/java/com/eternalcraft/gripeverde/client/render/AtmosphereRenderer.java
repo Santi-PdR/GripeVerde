@@ -438,11 +438,6 @@ public class AtmosphereRenderer {
         }
     }
 
-    /** Publico: devuelve el indice de fase actual (0-7). */
-    public static int getMoonPhaseIndex() {
-        return moonPhaseIndex < 0 ? 4 : moonPhaseIndex;
-    }
-
     /** Renderiza la estrella fugaz con trail (llamado desde renderSky). */
     private static void renderShootingStar(GuiGraphics g, int w, int h) {
         if (!shootStarActive) return;

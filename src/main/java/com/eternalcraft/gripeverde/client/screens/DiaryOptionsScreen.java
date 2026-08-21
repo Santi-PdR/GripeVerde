@@ -222,9 +222,7 @@ public class DiaryOptionsScreen extends Screen {
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
 
         float reveal = DiaryChrome.reveal(this.openedAtMs, 260L);
-        DiaryChrome.drawPanelScaffold(g, panelX, panelY, panelW, panelH, DiaryTheme.PLAGUE_GREEN);
-        PaperTexture.drawClean(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.LEDGER);
-        DiaryChrome.drawCornerOrnaments(g, panelX, panelY, panelW, panelH);
+        DiaryChrome.renderPanelBase(g, panelX, panelY, panelW, panelH, DiaryTheme.PLAGUE_GREEN, PaperTexture.PaperKind.LEDGER);
 
         String reference = isEnglishSelected() ? "EC-QV/1897 · CENTRAL DESK" : "EC-QV/1897 · MESA CENTRAL";
         String subtitle = "- " + Component.translatable("gripeverde.options.subtitle").getString() + " -";

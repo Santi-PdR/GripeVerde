@@ -153,9 +153,7 @@ public class DiarySkinCustomizationScreen extends Screen {
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(gfx, this.width, this.height);
 
         float reveal = DiaryChrome.reveal(this.openedAtMs, 240L);
-        DiaryChrome.drawPanelScaffold(gfx, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.PLAGUE_SICK);
-        PaperTexture.drawClean(gfx, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.MEDICAL);
-        DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
+        DiaryChrome.renderPanelBase(gfx, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.PLAGUE_SICK, PaperTexture.PaperKind.MEDICAL);
 
         float visibleRatio = computeVisibleRatio();
         int headerBottom = ExpedientHeader.draw(gfx, this.font, this.panelX, this.panelY, this.panelW,

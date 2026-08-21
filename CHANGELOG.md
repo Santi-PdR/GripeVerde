@@ -1,5 +1,15 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.7 - El gabinete sin peso muerto
+
+Registro tecnico: consolidacion y limpieza. Se eliminaron 9 clases sin uso
+o duplicadas (incluidas las herramientas de desarrollo inalcanzables y los
+dos sliders de sonido, combinados en el generico), 7 metodos muertos y 57
+claves de idioma huerfanas; el pipeline de 14 pantallas comparte un unico
+helper de panel. Sin cambios de gameplay ni de recursos; la sala de sonido
+unifica el aspecto de sus dos reguladores. 59 clases Java, 25 idiomas, 35
+eventos de sonido, 42 OGG.
+
 ## v0.21.6 - El heraldo cuenta la limpieza
 
 El periodico del kiosco encontro palabras nuevas para la noche: el gabinete

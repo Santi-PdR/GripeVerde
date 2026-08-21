@@ -3,8 +3,52 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/01a025d1-gripeverde` (sync con `main` v0.21.2, commit `afe8e83`).
-- Version: `0.21.6`.
+- Version: `0.21.7`.
 - Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks, integrando el contexto maestro y sincronizacion documental de v0.17.2.
+
+### DECISION 2026-08-21: v0.21.7 - El gabinete sin peso muerto
+
+Hito tecnico de consolidacion (sin gameplay, sin resourcepacks, sin tocar
+logica vanilla). El usuario pidio eliminar archivos inutiles, combinar
+archivos y optimizar.
+
+**Archivos eliminados (9):**
+- `render/VictorianFrame.java` (0 referencias; framework de overlay v0.6.x)
+- `screens/AbstractDiaryScreen.java` (0 referencias; nunca fue extendida)
+- `screens/DebugCanvasScreen.java` + `screens/SoundLabScreen.java`
+  (herramientas de desarrollo inalcanzables en produccion: nada las abre)
+- `render/DiaryDecorator.java` y `render/CandleLight.java` (solo las usaba
+  DebugCanvasScreen)
+- `render/InkEffects.java` (0 referencias)
+- `widgets/DiaryMusicSlider.java` y `widgets/DiaryAmbienceSlider.java`
+  (combinadas en el `DiarySlider` generico, que ya tenia labelFormatter +
+  onValueChanged + applyOnDrag)
+
+**Metodos muertos eliminados:** `DiaryChrome.drawQuillCursor`,
+`drawVerticalDivider`, `drawDarkLeatherBackground` + constante `LEATHER_BASE`;
+`PaperTexture.getOpenCount` y `drawSolidBlob`; `AtmosphereRenderer.getMoonPhaseIndex`;
+`PosterRenderer.drawVersionPanel`.
+
+**Optimizacion de pipeline:** nuevo `DiaryChrome.renderPanelBase(g, x, y, w, h,
+accent, PaperKind)` (scaffold + pergamino + esquineros) aplicado en 14
+pantallas Diary. Changelog y Credits conservan su decoracion propia
+(encuadernado / marco oficial).
+
+**Lang:** 57 claves sin uso eliminadas de los 25 idiomas (137 -> 80); eran
+en su mayoria de las dev screens (`gripeverde.catalog.*`, `gripeverde.soundlab.*`,
+`gripeverde.panel.version.*`) y de features retiradas (telemetria, subtitulos
+viejos). Nueva clave `gripeverde.options.sound.ambience_slider` (25 idiomas)
+para el slider de ambiente unificado en Sonidos (antes tenia el label
+hardcodeado en espanol).
+
+**Conteos post-consolidacion:** 59 clases Java (vs 68), 25 lang (80 claves
+cada uno), 25 changelog in-game, 35 eventos de sonido, 42 OGG, 0 PNG.
+sounds.json <-> ModSounds <-> OGG verificados (35/35).
+
+**Nota R-CHANGELOG-DISCRECIONAL:** changelog in-game (25 .md) OMITIDO en este
+hito por ser puramente tecnico; el unico cambio visible es el look unificado
+del slider de ambiente en la sala de sonido. CHANGELOG.md raiz si lleva
+entrada breve. Validacion pendiente en cliente real (KI-32).
 
 ### DECISION 2026-08-21: v0.21.6 - El heraldo cuenta la limpieza
 
@@ -284,9 +328,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.21.6
-- build.gradle: version = '0.21.6'
-- GripeVerdeMod.VERSION: "0.21.6"
+- Version estable actual: v0.21.7
+- build.gradle: version = '0.21.7'
+- GripeVerdeMod.VERSION: "0.21.7"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10 (no se han publicado tags desde el ciclo v0.13.x; los bumps v0.14-v0.17 quedaron sin tag)
 - Working tree esperado al retomar: limpio

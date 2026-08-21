@@ -159,9 +159,7 @@ public class DiaryDirectJoinScreen extends Screen {
         } catch (Throwable ignored) {}
 
         float reveal = DiaryChrome.reveal(this.openedAtMs, 220L);
-        DiaryChrome.drawPanelScaffold(gfx, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.BRONZE);
-        PaperTexture.drawClean(gfx, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.OFFICIAL);
-        DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
+        DiaryChrome.renderPanelBase(gfx, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.BRONZE, PaperTexture.PaperKind.OFFICIAL);
 
         boolean ready = this.selectButton != null && this.selectButton.active;
         int headerBottom = ExpedientHeader.draw(gfx, this.font, this.panelX, this.panelY, this.panelW,

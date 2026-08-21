@@ -476,9 +476,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         int panelW = this.width - PANEL_MARGIN_H * 2;
         int panelH = this.height - PANEL_MARGIN_V * 2;
         float reveal = DiaryChrome.reveal(this.openedAtMs, 240L);
-        DiaryChrome.drawPanelScaffold(gfx, panelX, panelY, panelW, panelH, DiaryTheme.BRONZE);
-        PaperTexture.drawClean(gfx, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
-        DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, panelW, panelH);
+        DiaryChrome.renderPanelBase(gfx, panelX, panelY, panelW, panelH, DiaryTheme.BRONZE, PaperTexture.PaperKind.OFFICIAL);
 
         int headerBottom = ExpedientHeader.draw(gfx, this.font, panelX, panelY, panelW,
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT X" : "EXPEDIENTE X",

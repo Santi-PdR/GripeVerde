@@ -88,16 +88,6 @@ public final class DiaryChrome {
         drawInkDivider(gfx, x1, y, x2 - x1);
     }
 
-    public static void drawVerticalDivider(GuiGraphics gfx, int x, int y, int h) {
-        int fade = Math.max(8, h / 6);
-        int cy = y + h / 2;
-        gfx.fillGradient(x, y, x + 1, y + fade, 0x00000000, INK_DIVIDER);
-        gfx.fill(x, y + fade, x + 1, cy - 6, INK_DIVIDER);
-        gfx.fill(x, cy + 6, x + 1, y + h - fade, INK_DIVIDER);
-        gfx.fillGradient(x, y + h - fade, x + 1, y + h, INK_DIVIDER, 0x00000000);
-        drawDivisorLozenge(gfx, x, cy);
-    }
-
     public static void drawDivisorLozenge(GuiGraphics gfx, int cx, int cy) {
         int col = 0xC0422810;
         gfx.fill(cx,     cy - 2, cx + 1, cy - 1, col);
@@ -200,8 +190,7 @@ public final class DiaryChrome {
         gfx.fill(x, y + 11, x + Math.min(w, 18), y + 12, DiaryTheme.withAlpha(accent, 52));
     }
 
-    public static void drawPanelScaffold(GuiGraphics gfx, int x, int y, int w, int h, int accent) {
-        drawPanelShadow(gfx, x, y, w, h);
+    public static void drawPanelScaffold(GuiGraphics gfx, int x, int y, int w, int h, int accent) {        drawPanelShadow(gfx, x, y, w, h);
         gfx.fill(x + 6, y + 6, x + w - 6, y + h - 6, DiaryTheme.withAlpha(0x00FFFFFF, 4));
         gfx.fill(x + 10, y + 10, x + w - 10, y + h - 10, DiaryTheme.withAlpha(accent, 7));
         gfx.fill(x + 14, y + 14, x + w - 14, y + 15, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 24));
@@ -211,6 +200,14 @@ public final class DiaryChrome {
         gfx.fill(x + w - 32, y + 18, x + w - 18, y + 19, DiaryTheme.withAlpha(accent, 46));
         gfx.fill(x + 18, y + h - 19, x + 32, y + h - 18, DiaryTheme.withAlpha(accent, 30));
         gfx.fill(x + w - 32, y + h - 19, x + w - 18, y + h - 18, DiaryTheme.withAlpha(accent, 30));
+    }
+
+    /** v0.21.7: base comun del panel (scaffold + pergamino + esquineros). */
+    public static void renderPanelBase(GuiGraphics gfx, int x, int y, int w, int h, int accent,
+                                       PaperTexture.PaperKind kind) {
+        drawPanelScaffold(gfx, x, y, w, h, accent);
+        PaperTexture.drawClean(gfx, x, y, w, h, kind);
+        drawCornerOrnaments(gfx, x, y, w, h);
     }
 
     public static void drawInnerRail(GuiGraphics gfx, int x, int y, int w, int h, int accent) {
@@ -278,16 +275,6 @@ public final class DiaryChrome {
         drawScrollThumb(gfx, scrollLeft, trackY1, trackY2, list.getScrollAmount(), maxScroll);
     }
 
-    // ── Fondo cuero oscuro para pantallas de trabajo ────────────────────────
-    public static final int LEATHER_BASE = 0xFF1F1408;
-
-    public static void drawDarkLeatherBackground(GuiGraphics gfx, int screenW, int screenH) {
-        gfx.fill(0, 0, screenW, screenH, LEATHER_BASE);
-        int fade = Math.max(60, Math.min(screenW, screenH) / 4);
-        gfx.fillGradient(0, 0, screenW, fade, 0x60000000, 0x00000000);
-        gfx.fillGradient(0, screenH - fade, screenW, screenH, 0x00000000, 0x60000000);
-    }
-
     // ── Sombra proyectada profesional ───────────────────────────────────────
     public static void drawPanelShadow(GuiGraphics gfx, int x, int y, int w, int h) {
         int offset = 7;
@@ -316,21 +303,4 @@ public final class DiaryChrome {
         drawScrollThumb(gfx, scrollLeft, trackY1, trackY2, list.getScrollAmount(), maxScroll);
     }
 
-    // ── Cursor de pluma ─────────────────────────────────────────────────────
-    public static void drawQuillCursor(GuiGraphics g, int mouseX, int mouseY) {
-        int inkDark = 0xFF1A0F08;
-        int inkLight = 0xFF3D2E1A;
-        int feather = 0xFF6B4226;
-
-        int sx = mouseX + 6;
-        int sy = mouseY + 2;
-        for (int i = 0; i < 8; i++) {
-            g.fill(sx + i, sy + i, sx + i + 1, sy + i + 1, inkDark);
-        }
-        g.fill(sx - 1, sy + 8, sx, sy + 9, inkDark);
-        g.fill(sx, sy + 9, sx + 1, sy + 10, inkDark);
-        g.fill(sx + 6, sy - 1, sx + 8, sy + 1, feather);
-        g.fill(sx + 8, sy - 2, sx + 10, sy, feather);
-        g.fill(sx + 7, sy + 1, sx + 9, sy + 2, inkLight);
-    }
 }

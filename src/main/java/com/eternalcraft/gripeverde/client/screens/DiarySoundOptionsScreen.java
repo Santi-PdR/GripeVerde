@@ -9,8 +9,7 @@ import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar;
-import com.eternalcraft.gripeverde.client.widgets.DiaryMusicSlider;
-import com.eternalcraft.gripeverde.client.widgets.DiaryAmbienceSlider;
+import com.eternalcraft.gripeverde.client.widgets.DiarySlider;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
@@ -35,7 +34,7 @@ import java.lang.reflect.Field;
  *  - super.init() se ejecuta normalmente: crea la OptionsList vanilla con todas las filas.
  *  - Reflection acotada sobre el campo privado 'list' para desactivarle fondo y bordes.
  *    Fallback silencioso: si falla, la lista se ve con fondo negro pero funciona.
- *  - Se agrega DiaryMusicSlider como widget flotante debajo de la lista.
+ *  - Se agrega DiarySlider (musica) como widget flotante debajo de la lista.
  *  - Bypass total de super.render(): dibujamos escena viva + pergamino + cosmetica
  *    + list.render() manual + slider + boton Volver propio.
  *
@@ -53,8 +52,8 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     private int panelX, panelY, panelW, panelH;
     private OptionsList reflectedList;
     private final SmoothScroll smoothScroll = new SmoothScroll();
-    private DiaryMusicSlider musicSlider;
-    private DiaryAmbienceSlider ambienceSlider;
+    private DiarySlider musicSlider;
+    private DiarySlider ambienceSlider;
     private long openedAtMs = 0L;
 
     public DiarySoundOptionsScreen(Screen parent, Options options) {
@@ -100,7 +99,14 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         int sliderW = this.panelW - RAIL_W - 58;
         int sliderX = this.panelX + 22;
         int sliderY = this.panelY + this.panelH - 82;
-        this.musicSlider = new DiaryMusicSlider(sliderX, sliderY, sliderW, SLIDER_H);
+        this.musicSlider = new DiarySlider(sliderX, sliderY, sliderW, SLIDER_H,
+            MenuMusic.getUserVolume(),
+            v -> {
+                int pct = (int) Math.round(v * 100.0);
+                return Component.translatable("gripeverde.options.sound.music_slider").getString()
+                    + ": " + pct + "%";
+            },
+            v -> MenuMusic.setUserVolume((float) v));
         this.addRenderableWidget(this.musicSlider);
 
         // Slider de ambiente: mas pequeno, debajo del de musica
@@ -108,7 +114,14 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         int ambSliderW = sliderW * 3 / 4;  // 75% del ancho del principal
         int ambSliderX = sliderX + (sliderW - ambSliderW) / 2;
         int ambSliderY = sliderY + SLIDER_H + 2;
-        this.ambienceSlider = new DiaryAmbienceSlider(ambSliderX, ambSliderY, ambSliderW, ambSliderH);
+        this.ambienceSlider = new DiarySlider(ambSliderX, ambSliderY, ambSliderW, ambSliderH,
+            com.eternalcraft.gripeverde.client.audio.MenuAmbience.getUserVolume(),
+            v -> {
+                int pct = (int) Math.round(v * 100.0);
+                return Component.translatable("gripeverde.options.sound.ambience_slider").getString()
+                    + ": " + pct + "%";
+            },
+            v -> com.eternalcraft.gripeverde.client.audio.MenuAmbience.setUserVolume((float) v));
         this.addRenderableWidget(this.ambienceSlider);
 
         // Boton Volver estilo diario
@@ -217,9 +230,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
 
         float reveal = DiaryChrome.reveal(this.openedAtMs, 260L);
-        DiaryChrome.drawPanelScaffold(g, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.AMBER_FLAME);
-        PaperTexture.drawClean(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.LEDGER);
-        DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
+        DiaryChrome.renderPanelBase(g, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.AMBER_FLAME, PaperTexture.PaperKind.LEDGER);
 
         int headerBottom = ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW,
             Discoveries.isEnglish() ? "EXPEDIENT II" : "EXPEDIENTE II",

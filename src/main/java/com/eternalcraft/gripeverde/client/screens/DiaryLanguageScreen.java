@@ -154,9 +154,7 @@ public class DiaryLanguageScreen extends Screen {
         g.fill(0, 0, this.width, this.height, 0xFF000000);
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
         float reveal = DiaryChrome.reveal(this.openedAtMs, 240L);
-        DiaryChrome.drawPanelScaffold(g, panelX, panelY, panelW, panelH, DiaryTheme.BRONZE);
-        PaperTexture.drawClean(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.ARCHIVE);
-        DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
+        DiaryChrome.renderPanelBase(g, panelX, panelY, panelW, panelH, DiaryTheme.BRONZE, PaperTexture.PaperKind.ARCHIVE);
 
         int headerBottom = ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW,
             isEnglishSelected() ? "EXPEDIENT IV" : "EXPEDIENTE IV",

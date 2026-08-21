@@ -124,9 +124,7 @@ public class DiaryArchiveScreen extends Screen {
         }
 
         float reveal = DiaryChrome.reveal(this.openedAtMs, 260L);
-        DiaryChrome.drawPanelScaffold(g, panelX, panelY, panelW, panelH, DiaryTheme.BRONZE);
-        PaperTexture.drawClean(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.ARCHIVE);
-        DiaryChrome.drawCornerOrnaments(g, panelX, panelY, panelW, panelH);
+        DiaryChrome.renderPanelBase(g, panelX, panelY, panelW, panelH, DiaryTheme.BRONZE, PaperTexture.PaperKind.ARCHIVE);
 
         boolean en = Discoveries.isEnglish();
         int cx = panelX + panelW / 2;

@@ -69,7 +69,6 @@ public final class Discoveries {
     // v0.21.5: cuarta confesion de la limpieza
     public static final String BUTTONS_NEVER_PRESSED = "buttons_never_pressed";
 
-    public static final String TOTAL = "47";
 
     // Objetos del cajon
     public static final String ITEM_KEY    = "item_key";

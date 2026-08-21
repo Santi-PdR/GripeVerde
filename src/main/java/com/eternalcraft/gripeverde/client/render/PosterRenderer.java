@@ -129,7 +129,7 @@ public class PosterRenderer {
         } catch (Throwable ignored) {}
     }
 
-    
+
     /** Panel derecho inferior del menú: rota entre 3 avisos con seed diaria. */
     public static void drawRotatingNoticeRight(GuiGraphics g, int x, int y, int w, int h) {
         long day = System.currentTimeMillis() / 86_400_000L;
@@ -271,34 +271,6 @@ public class PosterRenderer {
         int eye = knows ? 0xFFD4941E : 0xFF141008;
         g.fill(x + 11 + shift, y + 10, x + 12 + shift, y + 11, eye);
         g.fill(x + 14 + shift, y + 10, x + 15 + shift, y + 11, eye);
-    }
-
-public static void drawVersionPanel(GuiGraphics g, int x, int y, int w, int h, String version) {
-        Font font = Minecraft.getInstance().font;
-        g.fill(x, y, x + w, y + h, 0xFF15100A);
-        drawSimpleBorder(g, x, y, w, h, DiaryTheme.BRONZE, DiaryTheme.SEPIA_DARK);
-
-        int cx = x + w / 2;
-
-        String vol = I18n.get("gripeverde.panel.version.header");
-        int vw = font.width(vol);
-        g.drawString(font, vol, cx - vw / 2, y + 12, DiaryTheme.SEPIA_LIGHT, false);
-
-        drawThinDivider(g, cx, y + 26, w - 40);
-
-        g.pose().pushPose();
-        g.pose().translate(cx, y + h / 2 + 4, 0);
-        g.pose().scale(3.5f, 3.5f, 1f);
-        int nw = font.width(version);
-        g.drawString(font, version, -nw / 2 + 1, 1, DiaryTheme.SEPIA_DARK, false);
-        g.drawString(font, version, -nw / 2, 0, DiaryTheme.BRONZE, false);
-        g.pose().popPose();
-
-        drawThinDivider(g, cx, y + h - 26, w - 40);
-
-        String ad = I18n.get("gripeverde.panel.version.footer");
-        int aw = font.width(ad);
-        g.drawString(font, ad, cx - aw / 2, y + h - 16, DiaryTheme.SEPIA_LIGHT, false);
     }
 
     private static void drawCenteredText(GuiGraphics g, Font f, String s, int cx, int y, int color) {
