@@ -2,10 +2,13 @@
 
 ## Addendum operativo actual
 
-- Rama fija de Arena: `arena/019fe1c5-gripeverde`.
-- Version: `0.17.0`.
+- Rama fija de Arena: `arena/01a025ab-gripeverde`.
+- Version: `0.17.2`.
 - Ultima regla explicita del usuario: gran pase de calidad de interfaz y
   identidad visual (resource pack + containers + pantallas del mod), un unico commit.
+- Pendiente revisado (post v0.17.2): dos parches de mantenimiento sobre el
+  acero de cuarentena (v0.17.1 remaches, v0.17.2 bandejas/sellos/transparencias)
+  ya cerrados en codigo pero sin addendum propio hasta este pase de documentacion.
 
 ### DECISION 2026-08-08: Acero de cuarentena (v0.17.0)
 
@@ -119,15 +122,20 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.17.0
-- build.gradle: version = '0.17.0'
-- GripeVerdeMod.VERSION: "0.17.0"
+- Version estable actual: v0.17.2
+- build.gradle: version = '0.17.2'
+- GripeVerdeMod.VERSION: "0.17.2"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
-- Ultimo tag publicado: v0.13.10
+- Ultimo tag publicado: v0.13.10 (no se han publicado tags desde el ciclo v0.13.x; los bumps v0.14-v0.17 quedaron sin tag)
 - Working tree esperado al retomar: limpio
 - Repositorio remoto sincronizado
-- Resource pack built-in: NUEVO "gripeverde_steel" (v0.17.0), REQUIRED, contenedores con acero de cuarentena (presentacion 1:1, geometria vanilla intacta).
-- ContainerOverlayHandler: ELIMINADO (v0.15.1). Titulos de contenedores vanilla.
+- Resource pack built-in: "gripeverde_steel" (v0.17.0+), REQUIRED, contenedores
+  con acero de cuarentena (presentacion 1:1, geometria vanilla intacta).
+  v0.17.2: slot universal 26px (era 18), transparencias repasadas, tabs.png
+  reemplazado por sprites tab_top/tab_bottom selected/unselected 1-7.
+- ContainerOverlayHandler: ELIMINADO (v0.15.1). NO reintroducido. Los
+  contenedores vanilla se estilizan unicamente via el resource pack; ningun
+  overlay por codigo redibuja titulos ni remaches.
 - Slider FOV: agregado al gabinete de opciones (v0.15.1) y arreglado el
   label para que muestre el numero (v0.15.2): la clave vanilla "options.fov"
   es solo "FOV" (sin placeholder), asi que el numero se agrega explicito:
@@ -2463,3 +2471,105 @@ contenedores ni layouts vanilla. Sin resource pack. Sin mixins nuevos.
   (57s, solo deprecation warnings preexistentes). v0.16.0 deployado a Test.
 - Regla derivada E125: sin javac disponible, todo codigo nuevo debe
   limitarse a APIs verificadas en el propio repo; nada de firmas recordadas.
+
+---
+
+## ADDENDUM v0.17.1 (Remaches bien puestos)
+
+### Alcance
+Parche de mantenimiento sobre el resource pack `gripeverde_steel` introducido
+en v0.17.0. Sin cambios observables para el jugador: repaso cosmetico de las
+planchas de acero (remaches, cepillado, juntas) para igualar el sello visual
+entre contenedores. Versionado y documentacion al dia.
+
+### Cambios
+- Refinamiento de assets del pack `gripeverde_steel` (remaches/cepillado).
+- Sin cambios de codigo Java, sin cambios de geometria ni de slots.
+- Bump de version: 0.17.0 -> 0.17.1 (build.gradle + GripeVerdeMod.VERSION).
+- Entrada narrativa en CHANGELOG.md raiz (bajo R-DIEGETICO).
+- Changelog in-game: OMITIDO (R-CHANGELOG-DISCRECIONAL — sin manifestacion
+  observable nueva para el cronista; es pulido interno del acero).
+
+### Notas
+- Entrada unica en CHANGELOG.md raiz, no en los 25 changelog/*.md in-game.
+- No abre ni cierra ningun KI.
+
+---
+
+## ADDENDUM v0.17.2 (Las bandejas de la mesa y la moneda del trato)
+
+### Alcance
+Pase de correccion geometrica/visual sobre el acero de cuarentena. El slot
+universal habia quedado en 18px (cuadrado estrecho); se llevo a 26px (bandeja
+con holgura para el contenido). Se repararon los oficios cuyos sprites de
+contenedor quedaron desalineados o sin tratamiento de acero, y se repasaron
+todas las transparencias del pack.
+
+### Cambios de assets (resource pack `gripeverde_steel`)
+- Sprite universal `sprites/container/slot.png`: 18px -> 26px (bandeja).
+- Oficios restaurados al arreglo correcto de acero: telar (loom), cantera
+  (stonecutter), cartografia (cartography_table) y el trato con forasteros
+  (villager trading). Cada moneda y cada sello del trato (trade_arrow,
+  discount_strikethrough, experience_bar_*, out_of_stock, scroller*) vuelve
+  a respirar su acero.
+- Transparencias repasadas una a una (ningun velo se vuelve muro). Afecta a
+  widgets y sprites con alpha: button/slider/text_field/scroller/checkbox,
+  sprites de contenedores, recipe_book.
+- Nuevo: sellos del archivo de telas (loom) y de la sala de mapas
+  (cartography_table): pattern, banner_slot, dye_slot, pattern_slot, error,
+  scroller; map/scaled_map/duplicated_map/locked/error.
+- Creative inventory: tabs.png (tapa muerta) REMOVIDO. Reemplazado por los
+  sprites tab_top_selected/unselected_1..7 y tab_bottom_selected/unselected_1..7.
+- Task `verifyGripeVerdeThemeAssets` (build.gradle): la lista de huerfanas
+  prohibidas ahora incluye `creative_inventory/tabs.png` (ademas de
+  dropper.png, villager2.png, inventory_backup.png).
+
+### Cambios de codigo
+- Ninguno (todo es assets del pack). El registro del pack
+  (`ResourcePackHandler`, required=true) y la geometria 1:1 no se tocan.
+
+### Version
+- 0.17.1 -> 0.17.2 (build.gradle + GripeVerdeMod.VERSION).
+- CHANGELOG.md raiz: entrada narrativa bajo R-DIEGETICO.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL
+  (pulido interno del acero, sin manifestacion narrativa nueva).
+
+### Validacion en este entorno
+- Sin JDK ni maven de Forge en el sandbox. Se valido programaticamente via
+  `verifyGripeVerdeThemeAssets` (dimensiones, alpha, .mcmeta, ausencia de
+  huerfanas). El build/validacion visual corresponde a la maquina del usuario (E125).
+
+### Estado del pack post-v0.17.2
+- 20 contenedores + 4 fondos creativos + slot universal + todos los sprites
+  de oficio (hornos, alambique, baliza, yunque, encantamientos, caballos,
+  telar, cartografia, cantera, herreria, comercio) + widgets vanilla
+  (button/slider/text_field/checkbox/scroller) + libro de recetas.
+- Geometria 1:1 verificada contra vanilla (alpha masks + slots en posicion exacta).
+
+## PROXIMO HITO PLANIFICADO (revisado tras v0.17.2)
+
+### Candidato C: v0.18.0+ - Contenido de gameplay (Gripe Verde en si)
+Objetivo: primer sistema REAL de gameplay. La fase de interfaz/identidad
+(pergamino + acero + lore + audio) esta cerrada y pulida; la casa esta lista
+para tener contenido adentro. Sub-hitos a definir en diseno previo escrito
+(antes de tocar codigo):
+- Sistema de enfermedad: sintomas, progreso, contagio.
+- Cuarentena: zonas seguras vs zonas infectadas.
+- NPCs: enfermos, sanos, personal medico.
+- Items: mascaras, medicinas, alcohol, agua limpia.
+- Mecanicas ambientales: humo verde, ratas, cadaveres.
+Riesgo: ALTO. Requiere diseno previo escrito antes de codigo.
+
+### Candidato O (sin urgencia): KI-12 - Mixin dirt bypass
+Reemplazar el fondo dirt vanilla de 4 pantallas de trabajo (MouseSettings,
+KeyBinds, PackSelection, OnlineOptions). Ruta correcta identificada (mixin
+sobre Screen.renderBackground + filtro instanceof). Infraestructura mixin
+armada pero sin mixins activos (client:[] vacio en gripeverde.mixins.json).
+
+### Deuda menor abierta
+- KI-13: server pinneado editable/borrable sin bloqueo visual (baja).
+- KI-14: banda sepia del multiplayer vs favicons brillantes (baja).
+- KI-21: sprites vanilla no confirmados en 1.20.1 (villager flechas de
+  comercio, etc.) cubiertos en v0.17.2; revisar si quedan holes.
+- Sin tags publicados desde v0.13.10: considerar tagear la RC actual cuando
+  se valide en cliente real.

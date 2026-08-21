@@ -111,6 +111,68 @@
 
 ---
 
+## v0.17.1 - Remaches bien puestos (mantenimiento del acero)
+
+### Cambios cerrados
+- Parche de mantenimiento sobre el resource pack `gripeverde_steel`. Repaso
+  cosmetico de las planchas de acero (remaches, cepillado, juntas) para
+  igualar el sello visual entre contenedores. Sin cambios observables para
+  el jugador.
+- Sin cambios de codigo Java, sin cambios de geometria ni de slots.
+- Bump de version: 0.17.0 -> 0.17.1 (build.gradle + GripeVerdeMod.VERSION).
+- CHANGELOG.md raiz: entrada narrativa. Changelog in-game OMITIDO
+  (R-CHANGELOG-DISCRECIONAL — pulido interno, sin manifestacion observable).
+
+### Riesgos activos / KI
+- Ninguno nuevo. No abre ni cierra KIs.
+- Refuerza KI-20 (validacion del pack en cliente real sigue pendiente).
+
+### Reglas nuevas
+- Ninguna.
+
+---
+
+## v0.17.2 - Las bandejas de la mesa y la moneda del trato (correccion del acero)
+
+### Cambios cerrados
+- Pase de correccion geometrica/visual sobre el acero de cuarentena. Todo es
+  assets del resource pack; sin cambios de codigo Java.
+- Sprite universal `sprites/container/slot.png`: 18px -> 26px (bandeja con
+  holgura en lugar de cuadrado estrecho).
+- Oficios restaurados al arreglo de acero correcto: telar (loom), cantera
+  (stonecutter), cartografia (cartography_table), trato con forasteros
+  (villager). Monedas y sellos del trato (trade_arrow, discount_strikethrough,
+  experience_bar_*, out_of_stock, scroller*) devueltos al acero.
+- Transparencias repasadas una a una (ningun velo se vuelve muro): widgets
+  (button/slider/text_field/scroller/checkbox), sprites de contenedores,
+  recipe_book.
+- Nuevos sellos del archivo de telas (loom: pattern/banner_slot/dye_slot/
+  pattern_slot/error/scroller) y de la sala de mapas (cartography: map/
+  scaled_map/duplicated_map/locked/error).
+- Creative inventory: `tabs.png` (tapa muerta) REMOVIDO. Reemplazado por
+  sprites tab_top/tab_bottom_selected/unselected_1..7.
+- Task `verifyGripeVerdeThemeAssets`: la lista de huerfanas prohibidas ahora
+  incluye `creative_inventory/tabs.png` (ademas de dropper.png, villager2.png,
+  inventory_backup.png).
+- Bump de version: 0.17.1 -> 0.17.2.
+- CHANGELOG.md raiz: entrada narrativa. Changelog in-game OMITIDO
+  (R-CHANGELOG-DISCRECIONAL).
+
+### Riesgos activos / KI
+- KI-20 (validacion en cliente real) sigue ABIERTO: sin JDK ni maven en el
+  sandbox. Validado programaticamente via verifyGripeVerdeThemeAssets
+  (dimensiones, alpha, .mcmeta, ausencia de huerfanas). Pendiente build +
+  revision visual en la maquina del usuario.
+- KI-21 (sprites no cubiertos): muy avanzado en v0.17.2 (loom, cartography,
+  stonecutter, villager trading ahora tienen tratamiento de acero). Revisar
+  si quedan holes tras validar en cliente real.
+
+### Reglas nuevas
+- Ninguna. Refuerza R-STEEL-GEOMETRY (el pack nunca cambia dimensiones/alpha/
+  posiciones de slots; solo presentacion) y R-CHANGELOG-DISCRECIONAL.
+
+---
+
 ## Estado actual de pulido RC
 
 ### Criterios activos
