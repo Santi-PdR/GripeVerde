@@ -3,6 +3,24 @@
 **Fecha:** 2026-08-04  
 **Auditor:** Principal Dev / UI-UX / Tech Art / Performance / QA Lead
 
+> ⚠️ **DOCUMENTO HISTÓRICO (v0.14.0-RC).** Esta auditoría refleja el "extreme
+> polish" de v0.14.0, **no el estado actual del proyecto (v0.17.2)**. Tener en
+> cuenta que:
+> - **`ContainerOverlayHandler` (con `drawContainerRivets` y redibujado de
+>   títulos) FUE ELIMINADO en v0.15.1** y nunca se reintrodujo. Los
+>   contenedores vanilla hoy se estilizan **100% vía el resource pack
+>   `gripeverde_steel`** (v0.17.0+), sin overlay por código. Las referencias a
+>   "rivets por código", "drawContainerRivets" y ContainerOverlayHandler aquí
+>   son OBSOLETAS.
+> - **Resource pack `gripeverde_theme` (v0.13/v0.14, required=false) fue
+>   retirado en v0.15.0** y reemplazado en v0.17.0 por `gripeverde_steel`
+>   (REQUIRED=true, contenedores + sprites + widgets, geometría 1:1).
+> - Sí siguen vigentes: `QuarantineSceneRenderer`, `AbstractDiaryScreen`,
+>   `LoopingAmbienceInstance`, `UiSounds` v2.0, y la mayoría de las
+>   optimizaciones de rendimiento aquí listadas (luna O(r), PaperTexture v2.0,
+>   vignette gradient, LOD del skyline, etc.).
+> - Para el estado actual y vigente, consultar `CONTEXTO.md` y `KNOWN_ISSUES.md`.
+
 > Objetivo: llevar el mod a calidad de versión oficial alternativa de Minecraft, manteniendo identidad victoriana bajo cuarentena.
 
 ---

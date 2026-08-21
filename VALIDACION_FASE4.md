@@ -2,6 +2,26 @@
 
 **Objetivo:** comprobar que todo funciona como resource pack real integrado, sin romper vanilla ni mods.
 
+> ⚠️ **DOCUMENTO HISTÓRICO (v0.14.1).** Esta validación corresponde al resource
+> pack `gripeverde_theme` (v0.13/v0.14) con **`required=false`**, que **fue
+> retirado por completo en v0.15.0**. No refleja el estado actual (v0.17.2).
+> Cambios clave respecto a lo descrito aquí:
+> - El pack actual se llama **`gripeverde_steel`** (v0.17.0+) y es
+>   **REQUIRED=true** (siempre activo, no aparece para desactivar).
+> - `ContainerOverlayHandler` (ocultar labels + redibujar títulos + rivets por
+>   código) **fue eliminado en v0.15.1** y NO reintroducido. Los títulos de
+>   contenedores hoy son vanilla puro; los remaches y la estética de acero
+>   vienen 100% de las texturas del pack.
+> - La lista de texturas pasó de 21 PNG sueltos a 20 contenedores + 4 creativos
+>   + sprites de oficio (hornos, alambique, baliza, yunque, encantamientos,
+>   caballos, telar, cartografía, cantera, herrería, comercio) + widgets
+>   (button/slider/text_field/checkbox/scroller) + recipe book. `dropper.png` y
+>   `villager2.png` no existen en 1.20.1 y están prohibidas. `pack.png` es
+>   128x128.
+> - La validación de compatibilidad con mods (Curios, Sophisticated Backpacks),
+>   tipografía y audio sigue siendo referencia útil.
+> - Estado actual vigente: `CONTEXTO.md` y `KNOWN_ISSUES.md`.
+
 ## 1. Resource Pack — Integración real
 
 **Archivo:** `ResourcePackHandler.java`

@@ -2,6 +2,19 @@
 
 Lista auditada de pequeños detalles que separan bueno de excelente. Todos aplicados en v0.14.0 extreme polish.
 
+> ⚠️ **DOCUMENTO HISTÓRICO (v0.14.0).** No refleja el estado actual (v0.17.2).
+> Válido como catálogo de intención de polish, pero con estas salvedades:
+> - La sección **"Contenedores vanilla" (items 101-106)** y cualquier
+>   referencia a `ContainerOverlayHandler` / `drawContainerRivets` / rivets
+>   dibujados por código son **OBSOLETAS**: esa clase se eliminó en v0.15.1 y
+>   los remaches hoy vienen de las texturas del pack `gripeverde_steel`
+>   (v0.17.0+), no de overlay por código. La "verificación 64x64" del pack.png
+>   también cambió: ahora es 128x128.
+> - El resto (botones DiaryButton/GreenFluButton, iconos, scrollbars,
+>   pergaminos/sellos, ciudad/atmósfera, menú principal, audio, QA/compat)
+>   sigue siendo referencia útil del nivel de detalle perseguido.
+> - Estado actual vigente: `CONTEXTO.md` y `KNOWN_ISSUES.md`.
+
 ## Papeles y pergaminos (15)
 1. Ledger base #E9DDC2 vs Correspondence #EFEBD0 vs Archive #E2CF9E vs Technical #E6DBC0 vs Medical #ECE8C8 vs Official #E8D7B0 — no plantilla única.
 2. Fibers densidad por kind: Archive 90, Ledger 70, Technical 50, Correspondence 35, Medical 20.
