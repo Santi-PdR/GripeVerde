@@ -9,6 +9,14 @@ public class LivingAtmosphere {
     private static final org.slf4j.Logger LOGGER = com.mojang.logging.LogUtils.getLogger();
     private static final boolean DEBUG_EVENTS = false;
 
+    // v0.21.3: RNG compartido con seed fija (sin Math.random en el loop caliente).
+    private static final java.util.Random RND = new java.util.Random(0xC10E5EL);
+
+    /** v0.21.3: accesibilidad - movimiento reducido del ambiente (ClientConfig). */
+    private static boolean reducedMotion() {
+        return com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get();
+    }
+
     private static float time = 0f;
     private static int[][] lanternPositions = null;
     private static int lastLanternW = 0, lastLanternH = 0;
@@ -162,24 +170,27 @@ public class LivingAtmosphere {
     public static void triggerLightningFlash(float intensity) {
         lightningTimer = 0f;
         lightningFlash = Math.max(lightningFlash, Math.max(0.15f, Math.min(1.0f, intensity)));
-        nextLightning = 8f + (float)(Math.random() * 12f);
+        nextLightning = 8f + (float)(RND.nextFloat() * 12f);
     }
 
     public static void tick(float deltaTime) {
         time += deltaTime;
         initAll();
+        boolean reduced = reducedMotion();
 
-        for (int i = 0; i < FOG_OFFSETS.length; i++) {
-            FOG_OFFSETS[i] += FOG_SPEEDS[i] * deltaTime * 60f;
-            if (FOG_OFFSETS[i] > 300f) FOG_OFFSETS[i] = -200f;
+        if (!reduced) {
+            for (int i = 0; i < FOG_OFFSETS.length; i++) {
+                FOG_OFFSETS[i] += FOG_SPEEDS[i] * deltaTime * 60f;
+                if (FOG_OFFSETS[i] > 300f) FOG_OFFSETS[i] = -200f;
+            }
         }
         for (int i = 0; i < SPORE_COUNT; i++) {
             spores[i][1] -= spores[i][2] * deltaTime * 60f;
             if (spores[i][1] < -0.05f) {
-                spores[i][0] = (float) Math.random();
+                spores[i][0] = (float) RND.nextFloat();
                 spores[i][1] = 1.05f;
-                spores[i][2] = 0.001f + (float)(Math.random() * 0.003f);
-                spores[i][3] = 1f + (float)(Math.random() * 2f);
+                spores[i][2] = 0.001f + (float)(RND.nextFloat() * 0.003f);
+                spores[i][3] = 1f + (float)(RND.nextFloat() * 2f);
             }
         }
         // Boost de velocidad si acaban de sonar los cuervos (coordinacion visual/audio)
@@ -190,29 +201,33 @@ public class LivingAtmosphere {
             crows[i][3] += deltaTime * 8f * crowWingMult;
             if (crows[i][0] > 1.1f) {
                 crows[i][0] = -0.1f;
-                crows[i][1] = 0.1f + (float)(Math.random() * 0.3f);
-                crows[i][2] = 0.001f + (float)(Math.random() * 0.002f);
+                crows[i][1] = 0.1f + (float)(RND.nextFloat() * 0.3f);
+                crows[i][2] = 0.001f + (float)(RND.nextFloat() * 0.002f);
                 crows[i][3] = 0f;
             }
         }
         for (int i = 0; i < RAIN_COUNT; i++) {
             rain[i][1] += rain[i][2] * deltaTime * 60f;
             if (rain[i][1] > 1.1f) {
-                rain[i][0] = (float) Math.random();
+                rain[i][0] = (float) RND.nextFloat();
                 rain[i][1] = -0.05f;
             }
         }
         for (int i = 0; i < SPLASH_COUNT; i++) {
             splashes[i][2] += deltaTime * (0.9f + i * 0.03f);
             if (splashes[i][2] > 1f) {
-                splashes[i][0] = (float) Math.random();
-                splashes[i][1] = 0.84f + (float)(Math.random() * 0.12f);
+                splashes[i][0] = (float) RND.nextFloat();
+                splashes[i][1] = 0.84f + (float)(RND.nextFloat() * 0.12f);
                 splashes[i][2] = 0f;
             }
         }
-        for (int i = 0; i < MOTH_COUNT; i++) {
-            moths[i][1] += moths[i][3] * deltaTime;
-            if (moths[i][1] > Math.PI * 2f) moths[i][1] -= (float)(Math.PI * 2f);
+        if (reduced) {
+            // v0.21.3: movimiento reducido - las polillas se quedan quietas.
+        } else {
+            for (int i = 0; i < MOTH_COUNT; i++) {
+                moths[i][1] += moths[i][3] * deltaTime;
+                if (moths[i][1] > Math.PI * 2f) moths[i][1] -= (float)(Math.PI * 2f);
+            }
         }
         for (int i = 0; i < RIPPLE_COUNT; i++) {
             ripples[i][2] += deltaTime * ripples[i][3];
@@ -220,24 +235,31 @@ public class LivingAtmosphere {
                 resetRipple(i);
             }
         }
-        for (int i = 0; i < PAPER_SCRAP_COUNT; i++) {
-            paperScraps[i][0] += (paperScraps[i][2] + windGustIntensity * 0.018f) * deltaTime;
-            paperScraps[i][3] += deltaTime * (5f + windGustIntensity * 6f);
-            if (paperScraps[i][0] < -0.08f || paperScraps[i][0] > 1.08f) {
-                resetPaperScrap(i);
+        if (!reduced) {
+            for (int i = 0; i < PAPER_SCRAP_COUNT; i++) {
+                paperScraps[i][0] += (paperScraps[i][2] + windGustIntensity * 0.018f) * deltaTime;
+                paperScraps[i][3] += deltaTime * (5f + windGustIntensity * 6f);
+                if (paperScraps[i][0] < -0.08f || paperScraps[i][0] > 1.08f) {
+                    resetPaperScrap(i);
+                }
             }
         }
-        windGustTimer += deltaTime;
-        if (windGustDuration > 0f) {
-            windGustDuration -= deltaTime;
-            windGustIntensity = Math.max(0f, windGustDuration / 3.2f);
-        } else if (windGustTimer >= windGustNext) {
-            windGustTimer = 0f;
-            windGustDuration = 2.4f + (float)(Math.random() * 1.8f);
-            windGustNext = 18f + (float)(Math.random() * 28f);
-            windGustIntensity = 1f;
+        if (reduced) {
+            windGustIntensity = 0f;
+            windGustDuration = 0f;
+        } else {
+            windGustTimer += deltaTime;
+            if (windGustDuration > 0f) {
+                windGustDuration -= deltaTime;
+                windGustIntensity = Math.max(0f, windGustDuration / 3.2f);
+            } else if (windGustTimer >= windGustNext) {
+                windGustTimer = 0f;
+                windGustDuration = 2.4f + (float)(RND.nextFloat() * 1.8f);
+                windGustNext = 18f + (float)(RND.nextFloat() * 28f);
+                windGustIntensity = 1f;
+            }
+            branchSway += deltaTime * (0.55f + windGustIntensity * 0.8f);
         }
-        branchSway += deltaTime * (0.55f + windGustIntensity * 0.8f);
         lightningTimer += deltaTime;
         if (lightningFlash > 0f) {
             lightningFlash -= deltaTime * 3f;
@@ -246,27 +268,35 @@ public class LivingAtmosphere {
         if (lightningTimer >= nextLightning) {
             lightningTimer = 0f;
             lightningFlash = 1f;
-            nextLightning  = 8f + (float)(Math.random() * 12f);
+            nextLightning  = 8f + (float)(RND.nextFloat() * 12f);
             if (DEBUG_EVENTS) LOGGER.info("[GripeVerde] Relampago DISPARADO, proximo en {}s", nextLightning);
         }
-        vignettePulse = (float)(Math.sin(time * 0.5f) * 0.5f + 0.5f);
+        vignettePulse = reduced ? 0.5f : (float)(Math.sin(time * 0.5f) * 0.5f + 0.5f);
 
         // Erratic lantern timer
-        erraticTimer += deltaTime;
-        if (erraticIntensity > 0f) {
-            erraticDuration -= deltaTime;
-            if (erraticDuration <= 0f) {
-                erraticIntensity = 0f;
-                erraticNextEvent = 30f + (float)(Math.random() * 30.0);
-                erraticTimer = 0f;
+        if (reduced) {
+            erraticIntensity = 0f;
+            erraticTimer = 0f;
+        } else {
+            erraticTimer += deltaTime;
+            if (erraticIntensity > 0f) {
+                erraticDuration -= deltaTime;
+                if (erraticDuration <= 0f) {
+                    erraticIntensity = 0f;
+                    erraticNextEvent = 30f + (float)(RND.nextFloat() * 30.0);
+                    erraticTimer = 0f;
+                }
+            } else if (erraticTimer >= erraticNextEvent) {
+                erraticIntensity = 1f;
+                erraticDuration = 3f + (float)(RND.nextFloat() * 2.0);
             }
-        } else if (erraticTimer >= erraticNextEvent) {
-            erraticIntensity = 1f;
-            erraticDuration = 3f + (float)(Math.random() * 2.0);
         }
 
         // Street rat: crossing logic (+ v0.16.0: la rata que a veces se detiene)
-        if (ratActive) {
+        if (reduced) {
+            ratActive = false;
+            ratStanding = false;
+        } else if (ratActive) {
             if (ratStanding) {
                 ratStandTimer -= deltaTime;
                 if (ratStandTimer <= 0f) {
@@ -285,19 +315,19 @@ public class LivingAtmosphere {
                 ratActive = false;
                 ratStanding = false;
                 ratTimer = 0f;
-                ratNextEvent = 40f + (float)(Math.random() * 40.0);
+                ratNextEvent = 40f + (float)(RND.nextFloat() * 40.0);
             }
         } else {
             ratTimer += deltaTime;
             if (ratTimer >= ratNextEvent) {
                 ratActive = true;
-                ratWillStand = Math.random() < 0.12; // solo a veces se detiene
-                if (Math.random() < 0.5) {
+                ratWillStand = RND.nextFloat() < 0.12; // solo a veces se detiene
+                if (RND.nextFloat() < 0.5) {
                     ratX = -0.05f;
-                    ratSpeed = 0.15f + (float)(Math.random() * 0.10);
+                    ratSpeed = 0.15f + (float)(RND.nextFloat() * 0.10);
                 } else {
                     ratX = 1.05f;
-                    ratSpeed = -(0.15f + (float)(Math.random() * 0.10));
+                    ratSpeed = -(0.15f + (float)(RND.nextFloat() * 0.10));
                 }
             }
         }
@@ -328,46 +358,46 @@ public class LivingAtmosphere {
         if (!sporesInit) {
             sporesInit = true;
             for (int i = 0; i < SPORE_COUNT; i++) {
-                spores[i][0] = (float) Math.random();
-                spores[i][1] = (float) Math.random();
-                spores[i][2] = 0.001f + (float)(Math.random() * 0.003f);
-                spores[i][3] = 1f + (float)(Math.random() * 2f);
+                spores[i][0] = (float) RND.nextFloat();
+                spores[i][1] = (float) RND.nextFloat();
+                spores[i][2] = 0.001f + (float)(RND.nextFloat() * 0.003f);
+                spores[i][3] = 1f + (float)(RND.nextFloat() * 2f);
             }
         }
         if (!crowsInit) {
             crowsInit = true;
             for (int i = 0; i < CROW_COUNT; i++) {
-                crows[i][0] = (float) Math.random();
-                crows[i][1] = 0.1f + (float)(Math.random() * 0.3f);
-                crows[i][2] = 0.001f + (float)(Math.random() * 0.002f);
-                crows[i][3] = (float)(Math.random() * Math.PI * 2);
-                crows[i][4] = 0.6f + (float)(Math.random() * 0.8f);
+                crows[i][0] = (float) RND.nextFloat();
+                crows[i][1] = 0.1f + (float)(RND.nextFloat() * 0.3f);
+                crows[i][2] = 0.001f + (float)(RND.nextFloat() * 0.002f);
+                crows[i][3] = (float)(RND.nextFloat() * Math.PI * 2);
+                crows[i][4] = 0.6f + (float)(RND.nextFloat() * 0.8f);
             }
         }
         if (!rainInit) {
             rainInit = true;
             for (int i = 0; i < RAIN_COUNT; i++) {
-                rain[i][0] = (float) Math.random();
-                rain[i][1] = (float) Math.random();
-                rain[i][2] = 0.008f + (float)(Math.random() * 0.006f);
+                rain[i][0] = (float) RND.nextFloat();
+                rain[i][1] = (float) RND.nextFloat();
+                rain[i][2] = 0.008f + (float)(RND.nextFloat() * 0.006f);
             }
         }
         if (!splashesInit) {
             splashesInit = true;
             for (int i = 0; i < SPLASH_COUNT; i++) {
-                splashes[i][0] = (float) Math.random();
-                splashes[i][1] = 0.84f + (float)(Math.random() * 0.12f);
-                splashes[i][2] = (float) Math.random();
+                splashes[i][0] = (float) RND.nextFloat();
+                splashes[i][1] = 0.84f + (float)(RND.nextFloat() * 0.12f);
+                splashes[i][2] = (float) RND.nextFloat();
             }
         }
         if (!mothsInit) {
             mothsInit = true;
             for (int i = 0; i < MOTH_COUNT; i++) {
                 moths[i][0] = i;
-                moths[i][1] = (float)(Math.random() * Math.PI * 2.0);
-                moths[i][2] = 5f + (float)(Math.random() * 8f);
-                moths[i][3] = 0.7f + (float)(Math.random() * 1.3f);
-                moths[i][4] = (float)Math.random();
+                moths[i][1] = (float)(RND.nextFloat() * Math.PI * 2.0);
+                moths[i][2] = 5f + (float)(RND.nextFloat() * 8f);
+                moths[i][3] = 0.7f + (float)(RND.nextFloat() * 1.3f);
+                moths[i][4] = (float)RND.nextFloat();
             }
         }
         if (!ripplesInit) {
@@ -381,19 +411,19 @@ public class LivingAtmosphere {
     }
 
     private static void resetRipple(int i) {
-        ripples[i][0] = (float)Math.random();
-        ripples[i][1] = 0.84f + (float)(Math.random() * 0.12f);
-        ripples[i][2] = (float)(Math.random() * 0.15f);
-        ripples[i][3] = 0.35f + (float)(Math.random() * 0.45f);
+        ripples[i][0] = (float)RND.nextFloat();
+        ripples[i][1] = 0.84f + (float)(RND.nextFloat() * 0.12f);
+        ripples[i][2] = (float)(RND.nextFloat() * 0.15f);
+        ripples[i][3] = 0.35f + (float)(RND.nextFloat() * 0.45f);
     }
 
     private static void resetPaperScrap(int i) {
-        boolean leftToRight = Math.random() < 0.5;
+        boolean leftToRight = RND.nextFloat() < 0.5;
         paperScraps[i][0] = leftToRight ? -0.05f : 1.05f;
-        paperScraps[i][1] = 0.84f + (float)(Math.random() * 0.12f);
-        paperScraps[i][2] = (leftToRight ? 1f : -1f) * (0.035f + (float)(Math.random() * 0.05f));
-        paperScraps[i][3] = (float)(Math.random() * Math.PI * 2.0);
-        paperScraps[i][4] = 0.5f + (float)Math.random();
+        paperScraps[i][1] = 0.84f + (float)(RND.nextFloat() * 0.12f);
+        paperScraps[i][2] = (leftToRight ? 1f : -1f) * (0.035f + (float)(RND.nextFloat() * 0.05f));
+        paperScraps[i][3] = (float)(RND.nextFloat() * Math.PI * 2.0);
+        paperScraps[i][4] = 0.5f + (float)RND.nextFloat();
     }
 
     public static void renderFogLow(GuiGraphics g, int w, int h) {
@@ -853,7 +883,7 @@ public class LivingAtmosphere {
             float radius = moths[i][2];
             int mx = lx + (int)(Math.cos(angle) * radius);
             int my = ly + (int)(Math.sin(angle * 1.7f + moths[i][4] * 6f) * radius * 0.45f);
-            int alpha = 120 + (int)(Math.sin(time * 4.0f + i) * 45f);
+            int alpha = reducedMotion() ? 130 : 120 + (int)(Math.sin(time * 4.0f + i) * 45f);
             alpha = Math.max(35, Math.min(170, alpha));
             int color = AtmosphereRenderer.withAlpha(0x00FFD06A, alpha);
             g.fill(mx, my, mx + 1, my + 1, color);

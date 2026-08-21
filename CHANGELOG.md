@@ -1,5 +1,19 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.3 - El gabinete respira mas ligero
+
+Esta noche el gabinete aprendio a no gastar fuerzas. La ciudad del cristal
+repite sus nubes, su humo y su lluvia con la misma semilla, como si la
+vigilia se guardara en la memoria; y quien lo pida puede aquietar el
+movimiento de la escena entera: el farol deja de temblar, la polilla se
+posa, la rata deja de cruzar y el papel espera el viento.
+
+El archivo, ademas, confiesa tres cosas que retiro en la limpieza: el
+archivo que se adelgaza, el tema que nunca sono y la calle que nunca
+existio. Quien pronuncie la palabra de la limpieza recibira un telegrama
+del propio cronista; y quien encuentre dos de esas confesiones podra pedir
+la tercera.
+
 ## v0.21.2 - Limpieza profunda del proyecto
 
 La oficina no cambió de aspecto, pero sí de peso. Tras cerrar filas en v0.21.0 y corregir el registro sonoro en v0.21.1, el gabinete se sometió a una auditoría completa: todo lo que ya no servía fue retirado, y todo lo que estaba desactualizado fue puesto al día.

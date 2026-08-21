@@ -3,8 +3,35 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/01a025d1-gripeverde` (sync con `main` v0.21.2, commit `afe8e83`).
-- Version: `0.21.2`.
+- Version: `0.21.3`.
 - Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks, integrando el contexto maestro y sincronizacion documental de v0.17.2.
+
+### DECISION 2026-08-21: v0.21.3 - El gabinete respira mas ligero
+
+Hito no-gameplay aprobado por el usuario (solo texto/rendimiento/config):
+- RNG con seed fija en `VictorianSkyline`, `LivingAtmosphere` y
+  `QuarantineSceneRenderer`: eliminado `Math.random` del loop caliente
+  (RND compartido por clase, seeds `0x5EEDF00DL` / `0xC10E5EL` / `0xD05E`).
+  La escena del Title ahora es determinista por sesion.
+- `ClientConfig`: nueva clave `REDUCED_MOTION` (boolean, seccion `visual`,
+  default false) respetada en `LivingAtmosphere` (farol erratico, polillas,
+  rata, papeles, rafagas, pulso de niebla). NO toca widgets ni `EasedValue`
+  (evita riesgo en toda la UI).
+- `Discoveries`: 3 fichas nuevas sobre la limpieza v0.21.2 (43 -> 46):
+  `ARCHIVE_THINNING` (openCount >= 50, dispara en `DiaryTitleScreen.init`),
+  `THEME_NEVER_PLAYED` (codigo `CLEANSE` en `HiddenCipher` + telegrama
+  propio), `BG_TOWN_MEMORY` (cadena en `DiaryArchiveScreen` cuando las
+  otras dos estan descubiertas).
+- `DiaryOptionsScreen`: el progreso del archivo usa `Discoveries.ALL.length`
+  (antes `43` hardcodeado).
+- Sin clases nuevas (siguen 68); sin lang keys nuevas (nombres/pistas
+  hardcodeados ES/EN como el resto de fichas).
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.3.
+- Docs sincronizadas (R-CIERRE): README, CHANGELOG, KNOWN_ISSUES, CONTEXTO
+  y 25 changelog in-game (entrada observable en la ciudad: fichas/toast).
+- Validacion pendiente en cliente real (E125): 4 escalas GUI, toast de las
+  3 fichas, telegrama CLEANSE, quietud con REDUCED_MOTION=true, y que la
+  escena con seed fija no se sienta repetida tras varias sesiones (KI-27).
 
 ### DECISION 2026-08-21 (post-v0.21.2): retiro de CONTEXTO_PARA_IA.md
 
@@ -188,9 +215,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.21.2
-- build.gradle: version = '0.21.2'
-- GripeVerdeMod.VERSION: "0.21.2"
+- Version estable actual: v0.21.3
+- build.gradle: version = '0.21.3'
+- GripeVerdeMod.VERSION: "0.21.3"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10 (no se han publicado tags desde el ciclo v0.13.x; los bumps v0.14-v0.17 quedaron sin tag)
 - Working tree esperado al retomar: limpio

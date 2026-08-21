@@ -2,6 +2,13 @@
 ## Chronicle under seal
 
 
+## Version 0.21.3 - The cabinet breathes lighter
+
+The cabinet learned not to waste its strength. The city repeats its clouds, its smoke and its rain from the same seed, as if the vigil kept itself in memory; and those who ask may quiet the motion of the scene: the lantern stops trembling, the moth settles, the rat stops crossing and the paper waits for the wind.
+
+The archive confesses three things it removed in the cleansing: the archive that grows thinner, the theme that never played, and the street that never existed. Whoever speaks the word of the cleansing will receive a telegram from the chronicler himself.
+
+
 ## Version 0.21.2 - Deep cleanup
 
 Following the cohesion pass and the sound registry fix, the cabinet was audited end-to-end. Historical audit docs, test samples, an unused 2.1M texture, inert theme framework and dead widgets were removed, and all docs were brought up to date. The result is a leaner codebase: 68 Java classes, 25 langs, 25 in-game changelogs, 42 OGG, 0 container PNGs.

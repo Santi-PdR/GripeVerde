@@ -62,7 +62,12 @@ public final class Discoveries {
     public static final String WEATHERVANE       = "weathervane";
     public static final String SKULL_WATCHES     = "skull_watches";
 
-    public static final String TOTAL = "43";
+    // v0.21.3: fichas de la limpieza (solo texto, sin mecanica nueva)
+    public static final String ARCHIVE_THINNING  = "archive_thinning";
+    public static final String THEME_NEVER_PLAYED = "theme_never_played";
+    public static final String BG_TOWN_MEMORY    = "bg_town_memory";
+
+    public static final String TOTAL = "46";
 
     // Objetos del cajon
     public static final String ITEM_KEY    = "item_key";
@@ -187,6 +192,9 @@ public final class Discoveries {
             case COFFIN_CART:       return en ? "The undertaker's cart" : "El coche del sepulturero";
             case WEATHERVANE:       return en ? "The vane obeys the wind" : "La veleta obedece al viento";
             case SKULL_WATCHES:     return en ? "The emblem watches you" : "El emblema te mira";
+            case ARCHIVE_THINNING:  return en ? "The archive that grows thinner" : "El archivo que se adelgaza";
+            case THEME_NEVER_PLAYED: return en ? "The theme that never played" : "El tema que nunca sono";
+            case BG_TOWN_MEMORY:    return en ? "The street that never existed" : "La calle que nunca existio";
             default: return "???";
         }
     }
@@ -238,6 +246,9 @@ public final class Discoveries {
             case COFFIN_CART:       return en ? "Wait after the bells." : "Espera despues de las campanas.";
             case WEATHERVANE:       return en ? "Watch the roofs when the wind rises." : "Mira los tejados cuando el viento suba.";
             case SKULL_WATCHES:     return en ? "The emblem's eye is not painted." : "El ojo del emblema no esta pintado.";
+            case ARCHIVE_THINNING:  return en ? "Open the cabinet again and again, until it gives up its old papers." : "Abre el gabinete una y otra vez, hasta que entregue sus papeles viejos.";
+            case THEME_NEVER_PLAYED: return en ? "Speak the word of the cleansing." : "Pronuncia la palabra de la limpieza.";
+            case BG_TOWN_MEMORY:    return en ? "When the archive confesses two ghosts, ask for the third." : "Cuando el archivo confiese dos fantasmas, pide el tercero.";
             default: return "???";
         }
     }
@@ -261,6 +272,7 @@ public final class Discoveries {
         FOG_TONGUE, BINDER_MARKS, BROKEN_SEAL, SILENCE_LISTENS, DESTROYER,
         ADDRESS_13, WHISPER_ANSWER, KNOCK_BACK, HINGE, NIGHT_WHOLE,
         TIME_SICK, STREAK3, DUST, ANNIVERSARY, FORBIDDEN_FOLIO,
-        COFFIN_CART, WEATHERVANE, SKULL_WATCHES
+        COFFIN_CART, WEATHERVANE, SKULL_WATCHES,
+        ARCHIVE_THINNING, THEME_NEVER_PLAYED, BG_TOWN_MEMORY
     };
 }

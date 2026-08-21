@@ -93,7 +93,10 @@ public final class QuarantineSceneRenderer {
     private static boolean dustInit = false;
     private static float dustTime = 0f;
 
-    public static void tickDust(float delta){ dustTime+=delta; if(!dustInit){ java.util.Random r=new java.util.Random(0xD05E); for(int i=0;i<DUST_COUNT;i++){ dust[i][0]=r.nextFloat(); dust[i][1]=r.nextFloat(); dust[i][2]=0.0006f+r.nextFloat()*0.0012f; dust[i][3]=r.nextFloat()*6.28f; } dustInit=true; } for(int i=0;i<DUST_COUNT;i++){ dust[i][1]-=dust[i][2]*delta*60f; dust[i][3]+=delta*0.7f; if(dust[i][1]<-0.05f){ dust[i][0]=(float)Math.random(); dust[i][1]=1.05f; } } }
+    // v0.21.3: RNG compartido con seed fija (sin Math.random en el loop caliente).
+    private static final java.util.Random RND = new java.util.Random(0xD05E);
+
+    public static void tickDust(float delta){ dustTime+=delta; if(!dustInit){ java.util.Random r=RND; for(int i=0;i<DUST_COUNT;i++){ dust[i][0]=r.nextFloat(); dust[i][1]=r.nextFloat(); dust[i][2]=0.0006f+r.nextFloat()*0.0012f; dust[i][3]=r.nextFloat()*6.28f; } dustInit=true; } for(int i=0;i<DUST_COUNT;i++){ dust[i][1]-=dust[i][2]*delta*60f; dust[i][3]+=delta*0.7f; if(dust[i][1]<-0.05f){ dust[i][0]=RND.nextFloat(); dust[i][1]=1.05f; } } }
 
     private static void renderAtmosphericDust(GuiGraphics g, int w, int h){
         tickDust(1f/20f);

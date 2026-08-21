@@ -2,6 +2,13 @@
 ## Cronica bajo sello
 
 
+## Version 0.21.3 - El gabinete respira más ligero
+
+El gabinete aprendió a no gastar fuerzas. La ciudad repite sus nubes, su humo y su lluvia con la misma semilla, como si la vigilia se guardara en la memoria; y quien lo pida puede aquietar el movimiento de la escena: el farol deja de temblar, la polilla se posa, la rata deja de cruzar y el papel espera el viento.
+
+El archivo confiesa tres cosas que retiró en la limpieza: el archivo que se adelgaza, el tema que nunca sonó y la calle que nunca existió. Quien pronuncie la palabra de la limpieza recibirá un telegrama del propio cronista.
+
+
 ## Version 0.21.2 - Limpieza profunda
 
 Tras el cierre de interfaces y la corrección del registro sonoro, el gabinete fue auditado por completo. Documentos históricos, muestras de prueba, una textura de 2.1M sin uso, framework inerte de temas y widgets muertos fueron retirados, y toda la documentación fue actualizada. El resultado es un código más ligero: 68 clases Java, 25 idiomas, 25 crónicas in-game, 42 OGG, 0 PNG de contenedores.

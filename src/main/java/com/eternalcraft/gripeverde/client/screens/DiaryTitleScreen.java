@@ -85,6 +85,11 @@ public class DiaryTitleScreen extends Screen {
                 int cur = com.eternalcraft.gripeverde.config.ClientConfig.OPEN_COUNT.get();
                 com.eternalcraft.gripeverde.config.ClientConfig.OPEN_COUNT.set(cur + 1);
                 com.eternalcraft.gripeverde.config.ClientConfig.OPEN_COUNT.save();
+                if (cur + 1 >= 50) {
+                    // v0.21.3: el archivo que se adelgaza (solo texto, sin mecanica nueva)
+                    com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                        com.eternalcraft.gripeverde.client.lore.Discoveries.ARCHIVE_THINNING);
+                }
                 openCountIncremented = true;
             }
         } catch (Throwable ignored) {}
@@ -326,6 +331,7 @@ public class DiaryTitleScreen extends Screen {
         try {
             com.eternalcraft.gripeverde.client.lore.HiddenCipher.drawBuffer(g, this.width, this.height);
             com.eternalcraft.gripeverde.client.lore.HiddenCipher.drawTelegram(g, this.width, this.height);
+            com.eternalcraft.gripeverde.client.lore.HiddenCipher.drawCleanseTelegram(g, this.width, this.height);
             com.eternalcraft.gripeverde.client.lore.HiddenCipher.drawPereiraFlash(g, this.width, this.height);
             com.eternalcraft.gripeverde.client.lore.Herald.draw(g, this.width, this.height);
             drawDustIfDue(g);

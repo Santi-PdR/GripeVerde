@@ -191,6 +191,11 @@ public class DiaryArchiveScreen extends Screen {
         super.render(g, mouseX, mouseY, partialTick);
         com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
         com.eternalcraft.gripeverde.client.lore.Marginalia.draw(g, panelX, panelY, panelW, panelH);
+        if (ChroniclerMemory.isDiscovered(Discoveries.ARCHIVE_THINNING)
+                && ChroniclerMemory.isDiscovered(Discoveries.THEME_NEVER_PLAYED)) {
+            // v0.21.3: cuando el archivo confiesa dos fantasmas, pide el tercero.
+            Discoveries.discover(Discoveries.BG_TOWN_MEMORY);
+        }
         Discoveries.drawToast(g, this.width);
     }
 

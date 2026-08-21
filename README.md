@@ -5,19 +5,21 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.21.2 - Limpieza profunda del proyecto**
+**v0.21.3 - El gabinete respira mas ligero**
 
-Hotfix tecnico sobre la linea v0.21.0. Se corrigio el registro de
-`SoundEvent` del mod para que el jar no falle al iniciar en el runtime real
-de Forge 1.20.1. No cambia la direccion visual del gabinete: corrige un
-bloqueo de arranque y mantiene intacta la interfaz ya entregada.
+El gabinete aprendio a no gastar fuerzas. La escena del Title usa un mismo
+generador de azar con semilla fija: humo, nubes, lluvia y eventos de la
+calle se repiten de forma estable en cada vigilia, sin `Math.random` en el
+loop. Nueva opcion de accesibilidad `REDUCED_MOTION`
+(`config/gripeverde-client.toml`, seccion `visual`): con ella se aquietan
+el farol erratico, las polillas, la rata, los papeles, las rafagas y el
+pulso de niebla.
 
-En v0.21.2 se hizo limpieza profunda (sobre v0.21.1): eliminados `AUDITORIA_PROFESIONAL.md`,
-`MICRODETALLES_EXTREMO.md`, `VALIDACION_FASE4.md` (históricos v0.14.x),
-`sound-tests/` (muestras de audio ya integradas), `bg_town.png` (2.1M sin uso,
-Title usa render procedural), framework inerte `client/theme/` parcial
-(ThemeManager, GhoulPalette, componentes de overlay sin registrar) y widgets
-muertos `IconButton`, `SilentButton`, `DiarySeparator`.
+La Sala de consulta suma 3 fichas (46 en total): "El archivo que se
+adelgaza" (se abre tras visitar el gabinete muchas veces), "El tema que
+nunca sono" (palabra `CLEANSE` en el telegrafo oculto) y "La calle que
+nunca existio" (cuando el archivo confiese dos fantasmas). Documentacion
+sincronizada y version 0.21.3.
 
 ## Resumen visible del Mod Menu
 
@@ -47,7 +49,7 @@ Los contenedores del juego conservan su aspecto vanilla original; el mod no alte
 
 ### La memoria del gabinete (v0.16.0)
 - Memoria persistente propia (descubrimientos, objetos, noches seguidas, ausencias) separada del ajuste de audio.
-- 43 descubrimientos con fichas, sellos y pistas encadenadas; algunas consecuencias son permanentes.
+- 46 descubrimientos con fichas, sellos y pistas encadenadas; algunas consecuencias son permanentes.
 - Marginalia contextual del cronista: notas que responden a lo que el lector hace.
 - La Sala de consulta: detras del ultimo folio de la cronica, un archivo con las fichas halladas y documentos recuperados.
 
@@ -69,7 +71,7 @@ Los contenedores del juego conservan su aspecto vanilla original; el mod no alte
 - **Accessibility** - expediente de observacion con lectura por capas.
 - **Online / Multiplayer** - registros de conexion y hospedaje sobre presentacion propia.
 - **Credits** - ultimo archivo del gabinete.
-- **Archive** - sala de consulta (43 fichas).
+- **Archive** - sala de consulta (46 fichas).
 - **DirectJoin / EditServer / Confirm** - formularios y autorizaciones pulidos en v0.21.0.
 - **DebugCanvas** - herramienta interna de desarrollo (no en produccion).
 - **SoundLab** - herramienta interna de audio (no en produccion).
@@ -101,8 +103,8 @@ Reglas actuales:
 
 ## Documentacion
 
-- `CONTEXTO.md` - contexto maestro actual para retomar sesiones (v0.21.2).
-- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.2).
+- `CONTEXTO.md` - contexto maestro actual para retomar sesiones (v0.21.3).
+- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.3).
 - `KNOWN_ISSUES.md` - estado tecnico, decisiones activas, errores documentados, KIs.
 - `README.md` - esta portada.
 

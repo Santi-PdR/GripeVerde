@@ -45,6 +45,9 @@ public class VictorianSkyline {
     private static final long WINDOW_SEED_FG = 0xDEADBEEFL;
     private static final long WINDOW_SEED_BG = 0xCAFEBABEL;
 
+    // v0.21.3: RNG compartido con seed fija (sin Math.random en el loop caliente).
+    private static final java.util.Random RND = new java.util.Random(0x5EEDF00DL);
+
     private static final int TOTAL_CHIMNEYS = CHIMNEYS_BG.length + CHIMNEYS_FG.length;
     private static final float[][] smokeParticles = new float[TOTAL_CHIMNEYS * 8][4];
     private static boolean smokeInit = false;
@@ -72,8 +75,8 @@ public class VictorianSkyline {
         // Animate multiple windows with distinct timers
         if (!animWindowsInit) {
             for (int i = 0; i < ANIM_COUNT; i++) {
-                animTimer[i] = (float)(Math.random() * 15.0);
-                animOn[i] = Math.random() > 0.5;
+                animTimer[i] = (float)(RND.nextFloat() * 15.0);
+                animOn[i] = RND.nextFloat() > 0.5;
                 animPhase[i] = animOn[i] ? 1f : 0f;
             }
             animWindowsInit = true;
@@ -83,7 +86,7 @@ public class VictorianSkyline {
             animTimer[i] -= deltaTime;
             if (animTimer[i] <= 0f) {
                 animOn[i] = !animOn[i];
-                animTimer[i] = 6f + (float)(Math.random() * 12.0);
+                animTimer[i] = 6f + (float)(RND.nextFloat() * 12.0);
             }
             float target = animOn[i] ? 1f : 0f;
             if (animPhase[i] < target) {
@@ -447,7 +450,7 @@ public class VictorianSkyline {
     private static void initSmoke() {
         if (smokeInit) return;
         smokeInit = true;
-        java.util.Random rng = new java.util.Random(0x53330333L);
+        java.util.Random rng = RND;
         for (int i = 0; i < smokeParticles.length; i++) {
             smokeParticles[i][0] = rng.nextFloat();
             smokeParticles[i][1] = rng.nextFloat();
@@ -461,10 +464,10 @@ public class VictorianSkyline {
             smokeParticles[i][1] -= 0.3f * deltaTime * 60f;
             smokeParticles[i][2] -= 0.008f * deltaTime * 60f;
             if (smokeParticles[i][2] <= 0f || smokeParticles[i][1] < -0.15f) {
-                smokeParticles[i][0] = (float)(Math.random() * 0.8f + 0.1f);
+                smokeParticles[i][0] = (float)(RND.nextFloat() * 0.8f + 0.1f);
                 smokeParticles[i][1] = 0f;
-                smokeParticles[i][2] = 0.3f + (float)(Math.random() * 0.3f);
-                smokeParticles[i][3] = 3 + (float)(Math.random() * 5);
+                smokeParticles[i][2] = 0.3f + (float)(RND.nextFloat() * 0.3f);
+                smokeParticles[i][3] = 3 + (float)(RND.nextFloat() * 5);
             }
         }
     }

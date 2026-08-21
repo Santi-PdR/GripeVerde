@@ -1,5 +1,33 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.21.3 - El gabinete respira mas ligero (2026-08-21)
+
+### Cambios cerrados
+- RNG con seed fija en los 3 renderers del Title (`VictorianSkyline`,
+  `LivingAtmosphere`, `QuarantineSceneRenderer`): eliminado `Math.random`
+  del loop caliente. Escena determinista por sesion.
+- `ClientConfig.REDUCED_MOTION` (boolean, seccion `visual`, default false):
+  aquieta en `LivingAtmosphere` el farol erratico, las polillas, la rata,
+  los papeles, las rafagas y el pulso de niebla. No toca widgets ni
+  `EasedValue` (riesgo UI evitado).
+- 3 fichas nuevas de la limpieza (43 -> 46): `ARCHIVE_THINNING`
+  (openCount >= 50, en `DiaryTitleScreen.init`), `THEME_NEVER_PLAYED`
+  (codigo `CLEANSE` en `HiddenCipher` + telegrama), `BG_TOWN_MEMORY`
+  (cadena en `DiaryArchiveScreen` con las otras dos). Nombres/pistas ES/EN
+  hardcodeados; sin lang keys nuevas.
+- `DiaryOptionsScreen`: progreso del archivo con `Discoveries.ALL.length`
+  (era `43` fijo).
+- Version bump: 0.21.2 -> 0.21.3 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-27 (validacion v0.21.3)**: validar en cliente real — 4 escalas GUI
+  (fichas/toast/CLEANSE/REDUCED_MOTION), que la escena con seed fija no se
+  sienta repetida tras varias sesiones, y que el toml nuevo (seccion
+  `visual`) no rompa configs existentes (Forge agrega la clave con default).
+- KI-20, KI-21, KI-24, KI-25 y KI-26 siguen abiertos sin cambios.
+
+---
+
 ## v0.21.2 - Limpieza profunda del proyecto (2026-08-21) + hotfix previo v0.21.1
 
 ### Cambios cerrados (hotfix)

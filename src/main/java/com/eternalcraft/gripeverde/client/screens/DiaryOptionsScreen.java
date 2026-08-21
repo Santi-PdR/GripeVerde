@@ -298,7 +298,7 @@ public class DiaryOptionsScreen extends Screen {
 
     private void drawOptionsRail(GuiGraphics g, float reveal) {
         int found = 0;
-        int total = 43;
+        int total = com.eternalcraft.gripeverde.client.lore.Discoveries.ALL.length;
         try { found = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.discoveredCount(); } catch (Throwable ignored) {}
         String locale = currentLanguageCode().toUpperCase(java.util.Locale.ROOT);
         String locTitle = isEnglishSelected() ? "ACTIVE TONGUE" : "LENGUA ACTIVA";
