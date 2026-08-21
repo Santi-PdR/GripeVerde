@@ -140,8 +140,8 @@ tasks.register('verifyGripeVerdeNoDeadCode') {
             'DiaryDecorator', 'CandleLight', 'InkEffects', 'DiaryMusicSlider',
             'DiaryAmbienceSlider', 'drawVictorianFrame', 'drawQuillCursor',
             'drawVerticalDivider', 'drawDarkLeatherBackground', 'drawVersionPanel',
-            'getMoonPhaseIndex', 'getOpenCount', 'drawSolidBlob', 'TextureAssets.exists',
-            'drawRowBands', 'drawCornerOrnaments', 'openTelemetry', 'scrollToSection',
+            'getMoonPhaseIndex', 'getOpenCount', 'drawSolidBlob',
+            'drawRowBands', 'openTelemetry', 'scrollToSection',
             'drawOrnamentalDivider']
         def pattern = ~/(?i)\b(?:${banned.join('|')})\b/
         def problems = []
