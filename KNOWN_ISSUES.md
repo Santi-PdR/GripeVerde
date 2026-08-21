@@ -18,6 +18,7 @@
 - **ScreenEventHandler:** eliminado import y llamada a `ThemeManager.render()` (no-op), simplificado a intercept Title/Pause + feedback sonoro + atajo Ctrl+0.
 - **Docs actualizados:** `README.md` (v0.21.1 + nota limpieza + lista docs sin _backups), `CONTEXTO_PARA_IA.md` (reescrito a v0.21.1, 68 clases, 0 PNG, sin steel), `CHANGELOG.md` (añadidos v0.19.0, v0.17.2, v0.17.1, v0.17.0), 25 `changelog/*.md` in-game (entrada v0.21.1 EN/ES), `CONTEXTO.md` (nuevo addendum limpieza + nota ThemeManager).
 - **Conteos post-limpieza:** 68 clases Java (vs 83 en v0.17.2), 25 lang, 25 changelog, 42 OGG, 0 PNG contenedores. Working tree limpio.
+- **Post-cierre (docs):** `CONTEXTO_PARA_IA.md` retirado por redundancia con `CONTEXTO.md` (habia quedado desincronizado en v0.21.1). `CONTEXTO.md` queda como unica fuente de verdad. Sin impacto en build ni runtime, sin bump.
 
 ### Riesgos activos / KI
 - **KI-25 (build local del usuario)**: si reaparece un crash distinto al

@@ -101,13 +101,12 @@ Reglas actuales:
 
 ## Documentacion
 
-- `CONTEXTO.md` - contexto maestro actual para retomar sesiones (v0.21.1).
-- `CONTEXTO_PARA_IA.md` - contexto autocontenido para otra IA (v0.21.1, sin steel pack).
-- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.1).
+- `CONTEXTO.md` - contexto maestro actual para retomar sesiones (v0.21.2).
+- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.2).
 - `KNOWN_ISSUES.md` - estado tecnico, decisiones activas, errores documentados, KIs.
 - `README.md` - esta portada.
 
-Históricos eliminados en v0.21.1: `AUDITORIA_PROFESIONAL.md`, `MICRODETALLES_EXTREMO.md`, `VALIDACION_FASE4.md` (eran referencia de polish v0.14.0, ya revertido).
+Históricos eliminados en v0.21.2: `AUDITORIA_PROFESIONAL.md`, `MICRODETALLES_EXTREMO.md`, `VALIDACION_FASE4.md` (eran referencia de polish v0.14.0, ya revertido) y `CONTEXTO_PARA_IA.md` (resumen redundante de `CONTEXTO.md`).
 
 ## Requisitos
 

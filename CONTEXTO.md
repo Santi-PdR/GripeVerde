@@ -2,9 +2,17 @@
 
 ## Addendum operativo actual
 
-- Rama fija de Arena: `arena/019fe23e-gripeverde` (merge con `main` v0.17.2 docs).
+- Rama fija de Arena: `arena/01a025d1-gripeverde` (sync con `main` v0.21.2, commit `afe8e83`).
 - Version: `0.21.2`.
 - Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks, integrando el contexto maestro y sincronizacion documental de v0.17.2.
+
+### DECISION 2026-08-21 (post-v0.21.2): retiro de CONTEXTO_PARA_IA.md
+
+El usuario ordeno eliminar el documento de contexto para otra IA por
+redundancia: duplicaba a CONTEXTO.md y quedo desincronizado en v0.21.1
+cuando el repo ya estaba en v0.21.2. Retirado del repo y de la lista de
+documentacion del README. CONTEXTO.md queda como UNICA fuente de verdad.
+Sin impacto en build ni runtime; no requiere bump de version (docs only).
 
 ### DECISION 2026-08-21: limpieza profunda del proyecto (v0.21.2)
 
