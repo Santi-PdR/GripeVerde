@@ -3,8 +3,30 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/01a025d1-gripeverde` (sync con `main` v0.21.2, commit `afe8e83`).
-- Version: `0.21.10`.
+- Version: `0.21.11`.
 - Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks, integrando el contexto maestro y sincronizacion documental de v0.17.2.
+
+### DECISION 2026-08-21: v0.21.11 - La sala respira bajo la mano
+
+Hito de micro-pulido + optimizacion (sin gameplay, sin assets):
+- Micro-animacion en la Sala de consulta: la ficha bajo el cursor se alza
+  2px y aclara con `EasedValue` (patron de DiaryButton). El hover se
+  suaviza entre fichas (animHoverCard + cardHover en tick).
+- `DiaryProgressBar` estilo ALERT: pulso suave 0.8-1.0 de alpha (el progreso
+  del archivo "late" sin parpadear). Solo afecta al estilo ALERT.
+- `ChroniclerMemory.save()` diferido: max 1 escritura a disco cada 2s
+  (antes escribia en cada `discover`, `bump`, `markDiscovered`, etc.),
+  con `flushForShutdown()` registrado via `Runtime.addShutdownHook` en
+  `GripeVerdeMod` para no perder memoria al cerrar.
+- `QuarantineSceneRenderer`: el grano de pelicula se rehace cada 300ms en
+  modo low-end (antes 90ms) — ahorro de CPU cuando el FPS ya es bajo.
+- Sin clases nuevas (59), sin lang keys, 42 OGG, 35 eventos.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL (el
+  latido del archivo y el alzar de fichas son detalle de interfaz).
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.11.
+- Validacion pendiente en cliente real (KI-36): la ficha del archivo se
+  alza con suavidad (sin saltos), el pulso ALERT es sutil, y la memoria del
+  gabinete sobrevive al cierre del juego (flush).
 
 ### DECISION 2026-08-21: v0.21.10 - La estacion parpadea al cambiar
 
@@ -404,9 +426,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.21.10
-- build.gradle: version = '0.21.10'
-- GripeVerdeMod.VERSION: "0.21.10"
+- Version estable actual: v0.21.11
+- build.gradle: version = '0.21.11'
+- GripeVerdeMod.VERSION: "0.21.11"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10 (no se han publicado tags desde el ciclo v0.13.x; los bumps v0.14-v0.17 quedaron sin tag)
 - Working tree esperado al retomar: limpio

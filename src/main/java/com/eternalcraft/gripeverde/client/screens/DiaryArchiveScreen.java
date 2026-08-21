@@ -43,7 +43,12 @@ public class DiaryArchiveScreen extends Screen {
     private int lastMouseX = -1, lastMouseY = -1;
     private long openedAtMs = 0L;
 
-    // v0.21.5: consulta por nombre/pista/id en la sala de consulta
+    // v0.21.11: micro-animacion de las fichas (patron EasedValue de DiaryButton)
+    private final com.eternalcraft.gripeverde.client.util.EasedValue cardHover =
+        new com.eternalcraft.gripeverde.client.util.EasedValue(5.0f);
+    private int animHoverCard = -1;
+
+    // v0.21.11: consulta por nombre/pista/id en la sala de consulta
     private DiaryTextField searchField = null;
 
     private static final int COLS = 5;
@@ -108,6 +113,13 @@ public class DiaryArchiveScreen extends Screen {
     public void tick() {
         super.tick();
         QuarantineSceneRenderer.tick(1f / 20f);
+        // v0.21.11: suavizar el hover de la ficha hacia la ficha bajo el cursor
+        boolean same = this.animHoverCard == this.hoverCard;
+        this.cardHover.setTarget(this.hoverCard >= 0);
+        this.cardHover.tick(1f / 20f);
+        if (!same && this.hoverCard >= 0) {
+            this.animHoverCard = this.hoverCard;
+        }
     }
 
     @Override
@@ -261,9 +273,14 @@ public class DiaryArchiveScreen extends Screen {
 
     private void drawArchiveCard(GuiGraphics g, int x, int y, int w, String id, boolean discovered, boolean hover, int folio) {
         int tabX = x + w - 16;
+        // v0.21.11: la ficha bajo el cursor se alza 2px y aclara con easing
+        float t = (this.animHoverCard == folio - 1 || (hover && this.animHoverCard < 0))
+            ? Math.max(0f, Math.min(1f, this.cardHover.getEased())) : 0f;
+        int lift = (int) (t * 2f);
+        y -= lift;
         if (discovered) {
             g.fill(x + 1, y + 1, x + w + 1, y + CARD_H + 1, 0x14000000);
-            g.fill(x, y, x + w, y + CARD_H, hover ? 0xFFE0CFAB : 0xFFD5C298);
+            g.fill(x, y, x + w, y + CARD_H, DiaryChrome.lerpColor(hover ? 0xFFE0CFAB : 0xFFD5C298, 0xFFF0E2C2, t));
             g.fill(x, y, x + w, y + 1, 0xFF8E6A35);
             g.fill(x, y + CARD_H - 1, x + w, y + CARD_H, 0xFF8E6A35);
             g.fill(x, y, x + 1, y + CARD_H, 0xFF8E6A35);

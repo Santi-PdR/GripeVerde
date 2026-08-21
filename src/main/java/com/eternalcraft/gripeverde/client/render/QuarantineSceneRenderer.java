@@ -89,7 +89,10 @@ public final class QuarantineSceneRenderer {
 
     private static void renderFilmGrain(GuiGraphics g, int w, int h) {
         long now = System.currentTimeMillis();
-        if (now - lastGrainMs > 90L) {
+        // v0.21.11: en modo low-end el grano se rehace con menos frecuencia
+        // (el detalle se pierde igual con FPS bajos y se ahorra CPU).
+        long grainInterval = isLowEnd() ? 300L : 90L;
+        if (now - lastGrainMs > grainInterval) {
             lastGrainMs = now;
             for (int i = 0; i < grainX.length; i++) {
                 grainX[i] = GRAIN_RNG.nextInt(Math.max(1, w));

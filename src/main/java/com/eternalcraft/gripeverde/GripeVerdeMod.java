@@ -14,7 +14,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 public class GripeVerdeMod {
 
     public static final String MOD_ID  = "gripeverde";
-    public static final String VERSION = "0.21.10";
+    public static final String VERSION = "0.21.11";
 
     public GripeVerdeMod() {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -27,5 +27,12 @@ public class GripeVerdeMod {
 
         // Eventos de pantalla
         MinecraftForge.EVENT_BUS.register(new ScreenEventHandler());
+
+        // v0.21.11: al cerrar el juego se escribe la memoria pendiente del cronista.
+        try {
+            Runtime.getRuntime().addShutdownHook(new Thread(
+                com.eternalcraft.gripeverde.client.lore.ChroniclerMemory::flushForShutdown,
+                "gripeverde-memory-flush"));
+        } catch (Throwable ignored) {}
     }
 }

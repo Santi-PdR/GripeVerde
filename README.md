@@ -5,17 +5,15 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.21.10 - La estacion parpadea al cambiar**
+**v0.21.11 - La sala respira bajo la mano**
 
-El medidor de alcance de la estacion de comunicaciones ya no salta de golpe
-al mover los avisos: se desliza como una aguja sobre papel. Quince tonos de
-tinta que ninguna sala usaba fueron retirados de la paleta, y la vigilancia
-de codigo muerto aprende a nombrar lo desterrado. Sobre las consolidaciones
-v0.21.7-0.21.9 (9 clases + 15 metodos/campos + 57 claves lang limpias,
-pipeline de panel unificado, sliders combinados, cache de idioma, ticker
-del Heraldo en Multiplayer), el proyecto queda en 59 clases Java, 25
-idiomas (80 claves), 35 eventos de sonido, 42 OGG y 0 PNG de contenedores.
-Documentacion sincronizada y version 0.21.10.
+La Sala de consulta responde al tacto: la ficha bajo el cursor se alza con
+suavidad y el medidor del archivo late con pulso tenue (estilo ALERT). La
+memoria del cronista se asienta en disco como mucho una vez cada dos
+segundos y se guarda entera al apagar el juego (flush en shutdown). En modo
+low-end el grano de pelicula se rehace con menos frecuencia para aliviar la
+CPU. 59 clases Java, 25 idiomas, 35 eventos de sonido, 42 OGG y 0 PNG de
+contenedores. Documentacion sincronizada y version 0.21.11.
 
 ## Resumen visible del Mod Menu
 
@@ -100,8 +98,8 @@ Reglas actuales:
 ## Documentacion
 
 - `CONTRIBUTING.md` - guia corta de contribucion (branch fija, no gameplay, validacion).
-- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.10.
-- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.10).
+- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.11.
+- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.11).
 - `KNOWN_ISSUES.md` - estado tecnico, decisiones activas, errores documentados, KIs.
 - `README.md` - esta portada.
 

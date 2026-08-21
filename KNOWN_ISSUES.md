@@ -1,5 +1,26 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.21.11 - La sala respira bajo la mano (2026-08-21)
+
+### Cambios cerrados
+- Micro-animacion de fichas en la Sala de consulta (`EasedValue`: alza 2px
+  + aclarado, hover suavizado entre fichas).
+- `DiaryProgressBar` ALERT con pulso suave 0.8-1.0 (solo ese estilo).
+- `ChroniclerMemory.save()` diferido (1 escritura/2s) + `flushForShutdown()`
+  via `Runtime.addShutdownHook` en `GripeVerdeMod`.
+- Grano de pelicula low-end: intervalo 90ms -> 300ms cuando FPS < 30.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.10 -> 0.21.11 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-36 (v0.21.11)**: validar en cliente — alza suave de fichas, pulso
+  ALERT sutil, y que la memoria sobreviva al cerrar el juego (flush en
+  shutdown).
+- KI-35, KI-34, KI-32/33, KI-27/28/30/31 pendientes. KI-29 (pistas
+  MenuMusic) requiere OGGs del usuario. KI-20/21/24/25 sin cambios.
+
+---
+
 ## v0.21.10 - La estacion parpadea al cambiar (2026-08-21)
 
 ### Cambios cerrados

@@ -1,5 +1,13 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.11 - La sala respira bajo la mano
+
+La sala de consulta ahora responde al tacto: la ficha bajo el dedo se alza
+un instante, y el medidor del archivo late con un pulso tenue, como un
+corazon de papel. La memoria del cronista ya no se escribe a cada paso: se
+asienta de tanto en tanto, y al apagar la lampara se guarda entera antes de
+que la casa quede a oscuras.
+
 ## v0.21.10 - La estacion parpadea al cambiar
 
 Registro tecnico: el medidor de alcance de la estacion de comunicaciones ya
