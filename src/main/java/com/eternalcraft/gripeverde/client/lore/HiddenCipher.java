@@ -105,6 +105,12 @@ public final class HiddenCipher {
                 UiSounds.playCustom(ModSounds.MENU_DOOR.get(), 0.20f, 0.80f);
                 UiSounds.playCustom(ModSounds.UI_NOTIFICATION.get(), 0.15f, 0.70f);
             } catch (Throwable ignored) {}
+        } else if (s.endsWith("ARCHIVE")) {
+            // v0.21.6: la palabra abre la sala de consulta (las fichas que faltan).
+            buffer.setLength(0);
+            try {
+                mc.setScreen(new com.eternalcraft.gripeverde.client.screens.DiaryArchiveScreen(null));
+            } catch (Throwable ignored) {}
         }
     }
 

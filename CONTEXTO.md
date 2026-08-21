@@ -3,8 +3,23 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/01a025d1-gripeverde` (sync con `main` v0.21.2, commit `afe8e83`).
-- Version: `0.21.5`.
+- Version: `0.21.6`.
 - Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks, integrando el contexto maestro y sincronizacion documental de v0.17.2.
+
+### DECISION 2026-08-21: v0.21.6 - El heraldo cuenta la limpieza
+
+Hito de lore (solo texto, sin gameplay):
+- `Herald`: 3 noticias nuevas (limpieza del gabinete, farol del tejado que se
+  apaga solo, gato del kiosco) en ES/EN + array `SECOND_*` con 4 segundas
+  lineas variables (antes fija). Todo sembrado con la semilla del dia real:
+  nunca dos amaneceres iguales.
+- `HiddenCipher`: codigo `ARCHIVE` que abre la Sala de consulta (mismo patron
+  que HOLLOWAY; sin fichas nuevas).
+- Sin cambios de assets, sin clases nuevas (68), sin lang keys.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.6.
+- Validacion pendiente en cliente real (KI-31): ver el Heraldo del dia con
+  las noticias nuevas (se puede forzar cambiando la fecha del sistema), y
+  escribir ARCHIVE en el telegrafo oculto.
 
 ### DECISION 2026-08-21: v0.21.5 - La sala responde a la consulta
 
@@ -269,9 +284,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.21.5
-- build.gradle: version = '0.21.5'
-- GripeVerdeMod.VERSION: "0.21.5"
+- Version estable actual: v0.21.6
+- build.gradle: version = '0.21.6'
+- GripeVerdeMod.VERSION: "0.21.6"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10 (no se han publicado tags desde el ciclo v0.13.x; los bumps v0.14-v0.17 quedaron sin tag)
 - Working tree esperado al retomar: limpio

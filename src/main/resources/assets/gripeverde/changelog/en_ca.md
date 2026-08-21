@@ -2,6 +2,11 @@
 ## Chronicle under seal
 
 
+## Version 0.21.6 - The herald tells the cleansing
+
+The kiosk newspaper found new words for the night: the district cabinet emptied of old papers, a roof lantern that flickered three times and went out on its own, the cat that came down to the kiosk and stole nothing. The fine print of the second column also changes from dawn to dawn. And whoever knows the word that opens the archive may ask the room to show the cards that are missing.
+
+
 ## Version 0.21.5 - The room answers the query
 
 The consultation room learned to answer. Whoever searches among the cards by name, by hint, or by the word that names them, will see only those that matter; and when the archive confesses three ghosts of the cleansing, a fourth remembers the desk that was never used. The music yields for a moment when the archive speaks, and when the machine that holds the vigil runs slow, the street sheds its fog and lanterns so as not to stop.

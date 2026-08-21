@@ -1,5 +1,14 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.6 - El heraldo cuenta la limpieza
+
+El periodico del kiosco encontro palabras nuevas para la noche: el gabinete
+del distrito vaciado de papeles viejos, un farol del tejado que parpadeo
+tres veces y se apago solo, el gato que bajo al kiosco y no robo nada. La
+letra menuda de la segunda columna tambien cambia de amanecer en amanecer.
+Y quien conozca la palabra que abre el archivo podra pedirle a la sala que
+le muestre las fichas que faltan.
+
 ## v0.21.5 - La sala responde a la consulta
 
 La sala de consulta aprendio a responder. Quien busque entre las fichas por

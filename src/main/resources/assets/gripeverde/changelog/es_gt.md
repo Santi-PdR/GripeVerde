@@ -2,6 +2,11 @@
 ## Cronica bajo sello
 
 
+## Version 0.21.6 - El heraldo cuenta la limpieza
+
+El periódico del kiosco encontró palabras nuevas para la noche: el gabinete del distrito vaciado de papeles viejos, un farol del tejado que parpadeó tres veces y se apagó solo, el gato que bajó al kiosco y no robó nada. La letra menuda de la segunda columna también cambia de amanecer en amanecer. Y quien conozca la palabra que abre el archivo podrá pedirle a la sala que le muestre las fichas que faltan.
+
+
 ## Version 0.21.5 - La sala responde a la consulta
 
 La sala de consulta aprendió a responder. Quien busque entre las fichas por su nombre, por su pista o por la palabra que las nombra, verá solo las que importan; y cuando el archivo confiese tres fantasmas de la limpieza, un cuarto recuerda la mesa que nunca se usó. La música cede un instante cuando el archivo habla, y cuando la máquina que sostiene la vigilia va lenta, la calle se despoja de niebla y faroles para no detenerse.

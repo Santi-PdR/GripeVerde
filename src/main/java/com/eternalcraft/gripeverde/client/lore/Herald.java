@@ -57,7 +57,16 @@ public final class Herald {
         "un medico cruzo la linea con la maleta vacia",
         "las ratas abandonaron tres casas a la vez",
         "se apago un farol que nadie habia tocado",
-        "un telegrama llego sin remitente ni destino"
+        "un telegrama llego sin remitente ni destino",
+        "el gabinete del distrito fue vaciado de papeles viejos",
+        "un farol del tejado parpadeo tres veces y se apago solo",
+        "el gato del tejado bajo al kiosco y no robo nada"
+    };
+    private static final String[] SECOND_ES = {
+        "El precio de las velas volvio a subir. El campanario lo niega.",
+        "Se dice que el reloj de bolsillo marco las once y cincuenta y dos tres veces.",
+        "Nadie firma los edictos. Todos reconocen la letra.",
+        "Un papel cayo del cielo y nadie lo recogio."
     };
     private static final String[] EDICTS_ES = {
         "La Junta Sanitaria recuerda: ninguna luz despues del crepusculo.",
@@ -76,7 +85,16 @@ public final class Herald {
         "a doctor crossed the line with an empty bag",
         "the rats left three houses at once",
         "a lamp went out that no one had touched",
-        "a telegram arrived with no sender and no address"
+        "a telegram arrived with no sender and no address",
+        "the district cabinet was emptied of old papers",
+        "a roof lantern flickered three times and went out on its own",
+        "the roof cat came down to the kiosk and stole nothing"
+    };
+    private static final String[] SECOND_EN = {
+        "The price of candles rose again. The bell tower denies it.",
+        "The pocket watch is said to have struck eleven fifty-two three times.",
+        "No one signs the edicts. Everyone recognises the hand.",
+        "A paper fell from the sky and no one picked it up."
     };
     private static final String[] EDICTS_EN = {
         "The Sanitary Board reminds: no lights after dusk.",
@@ -106,9 +124,8 @@ public final class Herald {
             + districts[rnd.nextInt(districts.length)].toUpperCase()
             + ": " + events[rnd.nextInt(events.length)];
         String edict = edicts[(int)(Math.abs(today) % edicts.length)];
-        String second = en
-            ? "The price of candles rose again. The bell tower denies it."
-            : "El precio de las velas volvio a subir. El campanario lo niega.";
+        String[] seconds = en ? SECOND_EN : SECOND_ES;
+        String second = seconds[rnd.nextInt(seconds.length)];
         String name = en ? "THE QUARANTINE HERALD" : "EL HERALDO DE LA CUARENTENA";
         String motto = en ? "printed under seal - price: one breath" : "impreso bajo sello - precio: un aliento";
 

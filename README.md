@@ -5,17 +5,14 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.21.5 - La sala responde a la consulta**
+**v0.21.6 - El heraldo cuenta la limpieza**
 
-La Sala de consulta ahora acepta busqueda: un campo de pergamino filtra las
-fichas por nombre, pista o id, con contador "N / 47" y aviso cuando nada
-coincide. Cuarta confesion de la limpieza: "Los botones que nunca se
-pulsaron" (47 fichas en total, aparece tras las tres de v0.21.3). Marginalia
-nueva para las cien aperturas y para casi completar el archivo. Al hallar
-una ficha, la musica del gabinete cede un instante (ducking). Y si el
-cliente va lento (FPS < 30), la escena omite niebla y faroles para no
-detenerse (modo low-end, muestreo defensivo). Documentacion sincronizada y
-version 0.21.5.
+El Heraldo de la Cuarentena gana noticias nuevas sembradas con el dia real:
+el gabinete vaciado de papeles viejos, un farol del tejado que se apaga
+solo, el gato del kiosco que no roba nada — y la segunda linea del
+periodico varia entre cuatro avisos. El telegrafo oculto acepta la palabra
+`ARCHIVE`, que abre la Sala de consulta para quien quiera ver las fichas
+que faltan. Documentacion sincronizada y version 0.21.6.
 
 ## Resumen visible del Mod Menu
 
@@ -99,8 +96,8 @@ Reglas actuales:
 
 ## Documentacion
 
-- `CONTEXTO.md` - contexto maestro actual para retomar sesiones (v0.21.5).
-- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.5).
+- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.6.
+- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.6).
 - `KNOWN_ISSUES.md` - estado tecnico, decisiones activas, errores documentados, KIs.
 - `README.md` - esta portada.
 

@@ -1,5 +1,24 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.21.6 - El heraldo cuenta la limpieza (2026-08-21)
+
+### Cambios cerrados
+- `Herald`: 3 noticias nuevas (limpieza del gabinete, farol del tejado,
+  gato del kiosco) en ES/EN + segundas lineas variables (SECOND_ES/EN, 4
+  variantes, antes fija). Semilla del dia real intacta.
+- `HiddenCipher`: codigo `ARCHIVE` abre la Sala de consulta (patron
+  HOLLOWAY). Sin fichas nuevas.
+- Version bump: 0.21.5 -> 0.21.6 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-31 (v0.21.6)**: validar en cliente — Heraldo con noticias nuevas
+  (cambiar la fecha del sistema para ver variantes) y codigo ARCHIVE.
+- KI-27 (v0.21.3), KI-28 (v0.21.4) y KI-30 (v0.21.5) siguen pendientes de
+  validacion en cliente. KI-29 (2 pistas MenuMusic) requiere OGGs del
+  usuario. KI-20/21/24/25 sin cambios.
+
+---
+
 ## v0.21.5 - La sala responde a la consulta (2026-08-21)
 
 ### Cambios cerrados
