@@ -312,7 +312,7 @@ public class DiaryPauseScreen extends PauseScreen {
                 // Solo a oscuras se lee esto
                 long now = System.currentTimeMillis();
                 int pulse = 60 + (int)(Math.sin(now / 650.0) * 24);
-                boolean en = isEnglishSelected();
+                boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
                 String dark = en ? "the darkness reads too" : "la oscuridad tambien lee";
                 int dw = this.font.width(dark);
                 g.drawString(this.font, dark, px + (panelW() - dw) / 2, py + panelH() / 2,
@@ -474,12 +474,12 @@ public class DiaryPauseScreen extends PauseScreen {
     // ================================================================
 
     private void drawPauseLedger(GuiGraphics g, int px, int py) {
-        String docket = isEnglishSelected() ? "FIELD DOSSIER" : "DOSIER DE CAMPO";
+        String docket = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "FIELD DOSSIER" : "DOSIER DE CAMPO";
         g.drawString(this.font, docket, px + 14, py + 12, DiaryTheme.SEPIA_MID, false);
 
         String state;
-        if (this.minecraft.hasSingleplayerServer()) state = isEnglishSelected() ? "LOCAL WATCH" : "VIGILIA LOCAL";
-        else state = isEnglishSelected() ? "REMOTE WATCH" : "VIGILIA REMOTA";
+        if (this.minecraft.hasSingleplayerServer()) state = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "LOCAL WATCH" : "VIGILIA LOCAL";
+        else state = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "REMOTE WATCH" : "VIGILIA REMOTA";
         int sw = this.font.width(state);
         int sx = px + panelW() - sw - 18;
         g.fill(sx - 6, py + 11, sx + sw + 6, py + 24, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 28));
@@ -493,7 +493,7 @@ public class DiaryPauseScreen extends PauseScreen {
         int barW = panelW() - 36;
         com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar.draw(g, barX, barY, barW, 12,
             calm,
-            isEnglishSelected() ? ("stillness · " + minutes + "m") : ("quietud · " + minutes + "m"),
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? ("stillness · " + minutes + "m") : ("quietud · " + minutes + "m"),
             com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar.Style.STEEL);
     }
 
@@ -570,7 +570,7 @@ public class DiaryPauseScreen extends PauseScreen {
     }
 
     private void drawSignature(GuiGraphics g, int px, int py) {
-        Component sig = Component.literal(isEnglishSelected()
+        Component sig = Component.literal(com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
                 ? "Signed: S. Pereira, M.D."
                 : "Firmado: S. Pereira, Medico")
             .withStyle(ChatFormatting.ITALIC);
@@ -582,21 +582,12 @@ public class DiaryPauseScreen extends PauseScreen {
         // v0.16.0: tras bastantes hallazgos, la firma reconoce al lector.
         try {
             if (com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.discoveredCount() >= 10) {
-                String add = isEnglishSelected() ? "- and of whoever reads -" : "- y de quien lee -";
+                String add = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "- and of whoever reads -" : "- y de quien lee -";
                 int aw = this.font.width(add);
                 g.drawString(this.font, add, centerX - aw / 2, sy - 10,
                     DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 130), false);
             }
         } catch (Throwable ignored) {}
-    }
-
-    private static boolean isEnglishSelected() {
-        try {
-            String lang = net.minecraft.client.Minecraft.getInstance().getLanguageManager().getSelected();
-            return lang == null || lang.startsWith("en_") || lang.equals("en_us");
-        } catch (Throwable ignored) {
-            return false;
-        }
     }
 
     private void drawWaxSeal(GuiGraphics g, int cx, int cy) {

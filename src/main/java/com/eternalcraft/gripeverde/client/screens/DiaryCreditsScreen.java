@@ -68,19 +68,19 @@ public class DiaryCreditsScreen extends Screen {
         DiaryChrome.drawCornerOrnaments(g, panelX, panelY, panelW, panelH);
 
         int bodyTop = ExpedientHeader.draw(g, this.font, panelX, panelY, panelW,
-            isEnglish() ? "EXPEDIENT IX" : "EXPEDIENTE IX",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT IX" : "EXPEDIENTE IX",
             this.title,
             "- " + Component.translatable("gripeverde.options.credits.subtitle").getString() + " -",
-            isEnglish() ? "EC-QV/1897 · FINAL ARCHIVE" : "EC-QV/1897 · ARCHIVO FINAL",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · FINAL ARCHIVE" : "EC-QV/1897 · ARCHIVO FINAL",
             Component.translatable("gripeverde.options.credits.flavor").getString(),
-            isEnglish() ? "SEALED" : "SELLADO",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "SEALED" : "SELLADO",
             DiaryTheme.BRONZE,
             reveal);
 
         DiaryChrome.drawInsetCard(g, this.font, panelX + panelW - 138, bodyTop + 2, 118, 72,
-            isEnglish() ? "CERTIFICATE" : "CERTIFICADO",
-            isEnglish() ? "single chronicle" : "cronica unica",
-            isEnglish() ? "Every name listed here belongs to the same night watch." : "Cada nombre de este registro pertenece a la misma vigilia.",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "CERTIFICATE" : "CERTIFICADO",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "single chronicle" : "cronica unica",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Every name listed here belongs to the same night watch." : "Cada nombre de este registro pertenece a la misma vigilia.",
             DiaryTheme.BRONZE);
 
         renderRegistryEntries(g, bodyTop + 8);
@@ -127,7 +127,7 @@ public class DiaryCreditsScreen extends Screen {
                 g.fill(x + 1 + 3, y + dy, x + dx + 3, y + dy + 1, 0xFF6E1B12);
             }
             // Lo que el sello guardaba
-            String hidden = isEnglish()
+            String hidden = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
                 ? "The reader, too, shall be remembered."
                 : "El lector tambien sera recordado.";
             int hw = this.font.width(hidden);
@@ -162,17 +162,17 @@ public class DiaryCreditsScreen extends Screen {
         int y = startY;
 
         // Section helper
-        y = drawSection(g, left, y, isEnglish() ? "ESTUDIO" : "ESTUDIO", isEnglish() ? "EternalCraft Studio" : "Estudio EternalCraft");
+        y = drawSection(g, left, y, com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "ESTUDIO" : "ESTUDIO", com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EternalCraft Studio" : "Estudio EternalCraft");
         y += 4;
-        y = drawSection(g, left, y, isEnglish() ? "CHRONICLER" : "CRONISTA", "S. Pereira");
-        y = drawSection(g, left, y, isEnglish() ? "DIRECTOR" : "DIRECTOR", "Santi PdR / Alex");
+        y = drawSection(g, left, y, com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "CHRONICLER" : "CRONISTA", "S. Pereira");
+        y = drawSection(g, left, y, com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "DIRECTOR" : "DIRECTOR", "Santi PdR / Alex");
         y += 4;
-        y = drawSection(g, left, y, isEnglish() ? "CITY BLUEPRINTS" : "PLANOS DE LA CIUDAD", isEnglish() ? "Victorian skyline, gas lamps, quarantine seals" : "Horizonte victoriano, faroles de gas, sellos");
-        y = drawSection(g, left, y, isEnglish() ? "PAPER & INK" : "PAPEL Y TINTA", isEnglish() ? "Parchment panels, ledger bindings, wax" : "Paneles pergamino, encuadernaciones, cera");
+        y = drawSection(g, left, y, com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "CITY BLUEPRINTS" : "PLANOS DE LA CIUDAD", com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Victorian skyline, gas lamps, quarantine seals" : "Horizonte victoriano, faroles de gas, sellos");
+        y = drawSection(g, left, y, com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "PAPER & INK" : "PAPEL Y TINTA", com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Parchment panels, ledger bindings, wax" : "Paneles pergamino, encuadernaciones, cera");
         y += 8;
 
         // Official note
-        String note = isEnglish() ? "Sealed under quarantine act 1897" : "Sellado bajo acta de cuarentena 1897";
+        String note = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Sealed under quarantine act 1897" : "Sellado bajo acta de cuarentena 1897";
         int nw = this.font.width(note);
         g.drawString(this.font, note, panelX + (panelW - nw) / 2, y, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 130), false);
     }
@@ -197,13 +197,6 @@ public class DiaryCreditsScreen extends Screen {
         g.fill(panelX + panelW - 10, panelY + 8, panelX + panelW - 8, panelY + 10, rivet);
         g.fill(panelX + 8, panelY + panelH - 10, panelX + 10, panelY + panelH - 8, rivet);
         g.fill(panelX + panelW - 10, panelY + panelH - 10, panelX + panelW - 8, panelY + panelH - 8, rivet);
-    }
-
-    private boolean isEnglish() {
-        try {
-            String lang = net.minecraft.client.Minecraft.getInstance().getLanguageManager().getSelected();
-            return lang == null || lang.startsWith("en_");
-        } catch (Throwable ignored) { return true; }
     }
 
     @Override public void renderBackground(GuiGraphics g) {}

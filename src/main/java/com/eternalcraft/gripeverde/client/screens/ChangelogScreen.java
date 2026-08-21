@@ -294,12 +294,12 @@ public class ChangelogScreen extends Screen {
         drawLedgerDetails(g, px, py, pw, ph, cx, cy, cw, ch);
 
         int headerBottom = ExpedientHeader.draw(g, this.font, px, py, pw,
-            isEnglishSelected() ? "EXPEDIENT XV" : "EXPEDIENTE XV",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT XV" : "EXPEDIENTE XV",
             this.title,
-            isEnglishSelected() ? "- revision register -" : "- registro de revisiones -",
-            isEnglishSelected() ? "EC-QV/1897 · SEALED CHRONICLE" : "EC-QV/1897 · CRONICA SELLADA",
-            isEnglishSelected() ? "Filed notices arranged in the order the city learned to speak." : "Partes archivados en el orden en que la ciudad aprendio a hablar.",
-            isEnglishSelected() ? "OPEN FOLIO" : "FOLIO ABIERTO",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "- revision register -" : "- registro de revisiones -",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · SEALED CHRONICLE" : "EC-QV/1897 · CRONICA SELLADA",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Filed notices arranged in the order the city learned to speak." : "Partes archivados en el orden en que la ciudad aprendio a hablar.",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "OPEN FOLIO" : "FOLIO ABIERTO",
             DiaryTheme.BRONZE,
             reveal);
 
@@ -326,7 +326,7 @@ public class ChangelogScreen extends Screen {
             // v0.16.0: despues del ultimo renglon, un folio que no figura en la cronica.
             int fy = cy - scrollY + this.contentTotalH + 8;
             if (fy >= cy - 12 && fy <= cy + ch + 4) {
-                boolean en = isEnglishSelected();
+                boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
                 String hidden = en ? "~ there is a room behind the last folio ~"
                                    : "~ hay una sala detras del ultimo folio ~";
                 int hw = this.font.width(hidden);
@@ -356,7 +356,7 @@ public class ChangelogScreen extends Screen {
     }
 
     private void drawRevisionFooter(GuiGraphics g, int px, int py, int pw, int ph) {
-        boolean en = isEnglishSelected();
+        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
         String left = en ? "consultation register" : "registro de consulta";
         String right = en ? ("page " + (scrollY / 160 + 1)) : ("folio " + (scrollY / 160 + 1));
         g.drawString(this.font, left, px + 18, py + ph - 18, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 118), false);
@@ -393,7 +393,7 @@ public class ChangelogScreen extends Screen {
         }
 
         // ── Top archival reference line ──
-        boolean en = isEnglishSelected();
+        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
         String ref = en ? "ARCHIVE EC-QV/1897 - FOLIO " + (scrollY / 120 + 1) : "ARCHIVO EC-QV/1897 - FOLIO " + (scrollY / 120 + 1);
         int refW = this.font.width(ref);
         int refX = px + pw - refW - 22;
@@ -433,13 +433,6 @@ public class ChangelogScreen extends Screen {
             int fw = this.font.width(folio);
             g.drawString(this.font, folio, px + (pw - fw) / 2, bottomY + 6, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 75), false);
         }
-    }
-
-    private static boolean isEnglishSelected() {
-        String lang = "en_us";
-        try { lang = Minecraft.getInstance().getLanguageManager().getSelected(); }
-        catch (Throwable ignored) {}
-        return lang == null || lang.startsWith("en_") || lang.equals("en_us");
     }
 
     private void renderRow(GuiGraphics g, Row row, int x, int y, int maxW) {

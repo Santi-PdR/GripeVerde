@@ -5,17 +5,17 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.21.7 - El gabinete sin peso muerto**
+**v0.21.8 - Una sola mano para el idioma**
 
-Consolidacion interna: 9 clases eliminadas (marco victoriano sin uso, base
-de pantalla nunca extendida, herramientas de desarrollo inalcanzables, tinta
-decorativa huerfana, y los dos sliders de sonido combinados en el
-`DiarySlider` generico). El pipeline de las 14 pantallas Diary comparte un
-nuevo `DiaryChrome.renderPanelBase` (scaffold + pergamino + esquineros), se
-eliminaron 7 metodos muertos y 57 claves de idioma sin uso (los 25 lang
-quedan en 80 claves). El slider de ambiente de la sala de sonido ahora usa
-clave localizada. 59 clases Java, 25 idiomas, 35 eventos de sonido, 42 OGG,
-0 PNG de contenedores. Documentacion sincronizada y version 0.21.7.
+Consolidacion: las 7 salas que consultaban el idioma del lector con su
+propia receta ahora preguntan a la unica mano del gabinete
+(`Discoveries.isEnglish()`), y se retiraron los ornamentos de marco que
+nadie usaba. Sobre la consolidacion de v0.21.7 (9 clases eliminadas, 57
+claves de idioma limpias, pipeline de panel unificado en 14 pantallas,
+sliders de sonido combinados en el `DiarySlider` generico), el proyecto
+queda en 59 clases Java, 25 idiomas (80 claves), 35 eventos de sonido, 42
+OGG y 0 PNG de contenedores. Sin cambios de gameplay. Documentacion
+sincronizada y version 0.21.8.
 
 ## Resumen visible del Mod Menu
 
@@ -99,8 +99,8 @@ Reglas actuales:
 
 ## Documentacion
 
-- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.7.
-- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.7).
+- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.8.
+- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.8).
 - `KNOWN_ISSUES.md` - estado tecnico, decisiones activas, errores documentados, KIs.
 - `README.md` - esta portada.
 

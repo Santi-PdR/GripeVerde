@@ -1,5 +1,28 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.21.8 - Una sola mano para el idioma (2026-08-21)
+
+### Cambios cerrados
+- 7 pantallas unificadas en `Discoveries.isEnglish()`: eliminadas las
+  definiciones privadas de `isEnglish()`/`isEnglishSelected()` en Changelog,
+  Credits, Language, Options, Pause, Title y Video (92 llamadas reescritas).
+  Sin cambio de comportamiento (todas leen el LanguageManager activo).
+- `OrnamentRenderer`: eliminados `drawVictorianFrame`, `drawDoubleBorder`,
+  `drawFiligreeCorner` y `drawFleuron` (0 referencias). Quedan
+  `drawPaperPanel` y `drawWaxSeal` (PosterRenderer).
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.7 -> 0.21.8 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-33 (v0.21.8)**: validar en cliente — las 7 pantallas en ES y EN
+  siguen mostrando el idioma correcto (la unificacion no altero el criterio
+  `startsWith("en_")`).
+- KI-32 (v0.21.7), KI-27, KI-28, KI-30, KI-31 pendientes de validacion.
+  KI-29 (2 pistas MenuMusic) requiere OGGs del usuario. KI-20/21/24/25 sin
+  cambios.
+
+---
+
 ## v0.21.7 - El gabinete sin peso muerto (2026-08-21)
 
 ### Cambios cerrados

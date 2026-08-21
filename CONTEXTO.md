@@ -3,8 +3,27 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/01a025d1-gripeverde` (sync con `main` v0.21.2, commit `afe8e83`).
-- Version: `0.21.7`.
+- Version: `0.21.8`.
 - Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks, integrando el contexto maestro y sincronizacion documental de v0.17.2.
+
+### DECISION 2026-08-21: v0.21.8 - Una sola mano para el idioma
+
+Hito tecnico de consolidacion (continuacion de v0.21.7):
+- 7 pantallas (Changelog, Credits, Language, Options, Pause, Title, Video)
+  tenian su propio helper `isEnglish()`/`isEnglishSelected()` con logica
+  duplicada (y en 2 casos catch con valor distinto). Unificadas 92 llamadas
+  en la canonica `Discoveries.isEnglish()` y eliminadas las 7 definiciones
+  privadas. Sin cambio de comportamiento: todas leen el idioma activo del
+  LanguageManager y devuelven null-safe startsWith("en_").
+- `OrnamentRenderer`: eliminados `drawVictorianFrame` + helpers privados
+  `drawDoubleBorder`, `drawFiligreeCorner`, `drawFleuron` (0 referencias).
+  Sobreviven `drawPaperPanel` y `drawWaxSeal` (usados por PosterRenderer).
+- Sin cambios de assets, sin lang keys, sin gameplay. 59 clases Java.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL (hito
+  tecnico sin manifestacion observable).
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.8.
+- Validacion pendiente en cliente real (KI-33): navegar las 7 pantallas en
+  ES y EN para confirmar que el idioma se sigue leyendo igual.
 
 ### DECISION 2026-08-21: v0.21.7 - El gabinete sin peso muerto
 
@@ -328,9 +347,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.21.7
-- build.gradle: version = '0.21.7'
-- GripeVerdeMod.VERSION: "0.21.7"
+- Version estable actual: v0.21.8
+- build.gradle: version = '0.21.8'
+- GripeVerdeMod.VERSION: "0.21.8"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10 (no se han publicado tags desde el ciclo v0.13.x; los bumps v0.14-v0.17 quedaron sin tag)
 - Working tree esperado al retomar: limpio

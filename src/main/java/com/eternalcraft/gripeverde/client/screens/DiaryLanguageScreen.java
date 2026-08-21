@@ -157,12 +157,12 @@ public class DiaryLanguageScreen extends Screen {
         DiaryChrome.renderPanelBase(g, panelX, panelY, panelW, panelH, DiaryTheme.BRONZE, PaperTexture.PaperKind.ARCHIVE);
 
         int headerBottom = ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW,
-            isEnglishSelected() ? "EXPEDIENT IV" : "EXPEDIENTE IV",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT IV" : "EXPEDIENTE IV",
             this.title,
             "- " + Component.translatable("gripeverde.options.language.subtitle").getString() + " -",
-            isEnglishSelected() ? "EC-QV/1897 · LINGUISTIC ARCHIVE" : "EC-QV/1897 · ARCHIVO LINGUISTICO",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · LINGUISTIC ARCHIVE" : "EC-QV/1897 · ARCHIVO LINGUISTICO",
             Component.translatable("gripeverde.options.language.flavor").getString(),
-            this.applyingLanguage ? (isEnglishSelected() ? "APPLYING" : "APLICANDO") : (isEnglishSelected() ? "INDEXED" : "INDEXADO"),
+            this.applyingLanguage ? (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "APPLYING" : "APLICANDO") : (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "INDEXED" : "INDEXADO"),
             DiaryTheme.BRONZE,
             reveal);
 
@@ -171,7 +171,7 @@ public class DiaryLanguageScreen extends Screen {
         int frameW = this.listW + 8;
         int frameH = this.listH + 8;
         DiaryChrome.drawInnerRail(g, frameX, frameY, frameW, frameH, DiaryTheme.BRONZE);
-        g.drawString(this.font, isEnglishSelected() ? "CONSULATES" : "CONSULADOS", frameX + 10, frameY + 8, DiaryTheme.BRONZE, false);
+        g.drawString(this.font, com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "CONSULATES" : "CONSULADOS", frameX + 10, frameY + 8, DiaryTheme.BRONZE, false);
 
         if (this.languageList != null) {
             if (reveal < 0.995f) {
@@ -186,18 +186,18 @@ public class DiaryLanguageScreen extends Screen {
 
         int statusY = this.panelY + this.panelH - 92;
         DiaryChrome.drawInsetCard(g, this.font, this.panelX + 18, statusY, 146, 42,
-            isEnglishSelected() ? "CURRENT" : "ACTUAL",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "CURRENT" : "ACTUAL",
             safeCode(this.appliedLanguageCode),
-            isEnglishSelected() ? "Language already loaded in the client." : "Idioma ya cargado en el cliente.",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Language already loaded in the client." : "Idioma ya cargado en el cliente.",
             DiaryTheme.BRONZE);
         DiaryChrome.drawInsetCard(g, this.font, this.panelX + 172, statusY, 146, 42,
-            isEnglishSelected() ? "PENDING" : "PENDIENTE",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "PENDING" : "PENDIENTE",
             safeCode(this.pendingLanguageCode),
-            isEnglishSelected() ? "Selection under the reader's hand." : "Seleccion bajo la mano del lector.",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Selection under the reader's hand." : "Seleccion bajo la mano del lector.",
             DiaryTheme.AMBER_FLAME);
         DiaryProgressBar.draw(g, this.panelX + 326, statusY + 14, this.panelW - 344, 14,
             Math.min(1f, this.languageEntries.isEmpty() ? 0f : this.languageEntries.size() / 25f),
-            isEnglishSelected() ? (this.languageEntries.size() + " registries") : (this.languageEntries.size() + " registros"),
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? (this.languageEntries.size() + " registries") : (this.languageEntries.size() + " registros"),
             DiaryProgressBar.Style.INK);
 
         int divY2 = this.panelY + this.panelH - PANEL_PAD - FOOTER_BTN_H - 6;
@@ -215,15 +215,6 @@ public class DiaryLanguageScreen extends Screen {
             com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, this.panelY - 12);
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
         } catch (Throwable ignored) {}
-    }
-
-    private static boolean isEnglishSelected() {
-        try {
-            String lang = Minecraft.getInstance().getLanguageManager().getSelected();
-            return lang == null || lang.startsWith("en_") || lang.equals("en_us");
-        } catch (Throwable ignored) {
-            return true;
-        }
     }
 
     private static String safeCode(String code) {

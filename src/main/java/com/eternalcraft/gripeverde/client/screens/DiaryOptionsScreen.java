@@ -195,13 +195,8 @@ public class DiaryOptionsScreen extends Screen {
         }
     }
 
-    private static boolean isEnglishSelected() {
-        String lang = currentLanguageCode();
-        return lang.startsWith("en_") || lang.equals("en_us");
-    }
-
     private static String[] getFlavorPool() {
-        return isEnglishSelected() ? FLAVOR_POOL_EN : FLAVOR_POOL_ES;
+        return com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? FLAVOR_POOL_EN : FLAVOR_POOL_ES;
     }
 
     private void addBtn(int x, int y, String translationKey, DiaryButton.Icon icon,
@@ -224,11 +219,11 @@ public class DiaryOptionsScreen extends Screen {
         float reveal = DiaryChrome.reveal(this.openedAtMs, 260L);
         DiaryChrome.renderPanelBase(g, panelX, panelY, panelW, panelH, DiaryTheme.PLAGUE_GREEN, PaperTexture.PaperKind.LEDGER);
 
-        String reference = isEnglishSelected() ? "EC-QV/1897 · CENTRAL DESK" : "EC-QV/1897 · MESA CENTRAL";
+        String reference = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · CENTRAL DESK" : "EC-QV/1897 · MESA CENTRAL";
         String subtitle = "- " + Component.translatable("gripeverde.options.subtitle").getString() + " -";
-        String status = isEnglishSelected() ? "ACTIVE" : "ACTIVO";
+        String status = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "ACTIVE" : "ACTIVO";
         int headerBottom = ExpedientHeader.draw(g, this.font, panelX, panelY, panelW,
-            isEnglishSelected() ? "EXPEDIENT I" : "EXPEDIENTE I",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT I" : "EXPEDIENTE I",
             this.title,
             subtitle,
             reference,
@@ -242,16 +237,16 @@ public class DiaryOptionsScreen extends Screen {
         int contentW = contentRight - contentLeft;
 
         drawOptionsGroup(g, contentLeft, this.gridTop - 16, contentW, row(3) + BTN_H + 8,
-            isEnglishSelected() ? "OPERATIVE SURFACES" : "SUPERFICIES OPERATIVAS",
-            isEnglishSelected() ? "Appearance, sound, vision and correspondence." : "Aspecto, sonido, vision y correspondencia.",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "OPERATIVE SURFACES" : "SUPERFICIES OPERATIVAS",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Appearance, sound, vision and correspondence." : "Aspecto, sonido, vision y correspondencia.",
             DiaryTheme.BRONZE);
         drawOptionsGroup(g, contentLeft, this.gridTop + row(3) - 8, contentW, row(2) + BTN_H + 10,
-            isEnglishSelected() ? "DISTRICT RECORDS" : "REGISTROS DEL DISTRITO",
-            isEnglishSelected() ? "External routes, public notices and sealed attributions." : "Rutas externas, avisos publicos y atribuciones selladas.",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "DISTRICT RECORDS" : "REGISTROS DEL DISTRITO",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "External routes, public notices and sealed attributions." : "Rutas externas, avisos publicos y atribuciones selladas.",
             DiaryTheme.PLAGUE_SICK);
         drawOptionsGroup(g, contentLeft, this.gridTop + row(5) - 8, contentW, BTN_H + 20,
-            isEnglishSelected() ? "OPTICAL CALIBRATION" : "CALIBRACION OPTICA",
-            isEnglishSelected() ? "Field of view remains within arm's reach." : "El campo de vision queda al alcance de la mano.",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "OPTICAL CALIBRATION" : "CALIBRACION OPTICA",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Field of view remains within arm's reach." : "El campo de vision queda al alcance de la mano.",
             DiaryTheme.AMBER_FLAME);
 
         // Carril lateral de estado
@@ -292,40 +287,40 @@ public class DiaryOptionsScreen extends Screen {
         int total = com.eternalcraft.gripeverde.client.lore.Discoveries.ALL.length;
         try { found = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.discoveredCount(); } catch (Throwable ignored) {}
         String locale = currentLanguageCode().toUpperCase(java.util.Locale.ROOT);
-        String locTitle = isEnglishSelected() ? "ACTIVE TONGUE" : "LENGUA ACTIVA";
-        String locBody = isEnglishSelected() ? "Current registry and spoken district." : "Registro actual y distrito en uso.";
+        String locTitle = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "ACTIVE TONGUE" : "LENGUA ACTIVA";
+        String locBody = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Current registry and spoken district." : "Registro actual y distrito en uso.";
         DiaryChrome.drawInsetCard(g, this.font, railX, railY, railW, 66, locTitle, locale, locBody, DiaryTheme.BRONZE);
 
         int meterY = railY + 74;
         DiaryChrome.drawInsetCard(g, this.font, railX, meterY, railW, 86,
-            isEnglishSelected() ? "ACOUSTIC STATE" : "ESTADO ACUSTICO",
-            isEnglishSelected() ? "music & room tone" : "musica y ambiente",
-            isEnglishSelected() ? "Music and room tone are carried through the whole cabinet." : "La musica y la resonancia atraviesan todo el gabinete.",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "ACOUSTIC STATE" : "ESTADO ACUSTICO",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "music & room tone" : "musica y ambiente",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Music and room tone are carried through the whole cabinet." : "La musica y la resonancia atraviesan todo el gabinete.",
             DiaryTheme.PLAGUE_SICK);
         DiaryProgressBar.draw(g, railX + 10, meterY + 38, railW - 20, 12,
-            MenuMusic.getUserVolume(), isEnglishSelected() ? "Gramophone" : "Gramofono", DiaryProgressBar.Style.AMBER);
+            MenuMusic.getUserVolume(), com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Gramophone" : "Gramofono", DiaryProgressBar.Style.AMBER);
         DiaryProgressBar.draw(g, railX + 10, meterY + 56, railW - 20, 12,
             com.eternalcraft.gripeverde.client.audio.MenuAmbience.getUserVolume(),
-            isEnglishSelected() ? "Room tone" : "Ambiente", DiaryProgressBar.Style.PLAGUE);
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Room tone" : "Ambiente", DiaryProgressBar.Style.PLAGUE);
 
         int archiveY = meterY + 94;
         DiaryChrome.drawInsetCard(g, this.font, railX, archiveY, railW, 88,
-            isEnglishSelected() ? "ARCHIVE" : "ARCHIVO",
-            (isEnglishSelected() ? "Reading room progress" : "Progreso de la sala de consulta"),
-            isEnglishSelected() ? "The cabinet keeps count of every recovered card." : "El gabinete lleva la cuenta de cada ficha recuperada.",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "ARCHIVE" : "ARCHIVO",
+            (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Reading room progress" : "Progreso de la sala de consulta"),
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "The cabinet keeps count of every recovered card." : "El gabinete lleva la cuenta de cada ficha recuperada.",
             DiaryTheme.REDCOAT);
         DiaryProgressBar.draw(g, railX + 10, archiveY + 42, railW - 20, 14,
             total <= 0 ? 0f : (found / (float) total), found + " / " + total, DiaryProgressBar.Style.ALERT);
         DiaryChrome.drawValueRow(g, this.font, railX + 10, archiveY + 63, railW - 20,
-            isEnglishSelected() ? "Section count" : "Cantidad de secciones", "10", DiaryTheme.INK);
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Section count" : "Cantidad de secciones", "10", DiaryTheme.INK);
 
         int sealY = archiveY + 96;
-        String finalStatus = isEnglishSelected() ? "FIELD READY" : "LISTO PARA CAMPO";
+        String finalStatus = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "FIELD READY" : "LISTO PARA CAMPO";
         DiaryChrome.drawStatusPill(g, this.font, railX + 10, sealY, finalStatus,
             DiaryTheme.withAlpha(DiaryTheme.PLAGUE_GREEN, (int)(76 + 90 * reveal)),
             DiaryTheme.PLAGUE_SICK, DiaryTheme.INK_BLACK);
         DiaryChrome.drawValueRow(g, this.font, railX + 10, sealY + 22, railW - 20,
-            isEnglishSelected() ? "GUI scale" : "Escala GUI", String.valueOf(this.minecraft.options.guiScale().get()), DiaryTheme.BRONZE);
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "GUI scale" : "Escala GUI", String.valueOf(this.minecraft.options.guiScale().get()), DiaryTheme.BRONZE);
     }
 
     private int drawerX() { return panelX + panelW - PAD_SIDES - 92; }

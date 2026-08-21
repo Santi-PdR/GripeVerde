@@ -6,7 +6,7 @@ plugins {
     id 'org.spongepowered.mixin' version '0.7.+'
 }
 
-version = '0.21.7'
+version = '0.21.8'
 group = 'com.eternalcraft.gripeverde'
 base { archivesName = 'gripeverde' }
 

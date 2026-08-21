@@ -1,5 +1,12 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.8 - Una sola mano para el idioma
+
+Registro tecnico: siete salas del gabinete consultaban el idioma del lector
+cada una con su propia receta; ahora todas preguntan a la misma mano, y se
+retiraron los ornamentos de marco que nadie usaba. Sin cambios visibles ni
+de gameplay.
+
 ## v0.21.7 - El gabinete sin peso muerto
 
 Registro tecnico: consolidacion y limpieza. Se eliminaron 9 clases sin uso

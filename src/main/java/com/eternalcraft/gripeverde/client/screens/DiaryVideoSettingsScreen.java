@@ -130,46 +130,46 @@ public class DiaryVideoSettingsScreen extends VideoSettingsScreen {
         DiaryChrome.renderPanelBase(g, this.panelX, this.panelY, this.panelW, this.panelH, DiaryChrome.STEEL_MID, PaperTexture.PaperKind.TECHNICAL);
 
         int headerBottom = ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW,
-            isEnglish() ? "EXPEDIENT VII" : "EXPEDIENTE VII",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT VII" : "EXPEDIENTE VII",
             Component.translatable("options.videoTitle"),
-            isEnglish() ? "- optical and rendering apparatus -" : "- aparato optico y de render -",
-            isEnglish() ? "EC-QV/1897 · OBSERVATION APPARATUS" : "EC-QV/1897 · APARATO DE OBSERVACION",
-            isEnglish() ? "The scene remains vanilla; only the console changes." : "La escena sigue siendo vanilla; solo cambia la consola.",
-            isEnglish() ? "CALIBRATED" : "CALIBRADO",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "- optical and rendering apparatus -" : "- aparato optico y de render -",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · OBSERVATION APPARATUS" : "EC-QV/1897 · APARATO DE OBSERVACION",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "The scene remains vanilla; only the console changes." : "La escena sigue siendo vanilla; solo cambia la consola.",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "CALIBRATED" : "CALIBRADO",
             DiaryTheme.BRONZE,
             reveal);
 
         int railX = this.panelX + this.panelW - RAIL_W - 18;
         // v0.21.4: el aparato se agrupa por secciones (render / calidad / rendimiento)
         DiaryChrome.drawInsetCard(g, this.font, railX, headerBottom, RAIL_W, 86,
-            isEnglish() ? "RENDER" : "RENDER",
-            isEnglish() ? "Field adjustments" : "Ajustes de campo",
-            isEnglish() ? "Sliders and toggles keep their vanilla behaviour while the chamber clarifies hierarchy." : "Los deslizadores y tiradores conservan comportamiento vanilla mientras la camara aclara la jerarquia.",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "RENDER" : "RENDER",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Field adjustments" : "Ajustes de campo",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Sliders and toggles keep their vanilla behaviour while the chamber clarifies hierarchy." : "Los deslizadores y tiradores conservan comportamiento vanilla mientras la camara aclara la jerarquia.",
             DiaryTheme.BRONZE);
         DiaryProgressBar.draw(g, railX + 10, headerBottom + 52, RAIL_W - 20, 14,
-            normalizeFov(), isEnglish() ? "Field of view" : "Campo visual", DiaryProgressBar.Style.STEEL);
+            normalizeFov(), com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Field of view" : "Campo visual", DiaryProgressBar.Style.STEEL);
         DiaryChrome.drawValueRow(g, this.font, railX + 10, headerBottom + 70, RAIL_W - 20,
-            isEnglish() ? "Canvas" : "Lienzo",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Canvas" : "Lienzo",
             this.width + " x " + this.height, DiaryTheme.INK);
 
         DiaryChrome.drawInsetCard(g, this.font, railX, headerBottom + 94, RAIL_W, 80,
-            isEnglish() ? "QUALITY" : "CALIDAD",
-            isEnglish() ? "GUI scaling" : "Escala GUI",
-            isEnglish() ? "Small resolutions and high GUI scales remain legible through the same dossier layout." : "Resoluciones pequenas y escalas altas mantienen legibilidad bajo el mismo dossier.",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "QUALITY" : "CALIDAD",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "GUI scaling" : "Escala GUI",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Small resolutions and high GUI scales remain legible through the same dossier layout." : "Resoluciones pequenas y escalas altas mantienen legibilidad bajo el mismo dossier.",
             DiaryTheme.AMBER_FLAME);
         DiaryChrome.drawValueRow(g, this.font, railX + 10, headerBottom + 140, RAIL_W - 20,
-            isEnglish() ? "Scale" : "Escala",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Scale" : "Escala",
             String.valueOf(this.ownOptions.guiScale().get()), DiaryTheme.INK);
 
         if (this.panelH >= 330) {
             int perfY = headerBottom + 182;
             DiaryChrome.drawInsetCard(g, this.font, railX, perfY, RAIL_W, 70,
-                isEnglish() ? "PERFORMANCE" : "RENDIMIENTO",
-                isEnglish() ? "Frame pacing" : "Caudal de la vigilia",
-                isEnglish() ? "The gauge reads the client's current pacing; the cabinet only watches." : "El medidor lee el ritmo actual del cliente; el gabinete solo observa.",
+                com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "PERFORMANCE" : "RENDIMIENTO",
+                com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Frame pacing" : "Caudal de la vigilia",
+                com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "The gauge reads the client's current pacing; the cabinet only watches." : "El medidor lee el ritmo actual del cliente; el gabinete solo observa.",
                 DiaryTheme.PLAGUE_SICK);
             DiaryProgressBar.draw(g, railX + 10, perfY + 46, RAIL_W - 20, 14,
-                normalizedFps(), isEnglish() ? "Pacing" : "Ritmo", DiaryProgressBar.Style.PLAGUE);
+                normalizedFps(), com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Pacing" : "Ritmo", DiaryProgressBar.Style.PLAGUE);
         }
 
         int listRight = railX - 8;
@@ -209,15 +209,6 @@ public class DiaryVideoSettingsScreen extends VideoSettingsScreen {
             return Math.max(0f, Math.min(1f, fps / 60f));
         } catch (Throwable ignored) {
             return 0.5f;
-        }
-    }
-
-    private boolean isEnglish() {
-        try {
-            String lang = this.minecraft.getLanguageManager().getSelected();
-            return lang == null || lang.startsWith("en_");
-        } catch (Throwable ignored) {
-            return true;
         }
     }
 
