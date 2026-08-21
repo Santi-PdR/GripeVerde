@@ -1,15 +1,12 @@
 package com.eternalcraft.gripeverde.client.screens;
 
-import com.eternalcraft.gripeverde.client.audio.MenuMusic;
-import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
-import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
-import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar;
+import com.eternalcraft.gripeverde.client.widgets.DiaryTextField;
 import com.eternalcraft.gripeverde.client.widgets.DiaryToggle;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.Options;
@@ -19,6 +16,10 @@ import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Version Diary de ControlsScreen (pantalla "Controles" hub).
@@ -52,6 +53,10 @@ public class DiaryControlsScreen extends Screen {
     private boolean smugglerSeen = false;
     private long openedAtMs = 0L;
 
+    // v0.21.4: busqueda del manual (filtra los puntos de entrada y toggles)
+    private final List<AbstractWidget> controlItems = new ArrayList<>();
+    private DiaryTextField searchField = null;
+
     public DiaryControlsScreen(Screen parent, Options options) {
         super(Component.translatable("controls.title"));
         this.lastScreen = parent;
@@ -83,18 +88,22 @@ public class DiaryControlsScreen extends Screen {
         int col2X = col1X + btnW + 10;
 
         // Fila 0: Mouse... | Atajos...
-        this.addRenderableWidget(new DiaryButton(
+        DiaryButton mouseBtn = new DiaryButton(
             col1X, gridTop, btnW, btnH,
             Component.translatable("options.mouse_settings"),
             DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
             () -> this.minecraft.setScreen(new net.minecraft.client.gui.screens.MouseSettingsScreen(this, this.options))
-        ));
-        this.addRenderableWidget(new DiaryButton(
+        );
+        this.addRenderableWidget(mouseBtn);
+        this.controlItems.add(mouseBtn);
+        DiaryButton keyBindsBtn = new DiaryButton(
             col2X, gridTop, btnW, btnH,
             Component.translatable("controls.keybinds"),
             DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
             () -> this.minecraft.setScreen(new net.minecraft.client.gui.screens.controls.KeyBindsScreen(this, this.options))
-        ));
+        );
+        this.addRenderableWidget(keyBindsBtn);
+        this.controlItems.add(keyBindsBtn);
 
         // Fila 1: toggleCrouch | toggleSprint
         addDiaryToggle(this.options.toggleCrouch(),
@@ -113,6 +122,19 @@ public class DiaryControlsScreen extends Screen {
         addDiaryToggle(this.options.operatorItemsTab(),
             Component.translatable("options.operatorItemsTab"),
             col2X, gridTop + rowH * 2, btnW, btnH);
+
+        // v0.21.4: campo de busqueda del manual (filtra los 6 puntos de mando).
+        // Se omite en paneles muy pequenos para no invadir el divisor.
+        if (this.panelH >= 220) {
+            int searchX = col1X;
+            int searchW = (col2X + btnW) - searchX;
+            int searchY = gridTop + rowH * 3 + 8;
+            this.searchField = new DiaryTextField(this.font, searchX, searchY, searchW, 18,
+                Component.literal("search"));
+            this.searchField.setMaxLength(24);
+            this.searchField.setResponder(q -> applyManualSearch(q));
+            this.addRenderableWidget(this.searchField);
+        }
 
         // Boton Volver Diary
         int backW = 120;
@@ -138,6 +160,24 @@ public class DiaryControlsScreen extends Screen {
                                 java.util.function.Function<Boolean, Component> fmt,
                                 int x, int y, int w, int h) {
         this.addRenderableWidget(new DiaryToggle(x, y, w, h, opt, baseLabel, fmt, null));
+    }
+
+    // v0.21.4: filtro del manual por nombre de entrada o mando.
+    private void applyManualSearch(String query) {
+        String q = query == null ? "" : query.toLowerCase(Locale.ROOT).trim();
+        for (AbstractWidget w : this.controlItems) {
+            String label = w.getMessage().getString().toLowerCase(Locale.ROOT);
+            w.visible = q.isEmpty() || label.contains(q);
+        }
+    }
+
+    private boolean noManualMatches() {
+        if (this.controlItems.isEmpty()) return false;
+        boolean anyVisible = false;
+        for (AbstractWidget w : this.controlItems) {
+            if (w.visible) { anyVisible = true; break; }
+        }
+        return !anyVisible;
     }
 
     @Override
@@ -201,6 +241,21 @@ public class DiaryControlsScreen extends Screen {
 
         int divY2 = this.panelY + this.panelH - 38;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
+
+        if (this.searchField != null) {
+            boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+            if (this.searchField.getValue().isEmpty() && !this.searchField.isFocused()) {
+                String hint = en ? "type to filter the manual" : "escriba para filtrar el manual";
+                g.drawString(this.font, hint, this.searchField.getX() + 6, this.searchField.getY() + 5,
+                    DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 170), false);
+            }
+            if (!this.searchField.getValue().isEmpty() && noManualMatches()) {
+                String none = en ? "- no entry matches -" : "- ningun punto coincide -";
+                int nx = this.searchField.getX() + (this.searchField.getWidth() - this.font.width(none)) / 2;
+                g.drawString(this.font, none, nx, this.searchField.getY() + 24,
+                    DiaryTheme.withAlpha(DiaryTheme.INK, 130), false);
+            }
+        }
 
         if (reveal < 0.995f) {
             int revealBottom = this.panelY + Math.max(28, (int)(this.panelH * reveal));

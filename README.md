@@ -5,21 +5,21 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.21.3 - El gabinete respira mas ligero**
+**v0.21.4 - La tinta se asienta**
 
-El gabinete aprendio a no gastar fuerzas. La escena del Title usa un mismo
-generador de azar con semilla fija: humo, nubes, lluvia y eventos de la
-calle se repiten de forma estable en cada vigilia, sin `Math.random` en el
-loop. Nueva opcion de accesibilidad `REDUCED_MOTION`
-(`config/gripeverde-client.toml`, seccion `visual`): con ella se aquietan
-el farol erratico, las polillas, la rata, los papeles, las rafagas y el
-pulso de niebla.
+El gabinete ordeno sus utensilios. El manual de campo (Controles) acepta
+busqueda por nombre: un campo de pergamino filtra los puntos de mando sin
+tocar la logica vanilla. El aparato de observacion (Video) agrupa su carril
+en secciones RENDER / QUALITY / PERFORMANCE, con medidor de pulso del
+cliente y dimension del lienzo. El archivo de lenguas declara, al pasar la
+mano sobre cada consulado, cuantas paginas de su registro guarda el
+gabinete (136/136 para las 25 lenguas soportadas). Al abrir la Sala de
+consulta, un papel cae al suelo (`ui.paper_fall`, reutiliza OGG existentes).
 
-La Sala de consulta suma 3 fichas (46 en total): "El archivo que se
-adelgaza" (se abre tras visitar el gabinete muchas veces), "El tema que
-nunca sono" (palabra `CLEANSE` en el telegrafo oculto) y "La calle que
-nunca existio" (cuando el archivo confiese dos fantasmas). Documentacion
-sincronizada y version 0.21.3.
+Higiene: 54 imports muertos eliminados, nueva verificacion de build
+`verifyGripeVerdeNoDeadCode` (falla si reaparece codigo desterrado) y
+`.editorconfig` (UTF-8 sin BOM, LF, sin trailing whitespace). Documentacion
+sincronizada y version 0.21.4.
 
 ## Resumen visible del Mod Menu
 
@@ -103,8 +103,8 @@ Reglas actuales:
 
 ## Documentacion
 
-- `CONTEXTO.md` - contexto maestro actual para retomar sesiones (v0.21.3).
-- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.3).
+- `CONTEXTO.md` - contexto maestro actual para retomar sesiones (v0.21.4).
+- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.4).
 - `KNOWN_ISSUES.md` - estado tecnico, decisiones activas, errores documentados, KIs.
 - `README.md` - esta portada.
 

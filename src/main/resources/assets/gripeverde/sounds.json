@@ -363,5 +363,18 @@
       }
     ],
     "subtitle": ""
+  },
+  "ui.paper_fall": {
+    "sounds": [
+      {
+        "name": "gripeverde:ui/scroll1",
+        "volume": 0.9
+      },
+      {
+        "name": "gripeverde:ui/back2",
+        "volume": 0.8
+      }
+    ],
+    "subtitle": ""
   }
 }

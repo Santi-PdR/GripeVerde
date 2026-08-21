@@ -2,6 +2,11 @@
 ## Cronica bajo sello
 
 
+## Version 0.21.4 - La tinta se asienta
+
+El gabinete ordenó sus utensilios. El manual de campo acepta que se le pregunte por nombre: quien busque entre sus páginas encuentra el mando que necesita sin revolver el resto. El aparato de observación separa sus secciones —lo que pinta, lo que muestra, lo que mide— y añade una aguja que lee el pulso de la máquina. Los consulados de lenguas declaran, al pasar la mano, cuántas páginas de su registro guarda el gabinete. Y en la sala de consulta, al abrir la puerta, un papel cae al suelo.
+
+
 ## Version 0.21.3 - El gabinete respira más ligero
 
 El gabinete aprendió a no gastar fuerzas. La ciudad repite sus nubes, su humo y su lluvia con la misma semilla, como si la vigilia se guardara en la memoria; y quien lo pida puede aquietar el movimiento de la escena: el farol deja de temblar, la polilla se posa, la rata deja de cruzar y el papel espera el viento.

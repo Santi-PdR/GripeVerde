@@ -1,0 +1,22 @@
+# Eternal Craft: Gripe Verde - convenciones de archivo
+# R-UTF8-NOBOM: UTF-8 sin BOM. Sin trailing whitespace (ver R-CIERRE / higiene).
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.java]
+indent_style = space
+indent_size = 4
+
+[*.json]
+indent_style = space
+indent_size = 2
+
+[*.{md,toml,yml,yaml,gradle}]
+indent_style = space
+indent_size = 4

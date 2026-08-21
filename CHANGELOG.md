@@ -1,5 +1,19 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.4 - La tinta se asienta
+
+Esta noche el gabinete ordeno sus utensilios. El manual de campo acepta que se
+le pregunte por nombre: quien busque entre sus paginas encuentra el mando que
+necesita sin revolver el resto. El aparato de observacion separa sus
+secciones —lo que pinta, lo que muestra, lo que mide— y anade una aguja que
+lee el pulso de la maquina. Los consulados de lenguas declaran, al pasar la
+mano, cuantas paginas de su registro guarda el gabinete. Y en la sala de
+consulta, al abrir la puerta, un papel cae al suelo.
+
+El gabinete tambien se ordeno por dentro: se retiraron referencias que ya no
+nombraban a nada, y se anadio una vigilancia que avisa si vuelve a aparecer lo
+que fue desterrado.
+
 ## v0.21.3 - El gabinete respira mas ligero
 
 Esta noche el gabinete aprendio a no gastar fuerzas. La ciudad del cristal

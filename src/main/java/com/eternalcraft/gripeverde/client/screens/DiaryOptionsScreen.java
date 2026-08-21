@@ -1,28 +1,21 @@
 package com.eternalcraft.gripeverde.client.screens;
 
-import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
-import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
 import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
-import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar;
 import com.eternalcraft.gripeverde.client.widgets.DiarySlider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.AccessibilityOptionsScreen;
 import com.eternalcraft.gripeverde.client.screens.DiaryAccessibilityOptionsScreen;
-import net.minecraft.client.gui.screens.ChatOptionsScreen;
 import com.eternalcraft.gripeverde.client.screens.DiaryChatOptionsScreen;
 import net.minecraft.client.gui.screens.OptionsScreen;
 import net.minecraft.client.gui.screens.Screen;
 import com.eternalcraft.gripeverde.client.screens.DiarySkinCustomizationScreen;
 import com.eternalcraft.gripeverde.client.screens.DiarySoundOptionsScreen;
-import net.minecraft.client.gui.screens.VideoSettingsScreen;
-import net.minecraft.client.gui.screens.controls.ControlsScreen;
 import net.minecraft.network.chat.Component;
 
 /**

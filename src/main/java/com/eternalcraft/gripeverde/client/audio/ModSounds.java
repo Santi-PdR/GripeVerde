@@ -47,6 +47,8 @@ public class ModSounds {
         reg("ui.success");
     public static final RegistryObject<SoundEvent> UI_NOTIFICATION =
         reg("ui.notification");
+    public static final RegistryObject<SoundEvent> UI_PAPER_FALL =
+        reg("ui.paper_fall");
     public static final RegistryObject<SoundEvent> UI_CLICK_CREATE =
         reg("ui.click_create");
     public static final RegistryObject<SoundEvent> UI_CLICK_DESTROY =

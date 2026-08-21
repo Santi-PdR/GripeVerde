@@ -1,7 +1,5 @@
 package com.eternalcraft.gripeverde.client.screens;
 
-import com.eternalcraft.gripeverde.client.audio.MenuAmbience;
-import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.lore.ChroniclerMemory;
 import com.eternalcraft.gripeverde.client.lore.Discoveries;
@@ -79,6 +77,12 @@ public class DiaryArchiveScreen extends Screen {
             initialDoc = DOC_NONE;
         }
         this.openedAtMs = System.currentTimeMillis();
+
+        // v0.21.4: un papel cae al abrir la sala de consulta.
+        try {
+            UiSounds.playCustom(com.eternalcraft.gripeverde.client.audio.ModSounds.UI_PAPER_FALL.get(),
+                0.11f, 1.18f);
+        } catch (Throwable ignored) {}
     }
 
     @Override

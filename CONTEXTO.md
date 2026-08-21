@@ -3,8 +3,40 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/01a025d1-gripeverde` (sync con `main` v0.21.2, commit `afe8e83`).
-- Version: `0.21.3`.
+- Version: `0.21.4`.
 - Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks, integrando el contexto maestro y sincronizacion documental de v0.17.2.
+
+### DECISION 2026-08-21: v0.21.4 - La tinta se asienta
+
+Hito no-gameplay aprobado por el usuario (presentacion + audio + higiene):
+- Busqueda del manual en `DiaryControlsScreen`: `DiaryTextField` filtra los
+  6 puntos de mando (Mouse/Atajos + 4 toggles) por nombre traducido via
+  `AbstractWidget.visible`; hint "escriba para filtrar" y aviso "ningun punto
+  coincide"; se omite si panelH < 220 (escalas extremas).
+- `DiaryVideoSettingsScreen`: carril reagrupado en secciones RENDER / QUALITY /
+  PERFORMANCE (RENDER: barra FOV + fila Canvas con this.width x this.height;
+  QUALITY: escala GUI; PERFORMANCE: medidor de FPS del cliente con
+  `minecraft.getFps()` en try/catch, oculto si panelH < 330). Solo presenta;
+  no toca la lista vanilla ni su logica.
+- `DiaryLanguageScreen`: al hover/pendiente cada consulado declara su registro
+  (136/136 para las 25 lenguas del gabinete via Set estatico REGISTERED;
+  0/136 para el resto de lenguas vanilla). Verificado: los 25 lang tienen 136
+  claves identicas.
+- Audio: evento nuevo `ui.paper_fall` (sounds.json 34 -> 35 eventos) que
+  reutiliza `ui/scroll1` + `ui/back2` (sin OGG nuevos, 42 OGG intactos);
+  suena al abrir la Sala de consulta (`DiaryArchiveScreen.init`).
+- Higiene: 54 imports no usados eliminados (audit de simple-name count==1);
+  nueva task Gradle `verifyGripeVerdeNoDeadCode` (falla si aparece ThemeManager,
+  gripeverde_steel, bg_town, IconButton, ResourcePackHandler, etc. fuera de
+  comentarios; word-boundary para no chocar con `BG_TOWN_MEMORY`) conectada a
+  processResources; `.editorconfig` (utf-8, LF, trim trailing whitespace).
+- Sin clases nuevas (68), sin lang keys nuevas (nombres hardcoded ES/EN).
+- Pendiente: las 2 pistas MenuMusic nuevas del brief requieren OGGs reales del
+  usuario (no generables en sandbox); queda como deuda KI-29.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.4.
+- Validacion pendiente en cliente real (KI-28): 4 escalas GUI, filtro del
+  manual, secciones del aparato, hover de registro en lenguas, papel en la
+  sala de consulta.
 
 ### DECISION 2026-08-21: v0.21.3 - El gabinete respira mas ligero
 
@@ -215,9 +247,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.21.3
-- build.gradle: version = '0.21.3'
-- GripeVerdeMod.VERSION: "0.21.3"
+- Version estable actual: v0.21.4
+- build.gradle: version = '0.21.4'
+- GripeVerdeMod.VERSION: "0.21.4"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10 (no se han publicado tags desde el ciclo v0.13.x; los bumps v0.14-v0.17 quedaron sin tag)
 - Working tree esperado al retomar: limpio

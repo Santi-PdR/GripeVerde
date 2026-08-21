@@ -1,15 +1,12 @@
 package com.eternalcraft.gripeverde.client.screens;
 
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
-import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
-import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
 import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
 import com.eternalcraft.gripeverde.client.render.FlagRenderer;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
-import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
 import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar;
@@ -45,6 +42,20 @@ public class DiaryLanguageScreen extends Screen {
     private static final int INK_ACTIVE  = 0xFF1A0F08;
     private static final int INK_PENDING = 0xFF3A230F;
     private static final int INK_NORMAL  = 0xFF6B4A2E;
+
+    // v0.21.4: registros del gabinete (claves en assets/gripeverde/lang/*.json).
+    // Las 25 lenguas soportadas declaran 136 claves; las demas 0.
+    private static final int REGISTRY_KEYS = 136;
+    private static final java.util.Set<String> REGISTERED = java.util.Set.of(
+        "en_us", "en_gb", "en_ca", "en_au", "en_nz",
+        "es_es", "es_mx", "es_ar", "es_419", "es_bo", "es_cl", "es_co",
+        "es_cr", "es_do", "es_ec", "es_gt", "es_hn", "es_ni", "es_pa",
+        "es_pe", "es_pr", "es_py", "es_sv", "es_uy", "es_ve");
+
+    private static String registryFor(String code) {
+        int n = REGISTERED.contains(code) ? REGISTRY_KEYS : 0;
+        return n + "/" + REGISTRY_KEYS;
+    }
 
     private final Screen parent;
     private final Options options;
@@ -561,11 +572,17 @@ public class DiaryLanguageScreen extends Screen {
 
             if (hovered || isPending) {
                 String codeText = this.code.toUpperCase(java.util.Locale.ROOT);
+                String regText = DiaryLanguageScreen.registryFor(this.code);
+                int regW = DiaryLanguageScreen.this.font.width(regText);
                 int codeW = DiaryLanguageScreen.this.font.width(codeText);
-                int codeX = left + rowWidth - codeW - 16;
+                int totalW = codeW + 6 + regW;
+                int codeX = left + rowWidth - totalW - 16;
                 if (codeX > textZoneLeft + textW + 8) {
                     int codeColor = isPending ? 0xAA1A0F08 : 0x886B4A2E;
                     g.drawString(DiaryLanguageScreen.this.font, codeText, codeX, textY, codeColor, false);
+                    // v0.21.4: cada consulado declara cuantas claves tiene en el gabinete.
+                    g.drawString(DiaryLanguageScreen.this.font, regText, codeX + codeW + 6, textY,
+                        isPending ? 0x881A0F08 : 0x556B4A2E, false);
                 }
             }
         }

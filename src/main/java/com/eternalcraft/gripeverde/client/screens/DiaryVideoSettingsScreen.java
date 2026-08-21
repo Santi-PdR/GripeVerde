@@ -142,22 +142,37 @@ public class DiaryVideoSettingsScreen extends VideoSettingsScreen {
             reveal);
 
         int railX = this.panelX + this.panelW - RAIL_W - 18;
-        DiaryChrome.drawInsetCard(g, this.font, railX, headerBottom, RAIL_W, 82,
-            isEnglish() ? "OPTICS" : "OPTICA",
+        // v0.21.4: el aparato se agrupa por secciones (render / calidad / rendimiento)
+        DiaryChrome.drawInsetCard(g, this.font, railX, headerBottom, RAIL_W, 86,
+            isEnglish() ? "RENDER" : "RENDER",
             isEnglish() ? "Field adjustments" : "Ajustes de campo",
             isEnglish() ? "Sliders and toggles keep their vanilla behaviour while the chamber clarifies hierarchy." : "Los deslizadores y tiradores conservan comportamiento vanilla mientras la camara aclara la jerarquia.",
             DiaryTheme.BRONZE);
         DiaryProgressBar.draw(g, railX + 10, headerBottom + 52, RAIL_W - 20, 14,
             normalizeFov(), isEnglish() ? "Field of view" : "Campo visual", DiaryProgressBar.Style.STEEL);
+        DiaryChrome.drawValueRow(g, this.font, railX + 10, headerBottom + 70, RAIL_W - 20,
+            isEnglish() ? "Canvas" : "Lienzo",
+            this.width + " x " + this.height, DiaryTheme.INK);
 
-        DiaryChrome.drawInsetCard(g, this.font, railX, headerBottom + 90, RAIL_W, 84,
-            isEnglish() ? "DISPLAY" : "PANTALLA",
+        DiaryChrome.drawInsetCard(g, this.font, railX, headerBottom + 94, RAIL_W, 80,
+            isEnglish() ? "QUALITY" : "CALIDAD",
             isEnglish() ? "GUI scaling" : "Escala GUI",
             isEnglish() ? "Small resolutions and high GUI scales remain legible through the same dossier layout." : "Resoluciones pequenas y escalas altas mantienen legibilidad bajo el mismo dossier.",
             DiaryTheme.AMBER_FLAME);
-        DiaryChrome.drawValueRow(g, this.font, railX + 10, headerBottom + 136, RAIL_W - 20,
+        DiaryChrome.drawValueRow(g, this.font, railX + 10, headerBottom + 140, RAIL_W - 20,
             isEnglish() ? "Scale" : "Escala",
             String.valueOf(this.ownOptions.guiScale().get()), DiaryTheme.INK);
+
+        if (this.panelH >= 330) {
+            int perfY = headerBottom + 182;
+            DiaryChrome.drawInsetCard(g, this.font, railX, perfY, RAIL_W, 70,
+                isEnglish() ? "PERFORMANCE" : "RENDIMIENTO",
+                isEnglish() ? "Frame pacing" : "Caudal de la vigilia",
+                isEnglish() ? "The gauge reads the client's current pacing; the cabinet only watches." : "El medidor lee el ritmo actual del cliente; el gabinete solo observa.",
+                DiaryTheme.PLAGUE_SICK);
+            DiaryProgressBar.draw(g, railX + 10, perfY + 46, RAIL_W - 20, 14,
+                normalizedFps(), isEnglish() ? "Pacing" : "Ritmo", DiaryProgressBar.Style.PLAGUE);
+        }
 
         int listRight = railX - 8;
         DiaryChrome.drawInnerRail(g, this.panelX + 18, headerBottom - 2, listRight - (this.panelX + 18), this.panelH - 128, DiaryTheme.BRONZE);
@@ -184,6 +199,16 @@ public class DiaryVideoSettingsScreen extends VideoSettingsScreen {
     private float normalizeFov() {
         try {
             return Math.max(0f, Math.min(1f, (this.ownOptions.fov().get() - 30f) / 80f));
+        } catch (Throwable ignored) {
+            return 0.5f;
+        }
+    }
+
+    /** v0.21.4: medidor de rendimiento (FPS del cliente, defensivo). */
+    private float normalizedFps() {
+        try {
+            int fps = this.minecraft.getFps();
+            return Math.max(0f, Math.min(1f, fps / 60f));
         } catch (Throwable ignored) {
             return 0.5f;
         }

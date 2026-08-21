@@ -2,6 +2,11 @@
 ## Chronicle under seal
 
 
+## Version 0.21.4 - The ink settles
+
+The cabinet put its tools in order. The field manual accepts being asked by name: whoever searches among its pages finds the control they need without turning over the rest. The observation apparatus divides its sections —what it paints, what it shows, what it measures— and adds a needle that reads the machine's pulse. The language consulates declare, as the hand passes, how many pages of their register the cabinet keeps. And in the consultation room, when the door opens, a paper falls to the floor.
+
+
 ## Version 0.21.3 - The cabinet breathes lighter
 
 The cabinet learned not to waste its strength. The city repeats its clouds, its smoke and its rain from the same seed, as if the vigil kept itself in memory; and those who ask may quiet the motion of the scene: the lantern stops trembling, the moth settles, the rat stops crossing and the paper waits for the wind.

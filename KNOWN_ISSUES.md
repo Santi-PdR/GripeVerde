@@ -1,5 +1,39 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.21.4 - La tinta se asienta (2026-08-21)
+
+### Cambios cerrados
+- Busqueda del manual en `DiaryControlsScreen` (`DiaryTextField` filtra los 6
+  puntos de mando por nombre traducido; hint y aviso de "ningun punto coincide";
+  oculto en paneles < 220px para no invadir el divisor).
+- `DiaryVideoSettingsScreen` reagrupado: secciones RENDER (FOV + Canvas) /
+  QUALITY (escala GUI) / PERFORMANCE (medidor de FPS con `minecraft.getFps()`
+  defensivo, oculto en paneles < 330px). No toca la logica vanilla.
+- `DiaryLanguageScreen`: hover muestra el registro del consulado (136/136 para
+  las 25 lenguas del gabinete; 0/136 para lenguas vanilla no soportadas).
+- Nuevo evento de sonido `ui.paper_fall` (34 -> 35 eventos) reutilizando
+  `ui/scroll1` + `ui/back2` (42 OGG intactos); suena al abrir la Sala de
+  consulta.
+- Higiene: 54 imports no usados eliminados; task Gradle
+  `verifyGripeVerdeNoDeadCode` conectada a `processResources` (falla si
+  reaparecen ThemeManager, gripeverde_steel, bg_town, IconButton, etc. fuera
+  de comentarios); `.editorconfig` (utf-8, LF, trim trailing whitespace).
+- Version bump: 0.21.3 -> 0.21.4 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-27 (v0.21.3)**: sigue pendiente la validacion en cliente de RNG seed
+  fija, REDUCED_MOTION y las 3 fichas de limpieza.
+- **KI-28 (v0.21.4)**: validar en cliente real — 4 escalas GUI (filtro del
+  manual, secciones del aparato, hover de registro, papel en la sala), que el
+  filtro no rompa clicks ni el smugglers signal, y que el FPS meter no se vea
+  fragil en pantallas pequenas.
+- **KI-29 (deuda audio)**: las 2 pistas MenuMusic nuevas del brief requieren
+  OGGs reales del usuario (no generables en sandbox). Evento "papel cayendo"
+  ya cubierto por `ui.paper_fall` con reuso.
+- KI-20, KI-21, KI-24, KI-25 siguen abiertos sin cambios.
+
+---
+
 ## v0.21.3 - El gabinete respira mas ligero (2026-08-21)
 
 ### Cambios cerrados
