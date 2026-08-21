@@ -1,5 +1,12 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.10 - La estacion parpadea al cambiar
+
+Registro tecnico: el medidor de alcance de la estacion de comunicaciones ya
+no salta de golpe al mover los avisos: se desliza como lo haria una aguja
+sobre papel. Se retiraron quince tonos de tinta que ninguna sala usaba, y
+la vigilancia de codigo muerto aprende a nombrar lo que fue desterrado.
+
 ## v0.21.9 - La tinta pesa menos por frame
 
 Registro tecnico: el gabinete consultaba el idioma del lector decenas de

@@ -31,6 +31,10 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
     private final SmoothScroll smoothScroll = new SmoothScroll(0.50D, 0.24D);
     private final Options ownOptions;
     private int panelX, panelY, panelW, panelH;
+
+    // v0.21.10: el alcance de la estacion responde con transicion suave
+    private float signalDisplay = 0f;
+    private long lastSignalMs = 0L;
     private long openedAtMs = 0L;
 
     public DiaryOnlineOptionsScreen(Screen parent, Options options) {
@@ -93,6 +97,12 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
         super.tick();
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.tick(1.0f / 20.0f);
         this.smoothScroll.tick(this.list);
+        // v0.21.10: suavizar el medidor de alcance hacia su objetivo real
+        long now = System.currentTimeMillis();
+        float dt = Math.min(1f, (now - this.lastSignalMs) / 1000f);
+        this.lastSignalMs = now;
+        float target = computePublicSignal();
+        this.signalDisplay += (target - this.signalDisplay) * Math.min(1f, dt * 4f);
     }
 
     @Override
@@ -173,7 +183,7 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
         DiaryChrome.drawValueRow(g, this.font, x + 10, y + 64, w - 44,
             en ? "listing" : "listado", this.ownOptions.allowServerListing().get() ? (en ? "public" : "publico") : (en ? "sealed" : "sellado"), DiaryTheme.PLAGUE_SICK);
         DiaryProgressBar.draw(g, x + 10, y + h - 38, w - 20, 14,
-            computePublicSignal(), en ? "signal spread" : "alcance", DiaryProgressBar.Style.STEEL);
+            this.signalDisplay, en ? "signal spread" : "alcance", DiaryProgressBar.Style.STEEL);
         g.drawString(this.font,
             en ? "district traffic remains under your hand" : "el trafico del distrito permanece bajo vuestra mano",
             x + 10, y + h - 20, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 132), false);

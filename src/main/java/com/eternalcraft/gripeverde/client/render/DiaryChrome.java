@@ -25,19 +25,12 @@ public final class DiaryChrome {
     public static final int INK_SUBTITLE  = 0xFF654025;
     public static final int INK_FLAVOR    = 0xB864482C;
     public static final int INK_DIVIDER   = 0x7A422810;
-    public static final int SHADOW_COL    = 0x20201409;
     public static final int OVERLAY_COL   = 0x5E000000;
 
-    public static final int STEEL_LIGHT = 0xFFB6BAC4;
     public static final int STEEL_MID   = 0xFF9A9EA8;
-    public static final int STEEL_NEAR  = 0xFFA6AAB4;
-    public static final int STEEL_DARK  = 0xFF7C808A;
-    public static final int STEEL_DEEP  = 0xFF5E626C;
-    public static final int STEEL_EDGE  = 0xFF464A52;
     public static final int PLAGUE      = 0xFF6A8A48;
 
     public static final int CARD_BASE   = 0xF0E4D1AE;
-    public static final int CARD_SHADE  = 0x8A3D2A18;
     public static final int CARD_BORDER = 0xA06B4A2E;
 
     // ── Interpolacion / reveal ──────────────────────────────────────────────

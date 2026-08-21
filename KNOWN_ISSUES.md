@@ -1,5 +1,25 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.21.10 - La estacion parpadea al cambiar (2026-08-21)
+
+### Cambios cerrados
+- 15 constantes de color muertas eliminadas (8 de `DiaryTheme`, 7 de
+  `DiaryChrome`) tras audit de uso global.
+- `DiaryOnlineOptionsScreen`: medidor de alcance con transicion suave
+  (interpolacion en tick; antes el valor saltaba al togglear opciones).
+- Lista negra de `verifyGripeVerdeNoDeadCode` ampliada (13 simbolos de
+  v0.21.7-0.21.9 + 15 constantes de color).
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.9 -> 0.21.10 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-35 (v0.21.10)**: validar en cliente — el medidor de la estacion
+  transiciona suave al togglear "avisos"/"listado".
+- KI-34 (v0.21.9), KI-32/33, KI-27/28/30/31 pendientes. KI-29 (pistas
+  MenuMusic) requiere OGGs del usuario. KI-20/21/24/25 sin cambios.
+
+---
+
 ## v0.21.9 - La tinta pesa menos por frame (2026-08-21)
 
 ### Cambios cerrados

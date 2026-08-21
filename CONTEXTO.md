@@ -3,8 +3,30 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/01a025d1-gripeverde` (sync con `main` v0.21.2, commit `afe8e83`).
-- Version: `0.21.9`.
+- Version: `0.21.10`.
 - Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks, integrando el contexto maestro y sincronizacion documental de v0.17.2.
+
+### DECISION 2026-08-21: v0.21.10 - La estacion parpadea al cambiar
+
+Hito tecnico (consolidacion + micro-pulido, sin gameplay):
+- 15 constantes de color muertas eliminadas: `DiaryTheme.IRON_RUST`,
+  `GREEN_TOXIC`, `GREEN_DEEP`, `SICK_GREEN`, `SMOKE_GREY`, `WINDOW_AMBER`,
+  `WINDOW_SICK`, `CLOUD_DARK` y `DiaryChrome.SHADOW_COL`, `STEEL_LIGHT`,
+  `STEEL_NEAR`, `STEEL_DARK`, `STEEL_DEEP`, `STEEL_EDGE`, `CARD_SHADE`
+  (audit de uso global: 0 referencias).
+- `DiaryOnlineOptionsScreen`: el medidor de alcance de la estacion
+  (`computePublicSignal`) ahora responde con transicion suave (interpolacion
+  en tick hacia el objetivo; antes el valor saltaba al togglear).
+- Lista negra de `verifyGripeVerdeNoDeadCode` ampliada con 13 simbolos
+  muertos eliminados en v0.21.7-0.21.9 (drawVictorianFrame, drawQuillCursor,
+  drawVersionPanel, getMoonPhaseIndex, openTelemetry, etc.) y las 15
+  constantes de color.
+- Sin cambios de assets ni lang. 59 clases Java.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL (el
+  parpadeo del medidor es detalle de interfaz, no evento de la ciudad).
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.10.
+- Validacion pendiente en cliente real (KI-35): el medidor de alcance en la
+  estacion de comunicaciones transiciona suave al togglear los avisos.
 
 ### DECISION 2026-08-21: v0.21.9 - La tinta pesa menos por frame
 
@@ -382,9 +404,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.21.9
-- build.gradle: version = '0.21.9'
-- GripeVerdeMod.VERSION: "0.21.9"
+- Version estable actual: v0.21.10
+- build.gradle: version = '0.21.10'
+- GripeVerdeMod.VERSION: "0.21.10"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10 (no se han publicado tags desde el ciclo v0.13.x; los bumps v0.14-v0.17 quedaron sin tag)
 - Working tree esperado al retomar: limpio

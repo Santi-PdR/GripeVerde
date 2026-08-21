@@ -5,17 +5,17 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.21.9 - La tinta pesa menos por frame**
+**v0.21.10 - La estacion parpadea al cambiar**
 
-El gabinete consultaba el idioma del lector decenas de veces por cada
-parpadeo; ahora lo pregunta una vez cada instante y se lo guarda (cache de
-250ms). El texto centrado se escribe con una sola mano en cuatro salas
-(`DiaryChrome.drawCenteredString`), y el registro de hospedajes muestra,
-junto al libro de visitas, el titular del periodico del dia
-(`Herald.headlineToday()`). Se retiraron 14 campos y metodos sin uso, se
-elimino el helper muerto de `TextureAssets` y se anadio `CONTRIBUTING.md`
-(guia de contribucion). 59 clases Java, 25 idiomas, 35 eventos de sonido,
-42 OGG, 0 PNG. Documentacion sincronizada y version 0.21.9.
+El medidor de alcance de la estacion de comunicaciones ya no salta de golpe
+al mover los avisos: se desliza como una aguja sobre papel. Quince tonos de
+tinta que ninguna sala usaba fueron retirados de la paleta, y la vigilancia
+de codigo muerto aprende a nombrar lo desterrado. Sobre las consolidaciones
+v0.21.7-0.21.9 (9 clases + 15 metodos/campos + 57 claves lang limpias,
+pipeline de panel unificado, sliders combinados, cache de idioma, ticker
+del Heraldo en Multiplayer), el proyecto queda en 59 clases Java, 25
+idiomas (80 claves), 35 eventos de sonido, 42 OGG y 0 PNG de contenedores.
+Documentacion sincronizada y version 0.21.10.
 
 ## Resumen visible del Mod Menu
 
@@ -101,7 +101,7 @@ Reglas actuales:
 
 - `CONTRIBUTING.md` - guia corta de contribucion (branch fija, no gameplay, validacion).
 - `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.9.
-- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.9).
+- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.10).
 - `KNOWN_ISSUES.md` - estado tecnico, decisiones activas, errores documentados, KIs.
 - `README.md` - esta portada.
 
