@@ -3,8 +3,26 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/01a025d1-gripeverde` (sync con `main` v0.21.2, commit `afe8e83`).
-- Version: `0.21.12`.
+- Version: `0.21.13`.
 - Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks, integrando el contexto maestro y sincronizacion documental de v0.17.2.
+
+### DECISION 2026-08-21: v0.21.13 - El expediente se cierra
+
+Hito final de cierre narrativo (lore puro, sin gameplay):
+- Al completar las 47 fichas, la Sala de consulta muestra el archivo como
+  COMPLETO: el footer cambia de "las fichas que faltan siguen ahi fuera" a
+  "el archivo esta completo", y aparece un sello de cera dorado (SIGILLUM,
+  dibujado proceduralmente con fills, radio 8) junto al texto.
+- Disparo unico (persistente): `ChroniclerMemory.counter("cabinet_complete")`
+  se marca a 1 la primera vez; marginalia final `N_ARCHIVE_COMPLETE`
+  ("Cuarenta y siete fichas. El cajon ya esta vacio. Sellalo.") y campana
+  grave (`MENU_BELL` pitch 0.55).
+- Sin clases nuevas (59), sin lang keys, sin assets.
+- Changelog in-game (25 .md): SI, tiene manifestacion observable (el
+  archivo se sella) — entrada v0.21.13 ES/EN.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.13.
+- Validacion pendiente en cliente real (KI-38): completar las 47 fichas
+  (o forzar con `gripeverde-memory.json`) y ver el sello + marginalia.
 
 ### DECISION 2026-08-21: v0.21.12 - El marco de la pausa queda en su sitio
 
@@ -440,9 +458,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.21.12
-- build.gradle: version = '0.21.12'
-- GripeVerdeMod.VERSION: "0.21.12"
+- Version estable actual: v0.21.13
+- build.gradle: version = '0.21.13'
+- GripeVerdeMod.VERSION: "0.21.13"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10 (no se han publicado tags desde el ciclo v0.13.x; los bumps v0.14-v0.17 quedaron sin tag)
 - Working tree esperado al retomar: limpio

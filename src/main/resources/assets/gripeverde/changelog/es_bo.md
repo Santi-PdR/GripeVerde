@@ -2,6 +2,11 @@
 ## Cronica bajo sello
 
 
+## Version 0.21.13 - El expediente se cierra
+
+La sala de consulta, cuando por fin reúne todas las fichas, deja de decir que faltan. El archivo se declara completo, un sello de cera dorada lo firma con la palabra SIGILLUM, y el cronista anota al margen: cuarenta y siete fichas; el cajón ya está vacío; séllalo. La campana del campanario suena una vez, grave, para que nadie lo dude.
+
+
 ## Version 0.21.6 - El heraldo cuenta la limpieza
 
 El periódico del kiosco encontró palabras nuevas para la noche: el gabinete del distrito vaciado de papeles viejos, un farol del tejado que parpadeó tres veces y se apagó solo, el gato que bajó al kiosco y no robó nada. La letra menuda de la segunda columna también cambia de amanecer en amanecer. Y quien conozca la palabra que abre el archivo podrá pedirle a la sala que le muestre las fichas que faltan.

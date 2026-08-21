@@ -2,6 +2,11 @@
 ## Chronicle under seal
 
 
+## Version 0.21.13 - The file is sealed
+
+The consultation room, when it finally gathers every card, stops saying that any are missing. The archive declares itself complete, a golden wax seal signs it with the word SIGILLUM, and the chronicler notes in the margin: forty-seven cards; the drawer is empty now; seal it. The bell tower rings once, low, so no one doubts it.
+
+
 ## Version 0.21.6 - The herald tells the cleansing
 
 The kiosk newspaper found new words for the night: the district cabinet emptied of old papers, a roof lantern that flickered three times and went out on its own, the cat that came down to the kiosk and stole nothing. The fine print of the second column also changes from dawn to dawn. And whoever knows the word that opens the archive may ask the room to show the cards that are missing.

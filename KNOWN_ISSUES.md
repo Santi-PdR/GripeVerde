@@ -1,5 +1,25 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.21.13 - El expediente se cierra (2026-08-21)
+
+### Cambios cerrados
+- Al completar las 47 fichas: footer del Archive cambia a "el archivo esta
+  completo" y se dibuja un sello de cera dorado (SIGILLUM) procedural.
+- Disparo unico persistente `cabinet_complete` + marginalia final
+  `N_ARCHIVE_COMPLETE` + campana grave.
+- Changelog in-game (25 .md): SI (manifestacion observable: el archivo se
+  sella).
+- Version bump: 0.21.12 -> 0.21.13 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-38 (v0.21.13)**: validar en cliente — completar 47/47 (o forzar el
+  json de memoria) y ver el sello dorado + marginalia + campana.
+- KI-37, KI-36, KI-35, KI-34, KI-32/33, KI-27/28/30/31 pendientes.
+  KI-29 (pistas MenuMusic) requiere OGGs del usuario. KI-20/21/24/25 sin
+  cambios.
+
+---
+
 ## v0.21.12 - El marco de la pausa queda en su sitio (2026-08-21)
 
 ### Cambios cerrados

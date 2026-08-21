@@ -230,8 +230,20 @@ public class DiaryArchiveScreen extends Screen {
                 DiaryChrome.drawCenteredString(g, this.font, Discoveries.hintFor(id), cx, infoY, DiaryChrome.INK_FLAVOR);
             }
         } else if (q.isEmpty()) {
-            DiaryChrome.drawCenteredString(g, this.font, en ? "The missing cards are still out there." : "Las fichas que faltan siguen ahi fuera.",
-                cx, infoY, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 120));
+            // v0.21.13: al completar el archivo, el footer cambia y el sello se muestra.
+            boolean complete = found >= total;
+            String msg = complete
+                ? (en ? "The archive is complete." : "El archivo esta completo.")
+                : (en ? "The missing cards are still out there." : "Las fichas que faltan siguen ahi fuera.");
+            DiaryChrome.drawCenteredString(g, this.font, msg, cx, infoY,
+                complete ? DiaryTheme.INK : DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 120));
+            if (complete) {
+                int mw = this.font.width(msg);
+                int sealCx = cx + mw / 2 + 20;
+                String sig = "SIGILLUM";
+                g.drawString(this.font, sig, sealCx - this.font.width(sig) / 2, infoY - 15, 0xFF8A6A2D, false);
+                drawCompletionSeal(g, sealCx, infoY + 6, 8);
+            }
         } else {
             DiaryChrome.drawCenteredString(g, this.font, en ? (visible.isEmpty() ? "Nothing matches the query." : "Only these cards match.")
                        : (visible.isEmpty() ? "Nada coincide con la consulta." : "Solo estas fichas coinciden."),
@@ -268,6 +280,17 @@ public class DiaryArchiveScreen extends Screen {
             // v0.21.5: cuando confiesan tres, el cuarto recuerda la mesa sin uso.
             Discoveries.discover(Discoveries.BUTTONS_NEVER_PRESSED);
         }
+        // v0.21.13: al completar el archivo, el cronista lo sella (una sola vez).
+        try {
+            if (ChroniclerMemory.discoveredCount() >= Discoveries.ALL.length
+                    && ChroniclerMemory.counter("cabinet_complete") == 0) {
+                ChroniclerMemory.setCounter("cabinet_complete", 1);
+                com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                    com.eternalcraft.gripeverde.client.lore.Marginalia.N_ARCHIVE_COMPLETE);
+                com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                    com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_BELL.get(), 0.22f, 0.55f);
+            }
+        } catch (Throwable ignored) {}
         Discoveries.drawToast(g, this.width);
     }
 
@@ -299,6 +322,31 @@ public class DiaryArchiveScreen extends Screen {
             String q = "?";
             int qw = this.font.width(q);
             g.drawString(this.font, q, x + (w - qw) / 2, y + 7, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, hover ? 150 : 70), false);
+        }
+    }
+
+    /** v0.21.13: sello de cera dorado del archivo completado. */
+    private static void drawCompletionSeal(GuiGraphics g, int cx, int cy, int radius) {
+        int gold = 0xFFB8860B;
+        int goldDark = 0xFF6B4E16;
+        int goldHi = 0xFFE8C860;
+        for (int dy = -radius; dy <= radius; dy++) {
+            int dx = (int) Math.sqrt(radius * radius - dy * dy);
+            g.fill(cx - dx, cy + dy, cx + dx + 1, cy + dy + 1, gold);
+        }
+        for (int dy = -radius; dy <= 0; dy++) {
+            int dx = (int) Math.sqrt(radius * radius - dy * dy);
+            g.fill(cx - dx, cy + dy, cx, cy + dy + 1, DiaryTheme.withAlpha(0x00FFE9A0, 70));
+        }
+        for (int dy = -radius; dy <= radius; dy++) {
+            int dx = (int) Math.sqrt(radius * radius - dy * dy);
+            g.fill(cx - dx, cy + dy, cx - dx + 1, cy + dy + 1, goldDark);
+            g.fill(cx + dx, cy + dy, cx + dx + 1, cy + dy + 1, goldDark);
+        }
+        int r2 = Math.max(1, radius / 2);
+        for (int dy = -r2; dy <= r2; dy++) {
+            int dx = r2 - Math.abs(dy);
+            g.fill(cx - dx, cy + dy, cx + dx + 1, cy + dy + 1, goldHi);
         }
     }
 

@@ -1,5 +1,13 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.13 - El expediente se cierra
+
+La sala de consulta, cuando por fin reune todas las fichas, deja de decir
+que faltan. El archivo se declara completo, un sello de cera dorada lo
+firma con la palabra SIGILLUM, y el cronista anota al margen: cuarenta y
+siete fichas; el cajon ya esta vacio; sellalo. La campana del campanario
+suena una vez, grave, para que nadie lo dude.
+
 ## v0.21.12 - El marco de la pausa queda en su sitio
 
 Registro tecnico: el marco de oro del diario de pausa fue escrito en su
