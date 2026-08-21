@@ -5,12 +5,19 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.21.1 - Correccion del registro sonoro**
+**v0.21.2 - Limpieza profunda del proyecto**
 
 Hotfix tecnico sobre la linea v0.21.0. Se corrigio el registro de
 `SoundEvent` del mod para que el jar no falle al iniciar en el runtime real
 de Forge 1.20.1. No cambia la direccion visual del gabinete: corrige un
 bloqueo de arranque y mantiene intacta la interfaz ya entregada.
+
+En v0.21.2 se hizo limpieza profunda (sobre v0.21.1): eliminados `AUDITORIA_PROFESIONAL.md`,
+`MICRODETALLES_EXTREMO.md`, `VALIDACION_FASE4.md` (históricos v0.14.x),
+`sound-tests/` (muestras de audio ya integradas), `bg_town.png` (2.1M sin uso,
+Title usa render procedural), framework inerte `client/theme/` parcial
+(ThemeManager, GhoulPalette, componentes de overlay sin registrar) y widgets
+muertos `IconButton`, `SilentButton`, `DiarySeparator`.
 
 ## Resumen visible del Mod Menu
 
@@ -62,8 +69,10 @@ Los contenedores del juego conservan su aspecto vanilla original; el mod no alte
 - **Accessibility** - expediente de observacion con lectura por capas.
 - **Online / Multiplayer** - registros de conexion y hospedaje sobre presentacion propia.
 - **Credits** - ultimo archivo del gabinete.
-- **DebugCanvas** - herramienta interna de desarrollo.
-- **SoundLab** - herramienta interna de audio.
+- **Archive** - sala de consulta (43 fichas).
+- **DirectJoin / EditServer / Confirm** - formularios y autorizaciones pulidos en v0.21.0.
+- **DebugCanvas** - herramienta interna de desarrollo (no en produccion).
+- **SoundLab** - herramienta interna de audio (no en produccion).
 
 ## Build
 
@@ -71,9 +80,13 @@ Ejecutar: `.\gradlew build`
 
 El jar se genera en `build/libs/gripeverde-VERSION.jar`
 
+Verificaciones activas en `processResources`:
+- `verifyGripeVerdeLocalization` (25 lang + 25 changelog)
+- `verifyGripeVerdeSoundAssets` (sounds.json ↔ OGG existentes)
+
 ## Deploy
 
-Ruta de deploy configurable en `.deploy`.
+Ruta de deploy configurable en `.deploy` (clave `DEPLOY_MODS_PATH`).
 
 Reglas actuales:
 - Todo build de validacion debe ir acompanado de deploy.
@@ -88,10 +101,13 @@ Reglas actuales:
 
 ## Documentacion
 
-- `CONTEXTO.md` - contexto maestro actual para retomar sesiones.
-- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores.
-- `KNOWN_ISSUES.md` - estado tecnico, decisiones activas, errores documentados.
-- `_backups\LECCIONES_v0.7.x.md` - lecciones tecnicas y reglas operativas.
+- `CONTEXTO.md` - contexto maestro actual para retomar sesiones (v0.21.1).
+- `CONTEXTO_PARA_IA.md` - contexto autocontenido para otra IA (v0.21.1, sin steel pack).
+- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.1).
+- `KNOWN_ISSUES.md` - estado tecnico, decisiones activas, errores documentados, KIs.
+- `README.md` - esta portada.
+
+Históricos eliminados en v0.21.1: `AUDITORIA_PROFESIONAL.md`, `MICRODETALLES_EXTREMO.md`, `VALIDACION_FASE4.md` (eran referencia de polish v0.14.0, ya revertido).
 
 ## Requisitos
 

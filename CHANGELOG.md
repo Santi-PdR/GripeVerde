@@ -1,5 +1,15 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.2 - Limpieza profunda del proyecto
+
+La oficina no cambió de aspecto, pero sí de peso. Tras cerrar filas en v0.21.0 y corregir el registro sonoro en v0.21.1, el gabinete se sometió a una auditoría completa: todo lo que ya no servía fue retirado, y todo lo que estaba desactualizado fue puesto al día.
+
+Se eliminaron los tres documentos históricos de auditoría (v0.14.x), las muestras de audio de prueba, una textura de 2.1M sin uso (`bg_town.png`), el framework inerte de temas (`ThemeManager`, `GhoulPalette`, componentes de overlay sin registrar) y tres widgets muertos (`IconButton`, `SilentButton`, `DiarySeparator`). `TextureAssets` perdió su constante muerta y `ScreenEventHandler` dejó de delegar a un ThemeManager que no hacía nada.
+
+Se actualizaron `README.md` (v0.21.2 + nota de limpieza), `CONTEXTO_PARA_IA.md` (reescrito a v0.21.2, 68 clases, 0 PNG), `CHANGELOG.md` (añadidos v0.19.0 y v0.17.x faltantes), 25 changelogs in-game (entrada v0.21.1 y v0.21.2), `CONTEXTO.md` (nuevo addendum de limpieza) y `KNOWN_ISSUES.md` (sección v0.21.1 ampliada a v0.21.2).
+
+El resultado: 68 clases Java (vs 83 en v0.17.2), 25 idiomas, 25 crónicas, 42 OGG, 0 PNG de contenedores, working tree limpio y sin PRs abiertos.
+
 ## v0.21.1 - Correccion del registro sonoro
 
 La oficina no cambio de aspecto esta noche, pero si de disciplina interna.
@@ -37,6 +47,24 @@ las lenguas conocidas lucen como un archivo vivo; la portada y la pausa se
 sienten mas hermanas del gabinete central. Todo ello sin vestir la ciudad con
 texturas ajenas: solo papel, tinta, sombra, metal apagado y composicion.
 
+## v0.19.0 - El acero se retira de nuevo, la interfaz respira
+
+El gabinete volvió a mirar sus propias manos y decidió que el acero de cuarentena,
+aunque vistoso, no le pertenecía. Las planchas que cubrían los contenedores en
+v0.17.0-v0.17.2 fueron retiradas de nuevo por directiva explícita: nada de
+`gripeverde_steel`, nada de texturas vanilla modificadas. La identidad visual
+debía venir del propio mod —papel, tinta, sombra, metal apagado y composición—
+no de un resource pack superpuesto.
+
+Con la mesa limpia, se hizo un pase transversal de interfaz: cabeceras
+documentales con expediente y estado, rieles internos, tarjetas laterales,
+medidores con marcas, revelado de paneles y scaffolding de profundidad.
+`ExpedientHeader` y `DiaryChrome` evolucionaron hacia un lenguaje menos cuadrado:
+rieles incompletos, cápsulas discretas, scrollbars más físicas. `DiaryVideoSettingsScreen`
+nació como consola técnica propia. Options, Sound, Controls, Chat, Accessibility,
+Language, Online, Credits, Multiplayer y Pause se pulieron para parecer salas del
+mismo gabinete, no el mismo template.
+
 ## v0.18.0 - El gabinete toma forma definitiva
 
 La casa del cronista ha dejado de apoyarse en la pura costumbre. Esta noche,
@@ -53,6 +81,33 @@ sus railes, los paneles se revelan con mas ceremonia, y hasta la portada de la
 vigilia dispone ahora sus rutas y mandos con mejor jerarquia. No hubo que
 vestir nada con planchas ajenas: el oficio se logro con la propia mano del
 mod, sobre el papel, la tinta, la sombra y la luz.
+
+## v0.17.2 - Las bandejas de la mesa y la moneda del trato
+
+Parche de mantenimiento sobre el acero de cuarentena. El slot universal pasó
+de 18px a 26px, las transparencias fueron repasadas para que el pergamino
+respire mejor, y el viejo `tabs.png` fue reemplazado por sprites individuales
+`tab_top` / `tab_bottom` selected/unselected 1-7. Remaches y cepillado más
+discretos, sellos de cuarentena con mejor lectura. La geometría vanilla
+permaneció intacta: solo presentación.
+
+## v0.17.1 - Remaches bien puestos
+
+Segunda mano sobre el acero. Se ajustaron los remaches, el brillo del cepillado
+y las juntas de los contenedores para que el acero pareciera realmente clavado
+a la mesa, no pintado. Correcciones menores de alineación en hornos y cofres.
+
+## v0.17.0 - El acero vuelve a la cuarentena
+
+El gabinete volvió a vestirse con planchas de acero. Tras el retiro completo
+del resource pack en v0.15.0, esta versión reintrodujo `gripeverde_steel` como
+pack built-in REQUIRED: 20 contenedores + 4 fondos creativos + sprites de
+contenedores, widgets y recipe_book. Presentación 1:1, geometría vanilla intacta,
+solo acero cepillado, slots hundidos, juntas con remaches y sellos de cuarentena.
+`ResourcePackHandler` registraba el pack via `AddPackFindersEvent`, y
+`verifyGripeVerdeThemeAssets` verificaba dimensiones, alpha y ausencia de huérfanas.
+La línea v0.17.0-v0.17.2 fue luego retirada de nuevo en v0.19.0 por directiva de
+no usar resourcepacks.
 
 ## v0.16.0 - La sala de consulta
 

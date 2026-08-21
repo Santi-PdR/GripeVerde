@@ -3,8 +3,33 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/019fe23e-gripeverde` (merge con `main` v0.17.2 docs).
-- Version: `0.21.1`.
+- Version: `0.21.2`.
 - Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks, integrando el contexto maestro y sincronizacion documental de v0.17.2.
+
+### DECISION 2026-08-21: limpieza profunda del proyecto (v0.21.2)
+
+Tras el merge de v0.21.0 (cohesión y cierre de interfaces) y la resolución de conflictos con main v0.17.2 docs, se hizo auditoría completa del repo para eliminar todo lo que ya no sirve y actualizar lo desactualizado.
+
+**Eliminados:**
+- `AUDITORIA_PROFESIONAL.md`, `MICRODETALLES_EXTREMO.md`, `VALIDACION_FASE4.md` (históricos v0.14.0/v0.14.1, ya revertidos, marcaban polish de una línea con steel pack que no existe desde v0.15.0 y v0.19.0)
+- `sound-tests/` (wav fuente `03_brass_latch_clean.wav` ya integrado como ogg, README de selección ya cumplido)
+- `src/main/resources/assets/gripeverde/textures/gui/title/bg_town.png` (2.1M sin uso real, Title usa render procedural `QuarantineSceneRenderer`)
+- `client/theme/` parcial: `ThemeManager`, `GhoulPalette`, `ScreenLayout`, `ScreenTheme`, `AbstractScreenTheme`, `UIComponent`, `UIScale`, `components/*` (framework inerte sin themes registrados desde v0.6.0, solo `Anchor`, `LayoutRegion`, `Spacing` conservados por uso activo en DiaryTitleScreen)
+- `client/widgets/`: `IconButton`, `SilentButton`, `DiarySeparator` (definidos pero nunca usados fuera de su propio archivo)
+- `client/ResourcePackHandler.java` y `resourcepacks/gripeverde_steel/` ya estaban eliminados desde v0.19.0, pero se confirmó que no quedaran referencias activas en `CONTEXTO_PARA_IA.md` y build.gradle
+
+**Actualizados:**
+- `README.md`: versión v0.21.1 + nota de limpieza, lista de docs actualizada (sin _backups), verificaciones de build (solo localización y sonidos)
+- `CONTEXTO_PARA_IA.md`: reescrito completo a v0.21.1, sin steel pack, 68 clases Java (vs 83), 0 PNG de contenedores, 2 tasks de verificación, estructura sin resourcepacks, rama `arena/01a025bc-gripeverde`, historial de limpieza
+- `CHANGELOG.md`: añadidos v0.19.0 (retiro definitivo del acero, overhaul de interfaz), v0.17.2, v0.17.1, v0.17.0 (historia del acero temporal)
+- `src/main/resources/assets/gripeverde/changelog/*.md` (25 archivos): añadida entrada v0.21.1 en EN y ES
+- `TextureAssets.java`: eliminado `BG_TOWN` y `hasBgTown()`, solo quedan `ICON_BTN_MP` y `ICON_BTN_MODS` como identificadores lógicos para GreenFluButton (dibujo procedural)
+- `ScreenEventHandler.java`: eliminado import y llamada a ThemeManager (inerte), simplificado a solo intercept Title/Pause y feedback sonoro
+
+**Conteos post-limpieza:**
+- 68 clases Java (vs 83 en v0.17.2)
+- 25 lang, 25 changelog in-game, 42 OGG, 0 PNG de contenedores
+- Working tree limpio, sin PRs abiertos, main en v0.21.1
 
 ### DECISION 2026-08-09: hotfix de arranque (v0.21.1)
 
@@ -125,8 +150,7 @@ El usuario reporto dos restos tras probar v0.15.0:
    placeholder (es solo "FOV"); ahora se construye "FOV: N" explicito. Los titulos de contenedores ahora son
    vanilla puro.
 
-NOTA: `ThemeManager` no dibuja nada (sin themes registrados), y
-`TooltipEventHandler` solo recolorea tooltips (pergamino) - no letras.
+NOTA v0.21.1: `ThemeManager` y framework inerte de overlays (GhoulPalette, ScreenLayout, etc) fueron eliminados. Solo se conservan `Anchor`, `LayoutRegion`, `Spacing` porque DiaryTitleScreen los usa. `TooltipEventHandler` solo recolorea tooltips (pergamino) - no letras.
 
 ### NOTA plataforma: adjuntos del usuario
 
@@ -156,9 +180,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.21.1
-- build.gradle: version = '0.21.1'
-- GripeVerdeMod.VERSION: "0.21.1"
+- Version estable actual: v0.21.2
+- build.gradle: version = '0.21.2'
+- GripeVerdeMod.VERSION: "0.21.2"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10 (no se han publicado tags desde el ciclo v0.13.x; los bumps v0.14-v0.17 quedaron sin tag)
 - Working tree esperado al retomar: limpio
@@ -1950,7 +1974,7 @@ negro en Title rompe blend), E115 (Cloth Config + IMPR crash externo).
 Version masiva con 60+ mejoras de UI, atmosfera, contenido rotativo,
 easter eggs y widgets nuevos. 31 archivos, 1947 inserciones, 5 clases
 nuevas (DiaryOnlineOptionsScreen, DiaryAmbienceSlider, DiarySlider,
-DiaryProgressBar, DiarySeparator).
+DiaryProgressBar).
 
 ### Escena viva del Title
 - **Luna con 8 fases**: nueva, creciente, cuarto, gibosa, llena y
@@ -2011,7 +2035,6 @@ DiaryProgressBar, DiarySeparator).
 ### Widgets nuevos
 - DiarySlider: generico con DoubleConsumer + DoubleFunction.
 - DiaryProgressBar: barra pergamino con label opcional.
-- DiarySeparator: draw, drawWithLozenge, drawDouble, drawVertical.
 - DiaryAmbienceSlider: slider para volumen ambiente del cronista.
 - DiaryOnlineOptionsScreen: subclase de SimpleOptionsSubScreen.
 
@@ -2147,7 +2170,7 @@ Hotfixes criticos sobre v0.12.2. 22 archivos, 133 inserciones.
 - 39 archivos modificados entre v0.12.1 y v0.12.3.
 - 2055 inserciones netas.
 - 5 clases nuevas: DiaryOnlineOptionsScreen, DiaryAmbienceSlider,
-  DiarySlider, DiaryProgressBar, DiarySeparator.
+  DiarySlider, DiaryProgressBar.
 
 ## PROXIMO HITO PLANIFICADO (revisado tras v0.12.3)
 

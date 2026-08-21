@@ -1,18 +1,29 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
-## v0.21.1 - Hotfix de SoundEvent / arranque
+## v0.21.2 - Limpieza profunda del proyecto (2026-08-21) + hotfix previo v0.21.1
 
-### Cambios cerrados
+### Cambios cerrados (hotfix)
 - Corregido `client/audio/ModSounds.java`: el registro ya no depende
   ciegamente de `SoundEvent.createVariableRangeEvent(...)`, que en el runtime
   real estaba provocando `NoSuchMethodError` durante el arranque del cliente.
 - Hotfix sin cambios visuales ni de gameplay. Solo arranque/compat runtime.
 - Version bump: 0.21.0 -> 0.21.1.
 
+### Cambios cerrados (limpieza 2026-08-21)
+- **Docs históricos eliminados:** `AUDITORIA_PROFESIONAL.md` (17K), `MICRODETALLES_EXTREMO.md` (9K), `VALIDACION_FASE4.md` (9K) — eran referencia de polish v0.14.0 con steel pack, ya revertido y sin uso desde v0.15.0/v0.19.0.
+- **Assets sin uso:** `sound-tests/` (wav fuente + README) y `bg_town.png` (2.1M, Title usa render procedural, no textura estática). Directorios vacíos `textures/gui/title` y `textures/gui` eliminados.
+- **Código muerto - theme framework:** eliminados `ThemeManager` (inerte, sin themes desde v0.6.0), `GhoulPalette`, `ScreenLayout`, `ScreenTheme`, `AbstractScreenTheme`, `UIComponent`, `UIScale`, `components/*` (BackgroundRenderer, DecorationRenderer, FrameRenderer, SeparatorRenderer, TitleRenderer). Conservados solo `Anchor`, `LayoutRegion`, `Spacing` por uso activo en `DiaryTitleScreen`.
+- **Código muerto - widgets:** eliminados `IconButton`, `SilentButton`, `DiarySeparator` (definidos pero nunca instanciados fuera de su archivo).
+- **TextureAssets:** eliminado `BG_TOWN` y `hasBgTown()`, solo quedan `ICON_BTN_MP` y `ICON_BTN_MODS` como identificadores lógicos para `GreenFluButton` (dibujo procedural).
+- **ScreenEventHandler:** eliminado import y llamada a `ThemeManager.render()` (no-op), simplificado a intercept Title/Pause + feedback sonoro + atajo Ctrl+0.
+- **Docs actualizados:** `README.md` (v0.21.1 + nota limpieza + lista docs sin _backups), `CONTEXTO_PARA_IA.md` (reescrito a v0.21.1, 68 clases, 0 PNG, sin steel), `CHANGELOG.md` (añadidos v0.19.0, v0.17.2, v0.17.1, v0.17.0), 25 `changelog/*.md` in-game (entrada v0.21.1 EN/ES), `CONTEXTO.md` (nuevo addendum limpieza + nota ThemeManager).
+- **Conteos post-limpieza:** 68 clases Java (vs 83 en v0.17.2), 25 lang, 25 changelog, 42 OGG, 0 PNG contenedores. Working tree limpio.
+
 ### Riesgos activos / KI
 - **KI-25 (build local del usuario)**: si reaparece un crash distinto al
-  iniciar, revisar primero el nuevo jar `gripeverde-0.21.1.jar` y confirmar
+  iniciar, revisar primero el nuevo jar `gripeverde-0.21.2.jar` y confirmar
   que no quede mezclado con jars viejos del mod en `mods/`.
+- **KI-26 (limpieza validación)**: tras eliminar theme framework y widgets muertos, validar en cliente real que `DiaryTitleScreen` sigue anclando bien con `Anchor`/`LayoutRegion`/`Spacing` en 4 escalas GUI. Sin JDK en sandbox, pendiente de validación visual local.
 
 ---
 

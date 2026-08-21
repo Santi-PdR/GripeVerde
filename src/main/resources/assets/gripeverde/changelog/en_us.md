@@ -2,6 +2,16 @@
 ## Chronicle under seal
 
 
+## Version 0.21.2 - Deep cleanup
+
+Following the cohesion pass and the sound registry fix, the cabinet was audited end-to-end. Historical audit docs, test samples, an unused 2.1M texture, inert theme framework and dead widgets were removed, and all docs were brought up to date. The result is a leaner codebase: 68 Java classes, 25 langs, 25 in-game changelogs, 42 OGG, 0 container PNGs.
+
+
+## Version 0.21.1 - Sound registry correction + cleanup
+
+The office did not change its appearance, but its internal discipline. The cabinet's sounds were registered more safely so the archive can open without stumbling at the start of the vigil. A deep cleanup followed: historical audit docs, test samples, an unused 2.1M texture, inert theme framework and dead widgets were removed.
+
+
 ## Version 0.21 - The office closes its ranks
 
 The rooms that still felt most borrowed have now been brought nearer to the

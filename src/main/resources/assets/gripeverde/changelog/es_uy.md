@@ -2,6 +2,16 @@
 ## Cronica bajo sello
 
 
+## Version 0.21.2 - Limpieza profunda
+
+Tras el cierre de interfaces y la corrección del registro sonoro, el gabinete fue auditado por completo. Documentos históricos, muestras de prueba, una textura de 2.1M sin uso, framework inerte de temas y widgets muertos fueron retirados, y toda la documentación fue actualizada. El resultado es un código más ligero: 68 clases Java, 25 idiomas, 25 crónicas in-game, 42 OGG, 0 PNG de contenedores.
+
+
+## Version 0.21.1 - Corrección del registro sonoro + limpieza
+
+La oficina no cambió de aspecto, pero sí de disciplina interna. Los sonidos del gabinete quedaron registrados de forma más segura para que el archivo pueda abrirse sin tropezar al inicio de la vigilia. Siguió una limpieza profunda: documentos históricos de auditoría, muestras de prueba, una textura de 2.1M sin uso, framework inerte de temas y widgets muertos fueron retirados.
+
+
 ## Version 0.21 - La oficina cierra filas
 
 Las salas que aun se sentian mas prestadas quedaron ahora mas cerca del resto

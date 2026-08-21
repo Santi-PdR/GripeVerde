@@ -4,8 +4,6 @@ import com.eternalcraft.gripeverde.GripeVerdeMod;
 import com.eternalcraft.gripeverde.client.screens.ChangelogScreen;
 import com.eternalcraft.gripeverde.client.screens.DiaryPauseScreen;
 import com.eternalcraft.gripeverde.client.screens.DiaryTitleScreen;
-import com.eternalcraft.gripeverde.client.screens.SoundLabScreen;
-import com.eternalcraft.gripeverde.client.theme.ThemeManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.GenericDirtMessageScreen;
 import net.minecraft.client.gui.screens.PauseScreen;
@@ -24,7 +22,9 @@ import org.lwjgl.glfw.GLFW;
  * Escucha eventos de Screens vanilla:
  * - TitleScreen vanilla -> reemplaza por DiaryTitleScreen custom
  * - PauseScreen vanilla -> reemplaza por DiaryPauseScreen custom
- * - Delega render de overlays al ThemeManager (sin themes registrados en v0.6.0)
+ *
+ * Nota v0.21.1: se eliminó ThemeManager y el framework de overlays inerte (sin themes registrados desde v0.6.0).
+ * El layout útil (Anchor, LayoutRegion, Spacing) se conserva porque DiaryTitleScreen lo usa activamente.
  */
 @Mod.EventBusSubscriber(modid = GripeVerdeMod.MOD_ID, value = Dist.CLIENT)
 public class ScreenEventHandler {
@@ -119,25 +119,5 @@ public class ScreenEventHandler {
             }
             return;
         }
-    }
-
-
-    /**
-     * Delega el overlay de todas las pantallas al ThemeManager.
-     * Excluye las pantallas propias del mod (ya tienen su render).
-     */
-    @SubscribeEvent
-    public static void onScreenRenderPost(ScreenEvent.Render.Post event) {
-        var screen = event.getScreen();
-
-        if (screen instanceof DiaryTitleScreen
-                || screen instanceof DiaryPauseScreen
-                || screen instanceof ChangelogScreen
-                || screen instanceof SoundLabScreen) {
-            return;
-        }
-
-        ThemeManager.render(event.getGuiGraphics(), screen,
-                screen.width, screen.height, event.getPartialTick());
     }
 }
