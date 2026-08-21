@@ -3,8 +3,30 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/01a025d1-gripeverde` (sync con `main` v0.21.2, commit `afe8e83`).
-- Version: `0.21.4`.
+- Version: `0.21.5`.
 - Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks, integrando el contexto maestro y sincronizacion documental de v0.17.2.
+
+### DECISION 2026-08-21: v0.21.5 - La sala responde a la consulta
+
+Hito no-gameplay (lore + audio + performance + UI de consulta):
+- Sala de consulta: busqueda por nombre/pista/id con `DiaryTextField`
+  (columna derecha bajo ARCHIVE STATE, contador "N / 47", aviso de sin
+  coincidencias, grilla filtrada compacta; el campo se oculta al abrir
+  documentos para no dibujarse encima).
+- Ficha 47: `BUTTONS_NEVER_PRESSED` ("Los botones que nunca se pulsaron") —
+  cadena: cuando las 3 confesiones de limpieza de v0.21.3 estan, la cuarta
+  aparece en la sala. TOTAL/ALL/nombres/pistas actualizados a 47.
+- Marginalia: `N_OPEN_COUNT` (openCount >= 100 en Title.init) y
+  `N_MANY_CARDS` (discoveredCount >= 44 en Archive.init).
+- Audio: `Discoveries.discover()` hace ducking de la musica
+  (`MenuMusic.duckFor(2500L)`) para que el archivo hable claro.
+- Performance: `QuarantineSceneRenderer.isLowEnd()` (FPS < 30, muestreo
+  cada 1s, defensivo con try/catch) omite niebla y faroles en
+  `renderTitleScene` y `renderDiaryBackground`.
+- Sin clases nuevas (68), sin lang keys, 42 OGG, 35 eventos.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.5.
+- Validacion pendiente en cliente real (KI-30): 4 escalas GUI (busqueda en
+  la sala, cadena de la 47, ducking al hallar, low-end en maquinas lentas).
 
 ### DECISION 2026-08-21: v0.21.4 - La tinta se asienta
 
@@ -247,9 +269,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.21.4
-- build.gradle: version = '0.21.4'
-- GripeVerdeMod.VERSION: "0.21.4"
+- Version estable actual: v0.21.5
+- build.gradle: version = '0.21.5'
+- GripeVerdeMod.VERSION: "0.21.5"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10 (no se han publicado tags desde el ciclo v0.13.x; los bumps v0.14-v0.17 quedaron sin tag)
 - Working tree esperado al retomar: limpio

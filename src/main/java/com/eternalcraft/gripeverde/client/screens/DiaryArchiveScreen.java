@@ -10,6 +10,7 @@ import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar;
+import com.eternalcraft.gripeverde.client.widgets.DiaryTextField;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -41,6 +42,9 @@ public class DiaryArchiveScreen extends Screen {
     private int hoverCard = -1;
     private int lastMouseX = -1, lastMouseY = -1;
     private long openedAtMs = 0L;
+
+    // v0.21.5: consulta por nombre/pista/id en la sala de consulta
+    private DiaryTextField searchField = null;
 
     private static final int COLS = 5;
     private static final int CARD_H = 22;
@@ -83,6 +87,21 @@ public class DiaryArchiveScreen extends Screen {
             UiSounds.playCustom(com.eternalcraft.gripeverde.client.audio.ModSounds.UI_PAPER_FALL.get(),
                 0.11f, 1.18f);
         } catch (Throwable ignored) {}
+
+        // v0.21.5: campo de consulta del catalogo (columna derecha, bajo el estado).
+        int progressBoxX = panelX + panelW - 162;
+        this.searchField = new DiaryTextField(this.font, progressBoxX, panelY + 168, 142, 16,
+            Component.literal("search"));
+        this.searchField.setMaxLength(24);
+        this.addRenderableWidget(this.searchField);
+
+        // v0.21.5: marginalia cuando casi no quedan fichas fuera.
+        try {
+            if (ChroniclerMemory.discoveredCount() >= 44) {
+                com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                    com.eternalcraft.gripeverde.client.lore.Marginalia.N_MANY_CARDS);
+            }
+        } catch (Throwable ignored) {}
     }
 
     @Override
@@ -99,6 +118,10 @@ public class DiaryArchiveScreen extends Screen {
         this.lastMouseX = mouseX;
         this.lastMouseY = mouseY;
         QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
+        // El campo de consulta no se dibuja sobre los documentos abiertos.
+        if (this.searchField != null) {
+            this.searchField.visible = DOC_NONE.equals(viewingDoc);
+        }
 
         float reveal = DiaryChrome.reveal(this.openedAtMs, 260L);
         DiaryChrome.drawPanelScaffold(g, panelX, panelY, panelW, panelH, DiaryTheme.BRONZE);
@@ -151,9 +174,28 @@ public class DiaryArchiveScreen extends Screen {
         int cw = (gridW - (COLS - 1) * CARD_GAP) / COLS;
         int gridY = headerBottom;
         hoverCard = -1;
-        for (int i = 0; i < Discoveries.ALL.length; i++) {
-            int col = i % COLS;
-            int row = i / COLS;
+
+        // v0.21.5: la sala filtra el catalogo por nombre, pista o id.
+        String q = this.searchField == null ? "" : this.searchField.getValue()
+            .toLowerCase(java.util.Locale.ROOT).trim();
+        java.util.List<Integer> visible = new java.util.ArrayList<>();
+        if (q.isEmpty()) {
+            for (int i = 0; i < Discoveries.ALL.length; i++) visible.add(i);
+        } else {
+            for (int i = 0; i < Discoveries.ALL.length; i++) {
+                String id = Discoveries.ALL[i];
+                String name = Discoveries.nameFor(id).toLowerCase(java.util.Locale.ROOT);
+                String hint = Discoveries.hintFor(id).toLowerCase(java.util.Locale.ROOT);
+                if (name.contains(q) || hint.contains(q)
+                        || id.toLowerCase(java.util.Locale.ROOT).contains(q)) {
+                    visible.add(i);
+                }
+            }
+        }
+        for (int k = 0; k < visible.size(); k++) {
+            int i = visible.get(k);
+            int col = k % COLS;
+            int row = k / COLS;
             int x = gridX + col * (cw + CARD_GAP);
             int y = gridY + row * (CARD_H + CARD_GAP);
             String id = Discoveries.ALL[i];
@@ -163,7 +205,13 @@ public class DiaryArchiveScreen extends Screen {
             drawArchiveCard(g, x, y, cw, id, disc, hover, i + 1);
         }
 
-        int infoY = gridY + ((Discoveries.ALL.length + COLS - 1) / COLS) * (CARD_H + CARD_GAP) + 10;
+        if (this.searchField != null && !q.isEmpty()) {
+            String count = visible.size() + " / " + Discoveries.ALL.length;
+            g.drawString(this.font, count, progressBoxX, headerBottom + 116,
+                visible.isEmpty() ? 0xFF6E1F16 : DiaryTheme.withAlpha(DiaryTheme.INK, 160), false);
+        }
+
+        int infoY = gridY + ((visible.size() + COLS - 1) / COLS) * (CARD_H + CARD_GAP) + 10;
         if (hoverCard >= 0) {
             String id = Discoveries.ALL[hoverCard];
             if (ChroniclerMemory.isDiscovered(id)) {
@@ -171,9 +219,13 @@ public class DiaryArchiveScreen extends Screen {
             } else {
                 drawC(g, Discoveries.hintFor(id), cx, infoY, DiaryChrome.INK_FLAVOR);
             }
-        } else {
+        } else if (q.isEmpty()) {
             drawC(g, en ? "The missing cards are still out there." : "Las fichas que faltan siguen ahi fuera.",
                 cx, infoY, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 120));
+        } else {
+            drawC(g, en ? (visible.isEmpty() ? "Nothing matches the query." : "Only these cards match.")
+                       : (visible.isEmpty() ? "Nada coincide con la consulta." : "Solo estas fichas coinciden."),
+                cx, infoY, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 160));
         }
 
         int docsY = infoY + 18;
@@ -199,6 +251,12 @@ public class DiaryArchiveScreen extends Screen {
                 && ChroniclerMemory.isDiscovered(Discoveries.THEME_NEVER_PLAYED)) {
             // v0.21.3: cuando el archivo confiesa dos fantasmas, pide el tercero.
             Discoveries.discover(Discoveries.BG_TOWN_MEMORY);
+        }
+        if (ChroniclerMemory.isDiscovered(Discoveries.BG_TOWN_MEMORY)
+                && ChroniclerMemory.isDiscovered(Discoveries.ARCHIVE_THINNING)
+                && ChroniclerMemory.isDiscovered(Discoveries.THEME_NEVER_PLAYED)) {
+            // v0.21.5: cuando confiesan tres, el cuarto recuerda la mesa sin uso.
+            Discoveries.discover(Discoveries.BUTTONS_NEVER_PRESSED);
         }
         Discoveries.drawToast(g, this.width);
     }

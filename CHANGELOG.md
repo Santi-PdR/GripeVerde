@@ -1,5 +1,14 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.5 - La sala responde a la consulta
+
+La sala de consulta aprendio a responder. Quien busque entre las fichas por
+su nombre, por su pista o por la palabra que las nombra, vera solo las que
+importan; y cuando el archivo confiese tres fantasmas de la limpieza, un
+cuarto recuerda la mesa que nunca se uso. La musica cede un instante cuando
+el archivo habla, y cuando la maquina que sostiene la vigilia va lenta, la
+calle se despoja de niebla y faroles para no detenerse.
+
 ## v0.21.4 - La tinta se asienta
 
 Esta noche el gabinete ordeno sus utensilios. El manual de campo acepta que se

@@ -40,6 +40,8 @@ public final class Marginalia {
     public static final String N_READER10     = "reader10";
     public static final String N_CORRECTION   = "correction";
     public static final String N_FIRST_NIGHT  = "first_night";
+    public static final String N_OPEN_COUNT   = "open_count";
+    public static final String N_MANY_CARDS   = "many_cards";
 
     /** Encola una nota (persistente) si no hay ya una igual pendiente. */
     public static synchronized void queue(String noteId) {
@@ -170,6 +172,8 @@ public final class Marginalia {
             case N_READER10:     return en ? "Ten findings. I no longer write alone." : "Diez hallazgos. Ya no escribo solo.";
             case N_CORRECTION:   return en ? "The ink has not yet dried. No: the ink is no longer drying." : "La tinta aun no seco. No: la tinta ya no seca.";
             case N_FIRST_NIGHT:  return en ? "First night. Everything you touch will remember you." : "Primera noche. Todo lo que toques te recordara.";
+            case N_OPEN_COUNT:   return en ? "A hundred openings. The cabinet keeps the hours for you now." : "Cien aperturas. El gabinete ya lleva las horas por ti.";
+            case N_MANY_CARDS:   return en ? "Forty-four cards. Soon the drawer will be empty of secrets." : "Cuarenta y cuatro fichas. Pronto el cajon estara vacio de secretos.";
             default: return null;
         }
     }

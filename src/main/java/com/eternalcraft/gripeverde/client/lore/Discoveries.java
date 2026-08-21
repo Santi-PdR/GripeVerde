@@ -66,8 +66,10 @@ public final class Discoveries {
     public static final String ARCHIVE_THINNING  = "archive_thinning";
     public static final String THEME_NEVER_PLAYED = "theme_never_played";
     public static final String BG_TOWN_MEMORY    = "bg_town_memory";
+    // v0.21.5: cuarta confesion de la limpieza
+    public static final String BUTTONS_NEVER_PRESSED = "buttons_never_pressed";
 
-    public static final String TOTAL = "46";
+    public static final String TOTAL = "47";
 
     // Objetos del cajon
     public static final String ITEM_KEY    = "item_key";
@@ -90,6 +92,8 @@ public final class Discoveries {
             // Sonido de archivo: campanilla + papel, grave y seco.
             UiSounds.playCustom(ModSounds.UI_NOTIFICATION.get(), 0.16f, 0.62f);
             UiSounds.playCustom(ModSounds.UI_BACK.get(), 0.14f, 0.55f);
+            // v0.21.5: la musica cede mientras el archivo habla.
+            com.eternalcraft.gripeverde.client.audio.MenuMusic.duckFor(2500L);
         } catch (Throwable ignored) {}
         return true;
     }
@@ -195,6 +199,7 @@ public final class Discoveries {
             case ARCHIVE_THINNING:  return en ? "The archive that grows thinner" : "El archivo que se adelgaza";
             case THEME_NEVER_PLAYED: return en ? "The theme that never played" : "El tema que nunca sono";
             case BG_TOWN_MEMORY:    return en ? "The street that never existed" : "La calle que nunca existio";
+            case BUTTONS_NEVER_PRESSED: return en ? "The buttons never pressed" : "Los botones que nunca se pulsaron";
             default: return "???";
         }
     }
@@ -249,6 +254,7 @@ public final class Discoveries {
             case ARCHIVE_THINNING:  return en ? "Open the cabinet again and again, until it gives up its old papers." : "Abre el gabinete una y otra vez, hasta que entregue sus papeles viejos.";
             case THEME_NEVER_PLAYED: return en ? "Speak the word of the cleansing." : "Pronuncia la palabra de la limpieza.";
             case BG_TOWN_MEMORY:    return en ? "When the archive confesses two ghosts, ask for the third." : "Cuando el archivo confiese dos fantasmas, pide el tercero.";
+            case BUTTONS_NEVER_PRESSED: return en ? "When three ghosts confess, the fourth remembers the unused desk." : "Cuando tres fantasmas confiesen, el cuarto recuerda la mesa sin uso.";
             default: return "???";
         }
     }
@@ -273,6 +279,7 @@ public final class Discoveries {
         ADDRESS_13, WHISPER_ANSWER, KNOCK_BACK, HINGE, NIGHT_WHOLE,
         TIME_SICK, STREAK3, DUST, ANNIVERSARY, FORBIDDEN_FOLIO,
         COFFIN_CART, WEATHERVANE, SKULL_WATCHES,
-        ARCHIVE_THINNING, THEME_NEVER_PLAYED, BG_TOWN_MEMORY
+        ARCHIVE_THINNING, THEME_NEVER_PLAYED, BG_TOWN_MEMORY,
+        BUTTONS_NEVER_PRESSED
     };
 }

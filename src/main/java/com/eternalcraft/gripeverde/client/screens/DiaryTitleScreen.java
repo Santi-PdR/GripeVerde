@@ -90,6 +90,11 @@ public class DiaryTitleScreen extends Screen {
                     com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
                         com.eternalcraft.gripeverde.client.lore.Discoveries.ARCHIVE_THINNING);
                 }
+                if (cur + 1 >= 100) {
+                    // v0.21.5: marginalia de las cien aperturas
+                    com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                        com.eternalcraft.gripeverde.client.lore.Marginalia.N_OPEN_COUNT);
+                }
                 openCountIncremented = true;
             }
         } catch (Throwable ignored) {}

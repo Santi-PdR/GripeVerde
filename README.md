@@ -5,21 +5,17 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.21.4 - La tinta se asienta**
+**v0.21.5 - La sala responde a la consulta**
 
-El gabinete ordeno sus utensilios. El manual de campo (Controles) acepta
-busqueda por nombre: un campo de pergamino filtra los puntos de mando sin
-tocar la logica vanilla. El aparato de observacion (Video) agrupa su carril
-en secciones RENDER / QUALITY / PERFORMANCE, con medidor de pulso del
-cliente y dimension del lienzo. El archivo de lenguas declara, al pasar la
-mano sobre cada consulado, cuantas paginas de su registro guarda el
-gabinete (136/136 para las 25 lenguas soportadas). Al abrir la Sala de
-consulta, un papel cae al suelo (`ui.paper_fall`, reutiliza OGG existentes).
-
-Higiene: 54 imports muertos eliminados, nueva verificacion de build
-`verifyGripeVerdeNoDeadCode` (falla si reaparece codigo desterrado) y
-`.editorconfig` (UTF-8 sin BOM, LF, sin trailing whitespace). Documentacion
-sincronizada y version 0.21.4.
+La Sala de consulta ahora acepta busqueda: un campo de pergamino filtra las
+fichas por nombre, pista o id, con contador "N / 47" y aviso cuando nada
+coincide. Cuarta confesion de la limpieza: "Los botones que nunca se
+pulsaron" (47 fichas en total, aparece tras las tres de v0.21.3). Marginalia
+nueva para las cien aperturas y para casi completar el archivo. Al hallar
+una ficha, la musica del gabinete cede un instante (ducking). Y si el
+cliente va lento (FPS < 30), la escena omite niebla y faroles para no
+detenerse (modo low-end, muestreo defensivo). Documentacion sincronizada y
+version 0.21.5.
 
 ## Resumen visible del Mod Menu
 
@@ -49,7 +45,7 @@ Los contenedores del juego conservan su aspecto vanilla original; el mod no alte
 
 ### La memoria del gabinete (v0.16.0)
 - Memoria persistente propia (descubrimientos, objetos, noches seguidas, ausencias) separada del ajuste de audio.
-- 46 descubrimientos con fichas, sellos y pistas encadenadas; algunas consecuencias son permanentes.
+- 47 descubrimientos con fichas, sellos y pistas encadenadas; algunas consecuencias son permanentes.
 - Marginalia contextual del cronista: notas que responden a lo que el lector hace.
 - La Sala de consulta: detras del ultimo folio de la cronica, un archivo con las fichas halladas y documentos recuperados.
 
@@ -71,7 +67,7 @@ Los contenedores del juego conservan su aspecto vanilla original; el mod no alte
 - **Accessibility** - expediente de observacion con lectura por capas.
 - **Online / Multiplayer** - registros de conexion y hospedaje sobre presentacion propia.
 - **Credits** - ultimo archivo del gabinete.
-- **Archive** - sala de consulta (46 fichas).
+- **Archive** - sala de consulta (47 fichas).
 - **DirectJoin / EditServer / Confirm** - formularios y autorizaciones pulidos en v0.21.0.
 - **DebugCanvas** - herramienta interna de desarrollo (no en produccion).
 - **SoundLab** - herramienta interna de audio (no en produccion).
@@ -103,8 +99,8 @@ Reglas actuales:
 
 ## Documentacion
 
-- `CONTEXTO.md` - contexto maestro actual para retomar sesiones (v0.21.4).
-- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.4).
+- `CONTEXTO.md` - contexto maestro actual para retomar sesiones (v0.21.5).
+- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.5).
 - `KNOWN_ISSUES.md` - estado tecnico, decisiones activas, errores documentados, KIs.
 - `README.md` - esta portada.
 

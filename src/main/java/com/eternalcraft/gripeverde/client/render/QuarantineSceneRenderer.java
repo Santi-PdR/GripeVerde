@@ -27,17 +27,37 @@ public final class QuarantineSceneRenderer {
         } catch (Throwable ignored) {}
     }
 
+    // ── Modo low-end (v0.21.5): si el cliente va lento, se retiran la niebla
+    // y los faroles (los elementos mas costosos de la calle). El muestreo de
+    // FPS se hace una vez por segundo y nunca rompe por APIs ausentes.
+    private static int lowEndFps = 0;
+    private static long lowEndSampleMs = 0L;
+
+    public static boolean isLowEnd() {
+        long now = System.currentTimeMillis();
+        if (now - lowEndSampleMs >= 1000L) {
+            lowEndSampleMs = now;
+            try {
+                lowEndFps = net.minecraft.client.Minecraft.getInstance().getFps();
+            } catch (Throwable ignored) {
+                lowEndFps = 0;
+            }
+        }
+        return lowEndFps > 0 && lowEndFps < 30;
+    }
+
     // ── Full scene for Title ──
     public static void renderTitleScene(GuiGraphics g, int w, int h) {
         if (w <= 0 || h <= 0) return;
         com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick();
         com.eternalcraft.gripeverde.client.audio.MenuAmbience.setPocketWatchVisible(h >= 290);
 
+        boolean low = isLowEnd();
         AtmosphereRenderer.renderSky(g, w, h);
         VictorianSkyline.renderBackground(g, w, h);
-        LivingAtmosphere.renderFogLow(g, w, h);
+        if (!low) LivingAtmosphere.renderFogLow(g, w, h);
         VictorianSkyline.renderForeground(g, w, h);
-        LivingAtmosphere.renderStreetLevel(g, w, h);
+        if (!low) LivingAtmosphere.renderStreetLevel(g, w, h);
         LivingAtmosphere.renderAir(g, w, h);
         LivingAtmosphere.renderFlash(g, w, h);
         LivingAtmosphere.renderVignette(g, w, h);
@@ -50,10 +70,11 @@ public final class QuarantineSceneRenderer {
     public static void renderDiaryBackground(GuiGraphics g, int w, int h) {
         if (w <= 0 || h <= 0) return;
         g.fill(0, 0, w, h, 0xFF060401);
+        boolean low = isLowEnd();
         AtmosphereRenderer.renderSky(g, w, h);
         VictorianSkyline.renderBackground(g, w, h);
         VictorianSkyline.renderForeground(g, w, h);
-        LivingAtmosphere.renderStreet(g, w, h);
+        if (!low) LivingAtmosphere.renderStreet(g, w, h);
         LivingAtmosphere.renderVignette(g, w, h);
         // Overlay oscuro del gabinete
         g.fill(0, 0, w, h, DiaryChrome.OVERLAY_COL);

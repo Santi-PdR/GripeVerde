@@ -2,6 +2,11 @@
 ## Chronicle under seal
 
 
+## Version 0.21.5 - The room answers the query
+
+The consultation room learned to answer. Whoever searches among the cards by name, by hint, or by the word that names them, will see only those that matter; and when the archive confesses three ghosts of the cleansing, a fourth remembers the desk that was never used. The music yields for a moment when the archive speaks, and when the machine that holds the vigil runs slow, the street sheds its fog and lanterns so as not to stop.
+
+
 ## Version 0.21.4 - The ink settles
 
 The cabinet put its tools in order. The field manual accepts being asked by name: whoever searches among its pages finds the control they need without turning over the rest. The observation apparatus divides its sections —what it paints, what it shows, what it measures— and adds a needle that reads the machine's pulse. The language consulates declare, as the hand passes, how many pages of their register the cabinet keeps. And in the consultation room, when the door opens, a paper falls to the floor.

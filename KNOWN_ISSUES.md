@@ -1,5 +1,31 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.21.5 - La sala responde a la consulta (2026-08-21)
+
+### Cambios cerrados
+- Sala de consulta: busqueda por nombre/pista/id con `DiaryTextField`
+  (contador "N / 47", aviso de sin coincidencias, campo oculto al abrir
+  documentos).
+- Ficha 47 `BUTTONS_NEVER_PRESSED` ("Los botones que nunca se pulsaron"):
+  cadena cuando las 3 confesiones de limpieza de v0.21.3 estan descubiertas.
+- Marginalia `N_OPEN_COUNT` (openCount >= 100) y `N_MANY_CARDS`
+  (discoveredCount >= 44).
+- Ducking de la musica al descubrir (`Discoveries.discover` ->
+  `MenuMusic.duckFor(2500L)`).
+- Modo low-end en `QuarantineSceneRenderer.isLowEnd()` (FPS < 30, muestreo
+  1s, defensivo): omite niebla y faroles en Title y fondos Diary.
+- Version bump: 0.21.4 -> 0.21.5 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-30 (v0.21.5)**: validar en cliente real — busqueda en la sala (4
+  escalas GUI), cadena de la ficha 47, ducking al hallar, y low-end en
+  maquinas lentas (o forzando FPS bajo).
+- KI-27 (v0.21.3) y KI-28 (v0.21.4) siguen pendientes de validacion en
+  cliente. KI-29 (2 pistas MenuMusic nuevas) requiere OGGs del usuario.
+- KI-20, KI-21, KI-24, KI-25 siguen abiertos sin cambios.
+
+---
+
 ## v0.21.4 - La tinta se asienta (2026-08-21)
 
 ### Cambios cerrados

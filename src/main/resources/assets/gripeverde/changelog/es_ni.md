@@ -2,6 +2,11 @@
 ## Cronica bajo sello
 
 
+## Version 0.21.5 - La sala responde a la consulta
+
+La sala de consulta aprendió a responder. Quien busque entre las fichas por su nombre, por su pista o por la palabra que las nombra, verá solo las que importan; y cuando el archivo confiese tres fantasmas de la limpieza, un cuarto recuerda la mesa que nunca se usó. La música cede un instante cuando el archivo habla, y cuando la máquina que sostiene la vigilia va lenta, la calle se despoja de niebla y faroles para no detenerse.
+
+
 ## Version 0.21.4 - La tinta se asienta
 
 El gabinete ordenó sus utensilios. El manual de campo acepta que se le pregunte por nombre: quien busque entre sus páginas encuentra el mando que necesita sin revolver el resto. El aparato de observación separa sus secciones —lo que pinta, lo que muestra, lo que mide— y añade una aguja que lee el pulso de la máquina. Los consulados de lenguas declaran, al pasar la mano, cuántas páginas de su registro guarda el gabinete. Y en la sala de consulta, al abrir la puerta, un papel cae al suelo.
