@@ -100,7 +100,7 @@ Reglas actuales:
 ## Documentacion
 
 - `CONTRIBUTING.md` - guia corta de contribucion (branch fija, no gameplay, validacion).
-- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.9.
+- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.10.
 - `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.10).
 - `KNOWN_ISSUES.md` - estado tecnico, decisiones activas, errores documentados, KIs.
 - `README.md` - esta portada.
