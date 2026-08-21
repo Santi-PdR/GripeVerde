@@ -1,6 +1,9 @@
 package com.eternalcraft.gripeverde.client.screens;
 
+import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
+import com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer;
 import com.eternalcraft.gripeverde.client.widgets.SlimButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -54,6 +57,7 @@ public class ChangelogScreen extends Screen {
     private int contentTotalH = 0;
     private int lastContentW = -1;
     private boolean draggingScrollbar = false;
+    private long openedAtMs = 0L;
 
     // v0.16.0: las marcas del encuadernador y el folio escondido
     private final List<int[]> asteriskRects = new ArrayList<>();
@@ -84,6 +88,7 @@ public class ChangelogScreen extends Screen {
         this.addRenderableWidget(new SlimButton(bx, by, CLOSE_W, CLOSE_H,
             Component.translatable("gripeverde.changelog.button.close"),
             this::onClose));
+        this.openedAtMs = System.currentTimeMillis();
     }
 
     private void loadAndParse() {
@@ -261,9 +266,9 @@ public class ChangelogScreen extends Screen {
     private int panelW() { return this.width  - PANEL_MX * 2; }
     private int panelH() { return this.height - PANEL_TOP - PANEL_BOT; }
     private int contentX() { return panelX() + PAD_X; }
-    private int contentY() { return panelY() + PAD_Y + 10; }
+    private int contentY() { return panelY() + 72; }
     private int contentW() { return Math.max(40, panelW() - PAD_X * 2 - 8); }
-    private int contentH() { return Math.max(20, panelH() - PAD_Y * 2 - 10); }
+    private int contentH() { return Math.max(20, panelH() - 110); }
 
     @Override
     public void tick() {
@@ -282,19 +287,24 @@ public class ChangelogScreen extends Screen {
             recalcMaxScroll();
         }
 
-        g.fill(0, 0, this.width, this.height, 0xD0100D08);
-
+        QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
+        float reveal = DiaryChrome.reveal(this.openedAtMs, 260L);
+        DiaryChrome.drawPanelScaffold(g, px, py, pw, ph, DiaryTheme.BRONZE);
         com.eternalcraft.gripeverde.client.render.PaperTexture.drawClean(g, px, py, pw, ph, com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.ARCHIVE);
-        g.fill(px,          py,          px + pw, py + 1,      DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
-        g.fill(px,          py + ph - 1, px + pw, py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
-        g.fill(px,          py,          px + 1,  py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
-        g.fill(px + pw - 1, py,          px + pw, py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
         drawLedgerDetails(g, px, py, pw, ph, cx, cy, cw, ch);
 
-        int tw = this.font.width(this.title);
-        int tx = (this.width - tw) / 2;
-        g.drawString(this.font, this.title, tx, py + 8, DiaryTheme.AMBER_FLAME, false);
-        g.fill(tx - 4, py + 18, tx + tw + 4, py + 19, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 150));
+        int headerBottom = ExpedientHeader.draw(g, this.font, px, py, pw,
+            isEnglishSelected() ? "EXPEDIENT XV" : "EXPEDIENTE XV",
+            this.title,
+            isEnglishSelected() ? "- revision register -" : "- registro de revisiones -",
+            isEnglishSelected() ? "EC-QV/1897 · SEALED CHRONICLE" : "EC-QV/1897 · CRONICA SELLADA",
+            isEnglishSelected() ? "Filed notices arranged in the order the city learned to speak." : "Partes archivados en el orden en que la ciudad aprendio a hablar.",
+            isEnglishSelected() ? "OPEN FOLIO" : "FOLIO ABIERTO",
+            DiaryTheme.BRONZE,
+            reveal);
+
+        cy = Math.max(cy, headerBottom - 2);
+        ch = contentH() - Math.max(0, headerBottom - contentY() - 2);
 
         this.asteriskRects.clear();
         this.hiddenFolioRect = null;
@@ -332,15 +342,10 @@ public class ChangelogScreen extends Screen {
         g.disableScissor();
 
         if (maxScroll > 0) {
-            int bx2 = px + pw - 6;
-            int bh  = ch;
-            int th  = Math.max(20, bh * bh / (bh + maxScroll));
-            int ty2 = cy + (bh - th) * scrollY / maxScroll;
-            g.fill(bx2, cy,  bx2 + 3, cy + bh, DiaryTheme.withAlpha(DiaryTheme.PAPER_STAINED, 110));
-            g.fill(bx2, ty2, bx2 + 3, ty2 + th, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 190));
-
+            DiaryChrome.drawScrollThumb(g, px + pw - 10, cy, cy + ch, this.scrollY, this.maxScroll);
         }
 
+        drawRevisionFooter(g, px, py, pw, ph);
         super.render(g, mouseX, mouseY, partialTick);
 
         try {
@@ -348,6 +353,15 @@ public class ChangelogScreen extends Screen {
             com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, py - 12);
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
         } catch (Throwable ignored) {}
+    }
+
+    private void drawRevisionFooter(GuiGraphics g, int px, int py, int pw, int ph) {
+        boolean en = isEnglishSelected();
+        String left = en ? "consultation register" : "registro de consulta";
+        String right = en ? ("page " + (scrollY / 160 + 1)) : ("folio " + (scrollY / 160 + 1));
+        g.drawString(this.font, left, px + 18, py + ph - 18, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 118), false);
+        int rw = this.font.width(right);
+        g.drawString(this.font, right, px + pw - rw - 18, py + ph - 18, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 118), false);
     }
 
     private void drawLedgerDetails(GuiGraphics g, int px, int py, int pw, int ph,

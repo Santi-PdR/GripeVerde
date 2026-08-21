@@ -2,26 +2,35 @@
 ## Chronicle under seal
 
 
-## Version 0.17 - The Steel Returns to Quarantine
+## Version 0.21 - The office closes its ranks
 
-This night the workshop dresses in steel once more, and this time the steel
-carries a seal.
+The rooms that still felt most borrowed have now been brought nearer to the
+rest of the cabinet. Correspondence, consultation, revisions and the forms
+of entry now speak with a steadier hand, so that each office may be known by
+its duty and not only by its heading.
 
-The workbenches, the chests, the furnaces and the anvils woke with plates of
-cold metal, brushed by hand, with their grooves and their rivets. The hollows
-where things are kept are deeper and darker, like wells; every container can
-be told apart from its neighbour: the furnace smells of hot copper, the
-enchantment table of ink and old iron, the brewing stand of the clinic, the
-beacon of a signal machine. The great storerooms wear a green quarantine
-ribbon and rivets on all four corners.
 
-The chronicler's cabinet has changed as well: its corners are now held by
-steel brackets, and every sheet bears a small plate with its registry number.
-Even the room of material packs is now a cabinet archive, with its inventory
-sheet.
+## Version 0.20 - The cabinet finds its own hand
 
-The seal reads: EC-QV/1897. Whoever opens a drawer will know, at a glance,
-that they are in the house of the plague.
+Several leaves that once felt merely dressed for the occasion have now
+been rewritten in the cabinet's own hand. The consultation room, the
+register of revisions, the forms of entry and authorisation, and the
+small mirror of observation now belong more clearly to the same office,
+with better order, better weight, and less borrowed manner.
+
+
+## Version 0.18 - 0.19 - The cabinet learns its final manners
+
+The house of the chronicler now presents itself with greater order and
+less noise. The central desk, the room of instruments, the office of
+correspondence, the linguistic archive and the ledgers of command no
+longer look like borrowed sheets laid upon the same table. Each room has
+its own bearing, yet all belong to the same night office.
+
+Rules, needles, plates, rails of ink and papers laid one atop another now
+show the eye where it ought to rest. The cabinet has not changed its
+voice; it has learned how to keep it.
+
 
 ## Version 0.16 - The Reading Room
 

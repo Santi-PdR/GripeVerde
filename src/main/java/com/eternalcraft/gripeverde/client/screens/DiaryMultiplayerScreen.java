@@ -3,11 +3,14 @@ package com.eternalcraft.gripeverde.client.screens;
 import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
+import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
 import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
+import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
 import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
+import com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -64,6 +67,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     private DiaryButton diaryRefresh;
     private DiaryButton diaryCancel;
     private final SmoothScroll smoothScroll = new SmoothScroll();
+    private long openedAtMs = 0L;
 
     public DiaryMultiplayerScreen(Screen parent) {
         super(parent);
@@ -102,6 +106,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
 
         // Asegurar que el server oficial este siempre presente
         ensurePinnedServer();
+        this.openedAtMs = System.currentTimeMillis();
     }
 
     /**
@@ -474,34 +479,27 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         int panelY = PANEL_MARGIN_V;
         int panelW = this.width - PANEL_MARGIN_H * 2;
         int panelH = this.height - PANEL_MARGIN_V * 2;
-        DiaryChrome.drawPanelShadow(gfx, panelX, panelY, panelW, panelH);
+        float reveal = DiaryChrome.reveal(this.openedAtMs, 240L);
+        DiaryChrome.drawPanelScaffold(gfx, panelX, panelY, panelW, panelH, DiaryTheme.BRONZE);
         PaperTexture.drawClean(gfx, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
         DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, panelW, panelH);
-        DiaryChrome.drawRegistryTag(gfx, panelX, panelY, panelW, panelH, "REG. X");
 
-        // Titulo
-        int titleY = panelY + 14;
-        String titleStr = this.title.getString();
-        int titleW = this.font.width(titleStr);
-        gfx.drawString(this.font, titleStr, (this.width - titleW) / 2, titleY, DiaryChrome.INK_TITLE, false);
-
-        // Subtitulo
-        String subtitle = "- " + Component.translatable("gripeverde.multiplayer.subtitle").getString() + " -";
-        int subW = this.font.width(subtitle);
-        gfx.drawString(this.font, subtitle, (this.width - subW) / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
-
-        // Divisor con rombo
-        DiaryChrome.drawInkDivider(gfx, panelX + 24, titleY + 26, panelW - 48);
-        DiaryChrome.drawDivisorLozenge(gfx, this.width / 2, titleY + 26);
+        int headerBottom = ExpedientHeader.draw(gfx, this.font, panelX, panelY, panelW,
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT X" : "EXPEDIENTE X",
+            this.title,
+            "- " + Component.translatable("gripeverde.multiplayer.subtitle").getString() + " -",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · CONNECTION REGISTRY" : "EC-QV/1897 · REGISTRO DE CONEXIONES",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Known lodgings, road entries and dangerous addresses." : "Hospedajes conocidos, entradas de camino y direcciones peligrosas.",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "LIVE" : "EN VIVO",
+            DiaryTheme.BRONZE,
+            reveal);
 
         // Lista vanilla (con sus favicons, ping, MOTD, etc.)
         if (this.vanillaList != null) {
             try {
-                // Aplicar scissor para ocultar LAN header cuando hay servers
                 int scissorBottom = computeVisibleBottom();
                 if (scissorBottom > 0 && scissorBottom < this.vanillaList.getBottom()) {
                     gfx.enableScissor(0, this.vanillaList.getTop(), this.width, scissorBottom);
-                    // Banda sepia detras de cada server (contraste para texto blanco vanilla)
                     drawEntryBackgrounds(gfx);
                     this.vanillaList.render(gfx, mouseX, mouseY, partial);
                     gfx.disableScissor();
@@ -509,12 +507,12 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                     drawEntryBackgrounds(gfx);
                     this.vanillaList.render(gfx, mouseX, mouseY, partial);
                 }
-                // Subrayado sutil bajo cada server
                 drawEntryFrames(gfx);
-                // Scroll estilizado encima
                 DiaryChrome.drawStyledScrollThumbForOptionsList(gfx, this.vanillaList, this.width);
             } catch (Throwable ignored) {}
         }
+
+        drawSelectionLedger(gfx, panelX, headerBottom + 6, panelW);
 
         // Divisor inferior antes de los botones - con rombo central
         int dividerY = this.height - LIST_BOTTOM_OFFSET + 2;
@@ -566,6 +564,29 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             gfx.drawString(this.font, last, x, y + 16,
                 com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0xFFB8A888, 90), false);
         }
+    }
+
+    private void drawSelectionLedger(GuiGraphics gfx, int panelX, int y, int panelW) {
+        int boxW = 220;
+        int x = panelX + panelW - boxW - 18;
+        String title = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "SELECTED LODGING" : "HOSPEDAJE ELEGIDO";
+        String line1 = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "No active server selected." : "No hay servidor activo.";
+        String line2 = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Choose an address from the registry." : "Elegid una direccion del registro.";
+        try {
+            if (this.vanillaList != null) {
+                Object sel = this.vanillaList.getSelected();
+                ServerData sd = extractServerDataFromEntry(sel);
+                if (sd != null) {
+                    line1 = sd.name;
+                    line2 = sd.ip;
+                }
+            }
+        } catch (Throwable ignored) {}
+        DiaryChrome.drawInsetCard(gfx, this.font, x, y, boxW, 58, title, line1, line2, DiaryTheme.BRONZE);
+        DiaryProgressBar.draw(gfx, x + 10, y + 38, boxW - 20, 12,
+            this.vanillaList != null && this.vanillaList.getSelected() != null ? 1f : 0f,
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "selection" : "seleccion",
+            DiaryProgressBar.Style.INK);
     }
 
     @Override

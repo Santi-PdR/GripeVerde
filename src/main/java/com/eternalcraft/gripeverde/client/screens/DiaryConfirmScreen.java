@@ -4,6 +4,8 @@ import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
+import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
 import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
@@ -28,13 +30,15 @@ import java.util.List;
  */
 public class DiaryConfirmScreen extends ConfirmScreen {
 
-    private static final int PANEL_MAX_W = 340;
-    private static final int PANEL_MAX_H = 180;
+    private static final int PANEL_MAX_W = 420;
+    private static final int PANEL_MAX_H = 196;
 
     private final Screen parent;
     // Guardamos el mensaje propio porque ConfirmScreen.message es private
     private final Component ownMessage;
     private MultiLineLabel ownMultilineMessage;
+    private int panelX, panelY, panelW, panelH;
+    private long openedAtMs = 0L;
 
     public DiaryConfirmScreen(BooleanConsumer callback, Component title, Component message, Screen parent) {
         super(callback, title, message);
@@ -79,12 +83,16 @@ public class DiaryConfirmScreen extends ConfirmScreen {
             // Silencioso. Fallback: botones vanilla quedan visibles.
         }
 
+        this.panelW = Math.min(PANEL_MAX_W, this.width - 34);
+        this.panelH = Math.min(PANEL_MAX_H, this.height - 28);
+        this.panelX = (this.width - this.panelW) / 2;
+        this.panelY = (this.height - this.panelH) / 2;
+
         // Botones Diary propios
-        int btnW = 100;
+        int btnW = 112;
         int btnH = 20;
-        int panelY = (this.height - PANEL_MAX_H) / 2;
-        int btnY = panelY + PANEL_MAX_H - btnH - 16;
-        int gap = 12;
+        int btnY = this.panelY + this.panelH - btnH - 16;
+        int gap = 14;
         int totalW = btnW * 2 + gap;
         int startX = (this.width - totalW) / 2;
 
@@ -111,6 +119,7 @@ public class DiaryConfirmScreen extends ConfirmScreen {
 
         this.addRenderableWidget(diaryYes);
         this.addRenderableWidget(diaryNo);
+        this.openedAtMs = System.currentTimeMillis();
     }
 
     @Override
@@ -123,60 +132,56 @@ public class DiaryConfirmScreen extends ConfirmScreen {
 
     @Override
     public void render(GuiGraphics gfx, int mouseX, int mouseY, float partial) {
-        // Fondo: escena viva del Title
         try {
             com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(gfx, this.width, this.height);
-                } catch (Throwable ignored) {
-            // Si algo del pipeline falla, seguimos con overlay negro
-        }
+        } catch (Throwable ignored) {}
 
-        // Overlay para atenuar la escena
+        float reveal = DiaryChrome.reveal(this.openedAtMs, 220L);
+        DiaryChrome.drawPanelScaffold(gfx, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.REDCOAT_DARK);
+        PaperTexture.drawClean(gfx, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.OFFICIAL);
+        DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
 
-        // Panel pergamino
-        int panelW = Math.min(PANEL_MAX_W, this.width - 40);
-        int panelH = Math.min(PANEL_MAX_H, this.height - 30);
-        int panelX = (this.width - panelW) / 2;
-        int panelY = (this.height - panelH) / 2;
-        DiaryChrome.drawPanelShadow(gfx, panelX, panelY, panelW, panelH);
-        PaperTexture.drawClean(gfx, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
+        int headerBottom = ExpedientHeader.draw(gfx, this.font, this.panelX, this.panelY, this.panelW,
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT XIII" : "EXPEDIENTE XIII",
+            this.title,
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "- authorization required -" : "- autorizacion requerida -",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · PERMIT SHEET" : "EC-QV/1897 · HOJA DE PERMISO",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "The order below will only be filed if signed by your hand." : "La orden de abajo solo se archivara si la firma vuestra mano.",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "PENDING" : "PENDIENTE",
+            DiaryTheme.REDCOAT_DARK,
+            reveal);
 
-        // Cosmetica
-        DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, panelW, panelH);
-        DiaryChrome.drawRegistryTag(gfx, panelX, panelY, panelW, panelH, "REG. XIII");
-
-        // Titulo
-        int titleY = panelY + 18;
-        String titleStr = this.title.getString();
-        int titleW = this.font.width(titleStr);
-        gfx.drawString(this.font, titleStr, (this.width - titleW) / 2, titleY, DiaryChrome.INK_TITLE, false);
-
-        // Divisor con rombo
-        DiaryChrome.drawInkDivider(gfx, panelX + 24, titleY + 14, panelW - 48);
-        DiaryChrome.drawDivisorLozenge(gfx, this.width / 2, titleY + 14);
-
-        // Mensaje multilinea (propio, no toco el vanilla)
         if (this.ownMultilineMessage == null && this.ownMessage != null) {
-            this.ownMultilineMessage = MultiLineLabel.create(this.font, this.ownMessage, PANEL_MAX_W - 40);
+            this.ownMultilineMessage = MultiLineLabel.create(this.font, this.ownMessage, this.panelW - 74);
         }
+        int msgY = headerBottom + 8;
         if (this.ownMultilineMessage != null) {
-            int msgY = titleY + 28;
             this.ownMultilineMessage.renderCentered(gfx, this.width / 2, msgY, this.font.lineHeight + 2, DiaryChrome.INK_SUBTITLE);
         }
+        int signY = this.panelY + this.panelH - 62;
+        gfx.drawString(this.font,
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "authorising hand" : "mano autorizante",
+            this.panelX + 26, signY - 10, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 135), false);
+        gfx.fill(this.panelX + 24, signY, this.panelX + this.panelW - 24, signY + 1, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 58));
 
-        // v0.16.0: recordatorio para quien destruye demasiado.
+        DiaryChrome.drawInsetCard(gfx, this.font, this.panelX + this.panelW - 138, headerBottom + 2, 118, 62,
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "ORDER" : "ORDEN",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Awaiting signature" : "A la espera de firma",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Approval and refusal are treated as separate acts of filing." : "Aprobar y rehusar se consideran actos distintos de archivo.",
+            DiaryTheme.REDCOAT_DARK);
+
         try {
             if (com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("destroys") >= 3) {
                 String line = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
                     ? "The cabinet remembers what you destroy."
                     : "El gabinete recuerda lo que destruyes.";
                 int lw = this.font.width(line);
-                gfx.drawString(this.font, line, (this.width - lw) / 2, panelY + panelH - 42,
-                    com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0xFF6E1F16, 150), false);
+                gfx.drawString(this.font, line, (this.width - lw) / 2, this.panelY + this.panelH - 44,
+                    DiaryTheme.withAlpha(0xFF6E1F16, 150), false);
             }
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(gfx, this.width);
         } catch (Throwable ignored) {}
 
-        // Widgets propios (botones Diary y cualquier otro visible)
         for (var w : this.renderables) {
             if (w instanceof AbstractWidget aw && aw.visible) {
                 w.render(gfx, mouseX, mouseY, partial);

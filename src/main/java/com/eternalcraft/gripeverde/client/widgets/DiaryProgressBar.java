@@ -6,50 +6,82 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 
 /**
- * DiaryProgressBar: barra de progreso estilo pergamino con tinta.
- * No es un widget interactivo, solo se renderiza. Usar draw() cuando quieras.
- *
- * Ejemplo en render():
- *   DiaryProgressBar.draw(g, x, y, w, h, 0.75f, "Cargando...");
+ * Barra documental reutilizable para progreso, volumen y estados continuos.
  */
 public final class DiaryProgressBar {
 
-    private DiaryProgressBar() {}
+    public enum Style {
+        INK(0xFF6B4226, 0xFF2E1A0F, 0x80A0704C),
+        PLAGUE(0xFF5A7038, 0xFF2A3820, 0x809AB86A),
+        ALERT(0xFF8B1F0F, 0xFF4A1008, 0x80D47A5A),
+        AMBER(0xFFD4941E, 0xFF6B5028, 0x80FFE2A0),
+        STEEL(0xFF7C808A, 0xFF464A52, 0x80D0D4DE);
 
-    /** Dibuja una barra de progreso pergamino. progress = 0.0 a 1.0 */
-    public static void draw(GuiGraphics g, int x, int y, int w, int h, float progress) {
-        draw(g, x, y, w, h, progress, null);
+        final int fill;
+        final int border;
+        final int highlight;
+
+        Style(int fill, int border, int highlight) {
+            this.fill = fill;
+            this.border = border;
+            this.highlight = highlight;
+        }
     }
 
-    /** Dibuja una barra de progreso con label opcional centrado. */
+    private DiaryProgressBar() {}
+
+    public static void draw(GuiGraphics g, int x, int y, int w, int h, float progress) {
+        draw(g, x, y, w, h, progress, null, Style.INK, -1f);
+    }
+
     public static void draw(GuiGraphics g, int x, int y, int w, int h, float progress, String label) {
-        // Clamp
+        draw(g, x, y, w, h, progress, label, Style.INK, -1f);
+    }
+
+    public static void draw(GuiGraphics g, int x, int y, int w, int h, float progress,
+                            String label, Style style) {
+        draw(g, x, y, w, h, progress, label, style, -1f);
+    }
+
+    /**
+     * marker = 0..1 para dibujar una marca vertical (ej: umbral de alerta).
+     * Pasa -1 para omitirla.
+     */
+    public static void draw(GuiGraphics g, int x, int y, int w, int h, float progress,
+                            String label, Style style, float marker) {
         progress = Math.max(0f, Math.min(1f, progress));
 
-        // Fondo del track (pergamino oscuro)
+        g.fill(x + 1, y + 1, x + w + 1, y + h + 1, 0x18000000);
         g.fill(x, y, x + w, y + h, 0xFFA89468);
-        // Borde tinta
         g.fill(x, y, x + w, y + 1, 0xB0422810);
         g.fill(x, y + h - 1, x + w, y + h, 0xB0422810);
         g.fill(x, y, x + 1, y + h, 0xB0422810);
         g.fill(x + w - 1, y, x + w, y + h, 0xB0422810);
 
-        // Zona rellena de progreso (tinta viva)
-        int fillW = (int)((w - 4) * progress);
+        int innerX = x + 2;
+        int innerY = y + 2;
+        int innerW = Math.max(1, w - 4);
+        int innerH = Math.max(1, h - 4);
+        g.fill(innerX, innerY, innerX + innerW, innerY + innerH, DiaryTheme.withAlpha(style.border, 24));
+
+        int fillW = (int) (innerW * progress);
         if (fillW > 0) {
-            g.fill(x + 2, y + 2, x + 2 + fillW, y + h - 2, 0xFF6B4226);
-            // Highlight arriba
-            g.fill(x + 2, y + 2, x + 2 + fillW, y + 3, 0x80A0704C);
-            // Sombra abajo
-            g.fill(x + 2, y + h - 3, x + 2 + fillW, y + h - 2, 0x80301608);
+            g.fill(innerX, innerY, innerX + fillW, innerY + innerH, style.fill);
+            g.fill(innerX, innerY, innerX + fillW, innerY + 1, style.highlight);
+            g.fill(innerX, innerY + innerH - 1, innerX + fillW, innerY + innerH, DiaryTheme.withAlpha(style.border, 150));
         }
 
         for (int i = 1; i < 5; i++) {
-            int tx = x + 2 + (w - 4) * i / 5;
-            g.fill(tx, y + 2, tx + 1, y + h - 2, DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 45));
+            int tx = innerX + innerW * i / 5;
+            g.fill(tx, innerY, tx + 1, innerY + innerH, DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 34));
         }
 
-        // Label centrado sobre la barra
+        if (marker >= 0f && marker <= 1f) {
+            int mx = innerX + (int) (innerW * marker);
+            g.fill(mx, y - 1, mx + 1, y + h + 1, DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 120));
+            DiaryChrome.drawDivisorLozenge(g, mx, y + h / 2);
+        }
+
         if (label != null && !label.isEmpty()) {
             int lw = Minecraft.getInstance().font.width(label);
             int lx = x + (w - lw) / 2;

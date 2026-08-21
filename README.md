@@ -5,29 +5,18 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.17.2 - Las bandejas de la mesa y la moneda del trato**
+**v0.21.1 - Correccion del registro sonoro**
 
-El oficio vuelve a vestirse de acero, y esta vez el acero lleva sello.
-Las mesas de trabajo, los cajones, los hornos y los yunques amanecieron
-con planchas de metal frio, cepillado a mano, con sus ranuras y sus
-remaches. Los huecos donde descansa lo que se guarda son mas hondos y
-oscuros, como pozos; cada contenedor se distingue del vecino: el horno
-huele a cobre caliente, la mesa de encantamientos a tinta y hierro viejo,
-el alambique a clinica, la baliza a maquina de senales. Los grandes
-almacenes llevan una cinta verde de cuarentena y remaches en sus cuatro
-esquinas.
-
-El gabinete del cronista tambien cambio: sus esquinas se sujetan ahora
-con escuadras de acero, y cada hoja lleva una chapa con su numero de
-registro. Hasta la sala de los paquetes de materiales es hoy un archivo
-del gabinete, con su hoja de inventario y su sello EC-QV/1897. Quien abra
-un cajon sabra, de un vistazo, que esta en la casa de la plaga.
+Hotfix tecnico sobre la linea v0.21.0. Se corrigio el registro de
+`SoundEvent` del mod para que el jar no falle al iniciar en el runtime real
+de Forge 1.20.1. No cambia la direccion visual del gabinete: corrige un
+bloqueo de arranque y mantiene intacta la interfaz ya entregada.
 
 ## Resumen visible del Mod Menu
 
-Eternal Craft: Gripe Verde convierte los menus de Minecraft en un gabinete victoriano bajo cuarentena. El menu principal muestra una ciudad oscura con lluvia, niebla, reloj de bolsillo, carteles oficiales, musica y ambiente propio. El gabinete de opciones organiza las secciones como registros del cronista: apariencia, sonido, video, controles, idioma, chat, paquetes, accesibilidad, online y creditos. La pantalla de paquetes de recursos es ahora un archivo del gabinete.
+Eternal Craft: Gripe Verde convierte los menus de Minecraft en un gabinete victoriano bajo cuarentena. El menu principal muestra una ciudad oscura con lluvia, niebla, reloj de bolsillo, carteles oficiales, musica y ambiente propio, mientras que cada sala del gabinete adopta una identidad concreta: Options como mesa central, Sound como sala instrumental, Video como aparato de observacion, Controls como manual operativo, Language como archivo linguistico, Chat como oficina de correspondencia, Accessibility como expediente de percepcion, Online como estacion de comunicaciones, Multiplayer como registro de hospedajes, Credits como acta final, Archive como sala de consulta y las pantallas de formulario como documentos oficiales. El objetivo ya no es solo tematizar vanilla, sino hacer que la interfaz parezca realmente propia de Gripe Verde.
 
-Los contenedores del juego llevan el resource pack built-in "Acero de Cuarentena": paneles de acero cepillado, slots hundidos, juntas con remaches y sellos de cuarentena, con variantes por oficio (horno, herreria, encantamientos, alambique, baliza...). Es puramente visual: la geometria, los slots y el comportamiento son vanilla exactos. El mod es client-side y no agrega gameplay.
+Los contenedores del juego conservan su aspecto vanilla original; el mod no altera las texturas de los contenedores ni usa resourcepacks. El mod es client-side y no agrega gameplay.
 
 ## Caracteristicas principales
 
@@ -64,8 +53,15 @@ Los contenedores del juego llevan el resource pack built-in "Acero de Cuarentena
 - **Title** - menu principal victoriano completo con musica y ambiente sonoro.
 - **Pause** - diario del superviviente (R14, aprobada).
 - **Changelog** - historial narrativo en pergamino.
-- **Options** - gabinete central con slider de musica del menu.
-- **ResourcePacks** - archivador de materiales (sobre la pantalla vanilla).
+- **Options** - gabinete central con agrupacion visual, carril de estado y slider FOV integrado.
+- **Sound** - sala acustica con medidores, estado de mezcla y sliders propios del mod.
+- **Video** - aparato de observacion sobre consola vanilla, con presentacion tecnica propia.
+- **Controls** - manual operativo con resumen de postura y protocolo.
+- **Language** - archivo linguistico con estado actual/pediente y presentacion de consulados.
+- **Chat** - correspondencia con carril documental y archivo de entregas.
+- **Accessibility** - expediente de observacion con lectura por capas.
+- **Online / Multiplayer** - registros de conexion y hospedaje sobre presentacion propia.
+- **Credits** - ultimo archivo del gabinete.
 - **DebugCanvas** - herramienta interna de desarrollo.
 - **SoundLab** - herramienta interna de audio.
 

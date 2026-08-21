@@ -98,8 +98,43 @@ public class ModSounds {
 
     // â”€â”€ Helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     private static RegistryObject<SoundEvent> reg(String path) {
-        return SOUND_EVENTS.register(path,
-            () -> SoundEvent.createVariableRangeEvent(
-                new ResourceLocation(GripeVerdeMod.MOD_ID, path)));
+        return SOUND_EVENTS.register(path, () -> createSoundEvent(path));
+    }
+
+    /**
+     * Compat runtime para 1.20.1.
+     * Evita NoSuchMethodError si createVariableRangeEvent no existe con la
+     * misma firma en el entorno real donde corre el jar reobfuscado.
+     */
+    private static SoundEvent createSoundEvent(String path) {
+        ResourceLocation id = new ResourceLocation(GripeVerdeMod.MOD_ID, path);
+
+        try {
+            java.lang.reflect.Method m = SoundEvent.class.getDeclaredMethod("createVariableRangeEvent", ResourceLocation.class);
+            m.setAccessible(true);
+            Object out = m.invoke(null, id);
+            if (out instanceof SoundEvent se) return se;
+        } catch (Throwable ignored) {}
+
+        try {
+            for (java.lang.reflect.Constructor<?> ctor : SoundEvent.class.getDeclaredConstructors()) {
+                Class<?>[] p = ctor.getParameterTypes();
+                ctor.setAccessible(true);
+                if (p.length == 1 && p[0] == ResourceLocation.class) {
+                    Object out = ctor.newInstance(id);
+                    if (out instanceof SoundEvent se) return se;
+                }
+                if (p.length == 2 && p[0] == ResourceLocation.class && p[1] == float.class) {
+                    Object out = ctor.newInstance(id, 16.0F);
+                    if (out instanceof SoundEvent se) return se;
+                }
+                if (p.length == 3 && p[0] == ResourceLocation.class && p[1] == float.class && p[2] == boolean.class) {
+                    Object out = ctor.newInstance(id, 16.0F, false);
+                    if (out instanceof SoundEvent se) return se;
+                }
+            }
+        } catch (Throwable ignored) {}
+
+        throw new IllegalStateException("No se pudo construir SoundEvent para: " + id);
     }
 }

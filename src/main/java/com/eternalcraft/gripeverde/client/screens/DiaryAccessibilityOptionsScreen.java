@@ -2,14 +2,17 @@ package com.eternalcraft.gripeverde.client.screens;
 
 import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
+import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
 import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
 import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
+import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
 import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton.Icon;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton.Variant;
+import com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -20,8 +23,9 @@ import net.minecraft.network.chat.Component;
 public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen {
 
     // Panel deseado (se recorta si no cabe en pantalla)
-    private static final int PANEL_MAX_W = 380;
+    private static final int PANEL_MAX_W = 530;
     private static final int PANEL_MAX_H = 395;
+    private static final int RAIL_W = 154;
 
     // Margen minimo entre panel y borde de pantalla
     private static final int SCREEN_MARGIN = 12;
@@ -33,6 +37,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
     private DiaryButton btnVolver;
     private final SmoothScroll smoothScroll = new SmoothScroll();
     private int panelW, panelH, panelX, panelY;
+    private long openedAtMs = 0L;
 
     public DiaryAccessibilityOptionsScreen(Screen parent, Options options) {
         super(parent, options);
@@ -83,64 +88,63 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
             this::onClose
         );
         this.addRenderableWidget(this.btnVolver);
+        this.openedAtMs = System.currentTimeMillis();
     }
 
     @Override
     public void render(GuiGraphics gfx, int mouseX, int mouseY, float delta) {
-        // Escena viva
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(gfx, this.width, this.height);
 
-        // Panel pergamino
-        DiaryChrome.drawPanelShadow(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
+        float reveal = DiaryChrome.reveal(this.openedAtMs, 240L);
+        DiaryChrome.drawPanelScaffold(gfx, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.PLAGUE_SICK);
         PaperTexture.drawClean(gfx, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.OFFICIAL);
+        DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
 
-        // Titulo
-        int cx = this.width / 2;
-        int titleY = this.panelY + 12;
-        {
-        var _title = Component.translatable("options.accessibility.title");
-        int _tw = this.font.width(_title);
-        gfx.drawString(this.font, _title, cx - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
-        }
+        int headerBottom = ExpedientHeader.draw(gfx, this.font, this.panelX, this.panelY, this.panelW,
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT VI" : "EXPEDIENTE VI",
+            Component.translatable("options.accessibility.title"),
+            "- " + Component.translatable("gripeverde.options.accessibility.subtitle").getString() + " -",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · OBSERVATION SHEET" : "EC-QV/1897 · HOJA DE OBSERVACION",
+            getRotatingAccFlavor(),
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "SUPPORTED" : "ASISTIDO",
+            DiaryTheme.PLAGUE_SICK,
+            reveal);
 
-        // Subtitulo
-        int subtitleY = titleY + 12;
-        {
-            String subC = "- " + Component.translatable("gripeverde.options.accessibility.subtitle").getString() + " -";
-            int subW = this.font.width(subC);
-            gfx.drawString(this.font, subC, cx - subW / 2, subtitleY, DiaryChrome.INK_SUBTITLE, false);
-        }
+        int railX = this.panelX + this.panelW - RAIL_W - 18;
+        DiaryChrome.drawInsetCard(gfx, this.font, railX, headerBottom, RAIL_W, 84,
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "PERCEPTION" : "PERCEPCION",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Observation profile" : "Perfil de observacion",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Assistive options are kept apart from the main list so their purpose is immediately legible." : "Las ayudas quedan separadas del cuerpo principal para que su proposito se lea al instante.",
+            DiaryTheme.PLAGUE_SICK);
+        DiaryChrome.drawInsetCard(gfx, this.font, railX, headerBottom + 92, RAIL_W, 86,
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "READABILITY" : "LEGIBILIDAD",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Clear states" : "Estados claros",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Hover, scroll and focus are isolated visually without changing any vanilla value." : "Hover, scroll y foco se separan visualmente sin alterar ningun valor vanilla.",
+            DiaryTheme.BRONZE);
+        DiaryProgressBar.draw(gfx, railX + 10, headerBottom + 138, RAIL_W - 20, 14,
+            0.82f, com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Contrast" : "Contraste", DiaryProgressBar.Style.PLAGUE, 0.65f);
 
-        // Flavor
-        int flavorY = subtitleY + 13;
-        {
-            Component flvC = Component.literal(getRotatingAccFlavor());
-            int flvW = this.font.width(flvC);
-            gfx.drawString(this.font, flvC, cx - flvW / 2, flavorY, DiaryChrome.INK_FLAVOR, false);
-        }
-
-        // Divisor superior
-        int divY1 = flavorY + 12;
-        DiaryChrome.drawInkDivider(gfx, this.panelX, divY1, this.panelW);
-
-        // Lista vanilla sin gradientes blancos ni bandejas extra
+        int listRight = railX - 8;
+        DiaryChrome.drawInnerRail(gfx, this.panelX + 18, headerBottom - 2, listRight - (this.panelX + 18), this.panelH - 138, DiaryTheme.BRONZE);
         if (this.list != null) {
-            this.list.render(gfx, mouseX, mouseY, delta);
-            DiaryChrome.drawStyledScrollThumbInPanel(gfx, this.list, this.panelX + this.panelW);
+            if (reveal < 0.995f) {
+                int revealBottom = this.panelY + Math.max(28, (int)(this.panelH * reveal));
+                gfx.enableScissor(this.panelX - 2, this.panelY - 2, this.panelX + this.panelW + 2, revealBottom);
+                this.list.render(gfx, mouseX, mouseY, delta);
+                DiaryChrome.drawStyledScrollThumbInPanel(gfx, this.list, listRight);
+                gfx.disableScissor();
+            } else {
+                this.list.render(gfx, mouseX, mouseY, delta);
+                DiaryChrome.drawStyledScrollThumbInPanel(gfx, this.list, listRight);
+            }
         }
 
-        // Cosmeticos
         int divY2 = this.panelY + this.panelH - 38;
         DiaryChrome.drawInkDivider(gfx, this.panelX, divY2, this.panelW);
-        DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
-        DiaryChrome.drawRegistryTag(gfx, this.panelX, this.panelY, this.panelW, this.panelH, "REG. VI");
-
-        // Boton Volver
         if (this.btnVolver != null) {
             this.btnVolver.render(gfx, mouseX, mouseY, delta);
         }
 
-        // v0.16.0: el ojo de la percepcion, que mira a quien mira
         try {
             drawPerceptionEye(gfx, mouseX, mouseY);
             com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
