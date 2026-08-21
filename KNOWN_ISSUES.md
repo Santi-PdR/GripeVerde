@@ -203,6 +203,130 @@
 
 ---
 
+## v0.17.0 - Acero de cuarentena (pase de interfaz e identidad visual)
+
+### Cambios cerrados
+- Nuevo resource pack built-in `gripeverde_steel` (REQUIRED=true, siempre
+  activo): 20 contenedores + 4 fondos creativos + sprites de contenedores
+  (hornos, alambique, baliza, yunque, encantamientos, caballos, creativo) +
+  widgets vanilla (button/slider/text_field/checkbox/scroller) + boton del
+  libro de recetas. Todo 1:1 sobre geometria vanilla (alpha identica,
+  slots 18x18 en posiciones vanilla exactas).
+- Nuevo `client/ResourcePackHandler.java` (registro via AddPackFindersEvent,
+  `Pack.readMetaAndCreate` con required=true — patron v0.13.2, no el de
+  Master Steel required=false).
+- Nueva task `verifyGripeVerdeThemeAssets` en build.gradle (dimensiones,
+  pack_format 15, pack.png 128x128, ausencia de huerfanas dropper/villager2,
+  .mcmeta de 9-slices presentes). Dependencia de processResources.
+- Nuevo pipeline `tools/steel_pack/` (build_steel_pack.py + steel_pack_lib.py):
+  regenera el pack desde vanilla y valida alpha/slots.
+- DiaryChrome: esquineros ahora son escuadras de acero con remache (todas
+  las pantallas Diary); nueva chapa de registro `drawRegistryTag`
+  (REG. I..XV) arriba a la derecha de cada panel; variante izquierda en
+  Skin (el espejo ocupa la derecha).
+- Nueva `DiaryPackSelectionScreen` (archivador de materiales): envuelve la
+  pantalla vanilla de Resource Packs — escena viva + pergamino de archivo +
+  marco de acero + sello EC-QV/1897 + chapa REG. XV. Las listas vanilla
+  conservan su logica; se les quita el fondo dirt via reflexion acotada
+  (mismo patron que DiarySoundOptionsScreen). Scrollbars quedan en acero
+  via el pack (widget/scroller.png).
+- Nueva clave `gripeverde.options.packs.subtitle` en los 25 lang files.
+- Changelogs in-game (25) + CHANGELOG.md raiz con entrada narrativa v0.17.
+- Version bump: 0.16.0 -> 0.17.0.
+
+### Riesgos activos / KI nuevos
+- **KI-20 (validacion en cliente real) - ABIERTO**: el sandbox no tiene JDK
+  ni maven de Forge; no se pudo compilar ni ejecutar. Pendiente en la
+  maquina del usuario: build, deploy y revision visual en 4 escalas GUI.
+  Puntos de atencion: (1) el pack REQUIRED no aparece para desactivar
+  (a proposito); (2) la chapa de registro se omite si panelW<330 (escala 4
+  en paneles chicos); (3) la pantalla de paquetes: verificar que las listas
+  no dibujen doble fondo si la reflexion falla (fallback = fondo vanilla);
+  (4) en pantallas de mods que usan botones vanilla, el pack los estiliza
+  en acero (comportamiento esperado).
+- **KI-21 (sprites no cubiertos)**: quedan vanilla por no confirmarse en
+  1.20.1: sprites de villager (flechas de comercio, barras de experiencia),
+  loom (patrones), stonecutter (recetas), cartography (mapas), smithing
+  (error). Si en 1.20.1 existen, se ven vanilla sobre el panel de acero;
+  extension futura opcional.
+- **KI-22 (scrollbars Diary)**: DiaryChrome.drawScrollThumb ya usaba acero
+  + bronce (v0.11.x); sin cambios.
+- El pack no toca: hotbar (widgets.png), HUD, tooltips, ni contenedores de
+  mods (Curios, mochilas) — esos usan sus propias texturas; la estetica de
+  slots se hereda del pack solo cuando el container dibuja las de vanilla.
+
+### Reglas nuevas
+- **R-STEEL-GEOMETRY**: el resource pack NUNCA puede cambiar dimensiones,
+  alpha, posiciones de slots ni proporciones vanilla. Verificado por
+  build_steel_pack.py (hash de alpha) y por verifyGripeVerdeThemeAssets.
+- **R-PACK-REQUIRED**: el pack de identidad del mod es REQUIRED=true;
+  no depende de activacion manual. Si en el futuro se quiere opcional,
+  cambiar a required=false y documentar que hay que activarlo en pantalla.
+
+---
+
+## v0.17.1 - Remaches bien puestos (mantenimiento del acero)
+
+### Cambios cerrados
+- Parche de mantenimiento sobre el resource pack `gripeverde_steel`. Repaso
+  cosmetico de las planchas de acero (remaches, cepillado, juntas) para
+  igualar el sello visual entre contenedores. Sin cambios observables para
+  el jugador.
+- Sin cambios de codigo Java, sin cambios de geometria ni de slots.
+- Bump de version: 0.17.0 -> 0.17.1 (build.gradle + GripeVerdeMod.VERSION).
+- CHANGELOG.md raiz: entrada narrativa. Changelog in-game OMITIDO
+  (R-CHANGELOG-DISCRECIONAL — pulido interno, sin manifestacion observable).
+
+### Riesgos activos / KI
+- Ninguno nuevo. No abre ni cierra KIs.
+- Refuerza KI-20 (validacion del pack en cliente real sigue pendiente).
+
+### Reglas nuevas
+- Ninguna.
+
+---
+
+## v0.17.2 - Las bandejas de la mesa y la moneda del trato (correccion del acero)
+
+### Cambios cerrados
+- Pase de correccion geometrica/visual sobre el acero de cuarentena. Todo es
+  assets del resource pack; sin cambios de codigo Java.
+- Sprite universal `sprites/container/slot.png`: 18px -> 26px (bandeja con
+  holgura en lugar de cuadrado estrecho).
+- Oficios restaurados al arreglo de acero correcto: telar (loom), cantera
+  (stonecutter), cartografia (cartography_table), trato con forasteros
+  (villager). Monedas y sellos del trato (trade_arrow, discount_strikethrough,
+  experience_bar_*, out_of_stock, scroller*) devueltos al acero.
+- Transparencias repasadas una a una (ningun velo se vuelve muro): widgets
+  (button/slider/text_field/scroller/checkbox), sprites de contenedores,
+  recipe_book.
+- Nuevos sellos del archivo de telas (loom: pattern/banner_slot/dye_slot/
+  pattern_slot/error/scroller) y de la sala de mapas (cartography: map/
+  scaled_map/duplicated_map/locked/error).
+- Creative inventory: `tabs.png` (tapa muerta) REMOVIDO. Reemplazado por
+  sprites tab_top/tab_bottom_selected/unselected_1..7.
+- Task `verifyGripeVerdeThemeAssets`: la lista de huerfanas prohibidas ahora
+  incluye `creative_inventory/tabs.png` (ademas de dropper.png, villager2.png,
+  inventory_backup.png).
+- Bump de version: 0.17.1 -> 0.17.2.
+- CHANGELOG.md raiz: entrada narrativa. Changelog in-game OMITIDO
+  (R-CHANGELOG-DISCRECIONAL).
+
+### Riesgos activos / KI
+- KI-20 (validacion en cliente real) sigue ABIERTO: sin JDK ni maven en el
+  sandbox. Validado programaticamente via verifyGripeVerdeThemeAssets
+  (dimensiones, alpha, .mcmeta, ausencia de huerfanas). Pendiente build +
+  revision visual en la maquina del usuario.
+- KI-21 (sprites no cubiertos): muy avanzado en v0.17.2 (loom, cartography,
+  stonecutter, villager trading ahora tienen tratamiento de acero). Revisar
+  si quedan holes tras validar en cliente real.
+
+### Reglas nuevas
+- Ninguna. Refuerza R-STEEL-GEOMETRY (el pack nunca cambia dimensiones/alpha/
+  posiciones de slots; solo presentacion) y R-CHANGELOG-DISCRECIONAL.
+
+---
+
 ## Estado actual de pulido RC
 
 ### Criterios activos
