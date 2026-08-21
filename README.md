@@ -5,15 +5,15 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.21.11 - La sala respira bajo la mano**
+**v0.21.12 - El marco de la pausa queda en su sitio**
 
-La Sala de consulta responde al tacto: la ficha bajo el cursor se alza con
-suavidad y el medidor del archivo late con pulso tenue (estilo ALERT). La
-memoria del cronista se asienta en disco como mucho una vez cada dos
-segundos y se guarda entera al apagar el juego (flush en shutdown). En modo
-low-end el grano de pelicula se rehace con menos frecuencia para aliviar la
-CPU. 59 clases Java, 25 idiomas, 35 eventos de sonido, 42 OGG y 0 PNG de
-contenedores. Documentacion sincronizada y version 0.21.11.
+Registro tecnico: el marco de oro del diario de pausa fue escrito en su
+lugar definitivo, sin piezas sueltas, y el gabinete quedo sin un solo
+metodo o campo privado sin uso. Sobre lo anterior (fichas que se alzan con
+suavidad, pulso tenue del medidor del archivo, memoria que se asienta y se
+guarda al apagar, grano de pelicula low-end mas ligero), el proyecto queda
+en 59 clases Java, 25 idiomas, 35 eventos de sonido, 42 OGG y 0 PNG de
+contenedores. Documentacion sincronizada y version 0.21.12.
 
 ## Resumen visible del Mod Menu
 
@@ -98,8 +98,8 @@ Reglas actuales:
 ## Documentacion
 
 - `CONTRIBUTING.md` - guia corta de contribucion (branch fija, no gameplay, validacion).
-- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.11.
-- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.11).
+- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.12.
+- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.12).
 - `KNOWN_ISSUES.md` - estado tecnico, decisiones activas, errores documentados, KIs.
 - `README.md` - esta portada.
 

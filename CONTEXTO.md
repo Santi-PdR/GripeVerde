@@ -3,8 +3,22 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/01a025d1-gripeverde` (sync con `main` v0.21.2, commit `afe8e83`).
-- Version: `0.21.11`.
+- Version: `0.21.12`.
 - Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks, integrando el contexto maestro y sincronizacion documental de v0.17.2.
+
+### DECISION 2026-08-21: v0.21.12 - El marco de la pausa queda en su sitio
+
+Hito menor de consolidacion:
+- `DiaryPauseScreen`: el metodo privado `drawCornerOrnaments` (estilo oro
+  tarnished, 1 sola llamada) fue inline en su unico uso y eliminado; el
+  marco del diario queda identico visualmente pero sin metodo huerfano.
+- Audit global de campos/metodos privados: CERO muertos en todo
+  src/main/java (el proyecto quedo limpio tras v0.21.7-0.21.11).
+- Sin cambios de assets ni lang. 59 clases Java.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.12.
+- Validacion pendiente en cliente real (KI-37): marco del diario de pausa
+  identico (esquinas de oro) — solo refactor interno.
 
 ### DECISION 2026-08-21: v0.21.11 - La sala respira bajo la mano
 
@@ -426,9 +440,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.21.11
-- build.gradle: version = '0.21.11'
-- GripeVerdeMod.VERSION: "0.21.11"
+- Version estable actual: v0.21.12
+- build.gradle: version = '0.21.12'
+- GripeVerdeMod.VERSION: "0.21.12"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10 (no se han publicado tags desde el ciclo v0.13.x; los bumps v0.14-v0.17 quedaron sin tag)
 - Working tree esperado al retomar: limpio

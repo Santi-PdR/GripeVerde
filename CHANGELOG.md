@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.12 - El marco de la pausa queda en su sitio
+
+Registro tecnico: el marco de oro del diario de pausa fue escrito en su
+lugar definitivo, sin piezas sueltas. El gabinete, ademas, quedo sin un
+solo metodo o campo privado sin uso: todo lo que existe se usa.
+
 ## v0.21.11 - La sala respira bajo la mano
 
 La sala de consulta ahora responde al tacto: la ficha bajo el dedo se alza

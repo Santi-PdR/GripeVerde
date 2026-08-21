@@ -398,7 +398,19 @@ public class DiaryPauseScreen extends PauseScreen {
 
         // 4. Marco perimetral (siempre al final para que no lo cubra el brillo)
         drawDoubleBorder(g, x, y, w, h);
-        drawCornerOrnaments(g, x, y, w, h);
+        // Esquineros de oro tarnished, estilo propio de la pausa (marco de diario)
+        {
+            int size = 10;
+            int c = DiaryTheme.GOLD_TARNISHED;
+            g.fill(x - 1, y - 1, x + size, y + 1, c);
+            g.fill(x - 1, y - 1, x + 1, y + size, c);
+            g.fill(x + w - size, y - 1, x + w + 1, y + 1, c);
+            g.fill(x + w - 1, y - 1, x + w + 1, y + size, c);
+            g.fill(x - 1, y + h - 1, x + size, y + h + 1, c);
+            g.fill(x - 1, y + h - size, x + 1, y + h + 1, c);
+            g.fill(x + w - size, y + h - 1, x + w + 1, y + h + 1, c);
+            g.fill(x + w - 1, y + h - size, x + w + 1, y + h + 1, c);
+        }
     }
 
     private void drawPaperTextureMinimal(GuiGraphics g, int x, int y, int w, int h) {
@@ -450,19 +462,6 @@ public class DiaryPauseScreen extends PauseScreen {
         g.fill(x1, y2 - 1, x2, y2, color);
         g.fill(x1, y1, x1 + 1, y2, color);
         g.fill(x2 - 1, y1, x2, y2, color);
-    }
-
-    private void drawCornerOrnaments(GuiGraphics g, int x, int y, int w, int h) {
-        int size = 10;
-        int c = DiaryTheme.GOLD_TARNISHED;
-        g.fill(x - 1, y - 1, x + size, y + 1, c);
-        g.fill(x - 1, y - 1, x + 1, y + size, c);
-        g.fill(x + w - size, y - 1, x + w + 1, y + 1, c);
-        g.fill(x + w - 1, y - 1, x + w + 1, y + size, c);
-        g.fill(x - 1, y + h - 1, x + size, y + h + 1, c);
-        g.fill(x - 1, y + h - size, x + 1, y + h + 1, c);
-        g.fill(x + w - size, y + h - 1, x + w + 1, y + h + 1, c);
-        g.fill(x + w - 1, y + h - size, x + w + 1, y + h + 1, c);
     }
 
     // ================================================================

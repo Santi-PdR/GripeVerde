@@ -1,5 +1,22 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.21.12 - El marco de la pausa queda en su sitio (2026-08-21)
+
+### Cambios cerrados
+- `DiaryPauseScreen`: metodo privado `drawCornerOrnaments` inline en su
+  unico uso y eliminado (marco de oro identico visualmente).
+- Audit global: cero campos/metodos privados sin uso en src/main/java.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.11 -> 0.21.12 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-37 (v0.21.12)**: validar en cliente — marco de oro del diario de
+  pausa identico (solo refactor interno).
+- KI-36, KI-35, KI-34, KI-32/33, KI-27/28/30/31 pendientes. KI-29 (pistas
+  MenuMusic) requiere OGGs del usuario. KI-20/21/24/25 sin cambios.
+
+---
+
 ## v0.21.11 - La sala respira bajo la mano (2026-08-21)
 
 ### Cambios cerrados
