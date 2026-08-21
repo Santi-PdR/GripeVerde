@@ -18,9 +18,9 @@ public class PosterRenderer {
         int cx = x + w / 2;
         int cursorY = y + 10;
 
-        drawCenteredText(g, font, getRotatingQuarantineHeader(0), cx, cursorY, DiaryTheme.INK);
+        DiaryChrome.drawCenteredString(g, font, getRotatingQuarantineHeader(0), cx, cursorY, DiaryTheme.INK);
         cursorY += 12;
-        drawCenteredText(g, font, getRotatingQuarantineHeader(1), cx, cursorY, DiaryTheme.INK);
+        DiaryChrome.drawCenteredString(g, font, getRotatingQuarantineHeader(1), cx, cursorY, DiaryTheme.INK);
         cursorY += 16;
 
         drawThinDivider(g, cx, cursorY, w - 30);
@@ -53,7 +53,7 @@ public class PosterRenderer {
             I18n.get("gripeverde.poster.quarantine.warn.3")
         };
         for (String line : body) {
-            drawCenteredText(g, font, line, cx, cursorY, DiaryTheme.INK_FADED);
+            DiaryChrome.drawCenteredString(g, font, line, cx, cursorY, DiaryTheme.INK_FADED);
             cursorY += 10;
         }
 
@@ -70,7 +70,7 @@ public class PosterRenderer {
         int cx = x + w / 2;
         int cursorY = y + 8;
 
-        drawCenteredText(g, font, I18n.get("gripeverde.poster.elixir.author"), cx, cursorY, DiaryTheme.INK);
+        DiaryChrome.drawCenteredString(g, font, I18n.get("gripeverde.poster.elixir.author"), cx, cursorY, DiaryTheme.INK);
         cursorY += 12;
 
         drawThinDivider(g, cx, cursorY, w - 30);
@@ -107,7 +107,7 @@ public class PosterRenderer {
             I18n.get("gripeverde.poster.elixir.unit")
         };
         for (String line : body) {
-            drawCenteredText(g, font, line, cx, cursorY, DiaryTheme.INK_FADED);
+            DiaryChrome.drawCenteredString(g, font, line, cx, cursorY, DiaryTheme.INK_FADED);
             cursorY += 10;
         }
 
@@ -179,18 +179,18 @@ public class PosterRenderer {
             cursorY += 30;
         }
 
-        drawCenteredText(g, font, I18n.get("gripeverde.poster.reward.body.1"), cx, cursorY, DiaryTheme.INK_FADED);
+        DiaryChrome.drawCenteredString(g, font, I18n.get("gripeverde.poster.reward.body.1"), cx, cursorY, DiaryTheme.INK_FADED);
         cursorY += 10;
-        drawCenteredText(g, font, I18n.get("gripeverde.poster.reward.body.2"), cx, cursorY, DiaryTheme.INK_FADED);
+        DiaryChrome.drawCenteredString(g, font, I18n.get("gripeverde.poster.reward.body.2"), cx, cursorY, DiaryTheme.INK_FADED);
         cursorY += 14;
 
         drawThinDivider(g, cx, cursorY, w - 30);
         cursorY += 8;
 
         // Prize compactado en una sola línea
-        drawCenteredText(g, font, I18n.get("gripeverde.poster.reward.prize.short"), cx, cursorY, DiaryTheme.BLOOD_DRIED);
+        DiaryChrome.drawCenteredString(g, font, I18n.get("gripeverde.poster.reward.prize.short"), cx, cursorY, DiaryTheme.BLOOD_DRIED);
         cursorY += 10;
-        drawCenteredText(g, font, I18n.get("gripeverde.poster.reward.prize.unit"), cx, cursorY, DiaryTheme.BRONZE);
+        DiaryChrome.drawCenteredString(g, font, I18n.get("gripeverde.poster.reward.prize.unit"), cx, cursorY, DiaryTheme.BRONZE);
 
         // Sello más pequeño y en posición segura dentro del panel
         OrnamentRenderer.drawWaxSeal(g, x + w - 18, y + h - 18, 7);
@@ -206,7 +206,7 @@ public class PosterRenderer {
         int cx = x + w / 2;
         int cursorY = y + 10;
 
-        drawCenteredText(g, font, I18n.get("gripeverde.poster.decree.header"), cx, cursorY, DiaryTheme.INK);
+        DiaryChrome.drawCenteredString(g, font, I18n.get("gripeverde.poster.decree.header"), cx, cursorY, DiaryTheme.INK);
         cursorY += 12;
 
         drawThinDivider(g, cx, cursorY, w - 30);
@@ -226,9 +226,9 @@ public class PosterRenderer {
         drawThinDivider(g, cx, cursorY, w - 30);
         cursorY += 10;
 
-        drawCenteredText(g, font, I18n.get("gripeverde.poster.decree.body.1"), cx, cursorY, DiaryTheme.INK_FADED);
+        DiaryChrome.drawCenteredString(g, font, I18n.get("gripeverde.poster.decree.body.1"), cx, cursorY, DiaryTheme.INK_FADED);
         cursorY += 10;
-        drawCenteredText(g, font, I18n.get("gripeverde.poster.decree.body.2"), cx, cursorY, DiaryTheme.INK_FADED);
+        DiaryChrome.drawCenteredString(g, font, I18n.get("gripeverde.poster.decree.body.2"), cx, cursorY, DiaryTheme.INK_FADED);
         cursorY += 18;
 
         drawThinDivider(g, cx, cursorY, w - 30);
@@ -271,11 +271,6 @@ public class PosterRenderer {
         int eye = knows ? 0xFFD4941E : 0xFF141008;
         g.fill(x + 11 + shift, y + 10, x + 12 + shift, y + 11, eye);
         g.fill(x + 14 + shift, y + 10, x + 15 + shift, y + 11, eye);
-    }
-
-    private static void drawCenteredText(GuiGraphics g, Font f, String s, int cx, int y, int color) {
-        int tw = f.width(s);
-        g.drawString(f, s, cx - tw / 2, y, color, false);
     }
 
     private static void drawThinDivider(GuiGraphics g, int cx, int y, int width) {
@@ -356,7 +351,6 @@ public class PosterRenderer {
     // ============================================================
     // Manchas de sangre en posters (v0.12.2)
     // ============================================================
-    private static final java.util.Random BLOOD_RNG = new java.util.Random(0x800000DL);
 
     /** 30% chance de dibujar 2-4 pequenas manchas de sangre en el poster.
      *  Determinista por seed pasado (el mismo poster siempre tendra o no manchas). */
@@ -407,7 +401,6 @@ public class PosterRenderer {
         0xFF3D2A18,   // sepia oscuro (aprobado)
         0xFF6B4226    // sepia medio (pendiente)
     };
-    private static final java.util.Random STAMP_RNG = new java.util.Random();
 
     /** Dibuja un sello de tinta rotativo si el seed lo permite (40% chance). */
     public static void drawInkStamp(GuiGraphics g, int x, int y, int w, int h, long posterSeed) {

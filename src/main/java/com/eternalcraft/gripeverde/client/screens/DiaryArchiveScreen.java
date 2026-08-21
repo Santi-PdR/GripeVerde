@@ -213,15 +213,15 @@ public class DiaryArchiveScreen extends Screen {
         if (hoverCard >= 0) {
             String id = Discoveries.ALL[hoverCard];
             if (ChroniclerMemory.isDiscovered(id)) {
-                drawC(g, Discoveries.nameFor(id), cx, infoY, DiaryTheme.INK);
+                DiaryChrome.drawCenteredString(g, this.font, Discoveries.nameFor(id), cx, infoY, DiaryTheme.INK);
             } else {
-                drawC(g, Discoveries.hintFor(id), cx, infoY, DiaryChrome.INK_FLAVOR);
+                DiaryChrome.drawCenteredString(g, this.font, Discoveries.hintFor(id), cx, infoY, DiaryChrome.INK_FLAVOR);
             }
         } else if (q.isEmpty()) {
-            drawC(g, en ? "The missing cards are still out there." : "Las fichas que faltan siguen ahi fuera.",
+            DiaryChrome.drawCenteredString(g, this.font, en ? "The missing cards are still out there." : "Las fichas que faltan siguen ahi fuera.",
                 cx, infoY, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 120));
         } else {
-            drawC(g, en ? (visible.isEmpty() ? "Nothing matches the query." : "Only these cards match.")
+            DiaryChrome.drawCenteredString(g, this.font, en ? (visible.isEmpty() ? "Nothing matches the query." : "Only these cards match.")
                        : (visible.isEmpty() ? "Nada coincide con la consulta." : "Solo estas fichas coinciden."),
                 cx, infoY, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 160));
         }
@@ -375,11 +375,6 @@ public class DiaryArchiveScreen extends Screen {
             y += 12;
         }
         return y;
-    }
-
-    private void drawC(GuiGraphics g, String s, int cx, int y, int color) {
-        int w2 = this.font.width(s);
-        g.drawString(this.font, s, cx - w2 / 2, y, color, false);
     }
 
     private String truncate(String s, int maxPx) {

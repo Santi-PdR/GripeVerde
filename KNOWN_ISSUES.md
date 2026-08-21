@@ -1,5 +1,38 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.21.9 - La tinta pesa menos por frame (2026-08-21)
+
+### Cambios cerrados
+- `Discoveries.isEnglish()` con cache de 250ms (antes: consulta al
+  LanguageManager decenas de veces por frame). El cambio de idioma recarga
+  resources y el cache expira solo.
+- `DiaryChrome.drawCenteredString` nuevo; eliminados los helpers privados
+  duplicados en Archive, HiddenCipher, Herald y PosterRenderer (26
+  llamadas unificadas).
+- `Herald.headlineToday()` extraido; `DiaryMultiplayerScreen` muestra el
+  titular del dia junto al libro de visitas (ticker simetrico).
+- Eliminados campos muertos: `BLOOD_RNG`/`STAMP_RNG` (PosterRenderer),
+  `PAD_Y` (Changelog), `LOGGER`/`frameLogCounter` (Multiplayer),
+  `PANEL_MIN_H`/`MARGIN_BOTTOM_IDEAL`/`ORN_TITLE_TOP`/`ORN_SUBTITLE_TOP`
+  (Pause).
+- Eliminados metodos muertos: `scrollToSection` (Changelog),
+  `drawRowBands`/`drawCornerOrnaments`/`openTelemetry` (Options),
+  `drawOrnamentalDivider` (LogoRenderer), `TextureAssets.exists`.
+- Nuevo `CONTRIBUTING.md` (reglas branch fija, no gameplay, 4 escalas GUI,
+  3 tasks de verificacion).
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.8 -> 0.21.9 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-34 (v0.21.9)**: validar en cliente — ticker del Heraldo en
+  Multiplayer (ES/EN, sin pisar el guestbook), y cache de idioma (deberia
+  reflejar el cambio al recargar resources).
+- KI-32/33 (v0.21.7/8) y KI-27/28/30/31 pendientes de validacion.
+  KI-29 (2 pistas MenuMusic) requiere OGGs del usuario. KI-20/21/24/25 sin
+  cambios.
+
+---
+
 ## v0.21.8 - Una sola mano para el idioma (2026-08-21)
 
 ### Cambios cerrados

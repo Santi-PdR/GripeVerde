@@ -258,13 +258,24 @@ public final class Discoveries {
         }
     }
 
+    /** Cache corto (250ms) para no consultar el LanguageManager decenas de
+     *  veces por frame; el cambio de idioma recarga resources y expira solo. */
+    private static boolean cachedEnglish = true;
+    private static long cachedEnglishUntilMs = 0L;
+
     public static boolean isEnglish() {
+        long now = System.currentTimeMillis();
+        if (now < cachedEnglishUntilMs) return cachedEnglish;
+        boolean result;
         try {
             String lang = Minecraft.getInstance().getLanguageManager().getSelected();
-            return lang == null || lang.startsWith("en_");
+            result = lang == null || lang.startsWith("en_");
         } catch (Throwable t) {
-            return false;
+            result = false;
         }
+        cachedEnglish = result;
+        cachedEnglishUntilMs = now + 250L;
+        return result;
     }
 
     /** Lista ordenada de todos los ids, para la Sala de consulta. */

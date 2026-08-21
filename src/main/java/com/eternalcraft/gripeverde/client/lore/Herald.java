@@ -1,5 +1,6 @@
 package com.eternalcraft.gripeverde.client.lore;
 
+import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -104,6 +105,18 @@ public final class Herald {
         "Please do not feed the crows of the bell tower."
     };
 
+    /** v0.21.9: titular del dia (misma semilla que el periodico del kiosco). */
+    public static String headlineToday() {
+        boolean en = Discoveries.isEnglish();
+        long today = LocalDate.now().toEpochDay();
+        Random rnd = new Random(today * 7919L + (en ? 1L : 0L));
+        String[] districts = en ? DISTRICTS_EN : DISTRICTS_ES;
+        String[] events = en ? EVENTS_EN : EVENTS_ES;
+        return (en ? "IN " : "EN ")
+            + districts[rnd.nextInt(districts.length)].toUpperCase()
+            + ": " + events[rnd.nextInt(events.length)];
+    }
+
     public static void draw(GuiGraphics g, int w, int h) {
         if (!isViewing()) return;
         long now = System.currentTimeMillis();
@@ -117,12 +130,8 @@ public final class Herald {
         boolean en = Discoveries.isEnglish();
         long today = LocalDate.now().toEpochDay();
         Random rnd = new Random(today * 7919L + (en ? 1L : 0L));
-        String[] districts = en ? DISTRICTS_EN : DISTRICTS_ES;
-        String[] events = en ? EVENTS_EN : EVENTS_ES;
         String[] edicts = en ? EDICTS_EN : EDICTS_ES;
-        String headline = (en ? "IN " : "EN ")
-            + districts[rnd.nextInt(districts.length)].toUpperCase()
-            + ": " + events[rnd.nextInt(events.length)];
+        String headline = headlineToday();
         String edict = edicts[(int)(Math.abs(today) % edicts.length)];
         String[] seconds = en ? SECOND_EN : SECOND_ES;
         String second = seconds[rnd.nextInt(seconds.length)];
@@ -151,8 +160,8 @@ public final class Herald {
         g.fill(x + 2, y + 2, x + bw - 2, y + 3, bronze);
 
         int cx = x + bw / 2;
-        drawC(g, mc, name, cx, y + 10, ink, alpha);
-        drawC(g, mc, motto, cx, y + 24, bronze, alpha);
+        DiaryChrome.drawCenteredString(g, mc.font, name, cx, y + 10, ink);
+        DiaryChrome.drawCenteredString(g, mc.font, motto, cx, y + 24, bronze);
         g.fill(x + 10, y + 36, x + bw - 10, y + 37, (Math.min(140, alpha) << 24) | 0x422810);
 
         // Titular con tipewriter
@@ -166,14 +175,8 @@ public final class Herald {
             g.drawString(mc.font, lines.get(i), cx - lw / 2, ty, red, false);
             ty += 11;
         }
-        drawC(g, mc, second, cx, y + 74, ink, alpha);
+        DiaryChrome.drawCenteredString(g, mc.font, second, cx, y + 74, ink);
         g.fill(x + 10, y + 90, x + bw - 10, y + 91, (Math.min(110, alpha) << 24) | 0x422810);
-        drawC(g, mc, edict, cx, y + 98, bronze, alpha);
-    }
-
-    private static void drawC(GuiGraphics g, Minecraft mc, String s, int cx, int y, int color, int alpha) {
-        if (s == null || alpha <= 8) return;
-        int w2 = mc.font.width(s);
-        g.drawString(mc.font, s, cx - w2 / 2, y, color, false);
+        DiaryChrome.drawCenteredString(g, mc.font, edict, cx, y + 98, bronze);
     }
 }

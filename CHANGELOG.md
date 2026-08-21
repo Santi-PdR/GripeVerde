@@ -1,5 +1,14 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.9 - La tinta pesa menos por frame
+
+Registro tecnico: el gabinete consultaba el idioma del lector decenas de
+veces por cada parpadeo; ahora lo pregunta una sola vez cada instante y se
+lo guarda. El texto centrado se escribe con una sola mano en cuatro salas,
+y el registro de hospedajes muestra, junto al libro de visitas, el titular
+del periodico del dia. Se retiraron campos y metodos que nadie usaba, y se
+anadio la guia de contribucion al proyecto.
+
 ## v0.21.8 - Una sola mano para el idioma
 
 Registro tecnico: siete salas del gabinete consultaban el idioma del lector

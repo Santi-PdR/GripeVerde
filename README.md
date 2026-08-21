@@ -5,17 +5,17 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.21.8 - Una sola mano para el idioma**
+**v0.21.9 - La tinta pesa menos por frame**
 
-Consolidacion: las 7 salas que consultaban el idioma del lector con su
-propia receta ahora preguntan a la unica mano del gabinete
-(`Discoveries.isEnglish()`), y se retiraron los ornamentos de marco que
-nadie usaba. Sobre la consolidacion de v0.21.7 (9 clases eliminadas, 57
-claves de idioma limpias, pipeline de panel unificado en 14 pantallas,
-sliders de sonido combinados en el `DiarySlider` generico), el proyecto
-queda en 59 clases Java, 25 idiomas (80 claves), 35 eventos de sonido, 42
-OGG y 0 PNG de contenedores. Sin cambios de gameplay. Documentacion
-sincronizada y version 0.21.8.
+El gabinete consultaba el idioma del lector decenas de veces por cada
+parpadeo; ahora lo pregunta una vez cada instante y se lo guarda (cache de
+250ms). El texto centrado se escribe con una sola mano en cuatro salas
+(`DiaryChrome.drawCenteredString`), y el registro de hospedajes muestra,
+junto al libro de visitas, el titular del periodico del dia
+(`Herald.headlineToday()`). Se retiraron 14 campos y metodos sin uso, se
+elimino el helper muerto de `TextureAssets` y se anadio `CONTRIBUTING.md`
+(guia de contribucion). 59 clases Java, 25 idiomas, 35 eventos de sonido,
+42 OGG, 0 PNG. Documentacion sincronizada y version 0.21.9.
 
 ## Resumen visible del Mod Menu
 
@@ -99,8 +99,9 @@ Reglas actuales:
 
 ## Documentacion
 
-- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.8.
-- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.8).
+- `CONTRIBUTING.md` - guia corta de contribucion (branch fija, no gameplay, validacion).
+- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.9.
+- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.9).
 - `KNOWN_ISSUES.md` - estado tecnico, decisiones activas, errores documentados, KIs.
 - `README.md` - esta portada.
 

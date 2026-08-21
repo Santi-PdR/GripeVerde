@@ -26,7 +26,6 @@ public class ChangelogScreen extends Screen {
     private static final int PANEL_TOP  = 34;
     private static final int PANEL_BOT  = 54;
     private static final int PAD_X      = 18;
-    private static final int PAD_Y      = 26;
     private static final int CLOSE_W    = 130;
     private static final int CLOSE_H    = 28;
     private static final int SCROLL_SPD = 28;
@@ -206,27 +205,6 @@ public class ChangelogScreen extends Screen {
         }
         clampScroll();
     }
-
-    private void scrollToSection(boolean next) {
-        int cw = contentW();
-        int pos = 0;
-        int currentTarget = (int)Math.round(targetScrollY);
-        int candidate = next ? maxScroll : 0;
-        for (Row r : rows) {
-            if (r.type == LT.H1) {
-                if (next && pos > currentTarget + 4) {
-                    candidate = pos;
-                    break;
-                }
-                if (!next && pos < currentTarget - 4) {
-                    candidate = pos;
-                }
-            }
-            pos += rowHeight(r, cw);
-        }
-        setScrollTarget(candidate, false);
-    }
-
     private void scrollToTopOrBottom(boolean bottom) {
         setScrollTarget(bottom ? maxScroll : 0, false);
     }

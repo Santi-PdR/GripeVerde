@@ -481,19 +481,6 @@ public class DiaryOptionsScreen extends Screen {
         }
         return consumed;
     }
-
-    private void drawRowBands(GuiGraphics g, int gridTop, int col1X, int col2X) {
-        int rowW = BTN_W * 2 + GAP_X;
-        int x = col1X - 6;
-        int w = rowW + 12;
-        for (int i = 0; i < GRID_ROWS; i++) {
-            int y = gridTop + row(i) - 2;
-            // Banda muy sutil, casi imperceptible, solo para agrupar visualmente
-            int alpha = (i % 2 == 0) ? 0x0A000000 : 0x05000000;
-            g.fill(x, y, x + w, y + BTN_H + 4, alpha);
-        }
-    }
-
     // Divisor horizontal con fade a los costados color tinta - limpio
     private static void drawInkDivider(net.minecraft.client.gui.GuiGraphics g, int x1, int x2, int y) {
         int inkFull  = 0x66422810;
@@ -504,22 +491,6 @@ public class DiaryOptionsScreen extends Screen {
     }
 
     // Esquineros victorianos en L color tinta sutil
-    private static void drawCornerOrnaments(net.minecraft.client.gui.GuiGraphics g,
-                                            int x, int y, int w, int h) {
-        int ink = 0x70422810;
-        int len = 10;
-        int th = 1;
-        int m = 6;
-        g.fill(x + m, y + m, x + m + len, y + m + th, ink);
-        g.fill(x + m, y + m, x + m + th, y + m + len, ink);
-        g.fill(x + w - m - len, y + m, x + w - m, y + m + th, ink);
-        g.fill(x + w - m - th, y + m, x + w - m, y + m + len, ink);
-        g.fill(x + m, y + h - m - th, x + m + len, y + h - m, ink);
-        g.fill(x + m, y + h - m - len, x + m + th, y + h - m, ink);
-        g.fill(x + w - m - len, y + h - m - th, x + w - m, y + h - m, ink);
-        g.fill(x + w - m - th, y + h - m - len, x + w - m, y + h - m, ink);
-    }
-
     @Override
     public void onClose() {
         Minecraft.getInstance().setScreen(this.parent);
@@ -555,11 +526,6 @@ public class DiaryOptionsScreen extends Screen {
     }
     private void openAccessibility() {
         this.minecraft.setScreen(new DiaryAccessibilityOptionsScreen(this, this.minecraft.options));
-    }
-        private void openTelemetry() {
-        this.minecraft.setScreen(
-            new net.minecraft.client.gui.screens.telemetry.TelemetryInfoScreen(this, this.minecraft.options)
-        );
     }
         private void openOnline() {
         this.minecraft.setScreen(new DiaryOnlineOptionsScreen(this, this.minecraft.options));

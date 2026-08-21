@@ -27,15 +27,11 @@ public class DiaryPauseScreen extends PauseScreen {
     private static final int PANEL_MAX_W = 320;
     private static final int PANEL_MAX_H = 360;
     // Alto minimo para que quepan todos los ornamentos + botones sin superposicion
-    private static final int PANEL_MIN_H = 260;
     private static final int MARGIN_TOP    = 20;
-    private static final int MARGIN_BOTTOM_IDEAL = 55;  // hotbar completa
     private static final int MARGIN_BOTTOM_MIN   = 55;  // solo hotbar mesh
     private static final int MARGIN_SIDE   = 20;
 
     // Ornamentos internos (offsets relativos)
-    private static final int ORN_TITLE_TOP    = 24;
-    private static final int ORN_SUBTITLE_TOP = 58;
     private static final int ORN_SEP_TOP      = 80;
     private static final int ORN_SEP_BOT_FROM_BOT = 48;
     private static final int ORN_SIGN_FROM_BOT    = 28;

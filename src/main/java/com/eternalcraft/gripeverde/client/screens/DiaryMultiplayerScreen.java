@@ -20,8 +20,6 @@ import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.multiplayer.ServerList;
 import net.minecraft.client.multiplayer.resolver.ServerAddress;
 import net.minecraft.network.chat.Component;
-import com.mojang.logging.LogUtils;
-import org.slf4j.Logger;
 
 import java.lang.reflect.Field;
 
@@ -36,8 +34,6 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     private static final String PINNED_NAME = "Ghoul Outbreak Official";
     private static final String PINNED_IP   = "servercitoGhouls.exaroton.me:24652";
 
-    private static final Logger LOGGER = LogUtils.getLogger();
-    private int frameLogCounter = 0;
 
     private static final int PANEL_MARGIN_H = 40;
     private static final int PANEL_MARGIN_V = 40;
@@ -531,8 +527,27 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         // v0.16.0: el libro de visitas del atlas de hospederias
         try {
             drawGuestbook(gfx, panelX, panelY, panelW, mouseX, mouseY);
+            drawHeraldTicker(gfx);
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(gfx, this.width);
         } catch (Throwable ignored) {}
+    }
+
+    /** v0.21.9: titular del dia junto al libro de visitas (misma semilla que el kiosco). */
+    private void drawHeraldTicker(GuiGraphics gfx) {
+        String headline = com.eternalcraft.gripeverde.client.lore.Herald.headlineToday();
+        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+        String label = en ? "THE HERALD TODAY: " : "EL HERALDO DE HOY: ";
+        int x = PANEL_MARGIN_H + 12;
+        int y = guestbookY();
+        int maxW = guestbookX() - 24 - x;
+        int avail = Math.max(24, maxW - this.font.width(label));
+        if (this.font.width(headline) > avail) {
+            headline = this.font.plainSubstrByWidth(headline, Math.max(0, avail - 8)) + "...";
+        }
+        gfx.drawString(this.font, label, x, y, DiaryTheme.withAlpha(DiaryTheme.INK, 150), false);
+        gfx.drawString(this.font, headline, x + this.font.width(label), y, 0xFF6E1F16, false);
+        gfx.fill(x, y + 11, x + this.font.width(label) + this.font.width(headline), y + 12,
+            DiaryTheme.withAlpha(0xFF8E6A35, 70));
     }
 
     private int guestbookX() { return this.width - PANEL_MARGIN_H - 150; }

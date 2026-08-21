@@ -210,6 +210,13 @@ public final class DiaryChrome {
         drawCornerOrnaments(gfx, x, y, w, h);
     }
 
+    /** v0.21.9: texto centrado con la font del gabinete (consolidacion). */
+    public static void drawCenteredString(GuiGraphics gfx, Font font, String s, int cx, int y, int color) {
+        if (s == null) return;
+        int w = font.width(s);
+        gfx.drawString(font, s, cx - w / 2, y, color, false);
+    }
+
     public static void drawInnerRail(GuiGraphics gfx, int x, int y, int w, int h, int accent) {
         gfx.fill(x, y, x + w, y + h, DiaryTheme.withAlpha(accent, 10));
         gfx.fill(x, y, x + w, y + 1, DiaryTheme.withAlpha(accent, 54));

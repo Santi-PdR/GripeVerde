@@ -3,8 +3,43 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/01a025d1-gripeverde` (sync con `main` v0.21.2, commit `afe8e83`).
-- Version: `0.21.8`.
+- Version: `0.21.9`.
 - Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks, integrando el contexto maestro y sincronizacion documental de v0.17.2.
+
+### DECISION 2026-08-21: v0.21.9 - La tinta pesa menos por frame
+
+Hito tecnico de optimizacion + consolidacion (sin gameplay, sin assets):
+- `Discoveries.isEnglish()` con cache de 250ms: se consultaba el
+  LanguageManager decenas de veces por frame (Options: ~23 llamadas en
+  render). Ahora una lectura cada 250ms; el cambio de idioma recarga
+  resources y expira solo.
+- Consolidacion de texto centrado: nuevo `DiaryChrome.drawCenteredString`
+  y eliminados los helpers privados duplicados en DiaryArchiveScreen,
+  HiddenCipher, Herald y PosterRenderer (26 llamadas unificadas).
+- `Herald.headlineToday()`: titular del dia extraido a metodo publico
+  (misma semilla que el kiosco). `DiaryMultiplayerScreen` muestra el
+  titular junto al libro de visitas (ticker inferior izquierdo, simetrico
+  al guestbook).
+- Campos muertos eliminados: `PosterRenderer.BLOOD_RNG`/`STAMP_RNG` (las
+  funciones usan `new Random(posterSeed)`), `ChangelogScreen.PAD_Y`,
+  `DiaryMultiplayerScreen.LOGGER`/`frameLogCounter`,
+  `DiaryPauseScreen.PANEL_MIN_H`/`MARGIN_BOTTOM_IDEAL`/`ORN_TITLE_TOP`/
+  `ORN_SUBTITLE_TOP`.
+- Metodos muertos eliminados: `ChangelogScreen.scrollToSection`,
+  `DiaryOptionsScreen.drawRowBands`/`drawCornerOrnaments` (resto de la
+  migracion v0.21.7 a renderPanelBase)/`openTelemetry` (telemetria fuera
+  del grid), `LogoRenderer.drawOrnamentalDivider`,
+  `TextureAssets.exists` (0 llamadas).
+- Nuevo `CONTRIBUTING.md` (docs oficiales): reglas branch fija, no
+  gameplay, 4 escalas GUI, 3 tasks de verificacion.
+- Conteos: 59 clases Java, 25 lang (80 claves), 35 eventos, 42 OGG.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL (hito
+  tecnico; el ticker del Heraldo es detalle de interfaz, no evento de la
+  ciudad).
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.9.
+- Validacion pendiente en cliente real (KI-34): el ticker del Heraldo en
+  Multiplayer (ES/EN), y que el cache de idioma no tarde en reflejar un
+  cambio de idioma (deberia ser instantaneo por el reload).
 
 ### DECISION 2026-08-21: v0.21.8 - Una sola mano para el idioma
 
@@ -347,9 +382,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.21.8
-- build.gradle: version = '0.21.8'
-- GripeVerdeMod.VERSION: "0.21.8"
+- Version estable actual: v0.21.9
+- build.gradle: version = '0.21.9'
+- GripeVerdeMod.VERSION: "0.21.9"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10 (no se han publicado tags desde el ciclo v0.13.x; los bumps v0.14-v0.17 quedaron sin tag)
 - Working tree esperado al retomar: limpio

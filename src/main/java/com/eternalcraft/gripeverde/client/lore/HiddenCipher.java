@@ -2,6 +2,7 @@ package com.eternalcraft.gripeverde.client.lore;
 
 import com.eternalcraft.gripeverde.client.audio.ModSounds;
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
+import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -182,11 +183,11 @@ public final class HiddenCipher {
         String l3 = en ? "The bell counted thirteen. The watchman did not answer." : "La campana conto trece. El sereno no respondio.";
         String l4 = en ? "Close the line. No one in. No one out." : "Cierren la linea. Nadie entra. Nadie sale.";
         String l5 = en ? "Signed: no one." : "Firmado: nadie.";
-        drawC(g, mc, l1, x + bw / 2, y + 14, red, alpha);
-        drawC(g, mc, l2, x + bw / 2, y + 30, ink, alpha);
-        drawC(g, mc, l3, x + bw / 2, y + 44, ink, alpha);
-        drawC(g, mc, l4, x + bw / 2, y + 58, ink, alpha);
-        drawC(g, mc, l5, x + bw / 2, y + 74, bronze, alpha);
+        DiaryChrome.drawCenteredString(g, mc.font, l1, x + bw / 2, y + 14, red);
+        DiaryChrome.drawCenteredString(g, mc.font, l2, x + bw / 2, y + 30, ink);
+        DiaryChrome.drawCenteredString(g, mc.font, l3, x + bw / 2, y + 44, ink);
+        DiaryChrome.drawCenteredString(g, mc.font, l4, x + bw / 2, y + 58, ink);
+        DiaryChrome.drawCenteredString(g, mc.font, l5, x + bw / 2, y + 74, bronze);
     }
 
     /** Telegrama de la limpieza (v0.21.3): lo que el cronista retiro del archivo. */
@@ -229,17 +230,11 @@ public final class HiddenCipher {
         String l3 = en ? "The archive grew thinner. The theme never played." : "El archivo se adelgazo. El tema nunca sono.";
         String l4 = en ? "The street never existed. Three ghosts left the house." : "La calle nunca existio. Tres fantasmas dejaron la casa.";
         String l5 = en ? "Signed: the chronicler, after the cleansing." : "Firmado: el cronista, tras la limpieza.";
-        drawC(g, mc, l1, x + bw / 2, y + 14, red, alpha);
-        drawC(g, mc, l2, x + bw / 2, y + 30, ink, alpha);
-        drawC(g, mc, l3, x + bw / 2, y + 44, ink, alpha);
-        drawC(g, mc, l4, x + bw / 2, y + 58, ink, alpha);
-        drawC(g, mc, l5, x + bw / 2, y + 74, bronze, alpha);
-    }
-
-    private static void drawC(GuiGraphics g, Minecraft mc, String s, int cx, int y, int color, int alpha) {
-        if (s == null) return;
-        int wtxt = mc.font.width(s);
-        g.drawString(mc.font, s, cx - wtxt / 2, y, color, false);
+        DiaryChrome.drawCenteredString(g, mc.font, l1, x + bw / 2, y + 14, red);
+        DiaryChrome.drawCenteredString(g, mc.font, l2, x + bw / 2, y + 30, ink);
+        DiaryChrome.drawCenteredString(g, mc.font, l3, x + bw / 2, y + 44, ink);
+        DiaryChrome.drawCenteredString(g, mc.font, l4, x + bw / 2, y + 58, ink);
+        DiaryChrome.drawCenteredString(g, mc.font, l5, x + bw / 2, y + 74, bronze);
     }
 
     // ── Flash verde del codigo PEREIRA ──
