@@ -248,7 +248,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             Discoveries.isEnglish() ? "MASTER CHANNELS" : "CANALES MAESTROS",
             Discoveries.isEnglish() ? "Gramophone and room tone" : "Gramofono y ambiente",
             Discoveries.isEnglish() ? "Two custom channels stay independent from vanilla sound classes." : "Dos canales propios permanecen separados de las clases vanilla.",
-            DiaryTheme.AMBER_FLAME)
+            DiaryTheme.AMBER_FLAME);
 
         int railY2 = railY + 86;
         DiaryChrome.drawInsetCard(g, this.font, railX, railY2, RAIL_W, 88,

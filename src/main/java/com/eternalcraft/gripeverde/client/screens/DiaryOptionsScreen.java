@@ -293,7 +293,7 @@ public class DiaryOptionsScreen extends Screen {
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "ACOUSTIC STATE" : "ESTADO ACUSTICO",
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "music & room tone" : "musica y ambiente",
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Music and room tone are carried through the whole cabinet." : "La musica y la resonancia atraviesan todo el gabinete.",
-            DiaryTheme.PLAGUE_SICK)
+            DiaryTheme.PLAGUE_SICK);
 
         int archiveY = meterY + 94;
         DiaryChrome.drawInsetCard(g, this.font, railX, archiveY, railW, 88,
