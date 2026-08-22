@@ -2,9 +2,7 @@ package com.eternalcraft.gripeverde.client.screens;
 
 import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
-import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
-import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 
@@ -19,6 +17,8 @@ import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.multiplayer.ServerList;
 import net.minecraft.client.multiplayer.resolver.ServerAddress;
 import net.minecraft.network.chat.Component;
+import com.mojang.logging.LogUtils;
+import org.slf4j.Logger;
 
 import java.lang.reflect.Field;
 
@@ -33,10 +33,12 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     private static final String PINNED_NAME = "Ghoul Outbreak Official";
     private static final String PINNED_IP   = "servercitoGhouls.exaroton.me:24652";
 
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private int frameLogCounter = 0;
 
     private static final int PANEL_MARGIN_H = 40;
     private static final int PANEL_MARGIN_V = 40;
-    private static final int LIST_TOP_OFFSET = 52;
+    private static final int LIST_TOP_OFFSET = 50;
     // Espacio inferior reservado para las 2 filas de botones + divisor
     private static final int LIST_BOTTOM_OFFSET = 76;
 
@@ -58,7 +60,6 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     private DiaryButton diaryRefresh;
     private DiaryButton diaryCancel;
     private final SmoothScroll smoothScroll = new SmoothScroll();
-    private long openedAtMs = 0L;
 
     public DiaryMultiplayerScreen(Screen parent) {
         super(parent);
@@ -97,7 +98,6 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
 
         // Asegurar que el server oficial este siempre presente
         ensurePinnedServer();
-        this.openedAtMs = System.currentTimeMillis();
     }
 
     /**
@@ -470,18 +470,34 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         int panelY = PANEL_MARGIN_V;
         int panelW = this.width - PANEL_MARGIN_H * 2;
         int panelH = this.height - PANEL_MARGIN_V * 2;
-        float reveal = DiaryChrome.reveal(this.openedAtMs, 240L);
-        DiaryChrome.renderPanelBase(gfx, panelX, panelY, panelW, panelH, DiaryTheme.BRONZE, PaperTexture.PaperKind.OFFICIAL);
-        ExpedientHeader.draw(gfx, this.font, panelX, panelY, panelW, this.title, reveal);
+        DiaryChrome.drawPanelShadow(gfx, panelX, panelY, panelW, panelH);
+        PaperTexture.drawClean(gfx, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
+        DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, panelW, panelH);
+        DiaryChrome.drawRegistryTag(gfx, panelX, panelY, panelW, panelH, "REG. X");
 
+        // Titulo
+        int titleY = panelY + 14;
+        String titleStr = this.title.getString();
+        int titleW = this.font.width(titleStr);
+        gfx.drawString(this.font, titleStr, (this.width - titleW) / 2, titleY, DiaryChrome.INK_TITLE, false);
 
+        // Subtitulo
+        String subtitle = "- " + Component.translatable("gripeverde.multiplayer.subtitle").getString() + " -";
+        int subW = this.font.width(subtitle);
+        gfx.drawString(this.font, subtitle, (this.width - subW) / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
+
+        // Divisor con rombo
+        DiaryChrome.drawInkDivider(gfx, panelX + 24, titleY + 26, panelW - 48);
+        DiaryChrome.drawDivisorLozenge(gfx, this.width / 2, titleY + 26);
 
         // Lista vanilla (con sus favicons, ping, MOTD, etc.)
         if (this.vanillaList != null) {
             try {
+                // Aplicar scissor para ocultar LAN header cuando hay servers
                 int scissorBottom = computeVisibleBottom();
                 if (scissorBottom > 0 && scissorBottom < this.vanillaList.getBottom()) {
                     gfx.enableScissor(0, this.vanillaList.getTop(), this.width, scissorBottom);
+                    // Banda sepia detras de cada server (contraste para texto blanco vanilla)
                     drawEntryBackgrounds(gfx);
                     this.vanillaList.render(gfx, mouseX, mouseY, partial);
                     gfx.disableScissor();
@@ -489,11 +505,12 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                     drawEntryBackgrounds(gfx);
                     this.vanillaList.render(gfx, mouseX, mouseY, partial);
                 }
+                // Subrayado sutil bajo cada server
                 drawEntryFrames(gfx);
+                // Scroll estilizado encima
                 DiaryChrome.drawStyledScrollThumbForOptionsList(gfx, this.vanillaList, this.width);
             } catch (Throwable ignored) {}
         }
-
 
         // Divisor inferior antes de los botones - con rombo central
         int dividerY = this.height - LIST_BOTTOM_OFFSET + 2;
@@ -518,11 +535,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         // v0.16.0: el libro de visitas del atlas de hospederias
         try {
             drawGuestbook(gfx, panelX, panelY, panelW, mouseX, mouseY);
-
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(gfx, this.width);
         } catch (Throwable ignored) {}
     }
-
 
     private int guestbookX() { return this.width - PANEL_MARGIN_H - 150; }
     private int guestbookY() { return this.height - PANEL_MARGIN_V + 12; }
@@ -548,7 +563,6 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0xFFB8A888, 90), false);
         }
     }
-
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {

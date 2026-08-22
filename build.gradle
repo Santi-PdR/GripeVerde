@@ -6,7 +6,7 @@ plugins {
     id 'org.spongepowered.mixin' version '0.7.+'
 }
 
-version = '0.21.22'
+version = '0.21.23'
 group = 'com.eternalcraft.gripeverde'
 base { archivesName = 'gripeverde' }
 
@@ -137,8 +137,7 @@ tasks.register('verifyGripeVerdeNoDeadCode') {
             'DiarySeparator', 'gripeverde_steel', 'steel_pack', 'bg_town', 'BG_TOWN',
             'hasBgTown', 'ResourcePackHandler', 'ContainerOverlayHandler',
             'VictorianFrame', 'AbstractDiaryScreen', 'DebugCanvasScreen', 'SoundLabScreen',
-            'DiaryDecorator', 'CandleLight', 'InkEffects', 'DiaryMusicSlider',
-            'DiaryAmbienceSlider', 'drawVictorianFrame', 'drawQuillCursor',
+            'DiaryDecorator', 'CandleLight', 'InkEffects', 'DiaryVideoSettingsScreen', 'drawVictorianFrame', 'drawQuillCursor',
             'drawVerticalDivider', 'drawDarkLeatherBackground', 'drawVersionPanel',
             'getMoonPhaseIndex', 'getOpenCount', 'drawSolidBlob',
             'drawRowBands', 'openTelemetry', 'scrollToSection', 'drawGreeting',

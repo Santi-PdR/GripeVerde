@@ -3,8 +3,56 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/01a025d1-gripeverde` (sync con `main` v0.21.2, commit `afe8e83`).
-- Version: `0.21.22`.
+- Version: `0.21.23`.
 - Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks, integrando el contexto maestro y sincronizacion documental de v0.17.2.
+
+### DECISION 2026-08-22: v0.21.23 - Reconstruccion desde el backup pre-interfaces
+
+El usuario pidio deshacer de verdad la version que altero las interfaces
+("busques un registro o backup de ese mod y de ahi edites y saques esas
+version y adjuntes las demas").
+
+**Registro/backup encontrado:** commit `39e4720` (estado v0.17.2, el
+inmediatamente anterior a `715c52f` = v0.19.0 donde nacieron
+`ExpedientHeader`, `drawInsetCard` y el sistema de carteles/EXPEDIENTE).
+Las versiones que alteraron las interfaces y fueron excluidas: v0.19.0,
+v0.20.0 y v0.21.0.
+
+**Reconstruccion ejecutada (desde el backup + resto actual):**
+- Restauradas desde `39e4720` las 17 pantallas Diary (Options, Sound,
+  Controls, Language, Chat, Accessibility, Online, Multiplayer, Archive,
+  Changelog, Credits, Pause, Title, DirectJoin, EditServer, Confirm, Skin)
+  a su forma pre-alteracion: cabeceras propias de cada sala (titulo +
+  subtitulo + divisor), sin carteles ni rails de v0.19+.
+- Restaurados los widgets que las pantallas del backup usan:
+  `DiaryMusicSlider`, `DiaryAmbienceSlider`, `DiaryPackSelectionScreen`.
+- `DiaryVideoSettingsScreen` (nacio en la alteracion) ELIMINADA; Options
+  vuelve a abrir VideoSettingsScreen/Embeddium vanilla como antes.
+- `DiaryChrome`: anadidos los 3 metodos `drawRegistryTag*` del backup +
+  constantes STEEL_NEAR/DEEP/EDGE (las chapas de registro del backup).
+- Lang: clave `gripeverde.options.packs.subtitle` restaurada en los 25
+  idiomas (la usaba DiaryPackSelectionScreen).
+- Re-aplicados sobre las pantallas restauradas los ganchos de lore de las
+  versiones posteriores aprobadas: triggers del Title (ARCHIVE_THINNING
+  >=50, N_OPEN_COUNT >=100), cadena de fichas de la limpieza en Archive
+  (BG_TOWN_MEMORY, BUTTONS_NEVER_PRESSED) y sello SIGILLUM + campana al
+  completar las 47 fichas.
+- Re-eliminados los elementos que el usuario pidio sacar y que el backup
+  reintroducia: saludo del Title (drawGreeting), pie de registro del
+  Changelog (drawLedgerDetails/scrollToSection), filas de grupo y
+  telemetria de Options (drawRowBands/openTelemetry).
+- Se conservan intactos: audio (con hotfix v0.21.1), lore (Discoveries 47
+  fichas, Marginalia, Herald, HiddenCipher CLEANSE/ARCHIVE,
+  ChroniclerMemory con save diferido), render (RNG seed fija,
+  REDUCED_MOTION, low-end), config, theme, util y build (3 verificaciones).
+- Lista negra del build: quitados DiaryMusicSlider/DiaryAmbienceSlider
+  (restaurados), anadido DiaryVideoSettingsScreen.
+- Conteos: 61 clases Java, 25 lang (81 claves), 35 eventos, 42 OGG.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL
+  (reversion estructural, sin evento de la ciudad).
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.23.
+- Validacion pendiente en cliente real (KI-48): pantallas con la
+  identidad v0.17.2 + lore v0.21.x; compilar y recorrer todas las salas.
 
 ### DECISION 2026-08-22: v0.21.22 - Hotfix compilacion (firma rota)
 
@@ -748,9 +796,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.21.22
-- build.gradle: version = '0.21.22'
-- GripeVerdeMod.VERSION: "0.21.22"
+- Version estable actual: v0.21.23
+- build.gradle: version = '0.21.23'
+- GripeVerdeMod.VERSION: "0.21.23"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10 (no se han publicado tags desde el ciclo v0.13.x; los bumps v0.14-v0.17 quedaron sin tag)
 - Working tree esperado al retomar: limpio

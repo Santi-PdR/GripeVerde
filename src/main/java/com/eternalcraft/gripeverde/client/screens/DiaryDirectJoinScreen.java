@@ -2,8 +2,6 @@ package com.eternalcraft.gripeverde.client.screens;
 
 import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
-import com.eternalcraft.gripeverde.client.render.DiaryTheme;
-import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 
@@ -21,8 +19,8 @@ import net.minecraft.network.chat.Component;
  */
 public class DiaryDirectJoinScreen extends Screen {
 
-    private static final int PANEL_MAX_W = 430;
-    private static final int PANEL_MAX_H = 206;
+    private static final int PANEL_MAX_W = 340;
+    private static final int PANEL_MAX_H = 180;
     private static final Component ENTER_IP_LABEL = Component.translatable("addServer.enterIp");
 
     private final Screen parent;
@@ -31,8 +29,6 @@ public class DiaryDirectJoinScreen extends Screen {
 
     private DiaryTextField ipEdit;
     private DiaryButton selectButton;
-    private int panelX, panelY, panelW, panelH;
-    private long openedAtMs = 0L;
 
     public DiaryDirectJoinScreen(Screen parent, BooleanConsumer callback, ServerData serverData) {
         super(Component.translatable("selectServer.direct"));
@@ -43,15 +39,15 @@ public class DiaryDirectJoinScreen extends Screen {
 
     @Override
     protected void init() {
-        this.panelW = Math.min(PANEL_MAX_W, this.width - 34);
-        this.panelH = Math.min(PANEL_MAX_H, this.height - 28);
-        this.panelX = (this.width - panelW) / 2;
-        this.panelY = (this.height - panelH) / 2;
+        int panelW = Math.min(PANEL_MAX_W, this.width - 40);
+        int panelH = Math.min(PANEL_MAX_H, this.height - 30);
+        int panelX = (this.width - panelW) / 2;
+        int panelY = (this.height - panelH) / 2;
 
-        int fieldW = this.panelW - 170;
-        int fieldX = this.panelX + 24;
+        int fieldW = PANEL_MAX_W - 60;
+        int fieldX = panelX + 30;
         int fieldH = 20;
-        int ipY = this.panelY + 102;
+        int ipY = panelY + 76;
 
         // IP field
         this.ipEdit = new DiaryTextField(this.font, fieldX, ipY, fieldW, fieldH, ENTER_IP_LABEL);
@@ -70,7 +66,7 @@ public class DiaryDirectJoinScreen extends Screen {
         // Botones inferiores
         int btnW = 100;
         int btnH = 20;
-        int btnY = this.panelY + this.panelH - btnH - 16;
+        int btnY = panelY + PANEL_MAX_H - btnH - 16;
         int gap = 12;
         int totalW = btnW * 2 + gap;
         int startX = (this.width - totalW) / 2;
@@ -88,7 +84,6 @@ public class DiaryDirectJoinScreen extends Screen {
         this.addRenderableWidget(cancel);
 
         this.updateSelectButton();
-        this.openedAtMs = System.currentTimeMillis();
     }
 
     private void updateSelectButton() {
@@ -154,32 +149,52 @@ public class DiaryDirectJoinScreen extends Screen {
 
     @Override
     public void render(GuiGraphics gfx, int mouseX, int mouseY, float partial) {
+        // Fondo: escena viva del Title
         try {
             com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(gfx, this.width, this.height);
-        } catch (Throwable ignored) {}
+                } catch (Throwable ignored) {}
 
-        float reveal = DiaryChrome.reveal(this.openedAtMs, 220L);
-        DiaryChrome.renderPanelBase(gfx, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.BRONZE, PaperTexture.PaperKind.OFFICIAL);
+        // Overlay atenuador
 
-        int headerBottom = ExpedientHeader.draw(gfx, this.font, this.panelX, this.panelY, this.panelW, this.title, reveal);
+        // Panel pergamino
+        int panelW = Math.min(PANEL_MAX_W, this.width - 40);
+        int panelH = Math.min(PANEL_MAX_H, this.height - 30);
+        int panelX = (this.width - panelW) / 2;
+        int panelY = (this.height - panelH) / 2;
+        DiaryChrome.drawPanelShadow(gfx, panelX, panelY, panelW, panelH);
+        PaperTexture.drawClean(gfx, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
 
-        int noteX = this.panelX + this.panelW - 136;
+        // Cosmetica
+        DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, panelW, panelH);
+        DiaryChrome.drawRegistryTag(gfx, panelX, panelY, panelW, panelH, "REG. XII");
 
+        // Titulo
+        int titleY = panelY + 18;
+        String titleStr = this.title.getString();
+        int titleW = this.font.width(titleStr);
+        gfx.drawString(this.font, titleStr, (this.width - titleW) / 2, titleY, DiaryChrome.INK_TITLE, false);
 
+        // Subtitulo
+        String subtitle = "- " + Component.translatable("gripeverde.direct.subtitle").getString() + " -";
+        int subW = this.font.width(subtitle);
+        gfx.drawString(this.font, subtitle, (this.width - subW) / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
+
+        // Divisor con rombo
+        DiaryChrome.drawInkDivider(gfx, panelX + 24, titleY + 26, panelW - 48);
+        DiaryChrome.drawDivisorLozenge(gfx, this.width / 2, titleY + 26);
+
+        // Label IP
         String ipLbl = ENTER_IP_LABEL.getString();
-        gfx.drawString(this.font, ipLbl, this.panelX + 24, headerBottom + 10, DiaryChrome.INK_SUBTITLE, false);
-        gfx.fill(this.panelX + 24, headerBottom + 24, noteX - 12, headerBottom + 25, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 42));
-        gfx.fill(this.panelX + 24, headerBottom + 58, noteX - 12, headerBottom + 59, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 24));
-        gfx.drawString(this.font,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "No map is consulted until the line is accepted." : "Ningun mapa se consulta hasta aceptar la linea.",
-            this.panelX + 24, headerBottom + 44, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 150), false);
+        gfx.drawString(this.font, ipLbl, panelX + 30, panelY + 62, DiaryChrome.INK_SUBTITLE, false);
 
+        // Widgets
         for (var w : this.renderables) {
             if (w instanceof AbstractWidget aw && aw.visible) {
                 w.render(gfx, mouseX, mouseY, partial);
             }
         }
 
+        // v0.16.0: aviso de la direccion sin mapa
         try {
             if (System.currentTimeMillis() < this.unmappedWarnUntilMs) {
                 String warn = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
@@ -188,7 +203,7 @@ public class DiaryDirectJoinScreen extends Screen {
                 int ww = this.font.width(warn);
                 long remain = this.unmappedWarnUntilMs - System.currentTimeMillis();
                 int alpha = remain < 900L ? (int)(210 * remain / 900L) : 210;
-                gfx.drawString(this.font, warn, (this.width - ww) / 2, this.panelY + this.panelH + 10,
+                gfx.drawString(this.font, warn, (this.width - ww) / 2, panelY + panelH + 10,
                     (alpha << 24) | 0xB8A888, false);
             }
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(gfx, this.width);

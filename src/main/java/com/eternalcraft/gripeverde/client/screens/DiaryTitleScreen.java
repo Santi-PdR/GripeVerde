@@ -39,6 +39,8 @@ public class DiaryTitleScreen extends Screen {
     private long lastInteractionMs = System.currentTimeMillis();
     private boolean dustThisSession = false;
     private boolean dawnActive = false;
+    private static long greetingShownUntilMs = 0L;
+    private static String greetingText = null;
     private long wantedPressStartMs = 0L;
     private boolean wantedPressing = false;
 
@@ -107,17 +109,22 @@ public class DiaryTitleScreen extends Screen {
                 boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
                 long absence = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.sessionAbsenceDays();
                 if (kind == 1) {
+                    greetingText = en ? "The cabinet opens for the first time." : "El gabinete abre por primera vez.";
                     com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
                         com.eternalcraft.gripeverde.client.lore.Marginalia.N_FIRST_NIGHT);
                 } else if (kind == 2 && absence >= 7L) {
+                    greetingText = en ? "The dust did not ask why you returned." : "El polvo no pregunto por que volvias.";
                     dustThisSession = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.consumeDust();
                     com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
                         com.eternalcraft.gripeverde.client.lore.Discoveries.DUST);
                     com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
                         com.eternalcraft.gripeverde.client.lore.Marginalia.N_DUST);
                 } else if (kind == 2) {
+                    greetingText = en ? "The cabinet remembers your hand." : "El gabinete recuerda tu mano.";
                 } else if (kind == 3) {
+                    greetingText = en ? "Another vigil in the same night." : "Otra vigilia en la misma noche.";
                 }
+                if (greetingText != null) greetingShownUntilMs = System.currentTimeMillis() + 12_000L;
                 if (com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.consumeAnniversary()) {
                     com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
                         com.eternalcraft.gripeverde.client.lore.Discoveries.ANNIVERSARY);
@@ -201,7 +208,7 @@ public class DiaryTitleScreen extends Screen {
         this.skipMusicButton = new SlimButton(skipX, skipY, skipW, skipH,
             Component.literal(">>"),
             () -> MenuMusic.skipToNext());
-        this.skipMusicButton.setTooltip(Tooltip.create(Component.literal(com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+        this.skipMusicButton.setTooltip(Tooltip.create(Component.literal(isEnglishSelected()
             ? "Change the chronicler's piece"
             : "Cambiar la pieza del cronista")));
         this.addRenderableWidget(this.skipMusicButton);
@@ -253,8 +260,8 @@ public class DiaryTitleScreen extends Screen {
             this.skipMusicButton.active = ready;
             this.skipMusicButton.setTooltip(Tooltip.create(Component.literal(
                 ready
-                    ? (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Change the chronicler's piece" : "Cambiar la pieza del cronista")
-                    : (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "The gramophone is turning" : "El gramofono esta girando")
+                    ? (isEnglishSelected() ? "Change the chronicler's piece" : "Cambiar la pieza del cronista")
+                    : (isEnglishSelected() ? "The gramophone is turning" : "El gramofono esta girando")
             )));
         }
     }
@@ -329,11 +336,9 @@ public class DiaryTitleScreen extends Screen {
         try {
             com.eternalcraft.gripeverde.client.lore.HiddenCipher.drawBuffer(g, this.width, this.height);
             com.eternalcraft.gripeverde.client.lore.HiddenCipher.drawTelegram(g, this.width, this.height);
-            com.eternalcraft.gripeverde.client.lore.HiddenCipher.drawCleanseTelegram(g, this.width, this.height);
             com.eternalcraft.gripeverde.client.lore.HiddenCipher.drawPereiraFlash(g, this.width, this.height);
             com.eternalcraft.gripeverde.client.lore.Herald.draw(g, this.width, this.height);
             drawDustIfDue(g);
-
             drawVigilLine(g);
             com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
             com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, this.height - 60);
@@ -367,6 +372,7 @@ public class DiaryTitleScreen extends Screen {
         }
     }
 
+    /** Saludo del gabinete al iniciar la sesion (12 segundos). */
 
     /** La vigilia nota cuando el lector se queda quieto demasiado tiempo. */
     private void drawVigilLine(GuiGraphics g) {
@@ -544,7 +550,7 @@ public class DiaryTitleScreen extends Screen {
     };
 
     private static String signatureFor(int idx) {
-        String[] pool = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? SIGNATURE_POOL_EN : SIGNATURE_POOL_ES;
+        String[] pool = isEnglishSelected() ? SIGNATURE_POOL_EN : SIGNATURE_POOL_ES;
         return pool[idx % pool.length];
     }
 
@@ -554,7 +560,7 @@ public class DiaryTitleScreen extends Screen {
         // v0.16.0: tras oir su nombre en voz alta, el cronista firma a su manera.
         try {
             if (idx == 0 && com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("pereira_offended") > 0) {
-                signature = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+                signature = isEnglishSelected()
                     ? "Dr. S. Pereira (you again?)"
                     : "Dr. S. Pereira (¿otra vez tu?)";
             }
@@ -665,10 +671,15 @@ public class DiaryTitleScreen extends Screen {
     private static String cachedModsSubtitle = null;
     private static String cachedSubtitleLang = null;
 
+    private static boolean isEnglishSelected() {
+        String lang = net.minecraft.client.Minecraft.getInstance().getLanguageManager().getSelected();
+        return lang == null || lang.startsWith("en_") || lang.equals("en_us");
+    }
+
     private static String pickRotatingSubtitle(boolean multiplayer) {
         String lang = net.minecraft.client.Minecraft.getInstance().getLanguageManager().getSelected();
         if (lang == null) lang = "en_us";
-        boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+        boolean english = isEnglishSelected();
         if (!java.util.Objects.equals(cachedSubtitleLang, lang)) {
             cachedSubtitleLang = lang;
             cachedMultiSubtitle = null;
@@ -950,7 +961,7 @@ public class DiaryTitleScreen extends Screen {
         if (now - lastLogoClickMs < 260L) return;
         lastLogoClickMs = now;
 
-        String[] eggPool = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? LOGO_EASTER_EGGS_EN : LOGO_EASTER_EGGS_ES;
+        String[] eggPool = isEnglishSelected() ? LOGO_EASTER_EGGS_EN : LOGO_EASTER_EGGS_ES;
         int caseNo = 17 + EASTER_RNG.nextInt(80);
         char letter = (char)('A' + EASTER_RNG.nextInt(6));
         easterEggCaseCode = String.format(java.util.Locale.ROOT, "%02d-%c", caseNo, letter);
@@ -1038,9 +1049,9 @@ public class DiaryTitleScreen extends Screen {
         g.fill(boxX + 8, boxY + 7, boxX + 20, boxY + 8, green);
         g.fill(boxX + boxW - 20, boxY + 7, boxX + boxW - 8, boxY + 8, green);
 
-        String stamp = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "CASE " + easterEggCaseCode : "CASO " + easterEggCaseCode;
+        String stamp = isEnglishSelected() ? "CASE " + easterEggCaseCode : "CASO " + easterEggCaseCode;
         g.drawString(this.font, stamp, boxX + 13, boxY + 8, red, false);
-        String seal = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "UNDER SEAL" : "BAJO SELLO";
+        String seal = isEnglishSelected() ? "UNDER SEAL" : "BAJO SELLO";
         int sealW = this.font.width(seal);
         g.drawString(this.font, seal, boxX + boxW - sealW - 13, boxY + 8, DiaryTheme.withAlpha(0xFF241608, alpha), false);
         g.fill(boxX + 12, boxY + 19, boxX + boxW - 12, boxY + 20, (Math.min(115, alpha) << 24) | 0x422810);
@@ -1086,7 +1097,7 @@ public class DiaryTitleScreen extends Screen {
         }
         cachedDayMsgDate = today;
         cachedDayMsgLang = lang;
-        boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+        boolean english = isEnglishSelected();
         int month = today.getMonthValue();
         int dow = today.getDayOfWeek().getValue();
 

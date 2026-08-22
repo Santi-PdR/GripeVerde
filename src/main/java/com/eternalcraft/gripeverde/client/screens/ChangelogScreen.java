@@ -1,9 +1,6 @@
 package com.eternalcraft.gripeverde.client.screens;
 
-import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
-import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
-import com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer;
 import com.eternalcraft.gripeverde.client.widgets.SlimButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -26,6 +23,7 @@ public class ChangelogScreen extends Screen {
     private static final int PANEL_TOP  = 34;
     private static final int PANEL_BOT  = 54;
     private static final int PAD_X      = 18;
+    private static final int PAD_Y      = 26;
     private static final int CLOSE_W    = 130;
     private static final int CLOSE_H    = 28;
     private static final int SCROLL_SPD = 28;
@@ -56,7 +54,6 @@ public class ChangelogScreen extends Screen {
     private int contentTotalH = 0;
     private int lastContentW = -1;
     private boolean draggingScrollbar = false;
-    private long openedAtMs = 0L;
 
     // v0.16.0: las marcas del encuadernador y el folio escondido
     private final List<int[]> asteriskRects = new ArrayList<>();
@@ -87,7 +84,6 @@ public class ChangelogScreen extends Screen {
         this.addRenderableWidget(new SlimButton(bx, by, CLOSE_W, CLOSE_H,
             Component.translatable("gripeverde.changelog.button.close"),
             this::onClose));
-        this.openedAtMs = System.currentTimeMillis();
     }
 
     private void loadAndParse() {
@@ -205,6 +201,8 @@ public class ChangelogScreen extends Screen {
         }
         clampScroll();
     }
+
+
     private void scrollToTopOrBottom(boolean bottom) {
         setScrollTarget(bottom ? maxScroll : 0, false);
     }
@@ -244,9 +242,9 @@ public class ChangelogScreen extends Screen {
     private int panelW() { return this.width  - PANEL_MX * 2; }
     private int panelH() { return this.height - PANEL_TOP - PANEL_BOT; }
     private int contentX() { return panelX() + PAD_X; }
-    private int contentY() { return panelY() + 72; }
+    private int contentY() { return panelY() + PAD_Y + 10; }
     private int contentW() { return Math.max(40, panelW() - PAD_X * 2 - 8); }
-    private int contentH() { return Math.max(20, panelH() - 110); }
+    private int contentH() { return Math.max(20, panelH() - PAD_Y * 2 - 10); }
 
     @Override
     public void tick() {
@@ -265,16 +263,18 @@ public class ChangelogScreen extends Screen {
             recalcMaxScroll();
         }
 
-        QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
-        float reveal = DiaryChrome.reveal(this.openedAtMs, 260L);
-        DiaryChrome.drawPanelScaffold(g, px, py, pw, ph, DiaryTheme.BRONZE);
+        g.fill(0, 0, this.width, this.height, 0xD0100D08);
+
         com.eternalcraft.gripeverde.client.render.PaperTexture.drawClean(g, px, py, pw, ph, com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.ARCHIVE);
+        g.fill(px,          py,          px + pw, py + 1,      DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
+        g.fill(px,          py + ph - 1, px + pw, py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
+        g.fill(px,          py,          px + 1,  py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
+        g.fill(px + pw - 1, py,          px + pw, py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
 
-
-        int headerBottom = ExpedientHeader.draw(g, this.font, px, py, pw, this.title, reveal);
-
-        cy = Math.max(cy, headerBottom - 2);
-        ch = contentH() - Math.max(0, headerBottom - contentY() - 2);
+        int tw = this.font.width(this.title);
+        int tx = (this.width - tw) / 2;
+        g.drawString(this.font, this.title, tx, py + 8, DiaryTheme.AMBER_FLAME, false);
+        g.fill(tx - 4, py + 18, tx + tw + 4, py + 19, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 150));
 
         this.asteriskRects.clear();
         this.hiddenFolioRect = null;
@@ -296,7 +296,7 @@ public class ChangelogScreen extends Screen {
             // v0.16.0: despues del ultimo renglon, un folio que no figura en la cronica.
             int fy = cy - scrollY + this.contentTotalH + 8;
             if (fy >= cy - 12 && fy <= cy + ch + 4) {
-                boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+                boolean en = isEnglishSelected();
                 String hidden = en ? "~ there is a room behind the last folio ~"
                                    : "~ hay una sala detras del ultimo folio ~";
                 int hw = this.font.width(hidden);
@@ -312,7 +312,13 @@ public class ChangelogScreen extends Screen {
         g.disableScissor();
 
         if (maxScroll > 0) {
-            DiaryChrome.drawScrollThumb(g, px + pw - 10, cy, cy + ch, this.scrollY, this.maxScroll);
+            int bx2 = px + pw - 6;
+            int bh  = ch;
+            int th  = Math.max(20, bh * bh / (bh + maxScroll));
+            int ty2 = cy + (bh - th) * scrollY / maxScroll;
+            g.fill(bx2, cy,  bx2 + 3, cy + bh, DiaryTheme.withAlpha(DiaryTheme.PAPER_STAINED, 110));
+            g.fill(bx2, ty2, bx2 + 3, ty2 + th, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 190));
+
         }
 
         super.render(g, mouseX, mouseY, partialTick);
@@ -325,6 +331,12 @@ public class ChangelogScreen extends Screen {
     }
 
 
+    private static boolean isEnglishSelected() {
+        String lang = "en_us";
+        try { lang = Minecraft.getInstance().getLanguageManager().getSelected(); }
+        catch (Throwable ignored) {}
+        return lang == null || lang.startsWith("en_") || lang.equals("en_us");
+    }
 
     private void renderRow(GuiGraphics g, Row row, int x, int y, int maxW) {
         if (row.type == LT.GAP) return;

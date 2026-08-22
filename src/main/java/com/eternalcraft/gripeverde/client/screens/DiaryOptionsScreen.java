@@ -2,7 +2,6 @@ package com.eternalcraft.gripeverde.client.screens;
 
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
-import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import com.eternalcraft.gripeverde.client.widgets.DiarySlider;
@@ -14,6 +13,7 @@ import net.minecraft.client.gui.screens.OptionsScreen;
 import net.minecraft.client.gui.screens.Screen;
 import com.eternalcraft.gripeverde.client.screens.DiarySkinCustomizationScreen;
 import com.eternalcraft.gripeverde.client.screens.DiarySoundOptionsScreen;
+import net.minecraft.client.gui.screens.VideoSettingsScreen;
 import net.minecraft.network.chat.Component;
 
 /**
@@ -71,14 +71,13 @@ public class DiaryOptionsScreen extends Screen {
     private static final int GRID_ROWS = 6;
     private static final int GAP_BEFORE_BACK = 16;
     private static final int PAD_BOTTOM = 18;
-    private static final int PAD_SIDES = 24;
-    private static final int INFO_RAIL_W = 152;
-    private static final int INFO_RAIL_GAP = 18;
+    private static final int PAD_SIDES = 28;
+
+    // Overlay que atenua el fondo vivo (para dar peso al pergamino)
 
     // Panel calculado
     private int panelX, panelY, panelW, panelH;
     private int gridTop, col1X, col2X;
-    private long openedAtMs = 0L;
 
     // ── v0.16.0: la mesa de trabajo responde ──
     private static final long[] knockTimes = new long[6];
@@ -108,11 +107,8 @@ public class DiaryOptionsScreen extends Screen {
         currentFlavor = flavorPool[flavorIndex];
 
         int gridH = GRID_ROWS * BTN_H + (GRID_ROWS - 1) * GAP_Y;
-        int gridW = BTN_W * 2 + GAP_X;
-        panelW = Math.min(560, this.width - 24);
-        panelW = Math.max(gridW + INFO_RAIL_W + INFO_RAIL_GAP + PAD_SIDES * 2, panelW);
-        panelW = Math.min(panelW, this.width - 24);
-        panelH = PAD_TOP + TITLE_H + SUBTITLE_GAP + TITLE_GAP + gridH + GAP_BEFORE_BACK + BACK_H + PAD_BOTTOM + DRAWER_H + 22;
+        panelW = BTN_W * 2 + GAP_X + PAD_SIDES * 2;
+        panelH = PAD_TOP + TITLE_H + SUBTITLE_GAP + TITLE_GAP + gridH + GAP_BEFORE_BACK + BACK_H + PAD_BOTTOM + DRAWER_H;
 
         // v0.16.0: la bisagra cuenta las veces que el gabinete se abre.
         try {
@@ -133,11 +129,10 @@ public class DiaryOptionsScreen extends Screen {
         panelY = (this.height - panelH) / 2;
 
         int cx = this.width / 2;
-        this.gridTop = panelY + PAD_TOP + TITLE_H + SUBTITLE_GAP + TITLE_GAP + 11;
+        this.gridTop = panelY + PAD_TOP + TITLE_H + SUBTITLE_GAP + TITLE_GAP;
 
-        int contentLeft = panelX + PAD_SIDES;
-        this.col1X = contentLeft;
-        this.col2X = this.col1X + BTN_W + GAP_X;
+        this.col1X = cx - BTN_W - GAP_X / 2;
+        this.col2X = cx + GAP_X / 2;
 
         addBtn(this.col1X, this.gridTop + row(0), "gripeverde.options.button.skin", DiaryButton.Icon.PALETTE, DiaryButton.SoundProfile.OPTION_OPEN, this::openSkin);
         addBtn(this.col2X, this.gridTop + row(0), "gripeverde.options.button.sound", DiaryButton.Icon.SOUND, DiaryButton.SoundProfile.OPTION_OPEN, this::openSound);
@@ -173,7 +168,6 @@ public class DiaryOptionsScreen extends Screen {
                 DiaryButton.Icon.DOOR, DiaryButton.Variant.PRIMARY,
                 DiaryButton.SoundProfile.BACK,
                 this::onBack));
-        this.openedAtMs = System.currentTimeMillis();
     }
 
     private static int row(int i) {
@@ -189,8 +183,13 @@ public class DiaryOptionsScreen extends Screen {
         }
     }
 
+    private static boolean isEnglishSelected() {
+        String lang = currentLanguageCode();
+        return lang.startsWith("en_") || lang.equals("en_us");
+    }
+
     private static String[] getFlavorPool() {
-        return com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? FLAVOR_POOL_EN : FLAVOR_POOL_ES;
+        return isEnglishSelected() ? FLAVOR_POOL_EN : FLAVOR_POOL_ES;
     }
 
     private void addBtn(int x, int y, String translationKey, DiaryButton.Icon icon,
@@ -210,31 +209,73 @@ public class DiaryOptionsScreen extends Screen {
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
 
-        float reveal = DiaryChrome.reveal(this.openedAtMs, 260L);
-        DiaryChrome.renderPanelBase(g, panelX, panelY, panelW, panelH, DiaryTheme.PLAGUE_GREEN, PaperTexture.PaperKind.LEDGER);
-        ExpedientHeader.draw(g, this.font, panelX, panelY, panelW, this.title, reveal);
+        // Panel pergamino
+        DiaryChrome.drawPanelShadow(g, panelX, panelY, panelW, panelH);
+        PaperTexture.drawClean(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.LEDGER);
 
+        // Titulo en tinta - limpio, sin placa que corte
+        int titleY = panelY + PAD_TOP;
+        {
+            int titleW = this.font.width(this.title);
+            int titleX = (this.width - titleW) / 2;
+            g.drawString(this.font, this.title, titleX, titleY, DiaryTheme.INK, false);
 
+            // Subtitulo diegetico - sin sombra que divida
+            String subtitle = "- " + net.minecraft.network.chat.Component.translatable("gripeverde.options.subtitle").getString() + " -";
+            int subW = this.font.width(subtitle);
+            int subX = (this.width - subW) / 2;
+            int subY = titleY + TITLE_H + 2;
+            g.drawString(this.font, subtitle, subX, subY, DiaryChrome.INK_SUBTITLE, false);
 
+            // Rotating flavor quote - tinta muy suave
+            if (currentFlavor != null) {
+                int flavorW = this.font.width(currentFlavor);
+                int flavorX = (this.width - flavorW) / 2;
+                int flavorY = subY + this.font.lineHeight + 1;
+                // v0.16.0: el cronista corrige su propia letra tras leer a Holloway.
+                boolean corrected = false;
+                try {
+                    corrected = (currentFlavor.contains("tinta") || currentFlavor.contains("ink"))
+                        && com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.isDiscovered(
+                            com.eternalcraft.gripeverde.client.lore.Discoveries.CODE_HOLLOWAY);
+                } catch (Throwable ignored) {}
+                if (corrected) {
+                    g.drawString(this.font, currentFlavor, flavorX, flavorY,
+                        com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(DiaryChrome.INK_FLAVOR, 110), false);
+                    g.fill(flavorX - 2, flavorY + 4, flavorX + flavorW + 2, flavorY + 5,
+                        com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0xFF241608, 120));
+                    String fix = isEnglishSelected() ? "(no: the ink will never dry)" : "(no: la tinta ya no seca)";
+                    int fixW = this.font.width(fix);
+                    g.drawString(this.font, fix, this.width / 2 - fixW / 2, flavorY + 9, DiaryChrome.INK_FLAVOR, false);
+                } else {
+                    g.drawString(this.font, currentFlavor, flavorX, flavorY, DiaryChrome.INK_FLAVOR, false);
+                }
+            }
 
+            // Unico divisor horizontal DEBAJO del flavor (no entre titulo y subtitulo)
+            int divY1;
+            if (currentFlavor != null) {
+                int flavorY = subY + this.font.lineHeight + 1;
+                divY1 = flavorY + this.font.lineHeight + 4;
+            } else {
+                divY1 = subY + this.font.lineHeight + 4;
+            }
+            DiaryChrome.drawInkDivider(g, panelX + 24, divY1, panelW - 48);
 
+            // Divisor horizontal antes del boton Volver
+            int backY = panelY + panelH - PAD_BOTTOM - DRAWER_H - BACK_H;
+            int divY2 = backY - 10;
+            DiaryChrome.drawInkDivider(g, panelX + 24, divY2, panelW - 48);
 
-        // Carril lateral de estado
-
-        int backY = panelY + panelH - PAD_BOTTOM - DRAWER_H - BACK_H;
-        int divY2 = backY - 10;
-        DiaryChrome.drawInkDivider(g, panelX + 24, divY2, panelW - 48);
-
-        // Reveal documental del panel
-        if (reveal < 0.995f) {
-            int revealBottom = panelY + Math.max(34, (int)(panelH * reveal));
-            g.enableScissor(panelX - 2, panelY - 2, panelX + panelW + 2, revealBottom);
-            super.render(g, mouseX, mouseY, partialTick);
-            g.disableScissor();
-        } else {
-            super.render(g, mouseX, mouseY, partialTick);
+            // Esquineros victorianos sutiles
+            DiaryChrome.drawCornerOrnaments(g, panelX, panelY, panelW, panelH);
+            DiaryChrome.drawRegistryTag(g, panelX, panelY, panelW, panelH, "REG. I");
         }
 
+        // Widgets
+        super.render(g, mouseX, mouseY, partialTick);
+
+        // v0.16.0: el cajon de la mesa de trabajo
         try {
             drawDrawer(g, mouseX, mouseY);
             processKnockBack();
@@ -402,6 +443,8 @@ public class DiaryOptionsScreen extends Screen {
         }
         return consumed;
     }
+
+
     // Divisor horizontal con fade a los costados color tinta - limpio
     private static void drawInkDivider(net.minecraft.client.gui.GuiGraphics g, int x1, int x2, int y) {
         int inkFull  = 0x66422810;
@@ -412,6 +455,22 @@ public class DiaryOptionsScreen extends Screen {
     }
 
     // Esquineros victorianos en L color tinta sutil
+    private static void drawCornerOrnaments(net.minecraft.client.gui.GuiGraphics g,
+                                            int x, int y, int w, int h) {
+        int ink = 0x70422810;
+        int len = 10;
+        int th = 1;
+        int m = 6;
+        g.fill(x + m, y + m, x + m + len, y + m + th, ink);
+        g.fill(x + m, y + m, x + m + th, y + m + len, ink);
+        g.fill(x + w - m - len, y + m, x + w - m, y + m + th, ink);
+        g.fill(x + w - m - th, y + m, x + w - m, y + m + len, ink);
+        g.fill(x + m, y + h - m - th, x + m + len, y + h - m, ink);
+        g.fill(x + m, y + h - m - len, x + m + th, y + h - m, ink);
+        g.fill(x + w - m - len, y + h - m - th, x + w - m, y + h - m, ink);
+        g.fill(x + w - m - th, y + h - m - len, x + w - m, y + h - m, ink);
+    }
+
     @Override
     public void onClose() {
         Minecraft.getInstance().setScreen(this.parent);
@@ -430,7 +489,27 @@ public class DiaryOptionsScreen extends Screen {
         this.minecraft.setScreen(new DiarySoundOptionsScreen(this, this.minecraft.options));
     }
     private void openVideo() {
-        this.minecraft.setScreen(new DiaryVideoSettingsScreen(this, this.minecraft.options));
+        // Intento abrir EmbeddiumVideoOptionsScreen via reflection.
+        // Si Embeddium no esta o algo falla, fallback a VideoSettingsScreen vanilla.
+        try {
+            Class<?> pagesCls = Class.forName("me.jellysquid.mods.sodium.client.gui.SodiumGameOptionPages");
+            Class<?> screenCls = Class.forName("org.embeddedt.embeddium.gui.EmbeddiumVideoOptionsScreen");
+
+            java.util.List<Object> pages = new java.util.ArrayList<>();
+            pages.add(pagesCls.getMethod("general").invoke(null));
+            pages.add(pagesCls.getMethod("quality").invoke(null));
+            pages.add(pagesCls.getMethod("performance").invoke(null));
+            pages.add(pagesCls.getMethod("advanced").invoke(null));
+
+            java.lang.reflect.Constructor<?> ctor = screenCls.getConstructor(
+                    net.minecraft.client.gui.screens.Screen.class, java.util.List.class);
+            net.minecraft.client.gui.screens.Screen embScreen =
+                    (net.minecraft.client.gui.screens.Screen) ctor.newInstance(this, pages);
+            this.minecraft.setScreen(embScreen);
+        } catch (Throwable t) {
+            // Fallback: vanilla
+            this.minecraft.setScreen(new VideoSettingsScreen(this, this.minecraft.options));
+        }
     }
     private void openControls() {
         this.minecraft.setScreen(new DiaryControlsScreen(this, this.minecraft.options));
@@ -466,7 +545,7 @@ public class DiaryOptionsScreen extends Screen {
                 net.minecraft.network.chat.Component.translatable("resourcePack.title");
 
         this.minecraft.setScreen(
-                new net.minecraft.client.gui.screens.packs.PackSelectionScreen(
+                new DiaryPackSelectionScreen(
                         repo, callback, dir, title
                 )
         );

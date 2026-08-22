@@ -2,7 +2,6 @@ package com.eternalcraft.gripeverde.client.screens;
 
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
-import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
@@ -22,7 +21,6 @@ public class DiaryCreditsScreen extends Screen {
 
     private final Screen lastScreen;
     private int panelX, panelY, panelW, panelH;
-    private long openedAtMs = 0L;
 
     public DiaryCreditsScreen(Screen parent) {
         super(Component.translatable("gripeverde.options.credits.title"));
@@ -48,7 +46,6 @@ public class DiaryCreditsScreen extends Screen {
             DiaryButton.Icon.DOOR, DiaryButton.Variant.PRIMARY, DiaryButton.SoundProfile.BACK,
             this::onClose
         ));
-        this.openedAtMs = System.currentTimeMillis();
     }
 
     @Override
@@ -61,25 +58,39 @@ public class DiaryCreditsScreen extends Screen {
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
 
-        float reveal = DiaryChrome.reveal(this.openedAtMs, 260L);
-        DiaryChrome.drawPanelScaffold(g, panelX, panelY, panelW, panelH, DiaryTheme.BRONZE);
+        DiaryChrome.drawPanelShadow(g, panelX, panelY, panelW, panelH);
         PaperTexture.drawClean(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
         drawOfficialFrame(g);
-        DiaryChrome.drawCornerOrnaments(g, panelX, panelY, panelW, panelH);
 
-        int bodyTop = ExpedientHeader.draw(g, this.font, panelX, panelY, panelW, this.title, reveal);
+        int cx = this.width / 2;
+        int titleY = panelY + 14;
+        String titleStr = this.title.getString();
+        int tw = this.font.width(titleStr);
+        g.drawString(this.font, titleStr, cx - tw / 2, titleY, DiaryChrome.INK_TITLE, false);
 
+        String subtitle = "- " + Component.translatable("gripeverde.options.credits.subtitle").getString() + " -";
+        int subW = this.font.width(subtitle);
+        g.drawString(this.font, subtitle, cx - subW / 2, titleY + 14, DiaryChrome.INK_SUBTITLE, false);
 
+        String flavor = Component.translatable("gripeverde.options.credits.flavor").getString();
+        int flavW = this.font.width(flavor);
+        g.drawString(this.font, flavor, cx - flavW / 2, titleY + 26, DiaryChrome.INK_FLAVOR, false);
 
-        renderRegistryEntries(g, bodyTop + 8);
+        int divY1 = titleY + 44;
+        DiaryChrome.drawInkDividerBetween(g, panelX + 18, panelX + panelW - 18, divY1);
+
+        renderRegistryEntries(g, divY1 + 10);
 
         int divY2 = panelY + panelH - 40;
         DiaryChrome.drawInkDividerBetween(g, panelX + 18, panelX + panelW - 18, divY2);
+        DiaryChrome.drawCornerOrnaments(g, panelX, panelY, panelW, panelH);
+        DiaryChrome.drawRegistryTag(g, panelX, panelY, panelW, panelH, "REG. IX");
 
         for (Renderable r : this.renderables) {
             r.render(g, mouseX, mouseY, partialTick);
         }
 
+        // v0.16.0: el sello que nadie debia romper
         try {
             drawRegistrySeal(g, mouseX, mouseY);
             com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
@@ -115,7 +126,7 @@ public class DiaryCreditsScreen extends Screen {
                 g.fill(x + 1 + 3, y + dy, x + dx + 3, y + dy + 1, 0xFF6E1B12);
             }
             // Lo que el sello guardaba
-            String hidden = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+            String hidden = isEnglish()
                 ? "The reader, too, shall be remembered."
                 : "El lector tambien sera recordado.";
             int hw = this.font.width(hidden);
@@ -146,25 +157,27 @@ public class DiaryCreditsScreen extends Screen {
 
     private void renderRegistryEntries(GuiGraphics g, int startY) {
         int left = panelX + 24;
+        int lineH = 11;
         int y = startY;
 
         // Section helper
-        y = drawSection(g, left, y, com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "ESTUDIO" : "ESTUDIO", com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EternalCraft Studio" : "Estudio EternalCraft");
+        y = drawSection(g, left, y, isEnglish() ? "ESTUDIO" : "ESTUDIO", isEnglish() ? "EternalCraft Studio" : "Estudio EternalCraft");
         y += 4;
-        y = drawSection(g, left, y, com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "CHRONICLER" : "CRONISTA", "S. Pereira");
-        y = drawSection(g, left, y, com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "DIRECTOR" : "DIRECTOR", "Santi PdR / Alex");
+        y = drawSection(g, left, y, isEnglish() ? "CHRONICLER" : "CRONISTA", "S. Pereira");
+        y = drawSection(g, left, y, isEnglish() ? "DIRECTOR" : "DIRECTOR", "Santi PdR / Alex");
         y += 4;
-        y = drawSection(g, left, y, com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "CITY BLUEPRINTS" : "PLANOS DE LA CIUDAD", com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Victorian skyline, gas lamps, quarantine seals" : "Horizonte victoriano, faroles de gas, sellos");
-        y = drawSection(g, left, y, com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "PAPER & INK" : "PAPEL Y TINTA", com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Parchment panels, ledger bindings, wax" : "Paneles pergamino, encuadernaciones, cera");
+        y = drawSection(g, left, y, isEnglish() ? "CITY BLUEPRINTS" : "PLANOS DE LA CIUDAD", isEnglish() ? "Victorian skyline, gas lamps, quarantine seals" : "Horizonte victoriano, faroles de gas, sellos");
+        y = drawSection(g, left, y, isEnglish() ? "PAPER & INK" : "PAPEL Y TINTA", isEnglish() ? "Parchment panels, ledger bindings, wax" : "Paneles pergamino, encuadernaciones, cera");
         y += 8;
 
         // Official note
-        String note = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Sealed under quarantine act 1897" : "Sellado bajo acta de cuarentena 1897";
+        String note = isEnglish() ? "Sealed under quarantine act 1897" : "Sellado bajo acta de cuarentena 1897";
         int nw = this.font.width(note);
         g.drawString(this.font, note, panelX + (panelW - nw) / 2, y, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 130), false);
     }
 
     private int drawSection(GuiGraphics g, int x, int y, String label, String value) {
+        String line = label + ":  " + value;
         g.drawString(this.font, label + ":", x, y, DiaryTheme.withAlpha(DiaryTheme.INK, 210), false);
         int labelW = this.font.width(label + ":  ");
         g.drawString(this.font, value, x + labelW, y, DiaryTheme.INK_FADED, false);
@@ -183,6 +196,13 @@ public class DiaryCreditsScreen extends Screen {
         g.fill(panelX + panelW - 10, panelY + 8, panelX + panelW - 8, panelY + 10, rivet);
         g.fill(panelX + 8, panelY + panelH - 10, panelX + 10, panelY + panelH - 8, rivet);
         g.fill(panelX + panelW - 10, panelY + panelH - 10, panelX + panelW - 8, panelY + panelH - 8, rivet);
+    }
+
+    private boolean isEnglish() {
+        try {
+            String lang = net.minecraft.client.Minecraft.getInstance().getLanguageManager().getSelected();
+            return lang == null || lang.startsWith("en_");
+        } catch (Throwable ignored) { return true; }
     }
 
     @Override public void renderBackground(GuiGraphics g) {}

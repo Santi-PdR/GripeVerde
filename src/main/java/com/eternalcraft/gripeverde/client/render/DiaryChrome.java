@@ -26,6 +26,9 @@ public final class DiaryChrome {
     public static final int OVERLAY_COL   = 0x5E000000;
 
     public static final int STEEL_MID   = 0xFF9A9EA8;
+    public static final int STEEL_NEAR  = 0xFFA6AAB4;
+    public static final int STEEL_DEEP  = 0xFF5E626C;
+    public static final int STEEL_EDGE  = 0xFF464A52;
     public static final int PLAGUE      = 0xFF6A8A48;
 
 
@@ -58,6 +61,46 @@ public final class DiaryChrome {
     }
 
     // ── Divisor horizontal con fade + rombo central ─────────────────────────
+    public static void drawRegistryTag(GuiGraphics gfx, int panelX, int panelY, int panelW,
+                                       int panelH, String regCode) {
+        if (panelW < 330) return; // paneles muy chicos: se omite para no chocar
+        drawRegistryTagAt(gfx, panelX + panelW - 66, panelY + 6, regCode);
+    }
+
+
+    public static void drawRegistryTagLeft(GuiGraphics gfx, int panelX, int panelY, String regCode) {
+        drawRegistryTagAt(gfx, panelX + 8, panelY + 6, regCode);
+    }
+
+
+    public static void drawRegistryTagAt(GuiGraphics gfx, int x, int y, String regCode) {
+        int w = 58;
+        int h = 13;
+
+        // base de acero cepillado
+        for (int i = 0; i < h; i++) {
+            int v = STEEL_MID + (i % 3 == 0 ? 4 : (i % 3 == 1 ? -2 : 0));
+            gfx.fill(x + 1, y + i, x + w - 1, y + i + 1, v);
+        }
+        // borde
+        gfx.fill(x, y, x + w, y + 1, STEEL_EDGE);
+        gfx.fill(x, y + h - 1, x + w, y + h, STEEL_EDGE);
+        gfx.fill(x, y, x + 1, y + h, STEEL_EDGE);
+        gfx.fill(x + w - 1, y, x + w, y + h, STEEL_EDGE);
+        // biseles interiores
+        gfx.fill(x + 1, y + 1, x + w - 1, y + 2, STEEL_NEAR);
+        gfx.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, STEEL_DEEP);
+        // marca de cuarentena (verde plaga) en el borde izquierdo
+        gfx.fill(x + 1, y + 2, x + 2, y + h - 2, PLAGUE);
+        // remaches
+        gfx.fill(x + 4, y + 2, x + 6, y + 4, STEEL_DEEP);
+        gfx.fill(x + w - 6, y + 2, x + w - 4, y + 4, STEEL_DEEP);
+        // texto del registro
+        int tw = gfx.drawString(Minecraft.getInstance().font, regCode, x + 2, y + 3,
+                DiaryTheme.withAlpha(0x002A2620, 235), false);
+        gfx.fill(x + 2 + tw + 2, y + 4, x + 2 + tw + 4, y + 5, STEEL_EDGE);
+    }
+
     public static void drawInkDivider(GuiGraphics gfx, int x, int y, int w) {
         int fade = Math.max(8, w / 6);
         int cx   = x + w / 2;

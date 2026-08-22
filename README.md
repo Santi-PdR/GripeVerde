@@ -5,16 +5,18 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.21.21 - Se termina la deuda de los no-op**
+**v0.21.23 - Se reconstruye desde el registro previo**
 
-Limpieza final de la reversion: se eliminaron las ultimas treinta llamadas
-a los carteles que ya no se dibujan, los tres helpers muertos que las
-atendian, las variables que los alimentaban y el pie de registro de la
-cronica. Las barras de desplazamiento de tres salas, que habian quedado
-referenciando medidas eliminadas, se anclaron al borde derecho del panel.
-Sin cambios visibles de fondo ni de gameplay. 59 clases Java, 25 idiomas,
-35 eventos de sonido, 42 OGG y 0 PNG de contenedores. Documentacion
-sincronizada y version 0.21.21.
+Se localizo en el historial el estado anterior a la version que altero las
+interfaces (el registro v0.17.2) y desde el se reconstruyeron las diecisiete
+salas del gabinete a su forma original: cabeceras propias de cada sala, sin
+carteles ni paneles de la epoca revertida. Se conservan intactas las demas
+versiones: el arreglo del registro sonoro, la limpieza, la memoria del
+gabinete con sus cuarenta y siete fichas, el periodico, el telegrafo y los
+arreglos de audio y rendimiento. El sello que cierra el archivo, las fichas
+de la limpieza y los avisos de las cien aperturas siguen activos. 61 clases
+Java, 25 idiomas, 35 eventos de sonido, 42 OGG y 0 PNG de contenedores.
+Documentacion sincronizada y version 0.21.23.
 
 ## Resumen visible del Mod Menu
 
@@ -99,8 +101,8 @@ Reglas actuales:
 ## Documentacion
 
 - `CONTRIBUTING.md` - guia corta de contribucion (branch fija, no gameplay, validacion).
-- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.22.
-- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.22).
+- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.23.
+- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.23).
 - `KNOWN_ISSUES.md` - estado tecnico, decisiones activas, errores documentados, KIs.
 - `README.md` - esta portada.
 

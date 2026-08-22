@@ -1,24 +1,16 @@
 package com.eternalcraft.gripeverde.client.screens;
 
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
-import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
-import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
-import com.eternalcraft.gripeverde.client.widgets.DiaryTextField;
 import com.eternalcraft.gripeverde.client.widgets.DiaryToggle;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * Version Diary de ControlsScreen (pantalla "Controles" hub).
@@ -42,18 +34,13 @@ import java.util.Locale;
  */
 public class DiaryControlsScreen extends Screen {
 
-    private static final int PANEL_W = 520;
-    private static final int PANEL_H = 278;
+    private static final int PANEL_W = 340;
+    private static final int PANEL_H = 260;
 
     private final Screen lastScreen;
     private final Options options;
     private int panelX, panelY, panelW, panelH;
     private boolean smugglerSeen = false;
-    private long openedAtMs = 0L;
-
-    // v0.21.4: busqueda del manual (filtra los puntos de entrada y toggles)
-    private final List<AbstractWidget> controlItems = new ArrayList<>();
-    private DiaryTextField searchField = null;
 
     public DiaryControlsScreen(Screen parent, Options options) {
         super(Component.translatable("controls.title"));
@@ -77,31 +64,27 @@ public class DiaryControlsScreen extends Screen {
         this.panelX = (this.width - this.panelW) / 2;
         this.panelY = (this.height - this.panelH) / 2;
 
-        // Grid 2 columnas x 3 filas dentro del panel, con carril lateral de protocolo
-        int gridTop = this.panelY + 62;
+        // Grid 2 columnas x 3 filas dentro del panel
+        int gridTop = this.panelY + 50;
         int rowH = 24;
         int btnW = 150;
         int btnH = 20;
-        int col1X = this.panelX + 22;
-        int col2X = col1X + btnW + 10;
+        int col1X = this.panelX + (this.panelW / 2) - btnW - 4;
+        int col2X = this.panelX + (this.panelW / 2) + 4;
 
         // Fila 0: Mouse... | Atajos...
-        DiaryButton mouseBtn = new DiaryButton(
+        this.addRenderableWidget(new DiaryButton(
             col1X, gridTop, btnW, btnH,
             Component.translatable("options.mouse_settings"),
             DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
             () -> this.minecraft.setScreen(new net.minecraft.client.gui.screens.MouseSettingsScreen(this, this.options))
-        );
-        this.addRenderableWidget(mouseBtn);
-        this.controlItems.add(mouseBtn);
-        DiaryButton keyBindsBtn = new DiaryButton(
+        ));
+        this.addRenderableWidget(new DiaryButton(
             col2X, gridTop, btnW, btnH,
             Component.translatable("controls.keybinds"),
             DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
             () -> this.minecraft.setScreen(new net.minecraft.client.gui.screens.controls.KeyBindsScreen(this, this.options))
-        );
-        this.addRenderableWidget(keyBindsBtn);
-        this.controlItems.add(keyBindsBtn);
+        ));
 
         // Fila 1: toggleCrouch | toggleSprint
         addDiaryToggle(this.options.toggleCrouch(),
@@ -121,19 +104,6 @@ public class DiaryControlsScreen extends Screen {
             Component.translatable("options.operatorItemsTab"),
             col2X, gridTop + rowH * 2, btnW, btnH);
 
-        // v0.21.4: campo de busqueda del manual (filtra los 6 puntos de mando).
-        // Se omite en paneles muy pequenos para no invadir el divisor.
-        if (this.panelH >= 220) {
-            int searchX = col1X;
-            int searchW = (col2X + btnW) - searchX;
-            int searchY = gridTop + rowH * 3 + 8;
-            this.searchField = new DiaryTextField(this.font, searchX, searchY, searchW, 18,
-                Component.literal("search"));
-            this.searchField.setMaxLength(24);
-            this.searchField.setResponder(q -> applyManualSearch(q));
-            this.addRenderableWidget(this.searchField);
-        }
-
         // Boton Volver Diary
         int backW = 120;
         int backY = this.panelY + this.panelH - 30;
@@ -144,7 +114,6 @@ public class DiaryControlsScreen extends Screen {
             DiaryButton.Variant.PRIMARY,
             () -> this.onClose()
         ));
-        this.openedAtMs = System.currentTimeMillis();
     }
 
     /** Toggle Diary generico con etiqueta base + On/Off por defecto. */
@@ -160,24 +129,6 @@ public class DiaryControlsScreen extends Screen {
         this.addRenderableWidget(new DiaryToggle(x, y, w, h, opt, baseLabel, fmt, null));
     }
 
-    // v0.21.4: filtro del manual por nombre de entrada o mando.
-    private void applyManualSearch(String query) {
-        String q = query == null ? "" : query.toLowerCase(Locale.ROOT).trim();
-        for (AbstractWidget w : this.controlItems) {
-            String label = w.getMessage().getString().toLowerCase(Locale.ROOT);
-            w.visible = q.isEmpty() || label.contains(q);
-        }
-    }
-
-    private boolean noManualMatches() {
-        if (this.controlItems.isEmpty()) return false;
-        boolean anyVisible = false;
-        for (AbstractWidget w : this.controlItems) {
-            if (w.visible) { anyVisible = true; break; }
-        }
-        return !anyVisible;
-    }
-
     @Override
     public void tick() {
         super.tick();
@@ -186,50 +137,50 @@ public class DiaryControlsScreen extends Screen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        // Escena viva
+        // Clear framebuffer + transition fade
         g.fill(0, 0, this.width, this.height, 0xFF000000);
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
+                // Overlay
 
-        float reveal = DiaryChrome.reveal(this.openedAtMs, 240L);
-        DiaryChrome.renderPanelBase(g, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.BRONZE, PaperTexture.PaperKind.TECHNICAL);
+        // Pergamino
+        DiaryChrome.drawPanelShadow(g, this.panelX, this.panelY, this.panelW, this.panelH);
+        PaperTexture.drawClean(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.TECHNICAL);
 
-        ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW, this.title, reveal);
+        // Titulo
+        String titleStr = this.title.getString();
+        int titleX = this.width / 2;
+        int titleY = this.panelY + 10;
+        {
+        int _tw = this.font.width(titleStr);
+        g.drawString(this.font, titleStr, titleX - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
+        }
 
+        // Subtitulo
+        String subtitle = "- " + Component.translatable("gripeverde.options.controls.subtitle").getString() + " -";
+        int subWC = this.font.width(subtitle);
+        g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
+        // Flavor
+        String flavor = Component.translatable("gripeverde.options.controls.flavor").getString();
+        int flvWC = this.font.width(flavor);
+        g.drawString(this.font, flavor, (this.width - flvWC) / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
 
-
-
-
+        // Divisores + esquineros
+        int divY1 = titleY + 42;
+        DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY1);
         int divY2 = this.panelY + this.panelH - 38;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
+        DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
+        DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. III");
 
-        if (this.searchField != null) {
-            boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
-            if (this.searchField.getValue().isEmpty() && !this.searchField.isFocused()) {
-                String hint = en ? "type to filter the manual" : "escriba para filtrar el manual";
-                g.drawString(this.font, hint, this.searchField.getX() + 6, this.searchField.getY() + 5,
-                    DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 170), false);
-            }
-            if (!this.searchField.getValue().isEmpty() && noManualMatches()) {
-                String none = en ? "- no entry matches -" : "- ningun punto coincide -";
-                int nx = this.searchField.getX() + (this.searchField.getWidth() - this.font.width(none)) / 2;
-                g.drawString(this.font, none, nx, this.searchField.getY() + 24,
-                    DiaryTheme.withAlpha(DiaryTheme.INK, 130), false);
-            }
+        // Widgets
+        for (Renderable r : this.renderables) {
+            r.render(g, mouseX, mouseY, partialTick);
         }
 
-        if (reveal < 0.995f) {
-            int revealBottom = this.panelY + Math.max(28, (int)(this.panelH * reveal));
-            g.enableScissor(this.panelX - 2, this.panelY - 2, this.panelX + this.panelW + 2, revealBottom);
-            for (Renderable r : this.renderables) {
-                r.render(g, mouseX, mouseY, partialTick);
-            }
-            g.disableScissor();
-        } else {
-            for (Renderable r : this.renderables) {
-                r.render(g, mouseX, mouseY, partialTick);
-            }
-        }
-
+        // v0.16.0: la senal del contrabandista.
+        // Agacharse y correr en "alternar"; el resto, quieto.
         try {
             if (!smugglerSeen
                     && this.options.toggleCrouch().get()
@@ -250,19 +201,6 @@ public class DiaryControlsScreen extends Screen {
             com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, this.panelY - 12);
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
         } catch (Throwable ignored) {}
-    }
-
-    private String buildControlSummaryTitle() {
-        boolean crouch = this.options.toggleCrouch().get();
-        boolean sprint = this.options.toggleSprint().get();
-        if (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()) {
-            if (crouch && sprint) return "toggle posture engaged";
-            if (crouch || sprint) return "mixed field habits";
-            return "hands remain direct";
-        }
-        if (crouch && sprint) return "postura alternada activa";
-        if (crouch || sprint) return "habitos de campo mixtos";
-        return "las manos siguen directas";
     }
 
     @Override

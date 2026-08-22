@@ -1,5 +1,35 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.21.23 - Se reconstruye desde el registro previo (2026-08-22)
+
+### Cambios cerrados
+- Backup localizado: commit `39e4720` (v0.17.2, previo a la alteracion
+  v0.19.0). Excluidas v0.19.0/v0.20.0/v0.21.0.
+- 17 pantallas Diary restauradas a su forma pre-alteracion (cabeceras
+  propias, sin carteles/rails).
+- Restaurados: DiaryMusicSlider, DiaryAmbienceSlider, DiaryPackSelectionScreen.
+- Eliminada: DiaryVideoSettingsScreen (nacio en la alteracion).
+- DiaryChrome: anadidos drawRegistryTag* + STEEL_NEAR/DEEP/EDGE.
+- Lang: packs.subtitle restaurada en los 25 idiomas.
+- Re-aplicado lore: triggers Title, cadena de fichas Archive, sello
+  SIGILLUM + campana.
+- Re-eliminados: drawGreeting, drawLedgerDetails/scrollToSection,
+  drawRowBands/openTelemetry.
+- Lista negra del build ajustada (DiaryMusicSlider/DiaryAmbienceSlider
+  fuera, DiaryVideoSettingsScreen dentro).
+- Conteos: 61 clases, 25 lang (81 claves), 35 eventos, 42 OGG.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.22 -> 0.21.23.
+
+### Riesgos activos / KI nuevos
+- **KI-48 (v0.21.23)**: validar en cliente — recorrer todas las salas con
+  la identidad v0.17.2 + lore v0.21.x (especialmente Options, Sound,
+  Multiplayer, Archive con SIGILLUM, Title con fichas).
+- KI-47, KI-46, KI-45, KI-44, KI-41/43, KI-39/40 pendientes. KI-29
+  (pistas MenuMusic) requiere OGGs del usuario.
+
+---
+
 ## v0.21.21 - Se termina la deuda de los no-op (2026-08-22)
 
 ### Cambios cerrados

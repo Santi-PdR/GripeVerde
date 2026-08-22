@@ -1,5 +1,17 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.23 - Se reconstruye desde el registro previo
+
+Registro tecnico: se localizo en el historial el estado anterior a la
+version que altero las interfaces (el registro v0.17.2) y desde el se
+reconstruyeron las diecisiete salas del gabinete a su forma original:
+cabeceras propias de cada sala, sin carteles ni paneles de la epoca
+revertida. Se conservan intactas las demas versiones: el arreglo del
+registro sonoro, la limpieza, la memoria del gabinete con sus cuarenta y
+siete fichas, el periodico, el telegrafo y los arreglos de audio y
+rendimiento. El sello que cierra el archivo, las fichas de la limpieza y
+los avisos de las cien aperturas siguen activos.
+
 ## v0.21.22 - Hotfix compilacion
 
 Registro tecnico: la limpieza de la v0.21.21 dejo una firma de metodo rota

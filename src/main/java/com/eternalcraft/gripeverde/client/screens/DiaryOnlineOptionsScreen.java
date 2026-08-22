@@ -2,7 +2,6 @@ package com.eternalcraft.gripeverde.client.screens;
 
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
-import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import net.minecraft.client.OptionInstance;
@@ -22,14 +21,11 @@ import net.minecraft.network.chat.Component;
  */
 public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
 
-    private static final int PANEL_W = 500;
-    private static final int PANEL_H = 258;
+    private static final int PANEL_W = 340;
+    private static final int PANEL_H = 240;
 
     private final SmoothScroll smoothScroll = new SmoothScroll(0.50D, 0.24D);
-    private final Options ownOptions;
     private int panelX, panelY, panelW, panelH;
-
-    private long openedAtMs = 0L;
 
     public DiaryOnlineOptionsScreen(Screen parent, Options options) {
         super(parent,
@@ -39,7 +35,6 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
                   options.realmsNotifications(),
                   options.allowServerListing()
               });
-        this.ownOptions = options;
     }
 
     @Override
@@ -55,8 +50,8 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
         if (this.list != null) {
             this.list.setRenderBackground(false);
             this.list.setRenderTopAndBottom(false);
-            int listTop = this.panelY + 62;
-            int listBottom = this.panelY + this.panelH - 52;
+            int listTop = this.panelY + 55;
+            int listBottom = this.panelY + this.panelH - 45;
             this.list.updateSize(this.width, this.height, listTop, listBottom);
             this.smoothScroll.snapToCurrent(this.list);
         }
@@ -83,14 +78,14 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
             Component.translatable("gripeverde.options.button.done"),
             DiaryButton.Icon.DOOR, DiaryButton.Variant.PRIMARY,
             () -> this.onClose()));
-        this.openedAtMs = System.currentTimeMillis();
     }
 
     @Override
     public void tick() {
         super.tick();
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.tick(1.0f / 20.0f);
-        this.smoothScroll.tick(this.list);    }
+        this.smoothScroll.tick(this.list);
+    }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
@@ -105,31 +100,48 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        // Escena viva
         g.fill(0, 0, this.width, this.height, 0xFF000000);
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
+                // Overlay
 
-        float reveal = DiaryChrome.reveal(this.openedAtMs, 240L);
-        DiaryChrome.renderPanelBase(g, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.BRONZE, PaperTexture.PaperKind.OFFICIAL);
+        // Pergamino
+        DiaryChrome.drawPanelShadow(g, this.panelX, this.panelY, this.panelW, this.panelH);
+        PaperTexture.drawClean(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.OFFICIAL);
 
-        if (this.list != null) {
-            if (reveal < 0.995f) {
-                int revealBottom = this.panelY + Math.max(28, (int)(this.panelH * reveal));
-                g.enableScissor(this.panelX - 2, this.panelY - 2, this.panelX + this.panelW + 2, revealBottom);
-                this.list.render(g, mouseX, mouseY, partialTick);
-                DiaryChrome.drawStyledScrollThumbInPanel(g, this.list, this.panelX + this.panelW - 26);
-                g.disableScissor();
-            } else {
-                this.list.render(g, mouseX, mouseY, partialTick);
-                DiaryChrome.drawStyledScrollThumbInPanel(g, this.list, this.panelX + this.panelW - 26);
-            }
-        }
+        // Titulo
+        String titleStr = this.title.getString();
+        int titleX = this.width / 2;
+        int titleY = this.panelY + 12;
+        int tw = this.font.width(titleStr);
+        g.drawString(this.font, titleStr, titleX - tw / 2, titleY, DiaryChrome.INK_TITLE, false);
 
+        // Subtitulo diegetico
+        String subtitle = "- " + Component.translatable("gripeverde.options.online.subtitle").getString() + " -";
+        int subW = this.font.width(subtitle);
+        g.drawString(this.font, subtitle, titleX - subW / 2, titleY + 14, DiaryChrome.INK_SUBTITLE, false);
+        String flavor = Component.translatable("gripeverde.options.online.flavor").getString();
+        int flavorW = this.font.width(flavor);
+        g.drawString(this.font, flavor, titleX - flavorW / 2, titleY + 26, DiaryChrome.INK_FLAVOR, false);
+
+        // Divisor
+        int divY = titleY + 40;
+        DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY);
+
+        // Divisor inferior + esquineros
         int divY2 = this.panelY + this.panelH - 40;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
+        DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
+        DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. VIII");
+
+        // Lista vanilla
+        if (this.list != null) {
+            this.list.render(g, mouseX, mouseY, partialTick);
+        }
+
+        // Widgets propios (boton Volver)
         for (Renderable r : this.renderables) {
             r.render(g, mouseX, mouseY, partialTick);
         }
     }
-
-
 }

@@ -3,13 +3,10 @@ package com.eternalcraft.gripeverde.client.screens;
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.audio.MenuMusic;
-import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
 import com.eternalcraft.gripeverde.client.render.FlagRenderer;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
-import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
-import com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
@@ -25,8 +22,8 @@ import java.util.Objects;
 
 public class DiaryLanguageScreen extends Screen {
 
-    private static final int PANEL_MAX_W = 520;
-    private static final int PANEL_MAX_H = 322;
+    private static final int PANEL_MAX_W = 420;
+    private static final int PANEL_MAX_H = 300;
     private static final int PANEL_PAD = 18;
     private static final int FOOTER_GAP = 12;
     private static final int FOOTER_BTN_H = 22;
@@ -42,20 +39,6 @@ public class DiaryLanguageScreen extends Screen {
     private static final int INK_ACTIVE  = 0xFF1A0F08;
     private static final int INK_PENDING = 0xFF3A230F;
     private static final int INK_NORMAL  = 0xFF6B4A2E;
-
-    // v0.21.4: registros del gabinete (claves en assets/gripeverde/lang/*.json).
-    // Las 25 lenguas soportadas declaran 136 claves; las demas 0.
-    private static final int REGISTRY_KEYS = 136;
-    private static final java.util.Set<String> REGISTERED = java.util.Set.of(
-        "en_us", "en_gb", "en_ca", "en_au", "en_nz",
-        "es_es", "es_mx", "es_ar", "es_419", "es_bo", "es_cl", "es_co",
-        "es_cr", "es_do", "es_ec", "es_gt", "es_hn", "es_ni", "es_pa",
-        "es_pe", "es_pr", "es_py", "es_sv", "es_uy", "es_ve");
-
-    private static String registryFor(String code) {
-        int n = REGISTERED.contains(code) ? REGISTRY_KEYS : 0;
-        return n + "/" + REGISTRY_KEYS;
-    }
 
     private final Screen parent;
     private final Options options;
@@ -80,7 +63,6 @@ public class DiaryLanguageScreen extends Screen {
     private int listY;
     private int listW;
     private int listH;
-    private long openedAtMs = 0L;
 
     public DiaryLanguageScreen(Screen parent, Options options, LanguageManager languageManager) {
         super(Component.translatable("gripeverde.options.language.title"));
@@ -105,7 +87,7 @@ public class DiaryLanguageScreen extends Screen {
         this.listX = this.panelX + PANEL_PAD;
         this.listY = titleY + 50;
         this.listW = this.panelW - PANEL_PAD * 2;
-        this.listH = footerY - FOOTER_GAP - 52 - this.listY;
+        this.listH = footerY - FOOTER_GAP - this.listY;
         this.languageEntries.clear();
 
         this.languageList = new LanguageList(this.minecraft, this.listX, this.listY, this.listW, this.listH);
@@ -139,7 +121,6 @@ public class DiaryLanguageScreen extends Screen {
                 DiaryButton.Variant.PRIMARY,
                 this::applyAndClose
         ));
-        this.openedAtMs = System.currentTimeMillis();
     }
 
     @Override
@@ -151,35 +132,52 @@ public class DiaryLanguageScreen extends Screen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        // Clear framebuffer + transition fade
         g.fill(0, 0, this.width, this.height, 0xFF000000);
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
-        float reveal = DiaryChrome.reveal(this.openedAtMs, 240L);
-        DiaryChrome.renderPanelBase(g, panelX, panelY, panelW, panelH, DiaryTheme.BRONZE, PaperTexture.PaperKind.ARCHIVE);
-        ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW, this.title, reveal);
+        DiaryChrome.drawPanelShadow(g, panelX, panelY, panelW, panelH);
+        PaperTexture.drawClean(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.ARCHIVE);
 
+        int titleY = this.panelY + PANEL_PAD;
+        int cx = this.width / 2;
+        {
+            int titleW = this.font.width(this.title);
+            int titleX = (this.width - titleW) / 2;
+            g.drawString(this.font, this.title, titleX, titleY, DiaryChrome.INK_TITLE, false);
 
+            String subtitle = "- " + Component.translatable("gripeverde.options.language.subtitle").getString() + " -";
+            int subWL = this.font.width(subtitle);
+            g.drawString(this.font, subtitle, cx - subWL / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
-        if (this.languageList != null) {
-            if (reveal < 0.995f) {
-                int revealBottom = this.panelY + Math.max(28, (int)(this.panelH * reveal));
-                g.enableScissor(this.panelX - 2, this.panelY - 2, this.panelX + this.panelW + 2, revealBottom);
-                this.languageList.render(g, mouseX, mouseY, partialTick);
-                g.disableScissor();
-            } else {
-                this.languageList.render(g, mouseX, mouseY, partialTick);
-            }
+            Component flavor = Component.translatable("gripeverde.options.language.flavor");
+            int flvWL = this.font.width(flavor);
+            g.drawString(this.font, flavor, cx - flvWL / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
+
+            int divY1 = titleY + 42;
+            DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY1);
         }
 
-        int statusY = this.panelY + this.panelH - 92;
+        int frameX = this.listX - 4;
+        int frameY = this.listY - 4;
+        int frameW = this.listW + 8;
+        int frameH = this.listH + 8;
 
+        // Fondo interno con textura de pergamino (evita cartulina lisa)
+        PaperTexture.drawClean(g, frameX, frameY, frameW, frameH);
+        // Marco tinta 1px
+        g.fill(frameX, frameY, frameX + frameW, frameY + 1, 0x5A3A2416);
+        g.fill(frameX, frameY + frameH - 1, frameX + frameW, frameY + frameH, 0x5A3A2416);
+        g.fill(frameX, frameY, frameX + 1, frameY + frameH, 0x5A3A2416);
+        g.fill(frameX + frameW - 1, frameY, frameX + frameW, frameY + frameH, 0x5A3A2416);
 
-        DiaryProgressBar.draw(g, this.panelX + 326, statusY + 14, this.panelW - 344, 14,
-            Math.min(1f, this.languageEntries.isEmpty() ? 0f : this.languageEntries.size() / 25f),
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? (this.languageEntries.size() + " registries") : (this.languageEntries.size() + " registros"),
-            DiaryProgressBar.Style.INK);
+        if (this.languageList != null) {
+            this.languageList.render(g, mouseX, mouseY, partialTick);
+        }
 
         int divY2 = this.panelY + this.panelH - PANEL_PAD - FOOTER_BTN_H - 6;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
+        DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
+        DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. IV");
 
         super.render(g, mouseX, mouseY, partialTick);
 
@@ -188,16 +186,12 @@ public class DiaryLanguageScreen extends Screen {
             drawApplyingOverlay(g);
         }
 
+        // v0.16.0
         try {
             com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
             com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, this.panelY - 12);
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
         } catch (Throwable ignored) {}
-    }
-
-    private static String safeCode(String code) {
-        if (code == null || code.isEmpty()) return "—";
-        return code.toUpperCase(java.util.Locale.ROOT);
     }
 
     private void drawSearchBuffer(GuiGraphics g) {
@@ -539,17 +533,11 @@ public class DiaryLanguageScreen extends Screen {
 
             if (hovered || isPending) {
                 String codeText = this.code.toUpperCase(java.util.Locale.ROOT);
-                String regText = DiaryLanguageScreen.registryFor(this.code);
-                int regW = DiaryLanguageScreen.this.font.width(regText);
                 int codeW = DiaryLanguageScreen.this.font.width(codeText);
-                int totalW = codeW + 6 + regW;
-                int codeX = left + rowWidth - totalW - 16;
+                int codeX = left + rowWidth - codeW - 16;
                 if (codeX > textZoneLeft + textW + 8) {
                     int codeColor = isPending ? 0xAA1A0F08 : 0x886B4A2E;
                     g.drawString(DiaryLanguageScreen.this.font, codeText, codeX, textY, codeColor, false);
-                    // v0.21.4: cada consulado declara cuantas claves tiene en el gabinete.
-                    g.drawString(DiaryLanguageScreen.this.font, regText, codeX + codeW + 6, textY,
-                        isPending ? 0x881A0F08 : 0x556B4A2E, false);
                 }
             }
         }

@@ -2,13 +2,11 @@ package com.eternalcraft.gripeverde.client.screens;
 
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.audio.MenuMusic;
-import com.eternalcraft.gripeverde.client.lore.Discoveries;
-import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
-import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
-import com.eternalcraft.gripeverde.client.widgets.DiarySlider;
+import com.eternalcraft.gripeverde.client.widgets.DiaryMusicSlider;
+import com.eternalcraft.gripeverde.client.widgets.DiaryAmbienceSlider;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
@@ -33,7 +31,7 @@ import java.lang.reflect.Field;
  *  - super.init() se ejecuta normalmente: crea la OptionsList vanilla con todas las filas.
  *  - Reflection acotada sobre el campo privado 'list' para desactivarle fondo y bordes.
  *    Fallback silencioso: si falla, la lista se ve con fondo negro pero funciona.
- *  - Se agrega DiarySlider (musica) como widget flotante debajo de la lista.
+ *  - Se agrega DiaryMusicSlider como widget flotante debajo de la lista.
  *  - Bypass total de super.render(): dibujamos escena viva + pergamino + cosmetica
  *    + list.render() manual + slider + boton Volver propio.
  *
@@ -43,17 +41,15 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
 
     private static final Logger LOG = LogUtils.getLogger();
 
-    private static final int PANEL_W = 540;
-    private static final int PANEL_H = 392;
+    private static final int PANEL_W = 340;
+    private static final int PANEL_H = 380;
     private static final int SLIDER_H = 20;
-    private static final int RAIL_W = 156;
 
     private int panelX, panelY, panelW, panelH;
     private OptionsList reflectedList;
     private final SmoothScroll smoothScroll = new SmoothScroll();
-    private DiarySlider musicSlider;
-    private DiarySlider ambienceSlider;
-    private long openedAtMs = 0L;
+    private DiaryMusicSlider musicSlider;
+    private DiaryAmbienceSlider ambienceSlider;
 
     public DiarySoundOptionsScreen(Screen parent, Options options) {
         super(parent, options);
@@ -74,7 +70,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             this.reflectedList.setRenderBackground(false);
             this.reflectedList.setRenderTopAndBottom(false);
 
-            int listTop = this.panelY + 58;
+            int listTop = this.panelY + 45;
             int listBottom = this.panelY + this.panelH - 100; // deja hueco para 2 sliders + divisor + boton
             this.reflectedList.updateSize(this.width, this.height, listTop, listBottom);
             this.smoothScroll.snapToCurrent(this.reflectedList);
@@ -94,18 +90,11 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             }
         }
 
-        // Slider propio de musica del mod, debajo de la lista / fuera del carril lateral
-        int sliderW = this.panelW - RAIL_W - 58;
-        int sliderX = this.panelX + 22;
+        // Slider propio de musica del mod, debajo de la lista
+        int sliderW = this.panelW - 40;
+        int sliderX = this.panelX + 20;
         int sliderY = this.panelY + this.panelH - 82;
-        this.musicSlider = new DiarySlider(sliderX, sliderY, sliderW, SLIDER_H,
-            MenuMusic.getUserVolume(),
-            v -> {
-                int pct = (int) Math.round(v * 100.0);
-                return Component.translatable("gripeverde.options.sound.music_slider").getString()
-                    + ": " + pct + "%";
-            },
-            v -> MenuMusic.setUserVolume((float) v));
+        this.musicSlider = new DiaryMusicSlider(sliderX, sliderY, sliderW, SLIDER_H);
         this.addRenderableWidget(this.musicSlider);
 
         // Slider de ambiente: mas pequeno, debajo del de musica
@@ -113,20 +102,13 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         int ambSliderW = sliderW * 3 / 4;  // 75% del ancho del principal
         int ambSliderX = sliderX + (sliderW - ambSliderW) / 2;
         int ambSliderY = sliderY + SLIDER_H + 2;
-        this.ambienceSlider = new DiarySlider(ambSliderX, ambSliderY, ambSliderW, ambSliderH,
-            com.eternalcraft.gripeverde.client.audio.MenuAmbience.getUserVolume(),
-            v -> {
-                int pct = (int) Math.round(v * 100.0);
-                return Component.translatable("gripeverde.options.sound.ambience_slider").getString()
-                    + ": " + pct + "%";
-            },
-            v -> com.eternalcraft.gripeverde.client.audio.MenuAmbience.setUserVolume((float) v));
+        this.ambienceSlider = new DiaryAmbienceSlider(ambSliderX, ambSliderY, ambSliderW, ambSliderH);
         this.addRenderableWidget(this.ambienceSlider);
 
         // Boton Volver estilo diario
-        int btnW = 132;
+        int btnW = 120;
         int btnH = 20;
-        int btnX = sliderX + (sliderW - btnW) / 2;
+        int btnX = (this.width - btnW) / 2;
         int btnY = this.panelY + this.panelH - 30;
         this.addRenderableWidget(new DiaryButton(
             btnX, btnY, btnW, btnH,
@@ -135,7 +117,6 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             DiaryButton.Variant.PRIMARY,
             () -> this.onClose()
         ));
-        this.openedAtMs = System.currentTimeMillis();
     }
 
     /**
@@ -225,42 +206,62 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        // --- Escena viva atenuada ---
+        // Clear framebuffer + transition fade
         g.fill(0, 0, this.width, this.height, 0xFF000000);
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
+                // --- Overlay oscuro ---
 
-        float reveal = DiaryChrome.reveal(this.openedAtMs, 260L);
-        DiaryChrome.renderPanelBase(g, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.AMBER_FLAME, PaperTexture.PaperKind.LEDGER);
+        // --- Pergamino ---
+        DiaryChrome.drawPanelShadow(g, this.panelX, this.panelY, this.panelW, this.panelH);
+        PaperTexture.drawClean(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.LEDGER);
 
-        ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW, Component.translatable("options.sounds.title"), reveal);
-
-
-
-
-
-
-
-        if (this.reflectedList != null) {
-            if (reveal < 0.995f) {
-                int revealBottom = this.panelY + Math.max(28, (int)(this.panelH * reveal));
-                g.enableScissor(this.panelX - 2, this.panelY - 2, this.panelX + this.panelW + 2, revealBottom);
-                this.reflectedList.render(g, mouseX, mouseY, partialTick);
-                DiaryChrome.drawStyledScrollThumbInPanel(g, (AbstractSelectionList<?>) this.reflectedList, this.panelX + this.panelW - 26);
-                g.disableScissor();
-            } else {
-                this.reflectedList.render(g, mouseX, mouseY, partialTick);
-                DiaryChrome.drawStyledScrollThumbInPanel(g, (AbstractSelectionList<?>) this.reflectedList, this.panelX + this.panelW - 26);
-            }
+        // --- Titulo ---
+        String titleStr = Component.translatable("options.sounds.title").getString();
+        int titleX = this.width / 2;
+        int titleY = this.panelY + 10;
+        {
+        int _tw = this.font.width(titleStr);
+        g.drawString(this.font, titleStr, titleX - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
         }
 
+        // --- Subtitulo ---
+        String subtitle = "- " + Component.translatable("gripeverde.options.sound.subtitle").getString() + " -";
+        int subWC = this.font.width(subtitle);
+        g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
+
+        // --- Flavor ---
+        String flavor = Component.translatable("gripeverde.options.sound.flavor").getString();
+        int flvWC = this.font.width(flavor);
+        g.drawString(this.font, flavor, (this.width - flvWC) / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
+
+        // --- Divisor superior ---
+        int divY1 = titleY + 42;
+        DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY1);
+
+        // --- Lista vanilla sin gradientes blancos ni bandejas extra ---
+        if (this.reflectedList != null) {
+            this.reflectedList.render(g, mouseX, mouseY, partialTick);
+            DiaryChrome.drawStyledScrollThumbInPanel(g,
+                (AbstractSelectionList<?>) this.reflectedList, this.panelX + this.panelW);
+        }
+
+        // --- Divisor entre lista y slider ---
         int divY2 = this.panelY + this.panelH - 88;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
+
+        // --- Divisor inferior + esquineros ---
         int divY3 = this.panelY + this.panelH - 38;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY3);
+        DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
+        DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. II");
 
+        // --- Slider + boton (renderables propios) ---
         for (Renderable r : this.renderables) {
             r.render(g, mouseX, mouseY, partialTick);
         }
 
+        // v0.16.0
         try {
             com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
             com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, this.panelY - 12);

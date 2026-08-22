@@ -27,11 +27,15 @@ public class DiaryPauseScreen extends PauseScreen {
     private static final int PANEL_MAX_W = 320;
     private static final int PANEL_MAX_H = 360;
     // Alto minimo para que quepan todos los ornamentos + botones sin superposicion
+    private static final int PANEL_MIN_H = 260;
     private static final int MARGIN_TOP    = 20;
+    private static final int MARGIN_BOTTOM_IDEAL = 55;  // hotbar completa
     private static final int MARGIN_BOTTOM_MIN   = 55;  // solo hotbar mesh
     private static final int MARGIN_SIDE   = 20;
 
     // Ornamentos internos (offsets relativos)
+    private static final int ORN_TITLE_TOP    = 24;
+    private static final int ORN_SUBTITLE_TOP = 58;
     private static final int ORN_SEP_TOP      = 80;
     private static final int ORN_SEP_BOT_FROM_BOT = 48;
     private static final int ORN_SIGN_FROM_BOT    = 28;
@@ -51,7 +55,6 @@ public class DiaryPauseScreen extends PauseScreen {
     private static final int BTN_GAP = 4;
 
     private int animTick = 0;
-    private long pauseOpenedAtMs = 0L;
 
     // ── v0.16.0: la pausa responde ──
     private boolean candleOut = false;
@@ -76,7 +79,6 @@ public class DiaryPauseScreen extends PauseScreen {
 
     @Override
     protected void init() {
-        this.pauseOpenedAtMs = System.currentTimeMillis();
         int px = panelX();
         int py = panelY();
         int pw = panelW();
@@ -287,7 +289,6 @@ public class DiaryPauseScreen extends PauseScreen {
         drawPanelTitle(g, px, py);
         drawDateStamp(g, px, py);
         drawPanelSeparators(g, px, py);
-        drawPauseLedger(g, px, py);
 
         // Elementos decorativos
         drawRaven(g, px + 14, py + 22);
@@ -308,7 +309,7 @@ public class DiaryPauseScreen extends PauseScreen {
                 // Solo a oscuras se lee esto
                 long now = System.currentTimeMillis();
                 int pulse = 60 + (int)(Math.sin(now / 650.0) * 24);
-                boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+                boolean en = isEnglishSelected();
                 String dark = en ? "the darkness reads too" : "la oscuridad tambien lee";
                 int dw = this.font.width(dark);
                 g.drawString(this.font, dark, px + (panelW() - dw) / 2, py + panelH() / 2,
@@ -398,19 +399,7 @@ public class DiaryPauseScreen extends PauseScreen {
 
         // 4. Marco perimetral (siempre al final para que no lo cubra el brillo)
         drawDoubleBorder(g, x, y, w, h);
-        // Esquineros de oro tarnished, estilo propio de la pausa (marco de diario)
-        {
-            int size = 10;
-            int c = DiaryTheme.GOLD_TARNISHED;
-            g.fill(x - 1, y - 1, x + size, y + 1, c);
-            g.fill(x - 1, y - 1, x + 1, y + size, c);
-            g.fill(x + w - size, y - 1, x + w + 1, y + 1, c);
-            g.fill(x + w - 1, y - 1, x + w + 1, y + size, c);
-            g.fill(x - 1, y + h - 1, x + size, y + h + 1, c);
-            g.fill(x - 1, y + h - size, x + 1, y + h + 1, c);
-            g.fill(x + w - size, y + h - 1, x + w + 1, y + h + 1, c);
-            g.fill(x + w - 1, y + h - size, x + w + 1, y + h + 1, c);
-        }
+        drawCornerOrnaments(g, x, y, w, h);
     }
 
     private void drawPaperTextureMinimal(GuiGraphics g, int x, int y, int w, int h) {
@@ -464,24 +453,22 @@ public class DiaryPauseScreen extends PauseScreen {
         g.fill(x2 - 1, y1, x2, y2, color);
     }
 
+    private void drawCornerOrnaments(GuiGraphics g, int x, int y, int w, int h) {
+        int size = 10;
+        int c = DiaryTheme.GOLD_TARNISHED;
+        g.fill(x - 1, y - 1, x + size, y + 1, c);
+        g.fill(x - 1, y - 1, x + 1, y + size, c);
+        g.fill(x + w - size, y - 1, x + w + 1, y + 1, c);
+        g.fill(x + w - 1, y - 1, x + w + 1, y + size, c);
+        g.fill(x - 1, y + h - 1, x + size, y + h + 1, c);
+        g.fill(x - 1, y + h - size, x + 1, y + h + 1, c);
+        g.fill(x + w - size, y + h - 1, x + w + 1, y + h + 1, c);
+        g.fill(x + w - 1, y + h - size, x + w + 1, y + h + 1, c);
+    }
+
     // ================================================================
     // TITULO / FECHA / SEPARADORES / FIRMA / SELLO
     // ================================================================
-
-    private void drawPauseLedger(GuiGraphics g, int px, int py) {
-        String docket = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "FIELD DOSSIER" : "DOSIER DE CAMPO";
-        g.drawString(this.font, docket, px + 14, py + 12, DiaryTheme.SEPIA_MID, false);
-
-        String state;
-        if (this.minecraft.hasSingleplayerServer()) state = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "LOCAL WATCH" : "VIGILIA LOCAL";
-        else state = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "REMOTE WATCH" : "VIGILIA REMOTA";
-        int sw = this.font.width(state);
-        int sx = px + panelW() - sw - 18;
-        g.fill(sx - 6, py + 11, sx + sw + 6, py + 24, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 28));
-        g.fill(sx - 6, py + 11, sx + sw + 6, py + 12, DiaryTheme.BRONZE_DARK);
-        g.drawString(this.font, state, sx, py + 15, DiaryTheme.INK, false);
-    }
-
 
     private void drawPanelTitle(GuiGraphics g, int px, int py) {
         String title = Component.translatable("gripeverde.pause.title").getString();
@@ -556,7 +543,7 @@ public class DiaryPauseScreen extends PauseScreen {
     }
 
     private void drawSignature(GuiGraphics g, int px, int py) {
-        Component sig = Component.literal(com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+        Component sig = Component.literal(isEnglishSelected()
                 ? "Signed: S. Pereira, M.D."
                 : "Firmado: S. Pereira, Medico")
             .withStyle(ChatFormatting.ITALIC);
@@ -568,12 +555,21 @@ public class DiaryPauseScreen extends PauseScreen {
         // v0.16.0: tras bastantes hallazgos, la firma reconoce al lector.
         try {
             if (com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.discoveredCount() >= 10) {
-                String add = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "- and of whoever reads -" : "- y de quien lee -";
+                String add = isEnglishSelected() ? "- and of whoever reads -" : "- y de quien lee -";
                 int aw = this.font.width(add);
                 g.drawString(this.font, add, centerX - aw / 2, sy - 10,
                     DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 130), false);
             }
         } catch (Throwable ignored) {}
+    }
+
+    private static boolean isEnglishSelected() {
+        try {
+            String lang = net.minecraft.client.Minecraft.getInstance().getLanguageManager().getSelected();
+            return lang == null || lang.startsWith("en_") || lang.equals("en_us");
+        } catch (Throwable ignored) {
+            return false;
+        }
     }
 
     private void drawWaxSeal(GuiGraphics g, int cx, int cy) {
@@ -610,6 +606,7 @@ public class DiaryPauseScreen extends PauseScreen {
 
         int black = 0xFF0A0503;
         int darkGray = 0xFF1F1408;
+        int highlight = DiaryTheme.SEPIA_DARK;
         int eye = 0xFFD4941E;  // ojo ambar
 
         // Cuerpo principal (elipse aproximada)
@@ -707,6 +704,7 @@ public class DiaryPauseScreen extends PauseScreen {
 
         // Halo (cálido, envuelve todo)
         int haloAlpha = 60 + (flameFrame * 15);
+        int haloC = DiaryTheme.withAlpha(flameHalo, haloAlpha);
         // Halo circular grande
         for (int dy = -8; dy <= 8; dy++) {
             for (int dx = -8; dx <= 8; dx++) {

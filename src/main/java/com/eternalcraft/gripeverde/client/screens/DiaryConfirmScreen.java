@@ -3,8 +3,6 @@ package com.eternalcraft.gripeverde.client.screens;
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
-import com.eternalcraft.gripeverde.client.render.DiaryTheme;
-import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 
@@ -27,15 +25,13 @@ import java.util.List;
  */
 public class DiaryConfirmScreen extends ConfirmScreen {
 
-    private static final int PANEL_MAX_W = 420;
-    private static final int PANEL_MAX_H = 196;
+    private static final int PANEL_MAX_W = 340;
+    private static final int PANEL_MAX_H = 180;
 
     private final Screen parent;
     // Guardamos el mensaje propio porque ConfirmScreen.message es private
     private final Component ownMessage;
     private MultiLineLabel ownMultilineMessage;
-    private int panelX, panelY, panelW, panelH;
-    private long openedAtMs = 0L;
 
     public DiaryConfirmScreen(BooleanConsumer callback, Component title, Component message, Screen parent) {
         super(callback, title, message);
@@ -80,16 +76,12 @@ public class DiaryConfirmScreen extends ConfirmScreen {
             // Silencioso. Fallback: botones vanilla quedan visibles.
         }
 
-        this.panelW = Math.min(PANEL_MAX_W, this.width - 34);
-        this.panelH = Math.min(PANEL_MAX_H, this.height - 28);
-        this.panelX = (this.width - this.panelW) / 2;
-        this.panelY = (this.height - this.panelH) / 2;
-
         // Botones Diary propios
-        int btnW = 112;
+        int btnW = 100;
         int btnH = 20;
-        int btnY = this.panelY + this.panelH - btnH - 16;
-        int gap = 14;
+        int panelY = (this.height - PANEL_MAX_H) / 2;
+        int btnY = panelY + PANEL_MAX_H - btnH - 16;
+        int gap = 12;
         int totalW = btnW * 2 + gap;
         int startX = (this.width - totalW) / 2;
 
@@ -116,7 +108,6 @@ public class DiaryConfirmScreen extends ConfirmScreen {
 
         this.addRenderableWidget(diaryYes);
         this.addRenderableWidget(diaryNo);
-        this.openedAtMs = System.currentTimeMillis();
     }
 
     @Override
@@ -129,34 +120,60 @@ public class DiaryConfirmScreen extends ConfirmScreen {
 
     @Override
     public void render(GuiGraphics gfx, int mouseX, int mouseY, float partial) {
+        // Fondo: escena viva del Title
         try {
             com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(gfx, this.width, this.height);
-        } catch (Throwable ignored) {}
+                } catch (Throwable ignored) {
+            // Si algo del pipeline falla, seguimos con overlay negro
+        }
 
-        float reveal = DiaryChrome.reveal(this.openedAtMs, 220L);
-        DiaryChrome.renderPanelBase(gfx, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.REDCOAT_DARK, PaperTexture.PaperKind.OFFICIAL);
+        // Overlay para atenuar la escena
 
-        int headerBottom = ExpedientHeader.draw(gfx, this.font, this.panelX, this.panelY, this.panelW, this.title, reveal);
+        // Panel pergamino
+        int panelW = Math.min(PANEL_MAX_W, this.width - 40);
+        int panelH = Math.min(PANEL_MAX_H, this.height - 30);
+        int panelX = (this.width - panelW) / 2;
+        int panelY = (this.height - panelH) / 2;
+        DiaryChrome.drawPanelShadow(gfx, panelX, panelY, panelW, panelH);
+        PaperTexture.drawClean(gfx, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
 
+        // Cosmetica
+        DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, panelW, panelH);
+        DiaryChrome.drawRegistryTag(gfx, panelX, panelY, panelW, panelH, "REG. XIII");
+
+        // Titulo
+        int titleY = panelY + 18;
+        String titleStr = this.title.getString();
+        int titleW = this.font.width(titleStr);
+        gfx.drawString(this.font, titleStr, (this.width - titleW) / 2, titleY, DiaryChrome.INK_TITLE, false);
+
+        // Divisor con rombo
+        DiaryChrome.drawInkDivider(gfx, panelX + 24, titleY + 14, panelW - 48);
+        DiaryChrome.drawDivisorLozenge(gfx, this.width / 2, titleY + 14);
+
+        // Mensaje multilinea (propio, no toco el vanilla)
         if (this.ownMultilineMessage == null && this.ownMessage != null) {
-            this.ownMultilineMessage = MultiLineLabel.create(this.font, this.ownMessage, this.panelW - 74);
+            this.ownMultilineMessage = MultiLineLabel.create(this.font, this.ownMessage, PANEL_MAX_W - 40);
         }
-        int msgY = headerBottom + 8;
         if (this.ownMultilineMessage != null) {
-            this.ownMultilineMessage.renderCentered(gfx, this.width / 2, msgY, this.font.lineHeight + 2, DiaryTheme.INK);
+            int msgY = titleY + 28;
+            this.ownMultilineMessage.renderCentered(gfx, this.width / 2, msgY, this.font.lineHeight + 2, DiaryChrome.INK_SUBTITLE);
         }
+
+        // v0.16.0: recordatorio para quien destruye demasiado.
         try {
             if (com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("destroys") >= 3) {
                 String line = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
                     ? "The cabinet remembers what you destroy."
                     : "El gabinete recuerda lo que destruyes.";
                 int lw = this.font.width(line);
-                gfx.drawString(this.font, line, (this.width - lw) / 2, this.panelY + this.panelH - 44,
-                    DiaryTheme.withAlpha(0xFF6E1F16, 150), false);
+                gfx.drawString(this.font, line, (this.width - lw) / 2, panelY + panelH - 42,
+                    com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0xFF6E1F16, 150), false);
             }
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(gfx, this.width);
         } catch (Throwable ignored) {}
 
+        // Widgets propios (botones Diary y cualquier otro visible)
         for (var w : this.renderables) {
             if (w instanceof AbstractWidget aw && aw.visible) {
                 w.render(gfx, mouseX, mouseY, partial);
