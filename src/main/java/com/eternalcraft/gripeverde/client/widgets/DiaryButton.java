@@ -34,6 +34,7 @@ public class DiaryButton extends AbstractButton {
     private boolean wasHovered = false;
     private int pressAnimTicks = 0;
     private final int wearSeed;
+    private final java.util.Random wearRng;
 
     public DiaryButton(int x, int y, int w, int h, Component label, Icon icon, Variant variant, Runnable onClick) {
         this(x,y,w,h,label,icon,variant,SoundProfile.DEFAULT,onClick);
@@ -45,6 +46,7 @@ public class DiaryButton extends AbstractButton {
         this.soundProfile = sp!=null?sp:SoundProfile.DEFAULT;
         this.onClick = onClick;
         this.wearSeed = (x*31 + y*17 + w*13 + h*7) ^ label.getString().hashCode();
+        this.wearRng = new java.util.Random(wearSeed);
     }
     public DiaryButton(int x,int y,int w,int h,Component label,Runnable onClick){this(x,y,w,h,label,Icon.NONE,Variant.SECONDARY,onClick);}
     public DiaryButton noEllipsis(){this.allowEllipsis=false;return this;}
@@ -150,11 +152,11 @@ public class DiaryButton extends AbstractButton {
         // Wear micro dots near edges (1px) based on seed
         if(active){
             int wear = DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, 34);
-            java.util.Random wr = new java.util.Random(wearSeed);
+            wearRng.setSeed(wearSeed);
             for(int i=0;i<2;i++){
-                int wx = x+6+wr.nextInt(Math.max(1,w-12));
-                int wy = yDraw+4+wr.nextInt(Math.max(1,h-8));
-                if(wr.nextInt(100)<32) g.fill(wx,wy,wx+1,wy+1,wear);
+                int wx = x+6+wearRng.nextInt(Math.max(1,w-12));
+                int wy = yDraw+4+wearRng.nextInt(Math.max(1,h-8));
+                if(wearRng.nextInt(100)<32) g.fill(wx,wy,wx+1,wy+1,wear);
             }
         }
 

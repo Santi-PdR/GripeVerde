@@ -278,10 +278,7 @@ public class DiaryOptionsScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0) {
-        }
-        boolean consumed = super.mouseClicked(mouseX, mouseY, button);
-        return consumed;
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
 

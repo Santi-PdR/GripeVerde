@@ -53,10 +53,9 @@ public class MenuAmbience {
         BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_RAIN, 0.30f));
         BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_CITY, 0.20f));
 
-        EVENTS_LAYER.add(new Entry(ModSounds.MENU_FOOTSTEPS, 40,0.25f,0.90f,1.10f));
-        EVENTS_LAYER.add(new Entry(ModSounds.MENU_WOOD_CREAK,35,0.30f,0.85f,1.15f));
-        EVENTS_LAYER.add(new Entry(ModSounds.MENU_DOOR,15,0.35f,0.90f,1.10f));
-        EVENTS_LAYER.add(new Entry(ModSounds.MENU_AMBIENT_OCCASIONAL,10,0.30f,0.95f,1.05f));
+        EVENTS_LAYER.add(new Entry(ModSounds.MENU_FOOTSTEPS, 45,0.25f,0.90f,1.10f));
+        EVENTS_LAYER.add(new Entry(ModSounds.MENU_WOOD_CREAK,20,0.22f,0.85f,1.15f));
+        EVENTS_LAYER.add(new Entry(ModSounds.MENU_AMBIENT_OCCASIONAL,15,0.30f,0.95f,1.05f));
 
         RARE_LAYER.add(new Entry(ModSounds.MENU_BELL,40,0.45f,0.95f,1.05f));
         RARE_LAYER.add(new Entry(ModSounds.MENU_THUNDER,35,0.55f,0.95f,1.05f));
