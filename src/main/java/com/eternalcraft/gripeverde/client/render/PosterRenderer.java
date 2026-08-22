@@ -31,9 +31,8 @@ public class PosterRenderer {
         g.pose().scale(1.2f, 1.2f, 1f);
         String q = I18n.get("gripeverde.poster.quarantine.title");
         int qw = font.width(q);
-        // Sombra suave translucida en vez de SEPIA_DARK opaco
-        g.drawString(font, q, -qw / 2 + 1, 1, 0x40201409, false);
-        g.drawString(font, q, -qw / 2, 0, DiaryTheme.BLOOD_DRIED, false);
+        // v0.21.24: tinta oscura sin sombra (se retiro el rojo sombreado).
+        g.drawString(font, q, -qw / 2, 0, DiaryTheme.INK, false);
         g.pose().popPose();
         cursorY += 18;
 
@@ -124,7 +123,6 @@ public class PosterRenderer {
                 g.fill(sx - 4, sy - 3, sx - 3, sy + 11, 0xFF5C1508);
                 g.fill(sx + tw2 + 3, sy - 3, sx + tw2 + 4, sy + 11, 0xFF5C1508);
                 g.drawString(font, stamp, sx, sy, 0xFF5C1508, false);
-                g.drawString(font, stamp, sx + 1, sy + 1, DiaryTheme.withAlpha(0xFF5C1508, 90), false);
             }
         } catch (Throwable ignored) {}
     }

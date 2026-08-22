@@ -1,5 +1,30 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.21.24 - Ajustes pedidos en cliente (2026-08-22)
+
+### Cambios cerrados
+- Sonido de madera/puerta al abrir Options: eliminado (UiSounds.close).
+- Cajon del gabinete (llave amarilla + vitrina) eliminado por completo.
+- Easter egg de los tres golpes (knock) eliminado.
+- Easter egg del doblado del poster de CUARENTENA eliminado (poster
+  estatico).
+- Titulo CUARENTENA y sellos de tinta: sin rojo sombreado (tinta normal).
+- Libro de visitas de Multiplayer: mas visible y hitbox mayor.
+- Creditos: etiquetas en titulo normal; contenido de atribuciones
+  pendiente de definicion por el usuario.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.23 -> 0.21.24.
+
+### Riesgos activos / KI nuevos
+- **KI-49 (v0.21.24)**: validar en cliente — gabinete sin cajon ni sonido,
+  poster estatico, libro de visitas clicable, creditos legibles.
+- **PENDIENTE USUARIO**: textos definitivos de atribuciones (Cronista,
+  Director, Planos) y mejoras nuevas (preguntar antes de interfaces).
+- KI-48, KI-47, KI-46, KI-45, KI-44, KI-41/43, KI-39/40 pendientes.
+  KI-29 (pistas MenuMusic) requiere OGGs del usuario.
+
+---
+
 ## v0.21.23 - Se reconstruye desde el registro previo (2026-08-22)
 
 ### Cambios cerrados

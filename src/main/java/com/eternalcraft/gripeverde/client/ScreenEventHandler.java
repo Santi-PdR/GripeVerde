@@ -78,7 +78,7 @@ public class ScreenEventHandler {
         try {
             var openingScreen = event.getNewScreen();
             if (openingScreen instanceof com.eternalcraft.gripeverde.client.screens.DiaryOptionsScreen) {
-                com.eternalcraft.gripeverde.client.audio.UiSounds.close();
+                // v0.21.24: sin sonido de puerta al abrir el gabinete (pedido del usuario).
             } else if (openingScreen instanceof ChangelogScreen) {
                 com.eternalcraft.gripeverde.client.audio.UiSounds.tab();
             } else if (openingScreen instanceof com.eternalcraft.gripeverde.client.screens.DiaryLanguageScreen) {

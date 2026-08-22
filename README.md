@@ -5,6 +5,16 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
+**v0.21.24 - Ajustes pedidos en cliente**
+
+Se retiro el sonido de madera al abrir el gabinete, el cajon con la llave
+y su vitrina, el juego de los tres golpes sobre la mesa y el despegue de
+la hoja de cuarentena; el titulo del cartel y los sellos de tinta pierden
+el rojo sombreado; el libro de visitas del registro de hospedajes se ve y
+responde mejor; y las atribuciones usan etiquetas en titulo normal. 61
+clases Java, 25 idiomas, 35 eventos de sonido, 42 OGG y 0 PNG de
+contenedores. Documentacion sincronizada y version 0.21.24.
+
 **v0.21.23 - Se reconstruye desde el registro previo**
 
 Se localizo en el historial el estado anterior a la version que altero las
@@ -101,8 +111,8 @@ Reglas actuales:
 ## Documentacion
 
 - `CONTRIBUTING.md` - guia corta de contribucion (branch fija, no gameplay, validacion).
-- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.23.
-- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.23).
+- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.24.
+- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.24).
 - `KNOWN_ISSUES.md` - estado tecnico, decisiones activas, errores documentados, KIs.
 - `README.md` - esta portada.
 

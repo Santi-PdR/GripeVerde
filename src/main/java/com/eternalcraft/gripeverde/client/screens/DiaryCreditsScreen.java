@@ -160,14 +160,14 @@ public class DiaryCreditsScreen extends Screen {
         int lineH = 11;
         int y = startY;
 
-        // Section helper
-        y = drawSection(g, left, y, isEnglish() ? "ESTUDIO" : "ESTUDIO", isEnglish() ? "EternalCraft Studio" : "Estudio EternalCraft");
+        // v0.21.24: etiquetas en titulo normal (sin MAYUSCULAS forzadas).
+        y = drawSection(g, left, y, isEnglish() ? "Studio" : "Estudio", isEnglish() ? "EternalCraft" : "EternalCraft");
         y += 4;
-        y = drawSection(g, left, y, isEnglish() ? "CHRONICLER" : "CRONISTA", "S. Pereira");
-        y = drawSection(g, left, y, isEnglish() ? "DIRECTOR" : "DIRECTOR", "Santi PdR / Alex");
+        y = drawSection(g, left, y, isEnglish() ? "Chronicler" : "Cronista", isEnglish() ? "The hand behind the vigil" : "La mano tras la vigilia");
+        y = drawSection(g, left, y, isEnglish() ? "Director" : "Director", isEnglish() ? "Project lead" : "Direccion del proyecto");
         y += 4;
-        y = drawSection(g, left, y, isEnglish() ? "CITY BLUEPRINTS" : "PLANOS DE LA CIUDAD", isEnglish() ? "Victorian skyline, gas lamps, quarantine seals" : "Horizonte victoriano, faroles de gas, sellos");
-        y = drawSection(g, left, y, isEnglish() ? "PAPER & INK" : "PAPEL Y TINTA", isEnglish() ? "Parchment panels, ledger bindings, wax" : "Paneles pergamino, encuadernaciones, cera");
+        y = drawSection(g, left, y, isEnglish() ? "City blueprints" : "Planos de la ciudad", isEnglish() ? "Night sky, gas lamps and rain" : "Cielo nocturno, faroles y lluvia");
+        y = drawSection(g, left, y, isEnglish() ? "Paper & ink" : "Papel y tinta", isEnglish() ? "Parchment, bindings and wax" : "Pergamino, encuadernaciones y cera");
         y += 8;
 
         // Official note

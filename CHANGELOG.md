@@ -1,5 +1,14 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.24 - Ajustes pedidos en cliente
+
+Registro tecnico: se retiro el sonido de madera al abrir el gabinete, el
+cajon con la llave y su vitrina, el juego de los tres golpes sobre la mesa
+y el despegue de la hoja de cuarentena; el titulo del cartel y los sellos
+de tinta pierden el rojo sombreado; el libro de visitas del registro de
+hospedajes se ve y responde mejor; y las atribuciones usan etiquetas en
+titulo normal.
+
 ## v0.21.23 - Se reconstruye desde el registro previo
 
 Registro tecnico: se localizo en el historial el estado anterior a la

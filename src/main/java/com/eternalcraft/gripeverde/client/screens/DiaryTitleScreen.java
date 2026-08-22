@@ -454,25 +454,6 @@ public class DiaryTitleScreen extends Screen {
 
         int posterH = Math.min(POSTER_H_MAX, maxPosterH);
         PosterRenderer.drawQuarantineNotice(g, leftCol.x, leftCol.y, POSTER_W, posterH);
-
-        // v0.16.0: tras despegar la esquina, el edicto revela lo que tapaba.
-        try {
-            if (com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("poster_peeled") > 0) {
-                int x2 = leftCol.x + POSTER_W;
-                int y2 = leftCol.y + posterH;
-                // La esquina doblada
-                g.fill(x2 - 26, y2 - 26, x2, y2, 0xFFC9B78A);
-                g.fill(x2 - 26, y2 - 26, x2 - 24, y2, 0xFF8E7A55);
-                g.fill(x2 - 26, y2 - 26, x2, y2 - 24, 0xFF8E7A55);
-                g.fill(x2 - 20, y2 - 20, x2 - 4, y2 - 4, 0xFFD8CAB0);
-                // Lo que hay debajo: un nombre
-                boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
-                String hidden = en ? "E. Holloway, M.D." : "E. Holloway, medico";
-                int hw = this.font.width(hidden);
-                g.drawString(this.font, hidden, x2 - 8 - hw, y2 - 12,
-                    com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0xFF3D2A18, 170), false);
-            }
-        } catch (Throwable ignored) {}
     }
 
     private void drawPocketWatch(GuiGraphics g) {
@@ -741,12 +722,6 @@ public class DiaryTitleScreen extends Screen {
                 LayoutRegion leftCol = leftColumn();
                 int totalBtnH = BTN_H * 2 + Spacing.GAP_MEDIUM;
                 int maxPosterH = leftCol.h - totalBtnH - Spacing.GAP_LARGE * 2;
-                if (!isMinimalMode() && maxPosterH >= 140
-                        && mouseX >= leftCol.x && mouseX <= leftCol.x + POSTER_W
-                        && mouseY >= leftCol.y && mouseY <= leftCol.y + Math.min(POSTER_H_MAX, maxPosterH)) {
-                    handlePosterPeel();
-                    return true;
-                }
 
                 // El cartel del buscado: sostenerle la mirada.
                 if (isWantedPosterShowing()) {
@@ -873,17 +848,6 @@ public class DiaryTitleScreen extends Screen {
         com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.toggleInspection();
     }
 
-    private void handlePosterPeel() {
-        boolean first = com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
-            com.eternalcraft.gripeverde.client.lore.Discoveries.POSTER_PEEL);
-        if (first) {
-            com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.setCounter("poster_peeled", 1);
-        }
-        try {
-            com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
-                com.eternalcraft.gripeverde.client.audio.ModSounds.UI_SCROLL.get(), 0.20f, 0.58f);
-        } catch (Throwable ignored) {}
-    }
 
     private void handleCatClick() {
         int n = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.bump("catClicks");

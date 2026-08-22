@@ -3,8 +3,42 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/01a025d1-gripeverde` (sync con `main` v0.21.2, commit `afe8e83`).
-- Version: `0.21.23`.
+- Version: `0.21.24`.
 - Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks, integrando el contexto maestro y sincronizacion documental de v0.17.2.
+
+### DECISION 2026-08-22: v0.21.24 - Ajustes pedidos en cliente
+
+El usuario pidio (en cliente real) una tanda de ajustes. Sin gameplay, sin
+botones nuevos, sin cambios de identidad de pantalla:
+
+- **Sonido del gabinete**: eliminado el `UiSounds.close()` (madera/puerta)
+  que sonaba al abrir Options desde ScreenEventHandler.
+- **Cajon del gabinete ELIMINADO**: el rectangulo marron con la llave
+  amarilla y la vitrina de objetos (drawer) fue borrado por completo
+  (dibujo, click, campos y el hueco del panel). Las fichas DRAWER_OPEN/
+  DRAWER_COMPLETE y el objeto ITEM_KEY quedan inalcanzables (lore muerto,
+  no rompe nada).
+- **Easter egg de los golpes (knock) ELIMINADO** en Options: tres golpes
+  sobre la madera ya no responden (KNOCK_BACK inalcanzable).
+- **Easter egg del poster de CUARENTENA ELIMINADO**: el poster ya no se
+  despega ni muestra la esquina doblada con el nombre de Holloway
+  (POSTER_PEEL inalcanzable). El poster queda estatico.
+- **Fuentes rojas con sombra**: el titulo "CUARENTENA" del poster pasa de
+  rojo (BLOOD_DRIED) con sombra a tinta oscura (INK) sin sombra; el sello
+  de tinta (APROBADO/REVOCADO...) pierde su sombra roja duplicada.
+- **Libro de visitas de Multiplayer**: ahora mas visible (fondo oscuro +
+  texto claro + subrayado ambar) y con hitbox mayor (y-6..y+30) para que el
+  clic registre bien.
+- **Creditos/Atribuciones**: etiquetas en titulo normal (Studio, Chronicler,
+  Director, City blueprints, Paper & ink) en vez de MAYUSCULAS forzadas;
+  contenido de Cronista/Director/Planos reescrito a descripciones genericas
+  (pendiente: el usuario indicara los nombres/info finales).
+- Pendiente de confirmacion del usuario: textos definitivos de las
+  atribuciones (Cronista, Director, Planos de la ciudad) y nuevas mejoras
+  (preguntar antes de meter interfaces/botones nuevos).
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.24.
+- Validacion pendiente en cliente real (KI-49).
 
 ### DECISION 2026-08-22: v0.21.23 - Reconstruccion desde el backup pre-interfaces
 
@@ -796,9 +830,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.21.23
-- build.gradle: version = '0.21.23'
-- GripeVerdeMod.VERSION: "0.21.23"
+- Version estable actual: v0.21.24
+- build.gradle: version = '0.21.24'
+- GripeVerdeMod.VERSION: "0.21.24"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10 (no se han publicado tags desde el ciclo v0.13.x; los bumps v0.14-v0.17 quedaron sin tag)
 - Working tree esperado al retomar: limpio
