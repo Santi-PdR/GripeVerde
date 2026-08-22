@@ -532,80 +532,17 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             }
         }
 
-        // v0.16.0: el libro de visitas del atlas de hospederias
+        // v0.16.0
         try {
-            drawGuestbook(gfx, panelX, panelY, panelW, mouseX, mouseY);
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(gfx, this.width);
         } catch (Throwable ignored) {}
     }
 
-    private int guestbookX() { return this.width - PANEL_MARGIN_H - 150; }
-    private int guestbookY() { return PANEL_MARGIN_V + 14; }
 
-    private void drawGuestbook(GuiGraphics gfx, int panelX, int panelY, int panelW, int mouseX, int mouseY) {
-        int x = guestbookX();
-        int y = guestbookY();
-        boolean hover = mouseX >= x - 4 && mouseX <= x + 152 && mouseY >= y - 6 && mouseY <= y + 30;
-        // v0.21.25: libro de visitas dentro del panel, mas visible.
-        int ink = hover ? 0xFFF0E4C8 : 0xFFC8B48A;
-        String label = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
-            ? "~ sign the visitor's book ~" : "~ firmar el libro de visitas ~";
-        int lw = this.font.width(label);
-        gfx.fill(x - 4, y - 3, x + lw + 4, y + 13, 0x66201408);
-        gfx.drawString(this.font, label, x, y, ink, false);
-        gfx.fill(x, y + 11, x + lw, y + 12,
-            com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0xFFD8A63A, hover ? 220 : 130));
-
-        // La ultima firma conocida, apenas visible
-        var mem = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.get();
-        if (!mem.guestbook.isEmpty()) {
-            String last = mem.guestbook.get(mem.guestbook.size() - 1);
-            if (this.font.width(last) > 200) last = this.font.plainSubstrByWidth(last, 196) + "...";
-            gfx.drawString(this.font, last, x, y + 16,
-                com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0xFFB8A888, 90), false);
-        }
-    }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0) {
-            int x = guestbookX();
-            int y = guestbookY();
-            if (mouseX >= x - 4 && mouseX <= x + 152 && mouseY >= y - 6 && mouseY <= y + 30) {
-                try {
-                    signGuestbook();
-                } catch (Throwable ignored) {}
-                return true;
-            }
-        }
         return super.mouseClicked(mouseX, mouseY, button);
-    }
-
-    private void signGuestbook() {
-        var mem = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.get();
-        String name;
-        try {
-            name = this.minecraft.getUser().getName();
-        } catch (Throwable t) {
-            name = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "a stranger" : "un desconocido";
-        }
-        String line = name + " - " + java.time.LocalDate.now();
-        boolean already = false;
-        for (String s : mem.guestbook) {
-            if (s.startsWith(name + " - ")) { already = true; break; }
-        }
-        if (!already) {
-            mem.guestbook.add(line);
-            while (mem.guestbook.size() > 24) mem.guestbook.remove(0);
-            com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.save();
-            com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
-                com.eternalcraft.gripeverde.client.lore.Discoveries.GUESTBOOK);
-            com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
-                com.eternalcraft.gripeverde.client.audio.ModSounds.UI_SCROLL.get(), 0.18f, 0.70f);
-        } else {
-            com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
-                com.eternalcraft.gripeverde.client.audio.ModSounds.UI_SCROLL.get(), 0.12f, 0.55f);
-        }
     }
 
     @Override

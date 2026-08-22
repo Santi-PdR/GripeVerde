@@ -112,10 +112,7 @@ public class DiaryOptionsScreen extends Screen {
                 com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
                     com.eternalcraft.gripeverde.client.lore.Marginalia.N_HINGE);
             }
-            if (opens >= 25) {
-                com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
-                    com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_WOOD_CREAK.get(), 0.20f, 0.55f);
-            }
+            // v0.21.26: sin sonido de madera al abrir el gabinete.
         } catch (Throwable ignored) {}
 
         panelX = (this.width - panelW) / 2;

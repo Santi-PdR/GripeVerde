@@ -29,6 +29,7 @@ public class DiaryDirectJoinScreen extends Screen {
 
     private DiaryTextField ipEdit;
     private DiaryButton selectButton;
+    private boolean justOpened = true;
 
     public DiaryDirectJoinScreen(Screen parent, BooleanConsumer callback, ServerData serverData) {
         super(Component.translatable("selectServer.direct"));
@@ -136,8 +137,15 @@ public class DiaryDirectJoinScreen extends Screen {
     @Override
     public void tick() {
         if (this.ipEdit != null) this.ipEdit.tick();
+        justOpened = false;
         try { MenuMusic.tick();
  com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick(); } catch (Throwable ignored) {}
+    }
+
+    @Override
+    public boolean charTyped(char codePoint, int modifiers) {
+        if (justOpened) return true; // v0.21.26: ignorar tecla filtrada de la pantalla anterior
+        return super.charTyped(codePoint, modifiers);
     }
 
     @Override

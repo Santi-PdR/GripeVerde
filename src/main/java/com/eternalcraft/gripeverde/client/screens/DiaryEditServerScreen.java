@@ -33,6 +33,7 @@ public class DiaryEditServerScreen extends Screen {
     private EditBox nameEdit;
     private EditBox ipEdit;
     private DiaryButton doneButton;
+    private boolean justOpened = true;
 
     public DiaryEditServerScreen(Screen parent, BooleanConsumer callback, ServerData serverData) {
         super(Component.translatable("addServer.title"));
@@ -112,8 +113,15 @@ public class DiaryEditServerScreen extends Screen {
     public void tick() {
         this.nameEdit.tick();
         this.ipEdit.tick();
+        justOpened = false;
         try { MenuMusic.tick();
  com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick(); } catch (Throwable ignored) {}
+    }
+
+    @Override
+    public boolean charTyped(char codePoint, int modifiers) {
+        if (justOpened) return true; // v0.21.26: ignorar tecla filtrada de la pantalla anterior
+        return super.charTyped(codePoint, modifiers);
     }
 
     @Override
