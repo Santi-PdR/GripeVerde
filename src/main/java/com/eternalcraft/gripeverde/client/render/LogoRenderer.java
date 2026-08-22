@@ -176,15 +176,4 @@ public class LogoRenderer {
         g.fill(cx - 1, y - 1, cx + 2, y, DiaryTheme.GOLD_TARNISHED);
         g.fill(cx - 1, y + 3, cx + 2, y + 4, DiaryTheme.GOLD_TARNISHED);
     }
-
-    private static void drawOrnamentalDivider(GuiGraphics g, int cx, int y) {
-        int half = 120;
-        g.fill(cx - half, y, cx - 15, y + 1, DiaryTheme.SEPIA_LIGHT);
-        g.fill(cx + 15, y, cx + half, y + 1, DiaryTheme.SEPIA_LIGHT);
-        g.fill(cx - 15, y - 2, cx - 12, y + 3, DiaryTheme.OCHRE);
-        g.fill(cx - 12, y - 1, cx - 10, y + 2, DiaryTheme.OCHRE);
-        g.fill(cx + 12, y - 2, cx + 15, y + 3, DiaryTheme.OCHRE);
-        g.fill(cx + 10, y - 1, cx + 12, y + 2, DiaryTheme.OCHRE);
-        g.fill(cx - 1, y - 1, cx + 2, y + 2, DiaryTheme.GOLD_TARNISHED);
-    }
 }

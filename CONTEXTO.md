@@ -2,9 +2,659 @@
 
 ## Addendum operativo actual
 
-- Rama fija de Arena: `arena/019fe23e-gripeverde` (merge con `main` v0.17.2 docs).
-- Version: `0.21.2`.
+- Rama fija de Arena: `arena/01a025d1-gripeverde` (sync con `main` v0.21.2, commit `afe8e83`).
+- Version: `0.21.24`.
 - Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks, integrando el contexto maestro y sincronizacion documental de v0.17.2.
+
+### DECISION 2026-08-22: v0.21.24 - Ajustes pedidos en cliente
+
+El usuario pidio (en cliente real) una tanda de ajustes. Sin gameplay, sin
+botones nuevos, sin cambios de identidad de pantalla:
+
+- **Sonido del gabinete**: eliminado el `UiSounds.close()` (madera/puerta)
+  que sonaba al abrir Options desde ScreenEventHandler.
+- **Cajon del gabinete ELIMINADO**: el rectangulo marron con la llave
+  amarilla y la vitrina de objetos (drawer) fue borrado por completo
+  (dibujo, click, campos y el hueco del panel). Las fichas DRAWER_OPEN/
+  DRAWER_COMPLETE y el objeto ITEM_KEY quedan inalcanzables (lore muerto,
+  no rompe nada).
+- **Easter egg de los golpes (knock) ELIMINADO** en Options: tres golpes
+  sobre la madera ya no responden (KNOCK_BACK inalcanzable).
+- **Easter egg del poster de CUARENTENA ELIMINADO**: el poster ya no se
+  despega ni muestra la esquina doblada con el nombre de Holloway
+  (POSTER_PEEL inalcanzable). El poster queda estatico.
+- **Fuentes rojas con sombra**: el titulo "CUARENTENA" del poster pasa de
+  rojo (BLOOD_DRIED) con sombra a tinta oscura (INK) sin sombra; el sello
+  de tinta (APROBADO/REVOCADO...) pierde su sombra roja duplicada.
+- **Libro de visitas de Multiplayer**: ahora mas visible (fondo oscuro +
+  texto claro + subrayado ambar) y con hitbox mayor (y-6..y+30) para que el
+  clic registre bien.
+- **Creditos/Atribuciones**: etiquetas en titulo normal (Studio, Chronicler,
+  Director, City blueprints, Paper & ink) en vez de MAYUSCULAS forzadas;
+  contenido de Cronista/Director/Planos reescrito a descripciones genericas
+  (pendiente: el usuario indicara los nombres/info finales).
+- Pendiente de confirmacion del usuario: textos definitivos de las
+  atribuciones (Cronista, Director, Planos de la ciudad) y nuevas mejoras
+  (preguntar antes de meter interfaces/botones nuevos).
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.24.
+- Validacion pendiente en cliente real (KI-49).
+
+### DECISION 2026-08-22: v0.21.23 - Reconstruccion desde el backup pre-interfaces
+
+El usuario pidio deshacer de verdad la version que altero las interfaces
+("busques un registro o backup de ese mod y de ahi edites y saques esas
+version y adjuntes las demas").
+
+**Registro/backup encontrado:** commit `39e4720` (estado v0.17.2, el
+inmediatamente anterior a `715c52f` = v0.19.0 donde nacieron
+`ExpedientHeader`, `drawInsetCard` y el sistema de carteles/EXPEDIENTE).
+Las versiones que alteraron las interfaces y fueron excluidas: v0.19.0,
+v0.20.0 y v0.21.0.
+
+**Reconstruccion ejecutada (desde el backup + resto actual):**
+- Restauradas desde `39e4720` las 17 pantallas Diary (Options, Sound,
+  Controls, Language, Chat, Accessibility, Online, Multiplayer, Archive,
+  Changelog, Credits, Pause, Title, DirectJoin, EditServer, Confirm, Skin)
+  a su forma pre-alteracion: cabeceras propias de cada sala (titulo +
+  subtitulo + divisor), sin carteles ni rails de v0.19+.
+- Restaurados los widgets que las pantallas del backup usan:
+  `DiaryMusicSlider`, `DiaryAmbienceSlider`, `DiaryPackSelectionScreen`.
+- `DiaryVideoSettingsScreen` (nacio en la alteracion) ELIMINADA; Options
+  vuelve a abrir VideoSettingsScreen/Embeddium vanilla como antes.
+- `DiaryChrome`: anadidos los 3 metodos `drawRegistryTag*` del backup +
+  constantes STEEL_NEAR/DEEP/EDGE (las chapas de registro del backup).
+- Lang: clave `gripeverde.options.packs.subtitle` restaurada en los 25
+  idiomas (la usaba DiaryPackSelectionScreen).
+- Re-aplicados sobre las pantallas restauradas los ganchos de lore de las
+  versiones posteriores aprobadas: triggers del Title (ARCHIVE_THINNING
+  >=50, N_OPEN_COUNT >=100), cadena de fichas de la limpieza en Archive
+  (BG_TOWN_MEMORY, BUTTONS_NEVER_PRESSED) y sello SIGILLUM + campana al
+  completar las 47 fichas.
+- Re-eliminados los elementos que el usuario pidio sacar y que el backup
+  reintroducia: saludo del Title (drawGreeting), pie de registro del
+  Changelog (drawLedgerDetails/scrollToSection), filas de grupo y
+  telemetria de Options (drawRowBands/openTelemetry).
+- Se conservan intactos: audio (con hotfix v0.21.1), lore (Discoveries 47
+  fichas, Marginalia, Herald, HiddenCipher CLEANSE/ARCHIVE,
+  ChroniclerMemory con save diferido), render (RNG seed fija,
+  REDUCED_MOTION, low-end), config, theme, util y build (3 verificaciones).
+- Lista negra del build: quitados DiaryMusicSlider/DiaryAmbienceSlider
+  (restaurados), anadido DiaryVideoSettingsScreen.
+- Conteos: 61 clases Java, 25 lang (81 claves), 35 eventos, 42 OGG.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL
+  (reversion estructural, sin evento de la ciudad).
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.23.
+- Validacion pendiente en cliente real (KI-48): pantallas con la
+  identidad v0.17.2 + lore v0.21.x; compilar y recorrer todas las salas.
+
+### DECISION 2026-08-22: v0.21.22 - Hotfix compilacion (firma rota)
+
+La limpieza v0.21.21 dejo una firma de metodo rota en `DiaryOptionsScreen`
+(`private void  {` — el limpiador de llamadas no-op se comio el nombre del
+metodo `drawOptionsGroup`). Detectado por el usuario en build local
+(error: identifier expected). Fix: eliminado el metodo vacio roto entero
+(no tenia llamadas). Sin otros cambios. Bump 0.21.21 -> 0.21.22.
+
+### DECISION 2026-08-22: v0.21.21 - Se termina la deuda de los no-op
+
+El usuario pidio "mas". Se cerro la deuda KI-42 (call sites no-op de la
+reversion):
+
+- Eliminadas 30 llamadas no-op a `DiaryChrome.drawInsetCard` /
+  `drawInnerRail` / `drawValueRow` en 11 pantallas (Accessibility, Archive,
+  Controls, Credits, DirectJoin, EditServer, Language, Options, Skin,
+  Sound, Video) y las 3 llamadas a `drawOptionsGroup` (Options).
+- Eliminados los 3 metodos no-op de `DiaryChrome` + constantes `CARD_BASE`
+  / `CARD_BORDER` (quedaron con 0 usos).
+- Eliminadas las variables locales y bloques muertos que alimentaban esos
+  carteles: Language (frameX/Y/W/H), Controls (leftX/railX/workW),
+  Options (contentLeft/contentRight/contentW), Sound (railX/railY/railY2/
+  listFrameX/listFrameW), Skin (headerBottom sin asignar), Accessibility
+  (headerBottom sin asignar), constantes `RAIL_W` (Controls) y `STATION_W`
+  (Online).
+- Changelog: eliminado el footer de registro (`drawRevisionFooter`:
+  "consultation register / folio N", resto v0.21.0).
+- FIX de scrollbars: las llamadas `drawStyledScrollThumbInPanel` de Chat,
+  Online y Sound referenciaban variables eliminadas (rackX/stationX/railX)
+  -> ahora usan `this.panelX + this.panelW - 26` (borde derecho del panel).
+- Higiene: 14 imports no usados eliminados; newline-final en archivos que
+  no lo tenian; trailing whitespace global limpio.
+- Resultado: 34 archivos, -209 lineas netas. Cero variables locales sin
+  uso, cero campos muertos, balance OK, dead-code OK.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.21.
+- Validacion pendiente en cliente real (KI-47): Chat/Online/Sound con
+  scrollbar en el borde derecho del panel y listas intactas.
+
+### DECISION 2026-08-22: v0.21.20 - La tinta pesa menos (limpieza post-reversion)
+
+El usuario pidio "mejora todo lo que veas". Se hizo una pasada de limpieza
+profunda sobre el codigo que quedo tras la reversion de interfaz:
+
+- `ExpedientHeader`: nueva sobrecarga simple `draw(gfx, font, x, y, w,
+  title, reveal)`. Las 16 pantallas migradas a la llamada simple;
+  eliminados ~150 lineas de argumentos muertos ("EXPEDIENT...",
+  "EC-QV/1897 · ...", subtitulos, flavors y los estados REGISTERABLE /
+  INCOMPLETO / LISTO / READY / LIVE / PENDING / APPLYING / INDEXED /
+  CALIBRADO...). La firma larga delega en la simple (compat).
+- Metodos muertos eliminados: `computeControlDiscipline` (Controls),
+  `normalizeFov` (Video), `computeVisibleRatio` + variable `visibleRatio`
+  (Skin), `getVisualMixLevel` / `getCrossfadeVisual` (MenuMusic).
+- Variables locales muertas eliminadas: Options (reference/subtitle/status
+  del header, rail completo `drawOptionsRail` + campos railX/railY/railW),
+  Online (en/stationX/stationY + bloque board no-op), Chat (rackX/rackY +
+  bloque rail no-op), Language/Multiplayer/Options/Chat (headerBottom sin
+  asignacion), DirectJoin/EditServer (ready), Pause (bloque de la barra
+  stillness + highlight + haloC; se restauro el cierre de metodo que la
+  limpieza habia comido), Credits (lineH/line), PosterRenderer (angle),
+  VictorianSkyline (h3).
+- Options gridTop 77 -> 66 (acercar el grid al header simple).
+- Resultado: 23 archivos, -252 lineas netas; cero variables locales sin
+  uso; balance de llaves/parentesis OK; trailing whitespace limpio.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.20.
+- Validacion pendiente en cliente real (KI-46): revisar que todas las
+  salas siguen mostrando su titulo + contenido y que nada se rompio por la
+  limpieza (especialmente Pause, Options, Chat y Online).
+
+### DECISION 2026-08-22: v0.21.19 - Se corrigen scrolls y posiciones tras la reversion
+
+El usuario pidio corregir "los scrolls, las posiciones de botones y todo lo
+demas" que quedaron desplazados por la reversion de interfaz (v0.21.16-18):
+la cabecera paso de ~78px a ~52px (titulo simple) y los carteles dejaron de
+dibujarse, dejando listas y botones anclados a medidas viejas (solapes o
+huecos de 32-40px).
+
+**Correcciones:**
+- `DiaryMultiplayerScreen`: LIST_TOP_OFFSET 84 -> 52 (la lista de
+  servidores arranca justo debajo de la cabecera, sin hueco de 32px).
+- `DiarySoundOptionsScreen`: listTop 45 -> 58 (la lista de opciones
+  solapaba el titulo de la cabecera).
+- `DiaryChatOptionsScreen`: listTop 88 -> 62 (quitado hueco de 36px).
+- `DiaryOnlineOptionsScreen`: listTop 92 -> 62 (quitado hueco de 40px).
+- `DiaryControlsScreen`: gridTop 92 -> 62 (los botones del manual quedaban
+  a 40px de la cabecera).
+- `DiaryArchiveScreen`: el campo de busqueda pasaba por ENCIMA de la grilla
+  de fichas (estaba en panelY+168, dentro del area de 47 fichas); ahora
+  vive en la esquina superior derecha (panelY+18) y el contador "N / 47"
+  justo debajo (panelY+38).
+
+**Verificado sin cambios:** Video (66), Language (68), Accessibility
+(HEADER_H=60) y Options (gridTop=77) ya quedaban debajo de la cabecera;
+Changelog y Pause recalculan el contenido relativo a la cabecera en tiempo
+de render; los botones de volver estan anclados al fondo del panel.
+
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.19.
+- Validacion pendiente en cliente real (KI-45): listas/scrolls alineados en
+  Multiplayer, Sound, Chat, Online, Controls y Archive.
+
+### DECISION 2026-08-22: v0.21.18 - Se restaura lo que no era de la version revertida
+
+El usuario pidio revisar la reversion (v0.21.14-v0.21.17): "revisa que no
+hayas sacado cosas de otras versiones o de versiones nuevas que no queria
+sacar; yo queria sacar lo que pusieron nuevo en aquella version" (v0.18.0-
+v0.21.0). Se hizo pickaxe de git con la historia completa (163 commits) y
+se restauro lo que NO era de esas versiones:
+
+**RESTAURADO:**
+- `DiaryProgressBar.draw` -> cuerpo original vivo (v0.12.2, widget base).
+  Con el cuerpo vivo, se eliminaron las llamadas de medidores que SI eran
+  de v0.18-v0.21.0 para que no dibujen: Options (Gramophone/Room tone
+  v0.19, catalogue v0.20), Sound (Music/Ambience/Transition v0.19),
+  Controls (Discipline v0.19), Video (FOV v0.19), Accessibility (Contrast
+  v0.19), Pause (stillness v0.19), Skin (presence v0.20).
+- Medidores de versiones MÍAS que vuelven a dibujar: Video "Pacing"
+  (v0.21.4) y Language "registries" (v0.21.4).
+- Sello SIGILLUM + `drawCompletionSeal` (v0.21.13, archivo completo).
+- `drawOfficialFrame` de Credits (v0.14.1, anterior a la version
+  revertida).
+
+**CONFIRMADO QUE SI ERA DE v0.18-v0.21.0 (queda fuera):** header completo
+(expediente/referencia/subtitulo/flavor v0.18), tarjetas/railes/valueRows
+(v0.18-v0.20), RECOVERED PAPERS (v0.21.0), footer "consultation register"
+(v0.21.0), Chat/Online rack (v0.21.0), VANILLA CLASSES (v0.19), EXPOSED
+PARTS (v0.20), drawOptionsGroup (v0.19), drawStatusPill (v0.19),
+HOSPEDAJE ELEGIDO (v0.19). Y lo pedido explicitamente aunque fuera de otra
+version: saludo del Title (v0.16) y ticker del Heraldo (v0.21.9).
+
+- Lista negra del build: se quito SIGILLUM/drawCompletionSeal (vuelven a
+  existir); sigue drawLedgerDetails.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.18.
+- Validacion pendiente en cliente real (KI-44): el sello al completar 47
+  fichas, el medidor de Pacing en Video, el de registros en Lenguas, y que
+  el resto siga sin carteles.
+
+### DECISION 2026-08-21: v0.21.17 - Se retiran los medidores y el resto de carteles
+
+Continuacion de la reversion v0.21.16 (el usuario reporto "hay cosas que
+no sacaste"). Se retiraron los elementos restantes de la identidad de
+v0.18.0-v0.21.0:
+
+- `DiaryProgressBar.draw` -> no-op: fuera los medidores con etiqueta
+  (Gramofono, Ambiente, catalogo, Disciplina, Campo visual, Ritmo,
+  registros, etc.) en Options, Sound, Video, Controls, Language, Skin,
+  Accessibility y Pause. Firma intacta (los call sites compilan sin
+  dibujar; deuda de limpieza KI-42).
+- Archive: fuera el titulo "RECOVERED PAPERS / PAPELES RECUPERADOS" y su
+  divisor (los documentos v0.16 se conservan), y fuera el sello SIGILLUM
+  de archivo completo (v0.21.13, cartel) + metodo `drawCompletionSeal`.
+- Changelog: fuera el footer de registro ("consultation register / folio",
+  sello de cuarentena, referencia ARCHIVO EC-QV/1897) via
+  `drawLedgerDetails` (v0.21.0). Se conserva el folio escondido v0.16
+  (entrada a la sala).
+- Options: `drawOptionsGroup` -> no-op (los carteles de grupo de v0.18).
+- Credits: `drawOfficialFrame` -> no-op (marco oficial de v0.21.0).
+- Verificacion: grep global de textos directos hardcodeados en pantallas =
+  0 (solo quedan labels funcionales de inputs, hints de busqueda y
+  mensajes de estado del juego).
+- Lista negra del build ampliada (drawCompletionSeal, drawLedgerDetails,
+  drawOptionsGroup, drawOfficialFrame, SIGILLUM).
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.17.
+- Validacion pendiente en cliente real (KI-41/43).
+
+### DECISION 2026-08-21: v0.21.16 - Se retiran los carteles de interfaz
+
+Reversion masiva de la identidad visual agregada por v0.18.0/v0.19.0/
+v0.20.0/v0.21.0 (pases de interfaces y cohesion), pedida por el usuario
+("saca lo que metio y cambio interfaces de esas versiones, carteles y esas
+cosas, menos arreglos"). BACKUP previo: tag `backup-pre-reversion-v0.21.15`
+en GitHub + `backup_gripeverde_antes_reversion.tar.gz` local.
+
+**Metodo:** en vez de reescribir 16 pantallas (riesgo alto), se apago la
+capa de carteles en los helpers y se eliminaron los textos directos:
+
+- `ExpedientHeader.draw` -> solo dibuja el TITULO + divisor. Fuera:
+  expediente ("EXPEDIENTE XIV"), referencia ("EC-QV/1897 · ..."),
+  subtitulo, flavor y estado. Firma intacta (los ~16 call sites siguen
+  pasando los parametros, que se ignoran).
+- `DiaryChrome.drawInsetCard`, `drawInnerRail`, `drawValueRow` -> no-op
+  (firma intacta; las llamadas restantes compilan y no dibujan; quedan
+  como deuda tecnica para limpiar en una pasada futura).
+- Textos de seccion directos eliminados: Chat ("CASILLERO", "REGISTRO
+  PUBLICO", nota inferior + metodo `drawCorrespondenceRack` entero y
+  `drawBottomNotice`), Online ("TABLERO DE COMUNICACION", "ESTACION DE
+  RELE" + metodo `drawSignalStation` entero + `computePublicSignal`/
+  `signalDisplay`), Archive (tarjeta "ARCHIVE STATE" + barra "catalogue";
+  la grilla ahora usa el ancho completo), Sound ("CLASES VANILLA"),
+  Controls ("PUNTOS DE ENTRADA", "POSTURA Y CONDUCTA AUXILIAR"),
+  Language ("CONSULADOS"), Skin ("PARTES EXPUESTAS", "MANO PRINCIPAL" +
+  `drawSpecimenFooter`).
+
+**Conservado (funcional o anterior a esas versiones):** panel pergamino,
+botones, sliders, textfield, toggle, lista de opciones vanilla, busqueda de
+la Sala, fichas del archivo, documentos recuperados (v0.16), buzón/cajón/
+espejo (lore v0.16), libro de visitas, toasts, marginalia, fondo del Title.
+
+**Notas:**
+- Las progress bars (medidores) se conservan (no son carteles).
+- Las llamadas no-op a drawInsetCard/drawInnerRail/drawValueRow quedan en
+  las pantallas (compilan, no dibujan); limpieza total en pasada futura.
+- Lista negra del build ampliada (drawCorrespondenceRack, drawSignalStation,
+  drawBottomNotice, drawSpecimenFooter, computePublicSignal).
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.16.
+- Validacion pendiente en cliente real (KI-41): revisar las 16 pantallas
+  (titulo simple, sin carteles, sin solapes; botones/listas intactos).
+
+### DECISION 2026-08-21: v0.21.15 - Se retiran los sellos de estado
+
+Continuacion del pase de reversion de interfaz pedido por el usuario
+("revisa cuando fueron esos cambios y saca los que cambien interfaces de
+menu"). El pickaxe de git confirmo que los elementos que molestaban
+(REGISTRABLE, INCOMPLETO, LISTO, PENDIENTE, READY, LIVE, etc.) vienen de
+v0.18.0 (pase mayor de interfaces) y v0.21.0 (cierre de interfaces
+secundarias); el unico agregado reciente era el ticker del Heraldo (v0.21.9,
+ya revertido en v0.21.14).
+
+**Cambios:**
+- `ExpedientHeader`: eliminado el dibujo del pill de estado (status) en
+  TODAS las pantallas Diary (antes: REGISTRABLE, INCOMPLETO, LISTO,
+  PENDIENTE, READY, LIVE, INDEXADO, CALIBRADO, COMPLETO, CATALOGADO,
+  PREPARADO, ATENUANDO...). El parametro status se conserva en la firma
+  para no tocar ~20 llamadas. El flavor ya no reserva espacio para el pill
+  y usa todo el ancho del panel (truncado defensivo con ellipsis).
+- `DiaryOptionsScreen`: eliminado el pill "FIELD READY / LISTO PARA CAMPO"
+  del carril lateral (se mantiene la fila "GUI scale").
+- `DiaryChrome.drawStatusPill`: eliminado (quedo sin usos). Lista negra del
+  build ampliada con `drawStatusPill`.
+- El mensaje de borrar servidor ("va a desaparecer") es vanilla
+  (`selectServer.deleteWarning`); el rojo que se veia era el pill PENDIENTE
+  (quitado en v0.21.14) y el cartel ORDER (quitado). El mensaje ahora se
+  dibuja en tinta normal.
+- El libro de visitas de Multiplayer: verificado, el click y la firma estan
+  intactos; lo que lo tapaba era la tarjeta HOSPEDAJE ELEGIDO (quitada en
+  v0.21.14).
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL
+  (reversion de interfaz, no evento de la ciudad).
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.15.
+- Validacion pendiente en cliente real (KI-39/40).
+
+### DECISION 2026-08-21: v0.21.14 - El gabinete vuelve a respirar
+
+Reversion de adornos de interfaz que el usuario pidio quitar (los vio en
+cliente real). Sin gameplay, sin assets.
+
+**Eliminado del Title:** el saludo de sesion (`greetingText`, se dibujaba
+centrado en y=148 y solapaba los botones MP/MODS). Se quitaron la llamada,
+el metodo `drawGreeting`, los campos y las asignaciones en init (las
+marginalias N_FIRST_NIGHT/N_DUST y los descubrimientos DUST/ANNIVERSARY se
+conservan intactos).
+
+**Multiplayer:**
+- `LIST_TOP_OFFSET` 50 -> 84: la lista de servidores arrancaba en y=90,
+  por ENCIMA del final de la cabecera (y~118) — el server pinneado tapaba
+  titulo/subtitulo/divisora. Ahora arranca debajo.
+- Eliminada la tarjeta "HOSPEDAJE ELEGIDO / SELECTED LODGING"
+  (`drawSelectionLedger`) que se superponia a la zona del libro de visitas.
+- Eliminado el ticker del Heraldo en Multiplayer (adicion v0.21.9 que el
+  usuario no pidio y podia interferir con el libro de visitas).
+
+**Confirm (borrar servidor):** eliminado el cartel "ORDEN / ORDER"
+(drawInsetCard que solapaba el mensaje de confirmacion), eliminada la linea
+"mano autorizante / authorising hand" con su raya de firma, quitado el pill
+"PENDIENTE" del header, y el mensaje de confirmacion pasa a tinta normal
+(`DiaryTheme.INK`) en vez del rojo/negrita que se veia.
+
+**ExpedientHeader (fix general anti-solape):** el flavor debajo del
+subtitulo ahora se trunca con ellipsis al espacio libre antes del pill de
+estado. Arregla el solape de "REGISTRABLE" (editar servidor), "INCOMPLETO"
+(agregar servidor), "LISTO" (conexion directa) y cualquier otra pantalla
+con flavor largo + pill (incluido Options "READY").
+
+**Build:** lista negra de `verifyGripeVerdeNoDeadCode` ampliada con
+`drawGreeting`, `drawSelectionLedger`, `drawHeraldTicker`.
+
+**Nota:** el usuario reporto "el libro de visitas dejo de funcionar" y
+"errores en el gabinete" sin poder verse las capturas en el sandbox
+(adjuntos no llegan). Se limpiaron las superposiciones que podian taparlo;
+si persiste, requiere captura o descripcion puntual.
+
+Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL
+(reversion de interfaz, no evento de la ciudad).
+Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.14.
+Validacion pendiente en cliente real (KI-39).
+
+### DECISION 2026-08-21: v0.21.13 - El expediente se cierra
+
+Hito final de cierre narrativo (lore puro, sin gameplay):
+- Al completar las 47 fichas, la Sala de consulta muestra el archivo como
+  COMPLETO: el footer cambia de "las fichas que faltan siguen ahi fuera" a
+  "el archivo esta completo", y aparece un sello de cera dorado (SIGILLUM,
+  dibujado proceduralmente con fills, radio 8) junto al texto.
+- Disparo unico (persistente): `ChroniclerMemory.counter("cabinet_complete")`
+  se marca a 1 la primera vez; marginalia final `N_ARCHIVE_COMPLETE`
+  ("Cuarenta y siete fichas. El cajon ya esta vacio. Sellalo.") y campana
+  grave (`MENU_BELL` pitch 0.55).
+- Sin clases nuevas (59), sin lang keys, sin assets.
+- Changelog in-game (25 .md): SI, tiene manifestacion observable (el
+  archivo se sella) — entrada v0.21.13 ES/EN.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.13.
+- Validacion pendiente en cliente real (KI-38): completar las 47 fichas
+  (o forzar con `gripeverde-memory.json`) y ver el sello + marginalia.
+
+### DECISION 2026-08-21: v0.21.12 - El marco de la pausa queda en su sitio
+
+Hito menor de consolidacion:
+- `DiaryPauseScreen`: el metodo privado `drawCornerOrnaments` (estilo oro
+  tarnished, 1 sola llamada) fue inline en su unico uso y eliminado; el
+  marco del diario queda identico visualmente pero sin metodo huerfano.
+- Audit global de campos/metodos privados: CERO muertos en todo
+  src/main/java (el proyecto quedo limpio tras v0.21.7-0.21.11).
+- Sin cambios de assets ni lang. 59 clases Java.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.12.
+- Validacion pendiente en cliente real (KI-37): marco del diario de pausa
+  identico (esquinas de oro) — solo refactor interno.
+
+### DECISION 2026-08-21: v0.21.11 - La sala respira bajo la mano
+
+Hito de micro-pulido + optimizacion (sin gameplay, sin assets):
+- Micro-animacion en la Sala de consulta: la ficha bajo el cursor se alza
+  2px y aclara con `EasedValue` (patron de DiaryButton). El hover se
+  suaviza entre fichas (animHoverCard + cardHover en tick).
+- `DiaryProgressBar` estilo ALERT: pulso suave 0.8-1.0 de alpha (el progreso
+  del archivo "late" sin parpadear). Solo afecta al estilo ALERT.
+- `ChroniclerMemory.save()` diferido: max 1 escritura a disco cada 2s
+  (antes escribia en cada `discover`, `bump`, `markDiscovered`, etc.),
+  con `flushForShutdown()` registrado via `Runtime.addShutdownHook` en
+  `GripeVerdeMod` para no perder memoria al cerrar.
+- `QuarantineSceneRenderer`: el grano de pelicula se rehace cada 300ms en
+  modo low-end (antes 90ms) — ahorro de CPU cuando el FPS ya es bajo.
+- Sin clases nuevas (59), sin lang keys, 42 OGG, 35 eventos.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL (el
+  latido del archivo y el alzar de fichas son detalle de interfaz).
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.11.
+- Validacion pendiente en cliente real (KI-36): la ficha del archivo se
+  alza con suavidad (sin saltos), el pulso ALERT es sutil, y la memoria del
+  gabinete sobrevive al cierre del juego (flush).
+
+### DECISION 2026-08-21: v0.21.10 - La estacion parpadea al cambiar
+
+Hito tecnico (consolidacion + micro-pulido, sin gameplay):
+- 15 constantes de color muertas eliminadas: `DiaryTheme.IRON_RUST`,
+  `GREEN_TOXIC`, `GREEN_DEEP`, `SICK_GREEN`, `SMOKE_GREY`, `WINDOW_AMBER`,
+  `WINDOW_SICK`, `CLOUD_DARK` y `DiaryChrome.SHADOW_COL`, `STEEL_LIGHT`,
+  `STEEL_NEAR`, `STEEL_DARK`, `STEEL_DEEP`, `STEEL_EDGE`, `CARD_SHADE`
+  (audit de uso global: 0 referencias).
+- `DiaryOnlineOptionsScreen`: el medidor de alcance de la estacion
+  (`computePublicSignal`) ahora responde con transicion suave (interpolacion
+  en tick hacia el objetivo; antes el valor saltaba al togglear).
+- Lista negra de `verifyGripeVerdeNoDeadCode` ampliada con 13 simbolos
+  muertos eliminados en v0.21.7-0.21.9 (drawVictorianFrame, drawQuillCursor,
+  drawVersionPanel, getMoonPhaseIndex, openTelemetry, etc.) y las 15
+  constantes de color.
+- Sin cambios de assets ni lang. 59 clases Java.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL (el
+  parpadeo del medidor es detalle de interfaz, no evento de la ciudad).
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.10.
+- Validacion pendiente en cliente real (KI-35): el medidor de alcance en la
+  estacion de comunicaciones transiciona suave al togglear los avisos.
+
+### DECISION 2026-08-21: v0.21.9 - La tinta pesa menos por frame
+
+Hito tecnico de optimizacion + consolidacion (sin gameplay, sin assets):
+- `Discoveries.isEnglish()` con cache de 250ms: se consultaba el
+  LanguageManager decenas de veces por frame (Options: ~23 llamadas en
+  render). Ahora una lectura cada 250ms; el cambio de idioma recarga
+  resources y expira solo.
+- Consolidacion de texto centrado: nuevo `DiaryChrome.drawCenteredString`
+  y eliminados los helpers privados duplicados en DiaryArchiveScreen,
+  HiddenCipher, Herald y PosterRenderer (26 llamadas unificadas).
+- `Herald.headlineToday()`: titular del dia extraido a metodo publico
+  (misma semilla que el kiosco). `DiaryMultiplayerScreen` muestra el
+  titular junto al libro de visitas (ticker inferior izquierdo, simetrico
+  al guestbook).
+- Campos muertos eliminados: `PosterRenderer.BLOOD_RNG`/`STAMP_RNG` (las
+  funciones usan `new Random(posterSeed)`), `ChangelogScreen.PAD_Y`,
+  `DiaryMultiplayerScreen.LOGGER`/`frameLogCounter`,
+  `DiaryPauseScreen.PANEL_MIN_H`/`MARGIN_BOTTOM_IDEAL`/`ORN_TITLE_TOP`/
+  `ORN_SUBTITLE_TOP`.
+- Metodos muertos eliminados: `ChangelogScreen.scrollToSection`,
+  `DiaryOptionsScreen.drawRowBands`/`drawCornerOrnaments` (resto de la
+  migracion v0.21.7 a renderPanelBase)/`openTelemetry` (telemetria fuera
+  del grid), `LogoRenderer.drawOrnamentalDivider`,
+  `TextureAssets.exists` (0 llamadas).
+- Nuevo `CONTRIBUTING.md` (docs oficiales): reglas branch fija, no
+  gameplay, 4 escalas GUI, 3 tasks de verificacion.
+- Conteos: 59 clases Java, 25 lang (80 claves), 35 eventos, 42 OGG.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL (hito
+  tecnico; el ticker del Heraldo es detalle de interfaz, no evento de la
+  ciudad).
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.9.
+- Validacion pendiente en cliente real (KI-34): el ticker del Heraldo en
+  Multiplayer (ES/EN), y que el cache de idioma no tarde en reflejar un
+  cambio de idioma (deberia ser instantaneo por el reload).
+
+### DECISION 2026-08-21: v0.21.8 - Una sola mano para el idioma
+
+Hito tecnico de consolidacion (continuacion de v0.21.7):
+- 7 pantallas (Changelog, Credits, Language, Options, Pause, Title, Video)
+  tenian su propio helper `isEnglish()`/`isEnglishSelected()` con logica
+  duplicada (y en 2 casos catch con valor distinto). Unificadas 92 llamadas
+  en la canonica `Discoveries.isEnglish()` y eliminadas las 7 definiciones
+  privadas. Sin cambio de comportamiento: todas leen el idioma activo del
+  LanguageManager y devuelven null-safe startsWith("en_").
+- `OrnamentRenderer`: eliminados `drawVictorianFrame` + helpers privados
+  `drawDoubleBorder`, `drawFiligreeCorner`, `drawFleuron` (0 referencias).
+  Sobreviven `drawPaperPanel` y `drawWaxSeal` (usados por PosterRenderer).
+- Sin cambios de assets, sin lang keys, sin gameplay. 59 clases Java.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL (hito
+  tecnico sin manifestacion observable).
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.8.
+- Validacion pendiente en cliente real (KI-33): navegar las 7 pantallas en
+  ES y EN para confirmar que el idioma se sigue leyendo igual.
+
+### DECISION 2026-08-21: v0.21.7 - El gabinete sin peso muerto
+
+Hito tecnico de consolidacion (sin gameplay, sin resourcepacks, sin tocar
+logica vanilla). El usuario pidio eliminar archivos inutiles, combinar
+archivos y optimizar.
+
+**Archivos eliminados (9):**
+- `render/VictorianFrame.java` (0 referencias; framework de overlay v0.6.x)
+- `screens/AbstractDiaryScreen.java` (0 referencias; nunca fue extendida)
+- `screens/DebugCanvasScreen.java` + `screens/SoundLabScreen.java`
+  (herramientas de desarrollo inalcanzables en produccion: nada las abre)
+- `render/DiaryDecorator.java` y `render/CandleLight.java` (solo las usaba
+  DebugCanvasScreen)
+- `render/InkEffects.java` (0 referencias)
+- `widgets/DiaryMusicSlider.java` y `widgets/DiaryAmbienceSlider.java`
+  (combinadas en el `DiarySlider` generico, que ya tenia labelFormatter +
+  onValueChanged + applyOnDrag)
+
+**Metodos muertos eliminados:** `DiaryChrome.drawQuillCursor`,
+`drawVerticalDivider`, `drawDarkLeatherBackground` + constante `LEATHER_BASE`;
+`PaperTexture.getOpenCount` y `drawSolidBlob`; `AtmosphereRenderer.getMoonPhaseIndex`;
+`PosterRenderer.drawVersionPanel`.
+
+**Optimizacion de pipeline:** nuevo `DiaryChrome.renderPanelBase(g, x, y, w, h,
+accent, PaperKind)` (scaffold + pergamino + esquineros) aplicado en 14
+pantallas Diary. Changelog y Credits conservan su decoracion propia
+(encuadernado / marco oficial).
+
+**Lang:** 57 claves sin uso eliminadas de los 25 idiomas (137 -> 80); eran
+en su mayoria de las dev screens (`gripeverde.catalog.*`, `gripeverde.soundlab.*`,
+`gripeverde.panel.version.*`) y de features retiradas (telemetria, subtitulos
+viejos). Nueva clave `gripeverde.options.sound.ambience_slider` (25 idiomas)
+para el slider de ambiente unificado en Sonidos (antes tenia el label
+hardcodeado en espanol).
+
+**Conteos post-consolidacion:** 59 clases Java (vs 68), 25 lang (80 claves
+cada uno), 25 changelog in-game, 35 eventos de sonido, 42 OGG, 0 PNG.
+sounds.json <-> ModSounds <-> OGG verificados (35/35).
+
+**Nota R-CHANGELOG-DISCRECIONAL:** changelog in-game (25 .md) OMITIDO en este
+hito por ser puramente tecnico; el unico cambio visible es el look unificado
+del slider de ambiente en la sala de sonido. CHANGELOG.md raiz si lleva
+entrada breve. Validacion pendiente en cliente real (KI-32).
+
+### DECISION 2026-08-21: v0.21.6 - El heraldo cuenta la limpieza
+
+Hito de lore (solo texto, sin gameplay):
+- `Herald`: 3 noticias nuevas (limpieza del gabinete, farol del tejado que se
+  apaga solo, gato del kiosco) en ES/EN + array `SECOND_*` con 4 segundas
+  lineas variables (antes fija). Todo sembrado con la semilla del dia real:
+  nunca dos amaneceres iguales.
+- `HiddenCipher`: codigo `ARCHIVE` que abre la Sala de consulta (mismo patron
+  que HOLLOWAY; sin fichas nuevas).
+- Sin cambios de assets, sin clases nuevas (68), sin lang keys.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.6.
+- Validacion pendiente en cliente real (KI-31): ver el Heraldo del dia con
+  las noticias nuevas (se puede forzar cambiando la fecha del sistema), y
+  escribir ARCHIVE en el telegrafo oculto.
+
+### DECISION 2026-08-21: v0.21.5 - La sala responde a la consulta
+
+Hito no-gameplay (lore + audio + performance + UI de consulta):
+- Sala de consulta: busqueda por nombre/pista/id con `DiaryTextField`
+  (columna derecha bajo ARCHIVE STATE, contador "N / 47", aviso de sin
+  coincidencias, grilla filtrada compacta; el campo se oculta al abrir
+  documentos para no dibujarse encima).
+- Ficha 47: `BUTTONS_NEVER_PRESSED` ("Los botones que nunca se pulsaron") —
+  cadena: cuando las 3 confesiones de limpieza de v0.21.3 estan, la cuarta
+  aparece en la sala. TOTAL/ALL/nombres/pistas actualizados a 47.
+- Marginalia: `N_OPEN_COUNT` (openCount >= 100 en Title.init) y
+  `N_MANY_CARDS` (discoveredCount >= 44 en Archive.init).
+- Audio: `Discoveries.discover()` hace ducking de la musica
+  (`MenuMusic.duckFor(2500L)`) para que el archivo hable claro.
+- Performance: `QuarantineSceneRenderer.isLowEnd()` (FPS < 30, muestreo
+  cada 1s, defensivo con try/catch) omite niebla y faroles en
+  `renderTitleScene` y `renderDiaryBackground`.
+- Sin clases nuevas (68), sin lang keys, 42 OGG, 35 eventos.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.5.
+- Validacion pendiente en cliente real (KI-30): 4 escalas GUI (busqueda en
+  la sala, cadena de la 47, ducking al hallar, low-end en maquinas lentas).
+
+### DECISION 2026-08-21: v0.21.4 - La tinta se asienta
+
+Hito no-gameplay aprobado por el usuario (presentacion + audio + higiene):
+- Busqueda del manual en `DiaryControlsScreen`: `DiaryTextField` filtra los
+  6 puntos de mando (Mouse/Atajos + 4 toggles) por nombre traducido via
+  `AbstractWidget.visible`; hint "escriba para filtrar" y aviso "ningun punto
+  coincide"; se omite si panelH < 220 (escalas extremas).
+- `DiaryVideoSettingsScreen`: carril reagrupado en secciones RENDER / QUALITY /
+  PERFORMANCE (RENDER: barra FOV + fila Canvas con this.width x this.height;
+  QUALITY: escala GUI; PERFORMANCE: medidor de FPS del cliente con
+  `minecraft.getFps()` en try/catch, oculto si panelH < 330). Solo presenta;
+  no toca la lista vanilla ni su logica.
+- `DiaryLanguageScreen`: al hover/pendiente cada consulado declara su registro
+  (136/136 para las 25 lenguas del gabinete via Set estatico REGISTERED;
+  0/136 para el resto de lenguas vanilla). Verificado: los 25 lang tienen 136
+  claves identicas.
+- Audio: evento nuevo `ui.paper_fall` (sounds.json 34 -> 35 eventos) que
+  reutiliza `ui/scroll1` + `ui/back2` (sin OGG nuevos, 42 OGG intactos);
+  suena al abrir la Sala de consulta (`DiaryArchiveScreen.init`).
+- Higiene: 54 imports no usados eliminados (audit de simple-name count==1);
+  nueva task Gradle `verifyGripeVerdeNoDeadCode` (falla si aparece ThemeManager,
+  gripeverde_steel, bg_town, IconButton, ResourcePackHandler, etc. fuera de
+  comentarios; word-boundary para no chocar con `BG_TOWN_MEMORY`) conectada a
+  processResources; `.editorconfig` (utf-8, LF, trim trailing whitespace).
+- Sin clases nuevas (68), sin lang keys nuevas (nombres hardcoded ES/EN).
+- Pendiente: las 2 pistas MenuMusic nuevas del brief requieren OGGs reales del
+  usuario (no generables en sandbox); queda como deuda KI-29.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.4.
+- Validacion pendiente en cliente real (KI-28): 4 escalas GUI, filtro del
+  manual, secciones del aparato, hover de registro en lenguas, papel en la
+  sala de consulta.
+
+### DECISION 2026-08-21: v0.21.3 - El gabinete respira mas ligero
+
+Hito no-gameplay aprobado por el usuario (solo texto/rendimiento/config):
+- RNG con seed fija en `VictorianSkyline`, `LivingAtmosphere` y
+  `QuarantineSceneRenderer`: eliminado `Math.random` del loop caliente
+  (RND compartido por clase, seeds `0x5EEDF00DL` / `0xC10E5EL` / `0xD05E`).
+  La escena del Title ahora es determinista por sesion.
+- `ClientConfig`: nueva clave `REDUCED_MOTION` (boolean, seccion `visual`,
+  default false) respetada en `LivingAtmosphere` (farol erratico, polillas,
+  rata, papeles, rafagas, pulso de niebla). NO toca widgets ni `EasedValue`
+  (evita riesgo en toda la UI).
+- `Discoveries`: 3 fichas nuevas sobre la limpieza v0.21.2 (43 -> 46):
+  `ARCHIVE_THINNING` (openCount >= 50, dispara en `DiaryTitleScreen.init`),
+  `THEME_NEVER_PLAYED` (codigo `CLEANSE` en `HiddenCipher` + telegrama
+  propio), `BG_TOWN_MEMORY` (cadena en `DiaryArchiveScreen` cuando las
+  otras dos estan descubiertas).
+- `DiaryOptionsScreen`: el progreso del archivo usa `Discoveries.ALL.length`
+  (antes `43` hardcodeado).
+- Sin clases nuevas (siguen 68); sin lang keys nuevas (nombres/pistas
+  hardcodeados ES/EN como el resto de fichas).
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.3.
+- Docs sincronizadas (R-CIERRE): README, CHANGELOG, KNOWN_ISSUES, CONTEXTO
+  y 25 changelog in-game (entrada observable en la ciudad: fichas/toast).
+- Validacion pendiente en cliente real (E125): 4 escalas GUI, toast de las
+  3 fichas, telegrama CLEANSE, quietud con REDUCED_MOTION=true, y que la
+  escena con seed fija no se sienta repetida tras varias sesiones (KI-27).
+
+### DECISION 2026-08-21 (post-v0.21.2): retiro de CONTEXTO_PARA_IA.md
+
+El usuario ordeno eliminar el documento de contexto para otra IA por
+redundancia: duplicaba a CONTEXTO.md y quedo desincronizado en v0.21.1
+cuando el repo ya estaba en v0.21.2. Retirado del repo y de la lista de
+documentacion del README. CONTEXTO.md queda como UNICA fuente de verdad.
+Sin impacto en build ni runtime; no requiere bump de version (docs only).
 
 ### DECISION 2026-08-21: limpieza profunda del proyecto (v0.21.2)
 
@@ -180,9 +830,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.21.2
-- build.gradle: version = '0.21.2'
-- GripeVerdeMod.VERSION: "0.21.2"
+- Version estable actual: v0.21.24
+- build.gradle: version = '0.21.24'
+- GripeVerdeMod.VERSION: "0.21.24"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10 (no se han publicado tags desde el ciclo v0.13.x; los bumps v0.14-v0.17 quedaron sin tag)
 - Working tree esperado al retomar: limpio

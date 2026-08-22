@@ -1,17 +1,10 @@
 package com.eternalcraft.gripeverde.client.screens;
 
-import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
-import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
 import com.eternalcraft.gripeverde.client.audio.MenuMusic;
-import com.eternalcraft.gripeverde.client.lore.Discoveries;
-import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
-import com.eternalcraft.gripeverde.client.render.DiaryTheme;
-import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
 import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
-import com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar;
 import com.eternalcraft.gripeverde.client.widgets.DiaryMusicSlider;
 import com.eternalcraft.gripeverde.client.widgets.DiaryAmbienceSlider;
 import com.mojang.logging.LogUtils;
@@ -48,17 +41,15 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
 
     private static final Logger LOG = LogUtils.getLogger();
 
-    private static final int PANEL_W = 540;
-    private static final int PANEL_H = 392;
+    private static final int PANEL_W = 340;
+    private static final int PANEL_H = 380;
     private static final int SLIDER_H = 20;
-    private static final int RAIL_W = 156;
 
     private int panelX, panelY, panelW, panelH;
     private OptionsList reflectedList;
     private final SmoothScroll smoothScroll = new SmoothScroll();
     private DiaryMusicSlider musicSlider;
     private DiaryAmbienceSlider ambienceSlider;
-    private long openedAtMs = 0L;
 
     public DiarySoundOptionsScreen(Screen parent, Options options) {
         super(parent, options);
@@ -99,9 +90,9 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             }
         }
 
-        // Slider propio de musica del mod, debajo de la lista / fuera del carril lateral
-        int sliderW = this.panelW - RAIL_W - 58;
-        int sliderX = this.panelX + 22;
+        // Slider propio de musica del mod, debajo de la lista
+        int sliderW = this.panelW - 40;
+        int sliderX = this.panelX + 20;
         int sliderY = this.panelY + this.panelH - 82;
         this.musicSlider = new DiaryMusicSlider(sliderX, sliderY, sliderW, SLIDER_H);
         this.addRenderableWidget(this.musicSlider);
@@ -115,9 +106,9 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         this.addRenderableWidget(this.ambienceSlider);
 
         // Boton Volver estilo diario
-        int btnW = 132;
+        int btnW = 120;
         int btnH = 20;
-        int btnX = sliderX + (sliderW - btnW) / 2;
+        int btnX = (this.width - btnW) / 2;
         int btnY = this.panelY + this.panelH - 30;
         this.addRenderableWidget(new DiaryButton(
             btnX, btnY, btnW, btnH,
@@ -126,7 +117,6 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             DiaryButton.Variant.PRIMARY,
             () -> this.onClose()
         ));
-        this.openedAtMs = System.currentTimeMillis();
     }
 
     /**
@@ -216,78 +206,62 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        // --- Escena viva atenuada ---
+        // Clear framebuffer + transition fade
         g.fill(0, 0, this.width, this.height, 0xFF000000);
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
+                // --- Overlay oscuro ---
 
-        float reveal = DiaryChrome.reveal(this.openedAtMs, 260L);
-        DiaryChrome.drawPanelScaffold(g, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.AMBER_FLAME);
+        // --- Pergamino ---
+        DiaryChrome.drawPanelShadow(g, this.panelX, this.panelY, this.panelW, this.panelH);
         PaperTexture.drawClean(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.LEDGER);
-        DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
 
-        int headerBottom = ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW,
-            Discoveries.isEnglish() ? "EXPEDIENT II" : "EXPEDIENTE II",
-            Component.translatable("options.sounds.title"),
-            "- " + Component.translatable("gripeverde.options.sound.subtitle").getString() + " -",
-            Discoveries.isEnglish() ? "EC-QV/1897 · ACOUSTIC ROOM" : "EC-QV/1897 · SALA ACUSTICA",
-            Component.translatable("gripeverde.options.sound.flavor").getString(),
-            MenuMusic.isDucking() ? (Discoveries.isEnglish() ? "DUCKING" : "ATENUANDO") : (Discoveries.isEnglish() ? "LIVE" : "EN VIVO"),
-            DiaryTheme.AMBER_FLAME,
-            reveal);
-
-        int railX = this.panelX + this.panelW - RAIL_W - 18;
-        int railY = headerBottom;
-        DiaryChrome.drawInsetCard(g, this.font, railX, railY, RAIL_W, 78,
-            Discoveries.isEnglish() ? "MASTER CHANNELS" : "CANALES MAESTROS",
-            Discoveries.isEnglish() ? "Gramophone and room tone" : "Gramofono y ambiente",
-            Discoveries.isEnglish() ? "Two custom channels stay independent from vanilla sound classes." : "Dos canales propios permanecen separados de las clases vanilla.",
-            DiaryTheme.AMBER_FLAME);
-        DiaryProgressBar.draw(g, railX + 10, railY + 38, RAIL_W - 20, 12,
-            MenuMusic.getVisualMixLevel(), Discoveries.isEnglish() ? "Music" : "Musica", DiaryProgressBar.Style.AMBER);
-        DiaryProgressBar.draw(g, railX + 10, railY + 56, RAIL_W - 20, 12,
-            com.eternalcraft.gripeverde.client.audio.MenuAmbience.getUserVolume(), Discoveries.isEnglish() ? "Ambience" : "Ambiente", DiaryProgressBar.Style.PLAGUE);
-
-        int railY2 = railY + 86;
-        DiaryChrome.drawInsetCard(g, this.font, railX, railY2, RAIL_W, 88,
-            Discoveries.isEnglish() ? "ROOM STATE" : "ESTADO DE LA SALA",
-            MenuMusic.isCrossfading() ? (Discoveries.isEnglish() ? "Crossfade in progress" : "Cruce en curso") : (Discoveries.isEnglish() ? "Stable playback" : "Reproduccion estable"),
-            Discoveries.isEnglish() ? "The controls answer immediately and the background city keeps breathing." : "Los controles responden al instante y la ciudad del fondo sigue respirando.",
-            DiaryTheme.PLAGUE_SICK);
-        DiaryProgressBar.draw(g, railX + 10, railY2 + 40, RAIL_W - 20, 14,
-            MenuMusic.getCrossfadeVisual(), Discoveries.isEnglish() ? "Transition" : "Transicion", DiaryProgressBar.Style.STEEL);
-        DiaryChrome.drawValueRow(g, this.font, railX + 10, railY2 + 62, RAIL_W - 20,
-            Discoveries.isEnglish() ? "Signals" : "Senales",
-            com.eternalcraft.gripeverde.client.audio.MenuAmbience.isMuted() ? (Discoveries.isEnglish() ? "muted" : "silenciado") : (Discoveries.isEnglish() ? "open" : "abierto"),
-            DiaryTheme.BRONZE);
-
-        int listFrameX = this.panelX + 18;
-        int listFrameW = railX - listFrameX - 16;
-        DiaryChrome.drawInnerRail(g, listFrameX, headerBottom - 2, listFrameW, this.panelH - 138, DiaryTheme.SEPIA_MID);
-        g.drawString(this.font,
-            Discoveries.isEnglish() ? "VANILLA CLASSES" : "CLASES VANILLA",
-            listFrameX + 10, headerBottom + 6, DiaryTheme.BRONZE, false);
-
-        if (this.reflectedList != null) {
-            if (reveal < 0.995f) {
-                int revealBottom = this.panelY + Math.max(28, (int)(this.panelH * reveal));
-                g.enableScissor(this.panelX - 2, this.panelY - 2, this.panelX + this.panelW + 2, revealBottom);
-                this.reflectedList.render(g, mouseX, mouseY, partialTick);
-                DiaryChrome.drawStyledScrollThumbInPanel(g, (AbstractSelectionList<?>) this.reflectedList, railX - 8);
-                g.disableScissor();
-            } else {
-                this.reflectedList.render(g, mouseX, mouseY, partialTick);
-                DiaryChrome.drawStyledScrollThumbInPanel(g, (AbstractSelectionList<?>) this.reflectedList, railX - 8);
-            }
+        // --- Titulo ---
+        String titleStr = Component.translatable("options.sounds.title").getString();
+        int titleX = this.width / 2;
+        int titleY = this.panelY + 10;
+        {
+        int _tw = this.font.width(titleStr);
+        g.drawString(this.font, titleStr, titleX - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
         }
 
+        // --- Subtitulo ---
+        String subtitle = "- " + Component.translatable("gripeverde.options.sound.subtitle").getString() + " -";
+        int subWC = this.font.width(subtitle);
+        g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
+
+        // --- Flavor ---
+        String flavor = Component.translatable("gripeverde.options.sound.flavor").getString();
+        int flvWC = this.font.width(flavor);
+        g.drawString(this.font, flavor, (this.width - flvWC) / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
+
+        // --- Divisor superior ---
+        int divY1 = titleY + 42;
+        DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY1);
+
+        // --- Lista vanilla sin gradientes blancos ni bandejas extra ---
+        if (this.reflectedList != null) {
+            this.reflectedList.render(g, mouseX, mouseY, partialTick);
+            DiaryChrome.drawStyledScrollThumbInPanel(g,
+                (AbstractSelectionList<?>) this.reflectedList, this.panelX + this.panelW);
+        }
+
+        // --- Divisor entre lista y slider ---
         int divY2 = this.panelY + this.panelH - 88;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
+
+        // --- Divisor inferior + esquineros ---
         int divY3 = this.panelY + this.panelH - 38;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY3);
+        DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
+        DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. II");
 
+        // --- Slider + boton (renderables propios) ---
         for (Renderable r : this.renderables) {
             r.render(g, mouseX, mouseY, partialTick);
         }
 
+        // v0.16.0
         try {
             com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
             com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, this.panelY - 12);

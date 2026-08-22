@@ -5,15 +5,11 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
 /**
- * Cabecera documental reutilizable para las interfaces de Gripe Verde.
+ * Cabecera reutilizable para las interfaces de Gripe Verde.
  *
- * Estructura:
- *   EXPEDIENTE / referencia
- *   titulo principal
- *   subtitulo
- *   flavor / nota operativa
- *   capsula de estado opcional
- *   divisor
+ * v0.21.16: revertida al titulo simple (la estructura documental de
+ * v0.18.0/v0.21.0 fue retirada por pedido del usuario).
+ * v0.21.20: sobrecarga simple; la firma larga delega en ella.
  */
 public final class ExpedientHeader {
 
@@ -29,47 +25,23 @@ public final class ExpedientHeader {
                            String status,
                            int accentColor,
                            float reveal) {
+        // v0.21.20: los parametros documentales se ignoran; titulo simple.
+        return draw(gfx, font, panelX, panelY, panelW, title, reveal);
+    }
+
+    /** v0.21.20: cabecera simple (titulo + divisor). */
+    public static int draw(GuiGraphics gfx, Font font,
+                           int panelX, int panelY, int panelW,
+                           Component title, float reveal) {
         reveal = Math.max(0f, Math.min(1f, reveal));
         int cx = panelX + panelW / 2;
         int topY = panelY + 12;
         int slide = (int) ((1f - reveal) * 10f);
-
-        if (expedient != null && !expedient.isEmpty()) {
-            gfx.drawString(font, expedient, panelX + 18, topY - slide,
-                DiaryChrome.fadeColor(DiaryTheme.SEPIA_MID, 0.92f * reveal), false);
-        }
-        if (reference != null && !reference.isEmpty()) {
-            int rw = font.width(reference);
-            gfx.drawString(font, reference, panelX + panelW - rw - 18, topY - slide,
-                DiaryChrome.fadeColor(DiaryTheme.SEPIA_MID, 0.86f * reveal), false);
-        }
-
         int titleW = font.width(title);
         gfx.drawString(font, title, cx - titleW / 2, topY + 12 - slide,
             DiaryChrome.fadeColor(DiaryChrome.INK_TITLE, reveal), false);
-
-        if (subtitle != null && !subtitle.isEmpty()) {
-            int sw = font.width(subtitle);
-            gfx.drawString(font, subtitle, cx - sw / 2, topY + 25 - slide,
-                DiaryChrome.fadeColor(DiaryChrome.INK_SUBTITLE, reveal), false);
-        }
-
-        if (flavor != null && !flavor.isEmpty()) {
-            int fw = font.width(flavor);
-            gfx.drawString(font, flavor, cx - fw / 2, topY + 39 - slide,
-                DiaryChrome.fadeColor(DiaryChrome.INK_FLAVOR, reveal), false);
-        }
-
-        if (status != null && !status.isEmpty()) {
-            int alphaAccent = DiaryChrome.fadeColor(accentColor, 0.20f + 0.80f * reveal);
-            int border = DiaryChrome.fadeColor(accentColor, reveal);
-            int ink = DiaryChrome.fadeColor(DiaryTheme.INK_BLACK, reveal);
-            DiaryChrome.drawStatusPill(gfx, font, panelX + panelW - font.width(status) - 34,
-                topY + 37 - slide, status, alphaAccent, border, ink);
-        }
-
-        int dividerY = topY + 54 - slide;
+        int dividerY = topY + 30 - slide;
         DiaryChrome.drawInkDivider(gfx, panelX + 18, dividerY, panelW - 36);
-        return dividerY + 12;
+        return dividerY + 10;
     }
 }

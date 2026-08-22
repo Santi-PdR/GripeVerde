@@ -1,20 +1,12 @@
 package com.eternalcraft.gripeverde.client.screens;
 
-import com.eternalcraft.gripeverde.client.audio.MenuMusic;
-import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
-import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
-import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
-import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
-import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
-import com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar;
 import com.eternalcraft.gripeverde.client.widgets.DiaryToggle;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
@@ -42,15 +34,13 @@ import net.minecraft.network.chat.Component;
  */
 public class DiaryControlsScreen extends Screen {
 
-    private static final int PANEL_W = 520;
-    private static final int PANEL_H = 278;
-    private static final int RAIL_W = 152;
+    private static final int PANEL_W = 340;
+    private static final int PANEL_H = 260;
 
     private final Screen lastScreen;
     private final Options options;
     private int panelX, panelY, panelW, panelH;
     private boolean smugglerSeen = false;
-    private long openedAtMs = 0L;
 
     public DiaryControlsScreen(Screen parent, Options options) {
         super(Component.translatable("controls.title"));
@@ -74,13 +64,13 @@ public class DiaryControlsScreen extends Screen {
         this.panelX = (this.width - this.panelW) / 2;
         this.panelY = (this.height - this.panelH) / 2;
 
-        // Grid 2 columnas x 3 filas dentro del panel, con carril lateral de protocolo
-        int gridTop = this.panelY + 92;
+        // Grid 2 columnas x 3 filas dentro del panel
+        int gridTop = this.panelY + 50;
         int rowH = 24;
         int btnW = 150;
         int btnH = 20;
-        int col1X = this.panelX + 22;
-        int col2X = col1X + btnW + 10;
+        int col1X = this.panelX + (this.panelW / 2) - btnW - 4;
+        int col2X = this.panelX + (this.panelW / 2) + 4;
 
         // Fila 0: Mouse... | Atajos...
         this.addRenderableWidget(new DiaryButton(
@@ -124,7 +114,6 @@ public class DiaryControlsScreen extends Screen {
             DiaryButton.Variant.PRIMARY,
             () -> this.onClose()
         ));
-        this.openedAtMs = System.currentTimeMillis();
     }
 
     /** Toggle Diary generico con etiqueta base + On/Off por defecto. */
@@ -148,73 +137,50 @@ public class DiaryControlsScreen extends Screen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        // Escena viva
+        // Clear framebuffer + transition fade
         g.fill(0, 0, this.width, this.height, 0xFF000000);
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
+                // Overlay
 
-        float reveal = DiaryChrome.reveal(this.openedAtMs, 240L);
-        DiaryChrome.drawPanelScaffold(g, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.BRONZE);
+        // Pergamino
+        DiaryChrome.drawPanelShadow(g, this.panelX, this.panelY, this.panelW, this.panelH);
         PaperTexture.drawClean(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.TECHNICAL);
-        DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
 
-        int headerBottom = ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT III" : "EXPEDIENTE III",
-            this.title,
-            "- " + Component.translatable("gripeverde.options.controls.subtitle").getString() + " -",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · FIELD MANUAL" : "EC-QV/1897 · MANUAL DE CAMPO",
-            Component.translatable("gripeverde.options.controls.flavor").getString(),
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "READY" : "PREPARADO",
-            DiaryTheme.BRONZE,
-            reveal);
-
-        int leftX = this.panelX + 18;
-        int railX = this.panelX + this.panelW - RAIL_W - 18;
-        int workW = railX - leftX - 14;
-        DiaryChrome.drawInnerRail(g, leftX, headerBottom - 2, workW, 118, DiaryTheme.BRONZE);
-        g.drawString(this.font,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "ENTRY POINTS" : "PUNTOS DE ENTRADA",
-            leftX + 10, headerBottom + 6, DiaryTheme.BRONZE, false);
-        g.drawString(this.font,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "STANCE & AUXILIARY BEHAVIOUR" : "POSTURA Y CONDUCTA AUXILIAR",
-            leftX + 10, headerBottom + 56, DiaryTheme.BRONZE, false);
-
-        DiaryChrome.drawInsetCard(g, this.font, railX, headerBottom, RAIL_W, 78,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "PROTOCOL" : "PROTOCOLO",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Field discipline" : "Disciplina de campo",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
-                ? "Mouse and keybinds remain vanilla routes; the cabinet only reorganises their presentation."
-                : "Raton y teclas mantienen rutas vanilla; el gabinete solo reorganiza su presentacion.",
-            DiaryTheme.PLAGUE_SICK);
-        DiaryChrome.drawInsetCard(g, this.font, railX, headerBottom + 86, RAIL_W, 92,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "CURRENT STANCE" : "POSTURA ACTUAL",
-            buildControlSummaryTitle(),
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
-                ? "Toggle behaviour is visible at a glance, without opening any extra panel."
-                : "El comportamiento de alternancia se lee de un vistazo, sin abrir paneles extra.",
-            DiaryTheme.AMBER_FLAME);
-        DiaryProgressBar.draw(g, railX + 10, headerBottom + 124, RAIL_W - 20, 14,
-            computeControlDiscipline(),
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Discipline" : "Disciplina",
-            DiaryProgressBar.Style.STEEL);
-        DiaryChrome.drawValueRow(g, this.font, railX + 10, headerBottom + 146, RAIL_W - 20,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Main hand" : "Mano principal",
-            this.options.mainHand().get().getCaption().getString(), DiaryTheme.INK);
-
-        int divY2 = this.panelY + this.panelH - 38;
-        DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
-
-        if (reveal < 0.995f) {
-            int revealBottom = this.panelY + Math.max(28, (int)(this.panelH * reveal));
-            g.enableScissor(this.panelX - 2, this.panelY - 2, this.panelX + this.panelW + 2, revealBottom);
-            for (Renderable r : this.renderables) {
-                r.render(g, mouseX, mouseY, partialTick);
-            }
-            g.disableScissor();
-        } else {
-            for (Renderable r : this.renderables) {
-                r.render(g, mouseX, mouseY, partialTick);
-            }
+        // Titulo
+        String titleStr = this.title.getString();
+        int titleX = this.width / 2;
+        int titleY = this.panelY + 10;
+        {
+        int _tw = this.font.width(titleStr);
+        g.drawString(this.font, titleStr, titleX - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
         }
 
+        // Subtitulo
+        String subtitle = "- " + Component.translatable("gripeverde.options.controls.subtitle").getString() + " -";
+        int subWC = this.font.width(subtitle);
+        g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
+
+        // Flavor
+        String flavor = Component.translatable("gripeverde.options.controls.flavor").getString();
+        int flvWC = this.font.width(flavor);
+        g.drawString(this.font, flavor, (this.width - flvWC) / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
+
+        // Divisores + esquineros
+        int divY1 = titleY + 42;
+        DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY1);
+        int divY2 = this.panelY + this.panelH - 38;
+        DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
+        DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
+        DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. III");
+
+        // Widgets
+        for (Renderable r : this.renderables) {
+            r.render(g, mouseX, mouseY, partialTick);
+        }
+
+        // v0.16.0: la senal del contrabandista.
+        // Agacharse y correr en "alternar"; el resto, quieto.
         try {
             if (!smugglerSeen
                     && this.options.toggleCrouch().get()
@@ -235,28 +201,6 @@ public class DiaryControlsScreen extends Screen {
             com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, this.panelY - 12);
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
         } catch (Throwable ignored) {}
-    }
-
-    private String buildControlSummaryTitle() {
-        boolean crouch = this.options.toggleCrouch().get();
-        boolean sprint = this.options.toggleSprint().get();
-        if (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()) {
-            if (crouch && sprint) return "toggle posture engaged";
-            if (crouch || sprint) return "mixed field habits";
-            return "hands remain direct";
-        }
-        if (crouch && sprint) return "postura alternada activa";
-        if (crouch || sprint) return "habitos de campo mixtos";
-        return "las manos siguen directas";
-    }
-
-    private float computeControlDiscipline() {
-        float score = 0f;
-        if (this.options.toggleCrouch().get()) score += 0.25f;
-        if (this.options.toggleSprint().get()) score += 0.25f;
-        if (!this.options.autoJump().get()) score += 0.25f;
-        if (!this.options.operatorItemsTab().get()) score += 0.25f;
-        return score;
     }
 
     @Override

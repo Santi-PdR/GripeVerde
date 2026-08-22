@@ -1,5 +1,204 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.24 - Ajustes pedidos en cliente
+
+Registro tecnico: se retiro el sonido de madera al abrir el gabinete, el
+cajon con la llave y su vitrina, el juego de los tres golpes sobre la mesa
+y el despegue de la hoja de cuarentena; el titulo del cartel y los sellos
+de tinta pierden el rojo sombreado; el libro de visitas del registro de
+hospedajes se ve y responde mejor; y las atribuciones usan etiquetas en
+titulo normal.
+
+## v0.21.23 - Se reconstruye desde el registro previo
+
+Registro tecnico: se localizo en el historial el estado anterior a la
+version que altero las interfaces (el registro v0.17.2) y desde el se
+reconstruyeron las diecisiete salas del gabinete a su forma original:
+cabeceras propias de cada sala, sin carteles ni paneles de la epoca
+revertida. Se conservan intactas las demas versiones: el arreglo del
+registro sonoro, la limpieza, la memoria del gabinete con sus cuarenta y
+siete fichas, el periodico, el telegrafo y los arreglos de audio y
+rendimiento. El sello que cierra el archivo, las fichas de la limpieza y
+los avisos de las cien aperturas siguen activos.
+
+## v0.21.22 - Hotfix compilacion
+
+Registro tecnico: la limpieza de la v0.21.21 dejo una firma de metodo rota
+en el gabinete que impedia compilar. Corregido.
+
+## v0.21.21 - Se termina la deuda de los no-op
+
+Registro tecnico: se eliminaron las ultimas treinta llamadas a los carteles
+que ya no se dibujan, los tres helpers muertos que las atendian, las
+variables que los alimentaban y el pie de registro de la cronica. Las
+barras de desplazamiento de tres salas, que habian quedado referenciando
+medidas eliminadas, se anclaron al borde derecho del panel. Sin cambios
+visibles de fondo ni de gameplay.
+
+## v0.21.20 - La tinta pesa menos
+
+Registro tecnico: limpieza profunda tras la reversion. Las cabeceras se
+redujeron a la llamada simple (se eliminaron mas de ciento cincuenta lineas
+de textos documentales muertos), se retiraron metodos y variables que ya no
+alimentaban a nada (incluido el carril lateral del gabinete), y el grid de
+botones del gabinete quedo mas cerca de su cabecera. Sin cambios de
+gameplay ni de recursos.
+
+## v0.21.19 - Se corrigen scrolls y posiciones tras la reversion
+
+Registro tecnico: tras retirar los carteles y reducir las cabeceras al
+titulo, varias salas quedaron con las listas y los mandos desplazados. Se
+realinearon las listas del registro de hospedajes, la sala acustica, la
+correspondencia y la estacion de comunicaciones, los botones del manual de
+campo, y el campo de busqueda de la sala de consulta quedo en la esquina
+superior derecha, fuera de las fichas.
+
+## v0.21.18 - Se restaura lo que no era de la version revertida
+
+Registro tecnico: se reviso la reversion con el historial completo y se
+devolvieron los elementos que no pertenecian a los pases de interfaz
+revertidos: el sello dorado que cierra el archivo al reunir las cuarenta y
+siete fichas, el medidor de ritmo del aparato de observacion, el medidor de
+registros del archivo de lenguas y el marco de las atribuciones. Los
+medidores de las salas de la epoca revertida (gramofono, ambiente,
+disciplina, campo visual y compania) quedan retirados.
+
+## v0.21.17 - Se retiran los medidores y el resto de carteles
+
+Registro tecnico: continuacion de la reversion. Se retiraron los medidores
+con etiqueta (gramofono, ambiente, disciplina, campo visual, ritmo y
+compania), el sello de archivo completo, el pie de registro de la cronica,
+los carteles de grupo del gabinete y el marco oficial de las atribuciones.
+Quedan solo titulo, contenido y mandos.
+
+## v0.21.16 - Se retiran los carteles de interfaz
+
+Registro tecnico: reversion de la identidad visual agregada por los pases
+de interfaz. Las cabeceras vuelven al titulo simple; los carteles, tableros
+y casilleros de las salas (correspondencia, comunicaciones, consulta,
+sonido, controles, lenguas, aspecto) fueron retirados; las tarjetas y
+railes laterales dejaron de dibujarse. Se conserva todo lo funcional
+(botones, listas, busqueda, memoria, libro de visitas) y los arreglos.
+
+## v0.21.15 - Se retiran los sellos de estado
+
+Registro tecnico: se retiraron los sellos de estado de las cabeceras de
+todas las salas (REGISTRABLE, LISTO, PENDIENTE, READY y compania) y el
+sello del carril del gabinete; las frases bajo los subtitulos recuperan
+todo el ancho. Continuacion de la reversion de la v0.21.14. Sin cambios de
+gameplay ni de recursos.
+
+## v0.21.14 - El gabinete vuelve a respirar
+
+Registro tecnico: reversiones pedidas en cliente. Se retiro el saludo que
+aparecia sobre los botones del menu principal; en el registro de hospedajes
+la lista vuelve a empezar debajo de la cabecera, desaparece la tarjeta del
+hospedaje elegido y el aviso del periodico; en las autorizaciones se van el
+cartel de orden, la linea de la mano autorizante y el sello de estado; y
+las frases bajo los subtitulos ya no se topan con los sellos de estado en
+ninguna sala. Sin cambios de gameplay ni de recursos.
+
+## v0.21.13 - El expediente se cierra
+
+La sala de consulta, cuando por fin reune todas las fichas, deja de decir
+que faltan. El archivo se declara completo, un sello de cera dorada lo
+firma con la palabra SIGILLUM, y el cronista anota al margen: cuarenta y
+siete fichas; el cajon ya esta vacio; sellalo. La campana del campanario
+suena una vez, grave, para que nadie lo dude.
+
+## v0.21.12 - El marco de la pausa queda en su sitio
+
+Registro tecnico: el marco de oro del diario de pausa fue escrito en su
+lugar definitivo, sin piezas sueltas. El gabinete, ademas, quedo sin un
+solo metodo o campo privado sin uso: todo lo que existe se usa.
+
+## v0.21.11 - La sala respira bajo la mano
+
+La sala de consulta ahora responde al tacto: la ficha bajo el dedo se alza
+un instante, y el medidor del archivo late con un pulso tenue, como un
+corazon de papel. La memoria del cronista ya no se escribe a cada paso: se
+asienta de tanto en tanto, y al apagar la lampara se guarda entera antes de
+que la casa quede a oscuras.
+
+## v0.21.10 - La estacion parpadea al cambiar
+
+Registro tecnico: el medidor de alcance de la estacion de comunicaciones ya
+no salta de golpe al mover los avisos: se desliza como lo haria una aguja
+sobre papel. Se retiraron quince tonos de tinta que ninguna sala usaba, y
+la vigilancia de codigo muerto aprende a nombrar lo que fue desterrado.
+
+## v0.21.9 - La tinta pesa menos por frame
+
+Registro tecnico: el gabinete consultaba el idioma del lector decenas de
+veces por cada parpadeo; ahora lo pregunta una sola vez cada instante y se
+lo guarda. El texto centrado se escribe con una sola mano en cuatro salas,
+y el registro de hospedajes muestra, junto al libro de visitas, el titular
+del periodico del dia. Se retiraron campos y metodos que nadie usaba, y se
+anadio la guia de contribucion al proyecto.
+
+## v0.21.8 - Una sola mano para el idioma
+
+Registro tecnico: siete salas del gabinete consultaban el idioma del lector
+cada una con su propia receta; ahora todas preguntan a la misma mano, y se
+retiraron los ornamentos de marco que nadie usaba. Sin cambios visibles ni
+de gameplay.
+
+## v0.21.7 - El gabinete sin peso muerto
+
+Registro tecnico: consolidacion y limpieza. Se eliminaron 9 clases sin uso
+o duplicadas (incluidas las herramientas de desarrollo inalcanzables y los
+dos sliders de sonido, combinados en el generico), 7 metodos muertos y 57
+claves de idioma huerfanas; el pipeline de 14 pantallas comparte un unico
+helper de panel. Sin cambios de gameplay ni de recursos; la sala de sonido
+unifica el aspecto de sus dos reguladores. 59 clases Java, 25 idiomas, 35
+eventos de sonido, 42 OGG.
+
+## v0.21.6 - El heraldo cuenta la limpieza
+
+El periodico del kiosco encontro palabras nuevas para la noche: el gabinete
+del distrito vaciado de papeles viejos, un farol del tejado que parpadeo
+tres veces y se apago solo, el gato que bajo al kiosco y no robo nada. La
+letra menuda de la segunda columna tambien cambia de amanecer en amanecer.
+Y quien conozca la palabra que abre el archivo podra pedirle a la sala que
+le muestre las fichas que faltan.
+
+## v0.21.5 - La sala responde a la consulta
+
+La sala de consulta aprendio a responder. Quien busque entre las fichas por
+su nombre, por su pista o por la palabra que las nombra, vera solo las que
+importan; y cuando el archivo confiese tres fantasmas de la limpieza, un
+cuarto recuerda la mesa que nunca se uso. La musica cede un instante cuando
+el archivo habla, y cuando la maquina que sostiene la vigilia va lenta, la
+calle se despoja de niebla y faroles para no detenerse.
+
+## v0.21.4 - La tinta se asienta
+
+Esta noche el gabinete ordeno sus utensilios. El manual de campo acepta que se
+le pregunte por nombre: quien busque entre sus paginas encuentra el mando que
+necesita sin revolver el resto. El aparato de observacion separa sus
+secciones —lo que pinta, lo que muestra, lo que mide— y anade una aguja que
+lee el pulso de la maquina. Los consulados de lenguas declaran, al pasar la
+mano, cuantas paginas de su registro guarda el gabinete. Y en la sala de
+consulta, al abrir la puerta, un papel cae al suelo.
+
+El gabinete tambien se ordeno por dentro: se retiraron referencias que ya no
+nombraban a nada, y se anadio una vigilancia que avisa si vuelve a aparecer lo
+que fue desterrado.
+
+## v0.21.3 - El gabinete respira mas ligero
+
+Esta noche el gabinete aprendio a no gastar fuerzas. La ciudad del cristal
+repite sus nubes, su humo y su lluvia con la misma semilla, como si la
+vigilia se guardara en la memoria; y quien lo pida puede aquietar el
+movimiento de la escena entera: el farol deja de temblar, la polilla se
+posa, la rata deja de cruzar y el papel espera el viento.
+
+El archivo, ademas, confiesa tres cosas que retiro en la limpieza: el
+archivo que se adelgaza, el tema que nunca sono y la calle que nunca
+existio. Quien pronuncie la palabra de la limpieza recibira un telegrama
+del propio cronista; y quien encuentre dos de esas confesiones podra pedir
+la tercera.
+
 ## v0.21.2 - Limpieza profunda del proyecto
 
 La oficina no cambió de aspecto, pero sí de peso. Tras cerrar filas en v0.21.0 y corregir el registro sonoro en v0.21.1, el gabinete se sometió a una auditoría completa: todo lo que ya no servía fue retirado, y todo lo que estaba desactualizado fue puesto al día.

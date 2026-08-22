@@ -64,9 +64,14 @@ public final class DiaryProgressBar {
         int innerH = Math.max(1, h - 4);
         g.fill(innerX, innerY, innerX + innerW, innerY + innerH, DiaryTheme.withAlpha(style.border, 24));
 
+        // v0.21.11: el estilo ALERT late suavemente (pulso 0.8-1.0, sin parpadeo)
         int fillW = (int) (innerW * progress);
         if (fillW > 0) {
-            g.fill(innerX, innerY, innerX + fillW, innerY + innerH, style.fill);
+            int pulse = 255;
+            if (style == Style.ALERT) {
+                pulse = 200 + (int) (55 * (0.5f + 0.5f * (float) Math.sin(System.currentTimeMillis() / 620.0)));
+            }
+            g.fill(innerX, innerY, innerX + fillW, innerY + innerH, DiaryTheme.withAlpha(style.fill, pulse));
             g.fill(innerX, innerY, innerX + fillW, innerY + 1, style.highlight);
             g.fill(innerX, innerY + innerH - 1, innerX + fillW, innerY + innerH, DiaryTheme.withAlpha(style.border, 150));
         }

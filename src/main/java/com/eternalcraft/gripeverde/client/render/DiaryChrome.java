@@ -4,9 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSelectionList;
-import net.minecraft.network.chat.Component;
 
-import java.util.List;
 
 /**
  * Helpers cosmeticos compartidos por todas las pantallas Diary.
@@ -25,20 +23,14 @@ public final class DiaryChrome {
     public static final int INK_SUBTITLE  = 0xFF654025;
     public static final int INK_FLAVOR    = 0xB864482C;
     public static final int INK_DIVIDER   = 0x7A422810;
-    public static final int SHADOW_COL    = 0x20201409;
     public static final int OVERLAY_COL   = 0x5E000000;
 
-    public static final int STEEL_LIGHT = 0xFFB6BAC4;
     public static final int STEEL_MID   = 0xFF9A9EA8;
     public static final int STEEL_NEAR  = 0xFFA6AAB4;
-    public static final int STEEL_DARK  = 0xFF7C808A;
     public static final int STEEL_DEEP  = 0xFF5E626C;
     public static final int STEEL_EDGE  = 0xFF464A52;
     public static final int PLAGUE      = 0xFF6A8A48;
 
-    public static final int CARD_BASE   = 0xF0E4D1AE;
-    public static final int CARD_SHADE  = 0x8A3D2A18;
-    public static final int CARD_BORDER = 0xA06B4A2E;
 
     // ── Interpolacion / reveal ──────────────────────────────────────────────
     public static float reveal(long openedAtMs, long durationMs) {
@@ -69,6 +61,46 @@ public final class DiaryChrome {
     }
 
     // ── Divisor horizontal con fade + rombo central ─────────────────────────
+    public static void drawRegistryTag(GuiGraphics gfx, int panelX, int panelY, int panelW,
+                                       int panelH, String regCode) {
+        if (panelW < 330) return; // paneles muy chicos: se omite para no chocar
+        drawRegistryTagAt(gfx, panelX + panelW - 66, panelY + 6, regCode);
+    }
+
+
+    public static void drawRegistryTagLeft(GuiGraphics gfx, int panelX, int panelY, String regCode) {
+        drawRegistryTagAt(gfx, panelX + 8, panelY + 6, regCode);
+    }
+
+
+    public static void drawRegistryTagAt(GuiGraphics gfx, int x, int y, String regCode) {
+        int w = 58;
+        int h = 13;
+
+        // base de acero cepillado
+        for (int i = 0; i < h; i++) {
+            int v = STEEL_MID + (i % 3 == 0 ? 4 : (i % 3 == 1 ? -2 : 0));
+            gfx.fill(x + 1, y + i, x + w - 1, y + i + 1, v);
+        }
+        // borde
+        gfx.fill(x, y, x + w, y + 1, STEEL_EDGE);
+        gfx.fill(x, y + h - 1, x + w, y + h, STEEL_EDGE);
+        gfx.fill(x, y, x + 1, y + h, STEEL_EDGE);
+        gfx.fill(x + w - 1, y, x + w, y + h, STEEL_EDGE);
+        // biseles interiores
+        gfx.fill(x + 1, y + 1, x + w - 1, y + 2, STEEL_NEAR);
+        gfx.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, STEEL_DEEP);
+        // marca de cuarentena (verde plaga) en el borde izquierdo
+        gfx.fill(x + 1, y + 2, x + 2, y + h - 2, PLAGUE);
+        // remaches
+        gfx.fill(x + 4, y + 2, x + 6, y + 4, STEEL_DEEP);
+        gfx.fill(x + w - 6, y + 2, x + w - 4, y + 4, STEEL_DEEP);
+        // texto del registro
+        int tw = gfx.drawString(Minecraft.getInstance().font, regCode, x + 2, y + 3,
+                DiaryTheme.withAlpha(0x002A2620, 235), false);
+        gfx.fill(x + 2 + tw + 2, y + 4, x + 2 + tw + 4, y + 5, STEEL_EDGE);
+    }
+
     public static void drawInkDivider(GuiGraphics gfx, int x, int y, int w) {
         int fade = Math.max(8, w / 6);
         int cx   = x + w / 2;
@@ -86,16 +118,6 @@ public final class DiaryChrome {
 
     public static void drawInkDividerBetween(GuiGraphics gfx, int x1, int x2, int y) {
         drawInkDivider(gfx, x1, y, x2 - x1);
-    }
-
-    public static void drawVerticalDivider(GuiGraphics gfx, int x, int y, int h) {
-        int fade = Math.max(8, h / 6);
-        int cy = y + h / 2;
-        gfx.fillGradient(x, y, x + 1, y + fade, 0x00000000, INK_DIVIDER);
-        gfx.fill(x, y + fade, x + 1, cy - 6, INK_DIVIDER);
-        gfx.fill(x, cy + 6, x + 1, y + h - fade, INK_DIVIDER);
-        gfx.fillGradient(x, y + h - fade, x + 1, y + h, INK_DIVIDER, 0x00000000);
-        drawDivisorLozenge(gfx, x, cy);
     }
 
     public static void drawDivisorLozenge(GuiGraphics gfx, int cx, int cy) {
@@ -141,67 +163,10 @@ public final class DiaryChrome {
     }
 
     // ── Capsulas y tarjetas de sistema ──────────────────────────────────────
-    public static void drawStatusPill(GuiGraphics gfx, Font font, int x, int y, String text,
-                                      int bgColor, int borderColor, int textColor) {
-        int tw = font.width(text);
-        int w = tw + 18;
-        int h = 14;
-        gfx.fill(x + 2, y + 2, x + w + 2, y + h + 2, 0x18000000);
-        gfx.fill(x, y, x + w, y + h, bgColor);
-        gfx.fill(x, y, x + w, y + 1, borderColor);
-        gfx.fill(x, y + h - 1, x + w, y + h, DiaryTheme.withAlpha(borderColor, 220));
-        gfx.fill(x, y, x + 1, y + h, borderColor);
-        gfx.fill(x + w - 1, y, x + w, y + h, borderColor);
-        gfx.fill(x + 4, y + 3, x + 6, y + h - 3, borderColor);
-        gfx.fill(x + 8, y + 3, x + w - 4, y + 4, DiaryTheme.withAlpha(0x00FFF2D2, 52));
-        gfx.drawString(font, text, x + 10, y + 3, textColor, false);
-    }
 
-    public static void drawInsetCard(GuiGraphics gfx, Font font, int x, int y, int w, int h,
-                                     String kicker, String title, String body, int accent) {
-        gfx.fill(x + 3, y + 3, x + w + 3, y + h + 3, 0x14000000);
-        gfx.fill(x + 1, y + 1, x + w + 1, y + h + 1, 0x0E000000);
-        gfx.fill(x, y, x + w, y + h, CARD_BASE);
-        gfx.fill(x + 1, y + 1, x + w - 1, y + 2, DiaryTheme.withAlpha(0x00FFF4DB, 76));
-        gfx.fill(x, y, x + w, y + 1, accent);
-        gfx.fill(x, y + h - 1, x + w, y + h, CARD_BORDER);
-        gfx.fill(x, y, x + 1, y + h, CARD_BORDER);
-        gfx.fill(x + w - 1, y, x + w, y + h, CARD_BORDER);
 
-        // pestaña superior derecha y lomo izquierdo para evitar look de dashboard
-        gfx.fill(x + w - 22, y - 2, x + w - 6, y + 2, DiaryTheme.withAlpha(accent, 120));
-        gfx.fill(x + 5, y + 5, x + 7, y + h - 5, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 52));
-        gfx.fill(x + 8, y + 5, x + 9, y + h - 5, DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, 28));
-        gfx.fill(x + 12, y + h - 11, x + w - 12, y + h - 10, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 30));
-        gfx.fill(x + 12, y + h - 7, x + w - 20, y + h - 6, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 20));
 
-        if (kicker != null && !kicker.isEmpty()) {
-            gfx.drawString(font, kicker, x + 12, y + 6, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 185), false);
-        }
-        if (title != null && !title.isEmpty()) {
-            gfx.drawString(font, title, x + 12, y + 17, INK_TITLE, false);
-        }
-        if (body != null && !body.isEmpty()) {
-            int bodyY = y + 29;
-            List<net.minecraft.util.FormattedCharSequence> lines = font.split(Component.literal(body), Math.max(20, w - 22));
-            int maxLines = Math.max(1, Math.min(lines.size(), Math.max(1, (h - 36) / (font.lineHeight + 1))));
-            for (int i = 0; i < maxLines; i++) {
-                gfx.drawString(font, lines.get(i), x + 12, bodyY + i * (font.lineHeight + 1), INK_FLAVOR, false);
-            }
-        }
-    }
-
-    public static void drawValueRow(GuiGraphics gfx, Font font, int x, int y, int w,
-                                    String label, String value, int accent) {
-        gfx.drawString(font, label, x, y, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 190), false);
-        int vw = font.width(value);
-        gfx.drawString(font, value, x + w - vw, y, accent, false);
-        gfx.fill(x, y + 10, x + w, y + 11, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 48));
-        gfx.fill(x, y + 11, x + Math.min(w, 18), y + 12, DiaryTheme.withAlpha(accent, 52));
-    }
-
-    public static void drawPanelScaffold(GuiGraphics gfx, int x, int y, int w, int h, int accent) {
-        drawPanelShadow(gfx, x, y, w, h);
+    public static void drawPanelScaffold(GuiGraphics gfx, int x, int y, int w, int h, int accent) {        drawPanelShadow(gfx, x, y, w, h);
         gfx.fill(x + 6, y + 6, x + w - 6, y + h - 6, DiaryTheme.withAlpha(0x00FFFFFF, 4));
         gfx.fill(x + 10, y + 10, x + w - 10, y + h - 10, DiaryTheme.withAlpha(accent, 7));
         gfx.fill(x + 14, y + 14, x + w - 14, y + 15, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 24));
@@ -213,18 +178,21 @@ public final class DiaryChrome {
         gfx.fill(x + w - 32, y + h - 19, x + w - 18, y + h - 18, DiaryTheme.withAlpha(accent, 30));
     }
 
-    public static void drawInnerRail(GuiGraphics gfx, int x, int y, int w, int h, int accent) {
-        gfx.fill(x, y, x + w, y + h, DiaryTheme.withAlpha(accent, 10));
-        gfx.fill(x, y, x + w, y + 1, DiaryTheme.withAlpha(accent, 54));
-        gfx.fill(x, y + h - 1, x + w, y + h, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 74));
-        gfx.fill(x, y, x + 1, y + h, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 66));
-        gfx.fill(x + w - 1, y, x + w, y + h, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 44));
-        // rail incompleto con marcas de registro
-        for (int ty = y + 14; ty < y + h - 10; ty += 18) {
-            gfx.fill(x + 4, ty, x + 10, ty + 1, DiaryTheme.withAlpha(accent, 40));
-        }
-        gfx.fill(x + 10, y + 10, x + w - 10, y + 11, DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, 12));
+    /** v0.21.7: base comun del panel (scaffold + pergamino + esquineros). */
+    public static void renderPanelBase(GuiGraphics gfx, int x, int y, int w, int h, int accent,
+                                       PaperTexture.PaperKind kind) {
+        drawPanelScaffold(gfx, x, y, w, h, accent);
+        PaperTexture.drawClean(gfx, x, y, w, h, kind);
+        drawCornerOrnaments(gfx, x, y, w, h);
     }
+
+    /** v0.21.9: texto centrado con la font del gabinete (consolidacion). */
+    public static void drawCenteredString(GuiGraphics gfx, Font font, String s, int cx, int y, int color) {
+        if (s == null) return;
+        int w = font.width(s);
+        gfx.drawString(font, s, cx - w / 2, y, color, false);
+    }
+
 
     // ── Scrollbars ───────────────────────────────────────────────────────────
     public static void drawScrollThumb(GuiGraphics gfx, int scrollLeft,
@@ -278,16 +246,6 @@ public final class DiaryChrome {
         drawScrollThumb(gfx, scrollLeft, trackY1, trackY2, list.getScrollAmount(), maxScroll);
     }
 
-    // ── Fondo cuero oscuro para pantallas de trabajo ────────────────────────
-    public static final int LEATHER_BASE = 0xFF1F1408;
-
-    public static void drawDarkLeatherBackground(GuiGraphics gfx, int screenW, int screenH) {
-        gfx.fill(0, 0, screenW, screenH, LEATHER_BASE);
-        int fade = Math.max(60, Math.min(screenW, screenH) / 4);
-        gfx.fillGradient(0, 0, screenW, fade, 0x60000000, 0x00000000);
-        gfx.fillGradient(0, screenH - fade, screenW, screenH, 0x00000000, 0x60000000);
-    }
-
     // ── Sombra proyectada profesional ───────────────────────────────────────
     public static void drawPanelShadow(GuiGraphics gfx, int x, int y, int w, int h) {
         int offset = 7;
@@ -316,21 +274,4 @@ public final class DiaryChrome {
         drawScrollThumb(gfx, scrollLeft, trackY1, trackY2, list.getScrollAmount(), maxScroll);
     }
 
-    // ── Cursor de pluma ─────────────────────────────────────────────────────
-    public static void drawQuillCursor(GuiGraphics g, int mouseX, int mouseY) {
-        int inkDark = 0xFF1A0F08;
-        int inkLight = 0xFF3D2E1A;
-        int feather = 0xFF6B4226;
-
-        int sx = mouseX + 6;
-        int sy = mouseY + 2;
-        for (int i = 0; i < 8; i++) {
-            g.fill(sx + i, sy + i, sx + i + 1, sy + i + 1, inkDark);
-        }
-        g.fill(sx - 1, sy + 8, sx, sy + 9, inkDark);
-        g.fill(sx, sy + 9, sx + 1, sy + 10, inkDark);
-        g.fill(sx + 6, sy - 1, sx + 8, sy + 1, feather);
-        g.fill(sx + 8, sy - 2, sx + 10, sy, feather);
-        g.fill(sx + 7, sy + 1, sx + 9, sy + 2, inkLight);
-    }
 }

@@ -2,6 +2,7 @@ package com.eternalcraft.gripeverde.client.lore;
 
 import com.eternalcraft.gripeverde.client.audio.ModSounds;
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
+import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -95,6 +96,22 @@ public final class HiddenCipher {
                 UiSounds.playCustom(ModSounds.MENU_AMBIENT_OCCASIONAL.get(), 0.30f, 0.60f);
                 UiSounds.playCustom(ModSounds.MENU_CHAIN.get(), 0.18f, 0.42f);
             } catch (Throwable ignored) {}
+        } else if (s.endsWith("CLEANSE")) {
+            // v0.21.3: la palabra de la limpieza. Abre el telegrama del cronista.
+            buffer.setLength(0);
+            Discoveries.discover(Discoveries.THEME_NEVER_PLAYED);
+            cleanseFlashUntilMs = System.currentTimeMillis() + 5200L;
+            cleanseFlashStartMs = System.currentTimeMillis();
+            try {
+                UiSounds.playCustom(ModSounds.MENU_DOOR.get(), 0.20f, 0.80f);
+                UiSounds.playCustom(ModSounds.UI_NOTIFICATION.get(), 0.15f, 0.70f);
+            } catch (Throwable ignored) {}
+        } else if (s.endsWith("ARCHIVE")) {
+            // v0.21.6: la palabra abre la sala de consulta (las fichas que faltan).
+            buffer.setLength(0);
+            try {
+                mc.setScreen(new com.eternalcraft.gripeverde.client.screens.DiaryArchiveScreen(null));
+            } catch (Throwable ignored) {}
         }
     }
 
@@ -121,6 +138,10 @@ public final class HiddenCipher {
     // ── Telegrama (codigo 1897) ──
     private static long telegramFlashUntilMs = 0L;
     private static long telegramFlashStartMs = 0L;
+
+    // ── Telegrama de la limpieza (codigo CLEANSE, v0.21.3) ──
+    private static long cleanseFlashUntilMs = 0L;
+    private static long cleanseFlashStartMs = 0L;
 
     /** Dibuja el telegrama recibido en el centro de la vigilia. */
     public static void drawTelegram(GuiGraphics g, int w, int h) {
@@ -162,17 +183,58 @@ public final class HiddenCipher {
         String l3 = en ? "The bell counted thirteen. The watchman did not answer." : "La campana conto trece. El sereno no respondio.";
         String l4 = en ? "Close the line. No one in. No one out." : "Cierren la linea. Nadie entra. Nadie sale.";
         String l5 = en ? "Signed: no one." : "Firmado: nadie.";
-        drawC(g, mc, l1, x + bw / 2, y + 14, red, alpha);
-        drawC(g, mc, l2, x + bw / 2, y + 30, ink, alpha);
-        drawC(g, mc, l3, x + bw / 2, y + 44, ink, alpha);
-        drawC(g, mc, l4, x + bw / 2, y + 58, ink, alpha);
-        drawC(g, mc, l5, x + bw / 2, y + 74, bronze, alpha);
+        DiaryChrome.drawCenteredString(g, mc.font, l1, x + bw / 2, y + 14, red);
+        DiaryChrome.drawCenteredString(g, mc.font, l2, x + bw / 2, y + 30, ink);
+        DiaryChrome.drawCenteredString(g, mc.font, l3, x + bw / 2, y + 44, ink);
+        DiaryChrome.drawCenteredString(g, mc.font, l4, x + bw / 2, y + 58, ink);
+        DiaryChrome.drawCenteredString(g, mc.font, l5, x + bw / 2, y + 74, bronze);
     }
 
-    private static void drawC(GuiGraphics g, Minecraft mc, String s, int cx, int y, int color, int alpha) {
-        if (s == null) return;
-        int wtxt = mc.font.width(s);
-        g.drawString(mc.font, s, cx - wtxt / 2, y, color, false);
+    /** Telegrama de la limpieza (v0.21.3): lo que el cronista retiro del archivo. */
+    public static void drawCleanseTelegram(GuiGraphics g, int w, int h) {
+        long now = System.currentTimeMillis();
+        if (now >= cleanseFlashUntilMs) return;
+        long age = now - cleanseFlashStartMs;
+        long remain = cleanseFlashUntilMs - now;
+        int alpha = 235;
+        if (age < 420L) alpha = (int)(235 * age / 420L);
+        else if (remain < 900L) alpha = (int)(235 * remain / 900L);
+        alpha = Math.max(0, Math.min(235, alpha));
+        boolean en = Discoveries.isEnglish();
+
+        int bw = Math.min(340, w - 60);
+        int bh = 92;
+        int x = (w - bw) / 2;
+        int y = Math.max(60, h / 2 - bh - 30);
+
+        int paper = (alpha << 24) | 0xDED0AC;
+        int ink = (alpha << 24) | 0x241608;
+        int bronze = (Math.min(200, alpha) << 24) | 0x8E6A35;
+        int red = (Math.min(210, alpha) << 24) | 0x6E1F16;
+
+        g.fill(x + 3, y + 4, x + bw + 3, y + bh + 4, (Math.min(70, alpha / 3) << 24) | 0x000000);
+        g.fill(x, y, x + bw, y + bh, paper);
+        g.fill(x, y, x + bw, y + 1, bronze);
+        g.fill(x, y + bh - 1, x + bw, y + bh, bronze);
+        g.fill(x, y, x + 1, y + bh, bronze);
+        g.fill(x + bw - 1, y, x + bw, y + bh, bronze);
+        // perforado de telegrafo
+        for (int px = x + 8; px < x + bw - 8; px += 10) {
+            g.fill(px, y + 3, px + 2, y + 5, (Math.min(120, alpha / 2) << 24) | 0x6B4A2E);
+        }
+
+        Minecraft mc = Minecraft.getInstance();
+        if (mc == null || mc.font == null) return;
+        String l1 = en ? "TELEGRAM - 21 AUGUST 1897 - 11:52 PM" : "TELEGRAMA - 21 AGOSTO 1897 - 11:52 PM";
+        String l2 = en ? "FROM THE CABINET, AFTER THE CLEANSING:" : "DEL GABINETE, TRAS LA LIMPIEZA:";
+        String l3 = en ? "The archive grew thinner. The theme never played." : "El archivo se adelgazo. El tema nunca sono.";
+        String l4 = en ? "The street never existed. Three ghosts left the house." : "La calle nunca existio. Tres fantasmas dejaron la casa.";
+        String l5 = en ? "Signed: the chronicler, after the cleansing." : "Firmado: el cronista, tras la limpieza.";
+        DiaryChrome.drawCenteredString(g, mc.font, l1, x + bw / 2, y + 14, red);
+        DiaryChrome.drawCenteredString(g, mc.font, l2, x + bw / 2, y + 30, ink);
+        DiaryChrome.drawCenteredString(g, mc.font, l3, x + bw / 2, y + 44, ink);
+        DiaryChrome.drawCenteredString(g, mc.font, l4, x + bw / 2, y + 58, ink);
+        DiaryChrome.drawCenteredString(g, mc.font, l5, x + bw / 2, y + 74, bronze);
     }
 
     // ── Flash verde del codigo PEREIRA ──

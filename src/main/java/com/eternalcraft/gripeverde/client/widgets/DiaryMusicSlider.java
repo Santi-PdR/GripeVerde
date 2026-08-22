@@ -56,36 +56,46 @@ public class DiaryMusicSlider extends AbstractSliderButton {
         int y = this.getY();
         int w = this.getWidth();
         int h = this.getHeight();
-        boolean hovered = this.isHoveredOrFocused() && this.active;
 
-        g.fill(x + 1, y + 1, x + w + 1, y + h + 1, 0x18000000);
-        g.fill(x, y, x + w, y + h, 0xFFD8C7A0);
-        g.fill(x, y, x + w, y + 2, 0xA06B4A2E);
-        g.fill(x, y + h - 1, x + w, y + h, 0x88422810);
-        g.fill(x, y, x + 1, y + h, 0x88422810);
-        g.fill(x + w - 1, y, x + w, y + h, 0x88422810);
+        // Fondo: banda pergamino oscuro (track del slider)
+        g.fill(x, y, x + w, y + h, 0xFFC9B78A);            // PAPER_STAINED
+        g.fill(x, y, x + w, y + 1, 0x60422810);             // borde sup
+        g.fill(x, y + h - 1, x + w, y + h, 0x60422810);     // borde inf
+        g.fill(x, y, x + 1, y + h, 0x60422810);             // borde izq
+        g.fill(x + w - 1, y, x + w, y + h, 0x60422810);     // borde der
 
-        int trackX1 = x + 12;
-        int trackX2 = x + w - 12;
-        int trackY = y + h - 6;
-        g.fill(trackX1, trackY, trackX2, trackY + 2, 0x88422810);
-        for (int i = 0; i <= 10; i++) {
-            int tx = trackX1 + (trackX2 - trackX1) * i / 10;
-            int ht = (i % 5 == 0) ? 6 : 3;
-            g.fill(tx, trackY - ht, tx + 1, trackY, 0x70422810);
+        // Track interno (banda mas oscura donde corre el thumb)
+        int trackY1 = y + h / 2 - 1;
+        int trackY2 = y + h / 2 + 1;
+        g.fill(x + 3, trackY1, x + w - 3, trackY2, 0x60422810);
+        for (int i = 1; i < 4; i++) {
+            int tx = x + 3 + (w - 6) * i / 4;
+            g.fill(tx, trackY1 - 2, tx + 1, trackY2 + 2, 0x70422810);
         }
-        int progressX = trackX1 + (int)(this.value * Math.max(1, trackX2 - trackX1));
-        g.fill(trackX1, trackY, progressX, trackY + 2, hovered ? 0xE0D4941E : 0xC0A8783C);
 
-        int thumbX = progressX - 4;
-        g.fill(thumbX + 3, y + 6, thumbX + 5, trackY + 4, 0xFF6B4A2E);
-        g.fill(thumbX + 1, y + 4, thumbX + 7, y + 9, hovered ? 0xFFE8DCB4 : 0xFFD8C7A0);
-        DiaryChrome.drawDivisorLozenge(g, thumbX + 4, y + 6);
+        // Thumb: rombo tinta victoriana
+        int thumbW = 8;
+        int thumbX = x + (int) (this.value * (w - thumbW));
+        int thumbY = y + 2;
+        int thumbH = h - 4;
 
-        String label = this.getMessage().getString();
-        int tw = Minecraft.getInstance().font.width(label);
-        g.drawString(Minecraft.getInstance().font, label, x + (w - tw) / 2, y + 4,
-            hovered ? DiaryTheme.INK_BLACK : DiaryTheme.INK, false);
+        // Cuerpo del thumb
+        g.fill(thumbX, thumbY, thumbX + thumbW, thumbY + thumbH, 0xC0422810);
+        // Relieve claro izq
+        g.fill(thumbX, thumbY, thumbX + 2, thumbY + thumbH, 0xA0703020);
+        // Relieve oscuro der
+        g.fill(thumbX + thumbW - 2, thumbY, thumbX + thumbW, thumbY + thumbH, 0x80200E05);
+        // Rombo central
+        int cx = thumbX + thumbW / 2;
+        int cy = thumbY + thumbH / 2;
+        DiaryChrome.drawDivisorLozenge(g, cx, cy);
+
+        // Texto centrado con sombra suave
+        int textColor = this.isHovered() ? DiaryTheme.INK_BLACK : DiaryTheme.INK;
+        String msg = this.getMessage().getString();
+        int textX = x + w / 2 - Minecraft.getInstance().font.width(msg) / 2;
+        int textY = y + (h - 8) / 2;
+        g.drawString(Minecraft.getInstance().font, msg, textX, textY, textColor, false);
     }
 
     @Override

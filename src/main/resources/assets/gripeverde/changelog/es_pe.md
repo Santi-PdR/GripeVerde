@@ -2,6 +2,33 @@
 ## Cronica bajo sello
 
 
+## Version 0.21.13 - El expediente se cierra
+
+La sala de consulta, cuando por fin reúne todas las fichas, deja de decir que faltan. El archivo se declara completo, un sello de cera dorada lo firma con la palabra SIGILLUM, y el cronista anota al margen: cuarenta y siete fichas; el cajón ya está vacío; séllalo. La campana del campanario suena una vez, grave, para que nadie lo dude.
+
+
+## Version 0.21.6 - El heraldo cuenta la limpieza
+
+El periódico del kiosco encontró palabras nuevas para la noche: el gabinete del distrito vaciado de papeles viejos, un farol del tejado que parpadeó tres veces y se apagó solo, el gato que bajó al kiosco y no robó nada. La letra menuda de la segunda columna también cambia de amanecer en amanecer. Y quien conozca la palabra que abre el archivo podrá pedirle a la sala que le muestre las fichas que faltan.
+
+
+## Version 0.21.5 - La sala responde a la consulta
+
+La sala de consulta aprendió a responder. Quien busque entre las fichas por su nombre, por su pista o por la palabra que las nombra, verá solo las que importan; y cuando el archivo confiese tres fantasmas de la limpieza, un cuarto recuerda la mesa que nunca se usó. La música cede un instante cuando el archivo habla, y cuando la máquina que sostiene la vigilia va lenta, la calle se despoja de niebla y faroles para no detenerse.
+
+
+## Version 0.21.4 - La tinta se asienta
+
+El gabinete ordenó sus utensilios. El manual de campo acepta que se le pregunte por nombre: quien busque entre sus páginas encuentra el mando que necesita sin revolver el resto. El aparato de observación separa sus secciones —lo que pinta, lo que muestra, lo que mide— y añade una aguja que lee el pulso de la máquina. Los consulados de lenguas declaran, al pasar la mano, cuántas páginas de su registro guarda el gabinete. Y en la sala de consulta, al abrir la puerta, un papel cae al suelo.
+
+
+## Version 0.21.3 - El gabinete respira más ligero
+
+El gabinete aprendió a no gastar fuerzas. La ciudad repite sus nubes, su humo y su lluvia con la misma semilla, como si la vigilia se guardara en la memoria; y quien lo pida puede aquietar el movimiento de la escena: el farol deja de temblar, la polilla se posa, la rata deja de cruzar y el papel espera el viento.
+
+El archivo confiesa tres cosas que retiró en la limpieza: el archivo que se adelgaza, el tema que nunca sonó y la calle que nunca existió. Quien pronuncie la palabra de la limpieza recibirá un telegrama del propio cronista.
+
+
 ## Version 0.21.2 - Limpieza profunda
 
 Tras el cierre de interfaces y la corrección del registro sonoro, el gabinete fue auditado por completo. Documentos históricos, muestras de prueba, una textura de 2.1M sin uso, framework inerte de temas y widgets muertos fueron retirados, y toda la documentación fue actualizada. El resultado es un código más ligero: 68 clases Java, 25 idiomas, 25 crónicas in-game, 42 OGG, 0 PNG de contenedores.

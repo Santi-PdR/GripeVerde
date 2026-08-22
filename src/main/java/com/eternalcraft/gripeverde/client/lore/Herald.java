@@ -1,5 +1,6 @@
 package com.eternalcraft.gripeverde.client.lore;
 
+import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -57,7 +58,16 @@ public final class Herald {
         "un medico cruzo la linea con la maleta vacia",
         "las ratas abandonaron tres casas a la vez",
         "se apago un farol que nadie habia tocado",
-        "un telegrama llego sin remitente ni destino"
+        "un telegrama llego sin remitente ni destino",
+        "el gabinete del distrito fue vaciado de papeles viejos",
+        "un farol del tejado parpadeo tres veces y se apago solo",
+        "el gato del tejado bajo al kiosco y no robo nada"
+    };
+    private static final String[] SECOND_ES = {
+        "El precio de las velas volvio a subir. El campanario lo niega.",
+        "Se dice que el reloj de bolsillo marco las once y cincuenta y dos tres veces.",
+        "Nadie firma los edictos. Todos reconocen la letra.",
+        "Un papel cayo del cielo y nadie lo recogio."
     };
     private static final String[] EDICTS_ES = {
         "La Junta Sanitaria recuerda: ninguna luz despues del crepusculo.",
@@ -76,7 +86,16 @@ public final class Herald {
         "a doctor crossed the line with an empty bag",
         "the rats left three houses at once",
         "a lamp went out that no one had touched",
-        "a telegram arrived with no sender and no address"
+        "a telegram arrived with no sender and no address",
+        "the district cabinet was emptied of old papers",
+        "a roof lantern flickered three times and went out on its own",
+        "the roof cat came down to the kiosk and stole nothing"
+    };
+    private static final String[] SECOND_EN = {
+        "The price of candles rose again. The bell tower denies it.",
+        "The pocket watch is said to have struck eleven fifty-two three times.",
+        "No one signs the edicts. Everyone recognises the hand.",
+        "A paper fell from the sky and no one picked it up."
     };
     private static final String[] EDICTS_EN = {
         "The Sanitary Board reminds: no lights after dusk.",
@@ -85,6 +104,18 @@ public final class Herald {
         "No one in. No one out. No one asks.",
         "Please do not feed the crows of the bell tower."
     };
+
+    /** v0.21.9: titular del dia (misma semilla que el periodico del kiosco). */
+    public static String headlineToday() {
+        boolean en = Discoveries.isEnglish();
+        long today = LocalDate.now().toEpochDay();
+        Random rnd = new Random(today * 7919L + (en ? 1L : 0L));
+        String[] districts = en ? DISTRICTS_EN : DISTRICTS_ES;
+        String[] events = en ? EVENTS_EN : EVENTS_ES;
+        return (en ? "IN " : "EN ")
+            + districts[rnd.nextInt(districts.length)].toUpperCase()
+            + ": " + events[rnd.nextInt(events.length)];
+    }
 
     public static void draw(GuiGraphics g, int w, int h) {
         if (!isViewing()) return;
@@ -99,16 +130,11 @@ public final class Herald {
         boolean en = Discoveries.isEnglish();
         long today = LocalDate.now().toEpochDay();
         Random rnd = new Random(today * 7919L + (en ? 1L : 0L));
-        String[] districts = en ? DISTRICTS_EN : DISTRICTS_ES;
-        String[] events = en ? EVENTS_EN : EVENTS_ES;
         String[] edicts = en ? EDICTS_EN : EDICTS_ES;
-        String headline = (en ? "IN " : "EN ")
-            + districts[rnd.nextInt(districts.length)].toUpperCase()
-            + ": " + events[rnd.nextInt(events.length)];
+        String headline = headlineToday();
         String edict = edicts[(int)(Math.abs(today) % edicts.length)];
-        String second = en
-            ? "The price of candles rose again. The bell tower denies it."
-            : "El precio de las velas volvio a subir. El campanario lo niega.";
+        String[] seconds = en ? SECOND_EN : SECOND_ES;
+        String second = seconds[rnd.nextInt(seconds.length)];
         String name = en ? "THE QUARANTINE HERALD" : "EL HERALDO DE LA CUARENTENA";
         String motto = en ? "printed under seal - price: one breath" : "impreso bajo sello - precio: un aliento";
 
@@ -134,8 +160,8 @@ public final class Herald {
         g.fill(x + 2, y + 2, x + bw - 2, y + 3, bronze);
 
         int cx = x + bw / 2;
-        drawC(g, mc, name, cx, y + 10, ink, alpha);
-        drawC(g, mc, motto, cx, y + 24, bronze, alpha);
+        DiaryChrome.drawCenteredString(g, mc.font, name, cx, y + 10, ink);
+        DiaryChrome.drawCenteredString(g, mc.font, motto, cx, y + 24, bronze);
         g.fill(x + 10, y + 36, x + bw - 10, y + 37, (Math.min(140, alpha) << 24) | 0x422810);
 
         // Titular con tipewriter
@@ -149,14 +175,8 @@ public final class Herald {
             g.drawString(mc.font, lines.get(i), cx - lw / 2, ty, red, false);
             ty += 11;
         }
-        drawC(g, mc, second, cx, y + 74, ink, alpha);
+        DiaryChrome.drawCenteredString(g, mc.font, second, cx, y + 74, ink);
         g.fill(x + 10, y + 90, x + bw - 10, y + 91, (Math.min(110, alpha) << 24) | 0x422810);
-        drawC(g, mc, edict, cx, y + 98, bronze, alpha);
-    }
-
-    private static void drawC(GuiGraphics g, Minecraft mc, String s, int cx, int y, int color, int alpha) {
-        if (s == null || alpha <= 8) return;
-        int w2 = mc.font.width(s);
-        g.drawString(mc.font, s, cx - w2 / 2, y, color, false);
+        DiaryChrome.drawCenteredString(g, mc.font, edict, cx, y + 98, bronze);
     }
 }

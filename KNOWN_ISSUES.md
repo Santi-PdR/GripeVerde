@@ -1,5 +1,541 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.21.24 - Ajustes pedidos en cliente (2026-08-22)
+
+### Cambios cerrados
+- Sonido de madera/puerta al abrir Options: eliminado (UiSounds.close).
+- Cajon del gabinete (llave amarilla + vitrina) eliminado por completo.
+- Easter egg de los tres golpes (knock) eliminado.
+- Easter egg del doblado del poster de CUARENTENA eliminado (poster
+  estatico).
+- Titulo CUARENTENA y sellos de tinta: sin rojo sombreado (tinta normal).
+- Libro de visitas de Multiplayer: mas visible y hitbox mayor.
+- Creditos: etiquetas en titulo normal; contenido de atribuciones
+  pendiente de definicion por el usuario.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.23 -> 0.21.24.
+
+### Riesgos activos / KI nuevos
+- **KI-49 (v0.21.24)**: validar en cliente — gabinete sin cajon ni sonido,
+  poster estatico, libro de visitas clicable, creditos legibles.
+- **PENDIENTE USUARIO**: textos definitivos de atribuciones (Cronista,
+  Director, Planos) y mejoras nuevas (preguntar antes de interfaces).
+- KI-48, KI-47, KI-46, KI-45, KI-44, KI-41/43, KI-39/40 pendientes.
+  KI-29 (pistas MenuMusic) requiere OGGs del usuario.
+
+---
+
+## v0.21.23 - Se reconstruye desde el registro previo (2026-08-22)
+
+### Cambios cerrados
+- Backup localizado: commit `39e4720` (v0.17.2, previo a la alteracion
+  v0.19.0). Excluidas v0.19.0/v0.20.0/v0.21.0.
+- 17 pantallas Diary restauradas a su forma pre-alteracion (cabeceras
+  propias, sin carteles/rails).
+- Restaurados: DiaryMusicSlider, DiaryAmbienceSlider, DiaryPackSelectionScreen.
+- Eliminada: DiaryVideoSettingsScreen (nacio en la alteracion).
+- DiaryChrome: anadidos drawRegistryTag* + STEEL_NEAR/DEEP/EDGE.
+- Lang: packs.subtitle restaurada en los 25 idiomas.
+- Re-aplicado lore: triggers Title, cadena de fichas Archive, sello
+  SIGILLUM + campana.
+- Re-eliminados: drawGreeting, drawLedgerDetails/scrollToSection,
+  drawRowBands/openTelemetry.
+- Lista negra del build ajustada (DiaryMusicSlider/DiaryAmbienceSlider
+  fuera, DiaryVideoSettingsScreen dentro).
+- Conteos: 61 clases, 25 lang (81 claves), 35 eventos, 42 OGG.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.22 -> 0.21.23.
+
+### Riesgos activos / KI nuevos
+- **KI-48 (v0.21.23)**: validar en cliente — recorrer todas las salas con
+  la identidad v0.17.2 + lore v0.21.x (especialmente Options, Sound,
+  Multiplayer, Archive con SIGILLUM, Title con fichas).
+- KI-47, KI-46, KI-45, KI-44, KI-41/43, KI-39/40 pendientes. KI-29
+  (pistas MenuMusic) requiere OGGs del usuario.
+
+---
+
+## v0.21.21 - Se termina la deuda de los no-op (2026-08-22)
+
+### Cambios cerrados
+- 30 llamadas no-op a drawInsetCard/drawInnerRail/drawValueRow + 3 a
+  drawOptionsGroup eliminadas (11 pantallas).
+- DiaryChrome: eliminados los 3 helpers no-op + CARD_BASE/CARD_BORDER.
+- Variables/bloques muertos fuera: Language frame*, Controls leftX/railX/
+  workW, Options content*, Sound rail*/listFrame*, RAIL_W, STATION_W.
+- Changelog: drawRevisionFooter (pie de registro v0.21.0) eliminado.
+- Fix scrollbars Chat/Online/Sound -> borde derecho del panel (referencias
+  a variables eliminadas).
+- 14 imports muertos + newline-final + trailing whitespace.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.20 -> 0.21.21.
+
+### Riesgos activos / KI nuevos
+- **KI-47 (v0.21.21)**: validar en cliente — Chat/Online/Sound con
+  scrollbar en el borde derecho y listas intactas.
+- KI-46, KI-45, KI-44, KI-41/43, KI-39/40 pendientes. KI-29 (pistas
+  MenuMusic) requiere OGGs del usuario.
+
+---
+
+## v0.21.20 - La tinta pesa menos (2026-08-22)
+
+### Cambios cerrados
+- `ExpedientHeader`: sobrecarga simple; 16 pantallas migradas; ~150 lineas
+  de argumentos muertos eliminadas.
+- Metodos muertos fuera: computeControlDiscipline, normalizeFov,
+  computeVisibleRatio, getVisualMixLevel, getCrossfadeVisual.
+- Variables muertas fuera: rail completo de Options (drawOptionsRail +
+  campos), bloques no-op de Online/Chat, headerBottom sin asignacion en
+  Language/Multiplayer/Options/Chat, ready (DirectJoin/EditServer), barra
+  stillness + highlight + haloC (Pause; se restauro el cierre de metodo),
+  lineH/line (Credits), angle (Poster), h3 (Skyline).
+- Options gridTop 77 -> 66.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.19 -> 0.21.20 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-46 (v0.21.20)**: validar en cliente — salas con titulo + contenido
+  intactos tras la limpieza (especialmente Pause, Options, Chat y Online).
+- KI-42 (deuda): quedan call sites no-op de drawInsetCard/drawInnerRail/
+  drawValueRow en varias pantallas (no dibujan, compilan); limpieza total
+  en pasada futura.
+- KI-45, KI-44, KI-41/43, KI-39/40 pendientes. KI-29 (pistas MenuMusic)
+  requiere OGGs del usuario.
+
+---
+
+## v0.21.19 - Se corrigen scrolls y posiciones tras la reversion (2026-08-22)
+
+### Cambios cerrados
+- Multiplayer: LIST_TOP_OFFSET 84 -> 52 (lista debajo de la cabecera).
+- Sound: listTop 45 -> 58 (la lista ya no tapa el titulo).
+- Chat: listTop 88 -> 62. Online: listTop 92 -> 62.
+- Controls: gridTop 92 -> 62.
+- Archive: campo de busqueda a la esquina superior derecha (panelY+18) y
+  contador "N / 47" debajo (panelY+38) — antes pasaba sobre la grilla.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.18 -> 0.21.19 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-45 (v0.21.19)**: validar en cliente — listas/scrolls y botones
+  alineados en Multiplayer, Sound, Chat, Online, Controls y Archive (4
+  escalas GUI).
+- KI-44 (v0.21.18), KI-42 (deuda no-op), KI-41/43, KI-39/40 pendientes.
+  KI-29 (pistas MenuMusic) requiere OGGs del usuario.
+
+---
+
+## v0.21.18 - Se restaura lo que no era de la version revertida (2026-08-22)
+
+### Cambios cerrados
+- Pickaxe con historia completa: se fecho cada elemento sacado en
+  v0.21.14-v0.21.17.
+- Restaurado: `DiaryProgressBar.draw` (cuerpo vivo, v0.12.2), medidores
+  Pacing (Video) y registries (Language) v0.21.4, sello SIGILLUM +
+  `drawCompletionSeal` (v0.21.13), `drawOfficialFrame` de Credits (v0.14.1).
+- Eliminadas las llamadas de medidores v0.18-v0.21.0 (Options, Sound,
+  Controls, Video FOV, Accessibility, Pause, Skin) para que no dibujen con
+  el cuerpo restaurado.
+- Confirmado fuera (v0.18-v0.21.0 o pedido explicito): header completo,
+  tarjetas/railes, RECOVERED PAPERS, footer changelog, racks Chat/Online,
+  HOSPEDAJE ELEGIDO, saludo Title, ticker Herald.
+- Lista negra: quitados SIGILLUM/drawCompletionSeal (vuelven a existir).
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.17 -> 0.21.18 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-44 (v0.21.18)**: validar en cliente — sello al completar 47 fichas,
+  medidor Pacing en Video, registros en Lenguas; resto sin carteles.
+- KI-42 (deuda): limpiar call sites no-op restantes (drawInsetCard/
+  drawInnerRail/drawValueRow).
+- KI-41/43, KI-39/40, KI-38... pendientes. KI-29 (pistas MenuMusic)
+  requiere OGGs del usuario.
+
+---
+
+## v0.21.17 - Se retiran los medidores y el resto de carteles (2026-08-21)
+
+### Cambios cerrados
+- `DiaryProgressBar.draw` -> no-op (medidores con etiqueta fuera en 8
+  pantallas; firma intacta).
+- Archive: fuera "RECOVERED PAPERS" + divisor, y el sello SIGILLUM
+  (v0.21.13) + `drawCompletionSeal`.
+- Changelog: fuera `drawLedgerDetails` (footer + sello + referencia).
+- Options: `drawOptionsGroup` -> no-op. Credits: `drawOfficialFrame` ->
+  no-op.
+- Grep global de textos hardcodeados directos = 0.
+- Lista negra del build ampliada.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.16 -> 0.21.17.
+
+### Riesgos activos / KI nuevos
+- **KI-41/43 (v0.21.16/17)**: validar en cliente — pantallas con titulo +
+  contenido + mandos, sin medidores ni carteles.
+- **KI-42 (deuda)**: limpiar los call sites no-op restantes
+  (drawInsetCard/drawInnerRail/drawValueRow/DiaryProgressBar/
+  drawOptionsGroup/drawOfficialFrame).
+- KI-39/40 pendientes; KI-38, KI-37, KI-36, KI-35, KI-34, KI-32/33,
+  KI-27/28/30/31 pendientes. KI-29 (pistas MenuMusic) requiere OGGs del
+  usuario.
+
+---
+
+## v0.21.16 - Se retiran los carteles de interfaz (2026-08-21)
+
+### Cambios cerrados
+- BACKUP: tag `backup-pre-reversion-v0.21.15` (GitHub) + tar local.
+- `ExpedientHeader`: solo titulo + divisor (expediente/referencia/subtitulo/
+  flavor/estado fuera; firma intacta).
+- `DiaryChrome.drawInsetCard`/`drawInnerRail`/`drawValueRow`: no-op (firma
+  intacta; llamadas restantes compilan sin dibujar — deuda de limpieza).
+- Textos/metodos de cartel eliminados en Chat, Online, Archive, Sound,
+  Controls, Language y Skin (lista completa en CONTEXTO.md addendum).
+- Conservado: todo lo funcional y el lore v0.16.
+- Lista negra del build ampliada.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.15 -> 0.21.16 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-41 (v0.21.16)**: validar en cliente — las 16 pantallas con titulo
+  simple, sin carteles ni solapes; botones/listas intactos.
+- **KI-42 (deuda)**: limpiar las llamadas no-op restantes a
+  drawInsetCard/drawInnerRail/drawValueRow en las pantallas.
+- KI-39/40 (v0.21.14/15) pendientes; KI-38, KI-37, KI-36, KI-35, KI-34,
+  KI-32/33, KI-27/28/30/31 pendientes. KI-29 (pistas MenuMusic) requiere
+  OGGs del usuario.
+
+---
+
+## v0.21.15 - Se retiran los sellos de estado (2026-08-21)
+
+### Cambios cerrados
+- `ExpedientHeader`: pill de estado eliminado en todas las pantallas Diary
+  (status conservado en la firma). Flavor a ancho completo con truncado.
+- `DiaryOptionsScreen`: pill "FIELD READY / LISTO PARA CAMPO" eliminado.
+- `DiaryChrome.drawStatusPill` eliminado (0 usos); lista negra ampliada.
+- Confirmado por pickaxe: los sellos/elementos venian de v0.18.0/v0.21.0;
+  el unico reciente era el ticker (v0.21.9, revertido).
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.14 -> 0.21.15 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-39 (v0.21.14+15)**: validar en cliente — menu limpio, formularios sin
+  sellos ni solapes, lista de servidores debajo de la cabecera, guestbook
+  clickeable.
+- **KI-40 (pendiente de captura)**: "errores en el gabinete" (Options) sin
+  detalle; se quito el sello READY que se solapaba. Si persiste, pedir
+  descripcion puntual.
+- KI-38, KI-37, KI-36, KI-35, KI-34, KI-32/33, KI-27/28/30/31 pendientes.
+  KI-29 (pistas MenuMusic) requiere OGGs del usuario.
+
+---
+
+## v0.21.14 - El gabinete vuelve a respirar (2026-08-21)
+
+### Cambios cerrados
+- Title: eliminado el saludo de sesion que solapaba los botones
+  (`drawGreeting` + campos + asignaciones; marginalias/descubrimientos
+  intactos).
+- Multiplayer: `LIST_TOP_OFFSET` 50 -> 84 (el server ya no tapa la
+  cabecera); eliminadas la tarjeta HOSPEDAJE ELEGIDO y el ticker del
+  Heraldo.
+- Confirm: eliminados el cartel ORDER/ORDEN, la mano autorizante y el pill
+  PENDIENTE; mensaje de confirmacion en tinta normal.
+- ExpedientHeader: flavor truncado con ellipsis antes del pill de estado
+  (arregla solapes REGISTRABLE/INCOMPLETO/LISTO/READY).
+- Lista negra del build ampliada (`drawGreeting`, `drawSelectionLedger`,
+  `drawHeraldTicker`).
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.13 -> 0.21.14 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-39 (v0.21.14)**: validar en cliente — menu limpio, lista de
+  servidores debajo de la cabecera, confirmacion sin cartel/orden/mano,
+  formularios sin solape de sellos, y el libro de visitas clickeable.
+- **KI-40 (pendiente de captura)**: el usuario reporto "el libro de
+  visitas dejo de funcionar" y "errores en el gabinete" (Options) sin que
+  las capturas llegaran al sandbox. Se limpiaron superposiciones; si
+  persiste, pedir captura por otra via o descripcion puntual.
+- KI-38, KI-37, KI-36, KI-35, KI-34, KI-32/33, KI-27/28/30/31 pendientes.
+  KI-29 (pistas MenuMusic) requiere OGGs del usuario.
+
+---
+
+## v0.21.13 - El expediente se cierra (2026-08-21)
+
+### Cambios cerrados
+- Al completar las 47 fichas: footer del Archive cambia a "el archivo esta
+  completo" y se dibuja un sello de cera dorado (SIGILLUM) procedural.
+- Disparo unico persistente `cabinet_complete` + marginalia final
+  `N_ARCHIVE_COMPLETE` + campana grave.
+- Changelog in-game (25 .md): SI (manifestacion observable: el archivo se
+  sella).
+- Version bump: 0.21.12 -> 0.21.13 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-38 (v0.21.13)**: validar en cliente — completar 47/47 (o forzar el
+  json de memoria) y ver el sello dorado + marginalia + campana.
+- KI-37, KI-36, KI-35, KI-34, KI-32/33, KI-27/28/30/31 pendientes.
+  KI-29 (pistas MenuMusic) requiere OGGs del usuario. KI-20/21/24/25 sin
+  cambios.
+
+---
+
+## v0.21.12 - El marco de la pausa queda en su sitio (2026-08-21)
+
+### Cambios cerrados
+- `DiaryPauseScreen`: metodo privado `drawCornerOrnaments` inline en su
+  unico uso y eliminado (marco de oro identico visualmente).
+- Audit global: cero campos/metodos privados sin uso en src/main/java.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.11 -> 0.21.12 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-37 (v0.21.12)**: validar en cliente — marco de oro del diario de
+  pausa identico (solo refactor interno).
+- KI-36, KI-35, KI-34, KI-32/33, KI-27/28/30/31 pendientes. KI-29 (pistas
+  MenuMusic) requiere OGGs del usuario. KI-20/21/24/25 sin cambios.
+
+---
+
+## v0.21.11 - La sala respira bajo la mano (2026-08-21)
+
+### Cambios cerrados
+- Micro-animacion de fichas en la Sala de consulta (`EasedValue`: alza 2px
+  + aclarado, hover suavizado entre fichas).
+- `DiaryProgressBar` ALERT con pulso suave 0.8-1.0 (solo ese estilo).
+- `ChroniclerMemory.save()` diferido (1 escritura/2s) + `flushForShutdown()`
+  via `Runtime.addShutdownHook` en `GripeVerdeMod`.
+- Grano de pelicula low-end: intervalo 90ms -> 300ms cuando FPS < 30.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.10 -> 0.21.11 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-36 (v0.21.11)**: validar en cliente — alza suave de fichas, pulso
+  ALERT sutil, y que la memoria sobreviva al cerrar el juego (flush en
+  shutdown).
+- KI-35, KI-34, KI-32/33, KI-27/28/30/31 pendientes. KI-29 (pistas
+  MenuMusic) requiere OGGs del usuario. KI-20/21/24/25 sin cambios.
+
+---
+
+## v0.21.10 - La estacion parpadea al cambiar (2026-08-21)
+
+### Cambios cerrados
+- 15 constantes de color muertas eliminadas (8 de `DiaryTheme`, 7 de
+  `DiaryChrome`) tras audit de uso global.
+- `DiaryOnlineOptionsScreen`: medidor de alcance con transicion suave
+  (interpolacion en tick; antes el valor saltaba al togglear opciones).
+- Lista negra de `verifyGripeVerdeNoDeadCode` ampliada (13 simbolos de
+  v0.21.7-0.21.9 + 15 constantes de color).
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.9 -> 0.21.10 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-35 (v0.21.10)**: validar en cliente — el medidor de la estacion
+  transiciona suave al togglear "avisos"/"listado".
+- KI-34 (v0.21.9), KI-32/33, KI-27/28/30/31 pendientes. KI-29 (pistas
+  MenuMusic) requiere OGGs del usuario. KI-20/21/24/25 sin cambios.
+
+---
+
+## v0.21.9 - La tinta pesa menos por frame (2026-08-21)
+
+### Cambios cerrados
+- `Discoveries.isEnglish()` con cache de 250ms (antes: consulta al
+  LanguageManager decenas de veces por frame). El cambio de idioma recarga
+  resources y el cache expira solo.
+- `DiaryChrome.drawCenteredString` nuevo; eliminados los helpers privados
+  duplicados en Archive, HiddenCipher, Herald y PosterRenderer (26
+  llamadas unificadas).
+- `Herald.headlineToday()` extraido; `DiaryMultiplayerScreen` muestra el
+  titular del dia junto al libro de visitas (ticker simetrico).
+- Eliminados campos muertos: `BLOOD_RNG`/`STAMP_RNG` (PosterRenderer),
+  `PAD_Y` (Changelog), `LOGGER`/`frameLogCounter` (Multiplayer),
+  `PANEL_MIN_H`/`MARGIN_BOTTOM_IDEAL`/`ORN_TITLE_TOP`/`ORN_SUBTITLE_TOP`
+  (Pause).
+- Eliminados metodos muertos: `scrollToSection` (Changelog),
+  `drawRowBands`/`drawCornerOrnaments`/`openTelemetry` (Options),
+  `drawOrnamentalDivider` (LogoRenderer), `TextureAssets.exists`.
+- Nuevo `CONTRIBUTING.md` (reglas branch fija, no gameplay, 4 escalas GUI,
+  3 tasks de verificacion).
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.8 -> 0.21.9 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-34 (v0.21.9)**: validar en cliente — ticker del Heraldo en
+  Multiplayer (ES/EN, sin pisar el guestbook), y cache de idioma (deberia
+  reflejar el cambio al recargar resources).
+- KI-32/33 (v0.21.7/8) y KI-27/28/30/31 pendientes de validacion.
+  KI-29 (2 pistas MenuMusic) requiere OGGs del usuario. KI-20/21/24/25 sin
+  cambios.
+
+---
+
+## v0.21.8 - Una sola mano para el idioma (2026-08-21)
+
+### Cambios cerrados
+- 7 pantallas unificadas en `Discoveries.isEnglish()`: eliminadas las
+  definiciones privadas de `isEnglish()`/`isEnglishSelected()` en Changelog,
+  Credits, Language, Options, Pause, Title y Video (92 llamadas reescritas).
+  Sin cambio de comportamiento (todas leen el LanguageManager activo).
+- `OrnamentRenderer`: eliminados `drawVictorianFrame`, `drawDoubleBorder`,
+  `drawFiligreeCorner` y `drawFleuron` (0 referencias). Quedan
+  `drawPaperPanel` y `drawWaxSeal` (PosterRenderer).
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.7 -> 0.21.8 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-33 (v0.21.8)**: validar en cliente — las 7 pantallas en ES y EN
+  siguen mostrando el idioma correcto (la unificacion no altero el criterio
+  `startsWith("en_")`).
+- KI-32 (v0.21.7), KI-27, KI-28, KI-30, KI-31 pendientes de validacion.
+  KI-29 (2 pistas MenuMusic) requiere OGGs del usuario. KI-20/21/24/25 sin
+  cambios.
+
+---
+
+## v0.21.7 - El gabinete sin peso muerto (2026-08-21)
+
+### Cambios cerrados
+- 9 clases eliminadas: `VictorianFrame`, `AbstractDiaryScreen`,
+  `DebugCanvasScreen`, `SoundLabScreen`, `DiaryDecorator`, `CandleLight`,
+  `InkEffects`, `DiaryMusicSlider`, `DiaryAmbienceSlider` (los dos sliders
+  combinados en `DiarySlider` generico con label/callback).
+- `DiaryChrome.renderPanelBase` nuevo y aplicado en 14 pantallas; eliminados
+  `drawQuillCursor`, `drawVerticalDivider`, `drawDarkLeatherBackground` y
+  `LEATHER_BASE` (muertos). Conservadas las decoraciones propias de
+  Changelog (encuadernado) y Credits (marco oficial).
+- Eliminados metodos muertos: `PaperTexture.getOpenCount`/`drawSolidBlob`,
+  `AtmosphereRenderer.getMoonPhaseIndex`, `PosterRenderer.drawVersionPanel`.
+- Lang: 57 claves huerfanas eliminadas de los 25 idiomas (137 -> 80);
+  nueva clave `gripeverde.options.sound.ambience_slider` en los 25 (slider
+  de ambiente localizado, antes hardcodeado en espanol).
+- Conteos: 59 clases Java, 25 lang (80 claves), 35 eventos, 42 OGG,
+  0 PNG. sounds.json <-> ModSounds <-> OGG consistentes (35/35).
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL (hito
+  tecnico; unico cambio visible: look unificado del regulador de ambiente).
+- Version bump: 0.21.6 -> 0.21.7 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-32 (v0.21.7)**: validar en cliente — sala de sonido con los dos
+  reguladores unificados (funcion y aspecto), resto de pantallas Diary sin
+  cambios visuales, y que nada referencie las clases eliminadas (el build
+  con `verifyGripeVerdeNoDeadCode` no falla).
+- KI-27 (v0.21.3), KI-28 (v0.21.4), KI-30 (v0.21.5) y KI-31 (v0.21.6)
+  siguen pendientes de validacion en cliente. KI-29 (2 pistas MenuMusic)
+  requiere OGGs del usuario. KI-20/21/24/25 sin cambios.
+
+---
+
+## v0.21.6 - El heraldo cuenta la limpieza (2026-08-21)
+
+### Cambios cerrados
+- `Herald`: 3 noticias nuevas (limpieza del gabinete, farol del tejado,
+  gato del kiosco) en ES/EN + segundas lineas variables (SECOND_ES/EN, 4
+  variantes, antes fija). Semilla del dia real intacta.
+- `HiddenCipher`: codigo `ARCHIVE` abre la Sala de consulta (patron
+  HOLLOWAY). Sin fichas nuevas.
+- Version bump: 0.21.5 -> 0.21.6 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-31 (v0.21.6)**: validar en cliente — Heraldo con noticias nuevas
+  (cambiar la fecha del sistema para ver variantes) y codigo ARCHIVE.
+- KI-27 (v0.21.3), KI-28 (v0.21.4) y KI-30 (v0.21.5) siguen pendientes de
+  validacion en cliente. KI-29 (2 pistas MenuMusic) requiere OGGs del
+  usuario. KI-20/21/24/25 sin cambios.
+
+---
+
+## v0.21.5 - La sala responde a la consulta (2026-08-21)
+
+### Cambios cerrados
+- Sala de consulta: busqueda por nombre/pista/id con `DiaryTextField`
+  (contador "N / 47", aviso de sin coincidencias, campo oculto al abrir
+  documentos).
+- Ficha 47 `BUTTONS_NEVER_PRESSED` ("Los botones que nunca se pulsaron"):
+  cadena cuando las 3 confesiones de limpieza de v0.21.3 estan descubiertas.
+- Marginalia `N_OPEN_COUNT` (openCount >= 100) y `N_MANY_CARDS`
+  (discoveredCount >= 44).
+- Ducking de la musica al descubrir (`Discoveries.discover` ->
+  `MenuMusic.duckFor(2500L)`).
+- Modo low-end en `QuarantineSceneRenderer.isLowEnd()` (FPS < 30, muestreo
+  1s, defensivo): omite niebla y faroles en Title y fondos Diary.
+- Version bump: 0.21.4 -> 0.21.5 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-30 (v0.21.5)**: validar en cliente real — busqueda en la sala (4
+  escalas GUI), cadena de la ficha 47, ducking al hallar, y low-end en
+  maquinas lentas (o forzando FPS bajo).
+- KI-27 (v0.21.3) y KI-28 (v0.21.4) siguen pendientes de validacion en
+  cliente. KI-29 (2 pistas MenuMusic nuevas) requiere OGGs del usuario.
+- KI-20, KI-21, KI-24, KI-25 siguen abiertos sin cambios.
+
+---
+
+## v0.21.4 - La tinta se asienta (2026-08-21)
+
+### Cambios cerrados
+- Busqueda del manual en `DiaryControlsScreen` (`DiaryTextField` filtra los 6
+  puntos de mando por nombre traducido; hint y aviso de "ningun punto coincide";
+  oculto en paneles < 220px para no invadir el divisor).
+- `DiaryVideoSettingsScreen` reagrupado: secciones RENDER (FOV + Canvas) /
+  QUALITY (escala GUI) / PERFORMANCE (medidor de FPS con `minecraft.getFps()`
+  defensivo, oculto en paneles < 330px). No toca la logica vanilla.
+- `DiaryLanguageScreen`: hover muestra el registro del consulado (136/136 para
+  las 25 lenguas del gabinete; 0/136 para lenguas vanilla no soportadas).
+- Nuevo evento de sonido `ui.paper_fall` (34 -> 35 eventos) reutilizando
+  `ui/scroll1` + `ui/back2` (42 OGG intactos); suena al abrir la Sala de
+  consulta.
+- Higiene: 54 imports no usados eliminados; task Gradle
+  `verifyGripeVerdeNoDeadCode` conectada a `processResources` (falla si
+  reaparecen ThemeManager, gripeverde_steel, bg_town, IconButton, etc. fuera
+  de comentarios); `.editorconfig` (utf-8, LF, trim trailing whitespace).
+- Version bump: 0.21.3 -> 0.21.4 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-27 (v0.21.3)**: sigue pendiente la validacion en cliente de RNG seed
+  fija, REDUCED_MOTION y las 3 fichas de limpieza.
+- **KI-28 (v0.21.4)**: validar en cliente real — 4 escalas GUI (filtro del
+  manual, secciones del aparato, hover de registro, papel en la sala), que el
+  filtro no rompa clicks ni el smugglers signal, y que el FPS meter no se vea
+  fragil en pantallas pequenas.
+- **KI-29 (deuda audio)**: las 2 pistas MenuMusic nuevas del brief requieren
+  OGGs reales del usuario (no generables en sandbox). Evento "papel cayendo"
+  ya cubierto por `ui.paper_fall` con reuso.
+- KI-20, KI-21, KI-24, KI-25 siguen abiertos sin cambios.
+
+---
+
+## v0.21.3 - El gabinete respira mas ligero (2026-08-21)
+
+### Cambios cerrados
+- RNG con seed fija en los 3 renderers del Title (`VictorianSkyline`,
+  `LivingAtmosphere`, `QuarantineSceneRenderer`): eliminado `Math.random`
+  del loop caliente. Escena determinista por sesion.
+- `ClientConfig.REDUCED_MOTION` (boolean, seccion `visual`, default false):
+  aquieta en `LivingAtmosphere` el farol erratico, las polillas, la rata,
+  los papeles, las rafagas y el pulso de niebla. No toca widgets ni
+  `EasedValue` (riesgo UI evitado).
+- 3 fichas nuevas de la limpieza (43 -> 46): `ARCHIVE_THINNING`
+  (openCount >= 50, en `DiaryTitleScreen.init`), `THEME_NEVER_PLAYED`
+  (codigo `CLEANSE` en `HiddenCipher` + telegrama), `BG_TOWN_MEMORY`
+  (cadena en `DiaryArchiveScreen` con las otras dos). Nombres/pistas ES/EN
+  hardcodeados; sin lang keys nuevas.
+- `DiaryOptionsScreen`: progreso del archivo con `Discoveries.ALL.length`
+  (era `43` fijo).
+- Version bump: 0.21.2 -> 0.21.3 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-27 (validacion v0.21.3)**: validar en cliente real — 4 escalas GUI
+  (fichas/toast/CLEANSE/REDUCED_MOTION), que la escena con seed fija no se
+  sienta repetida tras varias sesiones, y que el toml nuevo (seccion
+  `visual`) no rompa configs existentes (Forge agrega la clave con default).
+- KI-20, KI-21, KI-24, KI-25 y KI-26 siguen abiertos sin cambios.
+
+---
+
 ## v0.21.2 - Limpieza profunda del proyecto (2026-08-21) + hotfix previo v0.21.1
 
 ### Cambios cerrados (hotfix)
@@ -18,6 +554,7 @@
 - **ScreenEventHandler:** eliminado import y llamada a `ThemeManager.render()` (no-op), simplificado a intercept Title/Pause + feedback sonoro + atajo Ctrl+0.
 - **Docs actualizados:** `README.md` (v0.21.1 + nota limpieza + lista docs sin _backups), `CONTEXTO_PARA_IA.md` (reescrito a v0.21.1, 68 clases, 0 PNG, sin steel), `CHANGELOG.md` (añadidos v0.19.0, v0.17.2, v0.17.1, v0.17.0), 25 `changelog/*.md` in-game (entrada v0.21.1 EN/ES), `CONTEXTO.md` (nuevo addendum limpieza + nota ThemeManager).
 - **Conteos post-limpieza:** 68 clases Java (vs 83 en v0.17.2), 25 lang, 25 changelog, 42 OGG, 0 PNG contenedores. Working tree limpio.
+- **Post-cierre (docs):** `CONTEXTO_PARA_IA.md` retirado por redundancia con `CONTEXTO.md` (habia quedado desincronizado en v0.21.1). `CONTEXTO.md` queda como unica fuente de verdad. Sin impacto en build ni runtime, sin bump.
 
 ### Riesgos activos / KI
 - **KI-25 (build local del usuario)**: si reaparece un crash distinto al

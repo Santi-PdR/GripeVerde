@@ -2,6 +2,33 @@
 ## Chronicle under seal
 
 
+## Version 0.21.13 - The file is sealed
+
+The consultation room, when it finally gathers every card, stops saying that any are missing. The archive declares itself complete, a golden wax seal signs it with the word SIGILLUM, and the chronicler notes in the margin: forty-seven cards; the drawer is empty now; seal it. The bell tower rings once, low, so no one doubts it.
+
+
+## Version 0.21.6 - The herald tells the cleansing
+
+The kiosk newspaper found new words for the night: the district cabinet emptied of old papers, a roof lantern that flickered three times and went out on its own, the cat that came down to the kiosk and stole nothing. The fine print of the second column also changes from dawn to dawn. And whoever knows the word that opens the archive may ask the room to show the cards that are missing.
+
+
+## Version 0.21.5 - The room answers the query
+
+The consultation room learned to answer. Whoever searches among the cards by name, by hint, or by the word that names them, will see only those that matter; and when the archive confesses three ghosts of the cleansing, a fourth remembers the desk that was never used. The music yields for a moment when the archive speaks, and when the machine that holds the vigil runs slow, the street sheds its fog and lanterns so as not to stop.
+
+
+## Version 0.21.4 - The ink settles
+
+The cabinet put its tools in order. The field manual accepts being asked by name: whoever searches among its pages finds the control they need without turning over the rest. The observation apparatus divides its sections —what it paints, what it shows, what it measures— and adds a needle that reads the machine's pulse. The language consulates declare, as the hand passes, how many pages of their register the cabinet keeps. And in the consultation room, when the door opens, a paper falls to the floor.
+
+
+## Version 0.21.3 - The cabinet breathes lighter
+
+The cabinet learned not to waste its strength. The city repeats its clouds, its smoke and its rain from the same seed, as if the vigil kept itself in memory; and those who ask may quiet the motion of the scene: the lantern stops trembling, the moth settles, the rat stops crossing and the paper waits for the wind.
+
+The archive confesses three things it removed in the cleansing: the archive that grows thinner, the theme that never played, and the street that never existed. Whoever speaks the word of the cleansing will receive a telegram from the chronicler himself.
+
+
 ## Version 0.21.2 - Deep cleanup
 
 Following the cohesion pass and the sound registry fix, the cabinet was audited end-to-end. Historical audit docs, test samples, an unused 2.1M texture, inert theme framework and dead widgets were removed, and all docs were brought up to date. The result is a leaner codebase: 68 Java classes, 25 langs, 25 in-game changelogs, 42 OGG, 0 container PNGs.

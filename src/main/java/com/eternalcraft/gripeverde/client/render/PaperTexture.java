@@ -12,7 +12,6 @@ public final class PaperTexture {
     private static final long SEED = 189011974L;
     private static int openCount = 0;
     public static void incrementOpenCount() { if (openCount < 12) openCount++; }
-    public static int getOpenCount() { return openCount; }
 
     private static final long BLOOD_SEED = 66613337L;
     private static final long COFFEE_SEED = 0xC0FFEE420L;
@@ -370,7 +369,6 @@ public final class PaperTexture {
         fillCircleFast(g,cx,cy,r,(a<<24)|rgb);
         if(r>2) fillCircleFast(g,cx,cy,r+1,((a/3)<<24)|rgb);
     }
-    public static void drawSolidBlob(GuiGraphics g,int cx,int cy,int r,int col){fillCircleFast(g,cx,cy,r,col);}
     private static void fillCircleFast(GuiGraphics g,int cx,int cy,int r,int c){
         if(r<=0)return;
         for(int dy=-r;dy<=r;dy++){

@@ -1,16 +1,9 @@
 package com.eternalcraft.gripeverde.client.screens;
 
-import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
-import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
-import com.eternalcraft.gripeverde.client.audio.MenuMusic;
-import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
-import com.eternalcraft.gripeverde.client.render.DiaryTheme;
-import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
 import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
-import com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -23,13 +16,11 @@ import net.minecraft.network.chat.Component;
 
 public class DiaryChatOptionsScreen extends ChatOptionsScreen {
 
-    private static final int PANEL_W = 560;
-    private static final int PANEL_H = 350;
-    private static final int RACK_W = 172;
+    private static final int PANEL_W = 340;
+    private static final int PANEL_H = 330;
 
     private int panelX, panelY, panelW, panelH;
     private final SmoothScroll smoothScroll = new SmoothScroll();
-    private long openedAtMs = 0L;
 
     public DiaryChatOptionsScreen(Screen parent, Options options) {
         super(parent, options);
@@ -49,8 +40,8 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         if (this.list != null) {
             this.list.setRenderBackground(false);
             this.list.setRenderTopAndBottom(false);
-            int listTop = this.panelY + 88;
-            int listBottom = this.panelY + this.panelH - 54;
+            int listTop = this.panelY + 45;
+            int listBottom = this.panelY + this.panelH - 45;
             this.list.updateSize(this.width, this.height, listTop, listBottom);
             this.smoothScroll.snapToCurrent(this.list);
         }
@@ -81,7 +72,6 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
             DiaryButton.Variant.PRIMARY,
             () -> this.onClose()
         ));
-        this.openedAtMs = System.currentTimeMillis();
     }
 
     @Override
@@ -104,59 +94,57 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        // Escena viva
+        // Clear framebuffer + transition fade
         g.fill(0, 0, this.width, this.height, 0xFF000000);
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
+                // Overlay
 
-        float reveal = DiaryChrome.reveal(this.openedAtMs, 240L);
-        DiaryChrome.drawPanelScaffold(g, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.BRONZE);
+        // Pergamino
+        DiaryChrome.drawPanelShadow(g, this.panelX, this.panelY, this.panelW, this.panelH);
         PaperTexture.drawClean(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.CORRESPONDENCE);
-        DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
 
-        int headerBottom = ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT V" : "EXPEDIENTE V",
-            Component.translatable("options.chat.title"),
-            "- " + Component.translatable("gripeverde.options.chat.subtitle").getString() + " -",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · CORRESPONDENCE" : "EC-QV/1897 · CORRESPONDENCIA",
-            getRotatingChatFlavor(),
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "OPEN CHANNEL" : "CANAL ABIERTO",
-            DiaryTheme.BRONZE,
-            reveal);
-
-        int rackX = this.panelX + this.panelW - RACK_W - 18;
-        int rackY = headerBottom - 2;
-        drawCorrespondenceRack(g, rackX, rackY, RACK_W, this.panelH - 122, mouseX, mouseY);
-
-        int listFrameX = this.panelX + 18;
-        int listFrameW = rackX - listFrameX - 14;
-        DiaryChrome.drawInnerRail(g, listFrameX, headerBottom - 2, listFrameW, this.panelH - 122, DiaryTheme.BRONZE);
-        g.drawString(this.font,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "PUBLIC LEDGER" : "REGISTRO PUBLICO",
-            listFrameX + 10, headerBottom + 6, DiaryTheme.BRONZE, false);
-        g.drawString(this.font,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Ink discipline and outgoing notices" : "Disciplina de tinta y avisos salientes",
-            listFrameX + 10, headerBottom + 18, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 150), false);
-
-        if (this.list != null) {
-            if (reveal < 0.995f) {
-                int revealBottom = this.panelY + Math.max(28, (int)(this.panelH * reveal));
-                g.enableScissor(this.panelX - 2, this.panelY - 2, this.panelX + this.panelW + 2, revealBottom);
-                this.list.render(g, mouseX, mouseY, partialTick);
-                DiaryChrome.drawStyledScrollThumbInPanel(g, this.list, rackX - 8);
-                g.disableScissor();
-            } else {
-                this.list.render(g, mouseX, mouseY, partialTick);
-                DiaryChrome.drawStyledScrollThumbInPanel(g, this.list, rackX - 8);
-            }
+        // Titulo
+        String titleStr = Component.translatable("options.chat.title").getString();
+        int titleX = this.width / 2;
+        int titleY = this.panelY + 10;
+        {
+        int _tw = this.font.width(titleStr);
+        g.drawString(this.font, titleStr, titleX - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
         }
 
+        // Subtitulo
+        String subtitle = "- " + Component.translatable("gripeverde.options.chat.subtitle").getString() + " -";
+        int subWC = this.font.width(subtitle);
+        g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
+
+        // Flavor rotativo
+        String flavor = getRotatingChatFlavor();
+        int flvWC = this.font.width(flavor);
+        g.drawString(this.font, flavor, (this.width - flvWC) / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
+
+        // Divisor superior
+        int divY1 = titleY + 42;
+        DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY1);
+
+        // Divisor inferior + esquineros
         int divY2 = this.panelY + this.panelH - 38;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
-        drawBottomNotice(g, listFrameX, divY2 - 18, listFrameW);
+        DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
+        DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. V");
 
+        // Lista vanilla sin gradientes blancos ni bandejas extra
+        if (this.list != null) {
+            this.list.render(g, mouseX, mouseY, partialTick);
+            DiaryChrome.drawStyledScrollThumbInPanel(g, this.list, this.panelX + this.panelW);
+        }
+
+        // Widgets propios
         for (Renderable r : this.renderables) {
             r.render(g, mouseX, mouseY, partialTick);
         }
 
+        // v0.16.0: el buzon del barrio que no responde
         try {
             drawMailbox(g, mouseX, mouseY);
             com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
@@ -165,69 +153,36 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         } catch (Throwable ignored) {}
     }
 
-    private int mailboxX() { return this.panelX + this.panelW - RACK_W + 10; }
-    private int mailboxY() { return this.panelY + 104; }
-
-    private void drawCorrespondenceRack(GuiGraphics g, int x, int y, int w, int h, int mouseX, int mouseY) {
-        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
-        int letters = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("letters");
-        DiaryChrome.drawInnerRail(g, x, y, w, h, DiaryTheme.PLAGUE_SICK);
-        g.drawString(this.font, en ? "SORTING RACK" : "CASILLERO", x + 10, y + 8, DiaryTheme.BRONZE, false);
-        g.drawString(this.font, en ? "incoming / unanswered" : "entrada / sin respuesta", x + 10, y + 20,
-            DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 150), false);
-
-        // tres sobres superpuestos
-        for (int i = 0; i < 3; i++) {
-            int ex = x + 12 + i * 4;
-            int ey = y + 40 + i * 8;
-            int ew = w - 28;
-            g.fill(ex + 1, ey + 1, ex + ew + 1, ey + 28 + 1, 0x12000000);
-            g.fill(ex, ey, ex + ew, ey + 28, i == 2 ? 0xFFE5D6B3 : 0xFFDDCCAA);
-            g.fill(ex, ey, ex + ew, ey + 1, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 140));
-            g.fill(ex, ey + 27, ex + ew, ey + 28, DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 140));
-            g.fill(ex, ey, ex + 1, ey + 28, DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 100));
-            g.fill(ex + ew - 1, ey, ex + ew, ey + 28, DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 100));
-            g.fill(ex + 8, ey + 8, ex + ew - 8, ey + 9, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 32));
-            g.fill(ex + ew - 20, ey - 2, ex + ew - 6, ey + 2, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 110));
-        }
-
-        drawMailbox(g, mouseX, mouseY);
-        DiaryProgressBar.draw(g, x + 10, y + h - 42, w - 20, 14,
-            Math.min(1f, letters / 5f), en ? "mail volume" : "volumen de correo", DiaryProgressBar.Style.INK);
-        DiaryChrome.drawValueRow(g, this.font, x + 10, y + h - 22, w - 20,
-            en ? "readability" : "legibilidad",
-            en ? "stable" : "estable", DiaryTheme.PLAGUE_SICK);
-    }
+    private int mailboxX() { return this.panelX + this.panelW - 40; }
+    private int mailboxY() { return this.panelY + 14; }
 
     private void drawMailbox(GuiGraphics g, int mouseX, int mouseY) {
         int x = mailboxX(), y = mailboxY();
-        boolean hover = mouseX >= x - 2 && mouseX <= x + 34 && mouseY >= y - 2 && mouseY <= y + 26;
+        boolean hover = mouseX >= x - 2 && mouseX <= x + 24 && mouseY >= y - 2 && mouseY <= y + 20;
         int wood = hover ? 0xFF7A5A2E : 0xFF6B4A2E;
-        g.fill(x, y, x + 30, y + 18, wood);
-        g.fill(x, y, x + 30, y + 2, 0xFF8E6A35);
-        g.fill(x + 6, y + 8, x + 24, y + 10, 0xFF1A0F05);
-        g.fill(x + 3, y + 18, x + 6, y + 24, 0xFF3D2E1A);
-        g.fill(x + 24, y + 18, x + 27, y + 24, 0xFF3D2E1A);
+        // Caja de madera con ranura
+        g.fill(x, y, x + 22, y + 14, wood);
+        g.fill(x, y, x + 22, y + 2, 0xFF8E6A35);
+        g.fill(x, y + 12, x + 22, y + 14, 0xFF3D2A18);
+        g.fill(x + 5, y + 6, x + 17, y + 8, 0xFF1A0F05);
+        g.fill(x + 2, y + 14, x + 4, y + 19, 0xFF3D2E1A);
+        g.fill(x + 18, y + 14, x + 20, y + 19, 0xFF3D2E1A);
+        // Cartas depositadas: marcas de conteo
         int letters = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("letters");
-        for (int i = 0; i < Math.min(6, letters); i++) {
-            g.fill(x + 4 + i * 3, y - 4, x + 5 + i * 3, y - 1, 0xFFD8CAB0);
+        for (int i = 0; i < Math.min(8, letters); i++) {
+            g.fill(x + 2 + i * 2, y - 4, x + 3 + i * 2, y - 1, 0xFFD8CAB0);
         }
+        // La respuesta sellada que nadie abrira
         if (letters >= 5) {
-            g.fill(x + 6, y + 3, x + 18, y + 11, 0xFFE6D2A6);
-            g.fill(x + 11, y + 5, x + 13, y + 7, 0xFF7A1F18);
+            g.fill(x + 4, y + 2, x + 14, y + 9, 0xFFE6D2A6);
+            g.fill(x + 8, y + 4, x + 10, y + 6, 0xFF7A1F18);
         }
-    }
-
-    private void drawBottomNotice(GuiGraphics g, int x, int y, int w) {
-        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
-        String txt = en ? "Official correspondence is filed apart from public shouting." : "La correspondencia oficial se archiva aparte del griterio publico.";
-        g.drawString(this.font, txt, x + 10, y, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 132), false);
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0 && mouseX >= mailboxX() - 2 && mouseX <= mailboxX() + 34
-                && mouseY >= mailboxY() - 2 && mouseY <= mailboxY() + 26) {
+        if (button == 0 && mouseX >= mailboxX() - 2 && mouseX <= mailboxX() + 24
+                && mouseY >= mailboxY() - 2 && mouseY <= mailboxY() + 20) {
             try {
                 int n = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.bump("letters");
                 com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(

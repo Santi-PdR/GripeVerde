@@ -6,7 +6,7 @@ plugins {
     id 'org.spongepowered.mixin' version '0.7.+'
 }
 
-version = '0.21.2'
+version = '0.21.24'
 group = 'com.eternalcraft.gripeverde'
 base { archivesName = 'gripeverde' }
 
@@ -126,4 +126,40 @@ tasks.register('verifyGripeVerdeSoundAssets') {
 
 tasks.named('processResources').configure {
     dependsOn tasks.named('verifyGripeVerdeSoundAssets')
+}
+
+tasks.register('verifyGripeVerdeNoDeadCode') {
+    group = 'verification'
+    description = 'Fails if banned dead-code symbols appear in src/main/java (ignoring comments).'
+    doLast {
+        def banned = ['ThemeManager', 'GhoulPalette', 'ScreenLayout', 'ScreenTheme',
+            'AbstractScreenTheme', 'UIComponent', 'UIScale', 'IconButton', 'SilentButton',
+            'DiarySeparator', 'gripeverde_steel', 'steel_pack', 'bg_town', 'BG_TOWN',
+            'hasBgTown', 'ResourcePackHandler', 'ContainerOverlayHandler',
+            'VictorianFrame', 'AbstractDiaryScreen', 'DebugCanvasScreen', 'SoundLabScreen',
+            'DiaryDecorator', 'CandleLight', 'InkEffects', 'DiaryVideoSettingsScreen', 'drawVictorianFrame', 'drawQuillCursor',
+            'drawVerticalDivider', 'drawDarkLeatherBackground', 'drawVersionPanel',
+            'getMoonPhaseIndex', 'getOpenCount', 'drawSolidBlob',
+            'drawRowBands', 'openTelemetry', 'scrollToSection', 'drawGreeting',
+            'drawSelectionLedger', 'drawHeraldTicker', 'drawStatusPill', 'drawCorrespondenceRack',
+            'drawSignalStation', 'drawBottomNotice', 'drawSpecimenFooter', 'computePublicSignal',
+            'drawLedgerDetails',
+            'drawOrnamentalDivider']
+        def pattern = ~/(?i)\b(?:${banned.join('|')})\b/
+        def problems = []
+        fileTree('src/main/java') { include '**/*.java' }.each { f ->
+            f.readLines('UTF-8').eachWithIndex { line, idx ->
+                def t = line.trim()
+                if (t.startsWith('*') || t.startsWith('//') || t.startsWith('/*')) return
+                if (pattern.matcher(t).find()) problems << "${f.name}:${idx + 1}: ${t}"
+            }
+        }
+        if (!problems.isEmpty()) {
+            throw new GradleException("Codigo muerto detectado (verifyGripeVerdeNoDeadCode):\n" + problems.join('\n'))
+        }
+    }
+}
+
+tasks.named('processResources').configure {
+    dependsOn tasks.named('verifyGripeVerdeNoDeadCode')
 }

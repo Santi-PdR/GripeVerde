@@ -5,19 +5,28 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.21.2 - Limpieza profunda del proyecto**
+**v0.21.24 - Ajustes pedidos en cliente**
 
-Hotfix tecnico sobre la linea v0.21.0. Se corrigio el registro de
-`SoundEvent` del mod para que el jar no falle al iniciar en el runtime real
-de Forge 1.20.1. No cambia la direccion visual del gabinete: corrige un
-bloqueo de arranque y mantiene intacta la interfaz ya entregada.
+Se retiro el sonido de madera al abrir el gabinete, el cajon con la llave
+y su vitrina, el juego de los tres golpes sobre la mesa y el despegue de
+la hoja de cuarentena; el titulo del cartel y los sellos de tinta pierden
+el rojo sombreado; el libro de visitas del registro de hospedajes se ve y
+responde mejor; y las atribuciones usan etiquetas en titulo normal. 61
+clases Java, 25 idiomas, 35 eventos de sonido, 42 OGG y 0 PNG de
+contenedores. Documentacion sincronizada y version 0.21.24.
 
-En v0.21.2 se hizo limpieza profunda (sobre v0.21.1): eliminados `AUDITORIA_PROFESIONAL.md`,
-`MICRODETALLES_EXTREMO.md`, `VALIDACION_FASE4.md` (históricos v0.14.x),
-`sound-tests/` (muestras de audio ya integradas), `bg_town.png` (2.1M sin uso,
-Title usa render procedural), framework inerte `client/theme/` parcial
-(ThemeManager, GhoulPalette, componentes de overlay sin registrar) y widgets
-muertos `IconButton`, `SilentButton`, `DiarySeparator`.
+**v0.21.23 - Se reconstruye desde el registro previo**
+
+Se localizo en el historial el estado anterior a la version que altero las
+interfaces (el registro v0.17.2) y desde el se reconstruyeron las diecisiete
+salas del gabinete a su forma original: cabeceras propias de cada sala, sin
+carteles ni paneles de la epoca revertida. Se conservan intactas las demas
+versiones: el arreglo del registro sonoro, la limpieza, la memoria del
+gabinete con sus cuarenta y siete fichas, el periodico, el telegrafo y los
+arreglos de audio y rendimiento. El sello que cierra el archivo, las fichas
+de la limpieza y los avisos de las cien aperturas siguen activos. 61 clases
+Java, 25 idiomas, 35 eventos de sonido, 42 OGG y 0 PNG de contenedores.
+Documentacion sincronizada y version 0.21.23.
 
 ## Resumen visible del Mod Menu
 
@@ -47,7 +56,7 @@ Los contenedores del juego conservan su aspecto vanilla original; el mod no alte
 
 ### La memoria del gabinete (v0.16.0)
 - Memoria persistente propia (descubrimientos, objetos, noches seguidas, ausencias) separada del ajuste de audio.
-- 43 descubrimientos con fichas, sellos y pistas encadenadas; algunas consecuencias son permanentes.
+- 47 descubrimientos con fichas, sellos y pistas encadenadas; algunas consecuencias son permanentes.
 - Marginalia contextual del cronista: notas que responden a lo que el lector hace.
 - La Sala de consulta: detras del ultimo folio de la cronica, un archivo con las fichas halladas y documentos recuperados.
 
@@ -69,7 +78,7 @@ Los contenedores del juego conservan su aspecto vanilla original; el mod no alte
 - **Accessibility** - expediente de observacion con lectura por capas.
 - **Online / Multiplayer** - registros de conexion y hospedaje sobre presentacion propia.
 - **Credits** - ultimo archivo del gabinete.
-- **Archive** - sala de consulta (43 fichas).
+- **Archive** - sala de consulta (47 fichas).
 - **DirectJoin / EditServer / Confirm** - formularios y autorizaciones pulidos en v0.21.0.
 - **DebugCanvas** - herramienta interna de desarrollo (no en produccion).
 - **SoundLab** - herramienta interna de audio (no en produccion).
@@ -101,13 +110,13 @@ Reglas actuales:
 
 ## Documentacion
 
-- `CONTEXTO.md` - contexto maestro actual para retomar sesiones (v0.21.1).
-- `CONTEXTO_PARA_IA.md` - contexto autocontenido para otra IA (v0.21.1, sin steel pack).
-- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.1).
+- `CONTRIBUTING.md` - guia corta de contribucion (branch fija, no gameplay, validacion).
+- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.24.
+- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.24).
 - `KNOWN_ISSUES.md` - estado tecnico, decisiones activas, errores documentados, KIs.
 - `README.md` - esta portada.
 
-Históricos eliminados en v0.21.1: `AUDITORIA_PROFESIONAL.md`, `MICRODETALLES_EXTREMO.md`, `VALIDACION_FASE4.md` (eran referencia de polish v0.14.0, ya revertido).
+Históricos eliminados en v0.21.2: `AUDITORIA_PROFESIONAL.md`, `MICRODETALLES_EXTREMO.md`, `VALIDACION_FASE4.md` (eran referencia de polish v0.14.0, ya revertido) y `CONTEXTO_PARA_IA.md` (resumen redundante de `CONTEXTO.md`).
 
 ## Requisitos
 

@@ -26,7 +26,6 @@ public class DiaryTheme {
     public static final int BRONZE         = 0xFF6B5028;
     public static final int BRONZE_DARK    = 0xFF3D2E14;
     public static final int GOLD_TARNISHED = 0xFF8A6A2D;
-    public static final int IRON_RUST      = 0xFF6B4028;
 
     // ─── ROJO BRITANICO (nuevo acento principal) ─
     public static final int REDCOAT        = 0xFF8B1A15;
@@ -43,9 +42,6 @@ public class DiaryTheme {
     public static final int PLAGUE_GREEN   = 0xFF3A5028;
     public static final int PLAGUE_SICK    = 0xFF5A7038;
     public static final int PLAGUE_TOXIC   = 0xFF7A9A48;
-    public static final int GREEN_TOXIC    = 0xFF7A9A48;
-    public static final int GREEN_DEEP     = 0xFF2A3820;
-    public static final int SICK_GREEN     = 0xFF5A7038;
 
     // ─── SANGRE ────────────────────────────────
     public static final int BLOOD_FRESH    = 0xFF8B1F0F;
@@ -54,11 +50,7 @@ public class DiaryTheme {
 
     // ─── VARIOS ────────────────────────────────
     public static final int BONE_WHITE     = 0xFFDDD3B8;
-    public static final int SMOKE_GREY     = 0x33705F45;
-    public static final int WINDOW_AMBER   = 0x99D4941E;
-    public static final int WINDOW_SICK    = 0x996A8A38;
     public static final int MOON_WHITE     = 0xFFE8DCB8;
-    public static final int CLOUD_DARK     = 0xCC1A1108;
     public static final int RAIN_LINE      = 0x22B8A88C;
 
     // ─── FONDO NOCHE ───────────────────────────

@@ -27,17 +27,37 @@ public final class QuarantineSceneRenderer {
         } catch (Throwable ignored) {}
     }
 
+    // ── Modo low-end (v0.21.5): si el cliente va lento, se retiran la niebla
+    // y los faroles (los elementos mas costosos de la calle). El muestreo de
+    // FPS se hace una vez por segundo y nunca rompe por APIs ausentes.
+    private static int lowEndFps = 0;
+    private static long lowEndSampleMs = 0L;
+
+    public static boolean isLowEnd() {
+        long now = System.currentTimeMillis();
+        if (now - lowEndSampleMs >= 1000L) {
+            lowEndSampleMs = now;
+            try {
+                lowEndFps = net.minecraft.client.Minecraft.getInstance().getFps();
+            } catch (Throwable ignored) {
+                lowEndFps = 0;
+            }
+        }
+        return lowEndFps > 0 && lowEndFps < 30;
+    }
+
     // ── Full scene for Title ──
     public static void renderTitleScene(GuiGraphics g, int w, int h) {
         if (w <= 0 || h <= 0) return;
         com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick();
         com.eternalcraft.gripeverde.client.audio.MenuAmbience.setPocketWatchVisible(h >= 290);
 
+        boolean low = isLowEnd();
         AtmosphereRenderer.renderSky(g, w, h);
         VictorianSkyline.renderBackground(g, w, h);
-        LivingAtmosphere.renderFogLow(g, w, h);
+        if (!low) LivingAtmosphere.renderFogLow(g, w, h);
         VictorianSkyline.renderForeground(g, w, h);
-        LivingAtmosphere.renderStreetLevel(g, w, h);
+        if (!low) LivingAtmosphere.renderStreetLevel(g, w, h);
         LivingAtmosphere.renderAir(g, w, h);
         LivingAtmosphere.renderFlash(g, w, h);
         LivingAtmosphere.renderVignette(g, w, h);
@@ -50,10 +70,11 @@ public final class QuarantineSceneRenderer {
     public static void renderDiaryBackground(GuiGraphics g, int w, int h) {
         if (w <= 0 || h <= 0) return;
         g.fill(0, 0, w, h, 0xFF060401);
+        boolean low = isLowEnd();
         AtmosphereRenderer.renderSky(g, w, h);
         VictorianSkyline.renderBackground(g, w, h);
         VictorianSkyline.renderForeground(g, w, h);
-        LivingAtmosphere.renderStreet(g, w, h);
+        if (!low) LivingAtmosphere.renderStreet(g, w, h);
         LivingAtmosphere.renderVignette(g, w, h);
         // Overlay oscuro del gabinete
         g.fill(0, 0, w, h, DiaryChrome.OVERLAY_COL);
@@ -68,7 +89,10 @@ public final class QuarantineSceneRenderer {
 
     private static void renderFilmGrain(GuiGraphics g, int w, int h) {
         long now = System.currentTimeMillis();
-        if (now - lastGrainMs > 90L) {
+        // v0.21.11: en modo low-end el grano se rehace con menos frecuencia
+        // (el detalle se pierde igual con FPS bajos y se ahorra CPU).
+        long grainInterval = isLowEnd() ? 300L : 90L;
+        if (now - lastGrainMs > grainInterval) {
             lastGrainMs = now;
             for (int i = 0; i < grainX.length; i++) {
                 grainX[i] = GRAIN_RNG.nextInt(Math.max(1, w));
@@ -93,7 +117,10 @@ public final class QuarantineSceneRenderer {
     private static boolean dustInit = false;
     private static float dustTime = 0f;
 
-    public static void tickDust(float delta){ dustTime+=delta; if(!dustInit){ java.util.Random r=new java.util.Random(0xD05E); for(int i=0;i<DUST_COUNT;i++){ dust[i][0]=r.nextFloat(); dust[i][1]=r.nextFloat(); dust[i][2]=0.0006f+r.nextFloat()*0.0012f; dust[i][3]=r.nextFloat()*6.28f; } dustInit=true; } for(int i=0;i<DUST_COUNT;i++){ dust[i][1]-=dust[i][2]*delta*60f; dust[i][3]+=delta*0.7f; if(dust[i][1]<-0.05f){ dust[i][0]=(float)Math.random(); dust[i][1]=1.05f; } } }
+    // v0.21.3: RNG compartido con seed fija (sin Math.random en el loop caliente).
+    private static final java.util.Random RND = new java.util.Random(0xD05E);
+
+    public static void tickDust(float delta){ dustTime+=delta; if(!dustInit){ java.util.Random r=RND; for(int i=0;i<DUST_COUNT;i++){ dust[i][0]=r.nextFloat(); dust[i][1]=r.nextFloat(); dust[i][2]=0.0006f+r.nextFloat()*0.0012f; dust[i][3]=r.nextFloat()*6.28f; } dustInit=true; } for(int i=0;i<DUST_COUNT;i++){ dust[i][1]-=dust[i][2]*delta*60f; dust[i][3]+=delta*0.7f; if(dust[i][1]<-0.05f){ dust[i][0]=RND.nextFloat(); dust[i][1]=1.05f; } } }
 
     private static void renderAtmosphericDust(GuiGraphics g, int w, int h){
         tickDust(1f/20f);

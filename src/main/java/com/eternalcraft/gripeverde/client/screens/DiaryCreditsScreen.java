@@ -2,14 +2,12 @@ package com.eternalcraft.gripeverde.client.screens;
 
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
-import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.WinScreen;
 import net.minecraft.network.chat.Component;
 
 /**
@@ -23,7 +21,6 @@ public class DiaryCreditsScreen extends Screen {
 
     private final Screen lastScreen;
     private int panelX, panelY, panelW, panelH;
-    private long openedAtMs = 0L;
 
     public DiaryCreditsScreen(Screen parent) {
         super(Component.translatable("gripeverde.options.credits.title"));
@@ -49,7 +46,6 @@ public class DiaryCreditsScreen extends Screen {
             DiaryButton.Icon.DOOR, DiaryButton.Variant.PRIMARY, DiaryButton.SoundProfile.BACK,
             this::onClose
         ));
-        this.openedAtMs = System.currentTimeMillis();
     }
 
     @Override
@@ -62,37 +58,39 @@ public class DiaryCreditsScreen extends Screen {
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
 
-        float reveal = DiaryChrome.reveal(this.openedAtMs, 260L);
-        DiaryChrome.drawPanelScaffold(g, panelX, panelY, panelW, panelH, DiaryTheme.BRONZE);
+        DiaryChrome.drawPanelShadow(g, panelX, panelY, panelW, panelH);
         PaperTexture.drawClean(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
         drawOfficialFrame(g);
-        DiaryChrome.drawCornerOrnaments(g, panelX, panelY, panelW, panelH);
 
-        int bodyTop = ExpedientHeader.draw(g, this.font, panelX, panelY, panelW,
-            isEnglish() ? "EXPEDIENT IX" : "EXPEDIENTE IX",
-            this.title,
-            "- " + Component.translatable("gripeverde.options.credits.subtitle").getString() + " -",
-            isEnglish() ? "EC-QV/1897 · FINAL ARCHIVE" : "EC-QV/1897 · ARCHIVO FINAL",
-            Component.translatable("gripeverde.options.credits.flavor").getString(),
-            isEnglish() ? "SEALED" : "SELLADO",
-            DiaryTheme.BRONZE,
-            reveal);
+        int cx = this.width / 2;
+        int titleY = panelY + 14;
+        String titleStr = this.title.getString();
+        int tw = this.font.width(titleStr);
+        g.drawString(this.font, titleStr, cx - tw / 2, titleY, DiaryChrome.INK_TITLE, false);
 
-        DiaryChrome.drawInsetCard(g, this.font, panelX + panelW - 138, bodyTop + 2, 118, 72,
-            isEnglish() ? "CERTIFICATE" : "CERTIFICADO",
-            isEnglish() ? "single chronicle" : "cronica unica",
-            isEnglish() ? "Every name listed here belongs to the same night watch." : "Cada nombre de este registro pertenece a la misma vigilia.",
-            DiaryTheme.BRONZE);
+        String subtitle = "- " + Component.translatable("gripeverde.options.credits.subtitle").getString() + " -";
+        int subW = this.font.width(subtitle);
+        g.drawString(this.font, subtitle, cx - subW / 2, titleY + 14, DiaryChrome.INK_SUBTITLE, false);
 
-        renderRegistryEntries(g, bodyTop + 8);
+        String flavor = Component.translatable("gripeverde.options.credits.flavor").getString();
+        int flavW = this.font.width(flavor);
+        g.drawString(this.font, flavor, cx - flavW / 2, titleY + 26, DiaryChrome.INK_FLAVOR, false);
+
+        int divY1 = titleY + 44;
+        DiaryChrome.drawInkDividerBetween(g, panelX + 18, panelX + panelW - 18, divY1);
+
+        renderRegistryEntries(g, divY1 + 10);
 
         int divY2 = panelY + panelH - 40;
         DiaryChrome.drawInkDividerBetween(g, panelX + 18, panelX + panelW - 18, divY2);
+        DiaryChrome.drawCornerOrnaments(g, panelX, panelY, panelW, panelH);
+        DiaryChrome.drawRegistryTag(g, panelX, panelY, panelW, panelH, "REG. IX");
 
         for (Renderable r : this.renderables) {
             r.render(g, mouseX, mouseY, partialTick);
         }
 
+        // v0.16.0: el sello que nadie debia romper
         try {
             drawRegistrySeal(g, mouseX, mouseY);
             com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
@@ -162,14 +160,14 @@ public class DiaryCreditsScreen extends Screen {
         int lineH = 11;
         int y = startY;
 
-        // Section helper
-        y = drawSection(g, left, y, isEnglish() ? "ESTUDIO" : "ESTUDIO", isEnglish() ? "EternalCraft Studio" : "Estudio EternalCraft");
+        // v0.21.24: etiquetas en titulo normal (sin MAYUSCULAS forzadas).
+        y = drawSection(g, left, y, isEnglish() ? "Studio" : "Estudio", isEnglish() ? "EternalCraft" : "EternalCraft");
         y += 4;
-        y = drawSection(g, left, y, isEnglish() ? "CHRONICLER" : "CRONISTA", "S. Pereira");
-        y = drawSection(g, left, y, isEnglish() ? "DIRECTOR" : "DIRECTOR", "Santi PdR / Alex");
+        y = drawSection(g, left, y, isEnglish() ? "Chronicler" : "Cronista", isEnglish() ? "The hand behind the vigil" : "La mano tras la vigilia");
+        y = drawSection(g, left, y, isEnglish() ? "Director" : "Director", isEnglish() ? "Project lead" : "Direccion del proyecto");
         y += 4;
-        y = drawSection(g, left, y, isEnglish() ? "CITY BLUEPRINTS" : "PLANOS DE LA CIUDAD", isEnglish() ? "Victorian skyline, gas lamps, quarantine seals" : "Horizonte victoriano, faroles de gas, sellos");
-        y = drawSection(g, left, y, isEnglish() ? "PAPER & INK" : "PAPEL Y TINTA", isEnglish() ? "Parchment panels, ledger bindings, wax" : "Paneles pergamino, encuadernaciones, cera");
+        y = drawSection(g, left, y, isEnglish() ? "City blueprints" : "Planos de la ciudad", isEnglish() ? "Night sky, gas lamps and rain" : "Cielo nocturno, faroles y lluvia");
+        y = drawSection(g, left, y, isEnglish() ? "Paper & ink" : "Papel y tinta", isEnglish() ? "Parchment, bindings and wax" : "Pergamino, encuadernaciones y cera");
         y += 8;
 
         // Official note

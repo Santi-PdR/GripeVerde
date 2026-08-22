@@ -1,9 +1,6 @@
 package com.eternalcraft.gripeverde.client.screens;
 
-import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
-import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
-import com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer;
 import com.eternalcraft.gripeverde.client.widgets.SlimButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -57,7 +54,6 @@ public class ChangelogScreen extends Screen {
     private int contentTotalH = 0;
     private int lastContentW = -1;
     private boolean draggingScrollbar = false;
-    private long openedAtMs = 0L;
 
     // v0.16.0: las marcas del encuadernador y el folio escondido
     private final List<int[]> asteriskRects = new ArrayList<>();
@@ -88,7 +84,6 @@ public class ChangelogScreen extends Screen {
         this.addRenderableWidget(new SlimButton(bx, by, CLOSE_W, CLOSE_H,
             Component.translatable("gripeverde.changelog.button.close"),
             this::onClose));
-        this.openedAtMs = System.currentTimeMillis();
     }
 
     private void loadAndParse() {
@@ -207,25 +202,6 @@ public class ChangelogScreen extends Screen {
         clampScroll();
     }
 
-    private void scrollToSection(boolean next) {
-        int cw = contentW();
-        int pos = 0;
-        int currentTarget = (int)Math.round(targetScrollY);
-        int candidate = next ? maxScroll : 0;
-        for (Row r : rows) {
-            if (r.type == LT.H1) {
-                if (next && pos > currentTarget + 4) {
-                    candidate = pos;
-                    break;
-                }
-                if (!next && pos < currentTarget - 4) {
-                    candidate = pos;
-                }
-            }
-            pos += rowHeight(r, cw);
-        }
-        setScrollTarget(candidate, false);
-    }
 
     private void scrollToTopOrBottom(boolean bottom) {
         setScrollTarget(bottom ? maxScroll : 0, false);
@@ -266,9 +242,9 @@ public class ChangelogScreen extends Screen {
     private int panelW() { return this.width  - PANEL_MX * 2; }
     private int panelH() { return this.height - PANEL_TOP - PANEL_BOT; }
     private int contentX() { return panelX() + PAD_X; }
-    private int contentY() { return panelY() + 72; }
+    private int contentY() { return panelY() + PAD_Y + 10; }
     private int contentW() { return Math.max(40, panelW() - PAD_X * 2 - 8); }
-    private int contentH() { return Math.max(20, panelH() - 110); }
+    private int contentH() { return Math.max(20, panelH() - PAD_Y * 2 - 10); }
 
     @Override
     public void tick() {
@@ -287,24 +263,18 @@ public class ChangelogScreen extends Screen {
             recalcMaxScroll();
         }
 
-        QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
-        float reveal = DiaryChrome.reveal(this.openedAtMs, 260L);
-        DiaryChrome.drawPanelScaffold(g, px, py, pw, ph, DiaryTheme.BRONZE);
+        g.fill(0, 0, this.width, this.height, 0xD0100D08);
+
         com.eternalcraft.gripeverde.client.render.PaperTexture.drawClean(g, px, py, pw, ph, com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.ARCHIVE);
-        drawLedgerDetails(g, px, py, pw, ph, cx, cy, cw, ch);
+        g.fill(px,          py,          px + pw, py + 1,      DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
+        g.fill(px,          py + ph - 1, px + pw, py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
+        g.fill(px,          py,          px + 1,  py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
+        g.fill(px + pw - 1, py,          px + pw, py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
 
-        int headerBottom = ExpedientHeader.draw(g, this.font, px, py, pw,
-            isEnglishSelected() ? "EXPEDIENT XV" : "EXPEDIENTE XV",
-            this.title,
-            isEnglishSelected() ? "- revision register -" : "- registro de revisiones -",
-            isEnglishSelected() ? "EC-QV/1897 · SEALED CHRONICLE" : "EC-QV/1897 · CRONICA SELLADA",
-            isEnglishSelected() ? "Filed notices arranged in the order the city learned to speak." : "Partes archivados en el orden en que la ciudad aprendio a hablar.",
-            isEnglishSelected() ? "OPEN FOLIO" : "FOLIO ABIERTO",
-            DiaryTheme.BRONZE,
-            reveal);
-
-        cy = Math.max(cy, headerBottom - 2);
-        ch = contentH() - Math.max(0, headerBottom - contentY() - 2);
+        int tw = this.font.width(this.title);
+        int tx = (this.width - tw) / 2;
+        g.drawString(this.font, this.title, tx, py + 8, DiaryTheme.AMBER_FLAME, false);
+        g.fill(tx - 4, py + 18, tx + tw + 4, py + 19, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 150));
 
         this.asteriskRects.clear();
         this.hiddenFolioRect = null;
@@ -342,10 +312,15 @@ public class ChangelogScreen extends Screen {
         g.disableScissor();
 
         if (maxScroll > 0) {
-            DiaryChrome.drawScrollThumb(g, px + pw - 10, cy, cy + ch, this.scrollY, this.maxScroll);
+            int bx2 = px + pw - 6;
+            int bh  = ch;
+            int th  = Math.max(20, bh * bh / (bh + maxScroll));
+            int ty2 = cy + (bh - th) * scrollY / maxScroll;
+            g.fill(bx2, cy,  bx2 + 3, cy + bh, DiaryTheme.withAlpha(DiaryTheme.PAPER_STAINED, 110));
+            g.fill(bx2, ty2, bx2 + 3, ty2 + th, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 190));
+
         }
 
-        drawRevisionFooter(g, px, py, pw, ph);
         super.render(g, mouseX, mouseY, partialTick);
 
         try {
@@ -355,85 +330,6 @@ public class ChangelogScreen extends Screen {
         } catch (Throwable ignored) {}
     }
 
-    private void drawRevisionFooter(GuiGraphics g, int px, int py, int pw, int ph) {
-        boolean en = isEnglishSelected();
-        String left = en ? "consultation register" : "registro de consulta";
-        String right = en ? ("page " + (scrollY / 160 + 1)) : ("folio " + (scrollY / 160 + 1));
-        g.drawString(this.font, left, px + 18, py + ph - 18, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 118), false);
-        int rw = this.font.width(right);
-        g.drawString(this.font, right, px + pw - rw - 18, py + ph - 18, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 118), false);
-    }
-
-    private void drawLedgerDetails(GuiGraphics g, int px, int py, int pw, int ph,
-                                   int cx, int cy, int cw, int ch) {
-        int bronzeSoft = DiaryTheme.withAlpha(DiaryTheme.BRONZE, 85);
-        int inkSoft = DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 48);
-        int redSeal = DiaryTheme.withAlpha(DiaryTheme.BLOOD_DRIED, 140);
-
-        // ── Binding strip with brass rivets ──
-        int stripX = px + 9;
-        g.fill(stripX, py + 10, stripX + 6, py + ph - 10, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 32));
-        g.fill(stripX + 1, py + 10, stripX + 2, py + ph - 10, DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 60));
-        boolean glowActive = System.currentTimeMillis() < binderGlowUntilMs;
-        for (int y = py + 28; y < py + ph - 22; y += 38) {
-            g.fill(stripX + 1, y, stripX + 4, y + 2, bronzeSoft);
-            int rivetAlpha = glowActive ? 235 : 110;
-            int rivet = DiaryTheme.withAlpha(DiaryTheme.GOLD_TARNISHED, rivetAlpha);
-            g.fill(stripX + 2, y + 1, stripX + 3, y + 2, rivet);
-            if (glowActive) {
-                g.fill(stripX, y - 1, stripX + 5, y + 3, DiaryTheme.withAlpha(DiaryTheme.AMBER_FLAME, 46));
-            }
-        }
-
-        // ── Marginal rule with archival ticks every 26px ──
-        int ruleX = cx + 6;
-        g.fill(ruleX, cy - 6, ruleX + 1, cy + ch + 6, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 70));
-        for (int y = cy + 10; y < cy + ch; y += 28) {
-            g.fill(ruleX - 4, y, ruleX + 5, y + 1, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 55));
-        }
-
-        // ── Top archival reference line ──
-        boolean en = isEnglishSelected();
-        String ref = en ? "ARCHIVE EC-QV/1897 - FOLIO " + (scrollY / 120 + 1) : "ARCHIVO EC-QV/1897 - FOLIO " + (scrollY / 120 + 1);
-        int refW = this.font.width(ref);
-        int refX = px + pw - refW - 22;
-        int refY = py + 6;
-        if (pw > 260) {
-            g.drawString(this.font, ref, refX, refY, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 95), false);
-        }
-
-        // ── Quarantine stamp (official, slightly rotated feel via offset shadow) ──
-        int stampW = 96;
-        int stampX = px + pw - stampW - 20;
-        int stampY = py + 26;
-        // Shadow
-        g.fill(stampX + 2, stampY + 2, stampX + stampW + 2, stampY + 18, DiaryTheme.withAlpha(0x00000000, 55));
-        // Border
-        g.fill(stampX, stampY, stampX + stampW, stampY + 1, redSeal);
-        g.fill(stampX, stampY + 17, stampX + stampW, stampY + 18, redSeal);
-        g.fill(stampX, stampY, stampX + 1, stampY + 18, redSeal);
-        g.fill(stampX + stampW - 1, stampY, stampX + stampW, stampY + 18, redSeal);
-        // Inner double line
-        g.fill(stampX + 3, stampY + 3, stampX + stampW - 3, stampY + 4, DiaryTheme.withAlpha(DiaryTheme.BLOOD_DRIED, 80));
-        g.fill(stampX + 3, stampY + 14, stampX + stampW - 3, stampY + 15, DiaryTheme.withAlpha(DiaryTheme.BLOOD_DRIED, 80));
-        String stamp = en ? "FILED UNDER SEAL" : "BAJO SELLO";
-        int sw = this.font.width(stamp);
-        g.drawString(this.font, stamp, stampX + (stampW - sw) / 2, stampY + 6,
-            DiaryTheme.withAlpha(DiaryTheme.BLOOD_DRIED, 175), false);
-
-        // ── Bottom pagination & ledger fade ──
-        int bottomY = py + ph - 28;
-        g.fillGradient(px + 28, bottomY, px + pw / 2, bottomY + 1,
-            DiaryTheme.withAlpha(DiaryTheme.BRONZE, 0), DiaryTheme.withAlpha(DiaryTheme.BRONZE, 85));
-        g.fillGradient(px + pw / 2, bottomY, px + pw - 28, bottomY + 1,
-            DiaryTheme.withAlpha(DiaryTheme.BRONZE, 85), DiaryTheme.withAlpha(DiaryTheme.BRONZE, 0));
-        // Small page mark
-        if (pw > 200) {
-            String folio = en ? "~ folio ~" : "~ folio ~";
-            int fw = this.font.width(folio);
-            g.drawString(this.font, folio, px + (pw - fw) / 2, bottomY + 6, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 75), false);
-        }
-    }
 
     private static boolean isEnglishSelected() {
         String lang = "en_us";

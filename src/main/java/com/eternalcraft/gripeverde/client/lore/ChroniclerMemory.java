@@ -92,6 +92,19 @@ public final class ChroniclerMemory {
 
     public static synchronized void save() {
         if (data == null) return;
+        // v0.21.11: escritura diferida (max 1 por 2s). El cierre del juego
+        // dispara flushForShutdown() via ShutdownHook para no perder nada.
+        savePending = true;
+        long now = System.currentTimeMillis();
+        if (now - lastSaveMs < 2000L) return;
+        lastSaveMs = now;
+        savePending = false;
+        writeNow();
+    }
+
+    /** v0.21.11: escritura inmediata al disco. */
+    private static synchronized void writeNow() {
+        if (data == null) return;
         File f = memoryFile();
         OutputStreamWriter writer = null;
         try {
@@ -103,6 +116,17 @@ public final class ChroniclerMemory {
         } catch (Throwable ignored) {
         } finally {
             try { if (writer != null) writer.close(); } catch (Throwable ignored) {}
+        }
+    }
+
+    private static boolean savePending = false;
+    private static long lastSaveMs = 0L;
+
+    /** v0.21.11: al cerrar el juego se escribe lo pendiente. */
+    public static void flushForShutdown() {
+        if (savePending) {
+            savePending = false;
+            writeNow();
         }
     }
 

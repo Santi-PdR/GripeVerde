@@ -13,6 +13,7 @@ public final class ClientConfig {
     public static final ForgeConfigSpec.BooleanValue AMBIENCE_ENABLED;
     public static final ForgeConfigSpec.DoubleValue AMBIENCE_VOLUME;
     public static final ForgeConfigSpec.IntValue OPEN_COUNT;
+    public static final ForgeConfigSpec.BooleanValue REDUCED_MOTION;
 
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
@@ -29,6 +30,11 @@ public final class ClientConfig {
         OPEN_COUNT = b
             .comment("Numero de veces que se abrio el juego (contador persistente).")
             .defineInRange("openCount", 0, 0, 999999);
+        b.pop();
+        b.push("visual");
+        REDUCED_MOTION = b
+            .comment("Reducir el movimiento del ambiente del menu (accesibilidad).")
+            .define("reducedMotion", false);
         b.pop();
         SPEC = b.build();
     }
