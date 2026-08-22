@@ -540,13 +540,13 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     }
 
     private int guestbookX() { return this.width - PANEL_MARGIN_H - 150; }
-    private int guestbookY() { return this.height - PANEL_MARGIN_V + 12; }
+    private int guestbookY() { return PANEL_MARGIN_V + 14; }
 
     private void drawGuestbook(GuiGraphics gfx, int panelX, int panelY, int panelW, int mouseX, int mouseY) {
         int x = guestbookX();
         int y = guestbookY();
         boolean hover = mouseX >= x - 4 && mouseX <= x + 152 && mouseY >= y - 6 && mouseY <= y + 30;
-        // v0.21.24: el libro de visitas se ve mejor (texto claro + fondo) y con hitbox mayor.
+        // v0.21.25: libro de visitas dentro del panel, mas visible.
         int ink = hover ? 0xFFF0E4C8 : 0xFFC8B48A;
         String label = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
             ? "~ sign the visitor's book ~" : "~ firmar el libro de visitas ~";

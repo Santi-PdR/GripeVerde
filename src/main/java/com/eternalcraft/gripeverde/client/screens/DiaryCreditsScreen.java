@@ -160,15 +160,22 @@ public class DiaryCreditsScreen extends Screen {
         int lineH = 11;
         int y = startY;
 
-        // v0.21.24: etiquetas en titulo normal (sin MAYUSCULAS forzadas).
-        y = drawSection(g, left, y, isEnglish() ? "Studio" : "Estudio", isEnglish() ? "EternalCraft" : "EternalCraft");
+        // v0.21.25: nombres reales + descripcion que entra en el margen.
+        y = drawSection(g, left, y, isEnglish() ? "Studio" : "Estudio", "EternalCraft");
         y += 4;
-        y = drawSection(g, left, y, isEnglish() ? "Chronicler" : "Cronista", isEnglish() ? "The hand behind the vigil" : "La mano tras la vigilia");
-        y = drawSection(g, left, y, isEnglish() ? "Director" : "Director", isEnglish() ? "Project lead" : "Direccion del proyecto");
+        y = drawSection(g, left, y, isEnglish() ? "Chronicler" : "Cronista", "S. Pereira");
+        y = drawSection(g, left, y, isEnglish() ? "Director" : "Director", "A. Vergil");
         y += 4;
-        y = drawSection(g, left, y, isEnglish() ? "City blueprints" : "Planos de la ciudad", isEnglish() ? "Night sky, gas lamps and rain" : "Cielo nocturno, faroles y lluvia");
+        y = drawSection(g, left, y, isEnglish() ? "City blueprints" : "Planos de la ciudad", isEnglish() ? "Streets, lamps and docks" : "Calles, faroles y muelles");
         y = drawSection(g, left, y, isEnglish() ? "Paper & ink" : "Papel y tinta", isEnglish() ? "Parchment, bindings and wax" : "Pergamino, encuadernaciones y cera");
         y += 8;
+
+        // v0.21.25: version del gabinete visible en creditos.
+        String version = "v" + com.eternalcraft.gripeverde.GripeVerdeMod.VERSION;
+        int vw = this.font.width(version);
+        g.drawString(this.font, version, panelX + (panelW - vw) / 2, y,
+            DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 100), false);
+        y += 10;
 
         // Official note
         String note = isEnglish() ? "Sealed under quarantine act 1897" : "Sellado bajo acta de cuarentena 1897";

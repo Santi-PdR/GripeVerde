@@ -107,20 +107,20 @@ public class LogoRenderer {
         drawDecorativeLine(g, cx, topY + 46, 196);
 
         String title = I18n.get("gripeverde.brand.name");
+        // v0.21.25: titulo limpio sin sombra.
         g.pose().pushPose();
         g.pose().translate(cx, topY + 60, 0);
         g.pose().scale(1.9f, 1.9f, 1f);
         int tw = font.width(title);
-        g.drawString(font, title, -tw / 2 + 1, 1, DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 85), false);
         g.drawString(font, title, -tw / 2, 0, DiaryTheme.PAPER, false);
         g.pose().popPose();
 
         String subtitle = I18n.get("gripeverde.brand.subtitle");
+        // v0.21.25: subtitulo limpio sin sombra.
         g.pose().pushPose();
         g.pose().translate(cx, topY + 98, 0);
         g.pose().scale(1.45f, 1.45f, 1f);
         int sw = font.width(subtitle);
-        g.drawString(font, subtitle, -sw / 2 + 1, 1, DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 65), false);
         g.drawString(font, subtitle, -sw / 2, 0, DiaryTheme.PLAGUE_TOXIC, false);
         g.pose().popPose();
 

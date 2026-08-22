@@ -2,6 +2,11 @@
 ## Chronicle under seal
 
 
+## Version 0.21.25 - The ink is uniform
+
+The chronicler signed with his own name. The director's hand was recognized. The city blueprints found words that fit within the margins. Every poster in the cabinet —elixir, decree, reward, quarantine— now speaks in the same dark ink, without the red shadow that once divided each title. The stamps no longer cast their own shadow. The logo, the pause signature, the shooting star and the easter egg telegram all shed their doubles. The visitor's book moved inside the panel where it belongs. The credits show the version number. The cabinet speaks with one voice.
+
+
 ## Version 0.21.13 - The file is sealed
 
 The consultation room, when it finally gathers every card, stops saying that any are missing. The archive declares itself complete, a golden wax seal signs it with the word SIGILLUM, and the chronicler notes in the margin: forty-seven cards; the drawer is empty now; seal it. The bell tower rings once, low, so no one doubts it.

@@ -479,10 +479,10 @@ public class DiaryPauseScreen extends PauseScreen {
         int subtitleY = py + 58;
 
         int tw = this.font.width(title);
+        // v0.21.25: tinta limpia sin sombra doble.
         g.pose().pushPose();
         g.pose().translate(centerX, titleY, 0);
         g.pose().scale(1.75f, 1.75f, 1f);
-        g.drawString(this.font, title, -tw / 2 + 1, 1, DiaryTheme.SEPIA_DARK, false);
         g.drawString(this.font, title, -tw / 2, 0, DiaryTheme.INK, false);
         g.pose().popPose();
 
@@ -550,7 +550,7 @@ public class DiaryPauseScreen extends PauseScreen {
         int centerX = px + panelW() / 2;
         int sw = this.font.width(sig);
         int sy = py + panelH() - ORN_SIGN_FROM_BOT;
-        g.drawString(this.font, sig, centerX - sw / 2 + 1, sy + 1, DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 90), false);
+        // v0.21.25: firma limpia sin sombra.
         g.drawString(this.font, sig, centerX - sw / 2, sy, DiaryTheme.SEPIA_DARK, false);
         // v0.16.0: tras bastantes hallazgos, la firma reconoce al lector.
         try {

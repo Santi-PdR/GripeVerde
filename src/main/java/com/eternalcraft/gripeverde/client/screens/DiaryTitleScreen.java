@@ -563,6 +563,7 @@ public class DiaryTitleScreen extends Screen {
         double jitterY = Math.cos(System.currentTimeMillis() / 310.0) * 0.4;
         int newX = this.width - sw - oldSw - 16 + (int)Math.round(jitterX);
         int newY = y + (int)Math.round(jitterY);
+        // v0.21.25: firma limpia sin sombra.
         g.drawString(this.font, signature,
             newX, newY,
             DiaryTheme.SEPIA_LIGHT, false);
@@ -1017,6 +1018,7 @@ public class DiaryTitleScreen extends Screen {
         g.drawString(this.font, stamp, boxX + 13, boxY + 8, red, false);
         String seal = isEnglishSelected() ? "UNDER SEAL" : "BAJO SELLO";
         int sealW = this.font.width(seal);
+        // v0.21.25: texto limpio sin sombra.
         g.drawString(this.font, seal, boxX + boxW - sealW - 13, boxY + 8, DiaryTheme.withAlpha(0xFF241608, alpha), false);
         g.fill(boxX + 12, boxY + 19, boxX + boxW - 12, boxY + 20, (Math.min(115, alpha) << 24) | 0x422810);
 
@@ -1119,7 +1121,7 @@ public class DiaryTitleScreen extends Screen {
         // Posicion: arriba del logo (y ~200 para que sea visible)
         int cx = this.width / 2 - w / 2;
         int cy = this.height / 3;
-        g.drawString(this.font, ssm, cx + 1, cy + 1, shadowCol, false);
+        // v0.21.25: texto limpio sin sombra.
         g.drawString(this.font, ssm, cx, cy, col, false);
     }
 }
