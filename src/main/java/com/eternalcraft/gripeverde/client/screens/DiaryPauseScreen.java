@@ -358,21 +358,16 @@ public class DiaryPauseScreen extends PauseScreen {
     }
 
     private void drawVignette(GuiGraphics g) {
-        // v0.21.27: optimizado con fillGradient (4 fills en vez de 160)
-        int margin = 40;
-        int outerAlpha = 70;
-        int outer = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, outerAlpha);
-        int inner = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 0);
-        g.fillGradient(0, 0, margin, this.height, outer, inner);
-        g.fillGradient(this.width - margin, 0, this.width, this.height, inner, outer);
-        g.fillGradient(0, 0, this.width, margin, outer, inner);
-        g.fillGradient(0, this.height - margin, this.width, this.height, inner, outer);
-        // Esquinas más oscuras
-        int corner = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, outerAlpha / 3);
-        g.fill(0, 0, margin, margin, corner);
-        g.fill(this.width - margin, 0, this.width, margin, corner);
-        g.fill(0, this.height - margin, margin, this.height, corner);
-        g.fill(this.width - margin, this.height - margin, this.width, this.height, corner);
+        int steps = 40;
+        for (int i = 0; i < steps; i++) {
+            float t = (float)(steps - i) / steps;
+            int a = (int)(t * t * 70);
+            int c = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, a);
+            g.fill(i, 0, i + 1, this.height, c);
+            g.fill(this.width - i - 1, 0, this.width - i, this.height, c);
+            g.fill(0, i, this.width, i + 1, c);
+            g.fill(0, this.height - i - 1, this.width, this.height - i, c);
+        }
     }
 
     // ================================================================
