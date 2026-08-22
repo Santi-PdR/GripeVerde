@@ -90,68 +90,16 @@ public class DiaryCreditsScreen extends Screen {
             r.render(g, mouseX, mouseY, partialTick);
         }
 
-        // v0.16.0: el sello que nadie debia romper
+        // v0.21.26: sello de cera removido.
         try {
-            drawRegistrySeal(g, mouseX, mouseY);
             com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
             com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, panelY - 12);
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
         } catch (Throwable ignored) {}
     }
 
-    private int sealX() { return panelX + panelW - 42; }
-    private int sealY() { return panelY + panelH - 70; }
-
-    private void drawRegistrySeal(GuiGraphics g, int mouseX, int mouseY) {
-        int x = sealX(), y = sealY();
-        boolean broken;
-        try {
-            broken = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("seal_broken") > 0;
-        } catch (Throwable t) { broken = false; }
-        boolean hover = mouseX >= x - 9 && mouseX <= x + 9 && mouseY >= y - 9 && mouseY <= y + 9;
-
-        if (!broken) {
-            int wax = hover ? 0xFF8B2A1C : 0xFF7A1F18;
-            for (int dy = -7; dy <= 7; dy++) {
-                int dx = (int)Math.sqrt(Math.max(0, 49 - dy * dy));
-                g.fill(x - dx, y + dy, x + dx, y + dy + 1, wax);
-            }
-            g.fill(x - 3, y - 3, x + 3, y + 3, 0xFF5C1508);
-            g.fill(x - 4, y - 5, x - 2, y - 3, 0xFFB85A48);
-        } else {
-            // Mitades separadas
-            for (int dy = -7; dy <= 7; dy++) {
-                int dx = (int)Math.sqrt(Math.max(0, 49 - dy * dy));
-                g.fill(x - dx - 3, y + dy, x - 1 - 3, y + dy + 1, 0xFF6E1B12);
-                g.fill(x + 1 + 3, y + dy, x + dx + 3, y + dy + 1, 0xFF6E1B12);
-            }
-            // Lo que el sello guardaba
-            String hidden = isEnglish()
-                ? "The reader, too, shall be remembered."
-                : "El lector tambien sera recordado.";
-            int hw = this.font.width(hidden);
-            g.drawString(this.font, hidden, x - hw / 2, y + 14,
-                DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 170), false);
-        }
-    }
-
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0 && mouseX >= sealX() - 9 && mouseX <= sealX() + 9
-                && mouseY >= sealY() - 9 && mouseY <= sealY() + 9) {
-            try {
-                if (com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("seal_broken") == 0) {
-                    com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.setCounter("seal_broken", 1);
-                    com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.addCollectible(
-                        com.eternalcraft.gripeverde.client.lore.Discoveries.ITEM_SEAL);
-                    com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
-                        com.eternalcraft.gripeverde.client.lore.Discoveries.BROKEN_SEAL);
-                    com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
-                        com.eternalcraft.gripeverde.client.audio.ModSounds.UI_CLICK_DESTROY.get(), 0.24f, 0.66f);
-                }
-            } catch (Throwable ignored) {}
-            return true;
-        }
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
