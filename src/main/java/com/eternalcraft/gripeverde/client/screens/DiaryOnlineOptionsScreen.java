@@ -58,7 +58,7 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
         if (this.list != null) {
             this.list.setRenderBackground(false);
             this.list.setRenderTopAndBottom(false);
-            int listTop = this.panelY + 92;
+            int listTop = this.panelY + 62;
             int listBottom = this.panelY + this.panelH - 52;
             this.list.updateSize(this.width, this.height, listTop, listBottom);
             this.smoothScroll.snapToCurrent(this.list);

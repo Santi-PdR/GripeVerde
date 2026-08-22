@@ -36,7 +36,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
 
     private static final int PANEL_MARGIN_H = 40;
     private static final int PANEL_MARGIN_V = 40;
-    private static final int LIST_TOP_OFFSET = 84;
+    private static final int LIST_TOP_OFFSET = 52;
     // Espacio inferior reservado para las 2 filas de botones + divisor
     private static final int LIST_BOTTOM_OFFSET = 76;
 

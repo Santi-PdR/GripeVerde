@@ -80,7 +80,7 @@ public class DiaryControlsScreen extends Screen {
         this.panelY = (this.height - this.panelH) / 2;
 
         // Grid 2 columnas x 3 filas dentro del panel, con carril lateral de protocolo
-        int gridTop = this.panelY + 92;
+        int gridTop = this.panelY + 62;
         int rowH = 24;
         int btnW = 150;
         int btnH = 20;

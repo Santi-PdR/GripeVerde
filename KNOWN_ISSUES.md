@@ -1,5 +1,26 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.21.19 - Se corrigen scrolls y posiciones tras la reversion (2026-08-22)
+
+### Cambios cerrados
+- Multiplayer: LIST_TOP_OFFSET 84 -> 52 (lista debajo de la cabecera).
+- Sound: listTop 45 -> 58 (la lista ya no tapa el titulo).
+- Chat: listTop 88 -> 62. Online: listTop 92 -> 62.
+- Controls: gridTop 92 -> 62.
+- Archive: campo de busqueda a la esquina superior derecha (panelY+18) y
+  contador "N / 47" debajo (panelY+38) — antes pasaba sobre la grilla.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.18 -> 0.21.19 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-45 (v0.21.19)**: validar en cliente — listas/scrolls y botones
+  alineados en Multiplayer, Sound, Chat, Online, Controls y Archive (4
+  escalas GUI).
+- KI-44 (v0.21.18), KI-42 (deuda no-op), KI-41/43, KI-39/40 pendientes.
+  KI-29 (pistas MenuMusic) requiere OGGs del usuario.
+
+---
+
 ## v0.21.18 - Se restaura lo que no era de la version revertida (2026-08-22)
 
 ### Cambios cerrados

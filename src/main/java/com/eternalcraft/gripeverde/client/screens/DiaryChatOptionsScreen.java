@@ -45,7 +45,7 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         if (this.list != null) {
             this.list.setRenderBackground(false);
             this.list.setRenderTopAndBottom(false);
-            int listTop = this.panelY + 88;
+            int listTop = this.panelY + 62;
             int listBottom = this.panelY + this.panelH - 54;
             this.list.updateSize(this.width, this.height, listTop, listBottom);
             this.smoothScroll.snapToCurrent(this.list);

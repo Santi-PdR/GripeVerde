@@ -3,8 +3,40 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/01a025d1-gripeverde` (sync con `main` v0.21.2, commit `afe8e83`).
-- Version: `0.21.18`.
+- Version: `0.21.19`.
 - Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks, integrando el contexto maestro y sincronizacion documental de v0.17.2.
+
+### DECISION 2026-08-22: v0.21.19 - Se corrigen scrolls y posiciones tras la reversion
+
+El usuario pidio corregir "los scrolls, las posiciones de botones y todo lo
+demas" que quedaron desplazados por la reversion de interfaz (v0.21.16-18):
+la cabecera paso de ~78px a ~52px (titulo simple) y los carteles dejaron de
+dibujarse, dejando listas y botones anclados a medidas viejas (solapes o
+huecos de 32-40px).
+
+**Correcciones:**
+- `DiaryMultiplayerScreen`: LIST_TOP_OFFSET 84 -> 52 (la lista de
+  servidores arranca justo debajo de la cabecera, sin hueco de 32px).
+- `DiarySoundOptionsScreen`: listTop 45 -> 58 (la lista de opciones
+  solapaba el titulo de la cabecera).
+- `DiaryChatOptionsScreen`: listTop 88 -> 62 (quitado hueco de 36px).
+- `DiaryOnlineOptionsScreen`: listTop 92 -> 62 (quitado hueco de 40px).
+- `DiaryControlsScreen`: gridTop 92 -> 62 (los botones del manual quedaban
+  a 40px de la cabecera).
+- `DiaryArchiveScreen`: el campo de busqueda pasaba por ENCIMA de la grilla
+  de fichas (estaba en panelY+168, dentro del area de 47 fichas); ahora
+  vive en la esquina superior derecha (panelY+18) y el contador "N / 47"
+  justo debajo (panelY+38).
+
+**Verificado sin cambios:** Video (66), Language (68), Accessibility
+(HEADER_H=60) y Options (gridTop=77) ya quedaban debajo de la cabecera;
+Changelog y Pause recalculan el contenido relativo a la cabecera en tiempo
+de render; los botones de volver estan anclados al fondo del panel.
+
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.19.
+- Validacion pendiente en cliente real (KI-45): listas/scrolls alineados en
+  Multiplayer, Sound, Chat, Online, Controls y Archive.
 
 ### DECISION 2026-08-22: v0.21.18 - Se restaura lo que no era de la version revertida
 
@@ -646,9 +678,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.21.18
-- build.gradle: version = '0.21.18'
-- GripeVerdeMod.VERSION: "0.21.18"
+- Version estable actual: v0.21.19
+- build.gradle: version = '0.21.19'
+- GripeVerdeMod.VERSION: "0.21.19"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10 (no se han publicado tags desde el ciclo v0.13.x; los bumps v0.14-v0.17 quedaron sin tag)
 - Working tree esperado al retomar: limpio

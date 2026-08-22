@@ -1,5 +1,14 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.19 - Se corrigen scrolls y posiciones tras la reversion
+
+Registro tecnico: tras retirar los carteles y reducir las cabeceras al
+titulo, varias salas quedaron con las listas y los mandos desplazados. Se
+realinearon las listas del registro de hospedajes, la sala acustica, la
+correspondencia y la estacion de comunicaciones, los botones del manual de
+campo, y el campo de busqueda de la sala de consulta quedo en la esquina
+superior derecha, fuera de las fichas.
+
 ## v0.21.18 - Se restaura lo que no era de la version revertida
 
 Registro tecnico: se reviso la reversion con el historial completo y se

@@ -93,9 +93,9 @@ public class DiaryArchiveScreen extends Screen {
                 0.11f, 1.18f);
         } catch (Throwable ignored) {}
 
-        // v0.21.5: campo de consulta del catalogo (columna derecha, bajo el estado).
+        // v0.21.5: campo de consulta del catalogo (esquina superior derecha, junto al titulo).
         int progressBoxX = panelX + panelW - 162;
-        this.searchField = new DiaryTextField(this.font, progressBoxX, panelY + 168, 142, 16,
+        this.searchField = new DiaryTextField(this.font, progressBoxX, panelY + 18, 142, 16,
             Component.literal("search"));
         this.searchField.setMaxLength(24);
         this.addRenderableWidget(this.searchField);
@@ -199,7 +199,7 @@ public class DiaryArchiveScreen extends Screen {
 
         if (this.searchField != null && !q.isEmpty()) {
             String count = visible.size() + " / " + Discoveries.ALL.length;
-            g.drawString(this.font, count, progressBoxX, headerBottom + 116,
+            g.drawString(this.font, count, progressBoxX, panelY + 38,
                 visible.isEmpty() ? 0xFF6E1F16 : DiaryTheme.withAlpha(DiaryTheme.INK, 160), false);
         }
 

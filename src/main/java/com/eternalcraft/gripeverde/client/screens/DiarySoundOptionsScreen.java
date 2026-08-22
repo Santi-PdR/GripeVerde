@@ -75,7 +75,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             this.reflectedList.setRenderBackground(false);
             this.reflectedList.setRenderTopAndBottom(false);
 
-            int listTop = this.panelY + 45;
+            int listTop = this.panelY + 58;
             int listBottom = this.panelY + this.panelH - 100; // deja hueco para 2 sliders + divisor + boton
             this.reflectedList.updateSize(this.width, this.height, listTop, listBottom);
             this.smoothScroll.snapToCurrent(this.reflectedList);
