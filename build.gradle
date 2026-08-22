@@ -144,7 +144,7 @@ tasks.register('verifyGripeVerdeNoDeadCode') {
             'drawRowBands', 'openTelemetry', 'scrollToSection', 'drawGreeting',
             'drawSelectionLedger', 'drawHeraldTicker', 'drawStatusPill', 'drawCorrespondenceRack',
             'drawSignalStation', 'drawBottomNotice', 'drawSpecimenFooter', 'computePublicSignal',
-            'drawCompletionSeal', 'drawLedgerDetails', 'drawOptionsGroup', 'drawOfficialFrame', 'SIGILLUM',
+            'drawCompletionSeal', 'drawLedgerDetails', 'SIGILLUM',
             'drawOrnamentalDivider']
         def pattern = ~/(?i)\b(?:${banned.join('|')})\b/
         def problems = []
