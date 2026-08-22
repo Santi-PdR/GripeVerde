@@ -1,5 +1,32 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.21.17 - Se retiran los medidores y el resto de carteles (2026-08-21)
+
+### Cambios cerrados
+- `DiaryProgressBar.draw` -> no-op (medidores con etiqueta fuera en 8
+  pantallas; firma intacta).
+- Archive: fuera "RECOVERED PAPERS" + divisor, y el sello SIGILLUM
+  (v0.21.13) + `drawCompletionSeal`.
+- Changelog: fuera `drawLedgerDetails` (footer + sello + referencia).
+- Options: `drawOptionsGroup` -> no-op. Credits: `drawOfficialFrame` ->
+  no-op.
+- Grep global de textos hardcodeados directos = 0.
+- Lista negra del build ampliada.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.16 -> 0.21.17.
+
+### Riesgos activos / KI nuevos
+- **KI-41/43 (v0.21.16/17)**: validar en cliente — pantallas con titulo +
+  contenido + mandos, sin medidores ni carteles.
+- **KI-42 (deuda)**: limpiar los call sites no-op restantes
+  (drawInsetCard/drawInnerRail/drawValueRow/DiaryProgressBar/
+  drawOptionsGroup/drawOfficialFrame).
+- KI-39/40 pendientes; KI-38, KI-37, KI-36, KI-35, KI-34, KI-32/33,
+  KI-27/28/30/31 pendientes. KI-29 (pistas MenuMusic) requiere OGGs del
+  usuario.
+
+---
+
 ## v0.21.16 - Se retiran los carteles de interfaz (2026-08-21)
 
 ### Cambios cerrados

@@ -5,16 +5,15 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.21.16 - Se retiran los carteles de interfaz**
+**v0.21.17 - Se retiran los medidores y el resto de carteles**
 
-Reversion de la identidad visual agregada por los pases de interfaz: las
-cabeceras vuelven al titulo simple, y los carteles, tableros y casilleros
-de las salas (correspondencia, comunicaciones, consulta, sonido, controles,
-lenguas, aspecto) fueron retirados junto con las tarjetas y railes
-laterales. Se conserva todo lo funcional (botones, listas, busqueda,
-memoria, libro de visitas) y los arreglos. 59 clases Java, 25 idiomas, 35
-eventos de sonido, 42 OGG y 0 PNG de contenedores. Documentacion
-sincronizada y version 0.21.16.
+Continuacion de la reversion: se retiraron los medidores con etiqueta
+(gramofono, ambiente, disciplina, campo visual, ritmo...), el sello de
+archivo completo, el pie de registro de la cronica, los carteles de grupo
+del gabinete y el marco oficial de las atribuciones. Las pantallas quedan
+con titulo, contenido y mandos, sin carteles ni elementos superpuestos. 59
+clases Java, 25 idiomas, 35 eventos de sonido, 42 OGG y 0 PNG de
+contenedores. Documentacion sincronizada y version 0.21.17.
 
 ## Resumen visible del Mod Menu
 
@@ -99,8 +98,8 @@ Reglas actuales:
 ## Documentacion
 
 - `CONTRIBUTING.md` - guia corta de contribucion (branch fija, no gameplay, validacion).
-- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.16.
-- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.16).
+- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.17.
+- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.17).
 - `KNOWN_ISSUES.md` - estado tecnico, decisiones activas, errores documentados, KIs.
 - `README.md` - esta portada.
 

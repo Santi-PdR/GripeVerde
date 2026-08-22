@@ -3,8 +3,37 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/01a025d1-gripeverde` (sync con `main` v0.21.2, commit `afe8e83`).
-- Version: `0.21.16`.
+- Version: `0.21.17`.
 - Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks, integrando el contexto maestro y sincronizacion documental de v0.17.2.
+
+### DECISION 2026-08-21: v0.21.17 - Se retiran los medidores y el resto de carteles
+
+Continuacion de la reversion v0.21.16 (el usuario reporto "hay cosas que
+no sacaste"). Se retiraron los elementos restantes de la identidad de
+v0.18.0-v0.21.0:
+
+- `DiaryProgressBar.draw` -> no-op: fuera los medidores con etiqueta
+  (Gramofono, Ambiente, catalogo, Disciplina, Campo visual, Ritmo,
+  registros, etc.) en Options, Sound, Video, Controls, Language, Skin,
+  Accessibility y Pause. Firma intacta (los call sites compilan sin
+  dibujar; deuda de limpieza KI-42).
+- Archive: fuera el titulo "RECOVERED PAPERS / PAPELES RECUPERADOS" y su
+  divisor (los documentos v0.16 se conservan), y fuera el sello SIGILLUM
+  de archivo completo (v0.21.13, cartel) + metodo `drawCompletionSeal`.
+- Changelog: fuera el footer de registro ("consultation register / folio",
+  sello de cuarentena, referencia ARCHIVO EC-QV/1897) via
+  `drawLedgerDetails` (v0.21.0). Se conserva el folio escondido v0.16
+  (entrada a la sala).
+- Options: `drawOptionsGroup` -> no-op (los carteles de grupo de v0.18).
+- Credits: `drawOfficialFrame` -> no-op (marco oficial de v0.21.0).
+- Verificacion: grep global de textos directos hardcodeados en pantallas =
+  0 (solo quedan labels funcionales de inputs, hints de busqueda y
+  mensajes de estado del juego).
+- Lista negra del build ampliada (drawCompletionSeal, drawLedgerDetails,
+  drawOptionsGroup, drawOfficialFrame, SIGILLUM).
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.17.
+- Validacion pendiente en cliente real (KI-41/43).
 
 ### DECISION 2026-08-21: v0.21.16 - Se retiran los carteles de interfaz
 
@@ -580,9 +609,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.21.16
-- build.gradle: version = '0.21.16'
-- GripeVerdeMod.VERSION: "0.21.16"
+- Version estable actual: v0.21.17
+- build.gradle: version = '0.21.17'
+- GripeVerdeMod.VERSION: "0.21.17"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10 (no se han publicado tags desde el ciclo v0.13.x; los bumps v0.14-v0.17 quedaron sin tag)
 - Working tree esperado al retomar: limpio

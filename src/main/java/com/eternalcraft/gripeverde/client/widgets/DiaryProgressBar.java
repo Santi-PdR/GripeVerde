@@ -49,49 +49,7 @@ public final class DiaryProgressBar {
      */
     public static void draw(GuiGraphics g, int x, int y, int w, int h, float progress,
                             String label, Style style, float marker) {
-        progress = Math.max(0f, Math.min(1f, progress));
-
-        g.fill(x + 1, y + 1, x + w + 1, y + h + 1, 0x18000000);
-        g.fill(x, y, x + w, y + h, 0xFFA89468);
-        g.fill(x, y, x + w, y + 1, 0xB0422810);
-        g.fill(x, y + h - 1, x + w, y + h, 0xB0422810);
-        g.fill(x, y, x + 1, y + h, 0xB0422810);
-        g.fill(x + w - 1, y, x + w, y + h, 0xB0422810);
-
-        int innerX = x + 2;
-        int innerY = y + 2;
-        int innerW = Math.max(1, w - 4);
-        int innerH = Math.max(1, h - 4);
-        g.fill(innerX, innerY, innerX + innerW, innerY + innerH, DiaryTheme.withAlpha(style.border, 24));
-
-        // v0.21.11: el estilo ALERT late suavemente (pulso 0.8-1.0, sin parpadeo)
-        int fillW = (int) (innerW * progress);
-        if (fillW > 0) {
-            int pulse = 255;
-            if (style == Style.ALERT) {
-                pulse = 200 + (int) (55 * (0.5f + 0.5f * (float) Math.sin(System.currentTimeMillis() / 620.0)));
-            }
-            g.fill(innerX, innerY, innerX + fillW, innerY + innerH, DiaryTheme.withAlpha(style.fill, pulse));
-            g.fill(innerX, innerY, innerX + fillW, innerY + 1, style.highlight);
-            g.fill(innerX, innerY + innerH - 1, innerX + fillW, innerY + innerH, DiaryTheme.withAlpha(style.border, 150));
-        }
-
-        for (int i = 1; i < 5; i++) {
-            int tx = innerX + innerW * i / 5;
-            g.fill(tx, innerY, tx + 1, innerY + innerH, DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 34));
-        }
-
-        if (marker >= 0f && marker <= 1f) {
-            int mx = innerX + (int) (innerW * marker);
-            g.fill(mx, y - 1, mx + 1, y + h + 1, DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 120));
-            DiaryChrome.drawDivisorLozenge(g, mx, y + h / 2);
-        }
-
-        if (label != null && !label.isEmpty()) {
-            int lw = Minecraft.getInstance().font.width(label);
-            int lx = x + (w - lw) / 2;
-            int ly = y + (h - 8) / 2;
-            g.drawString(Minecraft.getInstance().font, label, lx, ly, DiaryTheme.INK, false);
-        }
+        // v0.21.17: medidores retirados por pedido del usuario (carteles de v0.18/0.21).
+        // La firma se conserva para no tocar los call sites.
     }
 }

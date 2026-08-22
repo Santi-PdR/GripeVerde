@@ -218,23 +218,13 @@ public class DiaryArchiveScreen extends Screen {
                 ? (en ? "The archive is complete." : "El archivo esta completo.")
                 : (en ? "The missing cards are still out there." : "Las fichas que faltan siguen ahi fuera.");
             DiaryChrome.drawCenteredString(g, this.font, msg, cx, infoY,
-                complete ? DiaryTheme.INK : DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 120));
-            if (complete) {
-                int mw = this.font.width(msg);
-                int sealCx = cx + mw / 2 + 20;
-                String sig = "SIGILLUM";
-                g.drawString(this.font, sig, sealCx - this.font.width(sig) / 2, infoY - 15, 0xFF8A6A2D, false);
-                drawCompletionSeal(g, sealCx, infoY + 6, 8);
-            }
-        } else {
+                complete ? DiaryTheme.INK : DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 120));        } else {
             DiaryChrome.drawCenteredString(g, this.font, en ? (visible.isEmpty() ? "Nothing matches the query." : "Only these cards match.")
                        : (visible.isEmpty() ? "Nada coincide con la consulta." : "Solo estas fichas coinciden."),
                 cx, infoY, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 160));
         }
 
         int docsY = infoY + 18;
-        g.drawString(this.font, en ? "RECOVERED PAPERS" : "PAPELES RECUPERADOS", panelX + 24, docsY - 18, DiaryTheme.BRONZE, false);
-        DiaryChrome.drawInkDivider(g, panelX + 22, docsY - 4, panelW - 44);
         int dx = panelX + 24;
         if (ChroniclerMemory.isDiscovered(Discoveries.CODE_1897)) {
             drawPaperDoc(g, dx, docsY + 4, en ? "The night of the outbreak" : "La noche del brote", mouseX, mouseY);
@@ -307,30 +297,6 @@ public class DiaryArchiveScreen extends Screen {
         }
     }
 
-    /** v0.21.13: sello de cera dorado del archivo completado. */
-    private static void drawCompletionSeal(GuiGraphics g, int cx, int cy, int radius) {
-        int gold = 0xFFB8860B;
-        int goldDark = 0xFF6B4E16;
-        int goldHi = 0xFFE8C860;
-        for (int dy = -radius; dy <= radius; dy++) {
-            int dx = (int) Math.sqrt(radius * radius - dy * dy);
-            g.fill(cx - dx, cy + dy, cx + dx + 1, cy + dy + 1, gold);
-        }
-        for (int dy = -radius; dy <= 0; dy++) {
-            int dx = (int) Math.sqrt(radius * radius - dy * dy);
-            g.fill(cx - dx, cy + dy, cx, cy + dy + 1, DiaryTheme.withAlpha(0x00FFE9A0, 70));
-        }
-        for (int dy = -radius; dy <= radius; dy++) {
-            int dx = (int) Math.sqrt(radius * radius - dy * dy);
-            g.fill(cx - dx, cy + dy, cx - dx + 1, cy + dy + 1, goldDark);
-            g.fill(cx + dx, cy + dy, cx + dx + 1, cy + dy + 1, goldDark);
-        }
-        int r2 = Math.max(1, radius / 2);
-        for (int dy = -r2; dy <= r2; dy++) {
-            int dx = r2 - Math.abs(dy);
-            g.fill(cx - dx, cy + dy, cx + dx + 1, cy + dy + 1, goldHi);
-        }
-    }
 
     private void drawPaperDoc(GuiGraphics g, int x, int y, String label, int mx, int my) {
         boolean hover = mx >= x && mx < x + 124 && my >= y && my < y + 18;

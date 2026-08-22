@@ -186,17 +186,7 @@ public class DiaryCreditsScreen extends Screen {
     }
 
     private void drawOfficialFrame(GuiGraphics g) {
-        int border = DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 110);
-        g.fill(panelX, panelY, panelX + panelW, panelY + 1, border);
-        g.fill(panelX, panelY + panelH - 1, panelX + panelW, panelY + panelH, border);
-        g.fill(panelX, panelY, panelX + 1, panelY + panelH, border);
-        g.fill(panelX + panelW - 1, panelY, panelX + panelW, panelY + panelH, border);
-        // Inner rivets
-        int rivet = DiaryTheme.withAlpha(DiaryTheme.GOLD_TARNISHED, 90);
-        g.fill(panelX + 8, panelY + 8, panelX + 10, panelY + 10, rivet);
-        g.fill(panelX + panelW - 10, panelY + 8, panelX + panelW - 8, panelY + 10, rivet);
-        g.fill(panelX + 8, panelY + panelH - 10, panelX + 10, panelY + panelH - 8, rivet);
-        g.fill(panelX + panelW - 10, panelY + panelH - 10, panelX + panelW - 8, panelY + panelH - 8, rivet);
+        // v0.21.17: marco oficial retirado por pedido del usuario.
     }
 
     @Override public void renderBackground(GuiGraphics g) {}

@@ -1,5 +1,13 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.17 - Se retiran los medidores y el resto de carteles
+
+Registro tecnico: continuacion de la reversion. Se retiraron los medidores
+con etiqueta (gramofono, ambiente, disciplina, campo visual, ritmo y
+compania), el sello de archivo completo, el pie de registro de la cronica,
+los carteles de grupo del gabinete y el marco oficial de las atribuciones.
+Quedan solo titulo, contenido y mandos.
+
 ## v0.21.16 - Se retiran los carteles de interfaz
 
 Registro tecnico: reversion de la identidad visual agregada por los pases

@@ -276,10 +276,7 @@ public class DiaryOptionsScreen extends Screen {
     }
 
     private void drawOptionsGroup(GuiGraphics g, int x, int y, int w, int h, String label, String body, int accent) {
-        DiaryChrome.drawInnerRail(g, x, y, w, h, accent);
-        g.drawString(this.font, label, x + 10, y + 8, accent, false);
-        g.drawString(this.font, body, x + 10, y + 19, DiaryChrome.INK_FLAVOR, false);
-        g.fill(x + 10, y + 31, x + w - 10, y + 32, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 48));
+        // v0.21.17: carteles de grupo retirados por pedido del usuario.
     }
 
     private void drawOptionsRail(GuiGraphics g, float reveal) {
