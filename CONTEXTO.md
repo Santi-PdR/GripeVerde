@@ -3,8 +3,41 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/01a025d1-gripeverde` (sync con `main` v0.21.2, commit `afe8e83`).
-- Version: `0.21.14`.
+- Version: `0.21.15`.
 - Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks, integrando el contexto maestro y sincronizacion documental de v0.17.2.
+
+### DECISION 2026-08-21: v0.21.15 - Se retiran los sellos de estado
+
+Continuacion del pase de reversion de interfaz pedido por el usuario
+("revisa cuando fueron esos cambios y saca los que cambien interfaces de
+menu"). El pickaxe de git confirmo que los elementos que molestaban
+(REGISTRABLE, INCOMPLETO, LISTO, PENDIENTE, READY, LIVE, etc.) vienen de
+v0.18.0 (pase mayor de interfaces) y v0.21.0 (cierre de interfaces
+secundarias); el unico agregado reciente era el ticker del Heraldo (v0.21.9,
+ya revertido en v0.21.14).
+
+**Cambios:**
+- `ExpedientHeader`: eliminado el dibujo del pill de estado (status) en
+  TODAS las pantallas Diary (antes: REGISTRABLE, INCOMPLETO, LISTO,
+  PENDIENTE, READY, LIVE, INDEXADO, CALIBRADO, COMPLETO, CATALOGADO,
+  PREPARADO, ATENUANDO...). El parametro status se conserva en la firma
+  para no tocar ~20 llamadas. El flavor ya no reserva espacio para el pill
+  y usa todo el ancho del panel (truncado defensivo con ellipsis).
+- `DiaryOptionsScreen`: eliminado el pill "FIELD READY / LISTO PARA CAMPO"
+  del carril lateral (se mantiene la fila "GUI scale").
+- `DiaryChrome.drawStatusPill`: eliminado (quedo sin usos). Lista negra del
+  build ampliada con `drawStatusPill`.
+- El mensaje de borrar servidor ("va a desaparecer") es vanilla
+  (`selectServer.deleteWarning`); el rojo que se veia era el pill PENDIENTE
+  (quitado en v0.21.14) y el cartel ORDER (quitado). El mensaje ahora se
+  dibuja en tinta normal.
+- El libro de visitas de Multiplayer: verificado, el click y la firma estan
+  intactos; lo que lo tapaba era la tarjeta HOSPEDAJE ELEGIDO (quitada en
+  v0.21.14).
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL
+  (reversion de interfaz, no evento de la ciudad).
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.15.
+- Validacion pendiente en cliente real (KI-39/40).
 
 ### DECISION 2026-08-21: v0.21.14 - El gabinete vuelve a respirar
 
@@ -503,9 +536,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.21.14
-- build.gradle: version = '0.21.14'
-- GripeVerdeMod.VERSION: "0.21.14"
+- Version estable actual: v0.21.15
+- build.gradle: version = '0.21.15'
+- GripeVerdeMod.VERSION: "0.21.15"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10 (no se han publicado tags desde el ciclo v0.13.x; los bumps v0.14-v0.17 quedaron sin tag)
 - Working tree esperado al retomar: limpio

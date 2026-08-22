@@ -1,5 +1,13 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.15 - Se retiran los sellos de estado
+
+Registro tecnico: se retiraron los sellos de estado de las cabeceras de
+todas las salas (REGISTRABLE, LISTO, PENDIENTE, READY y compania) y el
+sello del carril del gabinete; las frases bajo los subtitulos recuperan
+todo el ancho. Continuacion de la reversion de la v0.21.14. Sin cambios de
+gameplay ni de recursos.
+
 ## v0.21.14 - El gabinete vuelve a respirar
 
 Registro tecnico: reversiones pedidas en cliente. Se retiro el saludo que

@@ -6,7 +6,7 @@ plugins {
     id 'org.spongepowered.mixin' version '0.7.+'
 }
 
-version = '0.21.14'
+version = '0.21.15'
 group = 'com.eternalcraft.gripeverde'
 base { archivesName = 'gripeverde' }
 
@@ -142,7 +142,7 @@ tasks.register('verifyGripeVerdeNoDeadCode') {
             'drawVerticalDivider', 'drawDarkLeatherBackground', 'drawVersionPanel',
             'getMoonPhaseIndex', 'getOpenCount', 'drawSolidBlob',
             'drawRowBands', 'openTelemetry', 'scrollToSection', 'drawGreeting',
-            'drawSelectionLedger', 'drawHeraldTicker',
+            'drawSelectionLedger', 'drawHeraldTicker', 'drawStatusPill',
             'drawOrnamentalDivider']
         def pattern = ~/(?i)\b(?:${banned.join('|')})\b/
         def problems = []

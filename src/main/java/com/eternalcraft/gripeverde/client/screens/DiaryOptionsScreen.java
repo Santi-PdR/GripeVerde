@@ -315,11 +315,7 @@ public class DiaryOptionsScreen extends Screen {
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Section count" : "Cantidad de secciones", "10", DiaryTheme.INK);
 
         int sealY = archiveY + 96;
-        String finalStatus = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "FIELD READY" : "LISTO PARA CAMPO";
-        DiaryChrome.drawStatusPill(g, this.font, railX + 10, sealY, finalStatus,
-            DiaryTheme.withAlpha(DiaryTheme.PLAGUE_GREEN, (int)(76 + 90 * reveal)),
-            DiaryTheme.PLAGUE_SICK, DiaryTheme.INK_BLACK);
-        DiaryChrome.drawValueRow(g, this.font, railX + 10, sealY + 22, railW - 20,
+        DiaryChrome.drawValueRow(g, this.font, railX + 10, sealY + 4, railW - 20,
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "GUI scale" : "Escala GUI", String.valueOf(this.minecraft.options.guiScale().get()), DiaryTheme.BRONZE);
     }
 

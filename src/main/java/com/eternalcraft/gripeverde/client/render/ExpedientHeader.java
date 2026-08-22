@@ -55,11 +55,9 @@ public final class ExpedientHeader {
         }
 
         if (flavor != null && !flavor.isEmpty()) {
-            // v0.21.14: el flavor nunca debe llegar al pill de estado (solape en
-            // formularios chicos): se trunca al espacio libre con ellipsis.
+            // El flavor se trunca con ellipsis si excede el ancho del panel.
             String shown = flavor;
-            int pillW = (status != null && !status.isEmpty()) ? font.width(status) + 46 : 0;
-            int maxW = Math.max(40, panelW - 36 - pillW - 16);
+            int maxW = Math.max(40, panelW - 52);
             if (font.width(shown) > maxW) {
                 int room = Math.max(0, maxW - font.width("..."));
                 shown = font.plainSubstrByWidth(shown, room) + "...";
@@ -67,14 +65,6 @@ public final class ExpedientHeader {
             int fw = font.width(shown);
             gfx.drawString(font, shown, cx - fw / 2, topY + 39 - slide,
                 DiaryChrome.fadeColor(DiaryChrome.INK_FLAVOR, reveal), false);
-        }
-
-        if (status != null && !status.isEmpty()) {
-            int alphaAccent = DiaryChrome.fadeColor(accentColor, 0.20f + 0.80f * reveal);
-            int border = DiaryChrome.fadeColor(accentColor, reveal);
-            int ink = DiaryChrome.fadeColor(DiaryTheme.INK_BLACK, reveal);
-            DiaryChrome.drawStatusPill(gfx, font, panelX + panelW - font.width(status) - 34,
-                topY + 37 - slide, status, alphaAccent, border, ink);
         }
 
         int dividerY = topY + 54 - slide;

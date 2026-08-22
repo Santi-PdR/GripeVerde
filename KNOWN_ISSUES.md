@@ -1,5 +1,29 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.21.15 - Se retiran los sellos de estado (2026-08-21)
+
+### Cambios cerrados
+- `ExpedientHeader`: pill de estado eliminado en todas las pantallas Diary
+  (status conservado en la firma). Flavor a ancho completo con truncado.
+- `DiaryOptionsScreen`: pill "FIELD READY / LISTO PARA CAMPO" eliminado.
+- `DiaryChrome.drawStatusPill` eliminado (0 usos); lista negra ampliada.
+- Confirmado por pickaxe: los sellos/elementos venian de v0.18.0/v0.21.0;
+  el unico reciente era el ticker (v0.21.9, revertido).
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.14 -> 0.21.15 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-39 (v0.21.14+15)**: validar en cliente — menu limpio, formularios sin
+  sellos ni solapes, lista de servidores debajo de la cabecera, guestbook
+  clickeable.
+- **KI-40 (pendiente de captura)**: "errores en el gabinete" (Options) sin
+  detalle; se quito el sello READY que se solapaba. Si persiste, pedir
+  descripcion puntual.
+- KI-38, KI-37, KI-36, KI-35, KI-34, KI-32/33, KI-27/28/30/31 pendientes.
+  KI-29 (pistas MenuMusic) requiere OGGs del usuario.
+
+---
+
 ## v0.21.14 - El gabinete vuelve a respirar (2026-08-21)
 
 ### Cambios cerrados

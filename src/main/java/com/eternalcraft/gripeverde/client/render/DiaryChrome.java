@@ -124,21 +124,6 @@ public final class DiaryChrome {
     }
 
     // ── Capsulas y tarjetas de sistema ──────────────────────────────────────
-    public static void drawStatusPill(GuiGraphics gfx, Font font, int x, int y, String text,
-                                      int bgColor, int borderColor, int textColor) {
-        int tw = font.width(text);
-        int w = tw + 18;
-        int h = 14;
-        gfx.fill(x + 2, y + 2, x + w + 2, y + h + 2, 0x18000000);
-        gfx.fill(x, y, x + w, y + h, bgColor);
-        gfx.fill(x, y, x + w, y + 1, borderColor);
-        gfx.fill(x, y + h - 1, x + w, y + h, DiaryTheme.withAlpha(borderColor, 220));
-        gfx.fill(x, y, x + 1, y + h, borderColor);
-        gfx.fill(x + w - 1, y, x + w, y + h, borderColor);
-        gfx.fill(x + 4, y + 3, x + 6, y + h - 3, borderColor);
-        gfx.fill(x + 8, y + 3, x + w - 4, y + 4, DiaryTheme.withAlpha(0x00FFF2D2, 52));
-        gfx.drawString(font, text, x + 10, y + 3, textColor, false);
-    }
 
     public static void drawInsetCard(GuiGraphics gfx, Font font, int x, int y, int w, int h,
                                      String kicker, String title, String body, int accent) {
