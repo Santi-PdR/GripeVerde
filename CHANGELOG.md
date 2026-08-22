@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.22 - Hotfix compilacion
+
+Registro tecnico: la limpieza de la v0.21.21 dejo una firma de metodo rota
+en el gabinete que impedia compilar. Corregido.
+
 ## v0.21.21 - Se termina la deuda de los no-op
 
 Registro tecnico: se eliminaron las ultimas treinta llamadas a los carteles

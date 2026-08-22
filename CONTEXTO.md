@@ -3,8 +3,16 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/01a025d1-gripeverde` (sync con `main` v0.21.2, commit `afe8e83`).
-- Version: `0.21.21`.
+- Version: `0.21.22`.
 - Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks, integrando el contexto maestro y sincronizacion documental de v0.17.2.
+
+### DECISION 2026-08-22: v0.21.22 - Hotfix compilacion (firma rota)
+
+La limpieza v0.21.21 dejo una firma de metodo rota en `DiaryOptionsScreen`
+(`private void  {` — el limpiador de llamadas no-op se comio el nombre del
+metodo `drawOptionsGroup`). Detectado por el usuario en build local
+(error: identifier expected). Fix: eliminado el metodo vacio roto entero
+(no tenia llamadas). Sin otros cambios. Bump 0.21.21 -> 0.21.22.
 
 ### DECISION 2026-08-22: v0.21.21 - Se termina la deuda de los no-op
 
@@ -740,9 +748,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.21.21
-- build.gradle: version = '0.21.21'
-- GripeVerdeMod.VERSION: "0.21.21"
+- Version estable actual: v0.21.22
+- build.gradle: version = '0.21.22'
+- GripeVerdeMod.VERSION: "0.21.22"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10 (no se han publicado tags desde el ciclo v0.13.x; los bumps v0.14-v0.17 quedaron sin tag)
 - Working tree esperado al retomar: limpio

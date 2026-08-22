@@ -244,10 +244,6 @@ public class DiaryOptionsScreen extends Screen {
         } catch (Throwable ignored) {}
     }
 
-    private void  {
-        // v0.21.17: carteles de grupo retirados por pedido del usuario.
-    }
-
     private int drawerX() { return panelX + panelW - PAD_SIDES - 92; }
     private int drawerY() { return panelY + panelH - PAD_BOTTOM - DRAWER_H + 5; }
 
