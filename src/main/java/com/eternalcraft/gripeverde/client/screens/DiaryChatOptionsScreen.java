@@ -118,18 +118,11 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
 
         int rackX = this.panelX + this.panelW - RACK_W - 18;
         int rackY = headerBottom - 2;
-        drawCorrespondenceRack(g, rackX, rackY, RACK_W, this.panelH - 122, mouseX, mouseY);
+
 
         int listFrameX = this.panelX + 18;
         int listFrameW = rackX - listFrameX - 14;
         DiaryChrome.drawInnerRail(g, listFrameX, headerBottom - 2, listFrameW, this.panelH - 122, DiaryTheme.BRONZE);
-        g.drawString(this.font,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "PUBLIC LEDGER" : "REGISTRO PUBLICO",
-            listFrameX + 10, headerBottom + 6, DiaryTheme.BRONZE, false);
-        g.drawString(this.font,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Ink discipline and outgoing notices" : "Disciplina de tinta y avisos salientes",
-            listFrameX + 10, headerBottom + 18, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 150), false);
-
         if (this.list != null) {
             if (reveal < 0.995f) {
                 int revealBottom = this.panelY + Math.max(28, (int)(this.panelH * reveal));
@@ -145,7 +138,7 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
 
         int divY2 = this.panelY + this.panelH - 38;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
-        drawBottomNotice(g, listFrameX, divY2 - 18, listFrameW);
+
 
         for (Renderable r : this.renderables) {
             r.render(g, mouseX, mouseY, partialTick);
@@ -162,36 +155,6 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
     private int mailboxX() { return this.panelX + this.panelW - RACK_W + 10; }
     private int mailboxY() { return this.panelY + 104; }
 
-    private void drawCorrespondenceRack(GuiGraphics g, int x, int y, int w, int h, int mouseX, int mouseY) {
-        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
-        int letters = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("letters");
-        DiaryChrome.drawInnerRail(g, x, y, w, h, DiaryTheme.PLAGUE_SICK);
-        g.drawString(this.font, en ? "SORTING RACK" : "CASILLERO", x + 10, y + 8, DiaryTheme.BRONZE, false);
-        g.drawString(this.font, en ? "incoming / unanswered" : "entrada / sin respuesta", x + 10, y + 20,
-            DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 150), false);
-
-        // tres sobres superpuestos
-        for (int i = 0; i < 3; i++) {
-            int ex = x + 12 + i * 4;
-            int ey = y + 40 + i * 8;
-            int ew = w - 28;
-            g.fill(ex + 1, ey + 1, ex + ew + 1, ey + 28 + 1, 0x12000000);
-            g.fill(ex, ey, ex + ew, ey + 28, i == 2 ? 0xFFE5D6B3 : 0xFFDDCCAA);
-            g.fill(ex, ey, ex + ew, ey + 1, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 140));
-            g.fill(ex, ey + 27, ex + ew, ey + 28, DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 140));
-            g.fill(ex, ey, ex + 1, ey + 28, DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 100));
-            g.fill(ex + ew - 1, ey, ex + ew, ey + 28, DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 100));
-            g.fill(ex + 8, ey + 8, ex + ew - 8, ey + 9, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 32));
-            g.fill(ex + ew - 20, ey - 2, ex + ew - 6, ey + 2, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 110));
-        }
-
-        drawMailbox(g, mouseX, mouseY);
-        DiaryProgressBar.draw(g, x + 10, y + h - 42, w - 20, 14,
-            Math.min(1f, letters / 5f), en ? "mail volume" : "volumen de correo", DiaryProgressBar.Style.INK);
-        DiaryChrome.drawValueRow(g, this.font, x + 10, y + h - 22, w - 20,
-            en ? "readability" : "legibilidad",
-            en ? "stable" : "estable", DiaryTheme.PLAGUE_SICK);
-    }
 
     private void drawMailbox(GuiGraphics g, int mouseX, int mouseY) {
         int x = mailboxX(), y = mailboxY();
@@ -212,11 +175,6 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         }
     }
 
-    private void drawBottomNotice(GuiGraphics g, int x, int y, int w) {
-        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
-        String txt = en ? "Official correspondence is filed apart from public shouting." : "La correspondencia oficial se archiva aparte del griterio publico.";
-        g.drawString(this.font, txt, x + 10, y, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 132), false);
-    }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {

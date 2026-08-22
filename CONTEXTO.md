@@ -3,8 +3,52 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/01a025d1-gripeverde` (sync con `main` v0.21.2, commit `afe8e83`).
-- Version: `0.21.15`.
+- Version: `0.21.16`.
 - Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks, integrando el contexto maestro y sincronizacion documental de v0.17.2.
+
+### DECISION 2026-08-21: v0.21.16 - Se retiran los carteles de interfaz
+
+Reversion masiva de la identidad visual agregada por v0.18.0/v0.19.0/
+v0.20.0/v0.21.0 (pases de interfaces y cohesion), pedida por el usuario
+("saca lo que metio y cambio interfaces de esas versiones, carteles y esas
+cosas, menos arreglos"). BACKUP previo: tag `backup-pre-reversion-v0.21.15`
+en GitHub + `backup_gripeverde_antes_reversion.tar.gz` local.
+
+**Metodo:** en vez de reescribir 16 pantallas (riesgo alto), se apago la
+capa de carteles en los helpers y se eliminaron los textos directos:
+
+- `ExpedientHeader.draw` -> solo dibuja el TITULO + divisor. Fuera:
+  expediente ("EXPEDIENTE XIV"), referencia ("EC-QV/1897 · ..."),
+  subtitulo, flavor y estado. Firma intacta (los ~16 call sites siguen
+  pasando los parametros, que se ignoran).
+- `DiaryChrome.drawInsetCard`, `drawInnerRail`, `drawValueRow` -> no-op
+  (firma intacta; las llamadas restantes compilan y no dibujan; quedan
+  como deuda tecnica para limpiar en una pasada futura).
+- Textos de seccion directos eliminados: Chat ("CASILLERO", "REGISTRO
+  PUBLICO", nota inferior + metodo `drawCorrespondenceRack` entero y
+  `drawBottomNotice`), Online ("TABLERO DE COMUNICACION", "ESTACION DE
+  RELE" + metodo `drawSignalStation` entero + `computePublicSignal`/
+  `signalDisplay`), Archive (tarjeta "ARCHIVE STATE" + barra "catalogue";
+  la grilla ahora usa el ancho completo), Sound ("CLASES VANILLA"),
+  Controls ("PUNTOS DE ENTRADA", "POSTURA Y CONDUCTA AUXILIAR"),
+  Language ("CONSULADOS"), Skin ("PARTES EXPUESTAS", "MANO PRINCIPAL" +
+  `drawSpecimenFooter`).
+
+**Conservado (funcional o anterior a esas versiones):** panel pergamino,
+botones, sliders, textfield, toggle, lista de opciones vanilla, busqueda de
+la Sala, fichas del archivo, documentos recuperados (v0.16), buzón/cajón/
+espejo (lore v0.16), libro de visitas, toasts, marginalia, fondo del Title.
+
+**Notas:**
+- Las progress bars (medidores) se conservan (no son carteles).
+- Las llamadas no-op a drawInsetCard/drawInnerRail/drawValueRow quedan en
+  las pantallas (compilan, no dibujan); limpieza total en pasada futura.
+- Lista negra del build ampliada (drawCorrespondenceRack, drawSignalStation,
+  drawBottomNotice, drawSpecimenFooter, computePublicSignal).
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.16.
+- Validacion pendiente en cliente real (KI-41): revisar las 16 pantallas
+  (titulo simple, sin carteles, sin solapes; botones/listas intactos).
 
 ### DECISION 2026-08-21: v0.21.15 - Se retiran los sellos de estado
 
@@ -536,9 +580,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.21.15
-- build.gradle: version = '0.21.15'
-- GripeVerdeMod.VERSION: "0.21.15"
+- Version estable actual: v0.21.16
+- build.gradle: version = '0.21.16'
+- GripeVerdeMod.VERSION: "0.21.16"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10 (no se han publicado tags desde el ciclo v0.13.x; los bumps v0.14-v0.17 quedaron sin tag)
 - Working tree esperado al retomar: limpio

@@ -5,15 +5,12 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
 /**
- * Cabecera documental reutilizable para las interfaces de Gripe Verde.
+ * Cabecera reutilizable para las interfaces de Gripe Verde.
  *
- * Estructura:
- *   EXPEDIENTE / referencia
- *   titulo principal
- *   subtitulo
- *   flavor / nota operativa
- *   capsula de estado opcional
- *   divisor
+ * v0.21.16: revertida al titulo simple (la estructura documental de
+ * v0.18.0/v0.21.0 — expediente, referencia, subtitulo, flavor y estado —
+ * fue retirada por pedido del usuario; los parametros se conservan en la
+ * firma para no tocar los ~16 call sites).
  */
 public final class ExpedientHeader {
 
@@ -34,41 +31,13 @@ public final class ExpedientHeader {
         int topY = panelY + 12;
         int slide = (int) ((1f - reveal) * 10f);
 
-        if (expedient != null && !expedient.isEmpty()) {
-            gfx.drawString(font, expedient, panelX + 18, topY - slide,
-                DiaryChrome.fadeColor(DiaryTheme.SEPIA_MID, 0.92f * reveal), false);
-        }
-        if (reference != null && !reference.isEmpty()) {
-            int rw = font.width(reference);
-            gfx.drawString(font, reference, panelX + panelW - rw - 18, topY - slide,
-                DiaryChrome.fadeColor(DiaryTheme.SEPIA_MID, 0.86f * reveal), false);
-        }
-
+        // v0.21.16: solo el titulo (los carteles documentales ya no se dibujan).
         int titleW = font.width(title);
         gfx.drawString(font, title, cx - titleW / 2, topY + 12 - slide,
             DiaryChrome.fadeColor(DiaryChrome.INK_TITLE, reveal), false);
 
-        if (subtitle != null && !subtitle.isEmpty()) {
-            int sw = font.width(subtitle);
-            gfx.drawString(font, subtitle, cx - sw / 2, topY + 25 - slide,
-                DiaryChrome.fadeColor(DiaryChrome.INK_SUBTITLE, reveal), false);
-        }
-
-        if (flavor != null && !flavor.isEmpty()) {
-            // El flavor se trunca con ellipsis si excede el ancho del panel.
-            String shown = flavor;
-            int maxW = Math.max(40, panelW - 52);
-            if (font.width(shown) > maxW) {
-                int room = Math.max(0, maxW - font.width("..."));
-                shown = font.plainSubstrByWidth(shown, room) + "...";
-            }
-            int fw = font.width(shown);
-            gfx.drawString(font, shown, cx - fw / 2, topY + 39 - slide,
-                DiaryChrome.fadeColor(DiaryChrome.INK_FLAVOR, reveal), false);
-        }
-
-        int dividerY = topY + 54 - slide;
+        int dividerY = topY + 30 - slide;
         DiaryChrome.drawInkDivider(gfx, panelX + 18, dividerY, panelW - 36);
-        return dividerY + 12;
+        return dividerY + 10;
     }
 }

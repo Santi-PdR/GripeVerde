@@ -180,18 +180,11 @@ public class DiarySkinCustomizationScreen extends Screen {
         int workX = this.panelX + 18;
         int workW = railX - workX - 12;
         DiaryChrome.drawInnerRail(gfx, workX, headerBottom - 2, workW, this.panelH - 126, DiaryTheme.BRONZE);
-        gfx.drawString(this.font,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPOSED PARTS" : "PARTES EXPUESTAS",
-            workX + 10, headerBottom + 6, DiaryTheme.BRONZE, false);
-        gfx.drawString(this.font,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "PRIMARY HAND" : "MANO PRINCIPAL",
-            workX + 10, headerBottom + 86, DiaryTheme.BRONZE, false);
 
         super.render(gfx, mouseX, mouseY, delta);
 
         int divY2 = this.panelY + this.panelH - 38;
         DiaryChrome.drawInkDivider(gfx, this.panelX, divY2, this.panelW);
-        drawSpecimenFooter(gfx, workX, divY2 - 18, workW);
 
         try {
             drawMirror(gfx, mouseX, mouseY);
@@ -224,12 +217,6 @@ public class DiarySkinCustomizationScreen extends Screen {
         } catch (Throwable ignored) {}
     }
 
-    private void drawSpecimenFooter(GuiGraphics gfx, int x, int y, int w) {
-        String note = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
-            ? "Observed parts may be hidden without altering the patient."
-            : "Las partes observadas pueden ocultarse sin alterar al paciente.";
-        gfx.drawString(this.font, note, x + 10, y, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 132), false);
-    }
 
     private float computeVisibleRatio() {
         int enabled = 0;

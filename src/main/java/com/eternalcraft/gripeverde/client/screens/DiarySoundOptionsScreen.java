@@ -270,9 +270,6 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         int listFrameX = this.panelX + 18;
         int listFrameW = railX - listFrameX - 16;
         DiaryChrome.drawInnerRail(g, listFrameX, headerBottom - 2, listFrameW, this.panelH - 138, DiaryTheme.SEPIA_MID);
-        g.drawString(this.font,
-            Discoveries.isEnglish() ? "VANILLA CLASSES" : "CLASES VANILLA",
-            listFrameX + 10, headerBottom + 6, DiaryTheme.BRONZE, false);
 
         if (this.reflectedList != null) {
             if (reveal < 0.995f) {

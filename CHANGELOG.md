@@ -1,5 +1,14 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.16 - Se retiran los carteles de interfaz
+
+Registro tecnico: reversion de la identidad visual agregada por los pases
+de interfaz. Las cabeceras vuelven al titulo simple; los carteles, tableros
+y casilleros de las salas (correspondencia, comunicaciones, consulta,
+sonido, controles, lenguas, aspecto) fueron retirados; las tarjetas y
+railes laterales dejaron de dibujarse. Se conserva todo lo funcional
+(botones, listas, busqueda, memoria, libro de visitas) y los arreglos.
+
 ## v0.21.15 - Se retiran los sellos de estado
 
 Registro tecnico: se retiraron los sellos de estado de las cabeceras de

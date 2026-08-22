@@ -127,45 +127,13 @@ public final class DiaryChrome {
 
     public static void drawInsetCard(GuiGraphics gfx, Font font, int x, int y, int w, int h,
                                      String kicker, String title, String body, int accent) {
-        gfx.fill(x + 3, y + 3, x + w + 3, y + h + 3, 0x14000000);
-        gfx.fill(x + 1, y + 1, x + w + 1, y + h + 1, 0x0E000000);
-        gfx.fill(x, y, x + w, y + h, CARD_BASE);
-        gfx.fill(x + 1, y + 1, x + w - 1, y + 2, DiaryTheme.withAlpha(0x00FFF4DB, 76));
-        gfx.fill(x, y, x + w, y + 1, accent);
-        gfx.fill(x, y + h - 1, x + w, y + h, CARD_BORDER);
-        gfx.fill(x, y, x + 1, y + h, CARD_BORDER);
-        gfx.fill(x + w - 1, y, x + w, y + h, CARD_BORDER);
-
-        // pestaña superior derecha y lomo izquierdo para evitar look de dashboard
-        gfx.fill(x + w - 22, y - 2, x + w - 6, y + 2, DiaryTheme.withAlpha(accent, 120));
-        gfx.fill(x + 5, y + 5, x + 7, y + h - 5, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 52));
-        gfx.fill(x + 8, y + 5, x + 9, y + h - 5, DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, 28));
-        gfx.fill(x + 12, y + h - 11, x + w - 12, y + h - 10, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 30));
-        gfx.fill(x + 12, y + h - 7, x + w - 20, y + h - 6, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 20));
-
-        if (kicker != null && !kicker.isEmpty()) {
-            gfx.drawString(font, kicker, x + 12, y + 6, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 185), false);
-        }
-        if (title != null && !title.isEmpty()) {
-            gfx.drawString(font, title, x + 12, y + 17, INK_TITLE, false);
-        }
-        if (body != null && !body.isEmpty()) {
-            int bodyY = y + 29;
-            List<net.minecraft.util.FormattedCharSequence> lines = font.split(Component.literal(body), Math.max(20, w - 22));
-            int maxLines = Math.max(1, Math.min(lines.size(), Math.max(1, (h - 36) / (font.lineHeight + 1))));
-            for (int i = 0; i < maxLines; i++) {
-                gfx.drawString(font, lines.get(i), x + 12, bodyY + i * (font.lineHeight + 1), INK_FLAVOR, false);
-            }
-        }
+        // v0.21.16: carteles de sistema retirados por pedido del usuario.
+        // (la firma se conserva para no tocar los call sites)
     }
 
     public static void drawValueRow(GuiGraphics gfx, Font font, int x, int y, int w,
                                     String label, String value, int accent) {
-        gfx.drawString(font, label, x, y, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 190), false);
-        int vw = font.width(value);
-        gfx.drawString(font, value, x + w - vw, y, accent, false);
-        gfx.fill(x, y + 10, x + w, y + 11, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 48));
-        gfx.fill(x, y + 11, x + Math.min(w, 18), y + 12, DiaryTheme.withAlpha(accent, 52));
+        // v0.21.16: filas de valor de los carteles retiradas por pedido del usuario.
     }
 
     public static void drawPanelScaffold(GuiGraphics gfx, int x, int y, int w, int h, int accent) {        drawPanelShadow(gfx, x, y, w, h);
@@ -196,16 +164,7 @@ public final class DiaryChrome {
     }
 
     public static void drawInnerRail(GuiGraphics gfx, int x, int y, int w, int h, int accent) {
-        gfx.fill(x, y, x + w, y + h, DiaryTheme.withAlpha(accent, 10));
-        gfx.fill(x, y, x + w, y + 1, DiaryTheme.withAlpha(accent, 54));
-        gfx.fill(x, y + h - 1, x + w, y + h, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 74));
-        gfx.fill(x, y, x + 1, y + h, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 66));
-        gfx.fill(x + w - 1, y, x + w, y + h, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 44));
-        // rail incompleto con marcas de registro
-        for (int ty = y + 14; ty < y + h - 10; ty += 18) {
-            gfx.fill(x + 4, ty, x + 10, ty + 1, DiaryTheme.withAlpha(accent, 40));
-        }
-        gfx.fill(x + 10, y + 10, x + w - 10, y + 11, DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, 12));
+        // v0.21.16: railes decorativos retirados por pedido del usuario.
     }
 
     // ── Scrollbars ───────────────────────────────────────────────────────────

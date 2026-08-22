@@ -1,5 +1,31 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.21.16 - Se retiran los carteles de interfaz (2026-08-21)
+
+### Cambios cerrados
+- BACKUP: tag `backup-pre-reversion-v0.21.15` (GitHub) + tar local.
+- `ExpedientHeader`: solo titulo + divisor (expediente/referencia/subtitulo/
+  flavor/estado fuera; firma intacta).
+- `DiaryChrome.drawInsetCard`/`drawInnerRail`/`drawValueRow`: no-op (firma
+  intacta; llamadas restantes compilan sin dibujar — deuda de limpieza).
+- Textos/metodos de cartel eliminados en Chat, Online, Archive, Sound,
+  Controls, Language y Skin (lista completa en CONTEXTO.md addendum).
+- Conservado: todo lo funcional y el lore v0.16.
+- Lista negra del build ampliada.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.15 -> 0.21.16 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-41 (v0.21.16)**: validar en cliente — las 16 pantallas con titulo
+  simple, sin carteles ni solapes; botones/listas intactos.
+- **KI-42 (deuda)**: limpiar las llamadas no-op restantes a
+  drawInsetCard/drawInnerRail/drawValueRow en las pantallas.
+- KI-39/40 (v0.21.14/15) pendientes; KI-38, KI-37, KI-36, KI-35, KI-34,
+  KI-32/33, KI-27/28/30/31 pendientes. KI-29 (pistas MenuMusic) requiere
+  OGGs del usuario.
+
+---
+
 ## v0.21.15 - Se retiran los sellos de estado (2026-08-21)
 
 ### Cambios cerrados

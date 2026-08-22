@@ -208,12 +208,6 @@ public class DiaryControlsScreen extends Screen {
         int railX = this.panelX + this.panelW - RAIL_W - 18;
         int workW = railX - leftX - 14;
         DiaryChrome.drawInnerRail(g, leftX, headerBottom - 2, workW, 118, DiaryTheme.BRONZE);
-        g.drawString(this.font,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "ENTRY POINTS" : "PUNTOS DE ENTRADA",
-            leftX + 10, headerBottom + 6, DiaryTheme.BRONZE, false);
-        g.drawString(this.font,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "STANCE & AUXILIARY BEHAVIOUR" : "POSTURA Y CONDUCTA AUXILIAR",
-            leftX + 10, headerBottom + 56, DiaryTheme.BRONZE, false);
 
         DiaryChrome.drawInsetCard(g, this.font, railX, headerBottom, RAIL_W, 78,
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "PROTOCOL" : "PROTOCOLO",

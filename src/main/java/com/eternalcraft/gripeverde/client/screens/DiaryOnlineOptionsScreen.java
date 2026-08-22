@@ -32,9 +32,6 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
     private final Options ownOptions;
     private int panelX, panelY, panelW, panelH;
 
-    // v0.21.10: el alcance de la estacion responde con transicion suave
-    private float signalDisplay = 0f;
-    private long lastSignalMs = 0L;
     private long openedAtMs = 0L;
 
     public DiaryOnlineOptionsScreen(Screen parent, Options options) {
@@ -96,14 +93,7 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
     public void tick() {
         super.tick();
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.tick(1.0f / 20.0f);
-        this.smoothScroll.tick(this.list);
-        // v0.21.10: suavizar el medidor de alcance hacia su objetivo real
-        long now = System.currentTimeMillis();
-        float dt = Math.min(1f, (now - this.lastSignalMs) / 1000f);
-        this.lastSignalMs = now;
-        float target = computePublicSignal();
-        this.signalDisplay += (target - this.signalDisplay) * Math.min(1f, dt * 4f);
-    }
+        this.smoothScroll.tick(this.list);    }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
@@ -137,14 +127,11 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
 
         int stationX = this.panelX + this.panelW - STATION_W - 18;
         int stationY = headerBottom - 2;
-        drawSignalStation(g, stationX, stationY, STATION_W, this.panelH - 122);
+
 
         int boardX = this.panelX + 18;
         int boardW = stationX - boardX - 14;
         DiaryChrome.drawInnerRail(g, boardX, headerBottom - 2, boardW, this.panelH - 122, DiaryTheme.BRONZE);
-        g.drawString(this.font, en ? "COMMUNICATION BOARD" : "TABLERO DE COMUNICACION", boardX + 10, headerBottom + 6, DiaryTheme.BRONZE, false);
-        g.drawString(this.font, en ? "What leaves the district and what remains sealed." : "Lo que sale del distrito y lo que permanece sellado.", boardX + 10, headerBottom + 18, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 148), false);
-
         if (this.list != null) {
             if (reveal < 0.995f) {
                 int revealBottom = this.panelY + Math.max(28, (int)(this.panelH * reveal));
@@ -165,34 +152,5 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
         }
     }
 
-    private void drawSignalStation(GuiGraphics g, int x, int y, int w, int h) {
-        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
-        DiaryChrome.drawInnerRail(g, x, y, w, h, DiaryTheme.PLAGUE_SICK);
-        g.drawString(this.font, en ? "RELAY STATION" : "ESTACION DE RELE", x + 10, y + 8, DiaryTheme.BRONZE, false);
-        g.drawString(this.font, en ? "public / private" : "publico / privado", x + 10, y + 20, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 150), false);
 
-        // poste y lineas de señal
-        int mastX = x + w - 28;
-        g.fill(mastX, y + 34, mastX + 3, y + h - 18, 0xFF3D2E1A);
-        g.fill(mastX - 10, y + 42, mastX + 11, y + 43, 0xFF8E6A35);
-        g.fill(mastX - 14, y + 58, mastX + 15, y + 59, 0xFF6B4A2E);
-        g.fill(mastX - 18, y + 76, mastX + 19, y + 77, DiaryTheme.withAlpha(DiaryTheme.PLAGUE_SICK, 120));
-
-        DiaryChrome.drawValueRow(g, this.font, x + 10, y + 44, w - 44,
-            en ? "notices" : "avisos", this.ownOptions.realmsNotifications().get() ? (en ? "open" : "abiertos") : (en ? "closed" : "cerrados"), DiaryTheme.BRONZE);
-        DiaryChrome.drawValueRow(g, this.font, x + 10, y + 64, w - 44,
-            en ? "listing" : "listado", this.ownOptions.allowServerListing().get() ? (en ? "public" : "publico") : (en ? "sealed" : "sellado"), DiaryTheme.PLAGUE_SICK);
-        DiaryProgressBar.draw(g, x + 10, y + h - 38, w - 20, 14,
-            this.signalDisplay, en ? "signal spread" : "alcance", DiaryProgressBar.Style.STEEL);
-        g.drawString(this.font,
-            en ? "district traffic remains under your hand" : "el trafico del distrito permanece bajo vuestra mano",
-            x + 10, y + h - 20, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 132), false);
-    }
-
-    private float computePublicSignal() {
-        float v = 0f;
-        if (this.ownOptions.realmsNotifications().get()) v += 0.5f;
-        if (this.ownOptions.allowServerListing().get()) v += 0.5f;
-        return v;
-    }
 }

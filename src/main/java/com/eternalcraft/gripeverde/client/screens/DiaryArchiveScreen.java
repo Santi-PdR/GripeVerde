@@ -160,27 +160,9 @@ public class DiaryArchiveScreen extends Screen {
             reveal);
 
         int progressBoxX = panelX + panelW - 162;
-        String archiveBody = en
-            ? "Every recovered card remains indexed in the reading room."
-            : "Cada ficha recuperada permanece indexada en la sala de consulta.";
-        if (hoverCard >= 0) {
-            String id = Discoveries.ALL[hoverCard];
-            archiveBody = ChroniclerMemory.isDiscovered(id)
-                ? Discoveries.nameFor(id)
-                : Discoveries.hintFor(id);
-        }
-        DiaryChrome.drawInsetCard(g, this.font, progressBoxX, headerBottom, 142, 84,
-            en ? "ARCHIVE STATE" : "ESTADO DEL ARCHIVO",
-            found + " / " + total,
-            archiveBody,
-            DiaryTheme.BRONZE);
-        DiaryProgressBar.draw(g, progressBoxX + 10, headerBottom + 54, 122, 14,
-            total <= 0 ? 0f : (found / (float) total),
-            en ? "catalogue" : "catalogo",
-            DiaryProgressBar.Style.INK);
 
         int gridX = panelX + 18;
-        int gridW = progressBoxX - gridX - 10;
+        int gridW = (panelX + panelW - 18) - gridX;
         int cw = (gridW - (COLS - 1) * CARD_GAP) / COLS;
         int gridY = headerBottom;
         hoverCard = -1;

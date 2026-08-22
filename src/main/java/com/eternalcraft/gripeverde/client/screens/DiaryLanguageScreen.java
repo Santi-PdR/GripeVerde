@@ -171,7 +171,6 @@ public class DiaryLanguageScreen extends Screen {
         int frameW = this.listW + 8;
         int frameH = this.listH + 8;
         DiaryChrome.drawInnerRail(g, frameX, frameY, frameW, frameH, DiaryTheme.BRONZE);
-        g.drawString(this.font, com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "CONSULATES" : "CONSULADOS", frameX + 10, frameY + 8, DiaryTheme.BRONZE, false);
 
         if (this.languageList != null) {
             if (reveal < 0.995f) {
