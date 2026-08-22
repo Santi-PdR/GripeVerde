@@ -5,15 +5,17 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.21.17 - Se retiran los medidores y el resto de carteles**
+**v0.21.18 - Se restaura lo que no era de la version revertida**
 
-Continuacion de la reversion: se retiraron los medidores con etiqueta
-(gramofono, ambiente, disciplina, campo visual, ritmo...), el sello de
-archivo completo, el pie de registro de la cronica, los carteles de grupo
-del gabinete y el marco oficial de las atribuciones. Las pantallas quedan
-con titulo, contenido y mandos, sin carteles ni elementos superpuestos. 59
-clases Java, 25 idiomas, 35 eventos de sonido, 42 OGG y 0 PNG de
-contenedores. Documentacion sincronizada y version 0.21.17.
+Se reviso la reversion con el historial completo y se devolvieron los
+elementos que no pertenecian a los pases de interfaz revertidos: el sello
+dorado que cierra el archivo al reunir las cuarenta y siete fichas, el
+medidor de ritmo del aparato de observacion, el medidor de registros del
+archivo de lenguas y el marco de las atribuciones. Los medidores de las
+salas de la epoca revertida (gramofono, ambiente, disciplina, campo visual
+y compania) quedan retirados. 59 clases Java, 25 idiomas, 35 eventos de
+sonido, 42 OGG y 0 PNG de contenedores. Documentacion sincronizada y
+version 0.21.18.
 
 ## Resumen visible del Mod Menu
 
@@ -98,8 +100,8 @@ Reglas actuales:
 ## Documentacion
 
 - `CONTRIBUTING.md` - guia corta de contribucion (branch fija, no gameplay, validacion).
-- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.17.
-- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.17).
+- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.18.
+- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.18).
 - `KNOWN_ISSUES.md` - estado tecnico, decisiones activas, errores documentados, KIs.
 - `README.md` - esta portada.
 

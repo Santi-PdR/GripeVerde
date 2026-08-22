@@ -3,8 +3,45 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/01a025d1-gripeverde` (sync con `main` v0.21.2, commit `afe8e83`).
-- Version: `0.21.17`.
+- Version: `0.21.18`.
 - Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks, integrando el contexto maestro y sincronizacion documental de v0.17.2.
+
+### DECISION 2026-08-22: v0.21.18 - Se restaura lo que no era de la version revertida
+
+El usuario pidio revisar la reversion (v0.21.14-v0.21.17): "revisa que no
+hayas sacado cosas de otras versiones o de versiones nuevas que no queria
+sacar; yo queria sacar lo que pusieron nuevo en aquella version" (v0.18.0-
+v0.21.0). Se hizo pickaxe de git con la historia completa (163 commits) y
+se restauro lo que NO era de esas versiones:
+
+**RESTAURADO:**
+- `DiaryProgressBar.draw` -> cuerpo original vivo (v0.12.2, widget base).
+  Con el cuerpo vivo, se eliminaron las llamadas de medidores que SI eran
+  de v0.18-v0.21.0 para que no dibujen: Options (Gramophone/Room tone
+  v0.19, catalogue v0.20), Sound (Music/Ambience/Transition v0.19),
+  Controls (Discipline v0.19), Video (FOV v0.19), Accessibility (Contrast
+  v0.19), Pause (stillness v0.19), Skin (presence v0.20).
+- Medidores de versiones MÍAS que vuelven a dibujar: Video "Pacing"
+  (v0.21.4) y Language "registries" (v0.21.4).
+- Sello SIGILLUM + `drawCompletionSeal` (v0.21.13, archivo completo).
+- `drawOfficialFrame` de Credits (v0.14.1, anterior a la version
+  revertida).
+
+**CONFIRMADO QUE SI ERA DE v0.18-v0.21.0 (queda fuera):** header completo
+(expediente/referencia/subtitulo/flavor v0.18), tarjetas/railes/valueRows
+(v0.18-v0.20), RECOVERED PAPERS (v0.21.0), footer "consultation register"
+(v0.21.0), Chat/Online rack (v0.21.0), VANILLA CLASSES (v0.19), EXPOSED
+PARTS (v0.20), drawOptionsGroup (v0.19), drawStatusPill (v0.19),
+HOSPEDAJE ELEGIDO (v0.19). Y lo pedido explicitamente aunque fuera de otra
+version: saludo del Title (v0.16) y ticker del Heraldo (v0.21.9).
+
+- Lista negra del build: se quito SIGILLUM/drawCompletionSeal (vuelven a
+  existir); sigue drawLedgerDetails.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.18.
+- Validacion pendiente en cliente real (KI-44): el sello al completar 47
+  fichas, el medidor de Pacing en Video, el de registros en Lenguas, y que
+  el resto siga sin carteles.
 
 ### DECISION 2026-08-21: v0.21.17 - Se retiran los medidores y el resto de carteles
 
@@ -609,9 +646,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.21.17
-- build.gradle: version = '0.21.17'
-- GripeVerdeMod.VERSION: "0.21.17"
+- Version estable actual: v0.21.18
+- build.gradle: version = '0.21.18'
+- GripeVerdeMod.VERSION: "0.21.18"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10 (no se han publicado tags desde el ciclo v0.13.x; los bumps v0.14-v0.17 quedaron sin tag)
 - Working tree esperado al retomar: limpio

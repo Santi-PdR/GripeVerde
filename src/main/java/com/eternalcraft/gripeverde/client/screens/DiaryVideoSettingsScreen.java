@@ -145,10 +145,7 @@ public class DiaryVideoSettingsScreen extends VideoSettingsScreen {
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "RENDER" : "RENDER",
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Field adjustments" : "Ajustes de campo",
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Sliders and toggles keep their vanilla behaviour while the chamber clarifies hierarchy." : "Los deslizadores y tiradores conservan comportamiento vanilla mientras la camara aclara la jerarquia.",
-            DiaryTheme.BRONZE);
-        DiaryProgressBar.draw(g, railX + 10, headerBottom + 52, RAIL_W - 20, 14,
-            normalizeFov(), com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Field of view" : "Campo visual", DiaryProgressBar.Style.STEEL);
-        DiaryChrome.drawValueRow(g, this.font, railX + 10, headerBottom + 70, RAIL_W - 20,
+            DiaryTheme.BRONZE);        DiaryChrome.drawValueRow(g, this.font, railX + 10, headerBottom + 70, RAIL_W - 20,
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Canvas" : "Lienzo",
             this.width + " x " + this.height, DiaryTheme.INK);
 

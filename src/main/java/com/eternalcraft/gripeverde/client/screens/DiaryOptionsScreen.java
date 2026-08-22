@@ -293,22 +293,14 @@ public class DiaryOptionsScreen extends Screen {
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "ACOUSTIC STATE" : "ESTADO ACUSTICO",
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "music & room tone" : "musica y ambiente",
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Music and room tone are carried through the whole cabinet." : "La musica y la resonancia atraviesan todo el gabinete.",
-            DiaryTheme.PLAGUE_SICK);
-        DiaryProgressBar.draw(g, railX + 10, meterY + 38, railW - 20, 12,
-            MenuMusic.getUserVolume(), com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Gramophone" : "Gramofono", DiaryProgressBar.Style.AMBER);
-        DiaryProgressBar.draw(g, railX + 10, meterY + 56, railW - 20, 12,
-            com.eternalcraft.gripeverde.client.audio.MenuAmbience.getUserVolume(),
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Room tone" : "Ambiente", DiaryProgressBar.Style.PLAGUE);
+            DiaryTheme.PLAGUE_SICK)
 
         int archiveY = meterY + 94;
         DiaryChrome.drawInsetCard(g, this.font, railX, archiveY, railW, 88,
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "ARCHIVE" : "ARCHIVO",
             (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Reading room progress" : "Progreso de la sala de consulta"),
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "The cabinet keeps count of every recovered card." : "El gabinete lleva la cuenta de cada ficha recuperada.",
-            DiaryTheme.REDCOAT);
-        DiaryProgressBar.draw(g, railX + 10, archiveY + 42, railW - 20, 14,
-            total <= 0 ? 0f : (found / (float) total), found + " / " + total, DiaryProgressBar.Style.ALERT);
-        DiaryChrome.drawValueRow(g, this.font, railX + 10, archiveY + 63, railW - 20,
+            DiaryTheme.REDCOAT);        DiaryChrome.drawValueRow(g, this.font, railX + 10, archiveY + 63, railW - 20,
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Section count" : "Cantidad de secciones", "10", DiaryTheme.INK);
 
         int sealY = archiveY + 96;

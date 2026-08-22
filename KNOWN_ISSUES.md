@@ -1,5 +1,33 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.21.18 - Se restaura lo que no era de la version revertida (2026-08-22)
+
+### Cambios cerrados
+- Pickaxe con historia completa: se fecho cada elemento sacado en
+  v0.21.14-v0.21.17.
+- Restaurado: `DiaryProgressBar.draw` (cuerpo vivo, v0.12.2), medidores
+  Pacing (Video) y registries (Language) v0.21.4, sello SIGILLUM +
+  `drawCompletionSeal` (v0.21.13), `drawOfficialFrame` de Credits (v0.14.1).
+- Eliminadas las llamadas de medidores v0.18-v0.21.0 (Options, Sound,
+  Controls, Video FOV, Accessibility, Pause, Skin) para que no dibujen con
+  el cuerpo restaurado.
+- Confirmado fuera (v0.18-v0.21.0 o pedido explicito): header completo,
+  tarjetas/railes, RECOVERED PAPERS, footer changelog, racks Chat/Online,
+  HOSPEDAJE ELEGIDO, saludo Title, ticker Herald.
+- Lista negra: quitados SIGILLUM/drawCompletionSeal (vuelven a existir).
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.17 -> 0.21.18 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-44 (v0.21.18)**: validar en cliente — sello al completar 47 fichas,
+  medidor Pacing en Video, registros en Lenguas; resto sin carteles.
+- KI-42 (deuda): limpiar call sites no-op restantes (drawInsetCard/
+  drawInnerRail/drawValueRow).
+- KI-41/43, KI-39/40, KI-38... pendientes. KI-29 (pistas MenuMusic)
+  requiere OGGs del usuario.
+
+---
+
 ## v0.21.17 - Se retiran los medidores y el resto de carteles (2026-08-21)
 
 ### Cambios cerrados

@@ -248,21 +248,14 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             Discoveries.isEnglish() ? "MASTER CHANNELS" : "CANALES MAESTROS",
             Discoveries.isEnglish() ? "Gramophone and room tone" : "Gramofono y ambiente",
             Discoveries.isEnglish() ? "Two custom channels stay independent from vanilla sound classes." : "Dos canales propios permanecen separados de las clases vanilla.",
-            DiaryTheme.AMBER_FLAME);
-        DiaryProgressBar.draw(g, railX + 10, railY + 38, RAIL_W - 20, 12,
-            MenuMusic.getVisualMixLevel(), Discoveries.isEnglish() ? "Music" : "Musica", DiaryProgressBar.Style.AMBER);
-        DiaryProgressBar.draw(g, railX + 10, railY + 56, RAIL_W - 20, 12,
-            com.eternalcraft.gripeverde.client.audio.MenuAmbience.getUserVolume(), Discoveries.isEnglish() ? "Ambience" : "Ambiente", DiaryProgressBar.Style.PLAGUE);
+            DiaryTheme.AMBER_FLAME)
 
         int railY2 = railY + 86;
         DiaryChrome.drawInsetCard(g, this.font, railX, railY2, RAIL_W, 88,
             Discoveries.isEnglish() ? "ROOM STATE" : "ESTADO DE LA SALA",
             MenuMusic.isCrossfading() ? (Discoveries.isEnglish() ? "Crossfade in progress" : "Cruce en curso") : (Discoveries.isEnglish() ? "Stable playback" : "Reproduccion estable"),
             Discoveries.isEnglish() ? "The controls answer immediately and the background city keeps breathing." : "Los controles responden al instante y la ciudad del fondo sigue respirando.",
-            DiaryTheme.PLAGUE_SICK);
-        DiaryProgressBar.draw(g, railX + 10, railY2 + 40, RAIL_W - 20, 14,
-            MenuMusic.getCrossfadeVisual(), Discoveries.isEnglish() ? "Transition" : "Transicion", DiaryProgressBar.Style.STEEL);
-        DiaryChrome.drawValueRow(g, this.font, railX + 10, railY2 + 62, RAIL_W - 20,
+            DiaryTheme.PLAGUE_SICK);        DiaryChrome.drawValueRow(g, this.font, railX + 10, railY2 + 62, RAIL_W - 20,
             Discoveries.isEnglish() ? "Signals" : "Senales",
             com.eternalcraft.gripeverde.client.audio.MenuAmbience.isMuted() ? (Discoveries.isEnglish() ? "muted" : "silenciado") : (Discoveries.isEnglish() ? "open" : "abierto"),
             DiaryTheme.BRONZE);

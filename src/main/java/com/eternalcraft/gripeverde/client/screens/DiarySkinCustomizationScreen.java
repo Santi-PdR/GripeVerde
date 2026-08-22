@@ -172,11 +172,6 @@ public class DiarySkinCustomizationScreen extends Screen {
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Observation plate" : "Placa de observacion",
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Garments and exposed features are presented as a field note, not a vanilla checklist." : "Prendas y rasgos expuestos se presentan como nota de campo, no como simple lista vanilla.",
             DiaryTheme.PLAGUE_SICK);
-        DiaryProgressBar.draw(gfx, railX + 10, headerBottom + 62, 114, 14,
-            visibleRatio,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "presence" : "presencia",
-            DiaryProgressBar.Style.PLAGUE);
-
         int workX = this.panelX + 18;
         int workW = railX - workX - 12;
         DiaryChrome.drawInnerRail(gfx, workX, headerBottom - 2, workW, this.panelH - 126, DiaryTheme.BRONZE);

@@ -485,12 +485,7 @@ public class DiaryPauseScreen extends PauseScreen {
         float calm = Math.max(0f, Math.min(1f, 1f - minutes / 20f));
         int barX = px + 18;
         int barY = py + panelH() - 54;
-        int barW = panelW() - 36;
-        com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar.draw(g, barX, barY, barW, 12,
-            calm,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? ("stillness · " + minutes + "m") : ("quietud · " + minutes + "m"),
-            com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar.Style.STEEL);
-    }
+        int barW = panelW() - 36;    }
 
     private void drawPanelTitle(GuiGraphics g, int px, int py) {
         String title = Component.translatable("gripeverde.pause.title").getString();

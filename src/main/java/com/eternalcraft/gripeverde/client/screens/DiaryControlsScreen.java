@@ -222,12 +222,7 @@ public class DiaryControlsScreen extends Screen {
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
                 ? "Toggle behaviour is visible at a glance, without opening any extra panel."
                 : "El comportamiento de alternancia se lee de un vistazo, sin abrir paneles extra.",
-            DiaryTheme.AMBER_FLAME);
-        DiaryProgressBar.draw(g, railX + 10, headerBottom + 124, RAIL_W - 20, 14,
-            computeControlDiscipline(),
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Discipline" : "Disciplina",
-            DiaryProgressBar.Style.STEEL);
-        DiaryChrome.drawValueRow(g, this.font, railX + 10, headerBottom + 146, RAIL_W - 20,
+            DiaryTheme.AMBER_FLAME);        DiaryChrome.drawValueRow(g, this.font, railX + 10, headerBottom + 146, RAIL_W - 20,
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Main hand" : "Mano principal",
             this.options.mainHand().get().getCaption().getString(), DiaryTheme.INK);
 

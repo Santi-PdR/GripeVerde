@@ -1,5 +1,15 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.18 - Se restaura lo que no era de la version revertida
+
+Registro tecnico: se reviso la reversion con el historial completo y se
+devolvieron los elementos que no pertenecian a los pases de interfaz
+revertidos: el sello dorado que cierra el archivo al reunir las cuarenta y
+siete fichas, el medidor de ritmo del aparato de observacion, el medidor de
+registros del archivo de lenguas y el marco de las atribuciones. Los
+medidores de las salas de la epoca revertida (gramofono, ambiente,
+disciplina, campo visual y compania) quedan retirados.
+
 ## v0.21.17 - Se retiran los medidores y el resto de carteles
 
 Registro tecnico: continuacion de la reversion. Se retiraron los medidores

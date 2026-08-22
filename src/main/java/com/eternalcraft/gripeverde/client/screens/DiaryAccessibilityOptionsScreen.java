@@ -115,9 +115,6 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Clear states" : "Estados claros",
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Hover, scroll and focus are isolated visually without changing any vanilla value." : "Hover, scroll y foco se separan visualmente sin alterar ningun valor vanilla.",
             DiaryTheme.BRONZE);
-        DiaryProgressBar.draw(gfx, railX + 10, headerBottom + 138, RAIL_W - 20, 14,
-            0.82f, com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Contrast" : "Contraste", DiaryProgressBar.Style.PLAGUE, 0.65f);
-
         int listRight = railX - 8;
         DiaryChrome.drawInnerRail(gfx, this.panelX + 18, headerBottom - 2, listRight - (this.panelX + 18), this.panelH - 138, DiaryTheme.BRONZE);
         if (this.list != null) {
