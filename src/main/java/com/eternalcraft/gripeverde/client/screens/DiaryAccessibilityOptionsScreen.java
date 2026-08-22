@@ -8,7 +8,6 @@ import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton.Icon;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton.Variant;
-import com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -94,21 +93,13 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         float reveal = DiaryChrome.reveal(this.openedAtMs, 240L);
         DiaryChrome.renderPanelBase(gfx, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.PLAGUE_SICK, PaperTexture.PaperKind.OFFICIAL);
 
-        int headerBottom = ExpedientHeader.draw(gfx, this.font, this.panelX, this.panelY, this.panelW, Component.translatable("options.accessibility.title"), reveal);
+        ExpedientHeader.draw(gfx, this.font, this.panelX, this.panelY, this.panelW, Component.translatable("options.accessibility.title"), reveal);
 
         int railX = this.panelX + this.panelW - RAIL_W - 18;
-        DiaryChrome.drawInsetCard(gfx, this.font, railX, headerBottom, RAIL_W, 84,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "PERCEPTION" : "PERCEPCION",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Observation profile" : "Perfil de observacion",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Assistive options are kept apart from the main list so their purpose is immediately legible." : "Las ayudas quedan separadas del cuerpo principal para que su proposito se lea al instante.",
-            DiaryTheme.PLAGUE_SICK);
-        DiaryChrome.drawInsetCard(gfx, this.font, railX, headerBottom + 92, RAIL_W, 86,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "READABILITY" : "LEGIBILIDAD",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Clear states" : "Estados claros",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Hover, scroll and focus are isolated visually without changing any vanilla value." : "Hover, scroll y foco se separan visualmente sin alterar ningun valor vanilla.",
-            DiaryTheme.BRONZE);
+
+
         int listRight = railX - 8;
-        DiaryChrome.drawInnerRail(gfx, this.panelX + 18, headerBottom - 2, listRight - (this.panelX + 18), this.panelH - 138, DiaryTheme.BRONZE);
+
         if (this.list != null) {
             if (reveal < 0.995f) {
                 int revealBottom = this.panelY + Math.max(28, (int)(this.panelH * reveal));

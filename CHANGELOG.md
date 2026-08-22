@@ -1,5 +1,14 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.21 - Se termina la deuda de los no-op
+
+Registro tecnico: se eliminaron las ultimas treinta llamadas a los carteles
+que ya no se dibujan, los tres helpers muertos que las atendian, las
+variables que los alimentaban y el pie de registro de la cronica. Las
+barras de desplazamiento de tres salas, que habian quedado referenciando
+medidas eliminadas, se anclaron al borde derecho del panel. Sin cambios
+visibles de fondo ni de gameplay.
+
 ## v0.21.20 - La tinta pesa menos
 
 Registro tecnico: limpieza profunda tras la reversion. Las cabeceras se

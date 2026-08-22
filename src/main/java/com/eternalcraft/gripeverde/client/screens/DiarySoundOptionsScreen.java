@@ -8,7 +8,6 @@ import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
-import com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar;
 import com.eternalcraft.gripeverde.client.widgets.DiarySlider;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Options;
@@ -232,40 +231,24 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         float reveal = DiaryChrome.reveal(this.openedAtMs, 260L);
         DiaryChrome.renderPanelBase(g, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.AMBER_FLAME, PaperTexture.PaperKind.LEDGER);
 
-        int headerBottom = ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW, Component.translatable("options.sounds.title"), reveal);
+        ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW, Component.translatable("options.sounds.title"), reveal);
 
-        int railX = this.panelX + this.panelW - RAIL_W - 18;
-        int railY = headerBottom;
-        DiaryChrome.drawInsetCard(g, this.font, railX, railY, RAIL_W, 78,
-            Discoveries.isEnglish() ? "MASTER CHANNELS" : "CANALES MAESTROS",
-            Discoveries.isEnglish() ? "Gramophone and room tone" : "Gramofono y ambiente",
-            Discoveries.isEnglish() ? "Two custom channels stay independent from vanilla sound classes." : "Dos canales propios permanecen separados de las clases vanilla.",
-            DiaryTheme.AMBER_FLAME);
 
-        int railY2 = railY + 86;
-        DiaryChrome.drawInsetCard(g, this.font, railX, railY2, RAIL_W, 88,
-            Discoveries.isEnglish() ? "ROOM STATE" : "ESTADO DE LA SALA",
-            MenuMusic.isCrossfading() ? (Discoveries.isEnglish() ? "Crossfade in progress" : "Cruce en curso") : (Discoveries.isEnglish() ? "Stable playback" : "Reproduccion estable"),
-            Discoveries.isEnglish() ? "The controls answer immediately and the background city keeps breathing." : "Los controles responden al instante y la ciudad del fondo sigue respirando.",
-            DiaryTheme.PLAGUE_SICK);        DiaryChrome.drawValueRow(g, this.font, railX + 10, railY2 + 62, RAIL_W - 20,
-            Discoveries.isEnglish() ? "Signals" : "Senales",
-            com.eternalcraft.gripeverde.client.audio.MenuAmbience.isMuted() ? (Discoveries.isEnglish() ? "muted" : "silenciado") : (Discoveries.isEnglish() ? "open" : "abierto"),
-            DiaryTheme.BRONZE);
 
-        int listFrameX = this.panelX + 18;
-        int listFrameW = railX - listFrameX - 16;
-        DiaryChrome.drawInnerRail(g, listFrameX, headerBottom - 2, listFrameW, this.panelH - 138, DiaryTheme.SEPIA_MID);
+
+
+
 
         if (this.reflectedList != null) {
             if (reveal < 0.995f) {
                 int revealBottom = this.panelY + Math.max(28, (int)(this.panelH * reveal));
                 g.enableScissor(this.panelX - 2, this.panelY - 2, this.panelX + this.panelW + 2, revealBottom);
                 this.reflectedList.render(g, mouseX, mouseY, partialTick);
-                DiaryChrome.drawStyledScrollThumbInPanel(g, (AbstractSelectionList<?>) this.reflectedList, railX - 8);
+                DiaryChrome.drawStyledScrollThumbInPanel(g, (AbstractSelectionList<?>) this.reflectedList, this.panelX + this.panelW - 26);
                 g.disableScissor();
             } else {
                 this.reflectedList.render(g, mouseX, mouseY, partialTick);
-                DiaryChrome.drawStyledScrollThumbInPanel(g, (AbstractSelectionList<?>) this.reflectedList, railX - 8);
+                DiaryChrome.drawStyledScrollThumbInPanel(g, (AbstractSelectionList<?>) this.reflectedList, this.panelX + this.panelW - 26);
             }
         }
 

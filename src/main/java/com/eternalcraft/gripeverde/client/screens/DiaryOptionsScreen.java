@@ -2,11 +2,9 @@ package com.eternalcraft.gripeverde.client.screens;
 
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
-import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
-import com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar;
 import com.eternalcraft.gripeverde.client.widgets.DiarySlider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -218,22 +216,8 @@ public class DiaryOptionsScreen extends Screen {
 
 
 
-        int contentLeft = this.col1X - 10;
-        int contentRight = this.col2X + BTN_W + 10;
-        int contentW = contentRight - contentLeft;
 
-        drawOptionsGroup(g, contentLeft, this.gridTop - 16, contentW, row(3) + BTN_H + 8,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "OPERATIVE SURFACES" : "SUPERFICIES OPERATIVAS",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Appearance, sound, vision and correspondence." : "Aspecto, sonido, vision y correspondencia.",
-            DiaryTheme.BRONZE);
-        drawOptionsGroup(g, contentLeft, this.gridTop + row(3) - 8, contentW, row(2) + BTN_H + 10,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "DISTRICT RECORDS" : "REGISTROS DEL DISTRITO",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "External routes, public notices and sealed attributions." : "Rutas externas, avisos publicos y atribuciones selladas.",
-            DiaryTheme.PLAGUE_SICK);
-        drawOptionsGroup(g, contentLeft, this.gridTop + row(5) - 8, contentW, BTN_H + 20,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "OPTICAL CALIBRATION" : "CALIBRACION OPTICA",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Field of view remains within arm's reach." : "El campo de vision queda al alcance de la mano.",
-            DiaryTheme.AMBER_FLAME);
+
 
         // Carril lateral de estado
 
@@ -260,10 +244,9 @@ public class DiaryOptionsScreen extends Screen {
         } catch (Throwable ignored) {}
     }
 
-    private void drawOptionsGroup(GuiGraphics g, int x, int y, int w, int h, String label, String body, int accent) {
+    private void  {
         // v0.21.17: carteles de grupo retirados por pedido del usuario.
     }
-
 
     private int drawerX() { return panelX + panelW - PAD_SIDES - 92; }
     private int drawerY() { return panelY + panelH - PAD_BOTTOM - DRAWER_H + 5; }

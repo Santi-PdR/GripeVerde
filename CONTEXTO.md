@@ -3,8 +3,39 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/01a025d1-gripeverde` (sync con `main` v0.21.2, commit `afe8e83`).
-- Version: `0.21.20`.
+- Version: `0.21.21`.
 - Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks, integrando el contexto maestro y sincronizacion documental de v0.17.2.
+
+### DECISION 2026-08-22: v0.21.21 - Se termina la deuda de los no-op
+
+El usuario pidio "mas". Se cerro la deuda KI-42 (call sites no-op de la
+reversion):
+
+- Eliminadas 30 llamadas no-op a `DiaryChrome.drawInsetCard` /
+  `drawInnerRail` / `drawValueRow` en 11 pantallas (Accessibility, Archive,
+  Controls, Credits, DirectJoin, EditServer, Language, Options, Skin,
+  Sound, Video) y las 3 llamadas a `drawOptionsGroup` (Options).
+- Eliminados los 3 metodos no-op de `DiaryChrome` + constantes `CARD_BASE`
+  / `CARD_BORDER` (quedaron con 0 usos).
+- Eliminadas las variables locales y bloques muertos que alimentaban esos
+  carteles: Language (frameX/Y/W/H), Controls (leftX/railX/workW),
+  Options (contentLeft/contentRight/contentW), Sound (railX/railY/railY2/
+  listFrameX/listFrameW), Skin (headerBottom sin asignar), Accessibility
+  (headerBottom sin asignar), constantes `RAIL_W` (Controls) y `STATION_W`
+  (Online).
+- Changelog: eliminado el footer de registro (`drawRevisionFooter`:
+  "consultation register / folio N", resto v0.21.0).
+- FIX de scrollbars: las llamadas `drawStyledScrollThumbInPanel` de Chat,
+  Online y Sound referenciaban variables eliminadas (rackX/stationX/railX)
+  -> ahora usan `this.panelX + this.panelW - 26` (borde derecho del panel).
+- Higiene: 14 imports no usados eliminados; newline-final en archivos que
+  no lo tenian; trailing whitespace global limpio.
+- Resultado: 34 archivos, -209 lineas netas. Cero variables locales sin
+  uso, cero campos muertos, balance OK, dead-code OK.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.21.
+- Validacion pendiente en cliente real (KI-47): Chat/Online/Sound con
+  scrollbar en el borde derecho del panel y listas intactas.
 
 ### DECISION 2026-08-22: v0.21.20 - La tinta pesa menos (limpieza post-reversion)
 
@@ -709,9 +740,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.21.20
-- build.gradle: version = '0.21.20'
-- GripeVerdeMod.VERSION: "0.21.20"
+- Version estable actual: v0.21.21
+- build.gradle: version = '0.21.21'
+- GripeVerdeMod.VERSION: "0.21.21"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10 (no se han publicado tags desde el ciclo v0.13.x; los bumps v0.14-v0.17 quedaron sin tag)
 - Working tree esperado al retomar: limpio

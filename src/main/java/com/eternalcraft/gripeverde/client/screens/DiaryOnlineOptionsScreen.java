@@ -1,12 +1,10 @@
 package com.eternalcraft.gripeverde.client.screens;
 
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
-import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
-import com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
@@ -26,7 +24,6 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
 
     private static final int PANEL_W = 500;
     private static final int PANEL_H = 258;
-    private static final int STATION_W = 164;
 
     private final SmoothScroll smoothScroll = new SmoothScroll(0.50D, 0.24D);
     private final Options ownOptions;
@@ -119,11 +116,11 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
                 int revealBottom = this.panelY + Math.max(28, (int)(this.panelH * reveal));
                 g.enableScissor(this.panelX - 2, this.panelY - 2, this.panelX + this.panelW + 2, revealBottom);
                 this.list.render(g, mouseX, mouseY, partialTick);
-                DiaryChrome.drawStyledScrollThumbInPanel(g, this.list, stationX - 8);
+                DiaryChrome.drawStyledScrollThumbInPanel(g, this.list, this.panelX + this.panelW - 26);
                 g.disableScissor();
             } else {
                 this.list.render(g, mouseX, mouseY, partialTick);
-                DiaryChrome.drawStyledScrollThumbInPanel(g, this.list, stationX - 8);
+                DiaryChrome.drawStyledScrollThumbInPanel(g, this.list, this.panelX + this.panelW - 26);
             }
         }
 

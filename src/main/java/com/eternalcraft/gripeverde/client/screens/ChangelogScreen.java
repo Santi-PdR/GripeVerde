@@ -315,7 +315,6 @@ public class ChangelogScreen extends Screen {
             DiaryChrome.drawScrollThumb(g, px + pw - 10, cy, cy + ch, this.scrollY, this.maxScroll);
         }
 
-        drawRevisionFooter(g, px, py, pw, ph);
         super.render(g, mouseX, mouseY, partialTick);
 
         try {
@@ -325,14 +324,6 @@ public class ChangelogScreen extends Screen {
         } catch (Throwable ignored) {}
     }
 
-    private void drawRevisionFooter(GuiGraphics g, int px, int py, int pw, int ph) {
-        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
-        String left = en ? "consultation register" : "registro de consulta";
-        String right = en ? ("page " + (scrollY / 160 + 1)) : ("folio " + (scrollY / 160 + 1));
-        g.drawString(this.font, left, px + 18, py + ph - 18, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 118), false);
-        int rw = this.font.width(right);
-        g.drawString(this.font, right, px + pw - rw - 18, py + ph - 18, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 118), false);
-    }
 
 
     private void renderRow(GuiGraphics g, Row row, int x, int y, int maxW) {

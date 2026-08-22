@@ -1,7 +1,6 @@
 package com.eternalcraft.gripeverde.client.screens;
 
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
-import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.util.SmoothScroll;
@@ -133,36 +132,20 @@ public class DiaryVideoSettingsScreen extends VideoSettingsScreen {
 
         int railX = this.panelX + this.panelW - RAIL_W - 18;
         // v0.21.4: el aparato se agrupa por secciones (render / calidad / rendimiento)
-        DiaryChrome.drawInsetCard(g, this.font, railX, headerBottom, RAIL_W, 86,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "RENDER" : "RENDER",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Field adjustments" : "Ajustes de campo",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Sliders and toggles keep their vanilla behaviour while the chamber clarifies hierarchy." : "Los deslizadores y tiradores conservan comportamiento vanilla mientras la camara aclara la jerarquia.",
-            DiaryTheme.BRONZE);        DiaryChrome.drawValueRow(g, this.font, railX + 10, headerBottom + 70, RAIL_W - 20,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Canvas" : "Lienzo",
-            this.width + " x " + this.height, DiaryTheme.INK);
 
-        DiaryChrome.drawInsetCard(g, this.font, railX, headerBottom + 94, RAIL_W, 80,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "QUALITY" : "CALIDAD",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "GUI scaling" : "Escala GUI",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Small resolutions and high GUI scales remain legible through the same dossier layout." : "Resoluciones pequenas y escalas altas mantienen legibilidad bajo el mismo dossier.",
-            DiaryTheme.AMBER_FLAME);
-        DiaryChrome.drawValueRow(g, this.font, railX + 10, headerBottom + 140, RAIL_W - 20,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Scale" : "Escala",
-            String.valueOf(this.ownOptions.guiScale().get()), DiaryTheme.INK);
+
+
+
 
         if (this.panelH >= 330) {
             int perfY = headerBottom + 182;
-            DiaryChrome.drawInsetCard(g, this.font, railX, perfY, RAIL_W, 70,
-                com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "PERFORMANCE" : "RENDIMIENTO",
-                com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Frame pacing" : "Caudal de la vigilia",
-                com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "The gauge reads the client's current pacing; the cabinet only watches." : "El medidor lee el ritmo actual del cliente; el gabinete solo observa.",
-                DiaryTheme.PLAGUE_SICK);
+
             DiaryProgressBar.draw(g, railX + 10, perfY + 46, RAIL_W - 20, 14,
                 normalizedFps(), com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Pacing" : "Ritmo", DiaryProgressBar.Style.PLAGUE);
         }
 
         int listRight = railX - 8;
-        DiaryChrome.drawInnerRail(g, this.panelX + 18, headerBottom - 2, listRight - (this.panelX + 18), this.panelH - 128, DiaryTheme.BRONZE);
+
         if (this.reflectedList != null) {
             if (reveal < 0.995f) {
                 int revealBottom = this.panelY + Math.max(28, (int)(this.panelH * reveal));
@@ -182,7 +165,6 @@ public class DiaryVideoSettingsScreen extends VideoSettingsScreen {
             r.render(g, mouseX, mouseY, partialTick);
         }
     }
-
 
     /** v0.21.4: medidor de rendimiento (FPS del cliente, defensivo). */
     private float normalizedFps() {

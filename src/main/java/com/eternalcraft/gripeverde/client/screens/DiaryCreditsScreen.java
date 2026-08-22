@@ -69,11 +69,7 @@ public class DiaryCreditsScreen extends Screen {
 
         int bodyTop = ExpedientHeader.draw(g, this.font, panelX, panelY, panelW, this.title, reveal);
 
-        DiaryChrome.drawInsetCard(g, this.font, panelX + panelW - 138, bodyTop + 2, 118, 72,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "CERTIFICATE" : "CERTIFICADO",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "single chronicle" : "cronica unica",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Every name listed here belongs to the same night watch." : "Cada nombre de este registro pertenece a la misma vigilia.",
-            DiaryTheme.BRONZE);
+
 
         renderRegistryEntries(g, bodyTop + 8);
 

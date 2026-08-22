@@ -5,15 +5,16 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.21.20 - La tinta pesa menos**
+**v0.21.21 - Se termina la deuda de los no-op**
 
-Limpieza profunda tras la reversion: las cabeceras se redujeron a la
-llamada simple (mas de ciento cincuenta lineas de textos documentales
-muertos eliminadas), se retiraron metodos y variables que ya no alimentaban
-a nada (incluido el carril lateral del gabinete), y el grid de botones del
-gabinete quedo mas cerca de su cabecera. Sin cambios de gameplay ni de
-recursos. 59 clases Java, 25 idiomas, 35 eventos de sonido, 42 OGG y 0 PNG
-de contenedores. Documentacion sincronizada y version 0.21.20.
+Limpieza final de la reversion: se eliminaron las ultimas treinta llamadas
+a los carteles que ya no se dibujan, los tres helpers muertos que las
+atendian, las variables que los alimentaban y el pie de registro de la
+cronica. Las barras de desplazamiento de tres salas, que habian quedado
+referenciando medidas eliminadas, se anclaron al borde derecho del panel.
+Sin cambios visibles de fondo ni de gameplay. 59 clases Java, 25 idiomas,
+35 eventos de sonido, 42 OGG y 0 PNG de contenedores. Documentacion
+sincronizada y version 0.21.21.
 
 ## Resumen visible del Mod Menu
 
@@ -98,8 +99,8 @@ Reglas actuales:
 ## Documentacion
 
 - `CONTRIBUTING.md` - guia corta de contribucion (branch fija, no gameplay, validacion).
-- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.20.
-- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.20).
+- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.21.
+- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.21).
 - `KNOWN_ISSUES.md` - estado tecnico, decisiones activas, errores documentados, KIs.
 - `README.md` - esta portada.
 

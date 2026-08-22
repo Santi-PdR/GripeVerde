@@ -5,7 +5,6 @@ import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
-import com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar;
 import com.eternalcraft.gripeverde.client.widgets.DiaryTextField;
 import com.eternalcraft.gripeverde.client.widgets.DiaryToggle;
 import net.minecraft.client.OptionInstance;
@@ -45,7 +44,6 @@ public class DiaryControlsScreen extends Screen {
 
     private static final int PANEL_W = 520;
     private static final int PANEL_H = 278;
-    private static final int RAIL_W = 152;
 
     private final Screen lastScreen;
     private final Options options;
@@ -194,29 +192,12 @@ public class DiaryControlsScreen extends Screen {
         float reveal = DiaryChrome.reveal(this.openedAtMs, 240L);
         DiaryChrome.renderPanelBase(g, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.BRONZE, PaperTexture.PaperKind.TECHNICAL);
 
-        int headerBottom = ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW, this.title, reveal);
+        ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW, this.title, reveal);
 
-        int leftX = this.panelX + 18;
-        int railX = this.panelX + this.panelW - RAIL_W - 18;
-        int workW = railX - leftX - 14;
-        DiaryChrome.drawInnerRail(g, leftX, headerBottom - 2, workW, 118, DiaryTheme.BRONZE);
 
-        DiaryChrome.drawInsetCard(g, this.font, railX, headerBottom, RAIL_W, 78,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "PROTOCOL" : "PROTOCOLO",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Field discipline" : "Disciplina de campo",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
-                ? "Mouse and keybinds remain vanilla routes; the cabinet only reorganises their presentation."
-                : "Raton y teclas mantienen rutas vanilla; el gabinete solo reorganiza su presentacion.",
-            DiaryTheme.PLAGUE_SICK);
-        DiaryChrome.drawInsetCard(g, this.font, railX, headerBottom + 86, RAIL_W, 92,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "CURRENT STANCE" : "POSTURA ACTUAL",
-            buildControlSummaryTitle(),
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
-                ? "Toggle behaviour is visible at a glance, without opening any extra panel."
-                : "El comportamiento de alternancia se lee de un vistazo, sin abrir paneles extra.",
-            DiaryTheme.AMBER_FLAME);        DiaryChrome.drawValueRow(g, this.font, railX + 10, headerBottom + 146, RAIL_W - 20,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Main hand" : "Mano principal",
-            this.options.mainHand().get().getCaption().getString(), DiaryTheme.INK);
+
+
+
 
         int divY2 = this.panelY + this.panelH - 38;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
@@ -283,7 +264,6 @@ public class DiaryControlsScreen extends Screen {
         if (crouch || sprint) return "habitos de campo mixtos";
         return "las manos siguen directas";
     }
-
 
     @Override
     public void renderBackground(GuiGraphics g) {

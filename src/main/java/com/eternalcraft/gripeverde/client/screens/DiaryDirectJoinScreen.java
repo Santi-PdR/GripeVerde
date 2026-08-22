@@ -164,11 +164,7 @@ public class DiaryDirectJoinScreen extends Screen {
         int headerBottom = ExpedientHeader.draw(gfx, this.font, this.panelX, this.panelY, this.panelW, this.title, reveal);
 
         int noteX = this.panelX + this.panelW - 136;
-        DiaryChrome.drawInsetCard(gfx, this.font, noteX, headerBottom, 116, 78,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "ROUTE" : "RUTA",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Direct line" : "Linea directa",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "The address is written by hand and sent without entering the public registry." : "La direccion se escribe a mano y viaja sin entrar al registro publico.",
-            DiaryTheme.BRONZE);
+
 
         String ipLbl = ENTER_IP_LABEL.getString();
         gfx.drawString(this.font, ipLbl, this.panelX + 24, headerBottom + 10, DiaryChrome.INK_SUBTITLE, false);

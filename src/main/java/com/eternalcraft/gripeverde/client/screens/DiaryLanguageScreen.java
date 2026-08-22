@@ -159,12 +159,6 @@ public class DiaryLanguageScreen extends Screen {
 
 
 
-        int frameX = this.listX - 4;
-        int frameY = this.listY - 4;
-        int frameW = this.listW + 8;
-        int frameH = this.listH + 8;
-        DiaryChrome.drawInnerRail(g, frameX, frameY, frameW, frameH, DiaryTheme.BRONZE);
-
         if (this.languageList != null) {
             if (reveal < 0.995f) {
                 int revealBottom = this.panelY + Math.max(28, (int)(this.panelH * reveal));
@@ -177,16 +171,8 @@ public class DiaryLanguageScreen extends Screen {
         }
 
         int statusY = this.panelY + this.panelH - 92;
-        DiaryChrome.drawInsetCard(g, this.font, this.panelX + 18, statusY, 146, 42,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "CURRENT" : "ACTUAL",
-            safeCode(this.appliedLanguageCode),
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Language already loaded in the client." : "Idioma ya cargado en el cliente.",
-            DiaryTheme.BRONZE);
-        DiaryChrome.drawInsetCard(g, this.font, this.panelX + 172, statusY, 146, 42,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "PENDING" : "PENDIENTE",
-            safeCode(this.pendingLanguageCode),
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Selection under the reader's hand." : "Seleccion bajo la mano del lector.",
-            DiaryTheme.AMBER_FLAME);
+
+
         DiaryProgressBar.draw(g, this.panelX + 326, statusY + 14, this.panelW - 344, 14,
             Math.min(1f, this.languageEntries.isEmpty() ? 0f : this.languageEntries.size() / 25f),
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? (this.languageEntries.size() + " registries") : (this.languageEntries.size() + " registros"),

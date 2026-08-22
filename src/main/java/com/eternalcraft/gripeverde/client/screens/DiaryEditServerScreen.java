@@ -142,11 +142,7 @@ public class DiaryEditServerScreen extends Screen {
         int headerBottom = ExpedientHeader.draw(gfx, this.font, this.panelX, this.panelY, this.panelW, this.title, reveal);
 
         int noteX = this.panelX + this.panelW - 142;
-        DiaryChrome.drawInsetCard(gfx, this.font, noteX, headerBottom, 122, 94,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "ENTRY" : "FICHA",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Registry card" : "Tarjeta de registro",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Name and address remain on the same sheet, as every foreign lodging ought to." : "Nombre y direccion permanecen en la misma hoja, como corresponde a todo hospedaje extranjero.",
-            DiaryTheme.BRONZE);
+
 
         gfx.drawString(this.font, NAME_LABEL.getString(), this.panelX + 24, headerBottom + 10, DiaryChrome.INK_SUBTITLE, false);
         gfx.fill(this.panelX + 24, headerBottom + 24, noteX - 12, headerBottom + 25, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 42));

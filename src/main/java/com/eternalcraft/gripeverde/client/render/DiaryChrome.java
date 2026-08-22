@@ -4,9 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSelectionList;
-import net.minecraft.network.chat.Component;
 
-import java.util.List;
 
 /**
  * Helpers cosmeticos compartidos por todas las pantallas Diary.
@@ -30,8 +28,6 @@ public final class DiaryChrome {
     public static final int STEEL_MID   = 0xFF9A9EA8;
     public static final int PLAGUE      = 0xFF6A8A48;
 
-    public static final int CARD_BASE   = 0xF0E4D1AE;
-    public static final int CARD_BORDER = 0xA06B4A2E;
 
     // ── Interpolacion / reveal ──────────────────────────────────────────────
     public static float reveal(long openedAtMs, long durationMs) {
@@ -125,16 +121,7 @@ public final class DiaryChrome {
 
     // ── Capsulas y tarjetas de sistema ──────────────────────────────────────
 
-    public static void drawInsetCard(GuiGraphics gfx, Font font, int x, int y, int w, int h,
-                                     String kicker, String title, String body, int accent) {
-        // v0.21.16: carteles de sistema retirados por pedido del usuario.
-        // (la firma se conserva para no tocar los call sites)
-    }
 
-    public static void drawValueRow(GuiGraphics gfx, Font font, int x, int y, int w,
-                                    String label, String value, int accent) {
-        // v0.21.16: filas de valor de los carteles retiradas por pedido del usuario.
-    }
 
     public static void drawPanelScaffold(GuiGraphics gfx, int x, int y, int w, int h, int accent) {        drawPanelShadow(gfx, x, y, w, h);
         gfx.fill(x + 6, y + 6, x + w - 6, y + h - 6, DiaryTheme.withAlpha(0x00FFFFFF, 4));
@@ -163,9 +150,6 @@ public final class DiaryChrome {
         gfx.drawString(font, s, cx - w / 2, y, color, false);
     }
 
-    public static void drawInnerRail(GuiGraphics gfx, int x, int y, int w, int h, int accent) {
-        // v0.21.16: railes decorativos retirados por pedido del usuario.
-    }
 
     // ── Scrollbars ───────────────────────────────────────────────────────────
     public static void drawScrollThumb(GuiGraphics gfx, int scrollLeft,

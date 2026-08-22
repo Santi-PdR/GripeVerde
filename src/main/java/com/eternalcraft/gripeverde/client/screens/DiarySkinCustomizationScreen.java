@@ -7,7 +7,6 @@ import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton.Icon;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton.Variant;
-import com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -155,17 +154,13 @@ public class DiarySkinCustomizationScreen extends Screen {
         float reveal = DiaryChrome.reveal(this.openedAtMs, 240L);
         DiaryChrome.renderPanelBase(gfx, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.PLAGUE_SICK, PaperTexture.PaperKind.MEDICAL);
 
-        int headerBottom = ExpedientHeader.draw(gfx, this.font, this.panelX, this.panelY, this.panelW, this.title, reveal);
+        ExpedientHeader.draw(gfx, this.font, this.panelX, this.panelY, this.panelW, this.title, reveal);
 
         int railX = this.panelX + this.panelW - 156;
-        DiaryChrome.drawInsetCard(gfx, this.font, railX, headerBottom, 134, 94,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "MIRROR" : "ESPEJO",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Observation plate" : "Placa de observacion",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Garments and exposed features are presented as a field note, not a vanilla checklist." : "Prendas y rasgos expuestos se presentan como nota de campo, no como simple lista vanilla.",
-            DiaryTheme.PLAGUE_SICK);
+
         int workX = this.panelX + 18;
         int workW = railX - workX - 12;
-        DiaryChrome.drawInnerRail(gfx, workX, headerBottom - 2, workW, this.panelH - 126, DiaryTheme.BRONZE);
+
 
         super.render(gfx, mouseX, mouseY, delta);
 
@@ -202,8 +197,6 @@ public class DiarySkinCustomizationScreen extends Screen {
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(gfx, this.width);
         } catch (Throwable ignored) {}
     }
-
-
 
     private int mirrorX() { return this.panelX + this.panelW - 38; }
     private int mirrorY() { return this.panelY + 14; }

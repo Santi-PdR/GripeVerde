@@ -9,7 +9,6 @@ import com.eternalcraft.gripeverde.client.render.ExpedientHeader;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
-import com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar;
 import com.eternalcraft.gripeverde.client.widgets.DiaryTextField;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -297,7 +296,6 @@ public class DiaryArchiveScreen extends Screen {
         }
     }
 
-
     /** v0.21.13: sello de cera dorado del archivo completado. */
     private static void drawCompletionSeal(GuiGraphics g, int cx, int cy, int radius) {
         int gold = 0xFFB8860B;
@@ -342,11 +340,7 @@ public class DiaryArchiveScreen extends Screen {
         int maxW = panelW - 68;
         int lh = 12;
 
-        DiaryChrome.drawInsetCard(g, this.font, panelX + 18, panelY + 12, panelW - 36, panelH - 70,
-            en ? "RECOVERED PAPER" : "PAPEL RECUPERADO",
-            en ? "sealed transcript" : "transcripcion sellada",
-            en ? "The reading room isolates each recovered document from the general catalogue." : "La sala de consulta separa cada documento recuperado del catalogo general.",
-            DiaryTheme.BRONZE);
+
 
         if (DOC_TELEGRAM.equals(viewingDoc)) {
             ty = drawWrapped(g, textColor(0xFF6E1F16), ty, maxW, tx,

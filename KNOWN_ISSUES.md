@@ -1,5 +1,28 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.21.21 - Se termina la deuda de los no-op (2026-08-22)
+
+### Cambios cerrados
+- 30 llamadas no-op a drawInsetCard/drawInnerRail/drawValueRow + 3 a
+  drawOptionsGroup eliminadas (11 pantallas).
+- DiaryChrome: eliminados los 3 helpers no-op + CARD_BASE/CARD_BORDER.
+- Variables/bloques muertos fuera: Language frame*, Controls leftX/railX/
+  workW, Options content*, Sound rail*/listFrame*, RAIL_W, STATION_W.
+- Changelog: drawRevisionFooter (pie de registro v0.21.0) eliminado.
+- Fix scrollbars Chat/Online/Sound -> borde derecho del panel (referencias
+  a variables eliminadas).
+- 14 imports muertos + newline-final + trailing whitespace.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.20 -> 0.21.21.
+
+### Riesgos activos / KI nuevos
+- **KI-47 (v0.21.21)**: validar en cliente — Chat/Online/Sound con
+  scrollbar en el borde derecho y listas intactas.
+- KI-46, KI-45, KI-44, KI-41/43, KI-39/40 pendientes. KI-29 (pistas
+  MenuMusic) requiere OGGs del usuario.
+
+---
+
 ## v0.21.20 - La tinta pesa menos (2026-08-22)
 
 ### Cambios cerrados
