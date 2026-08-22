@@ -194,15 +194,7 @@ public class DiaryControlsScreen extends Screen {
         float reveal = DiaryChrome.reveal(this.openedAtMs, 240L);
         DiaryChrome.renderPanelBase(g, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.BRONZE, PaperTexture.PaperKind.TECHNICAL);
 
-        int headerBottom = ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT III" : "EXPEDIENTE III",
-            this.title,
-            "- " + Component.translatable("gripeverde.options.controls.subtitle").getString() + " -",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · FIELD MANUAL" : "EC-QV/1897 · MANUAL DE CAMPO",
-            Component.translatable("gripeverde.options.controls.flavor").getString(),
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "READY" : "PREPARADO",
-            DiaryTheme.BRONZE,
-            reveal);
+        int headerBottom = ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW, this.title, reveal);
 
         int leftX = this.panelX + 18;
         int railX = this.panelX + this.panelW - RAIL_W - 18;
@@ -292,14 +284,6 @@ public class DiaryControlsScreen extends Screen {
         return "las manos siguen directas";
     }
 
-    private float computeControlDiscipline() {
-        float score = 0f;
-        if (this.options.toggleCrouch().get()) score += 0.25f;
-        if (this.options.toggleSprint().get()) score += 0.25f;
-        if (!this.options.autoJump().get()) score += 0.25f;
-        if (!this.options.operatorItemsTab().get()) score += 0.25f;
-        return score;
-    }
 
     @Override
     public void renderBackground(GuiGraphics g) {

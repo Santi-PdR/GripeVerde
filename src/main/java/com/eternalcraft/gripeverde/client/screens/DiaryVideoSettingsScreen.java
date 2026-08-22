@@ -129,15 +129,7 @@ public class DiaryVideoSettingsScreen extends VideoSettingsScreen {
         float reveal = DiaryChrome.reveal(this.openedAtMs, 240L);
         DiaryChrome.renderPanelBase(g, this.panelX, this.panelY, this.panelW, this.panelH, DiaryChrome.STEEL_MID, PaperTexture.PaperKind.TECHNICAL);
 
-        int headerBottom = ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT VII" : "EXPEDIENTE VII",
-            Component.translatable("options.videoTitle"),
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "- optical and rendering apparatus -" : "- aparato optico y de render -",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · OBSERVATION APPARATUS" : "EC-QV/1897 · APARATO DE OBSERVACION",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "The scene remains vanilla; only the console changes." : "La escena sigue siendo vanilla; solo cambia la consola.",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "CALIBRATED" : "CALIBRADO",
-            DiaryTheme.BRONZE,
-            reveal);
+        int headerBottom = ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW, Component.translatable("options.videoTitle"), reveal);
 
         int railX = this.panelX + this.panelW - RAIL_W - 18;
         // v0.21.4: el aparato se agrupa por secciones (render / calidad / rendimiento)
@@ -191,13 +183,6 @@ public class DiaryVideoSettingsScreen extends VideoSettingsScreen {
         }
     }
 
-    private float normalizeFov() {
-        try {
-            return Math.max(0f, Math.min(1f, (this.ownOptions.fov().get() - 30f) / 80f));
-        } catch (Throwable ignored) {
-            return 0.5f;
-        }
-    }
 
     /** v0.21.4: medidor de rendimiento (FPS del cliente, defensivo). */
     private float normalizedFps() {

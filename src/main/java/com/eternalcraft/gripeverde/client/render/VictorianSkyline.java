@@ -601,7 +601,6 @@ public class VictorianSkyline {
         int totalH = endY - startY;
         int h1 = totalH / 3;
         int h2 = totalH / 3;
-        int h3 = totalH - h1 - h2;
 
         // Segmento 1 vertical (2px ancho)
         for (int y = startY; y < startY + h1; y++) {

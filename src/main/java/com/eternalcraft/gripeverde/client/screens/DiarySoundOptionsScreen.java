@@ -232,15 +232,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         float reveal = DiaryChrome.reveal(this.openedAtMs, 260L);
         DiaryChrome.renderPanelBase(g, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.AMBER_FLAME, PaperTexture.PaperKind.LEDGER);
 
-        int headerBottom = ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW,
-            Discoveries.isEnglish() ? "EXPEDIENT II" : "EXPEDIENTE II",
-            Component.translatable("options.sounds.title"),
-            "- " + Component.translatable("gripeverde.options.sound.subtitle").getString() + " -",
-            Discoveries.isEnglish() ? "EC-QV/1897 · ACOUSTIC ROOM" : "EC-QV/1897 · SALA ACUSTICA",
-            Component.translatable("gripeverde.options.sound.flavor").getString(),
-            MenuMusic.isDucking() ? (Discoveries.isEnglish() ? "DUCKING" : "ATENUANDO") : (Discoveries.isEnglish() ? "LIVE" : "EN VIVO"),
-            DiaryTheme.AMBER_FLAME,
-            reveal);
+        int headerBottom = ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW, Component.translatable("options.sounds.title"), reveal);
 
         int railX = this.panelX + this.panelW - RAIL_W - 18;
         int railY = headerBottom;

@@ -80,7 +80,6 @@ public class DiaryOptionsScreen extends Screen {
     // Panel calculado
     private int panelX, panelY, panelW, panelH;
     private int gridTop, col1X, col2X;
-    private int railX, railY, railW;
     private long openedAtMs = 0L;
 
     // ── v0.16.0: la mesa de trabajo responde ──
@@ -136,14 +135,11 @@ public class DiaryOptionsScreen extends Screen {
         panelY = (this.height - panelH) / 2;
 
         int cx = this.width / 2;
-        this.gridTop = panelY + PAD_TOP + TITLE_H + SUBTITLE_GAP + TITLE_GAP + 22;
+        this.gridTop = panelY + PAD_TOP + TITLE_H + SUBTITLE_GAP + TITLE_GAP + 11;
 
         int contentLeft = panelX + PAD_SIDES;
         this.col1X = contentLeft;
         this.col2X = this.col1X + BTN_W + GAP_X;
-        this.railW = INFO_RAIL_W;
-        this.railX = panelX + panelW - PAD_SIDES - railW;
-        this.railY = panelY + 92;
 
         addBtn(this.col1X, this.gridTop + row(0), "gripeverde.options.button.skin", DiaryButton.Icon.PALETTE, DiaryButton.SoundProfile.OPTION_OPEN, this::openSkin);
         addBtn(this.col2X, this.gridTop + row(0), "gripeverde.options.button.sound", DiaryButton.Icon.SOUND, DiaryButton.SoundProfile.OPTION_OPEN, this::openSound);
@@ -218,19 +214,9 @@ public class DiaryOptionsScreen extends Screen {
 
         float reveal = DiaryChrome.reveal(this.openedAtMs, 260L);
         DiaryChrome.renderPanelBase(g, panelX, panelY, panelW, panelH, DiaryTheme.PLAGUE_GREEN, PaperTexture.PaperKind.LEDGER);
+        ExpedientHeader.draw(g, this.font, panelX, panelY, panelW, this.title, reveal);
 
-        String reference = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · CENTRAL DESK" : "EC-QV/1897 · MESA CENTRAL";
-        String subtitle = "- " + Component.translatable("gripeverde.options.subtitle").getString() + " -";
-        String status = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "ACTIVE" : "ACTIVO";
-        int headerBottom = ExpedientHeader.draw(g, this.font, panelX, panelY, panelW,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT I" : "EXPEDIENTE I",
-            this.title,
-            subtitle,
-            reference,
-            currentFlavor,
-            status,
-            DiaryTheme.PLAGUE_SICK,
-            reveal);
+
 
         int contentLeft = this.col1X - 10;
         int contentRight = this.col2X + BTN_W + 10;
@@ -250,7 +236,6 @@ public class DiaryOptionsScreen extends Screen {
             DiaryTheme.AMBER_FLAME);
 
         // Carril lateral de estado
-        drawOptionsRail(g, reveal);
 
         int backY = panelY + panelH - PAD_BOTTOM - DRAWER_H - BACK_H;
         int divY2 = backY - 10;
@@ -279,34 +264,6 @@ public class DiaryOptionsScreen extends Screen {
         // v0.21.17: carteles de grupo retirados por pedido del usuario.
     }
 
-    private void drawOptionsRail(GuiGraphics g, float reveal) {
-        int found = 0;
-        int total = com.eternalcraft.gripeverde.client.lore.Discoveries.ALL.length;
-        try { found = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.discoveredCount(); } catch (Throwable ignored) {}
-        String locale = currentLanguageCode().toUpperCase(java.util.Locale.ROOT);
-        String locTitle = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "ACTIVE TONGUE" : "LENGUA ACTIVA";
-        String locBody = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Current registry and spoken district." : "Registro actual y distrito en uso.";
-        DiaryChrome.drawInsetCard(g, this.font, railX, railY, railW, 66, locTitle, locale, locBody, DiaryTheme.BRONZE);
-
-        int meterY = railY + 74;
-        DiaryChrome.drawInsetCard(g, this.font, railX, meterY, railW, 86,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "ACOUSTIC STATE" : "ESTADO ACUSTICO",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "music & room tone" : "musica y ambiente",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Music and room tone are carried through the whole cabinet." : "La musica y la resonancia atraviesan todo el gabinete.",
-            DiaryTheme.PLAGUE_SICK);
-
-        int archiveY = meterY + 94;
-        DiaryChrome.drawInsetCard(g, this.font, railX, archiveY, railW, 88,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "ARCHIVE" : "ARCHIVO",
-            (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Reading room progress" : "Progreso de la sala de consulta"),
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "The cabinet keeps count of every recovered card." : "El gabinete lleva la cuenta de cada ficha recuperada.",
-            DiaryTheme.REDCOAT);        DiaryChrome.drawValueRow(g, this.font, railX + 10, archiveY + 63, railW - 20,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Section count" : "Cantidad de secciones", "10", DiaryTheme.INK);
-
-        int sealY = archiveY + 96;
-        DiaryChrome.drawValueRow(g, this.font, railX + 10, sealY + 4, railW - 20,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "GUI scale" : "Escala GUI", String.valueOf(this.minecraft.options.guiScale().get()), DiaryTheme.BRONZE);
-    }
 
     private int drawerX() { return panelX + panelW - PAD_SIDES - 92; }
     private int drawerY() { return panelY + panelH - PAD_BOTTOM - DRAWER_H + 5; }

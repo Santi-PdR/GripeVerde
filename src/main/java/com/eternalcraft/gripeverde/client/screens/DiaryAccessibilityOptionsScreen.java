@@ -94,15 +94,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         float reveal = DiaryChrome.reveal(this.openedAtMs, 240L);
         DiaryChrome.renderPanelBase(gfx, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.PLAGUE_SICK, PaperTexture.PaperKind.OFFICIAL);
 
-        int headerBottom = ExpedientHeader.draw(gfx, this.font, this.panelX, this.panelY, this.panelW,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT VI" : "EXPEDIENTE VI",
-            Component.translatable("options.accessibility.title"),
-            "- " + Component.translatable("gripeverde.options.accessibility.subtitle").getString() + " -",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · OBSERVATION SHEET" : "EC-QV/1897 · HOJA DE OBSERVACION",
-            getRotatingAccFlavor(),
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "SUPPORTED" : "ASISTIDO",
-            DiaryTheme.PLAGUE_SICK,
-            reveal);
+        int headerBottom = ExpedientHeader.draw(gfx, this.font, this.panelX, this.panelY, this.panelW, Component.translatable("options.accessibility.title"), reveal);
 
         int railX = this.panelX + this.panelW - RAIL_W - 18;
         DiaryChrome.drawInsetCard(gfx, this.font, railX, headerBottom, RAIL_W, 84,

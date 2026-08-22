@@ -472,16 +472,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         int panelH = this.height - PANEL_MARGIN_V * 2;
         float reveal = DiaryChrome.reveal(this.openedAtMs, 240L);
         DiaryChrome.renderPanelBase(gfx, panelX, panelY, panelW, panelH, DiaryTheme.BRONZE, PaperTexture.PaperKind.OFFICIAL);
+        ExpedientHeader.draw(gfx, this.font, panelX, panelY, panelW, this.title, reveal);
 
-        int headerBottom = ExpedientHeader.draw(gfx, this.font, panelX, panelY, panelW,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT X" : "EXPEDIENTE X",
-            this.title,
-            "- " + Component.translatable("gripeverde.multiplayer.subtitle").getString() + " -",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · CONNECTION REGISTRY" : "EC-QV/1897 · REGISTRO DE CONEXIONES",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Known lodgings, road entries and dangerous addresses." : "Hospedajes conocidos, entradas de camino y direcciones peligrosas.",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "LIVE" : "EN VIVO",
-            DiaryTheme.BRONZE,
-            reveal);
+
 
         // Lista vanilla (con sus favicons, ping, MOTD, etc.)
         if (this.vanillaList != null) {

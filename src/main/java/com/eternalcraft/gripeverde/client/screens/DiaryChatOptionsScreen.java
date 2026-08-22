@@ -106,23 +106,8 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         float reveal = DiaryChrome.reveal(this.openedAtMs, 240L);
         DiaryChrome.renderPanelBase(g, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.BRONZE, PaperTexture.PaperKind.CORRESPONDENCE);
 
-        int headerBottom = ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT V" : "EXPEDIENTE V",
-            Component.translatable("options.chat.title"),
-            "- " + Component.translatable("gripeverde.options.chat.subtitle").getString() + " -",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · CORRESPONDENCE" : "EC-QV/1897 · CORRESPONDENCIA",
-            getRotatingChatFlavor(),
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "OPEN CHANNEL" : "CANAL ABIERTO",
-            DiaryTheme.BRONZE,
-            reveal);
-
-        int rackX = this.panelX + this.panelW - RACK_W - 18;
-        int rackY = headerBottom - 2;
 
 
-        int listFrameX = this.panelX + 18;
-        int listFrameW = rackX - listFrameX - 14;
-        DiaryChrome.drawInnerRail(g, listFrameX, headerBottom - 2, listFrameW, this.panelH - 122, DiaryTheme.BRONZE);
         if (this.list != null) {
             if (reveal < 0.995f) {
                 int revealBottom = this.panelY + Math.max(28, (int)(this.panelH * reveal));

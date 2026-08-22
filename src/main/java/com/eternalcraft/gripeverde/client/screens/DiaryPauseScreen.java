@@ -480,12 +480,8 @@ public class DiaryPauseScreen extends PauseScreen {
         g.fill(sx - 6, py + 11, sx + sw + 6, py + 24, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 28));
         g.fill(sx - 6, py + 11, sx + sw + 6, py + 12, DiaryTheme.BRONZE_DARK);
         g.drawString(this.font, state, sx, py + 15, DiaryTheme.INK, false);
+    }
 
-        long minutes = (System.currentTimeMillis() - pauseOpenedAtMs) / 60000L;
-        float calm = Math.max(0f, Math.min(1f, 1f - minutes / 20f));
-        int barX = px + 18;
-        int barY = py + panelH() - 54;
-        int barW = panelW() - 36;    }
 
     private void drawPanelTitle(GuiGraphics g, int px, int py) {
         String title = Component.translatable("gripeverde.pause.title").getString();
@@ -614,7 +610,6 @@ public class DiaryPauseScreen extends PauseScreen {
 
         int black = 0xFF0A0503;
         int darkGray = 0xFF1F1408;
-        int highlight = DiaryTheme.SEPIA_DARK;
         int eye = 0xFFD4941E;  // ojo ambar
 
         // Cuerpo principal (elipse aproximada)
@@ -712,7 +707,6 @@ public class DiaryPauseScreen extends PauseScreen {
 
         // Halo (cálido, envuelve todo)
         int haloAlpha = 60 + (flameFrame * 15);
-        int haloC = DiaryTheme.withAlpha(flameHalo, haloAlpha);
         // Halo circular grande
         for (int dy = -8; dy <= 8; dy++) {
             for (int dx = -8; dx <= 8; dx++) {

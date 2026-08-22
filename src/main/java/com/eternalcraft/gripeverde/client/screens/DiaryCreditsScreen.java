@@ -67,15 +67,7 @@ public class DiaryCreditsScreen extends Screen {
         drawOfficialFrame(g);
         DiaryChrome.drawCornerOrnaments(g, panelX, panelY, panelW, panelH);
 
-        int bodyTop = ExpedientHeader.draw(g, this.font, panelX, panelY, panelW,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT IX" : "EXPEDIENTE IX",
-            this.title,
-            "- " + Component.translatable("gripeverde.options.credits.subtitle").getString() + " -",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · FINAL ARCHIVE" : "EC-QV/1897 · ARCHIVO FINAL",
-            Component.translatable("gripeverde.options.credits.flavor").getString(),
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "SEALED" : "SELLADO",
-            DiaryTheme.BRONZE,
-            reveal);
+        int bodyTop = ExpedientHeader.draw(g, this.font, panelX, panelY, panelW, this.title, reveal);
 
         DiaryChrome.drawInsetCard(g, this.font, panelX + panelW - 138, bodyTop + 2, 118, 72,
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "CERTIFICATE" : "CERTIFICADO",
@@ -158,7 +150,6 @@ public class DiaryCreditsScreen extends Screen {
 
     private void renderRegistryEntries(GuiGraphics g, int startY) {
         int left = panelX + 24;
-        int lineH = 11;
         int y = startY;
 
         // Section helper
@@ -178,7 +169,6 @@ public class DiaryCreditsScreen extends Screen {
     }
 
     private int drawSection(GuiGraphics g, int x, int y, String label, String value) {
-        String line = label + ":  " + value;
         g.drawString(this.font, label + ":", x, y, DiaryTheme.withAlpha(DiaryTheme.INK, 210), false);
         int labelW = this.font.width(label + ":  ");
         g.drawString(this.font, value, x + labelW, y, DiaryTheme.INK_FADED, false);

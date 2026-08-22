@@ -161,16 +161,7 @@ public class DiaryDirectJoinScreen extends Screen {
         float reveal = DiaryChrome.reveal(this.openedAtMs, 220L);
         DiaryChrome.renderPanelBase(gfx, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.BRONZE, PaperTexture.PaperKind.OFFICIAL);
 
-        boolean ready = this.selectButton != null && this.selectButton.active;
-        int headerBottom = ExpedientHeader.draw(gfx, this.font, this.panelX, this.panelY, this.panelW,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT XII" : "EXPEDIENTE XII",
-            this.title,
-            "- " + Component.translatable("gripeverde.direct.subtitle").getString() + " -",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · UNMAPPED DOOR" : "EC-QV/1897 · PUERTA SIN MAPA",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Enter a foreign address as if filling a sealed field form." : "Ingrese una direccion extranjera como quien llena un formulario sellado.",
-            ready ? (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "READY" : "LISTO") : (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "DRAFT" : "BORRADOR"),
-            DiaryTheme.BRONZE,
-            reveal);
+        int headerBottom = ExpedientHeader.draw(gfx, this.font, this.panelX, this.panelY, this.panelW, this.title, reveal);
 
         int noteX = this.panelX + this.panelW - 136;
         DiaryChrome.drawInsetCard(gfx, this.font, noteX, headerBottom, 116, 78,

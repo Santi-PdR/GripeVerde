@@ -155,16 +155,9 @@ public class DiaryLanguageScreen extends Screen {
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
         float reveal = DiaryChrome.reveal(this.openedAtMs, 240L);
         DiaryChrome.renderPanelBase(g, panelX, panelY, panelW, panelH, DiaryTheme.BRONZE, PaperTexture.PaperKind.ARCHIVE);
+        ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW, this.title, reveal);
 
-        int headerBottom = ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT IV" : "EXPEDIENTE IV",
-            this.title,
-            "- " + Component.translatable("gripeverde.options.language.subtitle").getString() + " -",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · LINGUISTIC ARCHIVE" : "EC-QV/1897 · ARCHIVO LINGUISTICO",
-            Component.translatable("gripeverde.options.language.flavor").getString(),
-            this.applyingLanguage ? (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "APPLYING" : "APLICANDO") : (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "INDEXED" : "INDEXADO"),
-            DiaryTheme.BRONZE,
-            reveal);
+
 
         int frameX = this.listX - 4;
         int frameY = this.listY - 4;

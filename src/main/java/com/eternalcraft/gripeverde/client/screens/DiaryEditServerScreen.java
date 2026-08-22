@@ -139,16 +139,7 @@ public class DiaryEditServerScreen extends Screen {
         float reveal = DiaryChrome.reveal(this.openedAtMs, 220L);
         DiaryChrome.renderPanelBase(gfx, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.BRONZE, PaperTexture.PaperKind.OFFICIAL);
 
-        boolean ready = this.doneButton != null && this.doneButton.active;
-        int headerBottom = ExpedientHeader.draw(gfx, this.font, this.panelX, this.panelY, this.panelW,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT XI" : "EXPEDIENTE XI",
-            this.title,
-            "- " + Component.translatable("gripeverde.edit.subtitle").getString() + " -",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · FOREIGN ENTRY" : "EC-QV/1897 · ENTRADA EXTRANJERA",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "A server ledger written by hand and archived under one seal." : "Una ficha de servidor escrita a mano y archivada bajo un mismo sello.",
-            ready ? (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "REGISTERABLE" : "REGISTRABLE") : (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "INCOMPLETE" : "INCOMPLETO"),
-            DiaryTheme.BRONZE,
-            reveal);
+        int headerBottom = ExpedientHeader.draw(gfx, this.font, this.panelX, this.panelY, this.panelW, this.title, reveal);
 
         int noteX = this.panelX + this.panelW - 142;
         DiaryChrome.drawInsetCard(gfx, this.font, noteX, headerBottom, 122, 94,

@@ -271,15 +271,7 @@ public class ChangelogScreen extends Screen {
         com.eternalcraft.gripeverde.client.render.PaperTexture.drawClean(g, px, py, pw, ph, com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.ARCHIVE);
 
 
-        int headerBottom = ExpedientHeader.draw(g, this.font, px, py, pw,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT XV" : "EXPEDIENTE XV",
-            this.title,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "- revision register -" : "- registro de revisiones -",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · SEALED CHRONICLE" : "EC-QV/1897 · CRONICA SELLADA",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Filed notices arranged in the order the city learned to speak." : "Partes archivados en el orden en que la ciudad aprendio a hablar.",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "OPEN FOLIO" : "FOLIO ABIERTO",
-            DiaryTheme.BRONZE,
-            reveal);
+        int headerBottom = ExpedientHeader.draw(g, this.font, px, py, pw, this.title, reveal);
 
         cy = Math.max(cy, headerBottom - 2);
         ch = contentH() - Math.max(0, headerBottom - contentY() - 2);

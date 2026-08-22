@@ -141,7 +141,7 @@ public class MenuMusic {
 
         // Si llegamos aqui es porque o no esta activo, o la instancia murio (ej: al salir de un server)
         if (DEBUG_LOGGING && active) LOGGER.info("[MenuMusic v3] Reiniciando porque la instancia previa no existe o no suena");
-        
+
         stop(); // Limpieza de seguridad
         if (mc == null) return;
 
@@ -318,17 +318,7 @@ public class MenuMusic {
     }
 
     /** 0..1 donde 1 = volumen normal y 0 = completamente apagado. */
-    public static float getVisualMixLevel() {
-        if (!active) return 0f;
-        return Math.max(0f, Math.min(1f, getUserVolume() * computeDuckMultiplier(System.currentTimeMillis())));
-    }
 
-    /** 0..1 del progreso del crossfade actual, util para UI. */
-    public static float getCrossfadeVisual() {
-        if (!crossfading) return 0f;
-        long elapsed = System.currentTimeMillis() - crossfadeStartMs;
-        return Math.max(0f, Math.min(1f, elapsed / (float) CROSSFADE_MS));
-    }
     // === Internos ===
 
     private static void updateVolumes(long now) {

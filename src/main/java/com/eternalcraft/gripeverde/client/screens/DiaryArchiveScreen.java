@@ -149,15 +149,7 @@ public class DiaryArchiveScreen extends Screen {
             return;
         }
 
-        int headerBottom = ExpedientHeader.draw(g, this.font, panelX, panelY, panelW,
-            en ? "EXPEDIENT XIV" : "EXPEDIENTE XIV",
-            Component.literal(en ? "Reading Room" : "Sala de consulta"),
-            en ? "- the chronicler's cards -" : "- las fichas del cronista -",
-            en ? "EC-QV/1897 · CONSULTATION FILE" : "EC-QV/1897 · FICHA DE CONSULTA",
-            en ? "Recovered observations filed by the same diseased office." : "Observaciones recuperadas y archivadas por la misma oficina enferma.",
-            found >= total ? (en ? "COMPLETE" : "COMPLETO") : (en ? "CATALOGUED" : "CATALOGADO"),
-            DiaryTheme.BRONZE,
-            reveal);
+        int headerBottom = ExpedientHeader.draw(g, this.font, panelX, panelY, panelW, Component.literal(en ? "Reading Room" : "Sala de consulta"), reveal);
 
         int progressBoxX = panelX + panelW - 162;
 

@@ -1,5 +1,14 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.20 - La tinta pesa menos
+
+Registro tecnico: limpieza profunda tras la reversion. Las cabeceras se
+redujeron a la llamada simple (se eliminaron mas de ciento cincuenta lineas
+de textos documentales muertos), se retiraron metodos y variables que ya no
+alimentaban a nada (incluido el carril lateral del gabinete), y el grid de
+botones del gabinete quedo mas cerca de su cabecera. Sin cambios de
+gameplay ni de recursos.
+
 ## v0.21.19 - Se corrigen scrolls y posiciones tras la reversion
 
 Registro tecnico: tras retirar los carteles y reducir las cabeceras al

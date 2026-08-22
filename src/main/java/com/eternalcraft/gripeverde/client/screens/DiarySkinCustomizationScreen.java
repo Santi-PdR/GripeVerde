@@ -155,16 +155,7 @@ public class DiarySkinCustomizationScreen extends Screen {
         float reveal = DiaryChrome.reveal(this.openedAtMs, 240L);
         DiaryChrome.renderPanelBase(gfx, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.PLAGUE_SICK, PaperTexture.PaperKind.MEDICAL);
 
-        float visibleRatio = computeVisibleRatio();
-        int headerBottom = ExpedientHeader.draw(gfx, this.font, this.panelX, this.panelY, this.panelW,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT VII" : "EXPEDIENTE VII",
-            this.title,
-            "- " + Component.translatable("gripeverde.options.skin.subtitle").getString() + " -",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · OBSERVATION MIRROR" : "EC-QV/1897 · ESPEJO DE OBSERVACION",
-            Component.translatable("gripeverde.options.skin.flavor").getString(),
-            visibleRatio >= 0.75f ? (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "COMPLETE VIEW" : "VISTA COMPLETA") : (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "PARTIAL VIEW" : "VISTA PARCIAL"),
-            DiaryTheme.PLAGUE_SICK,
-            reveal);
+        int headerBottom = ExpedientHeader.draw(gfx, this.font, this.panelX, this.panelY, this.panelW, this.title, reveal);
 
         int railX = this.panelX + this.panelW - 156;
         DiaryChrome.drawInsetCard(gfx, this.font, railX, headerBottom, 134, 94,
@@ -213,13 +204,6 @@ public class DiarySkinCustomizationScreen extends Screen {
     }
 
 
-    private float computeVisibleRatio() {
-        int enabled = 0;
-        for (PlayerModelPart part : PlayerModelPart.values()) {
-            if (this.options.isModelPartEnabled(part)) enabled++;
-        }
-        return enabled / (float) PlayerModelPart.values().length;
-    }
 
     private int mirrorX() { return this.panelX + this.panelW - 38; }
     private int mirrorY() { return this.panelY + 14; }

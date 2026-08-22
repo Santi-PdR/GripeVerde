@@ -1,5 +1,32 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.21.20 - La tinta pesa menos (2026-08-22)
+
+### Cambios cerrados
+- `ExpedientHeader`: sobrecarga simple; 16 pantallas migradas; ~150 lineas
+  de argumentos muertos eliminadas.
+- Metodos muertos fuera: computeControlDiscipline, normalizeFov,
+  computeVisibleRatio, getVisualMixLevel, getCrossfadeVisual.
+- Variables muertas fuera: rail completo de Options (drawOptionsRail +
+  campos), bloques no-op de Online/Chat, headerBottom sin asignacion en
+  Language/Multiplayer/Options/Chat, ready (DirectJoin/EditServer), barra
+  stillness + highlight + haloC (Pause; se restauro el cierre de metodo),
+  lineH/line (Credits), angle (Poster), h3 (Skyline).
+- Options gridTop 77 -> 66.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.19 -> 0.21.20 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-46 (v0.21.20)**: validar en cliente — salas con titulo + contenido
+  intactos tras la limpieza (especialmente Pause, Options, Chat y Online).
+- KI-42 (deuda): quedan call sites no-op de drawInsetCard/drawInnerRail/
+  drawValueRow en varias pantallas (no dibujan, compilan); limpieza total
+  en pasada futura.
+- KI-45, KI-44, KI-41/43, KI-39/40 pendientes. KI-29 (pistas MenuMusic)
+  requiere OGGs del usuario.
+
+---
+
 ## v0.21.19 - Se corrigen scrolls y posiciones tras la reversion (2026-08-22)
 
 ### Cambios cerrados

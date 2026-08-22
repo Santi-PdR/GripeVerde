@@ -114,24 +114,6 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
         float reveal = DiaryChrome.reveal(this.openedAtMs, 240L);
         DiaryChrome.renderPanelBase(g, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.BRONZE, PaperTexture.PaperKind.OFFICIAL);
 
-        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
-        int headerBottom = ExpedientHeader.draw(g, this.font, this.panelX, this.panelY, this.panelW,
-            en ? "EXPEDIENT VIII" : "EXPEDIENTE VIII",
-            this.title,
-            "- " + Component.translatable("gripeverde.options.online.subtitle").getString() + " -",
-            en ? "EC-QV/1897 · SIGNAL OFFICE" : "EC-QV/1897 · OFICINA DE SENALES",
-            Component.translatable("gripeverde.options.online.flavor").getString(),
-            en ? "RELAY OPEN" : "RELE ABIERTO",
-            DiaryTheme.BRONZE,
-            reveal);
-
-        int stationX = this.panelX + this.panelW - STATION_W - 18;
-        int stationY = headerBottom - 2;
-
-
-        int boardX = this.panelX + 18;
-        int boardW = stationX - boardX - 14;
-        DiaryChrome.drawInnerRail(g, boardX, headerBottom - 2, boardW, this.panelH - 122, DiaryTheme.BRONZE);
         if (this.list != null) {
             if (reveal < 0.995f) {
                 int revealBottom = this.panelY + Math.max(28, (int)(this.panelH * reveal));

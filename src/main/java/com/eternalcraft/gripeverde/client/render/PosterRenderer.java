@@ -427,7 +427,6 @@ public class PosterRenderer {
         // Rotacion aproximada: shift horizontal por linea
         g.pose().pushPose();
         g.pose().translate(sx, sy, 0);
-        double angle = -0.2 + rnd.nextDouble() * 0.4;
         g.pose().translate(tw / 2.0, 3, 0);
         // No podemos rotar sin transformer, simulamos con offset diagonal
         g.pose().translate(-tw / 2.0, -3, 0);

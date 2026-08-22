@@ -3,8 +3,39 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/01a025d1-gripeverde` (sync con `main` v0.21.2, commit `afe8e83`).
-- Version: `0.21.19`.
+- Version: `0.21.20`.
 - Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks, integrando el contexto maestro y sincronizacion documental de v0.17.2.
+
+### DECISION 2026-08-22: v0.21.20 - La tinta pesa menos (limpieza post-reversion)
+
+El usuario pidio "mejora todo lo que veas". Se hizo una pasada de limpieza
+profunda sobre el codigo que quedo tras la reversion de interfaz:
+
+- `ExpedientHeader`: nueva sobrecarga simple `draw(gfx, font, x, y, w,
+  title, reveal)`. Las 16 pantallas migradas a la llamada simple;
+  eliminados ~150 lineas de argumentos muertos ("EXPEDIENT...",
+  "EC-QV/1897 · ...", subtitulos, flavors y los estados REGISTERABLE /
+  INCOMPLETO / LISTO / READY / LIVE / PENDING / APPLYING / INDEXED /
+  CALIBRADO...). La firma larga delega en la simple (compat).
+- Metodos muertos eliminados: `computeControlDiscipline` (Controls),
+  `normalizeFov` (Video), `computeVisibleRatio` + variable `visibleRatio`
+  (Skin), `getVisualMixLevel` / `getCrossfadeVisual` (MenuMusic).
+- Variables locales muertas eliminadas: Options (reference/subtitle/status
+  del header, rail completo `drawOptionsRail` + campos railX/railY/railW),
+  Online (en/stationX/stationY + bloque board no-op), Chat (rackX/rackY +
+  bloque rail no-op), Language/Multiplayer/Options/Chat (headerBottom sin
+  asignacion), DirectJoin/EditServer (ready), Pause (bloque de la barra
+  stillness + highlight + haloC; se restauro el cierre de metodo que la
+  limpieza habia comido), Credits (lineH/line), PosterRenderer (angle),
+  VictorianSkyline (h3).
+- Options gridTop 77 -> 66 (acercar el grid al header simple).
+- Resultado: 23 archivos, -252 lineas netas; cero variables locales sin
+  uso; balance de llaves/parentesis OK; trailing whitespace limpio.
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.20.
+- Validacion pendiente en cliente real (KI-46): revisar que todas las
+  salas siguen mostrando su titulo + contenido y que nada se rompio por la
+  limpieza (especialmente Pause, Options, Chat y Online).
 
 ### DECISION 2026-08-22: v0.21.19 - Se corrigen scrolls y posiciones tras la reversion
 
@@ -678,9 +709,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.21.19
-- build.gradle: version = '0.21.19'
-- GripeVerdeMod.VERSION: "0.21.19"
+- Version estable actual: v0.21.20
+- build.gradle: version = '0.21.20'
+- GripeVerdeMod.VERSION: "0.21.20"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10 (no se han publicado tags desde el ciclo v0.13.x; los bumps v0.14-v0.17 quedaron sin tag)
 - Working tree esperado al retomar: limpio

@@ -136,15 +136,7 @@ public class DiaryConfirmScreen extends ConfirmScreen {
         float reveal = DiaryChrome.reveal(this.openedAtMs, 220L);
         DiaryChrome.renderPanelBase(gfx, this.panelX, this.panelY, this.panelW, this.panelH, DiaryTheme.REDCOAT_DARK, PaperTexture.PaperKind.OFFICIAL);
 
-        int headerBottom = ExpedientHeader.draw(gfx, this.font, this.panelX, this.panelY, this.panelW,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EXPEDIENT XIII" : "EXPEDIENTE XIII",
-            this.title,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "- authorization required -" : "- autorizacion requerida -",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · PERMIT SHEET" : "EC-QV/1897 · HOJA DE PERMISO",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "The order below will only be filed if signed by your hand." : "La orden de abajo solo se archivara si la firma vuestra mano.",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "" : "",
-            DiaryTheme.REDCOAT_DARK,
-            reveal);
+        int headerBottom = ExpedientHeader.draw(gfx, this.font, this.panelX, this.panelY, this.panelW, this.title, reveal);
 
         if (this.ownMultilineMessage == null && this.ownMessage != null) {
             this.ownMultilineMessage = MultiLineLabel.create(this.font, this.ownMessage, this.panelW - 74);
