@@ -59,6 +59,7 @@ public class DiaryPauseScreen extends PauseScreen {
     // v0.21.27: Random cacheado para texturas (evita crear new Random cada frame)
     private static final java.util.Random PAPER_RNG = new java.util.Random();
     private static final java.util.Random BLOOD_RNG = new java.util.Random();
+    private static final java.util.Random BREATH_RNG = new java.util.Random();
 
     // ── v0.16.0: la pausa responde ──
     private boolean candleOut = false;
@@ -157,9 +158,9 @@ public class DiaryPauseScreen extends PauseScreen {
             if (breathUntilMs == 0L && now >= nextBreathMs) {
                 breathStartMs = now;
                 breathUntilMs = now + 4600L;
-                breathCx = panelX() + 24 + new java.util.Random(now).nextInt(Math.max(10, panelW() - 48));
-                breathCy = panelY() + 20 + new java.util.Random(now + 7).nextInt(Math.max(10, panelH() - 60));
-                nextBreathMs = now + 26_000L + new java.util.Random(now).nextLong() % 20_000L;
+                breathCx = panelX() + 24 + BREATH_RNG.nextInt(Math.max(10, panelW() - 48));
+                breathCy = panelY() + 20 + BREATH_RNG.nextInt(Math.max(10, panelH() - 60));
+                nextBreathMs = now + 26_000L + BREATH_RNG.nextLong() % 20_000L;
                 if (nextBreathMs < now) nextBreathMs = now + 30_000L;
                 com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
                     com.eternalcraft.gripeverde.client.lore.Discoveries.BREATH);
@@ -177,10 +178,10 @@ public class DiaryPauseScreen extends PauseScreen {
                 }
                 if (shadowUntilMs > 0L && now >= shadowUntilMs) {
                     shadowUntilMs = 0L;
-                    nextShadowMs = now + 90_000L + (long)(Math.random() * 120_000L);
+                    nextShadowMs = now + 90_000L + (long)(BREATH_RNG.nextDouble() * 120_000L);
                 }
                 if (nextShadowMs == 0L && shadowUntilMs == 0L) {
-                    nextShadowMs = now + 60_000L + (long)(Math.random() * 90_000L);
+                    nextShadowMs = now + 60_000L + (long)(BREATH_RNG.nextDouble() * 90_000L);
                 }
             }
         } catch (Throwable ignored) {}

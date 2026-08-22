@@ -361,13 +361,14 @@ public class DiaryTitleScreen extends Screen {
     }
 
     /** Polvo por ausencia larga: solo la primera vigilia del regreso. */
+    private static final java.util.Random DUST_RNG = new java.util.Random();
     private void drawDustIfDue(GuiGraphics g) {
         if (!dustThisSession) return;
-        java.util.Random rng = new java.util.Random(0xD05E7L ^ (long)this.width);
+        DUST_RNG.setSeed(0xD05E7L ^ (long)this.width);
         for (int i = 0; i < 40; i++) {
-            int x = rng.nextInt(Math.max(1, this.width));
-            int y = rng.nextInt(Math.max(1, this.height));
-            int al = 14 + rng.nextInt(16);
+            int x = DUST_RNG.nextInt(Math.max(1, this.width));
+            int y = DUST_RNG.nextInt(Math.max(1, this.height));
+            int al = 14 + DUST_RNG.nextInt(16);
             g.fill(x, y, x + 1, y + 1, (al << 24) | 0x9A938A);
         }
     }
@@ -920,6 +921,7 @@ public class DiaryTitleScreen extends Screen {
     private final float[][] eggParticles = new float[EGG_PARTICLE_COUNT][5];  // x, y, vx, vy, alpha
     private long eggParticlesUntilMs = 0L;
     private static final java.util.Random EASTER_RNG = new java.util.Random();
+    private static final java.util.Random PARTICLE_RNG = new java.util.Random();
 
     private void handleLogoClick() {
         long now = System.currentTimeMillis();
@@ -947,10 +949,10 @@ public class DiaryTitleScreen extends Screen {
         int logoCx = this.width / 2;
         int logoCy = 45;
         for (int p = 0; p < EGG_PARTICLE_COUNT; p++) {
-            eggParticles[p][0] = logoCx + (float)(Math.random() * 34 - 17);
-            eggParticles[p][1] = logoCy + (float)(Math.random() * 12);
-            eggParticles[p][2] = (float)(Math.random() * 1.6 - 0.8);
-            eggParticles[p][3] = (float)(Math.random() * 0.9 + 0.8);
+            eggParticles[p][0] = logoCx + (float)(PARTICLE_RNG.nextDouble() * 34 - 17);
+            eggParticles[p][1] = logoCy + (float)(PARTICLE_RNG.nextDouble() * 12);
+            eggParticles[p][2] = (float)(PARTICLE_RNG.nextDouble() * 1.6 - 0.8);
+            eggParticles[p][3] = (float)(PARTICLE_RNG.nextDouble() * 0.9 + 0.8);
             eggParticles[p][4] = 1.0f;
         }
 
