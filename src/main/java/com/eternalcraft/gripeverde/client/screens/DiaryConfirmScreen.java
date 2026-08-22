@@ -142,7 +142,7 @@ public class DiaryConfirmScreen extends ConfirmScreen {
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "- authorization required -" : "- autorizacion requerida -",
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "EC-QV/1897 · PERMIT SHEET" : "EC-QV/1897 · HOJA DE PERMISO",
             com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "The order below will only be filed if signed by your hand." : "La orden de abajo solo se archivara si la firma vuestra mano.",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "PENDING" : "PENDIENTE",
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "" : "",
             DiaryTheme.REDCOAT_DARK,
             reveal);
 
@@ -151,20 +151,8 @@ public class DiaryConfirmScreen extends ConfirmScreen {
         }
         int msgY = headerBottom + 8;
         if (this.ownMultilineMessage != null) {
-            this.ownMultilineMessage.renderCentered(gfx, this.width / 2, msgY, this.font.lineHeight + 2, DiaryChrome.INK_SUBTITLE);
+            this.ownMultilineMessage.renderCentered(gfx, this.width / 2, msgY, this.font.lineHeight + 2, DiaryTheme.INK);
         }
-        int signY = this.panelY + this.panelH - 62;
-        gfx.drawString(this.font,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "authorising hand" : "mano autorizante",
-            this.panelX + 26, signY - 10, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 135), false);
-        gfx.fill(this.panelX + 24, signY, this.panelX + this.panelW - 24, signY + 1, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 58));
-
-        DiaryChrome.drawInsetCard(gfx, this.font, this.panelX + this.panelW - 138, headerBottom + 2, 118, 62,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "ORDER" : "ORDEN",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Awaiting signature" : "A la espera de firma",
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Approval and refusal are treated as separate acts of filing." : "Aprobar y rehusar se consideran actos distintos de archivo.",
-            DiaryTheme.REDCOAT_DARK);
-
         try {
             if (com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("destroys") >= 3) {
                 String line = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()

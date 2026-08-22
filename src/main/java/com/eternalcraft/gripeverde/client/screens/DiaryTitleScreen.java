@@ -39,8 +39,6 @@ public class DiaryTitleScreen extends Screen {
     private long lastInteractionMs = System.currentTimeMillis();
     private boolean dustThisSession = false;
     private boolean dawnActive = false;
-    private static long greetingShownUntilMs = 0L;
-    private static String greetingText = null;
     private long wantedPressStartMs = 0L;
     private boolean wantedPressing = false;
 
@@ -109,22 +107,17 @@ public class DiaryTitleScreen extends Screen {
                 boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
                 long absence = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.sessionAbsenceDays();
                 if (kind == 1) {
-                    greetingText = en ? "The cabinet opens for the first time." : "El gabinete abre por primera vez.";
                     com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
                         com.eternalcraft.gripeverde.client.lore.Marginalia.N_FIRST_NIGHT);
                 } else if (kind == 2 && absence >= 7L) {
-                    greetingText = en ? "The dust did not ask why you returned." : "El polvo no pregunto por que volvias.";
                     dustThisSession = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.consumeDust();
                     com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
                         com.eternalcraft.gripeverde.client.lore.Discoveries.DUST);
                     com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
                         com.eternalcraft.gripeverde.client.lore.Marginalia.N_DUST);
                 } else if (kind == 2) {
-                    greetingText = en ? "The cabinet remembers your hand." : "El gabinete recuerda tu mano.";
                 } else if (kind == 3) {
-                    greetingText = en ? "Another vigil in the same night." : "Otra vigilia en la misma noche.";
                 }
-                if (greetingText != null) greetingShownUntilMs = System.currentTimeMillis() + 12_000L;
                 if (com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.consumeAnniversary()) {
                     com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
                         com.eternalcraft.gripeverde.client.lore.Discoveries.ANNIVERSARY);
@@ -340,7 +333,7 @@ public class DiaryTitleScreen extends Screen {
             com.eternalcraft.gripeverde.client.lore.HiddenCipher.drawPereiraFlash(g, this.width, this.height);
             com.eternalcraft.gripeverde.client.lore.Herald.draw(g, this.width, this.height);
             drawDustIfDue(g);
-            drawGreeting(g);
+
             drawVigilLine(g);
             com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
             com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, this.height - 60);
@@ -374,21 +367,6 @@ public class DiaryTitleScreen extends Screen {
         }
     }
 
-    /** Saludo del gabinete al iniciar la sesion (12 segundos). */
-    private void drawGreeting(GuiGraphics g) {
-        if (greetingText == null) return;
-        long now = System.currentTimeMillis();
-        if (now >= greetingShownUntilMs) { greetingText = null; return; }
-        long remain = greetingShownUntilMs - now;
-        long age = greetingShownUntilMs - 12_000L;
-        int alpha = 150;
-        if (now - age < 1200L) alpha = (int)(150 * (now - age) / 1200L);
-        else if (remain < 1500L) alpha = (int)(150 * remain / 1500L);
-        if (alpha <= 4) return;
-        int wTxt = this.font.width(greetingText);
-        g.drawString(this.font, greetingText, this.width / 2 - wTxt / 2, 148,
-            (alpha << 24) | 0xB8A888, false);
-    }
 
     /** La vigilia nota cuando el lector se queda quieto demasiado tiempo. */
     private void drawVigilLine(GuiGraphics g) {

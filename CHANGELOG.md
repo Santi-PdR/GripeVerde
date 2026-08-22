@@ -1,5 +1,15 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.14 - El gabinete vuelve a respirar
+
+Registro tecnico: reversiones pedidas en cliente. Se retiro el saludo que
+aparecia sobre los botones del menu principal; en el registro de hospedajes
+la lista vuelve a empezar debajo de la cabecera, desaparece la tarjeta del
+hospedaje elegido y el aviso del periodico; en las autorizaciones se van el
+cartel de orden, la linea de la mano autorizante y el sello de estado; y
+las frases bajo los subtitulos ya no se topan con los sellos de estado en
+ninguna sala. Sin cambios de gameplay ni de recursos.
+
 ## v0.21.13 - El expediente se cierra
 
 La sala de consulta, cuando por fin reune todas las fichas, deja de decir

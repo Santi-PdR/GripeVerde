@@ -7,7 +7,6 @@ import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
-import com.eternalcraft.gripeverde.client.widgets.DiaryProgressBar;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -37,7 +36,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
 
     private static final int PANEL_MARGIN_H = 40;
     private static final int PANEL_MARGIN_V = 40;
-    private static final int LIST_TOP_OFFSET = 50;
+    private static final int LIST_TOP_OFFSET = 84;
     // Espacio inferior reservado para las 2 filas de botones + divisor
     private static final int LIST_BOTTOM_OFFSET = 76;
 
@@ -502,7 +501,6 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             } catch (Throwable ignored) {}
         }
 
-        drawSelectionLedger(gfx, panelX, headerBottom + 6, panelW);
 
         // Divisor inferior antes de los botones - con rombo central
         int dividerY = this.height - LIST_BOTTOM_OFFSET + 2;
@@ -527,28 +525,11 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         // v0.16.0: el libro de visitas del atlas de hospederias
         try {
             drawGuestbook(gfx, panelX, panelY, panelW, mouseX, mouseY);
-            drawHeraldTicker(gfx);
+
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(gfx, this.width);
         } catch (Throwable ignored) {}
     }
 
-    /** v0.21.9: titular del dia junto al libro de visitas (misma semilla que el kiosco). */
-    private void drawHeraldTicker(GuiGraphics gfx) {
-        String headline = com.eternalcraft.gripeverde.client.lore.Herald.headlineToday();
-        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
-        String label = en ? "THE HERALD TODAY: " : "EL HERALDO DE HOY: ";
-        int x = PANEL_MARGIN_H + 12;
-        int y = guestbookY();
-        int maxW = guestbookX() - 24 - x;
-        int avail = Math.max(24, maxW - this.font.width(label));
-        if (this.font.width(headline) > avail) {
-            headline = this.font.plainSubstrByWidth(headline, Math.max(0, avail - 8)) + "...";
-        }
-        gfx.drawString(this.font, label, x, y, DiaryTheme.withAlpha(DiaryTheme.INK, 150), false);
-        gfx.drawString(this.font, headline, x + this.font.width(label), y, 0xFF6E1F16, false);
-        gfx.fill(x, y + 11, x + this.font.width(label) + this.font.width(headline), y + 12,
-            DiaryTheme.withAlpha(0xFF8E6A35, 70));
-    }
 
     private int guestbookX() { return this.width - PANEL_MARGIN_H - 150; }
     private int guestbookY() { return this.height - PANEL_MARGIN_V + 12; }
@@ -575,28 +556,6 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         }
     }
 
-    private void drawSelectionLedger(GuiGraphics gfx, int panelX, int y, int panelW) {
-        int boxW = 220;
-        int x = panelX + panelW - boxW - 18;
-        String title = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "SELECTED LODGING" : "HOSPEDAJE ELEGIDO";
-        String line1 = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "No active server selected." : "No hay servidor activo.";
-        String line2 = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "Choose an address from the registry." : "Elegid una direccion del registro.";
-        try {
-            if (this.vanillaList != null) {
-                Object sel = this.vanillaList.getSelected();
-                ServerData sd = extractServerDataFromEntry(sel);
-                if (sd != null) {
-                    line1 = sd.name;
-                    line2 = sd.ip;
-                }
-            }
-        } catch (Throwable ignored) {}
-        DiaryChrome.drawInsetCard(gfx, this.font, x, y, boxW, 58, title, line1, line2, DiaryTheme.BRONZE);
-        DiaryProgressBar.draw(gfx, x + 10, y + 38, boxW - 20, 12,
-            this.vanillaList != null && this.vanillaList.getSelected() != null ? 1f : 0f,
-            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "selection" : "seleccion",
-            DiaryProgressBar.Style.INK);
-    }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {

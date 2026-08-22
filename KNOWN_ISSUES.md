@@ -1,5 +1,36 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.21.14 - El gabinete vuelve a respirar (2026-08-21)
+
+### Cambios cerrados
+- Title: eliminado el saludo de sesion que solapaba los botones
+  (`drawGreeting` + campos + asignaciones; marginalias/descubrimientos
+  intactos).
+- Multiplayer: `LIST_TOP_OFFSET` 50 -> 84 (el server ya no tapa la
+  cabecera); eliminadas la tarjeta HOSPEDAJE ELEGIDO y el ticker del
+  Heraldo.
+- Confirm: eliminados el cartel ORDER/ORDEN, la mano autorizante y el pill
+  PENDIENTE; mensaje de confirmacion en tinta normal.
+- ExpedientHeader: flavor truncado con ellipsis antes del pill de estado
+  (arregla solapes REGISTRABLE/INCOMPLETO/LISTO/READY).
+- Lista negra del build ampliada (`drawGreeting`, `drawSelectionLedger`,
+  `drawHeraldTicker`).
+- Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL.
+- Version bump: 0.21.13 -> 0.21.14 (build.gradle + GripeVerdeMod.VERSION).
+
+### Riesgos activos / KI nuevos
+- **KI-39 (v0.21.14)**: validar en cliente — menu limpio, lista de
+  servidores debajo de la cabecera, confirmacion sin cartel/orden/mano,
+  formularios sin solape de sellos, y el libro de visitas clickeable.
+- **KI-40 (pendiente de captura)**: el usuario reporto "el libro de
+  visitas dejo de funcionar" y "errores en el gabinete" (Options) sin que
+  las capturas llegaran al sandbox. Se limpiaron superposiciones; si
+  persiste, pedir captura por otra via o descripcion puntual.
+- KI-38, KI-37, KI-36, KI-35, KI-34, KI-32/33, KI-27/28/30/31 pendientes.
+  KI-29 (pistas MenuMusic) requiere OGGs del usuario.
+
+---
+
 ## v0.21.13 - El expediente se cierra (2026-08-21)
 
 ### Cambios cerrados

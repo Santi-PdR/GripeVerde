@@ -5,15 +5,17 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.21.13 - El expediente se cierra**
+**v0.21.14 - El gabinete vuelve a respirar**
 
-La Sala de consulta, cuando reune todas las fichas, declara el archivo
-completo: el texto deja de hablar de fichas que faltan, un sello de cera
-dorada firma con la palabra SIGILLUM, y el cronista anota al margen
-"cuarenta y siete fichas; el cajon ya esta vacio; sellalo", mientras la
-campana del campanario suena una vez, grave. 59 clases Java, 25 idiomas,
-35 eventos de sonido, 42 OGG y 0 PNG de contenedores. Documentacion
-sincronizada y version 0.21.13.
+Reversiones pedidas en cliente: se retiro el saludo que aparecia sobre los
+botones del menu principal; en el registro de hospedajes la lista de
+servidores vuelve a empezar debajo de la cabecera, desaparece la tarjeta
+del "hospedaje elegido" y el aviso del periodico; en las autorizaciones se
+van el cartel de orden, la linea de la mano autorizante y el sello de
+estado, y el mensaje de confirmacion queda en tinta normal. Las frases bajo
+los subtitulos ya no se topan con los sellos de estado en ninguna sala. 59
+clases Java, 25 idiomas, 35 eventos de sonido, 42 OGG y 0 PNG de
+contenedores. Documentacion sincronizada y version 0.21.14.
 
 ## Resumen visible del Mod Menu
 
@@ -98,8 +100,8 @@ Reglas actuales:
 ## Documentacion
 
 - `CONTRIBUTING.md` - guia corta de contribucion (branch fija, no gameplay, validacion).
-- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.13.
-- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.13).
+- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.14.
+- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.14).
 - `KNOWN_ISSUES.md` - estado tecnico, decisiones activas, errores documentados, KIs.
 - `README.md` - esta portada.
 

@@ -3,8 +3,53 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/01a025d1-gripeverde` (sync con `main` v0.21.2, commit `afe8e83`).
-- Version: `0.21.13`.
+- Version: `0.21.14`.
 - Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks, integrando el contexto maestro y sincronizacion documental de v0.17.2.
+
+### DECISION 2026-08-21: v0.21.14 - El gabinete vuelve a respirar
+
+Reversion de adornos de interfaz que el usuario pidio quitar (los vio en
+cliente real). Sin gameplay, sin assets.
+
+**Eliminado del Title:** el saludo de sesion (`greetingText`, se dibujaba
+centrado en y=148 y solapaba los botones MP/MODS). Se quitaron la llamada,
+el metodo `drawGreeting`, los campos y las asignaciones en init (las
+marginalias N_FIRST_NIGHT/N_DUST y los descubrimientos DUST/ANNIVERSARY se
+conservan intactos).
+
+**Multiplayer:**
+- `LIST_TOP_OFFSET` 50 -> 84: la lista de servidores arrancaba en y=90,
+  por ENCIMA del final de la cabecera (y~118) — el server pinneado tapaba
+  titulo/subtitulo/divisora. Ahora arranca debajo.
+- Eliminada la tarjeta "HOSPEDAJE ELEGIDO / SELECTED LODGING"
+  (`drawSelectionLedger`) que se superponia a la zona del libro de visitas.
+- Eliminado el ticker del Heraldo en Multiplayer (adicion v0.21.9 que el
+  usuario no pidio y podia interferir con el libro de visitas).
+
+**Confirm (borrar servidor):** eliminado el cartel "ORDEN / ORDER"
+(drawInsetCard que solapaba el mensaje de confirmacion), eliminada la linea
+"mano autorizante / authorising hand" con su raya de firma, quitado el pill
+"PENDIENTE" del header, y el mensaje de confirmacion pasa a tinta normal
+(`DiaryTheme.INK`) en vez del rojo/negrita que se veia.
+
+**ExpedientHeader (fix general anti-solape):** el flavor debajo del
+subtitulo ahora se trunca con ellipsis al espacio libre antes del pill de
+estado. Arregla el solape de "REGISTRABLE" (editar servidor), "INCOMPLETO"
+(agregar servidor), "LISTO" (conexion directa) y cualquier otra pantalla
+con flavor largo + pill (incluido Options "READY").
+
+**Build:** lista negra de `verifyGripeVerdeNoDeadCode` ampliada con
+`drawGreeting`, `drawSelectionLedger`, `drawHeraldTicker`.
+
+**Nota:** el usuario reporto "el libro de visitas dejo de funcionar" y
+"errores en el gabinete" sin poder verse las capturas en el sandbox
+(adjuntos no llegan). Se limpiaron las superposiciones que podian taparlo;
+si persiste, requiere captura o descripcion puntual.
+
+Changelog in-game (25 .md): OMITIDO por R-CHANGELOG-DISCRECIONAL
+(reversion de interfaz, no evento de la ciudad).
+Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.14.
+Validacion pendiente en cliente real (KI-39).
 
 ### DECISION 2026-08-21: v0.21.13 - El expediente se cierra
 
@@ -458,9 +503,9 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ## Estado actual verificado
 
-- Version estable actual: v0.21.13
-- build.gradle: version = '0.21.13'
-- GripeVerdeMod.VERSION: "0.21.13"
+- Version estable actual: v0.21.14
+- build.gradle: version = '0.21.14'
+- GripeVerdeMod.VERSION: "0.21.14"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)
 - Ultimo tag publicado: v0.13.10 (no se han publicado tags desde el ciclo v0.13.x; los bumps v0.14-v0.17 quedaron sin tag)
 - Working tree esperado al retomar: limpio

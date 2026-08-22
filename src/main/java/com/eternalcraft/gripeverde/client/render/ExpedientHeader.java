@@ -55,8 +55,17 @@ public final class ExpedientHeader {
         }
 
         if (flavor != null && !flavor.isEmpty()) {
-            int fw = font.width(flavor);
-            gfx.drawString(font, flavor, cx - fw / 2, topY + 39 - slide,
+            // v0.21.14: el flavor nunca debe llegar al pill de estado (solape en
+            // formularios chicos): se trunca al espacio libre con ellipsis.
+            String shown = flavor;
+            int pillW = (status != null && !status.isEmpty()) ? font.width(status) + 46 : 0;
+            int maxW = Math.max(40, panelW - 36 - pillW - 16);
+            if (font.width(shown) > maxW) {
+                int room = Math.max(0, maxW - font.width("..."));
+                shown = font.plainSubstrByWidth(shown, room) + "...";
+            }
+            int fw = font.width(shown);
+            gfx.drawString(font, shown, cx - fw / 2, topY + 39 - slide,
                 DiaryChrome.fadeColor(DiaryChrome.INK_FLAVOR, reveal), false);
         }
 
