@@ -5,15 +5,14 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.21.24 - Ajustes pedidos en cliente**
+**v0.21.30 - La calle permanece**
 
-Se retiro el sonido de madera al abrir el gabinete, el cajon con la llave
-y su vitrina, el juego de los tres golpes sobre la mesa y el despegue de
-la hoja de cuarentena; el titulo del cartel y los sellos de tinta pierden
-el rojo sombreado; el libro de visitas del registro de hospedajes se ve y
-responde mejor; y las atribuciones usan etiquetas en titulo normal. 61
-clases Java, 25 idiomas, 35 eventos de sonido, 42 OGG y 0 PNG de
-contenedores. Documentacion sincronizada y version 0.21.24.
+Cuando la maquina que sostiene la vigilia aminora el paso, la ciudad puede
+renunciar a la niebla y a los adornos mas costosos, pero ya no pierde el
+suelo. El empedrado mojado permanece bajo los edificios aun en las noches
+que obligan a la ciudad a gastar menos fuerzas. 61 clases Java, 25 idiomas,
+35 eventos de sonido, 42 OGG y 0 PNG de contenedores. Documentacion
+sincronizada y version 0.21.30.
 
 **v0.21.23 - Se reconstruye desde el registro previo**
 

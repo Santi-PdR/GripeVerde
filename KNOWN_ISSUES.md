@@ -1,5 +1,23 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.21.30 - La calle permanece (2026-08-23)
+
+### Cambios cerrados
+- Corregido el modo low-end del menu principal: ya no omite toda la capa
+  `renderStreetLevel` cuando los FPS bajan de 30.
+- En low-end se dibuja siempre la base barata `renderStreet`; solo se
+  omiten la utileria y los efectos costosos del nivel de calle.
+- Las subpantallas Diary tambien conservan siempre la calle base,
+  independientemente del muestreo de FPS.
+- Version bump: 0.21.29 -> 0.21.30.
+
+### Riesgos activos / KI nuevos
+- **KI-50 (v0.21.30)**: validar en cliente real el Title por encima y por
+  debajo de 30 FPS y en las cuatro escalas GUI; la calzada debe permanecer
+  visible mientras los efectos costosos cambian segun el modo low-end.
+
+---
+
 ## v0.21.24 - Ajustes pedidos en cliente (2026-08-22)
 
 ### Cambios cerrados

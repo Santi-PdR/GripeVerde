@@ -2,6 +2,11 @@
 ## Chronicle under seal
 
 
+## Version 0.21.30 - The street remains
+
+When the machine that sustains the vigil slows its pace, the city may lose its fog and dim its most demanding ornaments. The wet cobblestones, however, no longer vanish with them. Beneath the buildings, the street remains and the city keeps its ground.
+
+
 ## Version 0.21.25 - The ink is uniform
 
 The chronicler signed with his own name. The director's hand was recognized. The city blueprints found words that fit within the margins. Every poster in the cabinet —elixir, decree, reward, quarantine— now speaks in the same dark ink, without the red shadow that once divided each title. The stamps no longer cast their own shadow. The logo, the pause signature, the shooting star and the easter egg telegram all shed their doubles. The visitor's book moved inside the panel where it belongs. The credits show the version number. The cabinet speaks with one voice.

@@ -2,6 +2,11 @@
 ## Cronica bajo sello
 
 
+## Version 0.21.30 - La calle permanece
+
+Cuando la máquina que sostiene la vigilia aminora el paso, la ciudad puede perder la niebla y apagar sus adornos más exigentes. El empedrado mojado, sin embargo, ya no se desvanece con ellos. Bajo los edificios, la calle permanece y la ciudad conserva su suelo.
+
+
 ## Version 0.21.25 - La tinta es uniforme
 
 El cronista firmó con su propio nombre. La mano del director fue reconocida. Los planos de la ciudad encontraron palabras que caben en los márgenes. Cada cartel del gabinete —elixir, decreto, recompensa, cuarentena— habla ahora con la misma tinta oscura, sin la sombra roja que antes dividía cada título. Los sellos ya no proyectan su propia sombra. El logo, la firma de la pausa, la estrella fugaz y el telegrama de los huevos de pascua perdieron todos sus dobles. El libro de visitas se mudó al interior del panel donde corresponde. Los créditos muestran el número de versión. El gabinete habla con una sola voz.

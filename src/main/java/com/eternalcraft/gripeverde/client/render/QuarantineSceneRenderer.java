@@ -57,7 +57,14 @@ public final class QuarantineSceneRenderer {
         VictorianSkyline.renderBackground(g, w, h);
         if (!low) LivingAtmosphere.renderFogLow(g, w, h);
         VictorianSkyline.renderForeground(g, w, h);
-        if (!low) LivingAtmosphere.renderStreetLevel(g, w, h);
+        // La calzada es parte estructural del fondo y debe dibujarse incluso
+        // en modo low-end. Solo se omiten la utileria y los efectos costosos,
+        // no la calle completa.
+        if (low) {
+            LivingAtmosphere.renderStreet(g, w, h);
+        } else {
+            LivingAtmosphere.renderStreetLevel(g, w, h);
+        }
         LivingAtmosphere.renderAir(g, w, h);
         LivingAtmosphere.renderFlash(g, w, h);
         LivingAtmosphere.renderVignette(g, w, h);
@@ -70,11 +77,12 @@ public final class QuarantineSceneRenderer {
     public static void renderDiaryBackground(GuiGraphics g, int w, int h) {
         if (w <= 0 || h <= 0) return;
         g.fill(0, 0, w, h, 0xFF060401);
-        boolean low = isLowEnd();
         AtmosphereRenderer.renderSky(g, w, h);
         VictorianSkyline.renderBackground(g, w, h);
         VictorianSkyline.renderForeground(g, w, h);
-        if (!low) LivingAtmosphere.renderStreet(g, w, h);
+        // La version base de la calle es barata y no debe desaparecer cuando
+        // el muestreador de FPS activa el modo low-end.
+        LivingAtmosphere.renderStreet(g, w, h);
         LivingAtmosphere.renderVignette(g, w, h);
         // Overlay oscuro del gabinete
         g.fill(0, 0, w, h, DiaryChrome.OVERLAY_COL);

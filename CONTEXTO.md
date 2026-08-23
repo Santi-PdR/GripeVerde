@@ -2,9 +2,29 @@
 
 ## Addendum operativo actual
 
-- Rama fija de Arena: `arena/01a025d1-gripeverde` (sync con `main` v0.21.2, commit `afe8e83`).
-- Version: `0.21.24`.
-- Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks, integrando el contexto maestro y sincronizacion documental de v0.17.2.
+- Rama fija de Arena: `arena/01a02cee-gripeverde` (desde `main` v0.21.29, commit `0e1befb`).
+- Version: `0.21.30`.
+- Ultima regla explicita del usuario: corregir el error del menu principal que hacia desaparecer la carretera, sin introducir gameplay ni resourcepacks.
+
+### DECISION 2026-08-23: v0.21.30 - La calle permanece
+
+El modo low-end introducido en v0.21.5 pretendia retirar la niebla y los
+faroles cuando el cliente bajaba de 30 FPS, pero condicionaba la llamada
+completa a `LivingAtmosphere.renderStreetLevel`. Como esa llamada tambien
+dibuja la base mediante `renderStreet`, la calzada desaparecia junto con
+los efectos costosos.
+
+- `QuarantineSceneRenderer.renderTitleScene`: en low-end llama ahora a
+  `renderStreet`; fuera de low-end conserva `renderStreetLevel` completo.
+- `renderDiaryBackground`: `renderStreet` se ejecuta siempre; la calle base
+  es barata y no depende del muestreador de FPS.
+- Se conservan sin cambios la niebla, los faroles, sus reflejos y las
+  particulas en el camino normal.
+- Changelog in-game actualizado en los 25 idiomas porque el arreglo tiene
+  manifestacion visible en la ciudad.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.30.
+- Validacion pendiente en cliente real (KI-50): Title a ambos lados del
+  umbral de 30 FPS y cuatro escalas GUI.
 
 ### DECISION 2026-08-22: v0.21.24 - Ajustes pedidos en cliente
 

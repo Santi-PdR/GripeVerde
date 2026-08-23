@@ -1,5 +1,12 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.30 - La calle permanece
+
+Cuando la maquina que sostiene la vigilia aminora el paso, la ciudad aun
+puede desprenderse de la niebla y apagar los adornos mas costosos. La
+calzada, sin embargo, ya no desaparece con ellos: el empedrado mojado
+permanece bajo los edificios y devuelve suelo a la vigilia.
+
 ## v0.21.24 - Ajustes pedidos en cliente
 
 Registro tecnico: se retiro el sonido de madera al abrir el gabinete, el
