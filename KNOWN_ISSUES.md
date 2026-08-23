@@ -1,5 +1,10 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+La primera seccion describe el estado operativo vigente. Todas las secciones
+de versiones anteriores son instantaneas historicas: sus listas de "riesgos
+activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
+que v0.22.0 lo mencione expresamente.
+
 ## v0.22.0 - La vigilia queda sellada (2026-08-23)
 
 ### Cambios cerrados
@@ -17,6 +22,15 @@
 - Verificación de 25 JSON/83 claves/25 changelogs y registro sonoro completo.
 - Version bump: 0.21.31 -> 0.22.0. Conteo Java sin cambios: 60 clases.
 
+### Estado de entrega
+- Implementacion final: `a1decf304b0c7236d624d4637bd3b5dcaa3961db`,
+  publicada en `arena/01a02cee-gripeverde` para revision mediante la PR 14.
+- Validacion estatica completada: 60 Java sin errores sintacticos segun
+  `java-parser`, 25 locales x 83 claves, 25 changelogs, 35 eventos, 42
+  referencias sonoras y 42 OGG.
+- `java-parser` no sustituye la compilacion semantica de Gradle/Forge.
+- No se creo tag ni release v0.22.0; ambos quedan bloqueados por KI-52.
+
 ### Riesgos activos / KI nuevos
 - **KI-52 (v0.22.0)**: el sandbox no dispone de JDK/JRE 17, por lo que el
   build Forge y la prueba dentro de Minecraft deben ejecutarse en cliente
@@ -29,6 +43,13 @@
   FPS altos y bajos.
 
 ---
+
+# HISTORIAL DE VERSIONES E INSTANTANEAS (NO OPERATIVO)
+
+Todo lo que sigue se conserva para trazabilidad. Los estados, riesgos, tags,
+rutas y planes llamados "actuales", "activos" o "vigentes" pertenecen a la
+version bajo la que fueron escritos; no sustituyen el estado v0.22.0 de la
+primera seccion.
 
 ## v0.21.31 - La vigilia permanece entera (2026-08-23)
 
@@ -1739,15 +1760,21 @@ Ultimo tag publicado: v0.11.13
 - Slider vanilla "Duracion de las notificaciones" en Accesibilidad tiene texto que se corta a la derecha por ancho fijo 150px del widget. Limitacion vanilla. Igual que en Chat (Duracion notificaciones), no se corrige.
 
 
-Ultima actualizacion: v0.11.8
-Estado: EN DESARROLLO
-Version estable actual: v0.11.8
-Ultimo tag publicado: v0.11.8
-Hitos recientes: v0.11.0 (DiaryOptionsScreen sobre pergamino con Title vivo detras, KI-06 cerrado extendido, sub-pantallas vanilla integradas); v0.10.4 (bump administrativo, changelog in-game intencionalmente sin entrada); v0.10.1 (persistencia del volumen de musica); v0.10.0 (ChangelogScreen sobre pergamino + reescritura diegetica de las 25 cronicas, KI-06 cerrado); v0.9.2 (fix humo/nubes, KI-05 cerrado); v0.9.1 (faroles reactivados, KI-03 cerrado completo); v0.9.0 hito visual del skyline; sistema de musica (v0.8.x) estable.
+## ARCHIVO HISTORICO: INSTANTANEA v0.11.8 (NO VIGENTE)
+
+Los campos siguientes se conservan como evidencia de aquella etapa. No
+representan la version, el tag, el estado ni las instrucciones actuales; el
+estado operativo vigente esta al comienzo de este documento.
+
+Ultima actualizacion de la instantanea: v0.11.8
+Estado archivado: EN DESARROLLO
+Version estable de la instantanea: v0.11.8
+Ultimo tag conocido en la instantanea: v0.11.8
+Hitos recientes de la instantanea: v0.11.0 (DiaryOptionsScreen sobre pergamino con Title vivo detras, KI-06 cerrado extendido, sub-pantallas vanilla integradas); v0.10.4 (bump administrativo, changelog in-game intencionalmente sin entrada); v0.10.1 (persistencia del volumen de musica); v0.10.0 (ChangelogScreen sobre pergamino + reescritura diegetica de las 25 cronicas, KI-06 cerrado); v0.9.2 (fix humo/nubes, KI-05 cerrado); v0.9.1 (faroles reactivados, KI-03 cerrado completo); v0.9.0 hito visual del skyline; sistema de musica (v0.8.x) estable.
 
 ---
 
-## 1. Version actual
+## 1. Version archivada en esta instantanea
 
 - Proyecto: Eternal Craft: Gripe Verde
 - Base: Minecraft Forge 1.20.1

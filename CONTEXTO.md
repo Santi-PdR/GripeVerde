@@ -2,9 +2,28 @@
 
 ## Addendum operativo actual
 
-- Rama fija de Arena: `arena/01a02cee-gripeverde` (estado base v0.21.31, commit `7605243`).
-- Version: `0.22.0`.
-- Ultima regla explicita del usuario: eliminar por completo el modo automatico de pocos FPS, impedir que desaparezcan luces o utileria y retirar el objeto de carretera que parecia un canasto junto con su easter egg.
+- Rama fija de Arena: `arena/01a02cee-gripeverde`.
+- Base respaldada: v0.21.31, commit
+  `7605243f9aff55ccbe0d00ad743c38414c66061f`.
+- Implementacion final: v0.22.0, commit
+  `a1decf304b0c7236d624d4637bd3b5dcaa3961db`.
+- Revision del owner: PR 14,
+  <https://github.com/Santi-PdR/GripeVerde/pull/14>.
+- Tag/release `v0.22.0`: deliberadamente ausente hasta cerrar KI-52.
+- Pedido vigente: entrega final documentada y coherente, preservando el
+  historial pero separandolo de las instrucciones actuales.
+- Restricciones funcionales absolutas: escena completa, faroles permanentes,
+  sin kiosco/Heraldo, sin modo automatico por FPS, sin gameplay y sin
+  resourcepacks.
+- Repositorio local vigente del owner:
+  `C:\Users\santi\Desktop\GripeVerde`.
+- Deploy vigente del owner:
+  `C:\Users\santi\AppData\Roaming\.sklauncher\instances\test-1\mods`.
+
+Toda ruta distinta de esas dos rutas Windows dentro del historial de este
+archivo es una referencia archivada, no una instruccion operativa. En
+particular, no usar `.deploy`, `D:\...` ni
+`C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde`.
 
 ### DECISION 2026-08-23: v0.22.0 - La vigilia queda sellada
 
@@ -39,9 +58,23 @@ verificó el bundle externo
 - Conteos: 60 clases Java, 25 lang (83 claves), 25 changelogs, 35 eventos y
   42 OGG.
 - Bump sincronizado: `build.gradle` + `GripeVerdeMod.VERSION` -> 0.22.0.
-- Validación pendiente en cliente real (KI-52): build con Java 17, recorrido
+- Validacion estatica final: 60 Java analizados por `java-parser`, 25 locales
+  x 83 claves, 25 changelogs, 35 eventos, 42 referencias y 42 OGG.
+- La compilacion semantica de Gradle/Forge no se ejecuto en el sandbox por
+  falta de Java 17; el analisis de sintaxis externo no la sustituye.
+- La implementacion se publico en la rama fija y la PR 14 se actualizo para
+  revision del owner. No se creo tag ni release.
+- Validacion pendiente en cliente real (KI-52): build con Java 17, recorrido
   de pantallas, toggle de movimiento reducido y prueba controlada de
-  recuperación de memoria.
+  recuperacion de memoria.
+
+### SIGUIENTE PASO OPERATIVO VIGENTE
+
+No implementar los planes de gameplay que aparecen en bloques historicos de
+este documento. La unica secuencia vigente es cerrar KI-52 en un cliente
+real, corregir solo si esa prueba encuentra un defecto y, despues, autorizar
+el tag/release v0.22.0. Las cronicas in-game ya estan sincronizadas en los 25
+idiomas; este cierre documental no requiere una entrada visible adicional.
 
 ### DECISION 2026-08-23: v0.21.31 - La vigilia permanece entera
 
@@ -915,9 +948,17 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ---
 
-## Estado actual verificado
+## ARCHIVO HISTORICO DE CONTEXTO (NO OPERATIVO)
 
-- Version estable actual: v0.21.24
+Desde este punto se preservan instantaneas antiguas, rutas retiradas, reglas
+de su momento y planes que ya fueron ejecutados o descartados. No interpretar
+ninguna aparicion de "actual", "vigente", "deploy" o "proximo hito" en este
+archivo historico como una instruccion presente: el addendum operativo del
+inicio es la unica fuente vigente.
+
+## Estado verificado en la instantanea archivada
+
+- Version estable de aquella instantanea: v0.21.24
 - build.gradle: version = '0.21.24'
 - GripeVerdeMod.VERSION: "0.21.24"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)

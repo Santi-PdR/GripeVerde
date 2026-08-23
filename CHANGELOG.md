@@ -16,6 +16,10 @@ deterministas para reducir asignaciones sin cambiar su aspecto. El build
 valida paridad de idiomas, changelogs y el registro sonoro completo. Version
 final 0.22.0.
 
+El expediente queda listo para revision del owner en la PR 14. El tag y el
+release v0.22.0 se reservan hasta completar en un cliente real la validacion
+registrada como KI-52.
+
 ## v0.21.31 - La vigilia permanece entera
 
 Se elimino por completo el modo automatico de pocos FPS: ya no existe el

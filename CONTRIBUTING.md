@@ -2,6 +2,21 @@
 
 Guia corta para tocar el mod sin romper las reglas del proyecto.
 
+## Estado vigente de la entrega
+
+- Version preparada: **v0.22.0**.
+- Implementacion final: `a1decf304b0c7236d624d4637bd3b5dcaa3961db`.
+- Rama de revision: `arena/01a02cee-gripeverde`; PR 14 abierta para el owner.
+- Baseline: 60 Java, 25 locales con 83 claves cada uno, 25 cronicas, 35
+  eventos de sonido, 42 referencias OGG y 42 archivos OGG.
+- El tag/release v0.22.0 no debe crearse hasta cerrar KI-52 con Java 17 y
+  una prueba completa en Minecraft.
+- Ruta local vigente del owner: `C:\Users\santi\Desktop\GripeVerde`.
+- Deploy vigente:
+  `C:\Users\santi\AppData\Roaming\.sklauncher\instances\test-1\mods`.
+- Las rutas antiguas y `.deploy` que sobreviven en documentacion historica
+  no son instrucciones de trabajo.
+
 ## Reglas base
 
 1. **Rama fija:** el trabajo de cada sesion vive en su rama `arena/*-gripeverde`.
@@ -15,30 +30,44 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
    hace con Java/render/widgets.
 4. **No tocar logica vanilla:** solo presentacion (R-VANILLA-LOGIC). Los
    contenedores son 100% vanilla (0 PNG).
-5. **Un sistema por version** y un cambio visual/audio sensible por bump.
+5. **Alcance coherente por version:** evitar mezclar cambios no relacionados.
+   Una entrega transversal solo procede cuando fue pedida expresamente y
+   cuenta con backup previo verificable, como v0.22.0.
 
 ## Antes de proponer un cambio
 
-- Leer `CONTEXTO.md` COMPLETO (reglas R-*, errores E-*).
+- Leer primero el addendum operativo al comienzo de `CONTEXTO.md`; consultar
+  el archivo historico solo para reglas R-*, errores E-* y decisiones pasadas.
 - Auditar el estado real: `git status`, `find src -name "*.java" | wc -l`,
   `cat build.gradle | grep version`.
-- Sin JDK en el sandbox (E125): solo APIs verificadas en el propio repo.
+- Si el entorno no dispone de JDK 17 (E125), limitarse a validaciones
+  estaticas y dejar explicitamente pendiente la compilacion semantica.
 
 ## Validacion
 
+- Usar **Java 17** para Forge 1.20.1.
 - **4 escalas GUI** para cualquier cambio de UI (scale 1-4; reiniciar cliente
   al cambiar escala si hay duda).
 - Validar JSON tras editar lang/sounds (`python3 -c "import json; json.load(...)"`).
-- Build local: `.\gradlew build` → `build/libs/gripeverde-<VERSION>.jar`.
-- Deploy: build siempre acompañado de deploy; limpiar `gripeverde-*.jar`
-  viejos antes de validar; confirmar la version en el reloj del Title.
+- Build local limpio: `.\gradlew.bat clean build` ->
+  `build\libs\gripeverde-<VERSION>.jar`.
+- Deploy: limpiar primero los `gripeverde-*.jar` antiguos tanto en
+  `build\libs` como en el directorio de SKLauncher, copiar el jar de la
+  version exacta y confirmarla en el reloj del Title.
+- Un parser externo puede comprobar sintaxis, pero no sustituye el build
+  contra Forge/Minecraft ni la prueba en cliente.
 
 ## Verificaciones de build activas (processResources)
 
-- `verifyGripeVerdeLocalization` — 25 lang + 25 changelog in-game presentes.
-- `verifyGripeVerdeSoundAssets` — sounds.json ↔ OGG existentes.
-- `verifyGripeVerdeNoDeadCode` — falla si reaparece codigo desterrado
-  (ThemeManager, steel pack, bg_town, IconButton, dev screens, etc.).
+- `verifyGripeVerdeLocalization` — conjunto exacto de 25 locales, JSON
+  valido, exactamente 83 claves no vacias con paridad frente a `en_us` y
+  presencia de la version actual en las 25 cronicas in-game.
+- `verifyGripeVerdeSoundAssets` — estructura e identificadores de eventos,
+  listas no vacias, referencias existentes y cobertura OGG exacta, sin
+  archivos huerfanos.
+- `verifyGripeVerdeNoDeadCode` — falla si reaparecen simbolos de codigo
+  desterrado fuera de comentarios (ThemeManager, steel pack, bg_town,
+  IconButton, dev screens, `drawHeraldTicker` y otros retirados).
 
 ## Codigo
 
