@@ -76,6 +76,14 @@ public class DiaryTitleScreen extends Screen {
         return this.height < MINIMAL_MODE_THRESHOLD;
     }
 
+    private static boolean reducedMotion() {
+        try {
+            return com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get();
+        } catch (IllegalStateException ignored) {
+            return false;
+        }
+    }
+
     @Override
     protected void init() {
         this.ticks = 0;
@@ -288,9 +296,6 @@ public class DiaryTitleScreen extends Screen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        MenuAmbience.tick();
-        MenuAmbience.setPocketWatchVisible(!isMinimalMode());
-
         // Professional centralized scene renderer
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderTitleScene(g, this.width, this.height);
         drawGlassPatina(g);
@@ -321,8 +326,8 @@ public class DiaryTitleScreen extends Screen {
 
         // Overlays interactivos (arriba de todo)
         drawEasterEggMessage(g);
-        // Easter egg: relampago verde
-        if (System.currentTimeMillis() < easterLightningUntilMs) {
+        // Easter egg: relampago verde (suprimido con movimiento reducido).
+        if (!reducedMotion() && System.currentTimeMillis() < easterLightningUntilMs) {
             long rem = easterLightningUntilMs - System.currentTimeMillis();
             int a = (int)(50 * rem / 300L);
             if (a > 2) {
@@ -337,7 +342,6 @@ public class DiaryTitleScreen extends Screen {
             com.eternalcraft.gripeverde.client.lore.HiddenCipher.drawBuffer(g, this.width, this.height);
             com.eternalcraft.gripeverde.client.lore.HiddenCipher.drawTelegram(g, this.width, this.height);
             com.eternalcraft.gripeverde.client.lore.HiddenCipher.drawPereiraFlash(g, this.width, this.height);
-            com.eternalcraft.gripeverde.client.lore.Herald.draw(g, this.width, this.height);
             drawDustIfDue(g);
             drawVigilLine(g);
             com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
@@ -487,7 +491,7 @@ public class DiaryTitleScreen extends Screen {
     private void drawLogo(GuiGraphics g) {
         long now = System.currentTimeMillis();
         int shakeX = 0, shakeY = 0;
-        if (now < skullShakeUntilMs) {
+        if (!reducedMotion() && now < skullShakeUntilMs) {
             long remain = skullShakeUntilMs - now;
             float intensity = (float) remain / 600f;
             shakeX = (int)(Math.sin(now / 40.0) * 3 * intensity);
@@ -495,8 +499,8 @@ public class DiaryTitleScreen extends Screen {
         }
         LogoRenderer.draw(g, this.width / 2 + shakeX, 30 + shakeY);
 
-        // Renderizar particulas verdes cayendo
-        if (now < eggParticlesUntilMs) {
+        // Renderizar particulas verdes cayendo solo cuando el movimiento esta habilitado.
+        if (!reducedMotion() && now < eggParticlesUntilMs) {
             float dt = 0.05f;
             for (int p = 0; p < EGG_PARTICLE_COUNT; p++) {
                 if (eggParticles[p][4] <= 0f) continue;
@@ -694,12 +698,6 @@ public class DiaryTitleScreen extends Screen {
                     com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.closeInspection();
                     return true;
                 }
-                // El Heraldo se pliega al tocarlo.
-                if (com.eternalcraft.gripeverde.client.lore.Herald.isViewing()) {
-                    com.eternalcraft.gripeverde.client.lore.Herald.close();
-                    return true;
-                }
-
                 int w = this.width, h = this.height;
 
                 // El ojo del emblema no esta pintado: mira.
@@ -761,12 +759,6 @@ public class DiaryTitleScreen extends Screen {
                 if (mouseX >= sw[0] - 2 && mouseX <= sw[0] + sw[2] + 2
                         && mouseY >= sw[1] - 2 && mouseY <= sw[1] + sw[3] + 2) {
                     com.eternalcraft.gripeverde.client.render.VictorianSkyline.signalWindowClicked();
-                    return true;
-                }
-
-                // El kiosco guarda el Heraldo del dia.
-                if (com.eternalcraft.gripeverde.client.render.LivingAtmosphere.heraldHit(mouseX, mouseY, w, h)) {
-                    com.eternalcraft.gripeverde.client.lore.Herald.openToday();
                     return true;
                 }
             } catch (Throwable ignored) {}
@@ -920,27 +912,26 @@ public class DiaryTitleScreen extends Screen {
         char letter = (char)('A' + EASTER_RNG.nextInt(6));
         easterEggCaseCode = String.format(java.util.Locale.ROOT, "%02d-%c", caseNo, letter);
         easterEggMessage = eggPool[EASTER_RNG.nextInt(eggPool.length)];
-        easterEggStartedMs = now;
+        boolean reduced = reducedMotion();
+        easterEggStartedMs = reduced ? now - easterEggMessage.length() * 22L : now;
         easterEggUntilMs = now + 5200L;
-        skullShakeUntilMs = now + 520L;
-        easterLightningUntilMs = now + 280L;
+        skullShakeUntilMs = reduced ? 0L : now + 520L;
+        easterLightningUntilMs = reduced ? 0L : now + 280L;
 
-        // Forzar un relampago instantaneo en la atmosfera
-        try {
-            java.lang.reflect.Field flashField = com.eternalcraft.gripeverde.client.render.LivingAtmosphere.class.getDeclaredField("lightningFlash");
-            flashField.setAccessible(true);
-            flashField.setFloat(null, 1f);
-        } catch (Throwable ignored) {}
-
-        eggParticlesUntilMs = now + 2600L;
-        int logoCx = this.width / 2;
-        int logoCy = 45;
-        for (int p = 0; p < EGG_PARTICLE_COUNT; p++) {
-            eggParticles[p][0] = logoCx + (float)(PARTICLE_RNG.nextDouble() * 34 - 17);
-            eggParticles[p][1] = logoCy + (float)(PARTICLE_RNG.nextDouble() * 12);
-            eggParticles[p][2] = (float)(PARTICLE_RNG.nextDouble() * 1.6 - 0.8);
-            eggParticles[p][3] = (float)(PARTICLE_RNG.nextDouble() * 0.9 + 0.8);
-            eggParticles[p][4] = 1.0f;
+        if (!reduced) {
+            LivingAtmosphere.triggerLightningFlash(1.0f);
+            eggParticlesUntilMs = now + 2600L;
+            int logoCx = this.width / 2;
+            int logoCy = 45;
+            for (int p = 0; p < EGG_PARTICLE_COUNT; p++) {
+                eggParticles[p][0] = logoCx + (float)(PARTICLE_RNG.nextDouble() * 34 - 17);
+                eggParticles[p][1] = logoCy + (float)(PARTICLE_RNG.nextDouble() * 12);
+                eggParticles[p][2] = (float)(PARTICLE_RNG.nextDouble() * 1.6 - 0.8);
+                eggParticles[p][3] = (float)(PARTICLE_RNG.nextDouble() * 0.9 + 0.8);
+                eggParticles[p][4] = 1.0f;
+            }
+        } else {
+            eggParticlesUntilMs = 0L;
         }
 
         try {
@@ -949,13 +940,13 @@ public class DiaryTitleScreen extends Screen {
                 0.32f, 0.92f);
             com.eternalcraft.gripeverde.client.audio.UiSounds.notification();
         } catch (Throwable ignored) {}
-        easterFlashUntilMs = now + 400L;
+        easterFlashUntilMs = reduced ? 0L : now + 400L;
     }
 
     private void drawEasterEggMessage(net.minecraft.client.gui.GuiGraphics g) {
         long now = System.currentTimeMillis();
 
-        if (now < easterFlashUntilMs) {
+        if (!reducedMotion() && now < easterFlashUntilMs) {
             long remainFlash = easterFlashUntilMs - now;
             int flashAlpha = (int)(54 * remainFlash / 400L);
             if (flashAlpha > 2) {
@@ -969,7 +960,9 @@ public class DiaryTitleScreen extends Screen {
         int alpha = remain < 900L ? (int)(230 * remain / 900L) : 230;
         alpha = Math.max(0, Math.min(230, alpha));
 
-        int elapsedChars = (int)Math.min(easterEggMessage.length(), Math.max(0, (now - easterEggStartedMs) / 22L));
+        int elapsedChars = reducedMotion()
+            ? easterEggMessage.length()
+            : (int)Math.min(easterEggMessage.length(), Math.max(0, (now - easterEggStartedMs) / 22L));
         String visibleMessage = easterEggMessage.substring(0, elapsedChars);
 
         int boxW = Math.max(220, Math.min(330, this.width - 96));
@@ -1097,6 +1090,7 @@ public class DiaryTitleScreen extends Screen {
 
 
     private void drawShootStarMessage(net.minecraft.client.gui.GuiGraphics g) {
+        if (reducedMotion()) return;
         String ssm = com.eternalcraft.gripeverde.client.render.AtmosphereRenderer.shootStarMessage;
         long untilMs = com.eternalcraft.gripeverde.client.render.AtmosphereRenderer.shootStarMessageUntilMs;
         if (ssm == null) return;

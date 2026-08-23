@@ -12,11 +12,13 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
- * Toggle booleano estilo diario. Envuelve un OptionInstance<Boolean>
- * y persiste inmediatamente al cambiar.
+ * Toggle booleano estilo diario. Admite opciones vanilla y valores externos
+ * persistentes, y anuncia etiqueta + estado al narrador.
  *
  * Look:
  *  - Fondo pergamino con highlight/shadow como DiaryButton
@@ -27,7 +29,8 @@ import java.util.function.Function;
  */
 public class DiaryToggle extends AbstractButton {
 
-    private final OptionInstance<Boolean> option;
+    private final Supplier<Boolean> valueGetter;
+    private final Consumer<Boolean> valueSetter;
     private final Component baseLabel;
     private final Function<Boolean, Component> valueFormatter;
     private final Runnable onChanged; // opcional, se invoca despues del set()
@@ -40,11 +43,29 @@ public class DiaryToggle extends AbstractButton {
                        Component baseLabel,
                        Function<Boolean, Component> valueFormatter,
                        Runnable onChanged) {
+        this(x, y, w, h,
+            option::get,
+            value -> {
+                option.set(value);
+                Minecraft.getInstance().options.save();
+            },
+            baseLabel, valueFormatter, onChanged);
+    }
+
+    /** Constructor para valores booleanos que no pertenecen a Options de Minecraft. */
+    public DiaryToggle(int x, int y, int w, int h,
+                       Supplier<Boolean> valueGetter,
+                       Consumer<Boolean> valueSetter,
+                       Component baseLabel,
+                       Function<Boolean, Component> valueFormatter,
+                       Runnable onChanged) {
         super(x, y, w, h, baseLabel);
-        this.option = option;
+        this.valueGetter = valueGetter;
+        this.valueSetter = valueSetter;
         this.baseLabel = baseLabel;
         this.valueFormatter = valueFormatter != null ? valueFormatter : DiaryToggle::defaultFormatter;
         this.onChanged = onChanged;
+        updateNarrationMessage();
     }
 
     /** Constructor simple: usa el formatter por defecto (On/Off traducidos). */
@@ -58,11 +79,18 @@ public class DiaryToggle extends AbstractButton {
         return Component.translatable(v ? "options.on" : "options.off");
     }
 
+    private void updateNarrationMessage() {
+        this.setMessage(Component.empty()
+            .append(this.baseLabel)
+            .append(": ")
+            .append(this.valueFormatter.apply(this.valueGetter.get())));
+    }
+
     @Override
     public void onPress() {
-        boolean current = this.option.get();
-        this.option.set(!current);
-        Minecraft.getInstance().options.save();
+        boolean current = this.valueGetter.get();
+        this.valueSetter.accept(!current);
+        updateNarrationMessage();
         if (this.onChanged != null) this.onChanged.run();
     }
 
@@ -85,7 +113,7 @@ public class DiaryToggle extends AbstractButton {
         hoverAnim.setTarget(hovered);
         hoverAnim.tick(partialTick / 20f);
         float t = hoverAnim.getEased();
-        boolean value = this.option.get();
+        boolean value = this.valueGetter.get();
 
         int outerShadow = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 96);
         g.fill(x + 2, y + h, x + w + 1, y + h + 2, outerShadow);

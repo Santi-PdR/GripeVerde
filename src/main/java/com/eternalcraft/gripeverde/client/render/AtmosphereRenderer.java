@@ -99,8 +99,31 @@ public class AtmosphereRenderer {
     private static boolean birdsActive = false;
     private static float birdsSpeedX = 0f;
 
+    private static boolean reducedMotion() {
+        try {
+            return com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get();
+        } catch (IllegalStateException ignored) {
+            return false;
+        }
+    }
+
     public static void tick(float deltaTime) {
         initCloudSpeeds();
+        if (reducedMotion()) {
+            moonGlowPulse = 0.5f;
+            shootStarActive = false;
+            shootStarTimer = 0f;
+            shootStarMessage = null;
+            shootStarMessageUntilMs = 0L;
+            birdsActive = false;
+            birdsTimer = 0f;
+            if (moonPhaseIndex < 0) {
+                moonPhaseIndex = MOON_RNG.nextInt(8);
+                lastMoonPhaseRotateMs = System.currentTimeMillis();
+            }
+            return;
+        }
+
         time += deltaTime;
         moonGlowPulse = (float)(Math.sin(time * 0.4f) * 0.5f + 0.5f);
         for (int i = 0; i < CLOUD_OFFSETS.length; i++) {

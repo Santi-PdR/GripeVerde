@@ -16,48 +16,36 @@ public final class QuarantineSceneRenderer {
 
     private QuarantineSceneRenderer() {}
 
+    private static boolean reducedMotion() {
+        try {
+            return com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get();
+        } catch (IllegalStateException ignored) {
+            return false;
+        }
+    }
+
     // ── Tick ──
     public static void tick(float delta) {
         AtmosphereRenderer.tick(delta);
         VictorianSkyline.tick(delta);
         LivingAtmosphere.tick(delta);
+        tickDust(delta);
         try {
             com.eternalcraft.gripeverde.client.audio.MenuMusic.tick();
             com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick();
         } catch (Throwable ignored) {}
     }
 
-    // ── Modo low-end (v0.21.5): si el cliente va lento, se retiran la niebla
-    // y los faroles (los elementos mas costosos de la calle). El muestreo de
-    // FPS se hace una vez por segundo y nunca rompe por APIs ausentes.
-    private static int lowEndFps = 0;
-    private static long lowEndSampleMs = 0L;
-
-    public static boolean isLowEnd() {
-        long now = System.currentTimeMillis();
-        if (now - lowEndSampleMs >= 1000L) {
-            lowEndSampleMs = now;
-            try {
-                lowEndFps = net.minecraft.client.Minecraft.getInstance().getFps();
-            } catch (Throwable ignored) {
-                lowEndFps = 0;
-            }
-        }
-        return lowEndFps > 0 && lowEndFps < 30;
-    }
-
     // ── Full scene for Title ──
     public static void renderTitleScene(GuiGraphics g, int w, int h) {
         if (w <= 0 || h <= 0) return;
-        com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick();
         com.eternalcraft.gripeverde.client.audio.MenuAmbience.setPocketWatchVisible(h >= 290);
 
-        boolean low = isLowEnd();
         AtmosphereRenderer.renderSky(g, w, h);
         VictorianSkyline.renderBackground(g, w, h);
-        if (!low) LivingAtmosphere.renderFogLow(g, w, h);
+        LivingAtmosphere.renderFogLow(g, w, h);
         VictorianSkyline.renderForeground(g, w, h);
-        if (!low) LivingAtmosphere.renderStreetLevel(g, w, h);
+        LivingAtmosphere.renderStreetLevel(g, w, h);
         LivingAtmosphere.renderAir(g, w, h);
         LivingAtmosphere.renderFlash(g, w, h);
         LivingAtmosphere.renderVignette(g, w, h);
@@ -70,11 +58,10 @@ public final class QuarantineSceneRenderer {
     public static void renderDiaryBackground(GuiGraphics g, int w, int h) {
         if (w <= 0 || h <= 0) return;
         g.fill(0, 0, w, h, 0xFF060401);
-        boolean low = isLowEnd();
         AtmosphereRenderer.renderSky(g, w, h);
         VictorianSkyline.renderBackground(g, w, h);
         VictorianSkyline.renderForeground(g, w, h);
-        if (!low) LivingAtmosphere.renderStreet(g, w, h);
+        LivingAtmosphere.renderStreet(g, w, h);
         LivingAtmosphere.renderVignette(g, w, h);
         // Overlay oscuro del gabinete
         g.fill(0, 0, w, h, DiaryChrome.OVERLAY_COL);
@@ -86,14 +73,16 @@ public final class QuarantineSceneRenderer {
     private static int[] grainX = new int[48];
     private static int[] grainY = new int[48];
     private static int[] grainCol = new int[48];
+    private static int grainW = -1;
+    private static int grainH = -1;
 
     private static void renderFilmGrain(GuiGraphics g, int w, int h) {
         long now = System.currentTimeMillis();
-        // v0.21.11: en modo low-end el grano se rehace con menos frecuencia
-        // (el detalle se pierde igual con FPS bajos y se ahorra CPU).
-        long grainInterval = isLowEnd() ? 300L : 90L;
-        if (now - lastGrainMs > grainInterval) {
+        if (lastGrainMs == 0L || w != grainW || h != grainH
+                || (!reducedMotion() && now - lastGrainMs > 90L)) {
             lastGrainMs = now;
+            grainW = w;
+            grainH = h;
             for (int i = 0; i < grainX.length; i++) {
                 grainX[i] = GRAIN_RNG.nextInt(Math.max(1, w));
                 grainY[i] = GRAIN_RNG.nextInt(Math.max(1, h));
@@ -113,17 +102,33 @@ public final class QuarantineSceneRenderer {
 
     // ── Microdust floating in amber light (title only) ──
     private static final int DUST_COUNT = 18;
-    private static final float[][] dust = new float[DUST_COUNT][4];
-    private static boolean dustInit = false;
-    private static float dustTime = 0f;
-
     // v0.21.3: RNG compartido con seed fija (sin Math.random en el loop caliente).
     private static final java.util.Random RND = new java.util.Random(0xD05E);
+    private static final float[][] dust = new float[DUST_COUNT][4];
 
-    public static void tickDust(float delta){ dustTime+=delta; if(!dustInit){ java.util.Random r=RND; for(int i=0;i<DUST_COUNT;i++){ dust[i][0]=r.nextFloat(); dust[i][1]=r.nextFloat(); dust[i][2]=0.0006f+r.nextFloat()*0.0012f; dust[i][3]=r.nextFloat()*6.28f; } dustInit=true; } for(int i=0;i<DUST_COUNT;i++){ dust[i][1]-=dust[i][2]*delta*60f; dust[i][3]+=delta*0.7f; if(dust[i][1]<-0.05f){ dust[i][0]=RND.nextFloat(); dust[i][1]=1.05f; } } }
+    static {
+        for (int i = 0; i < DUST_COUNT; i++) {
+            dust[i][0] = RND.nextFloat();
+            dust[i][1] = RND.nextFloat();
+            dust[i][2] = 0.0006f + RND.nextFloat() * 0.0012f;
+            dust[i][3] = RND.nextFloat() * 6.28f;
+        }
+    }
+
+    private static void tickDust(float delta) {
+        if (reducedMotion()) return;
+
+        for (int i = 0; i < DUST_COUNT; i++) {
+            dust[i][1] -= dust[i][2] * delta * 60f;
+            dust[i][3] += delta * 0.7f;
+            if (dust[i][1] < -0.05f) {
+                dust[i][0] = RND.nextFloat();
+                dust[i][1] = 1.05f;
+            }
+        }
+    }
 
     private static void renderAtmosphericDust(GuiGraphics g, int w, int h){
-        tickDust(1f/20f);
         if (h<320) return;
         for(int i=0;i<DUST_COUNT;i++){
             int dx = (int)(dust[i][0]*w);
@@ -137,7 +142,9 @@ public final class QuarantineSceneRenderer {
 
     private static void renderDistantFactoryGlow(GuiGraphics g, int w, int h){
         // Subtle amber glow on horizon, breathing 0.22Hz
-        float breath = (float)(Math.sin(System.currentTimeMillis()/1000.0*0.22*6.28)*0.15+0.85);
+        float breath = reducedMotion()
+            ? 0.85f
+            : (float)(Math.sin(System.currentTimeMillis()/1000.0*0.22*6.28)*0.15+0.85);
         int alpha = (int)(16*breath);
         int top = (int)(h*0.60f);
         int bot = top + Math.max(10, h/18);

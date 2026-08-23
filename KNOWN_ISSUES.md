@@ -1,5 +1,99 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+La primera seccion describe el estado operativo vigente. Todas las secciones
+de versiones anteriores son instantaneas historicas: sus listas de "riesgos
+activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
+que v0.22.0 lo mencione expresamente.
+
+## v0.22.0 - La vigilia queda sellada (2026-08-23)
+
+### Cambios cerrados
+- Polvo atmosférico trasladado de render por FPS al tick fijo de 20 Hz.
+- Música y ambiente consolidados en una única llamada por tick para todas
+  las pantallas del gabinete.
+- Movimiento reducido expuesto en Accesibilidad y ampliado al cielo, humo,
+  clima, partículas, grano y destellos, sin retirar detalles permanentes.
+- Toggles con narración de etiqueta y estado.
+- Memoria JSON con temporal durable, backup de última versión válida,
+  reemplazo atómico, recuperación y preservación del archivo corrupto.
+- RNG determinista reutilizado en papel y ventanas; mismo resultado visual
+  sin nueve asignaciones de `Random` por render de papel ni una por capa de
+  ventanas.
+- Verificación de 25 JSON/83 claves/25 changelogs y registro sonoro completo.
+- Version bump: 0.21.31 -> 0.22.0. Conteo Java sin cambios: 60 clases.
+
+### Estado de entrega
+- Implementacion final: `a1decf304b0c7236d624d4637bd3b5dcaa3961db`,
+  publicada en `arena/01a02cee-gripeverde` para revision mediante la PR 14.
+- Validacion estatica completada: 60 Java sin errores sintacticos segun
+  `java-parser`, 25 locales x 83 claves, 25 changelogs, 35 eventos, 42
+  referencias sonoras y 42 OGG.
+- `java-parser` no sustituye la compilacion semantica de Gradle/Forge.
+- No se creo tag ni release v0.22.0; ambos quedan bloqueados por KI-52.
+
+### Riesgos activos / KI nuevos
+- **KI-52 (v0.22.0)**: el sandbox no dispone de JDK/JRE 17, por lo que el
+  build Forge y la prueba dentro de Minecraft deben ejecutarse en cliente
+  real. Validar Title y subpantallas, escalas GUI 1-4, toggle de Movimiento
+  reducido, narración, continuidad de audio y recuperación controlada de
+  `gripeverde-memory.json` tanto desde `gripeverde-memory.tmp` como desde
+  `gripeverde-memory.backup.json`.
+- KI-51 queda absorbido por KI-52; siguen siendo obligatorias la escena
+  completa, todos los faroles visibles y la ausencia del kiosco/Heraldo a
+  FPS altos y bajos.
+
+---
+
+# HISTORIAL DE VERSIONES E INSTANTANEAS (NO OPERATIVO)
+
+Todo lo que sigue se conserva para trazabilidad. Los estados, riesgos, tags,
+rutas y planes llamados "actuales", "activos" o "vigentes" pertenecen a la
+version bajo la que fueron escritos; no sustituyen el estado v0.22.0 de la
+primera seccion.
+
+## v0.21.31 - La vigilia permanece entera (2026-08-23)
+
+### Cambios cerrados
+- Eliminado, no solo desactivado, el modo de pocos FPS y todo su muestreo.
+- El Title dibuja siempre niebla, calle completa, faroles, reflejos,
+  particulas y utileria; el grano ya no cambia segun los FPS.
+- Eliminados los restos del apagado de faroles, su ciclo erratico de
+  atenuacion y el debilitamiento persistido de `avenue_darkened`; las llamas,
+  reflejos y polillas ya no se omiten.
+- Identificado el supuesto canasto como el kiosco del Heraldo y eliminado por
+  completo: dibujo, hitbox, click, overlay, clase y ficha de descubrimiento.
+- El archivo pasa de 47 a 46 fichas y su contador ignora ids retirados que
+  puedan seguir guardados en memorias de versiones anteriores.
+- Version bump: 0.21.30 -> 0.21.31. Conteo Java: 61 -> 60 clases.
+
+### Riesgos activos / KI nuevos
+- **KI-51 (v0.21.31)**: validar en cliente real el Title con FPS por encima y
+  debajo de 30 y escalas GUI 1-4. La escena debe permanecer completa, todos
+  los faroles deben seguir encendidos y el kiosco/Heraldo no debe aparecer
+  ni responder a clicks.
+- KI-50 queda reemplazado por KI-51: ya no existe un umbral low-end que
+  comparar.
+
+---
+
+## v0.21.30 - La calle permanece (2026-08-23)
+
+### Cambios cerrados
+- Corregido el modo low-end del menu principal: ya no omite toda la capa
+  `renderStreetLevel` cuando los FPS bajan de 30.
+- En low-end se dibuja siempre la base barata `renderStreet`; solo se
+  omiten la utileria y los efectos costosos del nivel de calle.
+- Las subpantallas Diary tambien conservan siempre la calle base,
+  independientemente del muestreo de FPS.
+- Version bump: 0.21.29 -> 0.21.30.
+
+### Riesgos activos / KI nuevos
+- **KI-50 (v0.21.30)**: validar en cliente real el Title por encima y por
+  debajo de 30 FPS y en las cuatro escalas GUI; la calzada debe permanecer
+  visible mientras los efectos costosos cambian segun el modo low-end.
+
+---
+
 ## v0.21.24 - Ajustes pedidos en cliente (2026-08-22)
 
 ### Cambios cerrados
@@ -1666,15 +1760,21 @@ Ultimo tag publicado: v0.11.13
 - Slider vanilla "Duracion de las notificaciones" en Accesibilidad tiene texto que se corta a la derecha por ancho fijo 150px del widget. Limitacion vanilla. Igual que en Chat (Duracion notificaciones), no se corrige.
 
 
-Ultima actualizacion: v0.11.8
-Estado: EN DESARROLLO
-Version estable actual: v0.11.8
-Ultimo tag publicado: v0.11.8
-Hitos recientes: v0.11.0 (DiaryOptionsScreen sobre pergamino con Title vivo detras, KI-06 cerrado extendido, sub-pantallas vanilla integradas); v0.10.4 (bump administrativo, changelog in-game intencionalmente sin entrada); v0.10.1 (persistencia del volumen de musica); v0.10.0 (ChangelogScreen sobre pergamino + reescritura diegetica de las 25 cronicas, KI-06 cerrado); v0.9.2 (fix humo/nubes, KI-05 cerrado); v0.9.1 (faroles reactivados, KI-03 cerrado completo); v0.9.0 hito visual del skyline; sistema de musica (v0.8.x) estable.
+## ARCHIVO HISTORICO: INSTANTANEA v0.11.8 (NO VIGENTE)
+
+Los campos siguientes se conservan como evidencia de aquella etapa. No
+representan la version, el tag, el estado ni las instrucciones actuales; el
+estado operativo vigente esta al comienzo de este documento.
+
+Ultima actualizacion de la instantanea: v0.11.8
+Estado archivado: EN DESARROLLO
+Version estable de la instantanea: v0.11.8
+Ultimo tag conocido en la instantanea: v0.11.8
+Hitos recientes de la instantanea: v0.11.0 (DiaryOptionsScreen sobre pergamino con Title vivo detras, KI-06 cerrado extendido, sub-pantallas vanilla integradas); v0.10.4 (bump administrativo, changelog in-game intencionalmente sin entrada); v0.10.1 (persistencia del volumen de musica); v0.10.0 (ChangelogScreen sobre pergamino + reescritura diegetica de las 25 cronicas, KI-06 cerrado); v0.9.2 (fix humo/nubes, KI-05 cerrado); v0.9.1 (faroles reactivados, KI-03 cerrado completo); v0.9.0 hito visual del skyline; sistema de musica (v0.8.x) estable.
 
 ---
 
-## 1. Version actual
+## 1. Version archivada en esta instantanea
 
 - Proyecto: Eternal Craft: Gripe Verde
 - Base: Minecraft Forge 1.20.1

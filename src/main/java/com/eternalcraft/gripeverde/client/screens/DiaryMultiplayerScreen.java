@@ -1,6 +1,5 @@
 package com.eternalcraft.gripeverde.client.screens;
 
-import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.util.SmoothScroll;
@@ -440,8 +439,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         super.tick();
         updateDiaryButtonStates();
         this.smoothScroll.tick(this.vanillaList);
-        try { MenuMusic.tick();
- com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick(); } catch (Throwable ignored) {}
+        com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.tick(1.0f / 20.0f);
     }
 
     @Override

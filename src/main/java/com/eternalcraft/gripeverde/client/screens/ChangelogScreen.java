@@ -250,8 +250,7 @@ public class ChangelogScreen extends Screen {
     public void tick() {
         super.tick();
         tickSmoothScroll();
-        com.eternalcraft.gripeverde.client.audio.MenuMusic.tick();
-        com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick();
+        com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.tick(1.0f / 20.0f);
     }
 
     @Override

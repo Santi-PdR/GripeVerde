@@ -2,6 +2,23 @@
 ## Chronicle under seal
 
 
+## Version 0.22.0 - The vigil is sealed
+
+The city now moves to one steady twenty-beat pulse instead of advancing dust and ambience with every rendered frame. Reduced motion has a visible control among the perception aids and freezes atmospheric movement, grain and flashes without removing the street, lamps or any permanent scene detail. Every diary toggle now tells the narrator both its name and current state.
+
+The chronicler no longer writes directly over the only memory file: each record is flushed to a temporary file, the last valid copy is preserved, replacement is atomic when supported, and a damaged record can be recovered without silently erasing the archive. Paper grain and city windows also reuse their deterministic instruments, reducing needless frame-by-frame allocations while preserving their appearance. The build seal now checks localization parity, current chronicles and the complete sound registry.
+
+
+## Version 0.21.31 - The vigil remains whole
+
+The city no longer measures its strength only to erase pieces of the night. Fog, gas lamps, their reflections and every street detail remain even when FPS falls. The old wooden kiosk that resembled a basket is gone as well, together with its daily Herald, hidden interaction and card. No old memory or erratic cycle can dim the lights again.
+
+
+## Version 0.21.30 - The street remains
+
+When the machine that sustains the vigil slows its pace, the city may lose its fog and dim its most demanding ornaments. The wet cobblestones, however, no longer vanish with them. Beneath the buildings, the street remains and the city keeps its ground.
+
+
 ## Version 0.21.25 - The ink is uniform
 
 The chronicler signed with his own name. The director's hand was recognized. The city blueprints found words that fit within the margins. Every poster in the cabinet —elixir, decree, reward, quarantine— now speaks in the same dark ink, without the red shadow that once divided each title. The stamps no longer cast their own shadow. The logo, the pause signature, the shooting star and the easter egg telegram all shed their doubles. The visitor's book moved inside the panel where it belongs. The credits show the version number. The cabinet speaks with one voice.

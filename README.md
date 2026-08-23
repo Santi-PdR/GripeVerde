@@ -5,39 +5,44 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.21.24 - Ajustes pedidos en cliente**
+**v0.22.0 - La vigilia queda sellada**
 
-Se retiro el sonido de madera al abrir el gabinete, el cajon con la llave
-y su vitrina, el juego de los tres golpes sobre la mesa y el despegue de
-la hoja de cuarentena; el titulo del cartel y los sellos de tinta pierden
-el rojo sombreado; el libro de visitas del registro de hospedajes se ve y
-responde mejor; y las atribuciones usan etiquetas en titulo normal. 61
-clases Java, 25 idiomas, 35 eventos de sonido, 42 OGG y 0 PNG de
-contenedores. Documentacion sincronizada y version 0.21.24.
+La entrega final mantiene completa la escena del Title y unifica su
+simulación, música y ambiente en un tick estable de 20 Hz. La pantalla de
+Accesibilidad expone ahora Movimiento reducido, que congela el movimiento
+atmosférico, el grano y los destellos sin retirar la calle, los faroles ni la
+utilería; los toggles anuncian también su estado al narrador.
 
-**v0.21.23 - Se reconstruye desde el registro previo**
+La memoria persistente se escribe mediante un temporal durable y reemplazo
+atómico, conserva la última copia válida y recupera un temporal interrumpido
+o el respaldo si el JSON principal se daña. El render reutiliza generadores
+deterministas para evitar asignaciones por cuadro sin modificar su aspecto.
+Los validadores integrados en el build comprueban la paridad de 25 idiomas
+(83 claves), los 25 changelogs, 35 eventos y 42 OGG. La sintaxis de las 60
+clases Java se comprobó por separado con `java-parser`; la compilación
+semántica contra Forge requiere todavía Java 17.
 
-Se localizo en el historial el estado anterior a la version que altero las
-interfaces (el registro v0.17.2) y desde el se reconstruyeron las diecisiete
-salas del gabinete a su forma original: cabeceras propias de cada sala, sin
-carteles ni paneles de la epoca revertida. Se conservan intactas las demas
-versiones: el arreglo del registro sonoro, la limpieza, la memoria del
-gabinete con sus cuarenta y siete fichas, el periodico, el telegrafo y los
-arreglos de audio y rendimiento. El sello que cierra el archivo, las fichas
-de la limpieza y los avisos de las cien aperturas siguen activos. 61 clases
-Java, 25 idiomas, 35 eventos de sonido, 42 OGG y 0 PNG de contenedores.
-Documentacion sincronizada y version 0.21.23.
+### Estado de entrega
+
+- Implementación final: commit `a1decf304b0c7236d624d4637bd3b5dcaa3961db`.
+- Revisión del owner: [PR 14](https://github.com/Santi-PdR/GripeVerde/pull/14).
+- Validación estática y documental completada; árbol local y remoto limpio.
+- El build Forge y la prueba en Minecraft continúan pendientes bajo KI-52
+  porque el sandbox no dispone de Java 17.
+- No existe tag/release v0.22.0: debe publicarse solo después de validar el
+  cliente real.
 
 ## Resumen visible del Mod Menu
 
-Eternal Craft: Gripe Verde convierte los menus de Minecraft en un gabinete victoriano bajo cuarentena. El menu principal muestra una ciudad oscura con lluvia, niebla, reloj de bolsillo, carteles oficiales, musica y ambiente propio, mientras que cada sala del gabinete adopta una identidad concreta: Options como mesa central, Sound como sala instrumental, Video como aparato de observacion, Controls como manual operativo, Language como archivo linguistico, Chat como oficina de correspondencia, Accessibility como expediente de percepcion, Online como estacion de comunicaciones, Multiplayer como registro de hospedajes, Credits como acta final, Archive como sala de consulta y las pantallas de formulario como documentos oficiales. El objetivo ya no es solo tematizar vanilla, sino hacer que la interfaz parezca realmente propia de Gripe Verde.
+Eternal Craft: Gripe Verde convierte los menus de Minecraft en un gabinete victoriano bajo cuarentena. El menu principal muestra una ciudad oscura con lluvia, niebla, reloj de bolsillo, carteles oficiales, musica y ambiente propio. Las salas personalizadas conservan cabeceras y funciones diferenciadas sobre pergamino; Video abre la interfaz de Embeddium cuando esta disponible y usa la pantalla vanilla como fallback. El conjunto tematiza la navegacion sin alterar la logica del juego.
 
 Los contenedores del juego conservan su aspecto vanilla original; el mod no altera las texturas de los contenedores ni usa resourcepacks. El mod es client-side y no agrega gameplay.
 
 ## Caracteristicas principales
 
 ### Menu principal victoriano
-- Framework UI adaptativo con modo minimal automatico para pantallas pequenas.
+- Layout responsivo para pantallas pequenas, decidido por espacio disponible y
+  nunca por FPS; la calle y los faroles permanentes no dependen del rendimiento.
 - Fondo atmosferico del Title con cielo nocturno, luna, lluvia, niebla ocre, skyline victoriano y calle mojada.
 - Calle decorativa adaptativa por escala (v0.7.0).
 - Faroles de gas reactivados en v0.9.1 con anclaje a la calle y densidad adaptativa por escala GUI.
@@ -56,7 +61,7 @@ Los contenedores del juego conservan su aspecto vanilla original; el mod no alte
 
 ### La memoria del gabinete (v0.16.0)
 - Memoria persistente propia (descubrimientos, objetos, noches seguidas, ausencias) separada del ajuste de audio.
-- 47 descubrimientos con fichas, sellos y pistas encadenadas; algunas consecuencias son permanentes.
+- 46 descubrimientos con fichas, sellos y pistas encadenadas; algunas consecuencias son permanentes.
 - Marginalia contextual del cronista: notas que responden a lo que el lector hace.
 - La Sala de consulta: detras del ultimo folio de la cronica, un archivo con las fichas halladas y documentos recuperados.
 
@@ -69,38 +74,65 @@ Los contenedores del juego conservan su aspecto vanilla original; el mod no alte
 - **Title** - menu principal victoriano completo con musica y ambiente sonoro.
 - **Pause** - diario del superviviente (R14, aprobada).
 - **Changelog** - historial narrativo en pergamino.
-- **Options** - gabinete central con agrupacion visual, carril de estado y slider FOV integrado.
-- **Sound** - sala acustica con medidores, estado de mezcla y sliders propios del mod.
-- **Video** - aparato de observacion sobre consola vanilla, con presentacion tecnica propia.
-- **Controls** - manual operativo con resumen de postura y protocolo.
-- **Language** - archivo linguistico con estado actual/pediente y presentacion de consulados.
-- **Chat** - correspondencia con carril documental y archivo de entregas.
-- **Accessibility** - expediente de observacion con lectura por capas.
-- **Online / Multiplayer** - registros de conexion y hospedaje sobre presentacion propia.
+- **Options** - gabinete central con accesos propios y slider FOV integrado.
+- **Sound** - sala acustica sobre pergamino y sliders propios del mod.
+- **Video** - Embeddium si esta instalado; pantalla de video vanilla como fallback.
+- **Controls** - manual operativo con toggles sobre pergamino.
+- **Language** - archivo linguistico con lista y seleccion localizadas.
+- **Chat** - protocolos de correspondencia sobre pergamino.
+- **Accessibility** - opciones vanilla mas el toggle persistente de Movimiento reducido.
+- **Online / Multiplayer** - registros de conexion y hospedaje con presentacion propia.
 - **Credits** - ultimo archivo del gabinete.
-- **Archive** - sala de consulta (47 fichas).
+- **Archive** - sala de consulta (46 fichas).
 - **DirectJoin / EditServer / Confirm** - formularios y autorizaciones pulidos en v0.21.0.
-- **DebugCanvas** - herramienta interna de desarrollo (no en produccion).
-- **SoundLab** - herramienta interna de audio (no en produccion).
 
 ## Build
 
-Ejecutar: `.\gradlew build`
+Con Java 17, ejecutar: `.\gradlew.bat clean build`
 
-El jar se genera en `build/libs/gripeverde-VERSION.jar`
+El jar se genera en `build\libs\gripeverde-VERSION.jar`
 
 Verificaciones activas en `processResources`:
-- `verifyGripeVerdeLocalization` (25 lang + 25 changelog)
-- `verifyGripeVerdeSoundAssets` (sounds.json ↔ OGG existentes)
+- `verifyGripeVerdeLocalization` (JSON válido, 83 claves en paridad y
+  v0.22.0 presente en los 25 changelogs).
+- `verifyGripeVerdeSoundAssets` (eventos completos, referencias existentes y ningún OGG huérfano).
+- `verifyGripeVerdeNoDeadCode` (símbolos retirados fuera del código productivo).
 
 ## Deploy
 
-Ruta de deploy configurable en `.deploy` (clave `DEPLOY_MODS_PATH`).
+Repositorio local actual: `C:\Users\santi\Desktop\GripeVerde`.
 
-Reglas actuales:
-- Todo build de validacion debe ir acompanado de deploy.
-- Antes de validar visualmente, limpiar jars viejos del mismo mod en la carpeta mods.
-- Validar en pantalla la version mostrada por el reloj antes de aprobar o rechazar un cambio.
+Instancia de prueba de SKLauncher:
+`C:\Users\santi\AppData\Roaming\.sklauncher\instances\test-1\mods`.
+
+Antes de cada validacion se eliminan los jars anteriores de Gripe Verde, se
+compila y se copia exactamente `gripeverde-0.22.0.jar`. La version mostrada
+por el reloj debe comprobarse en pantalla antes de aprobar la entrega.
+
+Flujo PowerShell vigente para actualizar, compilar y desplegar:
+
+```powershell
+$ErrorActionPreference = "Stop"
+$Repo = "C:\Users\santi\Desktop\GripeVerde"
+$Mods = "C:\Users\santi\AppData\Roaming\.sklauncher\instances\test-1\mods"
+$Jar = Join-Path $Repo "build\libs\gripeverde-0.22.0.jar"
+
+Set-Location $Repo
+git fetch origin arena/01a02cee-gripeverde
+if ($LASTEXITCODE -ne 0) { throw "git fetch fallo" }
+git reset --hard FETCH_HEAD
+if ($LASTEXITCODE -ne 0) { throw "git reset fallo" }
+
+Get-ChildItem (Join-Path $Repo "build\libs") -Filter "gripeverde-*.jar" -ErrorAction SilentlyContinue | Remove-Item -Force
+Get-ChildItem $Mods -Filter "gripeverde-*.jar" -ErrorAction SilentlyContinue | Remove-Item -Force
+
+.\gradlew.bat clean build
+if ($LASTEXITCODE -ne 0) { throw "Gradle fallo" }
+if (-not (Test-Path $Jar)) { throw "No se genero $Jar" }
+
+Copy-Item $Jar $Mods -Force
+Get-Item (Join-Path $Mods "gripeverde-0.22.0.jar")
+```
 
 ## Idiomas soportados
 
@@ -111,8 +143,8 @@ Reglas actuales:
 ## Documentacion
 
 - `CONTRIBUTING.md` - guia corta de contribucion (branch fija, no gameplay, validacion).
-- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.24.
-- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.24).
+- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.22.0.
+- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.22.0).
 - `KNOWN_ISSUES.md` - estado tecnico, decisiones activas, errores documentados, KIs.
 - `README.md` - esta portada.
 

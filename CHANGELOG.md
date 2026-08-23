@@ -1,5 +1,43 @@
 # Eternal Craft: Gripe Verde
 
+## v0.22.0 - La vigilia queda sellada
+
+La simulacion atmosferica y el audio quedan reunidos en un tick fijo de
+20 Hz: el polvo ya no acelera con los FPS y se eliminan los ticks redundantes
+desde render. Movimiento reducido pasa a la pantalla de Accesibilidad y
+congela cielo, clima, humo, particulas, grano y destellos sin borrar calle,
+faroles ni utileria; los toggles anuncian tambien su estado al narrador.
+
+La memoria del cronista deja de sobrescribir su unico JSON: escribe un
+temporal durable, conserva la ultima copia valida, reemplaza atomicamente y
+recupera un temporal interrumpido o el backup cuando encuentra corrupcion,
+preservando el archivo dañado. El papel y las ventanas reutilizan RNGs
+deterministas para reducir asignaciones sin cambiar su aspecto. El build
+valida paridad de idiomas, changelogs y el registro sonoro completo. Version
+final 0.22.0.
+
+El expediente queda listo para revision del owner en la PR 14. El tag y el
+release v0.22.0 se reservan hasta completar en un cliente real la validacion
+registrada como KI-52.
+
+## v0.21.31 - La vigilia permanece entera
+
+Se elimino por completo el modo automatico de pocos FPS: ya no existe el
+muestreador, la escena del Title siempre conserva niebla, faroles, reflejos,
+particulas y utileria, y el grano vuelve a un intervalo estable. Tambien se
+limpio el estado heredado y el ciclo erratico que podian debilitar un farol
+o suprimir su reflejo.
+El objeto de madera de la carretera fue identificado como el kiosco del
+Heraldo y retirado junto con su hitbox, periodico diario, overlay, clase y
+ficha de descubrimiento. El archivo cuenta ahora 46 fichas activas.
+
+## v0.21.30 - La calle permanece
+
+Cuando la maquina que sostiene la vigilia aminora el paso, la ciudad aun
+puede desprenderse de la niebla y apagar los adornos mas costosos. La
+calzada, sin embargo, ya no desaparece con ellos: el empedrado mojado
+permanece bajo los edificios y devuelve suelo a la vigilia.
+
 ## v0.21.24 - Ajustes pedidos en cliente
 
 Registro tecnico: se retiro el sonido de madera al abrir el gabinete, el

@@ -2,9 +2,129 @@
 
 ## Addendum operativo actual
 
-- Rama fija de Arena: `arena/01a025d1-gripeverde` (sync con `main` v0.21.2, commit `afe8e83`).
-- Version: `0.21.24`.
-- Ultima regla explicita del usuario: estabilizar el build/runtime tras la entrega de v0.21.0 y mantener la linea visual sin introducir resourcepacks, integrando el contexto maestro y sincronizacion documental de v0.17.2.
+- Rama fija de Arena: `arena/01a02cee-gripeverde`.
+- Base respaldada: v0.21.31, commit
+  `7605243f9aff55ccbe0d00ad743c38414c66061f`.
+- Implementacion final: v0.22.0, commit
+  `a1decf304b0c7236d624d4637bd3b5dcaa3961db`.
+- Revision del owner: PR 14,
+  <https://github.com/Santi-PdR/GripeVerde/pull/14>.
+- Tag/release `v0.22.0`: deliberadamente ausente hasta cerrar KI-52.
+- Pedido vigente: entrega final documentada y coherente, preservando el
+  historial pero separandolo de las instrucciones actuales.
+- Restricciones funcionales absolutas: escena completa, faroles permanentes,
+  sin kiosco/Heraldo, sin modo automatico por FPS, sin gameplay y sin
+  resourcepacks.
+- Repositorio local vigente del owner:
+  `C:\Users\santi\Desktop\GripeVerde`.
+- Deploy vigente del owner:
+  `C:\Users\santi\AppData\Roaming\.sklauncher\instances\test-1\mods`.
+
+Toda ruta distinta de esas dos rutas Windows dentro del historial de este
+archivo es una referencia archivada, no una instruccion operativa. En
+particular, no usar `.deploy`, `D:\...` ni
+`C:\Users\santi\Desktop\EternalCraft_Mod\GripeVerde`.
+
+### DECISION 2026-08-23: v0.22.0 - La vigilia queda sellada
+
+Pasada final autorizada antes de entregar el mod al owner, sin gameplay,
+resourcepacks ni recortes de la escena. Antes de tocar archivos se creó y
+verificó el bundle externo
+`/home/user/GripeVerde-backup-v0.21.31-7605243f9aff-2026-08-23.bundle`
+(SHA-256 `361002ab5a443585a9297fe0e7161fbb3de265ab6ae47d4e38f117580853e74a`).
+
+- `QuarantineSceneRenderer` mueve ahora el polvo desde el tick fijo de 20 Hz;
+  su velocidad deja de depender de los FPS y `renderAtmosphericDust` solo dibuja.
+- Música y ambiente tienen una sola ruta de tick en todas las pantallas;
+  desaparecen las llamadas redundantes por cuadro del Title y de las
+  subpantallas que mantenían solo el audio.
+- `REDUCED_MOTION` aparece como toggle propio en Accesibilidad, persiste en
+  el TOML y congela cielo, humo, lluvia, partículas, grano, destellos y
+  movimiento atmosférico sin retirar calle, faroles ni utilería permanente;
+  también suprime sacudida, flashes, partículas y revelado progresivo del
+  easter egg del logo. El grano estático se recalcula si cambia la ventana.
+- `DiaryToggle` acepta opciones externas y su mensaje de narración incluye
+  etiqueta y estado actual.
+- `ChroniclerMemory` escribe un temporal con `force`, preserva la última
+  memoria válida, reemplaza atómicamente cuando el sistema lo admite,
+  recupera un temporal interrumpido o el backup y conserva el JSON corrupto
+  para diagnóstico.
+- `PaperTexture` y las ventanas de `VictorianSkyline` reutilizan RNGs
+  deterministas; se elimina la asignación de objetos por cuadro sin cambiar
+  la distribución visual.
+- El build valida JSON, paridad y valores de las 83 claves en 25 idiomas,
+  presencia de v0.22.0 en 25 changelogs, listas sonoras no vacías, entradas
+  bien formadas, referencias OGG completas y ausencia de OGG huérfanos.
+- Conteos: 60 clases Java, 25 lang (83 claves), 25 changelogs, 35 eventos y
+  42 OGG.
+- Bump sincronizado: `build.gradle` + `GripeVerdeMod.VERSION` -> 0.22.0.
+- Validacion estatica final: 60 Java analizados por `java-parser`, 25 locales
+  x 83 claves, 25 changelogs, 35 eventos, 42 referencias y 42 OGG.
+- La compilacion semantica de Gradle/Forge no se ejecuto en el sandbox por
+  falta de Java 17; el analisis de sintaxis externo no la sustituye.
+- La implementacion se publico en la rama fija y la PR 14 se actualizo para
+  revision del owner. No se creo tag ni release.
+- Validacion pendiente en cliente real (KI-52): build con Java 17, recorrido
+  de pantallas, toggle de movimiento reducido y prueba controlada de
+  recuperacion de memoria.
+
+### SIGUIENTE PASO OPERATIVO VIGENTE
+
+No implementar los planes de gameplay que aparecen en bloques historicos de
+este documento. La unica secuencia vigente es cerrar KI-52 en un cliente
+real, corregir solo si esa prueba encuentra un defecto y, despues, autorizar
+el tag/release v0.22.0. Las cronicas in-game ya estan sincronizadas en los 25
+idiomas; este cierre documental no requiere una entrada visible adicional.
+
+### DECISION 2026-08-23: v0.21.31 - La vigilia permanece entera
+
+La auditoria confirmo que `QuarantineSceneRenderer.isLowEnd()` muestreaba
+los FPS una vez por segundo y, por debajo de 30, eliminaba la niebla y toda
+la utileria de `renderStreetLevel`, incluidos los faroles. Ese modo se borro
+por completo: ya no quedan campos, muestreo ni bifurcaciones por FPS.
+
+- El Title ejecuta siempre `renderFogLow` y `renderStreetLevel`; la niebla,
+  los faroles, sus reflejos, las polillas, las particulas y el resto de la
+  calle no cambian por una bajada de FPS.
+- El grano de pelicula deja de consultar FPS y usa siempre su intervalo de
+  90 ms.
+- Se retiraron los restos del antiguo apagado interactivo, el ciclo erratico
+  de atenuacion y la lectura de `avenue_darkened`: ni un evento ni una
+  memoria vieja pueden apagar o debilitar una llama, omitir su reflejo ni
+  dispersar sus polillas.
+- El objeto que parecia un canasto era el kiosco de madera del Heraldo. Se
+  eliminaron su renderer, hitbox, interaccion, overlay, periodico diario,
+  clase `Herald.java` y ficha de descubrimiento.
+- `ChroniclerMemory.discoveredCount()` cuenta solo los ids activos, por lo
+  que memorias anteriores que tengan `herald` no producen un contador
+  superior al total actual de 46 fichas.
+- Conteos: 60 clases Java, 25 lang, 35 eventos y 42 OGG.
+- Changelog in-game actualizado en los 25 idiomas por tratarse de cambios
+  visibles en la escena.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.31.
+- Validacion pendiente en cliente real (KI-51): Title a FPS altos/bajos y
+  cuatro escalas GUI; confirmar escena completa, faroles estables y ausencia
+  total del kiosco/Heraldo.
+
+### DECISION 2026-08-23: v0.21.30 - La calle permanece
+
+El modo low-end introducido en v0.21.5 pretendia retirar la niebla y los
+faroles cuando el cliente bajaba de 30 FPS, pero condicionaba la llamada
+completa a `LivingAtmosphere.renderStreetLevel`. Como esa llamada tambien
+dibuja la base mediante `renderStreet`, la calzada desaparecia junto con
+los efectos costosos.
+
+- `QuarantineSceneRenderer.renderTitleScene`: en low-end llama ahora a
+  `renderStreet`; fuera de low-end conserva `renderStreetLevel` completo.
+- `renderDiaryBackground`: `renderStreet` se ejecuta siempre; la calle base
+  es barata y no depende del muestreador de FPS.
+- Se conservan sin cambios la niebla, los faroles, sus reflejos y las
+  particulas en el camino normal.
+- Changelog in-game actualizado en los 25 idiomas porque el arreglo tiene
+  manifestacion visible en la ciudad.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.30.
+- Validacion pendiente en cliente real (KI-50): Title a ambos lados del
+  umbral de 30 FPS y cuatro escalas GUI.
 
 ### DECISION 2026-08-22: v0.21.24 - Ajustes pedidos en cliente
 
@@ -828,9 +948,17 @@ necesaria para retomar el desarrollo sin repetir errores.
 
 ---
 
-## Estado actual verificado
+## ARCHIVO HISTORICO DE CONTEXTO (NO OPERATIVO)
 
-- Version estable actual: v0.21.24
+Desde este punto se preservan instantaneas antiguas, rutas retiradas, reglas
+de su momento y planes que ya fueron ejecutados o descartados. No interpretar
+ninguna aparicion de "actual", "vigente", "deploy" o "proximo hito" en este
+archivo historico como una instruccion presente: el addendum operativo del
+inicio es la unica fuente vigente.
+
+## Estado verificado en la instantanea archivada
+
+- Version estable de aquella instantanea: v0.21.24
 - build.gradle: version = '0.21.24'
 - GripeVerdeMod.VERSION: "0.21.24"
 - mods.toml: usa ${mod_version} desde project.version.toString() (ver E32)

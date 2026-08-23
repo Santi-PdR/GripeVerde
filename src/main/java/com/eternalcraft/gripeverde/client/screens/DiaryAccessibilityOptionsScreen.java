@@ -6,9 +6,12 @@ import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton.Icon;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton.Variant;
+import com.eternalcraft.gripeverde.client.widgets.DiaryToggle;
+import com.eternalcraft.gripeverde.config.ClientConfig;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.AccessibilityOptionsScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -24,9 +27,10 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
 
     // Bandas dentro del panel
     private static final int HEADER_H = 60;   // titulo + subtitulo + flavor + divisor
-    private static final int FOOTER_H = 45;   // divisor + boton Volver
+    private static final int FOOTER_H = 82;   // divisor + movimiento reducido + Volver
 
     private DiaryButton btnVolver;
+    private DiaryToggle reducedMotionToggle;
     private final SmoothScroll smoothScroll = new SmoothScroll();
     private int panelW, panelH, panelX, panelY;
 
@@ -66,6 +70,25 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
                 btn.setX(this.width + 200);
             }
         }
+
+        // Opcion propia del mod: visible junto a las opciones de accesibilidad vanilla.
+        int toggleW = Math.min(300, this.panelW - 32);
+        int toggleX = (this.width - toggleW) / 2;
+        int toggleY = this.panelY + this.panelH - 70;
+        this.reducedMotionToggle = new DiaryToggle(
+            toggleX, toggleY, toggleW, 24,
+            () -> ClientConfig.REDUCED_MOTION.get(),
+            value -> {
+                ClientConfig.REDUCED_MOTION.set(value);
+                ClientConfig.REDUCED_MOTION.save();
+            },
+            Component.translatable("gripeverde.options.accessibility.reduced_motion"),
+            value -> Component.translatable(value ? "options.on" : "options.off"),
+            null
+        );
+        this.reducedMotionToggle.setTooltip(Tooltip.create(Component.translatable(
+            "gripeverde.options.accessibility.reduced_motion.tooltip")));
+        this.addRenderableWidget(this.reducedMotionToggle);
 
         // Boton Volver propio
         int btnW = 160;
@@ -126,12 +149,15 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         }
 
         // Cosmeticos
-        int divY2 = this.panelY + this.panelH - 38;
+        int divY2 = this.panelY + this.panelH - FOOTER_H + 4;
         DiaryChrome.drawInkDivider(gfx, this.panelX, divY2, this.panelW);
         DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
         DiaryChrome.drawRegistryTag(gfx, this.panelX, this.panelY, this.panelW, this.panelH, "REG. VI");
 
-        // Boton Volver
+        // Controles del pie
+        if (this.reducedMotionToggle != null) {
+            this.reducedMotionToggle.render(gfx, mouseX, mouseY, delta);
+        }
         if (this.btnVolver != null) {
             this.btnVolver.render(gfx, mouseX, mouseY, delta);
         }
@@ -158,9 +184,10 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         gfx.fill(ex - 4, ey + 2, ex + 4, ey + 3, lid);
         gfx.fill(ex - 7, ey - 1, ex - 6, ey + 1, lid);
         gfx.fill(ex + 6, ey - 1, ex + 7, ey + 1, lid);
-        // Parpadeo ocasional
+        boolean reduced = ClientConfig.REDUCED_MOTION.get();
+        // Parpadeo ocasional, desactivado cuando el lector reduce el movimiento.
         long now = System.currentTimeMillis();
-        boolean blink = (now % 6200L) < 180L;
+        boolean blink = !reduced && (now % 6200L) < 180L;
         if (blink) {
             gfx.fill(ex - 6, ey - 2, ex + 6, ey + 2, lid);
             return;
@@ -168,9 +195,11 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         // Iris que sigue al lector
         double dx = mouseX - ex, dy = mouseY - ey;
         int px = 0, py = 0;
-        if (Math.abs(dx) > 12) px = dx > 0 ? 2 : -2;
-        else if (Math.abs(dx) > 4) px = dx > 0 ? 1 : -1;
-        if (Math.abs(dy) > 12) py = dy > 0 ? 1 : -1;
+        if (!reduced) {
+            if (Math.abs(dx) > 12) px = dx > 0 ? 2 : -2;
+            else if (Math.abs(dx) > 4) px = dx > 0 ? 1 : -1;
+            if (Math.abs(dy) > 12) py = dy > 0 ? 1 : -1;
+        }
         gfx.fill(ex - 2 + px, ey - 2 + py, ex + 2 + px, ey + 2 + py, 0xFF8E6A35);
         gfx.fill(ex - 1 + px, ey - 1 + py, ex + 1 + px, ey + 1 + py, 0xFF1A0F05);
         gfx.fill(ex - 2 + px, ey - 2 + py, ex - 1 + px, ey - 1 + py, 0xFFD8CAB0);

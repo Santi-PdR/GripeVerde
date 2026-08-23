@@ -79,5 +79,7 @@
     "gripeverde.direct.subtitle": "Una puerta abierta sin mapa",
     "gripeverde.options.online.subtitle": "Avisos lejanos y listas publicas",
     "gripeverde.options.online.flavor": "Decidid que senales pueden salir del distrito.",
-    "gripeverde.options.packs.subtitle": "Archivo de materiales"
+    "gripeverde.options.packs.subtitle": "Archivo de materiales",
+    "gripeverde.options.accessibility.reduced_motion": "Movimiento reducido",
+    "gripeverde.options.accessibility.reduced_motion.tooltip": "Congela las animaciones y destellos del ambiente sin quitar detalles de la escena."
 }

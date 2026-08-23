@@ -45,8 +45,17 @@ public class VictorianSkyline {
     private static final long WINDOW_SEED_FG = 0xDEADBEEFL;
     private static final long WINDOW_SEED_BG = 0xCAFEBABEL;
 
-    // v0.21.3: RNG compartido con seed fija (sin Math.random en el loop caliente).
+    // Reused deterministic generators avoid per-frame allocations without changing the scene.
     private static final java.util.Random RND = new java.util.Random(0x5EEDF00DL);
+    private static final java.util.Random WINDOW_RNG = new java.util.Random(WINDOW_SEED_FG);
+
+    private static boolean reducedMotion() {
+        try {
+            return com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get();
+        } catch (IllegalStateException ignored) {
+            return false;
+        }
+    }
 
     private static final int TOTAL_CHIMNEYS = CHIMNEYS_BG.length + CHIMNEYS_FG.length;
     private static final float[][] smokeParticles = new float[TOTAL_CHIMNEYS * 8][4];
@@ -68,9 +77,7 @@ public class VictorianSkyline {
     private static boolean animWindowsInit = false;
 
     public static void tick(float deltaTime) {
-        time += deltaTime;
         initSmoke();
-        tickSmoke(deltaTime);
 
         // Animate multiple windows with distinct timers
         if (!animWindowsInit) {
@@ -81,6 +88,10 @@ public class VictorianSkyline {
             }
             animWindowsInit = true;
         }
+        if (reducedMotion()) return;
+
+        time += deltaTime;
+        tickSmoke(deltaTime);
         float speed = 2f * deltaTime;
         for (int i = 0; i < ANIM_COUNT; i++) {
             animTimer[i] -= deltaTime;
@@ -300,7 +311,8 @@ public class VictorianSkyline {
 
     private static void renderWindowsOnBuildings(GuiGraphics g, int w, int h, float[][] buildings, boolean isBg) {
         long seed = isBg ? WINDOW_SEED_BG : WINDOW_SEED_FG;
-        java.util.Random rng = new java.util.Random(seed);
+        java.util.Random rng = WINDOW_RNG;
+        rng.setSeed(seed);
         int offOnThreshold = isBg ? 8 : 7;
         int amberThreshold  = 9;
         // LOD: reduce density on large resolutions to save fill calls

@@ -67,6 +67,12 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
     }
 
     @Override
+    public void tick() {
+        super.tick();
+        QuarantineSceneRenderer.tick(1.0f / 20.0f);
+    }
+
+    @Override
     public void renderBackground(GuiGraphics g) {
         // Escena viva detras (barata, sin foco)
         QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
