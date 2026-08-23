@@ -18,6 +18,13 @@ que una seccion posterior lo mencione expresamente.
   campana baja + contador `doctor_signed`). Archivo: 52 fichas; notas
   N_FLASH3/N_DROP/N_DOCTOR; nombres y pistas bilingues en el registry (sin
   claves lang nuevas: 93).
+- **Tooling (deploy.ps1)**: el script leia la version de `build.gradle`
+  ANTES de sincronizar la rama; cuando la version cambiaba entre local y
+  remoto, gradle compilaba el jar nuevo pero la copia buscaba el del release
+  anterior (`No se genero gripeverde-0.24.0.jar` tras un BUILD SUCCESSFUL
+  al desplegar 0.25.0). Corregido el archivo existente: la version se lee
+  despues del reset y el jar se localiza por glob. Sin .ps1 nuevos: el
+  owner opera con comandos inline.
 
 ### Riesgos activos / KI nuevos
 - **KI-58 (v0.25.0)**: validar en cliente real: (a) con tormenta forzada
