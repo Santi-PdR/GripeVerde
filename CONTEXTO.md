@@ -8,7 +8,7 @@
   arena/01a02cee-gripeverde" que sobreviven en el historico son instantaneas
   archivadas, no instrucciones.
 - Base respaldada: v0.22.0, commit `4ca038ddab972ca59435353330c9ccda4a86d581`.
-- Implementacion vigente: v0.23.1 en esta rama (ver DECISIONES 2026-08-23
+- Implementacion vigente: v0.23.2 en esta rama (ver DECISIONES 2026-08-23
   mas abajo).
 - Restricciones funcionales absolutas: escena completa, faroles permanentes,
   sin kiosco/Heraldo, sin modo automatico por FPS, sin gameplay y sin
@@ -94,14 +94,39 @@ hasta nueva autorizacion (ver REVISION_MOD.md, seccion de propuestas).
 - Bump sincronizado: build.gradle + GripeVerdeMod.VERSION -> 0.23.1; docs
   y 25 cronicas in-game al dia (parche: sellos, memoria y relojeria).
 
+### DECISION 2026-08-23 (tercera vuelta): v0.23.2 - El telegrama llega intacto
+
+Hotfix parche por crash en campo, reportado el mismo dia con crash-log
+completo de una instancia real (Java 17, Forge 47.4.10, mod v0.22.0):
+`ArrayIndexOutOfBoundsException: Index 0 out of bounds for length 0` en
+`DiaryTitleScreen.drawEasterEggMessage` durante el render del Title.
+
+- Causa raiz: el efecto maquina de escribir del telegrama (easter egg del
+  sello del titulo) produce una cadena vacia durante los primeros ~22 ms;
+  `font.split("")` devuelve lista vacia y el codigo indexaba `lines.get(0)`
+  tras forzar `lineCount >= 1`. El jugador clickeaba el logo y el cliente
+  moria en cada fotograma posterior (4 crashes consecutivos en el reporte).
+- Correccion: `lineCount` queda acotado por `lines.size()` (0 permitido; el
+  sobre conserva su altura minima con `Math.max(1, lineCount)` solo para el
+  boxH) y la llamada al overlay decorativo en `render()` queda envuelta en
+  try/catch (misma filosofia que el resto de capas ornamentales).
+- Auditoria lateral: los otros 5 usos de `font.split` (ChangelogScreen,
+  DiaryArchiveScreen) iteran seguros; el unico otro acceso indexado
+  (`MenuAmbience.weightedRandom`) ya tenia guardia `isEmpty()`.
+- Bump sincronizado: build.gradle + GripeVerdeMod.VERSION -> 0.23.2; docs y
+  25 cronicas in-game al dia.
+- KI-55 registra la validacion pendiente en cliente; el jar fijado debe
+  llegar al jugador que reporto (sigue en v0.22.0).
+
 ### SIGUIENTE PASO OPERATIVO VIGENTE
 
 No implementar planes de gameplay ni los items de "propuestas futuras"/
 "propuestas visibles" de REVISION_MOD.md sin autorizacion expresa del
 owner. La secuencia vigente: activar la CI con `tools/ci/activar-ci.ps1`,
-validar KI-53/KI-54 en cliente real, corregir solo si esa prueba encuentra
-defectos y, despues, autorizar tag/release v0.23.1 (con los pendientes de
-v0.23.0 y v0.22.0).
+validar KI-53/KI-54/KI-55 en cliente real (en particular reenviar el jar
+v0.23.2 al jugador que reporto el crash), corregir solo si esa prueba
+encuentra defectos y, despues, autorizar tag/release v0.23.2 (con los
+pendientes de v0.23.1, v0.23.0 y v0.22.0).
 
 ## Addendum operativo archivado (v0.22.0)
 

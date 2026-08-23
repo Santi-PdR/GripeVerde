@@ -5,6 +5,14 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
+**v0.23.2 - El telegrama llega intacto**
+
+Hotfix de crash en campo reportado con registro completo desde una
+instancia real (v0.22.0): el telegrama del easter egg del título podía
+dibujarse con 0 letras visibles y la lista vacía de renglones detenía el
+cliente con `ArrayIndexOutOfBoundsException`. El conteo de líneas queda
+acotado por el tamaño real de la lista y el overlay decorativo blindado.
+
 **v0.23.1 - Sellos y relojería**
 
 Parche de mantenimiento duro sobre v0.23.0: dos sellos de build nuevos
@@ -40,7 +48,7 @@ y publica el jar como artifact.
 
 ### Estado de entrega
 
-- Implementación vigente: rama `arena/01a02f45-gripeverde` (v0.23.1).
+- Implementación vigente: rama `arena/01a02f45-gripeverde` (v0.23.2).
 - Base: commit `4ca038d` (merge de la PR 14, v0.22.0 ya mergeada).
 - Validación estática y documental completada; árbol local y remoto limpio.
 - La compilación semántica contra Forge corre en el PC del owner y, una vez

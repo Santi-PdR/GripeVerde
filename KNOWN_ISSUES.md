@@ -29,6 +29,14 @@ que v0.23.1 lo mencione expresamente.
   claves), 25 cronicas, 35 eventos, 42 OGG.
 
 ### Riesgos activos / KI nuevos
+- **KI-55 (v0.23.2)**: validar en cliente real el hotfix del crash del
+  easter egg: clic repetido en el sello del titulo con movimiento normal
+  (maquina de escribir) ya no produce `ArrayIndexOutOfBoundsException` en
+  ningun fotograma; el telegrama aparece y desaparece con normalidad.
+  Pendiente operativo: reenviar el jar v0.23.2 al jugador que reporto el
+  crash (su instancia sigue en v0.22.0) y confirmar que su sesion arranca.
+  El reporte original (2026-08-23): 4 crashes consecutivos en
+  `DiaryTitleScreen.drawEasterEggMessage`, Forge 47.4.10, Java 17.0.8.
 - **KI-54 (v0.23.1)**: con CI activada (activar-ci.ps1) confirmar build
   verde en la rama y luego en cliente: hearse/cuervos/campana se comportan
   igual tras la migracion a nanoTime; la memoria recuperada sigue

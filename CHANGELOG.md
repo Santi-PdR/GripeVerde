@@ -1,5 +1,26 @@
 # Eternal Craft: Gripe Verde
 
+## v0.23.2 - El telegrama llega intacto
+
+Hotfix de crash en campo (parche): el easter egg que dispara el clic en el
+sello del titulo podia tumbar el cliente en el primer fotograma. El efecto
+maquina de escribir abre el telegrama con 0 letras visibles durante los
+primeros ~22 ms, `font.split("")` devuelve una lista vacia y el dibuje
+indexaba `lines.get(0)` tras forzar un minimo de un renglon:
+`ArrayIndexOutOfBoundsException` en
+`DiaryTitleScreen.drawEasterEggMessage`, con crashes en cadena bajo
+NotEnoughCrashes. Reportado por un jugador real con Java 17 y la edicion
+v0.22.0 (gracias por el registro completo).
+
+Correccion: el conteo de renglones del telegrama queda acotado por el
+tamano real de la lista (0 permitido: el sobre espera su primera letra) y
+la llamada al overlay, puramente decorativa, queda envuelta para que
+ningun fallo de ornamento pueda volver a detener el render del cliente.
+Se auditaron ademas los otros 5 usos de `font.split` del codigo
+(ChangelogScreen, DiaryArchiveScreen): todos iteran en forma segura ante
+listas vacias, y el resto de los accesos indexados a listas ya tenian su
+guardia de vacio correspondiente.
+
 ## v0.23.1 - Sellos y relojería
 
 Entrega de mantenimiento dura (sin cambios de escena, por eso va como

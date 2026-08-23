@@ -325,7 +325,11 @@ public class DiaryTitleScreen extends Screen {
         }
 
         // Overlays interactivos (arriba de todo)
-        drawEasterEggMessage(g);
+        // v0.23.2: es decoracion pura; jamas debe tumbar el render del cliente
+        // (en 0.22.0 un AIOOBE aqui crasheaba en bucle la sesion).
+        try {
+            drawEasterEggMessage(g);
+        } catch (Throwable ignored) {}
         // Easter egg: relampago verde (suprimido con movimiento reducido).
         if (!reducedMotion() && System.currentTimeMillis() < easterLightningUntilMs) {
             long rem = easterLightningUntilMs - System.currentTimeMillis();
@@ -968,8 +972,11 @@ public class DiaryTitleScreen extends Screen {
         int boxW = Math.max(220, Math.min(330, this.width - 96));
         java.util.List<net.minecraft.util.FormattedCharSequence> lines =
             this.font.split(Component.literal(visibleMessage), boxW - 34);
-        int lineCount = Math.max(1, Math.min(3, lines.size()));
-        int boxH = 31 + lineCount * this.font.lineHeight;
+        // v0.23.2: con la maquina de escribir, el primer fotograma tiene 0 letras y
+        // font.split("") devuelve lista VACIA; indexarla crashaba el cliente (AIOOBE
+        // reportado en 0.22.0). lineCount jamas puede superar lines.size().
+        int lineCount = Math.min(3, lines.size());
+        int boxH = 31 + Math.max(1, lineCount) * this.font.lineHeight;
 
         int buttonTop = estimateFirstButtonTop();
         int safeTop = isMinimalMode() ? 76 : 166;

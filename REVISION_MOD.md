@@ -1,5 +1,13 @@
 # REVISIÓN TÉCNICA - Eternal Craft: Gripe Verde v0.22.0
 
+> **ADDENDUM 2026-08-23 (crash en campo):** llegó un crash-log real de un
+> jugador con la edición v0.22.0 — `ArrayIndexOutOfBoundsException` en
+> `DiaryTitleScreen.drawEasterEggMessage` (la lista de `font.split("")`
+> vacía se indexaba con `lineCount` forzado a ≥1 en el primer fotograma de
+> la máquina de escribir). Es un bug que esta revisión no detectó; quedó
+> corregido y auditado en **v0.23.2 - El telegrama llega intacto**
+> (validación pendiente como KI-55, jar por reenviar al jugador).
+
 > **ESTADO AL CIERRE DE LA SESIÓN (2026-08-23):** todos los hallazgos A1-A6,
 > C1-C4, D1-D2, F1-F2, G1-G3 (G3 verificado como ya cubierto: los sliders
 > narran su etiqueta + porcentaje por defecto), H1-H2 fueron implementados en

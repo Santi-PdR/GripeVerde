@@ -2,6 +2,12 @@
 ## Chronicle under seal
 
 
+
+## Version 0.23.2 - The telegram arrives intact
+
+One of the cabinet's telegrams used to shatter the whole desk by arriving empty: clicking the title's seal could make the typewriter open its envelope before a single letter had landed, and reading that letterless envelope halted the client outright (the fault arrived in a player's field report on the 0.22.0 edition). The messenger now waits for at least one letter before counting lines, and that purely decorative reading is now fenced in: no ornamental fault will ever bring the vigil down again.
+
+
 ## Version 0.23.1 - Seals and clockwork
 
 No new scenery this round: the build gains two more seals. One guards that every ambient subtitle the city announces exists in all twenty-five languages; the other counts the registered sound events and refuses new silent entries, grandfathering the ten legacy ones with their contribution still owed. The cabinet's memory now quietly mends impossible numbers in hand-edited or logically damaged records and keeps a documented migration road for future archives, while the ambience layer moved onto the same monotonic clockwork as the gramophone.
