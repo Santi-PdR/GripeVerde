@@ -330,6 +330,10 @@ public class DiaryTitleScreen extends Screen {
         try {
             drawEasterEggMessage(g);
         } catch (Throwable ignored) {}
+        // v0.24.0: esquirlas del sello roto; igual de intocables.
+        try {
+            drawSealShards(g);
+        } catch (Throwable ignored) {}
         // Easter egg: relampago verde (suprimido con movimiento reducido).
         if (!reducedMotion() && System.currentTimeMillis() < easterLightningUntilMs) {
             long rem = easterLightningUntilMs - System.currentTimeMillis();
@@ -896,6 +900,14 @@ public class DiaryTitleScreen extends Screen {
     private String easterEggCaseCode = "";
     private long easterEggStartedMs = 0L;
     private long easterEggUntilMs = 0L;
+
+    // v0.24.0: el lacre del telegrama cede ante una mano terca (9 golpes seguidos).
+    private int sealTapStreak = 0;
+    private long sealTapLastMs = 0L;
+    private long sealShardsStartMs = 0L;
+    private long sealShardsUntilMs = 0L;
+    private final float[][] sealShards = new float[7][4]; // x,y,vx,vy
+    private static final java.util.Random SEAL_RNG = new java.util.Random();
     private long easterFlashUntilMs = 0L;
     private long skullShakeUntilMs = 0L;
     private long easterLightningUntilMs = 0L;
@@ -910,6 +922,11 @@ public class DiaryTitleScreen extends Screen {
         long now = System.currentTimeMillis();
         if (now - lastLogoClickMs < 260L) return;
         lastLogoClickMs = now;
+
+        // v0.24.0: golpear el sello una y otra vez, sin dejarlo respirar.
+        if (now - sealTapLastMs <= 1500L) sealTapStreak++; else sealTapStreak = 1;
+        sealTapLastMs = now;
+        if (sealTapStreak >= 9) breakWaxSeal();
 
         String[] eggPool = isEnglishSelected() ? LOGO_EASTER_EGGS_EN : LOGO_EASTER_EGGS_ES;
         int caseNo = 17 + EASTER_RNG.nextInt(80);
@@ -945,6 +962,55 @@ public class DiaryTitleScreen extends Screen {
             com.eternalcraft.gripeverde.client.audio.UiSounds.notification();
         } catch (Throwable ignored) {}
         easterFlashUntilMs = reduced ? 0L : now + 400L;
+    }
+
+    /** v0.24.0: el sello de lacre salta en esquirlas; el papel cae. */
+    private void breakWaxSeal() {
+        sealTapStreak = 0;
+        long now = System.currentTimeMillis();
+        boolean reduced = reducedMotion();
+        int cx = this.width / 2;
+        int cy = 45;
+        for (int i = 0; i < sealShards.length; i++) {
+            sealShards[i][0] = cx + (float)(SEAL_RNG.nextDouble() * 22 - 11);
+            sealShards[i][1] = cy + (float)(SEAL_RNG.nextDouble() * 10 - 5);
+            sealShards[i][2] = (float)(SEAL_RNG.nextDouble() * 140 - 70);
+            sealShards[i][3] = -20f - (float)(SEAL_RNG.nextDouble() * 120);
+        }
+        sealShardsStartMs = now;
+        sealShardsUntilMs = reduced ? 0L : now + 1500L;
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                com.eternalcraft.gripeverde.client.audio.ModSounds.UI_PAPER_FALL.get(), 0.9f, 0.78f);
+            com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                com.eternalcraft.gripeverde.client.audio.ModSounds.UI_CLICK_HEAVY.get(), 0.40f, 1.38f);
+        } catch (Throwable ignored) {}
+        try {
+            com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                com.eternalcraft.gripeverde.client.lore.Discoveries.SEAL_BREAKER);
+            com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                com.eternalcraft.gripeverde.client.lore.Marginalia.N_SEAL);
+        } catch (Throwable ignored) {}
+    }
+
+    /** v0.24.0: esquirlas de lacre con gravedad; pura decoracion. */
+    private void drawSealShards(net.minecraft.client.gui.GuiGraphics g) {
+        long now = System.currentTimeMillis();
+        if (sealShardsStartMs == 0L || now >= sealShardsUntilMs) return;
+        float t = (now - sealShardsStartMs) / 1000f;
+        float fade = (sealShardsUntilMs - now) / 1500f;
+        int alpha = (int)(220 * Math.min(1f, fade * 2f));
+        if (alpha <= 3) return;
+        int wax = (alpha << 24) | 0x7A2415;
+        int waxLight = (Math.min(alpha, 140) << 24) | 0xB8402A;
+        for (float[] sh : sealShards) {
+            float x = sh[0] + sh[2] * t;
+            float y = sh[1] + sh[3] * t + 380f * t * t;
+            if (y > this.height) continue;
+            int px = (int) x, py = (int) y;
+            g.fill(px, py, px + 2, py + 2, wax);
+            g.fill(px, py, px + 1, py + 1, waxLight);
+        }
     }
 
     private void drawEasterEggMessage(net.minecraft.client.gui.GuiGraphics g) {

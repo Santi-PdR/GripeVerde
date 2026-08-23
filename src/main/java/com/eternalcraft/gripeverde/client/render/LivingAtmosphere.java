@@ -248,7 +248,10 @@ public class LivingAtmosphere {
         if (lightningTimer >= nextLightning) {
             lightningTimer = 0f;
             lightningFlash = 1f;
-            nextLightning  = 8f + (float)(RND.nextFloat() * 12f);
+            // v0.24.0: en noche de tormenta el cielo no descansa.
+            boolean storm = com.eternalcraft.gripeverde.client.audio.MenuAmbience.isStormNight();
+            nextLightning  = storm ? 3.5f + (float)(RND.nextFloat() * 6f)
+                                   : 8f + (float)(RND.nextFloat() * 12f);
             if (DEBUG_EVENTS) LOGGER.info("[GripeVerde] Relampago DISPARADO, proximo en {}s", nextLightning);
         }
         vignettePulse = reduced ? 0.5f : (float)(Math.sin(time * 0.5f) * 0.5f + 0.5f);
@@ -432,6 +435,7 @@ public class LivingAtmosphere {
         renderSpores(g, w, h);
         renderRat(g, w, h);
         renderHearse(g, w, h);
+        renderStormVeil(g, w, h);
     }
 
     /** El coche del sepulturero: carretilla lenta con ataud, tras las campanas. */
@@ -913,14 +917,29 @@ public class LivingAtmosphere {
     }
 
     private static void renderRain(GuiGraphics g, int w, int h) {
-        for (int i = 0; i < RAIN_COUNT; i++) {
-            int rx = (int)(rain[i][0] * w);
-            int ry = (int)(rain[i][1] * h);
-            int slant = 1 + (int)(windGustIntensity * 5f);
-            g.fill(rx, ry, rx + 1, ry + 4, DiaryTheme.RAIN_LINE);
-            g.fill(rx + slant, ry + 4, rx + slant + 1, ry + 8, DiaryTheme.RAIN_LINE);
+        // v0.24.0: noche de tormenta - segunda pasada de gotas, inclinacion y brillo.
+        boolean storm = com.eternalcraft.gripeverde.client.audio.MenuAmbience.isStormNight();
+        int passes = storm ? 2 : 1;
+        int color = storm ? 0x36B8A88C : DiaryTheme.RAIN_LINE;
+        float gust = Math.max(windGustIntensity, storm ? 0.45f : 0f);
+        int slant = 1 + (int)(gust * 5f);
+        for (int pass = 0; pass < passes; pass++) {
+            for (int i = 0; i < RAIN_COUNT; i++) {
+                int idx = (i + pass * 17) % RAIN_COUNT;
+                float ox = pass == 0 ? 0f : 0.011f;
+                int rx = (int)((rain[idx][0] + ox) * w);
+                int ry = (int)(rain[idx][1] * h);
+                g.fill(rx, ry, rx + 1, ry + 4, color);
+                g.fill(rx + slant, ry + 4, rx + slant + 1, ry + 8, color);
+            }
         }
         renderRainSplashes(g, w, h);
+    }
+
+    /** v0.24.0: velo oscuro de tormenta sobre la calle (titulo y pergaminos). */
+    public static void renderStormVeil(GuiGraphics g, int w, int h) {
+        if (!com.eternalcraft.gripeverde.client.audio.MenuAmbience.isStormNight()) return;
+        g.fill(0, 0, w, h, 0x15070A16);
     }
 
     private static void renderRainSplashes(GuiGraphics g, int w, int h) {

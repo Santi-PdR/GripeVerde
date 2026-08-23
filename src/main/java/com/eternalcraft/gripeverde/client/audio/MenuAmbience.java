@@ -40,8 +40,9 @@ public class MenuAmbience {
     private static class BaseLoop {
         final RegistryObject<SoundEvent> sound;
         final float baseVolume;
+        final float stormMul;   // v0.24.0: factor de mezcla en noche de tormenta
         LoopingAmbienceInstance instance;
-        BaseLoop(RegistryObject<SoundEvent> s,float vol){sound=s;baseVolume=vol;}
+        BaseLoop(RegistryObject<SoundEvent> s,float vol,float sm){sound=s;baseVolume=vol;stormMul=sm;}
     }
 
     private static final List<BaseLoop> BASE_LOOPS = new ArrayList<>();
@@ -49,9 +50,9 @@ public class MenuAmbience {
     private static final List<Entry> RARE_LAYER = new ArrayList<>();
 
     static {
-        BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_WIND, 0.35f));
-        BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_RAIN, 0.30f));
-        BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_CITY, 0.20f));
+        BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_WIND, 0.35f, 1.25f));
+        BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_RAIN, 0.30f, 1.80f));
+        BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_CITY, 0.20f, 0.80f));
 
         EVENTS_LAYER.add(new Entry(ModSounds.MENU_FOOTSTEPS, 45,0.25f,0.90f,1.10f));
         EVENTS_LAYER.add(new Entry(ModSounds.MENU_WOOD_CREAK,20,0.22f,0.85f,1.15f));
@@ -79,6 +80,35 @@ public class MenuAmbience {
      * unico consumidor (LivingAtmosphere) usa el mismo reloj.
      */
     private static long nowMs() { return System.nanoTime() / 1_000_000L; }
+
+    // ── v0.24.0: Noche de tormenta ──────────────────────────────────────────
+    // Algunas sesiones el gabinete amanece bajo una tormenta cerrada: la lluvia
+    // manda en la mezcla, los truenos se suceden y la calle casi no se ve.
+    // El sorteo se hace una sola vez por sesion de juego (primer acceso).
+    private static final float STORM_CHANCE = 0.14f;
+    private static final long STORM_RARE_MIN_MS = 14_000L;
+    private static final long STORM_RARE_MAX_MS = 26_000L;
+    private static Boolean stormNight = null;
+    private static boolean stormAnnounced = false;
+
+    /** true si esta sesion del gabinete es una noche de tormenta. */
+    public static boolean isStormNight(){
+        if(stormNight==null){
+            stormNight = RNG.nextFloat() < STORM_CHANCE;
+        }
+        return Boolean.TRUE.equals(stormNight);
+    }
+
+    private static long rareDelay(){
+        return isStormNight()
+            ? randomBetween(STORM_RARE_MIN_MS, STORM_RARE_MAX_MS)
+            : randomBetween(RARE_MIN_MS, RARE_MAX_MS);
+    }
+
+    /** Ganancia efectiva de un loop base, con el factor de tormenta aplicado. */
+    private static float loopGain(BaseLoop bl){
+        return bl.baseVolume * getUserVolume() * (isStormNight() ? bl.stormMul : 1f);
+    }
 
     // ── v0.16.0: interacciones de oido ──────────────────────────────────────
     // Ventana en la que un susurro puede responderse con un gesto.
@@ -138,7 +168,7 @@ public class MenuAmbience {
             for(BaseLoop bl:BASE_LOOPS){
                 try{
                     SoundEvent se=bl.sound.get();
-                    bl.instance=buildLoopInstance(se, bl.baseVolume*getUserVolume());
+                    bl.instance=buildLoopInstance(se, loopGain(bl));
                     mc.getSoundManager().play(bl.instance);
                 }catch(Exception e){ bl.instance=null; }
             }
@@ -171,8 +201,7 @@ public class MenuAmbience {
             if(!active||muted) return;
             for(BaseLoop bl:BASE_LOOPS){
                 if(bl.instance!=null){
-                    float finalVol=bl.baseVolume*vol;
-                    bl.instance.setDynamicVolume(finalVol);
+                    bl.instance.setDynamicVolume(loopGain(bl));
                 }
             }
         }
@@ -184,20 +213,20 @@ public class MenuAmbience {
     public static void start(){
         try{ muted=!com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_ENABLED.get(); }catch(Exception ignored){}
         if(active){ if(DEBUG_LOGGING) LOGGER.info("[MenuAmbience] start ignorado ya activo"); return; }
-        Minecraft mc=Minecraft.getInstance(); if(mc==null) return;
+        Minecraft mc=Minecraft.getInstance(); if(mc==null||mc.level!=null) return;
         active=true; pocketWatchVisible=false;
         if(!muted){
             for(BaseLoop bl:BASE_LOOPS){
                 try{
                     SoundEvent se=bl.sound.get();
-                    bl.instance=buildLoopInstance(se, bl.baseVolume*getUserVolume());
+                    bl.instance=buildLoopInstance(se, loopGain(bl));
                     mc.getSoundManager().play(bl.instance);
                 }catch(Exception e){ bl.instance=null; }
             }
         }
         long now=nowMs();
         lastEventTriggerMs=now; nextEventDelayMs=randomBetween(EVENT_MIN_MS,EVENT_MAX_MS);
-        lastRareTriggerMs=now; nextRareDelayMs=randomBetween(RARE_MIN_MS,RARE_MAX_MS);
+        lastRareTriggerMs=now; nextRareDelayMs=rareDelay();
         lastEventTriggered=null; lastRareTriggered=null;
         lastAppliedVolume=getUserVolume();
     }
@@ -219,12 +248,26 @@ public class MenuAmbience {
             return;
         }
         updateLoopVolumes();
-        if(!active||muted) return;
         Minecraft mc=Minecraft.getInstance(); if(mc==null) return;
+        // v0.24.0: la calle del gabinete calla cuando el lector entra a un mundo
+        // (antes los loops seguian sonando bajo el gameplay). Al volver al
+        // titulo, DiaryTitleScreen.init() llama a start() y todo se rearma.
+        if(mc.level!=null){ stop(); return; }
+        // v0.24.0: la tormenta se presenta una sola vez, con o sin sonido.
+        if(isStormNight() && !stormAnnounced){
+            stormAnnounced=true;
+            try{
+                com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                    com.eternalcraft.gripeverde.client.lore.Discoveries.STORM_NIGHT);
+                com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                    com.eternalcraft.gripeverde.client.lore.Marginalia.N_STORM);
+            }catch(Throwable ignored){}
+        }
+        if(!active||muted) return;
         ensureBaseLoopsAlive(mc, ambVol);
         long now=nowMs();
         if(now-lastEventTriggerMs>=nextEventDelayMs){ triggerFrom(mc,EVENTS_LAYER,true); lastEventTriggerMs=now; nextEventDelayMs=randomBetween(EVENT_MIN_MS,EVENT_MAX_MS); }
-        if(now-lastRareTriggerMs>=nextRareDelayMs){ triggerFrom(mc,RARE_LAYER,false); lastRareTriggerMs=now; nextRareDelayMs=randomBetween(RARE_MIN_MS,RARE_MAX_MS); }
+        if(now-lastRareTriggerMs>=nextRareDelayMs){ triggerFrom(mc,RARE_LAYER,false); lastRareTriggerMs=now; nextRareDelayMs=rareDelay(); }
     }
 
     public static boolean isActive(){return active;}
@@ -235,7 +278,7 @@ public class MenuAmbience {
             try{
                 boolean missing=bl.instance==null||!mc.getSoundManager().isActive(bl.instance);
                 if(missing){
-                    float finalVol=bl.baseVolume*ambVol;
+                    float finalVol=loopGain(bl);
                     if(finalVol>0.001f){
                         bl.instance=buildLoopInstance(bl.sound.get(), finalVol);
                         mc.getSoundManager().play(bl.instance);
@@ -256,6 +299,10 @@ public class MenuAmbience {
             if(cands.isEmpty()) cands=layer;
         }
         Entry chosen=weightedRandom(cands); if(chosen==null) return;
+        // v0.24.0: en noche de tormenta el cielo manda; casi todo lo raro es trueno.
+        if(!isEvents && isStormNight() && RNG.nextFloat()<0.80f){
+            for(Entry e:layer){ if(e.sound==ModSounds.MENU_THUNDER){ chosen=e; break; } }
+        }
         try{
             SoundEvent se=chosen.sound.get();
             float pitch=randomFloatBetween(chosen.pitchMin,chosen.pitchMax);

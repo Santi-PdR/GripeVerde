@@ -55,6 +55,10 @@ public class ChangelogScreen extends Screen {
     private int lastContentW = -1;
     private boolean draggingScrollbar = false;
 
+    // v0.24.0: la cronica se abre donde quedo la pluma (entrada de la version instalada)
+    private Row newVersionRow = null;
+    private boolean arrivedFreshVersion = false;
+
     // v0.16.0: las marcas del encuadernador y el folio escondido
     private final List<int[]> asteriskRects = new ArrayList<>();
     private static int binderMarksLit = 0;
@@ -78,6 +82,7 @@ public class ChangelogScreen extends Screen {
 
         loadAndParse();
         recalcMaxScroll();
+        jumpToFreshVersion();
 
         int bx = (this.width - CLOSE_W) / 2;
         int by = this.height - CLOSE_H - 10;
@@ -253,6 +258,55 @@ public class ChangelogScreen extends Screen {
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.tick(1.0f / 20.0f);
     }
 
+    /**
+     * v0.24.0: si el gabinete se actualizo desde la ultima lectura, la cronica
+     * se abre directamente en la entrada de la version instalada y esa entrada
+     * lleva un sello de lacre "NUEVO" durante esta visita.
+     */
+    private void jumpToFreshVersion() {
+        this.newVersionRow = null;
+        this.arrivedFreshVersion = false;
+        String current;
+        try { current = com.eternalcraft.gripeverde.GripeVerdeMod.VERSION; }
+        catch (Throwable t) { return; }
+        if (current == null || current.isBlank()) return;
+        String seen;
+        try { seen = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.lastSeenVersion(); }
+        catch (Throwable t) { return; }
+        if (current.equals(seen)) return;
+        int idx = -1;
+        for (int i = 0; i < rows.size(); i++) {
+            Row r = rows.get(i);
+            if (r.type == LT.H1 && r.text.startsWith("Version " + current)) { idx = i; break; }
+        }
+        if (idx < 0) return; // cronica aun no tiene la entrada; nada que sellar
+        int cw = contentW();
+        int off = 0;
+        for (int i = 0; i < idx; i++) off += rowHeight(rows.get(i), cw);
+        off = Math.max(0, off - 6);
+        this.newVersionRow = rows.get(idx);
+        this.arrivedFreshVersion = true;
+        lastScrollY = off;
+        setScrollTarget(off, true);
+        try {
+            com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.setLastSeenVersion(current);
+        } catch (Throwable ignored) {}
+    }
+
+    /** v0.24.0: sello de lacre junto a la entrada recien llegada. */
+    private void drawNewSeal(GuiGraphics g, int x, int y, int maxW) {
+        String txt = isEnglishSelected() ? "NEW" : "NUEVO";
+        int tw = this.font.width(txt);
+        int sx = x + maxW - tw - 12;
+        int sy = y - 3;
+        int wax = 0xFF7A2415;
+        g.fill(sx - 2, sy - 1, sx + tw + 5, sy + 11, wax);
+        g.fill(sx - 3, sy, sx + tw + 6, sy + 10, wax);
+        g.fill(sx - 1, sy + 1, sx + tw + 4, sy + 9, 0xFF8B2A1C);
+        g.fill(sx, sy + 1, sx + 3, sy + 2, 0x60E8A080);
+        g.drawString(this.font, txt, sx + 1, sy + 2, 0xFFEAD9B0, false);
+    }
+
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         int px = panelX(), py = panelY(), pw = panelW(), ph = panelH();
@@ -289,6 +343,9 @@ public class ChangelogScreen extends Screen {
                 int h = rowHeight(row, cw);
                 if (y + h >= cy - 2 && y <= cy + ch + 2) {
                     renderRow(g, row, cx, y, cw);
+                    if (arrivedFreshVersion && row == newVersionRow) {
+                        drawNewSeal(g, cx, y, cw);
+                    }
                 }
                 y += h;
             }

@@ -5,7 +5,7 @@ plugins {
     id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
 }
 
-version = '0.23.2'
+version = '0.24.0'
 group = 'com.eternalcraft.gripeverde'
 base { archivesName = 'gripeverde' }
 
@@ -414,12 +414,14 @@ tasks.register('verifyGripeVerdeSoundUsage') {
     group = 'verification'
     description = 'Fails if a registered SoundEvent has no code usage, outside the grandfathered legacy allowlist.'
     doLast {
-        // 10 eventos legacy sin uso devengados en v0.23.1: se conservan hasta
-        // que el owner decida conectarlos a momentos de UI o retirarlos.
+        // Eventos legacy sin uso devengados: se conservan hasta que el owner
+        // decida conectarlos a momentos de UI o retirarlos.
         // Si alguno se conecta, sacarlo de la lista (el sello lo avisa); si
         // aparece un evento muerto nuevo, el build falla.
+        // v0.24.0: UI_PAPER_FALL paso a la rotura del sello (DiaryTitleScreen)
+        // y UI_SUCCESS al diapason de la sala de sonido (DiarySoundOptionsScreen).
         def legacyAllowlist = ['UI_BUTTON_CLEAN', 'UI_OPEN', 'UI_CLOSE', 'UI_MODAL',
-            'UI_ERROR', 'UI_TAB', 'UI_SUCCESS', 'UI_PAPER_FALL', 'UI_CLICK_CREATE',
+            'UI_ERROR', 'UI_TAB', 'UI_CLICK_CREATE',
             'UI_RESPAWN'] as Set
         def modSounds = file('src/main/java/com/eternalcraft/gripeverde/client/audio/ModSounds.java').getText('UTF-8')
         def fields = [] as Set

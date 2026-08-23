@@ -5,6 +5,19 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
+**v0.24.0 - El viento vuelve a soplar**
+
+El ambiente del gabinete por fin se escucha: el loop de viento estaba
+grabado a -64 dB RMS (físicamente inaudible) y la lluvia a -32 dB. Se
+regeneran por síntesis procedural (`tools/audio/regenerate_menu_ambience.py`,
+reproducible) y se refuerzan ciudad, susurros y pasos; el slider de ambiente
+ya manda sobre algo y la calle deja de sonar al entrar a un mundo. Visibles
+nuevas: la Crónica se abre en la entrada de la versión instalada con sello de
+lacre "NUEVO", ciertas sesiones (~14 %) arrancan en Noche de tormenta (lluvia
+doble, truenos frecuentes, ficha propia) y la lluvia resbala en gotas por los
+pergaminos. Easter eggs: el lacre del telegrama se rompe a golpes y un
+diapasón oculto en Opciones de sonido afina la sala (archivo: 50 fichas).
+
 **v0.23.2 - El telegrama llega intacto**
 
 Hotfix de crash en campo reportado con registro completo desde una
@@ -48,7 +61,7 @@ y publica el jar como artifact.
 
 ### Estado de entrega
 
-- Implementación vigente: rama `arena/01a02f45-gripeverde` (v0.23.2).
+- Implementación vigente: rama `arena/01a02f45-gripeverde` (v0.24.0).
 - Base: commit `4ca038d` (merge de la PR 14, v0.22.0 ya mergeada).
 - Validación estática y documental completada; árbol local y remoto limpio.
 - La compilación semántica contra Forge corre en el PC del owner y, una vez
@@ -86,7 +99,7 @@ Los contenedores del juego conservan su aspecto vanilla original; el mod no alte
 
 ### La memoria del gabinete (v0.16.0)
 - Memoria persistente propia (descubrimientos, objetos, noches seguidas, ausencias) separada del ajuste de audio.
-- 46 descubrimientos con fichas, sellos y pistas encadenadas; algunas consecuencias son permanentes.
+- 50 descubrimientos con fichas, sellos y pistas encadenadas; algunas consecuencias son permanentes.
 - Marginalia contextual del cronista: notas que responden a lo que el lector hace.
 - La Sala de consulta: detras del ultimo folio de la cronica, un archivo con las fichas halladas y documentos recuperados.
 
@@ -111,7 +124,7 @@ Los contenedores del juego conservan su aspecto vanilla original; el mod no alte
 - **Accessibility** - opciones vanilla mas el toggle persistente de Movimiento reducido.
 - **Online / Multiplayer** - registros de conexion y hospedaje con presentacion propia.
 - **Credits** - ultimo archivo del gabinete.
-- **Archive** - sala de consulta (46 fichas).
+- **Archive** - sala de consulta (50 fichas).
 - **DirectJoin / EditServer / Confirm** - formularios y autorizaciones pulidos en v0.21.0.
 
 ## Build

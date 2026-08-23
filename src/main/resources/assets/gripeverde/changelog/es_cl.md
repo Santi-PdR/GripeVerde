@@ -3,6 +3,10 @@
 
 
 
+## Version 0.24.0 - El viento vuelve a soplar
+
+Durante semanas la calle guardó el aliento: el viento del gabinete había quedado grabado tan quedo que ni las ráfagas cruzaban la ventana, y con él apenas tosían la lluvia, los pasos y los susurros. El cronista revisó los cilindros y devolvió cada capa a su volumen debido; el regulador de ambiente por fin manda sobre algo. Con el oído abierto llegan las noches de tormenta, la crónica se abre por la entrada recién llegada y la sella como NUEVA hasta que la leas, la lluvia resbala por los pergaminos, el lacre del telegrama cede ante una mano terca y un diapasón oculto afina la sala entera. La calle, además, ya no sigue sonando cuando el lector cruza hacia un mundo.
+
 ## Version 0.23.2 - El telegrama llega intacto
 
 Un telegrama del gabinete rompía la mesa entera al llegar vacío: al pulsar el sello del título, la máquina de escribir podía abrir el sobre antes de soltar su primera letra, y leer ese sobre sin renglones detenía el juego por completo (el fallo llegó en un informe de campo de un jugador con la edición 0.22.0 instalada). El mensajero ahora espera a tener al menos una letra antes de contar líneas, y esa lectura puramente decorativa quedó blindada: ningún fallo de ornamento volverá a tumbar la vigilia.

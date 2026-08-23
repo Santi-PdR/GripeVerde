@@ -62,6 +62,7 @@ public final class QuarantineSceneRenderer {
         VictorianSkyline.renderBackground(g, w, h);
         VictorianSkyline.renderForeground(g, w, h);
         LivingAtmosphere.renderStreet(g, w, h);
+        LivingAtmosphere.renderStormVeil(g, w, h);
         LivingAtmosphere.renderVignette(g, w, h);
         // Overlay oscuro del gabinete
         g.fill(0, 0, w, h, DiaryChrome.OVERLAY_COL);

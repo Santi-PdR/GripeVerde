@@ -1,5 +1,36 @@
 # Eternal Craft: Gripe Verde
 
+## v0.24.0 - El viento vuelve a soplar
+
+Entrega menor de superficie visible, pedida por el owner junto al segundo
+crash-log de Agus: "corrige que no se escucha el ambiente", mejoras visibles
+(V1+V3+V5) y mas easter eggs.
+
+El ambiente no se oia por contenido, no por codigo: el loop de viento estaba
+grabado a -64 dB RMS (inaudible a cualquier ganancia razonable) y la lluvia
+a -32 dB. Se regeneran viento y lluvia por sintesis procedural
+(`tools/audio/regenerate_menu_ambience.py`, reproducible e idempotente,
+con crossfade de extremos para loops sin chasquido) y se refuerzan ciudad,
+susurros y un paso. El regulador de ambiente por fin manda sobre algo, y de
+regalo el gabinete deja de sonar dentro de los mundos (fuga historica:
+los loops seguian activos con un nivel cargado).
+
+Mejoras visibles: la Cronica se abre en la entrada de la version instalada
+tras cada actualizacion y la marca con un sello de lacre "NUEVO" durante la
+visita (V1; `ChroniclerMemory.lastSeenVersion`); algunas sesiones (~14%)
+arrancan en Noche de tormenta, con lluvia doble, relampagos frecuentes,
+mezcla ambiente al mando de la lluvia y truenos casi seguros (V3); y la
+lluvia resbala en gotas por todos los pergaminos (V5; quieta con movimiento
+reducido). Easter eggs nuevos: el lacre del telegrama se rompe a golpes
+(`seal_breaker`, estrena `ui.paper_fall`) y un diapason oculto junto a los
+reguladores afina la sala (`sound_keeper`, estrena `ui.success`); el
+descubrimiento `storm_night` completa el trio. El archivo crece a 50 fichas
+y sus textos de "cuarenta y tantas fichas" ahora computan la cifra solos.
+
+Conteos: 60 Java, 25 lang (93 claves), 25 cronicas, 35 eventos de sonido
+(33 en uso; 8 legacy en allowlist), 42 OGG. Espejo Python: 7/7 sellos +
+balance OK.
+
 ## v0.23.2 - El telegrama llega intacto
 
 Hotfix de crash en campo (parche): el easter egg que dispara el clic en el

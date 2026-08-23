@@ -8,7 +8,7 @@
   arena/01a02cee-gripeverde" que sobreviven en el historico son instantaneas
   archivadas, no instrucciones.
 - Base respaldada: v0.22.0, commit `4ca038ddab972ca59435353330c9ccda4a86d581`.
-- Implementacion vigente: v0.23.2 en esta rama (ver DECISIONES 2026-08-23
+- Implementacion vigente: v0.24.0 en esta rama (ver DECISIONES 2026-08-23
   mas abajo).
 - Restricciones funcionales absolutas: escena completa, faroles permanentes,
   sin kiosco/Heraldo, sin modo automatico por FPS, sin gameplay y sin
@@ -118,15 +118,67 @@ completo de una instancia real (Java 17, Forge 47.4.10, mod v0.22.0):
 - KI-55 registra la validacion pendiente en cliente; el jar fijado debe
   llegar al jugador que reporto (sigue en v0.22.0).
 
+### DECISION 2026-08-23 (cuarta vuelta): v0.24.0 - El viento vuelve a soplar
+
+Pedido del owner (mismo dia, junto al segundo crash-log de Agus): "haz las
+implementaciones que dijiste, piensa en corregir este bug, implementa mejoras
+visibles, algunos easter eggs mas, corrige que no se escucha el ambiente."
+Bug ya corregido en v0.23.2 (tercera vuelta); aqui va el resto, autorizado.
+
+- Causa raiz del ambiente mudo (diagnostico con soundfile en sandbox): los
+  loops base estaban grabados casi en silencio. `wind_urban_loop.ogg` media
+  RMS 0.0006 (-64 dB), lluvia RMS 0.026 (-32 dB), ciudad RMS 0.034 (-29 dB),
+  susurro 0.0056 y primer paso 0.0077; con las ganancias del codigo
+  (0.35/0.30/0.20) el viento salia a ~-73 dB: fisicamente inaudible. El motor,
+  las instancias, el slider y los eventos estaban sanos (la musica, audios UI
+  y raros siempre se oyeron). NO era un bug de codigo: era contenido mudo.
+- Correccion de activos: `tools/audio/regenerate_menu_ambience.py` (nuevo,
+  idempotente) sintetiza viento (ruido 1/f con rafagas, remolinos y silbido)
+  y lluvia (siseo + masa grave + ~1400 gotas) como loops perfectos con
+  crossfade de extremos, y refuerza ciudad x3, susurro x3 y paso 1 x3.
+  Objetivos: RMS 0.10-0.13, picos <= 0.90 (margen por sobresalto Vorbis).
+- Mejoras visibles autorizadas (V1+V3+V5 de REVISION_MOD):
+  * V1 Cronica: al abrir el Changelog tras una actualizacion salta a la
+    entrada de la version instalada y la sello de lacre "NUEVO/NEW" la marca
+    durante esa visita; `ChroniclerMemory.lastSeenVersion` (campo nuevo,
+    tolerante con memorias viejas: GSON lo deja null y se sanea).
+  * V3 Noche de tormenta: ~14% de las sesiones arrancan bajo tormenta
+    cerrada (sorteo una vez por JVM en `MenuAmbience.isStormNight()`): lluvia visual x2 con mas inclinacion y
+    brillo, relampagos cada 3.5-9.5 s, mezcla ambiente con lluvia x1.8 /
+    viento x1.25 / ciudad x0.8, capa rara cada 14-26 s con trueno casi
+    garantizado, velo oscuro en titulo y pergaminos; descubrimiento
+    `storm_night` + marginalia. Respeta reduceFlashes (sin relampagos) y
+    reducedMotion (sin cortina extra de movimiento).
+  * V5 Gotas sobre el pergamino: 7 gotas (14 en tormenta) resbalan por
+    todos los pergaminos (`PaperTexture.draw/drawClean`); con movimiento
+    reducido quedan quietas como condensacion.
+- Easter eggs nuevos (descubrimientos 48-50 de 50):
+  * `seal_breaker`: 9 toques rapidos sobre el sello del titulo -> el lacre
+    salta en esquirlas con gravedad; estrena `ui.paper_fall` (sale del
+    allowlist del sello de uso de sonidos).
+  * `sound_keeper`: diapason diminuto al margen del regulador de ambiente en
+    Opciones de sonido; al pulsarlo suena `ui.success` (segundo evento que
+    sale del allowlist) y el gabinete queda "afinado".
+  * Textos de fichas al 100% (`N_MANY_CARDS`, `N_ARCHIVE_COMPLETE`) ahora
+    computan la cifra desde `Discoveries.ALL.length` (quedaron dinamicos).
+- Higiene lateral: el ambiente del gabinete se detiene al entrar a un mundo
+  (antes los loops seguian sonando bajo el gameplay; `start()` ademas se
+  niega a arrancar con mundo cargado).
+- Bump sincronizado: build.gradle + GripeVerdeMod.VERSION -> 0.24.0; docs y
+  25 cronicas in-game al dia. Espejo Python: 7/7 sellos + balance OK.
+- KI-56 registra la validacion pendiente en cliente real.
+
 ### SIGUIENTE PASO OPERATIVO VIGENTE
 
 No implementar planes de gameplay ni los items de "propuestas futuras"/
 "propuestas visibles" de REVISION_MOD.md sin autorizacion expresa del
 owner. La secuencia vigente: activar la CI con `tools/ci/activar-ci.ps1`,
-validar KI-53/KI-54/KI-55 en cliente real (en particular reenviar el jar
-v0.23.2 al jugador que reporto el crash), corregir solo si esa prueba
-encuentra defectos y, despues, autorizar tag/release v0.23.2 (con los
-pendientes de v0.23.1, v0.23.0 y v0.22.0).
+validar KI-53/KI-54/KI-55/KI-56 en cliente real (en particular reenviar los
+jars corregidos al jugador que reporto el crash y comprobar que el ambiente
+ya se escucha, con atencion a que los loops nuevos no tapen la musica),
+corregir solo si esa prueba encuentra defectos y, despues, autorizar
+tag/release (ultima version estable validada; con los pendientes de
+v0.23.x y v0.22.0).
 
 ## Addendum operativo archivado (v0.22.0)
 

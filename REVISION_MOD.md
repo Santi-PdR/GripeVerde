@@ -346,6 +346,16 @@ proyecto convendría confirmación del owner antes de implementar.
 
 ## PROPUESTAS VISIBLES / EFECTOS (presentadas al owner el 2026-08-23 — NO implementar sin autorización)
 
+> **ADDENDUM 2026-08-23 (v0.24.0 - El viento vuelve a soplar):** autorizadas
+> e implementadas **V1, V3 y V5** junto con tres easter eggs nuevos
+> (`storm_night`, `seal_breaker`, `sound_keeper`; el archivo pasa a 50 fichas)
+> y la reparación del ambiente mudo — era contenido, no código: el loop de
+> viento medía -64 dB RMS y la lluvia -32 dB; regenerados por síntesis
+> procedural con `tools/audio/regenerate_menu_ambience.py`. V2 queda
+> parcialmente cubierta (2 de 10: `ui.paper_fall` y `ui.success` conectados;
+> restan 8 en el allowlist). **Pendientes: V2 (resto), V4, V6, V7, V8.**
+> Diagnóstico completo del silencio en KNOWN_ISSUES (sección v0.24.0).
+
 Cosas que SE NOTAN en pantalla u oído. Cada una respeta las reglas madre
 (sin gameplay, sin resourcepacks, render Java puro).
 

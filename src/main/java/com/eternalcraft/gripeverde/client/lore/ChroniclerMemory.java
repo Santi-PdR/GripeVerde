@@ -47,6 +47,9 @@ public final class ChroniclerMemory {
         public List<String> pendingNotes = new ArrayList<>();
         public Map<String, Integer> counters = new HashMap<>();
         public List<String> guestbook = new ArrayList<>();
+        // v0.24.0: ultima version de la cronica que el lector ya vio al abrirla.
+        // null en memorias viejas (GSON no la rellena); los accesores la sanea.
+        public String lastSeenVersion = null;
     }
 
     private static Data data = null;
@@ -435,6 +438,19 @@ public final class ChroniclerMemory {
     public static synchronized void setCounter(String key, int value) {
         Data d = get();
         d.counters.put(key, value);
+        save();
+    }
+
+    // ── v0.24.0: cronica vista ──────────────────────────────────────────────
+
+    /** Ultima version de la cronica cuya entrada se mostro sellada como nueva. */
+    public static synchronized String lastSeenVersion() {
+        String v = get().lastSeenVersion;
+        return v == null ? "" : v;
+    }
+
+    public static synchronized void setLastSeenVersion(String v) {
+        get().lastSeenVersion = (v == null ? "" : v);
         save();
     }
 }

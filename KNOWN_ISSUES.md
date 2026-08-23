@@ -3,7 +3,57 @@
 La primera seccion describe el estado operativo vigente. Todas las secciones
 de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
-que v0.23.1 lo mencione expresamente.
+que una seccion posterior lo mencione expresamente.
+
+## v0.24.0 - El viento vuelve a soplar (2026-08-23)
+
+### Cambios cerrados
+- **Ambiente mudo (diagnostico)**: no era el motor ni los relojes — eran los
+  archivos. `wind_urban_loop.ogg` media RMS 0.0006 (-64 dB; a la ganancia
+  0.35 del codigo salia a ~-73 dB, inaudible), `rain_...` 0.026, `city_...`
+  0.034, `ambient_occasional` 0.0056, `footsteps_distant_1` 0.0077. Musica,
+  UI y raros siempre se oyeron: por eso el sintoma era "sin ambiente" con
+  clics y truenos presentes.
+- **Activos regenerados** con `tools/audio/regenerate_menu_ambience.py`
+  (nuevo; sintesis procedural con semilla fija, idempotente por umbral RMS;
+  crossfade de 2.5 s inicio/fin para loops sin chasquido; picos con margen
+  para el sobresalto del codificador Vorbis): viento y lluvia sintetizados a
+  RMS ~0.12-0.13; ciudad x3; susurro x3; paso 1 x3.
+- **V1**: Changelog salta a la entrada de la version instalada la primera
+  vez que se abre tras actualizar y la sello de lacre "NUEVO/NEW" la marca
+  durante la visita (`ChroniclerMemory.lastSeenVersion`, campo tolerante con
+  memorias viejas: null -> "" en accesores).
+- **V3**: Noche de tormenta (~14% de sesiones; sorteo por JVM): lluvia
+  visual x2 con mas viento y brillo, relampagos cada 3.5-9.5 s, mezcla
+  ambiente lluvia x1.8 / viento x1.25 / ciudad x0.8, capa rara cada 14-26 s
+  con trueno casi garantizado, velo oscuro en titulo y pergaminos; ficha
+  `storm_night` + marginalia. Respeta reduceFlashes y reducedMotion.
+- **V5**: 7 gotas (14 en tormenta) resbalan por todos los pergaminos via
+  `PaperTexture`; quietas con movimiento reducido.
+- **Easter eggs nuevos**: `seal_breaker` (9 toques rapidos al sello ->
+  esquirlas de lacre + `ui.paper_fall`, que sale del allowlist del sello de
+  uso) y `sound_keeper` (diapason al margen del regulador de ambiente ->
+  `ui.success`, segundo evento que sale del allowlist). El archivo pasa a
+  50 fichas; `N_MANY_CARDS`/`N_ARCHIVE_COMPLETE` computan la cifra desde
+  `Discoveries.ALL.length`.
+- **Higiene**: `MenuAmbience.stop()` al entrar a un mundo (los loops ya no
+  siguen sonando bajo el gameplay) y `start()` se niega con nivel cargado.
+
+### Riesgos activos / KI nuevos
+- **KI-56 (v0.24.0)**: validar en cliente real: (a) el ambiente se oye con
+  claridad sin tapar la musica (viento presente, lluvia de fondo, campanas
+  de la ciudad), y el slider de ambiente los mueve en vivo; (b) una sesion
+  forzada de tormenta (cambiar temporalmente `STORM_CHANCE` a 1.0f en
+  pruebas o repetir aperturas) muestra lluvia doble, relampagos frecuentes
+  y la ficha `storm_night`; (c) la Cronica se abre en 0.24.0 con sello
+  NUEVO solo en la primera visita; (d) las gotas resbalan por los
+  pergaminos y se quedan quietas con movimiento reducido; (e) romper el
+  sello a golpes suena a papel y suma ficha; el diapason suena y suma
+  ficha; (f) al entrar a un mundo la calle calla y al volver reaparece;
+  (g) las voces/sliders vanilla de la lista heredada siguen intactos.
+- KI-53/KI-54/KI-55 siguen abiertos y sin cambios (cliente real + reenvio
+  del jar corregido a Agus, que sigue en 0.22.0: conviene enviarle 0.24.0,
+  que incluye el hotfix del crash y el ambiente reparado).
 
 ## v0.23.1 - Sellos y relojería (2026-08-23)
 

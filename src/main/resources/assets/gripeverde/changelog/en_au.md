@@ -3,6 +3,10 @@
 
 
 
+## Version 0.24.0 - The wind blows again
+
+For weeks the street held its breath: the wind around the cabinet had been recorded so faint that no gust ever crossed the window, and with it the rain, the footsteps and the whispers barely coughed. The chronicler inspected the cylinders and restored every layer to its proper volume; the ambience dial finally governs something. With open ears come storm nights, the chronicle now opens at the freshly arrived entry and stamps it NEW until you read it, rain slides down the parchments, the telegram's wax yields to a stubborn hand, and a hidden tuning fork brings the whole room into pitch. The street, at last, stops playing once the reader crosses into a world.
+
 ## Version 0.23.2 - The telegram arrives intact
 
 One of the cabinet's telegrams used to shatter the whole desk by arriving empty: clicking the title's seal could make the typewriter open its envelope before a single letter had landed, and reading that letterless envelope halted the client outright (the fault arrived in a player's field report on the 0.22.0 edition). The messenger now waits for at least one letter before counting lines, and that purely decorative reading is now fenced in: no ornamental fault will ever bring the vigil down again.

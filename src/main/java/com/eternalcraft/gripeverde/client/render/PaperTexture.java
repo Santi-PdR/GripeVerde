@@ -58,6 +58,7 @@ public final class PaperTexture {
         drawStainsOptimized(g,x,y,w,h,kind);
         drawWrinkles(g,x,y,w,h,kind);
         drawBloodMist(g,x,y,w,h,kind);
+        drawRainDrops(g,x,y,w,h);
     }
 
     public static void drawClean(GuiGraphics g, int x, int y, int w, int h) { drawClean(g,x,y,w,h,PaperKind.DEFAULT); }
@@ -81,6 +82,63 @@ public final class PaperTexture {
         drawTornEdges(g,x,y,w,h,kind);
         if (w>=180&&h>=180&&kind!=PaperKind.MEDICAL) drawWaxSeal(g,x,y,w,h,kind);
         if (kind!=PaperKind.CORRESPONDENCE && w>200) drawMicroInkDot(g,x,y,w,h,kind);
+        drawRainDrops(g,x,y,w,h);
+    }
+
+    // -- v0.24.0: la lluvia tambien cae sobre los papeles ------------------
+    // Gotas que resbalan por el pergamino; duplican su numero en noche de
+    // tormenta. Con movimiento reducido quedan quietas, como condensacion.
+    private static final int DROP_COUNT = 7;
+    private static final float[][] drops = new float[DROP_COUNT][4]; // x,y,speed,size
+    private static boolean dropsInit = false;
+    private static long dropsLastMs = 0L;
+    private static final java.util.Random DROP_RNG = new java.util.Random(0xD20PL);
+
+    private static void respawnDrop(int i, boolean anywhere) {
+        drops[i][0] = DROP_RNG.nextFloat();
+        drops[i][1] = anywhere ? DROP_RNG.nextFloat() : -0.04f;
+        drops[i][2] = 0.045f + DROP_RNG.nextFloat() * 0.075f; // fraccion de alto por segundo
+        drops[i][3] = 1f + DROP_RNG.nextFloat() * 2f;
+    }
+
+    public static void drawRainDrops(GuiGraphics g, int x, int y, int w, int h) {
+        if (w < 140 || h < 160) return;
+        long now = System.nanoTime() / 1_000_000L;
+        if (!dropsInit) {
+            dropsInit = true;
+            for (int i = 0; i < DROP_COUNT; i++) respawnDrop(i, true);
+            dropsLastMs = now;
+        }
+        boolean reduced;
+        try { reduced = com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get(); }
+        catch (Throwable t) { reduced = false; }
+        boolean storm;
+        try { storm = com.eternalcraft.gripeverde.client.audio.MenuAmbience.isStormNight(); }
+        catch (Throwable t) { storm = false; }
+        float dt = Math.min(80L, Math.max(0L, now - dropsLastMs)) / 1000f;
+        dropsLastMs = now;
+        int count = storm ? DROP_COUNT * 2 : DROP_COUNT;
+        for (int i = 0; i < count; i++) {
+            int d = i % DROP_COUNT;
+            float px = drops[d][0] + (i >= DROP_COUNT ? 0.45f : 0f);
+            if (px > 1f) px -= 1f;
+            if (!reduced) {
+                drops[d][1] += drops[d][2] * dt * (storm ? 1.7f : 1f);
+                if (drops[d][1] > 0.97f) respawnDrop(d, false);
+            }
+            int gx = x + 6 + (int)(px * (w - 12));
+            int gy = y + 6 + (int)(drops[d][1] * (h - 12));
+            int size = 1 + (int) drops[d][3];
+            int alpha = storm ? 44 : 30;
+            // estela tenue encima de la gota
+            g.fill(gx, Math.max(y + 4, gy - 3 * size), gx + 1, gy,
+                DiaryTheme.withAlpha(0xD8E4E4, alpha / 2));
+            // cuerpo y brillo
+            g.fill(gx, gy, gx + 1 + size / 2, gy + size,
+                DiaryTheme.withAlpha(0xD8E4E4, alpha));
+            g.fill(gx, gy, gx + 1, gy + 1,
+                DiaryTheme.withAlpha(0xFFFFFF, Math.min(90, alpha + 22)));
+        }
     }
 
     // Backward compat overloads (no kind)
