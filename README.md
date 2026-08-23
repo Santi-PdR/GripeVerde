@@ -5,14 +5,16 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.21.30 - La calle permanece**
+**v0.21.31 - La vigilia permanece entera**
 
-Cuando la maquina que sostiene la vigilia aminora el paso, la ciudad puede
-renunciar a la niebla y a los adornos mas costosos, pero ya no pierde el
-suelo. El empedrado mojado permanece bajo los edificios aun en las noches
-que obligan a la ciudad a gastar menos fuerzas. 61 clases Java, 25 idiomas,
-35 eventos de sonido, 42 OGG y 0 PNG de contenedores. Documentacion
-sincronizada y version 0.21.30.
+El menu ya no mide los FPS ni cambia automaticamente a una escena
+recortada: la niebla, los faroles, sus reflejos y toda la utileria de la
+calle se dibujan siempre. Tambien se retiro por completo el kiosco de madera
+del Heraldo —el objeto de la carretera que parecia un canasto— junto con su
+interaccion, periodico diario y ficha. Los estados antiguos ni los ciclos erraticos pueden
+apagar o debilitar los faroles. 60 clases Java, 25 idiomas, 35 eventos de
+sonido, 42 OGG y 0 PNG de contenedores. Documentacion sincronizada y version
+0.21.31.
 
 **v0.21.23 - Se reconstruye desde el registro previo**
 
@@ -55,7 +57,7 @@ Los contenedores del juego conservan su aspecto vanilla original; el mod no alte
 
 ### La memoria del gabinete (v0.16.0)
 - Memoria persistente propia (descubrimientos, objetos, noches seguidas, ausencias) separada del ajuste de audio.
-- 47 descubrimientos con fichas, sellos y pistas encadenadas; algunas consecuencias son permanentes.
+- 46 descubrimientos con fichas, sellos y pistas encadenadas; algunas consecuencias son permanentes.
 - Marginalia contextual del cronista: notas que responden a lo que el lector hace.
 - La Sala de consulta: detras del ultimo folio de la cronica, un archivo con las fichas halladas y documentos recuperados.
 
@@ -77,7 +79,7 @@ Los contenedores del juego conservan su aspecto vanilla original; el mod no alte
 - **Accessibility** - expediente de observacion con lectura por capas.
 - **Online / Multiplayer** - registros de conexion y hospedaje sobre presentacion propia.
 - **Credits** - ultimo archivo del gabinete.
-- **Archive** - sala de consulta (47 fichas).
+- **Archive** - sala de consulta (46 fichas).
 - **DirectJoin / EditServer / Confirm** - formularios y autorizaciones pulidos en v0.21.0.
 - **DebugCanvas** - herramienta interna de desarrollo (no en produccion).
 - **SoundLab** - herramienta interna de audio (no en produccion).

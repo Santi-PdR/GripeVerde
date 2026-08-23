@@ -75,16 +75,7 @@ public class LivingAtmosphere {
     // (usa lightningFlash como fuente)
 
 
-    // Erratic lantern: one specific lantern flickers wildly every 30-60s
-    private static final int ERRATIC_LANTERN_INDEX = 2;
-    private static float erraticTimer = 20f;
-    private static float erraticNextEvent = 30f;
-    private static float erraticIntensity = 0f;  // 0=normal, 1=full erratic
-    private static float erraticDuration = 0f;
-
     // ── v0.16.0: la avenida interactiva ─────────────────────────────────────
-    // Faroles que el lector puede apagar/encender (por sesion).
-    private static final boolean[] lanternOut = new boolean[8];
     private static long lastStreetLevelRenderMs = 0L;
 
     // La rata que a veces se detiene.
@@ -101,35 +92,6 @@ public class LivingAtmosphere {
 
     public static float getWindGustIntensity() { return windGustIntensity; }
 
-    /** Alterna un farol. v0.21.29: deshabilitado — siempre devuelve false. */
-    public static boolean toggleLantern(int index, int count) {
-        // v0.21.29: las linternas ya no se pueden apagar.
-        return false;
-    }
-
-    public static boolean isLanternOut(int index) {
-        // v0.21.29: las linternas ya no se pueden apagar.
-        return false;
-    }
-
-    /** Hit-test del farol i (poste completo). */
-    public static boolean lanternHit(int i, double mx, double my, int w, int h) {
-        if (lanternPositions == null || i < 0 || i >= lanternPositions.length) return false;
-        int lx = lanternPositions[i][0];
-        int ly = lanternPositions[i][1];
-        int postH = (int)(h * 0.13f);
-        return mx >= lx - 7 && mx <= lx + 8 && my >= ly - postH - 12 && my <= ly + 3;
-    }
-
-    /** Devuelve el indice del farol bajo el cursor, o -1. */
-    public static int lanternIndexAt(double mx, double my, int w, int h) {
-        if (lanternPositions == null) return -1;
-        for (int i = 0; i < lanternPositions.length; i++) {
-            if (lanternHit(i, mx, my, w, h)) return i;
-        }
-        return -1;
-    }
-
     /** Hit-test de la rata (solo si esta activa). */
     public static boolean ratHit(double mx, double my, int w, int h) {
         if (!ratActive) return false;
@@ -145,17 +107,6 @@ public class LivingAtmosphere {
     }
 
     public static boolean isRatStanding() { return ratStanding; }
-
-    // ── Kiosco del Heraldo ──
-    public static int heraldKioskX(int w) { return (int)(w * 0.345f); }
-    public static int heraldKioskY(int h) { return (int)(h * 0.842f); }
-
-    public static boolean heraldHit(double mx, double my, int w, int h) {
-        if (h < 300) return false;
-        int kx = heraldKioskX(w);
-        int ky = heraldKioskY(h);
-        return mx >= kx - 10 && mx <= kx + 14 && my >= ky - 24 && my <= ky + 2;
-    }
 
     public static void triggerLightningFlash(float intensity) {
         lightningTimer = 0f;
@@ -262,25 +213,6 @@ public class LivingAtmosphere {
             if (DEBUG_EVENTS) LOGGER.info("[GripeVerde] Relampago DISPARADO, proximo en {}s", nextLightning);
         }
         vignettePulse = reduced ? 0.5f : (float)(Math.sin(time * 0.5f) * 0.5f + 0.5f);
-
-        // Erratic lantern timer
-        if (reduced) {
-            erraticIntensity = 0f;
-            erraticTimer = 0f;
-        } else {
-            erraticTimer += deltaTime;
-            if (erraticIntensity > 0f) {
-                erraticDuration -= deltaTime;
-                if (erraticDuration <= 0f) {
-                    erraticIntensity = 0f;
-                    erraticNextEvent = 30f + (float)(RND.nextFloat() * 30.0);
-                    erraticTimer = 0f;
-                }
-            } else if (erraticTimer >= erraticNextEvent) {
-                erraticIntensity = 1f;
-                erraticDuration = 3f + (float)(RND.nextFloat() * 2.0);
-            }
-        }
 
         // Street rat: crossing logic (+ v0.16.0: la rata que a veces se detiene)
         if (reduced) {
@@ -454,7 +386,6 @@ public class LivingAtmosphere {
         renderLanternReflections(g, w, h);
         renderPaperScraps(g, w, h);
         renderGroundFog(g, w, h);
-        renderHeraldKiosk(g, w, h);
         for (int i = 0; i < lanternPositions.length; i++) {
             renderGasLantern(g, lanternPositions[i][0], lanternPositions[i][1], i, w, h);
         }
@@ -462,38 +393,6 @@ public class LivingAtmosphere {
         renderSpores(g, w, h);
         renderRat(g, w, h);
         renderHearse(g, w, h);
-    }
-
-    /** Kiosco de madera con el Heraldo del dia (si nadie lo recogio aun). */
-    private static void renderHeraldKiosk(GuiGraphics g, int w, int h) {
-        if (h < 300) return;
-        int kx = heraldKioskX(w);
-        int ky = heraldKioskY(h);
-        boolean taken = false;
-        try {
-            long today = java.time.LocalDate.now().toEpochDay();
-            taken = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("herald_day") == today;
-        } catch (Throwable ignored) {}
-
-        // Patas y caja del kiosco
-        g.fill(kx - 8, ky - 14, kx + 12, ky - 2, 0xFF1F1408);
-        g.fill(kx - 7, ky - 13, kx + 11, ky - 3, 0xFF2A1C10);
-        g.fill(kx - 7, ky - 2, kx - 5, ky + 2, 0xFF140C06);
-        g.fill(kx + 9, ky - 2, kx + 11, ky + 2, 0xFF140C06);
-        // Tejadillo
-        g.fill(kx - 10, ky - 17, kx + 14, ky - 14, 0xFF120A05);
-        g.fill(kx - 9, ky - 18, kx + 13, ky - 17, 0xFF241608);
-        if (!taken) {
-            // Pila de periodicos
-            g.fill(kx - 5, ky - 8, kx + 9, ky - 6, 0xFFC9B78A);
-            g.fill(kx - 4, ky - 10, kx + 8, ky - 8, 0xFFD8CAB0);
-            g.fill(kx - 3, ky - 11, kx + 7, ky - 10, 0xFFE6D2A6);
-            g.fill(kx - 2, ky - 10, kx + 5, ky - 9, 0xFF3D2A18); // titular
-            // El de arriba, ligeramente desplegado
-            float lift = (float)(Math.sin(time * 1.3f) * 0.5f + 0.5f);
-            int la = (int)(120 + lift * 60);
-            g.fill(kx - 1, ky - 13, kx + 5, ky - 11, AtmosphereRenderer.withAlpha(0x00E6D2A6, la));
-        }
     }
 
     /** El coche del sepulturero: carretilla lenta con ataud, tras las campanas. */
@@ -707,7 +606,6 @@ public class LivingAtmosphere {
     private static void renderLanternReflections(GuiGraphics g, int w, int h) {
         if (lanternPositions == null) return;
         for (int i = 0; i < lanternPositions.length; i++) {
-            if (isLanternOut(i)) continue; // apagado: sin reflejo
             int lx = lanternPositions[i][0];
             int ly = lanternPositions[i][1];
             float flicker = (float)(Math.sin(time * 3.2f + i * 1.5f) * 0.2f + 0.8f);
@@ -758,9 +656,8 @@ public class LivingAtmosphere {
     }
 
     /**
-     * Farol de gas victoriano: poste ornamental + cabezal 4 vidrios + llama danzante
-     * Optimized: halo con gradient, no 12+ fills por farol
-     * v0.16.0: el lector puede apagarlos; el farol enfermo no se recupera igual.
+     * Farol de gas victoriano: poste ornamental + cabezal 4 vidrios + llama danzante.
+     * Siempre encendido; el parpadeo ambiental conserva un minimo visible.
      */
     private static void renderGasLantern(GuiGraphics g, int lx, int ly, int index, int w, int h) {
         int postH = (int)(h * 0.13f);
@@ -771,32 +668,14 @@ public class LivingAtmosphere {
         g.fill(lx - 1, ly - postH, lx + 2, ly - 2,    0xFF2A1810);
         g.fill(lx - 2, ly - postH/2, lx + 3, ly - postH/2 + 3, 0xFF3D2E1A);
 
-        boolean out = isLanternOut(index);
-
         float flicker = (float)(
             Math.sin(time * 3.7f + index * 1.3f) * 0.25f +
             Math.sin(time * 7.1f + index * 2.7f) * 0.15f +
             0.85f
         );
-        if (index == ERRATIC_LANTERN_INDEX && erraticIntensity > 0f) {
-            float chaos = (float)(
-                Math.sin(time * 23f) * 0.3f +
-                Math.sin(time * 37f + 1.7f) * 0.2f +
-                Math.sin(time * 53f + 3.1f) * 0.15f
-            );
-            flicker = flicker + chaos * erraticIntensity;
-        }
-        // Consecuencia permanente: tras apagar la avenida, el farol enfermo
-        // nunca vuelve a arder del todo.
-        boolean sickDim = false;
-        if (index == ERRATIC_LANTERN_INDEX) {
-            try {
-                sickDim = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("avenue_darkened") > 0;
-            } catch (Throwable ignored) {}
-        }
-        if (sickDim && !out) flicker = Math.min(flicker, 0.38f);
-        flicker = Math.max(0.15f, Math.min(1.2f, flicker));
-        if (out) flicker = 0f;
+        // Los faroles permanecen encendidos: ningun estado persistido, evento
+        // erratico ni bajada de FPS puede anular la llama o su reflejo.
+        flicker = Math.max(0.45f, Math.min(1.2f, flicker));
 
         int lanternY = ly - postH;
 
@@ -816,15 +695,6 @@ public class LivingAtmosphere {
         g.fill(lx, lanternY - 3, lx + 1, lanternY + boxSize, 0xFF2A1810);
         g.fill(lx - boxSize, lanternY + 1, lx + boxSize, lanternY + 2, 0xFF2A1810);
         g.fill(lx - boxSize - 1, lanternY + boxSize + 1, lx + boxSize + 1, lanternY + boxSize + 3, 0xFF1A1108);
-
-        if (out) {
-            // Vidrio frio y un hilo de humo apagandose
-            g.fill(lx - boxSize, lanternY - 3, lx + boxSize, lanternY + boxSize,
-                AtmosphereRenderer.withAlpha(0x00101820, 60));
-            float wispA = (float)(Math.sin(time * 0.9f + index) * 0.5f + 0.5f) * 26f;
-            g.fill(lx, lanternY - 10, lx + 1, lanternY - 6, AtmosphereRenderer.withAlpha(0x00909090, (int)wispA));
-            return;
-        }
 
         // Optimized halos: 2 gradients instead of 12+ fills
         int haloR = (int)(28 * flicker);
@@ -866,7 +736,6 @@ public class LivingAtmosphere {
         int postH = (int)(h * 0.13f);
         for (int i = 0; i < MOTH_COUNT; i++) {
             int idx = ((int)moths[i][0]) % lanternPositions.length;
-            if (isLanternOut(idx)) continue; // sin llama: las polillas se dispersan
             int lx = lanternPositions[idx][0];
             int ly = lanternPositions[idx][1] - postH - 2;
             float angle = moths[i][1];

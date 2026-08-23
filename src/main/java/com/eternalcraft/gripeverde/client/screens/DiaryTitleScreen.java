@@ -337,7 +337,6 @@ public class DiaryTitleScreen extends Screen {
             com.eternalcraft.gripeverde.client.lore.HiddenCipher.drawBuffer(g, this.width, this.height);
             com.eternalcraft.gripeverde.client.lore.HiddenCipher.drawTelegram(g, this.width, this.height);
             com.eternalcraft.gripeverde.client.lore.HiddenCipher.drawPereiraFlash(g, this.width, this.height);
-            com.eternalcraft.gripeverde.client.lore.Herald.draw(g, this.width, this.height);
             drawDustIfDue(g);
             drawVigilLine(g);
             com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
@@ -694,12 +693,6 @@ public class DiaryTitleScreen extends Screen {
                     com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.closeInspection();
                     return true;
                 }
-                // El Heraldo se pliega al tocarlo.
-                if (com.eternalcraft.gripeverde.client.lore.Herald.isViewing()) {
-                    com.eternalcraft.gripeverde.client.lore.Herald.close();
-                    return true;
-                }
-
                 int w = this.width, h = this.height;
 
                 // El ojo del emblema no esta pintado: mira.
@@ -761,12 +754,6 @@ public class DiaryTitleScreen extends Screen {
                 if (mouseX >= sw[0] - 2 && mouseX <= sw[0] + sw[2] + 2
                         && mouseY >= sw[1] - 2 && mouseY <= sw[1] + sw[3] + 2) {
                     com.eternalcraft.gripeverde.client.render.VictorianSkyline.signalWindowClicked();
-                    return true;
-                }
-
-                // El kiosco guarda el Heraldo del dia.
-                if (com.eternalcraft.gripeverde.client.render.LivingAtmosphere.heraldHit(mouseX, mouseY, w, h)) {
-                    com.eternalcraft.gripeverde.client.lore.Herald.openToday();
                     return true;
                 }
             } catch (Throwable ignored) {}

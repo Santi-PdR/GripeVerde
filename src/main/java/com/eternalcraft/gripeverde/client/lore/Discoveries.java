@@ -24,7 +24,6 @@ public final class Discoveries {
     public static final String WANTED_EYES       = "wanted_eyes";
     public static final String AVENUE_DARK       = "avenue_dark";
     public static final String SIGNAL_WINDOW     = "signal_window";
-    public static final String HERALD            = "herald";
     public static final String RAT_PAUSE         = "rat_pause";
     public static final String CAT_SCRAP         = "cat_scrap";
     public static final String CODE_1897         = "code_1897";
@@ -158,7 +157,6 @@ public final class Discoveries {
             case WANTED_EYES:       return en ? "The wrong face" : "El rostro equivocado";
             case AVENUE_DARK:       return en ? "The avenue goes dark" : "La avenida a oscuras";
             case SIGNAL_WINDOW:     return en ? "The window that answered" : "La ventana que respondio";
-            case HERALD:            return en ? "Today's herald" : "El heraldo de hoy";
             case RAT_PAUSE:         return en ? "The rat that stopped" : "La rata que se detuvo";
             case CAT_SCRAP:         return en ? "The cat's gift" : "El regalo del gato";
             case CODE_1897:         return en ? "The night of the outbreak" : "La noche del brote";
@@ -213,7 +211,6 @@ public final class Discoveries {
             case WANTED_EYES:       return en ? "Hold the gaze of the wanted man." : "Sostene la mirada del buscado.";
             case AVENUE_DARK:       return en ? "The gas can be refused." : "El gas puede rechazarse.";
             case SIGNAL_WINDOW:     return en ? "A light is waiting for an answer." : "Una luz espera respuesta.";
-            case HERALD:            return en ? "Something new lies on the street each day." : "Cada dia algo nuevo yace en la calle.";
             case RAT_PAUSE:         return en ? "Not every crossing is a hurry." : "No todo cruce es una huida.";
             case CAT_SCRAP:         return en ? "The roof cat pays its debts slowly." : "El gato del tejado paga sus deudas despacio.";
             case CODE_1897:         return en ? "Some years deserve to be spoken." : "Hay anos que merecen decirse.";
@@ -281,7 +278,7 @@ public final class Discoveries {
     /** Lista ordenada de todos los ids, para la Sala de consulta. */
     public static final String[] ALL = {
         WATCH_INSCRIPTION, WATCH_KEY, POSTER_PEEL, WANTED_EYES, AVENUE_DARK,
-        SIGNAL_WINDOW, HERALD, RAT_PAUSE, CAT_SCRAP, CODE_1897,
+        SIGNAL_WINDOW, RAT_PAUSE, CAT_SCRAP, CODE_1897,
         CODE_1152, CODE_HOLLOWAY, CODE_PEREIRA, GHOST_TRACK, CANDLE_DARK,
         RAVEN_FEATHER, BREATH, READER_SHADOW, DRAWER_OPEN, DRAWER_COMPLETE,
         SMUGGLER_SIGNAL, MIRROR, LETTERS, EYE_FOLLOWS, GUESTBOOK,

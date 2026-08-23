@@ -2,6 +2,11 @@
 ## Cronica bajo sello
 
 
+## Version 0.21.31 - La vigilia permanece entera
+
+La ciudad dejó de medir sus fuerzas para borrar partes de la noche. La niebla, los faroles, sus reflejos y cada detalle de la calle permanecen aunque bajen los FPS. El viejo kiosco de madera que parecía un canasto también desapareció, y con él se retiraron el Heraldo diario, su escondite y su ficha. Ninguna memoria antigua ni ciclo errático puede volver a apagar las luces.
+
+
 ## Version 0.21.30 - La calle permanece
 
 Cuando la máquina que sostiene la vigilia aminora el paso, la ciudad puede perder la niebla y apagar sus adornos más exigentes. El empedrado mojado, sin embargo, ya no se desvanece con ellos. Bajo los edificios, la calle permanece y la ciudad conserva su suelo.

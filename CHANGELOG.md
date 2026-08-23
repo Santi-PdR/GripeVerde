@@ -1,5 +1,16 @@
 # Eternal Craft: Gripe Verde
 
+## v0.21.31 - La vigilia permanece entera
+
+Se elimino por completo el modo automatico de pocos FPS: ya no existe el
+muestreador, la escena del Title siempre conserva niebla, faroles, reflejos,
+particulas y utileria, y el grano vuelve a un intervalo estable. Tambien se
+limpio el estado heredado y el ciclo erratico que podian debilitar un farol
+o suprimir su reflejo.
+El objeto de madera de la carretera fue identificado como el kiosco del
+Heraldo y retirado junto con su hitbox, periodico diario, overlay, clase y
+ficha de descubrimiento. El archivo cuenta ahora 46 fichas activas.
+
 ## v0.21.30 - La calle permanece
 
 Cuando la maquina que sostiene la vigilia aminora el paso, la ciudad aun

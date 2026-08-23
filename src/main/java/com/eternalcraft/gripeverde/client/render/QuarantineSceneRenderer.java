@@ -27,44 +27,17 @@ public final class QuarantineSceneRenderer {
         } catch (Throwable ignored) {}
     }
 
-    // ── Modo low-end (v0.21.5): si el cliente va lento, se retiran la niebla
-    // y los faroles (los elementos mas costosos de la calle). El muestreo de
-    // FPS se hace una vez por segundo y nunca rompe por APIs ausentes.
-    private static int lowEndFps = 0;
-    private static long lowEndSampleMs = 0L;
-
-    public static boolean isLowEnd() {
-        long now = System.currentTimeMillis();
-        if (now - lowEndSampleMs >= 1000L) {
-            lowEndSampleMs = now;
-            try {
-                lowEndFps = net.minecraft.client.Minecraft.getInstance().getFps();
-            } catch (Throwable ignored) {
-                lowEndFps = 0;
-            }
-        }
-        return lowEndFps > 0 && lowEndFps < 30;
-    }
-
     // ── Full scene for Title ──
     public static void renderTitleScene(GuiGraphics g, int w, int h) {
         if (w <= 0 || h <= 0) return;
         com.eternalcraft.gripeverde.client.audio.MenuAmbience.tick();
         com.eternalcraft.gripeverde.client.audio.MenuAmbience.setPocketWatchVisible(h >= 290);
 
-        boolean low = isLowEnd();
         AtmosphereRenderer.renderSky(g, w, h);
         VictorianSkyline.renderBackground(g, w, h);
-        if (!low) LivingAtmosphere.renderFogLow(g, w, h);
+        LivingAtmosphere.renderFogLow(g, w, h);
         VictorianSkyline.renderForeground(g, w, h);
-        // La calzada es parte estructural del fondo y debe dibujarse incluso
-        // en modo low-end. Solo se omiten la utileria y los efectos costosos,
-        // no la calle completa.
-        if (low) {
-            LivingAtmosphere.renderStreet(g, w, h);
-        } else {
-            LivingAtmosphere.renderStreetLevel(g, w, h);
-        }
+        LivingAtmosphere.renderStreetLevel(g, w, h);
         LivingAtmosphere.renderAir(g, w, h);
         LivingAtmosphere.renderFlash(g, w, h);
         LivingAtmosphere.renderVignette(g, w, h);
@@ -80,8 +53,6 @@ public final class QuarantineSceneRenderer {
         AtmosphereRenderer.renderSky(g, w, h);
         VictorianSkyline.renderBackground(g, w, h);
         VictorianSkyline.renderForeground(g, w, h);
-        // La version base de la calle es barata y no debe desaparecer cuando
-        // el muestreador de FPS activa el modo low-end.
         LivingAtmosphere.renderStreet(g, w, h);
         LivingAtmosphere.renderVignette(g, w, h);
         // Overlay oscuro del gabinete
@@ -97,10 +68,7 @@ public final class QuarantineSceneRenderer {
 
     private static void renderFilmGrain(GuiGraphics g, int w, int h) {
         long now = System.currentTimeMillis();
-        // v0.21.11: en modo low-end el grano se rehace con menos frecuencia
-        // (el detalle se pierde igual con FPS bajos y se ahorra CPU).
-        long grainInterval = isLowEnd() ? 300L : 90L;
-        if (now - lastGrainMs > grainInterval) {
+        if (now - lastGrainMs > 90L) {
             lastGrainMs = now;
             for (int i = 0; i < grainX.length; i++) {
                 grainX[i] = GRAIN_RNG.nextInt(Math.max(1, w));

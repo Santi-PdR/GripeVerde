@@ -212,7 +212,12 @@ public final class ChroniclerMemory {
     }
 
     public static synchronized int discoveredCount() {
-        return get().discovered.size();
+        Data data = get();
+        int count = 0;
+        for (String id : Discoveries.ALL) {
+            if (data.discovered.contains(id)) count++;
+        }
+        return count;
     }
 
     // ── Objetos del cajon ───────────────────────────────────────────────────

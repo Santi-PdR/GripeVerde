@@ -2,6 +2,11 @@
 ## Chronicle under seal
 
 
+## Version 0.21.31 - The vigil remains whole
+
+The city no longer measures its strength only to erase pieces of the night. Fog, gas lamps, their reflections and every street detail remain even when FPS falls. The old wooden kiosk that resembled a basket is gone as well, together with its daily Herald, hidden interaction and card. No old memory or erratic cycle can dim the lights again.
+
+
 ## Version 0.21.30 - The street remains
 
 When the machine that sustains the vigil slows its pace, the city may lose its fog and dim its most demanding ornaments. The wet cobblestones, however, no longer vanish with them. Beneath the buildings, the street remains and the city keeps its ground.

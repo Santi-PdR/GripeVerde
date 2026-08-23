@@ -3,8 +3,38 @@
 ## Addendum operativo actual
 
 - Rama fija de Arena: `arena/01a02cee-gripeverde` (desde `main` v0.21.29, commit `0e1befb`).
-- Version: `0.21.30`.
-- Ultima regla explicita del usuario: corregir el error del menu principal que hacia desaparecer la carretera, sin introducir gameplay ni resourcepacks.
+- Version: `0.21.31`.
+- Ultima regla explicita del usuario: eliminar por completo el modo automatico de pocos FPS, impedir que desaparezcan luces o utileria y retirar el objeto de carretera que parecia un canasto junto con su easter egg.
+
+### DECISION 2026-08-23: v0.21.31 - La vigilia permanece entera
+
+La auditoria confirmo que `QuarantineSceneRenderer.isLowEnd()` muestreaba
+los FPS una vez por segundo y, por debajo de 30, eliminaba la niebla y toda
+la utileria de `renderStreetLevel`, incluidos los faroles. Ese modo se borro
+por completo: ya no quedan campos, muestreo ni bifurcaciones por FPS.
+
+- El Title ejecuta siempre `renderFogLow` y `renderStreetLevel`; la niebla,
+  los faroles, sus reflejos, las polillas, las particulas y el resto de la
+  calle no cambian por una bajada de FPS.
+- El grano de pelicula deja de consultar FPS y usa siempre su intervalo de
+  90 ms.
+- Se retiraron los restos del antiguo apagado interactivo, el ciclo erratico
+  de atenuacion y la lectura de `avenue_darkened`: ni un evento ni una
+  memoria vieja pueden apagar o debilitar una llama, omitir su reflejo ni
+  dispersar sus polillas.
+- El objeto que parecia un canasto era el kiosco de madera del Heraldo. Se
+  eliminaron su renderer, hitbox, interaccion, overlay, periodico diario,
+  clase `Herald.java` y ficha de descubrimiento.
+- `ChroniclerMemory.discoveredCount()` cuenta solo los ids activos, por lo
+  que memorias anteriores que tengan `herald` no producen un contador
+  superior al total actual de 46 fichas.
+- Conteos: 60 clases Java, 25 lang, 35 eventos y 42 OGG.
+- Changelog in-game actualizado en los 25 idiomas por tratarse de cambios
+  visibles en la escena.
+- Bump: build.gradle + GripeVerdeMod.VERSION -> 0.21.31.
+- Validacion pendiente en cliente real (KI-51): Title a FPS altos/bajos y
+  cuatro escalas GUI; confirmar escena completa, faroles estables y ausencia
+  total del kiosco/Heraldo.
 
 ### DECISION 2026-08-23: v0.21.30 - La calle permanece
 

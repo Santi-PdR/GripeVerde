@@ -1,5 +1,30 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.21.31 - La vigilia permanece entera (2026-08-23)
+
+### Cambios cerrados
+- Eliminado, no solo desactivado, el modo de pocos FPS y todo su muestreo.
+- El Title dibuja siempre niebla, calle completa, faroles, reflejos,
+  particulas y utileria; el grano ya no cambia segun los FPS.
+- Eliminados los restos del apagado de faroles, su ciclo erratico de
+  atenuacion y el debilitamiento persistido de `avenue_darkened`; las llamas,
+  reflejos y polillas ya no se omiten.
+- Identificado el supuesto canasto como el kiosco del Heraldo y eliminado por
+  completo: dibujo, hitbox, click, overlay, clase y ficha de descubrimiento.
+- El archivo pasa de 47 a 46 fichas y su contador ignora ids retirados que
+  puedan seguir guardados en memorias de versiones anteriores.
+- Version bump: 0.21.30 -> 0.21.31. Conteo Java: 61 -> 60 clases.
+
+### Riesgos activos / KI nuevos
+- **KI-51 (v0.21.31)**: validar en cliente real el Title con FPS por encima y
+  debajo de 30 y escalas GUI 1-4. La escena debe permanecer completa, todos
+  los faroles deben seguir encendidos y el kiosco/Heraldo no debe aparecer
+  ni responder a clicks.
+- KI-50 queda reemplazado por KI-51: ya no existe un umbral low-end que
+  comparar.
+
+---
+
 ## v0.21.30 - La calle permanece (2026-08-23)
 
 ### Cambios cerrados
