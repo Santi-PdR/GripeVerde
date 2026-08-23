@@ -2,9 +2,46 @@
 
 ## Addendum operativo actual
 
-- Rama fija de Arena: `arena/01a02cee-gripeverde` (desde `main` v0.21.29, commit `0e1befb`).
-- Version: `0.21.31`.
+- Rama fija de Arena: `arena/01a02cee-gripeverde` (estado base v0.21.31, commit `7605243`).
+- Version: `0.22.0`.
 - Ultima regla explicita del usuario: eliminar por completo el modo automatico de pocos FPS, impedir que desaparezcan luces o utileria y retirar el objeto de carretera que parecia un canasto junto con su easter egg.
+
+### DECISION 2026-08-23: v0.22.0 - La vigilia queda sellada
+
+Pasada final autorizada antes de entregar el mod al owner, sin gameplay,
+resourcepacks ni recortes de la escena. Antes de tocar archivos se creó y
+verificó el bundle externo
+`/home/user/GripeVerde-backup-v0.21.31-7605243f9aff-2026-08-23.bundle`
+(SHA-256 `361002ab5a443585a9297fe0e7161fbb3de265ab6ae47d4e38f117580853e74a`).
+
+- `QuarantineSceneRenderer` mueve ahora el polvo desde el tick fijo de 20 Hz;
+  su velocidad deja de depender de los FPS y `renderAtmosphericDust` solo dibuja.
+- Música y ambiente tienen una sola ruta de tick en todas las pantallas;
+  desaparecen las llamadas redundantes por cuadro del Title y de las
+  subpantallas que mantenían solo el audio.
+- `REDUCED_MOTION` aparece como toggle propio en Accesibilidad, persiste en
+  el TOML y congela cielo, humo, lluvia, partículas, grano, destellos y
+  movimiento atmosférico sin retirar calle, faroles ni utilería permanente;
+  también suprime sacudida, flashes, partículas y revelado progresivo del
+  easter egg del logo. El grano estático se recalcula si cambia la ventana.
+- `DiaryToggle` acepta opciones externas y su mensaje de narración incluye
+  etiqueta y estado actual.
+- `ChroniclerMemory` escribe un temporal con `force`, preserva la última
+  memoria válida, reemplaza atómicamente cuando el sistema lo admite,
+  recupera un temporal interrumpido o el backup y conserva el JSON corrupto
+  para diagnóstico.
+- `PaperTexture` y las ventanas de `VictorianSkyline` reutilizan RNGs
+  deterministas; se elimina la asignación de objetos por cuadro sin cambiar
+  la distribución visual.
+- El build valida JSON, paridad y valores de las 83 claves en 25 idiomas,
+  presencia de v0.22.0 en 25 changelogs, listas sonoras no vacías, entradas
+  bien formadas, referencias OGG completas y ausencia de OGG huérfanos.
+- Conteos: 60 clases Java, 25 lang (83 claves), 25 changelogs, 35 eventos y
+  42 OGG.
+- Bump sincronizado: `build.gradle` + `GripeVerdeMod.VERSION` -> 0.22.0.
+- Validación pendiente en cliente real (KI-52): build con Java 17, recorrido
+  de pantallas, toggle de movimiento reducido y prueba controlada de
+  recuperación de memoria.
 
 ### DECISION 2026-08-23: v0.21.31 - La vigilia permanece entera
 

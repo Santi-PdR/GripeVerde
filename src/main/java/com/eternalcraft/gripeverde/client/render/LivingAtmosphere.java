@@ -12,9 +12,13 @@ public class LivingAtmosphere {
     // v0.21.3: RNG compartido con seed fija (sin Math.random en el loop caliente).
     private static final java.util.Random RND = new java.util.Random(0xC10E5EL);
 
-    /** v0.21.3: accesibilidad - movimiento reducido del ambiente (ClientConfig). */
+    /** Accesibilidad: congela la animacion ambiental sin retirar la composicion. */
     private static boolean reducedMotion() {
-        return com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get();
+        try {
+            return com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get();
+        } catch (IllegalStateException ignored) {
+            return false;
+        }
     }
 
     private static float time = 0f;
@@ -109,16 +113,24 @@ public class LivingAtmosphere {
     public static boolean isRatStanding() { return ratStanding; }
 
     public static void triggerLightningFlash(float intensity) {
+        if (reducedMotion()) return;
         lightningTimer = 0f;
         lightningFlash = Math.max(lightningFlash, Math.max(0.15f, Math.min(1.0f, intensity)));
         nextLightning = 8f + (float)(RND.nextFloat() * 12f);
     }
 
     public static void tick(float deltaTime) {
-        time += deltaTime;
         initAll();
         boolean reduced = reducedMotion();
+        if (reduced) {
+            windGustIntensity = 0f;
+            windGustDuration = 0f;
+            lightningFlash = 0f;
+            vignettePulse = 0.5f;
+            return;
+        }
 
+        time += deltaTime;
         if (!reduced) {
             for (int i = 0; i < FOG_OFFSETS.length; i++) {
                 FOG_OFFSETS[i] += FOG_SPEEDS[i] * deltaTime * 60f;

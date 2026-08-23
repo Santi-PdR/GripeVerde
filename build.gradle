@@ -6,7 +6,7 @@ plugins {
     id 'org.spongepowered.mixin' version '0.7.+'
 }
 
-version = '0.21.31'
+version = '0.22.0'
 group = 'com.eternalcraft.gripeverde'
 base { archivesName = 'gripeverde' }
 
@@ -76,7 +76,7 @@ jar.finalizedBy('reobfJar')
 
 tasks.register('verifyGripeVerdeLocalization') {
     group = 'verification'
-    description = 'Verifies core localized files required by the client UI.'
+    description = 'Verifies localized JSON syntax/key parity and current changelog coverage.'
     doLast {
         def langDir = file('src/main/resources/assets/gripeverde/lang')
         def changelogDir = file('src/main/resources/assets/gripeverde/changelog')
@@ -84,13 +84,70 @@ tasks.register('verifyGripeVerdeLocalization') {
             'es_es', 'es_mx', 'es_ar', 'es_419', 'es_bo', 'es_cl', 'es_co',
             'es_cr', 'es_do', 'es_ec', 'es_gt', 'es_hn', 'es_ni', 'es_pa',
             'es_pe', 'es_pr', 'es_py', 'es_sv', 'es_uy', 'es_ve']
-        def missingLang = requiredLangs.findAll { !new File(langDir, "${it}.json").isFile() }
-        def missingChangelog = requiredLangs.findAll { !new File(changelogDir, "${it}.md").isFile() }
+        def requiredSet = requiredLangs as Set
+        def availableLangs = fileTree(langDir) { include '*.json' }.files.collect {
+            it.name - '.json'
+        } as Set
+        def availableChangelogs = fileTree(changelogDir) { include '*.md' }.files.collect {
+            it.name - '.md'
+        } as Set
+        def missingLang = requiredSet - availableLangs
+        def unexpectedLang = availableLangs - requiredSet
+        def missingChangelog = requiredSet - availableChangelogs
+        def unexpectedChangelog = availableChangelogs - requiredSet
         if (!missingLang.isEmpty()) {
-            throw new GradleException("Missing lang JSON files: ${missingLang.join(', ')}")
+            throw new GradleException("Missing lang JSON files: ${missingLang.sort().join(', ')}")
+        }
+        if (!unexpectedLang.isEmpty()) {
+            throw new GradleException("Unexpected lang JSON files: ${unexpectedLang.sort().join(', ')}")
         }
         if (!missingChangelog.isEmpty()) {
-            throw new GradleException("Missing changelog markdown files: ${missingChangelog.join(', ')}")
+            throw new GradleException("Missing changelog markdown files: ${missingChangelog.sort().join(', ')}")
+        }
+        if (!unexpectedChangelog.isEmpty()) {
+            throw new GradleException("Unexpected changelog markdown files: ${unexpectedChangelog.sort().join(', ')}")
+        }
+
+        def json = new groovy.json.JsonSlurper()
+        def baseline = json.parse(new File(langDir, 'en_us.json'))
+        if (!(baseline instanceof Map)) {
+            throw new GradleException('en_us.json root must be a JSON object')
+        }
+        def baselineKeys = baseline.keySet() as Set
+        def expectedKeyCount = 83
+        def problems = []
+        if (baselineKeys.size() != expectedKeyCount) {
+            problems << "en_us: expected ${expectedKeyCount} keys, found ${baselineKeys.size()}"
+        }
+        requiredLangs.each { locale ->
+            def langFile = new File(langDir, "${locale}.json")
+            try {
+                def entries = json.parse(langFile)
+                if (!(entries instanceof Map)) {
+                    throw new IllegalArgumentException('root must be a JSON object')
+                }
+                def keys = entries.keySet() as Set
+                def absent = baselineKeys - keys
+                def extra = keys - baselineKeys
+                def invalidValues = entries.findAll { key, value ->
+                    !(value instanceof String) || value.trim().isEmpty()
+                }.keySet()
+                if (!absent.isEmpty()) problems << "${locale}: missing keys ${absent.sort()}"
+                if (!extra.isEmpty()) problems << "${locale}: unexpected keys ${extra.sort()}"
+                if (!invalidValues.isEmpty()) {
+                    problems << "${locale}: non-string or blank values ${invalidValues.sort()}"
+                }
+            } catch (Exception failure) {
+                problems << "${locale}: invalid JSON (${failure.message})"
+            }
+
+            def changelog = new File(changelogDir, "${locale}.md").getText('UTF-8')
+            if (!changelog.contains("## Version ${project.version}")) {
+                problems << "${locale}: changelog does not contain Version ${project.version}"
+            }
+        }
+        if (!problems.isEmpty()) {
+            throw new GradleException("Localization validation failed:\n" + problems.join('\n'))
         }
     }
 }
@@ -101,25 +158,74 @@ tasks.named('processResources').configure {
 
 tasks.register('verifyGripeVerdeSoundAssets') {
     group = 'verification'
-    description = 'Verifies sounds.json references existing OGG files.'
+    description = 'Verifies sound event structure, identifiers and exact OGG coverage.'
     doLast {
         def soundsJson = file('src/main/resources/assets/gripeverde/sounds.json')
         if (!soundsJson.isFile()) throw new GradleException('Missing sounds.json')
         def parsed = new groovy.json.JsonSlurper().parse(soundsJson)
+        if (!(parsed instanceof Map)) {
+            throw new GradleException('sounds.json root must be a JSON object')
+        }
+
         def base = file('src/main/resources/assets/gripeverde/sounds')
-        def missing = []
+        def problems = []
+        def referenced = [] as Set
         parsed.each { eventName, payload ->
-            def sounds = payload.sounds ?: []
-            sounds.each { entry ->
-                def raw = entry instanceof Map ? entry.name : entry.toString()
-                if (raw == null) return
-                def path = raw.startsWith('gripeverde:') ? raw.substring('gripeverde:'.length()) : raw
-                def f = new File(base, "${path}.ogg")
-                if (!f.isFile()) missing << "${eventName} -> ${path}.ogg"
+            if (!(eventName instanceof String) || !eventName.matches('[a-z0-9/._-]+') ||
+                    eventName.startsWith('/') || eventName.split('/').any { it == '..' || it == '.' }) {
+                problems << "invalid sound event id ${eventName}"
+                return
+            }
+            if (!(payload instanceof Map) || !(payload.sounds instanceof List) || payload.sounds.isEmpty()) {
+                problems << "${eventName}: sounds must be a non-empty list"
+                return
+            }
+
+            payload.sounds.eachWithIndex { entry, index ->
+                def raw = entry instanceof String ? entry : (entry instanceof Map ? entry.name : null)
+                def type = entry instanceof Map && entry.containsKey('type') ? entry.type : 'file'
+                if (!(raw instanceof String) || raw.trim().isEmpty()) {
+                    problems << "${eventName}[${index}]: sound entry needs a non-blank name"
+                    return
+                }
+                if (!(type instanceof String) || !(type in ['file', 'event'])) {
+                    problems << "${eventName}[${index}]: unsupported sound type ${type}"
+                    return
+                }
+
+                raw = raw.trim()
+                def separator = raw.indexOf(':')
+                def namespace = separator >= 0 ? raw.substring(0, separator) : 'gripeverde'
+                def path = separator >= 0 ? raw.substring(separator + 1) : raw
+                if (!namespace.matches('[a-z0-9_.-]+') || !path.matches('[a-z0-9/._-]+') ||
+                        path.startsWith('/') || path.split('/').any { it == '..' || it == '.' }) {
+                    problems << "${eventName}[${index}]: invalid sound id ${raw}"
+                    return
+                }
+
+                // Foreign namespace entries are owned and validated by that namespace.
+                if (namespace != 'gripeverde') return
+                if (type == 'event') {
+                    if (!parsed.containsKey(path)) problems << "${eventName}[${index}]: unknown sound event ${raw}"
+                    return
+                }
+
+                def relative = "${path}.ogg"
+                referenced << relative
+                if (!new File(base, relative).isFile()) {
+                    problems << "${eventName}[${index}]: missing ${relative}"
+                }
             }
         }
-        if (!missing.isEmpty()) {
-            throw new GradleException("Missing sound assets:\n" + missing.join('\n'))
+        def available = fileTree(base) { include '**/*.ogg' }.collect { sound ->
+            base.toPath().relativize(sound.toPath()).toString().replace('\\', '/')
+        } as Set
+        def orphaned = available - referenced
+        if (!orphaned.isEmpty()) {
+            problems << "unreferenced OGG assets: ${orphaned.sort().join(', ')}"
+        }
+        if (!problems.isEmpty()) {
+            throw new GradleException("Sound asset validation failed:\n" + problems.join('\n'))
         }
     }
 }

@@ -3,12 +3,16 @@ package com.eternalcraft.gripeverde.client.lore;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,6 +51,11 @@ public final class ChroniclerMemory {
 
     private static Data data = null;
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static final org.slf4j.Logger LOGGER = com.mojang.logging.LogUtils.getLogger();
+    private static final String MEMORY_FILE = "gripeverde-memory.json";
+    private static final String BACKUP_FILE = "gripeverde-memory.backup.json";
+    private static final String TEMP_FILE = "gripeverde-memory.tmp";
+    private static final String CORRUPT_FILE = "gripeverde-memory.corrupt.json";
 
     // Resultados del saludo de apertura de sesion (calculado en beginSession)
     private static int sessionGreetingKind = 0; // 0=ninguno 1=primera 2=regreso 3=mismo dia
@@ -57,77 +66,170 @@ public final class ChroniclerMemory {
         return data;
     }
 
-    private static File memoryFile() {
+    private static Path configPath(String fileName) {
         try {
-            java.nio.file.Path dir = net.minecraftforge.fml.loading.FMLPaths.CONFIGDIR.get();
-            return new File(dir.toFile(), "gripeverde-memory.json");
+            return net.minecraftforge.fml.loading.FMLPaths.CONFIGDIR.get().resolve(fileName);
         } catch (Throwable t) {
-            return new File("config", "gripeverde-memory.json");
+            return Path.of("config", fileName);
+        }
+    }
+
+    private static Data sanitize(Data parsed) throws IOException {
+        if (parsed == null) throw new IOException("El JSON de memoria esta vacio");
+        if (parsed.discovered == null) parsed.discovered = new HashSet<>();
+        if (parsed.collectibles == null) parsed.collectibles = new HashSet<>();
+        if (parsed.pendingNotes == null) parsed.pendingNotes = new ArrayList<>();
+        if (parsed.counters == null) parsed.counters = new HashMap<>();
+        if (parsed.guestbook == null) parsed.guestbook = new ArrayList<>();
+        return parsed;
+    }
+
+    private static Data readData(Path path) throws IOException {
+        try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+            return sanitize(GSON.fromJson(reader, Data.class));
+        }
+    }
+
+    private static void preserveCorruptFile(Path primary) {
+        if (!Files.isRegularFile(primary)) return;
+        Path corrupt = configPath(CORRUPT_FILE);
+        try {
+            Files.move(primary, corrupt, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException moveFailure) {
+            try {
+                Files.copy(primary, corrupt, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException copyFailure) {
+                LOGGER.warn("[GripeVerde] No se pudo preservar la memoria corrupta", copyFailure);
+            }
         }
     }
 
     private static synchronized void load() {
         data = new Data();
-        File f = memoryFile();
-        if (!f.isFile()) return;
-        InputStreamReader reader = null;
-        try {
-            reader = new InputStreamReader(new FileInputStream(f), StandardCharsets.UTF_8);
-            Data parsed = GSON.fromJson(reader, Data.class);
-            if (parsed != null) {
-                data = parsed;
-                if (data.discovered == null) data.discovered = new HashSet<>();
-                if (data.collectibles == null) data.collectibles = new HashSet<>();
-                if (data.pendingNotes == null) data.pendingNotes = new ArrayList<>();
-                if (data.counters == null) data.counters = new HashMap<>();
-                if (data.guestbook == null) data.guestbook = new ArrayList<>();
+        Path primary = configPath(MEMORY_FILE);
+        Path temporary = configPath(TEMP_FILE);
+        Path backup = configPath(BACKUP_FILE);
+        boolean primaryExists = Files.isRegularFile(primary);
+        boolean temporaryExists = Files.isRegularFile(temporary);
+        boolean backupExists = Files.isRegularFile(backup);
+
+        if (primaryExists) {
+            try {
+                data = readData(primary);
+                return;
+            } catch (Throwable primaryFailure) {
+                primaryKnownCorrupt = true;
+                LOGGER.warn("[GripeVerde] La memoria principal no es valida; intentando recuperar otra copia", primaryFailure);
             }
-        } catch (Throwable t) {
-            // Memoria corrupta: el cronista empieza de cero, sin drama.
+        } else if (!temporaryExists && !backupExists) {
+            return;
+        }
+
+        Data recovered = null;
+        String recoveredFrom = null;
+        if (temporaryExists) {
+            try {
+                recovered = readData(temporary);
+                recoveredFrom = TEMP_FILE;
+            } catch (Throwable temporaryFailure) {
+                LOGGER.warn("[GripeVerde] El temporal de memoria interrumpido no es valido", temporaryFailure);
+            }
+        }
+        if (recovered == null && backupExists) {
+            try {
+                recovered = readData(backup);
+                recoveredFrom = BACKUP_FILE;
+            } catch (Throwable backupFailure) {
+                LOGGER.error("[GripeVerde] El respaldo de memoria tampoco es valido", backupFailure);
+            }
+        }
+
+        if (primaryExists) preserveCorruptFile(primary);
+        if (recovered != null) {
+            data = recovered;
+            savePending = true;
+            writeNow();
+            LOGGER.warn("[GripeVerde] Memoria recuperada desde {}", recoveredFrom);
+        } else {
             data = new Data();
-        } finally {
-            try { if (reader != null) reader.close(); } catch (Throwable ignored) {}
+            LOGGER.error("[GripeVerde] No existe una memoria valida; se iniciara un registro nuevo. Los archivos dañados no se usaron.");
         }
     }
 
     public static synchronized void save() {
         if (data == null) return;
-        // v0.21.11: escritura diferida (max 1 por 2s). El cierre del juego
-        // dispara flushForShutdown() via ShutdownHook para no perder nada.
+        // Escritura diferida (maximo una cada 2 s); el cierre fuerza lo pendiente.
         savePending = true;
         long now = System.currentTimeMillis();
         if (now - lastSaveMs < 2000L) return;
         lastSaveMs = now;
-        savePending = false;
         writeNow();
     }
 
-    /** v0.21.11: escritura inmediata al disco. */
+    /**
+     * Escribe primero un temporal durable, preserva la ultima version valida y
+     * reemplaza el JSON principal atomicamente cuando el sistema lo permite.
+     */
     private static synchronized void writeNow() {
         if (data == null) return;
-        File f = memoryFile();
-        OutputStreamWriter writer = null;
+        Path primary = configPath(MEMORY_FILE);
+        Path backup = configPath(BACKUP_FILE);
+        Path temporary = configPath(TEMP_FILE);
         try {
-            File parent = f.getParentFile();
-            if (parent != null && !parent.isDirectory() && !parent.mkdirs()) return;
-            writer = new OutputStreamWriter(new FileOutputStream(f), StandardCharsets.UTF_8);
-            GSON.toJson(data, writer);
-            writer.flush();
-        } catch (Throwable ignored) {
-        } finally {
-            try { if (writer != null) writer.close(); } catch (Throwable ignored) {}
+            Path parent = primary.getParent();
+            if (parent != null) Files.createDirectories(parent);
+
+            byte[] json = (GSON.toJson(data) + "\n").getBytes(StandardCharsets.UTF_8);
+            try (FileChannel channel = FileChannel.open(temporary,
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING,
+                    StandardOpenOption.WRITE)) {
+                ByteBuffer buffer = ByteBuffer.wrap(json);
+                while (buffer.hasRemaining()) channel.write(buffer);
+                channel.force(true);
+            }
+
+            if (!primaryKnownCorrupt && Files.isRegularFile(primary)) {
+                try {
+                    // Never replace a known-good backup with an externally damaged primary.
+                    readData(primary);
+                    try {
+                        Files.copy(primary, backup, StandardCopyOption.REPLACE_EXISTING);
+                    } catch (IOException backupFailure) {
+                        // A blocked backup must not prevent the new atomic save from completing.
+                        LOGGER.warn("[GripeVerde] No se pudo actualizar el respaldo de memoria", backupFailure);
+                    }
+                } catch (Throwable invalidPrimary) {
+                    primaryKnownCorrupt = true;
+                    LOGGER.warn("[GripeVerde] La memoria principal cambio fuera del juego y no es valida; no se reemplazara el respaldo", invalidPrimary);
+                    preserveCorruptFile(primary);
+                }
+            }
+
+            try {
+                Files.move(temporary, primary,
+                    StandardCopyOption.ATOMIC_MOVE,
+                    StandardCopyOption.REPLACE_EXISTING);
+            } catch (AtomicMoveNotSupportedException unsupported) {
+                Files.move(temporary, primary, StandardCopyOption.REPLACE_EXISTING);
+            }
+
+            primaryKnownCorrupt = false;
+            savePending = false;
+        } catch (Throwable failure) {
+            savePending = true;
+            LOGGER.error("[GripeVerde] No se pudo guardar la memoria del cronista", failure);
+            try { Files.deleteIfExists(temporary); } catch (IOException ignored) {}
         }
     }
 
     private static boolean savePending = false;
+    private static boolean primaryKnownCorrupt = false;
     private static long lastSaveMs = 0L;
 
-    /** v0.21.11: al cerrar el juego se escribe lo pendiente. */
-    public static void flushForShutdown() {
-        if (savePending) {
-            savePending = false;
-            writeNow();
-        }
+    /** Al cerrar el juego se escribe todo cambio pendiente. */
+    public static synchronized void flushForShutdown() {
+        if (savePending) writeNow();
     }
 
     // ── Sesiones ────────────────────────────────────────────────────────────

@@ -1,5 +1,35 @@
 # KNOWN_ISSUES - Eternal Craft: Gripe Verde
 
+## v0.22.0 - La vigilia queda sellada (2026-08-23)
+
+### Cambios cerrados
+- Polvo atmosférico trasladado de render por FPS al tick fijo de 20 Hz.
+- Música y ambiente consolidados en una única llamada por tick para todas
+  las pantallas del gabinete.
+- Movimiento reducido expuesto en Accesibilidad y ampliado al cielo, humo,
+  clima, partículas, grano y destellos, sin retirar detalles permanentes.
+- Toggles con narración de etiqueta y estado.
+- Memoria JSON con temporal durable, backup de última versión válida,
+  reemplazo atómico, recuperación y preservación del archivo corrupto.
+- RNG determinista reutilizado en papel y ventanas; mismo resultado visual
+  sin nueve asignaciones de `Random` por render de papel ni una por capa de
+  ventanas.
+- Verificación de 25 JSON/83 claves/25 changelogs y registro sonoro completo.
+- Version bump: 0.21.31 -> 0.22.0. Conteo Java sin cambios: 60 clases.
+
+### Riesgos activos / KI nuevos
+- **KI-52 (v0.22.0)**: el sandbox no dispone de JDK/JRE 17, por lo que el
+  build Forge y la prueba dentro de Minecraft deben ejecutarse en cliente
+  real. Validar Title y subpantallas, escalas GUI 1-4, toggle de Movimiento
+  reducido, narración, continuidad de audio y recuperación controlada de
+  `gripeverde-memory.json` tanto desde `gripeverde-memory.tmp` como desde
+  `gripeverde-memory.backup.json`.
+- KI-51 queda absorbido por KI-52; siguen siendo obligatorias la escena
+  completa, todos los faroles visibles y la ausencia del kiosco/Heraldo a
+  FPS altos y bajos.
+
+---
+
 ## v0.21.31 - La vigilia permanece entera (2026-08-23)
 
 ### Cambios cerrados

@@ -5,16 +5,21 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.21.31 - La vigilia permanece entera**
+**v0.22.0 - La vigilia queda sellada**
 
-El menu ya no mide los FPS ni cambia automaticamente a una escena
-recortada: la niebla, los faroles, sus reflejos y toda la utileria de la
-calle se dibujan siempre. Tambien se retiro por completo el kiosco de madera
-del Heraldo —el objeto de la carretera que parecia un canasto— junto con su
-interaccion, periodico diario y ficha. Los estados antiguos ni los ciclos erraticos pueden
-apagar o debilitar los faroles. 60 clases Java, 25 idiomas, 35 eventos de
-sonido, 42 OGG y 0 PNG de contenedores. Documentacion sincronizada y version
-0.21.31.
+La entrega final mantiene completa la escena del Title y unifica su
+simulación, música y ambiente en un tick estable de 20 Hz. La pantalla de
+Accesibilidad expone ahora Movimiento reducido, que congela el movimiento
+atmosférico, el grano y los destellos sin retirar la calle, los faroles ni la
+utilería; los toggles anuncian también su estado al narrador.
+
+La memoria persistente se escribe mediante un temporal durable y reemplazo
+atómico, conserva la última copia válida y recupera un temporal interrumpido
+o el respaldo si el JSON principal se daña. El render reutiliza generadores
+deterministas para evitar asignaciones por cuadro sin modificar su aspecto.
+Las verificaciones del build validan sintaxis y paridad de 25 idiomas
+(83 claves), los 25 changelogs, 35 eventos y 42 OGG. La versión final es
+0.22.0 y conserva 60 clases Java.
 
 **v0.21.23 - Se reconstruye desde el registro previo**
 
@@ -81,8 +86,6 @@ Los contenedores del juego conservan su aspecto vanilla original; el mod no alte
 - **Credits** - ultimo archivo del gabinete.
 - **Archive** - sala de consulta (46 fichas).
 - **DirectJoin / EditServer / Confirm** - formularios y autorizaciones pulidos en v0.21.0.
-- **DebugCanvas** - herramienta interna de desarrollo (no en produccion).
-- **SoundLab** - herramienta interna de audio (no en produccion).
 
 ## Build
 
@@ -91,17 +94,21 @@ Ejecutar: `.\gradlew build`
 El jar se genera en `build/libs/gripeverde-VERSION.jar`
 
 Verificaciones activas en `processResources`:
-- `verifyGripeVerdeLocalization` (25 lang + 25 changelog)
-- `verifyGripeVerdeSoundAssets` (sounds.json ↔ OGG existentes)
+- `verifyGripeVerdeLocalization` (JSON válido, 83 claves en paridad y
+  v0.22.0 presente en los 25 changelogs).
+- `verifyGripeVerdeSoundAssets` (eventos completos, referencias existentes y ningún OGG huérfano).
+- `verifyGripeVerdeNoDeadCode` (símbolos retirados fuera del código productivo).
 
 ## Deploy
 
-Ruta de deploy configurable en `.deploy` (clave `DEPLOY_MODS_PATH`).
+Repositorio local actual: `C:\Users\santi\Desktop\GripeVerde`.
 
-Reglas actuales:
-- Todo build de validacion debe ir acompanado de deploy.
-- Antes de validar visualmente, limpiar jars viejos del mismo mod en la carpeta mods.
-- Validar en pantalla la version mostrada por el reloj antes de aprobar o rechazar un cambio.
+Instancia de prueba de SKLauncher:
+`C:\Users\santi\AppData\Roaming\.sklauncher\instances\test-1\mods`.
+
+Antes de cada validación se eliminan los jars anteriores de Gripe Verde, se
+compila y se copia exactamente `gripeverde-0.22.0.jar`. La versión mostrada
+por el reloj debe comprobarse en pantalla antes de aprobar la entrega.
 
 ## Idiomas soportados
 
@@ -112,8 +119,8 @@ Reglas actuales:
 ## Documentacion
 
 - `CONTRIBUTING.md` - guia corta de contribucion (branch fija, no gameplay, validacion).
-- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.21.24.
-- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.21.24).
+- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.22.0.
+- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.22.0).
 - `KNOWN_ISSUES.md` - estado tecnico, decisiones activas, errores documentados, KIs.
 - `README.md` - esta portada.
 

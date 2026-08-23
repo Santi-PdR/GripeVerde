@@ -1,5 +1,21 @@
 # Eternal Craft: Gripe Verde
 
+## v0.22.0 - La vigilia queda sellada
+
+La simulacion atmosferica y el audio quedan reunidos en un tick fijo de
+20 Hz: el polvo ya no acelera con los FPS y se eliminan los ticks redundantes
+desde render. Movimiento reducido pasa a la pantalla de Accesibilidad y
+congela cielo, clima, humo, particulas, grano y destellos sin borrar calle,
+faroles ni utileria; los toggles anuncian tambien su estado al narrador.
+
+La memoria del cronista deja de sobrescribir su unico JSON: escribe un
+temporal durable, conserva la ultima copia valida, reemplaza atomicamente y
+recupera un temporal interrumpido o el backup cuando encuentra corrupcion,
+preservando el archivo dañado. El papel y las ventanas reutilizan RNGs
+deterministas para reducir asignaciones sin cambiar su aspecto. El build
+valida paridad de idiomas, changelogs y el registro sonoro completo. Version
+final 0.22.0.
+
 ## v0.21.31 - La vigilia permanece entera
 
 Se elimino por completo el modo automatico de pocos FPS: ya no existe el

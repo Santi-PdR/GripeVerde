@@ -2,6 +2,13 @@
 ## Cronica bajo sello
 
 
+## Version 0.22.0 - La vigilia queda sellada
+
+La ciudad se mueve ahora con un único pulso estable de veinte compases, en vez de adelantar el polvo y el ambiente en cada cuadro dibujado. Movimiento reducido aparece entre las ayudas de percepción y congela el movimiento atmosférico, el grano y los destellos sin retirar la calle, los faroles ni ningún detalle permanente de la escena. Cada interruptor del diario anuncia además al narrador su nombre y su estado actual.
+
+El cronista ya no escribe directamente sobre su único archivo de memoria: cada registro pasa por un temporal durable, conserva la última copia válida, usa reemplazo atómico cuando el sistema lo permite y puede recuperarse de un archivo dañado sin borrar silenciosamente el gabinete. El papel y las ventanas reutilizan también sus instrumentos deterministas, evitando asignaciones innecesarias por cuadro sin alterar su aspecto. El sello del build comprueba ahora la paridad de traducciones, las crónicas de la versión y el registro sonoro completo.
+
+
 ## Version 0.21.31 - La vigilia permanece entera
 
 La ciudad dejó de medir sus fuerzas para borrar partes de la noche. La niebla, los faroles, sus reflejos y cada detalle de la calle permanecen aunque bajen los FPS. El viejo kiosco de madera que parecía un canasto también desapareció, y con él se retiraron el Heraldo diario, su escondite y su ficha. Ninguna memoria antigua ni ciclo errático puede volver a apagar las luces.

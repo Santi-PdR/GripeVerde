@@ -18,6 +18,13 @@ public final class PaperTexture {
     private static final long TORN_SEED   = 0x707E12345L;
     private static final long FIBER_SEED  = 0xF1BE12L;
     private static final long INK_DOT_SEED = 0x1A2B3C4DL;
+    private static final Random RNG = new Random(SEED);
+
+    /** Rendering is single-threaded; reseeding preserves the exact deterministic pattern. */
+    private static Random seededRandom(long seed) {
+        RNG.setSeed(seed);
+        return RNG;
+    }
 
     public enum PaperKind {
         LEDGER, CORRESPONDENCE, ARCHIVE, TECHNICAL, MEDICAL, OFFICIAL, DEFAULT
@@ -157,7 +164,7 @@ public final class PaperTexture {
     }
 
     private static void drawSubtleBindingFibers(GuiGraphics g,int x,int y,int w,int h, PaperKind k){
-        Random rnd = new Random(SEED ^ 0xB1D1L ^ k.ordinal());
+        Random rnd = seededRandom(SEED ^ 0xB1D1L ^ k.ordinal());
         int col = DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, k==PaperKind.LEDGER?13:10);
         int count = Math.max(4, Math.min(k==PaperKind.LEDGER?12:8, h/32));
         int left = x+10;
@@ -190,7 +197,7 @@ public final class PaperTexture {
 
     private static void drawStainsOptimized(GuiGraphics g,int x,int y,int w,int h, PaperKind k){
         if (w<=0||h<=0) return;
-        Random rnd = new Random(SEED ^ k.ordinal());
+        Random rnd = seededRandom(SEED ^ k.ordinal());
         int area = w*h;
         int baseCount = switch(k){
             case ARCHIVE -> 7;
@@ -214,7 +221,7 @@ public final class PaperTexture {
     }
 
     private static void drawWrinkles(GuiGraphics g,int x,int y,int w,int h, PaperKind k){
-        Random rnd = new Random(SEED+1+k.ordinal());
+        Random rnd = seededRandom(SEED+1+k.ordinal());
         int lines = Math.max(2, Math.min(k==PaperKind.ARCHIVE?7:5, h/70));
         for (int i=0;i<lines;i++){
             int wy = y+rnd.nextInt(Math.max(1,h));
@@ -228,7 +235,7 @@ public final class PaperTexture {
     }
 
     private static void drawBloodMist(GuiGraphics g,int x,int y,int w,int h, PaperKind k){
-        Random rnd = new Random(BLOOD_SEED ^ k.ordinal());
+        Random rnd = seededRandom(BLOOD_SEED ^ k.ordinal());
         int drops = Math.min(k==PaperKind.MEDICAL?6:3, Math.max(1,(w*h)/140000));
         if (k==PaperKind.MEDICAL) drops+=1;
         for (int i=0;i<drops;i++){
@@ -242,7 +249,7 @@ public final class PaperTexture {
 
     private static void drawCoffeeStain(GuiGraphics g,int x,int y,int w,int h, PaperKind k){
         if (w<60||h<60) return;
-        Random rnd = new Random(COFFEE_SEED ^ k.ordinal());
+        Random rnd = seededRandom(COFFEE_SEED ^ k.ordinal());
         int cx = x+20+rnd.nextInt(Math.max(1,w-40));
         int cy = y+20+rnd.nextInt(Math.max(1,h-40));
         int size = 9+rnd.nextInt(7);
@@ -279,7 +286,7 @@ public final class PaperTexture {
     }
 
     private static void drawTornEdges(GuiGraphics g,int x,int y,int w,int h, PaperKind k){
-        Random rnd = new Random(TORN_SEED ^ k.ordinal());
+        Random rnd = seededRandom(TORN_SEED ^ k.ordinal());
         int col = DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, k==PaperKind.ARCHIVE?92:78);
         int notches = k==PaperKind.ARCHIVE?3:2;
         for (int i=0;i<notches;i++){
@@ -291,7 +298,7 @@ public final class PaperTexture {
     }
 
     private static void drawPaperFibersOptimized(GuiGraphics g,int x,int y,int w,int h, PaperKind k){
-        Random rnd = new Random(FIBER_SEED ^ k.ordinal());
+        Random rnd = seededRandom(FIBER_SEED ^ k.ordinal());
         int base = switch(k){
             case ARCHIVE -> 90;
             case LEDGER -> 70;
@@ -338,7 +345,7 @@ public final class PaperTexture {
     }
 
     private static void drawMicroInkDot(GuiGraphics g,int x,int y,int w,int h, PaperKind k){
-        Random rnd = new Random(INK_DOT_SEED ^ (x*31L + y*17L + k.ordinal()*13));
+        Random rnd = seededRandom(INK_DOT_SEED ^ (x*31L + y*17L + k.ordinal()*13));
         if (rnd.nextInt(100) < 72) return; // 28% chance
         int px = x + w - 18 - rnd.nextInt(22);
         int py = y + 18 + rnd.nextInt(Math.max(1,h-60));
@@ -351,7 +358,7 @@ public final class PaperTexture {
     public static void drawBloody(GuiGraphics g,int x,int y,int w,int h){ drawBloody(g,x,y,w,h,PaperKind.DEFAULT); }
     public static void drawBloody(GuiGraphics g,int x,int y,int w,int h, PaperKind k){
         draw(g,x,y,w,h,k);
-        Random rnd = new Random(BLOOD_SEED+42+k.ordinal());
+        Random rnd = seededRandom(BLOOD_SEED+42+k.ordinal());
         int splatters=2+rnd.nextInt(2);
         for(int i=0;i<splatters;i++){
             int cx=x+40+rnd.nextInt(Math.max(1,w-80));
