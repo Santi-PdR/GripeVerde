@@ -132,11 +132,37 @@ public class LivingAtmosphere {
 
     public static boolean isRatStanding() { return ratStanding; }
 
+    // v0.25.0: tres relampagos para quien se queda mirando (storm_watcher).
+    private static int flashCount = 0;
+    public static int flashCount() { return flashCount; }
+
+    // v0.25.0: la lluvia se deja atrapar (drop_catcher).
+    public static int rainDropAt(double mx, double my, int w, int h) {
+        if (!rainInit) return -1;
+        int best = -1; double bestD2 = Double.MAX_VALUE;
+        for (int i = 0; i < RAIN_COUNT; i++) {
+            double rx = rain[i][0] * w, ry = rain[i][1] * h;
+            if (ry < 0 || ry > h) continue;
+            double dx = mx - rx;          if (dx < -5 || dx > 6) continue;
+            double dy = my - (ry + 3);    if (dy < -6 || dy > 8) continue;
+            double d2 = dx * dx + dy * dy;
+            if (d2 < bestD2) { bestD2 = d2; best = i; }
+        }
+        return best;
+    }
+    /** La gota atrapada vuelve al cielo. */
+    public static void scareDrop(int i) {
+        if (i < 0 || i >= RAIN_COUNT) return;
+        rain[i][0] = (float) RND.nextFloat();
+        rain[i][1] = -0.06f - (float)(RND.nextFloat() * 0.12f);
+    }
+
     public static void triggerLightningFlash(float intensity) {
         if (reducedMotion() || reduceFlashes()) return;
         lightningTimer = 0f;
         lightningFlash = Math.max(lightningFlash, Math.max(0.15f, Math.min(1.0f, intensity)));
         nextLightning = 8f + (float)(RND.nextFloat() * 12f);
+        flashCount++;
     }
 
     public static void tick(float deltaTime) {
@@ -248,6 +274,7 @@ public class LivingAtmosphere {
         if (lightningTimer >= nextLightning) {
             lightningTimer = 0f;
             lightningFlash = 1f;
+            flashCount++;
             // v0.24.0: en noche de tormenta el cielo no descansa.
             boolean storm = com.eternalcraft.gripeverde.client.audio.MenuAmbience.isStormNight();
             nextLightning  = storm ? 3.5f + (float)(RND.nextFloat() * 6f)

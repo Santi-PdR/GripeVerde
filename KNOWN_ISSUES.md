@@ -5,6 +5,61 @@ de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
 que una seccion posterior lo mencione expresamente.
 
+## v0.25.0 - El que mira la tormenta (2026-08-23)
+
+### Cambios cerrados
+- **Tres easter eggs nuevos** (pedido del owner): `storm_watcher`
+  (`LivingAtmosphere.flashCount()` nuevo, incrementado en ambos puntos donde
+  nace un destello; la vigilia marca linea base al abrirse en noche de
+  tormenta y otorga la ficha al tercero; con destellos reducidos no se
+  regala), `drop_catcher` (hit-test `rainDropAt`/`scareDrop` sobre las 40
+  gotas en vuelo; plink de aguja; zona de botones excluida para no tragar
+  clics) y `code_doctor` (palabra DOCTOR en el telegrafo oculto: susurro +
+  campana baja + contador `doctor_signed`). Archivo: 52 fichas; notas
+  N_FLASH3/N_DROP/N_DOCTOR; nombres y pistas bilingues en el registry (sin
+  claves lang nuevas: 93).
+
+### Riesgos activos / KI nuevos
+- **KI-58 (v0.25.0)**: validar en cliente real: (a) con tormenta forzada
+  (`MenuAmbience.STORM_CHANCE = 1.0f` temporal) quedarse tres relampagos en
+  el titulo otorga `storm_watcher` y su nota; que NO se otorgue con
+  destellos reducidos; (b) clic sobre una gota en vuelo la devuelve al cielo
+  con plink y otorga `drop_catcher`; los clics en botones nunca se tragan;
+  (c) escribir DOCTOR en la vigilia otorga `code_doctor` con susurro y
+  campana; (d) la Sala de consulta muestra 52 fichas y las tres nuevas
+  tienen nombre y pista en ES y EN; (e) los huevos anteriores (sello roto,
+  diapason, telegramas) siguen desbloqueandose igual.
+- KI-53/54/55/56/57 siguen abiertos. Candidata a distribuir a Agus: la
+  **0.25.0**, que incluye el crash fix, el ambiente reparado, lo visible y
+  estos tres huevos.
+
+## v0.24.1 - La errata del cronista (2026-08-23)
+
+### Cambios cerrados
+- **Build roto en 0.24.0 (errata propia)**: `PaperTexture.java:95` declaro
+  `new java.util.Random(0xD20PL)` con una P —no es digito hexadecimal— y
+  `compileJava` fallo con `malformed floating-point literal` (3 errores) en
+  el primer `deploy.ps1` del owner. El sandbox no tiene JDK y el espejo
+  solo verificaba balance de llaves: por eso salio sellada. Semilla corregida
+  a `0xCA1DAL`; comportamiento identico (gotas deterministas, otra
+  secuencia) y sin ningun otro cambio funcional respecto a 0.24.0.
+- **Sello 8 del espejo Python**: nuevo `verifyJavaLiterals` —lint de todos
+  los literales numericos de los 60 .java (hex/binario/octal/decimal/
+  flotante, sufijos fFdDlL, octales con 8/9, floats hex con sufijo ilegal)
+  tras retirar comentarios y cadenas preservando numeros de linea.
+  Demostrado: detecta `0xD20PL` y rechaza la errata antes de sellar.
+
+### Riesgos activos / KI nuevos
+- **KI-57 (v0.24.1)**: validar en cliente real: (a) `deploy.ps1` compila y
+  copia `gripeverde-0.24.1.jar`; (b) el reloj del Title muestra v0.24.1;
+  (c) las gotas siguen resbalando por los pergaminos (patron distinto,
+  misma densidad) y se aquietan con movimiento reducido; (d) repetir
+  INTEGRO el checklist de KI-56, que quedo pendiente porque la 0.24.0
+  nunca llego a existir como jar.
+- KI-53/KI-54/KI-55/KI-56 siguen abiertos y sin cambios. Para Agus: enviar
+  **0.24.1** (incluye el hotfix del crash, el ambiente reparado y todo lo
+  visible; la 0.24.0 no compilo jamas).
+
 ## v0.24.0 - El viento vuelve a soplar (2026-08-23)
 
 ### Cambios cerrados

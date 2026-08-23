@@ -3,6 +3,14 @@
 
 
 
+## Version 0.25.0 - El que mira la tormenta
+
+Tres secretos nuevos caben en una mano. En las noches en que el cielo se rompe, quien aguanta tres relámpagos frente a la vigilia sin irse recibe ficha propia: el cronista cuenta los destellos por ti. La lluvia, además, cayó lo bastante cerca para tocarla: una gota bien apuntada se deja atrapar con un clic, suena como aguja sobre cilindro y vuelve al cielo (sobre los botones nunca llueve). Y en el telégrafo oculto, escribir DOCTOR trae un susurro y una campana baja: el elixir tuvo un médico, el oficio sigue en pie y su firma aún llega en formularios que nadie envía. El archivo crece a cincuenta y dos fichas.
+
+## Version 0.24.1 - La errata del cronista
+
+Una sola letra torcida en la portada recién impresa detuvo la rotativa: la semilla de las gotas de lluvia se dejó escrita con un carácter que no existe en el alfabeto hexadecimal, y la edición 0.24.0 no llegó a compilar en el taller (el fallo saltó en el primer intento de despliegue). La errata queda corregida con tinta válida —las gotas caen igual que antes, con otra semilla— y el gabinete suma un sello de imprenta más: un corrector mecánico revisa ahora cada literal numérico del códice antes de que ninguna edición salga sellada. Todo lo anunciado en 0.24.0 sigue dentro, intacto.
+
 ## Version 0.24.0 - El viento vuelve a soplar
 
 Durante semanas la calle guardó el aliento: el viento del gabinete había quedado grabado tan quedo que ni las ráfagas cruzaban la ventana, y con él apenas tosían la lluvia, los pasos y los susurros. El cronista revisó los cilindros y devolvió cada capa a su volumen debido; el regulador de ambiente por fin manda sobre algo. Con el oído abierto llegan las noches de tormenta, la crónica se abre por la entrada recién llegada y la sella como NUEVA hasta que la leas, la lluvia resbala por los pergaminos, el lacre del telegrama cede ante una mano terca y un diapasón oculto afina la sala entera. La calle, además, ya no sigue sonando cuando el lector cruza hacia un mundo.

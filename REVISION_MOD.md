@@ -355,6 +355,23 @@ proyecto convendría confirmación del owner antes de implementar.
 > parcialmente cubierta (2 de 10: `ui.paper_fall` y `ui.success` conectados;
 > restan 8 en el allowlist). **Pendientes: V2 (resto), V4, V6, V7, V8.**
 > Diagnóstico completo del silencio en KNOWN_ISSUES (sección v0.24.0).
+>
+> **ADDENDUM 2026-08-23 (v0.24.1 - La errata del cronista):** hotfix de
+> build — la semilla de las gotas (V5) se escribió con una P en un literal
+> hexadecimal (`0xD20PL`) y la 0.24.0 nunca compiló fuera del sandbox; lo
+> detectó el owner en el primer `deploy.ps1`. Errata corregida
+> (`0xCA1DAL`) y el espejo Python suma su octavo sello: lint de literales
+> numéricos Java sobre los 60 archivos. Contenido de 0.24.0 intacto;
+> para distribuir (incluido Agus): usar **0.24.1**.
+>
+> **ADDENDUM 2026-08-23 (v0.25.0 - El que mira la tormenta):** tres easter
+> eggs nuevos autorizados por el owner — `storm_watcher` (quedarse tres
+> relámpagos frente a la vigilia en noche de tormenta; contador de destellos
+> en `LivingAtmosphere`), `drop_catcher` (la lluvia es tocable:
+> `rainDropAt`/`scareDrop`, botones excluidos) y `code_doctor` (palabra
+> DOCTOR en el telégrafo oculto). Archivo: 52 fichas; notas N_FLASH3,
+> N_DROP, N_DOCTOR; cero claves lang nuevas. Incluye todo lo de 0.24.x.
+> **Pendientes: V2 (resto), V4, V6, V7, V8.**
 
 Cosas que SE NOTAN en pantalla u oído. Cada una respeta las reglas madre
 (sin gameplay, sin resourcepacks, render Java puro).

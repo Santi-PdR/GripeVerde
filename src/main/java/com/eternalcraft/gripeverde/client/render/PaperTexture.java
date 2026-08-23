@@ -92,7 +92,9 @@ public final class PaperTexture {
     private static final float[][] drops = new float[DROP_COUNT][4]; // x,y,speed,size
     private static boolean dropsInit = false;
     private static long dropsLastMs = 0L;
-    private static final java.util.Random DROP_RNG = new java.util.Random(0xD20PL);
+    // v0.24.1: errata corregida — la semilla llevaba una P (0xD20PL), que no es
+    // digito hexadecimal y rompia compileJava. CA1DA = la caida de la gota.
+    private static final java.util.Random DROP_RNG = new java.util.Random(0xCA1DAL);
 
     private static void respawnDrop(int i, boolean anywhere) {
         drops[i][0] = DROP_RNG.nextFloat();

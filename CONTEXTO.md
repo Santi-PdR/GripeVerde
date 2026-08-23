@@ -8,7 +8,7 @@
   arena/01a02cee-gripeverde" que sobreviven en el historico son instantaneas
   archivadas, no instrucciones.
 - Base respaldada: v0.22.0, commit `4ca038ddab972ca59435353330c9ccda4a86d581`.
-- Implementacion vigente: v0.24.0 en esta rama (ver DECISIONES 2026-08-23
+- Implementacion vigente: v0.25.0 en esta rama (ver DECISIONES 2026-08-23
   mas abajo).
 - Restricciones funcionales absolutas: escena completa, faroles permanentes,
   sin kiosco/Heraldo, sin modo automatico por FPS, sin gameplay y sin
@@ -168,13 +168,60 @@ Bug ya corregido en v0.23.2 (tercera vuelta); aqui va el resto, autorizado.
   25 cronicas in-game al dia. Espejo Python: 7/7 sellos + balance OK.
 - KI-56 registra la validacion pendiente en cliente real.
 
+### DECISION 2026-08-23 (quinta vuelta): v0.24.1 - La errata del cronista
+
+El owner ejecuto `tools\deploy.ps1` y `compileJava` fallo:
+`PaperTexture.java:95` usaba `0xD20PL` como semilla de las gotas y la P no
+es digito hexadecimal (`malformed floating-point literal`). La 0.24.0 jamas
+existio como jar: el sandbox no tiene JDK y el espejo Python solo verifica
+balance de llaves, asi que la errata salio sellada (fallo de proceso,
+registrado para que no se repita).
+
+- Correccion: semilla `0xCA1DAL` ("la caida"); comportamiento identico,
+  sin ningun otro cambio funcional respecto a 0.24.0.
+- Refuerzo de proceso: el espejo Python suma el sello 8
+  (`verifyJavaLiterals`), lint de todos los literales numericos de los 60
+  .java (hex/binario/octal/decimal/flotante, sufijos, octales con 8/9)
+  ignorando comentarios y cadenas. Detectado el caso real: `0xD20PL`
+  queda rechazado; con el sello activo, esta familia de erratas no vuelve
+  a salir.
+- Bump sincronizado: build.gradle + GripeVerdeMod.VERSION -> 0.24.1; docs y
+  25 cronicas in-game al dia. Espejo Python: 8/8 sellos + balance OK.
+- KI-57 registra la validacion pendiente; KI-56 queda pendiente INTEGRO (la
+  0.24.0 nunca se pudo probar). Para Agus: enviar 0.24.1.
+
+### DECISION 2026-08-23 (sexta vuelta): v0.25.0 - El que mira la tormenta
+
+Pedido del owner: "algunos easter eggs mas". Tres secretos nuevos en la
+vigilia, todos cableados sobre mecanica existente, sin resourcepacks y sin
+gameplay (reglas madre intactas):
+
+- `storm_watcher`: `LivingAtmosphere.flashCount()` (nuevo; se incrementa en
+  el destello programado y en `triggerLightningFlash`) + linea base por
+  apertura de la vigilia en `DiaryTitleScreen.tick`; al tercer relampago
+  nuevo, ficha y nota `N_FLASH3`. Con destellos reducidos los relampagos no
+  nacen y la ficha no se otorga sola (accesibilidad).
+- `drop_catcher`: `LivingAtmosphere.rainDropAt` (hit-test sobre las 40
+  gotas, tolerancia generosa) + `scareDrop` (la gota vuelve al cielo) +
+  plink de aguja (`menu/tick` 1.9) + guarda `estimateFirstButtonTop` para
+  no tragar clics de botones; nota `N_DROP`.
+- `code_doctor`: rama DOCTOR en el telegrafo oculto (`HiddenCipher`):
+  susurro + campana baja, contador `doctor_signed`, nota `N_DOCTOR`.
+- Registry: 3 ids nuevos en `Discoveries.ALL` (archivo: 52 fichas) con
+  nombre y pista bilingues inline (cero claves lang nuevas; 93 intactas) y
+  3 notas nuevas en `Marginalia` (N_FLASH3, N_DROP, N_DOCTOR).
+- Bump sincronizado: build.gradle + GripeVerdeMod.VERSION -> 0.25.0; docs y
+  25 cronicas in-game al dia. Espejo Python: 8/8 sellos + balance OK.
+- KI-58 registra la validacion pendiente en cliente real.
+
 ### SIGUIENTE PASO OPERATIVO VIGENTE
 
 No implementar planes de gameplay ni los items de "propuestas futuras"/
 "propuestas visibles" de REVISION_MOD.md sin autorizacion expresa del
 owner. La secuencia vigente: activar la CI con `tools/ci/activar-ci.ps1`,
-validar KI-53/KI-54/KI-55/KI-56 en cliente real (en particular reenviar los
-jars corregidos al jugador que reporto el crash y comprobar que el ambiente
+validar KI-53/KI-54/KI-55/KI-56/KI-57/KI-58 en cliente real (en particular
+reenviar el jar 0.25.0 al jugador que reporto el crash y comprobar que el
+ambiente
 ya se escucha, con atencion a que los loops nuevos no tapen la musica),
 corregir solo si esa prueba encuentra defectos y, despues, autorizar
 tag/release (ultima version estable validada; con los pendientes de

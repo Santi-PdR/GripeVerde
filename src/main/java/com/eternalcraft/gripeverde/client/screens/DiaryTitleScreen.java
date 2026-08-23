@@ -246,6 +246,21 @@ public class DiaryTitleScreen extends Screen {
                 com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
                     com.eternalcraft.gripeverde.client.lore.Discoveries.TIME_SICK);
             }
+            // v0.25.0: el que mira la tormenta — tres relampagos sin irse de la vigilia.
+            if (com.eternalcraft.gripeverde.client.audio.MenuAmbience.isStormNight()) {
+                int fc = com.eternalcraft.gripeverde.client.render.LivingAtmosphere.flashCount();
+                if (stormFlashBaseline < 0) stormFlashBaseline = fc;
+                else if (fc - stormFlashBaseline >= 3) {
+                    stormFlashBaseline = fc;
+                    if (com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                            com.eternalcraft.gripeverde.client.lore.Discoveries.STORM_WATCHER)) {
+                        com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                            com.eternalcraft.gripeverde.client.lore.Marginalia.N_FLASH3);
+                    }
+                }
+            } else {
+                stormFlashBaseline = -1;
+            }
             // Una noche entera frente al papel: el alba enferma aparece.
             long sessionMin = (System.currentTimeMillis() - sessionStartMs) / 60_000L;
             if (sessionMin >= 20L && !dawnActive) {
@@ -769,6 +784,22 @@ public class DiaryTitleScreen extends Screen {
                     com.eternalcraft.gripeverde.client.render.VictorianSkyline.signalWindowClicked();
                     return true;
                 }
+
+                // v0.25.0: la lluvia se deja atrapar (nunca sobre la mesa de botones).
+                if (mouseY < estimateFirstButtonTop() - 8) {
+                    int di = com.eternalcraft.gripeverde.client.render.LivingAtmosphere.rainDropAt(mouseX, mouseY, w, h);
+                    if (di >= 0) {
+                        com.eternalcraft.gripeverde.client.render.LivingAtmosphere.scareDrop(di);
+                        if (com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                                com.eternalcraft.gripeverde.client.lore.Discoveries.DROP_CATCHER)) {
+                            com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                                com.eternalcraft.gripeverde.client.lore.Marginalia.N_DROP);
+                        }
+                        com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                            com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_TICK.get(), 0.10f, 1.9f);
+                        return true;
+                    }
+                }
             } catch (Throwable ignored) {}
         }
 
@@ -910,6 +941,8 @@ public class DiaryTitleScreen extends Screen {
     private static final java.util.Random SEAL_RNG = new java.util.Random();
     private long easterFlashUntilMs = 0L;
     private long skullShakeUntilMs = 0L;
+    // v0.25.0: linea base de relampagos contados desde que la vigilia abrio (storm_watcher).
+    private int stormFlashBaseline = -1;
     private long easterLightningUntilMs = 0L;
     // Particulas verdes cayendo del logo tras easter egg
     private static final int EGG_PARTICLE_COUNT = 20;

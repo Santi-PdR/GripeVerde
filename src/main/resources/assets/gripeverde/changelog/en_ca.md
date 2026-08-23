@@ -3,6 +3,14 @@
 
 
 
+## Version 0.25.0 - The storm watcher
+
+Three new secrets fit in one hand. On nights when the sky breaks, whoever stays through three flashes before the vigil without leaving earns a card of their own: the chronicler counts the lightning for you. The rain, too, has fallen close enough to touch: a well-aimed drop lets itself be caught with a click, sounds like a needle on the cylinder, and climbs back to the sky (it never rains over the buttons). And in the hidden telegraph, typing DOCTOR brings a whisper and a low bell: the elixir had a doctor, the practice still stands, and his signature keeps arriving on forms nobody sends. The archive grows to fifty-two cards.
+
+## Version 0.24.1 - The chronicler's errata
+
+A single crooked letter on the freshly printed front page halted the press: the raindrop seed had been written with a character that does not exist in the hexadecimal alphabet, and edition 0.24.0 never compiled in the workshop (the fault surfaced on the very first deployment attempt). The errata is now set in valid ink — the drops fall exactly as before, just from another seed — and the cabinet gains one more printing seal: a mechanical proofreader now inspects every numeric literal in the codex before any edition leaves stamped. Everything announced in 0.24.0 remains inside, intact.
+
 ## Version 0.24.0 - The wind blows again
 
 For weeks the street held its breath: the wind around the cabinet had been recorded so faint that no gust ever crossed the window, and with it the rain, the footsteps and the whispers barely coughed. The chronicler inspected the cylinders and restored every layer to its proper volume; the ambience dial finally governs something. With open ears come storm nights, the chronicle now opens at the freshly arrived entry and stamps it NEW until you read it, rain slides down the parchments, the telegram's wax yields to a stubborn hand, and a hidden tuning fork brings the whole room into pitch. The street, at last, stops playing once the reader crosses into a world.

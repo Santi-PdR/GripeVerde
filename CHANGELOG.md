@@ -1,5 +1,53 @@
 # Eternal Craft: Gripe Verde
 
+## v0.25.0 - El que mira la tormenta
+
+Entrega menor de easter eggs pedida por el owner ("algunos easter eggs
+mas"): tres secretos nuevos en la vigilia, cableados sobre mecanica que ya
+existia (tormenta, lluvia, telegrafo oculto).
+
+- `storm_watcher`: `LivingAtmosphere` cuenta ahora cada relampago que nace
+  (programado o forzado) y la pantalla del titulo marca una linea base al
+  abrirse en noche de tormenta: al tercer destello nuevo, ficha y nota
+  (`N_FLASH3`). Con destellos reducidos no hay relampagos y la ficha no se
+  regala: respeta accesibilidad.
+- `drop_catcher`: la lluvia es tocable. `LivingAtmosphere.rainDropAt` hace
+  hit-test contra las 40 gotas en vuelo con tolerancia generosa; atrapar una
+  la devuelve al cielo (`scareDrop`), suena un plink de aguja (`menu/tick`
+  a 1.9) y suma ficha + nota (`N_DROP`). La zona de botones queda excluida:
+  ningun clic sobre la mesa se pierde por culpa de una gota.
+- `code_doctor`: palabra nueva del telegrafo oculto — escribir DOCTOR en la
+  vigilia trae susurro y campana baja, ficha, contador `doctor_signed` y
+  nota (`N_DOCTOR`). El elixir tuvo un medico; el oficio sigue en pie.
+
+El archivo crece a 52 fichas; nombres y pistas viven en el registry bilingue
+de `Discoveries` (cero claves lang nuevas: el conteo sigue en 93). Notas de
+Marginalia nuevas: N_FLASH3, N_DROP, N_DOCTOR.
+
+Conteos: 60 Java, 25 lang (93 claves), 25 cronicas, 35 eventos de sonido
+(33 en uso; 8 legacy en allowlist), 42 OGG. Espejo Python: 8/8 sellos +
+balance OK.
+
+## v0.24.1 - La errata del cronista
+
+Hotfix de build (parche): la semilla de las gotas de lluvia de V5 se escribio
+como `0xD20PL` —la P no es digito hexadecimal— y la 0.24.0 no compilaba
+(`error: malformed floating-point literal` en `PaperTexture.java:95`,
+detectado por el owner en el primer `deploy.ps1`; en el sandbox no hay JDK
+y el espejo Python solo verifica balance de llaves, por eso se escapo).
+Corregida a `0xCA1DAL` ("la caida"): comportamiento identico, gotas
+deterministas con otra secuencia. Para que ninguna errata de esta familia
+vuelva a salir sellada, el espejo Python suma un octavo sello:
+`verifyJavaLiterals` valida todos los literales numericos (hex/binario/
+octal/decimal/flotante, sufijos incluidos) de los 60 .java tras retirar
+comentarios y cadenas. Sin cambios funcionales: el contenido de 0.24.0
+queda intacto. Para Agus y para cualquier distribucion: usar 0.24.1 —la
+0.24.0 jamas existio como jar.
+
+Conteos: 60 Java, 25 lang (93 claves), 25 cronicas, 35 eventos de sonido
+(33 en uso; 8 legacy en allowlist), 42 OGG. Espejo Python: 8/8 sellos +
+balance OK.
+
 ## v0.24.0 - El viento vuelve a soplar
 
 Entrega menor de superficie visible, pedida por el owner junto al segundo
