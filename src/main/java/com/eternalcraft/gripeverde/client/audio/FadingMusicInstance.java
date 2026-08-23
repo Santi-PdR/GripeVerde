@@ -30,7 +30,8 @@ public class FadingMusicInstance extends AbstractSoundInstance implements Tickab
         this.y = 0.0;
         this.z = 0.0;
         this.durationMs = durationMs;
-        this.startMs = System.currentTimeMillis();
+        // v0.23.0: reloj monotonico; los saltos de hora del SO ya no alargan pistas.
+        this.startMs = System.nanoTime() / 1_000_000L;
     }
 
     public void setDynamicVolume(float v) {
@@ -40,7 +41,7 @@ public class FadingMusicInstance extends AbstractSoundInstance implements Tickab
 
     public float getDynamicVolume() { return dynamicVolume; }
 
-    public long getElapsedMs() { return System.currentTimeMillis() - startMs; }
+    public long getElapsedMs() { return System.nanoTime() / 1_000_000L - startMs; }
 
     public long getRemainingMs() { return Math.max(0, durationMs - getElapsedMs()); }
 

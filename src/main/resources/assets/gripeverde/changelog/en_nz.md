@@ -2,6 +2,13 @@
 ## Chronicle under seal
 
 
+## Version 0.23.0 - The gramophone keeps the floor
+
+The gramophone no longer shares the night with vanilla menu music: while the cabinet is open the old soundtrack stays silent, and if the sound engine is reloaded (F3+T or a pack change) the next piece queues by itself instead of falling forever quiet. The storm can now be tamed on its own: a new Reduced flashes aid dims lightning without freezing fog, rain or lamps, ambient events gain subtitles, and the ambience slider answers in the reader's own language.
+
+The mod also learned manners: it registers its listener exactly once, stays inert on dedicated servers, sheds its empty mixin scaffolding and hides the debug shortcut unless summoned, and cedes the title screen whenever another mod already owns it. The chronicler now writes his memory off the render thread, and the build seals guard version sync and real track durations; a ready-to-enable continuous integration workflow (tools/ci) compiles every push with Java 17.
+
+
 ## Version 0.22.0 - The vigil is sealed
 
 The city now moves to one steady twenty-beat pulse instead of advancing dust and ambience with every rendered frame. Reduced motion has a visible control among the perception aids and freezes atmospheric movement, grain and flashes without removing the street, lamps or any permanent scene detail. Every diary toggle now tells the narrator both its name and current state.

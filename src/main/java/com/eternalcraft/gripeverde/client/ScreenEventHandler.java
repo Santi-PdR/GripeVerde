@@ -4,6 +4,7 @@ import com.eternalcraft.gripeverde.GripeVerdeMod;
 import com.eternalcraft.gripeverde.client.screens.ChangelogScreen;
 import com.eternalcraft.gripeverde.client.screens.DiaryPauseScreen;
 import com.eternalcraft.gripeverde.client.screens.DiaryTitleScreen;
+import com.eternalcraft.gripeverde.config.ClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.GenericDirtMessageScreen;
 import net.minecraft.client.gui.screens.PauseScreen;
@@ -34,9 +35,25 @@ public class ScreenEventHandler {
     private static boolean redirecting = false;
     private static boolean ctrlZeroLatch = false;
 
+    // v0.23.0: accesos tolerantes a config no cargada (defaults seguros)
+    private static boolean replaceTitleEnabled() {
+        try { return ClientConfig.REPLACE_TITLE.get(); } catch (Throwable t) { return true; }
+    }
+    private static boolean replacePauseEnabled() {
+        try { return ClientConfig.REPLACE_PAUSE.get(); } catch (Throwable t) { return true; }
+    }
+    private static boolean debugShortcutEnabled() {
+        try { return ClientConfig.DEBUG_SHORTCUT.get(); } catch (Throwable t) { return false; }
+    }
+
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
+        // v0.23.0: el atajo de depuracion Ctrl+0 queda desactivado por defecto.
+        if (!debugShortcutEnabled()) {
+            ctrlZeroLatch = false;
+            return;
+        }
         Minecraft mc = Minecraft.getInstance();
         if (mc == null || mc.level == null || mc.getWindow() == null) {
             ctrlZeroLatch = false;
@@ -95,7 +112,11 @@ public class ScreenEventHandler {
         if (newScreen == null) return;
 
         // Intercept: TitleScreen vanilla -> DiaryTitleScreen custom
-        if (newScreen instanceof TitleScreen && !(newScreen instanceof DiaryTitleScreen)) {
+        // v0.23.0: comparacion por CLASE EXACTA. Antes era instanceof, lo que
+        // barria cualquier Title custom de otro mod (FancyMenu y derivadas son
+        // subclases). Si otro mod ya personalizo el menu, Gripe Verde cede.
+        // Ademas el reemplazo puede apagarse por config (integration.*).
+        if (newScreen.getClass() == TitleScreen.class && replaceTitleEnabled()) {
             redirecting = true;
             try {
                 event.setNewScreen(new DiaryTitleScreen());
@@ -108,7 +129,7 @@ public class ScreenEventHandler {
         }
 
         // Intercept: PauseScreen vanilla -> DiaryPauseScreen custom
-        if (newScreen instanceof PauseScreen && !(newScreen instanceof DiaryPauseScreen)) {
+        if (newScreen.getClass() == PauseScreen.class && replacePauseEnabled()) {
             redirecting = true;
             try {
                 event.setNewScreen(new DiaryPauseScreen());

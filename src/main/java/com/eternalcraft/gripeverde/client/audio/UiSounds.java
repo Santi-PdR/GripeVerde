@@ -90,7 +90,6 @@ public class UiSounds {
     }
 
     // ── Legacy compat (mapped to new) ──
-    public static void hover() { /* kept for compat, but specific hover via playHover */ }
     public static void click() { buttonMain(); }
     public static void clickHeavy() { buttonSection(); }
     public static void open() { buttonSection(); }
@@ -126,7 +125,8 @@ public class UiSounds {
 
     // ── Internal helpers ──
     private static void play(String key, SoundEvent sound, float volume, float pitch) {
-        long now = System.currentTimeMillis();
+        // v0.23.0: reloj monotonico para los cooldowns (nanoTime, no se ajusta con el SO).
+        long now = System.nanoTime() / 1_000_000L;
         long cd = COOLDOWNS.getOrDefault(key, 100L);
         long last = lastPlayed.getOrDefault(key, 0L);
         if (now - last < cd) return;
@@ -148,7 +148,4 @@ public class UiSounds {
     private static float rand(float range) {
         return (float)(java.util.concurrent.ThreadLocalRandom.current().nextDouble() * range);
     }
-
-    public static void setHoverSound(SoundEvent s, float v, float p) { }
-    public static void setClickSound(SoundEvent s, float v, float p) { }
 }

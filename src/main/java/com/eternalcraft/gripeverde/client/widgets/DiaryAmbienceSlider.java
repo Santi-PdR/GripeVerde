@@ -21,7 +21,10 @@ public class DiaryAmbienceSlider extends AbstractSliderButton {
 
     private static Component buildLabel(double v) {
         int pct = (int) Math.round(v * 100.0);
-        String txt = "Ambiente del Cronista: " + pct + "%";
+        // v0.23.0: la etiqueta estaba hardcodeada en castellano; la clave
+        // traducida ya existia en los 25 locales pero no se utilizaba.
+        String txt = Component.translatable("gripeverde.options.sound.ambience_slider").getString()
+                + ": " + pct + "%";
         return Component.literal(txt);
     }
 

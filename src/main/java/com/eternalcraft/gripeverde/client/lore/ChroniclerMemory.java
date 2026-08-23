@@ -163,7 +163,30 @@ public final class ChroniclerMemory {
         long now = System.currentTimeMillis();
         if (now - lastSaveMs < 2000L) return;
         lastSaveMs = now;
-        writeNow();
+        scheduleWrite();
+    }
+
+    /**
+     * v0.23.0: la escritura (archivo + force/fsync) sale del hilo del cliente.
+     * Antes ocurria en el hilo de render y podia producir micro-tirones en
+     * discos lentos. writeNow() es synchronized, asi que el executor serializa
+     * con cualquier escritura en linea y el orden "ultima copia gana" se
+     * conserva. Hilo daemon con nombre propio para no retener el JVM.
+     */
+    private static final java.util.concurrent.ExecutorService WRITER =
+        java.util.concurrent.Executors.newSingleThreadExecutor(r -> {
+            Thread t = new Thread(r, "gripeverde-memory-writer");
+            t.setDaemon(true);
+            return t;
+        });
+
+    private static void scheduleWrite() {
+        try {
+            WRITER.execute(ChroniclerMemory::writeNow);
+        } catch (Throwable rejected) {
+            // Executor ya en parada (cierre del JVM): escribir en linea como antes.
+            writeNow();
+        }
     }
 
     /**
@@ -229,6 +252,14 @@ public final class ChroniclerMemory {
 
     /** Al cerrar el juego se escribe todo cambio pendiente. */
     public static synchronized void flushForShutdown() {
+        // Espera a que termine cualquier escritura en vuelo del executor y
+        // solo entonces escribe en linea lo que haya quedado pendiente.
+        WRITER.shutdown();
+        try {
+            WRITER.awaitTermination(3L, java.util.concurrent.TimeUnit.SECONDS);
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+        }
         if (savePending) writeNow();
     }
 

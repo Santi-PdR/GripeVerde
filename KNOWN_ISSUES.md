@@ -3,7 +3,77 @@
 La primera seccion describe el estado operativo vigente. Todas las secciones
 de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
-que v0.22.0 lo mencione expresamente.
+que v0.23.0 lo mencione expresamente.
+
+## v0.23.0 - El gramófono guarda la palabra (2026-08-23)
+
+Entrega transversal pedida expresamente por el owner tras la revision
+tecnica completa del mod (hallazgos en REVISION_MOD.md). Backup externo
+previo: `/home/user/GripeVerde-backup-pre-v0.23.0-4ca038d.bundle`.
+
+### Cambios cerrados
+- Se elimina el registro manual de `ScreenEventHandler` (doble suscripcion al
+  bus FORGE y crash latente en servidores dedicados por carga de clases
+  client-only); la clase se autorregistra solo en cliente y el mod queda
+  inerte en servidor. `mods.toml` suma `displayTest="IGNORE_ALL_VERSION"` e
+  `issueTrackerURL` con la URL real del repo.
+- Se suprime la musica vanilla de menu mientras el gabinete esta abierto
+  (guardia por tick sobre MusicManager) y se anade un watchdog: si el motor
+  de sonido mata la instancia (F3+T, recarga de packs), la playlist se
+  reanuda sola en lugar de quedar muda hasta el cambio de pantalla.
+- Nueva ayuda de accesibilidad "Destellos reducidos" (fotosensibilidad,
+  independiente de Movimiento reducido) y subtitulos reales para los ocho
+  eventos ambientales en los 25 idiomas. La etiqueta del slider de ambiente
+  deja de estar hardcodeada en castellano.
+- Escritura de la memoria del cronista fuera del hilo de render (executor
+  monohilo, cierre ordenado con awaitTermination en el shutdown hook) y
+  temporizadores con reloj monotonico (nanoTime) en musica, cooldowns UI y
+  instancias de sonido.
+- El reemplazo de Title/Pause solo ocurre con clase exactamente vanilla
+  (otros mods de menu ya no son barridos) y ambos reemplazos tienen apagado
+  por config (`integration.*`); el atajo oculto Ctrl+0 pasa a ser opt-in
+  (`debug.debugShortcut`, por defecto off).
+- Retirados: infraestructura de Mixins vacia (JSON, plugin, annotation
+  processor, refmap, entrada mods.toml, repo sponge), namespace GameTest sin
+  tests, y los metodos muertos de UiSounds (setHoverSound/setClickSound/
+  hover).
+- Dos sellos nuevos de build: `verifyGripeVerdeVersionSync` (VERSION ==
+  project.version) y `verifyGripeVerdeMusicDurations` (parser Vorbis propio:
+  granule/rate real de cada OGG vs TRACK_DURATIONS_MS, tolerancia 1.5 s).
+  Conteo de claves lang: 83 -> 93 (10 nuevas: toggle destellos + tooltip +
+  8 subtitulos).
+- Nueva CI lista para activar en `tools/ci/build.yml`: JDK 17 Temurin +
+  Gradle cacheado, `./gradlew clean build` en cada push/PR y el jar publicado
+  como artifact. Queda como plantilla porque el token de la sesion no tiene
+  permiso `workflows`; se activa moviendola a `.github/workflows/build.yml`.
+- Deploy parametrizado en `tools/deploy.ps1` (lee la version de
+  build.gradle; documentado en README).
+- Conteos: 60 clases Java, 25 lang (93 claves), 25 cronicas, 35 eventos,
+  42 OGG. Bump: 0.22.0 -> 0.23.0.
+
+### Riesgos activos / KI nuevos
+- **KI-53 (v0.23.0)**: validar en cliente real con Java 17: (a) la musica
+  vanilla del menu ya no suena bajo el gramofono (esperar >60 s en Title);
+  (b) tras F3+T la musica propia vuelve sola; (c) el toggle Destellos
+  reducidos apaga los relampagos sin congelar la lluvia; (d) los subtitulos
+  aparecen con los subtitulos de Minecraft activos; (e) Ctrl+0 ya no
+  desconecta por defecto; (f) Title/Pause se siguen reemplazando y ceden si
+  otro mod los ocupa; (g) la memoria se sigue escribiendo y recuperando bien
+  en uso intenso (executor async); (h) el build pasa los cinco sellos.
+- El sandbox local sigue sin Java 17: la compilacion semantica queda
+  delegada al PC del owner y, cuando se active, a la CI de `tools/ci/`;
+  `java-parser` solo valida sintaxis. KI-52 queda absorbido por KI-53 para la parte de cliente;
+  el tag/release v0.23.0 (y el pendiente de v0.22.0) siguen bloqueados hasta
+  validar en Minecraft real.
+
+---
+
+# HISTORIAL DE VERSIONES E INSTANTANEAS (NO OPERATIVO)
+
+Todo lo que sigue se conserva para trazabilidad. Los estados, riesgos, tags,
+rutas y planes llamados "actuales", "activos" o "vigentes" pertenecen a la
+version bajo la que fueron escritos; no sustituyen el estado v0.23.0 de la
+primera seccion.
 
 ## v0.22.0 - La vigilia queda sellada (2026-08-23)
 

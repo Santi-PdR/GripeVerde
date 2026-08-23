@@ -56,6 +56,12 @@ public class MenuMusic {
 
     private static final RandomSource RNG = RandomSource.create();
 
+    /**
+     * v0.23.0: temporizadores con reloj monotonico. System.currentTimeMillis()
+     * salta si el SO ajusta la hora (NTP, suspension); nanoTime solo avanza.
+     */
+    private static long nowMs() { return System.nanoTime() / 1_000_000L; }
+
     private static boolean active = false;
     private static FadingMusicInstance currentInstance = null;
     private static FadingMusicInstance previousInstance = null;
@@ -113,7 +119,7 @@ public class MenuMusic {
      * La musica bajara temporalmente para no taparlo.
      */
     public static void duckFor(long durationMs) {
-        long now = System.currentTimeMillis();
+        long now = nowMs();
         long newUntil = now + durationMs;
         if (newUntil > duckUntilMs) {
             if (duckUntilMs <= now) duckStartMs = now;
@@ -127,6 +133,42 @@ public class MenuMusic {
         Minecraft mc = Minecraft.getInstance();
         if (mc == null || mc.level != null) return;
         start();
+    }
+
+    /**
+     * v0.23.0: la banda sonora vanilla del menu calla mientras el gabinete esta
+     * abierto. En 1.20.1 MusicManager dispara Musics.MENU a los 20-600 ticks en
+     * cualquier pantalla sin mundo y sonaba ENCIMA de las pistas del mod.
+     * Se revisa cada tick porque vanilla reprograma la siguiente pista solo.
+     */
+    private static void suppressVanillaMenuMusic(Minecraft mc) {
+        try {
+            var manager = mc.getMusicManager();
+            var situational = mc.getSituationalMusic();
+            if (situational != null && manager.isPlayingMusic(situational)) {
+                manager.stopPlaying();
+            }
+        } catch (Throwable ignored) {}
+    }
+
+    /**
+     * v0.23.0 watchdog: detecta instancias fantasma tras una recarga del motor
+     * de sonido (F3+T, cambio de resourcepacks). Si el motor mata la instancia,
+     * nadie vuelve a llamar a su tick() y done queda en false; sin esta guarda
+     * la musica del menu quedaba muda para siempre hasta cambiar de pantalla.
+     */
+    private static boolean instanceGoneDead(Minecraft mc) {
+        if (currentInstance == null) return false;
+        long elapsed = currentInstance.getElapsedMs();
+        if (currentDurationMs > 0L && elapsed > currentDurationMs + 2_000L) return true;
+        if (elapsed > 1_500L) {
+            try {
+                return !mc.getSoundManager().isActive(currentInstance);
+            } catch (Throwable t) {
+                return false;
+            }
+        }
+        return false;
     }
 
     public static void start() {
@@ -144,6 +186,8 @@ public class MenuMusic {
 
         stop(); // Limpieza de seguridad
         if (mc == null) return;
+
+        suppressVanillaMenuMusic(mc);
 
         active = true;
         manualSkipsThisSession = 0;
@@ -196,7 +240,10 @@ public class MenuMusic {
 
         if (!active) return;
 
-        long now = System.currentTimeMillis();
+        // La vieja banda sonora no toca mientras el gramofono del gabinete gira.
+        suppressVanillaMenuMusic(mc);
+
+        long now = nowMs();
 
         // Susurro diferido de la pieza fantasma
         if (ghostWhisperAtMs > 0L && now >= ghostWhisperAtMs) {
@@ -232,8 +279,8 @@ public class MenuMusic {
             return;
         }
 
-        // Si no hay instancia actual, pasamos a la siguiente
-        if (currentInstance == null || currentInstance.isStopped()) {
+        // Si no hay instancia actual (o el motor la dejo fantasma), pasamos a la siguiente
+        if (currentInstance == null || currentInstance.isStopped() || instanceGoneDead(mc)) {
             currentInstance = null;
             queueNextWithGap();
             return;
@@ -296,8 +343,8 @@ public class MenuMusic {
         } catch (Throwable ignored) {}
 
         // Marcar el susurro diferido y volver a pista normal tras una pausa larga.
-        ghostWhisperAtMs = System.currentTimeMillis() + 1500L;
-        nextTrackAtMs = System.currentTimeMillis() + 7000L;
+        ghostWhisperAtMs = nowMs() + 1500L;
+        nextTrackAtMs = nowMs() + 7000L;
         waitingForNext = true;
     }
 
@@ -313,7 +360,7 @@ public class MenuMusic {
     }
 
     public static boolean isDucking() {
-        long now = System.currentTimeMillis();
+        long now = nowMs();
         return duckUntilMs > now || (duckReleaseStartMs > 0L && now - duckReleaseStartMs < DUCK_RELEASE_MS);
     }
 
@@ -368,7 +415,7 @@ public class MenuMusic {
 
     private static void queueNextWithGap() {
         long gap = GAP_MIN_MS + (long)(RNG.nextDouble() * (GAP_MAX_MS - GAP_MIN_MS));
-        nextTrackAtMs = System.currentTimeMillis() + gap;
+        nextTrackAtMs = nowMs() + gap;
         waitingForNext = true;
 
         if (DEBUG_LOGGING) LOGGER.info("[MenuMusic v3] Proxima pista en {} ms", gap);
@@ -399,10 +446,10 @@ public class MenuMusic {
             previousInstance = currentInstance;
             currentInstance = nextInst;
             currentIndex = nextIndex;
-            currentStartMs = System.currentTimeMillis();
+            currentStartMs = nowMs();
             currentDurationMs = TRACK_DURATIONS_MS[nextIndex];
 
-            crossfadeStartMs = System.currentTimeMillis();
+            crossfadeStartMs = nowMs();
             crossfading = true;
 
             if (DEBUG_LOGGING) LOGGER.info("[MenuMusic v3] Crossfade a pista {}", nextIndex + 1);
@@ -439,7 +486,7 @@ public class MenuMusic {
             currentInstance = new FadingMusicInstance(se, baseVol, TRACK_DURATIONS_MS[currentIndex]);
             mc.getSoundManager().play(currentInstance);
 
-            currentStartMs = System.currentTimeMillis();
+            currentStartMs = nowMs();
             currentDurationMs = TRACK_DURATIONS_MS[currentIndex];
 
             if (DEBUG_LOGGING) {

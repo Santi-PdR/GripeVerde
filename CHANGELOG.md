@@ -1,5 +1,45 @@
 # Eternal Craft: Gripe Verde
 
+## v0.23.0 - El gramófono guarda la palabra
+
+Pasada transversal pedida expresamente tras la revision tecnica del
+2026-08-23 (ver REVISION_MOD.md), sin gameplay ni resourcepacks y con
+backup externo verificado antes de tocar archivos.
+
+Audio blindado: la banda sonora vanilla del menu calla mientras el gabinete
+esta abierto (MusicManager disparaba Musics.MENU a los 20-600 ticks y sonaba
+encima de las pistas propias), y un watchdog detecta instancias fantasma del
+motor de sonido: tras un F3+T la playlist vuelve sola en vez de quedar muda
+para siempre. Los temporizadores de musica, cooldowns UI y duracion de pistas
+usan ahora reloj monotonico (nanoTime). La escritura de la memoria del
+cronista (temporal + force + reemplazo atomico) sale del hilo de render hacia
+un executor monohilo, sin micro-tirones y con cierre ordenado.
+
+Accesibilidad: nueva ayuda visible "Destellos reducidos" (fotosensibilidad,
+separada de Movimiento reducido) que apaga relampagos sin congelar el resto
+de la escena; los ocho eventos ambientales (pasos, madera, puerta, susurro,
+campana, cuervos, cadenas, trueno) ganan subtitulos reales en los 25 idiomas;
+el deslizador de ambiente corrige su etiqueta hardcodeada y usa la clave
+traducida que ya existia.
+
+Ingenieria: el mod ya no registra manualmente su escucha de pantallas
+(eliminada la doble entrega de eventos y el crash latente en servidores
+dedicados; el mod queda inerte fuera del cliente), se retira por completo la
+infraestructura de Mixins vacia (JSON, plugin, refmap, mods.toml) y el
+namespace de GameTest sin tests, y el atajo oculto Ctrl+0 pasa a ser opt-in
+via config. Las pantallas solo se reemplazan cuando la clase es exactamente
+vanilla (ningun mod de menu ajeno es barrido) y ambos reemplazos pueden
+apagarse por config para convivir con otros mods. El build crece con dos
+sellos nuevos (sincronia de version Gradle/VERSION y duraciones reales de
+las pistas OGG parseadas como Vorbis) y una CI de GitHub Actions compila
+cada push con JDK 17 y publica el jar como artifact: el bloqueo de KI-52 por
+falta de Java 17 en el sandbox tiene ahora via automatica de validacion.
+Conteos: 60 clases Java, 25 idiomas con 93 claves, 25 cronicas, 35 eventos,
+42 OGG. Version final 0.23.0.
+
+El tag y el release v0.23.0 se reservan hasta completar en cliente real la
+validacion registrada como KI-53 (ver KNOWN_ISSUES.md).
+
 ## v0.22.0 - La vigilia queda sellada
 
 La simulacion atmosferica y el audio quedan reunidos en un tick fijo de

@@ -12,6 +12,19 @@ public class LivingAtmosphere {
     // v0.21.3: RNG compartido con seed fija (sin Math.random en el loop caliente).
     private static final java.util.Random RND = new java.util.Random(0xC10E5EL);
 
+    /**
+     * v0.23.0: ayuda de fotosensibilidad separada de Movimiento reducido
+     * (WCAG 2.3.1). Apaga relampagos y destellos sin congelar niebla,
+     * lluvia, faroles ni ningun otro movimiento de la escena.
+     */
+    private static boolean reduceFlashes() {
+        try {
+            return com.eternalcraft.gripeverde.config.ClientConfig.REDUCE_FLASHES.get();
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
     /** Accesibilidad: congela la animacion ambiental sin retirar la composicion. */
     private static boolean reducedMotion() {
         try {
@@ -113,7 +126,7 @@ public class LivingAtmosphere {
     public static boolean isRatStanding() { return ratStanding; }
 
     public static void triggerLightningFlash(float intensity) {
-        if (reducedMotion()) return;
+        if (reducedMotion() || reduceFlashes()) return;
         lightningTimer = 0f;
         lightningFlash = Math.max(lightningFlash, Math.max(0.15f, Math.min(1.0f, intensity)));
         nextLightning = 8f + (float)(RND.nextFloat() * 12f);
@@ -128,6 +141,13 @@ public class LivingAtmosphere {
             lightningFlash = 0f;
             vignettePulse = 0.5f;
             return;
+        }
+        // v0.23.0: con destellos reducidos el temporizador queda congelado en
+        // cero, de modo que ni el relampago ambiental programado ni un flash
+        // externo ya en curso llegan a dibujarse; el resto de la escena sigue viva.
+        if (reduceFlashes()) {
+            lightningFlash = 0f;
+            lightningTimer = 0f;
         }
 
         time += deltaTime;

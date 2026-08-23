@@ -2,6 +2,87 @@
 
 ## Addendum operativo actual
 
+- Rama fija de Arena de esta sesion: `arena/01a02f45-gripeverde`.
+- La PR 14 (`arena/01a02cee-gripeverde`) ya esta mergeada en main; HEAD base
+  de esta sesion: `4ca038d`. Las menciones de "rama fija
+  arena/01a02cee-gripeverde" que sobreviven en el historico son instantaneas
+  archivadas, no instrucciones.
+- Base respaldada: v0.22.0, commit `4ca038ddab972ca59435353330c9ccda4a86d581`.
+- Implementacion vigente: v0.23.0 en esta rama (ver DECISION 2026-08-23
+  mas abajo).
+- Restricciones funcionales absolutas: escena completa, faroles permanentes,
+  sin kiosco/Heraldo, sin modo automatico por FPS, sin gameplay y sin
+  resourcepacks.
+- Tag/release: deliberadamente ausentes hasta cerrar KI-53 en cliente real.
+- Repositorio local vigente del owner:
+  `C:\Users\santi\Desktop\GripeVerde`.
+- Deploy vigente del owner:
+  `C:\Users\santi\AppData\Roaming\.sklauncher\instances\test-1\mods`
+  (ahora mediante `tools\deploy.ps1`, que lee la version de `build.gradle`).
+
+### DECISION 2026-08-23: v0.23.0 - El gramófono guarda la palabra
+
+Pasada transversal autorizada por el owner a partir de la revision tecnica
+completa del mod (hallazgos documentados en `REVISION_MOD.md` junto con
+evidencia de verificaciones: duraciones OGG reales parseadas, ausencia de
+MusicManager en el codigo, doble registro de eventos). Antes de tocar
+archivos se creo el bundle externo
+`/home/user/GripeVerde-backup-pre-v0.23.0-4ca038d.bundle` (contiene --all).
+
+- `GripeVerdeMod`: eliminado el `EVENT_BUS.register(new ScreenEventHandler())`
+  manual. La doble entrega quedaba enmascarada por cooldowns y el guard
+  `redirecting`, pero el registro corria en ambos lados y crashearia un
+  servidor dedicado al cargar `net.minecraftforge.client.event.*`. El mod
+  queda inerte fuera del cliente; `mods.toml` suma
+  `displayTest="IGNORE_ALL_VERSION"` e `issueTrackerURL`.
+- `MenuMusic`: guardia por tick sobre `MusicManager` (`isPlayingMusic` +
+  `stopPlaying` de la musica situacional) que silencia la banda sonora
+  vanilla de menu bajo el gramofono; watchdog `instanceGoneDead` recupera la
+  playlist si el motor mata la instancia (F3+T/recargas), caso que antes
+  dejaba la musica muda para siempre; temporizadores migrados a `nanoTime`.
+- `LivingAtmosphere` + `DiaryAccessibilityOptionsScreen` + `ClientConfig`:
+  nueva ayuda "Destellos reducidos" (fotosensibilidad, WCAG 2.3.1) separada
+  de Movimiento reducido; congela el temporizador del relampago sin tocar
+  niebla, lluvia ni faroles.
+- `sounds.json` + 25 lang: subtitulos reales para los ocho eventos
+  ambientales (pasos, madera, puerta, susurro, campana, cuervos, cadenas,
+  trueno). `DiaryAmbienceSlider` corrige su etiqueta hardcodeada usando la
+  clave traducida existente. Paridad lang: 93 claves.
+- `ChroniclerMemory`: escritura en executor monohilo daemon ("ultima copia
+  gana" conservado, `writeNow` synchronized); `flushForShutdown` hace
+  shutdown + awaitTermination y solo entonces escribe en linea lo pendiente.
+- `ScreenEventHandler`: reemplazo solo si la clase es exactamente
+  TitleScreen/PauseScreen vanilla; config `integration.replaceTitleScreen` /
+  `replacePauseScreen`; Ctrl+0 pasa a `debug.debugShortcut` (por defecto
+  off).
+- Retirados: mixins.json vacio (+ plugin, annotationProcessor, refmap y
+  entrada en mods.toml), namespace GameTest sin tests, metodos no-op de
+  UiSounds, propiedad sponge de settings.gradle.
+- Build: sellos nuevos `verifyGripeVerdeVersionSync` y
+  `verifyGripeVerdeMusicDurations` (parser Vorbis granule/rate, tolerancia
+  1.5 s); conteo lang 83 -> 93; CI lista para activar en
+  `tools/ci/build.yml` (JDK 17 Temurin, Gradle cacheado, jar como artifact;
+  mover a `.github/workflows/`: la sesion carece del permiso `workflows`),
+  con lo que la compilacion semantica pendiente en el sandbox (KI-52) tiene
+  via automatica; `tools/deploy.ps1` lee la version de build.gradle.
+- Conteos: 60 clases Java, 25 lang (93 claves), 25 cronicas, 35 eventos,
+  42 OGG, 42 referencias. Bump sincronizado: build.gradle +
+  GripeVerdeMod.VERSION -> 0.23.0.
+- Compilacion semantica Gradle/Forge no ejecutada en el sandbox (sin Java
+  17): queda delegada a la CI y al PC del owner (KI-53).
+- Changelog in-game actualizado en los 25 idiomas (manifestacion observable:
+  audio, accesibilidad y subtitulos nuevos).
+
+### SIGUIENTE PASO OPERATIVO VIGENTE
+
+No implementar planes de gameplay ni los items del bloque "propuestas
+futuras" de REVISION_MOD.md sin autorizacion expresa del owner. La secuencia
+vigente: validar KI-53 en cliente real (activando antes la CI de tools/ci),
+corregir solo si esa prueba encuentra defectos y, despues, autorizar
+tag/release v0.23.0 (junto con el pendiente de v0.22.0).
+
+## Addendum operativo archivado (v0.22.0)
+
 - Rama fija de Arena: `arena/01a02cee-gripeverde`.
 - Base respaldada: v0.21.31, commit
   `7605243f9aff55ccbe0d00ad743c38414c66061f`.

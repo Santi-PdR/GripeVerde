@@ -2,6 +2,13 @@
 ## Cronica bajo sello
 
 
+## Version 0.23.0 - El gramófono guarda la palabra
+
+El gramófono ya no comparte la noche con la música vanilla del menú: mientras el gabinete está abierto, la vieja banda sonora calla, y si el motor de sonido se recarga (F3+T o un cambio de paquete) la siguiente pieza se encola sola en vez de quedar muda para siempre. La tormenta ahora puede amainarse aparte: una nueva ayuda de Destellos reducidos apaga el relámpago sin congelar niebla, lluvia ni faroles, los eventos ambientales ganan subtítulos y el deslizador de ambiente responde ya en el idioma del lector.
+
+El mod también aprendió modales: registra su escucha una sola vez, permanece inerte en servidores dedicados, se despoja del andamiaje de mixins vacío y esconde el atajo de depuración salvo que se le invoque, y cede la pantalla de título cuando otro mod ya la reclama. El cronista escribe ahora su memoria fuera del hilo de render, y los sellos del build vigilan la sincronía de versiones y la duración real de las pistas; un flujo de integración continua listo para activar (tools/ci) compila cada push con Java 17.
+
+
 ## Version 0.22.0 - La vigilia queda sellada
 
 La ciudad se mueve ahora con un único pulso estable de veinte compases, en vez de adelantar el polvo y el ambiente en cada cuadro dibujado. Movimiento reducido aparece entre las ayudas de percepción y congela el movimiento atmosférico, el grano y los destellos sin retirar la calle, los faroles ni ningún detalle permanente de la escena. Cada interruptor del diario anuncia además al narrador su nombre y su estado actual.

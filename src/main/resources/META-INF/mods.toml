@@ -1,11 +1,14 @@
 modLoader="javafml"
 loaderVersion="[47,)"
 license="All Rights Reserved"
-issueTrackerURL=""
+issueTrackerURL="https://github.com/Santi-PdR/GripeVerde/issues"
 
 [[mods]]
 modId="gripeverde"
 version="${mod_version}"
+# El mod es 100% cliente (sin componente servidor): no marca incompatibilidad
+# de version en ningun lado. Guia Forge Sides para mods one-sided.
+displayTest="IGNORE_ALL_VERSION"
 displayName="Eternal Craft: Gripe Verde"
 displayURL="https://discord.gg/qrBCgYuwWb"
 credits="Documento oficial bajo sello EC-QV/1897 - Cronista S. Pereira"
@@ -34,6 +37,3 @@ Etapa 1800x - Sobrevive a la plaga.
     versionRange="[1.20.1,1.21)"
     ordering="NONE"
     side="BOTH"
-
-[[mixins]]
-    config="gripeverde.mixins.json"

@@ -5,32 +5,39 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.22.0 - La vigilia queda sellada**
+**v0.23.0 - El gramófono guarda la palabra**
 
-La entrega final mantiene completa la escena del Title y unifica su
-simulación, música y ambiente en un tick estable de 20 Hz. La pantalla de
-Accesibilidad expone ahora Movimiento reducido, que congela el movimiento
-atmosférico, el grano y los destellos sin retirar la calle, los faroles ni la
-utilería; los toggles anuncian también su estado al narrador.
+Pasada transversal autorizada tras la revisión técnica completa del mod
+(hallazgos en `REVISION_MOD.md`). El gramófono ya no comparte la noche con
+la música vanilla del menú: se silencia el `MusicManager` mientras el
+gabinete está abierto, y un watchdog reanuda la playlist tras recargas del
+motor de sonido (F3+T, cambio de packs) en vez de quedar muda para siempre.
 
-La memoria persistente se escribe mediante un temporal durable y reemplazo
-atómico, conserva la última copia válida y recupera un temporal interrumpido
-o el respaldo si el JSON principal se daña. El render reutiliza generadores
-deterministas para evitar asignaciones por cuadro sin modificar su aspecto.
-Los validadores integrados en el build comprueban la paridad de 25 idiomas
-(83 claves), los 25 changelogs, 35 eventos y 42 OGG. La sintaxis de las 60
-clases Java se comprobó por separado con `java-parser`; la compilación
-semántica contra Forge requiere todavía Java 17.
+Accesibilidad nueva: Destellos reducidos (fotosensibilidad, separada de
+Movimiento reducido), subtítulos reales para los ocho eventos ambientales en
+los 25 idiomas y la etiqueta del slider de ambiente por fin traducida. El mod
+queda inerte en servidores dedicados (eliminado el registro manual que
+duplicaba eventos y podía crashear un server), se despoja de la
+infraestructura vacía de Mixins, y solo reemplaza Title/Pause cuando son
+clases exactamente vanilla, con apagado por config para convivir con otros
+mods. La memoria del cronista se escribe fuera del hilo de render y los
+temporizadores usan reloj monotónico.
+
+El build añade dos sellos (sincronía de versión y duraciones reales de las
+pistas parseadas como Vorbis) y un **workflow de CI listo para activar**
+(`tools/ci/build.yml` → `.github/workflows/`): compila cada push con JDK 17
+y publica el jar como artifact.
 
 ### Estado de entrega
 
-- Implementación final: commit `a1decf304b0c7236d624d4637bd3b5dcaa3961db`.
-- Revisión del owner: [PR 14](https://github.com/Santi-PdR/GripeVerde/pull/14).
+- Implementación vigente: rama `arena/01a02f45-gripeverde` (v0.23.0).
+- Base: commit `4ca038d` (merge de la PR 14, v0.22.0 ya mergeada).
 - Validación estática y documental completada; árbol local y remoto limpio.
-- El build Forge y la prueba en Minecraft continúan pendientes bajo KI-52
-  porque el sandbox no dispone de Java 17.
-- No existe tag/release v0.22.0: debe publicarse solo después de validar el
-  cliente real.
+- La compilación semántica contra Forge corre en el PC del owner y, una vez
+  activada, en la CI (JDK 17); la validación dentro de Minecraft sigue bajo
+  KI-53.
+- No existe tag/release v0.23.0: debe publicarse solo después de validar el
+  cliente real (junto con el pendiente de v0.22.0).
 
 ## Resumen visible del Mod Menu
 
@@ -68,6 +75,9 @@ Los contenedores del juego conservan su aspecto vanilla original; el mod no alte
 ### Otros
 - Historial de cambios in-game con word-wrap real, accesible desde el boton "?".
 - Soporte para 25 variantes de idioma (5 de ingles + 20 de espanol).
+- v0.23.0: subtitulos de los eventos ambientales en los 25 idiomas, ayuda
+  Destellos reducidos (fotosensibilidad), apagado del gramofono vanilla del
+  menu, convivencia configurable con otros mods de menu y CI con Java 17.
 
 ## Pantallas implementadas
 
@@ -93,10 +103,18 @@ Con Java 17, ejecutar: `.\gradlew.bat clean build`
 El jar se genera en `build\libs\gripeverde-VERSION.jar`
 
 Verificaciones activas en `processResources`:
-- `verifyGripeVerdeLocalization` (JSON válido, 83 claves en paridad y
-  v0.22.0 presente en los 25 changelogs).
+- `verifyGripeVerdeLocalization` (JSON válido, 93 claves en paridad y
+  v0.23.0 presente en los 25 changelogs).
 - `verifyGripeVerdeSoundAssets` (eventos completos, referencias existentes y ningún OGG huérfano).
 - `verifyGripeVerdeNoDeadCode` (símbolos retirados fuera del código productivo).
+- `verifyGripeVerdeVersionSync` (`GripeVerdeMod.VERSION` == version Gradle).
+- `verifyGripeVerdeMusicDurations` (duración real Vorbis de cada OGG de
+  música vs `TRACK_DURATIONS_MS`, tolerancia 1.5 s).
+
+Ademas, `tools/ci/build.yml` es un workflow de CI listo: al moverlo a
+`.github/workflows/build.yml` compila cada push/PR con JDK 17 y publica el
+jar como artifact. La sesion no pudo colocarlo directamente porque el token
+de GitHub no tiene permiso `workflows`.
 
 ## Deploy
 
@@ -106,33 +124,13 @@ Instancia de prueba de SKLauncher:
 `C:\Users\santi\AppData\Roaming\.sklauncher\instances\test-1\mods`.
 
 Antes de cada validacion se eliminan los jars anteriores de Gripe Verde, se
-compila y se copia exactamente `gripeverde-0.22.0.jar`. La version mostrada
-por el reloj debe comprobarse en pantalla antes de aprobar la entrega.
+compila y se copia exactamente el jar de la version vigente. La version
+mostrada por el reloj debe comprobarse en pantalla antes de aprobar la
+entrega.
 
-Flujo PowerShell vigente para actualizar, compilar y desplegar:
-
-```powershell
-$ErrorActionPreference = "Stop"
-$Repo = "C:\Users\santi\Desktop\GripeVerde"
-$Mods = "C:\Users\santi\AppData\Roaming\.sklauncher\instances\test-1\mods"
-$Jar = Join-Path $Repo "build\libs\gripeverde-0.22.0.jar"
-
-Set-Location $Repo
-git fetch origin arena/01a02cee-gripeverde
-if ($LASTEXITCODE -ne 0) { throw "git fetch fallo" }
-git reset --hard FETCH_HEAD
-if ($LASTEXITCODE -ne 0) { throw "git reset fallo" }
-
-Get-ChildItem (Join-Path $Repo "build\libs") -Filter "gripeverde-*.jar" -ErrorAction SilentlyContinue | Remove-Item -Force
-Get-ChildItem $Mods -Filter "gripeverde-*.jar" -ErrorAction SilentlyContinue | Remove-Item -Force
-
-.\gradlew.bat clean build
-if ($LASTEXITCODE -ne 0) { throw "Gradle fallo" }
-if (-not (Test-Path $Jar)) { throw "No se genero $Jar" }
-
-Copy-Item $Jar $Mods -Force
-Get-Item (Join-Path $Mods "gripeverde-0.22.0.jar")
-```
+Flujo vigente para actualizar, compilar y desplegar: `tools\deploy.ps1`.
+El script lee la version de `build.gradle`, hace fetch/reset de la rama de
+sesion, limpia los jars antiguos, compila y copia el jar exacto.
 
 ## Idiomas soportados
 
@@ -143,9 +141,10 @@ Get-Item (Join-Path $Mods "gripeverde-0.22.0.jar")
 ## Documentacion
 
 - `CONTRIBUTING.md` - guia corta de contribucion (branch fija, no gameplay, validacion).
-- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.22.0.
-- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.22.0).
+- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.23.0.
+- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.23.0).
 - `KNOWN_ISSUES.md` - estado tecnico, decisiones activas, errores documentados, KIs.
+- `REVISION_MOD.md` - revision tecnica completa del 2026-08-23 (origen de v0.23.0) junto con las propuestas futuras pendientes de autorizacion.
 - `README.md` - esta portada.
 
 Históricos eliminados en v0.21.2: `AUDITORIA_PROFESIONAL.md`, `MICRODETALLES_EXTREMO.md`, `VALIDACION_FASE4.md` (eran referencia de polish v0.14.0, ya revertido) y `CONTEXTO_PARA_IA.md` (resumen redundante de `CONTEXTO.md`).

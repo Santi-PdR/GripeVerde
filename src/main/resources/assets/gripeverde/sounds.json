@@ -224,7 +224,7 @@
         "volume": 1.0
       }
     ],
-    "subtitle": ""
+    "subtitle": "gripeverde.subtitle.menu.footsteps"
   },
   "menu.wood_creak": {
     "sounds": [
@@ -233,7 +233,7 @@
         "volume": 1.0
       }
     ],
-    "subtitle": ""
+    "subtitle": "gripeverde.subtitle.menu.wood_creak"
   },
   "menu.door": {
     "sounds": [
@@ -242,7 +242,7 @@
         "volume": 1.0
       }
     ],
-    "subtitle": ""
+    "subtitle": "gripeverde.subtitle.menu.door"
   },
   "menu.ambient_occasional": {
     "sounds": [
@@ -251,7 +251,7 @@
         "volume": 1.0
       }
     ],
-    "subtitle": ""
+    "subtitle": "gripeverde.subtitle.menu.ambient_occasional"
   },
   "menu.bell": {
     "sounds": [
@@ -260,7 +260,7 @@
         "volume": 1.0
       }
     ],
-    "subtitle": ""
+    "subtitle": "gripeverde.subtitle.menu.bell"
   },
   "menu.crows": {
     "sounds": [
@@ -269,7 +269,7 @@
         "volume": 1.0
       }
     ],
-    "subtitle": ""
+    "subtitle": "gripeverde.subtitle.menu.crows"
   },
   "menu.chain": {
     "sounds": [
@@ -278,7 +278,7 @@
         "volume": 1.0
       }
     ],
-    "subtitle": ""
+    "subtitle": "gripeverde.subtitle.menu.chain"
   },
   "menu.thunder": {
     "sounds": [
@@ -295,7 +295,7 @@
         "volume": 1.0
       }
     ],
-    "subtitle": ""
+    "subtitle": "gripeverde.subtitle.menu.thunder"
   },
   "menu.tick": {
     "sounds": [
