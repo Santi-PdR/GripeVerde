@@ -735,21 +735,8 @@ public class DiaryTitleScreen extends Screen {
                     }
                 }
 
-                // Los faroles de la avenida se apagan y se encienden a mano.
-                int li = com.eternalcraft.gripeverde.client.render.LivingAtmosphere.lanternIndexAt(mouseX, mouseY, w, h);
-                if (li >= 0) {
-                    int[][] lp = com.eternalcraft.gripeverde.client.render.VictorianSkyline.getLanternPositions(w, h);
-                    boolean allOut = com.eternalcraft.gripeverde.client.render.LivingAtmosphere.toggleLantern(li, lp.length);
-                    if (allOut) {
-                        boolean first = com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
-                            com.eternalcraft.gripeverde.client.lore.Discoveries.AVENUE_DARK);
-                        if (first) {
-                            com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.setCounter("avenue_darkened", 1);
-                            com.eternalcraft.gripeverde.client.audio.MenuMusic.duckFor(2200L);
-                        }
-                    }
-                    return true;
-                }
+                // Los faroles de la avenida: v0.21.29 easter egg removido.
+                // (Las linternas ya no se pueden apagar)
 
                 // El gato del tejado cobra sus deudas despacio.
                 int[] catR = com.eternalcraft.gripeverde.client.render.VictorianSkyline.catRect(w, h);
