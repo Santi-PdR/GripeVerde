@@ -25,11 +25,13 @@ public class GreenFluButton extends AbstractButton {
     private final EasedValue hoverAnim = new EasedValue(5.5f);
     private int pressTicks = 0;
     private final int wearSeed;
+    private final java.util.Random wearRng;
 
     public GreenFluButton(int x,int y,int w,int h, Component title, Component subtitle, ResourceLocation icon, Runnable onClick){
         super(x,y,w,h,title);
         this.title=title; this.subtitle=subtitle; this.iconTexture=icon; this.onClick=onClick;
         this.wearSeed = (x*29 + y*19 + title.getString().hashCode()) & 0x7fffffff;
+        this.wearRng = new java.util.Random(wearSeed);
     }
 
     @Override public void onPress(){ UiSounds.playClick(); onClick.run(); }
@@ -139,12 +141,12 @@ public class GreenFluButton extends AbstractButton {
         g.fill(x+44,yDraw+h-7,x+w-18,yDraw+h-6,DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 54));
         // Wear dots
         if(active){
-            java.util.Random wr = new java.util.Random(wearSeed);
+            wearRng.setSeed(wearSeed);
             int wearCol = DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, 28);
             for(int i=0;i<2;i++){
-                if(wr.nextInt(100)<40){
-                    int wx=x+48+wr.nextInt(Math.max(1,w-66));
-                    int wy=yDraw+8+wr.nextInt(Math.max(1,h-16));
+                if(wearRng.nextInt(100)<40){
+                    int wx=x+48+wearRng.nextInt(Math.max(1,w-66));
+                    int wy=yDraw+8+wearRng.nextInt(Math.max(1,h-16));
                     g.fill(wx,wy,wx+1,wy+1,wearCol);
                 }
             }

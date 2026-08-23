@@ -56,6 +56,11 @@ public class DiaryPauseScreen extends PauseScreen {
 
     private int animTick = 0;
 
+    // v0.21.27: Random cacheado para texturas (evita crear new Random cada frame)
+    private static final java.util.Random PAPER_RNG = new java.util.Random();
+    private static final java.util.Random BLOOD_RNG = new java.util.Random();
+    private static final java.util.Random BREATH_RNG = new java.util.Random();
+
     // ── v0.16.0: la pausa responde ──
     private boolean candleOut = false;
     private long candleSmokeUntilMs = 0L;
@@ -153,9 +158,9 @@ public class DiaryPauseScreen extends PauseScreen {
             if (breathUntilMs == 0L && now >= nextBreathMs) {
                 breathStartMs = now;
                 breathUntilMs = now + 4600L;
-                breathCx = panelX() + 24 + new java.util.Random(now).nextInt(Math.max(10, panelW() - 48));
-                breathCy = panelY() + 20 + new java.util.Random(now + 7).nextInt(Math.max(10, panelH() - 60));
-                nextBreathMs = now + 26_000L + new java.util.Random(now).nextLong() % 20_000L;
+                breathCx = panelX() + 24 + BREATH_RNG.nextInt(Math.max(10, panelW() - 48));
+                breathCy = panelY() + 20 + BREATH_RNG.nextInt(Math.max(10, panelH() - 60));
+                nextBreathMs = now + 26_000L + BREATH_RNG.nextLong() % 20_000L;
                 if (nextBreathMs < now) nextBreathMs = now + 30_000L;
                 com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
                     com.eternalcraft.gripeverde.client.lore.Discoveries.BREATH);
@@ -173,10 +178,10 @@ public class DiaryPauseScreen extends PauseScreen {
                 }
                 if (shadowUntilMs > 0L && now >= shadowUntilMs) {
                     shadowUntilMs = 0L;
-                    nextShadowMs = now + 90_000L + (long)(Math.random() * 120_000L);
+                    nextShadowMs = now + 90_000L + (long)(BREATH_RNG.nextDouble() * 120_000L);
                 }
                 if (nextShadowMs == 0L && shadowUntilMs == 0L) {
-                    nextShadowMs = now + 60_000L + (long)(Math.random() * 90_000L);
+                    nextShadowMs = now + 60_000L + (long)(BREATH_RNG.nextDouble() * 90_000L);
                 }
             }
         } catch (Throwable ignored) {}
@@ -403,12 +408,12 @@ public class DiaryPauseScreen extends PauseScreen {
     }
 
     private void drawPaperTextureMinimal(GuiGraphics g, int x, int y, int w, int h) {
-        Random r = new Random(x * 31L + y * 17L);
+        PAPER_RNG.setSeed(x * 31L + y * 17L);
         for (int i = 0; i < 15; i++) {
             if (w <= 8 || h <= 8) continue;
-            int px = x + 4 + r.nextInt(w - 8);
-            int py = y + 4 + r.nextInt(h - 8);
-            int alpha = 6 + r.nextInt(8);
+            int px = x + 4 + PAPER_RNG.nextInt(w - 8);
+            int py = y + 4 + PAPER_RNG.nextInt(h - 8);
+            int alpha = 6 + PAPER_RNG.nextInt(8);
             int color = DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, alpha);
             g.fill(px, py, px + 1, py + 1, color);
         }
@@ -428,12 +433,12 @@ public class DiaryPauseScreen extends PauseScreen {
         }
         g.fill(cx - 2, cy - 2, cx + 2, cy + 2, DiaryTheme.BLOOD_DRIED);
 
-        Random r2 = new Random(cx * 7L + cy * 13L);
+        BLOOD_RNG.setSeed(cx * 7L + cy * 13L);
         for (int i = 0; i < 10; i++) {
-            int sx = cx + r2.nextInt(r * 3) - r;
-            int sy = cy + r2.nextInt(r * 3) - r;
-            int size = 1 + r2.nextInt(2);
-            int alpha = 100 + r2.nextInt(100);
+            int sx = cx + BLOOD_RNG.nextInt(r * 3) - r;
+            int sy = cy + BLOOD_RNG.nextInt(r * 3) - r;
+            int size = 1 + BLOOD_RNG.nextInt(2);
+            int alpha = 100 + BLOOD_RNG.nextInt(100);
             int c = DiaryTheme.withAlpha(DiaryTheme.BLOOD_DRIED, alpha);
             g.fill(sx, sy, sx + size, sy + size, c);
         }
@@ -479,10 +484,10 @@ public class DiaryPauseScreen extends PauseScreen {
         int subtitleY = py + 58;
 
         int tw = this.font.width(title);
+        // v0.21.25: tinta limpia sin sombra doble.
         g.pose().pushPose();
         g.pose().translate(centerX, titleY, 0);
         g.pose().scale(1.75f, 1.75f, 1f);
-        g.drawString(this.font, title, -tw / 2 + 1, 1, DiaryTheme.SEPIA_DARK, false);
         g.drawString(this.font, title, -tw / 2, 0, DiaryTheme.INK, false);
         g.pose().popPose();
 
@@ -550,7 +555,7 @@ public class DiaryPauseScreen extends PauseScreen {
         int centerX = px + panelW() / 2;
         int sw = this.font.width(sig);
         int sy = py + panelH() - ORN_SIGN_FROM_BOT;
-        g.drawString(this.font, sig, centerX - sw / 2 + 1, sy + 1, DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 90), false);
+        // v0.21.25: firma limpia sin sombra.
         g.drawString(this.font, sig, centerX - sw / 2, sy, DiaryTheme.SEPIA_DARK, false);
         // v0.16.0: tras bastantes hallazgos, la firma reconoce al lector.
         try {
@@ -702,19 +707,17 @@ public class DiaryPauseScreen extends PauseScreen {
         // LLAMA ANIMADA — parpadeo sutil
         int flameFrame = (animTick / 4) % 4;
 
-        // Halo (cálido, envuelve todo)
+        // Halo (cálido, envuelve todo) — v0.21.27: optimizado con fillCircle
         int haloAlpha = 60 + (flameFrame * 15);
-        int haloC = DiaryTheme.withAlpha(flameHalo, haloAlpha);
-        // Halo circular grande
-        for (int dy = -8; dy <= 8; dy++) {
-            for (int dx = -8; dx <= 8; dx++) {
-                int d2 = dx * dx + dy * dy;
-                if (d2 <= 64 && d2 >= 25) {
-                    float t = 1f - (float)Math.sqrt(d2) / 8f;
-                    int a = (int)(t * haloAlpha);
-                    g.fill(x + 6 + dx, y + 1 + dy, x + 6 + dx + 1, y + 1 + dy + 1,
-                           DiaryTheme.withAlpha(flameHalo, a));
-                }
+        // Halo exterior suave
+        for (int r = 8; r > 2; r -= 3) {
+            float t = 1f - (float)r / 8f;
+            int a = (int)(t * haloAlpha);
+            if (a <= 2) continue;
+            int col = DiaryTheme.withAlpha(flameHalo, a);
+            for (int dy = -r; dy <= r; dy++) {
+                int dx = (int)Math.sqrt(Math.max(0, r * r - dy * dy));
+                g.fill(x + 6 - dx, y + 1 + dy, x + 6 + dx + 1, y + 1 + dy + 1, col);
             }
         }
 

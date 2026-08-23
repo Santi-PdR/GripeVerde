@@ -80,8 +80,8 @@ public class PosterRenderer {
         g.pose().scale(1.2f, 1.2f, 1f);
         String am = I18n.get("gripeverde.poster.elixir.title.1");
         int aw = font.width(am);
-        g.drawString(font, am, -aw / 2 + 1, 1, DiaryTheme.SEPIA_DARK, false);
-        g.drawString(font, am, -aw / 2, 0, DiaryTheme.BRONZE, false);
+        // v0.21.25: tinta oscura sin sombra (consistencia con poster de cuarentena).
+        g.drawString(font, am, -aw / 2, 0, DiaryTheme.INK, false);
         g.pose().popPose();
         cursorY += 14;
 
@@ -90,8 +90,8 @@ public class PosterRenderer {
         g.pose().scale(1.4f, 1.4f, 1f);
         String el = I18n.get("gripeverde.poster.elixir.title.2");
         int ew = font.width(el);
-        g.drawString(font, el, -ew / 2 + 1, 1, DiaryTheme.SEPIA_DARK, false);
-        g.drawString(font, el, -ew / 2, 0, DiaryTheme.BLOOD_DRIED, false);
+        // v0.21.25: tinta oscura sin sombra (consistencia con poster de cuarentena).
+        g.drawString(font, el, -ew / 2, 0, DiaryTheme.INK, false);
         g.pose().popPose();
         cursorY += 18;
 
@@ -162,8 +162,8 @@ public class PosterRenderer {
         g.pose().scale(1.2f, 1.2f, 1f);
         String title = I18n.get("gripeverde.poster.reward.title.short");
         int tw = font.width(title);
-        g.drawString(font, title, -tw / 2 + 1, 1, DiaryTheme.SEPIA_DARK, false);
-        g.drawString(font, title, -tw / 2, 0, DiaryTheme.BLOOD_DRIED, false);
+        // v0.21.25: tinta oscura sin sombra (consistencia con poster de cuarentena).
+        g.drawString(font, title, -tw / 2, 0, DiaryTheme.INK, false);
         g.pose().popPose();
         cursorY += 18;
 
@@ -215,8 +215,7 @@ public class PosterRenderer {
         g.pose().scale(1.1f, 1.1f, 1f);
         String title = I18n.get("gripeverde.poster.decree.title");
         int tw = font.width(title);
-        // Sombra suave translucida
-        g.drawString(font, title, -tw / 2 + 1, 1, 0x40201409, false);
+        // v0.21.25: tinta oscura sin sombra (consistencia con poster de cuarentena).
         g.drawString(font, title, -tw / 2, 0, DiaryTheme.INK, false);
         g.pose().popPose();
         cursorY += 18;
@@ -237,8 +236,8 @@ public class PosterRenderer {
         g.pose().scale(1.1f, 1.1f, 1f);
         String warn = I18n.get("gripeverde.poster.decree.warn");
         int ww = font.width(warn);
-        g.drawString(font, warn, -ww / 2 + 1, 1, DiaryTheme.SEPIA_DARK, false);
-        g.drawString(font, warn, -ww / 2, 0, DiaryTheme.BLOOD_DRIED, false);
+        // v0.21.25: tinta oscura sin sombra (consistencia con poster de cuarentena).
+        g.drawString(font, warn, -ww / 2, 0, DiaryTheme.INK, false);
         g.pose().popPose();
     }
 
@@ -435,10 +434,8 @@ public class PosterRenderer {
         g.fill(-3, -2, -2, 11, col);
         g.fill(tw + 2, -2, tw + 3, 11, col);
 
-        // Texto en color sello
+        // v0.21.25: texto en color sello sin sombra (consistencia con poster de cuarentena).
         g.drawString(f, label, 0, 0, col, false);
-        // Sombra sutil detras (rotacion falsa)
-        g.drawString(f, label, 1, 1, DiaryTheme.withAlpha(col, 100), false);
 
         g.pose().popPose();
     }

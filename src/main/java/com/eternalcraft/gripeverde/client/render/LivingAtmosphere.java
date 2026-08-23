@@ -101,25 +101,15 @@ public class LivingAtmosphere {
 
     public static float getWindGustIntensity() { return windGustIntensity; }
 
-    /** Alterna un farol. Devuelve true si ahora estan TODOS apagados. */
+    /** Alterna un farol. v0.21.29: deshabilitado — siempre devuelve false. */
     public static boolean toggleLantern(int index, int count) {
-        if (index < 0 || index >= lanternOut.length) return false;
-        lanternOut[index] = !lanternOut[index];
-        try {
-            com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
-                com.eternalcraft.gripeverde.client.audio.ModSounds.UI_CLICK_HEAVY.get(),
-                lanternOut[index] ? 0.16f : 0.14f,
-                lanternOut[index] ? 0.55f : 0.75f);
-        } catch (Throwable ignored) {}
-        if (count <= 0) return false;
-        for (int i = 0; i < count; i++) {
-            if (!lanternOut[i]) return false;
-        }
-        return true;
+        // v0.21.29: las linternas ya no se pueden apagar.
+        return false;
     }
 
     public static boolean isLanternOut(int index) {
-        return index >= 0 && index < lanternOut.length && lanternOut[index];
+        // v0.21.29: las linternas ya no se pueden apagar.
+        return false;
     }
 
     /** Hit-test del farol i (poste completo). */

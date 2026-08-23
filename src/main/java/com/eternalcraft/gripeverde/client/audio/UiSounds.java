@@ -146,7 +146,7 @@ public class UiSounds {
     }
 
     private static float rand(float range) {
-        return (float)(Math.random() * range);
+        return (float)(java.util.concurrent.ThreadLocalRandom.current().nextDouble() * range);
     }
 
     public static void setHoverSound(SoundEvent s, float v, float p) { }

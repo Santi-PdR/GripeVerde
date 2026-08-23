@@ -361,13 +361,14 @@ public class DiaryTitleScreen extends Screen {
     }
 
     /** Polvo por ausencia larga: solo la primera vigilia del regreso. */
+    private static final java.util.Random DUST_RNG = new java.util.Random();
     private void drawDustIfDue(GuiGraphics g) {
         if (!dustThisSession) return;
-        java.util.Random rng = new java.util.Random(0xD05E7L ^ (long)this.width);
+        DUST_RNG.setSeed(0xD05E7L ^ (long)this.width);
         for (int i = 0; i < 40; i++) {
-            int x = rng.nextInt(Math.max(1, this.width));
-            int y = rng.nextInt(Math.max(1, this.height));
-            int al = 14 + rng.nextInt(16);
+            int x = DUST_RNG.nextInt(Math.max(1, this.width));
+            int y = DUST_RNG.nextInt(Math.max(1, this.height));
+            int al = 14 + DUST_RNG.nextInt(16);
             g.fill(x, y, x + 1, y + 1, (al << 24) | 0x9A938A);
         }
     }
@@ -563,6 +564,7 @@ public class DiaryTitleScreen extends Screen {
         double jitterY = Math.cos(System.currentTimeMillis() / 310.0) * 0.4;
         int newX = this.width - sw - oldSw - 16 + (int)Math.round(jitterX);
         int newY = y + (int)Math.round(jitterY);
+        // v0.21.25: firma limpia sin sombra.
         g.drawString(this.font, signature,
             newX, newY,
             DiaryTheme.SEPIA_LIGHT, false);
@@ -733,21 +735,8 @@ public class DiaryTitleScreen extends Screen {
                     }
                 }
 
-                // Los faroles de la avenida se apagan y se encienden a mano.
-                int li = com.eternalcraft.gripeverde.client.render.LivingAtmosphere.lanternIndexAt(mouseX, mouseY, w, h);
-                if (li >= 0) {
-                    int[][] lp = com.eternalcraft.gripeverde.client.render.VictorianSkyline.getLanternPositions(w, h);
-                    boolean allOut = com.eternalcraft.gripeverde.client.render.LivingAtmosphere.toggleLantern(li, lp.length);
-                    if (allOut) {
-                        boolean first = com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
-                            com.eternalcraft.gripeverde.client.lore.Discoveries.AVENUE_DARK);
-                        if (first) {
-                            com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.setCounter("avenue_darkened", 1);
-                            com.eternalcraft.gripeverde.client.audio.MenuMusic.duckFor(2200L);
-                        }
-                    }
-                    return true;
-                }
+                // Los faroles de la avenida: v0.21.29 easter egg removido.
+                // (Las linternas ya no se pueden apagar)
 
                 // El gato del tejado cobra sus deudas despacio.
                 int[] catR = com.eternalcraft.gripeverde.client.render.VictorianSkyline.catRect(w, h);
@@ -919,6 +908,7 @@ public class DiaryTitleScreen extends Screen {
     private final float[][] eggParticles = new float[EGG_PARTICLE_COUNT][5];  // x, y, vx, vy, alpha
     private long eggParticlesUntilMs = 0L;
     private static final java.util.Random EASTER_RNG = new java.util.Random();
+    private static final java.util.Random PARTICLE_RNG = new java.util.Random();
 
     private void handleLogoClick() {
         long now = System.currentTimeMillis();
@@ -946,10 +936,10 @@ public class DiaryTitleScreen extends Screen {
         int logoCx = this.width / 2;
         int logoCy = 45;
         for (int p = 0; p < EGG_PARTICLE_COUNT; p++) {
-            eggParticles[p][0] = logoCx + (float)(Math.random() * 34 - 17);
-            eggParticles[p][1] = logoCy + (float)(Math.random() * 12);
-            eggParticles[p][2] = (float)(Math.random() * 1.6 - 0.8);
-            eggParticles[p][3] = (float)(Math.random() * 0.9 + 0.8);
+            eggParticles[p][0] = logoCx + (float)(PARTICLE_RNG.nextDouble() * 34 - 17);
+            eggParticles[p][1] = logoCy + (float)(PARTICLE_RNG.nextDouble() * 12);
+            eggParticles[p][2] = (float)(PARTICLE_RNG.nextDouble() * 1.6 - 0.8);
+            eggParticles[p][3] = (float)(PARTICLE_RNG.nextDouble() * 0.9 + 0.8);
             eggParticles[p][4] = 1.0f;
         }
 
@@ -1017,6 +1007,7 @@ public class DiaryTitleScreen extends Screen {
         g.drawString(this.font, stamp, boxX + 13, boxY + 8, red, false);
         String seal = isEnglishSelected() ? "UNDER SEAL" : "BAJO SELLO";
         int sealW = this.font.width(seal);
+        // v0.21.25: texto limpio sin sombra.
         g.drawString(this.font, seal, boxX + boxW - sealW - 13, boxY + 8, DiaryTheme.withAlpha(0xFF241608, alpha), false);
         g.fill(boxX + 12, boxY + 19, boxX + boxW - 12, boxY + 20, (Math.min(115, alpha) << 24) | 0x422810);
 
@@ -1119,7 +1110,7 @@ public class DiaryTitleScreen extends Screen {
         // Posicion: arriba del logo (y ~200 para que sea visible)
         int cx = this.width / 2 - w / 2;
         int cy = this.height / 3;
-        g.drawString(this.font, ssm, cx + 1, cy + 1, shadowCol, false);
+        // v0.21.25: texto limpio sin sombra.
         g.drawString(this.font, ssm, cx, cy, col, false);
     }
 }
