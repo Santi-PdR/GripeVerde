@@ -2,6 +2,11 @@
 ## Cronica bajo sello
 
 
+## Version 0.23.1 - Sellos y relojería
+
+Esta vez no hay nueva escenografía: el build gana dos sellos más. Uno vigila que cada subtítulo ambiental que la ciudad anuncia exista en los veinticinco idiomas; el otro cuenta los eventos sonoros registrados y rechaza nuevas altas mudas, admitiendo las diez heredadas con su destino aún por decidir. La memoria del gabinete corrige ahora en silencio los números imposibles de registros tocados a mano o dañados en lógica, y guarda un camino de migración documentado para futuros esquemas, mientras la capa de ambiente se mudó al mismo reloj monotónico del gramófono.
+
+
 ## Version 0.23.0 - El gramófono guarda la palabra
 
 El gramófono ya no comparte la noche con la música vanilla del menú: mientras el gabinete está abierto, la vieja banda sonora calla, y si el motor de sonido se recarga (F3+T o un cambio de paquete) la siguiente pieza se encola sola en vez de quedar muda para siempre. La tormenta ahora puede amainarse aparte: una nueva ayuda de Destellos reducidos apaga el relámpago sin congelar niebla, lluvia ni faroles, los eventos ambientales ganan subtítulos y el deslizador de ambiente responde ya en el idioma del lector.

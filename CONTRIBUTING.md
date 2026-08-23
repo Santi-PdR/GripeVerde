@@ -4,7 +4,7 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
 
 ## Estado vigente de la entrega
 
-- Version preparada: **v0.23.0**.
+- Version preparada: **v0.23.1**.
 - PR 14 (v0.22.0) ya mergeada en main (`4ca038d`).
 - Rama de trabajo vigente: `arena/01a02f45-gripeverde`.
 - Baseline: 60 Java, 25 locales con 93 claves cada uno, 25 cronicas, 35
@@ -72,10 +72,15 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   la version de `build.gradle`.
 - `verifyGripeVerdeMusicDurations` — la duracion real Vorbis de cada OGG de
   musica debe estar dentro de 1.5 s de `TRACK_DURATIONS_MS`.
+- `verifyGripeVerdeSubtitles` — toda clave de subtitulo no vacia (8 eventos
+  ambientales) debe existir en los 25 idiomas.
+- `verifyGripeVerdeSoundUsage` — ningun SoundEvent registrado sin uso fuera
+  del allowlist legacy (10 eventos devengados, ver javadoc de ModSounds).
 
 Ademas, hay un workflow de CI listo en `tools/ci/build.yml` (compila todo
-con JDK 17 en cada push/PR); se activa moviendolo a
-`.github/workflows/build.yml`.
+con JDK 17 en cada push/PR); se activa en un paso con
+`tools/ci/activar-ci.ps1` (la sesion no pudo subirlo directamente por
+permisos; el script usa las credenciales locales del owner).
 
 ## Codigo
 

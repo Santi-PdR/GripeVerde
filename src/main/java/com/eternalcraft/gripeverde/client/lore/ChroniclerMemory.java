@@ -57,6 +57,12 @@ public final class ChroniclerMemory {
     private static final String TEMP_FILE = "gripeverde-memory.tmp";
     private static final String CORRUPT_FILE = "gripeverde-memory.corrupt.json";
 
+    /**
+     * v0.23.1: version del esquema de la memoria. Cuando el esquema crezca hay
+     * que subir esta constante y encadenar el paso N -> N+1 en migrate().
+     */
+    private static final int SCHEMA_VERSION = 1;
+
     // Resultados del saludo de apertura de sesion (calculado en beginSession)
     private static int sessionGreetingKind = 0; // 0=ninguno 1=primera 2=regreso 3=mismo dia
     private static long sessionAbsenceDays = 0L;
@@ -81,7 +87,48 @@ public final class ChroniclerMemory {
         if (parsed.pendingNotes == null) parsed.pendingNotes = new ArrayList<>();
         if (parsed.counters == null) parsed.counters = new HashMap<>();
         if (parsed.guestbook == null) parsed.guestbook = new ArrayList<>();
+        // v0.23.1: bounds. Un JSON editado a mano (o corrompido logicamente)
+        // puede ser JSON valido y aun asi traer numeros imposibles.
+        if (parsed.visitCount < 0L) parsed.visitCount = 0L;
+        if (parsed.streak < 0) parsed.streak = 0;
+        if (parsed.firstVisitDay < -1L) parsed.firstVisitDay = -1L;
+        if (parsed.lastVisitDay < -1L) parsed.lastVisitDay = -1L;
+        if (parsed.firstVisitDay < 0L && parsed.lastVisitDay >= 0L) {
+            parsed.firstVisitDay = parsed.lastVisitDay;
+        }
+        parsed.counters.values().removeIf(java.util.Objects::isNull);
+        if (parsed.pendingNotes.size() > 256) {
+            parsed.pendingNotes = new ArrayList<>(parsed.pendingNotes.subList(0, 256));
+        }
+        if (parsed.guestbook.size() > 4096) {
+            parsed.guestbook = new ArrayList<>(parsed.guestbook.subList(0, 4096));
+        }
+        migrate(parsed);
         return parsed;
+    }
+
+    /**
+     * Pipeline de migracion versionada (v0.23.1). Cuando el esquema suba,
+     * SCHEMA_VERSION crece y aqui se encadenan pasos N -> N+1 idempotentes:
+     *
+     *   while (parsed.version < SCHEMA_VERSION) {
+     *       switch (parsed.version) { case 1: ...; }
+     *       parsed.version++;
+     *   }
+     *
+     * Un archivo escrito por una version MAS NUEVA del mod (esquema mayor)
+     * se conserva sin tocar y solo deja aviso en el log.
+     */
+    private static void migrate(Data parsed) {
+        if (parsed.version > SCHEMA_VERSION) {
+            LOGGER.warn("[GripeVerde] La memoria usa el esquema {} pero este mod entiende {}; se conserva sin migrar",
+                parsed.version, SCHEMA_VERSION);
+            return;
+        }
+        while (parsed.version < SCHEMA_VERSION) {
+            // Sin pasos todavia: el esquema 1 es el actual y original.
+            parsed.version++;
+        }
     }
 
     private static Data readData(Path path) throws IOException {

@@ -25,6 +25,13 @@ public class LivingAtmosphere {
         }
     }
 
+    /**
+     * v0.23.1: reloj monotonico compartido con MenuAmbience (lastBellMs).
+     * El coche del sepulturero y el seguimiento de la calle dejan de depender
+     * del reloj de pared del SO.
+     */
+    private static long nowMs() { return System.nanoTime() / 1_000_000L; }
+
     /** Accesibilidad: congela la animacion ambiental sin retirar la composicion. */
     private static boolean reducedMotion() {
         try {
@@ -290,7 +297,7 @@ public class LivingAtmosphere {
         // doblen las campanas, solo si el lector esta mirando la calle.
         if (!hearseActive) {
             long bellMs = com.eternalcraft.gripeverde.client.audio.MenuAmbience.lastBellMs();
-            long nowMs = System.currentTimeMillis();
+            long nowMs = nowMs();
             if (bellMs > lastHearseMs && nowMs - bellMs > 5000L
                     && nowMs - lastStreetLevelRenderMs < 600L) {
                 lastHearseMs = nowMs;
@@ -412,7 +419,7 @@ public class LivingAtmosphere {
             lanternPositions = VictorianSkyline.getLanternPositions(w, h);
             lastLanternW = w; lastLanternH = h;
         }
-        lastStreetLevelRenderMs = System.currentTimeMillis();
+        lastStreetLevelRenderMs = nowMs();
         renderStreet(g, w, h);
         renderPuddleRipples(g, w, h);
         renderLanternReflections(g, w, h);

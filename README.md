@@ -5,6 +5,16 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
+**v0.23.1 - Sellos y relojería**
+
+Parche de mantenimiento duro sobre v0.23.0: dos sellos de build nuevos
+(subtítulos resueltos en los 25 idiomas y ningún evento de sonido registrado
+sin uso fuera del allowlist legacy documentado), memoria del cronista con
+migración versionada + sanitize de bounds, y la capa de ambiente migrada al
+mismo reloj monotónico que la música (toda la relojería del mod es ya
+inmune a ajustes de hora del SO). La CI se activa en un paso con
+`tools/ci/activar-ci.ps1` (la sesión no pudo subir el workflow por permisos).
+
 **v0.23.0 - El gramófono guarda la palabra**
 
 Pasada transversal autorizada tras la revisión técnica completa del mod
@@ -30,7 +40,7 @@ y publica el jar como artifact.
 
 ### Estado de entrega
 
-- Implementación vigente: rama `arena/01a02f45-gripeverde` (v0.23.0).
+- Implementación vigente: rama `arena/01a02f45-gripeverde` (v0.23.1).
 - Base: commit `4ca038d` (merge de la PR 14, v0.22.0 ya mergeada).
 - Validación estática y documental completada; árbol local y remoto limpio.
 - La compilación semántica contra Forge corre en el PC del owner y, una vez
@@ -110,6 +120,10 @@ Verificaciones activas en `processResources`:
 - `verifyGripeVerdeVersionSync` (`GripeVerdeMod.VERSION` == version Gradle).
 - `verifyGripeVerdeMusicDurations` (duración real Vorbis de cada OGG de
   música vs `TRACK_DURATIONS_MS`, tolerancia 1.5 s).
+- `verifyGripeVerdeSubtitles` (toda clave de subtítulo no vacía existe en
+  los 25 idiomas).
+- `verifyGripeVerdeSoundUsage` (ningún SoundEvent registrado sin uso fuera
+  del allowlist legacy documentado en ModSounds).
 
 Ademas, `tools/ci/build.yml` es un workflow de CI listo: al moverlo a
 `.github/workflows/build.yml` compila cada push/PR con JDK 17 y publica el

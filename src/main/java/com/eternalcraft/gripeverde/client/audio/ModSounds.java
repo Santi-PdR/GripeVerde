@@ -10,6 +10,13 @@ import net.minecraftforge.registries.RegistryObject;
 /**
  * Registro de todos los SoundEvent custom de Gripe Verde.
  * Generado automaticamente â€” no editar manualmente.
+ *
+ * v0.23.1 censo de uso: 10 eventos registrados no aparecen en ninguna clase
+ * (UI_BUTTON_CLEAN, UI_OPEN, UI_CLOSE, UI_MODAL, UI_ERROR, UI_TAB,
+ * UI_SUCCESS, UI_PAPER_FALL, UI_CLICK_CREATE, UI_RESPAWN). Se conservan como
+ * legacy hasta que el owner decida conectarlos a momentos de UI concretos o
+ * retirarlos; el sello `verifyGripeVerdeSoundUsage` vigila que no entren
+ * nuevos eventos muertos y que ningun allowlisteado quede obsoleto.
  */
 public class ModSounds {
 

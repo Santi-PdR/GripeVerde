@@ -69,8 +69,16 @@ public class MenuAmbience {
     private static long lastEventTriggerMs=0L, nextEventDelayMs=0L, lastRareTriggerMs=0L, nextRareDelayMs=0L;
     private static RegistryObject<SoundEvent> lastEventTriggered=null, lastRareTriggered=null;
     private static long crowsPlayingUntilMs=0L;
-    public static boolean isCrowsRecentlyTriggered(){return System.currentTimeMillis()<crowsPlayingUntilMs;}
+    public static boolean isCrowsRecentlyTriggered(){return nowMs()<crowsPlayingUntilMs;}
     private static final RandomSource RNG = RandomSource.create();
+
+    /**
+     * v0.23.1: reloj monotonico (nanoTime) para la programacion de eventos,
+     * susurros, campanas y cuervos; estable frente a ajustes de hora del SO.
+     * Sus API publicas de tiempo (lastBellMs) ahora devuelven este reloj; su
+     * unico consumidor (LivingAtmosphere) usa el mismo reloj.
+     */
+    private static long nowMs() { return System.nanoTime() / 1_000_000L; }
 
     // ── v0.16.0: interacciones de oido ──────────────────────────────────────
     // Ventana en la que un susurro puede responderse con un gesto.
@@ -78,7 +86,7 @@ public class MenuAmbience {
     // Momento en que doblaron las campanas (el coche del sepulturero sale despues).
     private static long lastBellMs=0L;
 
-    public static boolean isWhisperOpen(){ return System.currentTimeMillis()<whisperRespondableUntilMs; }
+    public static boolean isWhisperOpen(){ return nowMs()<whisperRespondableUntilMs; }
 
     /** El lector responde al susurro (click en la vigilia dentro de la ventana). */
     public static void answerWhisper(){
@@ -187,7 +195,7 @@ public class MenuAmbience {
                 }catch(Exception e){ bl.instance=null; }
             }
         }
-        long now=System.currentTimeMillis();
+        long now=nowMs();
         lastEventTriggerMs=now; nextEventDelayMs=randomBetween(EVENT_MIN_MS,EVENT_MAX_MS);
         lastRareTriggerMs=now; nextRareDelayMs=randomBetween(RARE_MIN_MS,RARE_MAX_MS);
         lastEventTriggered=null; lastRareTriggered=null;
@@ -214,7 +222,7 @@ public class MenuAmbience {
         if(!active||muted) return;
         Minecraft mc=Minecraft.getInstance(); if(mc==null) return;
         ensureBaseLoopsAlive(mc, ambVol);
-        long now=System.currentTimeMillis();
+        long now=nowMs();
         if(now-lastEventTriggerMs>=nextEventDelayMs){ triggerFrom(mc,EVENTS_LAYER,true); lastEventTriggerMs=now; nextEventDelayMs=randomBetween(EVENT_MIN_MS,EVENT_MAX_MS); }
         if(now-lastRareTriggerMs>=nextRareDelayMs){ triggerFrom(mc,RARE_LAYER,false); lastRareTriggerMs=now; nextRareDelayMs=randomBetween(RARE_MIN_MS,RARE_MAX_MS); }
     }
@@ -256,12 +264,12 @@ public class MenuAmbience {
             else{
                 lastRareTriggered=chosen.sound;
                 MenuMusic.duckFor(2500L);
-                if(chosen.sound==ModSounds.MENU_CROWS) crowsPlayingUntilMs=System.currentTimeMillis()+4000L;
+                if(chosen.sound==ModSounds.MENU_CROWS) crowsPlayingUntilMs=nowMs()+4000L;
                 else if(chosen.sound==ModSounds.MENU_THUNDER) com.eternalcraft.gripeverde.client.render.LivingAtmosphere.triggerLightningFlash(1.0f);
-                else if(chosen.sound==ModSounds.MENU_BELL) lastBellMs=System.currentTimeMillis();
+                else if(chosen.sound==ModSounds.MENU_BELL) lastBellMs=nowMs();
                 else if(chosen.sound==ModSounds.MENU_AMBIENT_OCCASIONAL && chosen.pitchMax<0.8f){
                     // Un susurro: puede responderse durante unos segundos.
-                    whisperRespondableUntilMs=System.currentTimeMillis()+3000L;
+                    whisperRespondableUntilMs=nowMs()+3000L;
                 }
             }
         }catch(Exception e){ if(DEBUG_LOGGING) LOGGER.warn("[MenuAmbience] Sonido no disponible"); }

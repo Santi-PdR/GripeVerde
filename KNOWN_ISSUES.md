@@ -3,7 +3,51 @@
 La primera seccion describe el estado operativo vigente. Todas las secciones
 de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
-que v0.23.0 lo mencione expresamente.
+que v0.23.1 lo mencione expresamente.
+
+## v0.23.1 - Sellos y relojería (2026-08-23)
+
+### Cambios cerrados
+- Nuevo sello `verifyGripeVerdeSubtitles`: toda clave `subtitle` no vacia de
+  sounds.json debe existir, no vacia, en los 25 lang.
+- Nuevo sello `verifyGripeVerdeSoundUsage`: falla si un SoundEvent
+  registrado no aparece en el codigo. Los 10 eventos legacy sin uso
+  (censo del informe) quedan en allowlist grandfathered, documentados en
+  la javadoc de ModSounds, hasta decidir conexion o retirada; el sello
+  avisa si alguno deja de ser legacy.
+- ChroniclerMemory: SCHEMA_VERSION + pipeline migrate() documentado (pasos
+  N→N+1 idempotentes; esquema mas nuevo se conserva con aviso) y sanitize
+  de bounds (contadores negativos, firstVisitDay incoherente, nulls en
+  map, caps de listas).
+- MenuAmbience migra a reloj monotonico nanoTime junto con el rastreo de
+  calle de LivingAtmosphere (coche del sepulturero): sus unicos puntos de
+  contacto para `lastBellMs` ya usan el mismo reloj.
+- CI: `tools/ci/activar-ci.ps1` confirma 2 vias bloqueadas en sesion (git
+  push y API, 403/workflows-permission) y activa la CI con credenciales
+  locales del owner en un paso.
+- Bump: 0.23.0 -> 0.23.1. Conteos sin cambios: 60 Java, 25 lang (93
+  claves), 25 cronicas, 35 eventos, 42 OGG.
+
+### Riesgos activos / KI nuevos
+- **KI-54 (v0.23.1)**: con CI activada (activar-ci.ps1) confirmar build
+  verde en la rama y luego en cliente: hearse/cuervos/campana se comportan
+  igual tras la migracion a nanoTime; la memoria recuperada sigue
+  escribiendose y recuperandose (sanitize/migrate intactos); los 7 sellos
+  pasan locales.
+- KI-53 sigue abierto para la parte de cliente de v0.23.0 (audio vanilla
+  callado, watchdog F3+T, toggle destellos, subtitulos, Ctrl+0 off,
+  reemplazos exactos).
+
+---
+
+# HISTORIAL DE VERSIONES E INSTANTANEAS (NO OPERATIVO)
+
+Todo lo que sigue se conserva para trazabilidad. Los estados, riesgos, tags,
+rutas y planes llamados "actuales", "activos" o "vigentes" pertenecen a la
+version bajo la que fueron escritos; no sustituyen el estado v0.23.1 de la
+primera seccion.
+
+## v0.23.0 - El gramófono guarda la palabra (2026-08-23)
 
 ## v0.23.0 - El gramófono guarda la palabra (2026-08-23)
 

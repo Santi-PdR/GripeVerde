@@ -5,7 +5,7 @@ plugins {
     id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
 }
 
-version = '0.23.0'
+version = '0.23.1'
 group = 'com.eternalcraft.gripeverde'
 base { archivesName = 'gripeverde' }
 
@@ -370,4 +370,79 @@ tasks.register('verifyGripeVerdeMusicDurations') {
 
 tasks.named('processResources').configure {
     dependsOn tasks.named('verifyGripeVerdeMusicDurations')
+}
+
+tasks.register('verifyGripeVerdeSubtitles') {
+    group = 'verification'
+    description = 'Fails if a non-empty sounds.json subtitle key is missing or blank in any of the 25 lang files.'
+    doLast {
+        def soundsJson = file('src/main/resources/assets/gripeverde/sounds.json')
+        def parsed = new groovy.json.JsonSlurper().parse(soundsJson)
+        def required = ['en_us', 'en_gb', 'en_ca', 'en_au', 'en_nz',
+            'es_es', 'es_mx', 'es_ar', 'es_419', 'es_bo', 'es_cl', 'es_co',
+            'es_cr', 'es_do', 'es_ec', 'es_gt', 'es_hn', 'es_ni', 'es_pa',
+            'es_pe', 'es_pr', 'es_py', 'es_sv', 'es_uy', 'es_ve']
+        def json = new groovy.json.JsonSlurper()
+        def langDir = file('src/main/resources/assets/gripeverde/lang')
+        def langs = [:]
+        required.each { loc ->
+            langs[loc] = json.parse(new File(langDir, "${loc}.json")) as Map
+        }
+        def problems = []
+        parsed.each { ev, payload ->
+            def sub = (payload instanceof Map) ? payload.subtitle : null
+            if (sub instanceof String && sub.trim().length() > 0) {
+                required.each { loc ->
+                    def v = langs[loc][sub]
+                    if (!(v instanceof String) || v.trim().isEmpty()) {
+                        problems << "${ev}: subtitle ${sub} missing or blank in ${loc}"
+                    }
+                }
+            }
+        }
+        if (!problems.isEmpty()) {
+            throw new GradleException("Subtitle validation failed:\n" + problems.join('\n'))
+        }
+    }
+}
+
+tasks.named('processResources').configure {
+    dependsOn tasks.named('verifyGripeVerdeSubtitles')
+}
+
+tasks.register('verifyGripeVerdeSoundUsage') {
+    group = 'verification'
+    description = 'Fails if a registered SoundEvent has no code usage, outside the grandfathered legacy allowlist.'
+    doLast {
+        // 10 eventos legacy sin uso devengados en v0.23.1: se conservan hasta
+        // que el owner decida conectarlos a momentos de UI o retirarlos.
+        // Si alguno se conecta, sacarlo de la lista (el sello lo avisa); si
+        // aparece un evento muerto nuevo, el build falla.
+        def legacyAllowlist = ['UI_BUTTON_CLEAN', 'UI_OPEN', 'UI_CLOSE', 'UI_MODAL',
+            'UI_ERROR', 'UI_TAB', 'UI_SUCCESS', 'UI_PAPER_FALL', 'UI_CLICK_CREATE',
+            'UI_RESPAWN'] as Set
+        def modSounds = file('src/main/java/com/eternalcraft/gripeverde/client/audio/ModSounds.java').getText('UTF-8')
+        def fields = [] as Set
+        (modSounds =~ /RegistryObject<SoundEvent>\s+(\w+)\s*=\s*reg\(/).each { m -> fields << m[1] }
+        def code = new StringBuilder()
+        fileTree('src/main/java') { include '**/*.java'; exclude '**/ModSounds.java' }.each { f ->
+            code.append(f.getText('UTF-8'))
+        }
+        def codeText = code.toString()
+        def unused = fields.findAll { f -> !codeText.contains(f) } as Set
+        def problems = []
+        (unused - legacyAllowlist).sort().each {
+            problems << "${it}: SoundEvent registrado sin uso en codigo (conectarlo o retirarlo)"
+        }
+        (legacyAllowlist - unused).sort().each {
+            problems << "${it}: ya esta en uso; sacarlo del allowlist legacy del sello"
+        }
+        if (!problems.isEmpty()) {
+            throw new GradleException("Sound usage validation failed:\n" + problems.join('\n'))
+        }
+    }
+}
+
+tasks.named('processResources').configure {
+    dependsOn tasks.named('verifyGripeVerdeSoundUsage')
 }

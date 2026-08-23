@@ -280,7 +280,11 @@ proyecto convendría confirmación del owner antes de implementar.
 
 ## PROPUESTAS FUTURAS (descubiertas durante la implementación — PENDIENTES de autorización del owner, ordenadas por valor/esfuerzo)
 
-1. **Censo de eventos de sonido: 10 de 35 registrados nunca se usan.**
+1. ~~**Censo de eventos de sonido: 10 de 35 registrados nunca se usan.**~~
+   **IMPLEMENTADA v0.23.1** (opción conservadora: allowlist grandfathered +
+   sello `verifyGripeVerdeSoundUsage` + censo documentado en la javadoc de
+   ModSounds). La decisión visible pendiente — conectar esos 10 sonidos a
+   momentos de UI o retirarlos — se mueve a PROPUESTAS VISIBLES (ítem V2).
    `UI_BUTTON_CLEAN, UI_OPEN, UI_CLOSE, UI_MODAL, UI_ERROR, UI_TAB,
    UI_SUCCESS, UI_PAPER_FALL, UI_CLICK_CREATE, UI_RESPAWN` están en el
    registro pero ninguna clase los referencia (sus OGG viven por otros
@@ -289,7 +293,7 @@ proyecto convendría confirmación del owner antes de implementar.
    mundo, pestañas), o (b) desregistrarlos y limpiar `sounds.json`. Medir:
    sello nuevo `verifyGripeVerdeSoundUsage` que falle si un evento
    registrado no aparece en el código.
-2. **Sello `verifyGripeVerdeSubtitles`.** Hacer permanente la comprobación
+2. ~~**Sello `verifyGripeVerdeSubtitles`.**~~ **IMPLEMENTADA v0.23.1**. Hacer permanente la comprobación
    que corrí en Python: toda clave `subtitle` no vacía de `sounds.json` debe
    existir en los 25 lang. ~25 líneas de Groovy; impide regresiones al
    tocar sonidos.
@@ -297,7 +301,9 @@ proyecto convendría confirmación del owner antes de implementar.
    `lastSeenVersion` en la memoria del cronista y al abrir el historial
    desplazarse a la entrada de la versión instalada con un sello "Nuevo"
    si el jugador actualizó desde una versión anterior. UX + diegesis.
-4. **Migración versionada + sanitize de bounds de la memoria.** El campo
+4. ~~**Migración versionada + sanitize de bounds de la memoria.**~~
+   **IMPLEMENTADA v0.23.1** (`SCHEMA_VERSION`, `migrate()` con pasos N→N+1
+   documentados, clamps y caps; esquema futuro se conserva con aviso). El campo
    `Data.version = 1` ya existe pero no hay pipeline de migración; añadir
    `migrate(Data)` documentada y clamps (visitCount/streak/counters
    negativos → 0) por si el JSON se edita a mano o se corrompe
@@ -307,7 +313,9 @@ proyecto convendría confirmación del owner antes de implementar.
    una `DynamicTexture` al hacer resize y solo blittear → ahorro de CPU
    por cuadro en todas las pantallas Diary. Requiere validar paridad
    visual pixel-por-pixel en las 4 escalas GUI.
-6. **MenuAmbience a reloj monotónico.** Quedó fuera de la migración a
+6. ~~**MenuAmbience a reloj monotónico.**~~ **IMPLEMENTADA v0.23.1**
+   (migración completa incluyendo `lastBellMs` y su único consumidor,
+   `LivingAtmosphere`: hearse/cuervos/campanas ahora en nanoTime). Quedó fuera de la migración a
    `nanoTime` porque sus APIs públicas (`lastBellMs`,
    `isCrowsRecentlyTriggered`, `isWhisperOpen`) se comparan con
    `currentTimeMillis` en pantallas; migrar API y call sites juntos.
@@ -327,6 +335,46 @@ proyecto convendría confirmación del owner antes de implementar.
 10. **Job de release-candidate en CI (manual).** `workflow_dispatch` que
     suba el jar a una Release *draft* sin publicarla, respetando la regla
     "tags solo tras validación del owner".
+
+## PROPUESTAS VISIBLES / EFECTOS (presentadas al owner el 2026-08-23 — NO implementar sin autorización)
+
+Cosas que SE NOTAN en pantalla u oído. Cada una respeta las reglas madre
+(sin gameplay, sin resourcepacks, render Java puro).
+
+- **V1. "Crónica nueva" en el Changelog** (visible): al abrir el historial,
+  salto automático a la entrada de la versión instalada con sello "Nuevo" si
+  el jugador actualizó desde otra versión (persiste `lastSeenVersion` en la
+  memoria). UX real, esfuerzo medio.
+- **V2. Conectar los 10 sonidos legacy a momentos de UI** (audible): propuesta
+  de mapeo — `ui.error` para formularios inválidos (DirectJoin/EditServer),
+  `ui.click_create`/`ui.click_destroy` para crear/borrar mundos o servidores,
+  `ui.tab` para Archive/Changelog, `ui.paper_fall` al cerrar pantallas largas,
+  `ui.open`/`ui.close` para Multiplayer y Packs. Cierra el censo retirando el
+  allowlist del sello.
+- **V3. "Noche de tormenta"** (visible + audible + lore): algunas sesiones
+  (baja probabilidad, semilla del día real) la vigilia arranca con tormenta
+  intensa — lluvia al 150 %, truenos más frecuentes, relámpago con silueta
+  recortada — y descubrimiento propio #47 con ficha en la Sala de consulta.
+  Respeta Destellos reducidos/Movimiento reducido de v0.23.0.
+- **V4. Escritura de pluma en Changelog** (visible, diegético): las entradas
+  "se escriben" letra a letra con leve grano de tinta la primera vez que se
+  abren por sesión (solo al scroll, respetando Movimiento reducido), con el
+  scratch de `ui.scroll` muy bajo.
+- **V5. Gotas de lluvia en el pergamino** (visible): 2-3 gotas que resbalan
+  por los bordes de la hoja desde el borde superior en pantallas Diary, con
+  estela de tinta diluida. Barato (partículas capadas) y muy atmosférico.
+- **V6. Faroles reactivos al cursor** (visible): acercar el mouse a un farol
+  inclina la llama lejos del cursor y dispersa las polillas; sin coste de
+  gameplay, reutiliza el sistema hover existente.
+- **V7. Logo del mod (logo.png)** (visible): sello EC-QV/1897 en la ficha de
+  la lista de Mods (`logoFile` en mods.toml). Necesita arte aprobado.
+- **V8. Transición de tinta entre pantallas** (visible): wipe de tinta breve
+  (300 ms) al pasar Title → Options o abrir el Archive, imitando una pluma
+  que cruza la hoja. Efecto de firma para la identidad del mod.
+
+Mi recomendación dentro de este lote: **V1 + V5 + V3** (la más barata de
+alto impacto, la atmosférica pura y la que da ficha nueva de
+descubrimiento). Ninguna se tocará hasta que el owner elija.
 
 ## Referencias externas usadas en la búsqueda
 

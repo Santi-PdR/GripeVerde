@@ -8,7 +8,7 @@
   arena/01a02cee-gripeverde" que sobreviven en el historico son instantaneas
   archivadas, no instrucciones.
 - Base respaldada: v0.22.0, commit `4ca038ddab972ca59435353330c9ccda4a86d581`.
-- Implementacion vigente: v0.23.0 en esta rama (ver DECISION 2026-08-23
+- Implementacion vigente: v0.23.1 en esta rama (ver DECISIONES 2026-08-23
   mas abajo).
 - Restricciones funcionales absolutas: escena completa, faroles permanentes,
   sin kiosco/Heraldo, sin modo automatico por FPS, sin gameplay y sin
@@ -71,15 +71,37 @@ archivos se creo el bundle externo
 - Compilacion semantica Gradle/Forge no ejecutada en el sandbox (sin Java
   17): queda delegada a la CI y al PC del owner (KI-53).
 - Changelog in-game actualizado en los 25 idiomas (manifestacion observable:
-  audio, accesibilidad y subtitulos nuevos).
+### DECISION 2026-08-23 (segunda vuelta): v0.23.1 - Sellos y relojería
+
+El owner autorizo implementar el lote recomendado del informe y pidio la
+activacion de la CI resuelta de forma automatica (quedo como script, ver
+mas abajo); las mejoras CON superficie visible/efectos quedan reservadas
+hasta nueva autorizacion (ver REVISION_MOD.md, seccion de propuestas).
+
+- Build: sellos nuevos `verifyGripeVerdeSubtitles` (subtitle != "" debe
+  existir en los 25 lang) y `verifyGripeVerdeSoundUsage` (SoundEvent sin
+  uso -> fallo; 10 legacy en allowlist grandfathered documentada en
+  ModSounds).
+- ChroniclerMemory: SCHEMA_VERSION=1 + migrate() (pasos N→N+1, esquema
+  futuro se conserva con warn) + sanitize de bounds (clamps, nulls, caps
+  256 notas / 4096 guestbook).
+- MenuAmbience -> nanoTime con LivingAtmosphere como unico consumidor de
+  lastBellMs migrado al mismo reloj (hearse/cuervos/campana estables).
+- CI: ambas vias automaticas bloqueadas (git push: workflows permission
+  denied; gh api: 403 Resource not accessible by integration). Solucion:
+  `tools/ci/activar-ci.ps1` ejecutable por el owner en su PC; activa la CI
+  con sus credenciales en un paso.
+- Bump sincronizado: build.gradle + GripeVerdeMod.VERSION -> 0.23.1; docs
+  y 25 cronicas in-game al dia (parche: sellos, memoria y relojeria).
 
 ### SIGUIENTE PASO OPERATIVO VIGENTE
 
-No implementar planes de gameplay ni los items del bloque "propuestas
-futuras" de REVISION_MOD.md sin autorizacion expresa del owner. La secuencia
-vigente: validar KI-53 en cliente real (activando antes la CI de tools/ci),
-corregir solo si esa prueba encuentra defectos y, despues, autorizar
-tag/release v0.23.0 (junto con el pendiente de v0.22.0).
+No implementar planes de gameplay ni los items de "propuestas futuras"/
+"propuestas visibles" de REVISION_MOD.md sin autorizacion expresa del
+owner. La secuencia vigente: activar la CI con `tools/ci/activar-ci.ps1`,
+validar KI-53/KI-54 en cliente real, corregir solo si esa prueba encuentra
+defectos y, despues, autorizar tag/release v0.23.1 (con los pendientes de
+v0.23.0 y v0.22.0).
 
 ## Addendum operativo archivado (v0.22.0)
 

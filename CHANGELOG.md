@@ -1,5 +1,28 @@
 # Eternal Craft: Gripe Verde
 
+## v0.23.1 - Sellos y relojería
+
+Entrega de mantenimiento dura (sin cambios de escena, por eso va como
+parche): el owner autorizo implementar el lote recomendado de la revision.
+
+Dos sellos nuevos de build: `verifyGripeVerdeSubtitles` (toda clave de
+subtitulo no vacia de sounds.json debe existir en los 25 idiomas) y
+`verifyGripeVerdeSoundUsage` (ningun SoundEvent registrado puede quedar
+sin uso en el codigo; los 10 eventos legacy sin uso quedan en allowlist
+grandfathered, documentados en ModSounds, hasta decidir su destino).
+
+La memoria del cronista gana sanitize de bounds (numeros imposibles de un
+JSON tocado a mano se corrigen en silencio) y un pipeline de migracion
+versionada documentado (SCHEMA_VERSION + pasos N→N+1) para futuros
+esquemas. La capa de ambiente (MenuAmbience) migra al mismo reloj
+monotonico nanoTime que la musica, junto con el rastreo de calle de
+LivingAtmosphere; los temporizadores del mod ya no dependen del reloj de
+pared del SO.
+
+La CI se entrega lista para activar con `tools/ci/activar-ci.ps1` (la
+sesion no tiene permiso `workflows`; el script la activa con las
+credenciales locales del owner en un paso).
+
 ## v0.23.0 - El gramófono guarda la palabra
 
 Pasada transversal pedida expresamente tras la revision tecnica del

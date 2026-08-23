@@ -2,6 +2,11 @@
 ## Chronicle under seal
 
 
+## Version 0.23.1 - Seals and clockwork
+
+No new scenery this round: the build gains two more seals. One guards that every ambient subtitle the city announces exists in all twenty-five languages; the other counts the registered sound events and refuses new silent entries, grandfathering the ten legacy ones with their contribution still owed. The cabinet's memory now quietly mends impossible numbers in hand-edited or logically damaged records and keeps a documented migration road for future archives, while the ambience layer moved onto the same monotonic clockwork as the gramophone.
+
+
 ## Version 0.23.0 - The gramophone keeps the floor
 
 The gramophone no longer shares the night with vanilla menu music: while the cabinet is open the old soundtrack stays silent, and if the sound engine is reloaded (F3+T or a pack change) the next piece queues by itself instead of falling forever quiet. The storm can now be tamed on its own: a new Reduced flashes aid dims lightning without freezing fog, rain or lamps, ambient events gain subtitles, and the ambience slider answers in the reader's own language.
