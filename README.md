@@ -5,6 +5,10 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
+**v0.25.1 - El cilindro original** (hotfix: la lluvia y el viento vuelven
+a los masters originales amplificados — se retira la síntesis de 0.24.0;
+mezcla de lluvia 0.30 → 0.45)
+
 **v0.25.0 - El que mira la tormenta**
 
 Tres easter eggs nuevos en la vigilia (archivo: 52 fichas): en noche de
@@ -72,7 +76,7 @@ y publica el jar como artifact.
 
 ### Estado de entrega
 
-- Implementación vigente: rama `arena/01a02f45-gripeverde` (v0.25.0).
+- Implementación vigente: rama `arena/01a02f45-gripeverde` (v0.25.1).
 - Base: commit `4ca038d` (merge de la PR 14, v0.22.0 ya mergeada).
 - Validación estática y documental completada; árbol local y remoto limpio.
 - La compilación semántica contra Forge corre en el PC del owner y, una vez

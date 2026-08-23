@@ -5,6 +5,35 @@ de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
 que una seccion posterior lo mencione expresamente.
 
+## v0.25.1 - El cilindro original (2026-08-23)
+
+### Cambios cerrados
+- **Lluvia sintetizada "bugeada" (reporte owner en cliente)**: el loop
+  regenerado por sintesis en 0.24.0 no convencio al oido. El owner pidio
+  usar "los sonidos que ya existian": se restauran los masters originales
+  de lluvia (recuperado del commit 447c290) y viento, amplificados en vez
+  de regrabados.
+- **Lluvia**: ganancia pura, normalizada a pico ~0.83 conservando la
+  cresta (~19); sin limitadores (descartado un soft-knee con NaN y picos
+  >1.0; rehecho desde el master). Mezcla del loop 0.30 -> 0.45.
+- **Viento**: master original amplificado a RMS ~0.085 (pico 0.80).
+- **Costuras**: medidas 0.0076 (lluvia) y 0.0000 (viento): empalmaban
+  limpios; no se añadio crossfade; duraciones y nombres intactos (30 s).
+- `tools/audio/regenerate_menu_ambience.py` archivado con nota (ya no es
+  fuente de esos loops).
+
+### Riesgos activos / KI nuevos
+- **KI-59 (v0.25.1)**: validar en cliente real: (a) la lluvia es la
+  grabacion original — gotas separadas, sin estatica ni chasquidos, loop
+  sin clicks en el empalme; (b) el viento es el original, presente de
+  fondo sin silbidos raros; (c) el slider de ambiente mueve ambos en vivo
+  y la musica sigue sin ser tapada; (d) en tormenta forzada
+  (`STORM_CHANCE = 1.0f` temporal) la lluvia toma protagonismo (x1.8, osea
+  0.81 de ganancia) SIN distorsionar; (e) la ciudad, los susurros y los
+  pasos (contenido original x3 de 0.24.0) suenan naturales.
+- KI-53/54/55/56/57/58 siguen abiertos; el jar candidato para Agus pasa a
+  ser **0.25.1**.
+
 ## v0.25.0 - El que mira la tormenta (2026-08-23)
 
 ### Cambios cerrados

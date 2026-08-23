@@ -3,6 +3,10 @@
 
 
 
+## Version 0.25.1 - The original cylinder
+
+The new rain sounded like machine static, and the chronicler owns the mistake: the cylinder had been re-recorded instead of cleaned. The synthesis is withdrawn and the original recording of rain on cobblestone returns — the same as ever, drops and all — now carefully amplified without crushing its peaks; the street wind, too, returns to its original master, simply raised in volume. To give the rain back its place in the mix, its inner dial steps up. Both loop seams were measured: they joined clean, so they carry no crossfade.
+
 ## Version 0.25.0 - The storm watcher
 
 Three new secrets fit in one hand. On nights when the sky breaks, whoever stays through three flashes before the vigil without leaving earns a card of their own: the chronicler counts the lightning for you. The rain, too, has fallen close enough to touch: a well-aimed drop lets itself be caught with a click, sounds like a needle on the cylinder, and climbs back to the sky (it never rains over the buttons). And in the hidden telegraph, typing DOCTOR brings a whisper and a low bell: the elixir had a doctor, the practice still stands, and his signature keeps arriving on forms nobody sends. The archive grows to fifty-two cards.

@@ -50,8 +50,10 @@ public class MenuAmbience {
     private static final List<Entry> RARE_LAYER = new ArrayList<>();
 
     static {
+        // v0.25.1: la lluvia vuelve al master original (ganancia pura, cresta
+        // intacta); su mezcla sube 0.30 -> 0.45 para sonar clara sin siseo.
         BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_WIND, 0.35f, 1.25f));
-        BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_RAIN, 0.30f, 1.80f));
+        BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_RAIN, 0.45f, 1.80f));
         BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_CITY, 0.20f, 0.80f));
 
         EVENTS_LAYER.add(new Entry(ModSounds.MENU_FOOTSTEPS, 45,0.25f,0.90f,1.10f));

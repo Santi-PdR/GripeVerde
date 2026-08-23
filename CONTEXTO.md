@@ -8,7 +8,7 @@
   arena/01a02cee-gripeverde" que sobreviven en el historico son instantaneas
   archivadas, no instrucciones.
 - Base respaldada: v0.22.0, commit `4ca038ddab972ca59435353330c9ccda4a86d581`.
-- Implementacion vigente: v0.25.0 en esta rama (ver DECISIONES 2026-08-23
+- Implementacion vigente: v0.25.1 en esta rama (ver DECISIONES 2026-08-23
   mas abajo).
 - Restricciones funcionales absolutas: escena completa, faroles permanentes,
   sin kiosco/Heraldo, sin modo automatico por FPS, sin gameplay y sin
@@ -214,13 +214,33 @@ gameplay (reglas madre intactas):
   25 cronicas in-game al dia. Espejo Python: 8/8 sellos + balance OK.
 - KI-58 registra la validacion pendiente en cliente real.
 
+### DECISION 2026-08-23 (septima vuelta): v0.25.1 - El cilindro original
+
+Feedback del owner tras escuchar la 0.25.0 en cliente: "El sonido de la
+lluvia que creaste esta bugeado creo, deberias usar los sonidos que ya
+existian." Leccion registrada: no re-sintetizar contenido que el owner
+reconoce; restaurar el master y amplificar.
+
+- Lluvia: se retira la sintesis de 0.24.0 y vuelve el master original
+  (commit 447c290) con ganancia pura, normalizado a pico ~0.83 conservando
+  la cresta (~19); sin limitadores (descartado un soft-knee con NaN y
+  picos >1.0, rehecho desde el master). Mezcla `BaseLoop` lluvia 0.30 ->
+  0.45.
+- Viento: master original amplificado a RMS ~0.085 (pico 0.80). Costuras
+  de loop medidas: limpias (0.0076 / 0.0000), sin crossfade; 30 s ambos.
+- `tools/audio/regenerate_menu_ambience.py` archivado con nota en cabecera
+  (ya no es la fuente de esos loops).
+- Bump sincronizado: build.gradle + GripeVerdeMod.VERSION -> 0.25.1; docs y
+  25 cronicas in-game al dia. Espejo Python: 8/8 sellos + balance OK.
+- KI-59 registra la validacion pendiente en cliente real.
+
 ### SIGUIENTE PASO OPERATIVO VIGENTE
 
 No implementar planes de gameplay ni los items de "propuestas futuras"/
 "propuestas visibles" de REVISION_MOD.md sin autorizacion expresa del
 owner. La secuencia vigente: activar la CI con `tools/ci/activar-ci.ps1`,
-validar KI-53/KI-54/KI-55/KI-56/KI-57/KI-58 en cliente real (en particular
-reenviar el jar 0.25.0 al jugador que reporto el crash y comprobar que el
+validar KI-53 a KI-59 en cliente real (en particular reenviar
+el jar 0.25.1 al jugador que reporto el crash y comprobar que el
 ambiente
 ya se escucha, con atencion a que los loops nuevos no tapen la musica),
 corregir solo si esa prueba encuentra defectos y, despues, autorizar

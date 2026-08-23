@@ -1,5 +1,30 @@
 # Eternal Craft: Gripe Verde
 
+## v0.25.1 - El cilindro original
+
+Hotfix de contenido (parche): la lluvia sintetizada de 0.24.0 "sonaba
+bugeada" (reporte del owner al escucharla en cliente). Decision: retirar
+la sintesis y restaurar los masters originales de lluvia y viento,
+amplificados en lugar de regrabados — usar "los sonidos que ya existian",
+pedido expreso del owner.
+
+- **Lluvia**: master original (el de -32 dB RMS) con ganancia pura,
+  normalizado a pico ~0.83 sin tocar la cresta (~19): nada de limitadores
+  (el primer intento de soft-knee genero NaN y picos >1.0 — descartado y
+  rehecho desde el master). Su volumen de mezcla sube 0.30 -> 0.45 en
+  `MenuAmbience` para que vuelva a sonar clara sin siseo aplastado.
+- **Viento**: master original (el de -64 dB RMS) amplificado a RMS ~0.085
+  (pico 0.80 tras decodificacion).
+- **Costuras medidas**: ambos masters empalmaban limpios (seam 0.0076 y
+  0.0000), asi que no llevan crossfade: loops identicos a los originales.
+- `tools/audio/regenerate_menu_ambience.py` queda archivado con nota en
+  cabecera: ya no es la fuente de esos dos loops (registro historico del
+  intento de sintesis).
+
+Conteos: 60 Java, 25 lang (93 claves), 25 cronicas, 35 eventos de sonido
+(33 en uso; 8 legacy en allowlist), 42 OGG. Espejo Python: 8/8 sellos +
+balance OK.
+
 ## v0.25.0 - El que mira la tormenta
 
 Entrega menor de easter eggs pedida por el owner ("algunos easter eggs

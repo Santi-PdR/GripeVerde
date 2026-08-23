@@ -3,6 +3,12 @@
 """
 Gripe Verde — regeneracion de los loops de ambiente del gabinete (v0.24.0).
 
+!! ARCHIVADO EN v0.25.1 (El cilindro original): la lluvia sintetizada sonaba
+!! "bugeada" en cliente (reporte del owner). Lluvia y viento vuelven a los
+!! masters originales amplificados (ganancia pura / soft-knee), asi que este
+!! script YA NO es la fuente de esos dos loops: se conserva solo como
+!! registro historico del intento de sintesis. No ejecutar contra el repo.
+
 POR QUE EXISTE ESTE SCRIPT
 --------------------------
 Diagnostico del reporte "no se escucha el ambiente" (v0.23.x): el motor,

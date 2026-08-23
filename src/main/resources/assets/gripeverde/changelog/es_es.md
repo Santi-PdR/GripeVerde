@@ -3,6 +3,10 @@
 
 
 
+## Version 0.25.1 - El cilindro original
+
+La lluvia nueva sonaba a estática de máquina, y el cronista reconoce el error: había regrabado el cilindro en vez de limpiarlo. Se retira la síntesis y vuelve la grabación original de la lluvia sobre el empedrado —la de siempre, con sus gotas separadas— ahora amplificada con cuidado y sin comprimir sus picos; el viento de la calle también vuelve a su master original, simplemente subido de volumen. Para que la lluvia recupere su sitio en la mezcla, su regulador interno sube un paso. Las costuras de ambos loops quedaron medidas: empalmaban limpias, así que no llevan crossfade.
+
 ## Version 0.25.0 - El que mira la tormenta
 
 Tres secretos nuevos caben en una mano. En las noches en que el cielo se rompe, quien aguanta tres relámpagos frente a la vigilia sin irse recibe ficha propia: el cronista cuenta los destellos por ti. La lluvia, además, cayó lo bastante cerca para tocarla: una gota bien apuntada se deja atrapar con un clic, suena como aguja sobre cilindro y vuelve al cielo (sobre los botones nunca llueve). Y en el telégrafo oculto, escribir DOCTOR trae un susurro y una campana baja: el elixir tuvo un médico, el oficio sigue en pie y su firma aún llega en formularios que nadie envía. El archivo crece a cincuenta y dos fichas.

@@ -364,6 +364,13 @@ proyecto convendría confirmación del owner antes de implementar.
 > numéricos Java sobre los 60 archivos. Contenido de 0.24.0 intacto;
 > para distribuir (incluido Agus): usar **0.24.1**.
 >
+> **ADDENDUM 2026-08-23 (v0.25.1 - El cilindro original):** la lluvia
+> sintetizada de 0.24.0 sonaba "bugeada" en cliente (owner). Se retira la
+> síntesis: lluvia y viento vuelven a los masters originales amplificados
+> (ganancia pura, cresta intacta; mezcla lluvia 0.30→0.45). El script de
+> regeneración queda archivado. Lección: restaurar y amplificar antes que
+> regrabar contenido que el owner reconoce.
+>
 > **ADDENDUM 2026-08-23 (v0.25.0 - El que mira la tormenta):** tres easter
 > eggs nuevos autorizados por el owner — `storm_watcher` (quedarse tres
 > relámpagos frente a la vigilia en noche de tormenta; contador de destellos
