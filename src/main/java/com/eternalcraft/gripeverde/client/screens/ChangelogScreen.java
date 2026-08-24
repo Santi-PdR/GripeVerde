@@ -58,6 +58,12 @@ public class ChangelogScreen extends Screen {
     // v0.24.0: la cronica se abre donde quedo la pluma (entrada de la version instalada)
     private Row newVersionRow = null;
     private boolean arrivedFreshVersion = false;
+    // v0.28.0: si el gabinete avanzo mas de una edicion desde la ultima
+    // lectura, TODAS las entradas saltadas amanecen con lacre, no solo la
+    // vigente (la pluma, en cambio, escribe unicamente la mas nueva).
+    private final java.util.List<Row> freshRows = new java.util.ArrayList<>();
+    private static final java.util.regex.Pattern VERSION_HEAD =
+        java.util.regex.Pattern.compile("^(?:Version\\s+)?(\\d+)\\.(\\d+)\\.(\\d+)");
 
     // v0.27.0 (V4): la entrada recien llegada se escribe letra a letra en
     // esta visita, y solo en esta. Una mano segura: minimo 170 caracteres
@@ -284,6 +290,7 @@ public class ChangelogScreen extends Screen {
     private void jumpToFreshVersion() {
         this.newVersionRow = null;
         this.arrivedFreshVersion = false;
+        this.freshRows.clear();
         String current;
         try { current = com.eternalcraft.gripeverde.GripeVerdeMod.VERSION; }
         catch (Throwable t) { return; }
@@ -292,6 +299,18 @@ public class ChangelogScreen extends Screen {
         try { seen = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.lastSeenVersion(); }
         catch (Throwable t) { return; }
         if (current.equals(seen)) return;
+        // v0.28.0: todas las entradas posteriores a la ultima leida llevan
+        // lacre esta visita (si se saltaron ediciones, no solo la vigente).
+        int[] seenTriple = parseTriple(seen);
+        if (seenTriple != null) {
+            for (Row r : rows) {
+                if (r.type != LT.H1) continue;
+                int[] v = parseTriple(r.text);
+                if (v != null && compareTriple(v, seenTriple) > 0) {
+                    freshRows.add(r);
+                }
+            }
+        }
         int idx = -1;
         for (int i = 0; i < rows.size(); i++) {
             Row r = rows.get(i);
@@ -347,6 +366,26 @@ public class ChangelogScreen extends Screen {
     private static boolean reducedFlashes() {
         try { return com.eternalcraft.gripeverde.config.ClientConfig.REDUCE_FLASHES.get(); }
         catch (Throwable t) { return false; }
+    }
+
+    // v0.28.0: triple de version. Acepta encabezados "Version X.Y.Z - ..."
+    // y numeros desnudos ("X.Y.Z", como GripeVerdeMod.VERSION). null si no
+    // se puede leer.
+    private static int[] parseTriple(String text) {
+        if (text == null) return null;
+        try {
+            java.util.regex.Matcher m = VERSION_HEAD.matcher(text.trim());
+            if (!m.find()) return null;
+            return new int[]{ Integer.parseInt(m.group(1)),
+                Integer.parseInt(m.group(2)), Integer.parseInt(m.group(3)) };
+        } catch (Throwable t) { return null; }
+    }
+
+    private static int compareTriple(int[] a, int[] b) {
+        for (int i = 0; i < 3; i++) {
+            if (a[i] != b[i]) return a[i] < b[i] ? -1 : 1;
+        }
+        return 0;
     }
 
     /** v0.24.0: sello de lacre junto a la entrada recien llegada. */
@@ -429,7 +468,7 @@ public class ChangelogScreen extends Screen {
                         int vis = Math.max(0, Math.min(len, penBudget - penConsumed));
                         if (vis >= len) {
                             renderRow(g, row, cx, y, cw);
-                            if (arrivedFreshVersion && row == newVersionRow) {
+                            if (freshRows.contains(row)) {
                                 drawNewSeal(g, cx, y, cw);
                             }
                         } else {
@@ -446,7 +485,7 @@ public class ChangelogScreen extends Screen {
                         penConsumed += len;
                     } else {
                         renderRow(g, row, cx, y, cw);
-                        if (arrivedFreshVersion && row == newVersionRow) {
+                        if (freshRows.contains(row)) {
                             drawNewSeal(g, cx, y, cw);
                         }
                     }
@@ -485,6 +524,23 @@ public class ChangelogScreen extends Screen {
             g.fill(bx2, cy,  bx2 + 3, cy + bh, DiaryTheme.withAlpha(DiaryTheme.PAPER_STAINED, 110));
             g.fill(bx2, ty2, bx2 + 3, ty2 + th, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 190));
 
+        }
+
+        // v0.28.0: el folio de la bitacora, centrado al pie del papel.
+        // Avanza con la lectura: "folio N · M" (hoja actual de cuantas hay).
+        if (!loadError) {
+            int pages = Math.max(1, (int) Math.ceil((maxScroll + ch) / (double) ch));
+            int cur = Math.max(1, Math.min(pages,
+                (int) Math.floor(scrollY / (double) Math.max(1, ch)) + 1));
+            String folio = "folio " + cur + " \u00b7 " + pages;
+            int fw = this.font.width(folio);
+            int fx = px + (pw - fw) / 2;
+            int fy = py + ph - 16;
+            int orn = DiaryTheme.withAlpha(DiaryTheme.BRONZE, 110);
+            g.fill(fx - 14, fy + 4, fx - 6, fy + 5, orn);
+            g.fill(fx + fw + 6, fy + 4, fx + fw + 14, fy + 5, orn);
+            g.drawString(this.font, folio, fx, fy,
+                DiaryTheme.withAlpha(DiaryTheme.SEPIA_LIGHT, 190), false);
         }
 
         super.render(g, mouseX, mouseY, partialTick);

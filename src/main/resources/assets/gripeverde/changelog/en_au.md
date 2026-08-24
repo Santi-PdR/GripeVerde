@@ -3,6 +3,10 @@
 
 
 
+## Version 0.28.0 - The drops and the folios
+
+The ink the curtain drags no longer passes dry: drops break off its edge, slide a short span and leave their fine trail, like a laden quill moved too fast; those who ask for reduced motion never see them. And the chronicle gains a folio of its own: at the foot of the page, centered, a discreet mark tells which leaf the reader is on and how many the ledger holds, and it advances on its own with the reading. Also, if the cabinet advanced more than one edition since the last visit, every entry the reader skipped wakes stamped in wax as freshly arrived — not just the latest; and the title board learned a few new lines for its rotating notices.
+
 ## Version 0.27.0 - The fold and the pen
 
 The leaf has learned where the reader comes from: advancing to a new desk sweeps the ink downward to uncover it, and returning to a desk already visited sweeps the ink upward, like turning a page of the tome back; the curtain's edge sprinkles tiny drops as it passes and, once uncovered, the new leaf settles onto the desk with a brief shadow. And the chronicle has learned a trade: the entry of the freshly arrived edition writes itself before the reader, letter by letter, the nib resting on the last stroke with a quiet scratch across the paper; the impatient finish it with a single touch, and those who ask for reduced motion receive it whole, already written.

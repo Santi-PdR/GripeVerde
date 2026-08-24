@@ -3,6 +3,10 @@
 
 
 
+## Version 0.28.0 - Las gotas y los folios
+
+La tinta que la cortina arrastra ya no pasa en seco: del filo se desprenden gotas que resbalan un trecho breve y dejan su rastro fino, como una pluma cargada que se mueve demasiado deprisa; quien pide el movimiento reducido no las ve jamás. Y la crónica gana folio propio: al pie del papel, centrada, una marca discreta anuncia en qué hoja va el lector y cuántas tiene la bitácora, y avanza sola con la lectura. Además, si el gabinete avanzó más de una edición desde la última visita, todas las entradas que el lector se saltó amanecen estampadas en lacre como recién llegadas — no solo la última; y el tablón del título aprendió unas líneas nuevas para sus avisos rotatorios.
+
 ## Version 0.27.0 - El pliegue y la pluma
 
 La hoja aprendió a saber de dónde viene el lector: al avanzar hacia una mesa nueva la tinta baja descubriéndola, y al regresar a una mesa ya visitada la tinta sube, como quien vuelve atrás una página del tomo; el filo de la cortina salpica gotas diminutas a su paso y, una vez destapada, la hoja se acuesta sobre el escritorio con una sombra breve. Y la crónica estrena oficio: la entrada de la edición recién llegada se escribe delante del lector, letra a letra, con el plumín descansando en el último trazo y un rasguño quedo sobre el papel; quien tenga prisa la termina de un solo toque, y quien pida el movimiento reducido la recibe entera, ya escrita.

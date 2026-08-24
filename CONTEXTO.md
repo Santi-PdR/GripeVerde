@@ -8,8 +8,8 @@
   arena/01a02cee-gripeverde" que sobreviven en el historico son instantaneas
   archivadas, no instrucciones.
 - Base respaldada: v0.22.0, commit `4ca038ddab972ca59435353330c9ccda4a86d581`.
-- Implementacion vigente: v0.27.0 en esta rama (ver DECISIONES 2026-08-24
-  decima vuelta, mas abajo).
+- Implementacion vigente: v0.28.0 en esta rama (ver DECISIONES 2026-08-24
+  undecima vuelta, mas abajo).
 - Restricciones funcionales absolutas: escena completa, faroles permanentes,
   sin kiosco/Heraldo, sin modo automatico por FPS, sin gameplay y sin
   resourcepacks.
@@ -262,6 +262,33 @@ montaba sobre el texto en carteles bajos.
   25 cronicas in-game al dia. Espejo Python: 8/8 sellos + balance OK.
 - KI-60 registra la validacion pendiente en cliente real.
 
+### DECISION 2026-08-24 (undecima vuelta): v0.28.0 - Las gotas y los folios
+
+Pedido del owner (consigna repetida): changelog al dia sin terminos de
+taller, mejoras significativas en textos y efectos entre interfaces, bien
+en TODAS las interfaces, backup previo.
+
+- Backup externo previo:
+  `/home/user/GripeVerde-backup-pre-v0.28.0-d40c820.bundle` (--all,
+  verificado).
+- Gotas del filo (DiaryTransitions): 3 desprendimientos por pliegue
+  (30/55/80% del barrido), resbalon de 26 px max en el sentido del
+  pliegue con rastro 1 px; vida 550 ms; alfas ≤ 85/40; semilla LCG propia
+  por apertura. reducedMotion: sin gotas.
+- Folio de la cronica: "folio N · M" centrado al pie del panel, calculado
+  de scrollY/contentH; ornamentos bronce; fuera del area de contenido
+  (no pisa texto, Cerrar ni el folio escondido del huevo).
+- Lacre multi-edicion (ChangelogScreen): freshRows = cabeceras cuyo
+  triple de version > lastSeenVersion (parser regex tolerante,
+  comparacion numerica); sello para todas, pluma solo en la vigente.
+- Subtitulos del titulo: pools 9 → 12 por idioma/contexto (hospedajes y
+  arsenales), voz de documento intacta.
+- Interfaces: medido contra GUI 2/3/4, minimal, reducedMotion y
+  reduceFlashes (KI-63). Sin gameplay, render Java puro.
+- Bump sincronizado 0.28.0 (build.gradle + GripeVerdeMod.VERSION), 25
+  cronicas al dia con vocabulario de documento real, docs en regla.
+  Espejo Python 8/8 + balance OK (61 Java; 35/35 sonidos en uso).
+
 ### DECISION 2026-08-24 (decima vuelta): v0.27.0 - El pliegue y la pluma
 
 Pedido del owner (misma consigna que la vuelta anterior): changelog al dia
@@ -343,8 +370,8 @@ en TODAS las interfaces; y haz un backup antes."
 No implementar planes de gameplay ni los items de "propuestas futuras"/
 "propuestas visibles" de REVISION_MOD.md sin autorizacion expresa del
 owner. La secuencia vigente: activar la CI con `tools/ci/activar-ci.ps1`,
-validar KI-53 a KI-62 en cliente real (en particular reenviar
-el jar 0.27.0 al jugador que reporto el crash y comprobar que el
+validar KI-53 a KI-63 en cliente real (en particular reenviar
+el jar 0.28.0 al jugador que reporto el crash y comprobar que el
 ambiente
 ya se escucha, el sentido del pliegue y la pluma de la cronica, con
 atencion a que los loops nuevos no tapen la musica),

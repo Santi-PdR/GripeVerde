@@ -5,6 +5,15 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
+**v0.28.0 - Las gotas y los folios**
+
+La tinta del pliegue ya no pasa en seco: del filo se desprenden gotas que
+resbalan un trecho breve dejando su rastro fino (fuera con movimiento
+reducido). La crónica gana folio al pie del papel — dice en qué hoja vas
+y cuántas hay, y avanza solo con la lectura — y si el gabinete saltó más
+de una edición, TODAS las entradas nuevas amanecen lacradas, no solo la
+última. El tablón del título aprendió tres líneas nuevas por idioma.
+
 **v0.27.0 - El pliegue y la pluma**
 
 La cortina de tinta entre interfaces ahora tiene sentido: baja al avanzar
@@ -101,7 +110,7 @@ y publica el jar como artifact.
 
 ### Estado de entrega
 
-- Implementación vigente: rama `arena/01a02f45-gripeverde` (v0.27.0).
+- Implementación vigente: rama `arena/01a02f45-gripeverde` (v0.28.0).
 - Base: commit `4ca038d` (merge de la PR 14, v0.22.0 ya mergeada).
 - Validación estática y documental completada; árbol local y remoto limpio.
 - La compilación semántica contra Forge corre en el PC del owner y, una vez

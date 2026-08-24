@@ -643,7 +643,10 @@ public class DiaryTitleScreen extends Screen {
         "Que nadie cruce solo la niebla",
         "La guardia acepta nuevos nombres",
         "Hay luces en otros barrios",
-        "Compartan el pan y la fiebre"
+        "Compartan el pan y la fiebre",
+        "Los hospedajes abren sus libretas",
+        "Un cordon se sostiene entre todos",
+        "Escriban su nombre en la guardia"
     };
     private static final String[] MULTIPLAYER_SUBTITLES_EN = {
         "Fight beside your brothers",
@@ -654,7 +657,10 @@ public class DiaryTitleScreen extends Screen {
         "No one crosses the fog alone",
         "The guard accepts new names",
         "There are lights in other districts",
-        "Share the bread and the fever"
+        "Share the bread and the fever",
+        "The lodgings open their ledgers",
+        "A cordon is held by every hand",
+        "Write your name in the watch"
     };
     private static final String[] MODS_SUBTITLES_ES = {
         "Preparen su equipamiento",
@@ -665,7 +671,10 @@ public class DiaryTitleScreen extends Screen {
         "Inventario de instrumentos prohibidos",
         "Las cajas del sanatorio",
         "Herramientas para una ciudad enferma",
-        "Que piezas sostienen esta noche"
+        "Que piezas sostienen esta noche",
+        "Cada pieza lleva su sello",
+        "Lo que el cordon permite",
+        "Cuenten las lamparas antes de salir"
     };
     private static final String[] MODS_SUBTITLES_EN = {
         "Prepare your equipment",
@@ -676,7 +685,10 @@ public class DiaryTitleScreen extends Screen {
         "Inventory of forbidden instruments",
         "The sanatorium crates",
         "Tools for a sickened city",
-        "What pieces hold this night together"
+        "What pieces hold this night together",
+        "Every piece bears its seal",
+        "What the cordon allows",
+        "Count the lamps before leaving"
     };
     private static final java.util.Random SUB_RNG = new java.util.Random();
 

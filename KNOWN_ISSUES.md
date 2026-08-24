@@ -5,6 +5,41 @@ de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
 que una seccion posterior lo mencione expresamente.
 
+## v0.28.0 - Las gotas y los folios (2026-08-24)
+
+### Cambios cerrados
+- **Backup previo** (regla consolidada):
+  `/home/user/GripeVerde-backup-pre-v0.28.0-d40c820.bundle` (--all,
+  verificado).
+- **Gotas de tinta en el pliegue**: 3 gotas se desprenden del filo (30/55/
+  80% del barrido) y resbalan hasta 26 px en el sentido del pliegue con
+  rastro fino, 550 ms de vida, alfas ≤ 85/40. Con movimiento reducido:
+  fuera.
+- **Folio de la bitacora**: marca centrada al pie del papel "folio N · M"
+  viva con el scroll; bajo el contenido, dentro del panel, jamas pisa el
+  folio escondido del easter egg (ese va por el scrolleo) ni el boton de
+  cerrar.
+- **Lacre en entradas saltadas**: si `lastSeenVersion` quedo atras mas de
+  una edicion, TODAS las cabeceras de version posterior llevan sello NUEVO
+  esta visita (triple numerico, parser tolerante); la pluma sigue solo en
+  la vigente.
+- **Subtitulos del titulo**: pools ampliados 9 → 12 lineas por idioma y
+  contexto (hospedajes y arsenales, ES/EN).
+
+### Riesgos activos / KI nuevos
+- **KI-63 (v0.28.0)**: validar en cliente real: (a) las gotas resbalan en
+  el SENTIDO del pliegue (cae al avanzar, sube al regresar) y no dejan
+  marca permanente ni destellan; (b) el folio dice el numero correcto en
+  GUI scale 2/3/4, al hacer resize en vivo y con scroll por rueda, teclas
+  y arrastre de barra; nunca se monta sobre el boton Cerrar ni el texto;
+  (c) instalando encima de una 0.25.x (simular saltando ediciones): todas
+  las entradas nuevas llevan lacre y solo la 0.28.0 se escribe a pluma;
+  (d) los 12 subtitulos rotan sin salirse de su cajita en ambos idiomas;
+  (e) regresion nula: pliegue direccional, pluma, golpe sordo y gramofo
+  intactos.
+- KI-53 a KI-62 siguen abiertos; el jar candidato para Agus pasa a ser
+  **0.28.0**.
+
 ## v0.27.0 - El pliegue y la pluma (2026-08-24)
 
 ### Cambios cerrados

@@ -364,6 +364,13 @@ proyecto convendría confirmación del owner antes de implementar.
 > numéricos Java sobre los 60 archivos. Contenido de 0.24.0 intacto;
 > para distribuir (incluido Agus): usar **0.24.1**.
 >
+> **ADDENDUM 2026-08-24 (v0.28.0 - Las gotas y los folios):** el pliegue
+> gana peso físico — gotas que resbalan del filo de tinta con rastro fino
+> — y la crónica gana folio al pie (hoja actual / total, viva con el
+> scroll) y lacre en TODAS las entradas saltadas cuando se actualiza más
+> de una edición. Subtítulos del tablón ampliados (9 → 12 por pool).
+> Pendiente única: V7 (bloqueada por identidad render-Java-puro).
+>
 > **ADDENDUM 2026-08-24 (v0.27.0 - El pliegue y la pluma):** **V4
 > implementada** (la crónica escribe a pluma la entrada recién llegada,
 > solo en su primera visita; click la termina; movimiento reducido la

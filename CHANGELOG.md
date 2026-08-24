@@ -1,5 +1,46 @@
 # Eternal Craft: Gripe Verde
 
+## v0.28.0 - Las gotas y los folios
+
+Misma consigna del owner: mejoras significativas en textos y en los efectos
+al cambiar de pantalla/interfaz, correctas en TODAS las interfaces, con
+backup externo previo
+(`/home/user/GripeVerde-backup-pre-v0.28.0-d40c820.bundle`, --all,
+verificado).
+
+- **La tinta fresca gotea (transiciones)**: del filo de la cortina se
+  desprenden 3 gotas en momentos distintos del pliegue (30/55/80% del
+  barrido) que resbalan hasta 26 px EN EL SENTIDO del pliegue con rastro
+  fino (trail 1 px, alfa ≤ 40; gota 2x2, alfa ≤ 85) y se desvanecen en
+  550 ms. Posiciones por LCG con la semilla de cada apertura. Con
+  movimiento reducido: sin gotas (fundido limpio, como siempre).
+- **La cronica gana folio**: al pie del papel, centrado, "folio N · M"
+  calculado del scroll real (paginas = alto visible; N = hoja actual) con
+  ornamentos de bronce a los lados. Bajo el area de contenido y dentro
+  del panel: nunca pisa texto, botones ni el folio escondido (ese vive
+  dentro del scrolleo). Funciona en GUI 2/3/4 y con resize en vivo.
+- **Sello NUEVO en TODAS las entradas saltadas**: si el gabinete avanzo
+  mas de una edicion desde `lastSeenVersion` (p.ej. 0.25.2 → 0.28.0),
+  todas las cabeceras con triple de version posterior a la ultima leida
+  amanecen lacradas esta visita (comparacion numerica por triple, parser
+  tolerante). La pluma de 0.27.0 sigue escribiendo SOLO la entrada de la
+  version instalada.
+- **Tablon del titulo con lineas nuevas**: cada pool de subtitulos
+  rotativos pasa de 9 a 12 lineas por idioma (ES/EN), misma voz de
+  documento: "Los hospedajes abren sus libretas", "Un cordon se sostiene
+  entre todos", "Escriban su nombre en la guardia" (hospedajes) y "Cada
+  pieza lleva su sello", "Lo que el cordon permite", "Cuenten las
+  lamparas antes de salir" (arsenales).
+- Interfaces debidas: gotas solo durante transiciones del gabinete;
+  folio y sellos en pixeles logicos dentro del panel; probado contra
+  escala GUI 2/3/4, minimal mode, movimiento reducido y destellos
+  reducidos (KI-63). Reglas madre intactas: sin gameplay, render Java
+  puro.
+
+Conteos: 61 Java, 25 lang (93 claves), 25 cronicas, 35 eventos de sonido
+(los 35 en uso; allowlist legacy vacia), 42 OGG. Espejo Python: 8/8 sellos
++ balance OK.
+
 ## v0.27.0 - El pliegue y la pluma
 
 Misma receta pedida por el owner: mejoras significativas en textos y en los
