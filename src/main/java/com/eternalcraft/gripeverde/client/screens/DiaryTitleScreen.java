@@ -1069,6 +1069,8 @@ public class DiaryTitleScreen extends Screen {
         String visibleMessage = easterEggMessage.substring(0, elapsedChars);
 
         int boxW = Math.max(220, Math.min(330, this.width - 96));
+        // v0.25.2: jamas mas ancho que la propia pantalla (escala GUI 4).
+        boxW = Math.min(boxW, Math.max(120, this.width - 16));
         java.util.List<net.minecraft.util.FormattedCharSequence> lines =
             this.font.split(Component.literal(visibleMessage), boxW - 34);
         // v0.23.2: con la maquina de escribir, el primer fotograma tiene 0 letras y
@@ -1079,11 +1081,14 @@ public class DiaryTitleScreen extends Screen {
 
         int buttonTop = estimateFirstButtonTop();
         int safeTop = isMinimalMode() ? 76 : 166;
-        int safeBottom = Math.max(safeTop + boxH + 8, buttonTop - 16);
+        // v0.25.2: en escalas GUI 3-4 la banda libre se achica y el orden de los
+        // clamps importa — el segundo volvia a clavar el cartel SOBRE la mesa de
+        // botones (reporte del owner). Regla: jamas pisar botones, jamas salir
+        // por arriba; si no hay banda libre, sube sobre la franja del logo.
+        int maxTop = buttonTop - boxH - 10;
+        int boxY = (maxTop >= safeTop) ? safeTop + (maxTop - safeTop) / 2
+                                       : Math.max(8, maxTop);
         int boxX = (this.width - boxW) / 2;
-        int boxY = safeTop + Math.max(0, (safeBottom - safeTop - boxH) / 2);
-        if (boxY + boxH > buttonTop - 10) boxY = Math.max(8, buttonTop - boxH - 10);
-        if (boxY < safeTop) boxY = Math.max(8, safeTop);
 
         int paper = (alpha << 24) | 0xE6D2A6;
         int ink = (alpha << 24) | 0x241608;

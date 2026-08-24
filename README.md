@@ -5,6 +5,10 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
+**v0.25.2 - El telegrama no pisa la mesa** (hotfix de layout: el cartel de
+los easter eggs y el sello FRAUDE ya nunca se montan sobre los botones o el
+texto del cartel en GUI scale 3-4)
+
 **v0.25.1 - El cilindro original** (hotfix: la lluvia y el viento vuelven
 a los masters originales amplificados — se retira la síntesis de 0.24.0;
 mezcla de lluvia 0.30 → 0.45)
@@ -76,7 +80,7 @@ y publica el jar como artifact.
 
 ### Estado de entrega
 
-- Implementación vigente: rama `arena/01a02f45-gripeverde` (v0.25.1).
+- Implementación vigente: rama `arena/01a02f45-gripeverde` (v0.25.2).
 - Base: commit `4ca038d` (merge de la PR 14, v0.22.0 ya mergeada).
 - Validación estática y documental completada; árbol local y remoto limpio.
 - La compilación semántica contra Forge corre en el PC del owner y, una vez
@@ -178,7 +182,11 @@ compila y se copia exactamente el jar de la version vigente. La version
 mostrada por el reloj debe comprobarse en pantalla antes de aprobar la
 entrega.
 
-Flujo vigente para actualizar, compilar y desplegar: `tools\deploy.ps1`.
+Flujo vigente para actualizar, compilar y desplegar: **comandos PowerShell
+inline** (fetch + `reset --hard FETCH_HEAD`, `gradlew clean build` y copia
+del jar por glob a la instancia test-1), sin archivos `.ps1` nuevos;
+`tools\deploy.ps1` queda corregido como alternativa equivalente. Regla
+permanente: cada entrega de cambios termina con ese bloque listo para pegar.
 El script lee la version de `build.gradle`, hace fetch/reset de la rama de
 sesion, limpia los jars antiguos, compila y copia el jar exacto.
 

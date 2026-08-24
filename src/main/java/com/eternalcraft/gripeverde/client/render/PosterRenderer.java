@@ -117,7 +117,12 @@ public class PosterRenderer {
                 String stamp = "FRAUDE";
                 int tw2 = font.width(stamp);
                 int sx = cx - tw2 / 2;
-                int sy = y + h - 46;
+                // v0.25.2: el sello jamas tapa el cuerpo ni se sale del papel
+                // (escalas GUI 3-4): va tras el texto y dentro del cartel.
+                sx = Math.max(x + 4, Math.min(sx, x + w - tw2 - 4));
+                int sy = Math.max(cursorY + 6, y + h - 46);
+                int maxSy = y + h - 20;
+                if (sy > maxSy) sy = maxSy;
                 g.fill(sx - 4, sy - 3, sx + tw2 + 4, sy - 2, 0xFF5C1508);
                 g.fill(sx - 4, sy + 10, sx + tw2 + 4, sy + 11, 0xFF5C1508);
                 g.fill(sx - 4, sy - 3, sx - 3, sy + 11, 0xFF5C1508);

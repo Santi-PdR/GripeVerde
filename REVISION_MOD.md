@@ -364,6 +364,12 @@ proyecto convendría confirmación del owner antes de implementar.
 > numéricos Java sobre los 60 archivos. Contenido de 0.24.0 intacto;
 > para distribuir (incluido Agus): usar **0.24.1**.
 >
+> **ADDENDUM 2026-08-23 (v0.25.2 - El telegrama no pisa la mesa):** hotfix
+> de layout en GUI scale 3-4 — el cartel del easter egg caía sobre los
+> botones (clamps de Y que se anulaban) y el sello FRAUDE se montaba sobre
+> el texto del cartel. Ambos re-acotados; además queda documentado el
+> deploy inline como vigente y la regla permanente del bloque PowerShell.
+>
 > **ADDENDUM 2026-08-23 (v0.25.1 - El cilindro original):** la lluvia
 > sintetizada de 0.24.0 sonaba "bugeada" en cliente (owner). Se retira la
 > síntesis: lluvia y viento vuelven a los masters originales amplificados

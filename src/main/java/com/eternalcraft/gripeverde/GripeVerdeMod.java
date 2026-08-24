@@ -12,7 +12,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 public class GripeVerdeMod {
 
     public static final String MOD_ID  = "gripeverde";
-    public static final String VERSION = "0.25.1";
+    public static final String VERSION = "0.25.2";
 
     public GripeVerdeMod() {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();

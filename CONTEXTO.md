@@ -8,7 +8,7 @@
   arena/01a02cee-gripeverde" que sobreviven en el historico son instantaneas
   archivadas, no instrucciones.
 - Base respaldada: v0.22.0, commit `4ca038ddab972ca59435353330c9ccda4a86d581`.
-- Implementacion vigente: v0.25.1 en esta rama (ver DECISIONES 2026-08-23
+- Implementacion vigente: v0.25.2 en esta rama (ver DECISIONES 2026-08-23
   mas abajo).
 - Restricciones funcionales absolutas: escena completa, faroles permanentes,
   sin kiosco/Heraldo, sin modo automatico por FPS, sin gameplay y sin
@@ -16,9 +16,14 @@
 - Tag/release: deliberadamente ausentes hasta cerrar KI-53 en cliente real.
 - Repositorio local vigente del owner:
   `C:\Users\santi\Desktop\GripeVerde`.
-- Deploy vigente del owner:
-  `C:\Users\santi\AppData\Roaming\.sklauncher\instances\test-1\mods`
-  (ahora mediante `tools\deploy.ps1`, que lee la version de `build.gradle`).
+- Deploy vigente del owner al destino
+  `C:\Users\santi\AppData\Roaming\.sklauncher\instances\test-1\mods`:
+  comandos PowerShell INLINE (fetch origin + `reset --hard FETCH_HEAD` +
+  `gradlew clean build` + copia del jar por glob), SIN archivos .ps1 nuevos;
+  `tools\deploy.ps1` queda corregido como alternativa equivalente.
+- Regla permanente del owner (2026-08-23): tras CADA modificacion, la
+  entrega termina SIEMPRE con el bloque PowerShell inline completo
+  (actualizar + compilar + desplegar), listo para pegar en su consola.
 
 ### DECISION 2026-08-23: v0.23.0 - El gramófono guarda la palabra
 
@@ -233,6 +238,29 @@ reconoce; restaurar el master y amplificar.
 - Bump sincronizado: build.gradle + GripeVerdeMod.VERSION -> 0.25.1; docs y
   25 cronicas in-game al dia. Espejo Python: 8/8 sellos + balance OK.
 - KI-59 registra la validacion pendiente en cliente real.
+
+### DECISION 2026-08-23 (octava vuelta): v0.25.2 - El telegrama no pisa la mesa
+
+Reporte del owner probando GUI scale 3-4: el cartel del easter egg (el
+telegrama "CASO" que muestra textos como "Como conoces ese nombre?...")
+caia SOBRE la mesa de botones — los dos clamps de Y se anulaban (el segundo
+re-clavaba en `safeTop`) — y el sello FRAUDE del cartel del elixir se
+montaba sobre el texto en carteles bajos.
+
+- `DiaryTitleScreen.drawEasterEggMessage`: clamps reordenados (jamas pisar
+  botones, jamas salir por arriba; sin banda libre, sube sobre el logo) +
+  `boxW` con techo en el ancho real de pantalla.
+- `PosterRenderer` (FRAUDE): estampado siempre DESPUES del texto
+  (`cursorY + 6`), tope duro dentro del papel y clamp horizontal.
+- De paso: los textos del telegrama salen de un pool bilingue fijo en
+  `DiaryTitleScreen` (eggPool) y las fichas/pistas viven en el registry
+  `Discoveries` + notas en `Marginalia`; el owner pregunto "de donde los
+  saca" — respondido en chat y registrado aqui para la memoria.
+- Docs/tooling: deploy vigente = comandos PowerShell INLINE (sin .ps1
+  nuevos) + regla permanente: cada entrega termina con el bloque PW inline.
+- Bump sincronizado: build.gradle + GripeVerdeMod.VERSION -> 0.25.2; docs y
+  25 cronicas in-game al dia. Espejo Python: 8/8 sellos + balance OK.
+- KI-60 registra la validacion pendiente en cliente real.
 
 ### SIGUIENTE PASO OPERATIVO VIGENTE
 

@@ -3,6 +3,10 @@
 
 
 
+## Version 0.25.2 - The telegram never touches the desk
+
+A reader with a large interface scale (3 or 4) reported two desk accidents: the secrets telegram fell over the button desk and became unreadable, and the elixir's FRAUDE stamp climbed over the poster's lettering. The chronicler reorders his bounds: the telegram now refuses, above all, to touch the desk — if the free band shrinks, it rises above the logo strip and never leaves the window — and its width is trimmed on narrow screens; and the red stamp is always placed after the text and inside the paper, at any scale. No new secrets: just a tidy desk.
+
 ## Version 0.25.1 - The original cylinder
 
 The new rain sounded like machine static, and the chronicler owns the mistake: the cylinder had been re-recorded instead of cleaned. The synthesis is withdrawn and the original recording of rain on cobblestone returns — the same as ever, drops and all — now carefully amplified without crushing its peaks; the street wind, too, returns to its original master, simply raised in volume. To give the rain back its place in the mix, its inner dial steps up. Both loop seams were measured: they joined clean, so they carry no crossfade.

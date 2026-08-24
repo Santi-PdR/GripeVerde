@@ -3,6 +3,10 @@
 
 
 
+## Version 0.25.2 - El telegrama no pisa la mesa
+
+Un lector con la interfaz grande (escala 3 o 4) avisó de dos accidentes de escritorio: el telegrama de los secretos caía sobre la mesa de botones y quedaba ilegible, y el sello FRAUDE del elixir se montaba sobre las letras del cartel. El cronista reordena sus límites: el telegrama se niega ahora, ante todo, a tocar la mesa —si la banda libre se achica, sube sobre la franja del logo y jamás sale de la ventana— y su ancho se recorta cuando la pantalla es estrecha; y el sello rojo se estampa siempre después del texto y dentro del papel, a cualquier escala. Sin secretos nuevos: solo un escritorio ordenado.
+
 ## Version 0.25.1 - El cilindro original
 
 La lluvia nueva sonaba a estática de máquina, y el cronista reconoce el error: había regrabado el cilindro en vez de limpiarlo. Se retira la síntesis y vuelve la grabación original de la lluvia sobre el empedrado —la de siempre, con sus gotas separadas— ahora amplificada con cuidado y sin comprimir sus picos; el viento de la calle también vuelve a su master original, simplemente subido de volumen. Para que la lluvia recupere su sitio en la mezcla, su regulador interno sube un paso. Las costuras de ambos loops quedaron medidas: empalmaban limpias, así que no llevan crossfade.

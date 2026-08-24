@@ -1,5 +1,31 @@
 # Eternal Craft: Gripe Verde
 
+## v0.25.2 - El telegrama no pisa la mesa
+
+Hotfix de layout (parche), reportado por el owner probando GUI scale 3-4:
+
+- **Cartel del easter egg (telegrama "CASO")**: los dos clamps de Y se
+  anulaban entre si — uno lo subia para esquivar la mesa de botones y el
+  siguiente lo volvia a clavar en `safeTop` fijo, de modo que con poca
+  pantalla logica (escala 3-4) el cartel caia encima de los botones y el
+  texto quedaba ilegible. Regla nueva y monotona: jamas tocar la zona de
+  botones, jamas salirse por arriba; si no hay banda libre, el cartel sube
+  sobre la franja del logo. Ademas `boxW` ahora tiene techo en el ancho
+  real de pantalla.
+- **Sello FRAUDE** (cartel del elixir, tras HOLLOWAY): estaba fijado a 46
+  px del borde inferior del poster; en carteles bajos (escala 3-4) se
+  montaba sobre las lineas del cuerpo y podia salirse del papel. Ahora se
+  estampa siempre DESPUES del texto (`cursorY + 6`), nunca por encima, y
+  con tope duro dentro del poster, incluido clamp horizontal.
+- **Tooling/documentos**: la ruta de deploy vigente queda documentada como
+  comandos PowerShell INLINE (fetch+reset+build+copia por glob), sin .ps1
+  nuevos, y la regla permanente del owner: cada entrega termina con ese
+  bloque listo para pegar. `tools\deploy.ps1` queda como alternativa
+  corregida.
+
+Conteos: 60 Java, 25 lang (93 claves), 25 cronicas, 35 eventos, 42 OGG.
+Espejo Python: 8/8 sellos + balance OK.
+
 ## v0.25.1 - El cilindro original
 
 Hotfix de contenido (parche): la lluvia sintetizada de 0.24.0 "sonaba

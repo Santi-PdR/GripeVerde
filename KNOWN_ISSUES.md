@@ -5,6 +5,41 @@ de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
 que una seccion posterior lo mencione expresamente.
 
+## v0.25.2 - El telegrama no pisa la mesa (2026-08-23)
+
+### Cambios cerrados
+- **Cartel del easter egg ilegible en GUI scale 3-4** (reporte owner): los
+  clamps de Y se anulaban (uno esquivaba la mesa, el siguiente re-clavaba
+  en `safeTop`); reordenados: jamas pisar botones, jamas salir de pantalla,
+  y si no hay banda libre el cartel sube sobre la franja del logo. `boxW`
+  con techo en el ancho real de pantalla.
+- **Sello FRAUDE solapado en escala 3-4**: estaba fijado a 46 px del borde
+  inferior del poster del elixir; ahora se estampa DESPUES del texto
+  (`cursorY + 6`), nunca encima, con tope dentro del papel y clamp
+  horizontal.
+- **Docs/tooling**: deploy vigente = comandos PowerShell INLINE (sin .ps1
+  nuevos); regla permanente registrada: cada entrega termina con el bloque
+  PW inline de actualizar+compilar+desplegar.
+- **Espejo Python reconstruido dentro del repo** (`tools/verify_mirrors.py`,
+  antes vivia fuera y se perdia entre snapshots). Confesion: el sello 8
+  "lint de literales numericos" anunciado en v0.24.1 quedo documentado pero
+  NUNCA se escribio — entra en vigor ahora, dentro del repo, con dos
+  errores propios ya corregidos (guardas de sufijo donde `"" in "fFdD"` es
+  True en Python y F/D finales de literales hex son digitos, no sufijos).
+  Auto-test: 25/25 casos (0xD20PL y familia rechazados); 8/8 sellos +
+  balance sobre 8741 literales y los 60 Java.
+
+### Riesgos activos / KI nuevos
+- **KI-60 (v0.25.2)**: validar en cliente real con GUI scale 2, 3, 4 y
+  Auto: (a) disparar un easter egg del titulo (DOCTOR, PEREIRA, sello) y
+  comprobar que el telegrama NUNCA toca la mesa de botones ni se sale por
+  arriba a cualquier alto de ventana; (b) con `fraude_stamp` activo (tras
+  HOLLOWAY), el sello FRAUDE queda dentro del cartel del elixir sin tapar
+  sus lineas en todas las escalas; (c) regresion visual nula en escala 2
+  (el layout clasico queda igual).
+- KI-53/54/55/56/57/58/59 siguen abiertos; el jar candidato para Agus pasa
+  a ser **0.25.2**.
+
 ## v0.25.1 - El cilindro original (2026-08-23)
 
 ### Cambios cerrados
