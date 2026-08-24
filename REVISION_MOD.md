@@ -364,6 +364,19 @@ proyecto convendría confirmación del owner antes de implementar.
 > numéricos Java sobre los 60 archivos. Contenido de 0.24.0 intacto;
 > para distribuir (incluido Agus): usar **0.24.1**.
 >
+> **ADDENDUM 2026-08-24 (v0.26.0 - Las hojas y los faroles):** transición
+> entre interfaces (cortina de tinta al abrir cualquier pantalla del
+> gabinete; fundido breve con movimiento reducido), **V6 implementada**
+> (faroles reactivos al cursor) y **V2 completada** — los 8 sonidos legacy
+> cableados a sus eventos (cada mesa suena con su toque; el escritorio en
+> silencio responde con golpe sordo; el gramófono anuncia pieza nueva;
+> volver a la vigilia vuelve a sentarte; mapeo adaptado: `ui.tab` cubre
+> crónica/idiomas, `ui.modal` la sala de sonido, `ui.error` dobla como
+> golpe del escritorio, `ui.click_create` es el gramófono y `ui.respawn`
+> el regreso a la vigilia). Allowlist del sello vacía: 35/35 en uso.
+> Crónicas reescritas con vocabulario de documento real. Backup bundle
+> previo registrado. **Pendientes: V4, V7, V8.**
+>
 > **ADDENDUM 2026-08-23 (v0.25.2 - El telegrama no pisa la mesa):** hotfix
 > de layout en GUI scale 3-4 — el cartel del easter egg caía sobre los
 > botones (clamps de Y que se anulaban) y el sello FRAUDE se montaba sobre

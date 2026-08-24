@@ -136,6 +136,11 @@ public class LivingAtmosphere {
     private static int flashCount = 0;
     public static int flashCount() { return flashCount; }
 
+    // v0.26.0: los faroles reconocen la mano del lector (hover -> halo respira).
+    private static int mousePx = -9999, mousePy = -9999;
+    private static float[] lanternHover = null;
+    public static void setMouse(double mx, double my) { mousePx = (int) mx; mousePy = (int) my; }
+
     // v0.25.0: la lluvia se deja atrapar (drop_catcher).
     public static int rainDropAt(double mx, double my, int w, int h) {
         if (!rainInit) return -1;
@@ -167,6 +172,20 @@ public class LivingAtmosphere {
 
     public static void tick(float deltaTime) {
         initAll();
+        // v0.26.0: halo de los faroles siguiendo la mano (tambien con movimiento
+        // reducido: no hay movimiento nuevo, solo una respiracion del brillo).
+        if (lanternPositions != null) {
+            if (lanternHover == null || lanternHover.length != lanternPositions.length) {
+                lanternHover = new float[lanternPositions.length];
+            }
+            for (int i = 0; i < lanternPositions.length; i++) {
+                int dx = mousePx - lanternPositions[i][0];
+                int dy = mousePy - (lanternPositions[i][1] - 18);
+                float target = (dx * dx + dy * dy) < 30 * 30 ? 1f : 0f;
+                lanternHover[i] += (target - lanternHover[i]) * Math.min(1f, deltaTime * 9f);
+                if (lanternHover[i] < 0.001f && target == 0f) lanternHover[i] = 0f;
+            }
+        }
         boolean reduced = reducedMotion();
         if (reduced) {
             windGustIntensity = 0f;
@@ -749,6 +768,10 @@ public class LivingAtmosphere {
 
         int lanternY = ly - postH;
 
+        // v0.26.0: la mano del lector acerca la llama (suavizado en tick).
+        float hover = (lanternHover != null && index < lanternHover.length) ? lanternHover[index] : 0f;
+        if (hover < 0f) hover = 0f;
+
         // Sombrero
         g.fill(lx - 6, lanternY - 8, lx + 7, lanternY - 6, 0xFF1A1108);
         g.fill(lx - 5, lanternY - 6, lx + 6, lanternY - 5, 0xFF2A1810);
@@ -756,10 +779,11 @@ public class LivingAtmosphere {
 
         int boxSize = 5;
         g.fill(lx - boxSize - 1, lanternY - 4, lx + boxSize + 1, lanternY + boxSize + 1, 0xFF1F1408);
-        int lightAlpha = (int)(flicker * 200);
+        // v0.26.0: alphas con tope 255 (withAlpha no clampea; el hover suma).
+        int lightAlpha = Math.min(255, (int)(flicker * (200 + 50 * hover)));
         g.fill(lx - boxSize, lanternY - 3, lx + boxSize, lanternY + boxSize,
             AtmosphereRenderer.withAlpha(0x00FFAA33, lightAlpha));
-        int coreAlpha = (int)(flicker * 235);
+        int coreAlpha = Math.min(255, (int)(flicker * 235));
         g.fill(lx - 2, lanternY, lx + 3, lanternY + 3,
             AtmosphereRenderer.withAlpha(0x00FFEE88, coreAlpha));
         g.fill(lx, lanternY - 3, lx + 1, lanternY + boxSize, 0xFF2A1810);
@@ -767,12 +791,13 @@ public class LivingAtmosphere {
         g.fill(lx - boxSize - 1, lanternY + boxSize + 1, lx + boxSize + 1, lanternY + boxSize + 3, 0xFF1A1108);
 
         // Optimized halos: 2 gradients instead of 12+ fills
-        int haloR = (int)(28 * flicker);
-        int haloAlpha = (int)(flicker * 32);
+        // v0.26.0: el halo respira mas amplio bajo la mano del lector.
+        int haloR = (int)(28 * flicker * (1f + 0.5f * hover));
+        int haloAlpha = Math.min(255, (int)(flicker * 32 + hover * 34));
         g.fill(lx - haloR, ly - haloR / 4, lx + haloR, ly + haloR / 4,
             AtmosphereRenderer.withAlpha(0x00FFAA33, haloAlpha));
-        int floorR = (int)(48 * flicker);
-        int floorA = (int)(flicker * 16);
+        int floorR = (int)(48 * flicker * (1f + 0.35f * hover));
+        int floorA = Math.min(255, (int)(flicker * 16 + hover * 14));
         g.fill(lx - floorR, ly - 1, lx + floorR, ly + 6,
             AtmosphereRenderer.withAlpha(0x00D4941E, floorA));
     }

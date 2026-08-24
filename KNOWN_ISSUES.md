@@ -5,6 +5,42 @@ de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
 que una seccion posterior lo mencione expresamente.
 
+## v0.26.0 - Las hojas y los faroles (2026-08-24)
+
+### Cambios cerrados
+- **Backup previo** (pedido expreso del owner, nueva regla):
+  `/home/user/GripeVerde-backup-pre-v0.26.0-18e178d.bundle` (--all,
+  verificado con `git bundle verify`).
+- **Transicion entre interfaces** ("efectos visuales al cambiar de
+  pantalla"): `DiaryTransitions` (nueva) sobre `ScreenEvent.Render.Post`:
+  cortina de tinta que revela la hoja nueva de arriba abajo en ~260 ms
+  (velo sepia + franja con filo bronce); con movimiento reducido, fundido
+  breve sin barrido; solo pantallas del gabinete (paquete
+  `client.screens`), jamas vanilla.
+- **Faroles reactivos**: la mano del lector (30 px) ensancha el halo x1.5
+  y aviva la llama con ease en tick; topes 255 porque `withAlpha` no
+  clampea; respeta movimiento reducido y todas las escalas de GUI.
+- **Crónicas reescritas** (0.24.1/0.25.0/0.25.1 x25): vocabulario de
+  documento de la vida real, sin terminos de taller (hexadecimal,
+  crossfade, literal, clic).
+
+### Riesgos activos / KI nuevos
+- **KI-61 (v0.26.0)**: validar en cliente real: (a) la transicion se ve al
+  abrir TODA pantalla del gabinete (titulo ↔ opciones ↔ cronica ↔
+  archivo ↔ sonido ↔ pausa) en GUI scale 2/3/4 y en minimal mode, sin
+  velo trabado ni parpadeo raro al encadenar pantallas rapido; (b) con
+  movimiento reducido solo fundido; (c) los faroles del titulo respiran
+  bajo la mano sin apagarse nunca; (d) las crónicas 0.24.1-0.26.0 se leen
+  naturales en ES y EN; (e) regresion nula: entrada a mundo sigue
+  silenciando el ambiente; (f) los sonidos recableados (V2-resto): abrir
+  multijugador suena distinto a abrir cronica/idiomas o la sala de sonido,
+  el boton ">>" del gramofo no suena a pestillo, tocar el escritorio sin
+  susurro devuelve un golpe sordo quedo y contenido (no se apila con
+  clics rapidos), y volver al titulo desde una subpantalla suena a
+  "sentarse de nuevo" (la primera apertura del arranque NO debe sonar).
+- KI-53 a KI-60 siguen abiertos; el jar candidato para Agus pasa a ser
+  **0.26.0**.
+
 ## v0.25.2 - El telegrama no pisa la mesa (2026-08-23)
 
 ### Cambios cerrados

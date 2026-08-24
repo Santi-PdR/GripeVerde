@@ -5,6 +5,17 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
+**v0.26.0 - Las hojas y los faroles**
+
+Al cambiar de interfaz dentro del gabinete, la hoja nueva se revela con
+una cortina de tinta (fundido breve con movimiento reducido, nada en
+pantallas ajenas). Los faroles de la avenida reconocen la mano del lector:
+su halo respira más amplio al acercarla. El gabinete también afinó el
+oído: cada mesa se abre con su propio toque, el escritorio responde con
+un golpe sordo cuando el aire calla, el gramófono anuncia pieza nueva y
+volver a la vigilia vuelve a sentarte. Y las crónicas recientes fueron
+reescritas con pluma de documento de la vida real.
+
 **v0.25.2 - El telegrama no pisa la mesa** (hotfix de layout: el cartel de
 los easter eggs y el sello FRAUDE ya nunca se montan sobre los botones o el
 texto del cartel en GUI scale 3-4)
@@ -80,7 +91,7 @@ y publica el jar como artifact.
 
 ### Estado de entrega
 
-- Implementación vigente: rama `arena/01a02f45-gripeverde` (v0.25.2).
+- Implementación vigente: rama `arena/01a02f45-gripeverde` (v0.26.0).
 - Base: commit `4ca038d` (merge de la PR 14, v0.22.0 ya mergeada).
 - Validación estática y documental completada; árbol local y remoto limpio.
 - La compilación semántica contra Forge corre en el PC del owner y, una vez
@@ -162,8 +173,9 @@ Verificaciones activas en `processResources`:
   música vs `TRACK_DURATIONS_MS`, tolerancia 1.5 s).
 - `verifyGripeVerdeSubtitles` (toda clave de subtítulo no vacía existe en
   los 25 idiomas).
-- `verifyGripeVerdeSoundUsage` (ningún SoundEvent registrado sin uso fuera
-  del allowlist legacy documentado en ModSounds).
+- `verifyGripeVerdeSoundUsage` (ningún SoundEvent registrado sin uso en el
+  código; el allowlist legacy quedó vacío en v0.26.0: los 8 eventos
+  restantes se cablearon a sus momentos, V2 de REVISION_MOD cerrada).
 
 Ademas, `tools/ci/build.yml` es un workflow de CI listo: al moverlo a
 `.github/workflows/build.yml` compila cada push/PR con JDK 17 y publica el

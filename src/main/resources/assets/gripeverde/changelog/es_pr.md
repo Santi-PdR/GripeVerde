@@ -3,6 +3,10 @@
 
 
 
+## Version 0.26.0 - Las hojas y los faroles
+
+Al pasar de una pantalla del gabinete a otra —del título a las opciones, de la crónica a la pausa— la hoja nueva se descubre con una cortina de tinta que baja de arriba abajo, como quien pasa página con la mano seca; quien pide el movimiento reducido recibe solo un fundido breve, sin barrido, y las pantallas ajenas al gabinete no reciben adorno alguno. Y los faroles de la avenida aprendieron a reconocer la mano del lector: acérquela despacio a uno de ellos y su halo respira más amplio y su llama sube un poco, sin apagarse jamás. Y el gabinete afinó el oído: la crónica, los hospedajes y el gabinete sonoro se abren ahora cada uno con su propio toque, tal como estaba previsto desde el principio; tocar el escritorio cuando el aire calla devuelve un golpe sordo, apenas audible; el gramófono anuncia cada pieza nueva con un gesto propio; y regresar a la vigilia desde cualquier sala sienta de nuevo al lector, como una puerta que cierra bien a la espalda. Las crónicas de las ediciones recientes fueron reescritas además con pluma de documento de la vida real: fuera palabras de taller, solo oficio y papel.
+
 ## Version 0.25.2 - El telegrama no pisa la mesa
 
 Un lector con la interfaz grande (escala 3 o 4) avisó de dos accidentes de escritorio: el telegrama de los secretos caía sobre la mesa de botones y quedaba ilegible, y el sello FRAUDE del elixir se montaba sobre las letras del cartel. El cronista reordena sus límites: el telegrama se niega ahora, ante todo, a tocar la mesa —si la banda libre se achica, sube sobre la franja del logo y jamás sale de la ventana— y su ancho se recorta cuando la pantalla es estrecha; y el sello rojo se estampa siempre después del texto y dentro del papel, a cualquier escala. Sin secretos nuevos: solo un escritorio ordenado.

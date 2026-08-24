@@ -8,7 +8,7 @@
   arena/01a02cee-gripeverde" que sobreviven en el historico son instantaneas
   archivadas, no instrucciones.
 - Base respaldada: v0.22.0, commit `4ca038ddab972ca59435353330c9ccda4a86d581`.
-- Implementacion vigente: v0.25.2 en esta rama (ver DECISIONES 2026-08-23
+- Implementacion vigente: v0.26.0 en esta rama (ver DECISIONES 2026-08-24
   mas abajo).
 - Restricciones funcionales absolutas: escena completa, faroles permanentes,
   sin kiosco/Heraldo, sin modo automatico por FPS, sin gameplay y sin
@@ -262,13 +262,52 @@ montaba sobre el texto en carteles bajos.
   25 cronicas in-game al dia. Espejo Python: 8/8 sellos + balance OK.
 - KI-60 registra la validacion pendiente en cliente real.
 
+### DECISION 2026-08-24 (novena vuelta): v0.26.0 - Las hojas y los faroles
+
+Pedido del owner: "actualiza el changelog — sin terminos que no sean de un
+documento de la vida real —, haz nuevas mejoras significativas en textos y
+efectos visuales como al cambiar de pantalla/interfaz; tiene que estar bien
+en TODAS las interfaces; y haz un backup antes."
+
+- Backup externo previo (bundle --all, verificado):
+  `/home/user/GripeVerde-backup-pre-v0.26.0-18e178d.bundle`. Queda como
+  regla: backup bundle ANTES de cada entrega de cambios estructurales.
+- Transicion entre interfaces (`DiaryTransitions`, nueva clase, enganchada
+  en `ScreenEvent.Render.Post`): cortina de tinta que revela la hoja nueva
+  en ~260 ms (velo sepia + franja con filo bronce). Filtro por paquete
+  `client.screens`: solo pantallas del gabinete; vanilla y ajenas intactas.
+  Movimiento reducido: fundido de 130 ms sin barrido. Sin gameplay, sin
+  resourcepacks, render Java puro (reglas madre intactas).
+- Faroles reactivos al cursor (V6 de REVISION_MOD): `setMouse` desde el
+  titulo + `lanternHover[]` eased en tick (antes del early-return de
+  reducedMotion: en accesibilidad solo respira el brillo). Radio 30 px,
+  halo x1.5, llama +25%, topes 255 (withAlpha no clampea).
+- V2 de REVISION_MOD cerrada: los 8 sonidos legacy cableados a sus
+  eventos en `UiSounds` (open/close/modal/tab/error/cleanClick/
+  clickCreate/respawn, mas `silenceKnock` nuevo para el escritorio en
+  silencio y `SlimButton.withClickSound` para el gramofo). `respawn`
+  suena al volver al titulo via `onArriveTitle` (la primera apertura del
+  arranque no suena; el redirect vanilla tambien cuenta la llegada).
+  Allowlist del sello de uso VACIA en build.gradle y en
+  tools/verify_mirrors.py: 35/35 eventos en uso.
+- Cronicas in-game reescritas (0.24.1/0.25.0/0.25.1 x25): vocabulario de
+  documento real; fuera hexadecimal/crossfade/literal/clic. Regla nueva de
+  estilo: la cronica in-game jamas usa terminos de taller ni de software;
+  los documentos tecnicos (CHANGELOG.md, KNOWN_ISSUES) si pueden.
+- Recordatorio del owner registrado: este MOD VIVE EN INTERFACES — cada
+  cambio se verifica en GUI scale 2/3/4, minimal mode y movimiento
+  reducido.
+- Bump sincronizado: build.gradle + GripeVerdeMod.VERSION -> 0.26.0; docs y
+  25 cronicas in-game al dia. Espejo Python: 8/8 sellos + balance OK (61
+  Java ahora). KI-61 registra la validacion pendiente en cliente real.
+
 ### SIGUIENTE PASO OPERATIVO VIGENTE
 
 No implementar planes de gameplay ni los items de "propuestas futuras"/
 "propuestas visibles" de REVISION_MOD.md sin autorizacion expresa del
 owner. La secuencia vigente: activar la CI con `tools/ci/activar-ci.ps1`,
-validar KI-53 a KI-59 en cliente real (en particular reenviar
-el jar 0.25.1 al jugador que reporto el crash y comprobar que el
+validar KI-53 a KI-61 en cliente real (en particular reenviar
+el jar 0.26.0 al jugador que reporto el crash y comprobar que el
 ambiente
 ya se escucha, con atencion a que los loops nuevos no tapen la musica),
 corregir solo si esa prueba encuentra defectos y, despues, autorizar

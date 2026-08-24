@@ -3,6 +3,10 @@
 
 
 
+## Version 0.26.0 - Leaves and lanterns
+
+Moving from one cabinet screen to another — title, options, chronicle, pause — the new leaf is revealed beneath an ink curtain that sweeps from top to bottom, like a page turned with a dry hand; those who ask for reduced motion receive only a brief fade, no sweep, and screens outside the cabinet receive no adornment at all. And the avenue lanterns have learned to know the reader's hand: bring it slowly near one of them and its halo breathes wider and its flame rises a little, never to go out. And the cabinet tuned its ear as well: the Chronicle, the lodgings ledger and the Sound Cabinet now each open with a touch of their own, as was always intended; rapping the desk when the air has gone silent answers with a dull knock, barely audible; the gramophone heralds each new piece with a gesture of its own; and coming back to the vigil from any room seats the reader once more, like a door closing properly at one's back. The chronicles of recent editions have also been rewritten with the pen of a real-life document: no workshop words left, only craft and paper.
+
 ## Version 0.25.2 - The telegram never touches the desk
 
 A reader with a large interface scale (3 or 4) reported two desk accidents: the secrets telegram fell over the button desk and became unreadable, and the elixir's FRAUDE stamp climbed over the poster's lettering. The chronicler reorders his bounds: the telegram now refuses, above all, to touch the desk — if the free band shrinks, it rises above the logo strip and never leaves the window — and its width is trimmed on narrow screens; and the red stamp is always placed after the text and inside the paper, at any scale. No new secrets: just a tidy desk.

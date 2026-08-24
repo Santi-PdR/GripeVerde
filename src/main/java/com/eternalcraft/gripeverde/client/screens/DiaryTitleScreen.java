@@ -215,7 +215,8 @@ public class DiaryTitleScreen extends Screen {
         int skipH = 20;
         this.skipMusicButton = new SlimButton(skipX, skipY, skipW, skipH,
             Component.literal(">>"),
-            () -> MenuMusic.skipToNext());
+            () -> MenuMusic.skipToNext())
+            .withClickSound(com.eternalcraft.gripeverde.client.audio.UiSounds::clickCreate);
         this.skipMusicButton.setTooltip(Tooltip.create(Component.literal(isEnglishSelected()
             ? "Change the chronicler's piece"
             : "Cambiar la pieza del cronista")));
@@ -311,6 +312,8 @@ public class DiaryTitleScreen extends Screen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        // v0.26.0: los faroles reconocen la mano del lector.
+        com.eternalcraft.gripeverde.client.render.LivingAtmosphere.setMouse(mouseX, mouseY);
         // Professional centralized scene renderer
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderTitleScene(g, this.width, this.height);
         drawGlassPatina(g);

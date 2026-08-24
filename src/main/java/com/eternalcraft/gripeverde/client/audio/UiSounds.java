@@ -48,6 +48,12 @@ public class UiSounds {
         COOLDOWNS.put("modal", 500L);
         COOLDOWNS.put("tab", 80L);
         COOLDOWNS.put("success", 300L);
+        // v0.26.0: llaves propias para los legacy recableados a sus eventos
+        COOLDOWNS.put("clean", 90L);
+        COOLDOWNS.put("click_create", 150L);
+        COOLDOWNS.put("respawn", 300L);
+        COOLDOWNS.put("error", 400L);
+        COOLDOWNS.put("knock", 480L);
     }
 
     // ── Primary API ──
@@ -89,20 +95,50 @@ public class UiSounds {
         safePlay("notif", ModSounds.UI_NOTIFICATION, VOL_NOTIF, 0.98f + rand(0.04f));
     }
 
-    // ── Legacy compat (mapped to new) ──
+    // ── Legacy compat ──
+    // v0.26.0 (V2 de REVISION_MOD, resto): cada ayudante suena con el evento
+    // que se grabo para el. Estaban registrados y con pieza en disco desde el
+    // principio; solo faltaba el cable. Los alias puros (click, heavy,
+    // success, destroy) se quedan: sus eventos ya suenan por otros caminos
+    // (UI_CLICK_HEAVY y UI_CLICK_DESTROY se tocan directo desde las pantallas,
+    // UI_SUCCESS es el diapason de la sala de sonido).
     public static void click() { buttonMain(); }
     public static void clickHeavy() { buttonSection(); }
-    public static void open() { buttonSection(); }
-    public static void close() { back(); }
-    public static void modal() { buttonSection(); }
-    public static void error() { buttonSection(); }
-    public static void tab() { buttonMain(); }
+    public static void open() {
+        safePlay("open", ModSounds.UI_OPEN, VOL_CLICK_SECTION, 0.97f + rand(0.05f));
+    }
+    public static void close() {
+        safePlay("close", ModSounds.UI_CLOSE, VOL_BACK, 0.96f + rand(0.06f));
+    }
+    public static void modal() {
+        safePlay("modal", ModSounds.UI_MODAL, VOL_CLICK_SECTION, 0.96f + rand(0.04f));
+    }
+    public static void error() {
+        safePlay("error", ModSounds.UI_ERROR, 0.16f, 0.88f + rand(0.06f));
+    }
+    public static void tab() {
+        safePlay("tab", ModSounds.UI_TAB, VOL_CLICK_MAIN, 0.99f + rand(0.04f));
+    }
     public static void success() { buttonSection(); }
-    public static void clickCreate() { buttonMain(); }
+    public static void clickCreate() {
+        safePlay("click_create", ModSounds.UI_CLICK_CREATE, VOL_CLICK_MAIN, 1.00f + rand(0.04f));
+    }
     public static void clickDestroy() { back(); }
-    public static void respawn() { buttonSection(); }
-    public static void cleanClick() { buttonMain(); }
-    public static void optionOpen() { buttonSection(); }
+    public static void respawn() {
+        safePlay("respawn", ModSounds.UI_RESPAWN, VOL_BACK, 0.92f + rand(0.06f));
+    }
+    public static void cleanClick() {
+        safePlay("clean", ModSounds.UI_BUTTON_CLEAN, VOL_CLICK_MAIN, 1.00f + rand(0.03f));
+    }
+    public static void optionOpen() {
+        // Las opciones que abren otra mesa son "open" un pelo mas agudo.
+        safePlay("open", ModSounds.UI_OPEN, VOL_CLICK_SECTION, 1.02f + rand(0.04f));
+    }
+
+    /** v0.26.0: el silencio responde — golpe obtuso, apenas audible. */
+    public static void silenceKnock() {
+        safePlay("knock", ModSounds.UI_ERROR, 0.10f, 0.55f);
+    }
 
     public static void playRaw(SoundEvent sound, float volume, float pitch) {
         Minecraft mc = Minecraft.getInstance();

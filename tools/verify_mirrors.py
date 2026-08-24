@@ -175,8 +175,9 @@ for ev, payload in parsed.items():
 if sub_problems: fails.append("SUBTITLES:\n" + "\n".join(sub_problems))
 
 # 7) verifyGripeVerdeSoundUsage
-legacy = {'UI_BUTTON_CLEAN','UI_OPEN','UI_CLOSE','UI_MODAL','UI_ERROR','UI_TAB',
-          'UI_CLICK_CREATE','UI_RESPAWN'}
+# v0.26.0: allowlist vacia — los 8 legacy quedaron cableados a sus eventos
+# en UiSounds (V2-resto). Si uno queda huerfano otra vez, el sello falla.
+legacy = set()
 modsrc = read(os.path.join(JAVA_DIR, "com/eternalcraft/gripeverde/client/audio/ModSounds.java"))
 fields = set(re.findall(r"RegistryObject<SoundEvent>\s+(\w+)\s*=\s*reg\(", modsrc))
 code = "".join(read(f) for f in java_files if not f.endswith("ModSounds.java"))

@@ -1,5 +1,53 @@
 # Eternal Craft: Gripe Verde
 
+## v0.26.0 - Las hojas y los faroles
+
+Entrega pedida por el owner: mejoras visibles significativas ("efectos al
+cambiar de pantalla/interfaz, etc"), revision de textos y, antes de tocar
+nada, backup externo
+(`/home/user/GripeVerde-backup-pre-v0.26.0-18e178d.bundle`, --all).
+
+- **El pasar de las hojas (transicion entre interfaces)**: nueva
+  `DiaryTransitions` enganchada a `ScreenEvent.Render.Post` en
+  `ScreenEventHandler` — al abrir cualquier pantalla del paquete
+  `client.screens` (titulo, opciones, cronica, archivo, sonido, pausa...),
+  una cortina de tinta baja revelando la hoja nueva en ~260 ms con velo
+  sepia disolvente y franja de tinta con filo de bronce. Con movimiento
+  reducido solo fundido de 130 ms, sin barrido. Pantallas vanilla/ajenas:
+  cero efecto. Dibuja en Render.Post: cubre botones incluidos solo esos
+  260 ms, nunca interfiere con clics (es impermeable al input).
+- **Faroles reactivos (V6 de REVISION_MOD)**: `LivingAtmosphere.setMouse`
+  desde el titulo + `lanternHover[]` suavizado por tick (ease ~110 ms);
+  la mano cerca de un farol (radio 30 px sobre la lampara) levanta su
+  llama y ensancha su halo x1.5, todo con topes 255 (withAlpha no
+  clampea). Funciona con movimiento reducido (no hay movimiento nuevo,
+  solo respiracion de brillo) y en cualquier escala GUI/altura (4-6
+  faroles segun alto).
+- **Revision de textos (crónicas in-game)**: reescritas las entradas
+  0.24.1/0.25.0/0.25.1 en los 25 idiomas con vocabulario de documento de
+  la vida real — fuera "hexadecimal", "crossfade", "literal numerico",
+  "clic"; dentro "rotativa", "cilindro madre", "toque", "sello de
+  imprenta".
+- **El gabinete afina el oido (V2 de REVISION_MOD, resto)**: los 8 sonidos
+  legacy por fin suenan con sus eventos propios (estaban grabados y
+  registrados; faltaba el cable) — `UiSounds.open/close/modal/tab/error/
+  cleanClick/clickCreate/respawn` cableados a `UI_OPEN/UI_CLOSE/UI_MODAL/
+  UI_TAB/UI_ERROR/UI_BUTTON_CLEAN/UI_CLICK_CREATE/UI_RESPAWN`. Tres
+  momentos nuevos audibles: el escritorio responde con golpe sordo
+  (`UiSounds.silenceKnock`, cooldown 480 ms) cuando tocas la vigilia sin
+  susurro en el aire; el gramofono del titulo anuncia pieza nueva con
+  `clickCreate` (SlimButton gana hook `withClickSound`, los demas botones
+  intactos); y volver al titulo desde otra mesa te "vuelve a sentar" con
+  `respawn` (`onArriveTitle` en ScreenEventHandler; la primera apertura
+  del arranque no suena). Allowlist del sello de uso de sonidos vacia en
+  Gradle y en el espejo Python: 35/35 eventos en uso.
+- ERICA recuerda: este mod VIVE en interfaces; cada cambio visual va
+  probado contra escala GUI 2/3/4 y minimal mode (KI-61).
+
+Conteos: 61 Java, 25 lang (93 claves), 25 cronicas, 35 eventos de sonido
+(los 35 en uso; allowlist legacy vacia), 42 OGG. Espejo Python: 8/8
+sellos + balance OK.
+
 ## v0.25.2 - El telegrama no pisa la mesa
 
 Hotfix de layout (parche), reportado por el owner probando GUI scale 3-4:

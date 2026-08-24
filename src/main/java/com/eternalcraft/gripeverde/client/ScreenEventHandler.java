@@ -34,6 +34,9 @@ public class ScreenEventHandler {
 
     private static boolean redirecting = false;
     private static boolean ctrlZeroLatch = false;
+    // v0.26.0: la vigilia "vuelve a sentarte" solo al regresar, no en la
+    // primera apertura del arranque (ver onArriveTitle).
+    private static boolean titleSeenOnce = false;
 
     // v0.23.0: accesos tolerantes a config no cargada (defaults seguros)
     private static boolean replaceTitleEnabled() {
@@ -44,6 +47,16 @@ public class ScreenEventHandler {
     }
     private static boolean debugShortcutEnabled() {
         try { return ClientConfig.DEBUG_SHORTCUT.get(); } catch (Throwable t) { return false; }
+    }
+
+    // v0.26.0: al volver a la vigilia desde otra mesa (o caer en ella por la
+    // via vanilla), el gabinete "vuelve a sentarte". La primera apertura del
+    // arranque no suena: para eso ya esta toda la obertura del menu.
+    private static void onArriveTitle() {
+        if (titleSeenOnce) {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.respawn();
+        }
+        titleSeenOnce = true;
     }
 
     @SubscribeEvent
@@ -89,6 +102,14 @@ public class ScreenEventHandler {
         }
     }
 
+    // v0.26.0: el pasar de las hojas entre pantallas del gabinete.
+    @SubscribeEvent
+    public static void onScreenRenderPost(ScreenEvent.Render.Post event) {
+        try {
+            com.eternalcraft.gripeverde.client.render.DiaryTransitions.render(event.getScreen(), event.getGuiGraphics());
+        } catch (Throwable ignored) {}
+    }
+
     @SubscribeEvent
     public static void onScreenOpening(ScreenEvent.Opening event) {
         // Feedback sonoro discreto por familia de pantalla.
@@ -104,6 +125,8 @@ public class ScreenEventHandler {
                 com.eternalcraft.gripeverde.client.audio.UiSounds.open();
             } else if (openingScreen instanceof com.eternalcraft.gripeverde.client.screens.DiarySoundOptionsScreen) {
                 com.eternalcraft.gripeverde.client.audio.UiSounds.modal();
+            } else if (openingScreen instanceof com.eternalcraft.gripeverde.client.screens.DiaryTitleScreen) {
+                onArriveTitle();
             }
         } catch (Throwable ignored) {}
         if (redirecting) return;
@@ -120,6 +143,9 @@ public class ScreenEventHandler {
             redirecting = true;
             try {
                 event.setNewScreen(new DiaryTitleScreen());
+                // El reemplazo no dispara otro Opening: la llegada a la
+                // vigilia por esta via tambien cuenta (arranque o regreso).
+                onArriveTitle();
             } catch (Throwable t) {
                 LOG.error("Failed to replace TitleScreen", t);
             } finally {

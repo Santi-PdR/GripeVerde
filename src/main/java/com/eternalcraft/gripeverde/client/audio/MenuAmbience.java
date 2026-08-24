@@ -122,7 +122,13 @@ public class MenuAmbience {
 
     /** El lector responde al susurro (click en la vigilia dentro de la ventana). */
     public static void answerWhisper(){
-        if(!isWhisperOpen()) return;
+        if(!isWhisperOpen()){
+            // v0.26.0: el silencio tambien contesta — un golpe sordo, muy
+            // quedo, como quien toca una vez el escritorio. Lleva su propio
+            // enfriamiento en UiSounds, asi el tecleo impaciente no lo apila.
+            UiSounds.silenceKnock();
+            return;
+        }
         whisperRespondableUntilMs=0L;
         Minecraft mc=Minecraft.getInstance(); if(mc==null) return;
         try{
