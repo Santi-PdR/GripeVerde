@@ -3,6 +3,10 @@
 
 
 
+## Version 0.27.0 - The fold and the pen
+
+The leaf has learned where the reader comes from: advancing to a new desk sweeps the ink downward to uncover it, and returning to a desk already visited sweeps the ink upward, like turning a page of the tome back; the curtain's edge sprinkles tiny drops as it passes and, once uncovered, the new leaf settles onto the desk with a brief shadow. And the chronicle has learned a trade: the entry of the freshly arrived edition writes itself before the reader, letter by letter, the nib resting on the last stroke with a quiet scratch across the paper; the impatient finish it with a single touch, and those who ask for reduced motion receive it whole, already written.
+
 ## Version 0.26.0 - Leaves and lanterns
 
 Moving from one cabinet screen to another — title, options, chronicle, pause — the new leaf is revealed beneath an ink curtain that sweeps from top to bottom, like a page turned with a dry hand; those who ask for reduced motion receive only a brief fade, no sweep, and screens outside the cabinet receive no adornment at all. And the avenue lanterns have learned to know the reader's hand: bring it slowly near one of them and its halo breathes wider and its flame rises a little, never to go out. And the cabinet tuned its ear as well: the Chronicle, the lodgings ledger and the Sound Cabinet now each open with a touch of their own, as was always intended; rapping the desk when the air has gone silent answers with a dull knock, barely audible; the gramophone heralds each new piece with a gesture of its own; and coming back to the vigil from any room seats the reader once more, like a door closing properly at one's back. The chronicles of recent editions have also been rewritten with the pen of a real-life document: no workshop words left, only craft and paper.

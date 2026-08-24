@@ -3,6 +3,10 @@
 
 
 
+## Version 0.27.0 - El pliegue y la pluma
+
+La hoja aprendió a saber de dónde viene el lector: al avanzar hacia una mesa nueva la tinta baja descubriéndola, y al regresar a una mesa ya visitada la tinta sube, como quien vuelve atrás una página del tomo; el filo de la cortina salpica gotas diminutas a su paso y, una vez destapada, la hoja se acuesta sobre el escritorio con una sombra breve. Y la crónica estrena oficio: la entrada de la edición recién llegada se escribe delante del lector, letra a letra, con el plumín descansando en el último trazo y un rasguño quedo sobre el papel; quien tenga prisa la termina de un solo toque, y quien pida el movimiento reducido la recibe entera, ya escrita.
+
 ## Version 0.26.0 - Las hojas y los faroles
 
 Al pasar de una pantalla del gabinete a otra —del título a las opciones, de la crónica a la pausa— la hoja nueva se descubre con una cortina de tinta que baja de arriba abajo, como quien pasa página con la mano seca; quien pide el movimiento reducido recibe solo un fundido breve, sin barrido, y las pantallas ajenas al gabinete no reciben adorno alguno. Y los faroles de la avenida aprendieron a reconocer la mano del lector: acérquela despacio a uno de ellos y su halo respira más amplio y su llama sube un poco, sin apagarse jamás. Y el gabinete afinó el oído: la crónica, los hospedajes y el gabinete sonoro se abren ahora cada uno con su propio toque, tal como estaba previsto desde el principio; tocar el escritorio cuando el aire calla devuelve un golpe sordo, apenas audible; el gramófono anuncia cada pieza nueva con un gesto propio; y regresar a la vigilia desde cualquier sala sienta de nuevo al lector, como una puerta que cierra bien a la espalda. Las crónicas de las ediciones recientes fueron reescritas además con pluma de documento de la vida real: fuera palabras de taller, solo oficio y papel.

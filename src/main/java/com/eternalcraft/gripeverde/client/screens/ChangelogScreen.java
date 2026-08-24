@@ -59,6 +59,24 @@ public class ChangelogScreen extends Screen {
     private Row newVersionRow = null;
     private boolean arrivedFreshVersion = false;
 
+    // v0.27.0 (V4): la entrada recien llegada se escribe letra a letra en
+    // esta visita, y solo en esta. Una mano segura: minimo 170 caracteres
+    // por segundo, nunca mas de 6,5 segundos de escritura. Un gesto del
+    // lector (click) la completa al instante; con movimiento reducido la
+    // hoja llega entera, sin escritura.
+    private static final int PEN_CPS = 170;
+    private static final long PEN_MAX_MS = 6500L;
+    // Gracia para que el pliegue de 0.26.0 termine de destapar la hoja
+    // antes del primer trazo (la pluma no escribe bajo la cortina).
+    private static final long PEN_GRACE_MS = 300L;
+    private boolean penActive = false;
+    private int penRowStart = -1;
+    private int penRowEnd = -1;
+    private int penTotalChars = 0;
+    private long penStartMs = 0L;
+    private int penScratchChars = 0;
+    private long lastPenScratchMs = 0L;
+
     // v0.16.0: las marcas del encuadernador y el folio escondido
     private final List<int[]> asteriskRects = new ArrayList<>();
     private static int binderMarksLit = 0;
@@ -286,11 +304,49 @@ public class ChangelogScreen extends Screen {
         off = Math.max(0, off - 6);
         this.newVersionRow = rows.get(idx);
         this.arrivedFreshVersion = true;
+        preparePen(idx);
         lastScrollY = off;
         setScrollTarget(off, true);
         try {
             com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.setLastSeenVersion(current);
         } catch (Throwable ignored) {}
+    }
+
+    /**
+     * v0.27.0: prepara la escritura a pluma de la entrada que empieza en la
+     * cabecera h1Index (hasta la siguiente cabecera o el fin del documento).
+     */
+    private void preparePen(int h1Index) {
+        penActive = false;
+        penRowStart = -1;
+        penRowEnd = -1;
+        penTotalChars = 0;
+        if (reducedMotion()) return; // la hoja llega entera, sin escritura
+        if (h1Index < 0 || h1Index >= rows.size()) return;
+        int end = h1Index + 1;
+        int total = rows.get(h1Index).text.length();
+        while (end < rows.size() && rows.get(end).type != LT.H1) {
+            Row r = rows.get(end);
+            if (r.type != LT.GAP && r.type != LT.SEPARATOR) total += r.text.length();
+            end++;
+        }
+        if (total <= 0) return;
+        penRowStart = h1Index;
+        penRowEnd = end;
+        penTotalChars = total;
+        penActive = true;
+        penStartMs = 0L; // arranca con el primer trazo en pantalla
+        penScratchChars = 0;
+    }
+
+    private static boolean reducedMotion() {
+        try { return com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get(); }
+        catch (Throwable t) { return false; }
+    }
+
+    private static boolean reducedFlashes() {
+        try { return com.eternalcraft.gripeverde.config.ClientConfig.REDUCE_FLASHES.get(); }
+        catch (Throwable t) { return false; }
     }
 
     /** v0.24.0: sello de lacre junto a la entrada recien llegada. */
@@ -338,16 +394,70 @@ public class ChangelogScreen extends Screen {
                 Component.translatable("gripeverde.changelog.error").getString(),
                 cx, cy + 4, DiaryTheme.BLOOD_FRESH, false);
         } else {
+            // v0.27.0: presupuesto de tinta de la pluma para esta pasada.
+            int penBudget = Integer.MAX_VALUE;
+            if (penActive) {
+                long nowPen = System.currentTimeMillis();
+                if (penStartMs <= 0L) penStartMs = nowPen;
+                long ageMs = Math.max(0L, nowPen - penStartMs - PEN_GRACE_MS);
+                long fastLane = penTotalChars * ageMs / PEN_MAX_MS;
+                long steady = PEN_CPS * ageMs / 1000L;
+                penBudget = (int) Math.min(penTotalChars, Math.max(fastLane, steady));
+                // El rasguño quedo de la pluma: un tramo de texto por golpe.
+                int writtenNow = Math.min(penBudget, penTotalChars);
+                if (writtenNow - penScratchChars >= 42 && nowPen - lastPenScratchMs > 120L) {
+                    lastPenScratchMs = nowPen;
+                    penScratchChars = writtenNow;
+                    try {
+                        com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                            com.eternalcraft.gripeverde.client.audio.ModSounds.UI_SCROLL.get(),
+                            0.045f, 1.30f + (float) java.util.concurrent.ThreadLocalRandom
+                                .current().nextDouble() * 0.25f);
+                    } catch (Throwable ignored) {}
+                }
+            }
+            int penConsumed = 0;
             int y = cy - scrollY;
-            for (Row row : rows) {
+            for (int ri = 0; ri < rows.size(); ri++) {
+                Row row = rows.get(ri);
                 int h = rowHeight(row, cw);
+                boolean inPenEntry = penActive && ri >= penRowStart && ri < penRowEnd;
                 if (y + h >= cy - 2 && y <= cy + ch + 2) {
-                    renderRow(g, row, cx, y, cw);
-                    if (arrivedFreshVersion && row == newVersionRow) {
-                        drawNewSeal(g, cx, y, cw);
+                    if (inPenEntry) {
+                        int len = (row.type == LT.GAP || row.type == LT.SEPARATOR)
+                            ? 0 : row.text.length();
+                        int vis = Math.max(0, Math.min(len, penBudget - penConsumed));
+                        if (vis >= len) {
+                            renderRow(g, row, cx, y, cw);
+                            if (arrivedFreshVersion && row == newVersionRow) {
+                                drawNewSeal(g, cx, y, cw);
+                            }
+                        } else {
+                            // La pluma aun no llego: se dibuja lo escrito y el
+                            // plumín al final del ultimo trazo.
+                            if (len == 0) {
+                                renderRow(g, row, cx, y, cw);
+                            } else if (vis > 0) {
+                                Row partial = new Row(row.type, row.text.substring(0, vis));
+                                renderRow(g, partial, cx, y, cw);
+                                drawPenNib(g, row, cx, y, cw, vis);
+                            }
+                        }
+                        penConsumed += len;
+                    } else {
+                        renderRow(g, row, cx, y, cw);
+                        if (arrivedFreshVersion && row == newVersionRow) {
+                            drawNewSeal(g, cx, y, cw);
+                        }
                     }
+                } else if (inPenEntry) {
+                    penConsumed += (row.type == LT.GAP || row.type == LT.SEPARATOR)
+                        ? 0 : row.text.length();
                 }
                 y += h;
+            }
+            if (penActive && penBudget >= penTotalChars) {
+                penActive = false; // la tinta seco: escritura terminada
             }
             // v0.16.0: despues del ultimo renglon, un folio que no figura en la cronica.
             int fy = cy - scrollY + this.contentTotalH + 8;
@@ -392,6 +502,64 @@ public class ChangelogScreen extends Screen {
         try { lang = Minecraft.getInstance().getLanguageManager().getSelected(); }
         catch (Throwable ignored) {}
         return lang == null || lang.startsWith("en_") || lang.equals("en_us");
+    }
+
+    /** v0.27.0: el plumín descansa al final del ultimo trazo escrito. */
+    private void drawPenNib(GuiGraphics g, Row fullRow, int x, int y, int maxW, int vis) {
+        String shown = fullRow.text.substring(0, Math.min(vis, fullRow.text.length()));
+        int indent = (fullRow.type == LT.BULLET) ? 10 : 0;
+        int lh = lineHeightFor(fullRow.type);
+        int extraX = 0;
+        int firstLineExtra = 0;
+        int available;
+        String body = shown;
+        if (fullRow.type == LT.BULLET) {
+            extraX = this.font.width("\u2022 ");
+            available = Math.max(20, maxW - indent - extraX);
+        } else if (fullRow.type == LT.H1) {
+            if (shown.length() <= 1) {
+                // Solo la capital grande: el plumín va pegado a ella.
+                int capW = (int)(this.font.width(shown) * 1.6f) + 3;
+                drawNibAt(g, x + indent + capW, y + 2);
+                return;
+            }
+            int capW = (int)(this.font.width(shown.substring(0, 1)) * 1.6f) + 2;
+            firstLineExtra = capW;
+            available = Math.max(20, maxW - indent - capW);
+            body = shown.substring(1);
+        } else {
+            available = Math.max(20, maxW - indent);
+        }
+        List<FormattedCharSequence> wrapped =
+            this.font.split(Component.literal(body), available);
+        if (wrapped.isEmpty()) {
+            drawNibAt(g, x + indent, y);
+            return;
+        }
+        String last = flatten(wrapped.get(wrapped.size() - 1));
+        int lastW = this.font.width(last);
+        int nx = x + indent + extraX + lastW
+            + ((wrapped.size() == 1) ? firstLineExtra : 0) + 1;
+        int ny = y + (wrapped.size() - 1) * lh;
+        drawNibAt(g, nx, ny);
+    }
+
+    private void drawNibAt(GuiGraphics g, int nx, int ny) {
+        int a;
+        if (reducedFlashes()) {
+            a = 170; // destellos reducidos: tinta quieta
+        } else {
+            a = 150 + (int)(55 * Math.sin(System.currentTimeMillis() / 170.0));
+        }
+        a = Math.max(60, Math.min(230, a));
+        g.fill(nx + 1, ny, nx + 3, ny + 9, (a << 24) | 0x1A1108);       // caña
+        g.fill(nx + 1, ny + 7, nx + 3, ny + 9, (a << 24) | 0x8E6A35);   // punta cargada
+    }
+
+    private static String flatten(FormattedCharSequence fcs) {
+        StringBuilder sb = new StringBuilder();
+        fcs.accept((idx, style, cp) -> { sb.appendCodePoint(cp); return true; });
+        return sb.toString();
     }
 
     private void renderRow(GuiGraphics g, Row row, int x, int y, int maxW) {
@@ -493,6 +661,8 @@ public class ChangelogScreen extends Screen {
             return true;
         }
         if (button == 0) {
+            // v0.27.0: un gesto del lector y la pluma termina de golpe.
+            this.penActive = false;
             try {
                 // v0.16.0: las marcas del encuadernador
                 for (int[] r : this.asteriskRects) {

@@ -5,6 +5,42 @@ de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
 que una seccion posterior lo mencione expresamente.
 
+## v0.27.0 - El pliegue y la pluma (2026-08-24)
+
+### Cambios cerrados
+- **Backup previo** (regla vigente):
+  `/home/user/GripeVerde-backup-pre-v0.27.0-aa0ff79.bundle` (--all,
+  verificado con `git bundle verify`).
+- **Cortina direccional**: la tinta baja al avanzar a una mesa nueva y
+  sube al regresar a una ya visitada (pila de mesas en `DiaryTransitions`
+  alimentada desde `ScreenEvent.Opening`, con la pantalla nueva leida
+  despues del redirect vanilla). Arranque sin historia: siempre baja.
+- **Salpicaduras del filo**: 5 gotas diminutas por apertura (semilla
+  propia, alfas ≤ 95, cola de 500 ms); con movimiento reducido, fuera.
+- **La hoja se acuesta**: sombra interior breve de 450 ms tras el destape
+  (solo opacidad, alfa ≤ 20; tambien con movimiento reducido).
+- **V4 — la cronica se escribe a pluma**: la entrada de la version recien
+  instalada se escribe letra a letra solo en su primera visita (170
+  chars/s min, techo 6,5 s), con plumín que sigue el wrap real, rasguño
+  quedo por tramos y click que la termina. Movimiento reducido: hoja
+  entera. Destellos reducidos: tinta del plumín quieta.
+
+### Riesgos activos / KI nuevos
+- **KI-62 (v0.27.0)**: validar en cliente real: (a) el SENTIDO del pliegue
+  en toda combinacion de mesas (titulo↔opciones↔cronica↔idiomas↔sonido↔
+  hospedajes↔archivo, pausa dentro de mundo, volver por Esc y por boton
+  Cerrar): siempre baja al avanzar y sube al volver, jamas al reves; (b)
+  las salpicaduras no destellan ni dejan manchas permanentes; (c) la pluma
+  se ve bien en GUI scale 2/3/4, el plumín sigue la ultima letra con el
+  ancho de panel cambiando (resize en vivo) y el rasguño no machaca la
+  musica; (d) la pluma se escribe UNA sola vez por version (segunda
+  visita: hoja entera) y un click la completa sin tragarse el gesto
+  (sello NUEVO, folio y asteriscos siguen respondiendo); (e) con
+  movimiento reducido no hay pluma ni salpicaduras y el fundido sigue;
+  (f) regresion nula: la cortina 0.26.0 y el oido 0.26.0 intactos.
+- KI-53 a KI-61 siguen abiertos; el jar candidato para Agus pasa a ser
+  **0.27.0**.
+
 ## v0.26.0 - Las hojas y los faroles (2026-08-24)
 
 ### Cambios cerrados

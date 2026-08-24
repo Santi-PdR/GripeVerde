@@ -1,5 +1,47 @@
 # Eternal Craft: Gripe Verde
 
+## v0.27.0 - El pliegue y la pluma
+
+Misma receta pedida por el owner: mejoras significativas en textos y en los
+efectos al cambiar de pantalla/interfaz, bien en TODAS las interfaces, con
+backup externo previo
+(`/home/user/GripeVerde-backup-pre-v0.27.0-aa0ff79.bundle`, --all,
+verificado).
+
+- **El pliegue tiene sentido (direccion de la cortina)**: `DiaryTransitions`
+  gana pila de navegacion (`NAV`, acotada a 16) alimentada desde
+  `ScreenEventHandler.noteTransition` — la pantalla vieja se captura al
+  inicio de `onScreenOpening` y la nueva se lee TRAS el redirect vanilla, en
+  los tres puntos de salida del metodo. Avanzar a una mesa no visitada → la
+  cortina de tinta baja (como en 0.26.0); regresar a una mesa ya abierta
+  (Cerrar, Esc, volver al titulo, salir de la pausa) → la cortina sube, la
+  hoja vuelve al pliegue. Sin pista del origen (arranque), siempre baja.
+- **El filo salpica**: 5 gotas de tinta diminutas tras el borde de la
+  cortina, posiciones por LCG con semilla propia de cada apertura (estables
+  durante la transicion), alfas ≤ 95 y cola de 500 ms tras el destape. Sin
+  destellos; con movimiento reducido no hay salpicaduras (solo fundido).
+- **La hoja se acuesta**: sombra interior de 6 px que decae en 450 ms tras
+  la cortina (alfa max 20 → 0). Es solo opacidad — tambien presente con
+  movimiento reducido, nunca tapa texto ni botones.
+- **V4 implementada — la cronica se escribe a pluma**: la entrada de la
+  version recien instalada se escribe letra a letra en su primera visita
+  (ritmo minimo 170 chars/s, techo duro de 6,5 s para entradas largas).
+  Plumín dibujado al final del ultimo trazo siguiendo el wrap real del
+  font (tambien la capital del encabezado), parpadeo de tinta suave (fijo
+  en 170 con destellos reducidos) y rasguño quedo (`UI_SCROLL`, 0.045f,
+  un golpe por tramo de 42 chars con throttle de 120 ms). Un click la
+  termina al instante; con movimiento reducido la hoja llega entera.
+  Persistencia: la misma `lastSeenVersion` de 0.24.0 — solo la primera
+  visita de cada entrada se escribe.
+- Interfaces debidas: todo en pixeles logicos y dentro del scissor de la
+  cronica; layout intacto; probado contra escala GUI 2/3/4, minimal mode,
+  movimiento reducido y destellos reducidos (KI-62). Sin gameplay, sin
+  resourcepacks: render Java puro (reglas madre intactas).
+
+Conteos: 61 Java, 25 lang (93 claves), 25 cronicas, 35 eventos de sonido
+(los 35 en uso; allowlist legacy vacia), 42 OGG. Espejo Python: 8/8 sellos
++ balance OK.
+
 ## v0.26.0 - Las hojas y los faroles
 
 Entrega pedida por el owner: mejoras visibles significativas ("efectos al

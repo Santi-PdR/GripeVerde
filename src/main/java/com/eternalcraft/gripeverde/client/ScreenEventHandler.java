@@ -112,6 +112,8 @@ public class ScreenEventHandler {
 
     @SubscribeEvent
     public static void onScreenOpening(ScreenEvent.Opening event) {
+        // v0.27.0: la mesa que se va, para decidir el sentido del pliegue.
+        final net.minecraft.client.gui.screens.Screen fromScreen = event.getCurrentScreen();
         // Feedback sonoro discreto por familia de pantalla.
         try {
             var openingScreen = event.getNewScreen();
@@ -151,6 +153,7 @@ public class ScreenEventHandler {
             } finally {
                 redirecting = false;
             }
+            noteTransition(fromScreen, event);
             return;
         }
 
@@ -164,7 +167,20 @@ public class ScreenEventHandler {
             } finally {
                 redirecting = false;
             }
+            noteTransition(fromScreen, event);
             return;
         }
+
+        noteTransition(fromScreen, event);
+    }
+
+    // v0.27.0: avisa al pliegue tras el redirect definitivo, con la mesa
+    // vieja y la nueva ya resueltas. Ahi se decide si la hoja baja o sube.
+    private static void noteTransition(net.minecraft.client.gui.screens.Screen from,
+                                       ScreenEvent.Opening event) {
+        try {
+            com.eternalcraft.gripeverde.client.render.DiaryTransitions.noteOpening(
+                from, event.getNewScreen());
+        } catch (Throwable ignored) {}
     }
 }

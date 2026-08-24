@@ -8,8 +8,8 @@
   arena/01a02cee-gripeverde" que sobreviven en el historico son instantaneas
   archivadas, no instrucciones.
 - Base respaldada: v0.22.0, commit `4ca038ddab972ca59435353330c9ccda4a86d581`.
-- Implementacion vigente: v0.26.0 en esta rama (ver DECISIONES 2026-08-24
-  mas abajo).
+- Implementacion vigente: v0.27.0 en esta rama (ver DECISIONES 2026-08-24
+  decima vuelta, mas abajo).
 - Restricciones funcionales absolutas: escena completa, faroles permanentes,
   sin kiosco/Heraldo, sin modo automatico por FPS, sin gameplay y sin
   resourcepacks.
@@ -262,6 +262,43 @@ montaba sobre el texto en carteles bajos.
   25 cronicas in-game al dia. Espejo Python: 8/8 sellos + balance OK.
 - KI-60 registra la validacion pendiente en cliente real.
 
+### DECISION 2026-08-24 (decima vuelta): v0.27.0 - El pliegue y la pluma
+
+Pedido del owner (misma consigna que la vuelta anterior): changelog al dia
+sin terminos de taller, mejoras significativas en textos y en los efectos
+al cambiar de pantalla/interfaz, bien en TODAS las interfaces y backup
+antes de tocar nada.
+
+- Incidente de sesion resuelto al empezar: la copia local amanecio con
+  HEAD en 4ca038d (disco intacto, indice desfasado); `git fetch` +
+  `git reset --hard FETCH_HEAD` dejo el arbol = aa0ff79 (0.26.0) sin
+  perdida (probado: diff vs FETCH_HEAD solo listaba los files nuevos).
+- Backup externo previo (regla consolidada):
+  `/home/user/GripeVerde-backup-pre-v0.27.0-aa0ff79.bundle` (--all,
+  verificado).
+- Pliegue direccional: pila NAV acotada (16) en `DiaryTransitions`,
+  alimentada por `noteTransition` en los tres puntos de salida de
+  `onScreenOpening` (captura `getCurrentScreen()` al inicio; la pantalla
+  nueva se lee TRAS el redirect). Avanzar baja, regresar sube; la pausa
+  dentro de mundo y los returns por Esc quedan cubiertos por la pila.
+- Salpicaduras (5 gotas, LCG por apertura, alfas ≤ 95, cola 500 ms; fuera
+  con reducedMotion) y sombra de asiento de la hoja (450 ms, alfa ≤ 20,
+  solo opacidad: vale con reducedMotion).
+- V4 (REVISION_MOD) implementada: la entrada de la version recien
+  instalada se escribe a pluma en su primera visita (170 chars/s min,
+  techo 6,5 s), plumín anclado al wrap real del font (capital incluida),
+  rasguño con UI_SCROLL a 0.045f por tramos de 42 chars (throttle 120 ms),
+  click la completa sin tragar el gesto, lastSeenVersion garantiza que se
+  escribe una sola vez; reducedMotion → hoja entera; REDUCE_FLASHES →
+  tinta del plumín fija.
+- Recordatorio del owner reafirmado: el mod vive en interfaces — todo se
+  midio contra GUI 2/3/4, minimal mode, reducedMotion y reduceFlashes
+  (KI-62). Sin gameplay, sin resourcepacks.
+- Bump sincronizado: build.gradle + GripeVerdeMod.VERSION -> 0.27.0; 25
+  cronicas in-game con entrada nueva en vocabulario de documento real;
+  CHANGELOG/KNOWN_ISSUES/README/REVISION_MOD al dia. Espejo Python 8/8
+  sellos + balance OK (61 Java; 35/35 sonidos en uso).
+
 ### DECISION 2026-08-24 (novena vuelta): v0.26.0 - Las hojas y los faroles
 
 Pedido del owner: "actualiza el changelog — sin terminos que no sean de un
@@ -306,10 +343,11 @@ en TODAS las interfaces; y haz un backup antes."
 No implementar planes de gameplay ni los items de "propuestas futuras"/
 "propuestas visibles" de REVISION_MOD.md sin autorizacion expresa del
 owner. La secuencia vigente: activar la CI con `tools/ci/activar-ci.ps1`,
-validar KI-53 a KI-61 en cliente real (en particular reenviar
-el jar 0.26.0 al jugador que reporto el crash y comprobar que el
+validar KI-53 a KI-62 en cliente real (en particular reenviar
+el jar 0.27.0 al jugador que reporto el crash y comprobar que el
 ambiente
-ya se escucha, con atencion a que los loops nuevos no tapen la musica),
+ya se escucha, el sentido del pliegue y la pluma de la cronica, con
+atencion a que los loops nuevos no tapen la musica),
 corregir solo si esa prueba encuentra defectos y, despues, autorizar
 tag/release (ultima version estable validada; con los pendientes de
 v0.23.x y v0.22.0).

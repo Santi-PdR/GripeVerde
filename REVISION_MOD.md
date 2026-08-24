@@ -364,6 +364,17 @@ proyecto convendría confirmación del owner antes de implementar.
 > numéricos Java sobre los 60 archivos. Contenido de 0.24.0 intacto;
 > para distribuir (incluido Agus): usar **0.24.1**.
 >
+> **ADDENDUM 2026-08-24 (v0.27.0 - El pliegue y la pluma):** **V4
+> implementada** (la crónica escribe a pluma la entrada recién llegada,
+> solo en su primera visita; click la termina; movimiento reducido la
+> entrega entera) y la transición de 0.26.0 madura: la cortina tiene
+> sentido (baja al avanzar, sube al regresar, según pila de mesas), el
+> filo salpica gotas diminutas y la hoja nueva se acuesta con una sombra
+> breve. Con V1/V2/V3/V4/V5/V6 cerradas, **pendiente solo V7** (bloqueada
+> por la identidad render-Java-puro: un logo.png sería textura; la
+> alternativa es tipografía procedural, a evaluar). Backup bundle previo
+> registrado.
+>
 > **ADDENDUM 2026-08-24 (v0.26.0 - Las hojas y los faroles):** transición
 > entre interfaces (cortina de tinta al abrir cualquier pantalla del
 > gabinete; fundido breve con movimiento reducido), **V6 implementada**

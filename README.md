@@ -5,6 +5,16 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
+**v0.27.0 - El pliegue y la pluma**
+
+La cortina de tinta entre interfaces ahora tiene sentido: baja al avanzar
+a una mesa nueva y sube al regresar a una ya visitada, como quien vuelve
+una página del tomo; el filo salpica gotas diminutas y la hoja nueva se
+acuesta con una sombra breve. Y la crónica aprendió oficio: la entrada de
+la edición recién llegada se escribe delante del lector, letra a letra,
+con plumín que descansa en el último trazo — un toque la termina, y con
+movimiento reducido llega entera.
+
 **v0.26.0 - Las hojas y los faroles**
 
 Al cambiar de interfaz dentro del gabinete, la hoja nueva se revela con
@@ -91,7 +101,7 @@ y publica el jar como artifact.
 
 ### Estado de entrega
 
-- Implementación vigente: rama `arena/01a02f45-gripeverde` (v0.26.0).
+- Implementación vigente: rama `arena/01a02f45-gripeverde` (v0.27.0).
 - Base: commit `4ca038d` (merge de la PR 14, v0.22.0 ya mergeada).
 - Validación estática y documental completada; árbol local y remoto limpio.
 - La compilación semántica contra Forge corre en el PC del owner y, una vez

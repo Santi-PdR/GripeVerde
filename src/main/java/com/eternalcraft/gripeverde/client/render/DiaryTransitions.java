@@ -5,12 +5,14 @@ import net.minecraft.client.gui.screens.Screen;
 
 /**
  * v0.26.0: el pasar de las hojas.
+ * v0.27.0: el pliegue — la cortina tiene sentido (avanzar baja la hoja,
+ * regresar la sube), el filo de tinta salpica al pasar y, una vez destapada,
+ * la hoja nueva "se acuesta" sobre la mesa con una sombra interior breve.
  *
  * Al abrir cualquier pantalla del gabinete (paquete client.screens), una
- * cortina de tinta baja revelando la pagina nueva (~260 ms): la hoja se
- * descubre de arriba abajo, como quien pasa pagina con la mano seca. Con
- * movimiento reducido la transicion es solo un fundido breve, sin barrido.
- * Pantallas vanilla y ajenas quedan intactas.
+ * cortina de tinta recorre la pagina revelando la hoja nueva (~260 ms). Con
+ * movimiento reducido la transicion es solo un fundido breve, sin barrido ni
+ * salpicaduras. Pantallas vanilla y ajenas quedan intactas.
  */
 public final class DiaryTransitions {
 
@@ -19,13 +21,55 @@ public final class DiaryTransitions {
     private static final String PREFIX = "com.eternalcraft.gripeverde.client.screens.";
     private static final long DUR_MS = 260L;
     private static final long DUR_REDUCED_MS = 130L;
+    private static final long SETTLE_MS = 450L;   // la hoja se acuesta
+    private static final long SPLASH_TAIL_MS = 500L;
 
     private static Screen current = null;
     private static long openedAtMs = 0L;
 
+    // v0.27.0: direccion decidida por la pila de mesas visitadas.
+    // Avanzar (mesa nueva) -> la cortina baja; regresar (mesa ya visitada)
+    // -> la cortina sube. Se alimenta desde ScreenEvent.Opening.
+    private static final java.util.ArrayDeque<Class<?>> NAV = new java.util.ArrayDeque<>();
+    private static boolean directionForward = true;
+    private static boolean pendingHasDirection = false;
+
+    // Salpicaduras del filo (semilla por apertura, estable durante la transicion)
+    private static long splashSeed = 0L;
+    private static boolean splashForward = true;
+
     private static boolean reducedMotion() {
         try { return com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get(); }
         catch (Throwable t) { return false; }
+    }
+
+    /**
+     * Llamado desde ScreenEventHandler.onScreenOpening con la pantalla que se
+     * va y la que llega (ya con el redirect aplicado). Decide el sentido del
+     * pliegue segun si la mesa de destino estaba abierta antes.
+     */
+    public static void noteOpening(Screen from, Screen to) {
+        if (to == null || !to.getClass().getName().startsWith(PREFIX)) {
+            pendingHasDirection = false;
+            return;
+        }
+        Class<?> tc = to.getClass();
+        boolean forward = true;
+        try {
+            if (NAV.contains(tc)) {
+                // Regreso: desapilar hasta dejar la mesa de destino al tope.
+                while (!NAV.isEmpty() && NAV.peekLast() != tc) NAV.pollLast();
+                if (NAV.isEmpty() || NAV.peekLast() != tc) NAV.addLast(tc);
+                forward = false;
+            } else {
+                NAV.addLast(tc);
+                while (NAV.size() > 16) NAV.pollFirst();
+            }
+        } catch (Throwable ignored) {
+            forward = true;
+        }
+        directionForward = forward;
+        pendingHasDirection = true;
     }
 
     /** Llamado desde ScreenEvent.Render.Post. Dibuja encima de todo (es un velo). */
@@ -38,27 +82,58 @@ public final class DiaryTransitions {
         if (screen != current) {
             current = screen;
             openedAtMs = now;
+            if (!pendingHasDirection) directionForward = true;
+            pendingHasDirection = false;
+            splashForward = directionForward;
+            splashSeed = now * 1099511628211L ^ (long) screen.hashCode();
         }
         boolean reduced = reducedMotion();
         long dur = reduced ? DUR_REDUCED_MS : DUR_MS;
         long age = now - openedAtMs;
-        if (age < 0 || age >= dur) return;
+        if (age < 0) return;
+
+        int w = g.guiWidth(), h = g.guiHeight();
+
+        // ── La hoja se acuesta: sombra interior que decae tras el destape ──
+        // Es solo opacidad (sin movimiento): tambien con movimiento reducido.
+        long settleAge = age - dur;
+        if (settleAge >= 0 && settleAge < SETTLE_MS) {
+            float q = 1f - settleAge / (float) SETTLE_MS;
+            int a = (int)(q * q * 20);
+            if (a > 0) {
+                int shade = (a << 24) | 0x140C05;
+                g.fill(0, 0, w, 6, shade);
+                g.fill(0, h - 6, w, h, shade);
+                g.fill(0, 0, 6, h, shade);
+                g.fill(w - 6, 0, w, h, shade);
+            }
+        }
+
+        if (age >= dur) {
+            // Cola de las salpicaduras: un respiro tras el paso del filo.
+            if (!reduced && age < dur + SPLASH_TAIL_MS) {
+                float tail = 1f - (age - dur) / (float) SPLASH_TAIL_MS;
+                drawSplashes(g, w, h, splashForward ? h : 0, tail * 0.55f, true);
+            }
+            return;
+        }
 
         float p = age / (float) dur;
         float ease = 1f - (1f - p) * (1f - p); // salida suave
-        int w = g.guiWidth(), h = g.guiHeight();
 
-        // Velo sepia que se disuelve sobre toda la hoja.
+        // Velo sepia que se disuelve sobre toda la hoja (simetrico en ambos sentidos).
         int veil = (int)((1f - ease) * 150);
         if (veil > 0) {
             g.fill(0, 0, w, h, (veil << 24) | 0x1A1108);
         }
 
-        // Franja de tinta que revela la pagina de arriba abajo.
+        // Franja de tinta que revela la pagina. Avanzar: de arriba abajo.
+        // Regresar: de abajo arriba, la hoja vuelve al pliegue.
         if (!reduced) {
-            int lineY = (int)(ease * (h + 18)) - 9;
+            int travel = (int)(ease * (h + 18)) - 9;
+            int lineY = splashForward ? travel : h - travel;
             int bandA = (int)((1f - ease) * 120);
-            if (bandA > 0 && lineY > -16) {
+            if (bandA > 0 && lineY > -16 && lineY < h + 16) {
                 int y0 = Math.max(0, lineY - 14);
                 int y1 = Math.min(h, lineY + 16);
                 if (y1 > y0) {
@@ -66,7 +141,36 @@ public final class DiaryTransitions {
                     int ly = Math.min(h - 2, Math.max(0, lineY));
                     g.fill(0, ly, w, ly + 2, (Math.min(220, bandA + 80) << 24) | 0x8E6A35);
                 }
+                // El filo salpica: gotas diminutas detras del borde de tinta.
+                drawSplashes(g, w, h, lineY, (1f - ease) * 0.9f, false);
             }
+        }
+    }
+
+    /**
+     * Gotas de tinta detras del filo de la cortina. Pocas, pequenitas y sin
+     * destellos (alfas bajas); la posicion es estable para cada apertura.
+     */
+    private static void drawSplashes(GuiGraphics g, int w, int h, int edgeY,
+                                     float strength, boolean settled) {
+        if (strength <= 0.02f) return;
+        int dir = splashForward ? -1 : 1; // atras del filo segun el sentido
+        long s = splashSeed;
+        for (int i = 0; i < 5; i++) {
+            s = s * 6364136223846793005L + 1442695040888963407L;
+            int rx = (int)((s >>> 33) & 0x7FFFFFFF);
+            s = s * 6364136223846793005L + 1442695040888963407L;
+            int ry = (int)((s >>> 33) & 0x7FFFFFFF);
+            int x = 6 + rx % Math.max(1, w - 12);
+            int off = 3 + ry % 13; // 3..15 px detras del filo
+            int y = edgeY + dir * off;
+            if (y < 1 || y > h - 2) continue;
+            float drop = strength * (1f - off / 18f);
+            if (settled) drop *= 0.8f;
+            int a = (int)(drop * 95);
+            if (a < 8) continue;
+            int size = (ry % 3 == 0) ? 2 : 1;
+            g.fill(x, y, Math.min(w, x + size), Math.min(h, y + size), (a << 24) | 0x241608);
         }
     }
 }
