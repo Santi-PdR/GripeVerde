@@ -47,6 +47,9 @@ public final class ChroniclerMemory {
         public List<String> pendingNotes = new ArrayList<>();
         public Map<String, Integer> counters = new HashMap<>();
         public List<String> guestbook = new ArrayList<>();
+        // v0.24.0: ultima version de la cronica que el lector ya vio al abrirla.
+        // null en memorias viejas (GSON no la rellena); los accesores la sanea.
+        public String lastSeenVersion = null;
     }
 
     private static Data data = null;
@@ -56,6 +59,12 @@ public final class ChroniclerMemory {
     private static final String BACKUP_FILE = "gripeverde-memory.backup.json";
     private static final String TEMP_FILE = "gripeverde-memory.tmp";
     private static final String CORRUPT_FILE = "gripeverde-memory.corrupt.json";
+
+    /**
+     * v0.23.1: version del esquema de la memoria. Cuando el esquema crezca hay
+     * que subir esta constante y encadenar el paso N -> N+1 en migrate().
+     */
+    private static final int SCHEMA_VERSION = 1;
 
     // Resultados del saludo de apertura de sesion (calculado en beginSession)
     private static int sessionGreetingKind = 0; // 0=ninguno 1=primera 2=regreso 3=mismo dia
@@ -81,7 +90,48 @@ public final class ChroniclerMemory {
         if (parsed.pendingNotes == null) parsed.pendingNotes = new ArrayList<>();
         if (parsed.counters == null) parsed.counters = new HashMap<>();
         if (parsed.guestbook == null) parsed.guestbook = new ArrayList<>();
+        // v0.23.1: bounds. Un JSON editado a mano (o corrompido logicamente)
+        // puede ser JSON valido y aun asi traer numeros imposibles.
+        if (parsed.visitCount < 0L) parsed.visitCount = 0L;
+        if (parsed.streak < 0) parsed.streak = 0;
+        if (parsed.firstVisitDay < -1L) parsed.firstVisitDay = -1L;
+        if (parsed.lastVisitDay < -1L) parsed.lastVisitDay = -1L;
+        if (parsed.firstVisitDay < 0L && parsed.lastVisitDay >= 0L) {
+            parsed.firstVisitDay = parsed.lastVisitDay;
+        }
+        parsed.counters.values().removeIf(java.util.Objects::isNull);
+        if (parsed.pendingNotes.size() > 256) {
+            parsed.pendingNotes = new ArrayList<>(parsed.pendingNotes.subList(0, 256));
+        }
+        if (parsed.guestbook.size() > 4096) {
+            parsed.guestbook = new ArrayList<>(parsed.guestbook.subList(0, 4096));
+        }
+        migrate(parsed);
         return parsed;
+    }
+
+    /**
+     * Pipeline de migracion versionada (v0.23.1). Cuando el esquema suba,
+     * SCHEMA_VERSION crece y aqui se encadenan pasos N -> N+1 idempotentes:
+     *
+     *   while (parsed.version < SCHEMA_VERSION) {
+     *       switch (parsed.version) { case 1: ...; }
+     *       parsed.version++;
+     *   }
+     *
+     * Un archivo escrito por una version MAS NUEVA del mod (esquema mayor)
+     * se conserva sin tocar y solo deja aviso en el log.
+     */
+    private static void migrate(Data parsed) {
+        if (parsed.version > SCHEMA_VERSION) {
+            LOGGER.warn("[GripeVerde] La memoria usa el esquema {} pero este mod entiende {}; se conserva sin migrar",
+                parsed.version, SCHEMA_VERSION);
+            return;
+        }
+        while (parsed.version < SCHEMA_VERSION) {
+            // Sin pasos todavia: el esquema 1 es el actual y original.
+            parsed.version++;
+        }
     }
 
     private static Data readData(Path path) throws IOException {
@@ -163,7 +213,30 @@ public final class ChroniclerMemory {
         long now = System.currentTimeMillis();
         if (now - lastSaveMs < 2000L) return;
         lastSaveMs = now;
-        writeNow();
+        scheduleWrite();
+    }
+
+    /**
+     * v0.23.0: la escritura (archivo + force/fsync) sale del hilo del cliente.
+     * Antes ocurria en el hilo de render y podia producir micro-tirones en
+     * discos lentos. writeNow() es synchronized, asi que el executor serializa
+     * con cualquier escritura en linea y el orden "ultima copia gana" se
+     * conserva. Hilo daemon con nombre propio para no retener el JVM.
+     */
+    private static final java.util.concurrent.ExecutorService WRITER =
+        java.util.concurrent.Executors.newSingleThreadExecutor(r -> {
+            Thread t = new Thread(r, "gripeverde-memory-writer");
+            t.setDaemon(true);
+            return t;
+        });
+
+    private static void scheduleWrite() {
+        try {
+            WRITER.execute(ChroniclerMemory::writeNow);
+        } catch (Throwable rejected) {
+            // Executor ya en parada (cierre del JVM): escribir en linea como antes.
+            writeNow();
+        }
     }
 
     /**
@@ -229,6 +302,14 @@ public final class ChroniclerMemory {
 
     /** Al cerrar el juego se escribe todo cambio pendiente. */
     public static synchronized void flushForShutdown() {
+        // Espera a que termine cualquier escritura en vuelo del executor y
+        // solo entonces escribe en linea lo que haya quedado pendiente.
+        WRITER.shutdown();
+        try {
+            WRITER.awaitTermination(3L, java.util.concurrent.TimeUnit.SECONDS);
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+        }
         if (savePending) writeNow();
     }
 
@@ -357,6 +438,19 @@ public final class ChroniclerMemory {
     public static synchronized void setCounter(String key, int value) {
         Data d = get();
         d.counters.put(key, value);
+        save();
+    }
+
+    // ── v0.24.0: cronica vista ──────────────────────────────────────────────
+
+    /** Ultima version de la cronica cuya entrada se mostro sellada como nueva. */
+    public static synchronized String lastSeenVersion() {
+        String v = get().lastSeenVersion;
+        return v == null ? "" : v;
+    }
+
+    public static synchronized void setLastSeenVersion(String v) {
+        get().lastSeenVersion = (v == null ? "" : v);
         save();
     }
 }

@@ -4,15 +4,15 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
 
 ## Estado vigente de la entrega
 
-- Version preparada: **v0.22.0**.
-- Implementacion final: `a1decf304b0c7236d624d4637bd3b5dcaa3961db`.
-- Rama de revision: `arena/01a02cee-gripeverde`; PR 14 abierta para el owner.
-- Baseline: 60 Java, 25 locales con 83 claves cada uno, 25 cronicas, 35
+- Version preparada: **v0.23.1**.
+- PR 14 (v0.22.0) ya mergeada en main (`4ca038d`).
+- Rama de trabajo vigente: `arena/01a02f45-gripeverde`.
+- Baseline: 60 Java, 25 locales con 93 claves cada uno, 25 cronicas, 35
   eventos de sonido, 42 referencias OGG y 42 archivos OGG.
-- El tag/release v0.22.0 no debe crearse hasta cerrar KI-52 con Java 17 y
-  una prueba completa en Minecraft.
+- El tag/release v0.23.0 no debe crearse hasta cerrar KI-53 con Java 17 y
+  una prueba completa en Minecraft (queda tambien el pendiente v0.22.0).
 - Ruta local vigente del owner: `C:\Users\santi\Desktop\GripeVerde`.
-- Deploy vigente:
+- Deploy vigente: `tools\deploy.ps1` hacia
   `C:\Users\santi\AppData\Roaming\.sklauncher\instances\test-1\mods`.
 - Las rutas antiguas y `.deploy` que sobreviven en documentacion historica
   no son instrucciones de trabajo.
@@ -60,7 +60,7 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
 ## Verificaciones de build activas (processResources)
 
 - `verifyGripeVerdeLocalization` — conjunto exacto de 25 locales, JSON
-  valido, exactamente 83 claves no vacias con paridad frente a `en_us` y
+  valido, exactamente 93 claves no vacias con paridad frente a `en_us` y
   presencia de la version actual en las 25 cronicas in-game.
 - `verifyGripeVerdeSoundAssets` — estructura e identificadores de eventos,
   listas no vacias, referencias existentes y cobertura OGG exacta, sin
@@ -68,6 +68,19 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
 - `verifyGripeVerdeNoDeadCode` — falla si reaparecen simbolos de codigo
   desterrado fuera de comentarios (ThemeManager, steel pack, bg_town,
   IconButton, dev screens, `drawHeraldTicker` y otros retirados).
+- `verifyGripeVerdeVersionSync` — `GripeVerdeMod.VERSION` debe coincidir con
+  la version de `build.gradle`.
+- `verifyGripeVerdeMusicDurations` — la duracion real Vorbis de cada OGG de
+  musica debe estar dentro de 1.5 s de `TRACK_DURATIONS_MS`.
+- `verifyGripeVerdeSubtitles` — toda clave de subtitulo no vacia (8 eventos
+  ambientales) debe existir en los 25 idiomas.
+- `verifyGripeVerdeSoundUsage` — ningun SoundEvent registrado sin uso fuera
+  del allowlist legacy (10 eventos devengados, ver javadoc de ModSounds).
+
+Ademas, hay un workflow de CI listo en `tools/ci/build.yml` (compila todo
+con JDK 17 en cada push/PR); se activa en un paso con
+`tools/ci/activar-ci.ps1` (la sesion no pudo subirlo directamente por
+permisos; el script usa las credenciales locales del owner).
 
 ## Codigo
 

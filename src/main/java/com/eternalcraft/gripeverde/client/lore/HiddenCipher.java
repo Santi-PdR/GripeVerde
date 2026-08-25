@@ -96,6 +96,18 @@ public final class HiddenCipher {
                 UiSounds.playCustom(ModSounds.MENU_AMBIENT_OCCASIONAL.get(), 0.30f, 0.60f);
                 UiSounds.playCustom(ModSounds.MENU_CHAIN.get(), 0.18f, 0.42f);
             } catch (Throwable ignored) {}
+        } else if (s.endsWith("DOCTOR")) {
+            // v0.25.0: el oficio sigue en pie. El doctor aun firma.
+            buffer.setLength(0);
+            if (Discoveries.discover(Discoveries.CODE_DOCTOR)) {
+                ChroniclerMemory.setCounter("doctor_signed", 1);
+                Marginalia.queueOnce(Marginalia.N_DOCTOR);
+            }
+            try {
+                // Susurro lejano + campana baja: el formulario llega solo.
+                UiSounds.playCustom(ModSounds.MENU_AMBIENT_OCCASIONAL.get(), 0.30f, 0.55f);
+                UiSounds.playCustom(ModSounds.MENU_BELL.get(), 0.18f, 0.50f);
+            } catch (Throwable ignored) {}
         } else if (s.endsWith("CLEANSE")) {
             // v0.21.3: la palabra de la limpieza. Abre el telegrama del cronista.
             buffer.setLength(0);

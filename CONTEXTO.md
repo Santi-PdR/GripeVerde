@@ -2,6 +2,507 @@
 
 ## Addendum operativo actual
 
+- Rama fija de Arena de esta sesion: `arena/01a02f45-gripeverde`.
+- La PR 14 (`arena/01a02cee-gripeverde`) ya esta mergeada en main; HEAD base
+  de esta sesion: `4ca038d`. Las menciones de "rama fija
+  arena/01a02cee-gripeverde" que sobreviven en el historico son instantaneas
+  archivadas, no instrucciones.
+- Base respaldada: v0.22.0, commit `4ca038ddab972ca59435353330c9ccda4a86d581`.
+- Implementacion vigente: v0.30.0 en esta rama (ver DECISIONES 2026-08-24
+  decimotercera vuelta, mas abajo).
+- Restricciones funcionales absolutas: escena completa, faroles permanentes,
+  sin kiosco/Heraldo, sin modo automatico por FPS, sin gameplay y sin
+  resourcepacks.
+- Tag/release: deliberadamente ausentes hasta cerrar KI-53 en cliente real.
+- Repositorio local vigente del owner:
+  `C:\Users\santi\Desktop\GripeVerde`.
+- Deploy vigente del owner al destino
+  `C:\Users\santi\AppData\Roaming\.sklauncher\instances\test-1\mods`:
+  comandos PowerShell INLINE (fetch origin + `reset --hard FETCH_HEAD` +
+  `gradlew clean build` + copia del jar por glob), SIN archivos .ps1 nuevos;
+  `tools\deploy.ps1` queda corregido como alternativa equivalente.
+- Regla permanente del owner (2026-08-23): tras CADA modificacion, la
+  entrega termina SIEMPRE con el bloque PowerShell inline completo
+  (actualizar + compilar + desplegar), listo para pegar en su consola.
+
+### DECISION 2026-08-23: v0.23.0 - El gramófono guarda la palabra
+
+Pasada transversal autorizada por el owner a partir de la revision tecnica
+completa del mod (hallazgos documentados en `REVISION_MOD.md` junto con
+evidencia de verificaciones: duraciones OGG reales parseadas, ausencia de
+MusicManager en el codigo, doble registro de eventos). Antes de tocar
+archivos se creo el bundle externo
+`/home/user/GripeVerde-backup-pre-v0.23.0-4ca038d.bundle` (contiene --all).
+
+- `GripeVerdeMod`: eliminado el `EVENT_BUS.register(new ScreenEventHandler())`
+  manual. La doble entrega quedaba enmascarada por cooldowns y el guard
+  `redirecting`, pero el registro corria en ambos lados y crashearia un
+  servidor dedicado al cargar `net.minecraftforge.client.event.*`. El mod
+  queda inerte fuera del cliente; `mods.toml` suma
+  `displayTest="IGNORE_ALL_VERSION"` e `issueTrackerURL`.
+- `MenuMusic`: guardia por tick sobre `MusicManager` (`isPlayingMusic` +
+  `stopPlaying` de la musica situacional) que silencia la banda sonora
+  vanilla de menu bajo el gramofono; watchdog `instanceGoneDead` recupera la
+  playlist si el motor mata la instancia (F3+T/recargas), caso que antes
+  dejaba la musica muda para siempre; temporizadores migrados a `nanoTime`.
+- `LivingAtmosphere` + `DiaryAccessibilityOptionsScreen` + `ClientConfig`:
+  nueva ayuda "Destellos reducidos" (fotosensibilidad, WCAG 2.3.1) separada
+  de Movimiento reducido; congela el temporizador del relampago sin tocar
+  niebla, lluvia ni faroles.
+- `sounds.json` + 25 lang: subtitulos reales para los ocho eventos
+  ambientales (pasos, madera, puerta, susurro, campana, cuervos, cadenas,
+  trueno). `DiaryAmbienceSlider` corrige su etiqueta hardcodeada usando la
+  clave traducida existente. Paridad lang: 93 claves.
+- `ChroniclerMemory`: escritura en executor monohilo daemon ("ultima copia
+  gana" conservado, `writeNow` synchronized); `flushForShutdown` hace
+  shutdown + awaitTermination y solo entonces escribe en linea lo pendiente.
+- `ScreenEventHandler`: reemplazo solo si la clase es exactamente
+  TitleScreen/PauseScreen vanilla; config `integration.replaceTitleScreen` /
+  `replacePauseScreen`; Ctrl+0 pasa a `debug.debugShortcut` (por defecto
+  off).
+- Retirados: mixins.json vacio (+ plugin, annotationProcessor, refmap y
+  entrada en mods.toml), namespace GameTest sin tests, metodos no-op de
+  UiSounds, propiedad sponge de settings.gradle.
+- Build: sellos nuevos `verifyGripeVerdeVersionSync` y
+  `verifyGripeVerdeMusicDurations` (parser Vorbis granule/rate, tolerancia
+  1.5 s); conteo lang 83 -> 93; CI lista para activar en
+  `tools/ci/build.yml` (JDK 17 Temurin, Gradle cacheado, jar como artifact;
+  mover a `.github/workflows/`: la sesion carece del permiso `workflows`),
+  con lo que la compilacion semantica pendiente en el sandbox (KI-52) tiene
+  via automatica; `tools/deploy.ps1` lee la version de build.gradle.
+- Conteos: 60 clases Java, 25 lang (93 claves), 25 cronicas, 35 eventos,
+  42 OGG, 42 referencias. Bump sincronizado: build.gradle +
+  GripeVerdeMod.VERSION -> 0.23.0.
+- Compilacion semantica Gradle/Forge no ejecutada en el sandbox (sin Java
+  17): queda delegada a la CI y al PC del owner (KI-53).
+- Changelog in-game actualizado en los 25 idiomas (manifestacion observable:
+### DECISION 2026-08-23 (segunda vuelta): v0.23.1 - Sellos y relojería
+
+El owner autorizo implementar el lote recomendado del informe y pidio la
+activacion de la CI resuelta de forma automatica (quedo como script, ver
+mas abajo); las mejoras CON superficie visible/efectos quedan reservadas
+hasta nueva autorizacion (ver REVISION_MOD.md, seccion de propuestas).
+
+- Build: sellos nuevos `verifyGripeVerdeSubtitles` (subtitle != "" debe
+  existir en los 25 lang) y `verifyGripeVerdeSoundUsage` (SoundEvent sin
+  uso -> fallo; 10 legacy en allowlist grandfathered documentada en
+  ModSounds).
+- ChroniclerMemory: SCHEMA_VERSION=1 + migrate() (pasos N→N+1, esquema
+  futuro se conserva con warn) + sanitize de bounds (clamps, nulls, caps
+  256 notas / 4096 guestbook).
+- MenuAmbience -> nanoTime con LivingAtmosphere como unico consumidor de
+  lastBellMs migrado al mismo reloj (hearse/cuervos/campana estables).
+- CI: ambas vias automaticas bloqueadas (git push: workflows permission
+  denied; gh api: 403 Resource not accessible by integration). Solucion:
+  `tools/ci/activar-ci.ps1` ejecutable por el owner en su PC; activa la CI
+  con sus credenciales en un paso.
+- Bump sincronizado: build.gradle + GripeVerdeMod.VERSION -> 0.23.1; docs
+  y 25 cronicas in-game al dia (parche: sellos, memoria y relojeria).
+
+### DECISION 2026-08-23 (tercera vuelta): v0.23.2 - El telegrama llega intacto
+
+Hotfix parche por crash en campo, reportado el mismo dia con crash-log
+completo de una instancia real (Java 17, Forge 47.4.10, mod v0.22.0):
+`ArrayIndexOutOfBoundsException: Index 0 out of bounds for length 0` en
+`DiaryTitleScreen.drawEasterEggMessage` durante el render del Title.
+
+- Causa raiz: el efecto maquina de escribir del telegrama (easter egg del
+  sello del titulo) produce una cadena vacia durante los primeros ~22 ms;
+  `font.split("")` devuelve lista vacia y el codigo indexaba `lines.get(0)`
+  tras forzar `lineCount >= 1`. El jugador clickeaba el logo y el cliente
+  moria en cada fotograma posterior (4 crashes consecutivos en el reporte).
+- Correccion: `lineCount` queda acotado por `lines.size()` (0 permitido; el
+  sobre conserva su altura minima con `Math.max(1, lineCount)` solo para el
+  boxH) y la llamada al overlay decorativo en `render()` queda envuelta en
+  try/catch (misma filosofia que el resto de capas ornamentales).
+- Auditoria lateral: los otros 5 usos de `font.split` (ChangelogScreen,
+  DiaryArchiveScreen) iteran seguros; el unico otro acceso indexado
+  (`MenuAmbience.weightedRandom`) ya tenia guardia `isEmpty()`.
+- Bump sincronizado: build.gradle + GripeVerdeMod.VERSION -> 0.23.2; docs y
+  25 cronicas in-game al dia.
+- KI-55 registra la validacion pendiente en cliente; el jar fijado debe
+  llegar al jugador que reporto (sigue en v0.22.0).
+
+### DECISION 2026-08-23 (cuarta vuelta): v0.24.0 - El viento vuelve a soplar
+
+Pedido del owner (mismo dia, junto al segundo crash-log de Agus): "haz las
+implementaciones que dijiste, piensa en corregir este bug, implementa mejoras
+visibles, algunos easter eggs mas, corrige que no se escucha el ambiente."
+Bug ya corregido en v0.23.2 (tercera vuelta); aqui va el resto, autorizado.
+
+- Causa raiz del ambiente mudo (diagnostico con soundfile en sandbox): los
+  loops base estaban grabados casi en silencio. `wind_urban_loop.ogg` media
+  RMS 0.0006 (-64 dB), lluvia RMS 0.026 (-32 dB), ciudad RMS 0.034 (-29 dB),
+  susurro 0.0056 y primer paso 0.0077; con las ganancias del codigo
+  (0.35/0.30/0.20) el viento salia a ~-73 dB: fisicamente inaudible. El motor,
+  las instancias, el slider y los eventos estaban sanos (la musica, audios UI
+  y raros siempre se oyeron). NO era un bug de codigo: era contenido mudo.
+- Correccion de activos: `tools/audio/regenerate_menu_ambience.py` (nuevo,
+  idempotente) sintetiza viento (ruido 1/f con rafagas, remolinos y silbido)
+  y lluvia (siseo + masa grave + ~1400 gotas) como loops perfectos con
+  crossfade de extremos, y refuerza ciudad x3, susurro x3 y paso 1 x3.
+  Objetivos: RMS 0.10-0.13, picos <= 0.90 (margen por sobresalto Vorbis).
+- Mejoras visibles autorizadas (V1+V3+V5 de REVISION_MOD):
+  * V1 Cronica: al abrir el Changelog tras una actualizacion salta a la
+    entrada de la version instalada y la sello de lacre "NUEVO/NEW" la marca
+    durante esa visita; `ChroniclerMemory.lastSeenVersion` (campo nuevo,
+    tolerante con memorias viejas: GSON lo deja null y se sanea).
+  * V3 Noche de tormenta: ~14% de las sesiones arrancan bajo tormenta
+    cerrada (sorteo una vez por JVM en `MenuAmbience.isStormNight()`): lluvia visual x2 con mas inclinacion y
+    brillo, relampagos cada 3.5-9.5 s, mezcla ambiente con lluvia x1.8 /
+    viento x1.25 / ciudad x0.8, capa rara cada 14-26 s con trueno casi
+    garantizado, velo oscuro en titulo y pergaminos; descubrimiento
+    `storm_night` + marginalia. Respeta reduceFlashes (sin relampagos) y
+    reducedMotion (sin cortina extra de movimiento).
+  * V5 Gotas sobre el pergamino: 7 gotas (14 en tormenta) resbalan por
+    todos los pergaminos (`PaperTexture.draw/drawClean`); con movimiento
+    reducido quedan quietas como condensacion.
+- Easter eggs nuevos (descubrimientos 48-50 de 50):
+  * `seal_breaker`: 9 toques rapidos sobre el sello del titulo -> el lacre
+    salta en esquirlas con gravedad; estrena `ui.paper_fall` (sale del
+    allowlist del sello de uso de sonidos).
+  * `sound_keeper`: diapason diminuto al margen del regulador de ambiente en
+    Opciones de sonido; al pulsarlo suena `ui.success` (segundo evento que
+    sale del allowlist) y el gabinete queda "afinado".
+  * Textos de fichas al 100% (`N_MANY_CARDS`, `N_ARCHIVE_COMPLETE`) ahora
+    computan la cifra desde `Discoveries.ALL.length` (quedaron dinamicos).
+- Higiene lateral: el ambiente del gabinete se detiene al entrar a un mundo
+  (antes los loops seguian sonando bajo el gameplay; `start()` ademas se
+  niega a arrancar con mundo cargado).
+- Bump sincronizado: build.gradle + GripeVerdeMod.VERSION -> 0.24.0; docs y
+  25 cronicas in-game al dia. Espejo Python: 7/7 sellos + balance OK.
+- KI-56 registra la validacion pendiente en cliente real.
+
+### DECISION 2026-08-23 (quinta vuelta): v0.24.1 - La errata del cronista
+
+El owner ejecuto `tools\deploy.ps1` y `compileJava` fallo:
+`PaperTexture.java:95` usaba `0xD20PL` como semilla de las gotas y la P no
+es digito hexadecimal (`malformed floating-point literal`). La 0.24.0 jamas
+existio como jar: el sandbox no tiene JDK y el espejo Python solo verifica
+balance de llaves, asi que la errata salio sellada (fallo de proceso,
+registrado para que no se repita).
+
+- Correccion: semilla `0xCA1DAL` ("la caida"); comportamiento identico,
+  sin ningun otro cambio funcional respecto a 0.24.0.
+- Refuerzo de proceso: el espejo Python suma el sello 8
+  (`verifyJavaLiterals`), lint de todos los literales numericos de los 60
+  .java (hex/binario/octal/decimal/flotante, sufijos, octales con 8/9)
+  ignorando comentarios y cadenas. Detectado el caso real: `0xD20PL`
+  queda rechazado; con el sello activo, esta familia de erratas no vuelve
+  a salir.
+- Bump sincronizado: build.gradle + GripeVerdeMod.VERSION -> 0.24.1; docs y
+  25 cronicas in-game al dia. Espejo Python: 8/8 sellos + balance OK.
+- KI-57 registra la validacion pendiente; KI-56 queda pendiente INTEGRO (la
+  0.24.0 nunca se pudo probar). Para Agus: enviar 0.24.1.
+
+### DECISION 2026-08-23 (sexta vuelta): v0.25.0 - El que mira la tormenta
+
+Pedido del owner: "algunos easter eggs mas". Tres secretos nuevos en la
+vigilia, todos cableados sobre mecanica existente, sin resourcepacks y sin
+gameplay (reglas madre intactas):
+
+- `storm_watcher`: `LivingAtmosphere.flashCount()` (nuevo; se incrementa en
+  el destello programado y en `triggerLightningFlash`) + linea base por
+  apertura de la vigilia en `DiaryTitleScreen.tick`; al tercer relampago
+  nuevo, ficha y nota `N_FLASH3`. Con destellos reducidos los relampagos no
+  nacen y la ficha no se otorga sola (accesibilidad).
+- `drop_catcher`: `LivingAtmosphere.rainDropAt` (hit-test sobre las 40
+  gotas, tolerancia generosa) + `scareDrop` (la gota vuelve al cielo) +
+  plink de aguja (`menu/tick` 1.9) + guarda `estimateFirstButtonTop` para
+  no tragar clics de botones; nota `N_DROP`.
+- `code_doctor`: rama DOCTOR en el telegrafo oculto (`HiddenCipher`):
+  susurro + campana baja, contador `doctor_signed`, nota `N_DOCTOR`.
+- Registry: 3 ids nuevos en `Discoveries.ALL` (archivo: 52 fichas) con
+  nombre y pista bilingues inline (cero claves lang nuevas; 93 intactas) y
+  3 notas nuevas en `Marginalia` (N_FLASH3, N_DROP, N_DOCTOR).
+- Bump sincronizado: build.gradle + GripeVerdeMod.VERSION -> 0.25.0; docs y
+  25 cronicas in-game al dia. Espejo Python: 8/8 sellos + balance OK.
+- KI-58 registra la validacion pendiente en cliente real.
+
+### DECISION 2026-08-23 (septima vuelta): v0.25.1 - El cilindro original
+
+Feedback del owner tras escuchar la 0.25.0 en cliente: "El sonido de la
+lluvia que creaste esta bugeado creo, deberias usar los sonidos que ya
+existian." Leccion registrada: no re-sintetizar contenido que el owner
+reconoce; restaurar el master y amplificar.
+
+- Lluvia: se retira la sintesis de 0.24.0 y vuelve el master original
+  (commit 447c290) con ganancia pura, normalizado a pico ~0.83 conservando
+  la cresta (~19); sin limitadores (descartado un soft-knee con NaN y
+  picos >1.0, rehecho desde el master). Mezcla `BaseLoop` lluvia 0.30 ->
+  0.45.
+- Viento: master original amplificado a RMS ~0.085 (pico 0.80). Costuras
+  de loop medidas: limpias (0.0076 / 0.0000), sin crossfade; 30 s ambos.
+- `tools/audio/regenerate_menu_ambience.py` archivado con nota en cabecera
+  (ya no es la fuente de esos loops).
+- Bump sincronizado: build.gradle + GripeVerdeMod.VERSION -> 0.25.1; docs y
+  25 cronicas in-game al dia. Espejo Python: 8/8 sellos + balance OK.
+- KI-59 registra la validacion pendiente en cliente real.
+
+### DECISION 2026-08-23 (octava vuelta): v0.25.2 - El telegrama no pisa la mesa
+
+Reporte del owner probando GUI scale 3-4: el cartel del easter egg (el
+telegrama "CASO" que muestra textos como "Como conoces ese nombre?...")
+caia SOBRE la mesa de botones — los dos clamps de Y se anulaban (el segundo
+re-clavaba en `safeTop`) — y el sello FRAUDE del cartel del elixir se
+montaba sobre el texto en carteles bajos.
+
+- `DiaryTitleScreen.drawEasterEggMessage`: clamps reordenados (jamas pisar
+  botones, jamas salir por arriba; sin banda libre, sube sobre el logo) +
+  `boxW` con techo en el ancho real de pantalla.
+- `PosterRenderer` (FRAUDE): estampado siempre DESPUES del texto
+  (`cursorY + 6`), tope duro dentro del papel y clamp horizontal.
+- De paso: los textos del telegrama salen de un pool bilingue fijo en
+  `DiaryTitleScreen` (eggPool) y las fichas/pistas viven en el registry
+  `Discoveries` + notas en `Marginalia`; el owner pregunto "de donde los
+  saca" — respondido en chat y registrado aqui para la memoria.
+- Docs/tooling: deploy vigente = comandos PowerShell INLINE (sin .ps1
+  nuevos) + regla permanente: cada entrega termina con el bloque PW inline.
+- Bump sincronizado: build.gradle + GripeVerdeMod.VERSION -> 0.25.2; docs y
+  25 cronicas in-game al dia. Espejo Python: 8/8 sellos + balance OK.
+- KI-60 registra la validacion pendiente en cliente real.
+
+### DECISION 2026-08-24 (decimocuarta vuelta): REPOSO — plan de la proxima iteracion
+
+El owner puso el proyecto EN REPOSO: "dejare en reposo ahora mismo...
+documenta todo para seguir mas tarde". NO hubo cambios de codigo: la
+v0.30.0 (3c598a6) queda como version vigente y candidata para Agus. Esto
+solo registra el plan de la proxima iteracion, con su contexto tecnico.
+
+**P1 — Pluma de la cronica: coherencia visual y sonora (correccion).**
+Feedback textual: "se ve extraña cuando ya animo una parte y sigue la
+otra; el sonido es constante y no para — deberia parar cuando NO estas
+viendo la parte que se anima". Diseno acordado para implementar:
+- El rasguño (UI_SCROLL quedo) solo suena si la fila que se esta
+  escribiendo es VISIBLE en pantalla en ese frame (check de bounds en el
+  loop de ChangelogScreen.render; hoy suena por tiempo transcurrido sin
+  mirar la vista).
+- La pluma deja de correr por tiempo en zonas fuera de vista: el
+  presupuesto se consume SOLO por filas visibles (la regla de piso de
+  0.30.0 ya cubre el pasado lejano). Efecto: nunca mas "una parte
+  escrita y otra siguiendo" — la tinta siempre trabaja delante del
+  lector.
+- Mantener: gracia de 300 ms tras el pliegue, click que completa todo,
+  reducedMotion = hoja entera.
+
+**P2 — CUADERNO DOBLE FAZ (rediseno grande de la cronica).** Propuesta
+del owner, queda AUTORIZADA como diseno para la proxima iteracion:
+- La cronica pasa de pergamino con scroll a CUADERNO de dos hojas
+  abiertas (izquierda/derecha), 1 version por hoja; botones "hoja
+  siguiente"/"hoja anterior" (+ flechas de teclado y rueda = pasar de
+  hoja) y animacion de LA HOJA DOBLANDOSE (fake 2D por render puro:
+  trapezoide/degradado que se cierra con sombra; sin texturas).
+- La pluma, si se conserva, escribe solo la hoja en vista al llegar.
+- Conservar del sistema actual: la lupa (ahora salta a la HOJA que
+  contiene la palabra: indice version→hoja), el folio (N/M = hojas), el
+  lacre multi-edicion, el sello NUEVO, y los huevos: el folio escondido
+  pasa a ser "hoja sin numerar" tras la ultima hoja; los asteriscos del
+  encuadernador se reubican en el margen de la espina (centro del
+  cuaderno) para que sigan encontrables.
+- Reglas de siempre: reducedMotion = paso de hoja instantaneo o fundido
+  sin giro; reduceFlashes = sin brillo en el doblado; GUI 2/3/4 con
+  minimo ancho comprobado (cada hoja queda mas angosta: validar wrap a
+  ~170 px y, si no entra en escala 4, modo hoja simple como fallback);
+  minimal mode sin adornos extra.
+- Esfuerzo estimado ALTO: reescritura de ChangelogScreen (paginacion por
+  version, wrap por hoja, animacion de giro). NO empezar sin reconfirmar
+  con el owner al retomar (el dijo "seria bueno" entre alternativas).
+
+**P3 — Volumen de botones, segunda pasada.** Feedback: "sigue siendo
+alto" tras el -40% de hovers de 0.30.0. Plan: VOL_CLICK_MAIN 0.22→0.16,
+VOL_CLICK_SECTION 0.18→0.13, VOL_BACK 0.20→0.15 (y derivados: toggle,
+cleanClick, tab heredan las familias). Reevaluar tambien el cooldown de
+hover si al owner le sigue pareciendo "machacon".
+
+**Estado operativo al retomar:** repo en paz en 0.30.0; validar KI-53 a
+KI-65 sigue pendiente (owner no confirmo en cliente); orden sugerido de
+la proxima sesion: P3 (5 min) → P1 (correccion corta) → P2 solo con
+visto bueno explicito. Backups vigentes: bundles pre-v0.26.0…pre-v0.30.0
+fuera del repo (raiz del workspace).
+
+### DECISION 2026-08-24 (decimotercera vuelta): v0.30.0 - La hoja entera
+
+Feedback del owner tras la 0.29.0: "muy bien quedo [la vuelta]. En el
+changelog queda raro que solo una parte se escriba — corregilo (que todo
+se escriba o que se esconda y al bajar se anime). En el buscador la
+letra no se ve. Baja el volumen de los tick de los botones. Y corregi
+que subtitulos/informacion bajo los subtitulos quedan solapados por
+botones. Tiene que estar bien en todas las interfaces."
+Backup previo: `GripeVerde-backup-pre-v0.30.0-6ac186f.bundle`.
+
+- Pluma de bitacora entera: preparePen abarca desde la H1 vigente hasta
+  el fin del documento (340 c/s tras gracia de 300 ms) + REGLA DE PISO
+  en el loop: fila mas de media pantalla por encima de la vista = ya
+  impresa, no gasta presupuesto → bajar de golpe no deja huecos y la
+  escritura sigue al ritmo del lector. Click completa; reducedMotion,
+  hoja entera.
+- Lupa legible: fondo PAPER claro (era tinta sobre tinta — errata
+  reconocida), texto INK, caret bronce. 
+- Hovers -40% (VOL_HOVER_MAIN 0.028 / SECTION 0.022).
+- Solapes corregidos: (a) dayMsg del titulo va a la IZQUIERDA de la
+  firma en la misma linea (antes flotaba sobre la mesa de botones) y la
+  firma clampa x>=48 (fuera de la franja del gramofo); (b) linea "fix"
+  del huevo Holloway con tope duro sobre gridTop-11 y divisor debajo;
+  (c) flavor de la sala de sonido se omite si no hay aire sobre los
+  sliders; (d) elipsis al ancho del papel en flavor/fix largos.
+- Bump sincronizado 0.30.0; 25 cronicas con vocabulario de documento
+  real; docs en regla. Espejo 8/8 + balance OK (61 Java; 35/35 sonidos).
+
+### DECISION 2026-08-24 (duodecima vuelta): v0.29.0 - La vuelta y la lupa
+
+Feedback del owner tras jugar la 0.28.0: "me gusta lo que hiciste con la
+cronica, no me gusto la animacion de salir de cada cosa — podrias
+hacerla mejor y optimizarla; y cuando haces click en cualquier lado hace
+un sonido, eso no me gusta; aprovecha y anade cosas que creas que
+faltan". Backup previo:
+`/home/user/GripeVerde-backup-pre-v0.29.0-5dee740.bundle`.
+
+- Vuelta cortes: el regreso a mesa ya visitada pasa de barrido completo
+  invertido (260 ms con salpicaduras y gotas) a gesto breve (170 ms):
+  velo tenue (110) + banda superior (46 px) que se repliega con filo
+  bronce. Avanzar conserva TODA la ceremonia (gusto). Sombra de asiento
+  sigue en ambos (solo opacidad).
+- Optimizacion del velo: cache de elegibilidad por clase (sin cadenas
+  por frame), config resuelta una vez por apertura (`reducedNow`),
+  duracion (`durNowMs`) y fin de efecto (`fxEndMs`) precomputados →
+  fuera de la ventana del efecto, costo cero por frame.
+- silenceKnock retirado (pedido expreso: nada de sonido al tocar en
+  cualquier lado). UI_ERROR sigue cableado en error(): 35/35 en uso,
+  allowlist vacia.
+- Extra anadido: la LUPA de la bitacora (busqueda por palabra en la
+  cronica): cuadrito de 96 px al pie a la derecha (abrir con `/`, Ctrl+F
+  o toque), texto simple sin comodines, Enter/Shift+Enter recorre las
+  apariciones (piquito bronce + fondo tenue + contador), Esc la cierra y
+  olvida. Folio se corre a la izquierda en escala 4 — jamas se pisan.
+  Caret quieto con destellos reducidos.
+- Sandbox: HEAD volvio a amanecer en 4ca038d mid-edicion; rescate con
+  `git reset --mixed FETCH_HEAD` (disco intacto, mi DiaryTransitions
+  reescrito sobrevivio). Regla aprendida: verificar `git log` al
+  retomar.
+- Interfaces: banda proporcional en GUI 2/3/4; lupa bajo el contenido
+  en todas las escalas; reducedMotion = fundido limpio (KI-64).
+- Bump sincronizado 0.29.0, 25 cronicas con vocabulario de documento
+  real, docs en regla. Espejo Python 8/8 + balance OK.
+
+### DECISION 2026-08-24 (undecima vuelta): v0.28.0 - Las gotas y los folios
+
+Pedido del owner (consigna repetida): changelog al dia sin terminos de
+taller, mejoras significativas en textos y efectos entre interfaces, bien
+en TODAS las interfaces, backup previo.
+
+- Backup externo previo:
+  `/home/user/GripeVerde-backup-pre-v0.28.0-d40c820.bundle` (--all,
+  verificado).
+- Gotas del filo (DiaryTransitions): 3 desprendimientos por pliegue
+  (30/55/80% del barrido), resbalon de 26 px max en el sentido del
+  pliegue con rastro 1 px; vida 550 ms; alfas ≤ 85/40; semilla LCG propia
+  por apertura. reducedMotion: sin gotas.
+- Folio de la cronica: "folio N · M" centrado al pie del panel, calculado
+  de scrollY/contentH; ornamentos bronce; fuera del area de contenido
+  (no pisa texto, Cerrar ni el folio escondido del huevo).
+- Lacre multi-edicion (ChangelogScreen): freshRows = cabeceras cuyo
+  triple de version > lastSeenVersion (parser regex tolerante,
+  comparacion numerica); sello para todas, pluma solo en la vigente.
+- Subtitulos del titulo: pools 9 → 12 por idioma/contexto (hospedajes y
+  arsenales), voz de documento intacta.
+- Interfaces: medido contra GUI 2/3/4, minimal, reducedMotion y
+  reduceFlashes (KI-63). Sin gameplay, render Java puro.
+- Bump sincronizado 0.28.0 (build.gradle + GripeVerdeMod.VERSION), 25
+  cronicas al dia con vocabulario de documento real, docs en regla.
+  Espejo Python 8/8 + balance OK (61 Java; 35/35 sonidos en uso).
+
+### DECISION 2026-08-24 (decima vuelta): v0.27.0 - El pliegue y la pluma
+
+Pedido del owner (misma consigna que la vuelta anterior): changelog al dia
+sin terminos de taller, mejoras significativas en textos y en los efectos
+al cambiar de pantalla/interfaz, bien en TODAS las interfaces y backup
+antes de tocar nada.
+
+- Incidente de sesion resuelto al empezar: la copia local amanecio con
+  HEAD en 4ca038d (disco intacto, indice desfasado); `git fetch` +
+  `git reset --hard FETCH_HEAD` dejo el arbol = aa0ff79 (0.26.0) sin
+  perdida (probado: diff vs FETCH_HEAD solo listaba los files nuevos).
+- Backup externo previo (regla consolidada):
+  `/home/user/GripeVerde-backup-pre-v0.27.0-aa0ff79.bundle` (--all,
+  verificado).
+- Pliegue direccional: pila NAV acotada (16) en `DiaryTransitions`,
+  alimentada por `noteTransition` en los tres puntos de salida de
+  `onScreenOpening` (captura `getCurrentScreen()` al inicio; la pantalla
+  nueva se lee TRAS el redirect). Avanzar baja, regresar sube; la pausa
+  dentro de mundo y los returns por Esc quedan cubiertos por la pila.
+- Salpicaduras (5 gotas, LCG por apertura, alfas ≤ 95, cola 500 ms; fuera
+  con reducedMotion) y sombra de asiento de la hoja (450 ms, alfa ≤ 20,
+  solo opacidad: vale con reducedMotion).
+- V4 (REVISION_MOD) implementada: la entrada de la version recien
+  instalada se escribe a pluma en su primera visita (170 chars/s min,
+  techo 6,5 s), plumín anclado al wrap real del font (capital incluida),
+  rasguño con UI_SCROLL a 0.045f por tramos de 42 chars (throttle 120 ms),
+  click la completa sin tragar el gesto, lastSeenVersion garantiza que se
+  escribe una sola vez; reducedMotion → hoja entera; REDUCE_FLASHES →
+  tinta del plumín fija.
+- Recordatorio del owner reafirmado: el mod vive en interfaces — todo se
+  midio contra GUI 2/3/4, minimal mode, reducedMotion y reduceFlashes
+  (KI-62). Sin gameplay, sin resourcepacks.
+- Bump sincronizado: build.gradle + GripeVerdeMod.VERSION -> 0.27.0; 25
+  cronicas in-game con entrada nueva en vocabulario de documento real;
+  CHANGELOG/KNOWN_ISSUES/README/REVISION_MOD al dia. Espejo Python 8/8
+  sellos + balance OK (61 Java; 35/35 sonidos en uso).
+
+### DECISION 2026-08-24 (novena vuelta): v0.26.0 - Las hojas y los faroles
+
+Pedido del owner: "actualiza el changelog — sin terminos que no sean de un
+documento de la vida real —, haz nuevas mejoras significativas en textos y
+efectos visuales como al cambiar de pantalla/interfaz; tiene que estar bien
+en TODAS las interfaces; y haz un backup antes."
+
+- Backup externo previo (bundle --all, verificado):
+  `/home/user/GripeVerde-backup-pre-v0.26.0-18e178d.bundle`. Queda como
+  regla: backup bundle ANTES de cada entrega de cambios estructurales.
+- Transicion entre interfaces (`DiaryTransitions`, nueva clase, enganchada
+  en `ScreenEvent.Render.Post`): cortina de tinta que revela la hoja nueva
+  en ~260 ms (velo sepia + franja con filo bronce). Filtro por paquete
+  `client.screens`: solo pantallas del gabinete; vanilla y ajenas intactas.
+  Movimiento reducido: fundido de 130 ms sin barrido. Sin gameplay, sin
+  resourcepacks, render Java puro (reglas madre intactas).
+- Faroles reactivos al cursor (V6 de REVISION_MOD): `setMouse` desde el
+  titulo + `lanternHover[]` eased en tick (antes del early-return de
+  reducedMotion: en accesibilidad solo respira el brillo). Radio 30 px,
+  halo x1.5, llama +25%, topes 255 (withAlpha no clampea).
+- V2 de REVISION_MOD cerrada: los 8 sonidos legacy cableados a sus
+  eventos en `UiSounds` (open/close/modal/tab/error/cleanClick/
+  clickCreate/respawn, mas `silenceKnock` nuevo para el escritorio en
+  silencio y `SlimButton.withClickSound` para el gramofo). `respawn`
+  suena al volver al titulo via `onArriveTitle` (la primera apertura del
+  arranque no suena; el redirect vanilla tambien cuenta la llegada).
+  Allowlist del sello de uso VACIA en build.gradle y en
+  tools/verify_mirrors.py: 35/35 eventos en uso.
+- Cronicas in-game reescritas (0.24.1/0.25.0/0.25.1 x25): vocabulario de
+  documento real; fuera hexadecimal/crossfade/literal/clic. Regla nueva de
+  estilo: la cronica in-game jamas usa terminos de taller ni de software;
+  los documentos tecnicos (CHANGELOG.md, KNOWN_ISSUES) si pueden.
+- Recordatorio del owner registrado: este MOD VIVE EN INTERFACES — cada
+  cambio se verifica en GUI scale 2/3/4, minimal mode y movimiento
+  reducido.
+- Bump sincronizado: build.gradle + GripeVerdeMod.VERSION -> 0.26.0; docs y
+  25 cronicas in-game al dia. Espejo Python: 8/8 sellos + balance OK (61
+  Java ahora). KI-61 registra la validacion pendiente en cliente real.
+
+### SIGUIENTE PASO OPERATIVO VIGENTE
+
+PROYECTO EN REPOSO (orden del owner del 2026-08-24, ver decimocuarta
+vuelta). Al retomar: (1) validar KI-53 a KI-65 en cliente real con el
+jar 0.30.0 (incluye reenviarlo al jugador que reporto el crash y mirar
+especialmente pluma/lupa/vuelta cortes), (2) ejecutar el plan anotado:
+P3 clicks mas bajos → P1 pluma coherente (rasguño solo si la fila que se
+escribe esta a la vista; tinta solo delante del lector) → P2 cuaderno
+doble faz SOLO con visto bueno fresco del owner. No implementar planes
+de gameplay ni los items de "propuestas futuras"/"propuestas visibles"
+de REVISION_MOD.md sin autorizacion expresa. Tag/release: deliberadamente
+ausentes hasta validacion real (ultima estable validada; pendientes de
+v0.23.x y v0.22.0).
+
+## Addendum operativo archivado (v0.22.0)
+
 - Rama fija de Arena: `arena/01a02cee-gripeverde`.
 - Base respaldada: v0.21.31, commit
   `7605243f9aff55ccbe0d00ad743c38414c66061f`.
@@ -68,7 +569,8 @@ verificó el bundle externo
   de pantallas, toggle de movimiento reducido y prueba controlada de
   recuperacion de memoria.
 
-### SIGUIENTE PASO OPERATIVO VIGENTE
+### SIGUIENTE PASO OPERATIVO (instantanea historica de la v0.22.0 — la
+### secuencia vigente de verdad es la primera de este documento)
 
 No implementar los planes de gameplay que aparecen en bloques historicos de
 este documento. La unica secuencia vigente es cerrar KI-52 en un cliente

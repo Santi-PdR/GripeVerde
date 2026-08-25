@@ -215,7 +215,8 @@ public class DiaryTitleScreen extends Screen {
         int skipH = 20;
         this.skipMusicButton = new SlimButton(skipX, skipY, skipW, skipH,
             Component.literal(">>"),
-            () -> MenuMusic.skipToNext());
+            () -> MenuMusic.skipToNext())
+            .withClickSound(com.eternalcraft.gripeverde.client.audio.UiSounds::clickCreate);
         this.skipMusicButton.setTooltip(Tooltip.create(Component.literal(isEnglishSelected()
             ? "Change the chronicler's piece"
             : "Cambiar la pieza del cronista")));
@@ -245,6 +246,21 @@ public class DiaryTitleScreen extends Screen {
             if (com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.isTimeSick()) {
                 com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
                     com.eternalcraft.gripeverde.client.lore.Discoveries.TIME_SICK);
+            }
+            // v0.25.0: el que mira la tormenta — tres relampagos sin irse de la vigilia.
+            if (com.eternalcraft.gripeverde.client.audio.MenuAmbience.isStormNight()) {
+                int fc = com.eternalcraft.gripeverde.client.render.LivingAtmosphere.flashCount();
+                if (stormFlashBaseline < 0) stormFlashBaseline = fc;
+                else if (fc - stormFlashBaseline >= 3) {
+                    stormFlashBaseline = fc;
+                    if (com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                            com.eternalcraft.gripeverde.client.lore.Discoveries.STORM_WATCHER)) {
+                        com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                            com.eternalcraft.gripeverde.client.lore.Marginalia.N_FLASH3);
+                    }
+                }
+            } else {
+                stormFlashBaseline = -1;
             }
             // Una noche entera frente al papel: el alba enferma aparece.
             long sessionMin = (System.currentTimeMillis() - sessionStartMs) / 60_000L;
@@ -296,6 +312,8 @@ public class DiaryTitleScreen extends Screen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        // v0.26.0: los faroles reconocen la mano del lector.
+        com.eternalcraft.gripeverde.client.render.LivingAtmosphere.setMouse(mouseX, mouseY);
         // Professional centralized scene renderer
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderTitleScene(g, this.width, this.height);
         drawGlassPatina(g);
@@ -325,7 +343,15 @@ public class DiaryTitleScreen extends Screen {
         }
 
         // Overlays interactivos (arriba de todo)
-        drawEasterEggMessage(g);
+        // v0.23.2: es decoracion pura; jamas debe tumbar el render del cliente
+        // (en 0.22.0 un AIOOBE aqui crasheaba en bucle la sesion).
+        try {
+            drawEasterEggMessage(g);
+        } catch (Throwable ignored) {}
+        // v0.24.0: esquirlas del sello roto; igual de intocables.
+        try {
+            drawSealShards(g);
+        } catch (Throwable ignored) {}
         // Easter egg: relampago verde (suprimido con movimiento reducido).
         if (!reducedMotion() && System.currentTimeMillis() < easterLightningUntilMs) {
             long rem = easterLightningUntilMs - System.currentTimeMillis();
@@ -562,11 +588,13 @@ public class DiaryTitleScreen extends Screen {
         // ORDEN NUEVO: nombre nuevo a la izquierda, nombre viejo tachado a la derecha
         // Esto se lee mejor: "el nuevo cronista, el anterior tachado"
 
-        // Firma nueva (izquierda) con temblor sutil
+        // v0.30.0: la firma jamas entra en la franja del gramofo (>>), y el
+        // mensaje del dia se lee a su IZQUIERDA, en la misma linea — antes
+        // flotaba encima y podia pisar la mesa de botones.
         double jitterX = Math.sin(System.currentTimeMillis() / 250.0) * 0.5
                        + Math.sin(System.currentTimeMillis() / 87.0) * 0.3;
         double jitterY = Math.cos(System.currentTimeMillis() / 310.0) * 0.4;
-        int newX = this.width - sw - oldSw - 16 + (int)Math.round(jitterX);
+        int newX = Math.max(48, this.width - sw - oldSw - 16) + (int)Math.round(jitterX);
         int newY = y + (int)Math.round(jitterY);
         // v0.21.25: firma limpia sin sombra.
         g.drawString(this.font, signature,
@@ -586,14 +614,18 @@ public class DiaryTitleScreen extends Screen {
         g.fill(oldX + 2, strikeY - 1, oldX + oldSw - 1, strikeY,
             com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0x00000000, 90));
 
-        // Mensaje del dia real (arriba de todo, alineado a la derecha del nombre viejo)
+        // Mensaje del dia real: a la IZQUIERDA de la firma, en la misma
+        // linea; si no hay aire suficiente (pantalla minuscula), se omite —
+        // nunca pisando botones ni saliendose del vidrio.
         String dayMsg = getDayMessage();
         if (!dayMsg.isEmpty()) {
             int dmw = this.font.width(dayMsg);
-            int dmAlpha = com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
-                com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_LIGHT, 90);
-            g.drawString(this.font, dayMsg,
-                this.width - dmw - 6, y - 10, dmAlpha, false);
+            int dayX = newX - dmw - 8;
+            if (dayX >= 48) {
+                int dmAlpha = com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
+                    com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_LIGHT, 90);
+                g.drawString(this.font, dayMsg, dayX, y, dmAlpha, false);
+            }
         }
     }
 
@@ -617,7 +649,10 @@ public class DiaryTitleScreen extends Screen {
         "Que nadie cruce solo la niebla",
         "La guardia acepta nuevos nombres",
         "Hay luces en otros barrios",
-        "Compartan el pan y la fiebre"
+        "Compartan el pan y la fiebre",
+        "Los hospedajes abren sus libretas",
+        "Un cordon se sostiene entre todos",
+        "Escriban su nombre en la guardia"
     };
     private static final String[] MULTIPLAYER_SUBTITLES_EN = {
         "Fight beside your brothers",
@@ -628,7 +663,10 @@ public class DiaryTitleScreen extends Screen {
         "No one crosses the fog alone",
         "The guard accepts new names",
         "There are lights in other districts",
-        "Share the bread and the fever"
+        "Share the bread and the fever",
+        "The lodgings open their ledgers",
+        "A cordon is held by every hand",
+        "Write your name in the watch"
     };
     private static final String[] MODS_SUBTITLES_ES = {
         "Preparen su equipamiento",
@@ -639,7 +677,10 @@ public class DiaryTitleScreen extends Screen {
         "Inventario de instrumentos prohibidos",
         "Las cajas del sanatorio",
         "Herramientas para una ciudad enferma",
-        "Que piezas sostienen esta noche"
+        "Que piezas sostienen esta noche",
+        "Cada pieza lleva su sello",
+        "Lo que el cordon permite",
+        "Cuenten las lamparas antes de salir"
     };
     private static final String[] MODS_SUBTITLES_EN = {
         "Prepare your equipment",
@@ -650,7 +691,10 @@ public class DiaryTitleScreen extends Screen {
         "Inventory of forbidden instruments",
         "The sanatorium crates",
         "Tools for a sickened city",
-        "What pieces hold this night together"
+        "What pieces hold this night together",
+        "Every piece bears its seal",
+        "What the cordon allows",
+        "Count the lamps before leaving"
     };
     private static final java.util.Random SUB_RNG = new java.util.Random();
 
@@ -760,6 +804,22 @@ public class DiaryTitleScreen extends Screen {
                         && mouseY >= sw[1] - 2 && mouseY <= sw[1] + sw[3] + 2) {
                     com.eternalcraft.gripeverde.client.render.VictorianSkyline.signalWindowClicked();
                     return true;
+                }
+
+                // v0.25.0: la lluvia se deja atrapar (nunca sobre la mesa de botones).
+                if (mouseY < estimateFirstButtonTop() - 8) {
+                    int di = com.eternalcraft.gripeverde.client.render.LivingAtmosphere.rainDropAt(mouseX, mouseY, w, h);
+                    if (di >= 0) {
+                        com.eternalcraft.gripeverde.client.render.LivingAtmosphere.scareDrop(di);
+                        if (com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                                com.eternalcraft.gripeverde.client.lore.Discoveries.DROP_CATCHER)) {
+                            com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                                com.eternalcraft.gripeverde.client.lore.Marginalia.N_DROP);
+                        }
+                        com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                            com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_TICK.get(), 0.10f, 1.9f);
+                        return true;
+                    }
                 }
             } catch (Throwable ignored) {}
         }
@@ -892,8 +952,18 @@ public class DiaryTitleScreen extends Screen {
     private String easterEggCaseCode = "";
     private long easterEggStartedMs = 0L;
     private long easterEggUntilMs = 0L;
+
+    // v0.24.0: el lacre del telegrama cede ante una mano terca (9 golpes seguidos).
+    private int sealTapStreak = 0;
+    private long sealTapLastMs = 0L;
+    private long sealShardsStartMs = 0L;
+    private long sealShardsUntilMs = 0L;
+    private final float[][] sealShards = new float[7][4]; // x,y,vx,vy
+    private static final java.util.Random SEAL_RNG = new java.util.Random();
     private long easterFlashUntilMs = 0L;
     private long skullShakeUntilMs = 0L;
+    // v0.25.0: linea base de relampagos contados desde que la vigilia abrio (storm_watcher).
+    private int stormFlashBaseline = -1;
     private long easterLightningUntilMs = 0L;
     // Particulas verdes cayendo del logo tras easter egg
     private static final int EGG_PARTICLE_COUNT = 20;
@@ -906,6 +976,11 @@ public class DiaryTitleScreen extends Screen {
         long now = System.currentTimeMillis();
         if (now - lastLogoClickMs < 260L) return;
         lastLogoClickMs = now;
+
+        // v0.24.0: golpear el sello una y otra vez, sin dejarlo respirar.
+        if (now - sealTapLastMs <= 1500L) sealTapStreak++; else sealTapStreak = 1;
+        sealTapLastMs = now;
+        if (sealTapStreak >= 9) breakWaxSeal();
 
         String[] eggPool = isEnglishSelected() ? LOGO_EASTER_EGGS_EN : LOGO_EASTER_EGGS_ES;
         int caseNo = 17 + EASTER_RNG.nextInt(80);
@@ -943,6 +1018,55 @@ public class DiaryTitleScreen extends Screen {
         easterFlashUntilMs = reduced ? 0L : now + 400L;
     }
 
+    /** v0.24.0: el sello de lacre salta en esquirlas; el papel cae. */
+    private void breakWaxSeal() {
+        sealTapStreak = 0;
+        long now = System.currentTimeMillis();
+        boolean reduced = reducedMotion();
+        int cx = this.width / 2;
+        int cy = 45;
+        for (int i = 0; i < sealShards.length; i++) {
+            sealShards[i][0] = cx + (float)(SEAL_RNG.nextDouble() * 22 - 11);
+            sealShards[i][1] = cy + (float)(SEAL_RNG.nextDouble() * 10 - 5);
+            sealShards[i][2] = (float)(SEAL_RNG.nextDouble() * 140 - 70);
+            sealShards[i][3] = -20f - (float)(SEAL_RNG.nextDouble() * 120);
+        }
+        sealShardsStartMs = now;
+        sealShardsUntilMs = reduced ? 0L : now + 1500L;
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                com.eternalcraft.gripeverde.client.audio.ModSounds.UI_PAPER_FALL.get(), 0.9f, 0.78f);
+            com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                com.eternalcraft.gripeverde.client.audio.ModSounds.UI_CLICK_HEAVY.get(), 0.40f, 1.38f);
+        } catch (Throwable ignored) {}
+        try {
+            com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                com.eternalcraft.gripeverde.client.lore.Discoveries.SEAL_BREAKER);
+            com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                com.eternalcraft.gripeverde.client.lore.Marginalia.N_SEAL);
+        } catch (Throwable ignored) {}
+    }
+
+    /** v0.24.0: esquirlas de lacre con gravedad; pura decoracion. */
+    private void drawSealShards(net.minecraft.client.gui.GuiGraphics g) {
+        long now = System.currentTimeMillis();
+        if (sealShardsStartMs == 0L || now >= sealShardsUntilMs) return;
+        float t = (now - sealShardsStartMs) / 1000f;
+        float fade = (sealShardsUntilMs - now) / 1500f;
+        int alpha = (int)(220 * Math.min(1f, fade * 2f));
+        if (alpha <= 3) return;
+        int wax = (alpha << 24) | 0x7A2415;
+        int waxLight = (Math.min(alpha, 140) << 24) | 0xB8402A;
+        for (float[] sh : sealShards) {
+            float x = sh[0] + sh[2] * t;
+            float y = sh[1] + sh[3] * t + 380f * t * t;
+            if (y > this.height) continue;
+            int px = (int) x, py = (int) y;
+            g.fill(px, py, px + 2, py + 2, wax);
+            g.fill(px, py, px + 1, py + 1, waxLight);
+        }
+    }
+
     private void drawEasterEggMessage(net.minecraft.client.gui.GuiGraphics g) {
         long now = System.currentTimeMillis();
 
@@ -966,18 +1090,26 @@ public class DiaryTitleScreen extends Screen {
         String visibleMessage = easterEggMessage.substring(0, elapsedChars);
 
         int boxW = Math.max(220, Math.min(330, this.width - 96));
+        // v0.25.2: jamas mas ancho que la propia pantalla (escala GUI 4).
+        boxW = Math.min(boxW, Math.max(120, this.width - 16));
         java.util.List<net.minecraft.util.FormattedCharSequence> lines =
             this.font.split(Component.literal(visibleMessage), boxW - 34);
-        int lineCount = Math.max(1, Math.min(3, lines.size()));
-        int boxH = 31 + lineCount * this.font.lineHeight;
+        // v0.23.2: con la maquina de escribir, el primer fotograma tiene 0 letras y
+        // font.split("") devuelve lista VACIA; indexarla crashaba el cliente (AIOOBE
+        // reportado en 0.22.0). lineCount jamas puede superar lines.size().
+        int lineCount = Math.min(3, lines.size());
+        int boxH = 31 + Math.max(1, lineCount) * this.font.lineHeight;
 
         int buttonTop = estimateFirstButtonTop();
         int safeTop = isMinimalMode() ? 76 : 166;
-        int safeBottom = Math.max(safeTop + boxH + 8, buttonTop - 16);
+        // v0.25.2: en escalas GUI 3-4 la banda libre se achica y el orden de los
+        // clamps importa — el segundo volvia a clavar el cartel SOBRE la mesa de
+        // botones (reporte del owner). Regla: jamas pisar botones, jamas salir
+        // por arriba; si no hay banda libre, sube sobre la franja del logo.
+        int maxTop = buttonTop - boxH - 10;
+        int boxY = (maxTop >= safeTop) ? safeTop + (maxTop - safeTop) / 2
+                                       : Math.max(8, maxTop);
         int boxX = (this.width - boxW) / 2;
-        int boxY = safeTop + Math.max(0, (safeBottom - safeTop - boxH) / 2);
-        if (boxY + boxH > buttonTop - 10) boxY = Math.max(8, buttonTop - boxH - 10);
-        if (boxY < safeTop) boxY = Math.max(8, safeTop);
 
         int paper = (alpha << 24) | 0xE6D2A6;
         int ink = (alpha << 24) | 0x241608;

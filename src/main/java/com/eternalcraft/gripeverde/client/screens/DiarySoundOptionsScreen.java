@@ -160,6 +160,10 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     private long silenceStartMs = 0L;
     private boolean silenceHeard = false;
 
+    // v0.24.0: el diapason del gabinete (secreto al margen del regulador de ambiente)
+    private int[] forkRect = null;
+    private long forkRingUntilMs = 0L;
+
     @Override
     public void tick() {
         super.tick();
@@ -231,9 +235,16 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
         // --- Flavor ---
+        // v0.30.0: solo si hay aire real sobre los sliders; jamas pisado,
+        // jamas al medio. Si el panel es bajo, se omite.
         String flavor = Component.translatable("gripeverde.options.sound.flavor").getString();
-        int flvWC = this.font.width(flavor);
-        g.drawString(this.font, flavor, (this.width - flvWC) / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
+        int sliderTop = this.panelY + this.panelH - 82;
+        if (titleY + 24 + this.font.lineHeight <= sliderTop - 6) {
+            String flavorShown = this.font.width(flavor) <= this.panelW - 32 ? flavor
+                : this.font.plainSubstrByWidth(flavor, Math.max(0, this.panelW - 32 - this.font.width("..."))) + "...";
+            int flvWC = this.font.width(flavorShown);
+            g.drawString(this.font, flavorShown, (this.width - flvWC) / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
+        }
 
         // --- Divisor superior ---
         int divY1 = titleY + 42;
@@ -261,12 +272,77 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             r.render(g, mouseX, mouseY, partialTick);
         }
 
+        // v0.24.0: el diapason guarda el tono de la sala
+        try {
+            drawTuningFork(g, mouseX, mouseY);
+        } catch (Throwable ignored) {}
+
         // v0.16.0
         try {
             com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
             com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, this.panelY - 12);
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
         } catch (Throwable ignored) {}
+    }
+
+    /** v0.24.0: un diapason al margen; pulsado, afina la sala entera. */
+    private void drawTuningFork(GuiGraphics g, int mouseX, int mouseY) {
+        if (this.ambienceSlider == null) { this.forkRect = null; return; }
+        int fx = this.ambienceSlider.getX() - 16;
+        int fy = this.ambienceSlider.getY() + this.ambienceSlider.getHeight() / 2;
+        long now = System.currentTimeMillis();
+        boolean hot = mouseX >= fx - 4 && mouseX <= fx + 5 && mouseY >= fy - 8 && mouseY <= fy + 5;
+        boolean ringing = now < this.forkRingUntilMs;
+        if (ringing) fx += (int) Math.round(Math.sin((this.forkRingUntilMs - now) * 0.55) * 1.0);
+        int metal = (hot || ringing) ? 0xFFD8B56A : 0xFF8A6A3D;
+        int dimm  = (hot || ringing) ? 0xFF6B4E22 : 0xFF54401F;
+        int spread = (hot || ringing) ? 1 : 0;
+        g.fill(fx - 1, fy - 1, fx + 1, fy + 4, metal);                   // mango
+        g.fill(fx - 2 - spread, fy - 6, fx - 1 - spread, fy - 1, metal); // brazo izquierdo
+        g.fill(fx + 1 + spread, fy - 6, fx + 2 + spread, fy - 1, metal); // brazo derecho
+        g.fill(fx - 2 - spread, fy - 6, fx - 1 - spread, fy - 5, dimm);  // puntas
+        g.fill(fx + 1 + spread, fy - 6, fx + 2 + spread, fy - 5, dimm);
+        if (ringing) {
+            float rr = (this.forkRingUntilMs - now) / 700f; // 1 -> 0
+            int ra = (int)(120 * rr);
+            int rad = 3 + (int)((1f - rr) * 7f);
+            int rc = (ra << 24) | 0xD8B56A;
+            g.fill(fx - rad, fy - 2 - rad, fx + rad, fy - 1 - rad, rc);
+            g.fill(fx - rad, fy - 1 + rad, fx + rad, fy + rad, rc);
+            g.fill(fx - rad, fy - 2 - rad, fx - rad + 1, fy + rad, rc);
+            g.fill(fx + rad - 1, fy - 2 - rad, fx + rad, fy + rad, rc);
+        }
+        this.forkRect = new int[]{ fx - 6, fy - 9, 14, 17 };
+    }
+
+    /** v0.24.0: la prueba de tono del gabinete. */
+    private void ringTuningFork() {
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                com.eternalcraft.gripeverde.client.audio.ModSounds.UI_SUCCESS.get(), 0.55f, 0.62f);
+            com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                com.eternalcraft.gripeverde.client.audio.ModSounds.UI_SUCCESS.get(), 0.28f, 0.94f);
+        } catch (Throwable ignored) {}
+        try {
+            boolean first = com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                com.eternalcraft.gripeverde.client.lore.Discoveries.SOUND_KEEPER);
+            if (first) {
+                com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                    com.eternalcraft.gripeverde.client.lore.Marginalia.N_TUNING);
+            }
+        } catch (Throwable ignored) {}
+        this.forkRingUntilMs = System.currentTimeMillis() + 700L;
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == 0 && this.forkRect != null
+                && mouseX >= this.forkRect[0] && mouseX <= this.forkRect[0] + this.forkRect[2]
+                && mouseY >= this.forkRect[1] && mouseY <= this.forkRect[1] + this.forkRect[3]) {
+            ringTuningFork();
+            return true;
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override

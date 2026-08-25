@@ -5,32 +5,137 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
-**v0.22.0 - La vigilia queda sellada**
+**v0.30.0 - La hoja entera**
 
-La entrega final mantiene completa la escena del Title y unifica su
-simulación, música y ambiente en un tick estable de 20 Hz. La pantalla de
-Accesibilidad expone ahora Movimiento reducido, que congela el movimiento
-atmosférico, el grano y los destellos sin retirar la calle, los faroles ni la
-utilería; los toggles anuncian también su estado al narrador.
+La pluma ya no escribe un tramo solo: la bitácora entera se escribe al
+ritmo de tu lectura mientras bajás (lo lejano arriba se da por impreso;
+sin huecos jamás). La lupa se arregló — etiqueta de papel claro con
+letra de tinta, se lee perfecto. Los ticks de hover bajaron la voz. Y
+los textos que quedaban bajo botones (mensaje del día, la línea corregida
+de Holloway, citas de sonido) ya nunca se pisan ni se salen del papel.
 
-La memoria persistente se escribe mediante un temporal durable y reemplazo
-atómico, conserva la última copia válida y recupera un temporal interrumpido
-o el respaldo si el JSON principal se daña. El render reutiliza generadores
-deterministas para evitar asignaciones por cuadro sin modificar su aspecto.
-Los validadores integrados en el build comprueban la paridad de 25 idiomas
-(83 claves), los 25 changelogs, 35 eventos y 42 OGG. La sintaxis de las 60
-clases Java se comprobó por separado con `java-parser`; la compilación
-semántica contra Forge requiere todavía Java 17.
+**v0.29.0 - La vuelta y la lupa**
+
+Vuelta cortés: regresar de una mesa ya no corre la ceremonia completa de
+la tinta — la hoja cae de arriba en 170 ms y se acomoda; el barrido, las
+salpicaduras y las gotas quedan solo para avanzar. El escritorio ya no
+suena al tocarlo en silencio (pedido del dueño del estudio). Y la
+bitácora gana lupa: un cuadrito al pie para buscar una palabra y saltar
+de una aparición a la siguiente (Enter / Shift+Enter; Esc la olvida).
+
+**v0.28.0 - Las gotas y los folios**
+
+La tinta del pliegue ya no pasa en seco: del filo se desprenden gotas que
+resbalan un trecho breve dejando su rastro fino (fuera con movimiento
+reducido). La crónica gana folio al pie del papel — dice en qué hoja vas
+y cuántas hay, y avanza solo con la lectura — y si el gabinete saltó más
+de una edición, TODAS las entradas nuevas amanecen lacradas, no solo la
+última. El tablón del título aprendió tres líneas nuevas por idioma.
+
+**v0.27.0 - El pliegue y la pluma**
+
+La cortina de tinta entre interfaces ahora tiene sentido: baja al avanzar
+a una mesa nueva y sube al regresar a una ya visitada, como quien vuelve
+una página del tomo; el filo salpica gotas diminutas y la hoja nueva se
+acuesta con una sombra breve. Y la crónica aprendió oficio: la entrada de
+la edición recién llegada se escribe delante del lector, letra a letra,
+con plumín que descansa en el último trazo — un toque la termina, y con
+movimiento reducido llega entera.
+
+**v0.26.0 - Las hojas y los faroles**
+
+Al cambiar de interfaz dentro del gabinete, la hoja nueva se revela con
+una cortina de tinta (fundido breve con movimiento reducido, nada en
+pantallas ajenas). Los faroles de la avenida reconocen la mano del lector:
+su halo respira más amplio al acercarla. El gabinete también afinó el
+oído: cada mesa se abre con su propio toque, el escritorio responde con
+un golpe sordo cuando el aire calla, el gramófono anuncia pieza nueva y
+volver a la vigilia vuelve a sentarte. Y las crónicas recientes fueron
+reescritas con pluma de documento de la vida real.
+
+**v0.25.2 - El telegrama no pisa la mesa** (hotfix de layout: el cartel de
+los easter eggs y el sello FRAUDE ya nunca se montan sobre los botones o el
+texto del cartel en GUI scale 3-4)
+
+**v0.25.1 - El cilindro original** (hotfix: la lluvia y el viento vuelven
+a los masters originales amplificados — se retira la síntesis de 0.24.0;
+mezcla de lluvia 0.30 → 0.45)
+
+**v0.25.0 - El que mira la tormenta**
+
+Tres easter eggs nuevos en la vigilia (archivo: 52 fichas): en noche de
+tormenta, quedarse a ver tres relámpagos suma ficha; la lluvia se deja
+atrapar con un clic (la gota vuelve al cielo y los botones nunca se
+bloquean); y escribir DOCTOR en el telégrafo oculto trae un susurro, una
+campana baja y una firma que sigue llegando.
+
+Incluye la serie 0.24.x completa — **v0.24.1 - La errata del cronista**
+(hotfix de build: la 0.24.0 no compilaba por una P ilegal en un literal
+hexadecimal; ya corregida, con un sello nuevo en el espejo que lintea
+literales numéricos Java) sobre **v0.24.0 - El viento vuelve a soplar**:
+
+El ambiente del gabinete por fin se escucha: el loop de viento estaba
+grabado a -64 dB RMS (físicamente inaudible) y la lluvia a -32 dB. Se
+regeneran por síntesis procedural (`tools/audio/regenerate_menu_ambience.py`,
+reproducible) y se refuerzan ciudad, susurros y pasos; el slider de ambiente
+ya manda sobre algo y la calle deja de sonar al entrar a un mundo. Visibles
+nuevas: la Crónica se abre en la entrada de la versión instalada con sello de
+lacre "NUEVO", ciertas sesiones (~14 %) arrancan en Noche de tormenta (lluvia
+doble, truenos frecuentes, ficha propia) y la lluvia resbala en gotas por los
+pergaminos. Easter eggs: el lacre del telegrama se rompe a golpes y un
+diapasón oculto en Opciones de sonido afina la sala (archivo: 50 fichas).
+
+**v0.23.2 - El telegrama llega intacto**
+
+Hotfix de crash en campo reportado con registro completo desde una
+instancia real (v0.22.0): el telegrama del easter egg del título podía
+dibujarse con 0 letras visibles y la lista vacía de renglones detenía el
+cliente con `ArrayIndexOutOfBoundsException`. El conteo de líneas queda
+acotado por el tamaño real de la lista y el overlay decorativo blindado.
+
+**v0.23.1 - Sellos y relojería**
+
+Parche de mantenimiento duro sobre v0.23.0: dos sellos de build nuevos
+(subtítulos resueltos en los 25 idiomas y ningún evento de sonido registrado
+sin uso fuera del allowlist legacy documentado), memoria del cronista con
+migración versionada + sanitize de bounds, y la capa de ambiente migrada al
+mismo reloj monotónico que la música (toda la relojería del mod es ya
+inmune a ajustes de hora del SO). La CI se activa en un paso con
+`tools/ci/activar-ci.ps1` (la sesión no pudo subir el workflow por permisos).
+
+**v0.23.0 - El gramófono guarda la palabra**
+
+Pasada transversal autorizada tras la revisión técnica completa del mod
+(hallazgos en `REVISION_MOD.md`). El gramófono ya no comparte la noche con
+la música vanilla del menú: se silencia el `MusicManager` mientras el
+gabinete está abierto, y un watchdog reanuda la playlist tras recargas del
+motor de sonido (F3+T, cambio de packs) en vez de quedar muda para siempre.
+
+Accesibilidad nueva: Destellos reducidos (fotosensibilidad, separada de
+Movimiento reducido), subtítulos reales para los ocho eventos ambientales en
+los 25 idiomas y la etiqueta del slider de ambiente por fin traducida. El mod
+queda inerte en servidores dedicados (eliminado el registro manual que
+duplicaba eventos y podía crashear un server), se despoja de la
+infraestructura vacía de Mixins, y solo reemplaza Title/Pause cuando son
+clases exactamente vanilla, con apagado por config para convivir con otros
+mods. La memoria del cronista se escribe fuera del hilo de render y los
+temporizadores usan reloj monotónico.
+
+El build añade dos sellos (sincronía de versión y duraciones reales de las
+pistas parseadas como Vorbis) y un **workflow de CI listo para activar**
+(`tools/ci/build.yml` → `.github/workflows/`): compila cada push con JDK 17
+y publica el jar como artifact.
 
 ### Estado de entrega
 
-- Implementación final: commit `a1decf304b0c7236d624d4637bd3b5dcaa3961db`.
-- Revisión del owner: [PR 14](https://github.com/Santi-PdR/GripeVerde/pull/14).
+- Implementación vigente: rama `arena/01a02f45-gripeverde` (v0.30.0).
+- Base: commit `4ca038d` (merge de la PR 14, v0.22.0 ya mergeada).
 - Validación estática y documental completada; árbol local y remoto limpio.
-- El build Forge y la prueba en Minecraft continúan pendientes bajo KI-52
-  porque el sandbox no dispone de Java 17.
-- No existe tag/release v0.22.0: debe publicarse solo después de validar el
-  cliente real.
+- La compilación semántica contra Forge corre en el PC del owner y, una vez
+  activada, en la CI (JDK 17); la validación dentro de Minecraft sigue bajo
+  KI-53.
+- No existe tag/release v0.23.0: debe publicarse solo después de validar el
+  cliente real (junto con el pendiente de v0.22.0).
 
 ## Resumen visible del Mod Menu
 
@@ -61,13 +166,16 @@ Los contenedores del juego conservan su aspecto vanilla original; el mod no alte
 
 ### La memoria del gabinete (v0.16.0)
 - Memoria persistente propia (descubrimientos, objetos, noches seguidas, ausencias) separada del ajuste de audio.
-- 46 descubrimientos con fichas, sellos y pistas encadenadas; algunas consecuencias son permanentes.
+- 50 descubrimientos con fichas, sellos y pistas encadenadas; algunas consecuencias son permanentes.
 - Marginalia contextual del cronista: notas que responden a lo que el lector hace.
 - La Sala de consulta: detras del ultimo folio de la cronica, un archivo con las fichas halladas y documentos recuperados.
 
 ### Otros
 - Historial de cambios in-game con word-wrap real, accesible desde el boton "?".
 - Soporte para 25 variantes de idioma (5 de ingles + 20 de espanol).
+- v0.23.0: subtitulos de los eventos ambientales en los 25 idiomas, ayuda
+  Destellos reducidos (fotosensibilidad), apagado del gramofono vanilla del
+  menu, convivencia configurable con otros mods de menu y CI con Java 17.
 
 ## Pantallas implementadas
 
@@ -83,7 +191,7 @@ Los contenedores del juego conservan su aspecto vanilla original; el mod no alte
 - **Accessibility** - opciones vanilla mas el toggle persistente de Movimiento reducido.
 - **Online / Multiplayer** - registros de conexion y hospedaje con presentacion propia.
 - **Credits** - ultimo archivo del gabinete.
-- **Archive** - sala de consulta (46 fichas).
+- **Archive** - sala de consulta (50 fichas).
 - **DirectJoin / EditServer / Confirm** - formularios y autorizaciones pulidos en v0.21.0.
 
 ## Build
@@ -93,10 +201,23 @@ Con Java 17, ejecutar: `.\gradlew.bat clean build`
 El jar se genera en `build\libs\gripeverde-VERSION.jar`
 
 Verificaciones activas en `processResources`:
-- `verifyGripeVerdeLocalization` (JSON válido, 83 claves en paridad y
-  v0.22.0 presente en los 25 changelogs).
+- `verifyGripeVerdeLocalization` (JSON válido, 93 claves en paridad y
+  v0.23.0 presente en los 25 changelogs).
 - `verifyGripeVerdeSoundAssets` (eventos completos, referencias existentes y ningún OGG huérfano).
 - `verifyGripeVerdeNoDeadCode` (símbolos retirados fuera del código productivo).
+- `verifyGripeVerdeVersionSync` (`GripeVerdeMod.VERSION` == version Gradle).
+- `verifyGripeVerdeMusicDurations` (duración real Vorbis de cada OGG de
+  música vs `TRACK_DURATIONS_MS`, tolerancia 1.5 s).
+- `verifyGripeVerdeSubtitles` (toda clave de subtítulo no vacía existe en
+  los 25 idiomas).
+- `verifyGripeVerdeSoundUsage` (ningún SoundEvent registrado sin uso en el
+  código; el allowlist legacy quedó vacío en v0.26.0: los 8 eventos
+  restantes se cablearon a sus momentos, V2 de REVISION_MOD cerrada).
+
+Ademas, `tools/ci/build.yml` es un workflow de CI listo: al moverlo a
+`.github/workflows/build.yml` compila cada push/PR con JDK 17 y publica el
+jar como artifact. La sesion no pudo colocarlo directamente porque el token
+de GitHub no tiene permiso `workflows`.
 
 ## Deploy
 
@@ -106,33 +227,17 @@ Instancia de prueba de SKLauncher:
 `C:\Users\santi\AppData\Roaming\.sklauncher\instances\test-1\mods`.
 
 Antes de cada validacion se eliminan los jars anteriores de Gripe Verde, se
-compila y se copia exactamente `gripeverde-0.22.0.jar`. La version mostrada
-por el reloj debe comprobarse en pantalla antes de aprobar la entrega.
+compila y se copia exactamente el jar de la version vigente. La version
+mostrada por el reloj debe comprobarse en pantalla antes de aprobar la
+entrega.
 
-Flujo PowerShell vigente para actualizar, compilar y desplegar:
-
-```powershell
-$ErrorActionPreference = "Stop"
-$Repo = "C:\Users\santi\Desktop\GripeVerde"
-$Mods = "C:\Users\santi\AppData\Roaming\.sklauncher\instances\test-1\mods"
-$Jar = Join-Path $Repo "build\libs\gripeverde-0.22.0.jar"
-
-Set-Location $Repo
-git fetch origin arena/01a02cee-gripeverde
-if ($LASTEXITCODE -ne 0) { throw "git fetch fallo" }
-git reset --hard FETCH_HEAD
-if ($LASTEXITCODE -ne 0) { throw "git reset fallo" }
-
-Get-ChildItem (Join-Path $Repo "build\libs") -Filter "gripeverde-*.jar" -ErrorAction SilentlyContinue | Remove-Item -Force
-Get-ChildItem $Mods -Filter "gripeverde-*.jar" -ErrorAction SilentlyContinue | Remove-Item -Force
-
-.\gradlew.bat clean build
-if ($LASTEXITCODE -ne 0) { throw "Gradle fallo" }
-if (-not (Test-Path $Jar)) { throw "No se genero $Jar" }
-
-Copy-Item $Jar $Mods -Force
-Get-Item (Join-Path $Mods "gripeverde-0.22.0.jar")
-```
+Flujo vigente para actualizar, compilar y desplegar: **comandos PowerShell
+inline** (fetch + `reset --hard FETCH_HEAD`, `gradlew clean build` y copia
+del jar por glob a la instancia test-1), sin archivos `.ps1` nuevos;
+`tools\deploy.ps1` queda corregido como alternativa equivalente. Regla
+permanente: cada entrega de cambios termina con ese bloque listo para pegar.
+El script lee la version de `build.gradle`, hace fetch/reset de la rama de
+sesion, limpia los jars antiguos, compila y copia el jar exacto.
 
 ## Idiomas soportados
 
@@ -143,9 +248,10 @@ Get-Item (Join-Path $Mods "gripeverde-0.22.0.jar")
 ## Documentacion
 
 - `CONTRIBUTING.md` - guia corta de contribucion (branch fija, no gameplay, validacion).
-- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.22.0.
-- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.22.0).
+- `CONTEXTO.md` - contexto maestro actual para retomar sesiones v0.23.0.
+- `CHANGELOG.md` - historial narrativo de versiones orientado a jugadores (v0.10.0 → v0.23.0).
 - `KNOWN_ISSUES.md` - estado tecnico, decisiones activas, errores documentados, KIs.
+- `REVISION_MOD.md` - revision tecnica completa del 2026-08-23 (origen de v0.23.0) junto con las propuestas futuras pendientes de autorizacion.
 - `README.md` - esta portada.
 
 Históricos eliminados en v0.21.2: `AUDITORIA_PROFESIONAL.md`, `MICRODETALLES_EXTREMO.md`, `VALIDACION_FASE4.md` (eran referencia de polish v0.14.0, ya revertido) y `CONTEXTO_PARA_IA.md` (resumen redundante de `CONTEXTO.md`).

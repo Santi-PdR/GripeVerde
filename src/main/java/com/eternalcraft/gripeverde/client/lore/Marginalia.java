@@ -43,6 +43,14 @@ public final class Marginalia {
     public static final String N_OPEN_COUNT   = "open_count";
     public static final String N_MANY_CARDS   = "many_cards";
     public static final String N_ARCHIVE_COMPLETE = "archive_complete";
+    // v0.24.0
+    public static final String N_STORM        = "storm";
+    public static final String N_SEAL         = "seal";
+    public static final String N_TUNING       = "tuning";
+    // v0.25.0
+    public static final String N_FLASH3       = "flash3";
+    public static final String N_DROP         = "drop";
+    public static final String N_DOCTOR       = "doctor";
 
     /** Encola una nota (persistente) si no hay ya una igual pendiente. */
     public static synchronized void queue(String noteId) {
@@ -174,8 +182,23 @@ public final class Marginalia {
             case N_CORRECTION:   return en ? "The ink has not yet dried. No: the ink is no longer drying." : "La tinta aun no seco. No: la tinta ya no seca.";
             case N_FIRST_NIGHT:  return en ? "First night. Everything you touch will remember you." : "Primera noche. Todo lo que toques te recordara.";
             case N_OPEN_COUNT:   return en ? "A hundred openings. The cabinet keeps the hours for you now." : "Cien aperturas. El gabinete ya lleva las horas por ti.";
-            case N_MANY_CARDS:   return en ? "Forty-four cards. Soon the drawer will be empty of secrets." : "Cuarenta y cuatro fichas. Pronto el cajon estara vacio de secretos.";
-            case N_ARCHIVE_COMPLETE: return en ? "Forty-seven cards. The drawer is empty now. Seal it." : "Cuarenta y siete fichas. El cajon ya esta vacio. Sellalo.";
+            case N_MANY_CARDS: {
+                // v0.24.0: la cifra sigue al cajon, que ya no siempre tiene cuarenta y pico.
+                int cards = Discoveries.ALL.length - 3;
+                return en ? cards + " cards. Soon the drawer will be empty of secrets."
+                          : cards + " fichas. Pronto el cajon estara vacio de secretos.";
+            }
+            case N_ARCHIVE_COMPLETE: {
+                int total = Discoveries.ALL.length;
+                return en ? total + " cards. The drawer is empty now. Seal it."
+                          : total + " fichas. El cajon ya esta vacio. Sellalo.";
+            }
+            case N_STORM:        return en ? "Tonight the sky reads the files aloud." : "Esta noche el cielo lee las fichas en voz alta.";
+            case N_SEAL:         return en ? "The wax was old. It was asking to be broken." : "El lacre era viejo. Pedia a gritos que lo rompieran.";
+            case N_TUNING:       return en ? "The room now sounds like itself. At last." : "La sala ya suena a si misma. Por fin.";
+            case N_FLASH3:       return en ? "Three flashes and you did not blink. The chronicler counted." : "Tres relampagos y no parpadeaste. El cronista conto.";
+            case N_DROP:         return en ? "Rain can be held for a second. Then it goes back to the sky." : "La lluvia puede sostenerse un segundo. Luego vuelve al cielo.";
+            case N_DOCTOR:       return en ? "The doctor's signature keeps arriving on forms nobody sends." : "La firma del doctor sigue llegando en formularios que nadie envia.";
             default: return null;
         }
     }

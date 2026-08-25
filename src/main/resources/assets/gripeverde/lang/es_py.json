@@ -81,5 +81,15 @@
     "gripeverde.options.online.flavor": "Decidid que senales pueden salir del distrito.",
     "gripeverde.options.packs.subtitle": "Archivo de materiales",
     "gripeverde.options.accessibility.reduced_motion": "Movimiento reducido",
-    "gripeverde.options.accessibility.reduced_motion.tooltip": "Congela las animaciones y destellos del ambiente sin quitar detalles de la escena."
+    "gripeverde.options.accessibility.reduced_motion.tooltip": "Congela las animaciones y destellos del ambiente sin quitar detalles de la escena.",
+    "gripeverde.options.accessibility.reduce_flashes": "Destellos reducidos",
+    "gripeverde.options.accessibility.reduce_flashes.tooltip": "Suprime los destellos de la tormenta y las siluetas del relampago sin congelar el resto de la escena.",
+    "gripeverde.subtitle.menu.footsteps": "Pasos a lo lejos",
+    "gripeverde.subtitle.menu.wood_creak": "La madera cruje",
+    "gripeverde.subtitle.menu.door": "Una puerta rechina",
+    "gripeverde.subtitle.menu.ambient_occasional": "Susurro tenue",
+    "gripeverde.subtitle.menu.bell": "Campana de iglesia a lo lejos",
+    "gripeverde.subtitle.menu.crows": "Graznido de cuervos",
+    "gripeverde.subtitle.menu.chain": "Cadenas se arrastran",
+    "gripeverde.subtitle.menu.thunder": "Trueno lejano"
 }

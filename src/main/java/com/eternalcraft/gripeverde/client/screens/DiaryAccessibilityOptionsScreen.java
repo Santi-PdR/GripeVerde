@@ -27,10 +27,11 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
 
     // Bandas dentro del panel
     private static final int HEADER_H = 60;   // titulo + subtitulo + flavor + divisor
-    private static final int FOOTER_H = 82;   // divisor + movimiento reducido + Volver
+    private static final int FOOTER_H = 112;  // divisor + 2 toggles propios + Volver
 
     private DiaryButton btnVolver;
     private DiaryToggle reducedMotionToggle;
+    private DiaryToggle reduceFlashesToggle;
     private final SmoothScroll smoothScroll = new SmoothScroll();
     private int panelW, panelH, panelX, panelY;
 
@@ -71,10 +72,10 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
             }
         }
 
-        // Opcion propia del mod: visible junto a las opciones de accesibilidad vanilla.
+        // Opciones propias del mod: visibles junto a las opciones de accesibilidad vanilla.
         int toggleW = Math.min(300, this.panelW - 32);
         int toggleX = (this.width - toggleW) / 2;
-        int toggleY = this.panelY + this.panelH - 70;
+        int toggleY = this.panelY + this.panelH - 100;
         this.reducedMotionToggle = new DiaryToggle(
             toggleX, toggleY, toggleW, 24,
             () -> ClientConfig.REDUCED_MOTION.get(),
@@ -89,6 +90,24 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         this.reducedMotionToggle.setTooltip(Tooltip.create(Component.translatable(
             "gripeverde.options.accessibility.reduced_motion.tooltip")));
         this.addRenderableWidget(this.reducedMotionToggle);
+
+        // v0.23.0: ayuda de fotosensibilidad separada (solo destellos/relampagos,
+        // sin congelar movimiento). WCAG 2.3.1 recomienda control especifico.
+        int flashesY = this.panelY + this.panelH - 66;
+        this.reduceFlashesToggle = new DiaryToggle(
+            toggleX, flashesY, toggleW, 24,
+            () -> ClientConfig.REDUCE_FLASHES.get(),
+            value -> {
+                ClientConfig.REDUCE_FLASHES.set(value);
+                ClientConfig.REDUCE_FLASHES.save();
+            },
+            Component.translatable("gripeverde.options.accessibility.reduce_flashes"),
+            value -> Component.translatable(value ? "options.on" : "options.off"),
+            null
+        );
+        this.reduceFlashesToggle.setTooltip(Tooltip.create(Component.translatable(
+            "gripeverde.options.accessibility.reduce_flashes.tooltip")));
+        this.addRenderableWidget(this.reduceFlashesToggle);
 
         // Boton Volver propio
         int btnW = 160;
@@ -157,6 +176,9 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         // Controles del pie
         if (this.reducedMotionToggle != null) {
             this.reducedMotionToggle.render(gfx, mouseX, mouseY, delta);
+        }
+        if (this.reduceFlashesToggle != null) {
+            this.reduceFlashesToggle.render(gfx, mouseX, mouseY, delta);
         }
         if (this.btnVolver != null) {
             this.btnVolver.render(gfx, mouseX, mouseY, delta);

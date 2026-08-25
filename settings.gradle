@@ -2,7 +2,7 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         maven { url = 'https://maven.minecraftforge.net/' }
-        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+        // v0.23.0: repo.spongepowered.org retirado junto con el plugin de Mixins.
     }
 }
 plugins {

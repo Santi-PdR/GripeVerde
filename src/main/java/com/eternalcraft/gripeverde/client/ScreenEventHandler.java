@@ -4,6 +4,7 @@ import com.eternalcraft.gripeverde.GripeVerdeMod;
 import com.eternalcraft.gripeverde.client.screens.ChangelogScreen;
 import com.eternalcraft.gripeverde.client.screens.DiaryPauseScreen;
 import com.eternalcraft.gripeverde.client.screens.DiaryTitleScreen;
+import com.eternalcraft.gripeverde.config.ClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.GenericDirtMessageScreen;
 import net.minecraft.client.gui.screens.PauseScreen;
@@ -33,10 +34,39 @@ public class ScreenEventHandler {
 
     private static boolean redirecting = false;
     private static boolean ctrlZeroLatch = false;
+    // v0.26.0: la vigilia "vuelve a sentarte" solo al regresar, no en la
+    // primera apertura del arranque (ver onArriveTitle).
+    private static boolean titleSeenOnce = false;
+
+    // v0.23.0: accesos tolerantes a config no cargada (defaults seguros)
+    private static boolean replaceTitleEnabled() {
+        try { return ClientConfig.REPLACE_TITLE.get(); } catch (Throwable t) { return true; }
+    }
+    private static boolean replacePauseEnabled() {
+        try { return ClientConfig.REPLACE_PAUSE.get(); } catch (Throwable t) { return true; }
+    }
+    private static boolean debugShortcutEnabled() {
+        try { return ClientConfig.DEBUG_SHORTCUT.get(); } catch (Throwable t) { return false; }
+    }
+
+    // v0.26.0: al volver a la vigilia desde otra mesa (o caer en ella por la
+    // via vanilla), el gabinete "vuelve a sentarte". La primera apertura del
+    // arranque no suena: para eso ya esta toda la obertura del menu.
+    private static void onArriveTitle() {
+        if (titleSeenOnce) {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.respawn();
+        }
+        titleSeenOnce = true;
+    }
 
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
+        // v0.23.0: el atajo de depuracion Ctrl+0 queda desactivado por defecto.
+        if (!debugShortcutEnabled()) {
+            ctrlZeroLatch = false;
+            return;
+        }
         Minecraft mc = Minecraft.getInstance();
         if (mc == null || mc.level == null || mc.getWindow() == null) {
             ctrlZeroLatch = false;
@@ -72,8 +102,18 @@ public class ScreenEventHandler {
         }
     }
 
+    // v0.26.0: el pasar de las hojas entre pantallas del gabinete.
+    @SubscribeEvent
+    public static void onScreenRenderPost(ScreenEvent.Render.Post event) {
+        try {
+            com.eternalcraft.gripeverde.client.render.DiaryTransitions.render(event.getScreen(), event.getGuiGraphics());
+        } catch (Throwable ignored) {}
+    }
+
     @SubscribeEvent
     public static void onScreenOpening(ScreenEvent.Opening event) {
+        // v0.27.0: la mesa que se va, para decidir el sentido del pliegue.
+        final net.minecraft.client.gui.screens.Screen fromScreen = event.getCurrentScreen();
         // Feedback sonoro discreto por familia de pantalla.
         try {
             var openingScreen = event.getNewScreen();
@@ -87,6 +127,8 @@ public class ScreenEventHandler {
                 com.eternalcraft.gripeverde.client.audio.UiSounds.open();
             } else if (openingScreen instanceof com.eternalcraft.gripeverde.client.screens.DiarySoundOptionsScreen) {
                 com.eternalcraft.gripeverde.client.audio.UiSounds.modal();
+            } else if (openingScreen instanceof com.eternalcraft.gripeverde.client.screens.DiaryTitleScreen) {
+                onArriveTitle();
             }
         } catch (Throwable ignored) {}
         if (redirecting) return;
@@ -95,20 +137,28 @@ public class ScreenEventHandler {
         if (newScreen == null) return;
 
         // Intercept: TitleScreen vanilla -> DiaryTitleScreen custom
-        if (newScreen instanceof TitleScreen && !(newScreen instanceof DiaryTitleScreen)) {
+        // v0.23.0: comparacion por CLASE EXACTA. Antes era instanceof, lo que
+        // barria cualquier Title custom de otro mod (FancyMenu y derivadas son
+        // subclases). Si otro mod ya personalizo el menu, Gripe Verde cede.
+        // Ademas el reemplazo puede apagarse por config (integration.*).
+        if (newScreen.getClass() == TitleScreen.class && replaceTitleEnabled()) {
             redirecting = true;
             try {
                 event.setNewScreen(new DiaryTitleScreen());
+                // El reemplazo no dispara otro Opening: la llegada a la
+                // vigilia por esta via tambien cuenta (arranque o regreso).
+                onArriveTitle();
             } catch (Throwable t) {
                 LOG.error("Failed to replace TitleScreen", t);
             } finally {
                 redirecting = false;
             }
+            noteTransition(fromScreen, event);
             return;
         }
 
         // Intercept: PauseScreen vanilla -> DiaryPauseScreen custom
-        if (newScreen instanceof PauseScreen && !(newScreen instanceof DiaryPauseScreen)) {
+        if (newScreen.getClass() == PauseScreen.class && replacePauseEnabled()) {
             redirecting = true;
             try {
                 event.setNewScreen(new DiaryPauseScreen());
@@ -117,7 +167,20 @@ public class ScreenEventHandler {
             } finally {
                 redirecting = false;
             }
+            noteTransition(fromScreen, event);
             return;
         }
+
+        noteTransition(fromScreen, event);
+    }
+
+    // v0.27.0: avisa al pliegue tras el redirect definitivo, con la mesa
+    // vieja y la nueva ya resueltas. Ahi se decide si la hoja baja o sube.
+    private static void noteTransition(net.minecraft.client.gui.screens.Screen from,
+                                       ScreenEvent.Opening event) {
+        try {
+            com.eternalcraft.gripeverde.client.render.DiaryTransitions.noteOpening(
+                from, event.getNewScreen());
+        } catch (Throwable ignored) {}
     }
 }

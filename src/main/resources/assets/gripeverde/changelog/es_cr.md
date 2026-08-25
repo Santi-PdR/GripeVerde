@@ -2,6 +2,64 @@
 ## Cronica bajo sello
 
 
+
+## Version 0.30.0 - La hoja entera
+
+Correcciones del abuelo del estudio, anotadas con cuidado. La pluma ya no escribe una sola entrada dejando las demás impresas: ahora la bitácora entera se va escribiendo delante del lector a medida que baja por sus hojas — lo que quedó atrás, muy arriba, se da por impreso, y bajar de golpe jamás deja huecos; un toque lo termina todo. La lupa, además, aprendió a leerse: su cuadrito es ahora una etiqueta de papel claro con letra de tinta, y no una mancha oscura donde la palabra se perdía. Los toques de los botones al pasarles la mano bajaron la voz. Y tres descuidos de la imprenta quedaron enmendados: el renglón de la firma ya no se acerca a la mesa de botones, el aviso del día se lee a su izquierda en la misma línea, y las citas del gabinete y de la sala de sonido jamás vuelven a quedar bajo los botones ni fuera del papel.
+
+## Version 0.29.0 - La vuelta y la lupa
+
+La vuelta se volvió cortés: al regresar de una mesa a la anterior ya no corre toda la ceremonia de la tinta, sino un gesto breve — la hoja cae de arriba, se acomoda, y listo; el barrido largo, las salpicaduras y las gotas quedan reservados para ir hacia adelante. Y la bitácora gana lupa: al pie del papel, a la derecha, hay un cuadrito donde el lector escribe una palabra y la crónica lo lleva de una aparición a la siguiente, señalando cada renglón donde la palabra mora; la cruz la cierra y la bitácora olvida la pregunta. Además, el escritorio ya no responde con golpe sordo al tocarlo en silencio: el dueño del estudio pidió silencio y silencio habrá. Y el pasar de hojas se apretó los tornillos: cuando no hay tinta en el aire, el gabinete no gasta ni un instante en fingir que la hay.
+
+## Version 0.28.0 - Las gotas y los folios
+
+La tinta que la cortina arrastra ya no pasa en seco: del filo se desprenden gotas que resbalan un trecho breve y dejan su rastro fino, como una pluma cargada que se mueve demasiado deprisa; quien pide el movimiento reducido no las ve jamás. Y la crónica gana folio propio: al pie del papel, centrada, una marca discreta anuncia en qué hoja va el lector y cuántas tiene la bitácora, y avanza sola con la lectura. Además, si el gabinete avanzó más de una edición desde la última visita, todas las entradas que el lector se saltó amanecen estampadas en lacre como recién llegadas — no solo la última; y el tablón del título aprendió unas líneas nuevas para sus avisos rotatorios.
+
+## Version 0.27.0 - El pliegue y la pluma
+
+La hoja aprendió a saber de dónde viene el lector: al avanzar hacia una mesa nueva la tinta baja descubriéndola, y al regresar a una mesa ya visitada la tinta sube, como quien vuelve atrás una página del tomo; el filo de la cortina salpica gotas diminutas a su paso y, una vez destapada, la hoja se acuesta sobre el escritorio con una sombra breve. Y la crónica estrena oficio: la entrada de la edición recién llegada se escribe delante del lector, letra a letra, con el plumín descansando en el último trazo y un rasguño quedo sobre el papel; quien tenga prisa la termina de un solo toque, y quien pida el movimiento reducido la recibe entera, ya escrita.
+
+## Version 0.26.0 - Las hojas y los faroles
+
+Al pasar de una pantalla del gabinete a otra —del título a las opciones, de la crónica a la pausa— la hoja nueva se descubre con una cortina de tinta que baja de arriba abajo, como quien pasa página con la mano seca; quien pide el movimiento reducido recibe solo un fundido breve, sin barrido, y las pantallas ajenas al gabinete no reciben adorno alguno. Y los faroles de la avenida aprendieron a reconocer la mano del lector: acérquela despacio a uno de ellos y su halo respira más amplio y su llama sube un poco, sin apagarse jamás. Y el gabinete afinó el oído: la crónica, los hospedajes y el gabinete sonoro se abren ahora cada uno con su propio toque, tal como estaba previsto desde el principio; tocar el escritorio cuando el aire calla devuelve un golpe sordo, apenas audible; el gramófono anuncia cada pieza nueva con un gesto propio; y regresar a la vigilia desde cualquier sala sienta de nuevo al lector, como una puerta que cierra bien a la espalda. Las crónicas de las ediciones recientes fueron reescritas además con pluma de documento de la vida real: fuera palabras de taller, solo oficio y papel.
+
+## Version 0.25.2 - El telegrama no pisa la mesa
+
+Un lector con la interfaz grande (escala 3 o 4) avisó de dos accidentes de escritorio: el telegrama de los secretos caía sobre la mesa de botones y quedaba ilegible, y el sello FRAUDE del elixir se montaba sobre las letras del cartel. El cronista reordena sus límites: el telegrama se niega ahora, ante todo, a tocar la mesa —si la banda libre se achica, sube sobre la franja del logo y jamás sale de la ventana— y su ancho se recorta cuando la pantalla es estrecha; y el sello rojo se estampa siempre después del texto y dentro del papel, a cualquier escala. Sin secretos nuevos: solo un escritorio ordenado.
+
+## Version 0.25.1 - El cilindro original
+
+La lluvia nueva sonaba a estática de máquina, y el cronista reconoce el error: había regrabado el cilindro en vez de limpiarlo. Se retira la síntesis y vuelve la grabación original de la lluvia sobre el empedrado —la de siempre, con sus gotas separadas— ahora amplificada con cuidado y sin comprimir sus picos; el viento de la calle también vuelve a su master original, simplemente subido de volumen. Para que la lluvia recupere su sitio en la mezcla, su regulador interno sube un paso. Las costuras de ambos loops quedaron medidas: empalmaban limpias, así que no llevan crossfade.
+
+## Version 0.25.0 - El que mira la tormenta
+
+Tres secretos nuevos caben en una mano. En las noches en que el cielo se rompe, quien aguanta tres relámpagos frente a la vigilia sin irse recibe ficha propia: el cronista cuenta los destellos por ti. La lluvia, además, cayó lo bastante cerca para tocarla: una gota bien apuntada se deja atrapar con un clic, suena como aguja sobre cilindro y vuelve al cielo (sobre los botones nunca llueve). Y en el telégrafo oculto, escribir DOCTOR trae un susurro y una campana baja: el elixir tuvo un médico, el oficio sigue en pie y su firma aún llega en formularios que nadie envía. El archivo crece a cincuenta y dos fichas.
+
+## Version 0.24.1 - La errata del cronista
+
+Una sola letra torcida en la portada recién impresa detuvo la rotativa: la semilla de las gotas de lluvia se dejó escrita con un carácter que no existe en el alfabeto hexadecimal, y la edición 0.24.0 no llegó a compilar en el taller (el fallo saltó en el primer intento de despliegue). La errata queda corregida con tinta válida —las gotas caen igual que antes, con otra semilla— y el gabinete suma un sello de imprenta más: un corrector mecánico revisa ahora cada literal numérico del códice antes de que ninguna edición salga sellada. Todo lo anunciado en 0.24.0 sigue dentro, intacto.
+
+## Version 0.24.0 - El viento vuelve a soplar
+
+Durante semanas la calle guardó el aliento: el viento del gabinete había quedado grabado tan quedo que ni las ráfagas cruzaban la ventana, y con él apenas tosían la lluvia, los pasos y los susurros. El cronista revisó los cilindros y devolvió cada capa a su volumen debido; el regulador de ambiente por fin manda sobre algo. Con el oído abierto llegan las noches de tormenta, la crónica se abre por la entrada recién llegada y la sella como NUEVA hasta que la leas, la lluvia resbala por los pergaminos, el lacre del telegrama cede ante una mano terca y un diapasón oculto afina la sala entera. La calle, además, ya no sigue sonando cuando el lector cruza hacia un mundo.
+
+## Version 0.23.2 - El telegrama llega intacto
+
+Un telegrama del gabinete rompía la mesa entera al llegar vacío: al pulsar el sello del título, la máquina de escribir podía abrir el sobre antes de soltar su primera letra, y leer ese sobre sin renglones detenía el juego por completo (el fallo llegó en un informe de campo de un jugador con la edición 0.22.0 instalada). El mensajero ahora espera a tener al menos una letra antes de contar líneas, y esa lectura puramente decorativa quedó blindada: ningún fallo de ornamento volverá a tumbar la vigilia.
+
+
+## Version 0.23.1 - Sellos y relojería
+
+Esta vez no hay nueva escenografía: el build gana dos sellos más. Uno vigila que cada subtítulo ambiental que la ciudad anuncia exista en los veinticinco idiomas; el otro cuenta los eventos sonoros registrados y rechaza nuevas altas mudas, admitiendo las diez heredadas con su destino aún por decidir. La memoria del gabinete corrige ahora en silencio los números imposibles de registros tocados a mano o dañados en lógica, y guarda un camino de migración documentado para futuros esquemas, mientras la capa de ambiente se mudó al mismo reloj monotónico del gramófono.
+
+
+## Version 0.23.0 - El gramófono guarda la palabra
+
+El gramófono ya no comparte la noche con la música vanilla del menú: mientras el gabinete está abierto, la vieja banda sonora calla, y si el motor de sonido se recarga (F3+T o un cambio de paquete) la siguiente pieza se encola sola en vez de quedar muda para siempre. La tormenta ahora puede amainarse aparte: una nueva ayuda de Destellos reducidos apaga el relámpago sin congelar niebla, lluvia ni faroles, los eventos ambientales ganan subtítulos y el deslizador de ambiente responde ya en el idioma del lector.
+
+El mod también aprendió modales: registra su escucha una sola vez, permanece inerte en servidores dedicados, se despoja del andamiaje de mixins vacío y esconde el atajo de depuración salvo que se le invoque, y cede la pantalla de título cuando otro mod ya la reclama. El cronista escribe ahora su memoria fuera del hilo de render, y los sellos del build vigilan la sincronía de versiones y la duración real de las pistas; un flujo de integración continua listo para activar (tools/ci) compila cada push con Java 17.
+
+
 ## Version 0.22.0 - La vigilia queda sellada
 
 La ciudad se mueve ahora con un único pulso estable de veinte compases, en vez de adelantar el polvo y el ambiente en cada cuadro dibujado. Movimiento reducido aparece entre las ayudas de percepción y congela el movimiento atmosférico, el grano y los destellos sin retirar la calle, los faroles ni ningún detalle permanente de la escena. Cada interruptor del diario anuncia además al narrador su nombre y su estado actual.

@@ -60,6 +60,14 @@ public final class Discoveries {
     public static final String COFFIN_CART       = "coffin_cart";
     public static final String WEATHERVANE       = "weathervane";
     public static final String SKULL_WATCHES     = "skull_watches";
+    // v0.24.0: la tormenta, el lacre y el oido afinado
+    public static final String STORM_NIGHT       = "storm_night";
+    public static final String SEAL_BREAKER      = "seal_breaker";
+    public static final String SOUND_KEEPER      = "sound_keeper";
+    // v0.25.0: el que mira la tormenta, la lluvia tocable y el oficio del doctor
+    public static final String STORM_WATCHER     = "storm_watcher";
+    public static final String DROP_CATCHER      = "drop_catcher";
+    public static final String CODE_DOCTOR       = "code_doctor";
 
     // v0.21.3: fichas de la limpieza (solo texto, sin mecanica nueva)
     public static final String ARCHIVE_THINNING  = "archive_thinning";
@@ -193,6 +201,12 @@ public final class Discoveries {
             case COFFIN_CART:       return en ? "The undertaker's cart" : "El coche del sepulturero";
             case WEATHERVANE:       return en ? "The vane obeys the wind" : "La veleta obedece al viento";
             case SKULL_WATCHES:     return en ? "The emblem watches you" : "El emblema te mira";
+            case STORM_NIGHT:       return en ? "The night the sky broke" : "La noche en que el cielo se rompio";
+            case SEAL_BREAKER:      return en ? "The wax did not hold" : "El lacre no resistio";
+            case SOUND_KEEPER:      return en ? "The cabinet, in tune" : "El gabinete, afinado";
+            case STORM_WATCHER:     return en ? "The storm watcher" : "El que mira la tormenta";
+            case DROP_CATCHER:      return en ? "Catching the rain" : "Atrapar la lluvia";
+            case CODE_DOCTOR:       return en ? "The doctor still signs" : "El doctor aun firma";
             case ARCHIVE_THINNING:  return en ? "The archive that grows thinner" : "El archivo que se adelgaza";
             case THEME_NEVER_PLAYED: return en ? "The theme that never played" : "El tema que nunca sono";
             case BG_TOWN_MEMORY:    return en ? "The street that never existed" : "La calle que nunca existio";
@@ -247,6 +261,12 @@ public final class Discoveries {
             case COFFIN_CART:       return en ? "Wait after the bells." : "Espera despues de las campanas.";
             case WEATHERVANE:       return en ? "Watch the roofs when the wind rises." : "Mira los tejados cuando el viento suba.";
             case SKULL_WATCHES:     return en ? "The emblem's eye is not painted." : "El ojo del emblema no esta pintado.";
+            case STORM_NIGHT:       return en ? "Some nights the sky leans on the window." : "Hay noches en que el cielo se apoya en la ventana.";
+            case SEAL_BREAKER:      return en ? "The telegram seal gives in to a stubborn hand." : "El sello del telegrama cede ante una mano terca.";
+            case SOUND_KEEPER:      return en ? "The tuning fork hums where the sliders sleep." : "El diapason zumba donde duermen los reguladores.";
+            case STORM_WATCHER:     return en ? "On storm nights, stay for the third flash." : "En noche de tormenta, quedate para el tercer relampago.";
+            case DROP_CATCHER:      return en ? "The rain falls close enough to touch it." : "La lluvia cae lo bastante cerca como para tocarla.";
+            case CODE_DOCTOR:       return en ? "The elixir had a doctor. The office remains." : "El elixir tuvo un medico. El oficio sigue en pie.";
             case ARCHIVE_THINNING:  return en ? "Open the cabinet again and again, until it gives up its old papers." : "Abre el gabinete una y otra vez, hasta que entregue sus papeles viejos.";
             case THEME_NEVER_PLAYED: return en ? "Speak the word of the cleansing." : "Pronuncia la palabra de la limpieza.";
             case BG_TOWN_MEMORY:    return en ? "When the archive confesses two ghosts, ask for the third." : "Cuando el archivo confiese dos fantasmas, pide el tercero.";
@@ -287,6 +307,8 @@ public final class Discoveries {
         TIME_SICK, STREAK3, DUST, ANNIVERSARY, FORBIDDEN_FOLIO,
         COFFIN_CART, WEATHERVANE, SKULL_WATCHES,
         ARCHIVE_THINNING, THEME_NEVER_PLAYED, BG_TOWN_MEMORY,
-        BUTTONS_NEVER_PRESSED
+        BUTTONS_NEVER_PRESSED,
+        STORM_NIGHT, SEAL_BREAKER, SOUND_KEEPER,
+        STORM_WATCHER, DROP_CATCHER, CODE_DOCTOR
     };
 }

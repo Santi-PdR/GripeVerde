@@ -1,5 +1,429 @@
 # Eternal Craft: Gripe Verde
 
+## v0.30.0 - La hoja entera
+
+Feedback del owner tras la 0.29.0: la vuelta quedo bien, pero la pluma
+que escribe solo UN tramo queda rara; la letra de la lupa no se veia;
+los ticks de hover muy altos; y hay textos pisados por botones. Backup
+externo previo (`/home/user/GripeVerde-backup-pre-v0.30.0-6ac186f.bundle`,
+--all, verificado).
+
+- **La pluma escribe la bitacora ENTERA** (fusion de sus dos propuestas):
+  desde la entrada vigente hasta el fin del documento, el texto se
+  escribe mientras el lector baja (ritmo 340 chars/s tras 300 ms de
+  gracia). Regla de piso: lo que queda mas de media pantalla por encima
+  se considera impreso y no gasta tinta — bajar de golpe con la barra
+  jamas deja huecos, y quien sube encuentra todo seco. El click sigue
+  completando todo al instante; con movimiento reducido, hoja entera.
+- **La lupa ya se lee**: el cuadrito era tinta sobre tinta (errata
+  reconocida) — ahora es etiqueta de papel claro (`PAPER` al 240) con
+  letra de tinta; caret bronce legible sobre ella.
+- **Ticks de hover -40%**: `VOL_HOVER_MAIN` 0.045→0.028,
+  `VOL_HOVER_SECTION` 0.035→0.022 (pedido expreso). Clicks intactos.
+- **Fixes de solape (reporte del owner)**:
+  - Título: el mensaje del día ya no flota sobre la mesa de botones — se
+    lee a la IZQUIERDA de la firma en la misma línea (se omite si no hay
+    aire), y la firma jamas entra en la franja del gramofo (max clamp
+    x≥48).
+  - Gabinete de opciones: la línea "(no: la tinta ya no seca)" del huevo
+    Holloway quedaba DEBAJO de la primera fila de botones — ahora clamp
+    duro sobre la grilla, divisor siempre por debajo, y flavor/fix con
+    elipsis al ancho del papel.
+  - Sala de sonido: la cita del flavor se omite si no hay aire real
+    sobre los sliders, y con elipsis al ancho del panel.
+- Interfaces debidas: pluma y marcas en pixeles logicos dentro del
+  scissor; clamps de texto probados en GUI scale 2/3/4 y minimal mode;
+  reducedMotion y reduceFlashes respetados en todo lo nuevo (KI-65).
+
+Conteos: 61 Java, 25 lang (93 claves), 25 cronicas, 35 eventos de sonido
+(los 35 en uso; allowlist legacy vacia), 42 OGG. Espejo Python: 8/8 sellos
++ balance OK.
+
+## v0.29.0 - La vuelta y la lupa
+
+Feedback directo del owner tras jugar la 0.28.0: la cronica gusta, la
+animacion al SALIR de cada cosa no. Backup externo previo
+(`/home/user/GripeVerde-backup-pre-v0.29.0-5dee740.bundle`, --all,
+verificado).
+
+- **La vuelta cortes (rediseño de la transicion de regreso)**: volver a
+  una mesa ya visitada ya no corre el barrido completo al reves — ahora
+  la hoja cae de arriba en 170 ms: velo tenue (110 vs 150) + banda
+  superior de tinta que se repliega (46 px → 0) con filo bronce. Sin
+  salpicaduras, sin gotas, sin sombra extra. Toda la ceremonia (barrido
+  largo, salpicaduras, gotas) queda reservada para AVANZAR, donde gusto.
+  La sombra de asiento sigue en ambos sentidos (solo opacidad, 450 ms).
+- **Optimizacion del velo** (`DiaryTransitions`): cache de elegibilidad
+  por clase (fin de `getName().startsWith` por frame), `reducedMotion`
+  resuelto una vez por apertura, duracion y fin de efecto precomputados
+  (`durNowMs`/`fxEndMs`) — fuera de la ventana del efecto el render es
+  costo cero (dos restas y un return).
+- **Fuera el golpe sordo** (pedido expreso): el escritorio ya no suena
+  al tocarlo en cualquier lado; `answerWhisper` vuelve a su forma pura
+  (solo el susurro abierto contesta) y `UiSounds.silenceKnock` se retira
+  del catalogo. `UI_ERROR` sigue cableado en `error()` — 35/35 en uso.
+- **La lupa de la bitacora**: cuadrito al pie a la derecha del papel (96
+  px, se abre con `/`, Ctrl+F o tocandolo). Escribis una palabra (hasta
+  24 caracteres, texto simple sin comodines) y la cronica salta a cada
+  aparicion con Enter / Shift+Enter, piquito bronce en cada renglon
+  coincidente y fondo tenue en la actual; contador "N/M" (o "0") a la
+  izquierda. Esc la cierra y olvida la pregunta. El folio comparte la
+  franja: si el panel es angosto (escala 4) se corre a la izquierda —
+  jamas se pisan. Caret parpadeante (fijo con destellos reducidos).
+- Interfaces debidas: la vuelta corta se ve bien en GUI 2/3/4 (banda
+  proporcional, nada anclado al centro), la lupa vive bajo el contenido
+  dentro del panel en todas las escalas, y reducedMotion mantiene el
+  fundido limpio (sin vuelta ni ceremonia). KI-64.
+
+Conteos: 61 Java, 25 lang (93 claves), 25 cronicas, 35 eventos de sonido
+(los 35 en uso; allowlist legacy vacia), 42 OGG. Espejo Python: 8/8 sellos
++ balance OK.
+
+## v0.28.0 - Las gotas y los folios
+
+Misma consigna del owner: mejoras significativas en textos y en los efectos
+al cambiar de pantalla/interfaz, correctas en TODAS las interfaces, con
+backup externo previo
+(`/home/user/GripeVerde-backup-pre-v0.28.0-d40c820.bundle`, --all,
+verificado).
+
+- **La tinta fresca gotea (transiciones)**: del filo de la cortina se
+  desprenden 3 gotas en momentos distintos del pliegue (30/55/80% del
+  barrido) que resbalan hasta 26 px EN EL SENTIDO del pliegue con rastro
+  fino (trail 1 px, alfa ≤ 40; gota 2x2, alfa ≤ 85) y se desvanecen en
+  550 ms. Posiciones por LCG con la semilla de cada apertura. Con
+  movimiento reducido: sin gotas (fundido limpio, como siempre).
+- **La cronica gana folio**: al pie del papel, centrado, "folio N · M"
+  calculado del scroll real (paginas = alto visible; N = hoja actual) con
+  ornamentos de bronce a los lados. Bajo el area de contenido y dentro
+  del panel: nunca pisa texto, botones ni el folio escondido (ese vive
+  dentro del scrolleo). Funciona en GUI 2/3/4 y con resize en vivo.
+- **Sello NUEVO en TODAS las entradas saltadas**: si el gabinete avanzo
+  mas de una edicion desde `lastSeenVersion` (p.ej. 0.25.2 → 0.28.0),
+  todas las cabeceras con triple de version posterior a la ultima leida
+  amanecen lacradas esta visita (comparacion numerica por triple, parser
+  tolerante). La pluma de 0.27.0 sigue escribiendo SOLO la entrada de la
+  version instalada.
+- **Tablon del titulo con lineas nuevas**: cada pool de subtitulos
+  rotativos pasa de 9 a 12 lineas por idioma (ES/EN), misma voz de
+  documento: "Los hospedajes abren sus libretas", "Un cordon se sostiene
+  entre todos", "Escriban su nombre en la guardia" (hospedajes) y "Cada
+  pieza lleva su sello", "Lo que el cordon permite", "Cuenten las
+  lamparas antes de salir" (arsenales).
+- Interfaces debidas: gotas solo durante transiciones del gabinete;
+  folio y sellos en pixeles logicos dentro del panel; probado contra
+  escala GUI 2/3/4, minimal mode, movimiento reducido y destellos
+  reducidos (KI-63). Reglas madre intactas: sin gameplay, render Java
+  puro.
+
+Conteos: 61 Java, 25 lang (93 claves), 25 cronicas, 35 eventos de sonido
+(los 35 en uso; allowlist legacy vacia), 42 OGG. Espejo Python: 8/8 sellos
++ balance OK.
+
+## v0.27.0 - El pliegue y la pluma
+
+Misma receta pedida por el owner: mejoras significativas en textos y en los
+efectos al cambiar de pantalla/interfaz, bien en TODAS las interfaces, con
+backup externo previo
+(`/home/user/GripeVerde-backup-pre-v0.27.0-aa0ff79.bundle`, --all,
+verificado).
+
+- **El pliegue tiene sentido (direccion de la cortina)**: `DiaryTransitions`
+  gana pila de navegacion (`NAV`, acotada a 16) alimentada desde
+  `ScreenEventHandler.noteTransition` — la pantalla vieja se captura al
+  inicio de `onScreenOpening` y la nueva se lee TRAS el redirect vanilla, en
+  los tres puntos de salida del metodo. Avanzar a una mesa no visitada → la
+  cortina de tinta baja (como en 0.26.0); regresar a una mesa ya abierta
+  (Cerrar, Esc, volver al titulo, salir de la pausa) → la cortina sube, la
+  hoja vuelve al pliegue. Sin pista del origen (arranque), siempre baja.
+- **El filo salpica**: 5 gotas de tinta diminutas tras el borde de la
+  cortina, posiciones por LCG con semilla propia de cada apertura (estables
+  durante la transicion), alfas ≤ 95 y cola de 500 ms tras el destape. Sin
+  destellos; con movimiento reducido no hay salpicaduras (solo fundido).
+- **La hoja se acuesta**: sombra interior de 6 px que decae en 450 ms tras
+  la cortina (alfa max 20 → 0). Es solo opacidad — tambien presente con
+  movimiento reducido, nunca tapa texto ni botones.
+- **V4 implementada — la cronica se escribe a pluma**: la entrada de la
+  version recien instalada se escribe letra a letra en su primera visita
+  (ritmo minimo 170 chars/s, techo duro de 6,5 s para entradas largas).
+  Plumín dibujado al final del ultimo trazo siguiendo el wrap real del
+  font (tambien la capital del encabezado), parpadeo de tinta suave (fijo
+  en 170 con destellos reducidos) y rasguño quedo (`UI_SCROLL`, 0.045f,
+  un golpe por tramo de 42 chars con throttle de 120 ms). Un click la
+  termina al instante; con movimiento reducido la hoja llega entera.
+  Persistencia: la misma `lastSeenVersion` de 0.24.0 — solo la primera
+  visita de cada entrada se escribe.
+- Interfaces debidas: todo en pixeles logicos y dentro del scissor de la
+  cronica; layout intacto; probado contra escala GUI 2/3/4, minimal mode,
+  movimiento reducido y destellos reducidos (KI-62). Sin gameplay, sin
+  resourcepacks: render Java puro (reglas madre intactas).
+
+Conteos: 61 Java, 25 lang (93 claves), 25 cronicas, 35 eventos de sonido
+(los 35 en uso; allowlist legacy vacia), 42 OGG. Espejo Python: 8/8 sellos
++ balance OK.
+
+## v0.26.0 - Las hojas y los faroles
+
+Entrega pedida por el owner: mejoras visibles significativas ("efectos al
+cambiar de pantalla/interfaz, etc"), revision de textos y, antes de tocar
+nada, backup externo
+(`/home/user/GripeVerde-backup-pre-v0.26.0-18e178d.bundle`, --all).
+
+- **El pasar de las hojas (transicion entre interfaces)**: nueva
+  `DiaryTransitions` enganchada a `ScreenEvent.Render.Post` en
+  `ScreenEventHandler` — al abrir cualquier pantalla del paquete
+  `client.screens` (titulo, opciones, cronica, archivo, sonido, pausa...),
+  una cortina de tinta baja revelando la hoja nueva en ~260 ms con velo
+  sepia disolvente y franja de tinta con filo de bronce. Con movimiento
+  reducido solo fundido de 130 ms, sin barrido. Pantallas vanilla/ajenas:
+  cero efecto. Dibuja en Render.Post: cubre botones incluidos solo esos
+  260 ms, nunca interfiere con clics (es impermeable al input).
+- **Faroles reactivos (V6 de REVISION_MOD)**: `LivingAtmosphere.setMouse`
+  desde el titulo + `lanternHover[]` suavizado por tick (ease ~110 ms);
+  la mano cerca de un farol (radio 30 px sobre la lampara) levanta su
+  llama y ensancha su halo x1.5, todo con topes 255 (withAlpha no
+  clampea). Funciona con movimiento reducido (no hay movimiento nuevo,
+  solo respiracion de brillo) y en cualquier escala GUI/altura (4-6
+  faroles segun alto).
+- **Revision de textos (crónicas in-game)**: reescritas las entradas
+  0.24.1/0.25.0/0.25.1 en los 25 idiomas con vocabulario de documento de
+  la vida real — fuera "hexadecimal", "crossfade", "literal numerico",
+  "clic"; dentro "rotativa", "cilindro madre", "toque", "sello de
+  imprenta".
+- **El gabinete afina el oido (V2 de REVISION_MOD, resto)**: los 8 sonidos
+  legacy por fin suenan con sus eventos propios (estaban grabados y
+  registrados; faltaba el cable) — `UiSounds.open/close/modal/tab/error/
+  cleanClick/clickCreate/respawn` cableados a `UI_OPEN/UI_CLOSE/UI_MODAL/
+  UI_TAB/UI_ERROR/UI_BUTTON_CLEAN/UI_CLICK_CREATE/UI_RESPAWN`. Tres
+  momentos nuevos audibles: el escritorio responde con golpe sordo
+  (`UiSounds.silenceKnock`, cooldown 480 ms) cuando tocas la vigilia sin
+  susurro en el aire; el gramofono del titulo anuncia pieza nueva con
+  `clickCreate` (SlimButton gana hook `withClickSound`, los demas botones
+  intactos); y volver al titulo desde otra mesa te "vuelve a sentar" con
+  `respawn` (`onArriveTitle` en ScreenEventHandler; la primera apertura
+  del arranque no suena). Allowlist del sello de uso de sonidos vacia en
+  Gradle y en el espejo Python: 35/35 eventos en uso.
+- ERICA recuerda: este mod VIVE en interfaces; cada cambio visual va
+  probado contra escala GUI 2/3/4 y minimal mode (KI-61).
+
+Conteos: 61 Java, 25 lang (93 claves), 25 cronicas, 35 eventos de sonido
+(los 35 en uso; allowlist legacy vacia), 42 OGG. Espejo Python: 8/8
+sellos + balance OK.
+
+## v0.25.2 - El telegrama no pisa la mesa
+
+Hotfix de layout (parche), reportado por el owner probando GUI scale 3-4:
+
+- **Cartel del easter egg (telegrama "CASO")**: los dos clamps de Y se
+  anulaban entre si — uno lo subia para esquivar la mesa de botones y el
+  siguiente lo volvia a clavar en `safeTop` fijo, de modo que con poca
+  pantalla logica (escala 3-4) el cartel caia encima de los botones y el
+  texto quedaba ilegible. Regla nueva y monotona: jamas tocar la zona de
+  botones, jamas salirse por arriba; si no hay banda libre, el cartel sube
+  sobre la franja del logo. Ademas `boxW` ahora tiene techo en el ancho
+  real de pantalla.
+- **Sello FRAUDE** (cartel del elixir, tras HOLLOWAY): estaba fijado a 46
+  px del borde inferior del poster; en carteles bajos (escala 3-4) se
+  montaba sobre las lineas del cuerpo y podia salirse del papel. Ahora se
+  estampa siempre DESPUES del texto (`cursorY + 6`), nunca por encima, y
+  con tope duro dentro del poster, incluido clamp horizontal.
+- **Tooling/documentos**: la ruta de deploy vigente queda documentada como
+  comandos PowerShell INLINE (fetch+reset+build+copia por glob), sin .ps1
+  nuevos, y la regla permanente del owner: cada entrega termina con ese
+  bloque listo para pegar. `tools\deploy.ps1` queda como alternativa
+  corregida.
+
+Conteos: 60 Java, 25 lang (93 claves), 25 cronicas, 35 eventos, 42 OGG.
+Espejo Python: 8/8 sellos + balance OK.
+
+## v0.25.1 - El cilindro original
+
+Hotfix de contenido (parche): la lluvia sintetizada de 0.24.0 "sonaba
+bugeada" (reporte del owner al escucharla en cliente). Decision: retirar
+la sintesis y restaurar los masters originales de lluvia y viento,
+amplificados en lugar de regrabados — usar "los sonidos que ya existian",
+pedido expreso del owner.
+
+- **Lluvia**: master original (el de -32 dB RMS) con ganancia pura,
+  normalizado a pico ~0.83 sin tocar la cresta (~19): nada de limitadores
+  (el primer intento de soft-knee genero NaN y picos >1.0 — descartado y
+  rehecho desde el master). Su volumen de mezcla sube 0.30 -> 0.45 en
+  `MenuAmbience` para que vuelva a sonar clara sin siseo aplastado.
+- **Viento**: master original (el de -64 dB RMS) amplificado a RMS ~0.085
+  (pico 0.80 tras decodificacion).
+- **Costuras medidas**: ambos masters empalmaban limpios (seam 0.0076 y
+  0.0000), asi que no llevan crossfade: loops identicos a los originales.
+- `tools/audio/regenerate_menu_ambience.py` queda archivado con nota en
+  cabecera: ya no es la fuente de esos dos loops (registro historico del
+  intento de sintesis).
+
+Conteos: 60 Java, 25 lang (93 claves), 25 cronicas, 35 eventos de sonido
+(33 en uso; 8 legacy en allowlist), 42 OGG. Espejo Python: 8/8 sellos +
+balance OK.
+
+## v0.25.0 - El que mira la tormenta
+
+Entrega menor de easter eggs pedida por el owner ("algunos easter eggs
+mas"): tres secretos nuevos en la vigilia, cableados sobre mecanica que ya
+existia (tormenta, lluvia, telegrafo oculto).
+
+- `storm_watcher`: `LivingAtmosphere` cuenta ahora cada relampago que nace
+  (programado o forzado) y la pantalla del titulo marca una linea base al
+  abrirse en noche de tormenta: al tercer destello nuevo, ficha y nota
+  (`N_FLASH3`). Con destellos reducidos no hay relampagos y la ficha no se
+  regala: respeta accesibilidad.
+- `drop_catcher`: la lluvia es tocable. `LivingAtmosphere.rainDropAt` hace
+  hit-test contra las 40 gotas en vuelo con tolerancia generosa; atrapar una
+  la devuelve al cielo (`scareDrop`), suena un plink de aguja (`menu/tick`
+  a 1.9) y suma ficha + nota (`N_DROP`). La zona de botones queda excluida:
+  ningun clic sobre la mesa se pierde por culpa de una gota.
+- `code_doctor`: palabra nueva del telegrafo oculto — escribir DOCTOR en la
+  vigilia trae susurro y campana baja, ficha, contador `doctor_signed` y
+  nota (`N_DOCTOR`). El elixir tuvo un medico; el oficio sigue en pie.
+
+El archivo crece a 52 fichas; nombres y pistas viven en el registry bilingue
+de `Discoveries` (cero claves lang nuevas: el conteo sigue en 93). Notas de
+Marginalia nuevas: N_FLASH3, N_DROP, N_DOCTOR.
+
+Conteos: 60 Java, 25 lang (93 claves), 25 cronicas, 35 eventos de sonido
+(33 en uso; 8 legacy en allowlist), 42 OGG. Espejo Python: 8/8 sellos +
+balance OK.
+
+## v0.24.1 - La errata del cronista
+
+Hotfix de build (parche): la semilla de las gotas de lluvia de V5 se escribio
+como `0xD20PL` —la P no es digito hexadecimal— y la 0.24.0 no compilaba
+(`error: malformed floating-point literal` en `PaperTexture.java:95`,
+detectado por el owner en el primer `deploy.ps1`; en el sandbox no hay JDK
+y el espejo Python solo verifica balance de llaves, por eso se escapo).
+Corregida a `0xCA1DAL` ("la caida"): comportamiento identico, gotas
+deterministas con otra secuencia. Para que ninguna errata de esta familia
+vuelva a salir sellada, el espejo Python suma un octavo sello:
+`verifyJavaLiterals` valida todos los literales numericos (hex/binario/
+octal/decimal/flotante, sufijos incluidos) de los 60 .java tras retirar
+comentarios y cadenas. Sin cambios funcionales: el contenido de 0.24.0
+queda intacto. Para Agus y para cualquier distribucion: usar 0.24.1 —la
+0.24.0 jamas existio como jar.
+
+Conteos: 60 Java, 25 lang (93 claves), 25 cronicas, 35 eventos de sonido
+(33 en uso; 8 legacy en allowlist), 42 OGG. Espejo Python: 8/8 sellos +
+balance OK.
+
+## v0.24.0 - El viento vuelve a soplar
+
+Entrega menor de superficie visible, pedida por el owner junto al segundo
+crash-log de Agus: "corrige que no se escucha el ambiente", mejoras visibles
+(V1+V3+V5) y mas easter eggs.
+
+El ambiente no se oia por contenido, no por codigo: el loop de viento estaba
+grabado a -64 dB RMS (inaudible a cualquier ganancia razonable) y la lluvia
+a -32 dB. Se regeneran viento y lluvia por sintesis procedural
+(`tools/audio/regenerate_menu_ambience.py`, reproducible e idempotente,
+con crossfade de extremos para loops sin chasquido) y se refuerzan ciudad,
+susurros y un paso. El regulador de ambiente por fin manda sobre algo, y de
+regalo el gabinete deja de sonar dentro de los mundos (fuga historica:
+los loops seguian activos con un nivel cargado).
+
+Mejoras visibles: la Cronica se abre en la entrada de la version instalada
+tras cada actualizacion y la marca con un sello de lacre "NUEVO" durante la
+visita (V1; `ChroniclerMemory.lastSeenVersion`); algunas sesiones (~14%)
+arrancan en Noche de tormenta, con lluvia doble, relampagos frecuentes,
+mezcla ambiente al mando de la lluvia y truenos casi seguros (V3); y la
+lluvia resbala en gotas por todos los pergaminos (V5; quieta con movimiento
+reducido). Easter eggs nuevos: el lacre del telegrama se rompe a golpes
+(`seal_breaker`, estrena `ui.paper_fall`) y un diapason oculto junto a los
+reguladores afina la sala (`sound_keeper`, estrena `ui.success`); el
+descubrimiento `storm_night` completa el trio. El archivo crece a 50 fichas
+y sus textos de "cuarenta y tantas fichas" ahora computan la cifra solos.
+
+Conteos: 60 Java, 25 lang (93 claves), 25 cronicas, 35 eventos de sonido
+(33 en uso; 8 legacy en allowlist), 42 OGG. Espejo Python: 7/7 sellos +
+balance OK.
+
+## v0.23.2 - El telegrama llega intacto
+
+Hotfix de crash en campo (parche): el easter egg que dispara el clic en el
+sello del titulo podia tumbar el cliente en el primer fotograma. El efecto
+maquina de escribir abre el telegrama con 0 letras visibles durante los
+primeros ~22 ms, `font.split("")` devuelve una lista vacia y el dibuje
+indexaba `lines.get(0)` tras forzar un minimo de un renglon:
+`ArrayIndexOutOfBoundsException` en
+`DiaryTitleScreen.drawEasterEggMessage`, con crashes en cadena bajo
+NotEnoughCrashes. Reportado por un jugador real con Java 17 y la edicion
+v0.22.0 (gracias por el registro completo).
+
+Correccion: el conteo de renglones del telegrama queda acotado por el
+tamano real de la lista (0 permitido: el sobre espera su primera letra) y
+la llamada al overlay, puramente decorativa, queda envuelta para que
+ningun fallo de ornamento pueda volver a detener el render del cliente.
+Se auditaron ademas los otros 5 usos de `font.split` del codigo
+(ChangelogScreen, DiaryArchiveScreen): todos iteran en forma segura ante
+listas vacias, y el resto de los accesos indexados a listas ya tenian su
+guardia de vacio correspondiente.
+
+## v0.23.1 - Sellos y relojería
+
+Entrega de mantenimiento dura (sin cambios de escena, por eso va como
+parche): el owner autorizo implementar el lote recomendado de la revision.
+
+Dos sellos nuevos de build: `verifyGripeVerdeSubtitles` (toda clave de
+subtitulo no vacia de sounds.json debe existir en los 25 idiomas) y
+`verifyGripeVerdeSoundUsage` (ningun SoundEvent registrado puede quedar
+sin uso en el codigo; los 10 eventos legacy sin uso quedan en allowlist
+grandfathered, documentados en ModSounds, hasta decidir su destino).
+
+La memoria del cronista gana sanitize de bounds (numeros imposibles de un
+JSON tocado a mano se corrigen en silencio) y un pipeline de migracion
+versionada documentado (SCHEMA_VERSION + pasos N→N+1) para futuros
+esquemas. La capa de ambiente (MenuAmbience) migra al mismo reloj
+monotonico nanoTime que la musica, junto con el rastreo de calle de
+LivingAtmosphere; los temporizadores del mod ya no dependen del reloj de
+pared del SO.
+
+La CI se entrega lista para activar con `tools/ci/activar-ci.ps1` (la
+sesion no tiene permiso `workflows`; el script la activa con las
+credenciales locales del owner en un paso).
+
+## v0.23.0 - El gramófono guarda la palabra
+
+Pasada transversal pedida expresamente tras la revision tecnica del
+2026-08-23 (ver REVISION_MOD.md), sin gameplay ni resourcepacks y con
+backup externo verificado antes de tocar archivos.
+
+Audio blindado: la banda sonora vanilla del menu calla mientras el gabinete
+esta abierto (MusicManager disparaba Musics.MENU a los 20-600 ticks y sonaba
+encima de las pistas propias), y un watchdog detecta instancias fantasma del
+motor de sonido: tras un F3+T la playlist vuelve sola en vez de quedar muda
+para siempre. Los temporizadores de musica, cooldowns UI y duracion de pistas
+usan ahora reloj monotonico (nanoTime). La escritura de la memoria del
+cronista (temporal + force + reemplazo atomico) sale del hilo de render hacia
+un executor monohilo, sin micro-tirones y con cierre ordenado.
+
+Accesibilidad: nueva ayuda visible "Destellos reducidos" (fotosensibilidad,
+separada de Movimiento reducido) que apaga relampagos sin congelar el resto
+de la escena; los ocho eventos ambientales (pasos, madera, puerta, susurro,
+campana, cuervos, cadenas, trueno) ganan subtitulos reales en los 25 idiomas;
+el deslizador de ambiente corrige su etiqueta hardcodeada y usa la clave
+traducida que ya existia.
+
+Ingenieria: el mod ya no registra manualmente su escucha de pantallas
+(eliminada la doble entrega de eventos y el crash latente en servidores
+dedicados; el mod queda inerte fuera del cliente), se retira por completo la
+infraestructura de Mixins vacia (JSON, plugin, refmap, mods.toml) y el
+namespace de GameTest sin tests, y el atajo oculto Ctrl+0 pasa a ser opt-in
+via config. Las pantallas solo se reemplazan cuando la clase es exactamente
+vanilla (ningun mod de menu ajeno es barrido) y ambos reemplazos pueden
+apagarse por config para convivir con otros mods. El build crece con dos
+sellos nuevos (sincronia de version Gradle/VERSION y duraciones reales de
+las pistas OGG parseadas como Vorbis) y una CI de GitHub Actions compila
+cada push con JDK 17 y publica el jar como artifact: el bloqueo de KI-52 por
+falta de Java 17 en el sandbox tiene ahora via automatica de validacion.
+Conteos: 60 clases Java, 25 idiomas con 93 claves, 25 cronicas, 35 eventos,
+42 OGG. Version final 0.23.0.
+
+El tag y el release v0.23.0 se reservan hasta completar en cliente real la
+validacion registrada como KI-53 (ver KNOWN_ISSUES.md).
+
 ## v0.22.0 - La vigilia queda sellada
 
 La simulacion atmosferica y el audio quedan reunidos en un tick fijo de

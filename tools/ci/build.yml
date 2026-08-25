@@ -1,0 +1,55 @@
+# Continuous Integration - Eternal Craft: Gripe Verde
+#
+# v0.23.0 (KI-52): el sandbox de trabajo no dispone de Java 17, por lo que el
+# build Forge solo podia ejecutarse en el PC del owner. Este workflow compila
+# semánticamente contra Forge/Minecraft con JDK 17 en cada push y PR, ejecuta
+# las cinco verificaciones (localizacion 25x93, changelogs, sonido, codigo
+# muerto, version y duraciones Vorbis) y publica el jar como artifact.
+#
+# INSTALACION (10 segundos): mover este archivo a
+#   .github/workflows/build.yml
+# La sesion del 2026-08-23 no pudo subirlo directamente porque el token de la
+# app de GitHub no tiene permiso "workflows"; desde la web de GitHub el owner
+# puede pegarlo sin ese permiso, o reconectar GitHub en Arena y pedir el push.
+
+name: build
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle (cache incluida)
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build with ForgeGradle
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon clean build
+
+      - name: Upload mod jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: gripeverde-jar
+          path: build/libs/*.jar
+          if-no-files-found: error

@@ -55,6 +55,50 @@ public class ChangelogScreen extends Screen {
     private int lastContentW = -1;
     private boolean draggingScrollbar = false;
 
+    // v0.24.0: la cronica se abre donde quedo la pluma (entrada de la version instalada)
+    private Row newVersionRow = null;
+    private boolean arrivedFreshVersion = false;
+    // v0.28.0: si el gabinete avanzo mas de una edicion desde la ultima
+    // lectura, TODAS las entradas saltadas amanecen con lacre, no solo la
+    // vigente (la pluma, en cambio, escribe unicamente la mas nueva).
+    private final java.util.List<Row> freshRows = new java.util.ArrayList<>();
+    private static final java.util.regex.Pattern VERSION_HEAD =
+        java.util.regex.Pattern.compile("^(?:Version\\s+)?(\\d+)\\.(\\d+)\\.(\\d+)");
+
+    // v0.29.0: la lupa de la bitacora — un cuadrito al pie, a la derecha,
+    // donde el lector escribe una palabra y la cronica lo lleva de una
+    // aparicion a la siguiente (Enter/Shift+Enter). Esc la cierra y la
+    // bitacora olvida la pregunta. Se abre con "/" o Ctrl+F.
+    private static final int SEARCH_W = 96;
+    private static final int SEARCH_H = 12;
+    private static final int SEARCH_MAX = 24;
+    private boolean searchOpen = false;
+    private final StringBuilder searchText = new StringBuilder();
+    private final java.util.List<Integer> searchHits = new java.util.ArrayList<>();
+    private int searchHitPos = -1;
+
+    // v0.27.0 (V4): la entrada recien llegada se escribe letra a letra en
+    // esta visita, y solo en esta. Un gesto del lector (click) la completa
+    // al instante; con movimiento reducido la hoja llega entera.
+    // v0.29.0: — el rasguño acompaña por tramos.
+    // v0.30.0 (feedback del owner): nada de "una parte si, otra no" — la
+    // escritura cubre TODA la bitacora desde la entrada vigente hasta el
+    // final: mientras el lector baja, la pluma lo va alcanzando; lo que
+    // quedo mas de media pantalla por encima se considera ya impreso
+    // (bajar de golpe con la barra jamas deja huecos), y el click sigue
+    // completando todo al instante.
+    private static final int PEN_CPS = 340;
+    // Gracia para que el pliegue de 0.26.0 termine de destapar la hoja
+    // antes del primer trazo (la pluma no escribe bajo la cortina).
+    private static final long PEN_GRACE_MS = 300L;
+    private boolean penActive = false;
+    private int penRowStart = -1;
+    private int penRowEnd = -1;
+    private int penTotalChars = 0;
+    private long penStartMs = 0L;
+    private int penScratchChars = 0;
+    private long lastPenScratchMs = 0L;
+
     // v0.16.0: las marcas del encuadernador y el folio escondido
     private final List<int[]> asteriskRects = new ArrayList<>();
     private static int binderMarksLit = 0;
@@ -78,6 +122,7 @@ public class ChangelogScreen extends Screen {
 
         loadAndParse();
         recalcMaxScroll();
+        jumpToFreshVersion();
 
         int bx = (this.width - CLOSE_W) / 2;
         int by = this.height - CLOSE_H - 10;
@@ -253,6 +298,127 @@ public class ChangelogScreen extends Screen {
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.tick(1.0f / 20.0f);
     }
 
+    /**
+     * v0.24.0: si el gabinete se actualizo desde la ultima lectura, la cronica
+     * se abre directamente en la entrada de la version instalada y esa entrada
+     * lleva un sello de lacre "NUEVO" durante esta visita.
+     */
+    private void jumpToFreshVersion() {
+        this.newVersionRow = null;
+        this.arrivedFreshVersion = false;
+        this.freshRows.clear();
+        String current;
+        try { current = com.eternalcraft.gripeverde.GripeVerdeMod.VERSION; }
+        catch (Throwable t) { return; }
+        if (current == null || current.isBlank()) return;
+        String seen;
+        try { seen = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.lastSeenVersion(); }
+        catch (Throwable t) { return; }
+        if (current.equals(seen)) return;
+        // v0.28.0: todas las entradas posteriores a la ultima leida llevan
+        // lacre esta visita (si se saltaron ediciones, no solo la vigente).
+        int[] seenTriple = parseTriple(seen);
+        if (seenTriple != null) {
+            for (Row r : rows) {
+                if (r.type != LT.H1) continue;
+                int[] v = parseTriple(r.text);
+                if (v != null && compareTriple(v, seenTriple) > 0) {
+                    freshRows.add(r);
+                }
+            }
+        }
+        int idx = -1;
+        for (int i = 0; i < rows.size(); i++) {
+            Row r = rows.get(i);
+            if (r.type == LT.H1 && r.text.startsWith("Version " + current)) { idx = i; break; }
+        }
+        if (idx < 0) return; // cronica aun no tiene la entrada; nada que sellar
+        int cw = contentW();
+        int off = 0;
+        for (int i = 0; i < idx; i++) off += rowHeight(rows.get(i), cw);
+        off = Math.max(0, off - 6);
+        this.newVersionRow = rows.get(idx);
+        this.arrivedFreshVersion = true;
+        preparePen(idx);
+        lastScrollY = off;
+        setScrollTarget(off, true);
+        try {
+            com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.setLastSeenVersion(current);
+        } catch (Throwable ignored) {}
+    }
+
+    /**
+     * v0.27.0: prepara la escritura a pluma de la entrada que empieza en la
+     * cabecera h1Index (hasta la siguiente cabecera o el fin del documento).
+     */
+    private void preparePen(int h1Index) {
+        penActive = false;
+        penRowStart = -1;
+        penRowEnd = -1;
+        penTotalChars = 0;
+        if (reducedMotion()) return; // la hoja llega entera, sin escritura
+        if (h1Index < 0 || h1Index >= rows.size()) return;
+        // v0.30.0: desde la entrada vigente HASTA EL FIN de la bitacora.
+        int end = h1Index + 1;
+        int total = rows.get(h1Index).text.length();
+        while (end < rows.size()) {
+            Row r = rows.get(end);
+            if (r.type != LT.GAP && r.type != LT.SEPARATOR) total += r.text.length();
+            end++;
+        }
+        if (total <= 0) return;
+        penRowStart = h1Index;
+        penRowEnd = end;
+        penTotalChars = total;
+        penActive = true;
+        penStartMs = 0L; // arranca con el primer trazo en pantalla
+        penScratchChars = 0;
+    }
+
+    private static boolean reducedMotion() {
+        try { return com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get(); }
+        catch (Throwable t) { return false; }
+    }
+
+    private static boolean reducedFlashes() {
+        try { return com.eternalcraft.gripeverde.config.ClientConfig.REDUCE_FLASHES.get(); }
+        catch (Throwable t) { return false; }
+    }
+
+    // v0.28.0: triple de version. Acepta encabezados "Version X.Y.Z - ..."
+    // y numeros desnudos ("X.Y.Z", como GripeVerdeMod.VERSION). null si no
+    // se puede leer.
+    private static int[] parseTriple(String text) {
+        if (text == null) return null;
+        try {
+            java.util.regex.Matcher m = VERSION_HEAD.matcher(text.trim());
+            if (!m.find()) return null;
+            return new int[]{ Integer.parseInt(m.group(1)),
+                Integer.parseInt(m.group(2)), Integer.parseInt(m.group(3)) };
+        } catch (Throwable t) { return null; }
+    }
+
+    private static int compareTriple(int[] a, int[] b) {
+        for (int i = 0; i < 3; i++) {
+            if (a[i] != b[i]) return a[i] < b[i] ? -1 : 1;
+        }
+        return 0;
+    }
+
+    /** v0.24.0: sello de lacre junto a la entrada recien llegada. */
+    private void drawNewSeal(GuiGraphics g, int x, int y, int maxW) {
+        String txt = isEnglishSelected() ? "NEW" : "NUEVO";
+        int tw = this.font.width(txt);
+        int sx = x + maxW - tw - 12;
+        int sy = y - 3;
+        int wax = 0xFF7A2415;
+        g.fill(sx - 2, sy - 1, sx + tw + 5, sy + 11, wax);
+        g.fill(sx - 3, sy, sx + tw + 6, sy + 10, wax);
+        g.fill(sx - 1, sy + 1, sx + tw + 4, sy + 9, 0xFF8B2A1C);
+        g.fill(sx, sy + 1, sx + 3, sy + 2, 0x60E8A080);
+        g.drawString(this.font, txt, sx + 1, sy + 2, 0xFFEAD9B0, false);
+    }
+
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         int px = panelX(), py = panelY(), pw = panelW(), ph = panelH();
@@ -284,13 +450,96 @@ public class ChangelogScreen extends Screen {
                 Component.translatable("gripeverde.changelog.error").getString(),
                 cx, cy + 4, DiaryTheme.BLOOD_FRESH, false);
         } else {
+            // v0.27.0: presupuesto de tinta de la pluma para esta pasada.
+            int penBudget = Integer.MAX_VALUE;
+            if (penActive) {
+                long nowPen = System.currentTimeMillis();
+                if (penStartMs <= 0L) penStartMs = nowPen;
+                long ageMs = Math.max(0L, nowPen - penStartMs - PEN_GRACE_MS);
+                penBudget = (int) Math.min(penTotalChars, PEN_CPS * ageMs / 1000L);
+                // El rasguño quedo de la pluma: un tramo de texto por golpe.
+                int writtenNow = Math.min(penBudget, penTotalChars);
+                if (writtenNow - penScratchChars >= 42 && nowPen - lastPenScratchMs > 120L) {
+                    lastPenScratchMs = nowPen;
+                    penScratchChars = writtenNow;
+                    try {
+                        com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                            com.eternalcraft.gripeverde.client.audio.ModSounds.UI_SCROLL.get(),
+                            0.045f, 1.30f + (float) java.util.concurrent.ThreadLocalRandom
+                                .current().nextDouble() * 0.25f);
+                    } catch (Throwable ignored) {}
+                }
+            }
+            int penConsumed = 0;
             int y = cy - scrollY;
-            for (Row row : rows) {
+            for (int ri = 0; ri < rows.size(); ri++) {
+                Row row = rows.get(ri);
                 int h = rowHeight(row, cw);
+                boolean inPenEntry = penActive && ri >= penRowStart && ri < penRowEnd;
                 if (y + h >= cy - 2 && y <= cy + ch + 2) {
-                    renderRow(g, row, cx, y, cw);
+                    if (inPenEntry) {
+                        int len = (row.type == LT.GAP || row.type == LT.SEPARATOR)
+                            ? 0 : row.text.length();
+                        // v0.30.0: lo que quedo mas de media pantalla por
+                        // encima de la vista ya anda impreso y no le gasta
+                        // tinta al presente (bajar de golpe jamas deja huecos).
+                        boolean longGone = (y + h < cy - ch / 2);
+                        int vis = longGone ? len
+                            : Math.max(0, Math.min(len, penBudget - penConsumed));
+                        if (vis >= len) {
+                            renderRow(g, row, cx, y, cw);
+                            if (freshRows.contains(row)) {
+                                drawNewSeal(g, cx, y, cw);
+                            }
+                        } else {
+                            // La pluma aun no llego: se dibuja lo escrito y el
+                            // plumín al final del ultimo trazo.
+                            if (len == 0) {
+                                renderRow(g, row, cx, y, cw);
+                            } else if (vis > 0) {
+                                Row partial = new Row(row.type, row.text.substring(0, vis));
+                                renderRow(g, partial, cx, y, cw);
+                                drawPenNib(g, row, cx, y, cw, vis);
+                            }
+                        }
+                        // El pasado lejano no gasta tinta del presente.
+                        penConsumed += longGone ? 0 : len;
+                    } else {
+                        // v0.29.0: la aparicion actual de la lupa se asienta
+                        // sobre un fondo tenue; las demas llevan piquito.
+                        if (!searchHits.isEmpty() && searchText.length() > 0
+                                && row.type != LT.GAP && row.type != LT.SEPARATOR) {
+                            boolean isHit = searchHits.contains(ri);
+                            if (isHit) {
+                                boolean isCurrent = searchHitPos >= 0
+                                    && ri == searchHits.get(searchHitPos);
+                                if (isCurrent) {
+                                    g.fill(cx - 3, y - 1, cx + cw - 6, y + h - 1,
+                                        DiaryTheme.withAlpha(DiaryTheme.BRONZE, 20));
+                                }
+                                g.fill(cx - 7, y + 1, cx - 4, y + Math.min(h - 2, 9),
+                                    DiaryTheme.withAlpha(DiaryTheme.BRONZE,
+                                        isCurrent ? 220 : 130));
+                            }
+                        }
+                        renderRow(g, row, cx, y, cw);
+                        if (freshRows.contains(row)) {
+                            drawNewSeal(g, cx, y, cw);
+                        }
+                    }
+                } else if (inPenEntry) {
+                    // v0.30.0: misma regla de piso para filas fuera de vista —
+                    // solo gasta tinta lo cercano a la hoja visible.
+                    boolean longGone = (y + h < cy - ch / 2);
+                    if (!longGone) {
+                        penConsumed += (row.type == LT.GAP || row.type == LT.SEPARATOR)
+                            ? 0 : row.text.length();
+                    }
                 }
                 y += h;
+            }
+            if (penActive && penBudget >= penTotalChars) {
+                penActive = false; // la tinta seco: escritura terminada
             }
             // v0.16.0: despues del ultimo renglon, un folio que no figura en la cronica.
             int fy = cy - scrollY + this.contentTotalH + 8;
@@ -320,6 +569,29 @@ public class ChangelogScreen extends Screen {
 
         }
 
+        // v0.28.0: el folio de la bitacora, centrado al pie del papel.
+        // v0.29.0: comparte la franja con la lupa — si no hay sitio para
+        // ambos, el folio se corre a la izquierda (nunca se pisan).
+        if (!loadError) {
+            int pages = Math.max(1, (int) Math.ceil((maxScroll + ch) / (double) ch));
+            int cur = Math.max(1, Math.min(pages,
+                (int) Math.floor(scrollY / (double) Math.max(1, ch)) + 1));
+            String folio = "folio " + cur + " \u00b7 " + pages;
+            int fw = this.font.width(folio);
+            int fx = px + (pw - fw) / 2;
+            int fy = py + ph - 16;
+            int searchLeft = px + pw - 14 - SEARCH_W - 44; // lupa + contador
+            if (fx + fw + 18 > searchLeft) fx = px + 14;
+            int orn = DiaryTheme.withAlpha(DiaryTheme.BRONZE, 110);
+            g.fill(fx - 14, fy + 4, fx - 6, fy + 5, orn);
+            g.fill(fx + fw + 6, fy + 4, fx + fw + 14, fy + 5, orn);
+            g.drawString(this.font, folio, fx, fy,
+                DiaryTheme.withAlpha(DiaryTheme.SEPIA_LIGHT, 190), false);
+        }
+
+        // v0.29.0: la lupa de la bitacora, al pie a la derecha.
+        drawSearchBox(g, px, py, pw, ph);
+
         super.render(g, mouseX, mouseY, partialTick);
 
         try {
@@ -335,6 +607,152 @@ public class ChangelogScreen extends Screen {
         try { lang = Minecraft.getInstance().getLanguageManager().getSelected(); }
         catch (Throwable ignored) {}
         return lang == null || lang.startsWith("en_") || lang.equals("en_us");
+    }
+
+    /** v0.27.0: el plumín descansa al final del ultimo trazo escrito. */
+    private void drawPenNib(GuiGraphics g, Row fullRow, int x, int y, int maxW, int vis) {
+        String shown = fullRow.text.substring(0, Math.min(vis, fullRow.text.length()));
+        int indent = (fullRow.type == LT.BULLET) ? 10 : 0;
+        int lh = lineHeightFor(fullRow.type);
+        int extraX = 0;
+        int firstLineExtra = 0;
+        int available;
+        String body = shown;
+        if (fullRow.type == LT.BULLET) {
+            extraX = this.font.width("\u2022 ");
+            available = Math.max(20, maxW - indent - extraX);
+        } else if (fullRow.type == LT.H1) {
+            if (shown.length() <= 1) {
+                // Solo la capital grande: el plumín va pegado a ella.
+                int capW = (int)(this.font.width(shown) * 1.6f) + 3;
+                drawNibAt(g, x + indent + capW, y + 2);
+                return;
+            }
+            int capW = (int)(this.font.width(shown.substring(0, 1)) * 1.6f) + 2;
+            firstLineExtra = capW;
+            available = Math.max(20, maxW - indent - capW);
+            body = shown.substring(1);
+        } else {
+            available = Math.max(20, maxW - indent);
+        }
+        List<FormattedCharSequence> wrapped =
+            this.font.split(Component.literal(body), available);
+        if (wrapped.isEmpty()) {
+            drawNibAt(g, x + indent, y);
+            return;
+        }
+        String last = flatten(wrapped.get(wrapped.size() - 1));
+        int lastW = this.font.width(last);
+        int nx = x + indent + extraX + lastW
+            + ((wrapped.size() == 1) ? firstLineExtra : 0) + 1;
+        int ny = y + (wrapped.size() - 1) * lh;
+        drawNibAt(g, nx, ny);
+    }
+
+    /** v0.29.0: la lupa, abierta o con su pista minima. */
+    private void drawSearchBox(GuiGraphics g, int px, int py, int pw, int ph) {
+        int sx = searchBoxX();
+        int sy = py + ph - 19;
+        boolean empty = searchText.length() == 0;
+        // Contador de apariciones a la izquierda del cuadro.
+        String count;
+        if (empty) {
+            count = isEnglishSelected() ? "/ or ctrl+f" : "/ o ctrl+f";
+        } else if (searchHits.isEmpty()) {
+            count = "0";
+        } else {
+            count = (searchHitPos + 1) + "/" + searchHits.size();
+        }
+        int cw2 = this.font.width(count);
+        g.drawString(this.font, count, sx - 8 - cw2, sy + 3,
+            DiaryTheme.withAlpha(DiaryTheme.BRONZE, empty ? 90 : 190), false);
+        // v0.30.0: etiqueta de PAPEL clara con letra de tinta — antes era
+        // tinta sobre tinta y la letra no se veia (errata reconocida).
+        g.fill(sx - 1, sy - 1, sx + SEARCH_W + 1, sy + SEARCH_H + 1,
+            DiaryTheme.withAlpha(DiaryTheme.BRONZE, searchOpen ? 200 : 90));
+        g.fill(sx, sy, sx + SEARCH_W, sy + SEARCH_H,
+            DiaryTheme.withAlpha(DiaryTheme.PAPER, 240));
+        boolean en = isEnglishSelected();
+        if (empty) {
+            if (!searchOpen) {
+                g.drawString(this.font, en ? "search" : "buscar", sx + 4, sy + 3,
+                    DiaryTheme.withAlpha(DiaryTheme.SEPIA_LIGHT, 110), false);
+            }
+        } else {
+            String shown = this.font.plainSubstrByWidth(searchText.toString(), SEARCH_W - 8);
+            g.drawString(this.font, shown, sx + 4, sy + 3, DiaryTheme.INK, false);
+        }
+        if (searchOpen) {
+            String base = this.font.plainSubstrByWidth(searchText.toString(), SEARCH_W - 8);
+            int cxp = sx + 4 + this.font.width(base);
+            boolean caretOn = reducedFlashes()
+                || (System.currentTimeMillis() / 530L) % 2 == 0;
+            if (caretOn) {
+                g.fill(cxp + 1, sy + 2, cxp + 2, sy + SEARCH_H - 2,
+                    (200 << 24) | 0x8E6A35);
+            }
+        }
+    }
+
+    private int searchBoxX() {
+        return PANEL_MX + panelW() - 14 - SEARCH_W;
+    }
+
+    private boolean overSearchBox(double mouseX, double mouseY) {
+        int sx = searchBoxX();
+        int sy = PANEL_TOP + panelH() - 19;
+        return mouseX >= sx - 1 && mouseX <= sx + SEARCH_W + 1
+            && mouseY >= sy - 1 && mouseY <= sy + SEARCH_H + 1;
+    }
+
+    // Recuenta apariciones (texto simple, sin comodines) y salta a la primera.
+    private void searchRecalc() {
+        searchHits.clear();
+        searchHitPos = -1;
+        String needle = searchText.toString().toLowerCase(java.util.Locale.ROOT).trim();
+        if (needle.isEmpty()) return;
+        for (int i = 0; i < rows.size(); i++) {
+            Row r = rows.get(i);
+            if (r.type == LT.GAP || r.type == LT.SEPARATOR) continue;
+            if (r.text.toLowerCase(java.util.Locale.ROOT).contains(needle)) {
+                searchHits.add(i);
+            }
+        }
+        if (!searchHits.isEmpty()) {
+            searchHitPos = 0;
+            jumpToHit(0);
+        }
+    }
+
+    private void jumpToHit(int dir) {
+        if (searchHits.isEmpty()) return;
+        if (dir != 0) {
+            searchHitPos = Math.floorMod(searchHitPos + dir, searchHits.size());
+            com.eternalcraft.gripeverde.client.audio.UiSounds.scroll();
+        }
+        int idx = searchHits.get(searchHitPos);
+        int cw = contentW();
+        int off = 0;
+        for (int i = 0; i < idx; i++) off += rowHeight(rows.get(i), cw);
+        setScrollTarget(Math.max(0, off - contentH() / 3), false);
+    }
+
+    private void drawNibAt(GuiGraphics g, int nx, int ny) {
+        int a;
+        if (reducedFlashes()) {
+            a = 170; // destellos reducidos: tinta quieta
+        } else {
+            a = 150 + (int)(55 * Math.sin(System.currentTimeMillis() / 170.0));
+        }
+        a = Math.max(60, Math.min(230, a));
+        g.fill(nx + 1, ny, nx + 3, ny + 9, (a << 24) | 0x1A1108);       // caña
+        g.fill(nx + 1, ny + 7, nx + 3, ny + 9, (a << 24) | 0x8E6A35);   // punta cargada
+    }
+
+    private static String flatten(FormattedCharSequence fcs) {
+        StringBuilder sb = new StringBuilder();
+        fcs.accept((idx, style, cp) -> { sb.appendCodePoint(cp); return true; });
+        return sb.toString();
     }
 
     private void renderRow(GuiGraphics g, Row row, int x, int y, int maxW) {
@@ -430,12 +848,19 @@ public class ChangelogScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        // v0.29.0: tocar la lupa le da la palabra (y no propaga el gesto).
+        if (button == 0 && overSearchBox(mouseX, mouseY)) {
+            searchOpen = true;
+            return true;
+        }
         if (button == 0 && overScrollbar(mouseX, mouseY)) {
             this.draggingScrollbar = true;
             setScrollFromMouse(mouseY);
             return true;
         }
         if (button == 0) {
+            // v0.27.0: un gesto del lector y la pluma termina de golpe.
+            this.penActive = false;
             try {
                 // v0.16.0: las marcas del encuadernador
                 for (int[] r : this.asteriskRects) {
@@ -499,7 +924,48 @@ public class ChangelogScreen extends Screen {
     }
 
     @Override
+    public boolean charTyped(char codePoint, int modifiers) {
+        // v0.29.0: con la lupa abierta, toda letra es pregunta.
+        if (searchOpen && searchText.length() < SEARCH_MAX
+                && (Character.isLetterOrDigit(codePoint) || codePoint == ' '
+                || codePoint == '-' || codePoint == '.' )) {
+            searchText.append(codePoint);
+            searchRecalc();
+            return true;
+        }
+        return super.charTyped(codePoint, modifiers);
+    }
+
+    @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        // v0.29.0: la lupa manda mientras esta abierta.
+        if (searchOpen) {
+            if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+                // La cruz la cierra y la bitacora olvida la pregunta.
+                searchOpen = false;
+                searchText.setLength(0);
+                searchHits.clear();
+                searchHitPos = -1;
+                return true;
+            }
+            if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+                jumpToHit(hasShiftDown() ? -1 : 1);
+                return true;
+            }
+            if (keyCode == GLFW.GLFW_KEY_BACKSPACE) {
+                if (searchText.length() > 0) {
+                    searchText.setLength(searchText.length() - 1);
+                    searchRecalc();
+                }
+                return true;
+            }
+        } else if (keyCode == GLFW.GLFW_KEY_SLASH && modifiers == 0) {
+            searchOpen = true;
+            return true;
+        } else if (keyCode == GLFW.GLFW_KEY_F && hasControlDown()) {
+            searchOpen = true;
+            return true;
+        }
         switch (keyCode) {
             case GLFW.GLFW_KEY_UP        -> { scrollByWithSound(-SCROLL_SPD);     return true; }
             case GLFW.GLFW_KEY_DOWN      -> { scrollByWithSound( SCROLL_SPD);     return true; }

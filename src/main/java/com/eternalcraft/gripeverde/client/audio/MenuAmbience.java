@@ -40,8 +40,9 @@ public class MenuAmbience {
     private static class BaseLoop {
         final RegistryObject<SoundEvent> sound;
         final float baseVolume;
+        final float stormMul;   // v0.24.0: factor de mezcla en noche de tormenta
         LoopingAmbienceInstance instance;
-        BaseLoop(RegistryObject<SoundEvent> s,float vol){sound=s;baseVolume=vol;}
+        BaseLoop(RegistryObject<SoundEvent> s,float vol,float sm){sound=s;baseVolume=vol;stormMul=sm;}
     }
 
     private static final List<BaseLoop> BASE_LOOPS = new ArrayList<>();
@@ -49,9 +50,11 @@ public class MenuAmbience {
     private static final List<Entry> RARE_LAYER = new ArrayList<>();
 
     static {
-        BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_WIND, 0.35f));
-        BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_RAIN, 0.30f));
-        BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_CITY, 0.20f));
+        // v0.25.1: la lluvia vuelve al master original (ganancia pura, cresta
+        // intacta); su mezcla sube 0.30 -> 0.45 para sonar clara sin siseo.
+        BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_WIND, 0.35f, 1.25f));
+        BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_RAIN, 0.45f, 1.80f));
+        BASE_LOOPS.add(new BaseLoop(ModSounds.MENU_CITY, 0.20f, 0.80f));
 
         EVENTS_LAYER.add(new Entry(ModSounds.MENU_FOOTSTEPS, 45,0.25f,0.90f,1.10f));
         EVENTS_LAYER.add(new Entry(ModSounds.MENU_WOOD_CREAK,20,0.22f,0.85f,1.15f));
@@ -69,8 +72,45 @@ public class MenuAmbience {
     private static long lastEventTriggerMs=0L, nextEventDelayMs=0L, lastRareTriggerMs=0L, nextRareDelayMs=0L;
     private static RegistryObject<SoundEvent> lastEventTriggered=null, lastRareTriggered=null;
     private static long crowsPlayingUntilMs=0L;
-    public static boolean isCrowsRecentlyTriggered(){return System.currentTimeMillis()<crowsPlayingUntilMs;}
+    public static boolean isCrowsRecentlyTriggered(){return nowMs()<crowsPlayingUntilMs;}
     private static final RandomSource RNG = RandomSource.create();
+
+    /**
+     * v0.23.1: reloj monotonico (nanoTime) para la programacion de eventos,
+     * susurros, campanas y cuervos; estable frente a ajustes de hora del SO.
+     * Sus API publicas de tiempo (lastBellMs) ahora devuelven este reloj; su
+     * unico consumidor (LivingAtmosphere) usa el mismo reloj.
+     */
+    private static long nowMs() { return System.nanoTime() / 1_000_000L; }
+
+    // ── v0.24.0: Noche de tormenta ──────────────────────────────────────────
+    // Algunas sesiones el gabinete amanece bajo una tormenta cerrada: la lluvia
+    // manda en la mezcla, los truenos se suceden y la calle casi no se ve.
+    // El sorteo se hace una sola vez por sesion de juego (primer acceso).
+    private static final float STORM_CHANCE = 0.14f;
+    private static final long STORM_RARE_MIN_MS = 14_000L;
+    private static final long STORM_RARE_MAX_MS = 26_000L;
+    private static Boolean stormNight = null;
+    private static boolean stormAnnounced = false;
+
+    /** true si esta sesion del gabinete es una noche de tormenta. */
+    public static boolean isStormNight(){
+        if(stormNight==null){
+            stormNight = RNG.nextFloat() < STORM_CHANCE;
+        }
+        return Boolean.TRUE.equals(stormNight);
+    }
+
+    private static long rareDelay(){
+        return isStormNight()
+            ? randomBetween(STORM_RARE_MIN_MS, STORM_RARE_MAX_MS)
+            : randomBetween(RARE_MIN_MS, RARE_MAX_MS);
+    }
+
+    /** Ganancia efectiva de un loop base, con el factor de tormenta aplicado. */
+    private static float loopGain(BaseLoop bl){
+        return bl.baseVolume * getUserVolume() * (isStormNight() ? bl.stormMul : 1f);
+    }
 
     // ── v0.16.0: interacciones de oido ──────────────────────────────────────
     // Ventana en la que un susurro puede responderse con un gesto.
@@ -78,10 +118,12 @@ public class MenuAmbience {
     // Momento en que doblaron las campanas (el coche del sepulturero sale despues).
     private static long lastBellMs=0L;
 
-    public static boolean isWhisperOpen(){ return System.currentTimeMillis()<whisperRespondableUntilMs; }
+    public static boolean isWhisperOpen(){ return nowMs()<whisperRespondableUntilMs; }
 
     /** El lector responde al susurro (click en la vigilia dentro de la ventana). */
     public static void answerWhisper(){
+        // v0.29.0 (pedido expreso del owner): sin golpe sordo al tocar — el
+        // silencio queda en silencio. Solo el susurro abierto contesta.
         if(!isWhisperOpen()) return;
         whisperRespondableUntilMs=0L;
         Minecraft mc=Minecraft.getInstance(); if(mc==null) return;
@@ -130,7 +172,7 @@ public class MenuAmbience {
             for(BaseLoop bl:BASE_LOOPS){
                 try{
                     SoundEvent se=bl.sound.get();
-                    bl.instance=buildLoopInstance(se, bl.baseVolume*getUserVolume());
+                    bl.instance=buildLoopInstance(se, loopGain(bl));
                     mc.getSoundManager().play(bl.instance);
                 }catch(Exception e){ bl.instance=null; }
             }
@@ -163,8 +205,7 @@ public class MenuAmbience {
             if(!active||muted) return;
             for(BaseLoop bl:BASE_LOOPS){
                 if(bl.instance!=null){
-                    float finalVol=bl.baseVolume*vol;
-                    bl.instance.setDynamicVolume(finalVol);
+                    bl.instance.setDynamicVolume(loopGain(bl));
                 }
             }
         }
@@ -176,20 +217,20 @@ public class MenuAmbience {
     public static void start(){
         try{ muted=!com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_ENABLED.get(); }catch(Exception ignored){}
         if(active){ if(DEBUG_LOGGING) LOGGER.info("[MenuAmbience] start ignorado ya activo"); return; }
-        Minecraft mc=Minecraft.getInstance(); if(mc==null) return;
+        Minecraft mc=Minecraft.getInstance(); if(mc==null||mc.level!=null) return;
         active=true; pocketWatchVisible=false;
         if(!muted){
             for(BaseLoop bl:BASE_LOOPS){
                 try{
                     SoundEvent se=bl.sound.get();
-                    bl.instance=buildLoopInstance(se, bl.baseVolume*getUserVolume());
+                    bl.instance=buildLoopInstance(se, loopGain(bl));
                     mc.getSoundManager().play(bl.instance);
                 }catch(Exception e){ bl.instance=null; }
             }
         }
-        long now=System.currentTimeMillis();
+        long now=nowMs();
         lastEventTriggerMs=now; nextEventDelayMs=randomBetween(EVENT_MIN_MS,EVENT_MAX_MS);
-        lastRareTriggerMs=now; nextRareDelayMs=randomBetween(RARE_MIN_MS,RARE_MAX_MS);
+        lastRareTriggerMs=now; nextRareDelayMs=rareDelay();
         lastEventTriggered=null; lastRareTriggered=null;
         lastAppliedVolume=getUserVolume();
     }
@@ -211,12 +252,26 @@ public class MenuAmbience {
             return;
         }
         updateLoopVolumes();
-        if(!active||muted) return;
         Minecraft mc=Minecraft.getInstance(); if(mc==null) return;
+        // v0.24.0: la calle del gabinete calla cuando el lector entra a un mundo
+        // (antes los loops seguian sonando bajo el gameplay). Al volver al
+        // titulo, DiaryTitleScreen.init() llama a start() y todo se rearma.
+        if(mc.level!=null){ stop(); return; }
+        // v0.24.0: la tormenta se presenta una sola vez, con o sin sonido.
+        if(isStormNight() && !stormAnnounced){
+            stormAnnounced=true;
+            try{
+                com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                    com.eternalcraft.gripeverde.client.lore.Discoveries.STORM_NIGHT);
+                com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                    com.eternalcraft.gripeverde.client.lore.Marginalia.N_STORM);
+            }catch(Throwable ignored){}
+        }
+        if(!active||muted) return;
         ensureBaseLoopsAlive(mc, ambVol);
-        long now=System.currentTimeMillis();
+        long now=nowMs();
         if(now-lastEventTriggerMs>=nextEventDelayMs){ triggerFrom(mc,EVENTS_LAYER,true); lastEventTriggerMs=now; nextEventDelayMs=randomBetween(EVENT_MIN_MS,EVENT_MAX_MS); }
-        if(now-lastRareTriggerMs>=nextRareDelayMs){ triggerFrom(mc,RARE_LAYER,false); lastRareTriggerMs=now; nextRareDelayMs=randomBetween(RARE_MIN_MS,RARE_MAX_MS); }
+        if(now-lastRareTriggerMs>=nextRareDelayMs){ triggerFrom(mc,RARE_LAYER,false); lastRareTriggerMs=now; nextRareDelayMs=rareDelay(); }
     }
 
     public static boolean isActive(){return active;}
@@ -227,7 +282,7 @@ public class MenuAmbience {
             try{
                 boolean missing=bl.instance==null||!mc.getSoundManager().isActive(bl.instance);
                 if(missing){
-                    float finalVol=bl.baseVolume*ambVol;
+                    float finalVol=loopGain(bl);
                     if(finalVol>0.001f){
                         bl.instance=buildLoopInstance(bl.sound.get(), finalVol);
                         mc.getSoundManager().play(bl.instance);
@@ -248,6 +303,10 @@ public class MenuAmbience {
             if(cands.isEmpty()) cands=layer;
         }
         Entry chosen=weightedRandom(cands); if(chosen==null) return;
+        // v0.24.0: en noche de tormenta el cielo manda; casi todo lo raro es trueno.
+        if(!isEvents && isStormNight() && RNG.nextFloat()<0.80f){
+            for(Entry e:layer){ if(e.sound==ModSounds.MENU_THUNDER){ chosen=e; break; } }
+        }
         try{
             SoundEvent se=chosen.sound.get();
             float pitch=randomFloatBetween(chosen.pitchMin,chosen.pitchMax);
@@ -256,12 +315,12 @@ public class MenuAmbience {
             else{
                 lastRareTriggered=chosen.sound;
                 MenuMusic.duckFor(2500L);
-                if(chosen.sound==ModSounds.MENU_CROWS) crowsPlayingUntilMs=System.currentTimeMillis()+4000L;
+                if(chosen.sound==ModSounds.MENU_CROWS) crowsPlayingUntilMs=nowMs()+4000L;
                 else if(chosen.sound==ModSounds.MENU_THUNDER) com.eternalcraft.gripeverde.client.render.LivingAtmosphere.triggerLightningFlash(1.0f);
-                else if(chosen.sound==ModSounds.MENU_BELL) lastBellMs=System.currentTimeMillis();
+                else if(chosen.sound==ModSounds.MENU_BELL) lastBellMs=nowMs();
                 else if(chosen.sound==ModSounds.MENU_AMBIENT_OCCASIONAL && chosen.pitchMax<0.8f){
                     // Un susurro: puede responderse durante unos segundos.
-                    whisperRespondableUntilMs=System.currentTimeMillis()+3000L;
+                    whisperRespondableUntilMs=nowMs()+3000L;
                 }
             }
         }catch(Exception e){ if(DEBUG_LOGGING) LOGGER.warn("[MenuAmbience] Sonido no disponible"); }

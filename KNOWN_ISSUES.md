@@ -3,7 +3,496 @@
 La primera seccion describe el estado operativo vigente. Todas las secciones
 de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
-que v0.22.0 lo mencione expresamente.
+que una seccion posterior lo mencione expresamente.
+
+## ESTADO: REPOSO (2026-08-24, tras la v0.30.0)
+
+El owner puso el proyecto en pausa y dejo anotada la proxima iteracion
+(detalle completo en CONTEXTO, decimocuarta vuelta):
+
+- **KI-66 (proximo)**: tres frentes anotados, NADA implementado aun:
+  (a) pluma: el rasguño debe sonar SOLO si la fila que se escribe esta a
+  la vista, y la tinta no debe correr por zonas fuera de pantalla (el
+  reporte: "se ve extraña cuando ya animo una parte y sigue la otra; el
+  sonido es constante y no para"); (b) rediseño cuaderno doble faz de la
+  cronica (2 hojas, 1 version por hoja, animacion de hoja doblando,
+  render Java puro; lupa/folio/lacre/huevos adaptados; validar GUI 4 con
+  ~170 px por hoja o fallback a hoja simple; reducedMotion sin giro) —
+  NO empezar sin reconfirmar; (c) segunda bajada de volumen de botones
+  (clicks ~-30%).
+- Sigue pendiente la validacion en cliente real de TODO lo entregado
+  (KI-53 a KI-65); jar candidato para Agus: 0.30.0.
+
+## v0.30.0 - La hoja entera (2026-08-24)
+
+### Cambios cerrados
+- **Backup previo**: `/home/user/GripeVerde-backup-pre-v0.30.0-6ac186f.bundle`
+  (--all, verificado).
+- **Pluma de bitacora entera** (feedback owner: "una parte si otra no
+  quedaba rara"): la escritura cubre desde la entrada vigente hasta el
+  fin del documento, al ritmo del lector; regla de piso (lo lejano
+  arriba de media pantalla ya impreso) — sin huecos al bajar de golpe.
+- **Lupa ilegible corregida** (errata propia): papel claro + letra de
+  tinta (era tinta sobre tinta).
+- **Hovers -40%** (pedido).
+- **Solapes de texto corregidos** (reporte owner): mensaje del dia a la
+  izquierda de la firma (ya no sobre los botones), firma nunca en la
+  franja del gramofo, linea fix de Holloway con clamp sobre la grilla y
+  divisor debajo, flavor de sonido omitido si no hay aire sobre los
+  sliders; elipsis al ancho del papel en citas largas.
+
+### Riesgos activos / KI nuevos
+- **KI-65 (v0.30.0)**: validar en cliente real: (a) la pluma cubre toda
+  la bitacora al bajar (entrada a entrada, pareja), nunca huecos al
+  bajar rapido con la barra, el click lo cierra todo y la segunda visita
+  llega impresa; (b) la lupa se LEE (papel claro/letra tinta) y sigue
+  recorriendo con Enter; (c) los hovers suenan percibiblemente mas bajos
+  sin desaparecer; (d) los textos del titulo (firma + mensaje del dia en
+  fecha especial), del gabinete (sabor + linea fix con Holloway
+  descubierto) y de la sala de sonido NUNCA quedan bajo botones ni fuera
+  del papel en GUI scale 2/3/4 y minimal; (e) regresion nula: vuelta
+  cortes, pluma-gracia, lacre multi-edicion, folio intactos.
+- KI-53 a KI-64 siguen abiertos; jar candidato para Agus: **0.30.0**.
+
+## v0.29.0 - La vuelta y la lupa (2026-08-24)
+
+### Cambios cerrados
+- **Backup previo** (regla consolidada):
+  `/home/user/GripeVerde-backup-pre-v0.29.0-5dee740.bundle` (--all,
+  verificado).
+- **Transicion de regreso rediseñada** (feedback del owner: la salida
+  ceremonial no gustaba): vuelta cortes de 170 ms — velo tenue + banda
+  superior que se repliega con filo bronce; salpicaduras/gotas/barrido
+  largo quedan solo para AVANZAR. La pila de mesas ya sabia distinguir
+  regreso de avance: solo cambio el gesto.
+- **Optimizacion del velo**: cache por clase, config una vez por
+  apertura, fast path costo cero fuera del efecto.
+- **Silencio al tocar** (pedido expreso): `silenceKnock` retirado;
+  `answerWhisper` pura. 35/35 sonidos siguen en uso.
+- **Lupa de la bitacora**: busqueda por palabra en la cronica (apertura
+  `/`, Ctrl+F o toque; Enter/Shift+Enter recorre; Esc olvida). Marcas de
+  bronce por renglon, contador, caret (quieto con destellos reducidos),
+  folio que se corre si falta sitio.
+
+### Riesgos activos / KI nuevos
+- **KI-64 (v0.29.0)**: validar en cliente real: (a) la VUELTA se siente
+  breve y correcta en cada combinacion de mesas y en GUI 2/3/4 (banda
+  alta, 170 ms, sin gotas), mientras AVANZAR conserva toda la ceremonia;
+  (b) tocar el escritorio/titulo en silencio YA NO hace ningun sonido
+  (susurro abierto sigue contestando — easter egg intacto); (c) la lupa:
+  escribir "cordon" o "campana" salta a las apariciones, el contador
+  coincide, Enter/Shift+Enter recorre sin saltarse ninguna, Esc cierra
+  sin cerrar la pantalla, y en escala 4 el folio se corre a la izquierda
+  sin pisar el cuadro; (d) con reducedMotion no hay vuelta ni ceremonia,
+  solo fundido; (e) regresion nula: pluma, folio, lacre multi-edicion,
+  gramofo y "sentarse de nuevo" intactos.
+- KI-53 a KI-63 siguen abiertos; el jar candidato para Agus pasa a ser
+  **0.29.0**.
+
+## v0.28.0 - Las gotas y los folios (2026-08-24)
+
+### Cambios cerrados
+- **Backup previo** (regla consolidada):
+  `/home/user/GripeVerde-backup-pre-v0.28.0-d40c820.bundle` (--all,
+  verificado).
+- **Gotas de tinta en el pliegue**: 3 gotas se desprenden del filo (30/55/
+  80% del barrido) y resbalan hasta 26 px en el sentido del pliegue con
+  rastro fino, 550 ms de vida, alfas ≤ 85/40. Con movimiento reducido:
+  fuera.
+- **Folio de la bitacora**: marca centrada al pie del papel "folio N · M"
+  viva con el scroll; bajo el contenido, dentro del panel, jamas pisa el
+  folio escondido del easter egg (ese va por el scrolleo) ni el boton de
+  cerrar.
+- **Lacre en entradas saltadas**: si `lastSeenVersion` quedo atras mas de
+  una edicion, TODAS las cabeceras de version posterior llevan sello NUEVO
+  esta visita (triple numerico, parser tolerante); la pluma sigue solo en
+  la vigente.
+- **Subtitulos del titulo**: pools ampliados 9 → 12 lineas por idioma y
+  contexto (hospedajes y arsenales, ES/EN).
+
+### Riesgos activos / KI nuevos
+- **KI-63 (v0.28.0)**: validar en cliente real: (a) las gotas resbalan en
+  el SENTIDO del pliegue (cae al avanzar, sube al regresar) y no dejan
+  marca permanente ni destellan; (b) el folio dice el numero correcto en
+  GUI scale 2/3/4, al hacer resize en vivo y con scroll por rueda, teclas
+  y arrastre de barra; nunca se monta sobre el boton Cerrar ni el texto;
+  (c) instalando encima de una 0.25.x (simular saltando ediciones): todas
+  las entradas nuevas llevan lacre y solo la 0.28.0 se escribe a pluma;
+  (d) los 12 subtitulos rotan sin salirse de su cajita en ambos idiomas;
+  (e) regresion nula: pliegue direccional, pluma, golpe sordo y gramofo
+  intactos.
+- KI-53 a KI-62 siguen abiertos; el jar candidato para Agus pasa a ser
+  **0.28.0**.
+
+## v0.27.0 - El pliegue y la pluma (2026-08-24)
+
+### Cambios cerrados
+- **Backup previo** (regla vigente):
+  `/home/user/GripeVerde-backup-pre-v0.27.0-aa0ff79.bundle` (--all,
+  verificado con `git bundle verify`).
+- **Cortina direccional**: la tinta baja al avanzar a una mesa nueva y
+  sube al regresar a una ya visitada (pila de mesas en `DiaryTransitions`
+  alimentada desde `ScreenEvent.Opening`, con la pantalla nueva leida
+  despues del redirect vanilla). Arranque sin historia: siempre baja.
+- **Salpicaduras del filo**: 5 gotas diminutas por apertura (semilla
+  propia, alfas ≤ 95, cola de 500 ms); con movimiento reducido, fuera.
+- **La hoja se acuesta**: sombra interior breve de 450 ms tras el destape
+  (solo opacidad, alfa ≤ 20; tambien con movimiento reducido).
+- **V4 — la cronica se escribe a pluma**: la entrada de la version recien
+  instalada se escribe letra a letra solo en su primera visita (170
+  chars/s min, techo 6,5 s), con plumín que sigue el wrap real, rasguño
+  quedo por tramos y click que la termina. Movimiento reducido: hoja
+  entera. Destellos reducidos: tinta del plumín quieta.
+
+### Riesgos activos / KI nuevos
+- **KI-62 (v0.27.0)**: validar en cliente real: (a) el SENTIDO del pliegue
+  en toda combinacion de mesas (titulo↔opciones↔cronica↔idiomas↔sonido↔
+  hospedajes↔archivo, pausa dentro de mundo, volver por Esc y por boton
+  Cerrar): siempre baja al avanzar y sube al volver, jamas al reves; (b)
+  las salpicaduras no destellan ni dejan manchas permanentes; (c) la pluma
+  se ve bien en GUI scale 2/3/4, el plumín sigue la ultima letra con el
+  ancho de panel cambiando (resize en vivo) y el rasguño no machaca la
+  musica; (d) la pluma se escribe UNA sola vez por version (segunda
+  visita: hoja entera) y un click la completa sin tragarse el gesto
+  (sello NUEVO, folio y asteriscos siguen respondiendo); (e) con
+  movimiento reducido no hay pluma ni salpicaduras y el fundido sigue;
+  (f) regresion nula: la cortina 0.26.0 y el oido 0.26.0 intactos.
+- KI-53 a KI-61 siguen abiertos; el jar candidato para Agus pasa a ser
+  **0.27.0**.
+
+## v0.26.0 - Las hojas y los faroles (2026-08-24)
+
+### Cambios cerrados
+- **Backup previo** (pedido expreso del owner, nueva regla):
+  `/home/user/GripeVerde-backup-pre-v0.26.0-18e178d.bundle` (--all,
+  verificado con `git bundle verify`).
+- **Transicion entre interfaces** ("efectos visuales al cambiar de
+  pantalla"): `DiaryTransitions` (nueva) sobre `ScreenEvent.Render.Post`:
+  cortina de tinta que revela la hoja nueva de arriba abajo en ~260 ms
+  (velo sepia + franja con filo bronce); con movimiento reducido, fundido
+  breve sin barrido; solo pantallas del gabinete (paquete
+  `client.screens`), jamas vanilla.
+- **Faroles reactivos**: la mano del lector (30 px) ensancha el halo x1.5
+  y aviva la llama con ease en tick; topes 255 porque `withAlpha` no
+  clampea; respeta movimiento reducido y todas las escalas de GUI.
+- **Crónicas reescritas** (0.24.1/0.25.0/0.25.1 x25): vocabulario de
+  documento de la vida real, sin terminos de taller (hexadecimal,
+  crossfade, literal, clic).
+
+### Riesgos activos / KI nuevos
+- **KI-61 (v0.26.0)**: validar en cliente real: (a) la transicion se ve al
+  abrir TODA pantalla del gabinete (titulo ↔ opciones ↔ cronica ↔
+  archivo ↔ sonido ↔ pausa) en GUI scale 2/3/4 y en minimal mode, sin
+  velo trabado ni parpadeo raro al encadenar pantallas rapido; (b) con
+  movimiento reducido solo fundido; (c) los faroles del titulo respiran
+  bajo la mano sin apagarse nunca; (d) las crónicas 0.24.1-0.26.0 se leen
+  naturales en ES y EN; (e) regresion nula: entrada a mundo sigue
+  silenciando el ambiente; (f) los sonidos recableados (V2-resto): abrir
+  multijugador suena distinto a abrir cronica/idiomas o la sala de sonido,
+  el boton ">>" del gramofo no suena a pestillo, tocar el escritorio sin
+  susurro devuelve un golpe sordo quedo y contenido (no se apila con
+  clics rapidos), y volver al titulo desde una subpantalla suena a
+  "sentarse de nuevo" (la primera apertura del arranque NO debe sonar).
+- KI-53 a KI-60 siguen abiertos; el jar candidato para Agus pasa a ser
+  **0.26.0**.
+
+## v0.25.2 - El telegrama no pisa la mesa (2026-08-23)
+
+### Cambios cerrados
+- **Cartel del easter egg ilegible en GUI scale 3-4** (reporte owner): los
+  clamps de Y se anulaban (uno esquivaba la mesa, el siguiente re-clavaba
+  en `safeTop`); reordenados: jamas pisar botones, jamas salir de pantalla,
+  y si no hay banda libre el cartel sube sobre la franja del logo. `boxW`
+  con techo en el ancho real de pantalla.
+- **Sello FRAUDE solapado en escala 3-4**: estaba fijado a 46 px del borde
+  inferior del poster del elixir; ahora se estampa DESPUES del texto
+  (`cursorY + 6`), nunca encima, con tope dentro del papel y clamp
+  horizontal.
+- **Docs/tooling**: deploy vigente = comandos PowerShell INLINE (sin .ps1
+  nuevos); regla permanente registrada: cada entrega termina con el bloque
+  PW inline de actualizar+compilar+desplegar.
+- **Espejo Python reconstruido dentro del repo** (`tools/verify_mirrors.py`,
+  antes vivia fuera y se perdia entre snapshots). Confesion: el sello 8
+  "lint de literales numericos" anunciado en v0.24.1 quedo documentado pero
+  NUNCA se escribio — entra en vigor ahora, dentro del repo, con dos
+  errores propios ya corregidos (guardas de sufijo donde `"" in "fFdD"` es
+  True en Python y F/D finales de literales hex son digitos, no sufijos).
+  Auto-test: 25/25 casos (0xD20PL y familia rechazados); 8/8 sellos +
+  balance sobre 8741 literales y los 60 Java.
+
+### Riesgos activos / KI nuevos
+- **KI-60 (v0.25.2)**: validar en cliente real con GUI scale 2, 3, 4 y
+  Auto: (a) disparar un easter egg del titulo (DOCTOR, PEREIRA, sello) y
+  comprobar que el telegrama NUNCA toca la mesa de botones ni se sale por
+  arriba a cualquier alto de ventana; (b) con `fraude_stamp` activo (tras
+  HOLLOWAY), el sello FRAUDE queda dentro del cartel del elixir sin tapar
+  sus lineas en todas las escalas; (c) regresion visual nula en escala 2
+  (el layout clasico queda igual).
+- KI-53/54/55/56/57/58/59 siguen abiertos; el jar candidato para Agus pasa
+  a ser **0.25.2**.
+
+## v0.25.1 - El cilindro original (2026-08-23)
+
+### Cambios cerrados
+- **Lluvia sintetizada "bugeada" (reporte owner en cliente)**: el loop
+  regenerado por sintesis en 0.24.0 no convencio al oido. El owner pidio
+  usar "los sonidos que ya existian": se restauran los masters originales
+  de lluvia (recuperado del commit 447c290) y viento, amplificados en vez
+  de regrabados.
+- **Lluvia**: ganancia pura, normalizada a pico ~0.83 conservando la
+  cresta (~19); sin limitadores (descartado un soft-knee con NaN y picos
+  >1.0; rehecho desde el master). Mezcla del loop 0.30 -> 0.45.
+- **Viento**: master original amplificado a RMS ~0.085 (pico 0.80).
+- **Costuras**: medidas 0.0076 (lluvia) y 0.0000 (viento): empalmaban
+  limpios; no se añadio crossfade; duraciones y nombres intactos (30 s).
+- `tools/audio/regenerate_menu_ambience.py` archivado con nota (ya no es
+  fuente de esos loops).
+
+### Riesgos activos / KI nuevos
+- **KI-59 (v0.25.1)**: validar en cliente real: (a) la lluvia es la
+  grabacion original — gotas separadas, sin estatica ni chasquidos, loop
+  sin clicks en el empalme; (b) el viento es el original, presente de
+  fondo sin silbidos raros; (c) el slider de ambiente mueve ambos en vivo
+  y la musica sigue sin ser tapada; (d) en tormenta forzada
+  (`STORM_CHANCE = 1.0f` temporal) la lluvia toma protagonismo (x1.8, osea
+  0.81 de ganancia) SIN distorsionar; (e) la ciudad, los susurros y los
+  pasos (contenido original x3 de 0.24.0) suenan naturales.
+- KI-53/54/55/56/57/58 siguen abiertos; el jar candidato para Agus pasa a
+  ser **0.25.1**.
+
+## v0.25.0 - El que mira la tormenta (2026-08-23)
+
+### Cambios cerrados
+- **Tres easter eggs nuevos** (pedido del owner): `storm_watcher`
+  (`LivingAtmosphere.flashCount()` nuevo, incrementado en ambos puntos donde
+  nace un destello; la vigilia marca linea base al abrirse en noche de
+  tormenta y otorga la ficha al tercero; con destellos reducidos no se
+  regala), `drop_catcher` (hit-test `rainDropAt`/`scareDrop` sobre las 40
+  gotas en vuelo; plink de aguja; zona de botones excluida para no tragar
+  clics) y `code_doctor` (palabra DOCTOR en el telegrafo oculto: susurro +
+  campana baja + contador `doctor_signed`). Archivo: 52 fichas; notas
+  N_FLASH3/N_DROP/N_DOCTOR; nombres y pistas bilingues en el registry (sin
+  claves lang nuevas: 93).
+- **Tooling (deploy.ps1)**: el script leia la version de `build.gradle`
+  ANTES de sincronizar la rama; cuando la version cambiaba entre local y
+  remoto, gradle compilaba el jar nuevo pero la copia buscaba el del release
+  anterior (`No se genero gripeverde-0.24.0.jar` tras un BUILD SUCCESSFUL
+  al desplegar 0.25.0). Corregido el archivo existente: la version se lee
+  despues del reset y el jar se localiza por glob. Sin .ps1 nuevos: el
+  owner opera con comandos inline.
+
+### Riesgos activos / KI nuevos
+- **KI-58 (v0.25.0)**: validar en cliente real: (a) con tormenta forzada
+  (`MenuAmbience.STORM_CHANCE = 1.0f` temporal) quedarse tres relampagos en
+  el titulo otorga `storm_watcher` y su nota; que NO se otorgue con
+  destellos reducidos; (b) clic sobre una gota en vuelo la devuelve al cielo
+  con plink y otorga `drop_catcher`; los clics en botones nunca se tragan;
+  (c) escribir DOCTOR en la vigilia otorga `code_doctor` con susurro y
+  campana; (d) la Sala de consulta muestra 52 fichas y las tres nuevas
+  tienen nombre y pista en ES y EN; (e) los huevos anteriores (sello roto,
+  diapason, telegramas) siguen desbloqueandose igual.
+- KI-53/54/55/56/57 siguen abiertos. Candidata a distribuir a Agus: la
+  **0.25.0**, que incluye el crash fix, el ambiente reparado, lo visible y
+  estos tres huevos.
+
+## v0.24.1 - La errata del cronista (2026-08-23)
+
+### Cambios cerrados
+- **Build roto en 0.24.0 (errata propia)**: `PaperTexture.java:95` declaro
+  `new java.util.Random(0xD20PL)` con una P —no es digito hexadecimal— y
+  `compileJava` fallo con `malformed floating-point literal` (3 errores) en
+  el primer `deploy.ps1` del owner. El sandbox no tiene JDK y el espejo
+  solo verificaba balance de llaves: por eso salio sellada. Semilla corregida
+  a `0xCA1DAL`; comportamiento identico (gotas deterministas, otra
+  secuencia) y sin ningun otro cambio funcional respecto a 0.24.0.
+- **Sello 8 del espejo Python**: nuevo `verifyJavaLiterals` —lint de todos
+  los literales numericos de los 60 .java (hex/binario/octal/decimal/
+  flotante, sufijos fFdDlL, octales con 8/9, floats hex con sufijo ilegal)
+  tras retirar comentarios y cadenas preservando numeros de linea.
+  Demostrado: detecta `0xD20PL` y rechaza la errata antes de sellar.
+
+### Riesgos activos / KI nuevos
+- **KI-57 (v0.24.1)**: validar en cliente real: (a) `deploy.ps1` compila y
+  copia `gripeverde-0.24.1.jar`; (b) el reloj del Title muestra v0.24.1;
+  (c) las gotas siguen resbalando por los pergaminos (patron distinto,
+  misma densidad) y se aquietan con movimiento reducido; (d) repetir
+  INTEGRO el checklist de KI-56, que quedo pendiente porque la 0.24.0
+  nunca llego a existir como jar.
+- KI-53/KI-54/KI-55/KI-56 siguen abiertos y sin cambios. Para Agus: enviar
+  **0.24.1** (incluye el hotfix del crash, el ambiente reparado y todo lo
+  visible; la 0.24.0 no compilo jamas).
+
+## v0.24.0 - El viento vuelve a soplar (2026-08-23)
+
+### Cambios cerrados
+- **Ambiente mudo (diagnostico)**: no era el motor ni los relojes — eran los
+  archivos. `wind_urban_loop.ogg` media RMS 0.0006 (-64 dB; a la ganancia
+  0.35 del codigo salia a ~-73 dB, inaudible), `rain_...` 0.026, `city_...`
+  0.034, `ambient_occasional` 0.0056, `footsteps_distant_1` 0.0077. Musica,
+  UI y raros siempre se oyeron: por eso el sintoma era "sin ambiente" con
+  clics y truenos presentes.
+- **Activos regenerados** con `tools/audio/regenerate_menu_ambience.py`
+  (nuevo; sintesis procedural con semilla fija, idempotente por umbral RMS;
+  crossfade de 2.5 s inicio/fin para loops sin chasquido; picos con margen
+  para el sobresalto del codificador Vorbis): viento y lluvia sintetizados a
+  RMS ~0.12-0.13; ciudad x3; susurro x3; paso 1 x3.
+- **V1**: Changelog salta a la entrada de la version instalada la primera
+  vez que se abre tras actualizar y la sello de lacre "NUEVO/NEW" la marca
+  durante la visita (`ChroniclerMemory.lastSeenVersion`, campo tolerante con
+  memorias viejas: null -> "" en accesores).
+- **V3**: Noche de tormenta (~14% de sesiones; sorteo por JVM): lluvia
+  visual x2 con mas viento y brillo, relampagos cada 3.5-9.5 s, mezcla
+  ambiente lluvia x1.8 / viento x1.25 / ciudad x0.8, capa rara cada 14-26 s
+  con trueno casi garantizado, velo oscuro en titulo y pergaminos; ficha
+  `storm_night` + marginalia. Respeta reduceFlashes y reducedMotion.
+- **V5**: 7 gotas (14 en tormenta) resbalan por todos los pergaminos via
+  `PaperTexture`; quietas con movimiento reducido.
+- **Easter eggs nuevos**: `seal_breaker` (9 toques rapidos al sello ->
+  esquirlas de lacre + `ui.paper_fall`, que sale del allowlist del sello de
+  uso) y `sound_keeper` (diapason al margen del regulador de ambiente ->
+  `ui.success`, segundo evento que sale del allowlist). El archivo pasa a
+  50 fichas; `N_MANY_CARDS`/`N_ARCHIVE_COMPLETE` computan la cifra desde
+  `Discoveries.ALL.length`.
+- **Higiene**: `MenuAmbience.stop()` al entrar a un mundo (los loops ya no
+  siguen sonando bajo el gameplay) y `start()` se niega con nivel cargado.
+
+### Riesgos activos / KI nuevos
+- **KI-56 (v0.24.0)**: validar en cliente real: (a) el ambiente se oye con
+  claridad sin tapar la musica (viento presente, lluvia de fondo, campanas
+  de la ciudad), y el slider de ambiente los mueve en vivo; (b) una sesion
+  forzada de tormenta (cambiar temporalmente `STORM_CHANCE` a 1.0f en
+  pruebas o repetir aperturas) muestra lluvia doble, relampagos frecuentes
+  y la ficha `storm_night`; (c) la Cronica se abre en 0.24.0 con sello
+  NUEVO solo en la primera visita; (d) las gotas resbalan por los
+  pergaminos y se quedan quietas con movimiento reducido; (e) romper el
+  sello a golpes suena a papel y suma ficha; el diapason suena y suma
+  ficha; (f) al entrar a un mundo la calle calla y al volver reaparece;
+  (g) las voces/sliders vanilla de la lista heredada siguen intactos.
+- KI-53/KI-54/KI-55 siguen abiertos y sin cambios (cliente real + reenvio
+  del jar corregido a Agus, que sigue en 0.22.0: conviene enviarle 0.24.0,
+  que incluye el hotfix del crash y el ambiente reparado).
+
+## v0.23.1 - Sellos y relojería (2026-08-23)
+
+### Cambios cerrados
+- Nuevo sello `verifyGripeVerdeSubtitles`: toda clave `subtitle` no vacia de
+  sounds.json debe existir, no vacia, en los 25 lang.
+- Nuevo sello `verifyGripeVerdeSoundUsage`: falla si un SoundEvent
+  registrado no aparece en el codigo. Los 10 eventos legacy sin uso
+  (censo del informe) quedan en allowlist grandfathered, documentados en
+  la javadoc de ModSounds, hasta decidir conexion o retirada; el sello
+  avisa si alguno deja de ser legacy.
+- ChroniclerMemory: SCHEMA_VERSION + pipeline migrate() documentado (pasos
+  N→N+1 idempotentes; esquema mas nuevo se conserva con aviso) y sanitize
+  de bounds (contadores negativos, firstVisitDay incoherente, nulls en
+  map, caps de listas).
+- MenuAmbience migra a reloj monotonico nanoTime junto con el rastreo de
+  calle de LivingAtmosphere (coche del sepulturero): sus unicos puntos de
+  contacto para `lastBellMs` ya usan el mismo reloj.
+- CI: `tools/ci/activar-ci.ps1` confirma 2 vias bloqueadas en sesion (git
+  push y API, 403/workflows-permission) y activa la CI con credenciales
+  locales del owner en un paso.
+- Bump: 0.23.0 -> 0.23.1. Conteos sin cambios: 60 Java, 25 lang (93
+  claves), 25 cronicas, 35 eventos, 42 OGG.
+
+### Riesgos activos / KI nuevos
+- **KI-55 (v0.23.2)**: validar en cliente real el hotfix del crash del
+  easter egg: clic repetido en el sello del titulo con movimiento normal
+  (maquina de escribir) ya no produce `ArrayIndexOutOfBoundsException` en
+  ningun fotograma; el telegrama aparece y desaparece con normalidad.
+  Pendiente operativo: reenviar el jar v0.23.2 al jugador que reporto el
+  crash (su instancia sigue en v0.22.0) y confirmar que su sesion arranca.
+  El reporte original (2026-08-23): 4 crashes consecutivos en
+  `DiaryTitleScreen.drawEasterEggMessage`, Forge 47.4.10, Java 17.0.8.
+- **KI-54 (v0.23.1)**: con CI activada (activar-ci.ps1) confirmar build
+  verde en la rama y luego en cliente: hearse/cuervos/campana se comportan
+  igual tras la migracion a nanoTime; la memoria recuperada sigue
+  escribiendose y recuperandose (sanitize/migrate intactos); los 7 sellos
+  pasan locales.
+- KI-53 sigue abierto para la parte de cliente de v0.23.0 (audio vanilla
+  callado, watchdog F3+T, toggle destellos, subtitulos, Ctrl+0 off,
+  reemplazos exactos).
+
+---
+
+# HISTORIAL DE VERSIONES E INSTANTANEAS (NO OPERATIVO)
+
+Todo lo que sigue se conserva para trazabilidad. Los estados, riesgos, tags,
+rutas y planes llamados "actuales", "activos" o "vigentes" pertenecen a la
+version bajo la que fueron escritos; no sustituyen el estado v0.23.1 de la
+primera seccion.
+
+## v0.23.0 - El gramófono guarda la palabra (2026-08-23)
+
+## v0.23.0 - El gramófono guarda la palabra (2026-08-23)
+
+Entrega transversal pedida expresamente por el owner tras la revision
+tecnica completa del mod (hallazgos en REVISION_MOD.md). Backup externo
+previo: `/home/user/GripeVerde-backup-pre-v0.23.0-4ca038d.bundle`.
+
+### Cambios cerrados
+- Se elimina el registro manual de `ScreenEventHandler` (doble suscripcion al
+  bus FORGE y crash latente en servidores dedicados por carga de clases
+  client-only); la clase se autorregistra solo en cliente y el mod queda
+  inerte en servidor. `mods.toml` suma `displayTest="IGNORE_ALL_VERSION"` e
+  `issueTrackerURL` con la URL real del repo.
+- Se suprime la musica vanilla de menu mientras el gabinete esta abierto
+  (guardia por tick sobre MusicManager) y se anade un watchdog: si el motor
+  de sonido mata la instancia (F3+T, recarga de packs), la playlist se
+  reanuda sola en lugar de quedar muda hasta el cambio de pantalla.
+- Nueva ayuda de accesibilidad "Destellos reducidos" (fotosensibilidad,
+  independiente de Movimiento reducido) y subtitulos reales para los ocho
+  eventos ambientales en los 25 idiomas. La etiqueta del slider de ambiente
+  deja de estar hardcodeada en castellano.
+- Escritura de la memoria del cronista fuera del hilo de render (executor
+  monohilo, cierre ordenado con awaitTermination en el shutdown hook) y
+  temporizadores con reloj monotonico (nanoTime) en musica, cooldowns UI y
+  instancias de sonido.
+- El reemplazo de Title/Pause solo ocurre con clase exactamente vanilla
+  (otros mods de menu ya no son barridos) y ambos reemplazos tienen apagado
+  por config (`integration.*`); el atajo oculto Ctrl+0 pasa a ser opt-in
+  (`debug.debugShortcut`, por defecto off).
+- Retirados: infraestructura de Mixins vacia (JSON, plugin, annotation
+  processor, refmap, entrada mods.toml, repo sponge), namespace GameTest sin
+  tests, y los metodos muertos de UiSounds (setHoverSound/setClickSound/
+  hover).
+- Dos sellos nuevos de build: `verifyGripeVerdeVersionSync` (VERSION ==
+  project.version) y `verifyGripeVerdeMusicDurations` (parser Vorbis propio:
+  granule/rate real de cada OGG vs TRACK_DURATIONS_MS, tolerancia 1.5 s).
+  Conteo de claves lang: 83 -> 93 (10 nuevas: toggle destellos + tooltip +
+  8 subtitulos).
+- Nueva CI lista para activar en `tools/ci/build.yml`: JDK 17 Temurin +
+  Gradle cacheado, `./gradlew clean build` en cada push/PR y el jar publicado
+  como artifact. Queda como plantilla porque el token de la sesion no tiene
+  permiso `workflows`; se activa moviendola a `.github/workflows/build.yml`.
+- Deploy parametrizado en `tools/deploy.ps1` (lee la version de
+  build.gradle; documentado en README).
+- Conteos: 60 clases Java, 25 lang (93 claves), 25 cronicas, 35 eventos,
+  42 OGG. Bump: 0.22.0 -> 0.23.0.
+
+### Riesgos activos / KI nuevos
+- **KI-53 (v0.23.0)**: validar en cliente real con Java 17: (a) la musica
+  vanilla del menu ya no suena bajo el gramofono (esperar >60 s en Title);
+  (b) tras F3+T la musica propia vuelve sola; (c) el toggle Destellos
+  reducidos apaga los relampagos sin congelar la lluvia; (d) los subtitulos
+  aparecen con los subtitulos de Minecraft activos; (e) Ctrl+0 ya no
+  desconecta por defecto; (f) Title/Pause se siguen reemplazando y ceden si
+  otro mod los ocupa; (g) la memoria se sigue escribiendo y recuperando bien
+  en uso intenso (executor async); (h) el build pasa los cinco sellos.
+- El sandbox local sigue sin Java 17: la compilacion semantica queda
+  delegada al PC del owner y, cuando se active, a la CI de `tools/ci/`;
+  `java-parser` solo valida sintaxis. KI-52 queda absorbido por KI-53 para la parte de cliente;
+  el tag/release v0.23.0 (y el pendiente de v0.22.0) siguen bloqueados hasta
+  validar en Minecraft real.
+
+---
+
+# HISTORIAL DE VERSIONES E INSTANTANEAS (NO OPERATIVO)
+
+Todo lo que sigue se conserva para trazabilidad. Los estados, riesgos, tags,
+rutas y planes llamados "actuales", "activos" o "vigentes" pertenecen a la
+version bajo la que fueron escritos; no sustituyen el estado v0.23.0 de la
+primera seccion.
 
 ## v0.22.0 - La vigilia queda sellada (2026-08-23)
 

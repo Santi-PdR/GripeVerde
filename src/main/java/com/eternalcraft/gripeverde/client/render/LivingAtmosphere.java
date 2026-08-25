@@ -12,6 +12,26 @@ public class LivingAtmosphere {
     // v0.21.3: RNG compartido con seed fija (sin Math.random en el loop caliente).
     private static final java.util.Random RND = new java.util.Random(0xC10E5EL);
 
+    /**
+     * v0.23.0: ayuda de fotosensibilidad separada de Movimiento reducido
+     * (WCAG 2.3.1). Apaga relampagos y destellos sin congelar niebla,
+     * lluvia, faroles ni ningun otro movimiento de la escena.
+     */
+    private static boolean reduceFlashes() {
+        try {
+            return com.eternalcraft.gripeverde.config.ClientConfig.REDUCE_FLASHES.get();
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
+    /**
+     * v0.23.1: reloj monotonico compartido con MenuAmbience (lastBellMs).
+     * El coche del sepulturero y el seguimiento de la calle dejan de depender
+     * del reloj de pared del SO.
+     */
+    private static long nowMs() { return System.nanoTime() / 1_000_000L; }
+
     /** Accesibilidad: congela la animacion ambiental sin retirar la composicion. */
     private static boolean reducedMotion() {
         try {
@@ -112,15 +132,60 @@ public class LivingAtmosphere {
 
     public static boolean isRatStanding() { return ratStanding; }
 
+    // v0.25.0: tres relampagos para quien se queda mirando (storm_watcher).
+    private static int flashCount = 0;
+    public static int flashCount() { return flashCount; }
+
+    // v0.26.0: los faroles reconocen la mano del lector (hover -> halo respira).
+    private static int mousePx = -9999, mousePy = -9999;
+    private static float[] lanternHover = null;
+    public static void setMouse(double mx, double my) { mousePx = (int) mx; mousePy = (int) my; }
+
+    // v0.25.0: la lluvia se deja atrapar (drop_catcher).
+    public static int rainDropAt(double mx, double my, int w, int h) {
+        if (!rainInit) return -1;
+        int best = -1; double bestD2 = Double.MAX_VALUE;
+        for (int i = 0; i < RAIN_COUNT; i++) {
+            double rx = rain[i][0] * w, ry = rain[i][1] * h;
+            if (ry < 0 || ry > h) continue;
+            double dx = mx - rx;          if (dx < -5 || dx > 6) continue;
+            double dy = my - (ry + 3);    if (dy < -6 || dy > 8) continue;
+            double d2 = dx * dx + dy * dy;
+            if (d2 < bestD2) { bestD2 = d2; best = i; }
+        }
+        return best;
+    }
+    /** La gota atrapada vuelve al cielo. */
+    public static void scareDrop(int i) {
+        if (i < 0 || i >= RAIN_COUNT) return;
+        rain[i][0] = (float) RND.nextFloat();
+        rain[i][1] = -0.06f - (float)(RND.nextFloat() * 0.12f);
+    }
+
     public static void triggerLightningFlash(float intensity) {
-        if (reducedMotion()) return;
+        if (reducedMotion() || reduceFlashes()) return;
         lightningTimer = 0f;
         lightningFlash = Math.max(lightningFlash, Math.max(0.15f, Math.min(1.0f, intensity)));
         nextLightning = 8f + (float)(RND.nextFloat() * 12f);
+        flashCount++;
     }
 
     public static void tick(float deltaTime) {
         initAll();
+        // v0.26.0: halo de los faroles siguiendo la mano (tambien con movimiento
+        // reducido: no hay movimiento nuevo, solo una respiracion del brillo).
+        if (lanternPositions != null) {
+            if (lanternHover == null || lanternHover.length != lanternPositions.length) {
+                lanternHover = new float[lanternPositions.length];
+            }
+            for (int i = 0; i < lanternPositions.length; i++) {
+                int dx = mousePx - lanternPositions[i][0];
+                int dy = mousePy - (lanternPositions[i][1] - 18);
+                float target = (dx * dx + dy * dy) < 30 * 30 ? 1f : 0f;
+                lanternHover[i] += (target - lanternHover[i]) * Math.min(1f, deltaTime * 9f);
+                if (lanternHover[i] < 0.001f && target == 0f) lanternHover[i] = 0f;
+            }
+        }
         boolean reduced = reducedMotion();
         if (reduced) {
             windGustIntensity = 0f;
@@ -128,6 +193,13 @@ public class LivingAtmosphere {
             lightningFlash = 0f;
             vignettePulse = 0.5f;
             return;
+        }
+        // v0.23.0: con destellos reducidos el temporizador queda congelado en
+        // cero, de modo que ni el relampago ambiental programado ni un flash
+        // externo ya en curso llegan a dibujarse; el resto de la escena sigue viva.
+        if (reduceFlashes()) {
+            lightningFlash = 0f;
+            lightningTimer = 0f;
         }
 
         time += deltaTime;
@@ -221,7 +293,11 @@ public class LivingAtmosphere {
         if (lightningTimer >= nextLightning) {
             lightningTimer = 0f;
             lightningFlash = 1f;
-            nextLightning  = 8f + (float)(RND.nextFloat() * 12f);
+            flashCount++;
+            // v0.24.0: en noche de tormenta el cielo no descansa.
+            boolean storm = com.eternalcraft.gripeverde.client.audio.MenuAmbience.isStormNight();
+            nextLightning  = storm ? 3.5f + (float)(RND.nextFloat() * 6f)
+                                   : 8f + (float)(RND.nextFloat() * 12f);
             if (DEBUG_EVENTS) LOGGER.info("[GripeVerde] Relampago DISPARADO, proximo en {}s", nextLightning);
         }
         vignettePulse = reduced ? 0.5f : (float)(Math.sin(time * 0.5f) * 0.5f + 0.5f);
@@ -270,7 +346,7 @@ public class LivingAtmosphere {
         // doblen las campanas, solo si el lector esta mirando la calle.
         if (!hearseActive) {
             long bellMs = com.eternalcraft.gripeverde.client.audio.MenuAmbience.lastBellMs();
-            long nowMs = System.currentTimeMillis();
+            long nowMs = nowMs();
             if (bellMs > lastHearseMs && nowMs - bellMs > 5000L
                     && nowMs - lastStreetLevelRenderMs < 600L) {
                 lastHearseMs = nowMs;
@@ -392,7 +468,7 @@ public class LivingAtmosphere {
             lanternPositions = VictorianSkyline.getLanternPositions(w, h);
             lastLanternW = w; lastLanternH = h;
         }
-        lastStreetLevelRenderMs = System.currentTimeMillis();
+        lastStreetLevelRenderMs = nowMs();
         renderStreet(g, w, h);
         renderPuddleRipples(g, w, h);
         renderLanternReflections(g, w, h);
@@ -405,6 +481,7 @@ public class LivingAtmosphere {
         renderSpores(g, w, h);
         renderRat(g, w, h);
         renderHearse(g, w, h);
+        renderStormVeil(g, w, h);
     }
 
     /** El coche del sepulturero: carretilla lenta con ataud, tras las campanas. */
@@ -691,6 +768,10 @@ public class LivingAtmosphere {
 
         int lanternY = ly - postH;
 
+        // v0.26.0: la mano del lector acerca la llama (suavizado en tick).
+        float hover = (lanternHover != null && index < lanternHover.length) ? lanternHover[index] : 0f;
+        if (hover < 0f) hover = 0f;
+
         // Sombrero
         g.fill(lx - 6, lanternY - 8, lx + 7, lanternY - 6, 0xFF1A1108);
         g.fill(lx - 5, lanternY - 6, lx + 6, lanternY - 5, 0xFF2A1810);
@@ -698,10 +779,11 @@ public class LivingAtmosphere {
 
         int boxSize = 5;
         g.fill(lx - boxSize - 1, lanternY - 4, lx + boxSize + 1, lanternY + boxSize + 1, 0xFF1F1408);
-        int lightAlpha = (int)(flicker * 200);
+        // v0.26.0: alphas con tope 255 (withAlpha no clampea; el hover suma).
+        int lightAlpha = Math.min(255, (int)(flicker * (200 + 50 * hover)));
         g.fill(lx - boxSize, lanternY - 3, lx + boxSize, lanternY + boxSize,
             AtmosphereRenderer.withAlpha(0x00FFAA33, lightAlpha));
-        int coreAlpha = (int)(flicker * 235);
+        int coreAlpha = Math.min(255, (int)(flicker * 235));
         g.fill(lx - 2, lanternY, lx + 3, lanternY + 3,
             AtmosphereRenderer.withAlpha(0x00FFEE88, coreAlpha));
         g.fill(lx, lanternY - 3, lx + 1, lanternY + boxSize, 0xFF2A1810);
@@ -709,12 +791,13 @@ public class LivingAtmosphere {
         g.fill(lx - boxSize - 1, lanternY + boxSize + 1, lx + boxSize + 1, lanternY + boxSize + 3, 0xFF1A1108);
 
         // Optimized halos: 2 gradients instead of 12+ fills
-        int haloR = (int)(28 * flicker);
-        int haloAlpha = (int)(flicker * 32);
+        // v0.26.0: el halo respira mas amplio bajo la mano del lector.
+        int haloR = (int)(28 * flicker * (1f + 0.5f * hover));
+        int haloAlpha = Math.min(255, (int)(flicker * 32 + hover * 34));
         g.fill(lx - haloR, ly - haloR / 4, lx + haloR, ly + haloR / 4,
             AtmosphereRenderer.withAlpha(0x00FFAA33, haloAlpha));
-        int floorR = (int)(48 * flicker);
-        int floorA = (int)(flicker * 16);
+        int floorR = (int)(48 * flicker * (1f + 0.35f * hover));
+        int floorA = Math.min(255, (int)(flicker * 16 + hover * 14));
         g.fill(lx - floorR, ly - 1, lx + floorR, ly + 6,
             AtmosphereRenderer.withAlpha(0x00D4941E, floorA));
     }
@@ -886,14 +969,29 @@ public class LivingAtmosphere {
     }
 
     private static void renderRain(GuiGraphics g, int w, int h) {
-        for (int i = 0; i < RAIN_COUNT; i++) {
-            int rx = (int)(rain[i][0] * w);
-            int ry = (int)(rain[i][1] * h);
-            int slant = 1 + (int)(windGustIntensity * 5f);
-            g.fill(rx, ry, rx + 1, ry + 4, DiaryTheme.RAIN_LINE);
-            g.fill(rx + slant, ry + 4, rx + slant + 1, ry + 8, DiaryTheme.RAIN_LINE);
+        // v0.24.0: noche de tormenta - segunda pasada de gotas, inclinacion y brillo.
+        boolean storm = com.eternalcraft.gripeverde.client.audio.MenuAmbience.isStormNight();
+        int passes = storm ? 2 : 1;
+        int color = storm ? 0x36B8A88C : DiaryTheme.RAIN_LINE;
+        float gust = Math.max(windGustIntensity, storm ? 0.45f : 0f);
+        int slant = 1 + (int)(gust * 5f);
+        for (int pass = 0; pass < passes; pass++) {
+            for (int i = 0; i < RAIN_COUNT; i++) {
+                int idx = (i + pass * 17) % RAIN_COUNT;
+                float ox = pass == 0 ? 0f : 0.011f;
+                int rx = (int)((rain[idx][0] + ox) * w);
+                int ry = (int)(rain[idx][1] * h);
+                g.fill(rx, ry, rx + 1, ry + 4, color);
+                g.fill(rx + slant, ry + 4, rx + slant + 1, ry + 8, color);
+            }
         }
         renderRainSplashes(g, w, h);
+    }
+
+    /** v0.24.0: velo oscuro de tormenta sobre la calle (titulo y pergaminos). */
+    public static void renderStormVeil(GuiGraphics g, int w, int h) {
+        if (!com.eternalcraft.gripeverde.client.audio.MenuAmbience.isStormNight()) return;
+        g.fill(0, 0, w, h, 0x15070A16);
     }
 
     private static void renderRainSplashes(GuiGraphics g, int w, int h) {

@@ -17,6 +17,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class SlimButton extends AbstractButton {
 
     private final Runnable onClick;
+    // v0.26.0: sonido de prensado intercambiable (los botones normales usan
+    // el pestillo de laton de siempre; el gramofono toca "pieza nueva").
+    private Runnable clickSound = UiSounds::playClick;
     private boolean wasHovered = false;
     private final EasedValue hoverAnim = new EasedValue(6f);
 
@@ -25,9 +28,14 @@ public class SlimButton extends AbstractButton {
         this.onClick = onClick;
     }
 
+    public SlimButton withClickSound(Runnable sound) {
+        if (sound != null) this.clickSound = sound;
+        return this;
+    }
+
     @Override
     public void onPress() {
-        UiSounds.playClick();
+        this.clickSound.run();
         this.onClick.run();
     }
 

@@ -163,6 +163,14 @@ public class DiaryOptionsScreen extends Screen {
         return i * (BTN_H + GAP_Y);
     }
 
+    // v0.30.0: elipsis fiel para que ninguna cita se salga del papel.
+    private static String ellipsizeTo(net.minecraft.client.gui.Font font, String txt, int maxW) {
+        if (font.width(txt) <= maxW) return txt;
+        String ell = "...";
+        int room = Math.max(0, maxW - font.width(ell));
+        return font.plainSubstrByWidth(txt, room) + ell;
+    }
+
     private static String currentLanguageCode() {
         try {
             String lang = net.minecraft.client.Minecraft.getInstance().getLanguageManager().getSelected();
@@ -217,8 +225,13 @@ public class DiaryOptionsScreen extends Screen {
             g.drawString(this.font, subtitle, subX, subY, DiaryChrome.INK_SUBTITLE, false);
 
             // Rotating flavor quote - tinta muy suave
+            // v0.30.0: nunca fuera del papel (elipsis al ancho) y la linea
+            // "fix" del huevo Holloway jamas pisa la primera fila de botones.
+            int flavorBottom = subY + this.font.lineHeight + 1;
             if (currentFlavor != null) {
-                int flavorW = this.font.width(currentFlavor);
+                int maxTextW = panelW - 48;
+                String flavorShown = ellipsizeTo(this.font, currentFlavor, maxTextW);
+                int flavorW = this.font.width(flavorShown);
                 int flavorX = (this.width - flavorW) / 2;
                 int flavorY = subY + this.font.lineHeight + 1;
                 // v0.16.0: el cronista corrige su propia letra tras leer a Holloway.
@@ -229,26 +242,26 @@ public class DiaryOptionsScreen extends Screen {
                             com.eternalcraft.gripeverde.client.lore.Discoveries.CODE_HOLLOWAY);
                 } catch (Throwable ignored) {}
                 if (corrected) {
-                    g.drawString(this.font, currentFlavor, flavorX, flavorY,
+                    g.drawString(this.font, flavorShown, flavorX, flavorY,
                         com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(DiaryChrome.INK_FLAVOR, 110), false);
                     g.fill(flavorX - 2, flavorY + 4, flavorX + flavorW + 2, flavorY + 5,
                         com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0xFF241608, 120));
                     String fix = isEnglishSelected() ? "(no: the ink will never dry)" : "(no: la tinta ya no seca)";
-                    int fixW = this.font.width(fix);
-                    g.drawString(this.font, fix, this.width / 2 - fixW / 2, flavorY + 9, DiaryChrome.INK_FLAVOR, false);
+                    String fixShown = ellipsizeTo(this.font, fix, maxTextW);
+                    int fixW = this.font.width(fixShown);
+                    // Tope duro: siempre sobre la grilla, nunca debajo.
+                    int fixY = Math.min(flavorY + 9, this.gridTop - 11);
+                    g.drawString(this.font, fixShown, this.width / 2 - fixW / 2, fixY, DiaryChrome.INK_FLAVOR, false);
+                    flavorBottom = fixY + this.font.lineHeight;
                 } else {
-                    g.drawString(this.font, currentFlavor, flavorX, flavorY, DiaryChrome.INK_FLAVOR, false);
+                    g.drawString(this.font, flavorShown, flavorX, flavorY, DiaryChrome.INK_FLAVOR, false);
+                    flavorBottom = flavorY + this.font.lineHeight;
                 }
             }
 
-            // Unico divisor horizontal DEBAJO del flavor (no entre titulo y subtitulo)
-            int divY1;
-            if (currentFlavor != null) {
-                int flavorY = subY + this.font.lineHeight + 1;
-                divY1 = flavorY + this.font.lineHeight + 4;
-            } else {
-                divY1 = subY + this.font.lineHeight + 4;
-            }
+            // Unico divisor horizontal DEBAJO del flavor (y del fix si existe),
+            // jamas por encima de la grilla de botones.
+            int divY1 = Math.min(flavorBottom + 4, this.gridTop - 2);
             DiaryChrome.drawInkDivider(g, panelX + 24, divY1, panelW - 48);
 
             // Divisor horizontal antes del boton Volver

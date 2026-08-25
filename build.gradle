@@ -3,15 +3,17 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
-    id 'org.spongepowered.mixin' version '0.7.+'
 }
 
-version = '0.22.0'
+version = '0.30.0'
 group = 'com.eternalcraft.gripeverde'
 base { archivesName = 'gripeverde' }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
+// v0.23.0: eliminada la infraestructura de Mixins (el config estaba vacio,
+// con 0 mixins, required:true y compatibilityLevel JAVA_8) y el namespace de
+// GameTest (no existe ningun test). Menos puntos de fallo y build mas rapido.
 minecraft {
     mappings channel: 'official', version: '1.20.1'
     copyIdeResources = true
@@ -20,11 +22,10 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', 'gripeverde'
             mods { "gripeverde" { source sourceSets.main } }
         }
-        client { property 'forge.enabledGameTestNamespaces', 'gripeverde' }
-        server { property 'forge.enabledGameTestNamespaces', 'gripeverde'; args '--nogui' }
+        client {}
+        server { args '--nogui' }
     }
 }
 
@@ -32,12 +33,6 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.20.1-47.4.20'
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
-}
-
-mixin {
-    add sourceSets.main, "gripeverde.refmap.json"
-    config "gripeverde.mixins.json"
 }
 
 tasks.named('processResources', ProcessResources).configure {
@@ -64,8 +59,7 @@ jar {
             "Implementation-Title"    : project.name,
             "Implementation-Version"  : project.jar.archiveVersion,
             "Implementation-Vendor"   : "EternalCraft",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-            "MixinConfigs"            : "gripeverde.mixins.json"
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
 }
@@ -114,7 +108,7 @@ tasks.register('verifyGripeVerdeLocalization') {
             throw new GradleException('en_us.json root must be a JSON object')
         }
         def baselineKeys = baseline.keySet() as Set
-        def expectedKeyCount = 83
+        def expectedKeyCount = 93
         def problems = []
         if (baselineKeys.size() != expectedKeyCount) {
             problems << "en_us: expected ${expectedKeyCount} keys, found ${baselineKeys.size()}"
@@ -242,6 +236,7 @@ tasks.register('verifyGripeVerdeNoDeadCode') {
             'AbstractScreenTheme', 'UIComponent', 'UIScale', 'IconButton', 'SilentButton',
             'DiarySeparator', 'gripeverde_steel', 'steel_pack', 'bg_town', 'BG_TOWN',
             'hasBgTown', 'ResourcePackHandler', 'ContainerOverlayHandler',
+            'setHoverSound', 'setClickSound', 'gripeverde.mixins', 'gripeverde.refmap',
             'VictorianFrame', 'AbstractDiaryScreen', 'DebugCanvasScreen', 'SoundLabScreen',
             'DiaryDecorator', 'CandleLight', 'InkEffects', 'DiaryVideoSettingsScreen', 'drawVictorianFrame', 'drawQuillCursor',
             'drawVerticalDivider', 'drawDarkLeatherBackground', 'drawVersionPanel',
@@ -268,4 +263,190 @@ tasks.register('verifyGripeVerdeNoDeadCode') {
 
 tasks.named('processResources').configure {
     dependsOn tasks.named('verifyGripeVerdeNoDeadCode')
+}
+
+tasks.register('verifyGripeVerdeVersionSync') {
+    group = 'verification'
+    description = 'Fails if GripeVerdeMod.VERSION does not match the Gradle project version.'
+    doLast {
+        def modSrc = file('src/main/java/com/eternalcraft/gripeverde/GripeVerdeMod.java')
+        def srcText = modSrc.getText('UTF-8')
+        def matcher = (srcText =~ /VERSION\s*=\s*"([^"]+)"/)
+        if (!matcher.find()) {
+            throw new GradleException('Cannot find VERSION constant in GripeVerdeMod.java')
+        }
+        if (matcher.group(1) != project.version.toString()) {
+            throw new GradleException(
+                "Version mismatch: GripeVerdeMod.VERSION=${matcher.group(1)} vs build.gradle version=${project.version}")
+        }
+    }
+}
+
+tasks.named('processResources').configure {
+    dependsOn tasks.named('verifyGripeVerdeVersionSync')
+}
+
+// Parser OGG Vorbis minimo: sample rate de la cabecera de identificacion y
+// granule de la ultima pagina; duracion = granule / rate. Sin dependencias.
+def gripeVerdeOggDurationMs = { File f ->
+    byte[] bytes = f.bytes
+    int len = bytes.length
+    Integer rate = null
+    long lastGranule = -1L
+    int pos = 0
+    while (true) {
+        int idx = -1
+        int i = Math.max(0, pos)
+        while (i + 4 <= len) {
+            if (bytes[i] == 0x4F && bytes[i + 1] == 0x67 && bytes[i + 2] == 0x67 && bytes[i + 3] == 0x53) {
+                idx = i
+                break
+            }
+            i++
+        }
+        if (idx < 0 || idx + 27 > len) break
+        long granule = 0L
+        for (int k = 7; k >= 0; k--) granule = (granule << 8) | (bytes[idx + 6 + k] & 0xFF)
+        int nsegs = bytes[idx + 26] & 0xFF
+        int segtabStart = idx + 27
+        if (segtabStart + nsegs > len) break
+        int bodyLen = 0
+        for (int s = 0; s < nsegs; s++) bodyLen += bytes[segtabStart + s] & 0xFF
+        int bodyStart = segtabStart + nsegs
+        if (rate == null && bodyStart + 16 <= len) {
+            if (bytes[bodyStart] == 0x01 && bytes[bodyStart + 1] == 0x76 &&
+                    bytes[bodyStart + 2] == 0x6F && bytes[bodyStart + 3] == 0x72 &&
+                    bytes[bodyStart + 4] == 0x62 && bytes[bodyStart + 5] == 0x69 &&
+                    bytes[bodyStart + 6] == 0x73) {
+                long r = 0L
+                for (int k = 3; k >= 0; k--) r = (r << 8) | (bytes[bodyStart + 12 + k] & 0xFF)
+                rate = (int) r
+            }
+        }
+        if (granule >= 0L) lastGranule = granule
+        pos = bodyStart + bodyLen
+    }
+    if (rate == null || rate <= 0 || lastGranule < 0L) {
+        throw new GradleException("Cannot parse Vorbis duration of ${f.name}")
+    }
+    return (double) lastGranule / (double) rate * 1000.0d
+}
+
+tasks.register('verifyGripeVerdeMusicDurations') {
+    group = 'verification'
+    description = 'Fails if a music OGG deviates more than 1.5s from TRACK_DURATIONS_MS (crossfade guard).'
+    doLast {
+        def musicSrc = file('src/main/java/com/eternalcraft/gripeverde/client/audio/MenuMusic.java')
+        def srcText = musicSrc.getText('UTF-8')
+        def tableMatcher = (srcText =~ /TRACK_DURATIONS_MS\s*=\s*\{([^}]*)\}/)
+        if (!tableMatcher.find()) {
+            throw new GradleException('TRACK_DURATIONS_MS table not found in MenuMusic.java')
+        }
+        def declared = []
+        (tableMatcher.group(1) =~ /(\d[\d_]*)/).each { m -> declared << (m[1].replace('_', '') as long) }
+        def musicDir = file('src/main/resources/assets/gripeverde/sounds/music')
+        def available = fileTree(musicDir) { include '*.ogg' }.files.sort().size()
+        if (declared.size() != available) {
+            throw new GradleException(
+                "TRACK_DURATIONS_MS has ${declared.size()} entries but sounds/music has ${available} OGG files")
+        }
+        def problems = []
+        declared.eachWithIndex { declaredMs, idx ->
+            def f = new File(musicDir, "music_title_${idx + 1}.ogg")
+            if (!f.isFile()) {
+                problems << "missing music_title_${idx + 1}.ogg"
+                return
+            }
+            long realMs = Math.round(gripeVerdeOggDurationMs(f))
+            if (Math.abs(realMs - declaredMs) > 1_500L) {
+                problems << "music_title_${idx + 1}.ogg: real=${realMs}ms vs declared=${declaredMs}ms"
+            }
+        }
+        if (!problems.isEmpty()) {
+            throw new GradleException("Music duration validation failed:\n" + problems.join('\n'))
+        }
+    }
+}
+
+tasks.named('processResources').configure {
+    dependsOn tasks.named('verifyGripeVerdeMusicDurations')
+}
+
+tasks.register('verifyGripeVerdeSubtitles') {
+    group = 'verification'
+    description = 'Fails if a non-empty sounds.json subtitle key is missing or blank in any of the 25 lang files.'
+    doLast {
+        def soundsJson = file('src/main/resources/assets/gripeverde/sounds.json')
+        def parsed = new groovy.json.JsonSlurper().parse(soundsJson)
+        def required = ['en_us', 'en_gb', 'en_ca', 'en_au', 'en_nz',
+            'es_es', 'es_mx', 'es_ar', 'es_419', 'es_bo', 'es_cl', 'es_co',
+            'es_cr', 'es_do', 'es_ec', 'es_gt', 'es_hn', 'es_ni', 'es_pa',
+            'es_pe', 'es_pr', 'es_py', 'es_sv', 'es_uy', 'es_ve']
+        def json = new groovy.json.JsonSlurper()
+        def langDir = file('src/main/resources/assets/gripeverde/lang')
+        def langs = [:]
+        required.each { loc ->
+            langs[loc] = json.parse(new File(langDir, "${loc}.json")) as Map
+        }
+        def problems = []
+        parsed.each { ev, payload ->
+            def sub = (payload instanceof Map) ? payload.subtitle : null
+            if (sub instanceof String && sub.trim().length() > 0) {
+                required.each { loc ->
+                    def v = langs[loc][sub]
+                    if (!(v instanceof String) || v.trim().isEmpty()) {
+                        problems << "${ev}: subtitle ${sub} missing or blank in ${loc}"
+                    }
+                }
+            }
+        }
+        if (!problems.isEmpty()) {
+            throw new GradleException("Subtitle validation failed:\n" + problems.join('\n'))
+        }
+    }
+}
+
+tasks.named('processResources').configure {
+    dependsOn tasks.named('verifyGripeVerdeSubtitles')
+}
+
+tasks.register('verifyGripeVerdeSoundUsage') {
+    group = 'verification'
+    description = 'Fails if a registered SoundEvent has no code usage, outside the grandfathered legacy allowlist.'
+    doLast {
+        // Eventos legacy sin uso devengados: se conservan hasta que el owner
+        // decida conectarlos a momentos de UI o retirarlos.
+        // Si alguno se conecta, sacarlo de la lista (el sello lo avisa); si
+        // aparece un evento muerto nuevo, el build falla.
+        // v0.24.0: UI_PAPER_FALL paso a la rotura del sello (DiaryTitleScreen)
+        // y UI_SUCCESS al diapason de la sala de sonido (DiarySoundOptionsScreen).
+        // v0.26.0: allowlist vacia — los 8 legacy (UI_BUTTON_CLEAN, UI_OPEN,
+        // UI_CLOSE, UI_MODAL, UI_ERROR, UI_TAB, UI_CLICK_CREATE, UI_RESPAWN)
+        // quedaron cableados a sus eventos en UiSounds (V2-resto). Si uno
+        // vuelve a quedar huerfano, este sello vuelve a fallar.
+        def legacyAllowlist = [] as Set
+        def modSounds = file('src/main/java/com/eternalcraft/gripeverde/client/audio/ModSounds.java').getText('UTF-8')
+        def fields = [] as Set
+        (modSounds =~ /RegistryObject<SoundEvent>\s+(\w+)\s*=\s*reg\(/).each { m -> fields << m[1] }
+        def code = new StringBuilder()
+        fileTree('src/main/java') { include '**/*.java'; exclude '**/ModSounds.java' }.each { f ->
+            code.append(f.getText('UTF-8'))
+        }
+        def codeText = code.toString()
+        def unused = fields.findAll { f -> !codeText.contains(f) } as Set
+        def problems = []
+        (unused - legacyAllowlist).sort().each {
+            problems << "${it}: SoundEvent registrado sin uso en codigo (conectarlo o retirarlo)"
+        }
+        (legacyAllowlist - unused).sort().each {
+            problems << "${it}: ya esta en uso; sacarlo del allowlist legacy del sello"
+        }
+        if (!problems.isEmpty()) {
+            throw new GradleException("Sound usage validation failed:\n" + problems.join('\n'))
+        }
+    }
+}
+
+tasks.named('processResources').configure {
+    dependsOn tasks.named('verifyGripeVerdeSoundUsage')
 }

@@ -2,6 +2,64 @@
 ## Chronicle under seal
 
 
+
+## Version 0.30.0 - The whole leaf
+
+Corrections from the study's elder, carefully noted. The nib no longer writes a single entry while the others stand printed: the whole ledger now writes itself before the reader as they move down its leaves — what was left far above counts as printed, and jumping down never leaves gaps; a single touch finishes it all. The magnifier also learned to be read: its little box is now a label of clear paper with ink lettering, not a dark stain where the word got lost. The buttons' ticks as the hand passes over them lowered their voice. And three oversights of the press are amended: the signature line no longer nears the desk of buttons, the day's notice reads at its left on the same line, and the quotes of the cabinet and the sound room never again end up under buttons or outside the paper.
+
+## Version 0.29.0 - The way back and the magnifier
+
+The way back turned courteous: returning from a desk to the one before no longer calls the full ink ceremony, only a brief gesture — the leaf falls from above, settles, and that is all; the long sweep, the sprinkles and the drops are now reserved for going forward. And the ledger gains a magnifier: at the foot of the page, to the right, there is a little box where the reader writes a word, and the chronicle carries them from one sighting to the next, marking every line where the word dwells; a gesture closes it and the ledger forgets the question. Also, the desk no longer answers with a dull knock when touched in silence: the owner of this study asked for silence and silence there shall be. And the page-turning had its screws tightened: when there is no ink in the air, the cabinet spends not an instant pretending there is.
+
+## Version 0.28.0 - The drops and the folios
+
+The ink the curtain drags no longer passes dry: drops break off its edge, slide a short span and leave their fine trail, like a laden quill moved too fast; those who ask for reduced motion never see them. And the chronicle gains a folio of its own: at the foot of the page, centered, a discreet mark tells which leaf the reader is on and how many the ledger holds, and it advances on its own with the reading. Also, if the cabinet advanced more than one edition since the last visit, every entry the reader skipped wakes stamped in wax as freshly arrived — not just the latest; and the title board learned a few new lines for its rotating notices.
+
+## Version 0.27.0 - The fold and the pen
+
+The leaf has learned where the reader comes from: advancing to a new desk sweeps the ink downward to uncover it, and returning to a desk already visited sweeps the ink upward, like turning a page of the tome back; the curtain's edge sprinkles tiny drops as it passes and, once uncovered, the new leaf settles onto the desk with a brief shadow. And the chronicle has learned a trade: the entry of the freshly arrived edition writes itself before the reader, letter by letter, the nib resting on the last stroke with a quiet scratch across the paper; the impatient finish it with a single touch, and those who ask for reduced motion receive it whole, already written.
+
+## Version 0.26.0 - Leaves and lanterns
+
+Moving from one cabinet screen to another — title, options, chronicle, pause — the new leaf is revealed beneath an ink curtain that sweeps from top to bottom, like a page turned with a dry hand; those who ask for reduced motion receive only a brief fade, no sweep, and screens outside the cabinet receive no adornment at all. And the avenue lanterns have learned to know the reader's hand: bring it slowly near one of them and its halo breathes wider and its flame rises a little, never to go out. And the cabinet tuned its ear as well: the Chronicle, the lodgings ledger and the Sound Cabinet now each open with a touch of their own, as was always intended; rapping the desk when the air has gone silent answers with a dull knock, barely audible; the gramophone heralds each new piece with a gesture of its own; and coming back to the vigil from any room seats the reader once more, like a door closing properly at one's back. The chronicles of recent editions have also been rewritten with the pen of a real-life document: no workshop words left, only craft and paper.
+
+## Version 0.25.2 - The telegram never touches the desk
+
+A reader with a large interface scale (3 or 4) reported two desk accidents: the secrets telegram fell over the button desk and became unreadable, and the elixir's FRAUDE stamp climbed over the poster's lettering. The chronicler reorders his bounds: the telegram now refuses, above all, to touch the desk — if the free band shrinks, it rises above the logo strip and never leaves the window — and its width is trimmed on narrow screens; and the red stamp is always placed after the text and inside the paper, at any scale. No new secrets: just a tidy desk.
+
+## Version 0.25.1 - The original cylinder
+
+The new rain sounded like machine static, and the chronicler owns the mistake: the cylinder had been re-recorded instead of cleaned. The synthesis is withdrawn and the original recording of rain on cobblestone returns — the same as ever, drops and all — now carefully amplified without crushing its peaks; the street wind, too, returns to its original master, simply raised in volume. To give the rain back its place in the mix, its inner dial steps up. Both loop seams were measured: they joined clean, so they carry no crossfade.
+
+## Version 0.25.0 - The storm watcher
+
+Three new secrets fit in one hand. On nights when the sky breaks, whoever stays through three flashes before the vigil without leaving earns a card of their own: the chronicler counts the lightning for you. The rain, too, has fallen close enough to touch: a well-aimed drop lets itself be caught with a click, sounds like a needle on the cylinder, and climbs back to the sky (it never rains over the buttons). And in the hidden telegraph, typing DOCTOR brings a whisper and a low bell: the elixir had a doctor, the practice still stands, and his signature keeps arriving on forms nobody sends. The archive grows to fifty-two cards.
+
+## Version 0.24.1 - The chronicler's errata
+
+A single crooked letter on the freshly printed front page halted the press: the raindrop seed had been written with a character that does not exist in the hexadecimal alphabet, and edition 0.24.0 never compiled in the workshop (the fault surfaced on the very first deployment attempt). The errata is now set in valid ink — the drops fall exactly as before, just from another seed — and the cabinet gains one more printing seal: a mechanical proofreader now inspects every numeric literal in the codex before any edition leaves stamped. Everything announced in 0.24.0 remains inside, intact.
+
+## Version 0.24.0 - The wind blows again
+
+For weeks the street held its breath: the wind around the cabinet had been recorded so faint that no gust ever crossed the window, and with it the rain, the footsteps and the whispers barely coughed. The chronicler inspected the cylinders and restored every layer to its proper volume; the ambience dial finally governs something. With open ears come storm nights, the chronicle now opens at the freshly arrived entry and stamps it NEW until you read it, rain slides down the parchments, the telegram's wax yields to a stubborn hand, and a hidden tuning fork brings the whole room into pitch. The street, at last, stops playing once the reader crosses into a world.
+
+## Version 0.23.2 - The telegram arrives intact
+
+One of the cabinet's telegrams used to shatter the whole desk by arriving empty: clicking the title's seal could make the typewriter open its envelope before a single letter had landed, and reading that letterless envelope halted the client outright (the fault arrived in a player's field report on the 0.22.0 edition). The messenger now waits for at least one letter before counting lines, and that purely decorative reading is now fenced in: no ornamental fault will ever bring the vigil down again.
+
+
+## Version 0.23.1 - Seals and clockwork
+
+No new scenery this round: the build gains two more seals. One guards that every ambient subtitle the city announces exists in all twenty-five languages; the other counts the registered sound events and refuses new silent entries, grandfathering the ten legacy ones with their contribution still owed. The cabinet's memory now quietly mends impossible numbers in hand-edited or logically damaged records and keeps a documented migration road for future archives, while the ambience layer moved onto the same monotonic clockwork as the gramophone.
+
+
+## Version 0.23.0 - The gramophone keeps the floor
+
+The gramophone no longer shares the night with vanilla menu music: while the cabinet is open the old soundtrack stays silent, and if the sound engine is reloaded (F3+T or a pack change) the next piece queues by itself instead of falling forever quiet. The storm can now be tamed on its own: a new Reduced flashes aid dims lightning without freezing fog, rain or lamps, ambient events gain subtitles, and the ambience slider answers in the reader's own language.
+
+The mod also learned manners: it registers its listener exactly once, stays inert on dedicated servers, sheds its empty mixin scaffolding and hides the debug shortcut unless summoned, and cedes the title screen whenever another mod already owns it. The chronicler now writes his memory off the render thread, and the build seals guard version sync and real track durations; a ready-to-enable continuous integration workflow (tools/ci) compiles every push with Java 17.
+
+
 ## Version 0.22.0 - The vigil is sealed
 
 The city now moves to one steady twenty-beat pulse instead of advancing dust and ambience with every rendered frame. Reduced motion has a visible control among the perception aids and freezes atmospheric movement, grain and flashes without removing the street, lamps or any permanent scene detail. Every diary toggle now tells the narrator both its name and current state.
