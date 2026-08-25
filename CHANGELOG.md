@@ -1,5 +1,45 @@
 # Eternal Craft: Gripe Verde
 
+## v0.29.0 - La vuelta y la lupa
+
+Feedback directo del owner tras jugar la 0.28.0: la cronica gusta, la
+animacion al SALIR de cada cosa no. Backup externo previo
+(`/home/user/GripeVerde-backup-pre-v0.29.0-5dee740.bundle`, --all,
+verificado).
+
+- **La vuelta cortes (rediseño de la transicion de regreso)**: volver a
+  una mesa ya visitada ya no corre el barrido completo al reves — ahora
+  la hoja cae de arriba en 170 ms: velo tenue (110 vs 150) + banda
+  superior de tinta que se repliega (46 px → 0) con filo bronce. Sin
+  salpicaduras, sin gotas, sin sombra extra. Toda la ceremonia (barrido
+  largo, salpicaduras, gotas) queda reservada para AVANZAR, donde gusto.
+  La sombra de asiento sigue en ambos sentidos (solo opacidad, 450 ms).
+- **Optimizacion del velo** (`DiaryTransitions`): cache de elegibilidad
+  por clase (fin de `getName().startsWith` por frame), `reducedMotion`
+  resuelto una vez por apertura, duracion y fin de efecto precomputados
+  (`durNowMs`/`fxEndMs`) — fuera de la ventana del efecto el render es
+  costo cero (dos restas y un return).
+- **Fuera el golpe sordo** (pedido expreso): el escritorio ya no suena
+  al tocarlo en cualquier lado; `answerWhisper` vuelve a su forma pura
+  (solo el susurro abierto contesta) y `UiSounds.silenceKnock` se retira
+  del catalogo. `UI_ERROR` sigue cableado en `error()` — 35/35 en uso.
+- **La lupa de la bitacora**: cuadrito al pie a la derecha del papel (96
+  px, se abre con `/`, Ctrl+F o tocandolo). Escribis una palabra (hasta
+  24 caracteres, texto simple sin comodines) y la cronica salta a cada
+  aparicion con Enter / Shift+Enter, piquito bronce en cada renglon
+  coincidente y fondo tenue en la actual; contador "N/M" (o "0") a la
+  izquierda. Esc la cierra y olvida la pregunta. El folio comparte la
+  franja: si el panel es angosto (escala 4) se corre a la izquierda —
+  jamas se pisan. Caret parpadeante (fijo con destellos reducidos).
+- Interfaces debidas: la vuelta corta se ve bien en GUI 2/3/4 (banda
+  proporcional, nada anclado al centro), la lupa vive bajo el contenido
+  dentro del panel en todas las escalas, y reducedMotion mantiene el
+  fundido limpio (sin vuelta ni ceremonia). KI-64.
+
+Conteos: 61 Java, 25 lang (93 claves), 25 cronicas, 35 eventos de sonido
+(los 35 en uso; allowlist legacy vacia), 42 OGG. Espejo Python: 8/8 sellos
++ balance OK.
+
 ## v0.28.0 - Las gotas y los folios
 
 Misma consigna del owner: mejoras significativas en textos y en los efectos

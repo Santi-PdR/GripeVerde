@@ -3,6 +3,10 @@
 
 
 
+## Version 0.29.0 - La vuelta y la lupa
+
+La vuelta se volvió cortés: al regresar de una mesa a la anterior ya no corre toda la ceremonia de la tinta, sino un gesto breve — la hoja cae de arriba, se acomoda, y listo; el barrido largo, las salpicaduras y las gotas quedan reservados para ir hacia adelante. Y la bitácora gana lupa: al pie del papel, a la derecha, hay un cuadrito donde el lector escribe una palabra y la crónica lo lleva de una aparición a la siguiente, señalando cada renglón donde la palabra mora; la cruz la cierra y la bitácora olvida la pregunta. Además, el escritorio ya no responde con golpe sordo al tocarlo en silencio: el dueño del estudio pidió silencio y silencio habrá. Y el pasar de hojas se apretó los tornillos: cuando no hay tinta en el aire, el gabinete no gasta ni un instante en fingir que la hay.
+
 ## Version 0.28.0 - Las gotas y los folios
 
 La tinta que la cortina arrastra ya no pasa en seco: del filo se desprenden gotas que resbalan un trecho breve y dejan su rastro fino, como una pluma cargada que se mueve demasiado deprisa; quien pide el movimiento reducido no las ve jamás. Y la crónica gana folio propio: al pie del papel, centrada, una marca discreta anuncia en qué hoja va el lector y cuántas tiene la bitácora, y avanza sola con la lectura. Además, si el gabinete avanzó más de una edición desde la última visita, todas las entradas que el lector se saltó amanecen estampadas en lacre como recién llegadas — no solo la última; y el tablón del título aprendió unas líneas nuevas para sus avisos rotatorios.

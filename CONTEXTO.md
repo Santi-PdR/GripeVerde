@@ -8,8 +8,8 @@
   arena/01a02cee-gripeverde" que sobreviven en el historico son instantaneas
   archivadas, no instrucciones.
 - Base respaldada: v0.22.0, commit `4ca038ddab972ca59435353330c9ccda4a86d581`.
-- Implementacion vigente: v0.28.0 en esta rama (ver DECISIONES 2026-08-24
-  undecima vuelta, mas abajo).
+- Implementacion vigente: v0.29.0 en esta rama (ver DECISIONES 2026-08-24
+  duodecima vuelta, mas abajo).
 - Restricciones funcionales absolutas: escena completa, faroles permanentes,
   sin kiosco/Heraldo, sin modo automatico por FPS, sin gameplay y sin
   resourcepacks.
@@ -262,6 +262,42 @@ montaba sobre el texto en carteles bajos.
   25 cronicas in-game al dia. Espejo Python: 8/8 sellos + balance OK.
 - KI-60 registra la validacion pendiente en cliente real.
 
+### DECISION 2026-08-24 (duodecima vuelta): v0.29.0 - La vuelta y la lupa
+
+Feedback del owner tras jugar la 0.28.0: "me gusta lo que hiciste con la
+cronica, no me gusto la animacion de salir de cada cosa — podrias
+hacerla mejor y optimizarla; y cuando haces click en cualquier lado hace
+un sonido, eso no me gusta; aprovecha y anade cosas que creas que
+faltan". Backup previo:
+`/home/user/GripeVerde-backup-pre-v0.29.0-5dee740.bundle`.
+
+- Vuelta cortes: el regreso a mesa ya visitada pasa de barrido completo
+  invertido (260 ms con salpicaduras y gotas) a gesto breve (170 ms):
+  velo tenue (110) + banda superior (46 px) que se repliega con filo
+  bronce. Avanzar conserva TODA la ceremonia (gusto). Sombra de asiento
+  sigue en ambos (solo opacidad).
+- Optimizacion del velo: cache de elegibilidad por clase (sin cadenas
+  por frame), config resuelta una vez por apertura (`reducedNow`),
+  duracion (`durNowMs`) y fin de efecto (`fxEndMs`) precomputados →
+  fuera de la ventana del efecto, costo cero por frame.
+- silenceKnock retirado (pedido expreso: nada de sonido al tocar en
+  cualquier lado). UI_ERROR sigue cableado en error(): 35/35 en uso,
+  allowlist vacia.
+- Extra anadido: la LUPA de la bitacora (busqueda por palabra en la
+  cronica): cuadrito de 96 px al pie a la derecha (abrir con `/`, Ctrl+F
+  o toque), texto simple sin comodines, Enter/Shift+Enter recorre las
+  apariciones (piquito bronce + fondo tenue + contador), Esc la cierra y
+  olvida. Folio se corre a la izquierda en escala 4 — jamas se pisan.
+  Caret quieto con destellos reducidos.
+- Sandbox: HEAD volvio a amanecer en 4ca038d mid-edicion; rescate con
+  `git reset --mixed FETCH_HEAD` (disco intacto, mi DiaryTransitions
+  reescrito sobrevivio). Regla aprendida: verificar `git log` al
+  retomar.
+- Interfaces: banda proporcional en GUI 2/3/4; lupa bajo el contenido
+  en todas las escalas; reducedMotion = fundido limpio (KI-64).
+- Bump sincronizado 0.29.0, 25 cronicas con vocabulario de documento
+  real, docs en regla. Espejo Python 8/8 + balance OK.
+
 ### DECISION 2026-08-24 (undecima vuelta): v0.28.0 - Las gotas y los folios
 
 Pedido del owner (consigna repetida): changelog al dia sin terminos de
@@ -370,8 +406,8 @@ en TODAS las interfaces; y haz un backup antes."
 No implementar planes de gameplay ni los items de "propuestas futuras"/
 "propuestas visibles" de REVISION_MOD.md sin autorizacion expresa del
 owner. La secuencia vigente: activar la CI con `tools/ci/activar-ci.ps1`,
-validar KI-53 a KI-63 en cliente real (en particular reenviar
-el jar 0.28.0 al jugador que reporto el crash y comprobar que el
+validar KI-53 a KI-64 en cliente real (en particular reenviar
+el jar 0.29.0 al jugador que reporto el crash y comprobar que el
 ambiente
 ya se escucha, el sentido del pliegue y la pluma de la cronica, con
 atencion a que los loops nuevos no tapen la musica),

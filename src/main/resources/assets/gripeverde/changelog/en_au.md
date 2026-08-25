@@ -3,6 +3,10 @@
 
 
 
+## Version 0.29.0 - The way back and the magnifier
+
+The way back turned courteous: returning from a desk to the one before no longer calls the full ink ceremony, only a brief gesture — the leaf falls from above, settles, and that is all; the long sweep, the sprinkles and the drops are now reserved for going forward. And the ledger gains a magnifier: at the foot of the page, to the right, there is a little box where the reader writes a word, and the chronicle carries them from one sighting to the next, marking every line where the word dwells; a gesture closes it and the ledger forgets the question. Also, the desk no longer answers with a dull knock when touched in silence: the owner of this study asked for silence and silence there shall be. And the page-turning had its screws tightened: when there is no ink in the air, the cabinet spends not an instant pretending there is.
+
 ## Version 0.28.0 - The drops and the folios
 
 The ink the curtain drags no longer passes dry: drops break off its edge, slide a short span and leave their fine trail, like a laden quill moved too fast; those who ask for reduced motion never see them. And the chronicle gains a folio of its own: at the foot of the page, centered, a discreet mark tells which leaf the reader is on and how many the ledger holds, and it advances on its own with the reading. Also, if the cabinet advanced more than one edition since the last visit, every entry the reader skipped wakes stamped in wax as freshly arrived — not just the latest; and the title board learned a few new lines for its rotating notices.

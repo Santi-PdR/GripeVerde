@@ -5,6 +5,41 @@ de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
 que una seccion posterior lo mencione expresamente.
 
+## v0.29.0 - La vuelta y la lupa (2026-08-24)
+
+### Cambios cerrados
+- **Backup previo** (regla consolidada):
+  `/home/user/GripeVerde-backup-pre-v0.29.0-5dee740.bundle` (--all,
+  verificado).
+- **Transicion de regreso rediseñada** (feedback del owner: la salida
+  ceremonial no gustaba): vuelta cortes de 170 ms — velo tenue + banda
+  superior que se repliega con filo bronce; salpicaduras/gotas/barrido
+  largo quedan solo para AVANZAR. La pila de mesas ya sabia distinguir
+  regreso de avance: solo cambio el gesto.
+- **Optimizacion del velo**: cache por clase, config una vez por
+  apertura, fast path costo cero fuera del efecto.
+- **Silencio al tocar** (pedido expreso): `silenceKnock` retirado;
+  `answerWhisper` pura. 35/35 sonidos siguen en uso.
+- **Lupa de la bitacora**: busqueda por palabra en la cronica (apertura
+  `/`, Ctrl+F o toque; Enter/Shift+Enter recorre; Esc olvida). Marcas de
+  bronce por renglon, contador, caret (quieto con destellos reducidos),
+  folio que se corre si falta sitio.
+
+### Riesgos activos / KI nuevos
+- **KI-64 (v0.29.0)**: validar en cliente real: (a) la VUELTA se siente
+  breve y correcta en cada combinacion de mesas y en GUI 2/3/4 (banda
+  alta, 170 ms, sin gotas), mientras AVANZAR conserva toda la ceremonia;
+  (b) tocar el escritorio/titulo en silencio YA NO hace ningun sonido
+  (susurro abierto sigue contestando — easter egg intacto); (c) la lupa:
+  escribir "cordon" o "campana" salta a las apariciones, el contador
+  coincide, Enter/Shift+Enter recorre sin saltarse ninguna, Esc cierra
+  sin cerrar la pantalla, y en escala 4 el folio se corre a la izquierda
+  sin pisar el cuadro; (d) con reducedMotion no hay vuelta ni ceremonia,
+  solo fundido; (e) regresion nula: pluma, folio, lacre multi-edicion,
+  gramofo y "sentarse de nuevo" intactos.
+- KI-53 a KI-63 siguen abiertos; el jar candidato para Agus pasa a ser
+  **0.29.0**.
+
 ## v0.28.0 - Las gotas y los folios (2026-08-24)
 
 ### Cambios cerrados

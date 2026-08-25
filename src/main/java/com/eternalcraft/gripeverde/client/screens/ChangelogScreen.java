@@ -65,6 +65,18 @@ public class ChangelogScreen extends Screen {
     private static final java.util.regex.Pattern VERSION_HEAD =
         java.util.regex.Pattern.compile("^(?:Version\\s+)?(\\d+)\\.(\\d+)\\.(\\d+)");
 
+    // v0.29.0: la lupa de la bitacora — un cuadrito al pie, a la derecha,
+    // donde el lector escribe una palabra y la cronica lo lleva de una
+    // aparicion a la siguiente (Enter/Shift+Enter). Esc la cierra y la
+    // bitacora olvida la pregunta. Se abre con "/" o Ctrl+F.
+    private static final int SEARCH_W = 96;
+    private static final int SEARCH_H = 12;
+    private static final int SEARCH_MAX = 24;
+    private boolean searchOpen = false;
+    private final StringBuilder searchText = new StringBuilder();
+    private final java.util.List<Integer> searchHits = new java.util.ArrayList<>();
+    private int searchHitPos = -1;
+
     // v0.27.0 (V4): la entrada recien llegada se escribe letra a letra en
     // esta visita, y solo en esta. Una mano segura: minimo 170 caracteres
     // por segundo, nunca mas de 6,5 segundos de escritura. Un gesto del
@@ -484,6 +496,23 @@ public class ChangelogScreen extends Screen {
                         }
                         penConsumed += len;
                     } else {
+                        // v0.29.0: la aparicion actual de la lupa se asienta
+                        // sobre un fondo tenue; las demas llevan piquito.
+                        if (!searchHits.isEmpty() && searchText.length() > 0
+                                && row.type != LT.GAP && row.type != LT.SEPARATOR) {
+                            boolean isHit = searchHits.contains(ri);
+                            if (isHit) {
+                                boolean isCurrent = searchHitPos >= 0
+                                    && ri == searchHits.get(searchHitPos);
+                                if (isCurrent) {
+                                    g.fill(cx - 3, y - 1, cx + cw - 6, y + h - 1,
+                                        DiaryTheme.withAlpha(DiaryTheme.BRONZE, 20));
+                                }
+                                g.fill(cx - 7, y + 1, cx - 4, y + Math.min(h - 2, 9),
+                                    DiaryTheme.withAlpha(DiaryTheme.BRONZE,
+                                        isCurrent ? 220 : 130));
+                            }
+                        }
                         renderRow(g, row, cx, y, cw);
                         if (freshRows.contains(row)) {
                             drawNewSeal(g, cx, y, cw);
@@ -527,7 +556,8 @@ public class ChangelogScreen extends Screen {
         }
 
         // v0.28.0: el folio de la bitacora, centrado al pie del papel.
-        // Avanza con la lectura: "folio N · M" (hoja actual de cuantas hay).
+        // v0.29.0: comparte la franja con la lupa — si no hay sitio para
+        // ambos, el folio se corre a la izquierda (nunca se pisan).
         if (!loadError) {
             int pages = Math.max(1, (int) Math.ceil((maxScroll + ch) / (double) ch));
             int cur = Math.max(1, Math.min(pages,
@@ -536,12 +566,17 @@ public class ChangelogScreen extends Screen {
             int fw = this.font.width(folio);
             int fx = px + (pw - fw) / 2;
             int fy = py + ph - 16;
+            int searchLeft = px + pw - 14 - SEARCH_W - 44; // lupa + contador
+            if (fx + fw + 18 > searchLeft) fx = px + 14;
             int orn = DiaryTheme.withAlpha(DiaryTheme.BRONZE, 110);
             g.fill(fx - 14, fy + 4, fx - 6, fy + 5, orn);
             g.fill(fx + fw + 6, fy + 4, fx + fw + 14, fy + 5, orn);
             g.drawString(this.font, folio, fx, fy,
                 DiaryTheme.withAlpha(DiaryTheme.SEPIA_LIGHT, 190), false);
         }
+
+        // v0.29.0: la lupa de la bitacora, al pie a la derecha.
+        drawSearchBox(g, px, py, pw, ph);
 
         super.render(g, mouseX, mouseY, partialTick);
 
@@ -598,6 +633,92 @@ public class ChangelogScreen extends Screen {
             + ((wrapped.size() == 1) ? firstLineExtra : 0) + 1;
         int ny = y + (wrapped.size() - 1) * lh;
         drawNibAt(g, nx, ny);
+    }
+
+    /** v0.29.0: la lupa, abierta o con su pista minima. */
+    private void drawSearchBox(GuiGraphics g, int px, int py, int pw, int ph) {
+        int sx = searchBoxX();
+        int sy = py + ph - 19;
+        boolean empty = searchText.length() == 0;
+        // Contador de apariciones a la izquierda del cuadro.
+        String count;
+        if (empty) {
+            count = isEnglishSelected() ? "/ or ctrl+f" : "/ o ctrl+f";
+        } else if (searchHits.isEmpty()) {
+            count = "0";
+        } else {
+            count = (searchHitPos + 1) + "/" + searchHits.size();
+        }
+        int cw2 = this.font.width(count);
+        g.drawString(this.font, count, sx - 8 - cw2, sy + 3,
+            DiaryTheme.withAlpha(DiaryTheme.BRONZE, empty ? 90 : 190), false);
+        // El cuadrito: tinta de fondo, filete bronce (mas vivo si abierto).
+        g.fill(sx - 1, sy - 1, sx + SEARCH_W + 1, sy + SEARCH_H + 1,
+            DiaryTheme.withAlpha(DiaryTheme.BRONZE, searchOpen ? 200 : 90));
+        g.fill(sx, sy, sx + SEARCH_W, sy + SEARCH_H, 0xE0120A05);
+        boolean en = isEnglishSelected();
+        if (empty) {
+            if (!searchOpen) {
+                g.drawString(this.font, en ? "search" : "buscar", sx + 4, sy + 3,
+                    DiaryTheme.withAlpha(DiaryTheme.SEPIA_LIGHT, 110), false);
+            }
+        } else {
+            String shown = this.font.plainSubstrByWidth(searchText.toString(), SEARCH_W - 8);
+            g.drawString(this.font, shown, sx + 4, sy + 3, DiaryTheme.INK, false);
+        }
+        if (searchOpen) {
+            String base = this.font.plainSubstrByWidth(searchText.toString(), SEARCH_W - 8);
+            int cxp = sx + 4 + this.font.width(base);
+            boolean caretOn = reducedFlashes()
+                || (System.currentTimeMillis() / 530L) % 2 == 0;
+            if (caretOn) {
+                g.fill(cxp + 1, sy + 2, cxp + 2, sy + SEARCH_H - 2,
+                    (200 << 24) | 0x8E6A35);
+            }
+        }
+    }
+
+    private int searchBoxX() {
+        return PANEL_MX + panelW() - 14 - SEARCH_W;
+    }
+
+    private boolean overSearchBox(double mouseX, double mouseY) {
+        int sx = searchBoxX();
+        int sy = PANEL_TOP + panelH() - 19;
+        return mouseX >= sx - 1 && mouseX <= sx + SEARCH_W + 1
+            && mouseY >= sy - 1 && mouseY <= sy + SEARCH_H + 1;
+    }
+
+    // Recuenta apariciones (texto simple, sin comodines) y salta a la primera.
+    private void searchRecalc() {
+        searchHits.clear();
+        searchHitPos = -1;
+        String needle = searchText.toString().toLowerCase(java.util.Locale.ROOT).trim();
+        if (needle.isEmpty()) return;
+        for (int i = 0; i < rows.size(); i++) {
+            Row r = rows.get(i);
+            if (r.type == LT.GAP || r.type == LT.SEPARATOR) continue;
+            if (r.text.toLowerCase(java.util.Locale.ROOT).contains(needle)) {
+                searchHits.add(i);
+            }
+        }
+        if (!searchHits.isEmpty()) {
+            searchHitPos = 0;
+            jumpToHit(0);
+        }
+    }
+
+    private void jumpToHit(int dir) {
+        if (searchHits.isEmpty()) return;
+        if (dir != 0) {
+            searchHitPos = Math.floorMod(searchHitPos + dir, searchHits.size());
+            com.eternalcraft.gripeverde.client.audio.UiSounds.scroll();
+        }
+        int idx = searchHits.get(searchHitPos);
+        int cw = contentW();
+        int off = 0;
+        for (int i = 0; i < idx; i++) off += rowHeight(rows.get(i), cw);
+        setScrollTarget(Math.max(0, off - contentH() / 3), false);
     }
 
     private void drawNibAt(GuiGraphics g, int nx, int ny) {
@@ -711,6 +832,11 @@ public class ChangelogScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        // v0.29.0: tocar la lupa le da la palabra (y no propaga el gesto).
+        if (button == 0 && overSearchBox(mouseX, mouseY)) {
+            searchOpen = true;
+            return true;
+        }
         if (button == 0 && overScrollbar(mouseX, mouseY)) {
             this.draggingScrollbar = true;
             setScrollFromMouse(mouseY);
@@ -782,7 +908,48 @@ public class ChangelogScreen extends Screen {
     }
 
     @Override
+    public boolean charTyped(char codePoint, int modifiers) {
+        // v0.29.0: con la lupa abierta, toda letra es pregunta.
+        if (searchOpen && searchText.length() < SEARCH_MAX
+                && (Character.isLetterOrDigit(codePoint) || codePoint == ' '
+                || codePoint == '-' || codePoint == '.' )) {
+            searchText.append(codePoint);
+            searchRecalc();
+            return true;
+        }
+        return super.charTyped(codePoint, modifiers);
+    }
+
+    @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        // v0.29.0: la lupa manda mientras esta abierta.
+        if (searchOpen) {
+            if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+                // La cruz la cierra y la bitacora olvida la pregunta.
+                searchOpen = false;
+                searchText.setLength(0);
+                searchHits.clear();
+                searchHitPos = -1;
+                return true;
+            }
+            if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+                jumpToHit(hasShiftDown() ? -1 : 1);
+                return true;
+            }
+            if (keyCode == GLFW.GLFW_KEY_BACKSPACE) {
+                if (searchText.length() > 0) {
+                    searchText.setLength(searchText.length() - 1);
+                    searchRecalc();
+                }
+                return true;
+            }
+        } else if (keyCode == GLFW.GLFW_KEY_SLASH && modifiers == 0) {
+            searchOpen = true;
+            return true;
+        } else if (keyCode == GLFW.GLFW_KEY_F && hasControlDown()) {
+            searchOpen = true;
+            return true;
+        }
         switch (keyCode) {
             case GLFW.GLFW_KEY_UP        -> { scrollByWithSound(-SCROLL_SPD);     return true; }
             case GLFW.GLFW_KEY_DOWN      -> { scrollByWithSound( SCROLL_SPD);     return true; }

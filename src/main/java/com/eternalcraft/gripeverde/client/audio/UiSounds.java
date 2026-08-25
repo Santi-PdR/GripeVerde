@@ -53,7 +53,7 @@ public class UiSounds {
         COOLDOWNS.put("click_create", 150L);
         COOLDOWNS.put("respawn", 300L);
         COOLDOWNS.put("error", 400L);
-        COOLDOWNS.put("knock", 480L);
+        // v0.29.0: la llave "knock" se retiro junto con silenceKnock.
     }
 
     // ── Primary API ──
@@ -135,10 +135,8 @@ public class UiSounds {
         safePlay("open", ModSounds.UI_OPEN, VOL_CLICK_SECTION, 1.02f + rand(0.04f));
     }
 
-    /** v0.26.0: el silencio responde — golpe obtuso, apenas audible. */
-    public static void silenceKnock() {
-        safePlay("knock", ModSounds.UI_ERROR, 0.10f, 0.55f);
-    }
+    // v0.29.0: silenceKnock retirado (pedido expreso del owner: nada de
+    // sonido al tocar en cualquier lado). UI_ERROR sigue cableado en error().
 
     public static void playRaw(SoundEvent sound, float volume, float pitch) {
         Minecraft mc = Minecraft.getInstance();

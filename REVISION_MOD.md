@@ -364,6 +364,14 @@ proyecto convendría confirmación del owner antes de implementar.
 > numéricos Java sobre los 60 archivos. Contenido de 0.24.0 intacto;
 > para distribuir (incluido Agus): usar **0.24.1**.
 >
+> **ADDENDUM 2026-08-24 (v0.29.0 - La vuelta y la lupa):** feedback del
+> owner — la transición de regreso ceremonial no gustaba. Rediseño:
+> vuelta cortés (170 ms, banda superior que se repliega; la ceremonia
+> completa queda solo para avanzar) + optimización del velo (cache por
+> clase, fast path costo cero) + retirado el golpe sordo al tocar
+> (`silenceKnock` fuera, a pedido expreso). La crónica gana lupa
+> (búsqueda por palabra con recorrido Enter/Shift+Enter).
+>
 > **ADDENDUM 2026-08-24 (v0.28.0 - Las gotas y los folios):** el pliegue
 > gana peso físico — gotas que resbalan del filo de tinta con rastro fino
 > — y la crónica gana folio al pie (hoja actual / total, viva con el

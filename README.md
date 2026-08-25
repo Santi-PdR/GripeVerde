@@ -5,6 +5,15 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
+**v0.29.0 - La vuelta y la lupa**
+
+Vuelta cortés: regresar de una mesa ya no corre la ceremonia completa de
+la tinta — la hoja cae de arriba en 170 ms y se acomoda; el barrido, las
+salpicaduras y las gotas quedan solo para avanzar. El escritorio ya no
+suena al tocarlo en silencio (pedido del dueño del estudio). Y la
+bitácora gana lupa: un cuadrito al pie para buscar una palabra y saltar
+de una aparición a la siguiente (Enter / Shift+Enter; Esc la olvida).
+
 **v0.28.0 - Las gotas y los folios**
 
 La tinta del pliegue ya no pasa en seco: del filo se desprenden gotas que
@@ -110,7 +119,7 @@ y publica el jar como artifact.
 
 ### Estado de entrega
 
-- Implementación vigente: rama `arena/01a02f45-gripeverde` (v0.28.0).
+- Implementación vigente: rama `arena/01a02f45-gripeverde` (v0.29.0).
 - Base: commit `4ca038d` (merge de la PR 14, v0.22.0 ya mergeada).
 - Validación estática y documental completada; árbol local y remoto limpio.
 - La compilación semántica contra Forge corre en el PC del owner y, una vez
