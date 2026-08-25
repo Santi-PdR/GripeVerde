@@ -5,6 +5,24 @@ de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
 que una seccion posterior lo mencione expresamente.
 
+## ESTADO: REPOSO (2026-08-24, tras la v0.30.0)
+
+El owner puso el proyecto en pausa y dejo anotada la proxima iteracion
+(detalle completo en CONTEXTO, decimocuarta vuelta):
+
+- **KI-66 (proximo)**: tres frentes anotados, NADA implementado aun:
+  (a) pluma: el rasguño debe sonar SOLO si la fila que se escribe esta a
+  la vista, y la tinta no debe correr por zonas fuera de pantalla (el
+  reporte: "se ve extraña cuando ya animo una parte y sigue la otra; el
+  sonido es constante y no para"); (b) rediseño cuaderno doble faz de la
+  cronica (2 hojas, 1 version por hoja, animacion de hoja doblando,
+  render Java puro; lupa/folio/lacre/huevos adaptados; validar GUI 4 con
+  ~170 px por hoja o fallback a hoja simple; reducedMotion sin giro) —
+  NO empezar sin reconfirmar; (c) segunda bajada de volumen de botones
+  (clicks ~-30%).
+- Sigue pendiente la validacion en cliente real de TODO lo entregado
+  (KI-53 a KI-65); jar candidato para Agus: 0.30.0.
+
 ## v0.30.0 - La hoja entera (2026-08-24)
 
 ### Cambios cerrados

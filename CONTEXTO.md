@@ -262,6 +262,64 @@ montaba sobre el texto en carteles bajos.
   25 cronicas in-game al dia. Espejo Python: 8/8 sellos + balance OK.
 - KI-60 registra la validacion pendiente en cliente real.
 
+### DECISION 2026-08-24 (decimocuarta vuelta): REPOSO — plan de la proxima iteracion
+
+El owner puso el proyecto EN REPOSO: "dejare en reposo ahora mismo...
+documenta todo para seguir mas tarde". NO hubo cambios de codigo: la
+v0.30.0 (3c598a6) queda como version vigente y candidata para Agus. Esto
+solo registra el plan de la proxima iteracion, con su contexto tecnico.
+
+**P1 — Pluma de la cronica: coherencia visual y sonora (correccion).**
+Feedback textual: "se ve extraña cuando ya animo una parte y sigue la
+otra; el sonido es constante y no para — deberia parar cuando NO estas
+viendo la parte que se anima". Diseno acordado para implementar:
+- El rasguño (UI_SCROLL quedo) solo suena si la fila que se esta
+  escribiendo es VISIBLE en pantalla en ese frame (check de bounds en el
+  loop de ChangelogScreen.render; hoy suena por tiempo transcurrido sin
+  mirar la vista).
+- La pluma deja de correr por tiempo en zonas fuera de vista: el
+  presupuesto se consume SOLO por filas visibles (la regla de piso de
+  0.30.0 ya cubre el pasado lejano). Efecto: nunca mas "una parte
+  escrita y otra siguiendo" — la tinta siempre trabaja delante del
+  lector.
+- Mantener: gracia de 300 ms tras el pliegue, click que completa todo,
+  reducedMotion = hoja entera.
+
+**P2 — CUADERNO DOBLE FAZ (rediseno grande de la cronica).** Propuesta
+del owner, queda AUTORIZADA como diseno para la proxima iteracion:
+- La cronica pasa de pergamino con scroll a CUADERNO de dos hojas
+  abiertas (izquierda/derecha), 1 version por hoja; botones "hoja
+  siguiente"/"hoja anterior" (+ flechas de teclado y rueda = pasar de
+  hoja) y animacion de LA HOJA DOBLANDOSE (fake 2D por render puro:
+  trapezoide/degradado que se cierra con sombra; sin texturas).
+- La pluma, si se conserva, escribe solo la hoja en vista al llegar.
+- Conservar del sistema actual: la lupa (ahora salta a la HOJA que
+  contiene la palabra: indice version→hoja), el folio (N/M = hojas), el
+  lacre multi-edicion, el sello NUEVO, y los huevos: el folio escondido
+  pasa a ser "hoja sin numerar" tras la ultima hoja; los asteriscos del
+  encuadernador se reubican en el margen de la espina (centro del
+  cuaderno) para que sigan encontrables.
+- Reglas de siempre: reducedMotion = paso de hoja instantaneo o fundido
+  sin giro; reduceFlashes = sin brillo en el doblado; GUI 2/3/4 con
+  minimo ancho comprobado (cada hoja queda mas angosta: validar wrap a
+  ~170 px y, si no entra en escala 4, modo hoja simple como fallback);
+  minimal mode sin adornos extra.
+- Esfuerzo estimado ALTO: reescritura de ChangelogScreen (paginacion por
+  version, wrap por hoja, animacion de giro). NO empezar sin reconfirmar
+  con el owner al retomar (el dijo "seria bueno" entre alternativas).
+
+**P3 — Volumen de botones, segunda pasada.** Feedback: "sigue siendo
+alto" tras el -40% de hovers de 0.30.0. Plan: VOL_CLICK_MAIN 0.22→0.16,
+VOL_CLICK_SECTION 0.18→0.13, VOL_BACK 0.20→0.15 (y derivados: toggle,
+cleanClick, tab heredan las familias). Reevaluar tambien el cooldown de
+hover si al owner le sigue pareciendo "machacon".
+
+**Estado operativo al retomar:** repo en paz en 0.30.0; validar KI-53 a
+KI-65 sigue pendiente (owner no confirmo en cliente); orden sugerido de
+la proxima sesion: P3 (5 min) → P1 (correccion corta) → P2 solo con
+visto bueno explicito. Backups vigentes: bundles pre-v0.26.0…pre-v0.30.0
+fuera del repo (raiz del workspace).
+
 ### DECISION 2026-08-24 (decimotercera vuelta): v0.30.0 - La hoja entera
 
 Feedback del owner tras la 0.29.0: "muy bien quedo [la vuelta]. En el
@@ -431,16 +489,16 @@ en TODAS las interfaces; y haz un backup antes."
 
 ### SIGUIENTE PASO OPERATIVO VIGENTE
 
-No implementar planes de gameplay ni los items de "propuestas futuras"/
-"propuestas visibles" de REVISION_MOD.md sin autorizacion expresa del
-owner. La secuencia vigente: activar la CI con `tools/ci/activar-ci.ps1`,
-validar KI-53 a KI-65 en cliente real (en particular reenviar
-el jar 0.30.0 al jugador que reporto el crash y comprobar que el
-ambiente
-ya se escucha, el sentido del pliegue y la pluma de la cronica, con
-atencion a que los loops nuevos no tapen la musica),
-corregir solo si esa prueba encuentra defectos y, despues, autorizar
-tag/release (ultima version estable validada; con los pendientes de
+PROYECTO EN REPOSO (orden del owner del 2026-08-24, ver decimocuarta
+vuelta). Al retomar: (1) validar KI-53 a KI-65 en cliente real con el
+jar 0.30.0 (incluye reenviarlo al jugador que reporto el crash y mirar
+especialmente pluma/lupa/vuelta cortes), (2) ejecutar el plan anotado:
+P3 clicks mas bajos → P1 pluma coherente (rasguño solo si la fila que se
+escribe esta a la vista; tinta solo delante del lector) → P2 cuaderno
+doble faz SOLO con visto bueno fresco del owner. No implementar planes
+de gameplay ni los items de "propuestas futuras"/"propuestas visibles"
+de REVISION_MOD.md sin autorizacion expresa. Tag/release: deliberadamente
+ausentes hasta validacion real (ultima estable validada; pendientes de
 v0.23.x y v0.22.0).
 
 ## Addendum operativo archivado (v0.22.0)
@@ -511,7 +569,8 @@ verificó el bundle externo
   de pantallas, toggle de movimiento reducido y prueba controlada de
   recuperacion de memoria.
 
-### SIGUIENTE PASO OPERATIVO VIGENTE
+### SIGUIENTE PASO OPERATIVO (instantanea historica de la v0.22.0 — la
+### secuencia vigente de verdad es la primera de este documento)
 
 No implementar los planes de gameplay que aparecen en bloques historicos de
 este documento. La unica secuencia vigente es cerrar KI-52 en un cliente

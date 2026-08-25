@@ -364,6 +364,18 @@ proyecto convendría confirmación del owner antes de implementar.
 > numéricos Java sobre los 60 archivos. Contenido de 0.24.0 intacto;
 > para distribuir (incluido Agus): usar **0.24.1**.
 >
+> **ADDENDUM 2026-08-24 (REPOSO — plan anotado por el owner):** el proyecto
+> queda en pausa en la v0.30.0. Próxima iteración autorizada de palabra:
+> **(a)** pluma de la crónica coherente — rasguño solo si la fila que se
+> escribe está a la vista y la tinta ya no corre por zonas fuera de
+> pantalla; **(b)** rediseño **cuaderno doble faz**: dos hojas abiertas,
+> 1 versión por hoja, animación de hoja doblando (render Java puro), con
+> lupa/folio/lacre/huevos adaptados (validar wrap ~170 px en GUI 4;
+> fallback a hoja simple si no entra; reducedMotion = giro instantáneo);
+> **(c)** segunda bajada de volumen de botones (clicks −30 % aprox).
+> Detalle completo en CONTEXTO (decimocuarta vuelta). No empezar (b) sin
+> visto bueno al retomar.
+>
 > **ADDENDUM 2026-08-24 (v0.30.0 - La hoja entera):** feedback del
 > owner — la pluma ahora escribe la bitácora entera al ritmo del lector
 > (regla de piso: sin huecos al bajar de golpe), la lupa se arregló
