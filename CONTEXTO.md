@@ -8,8 +8,8 @@
   arena/01a02cee-gripeverde" que sobreviven en el historico son instantaneas
   archivadas, no instrucciones.
 - Base respaldada: v0.22.0, commit `4ca038ddab972ca59435353330c9ccda4a86d581`.
-- Implementacion vigente: v0.29.0 en esta rama (ver DECISIONES 2026-08-24
-  duodecima vuelta, mas abajo).
+- Implementacion vigente: v0.30.0 en esta rama (ver DECISIONES 2026-08-24
+  decimotercera vuelta, mas abajo).
 - Restricciones funcionales absolutas: escena completa, faroles permanentes,
   sin kiosco/Heraldo, sin modo automatico por FPS, sin gameplay y sin
   resourcepacks.
@@ -262,6 +262,34 @@ montaba sobre el texto en carteles bajos.
   25 cronicas in-game al dia. Espejo Python: 8/8 sellos + balance OK.
 - KI-60 registra la validacion pendiente en cliente real.
 
+### DECISION 2026-08-24 (decimotercera vuelta): v0.30.0 - La hoja entera
+
+Feedback del owner tras la 0.29.0: "muy bien quedo [la vuelta]. En el
+changelog queda raro que solo una parte se escriba — corregilo (que todo
+se escriba o que se esconda y al bajar se anime). En el buscador la
+letra no se ve. Baja el volumen de los tick de los botones. Y corregi
+que subtitulos/informacion bajo los subtitulos quedan solapados por
+botones. Tiene que estar bien en todas las interfaces."
+Backup previo: `GripeVerde-backup-pre-v0.30.0-6ac186f.bundle`.
+
+- Pluma de bitacora entera: preparePen abarca desde la H1 vigente hasta
+  el fin del documento (340 c/s tras gracia de 300 ms) + REGLA DE PISO
+  en el loop: fila mas de media pantalla por encima de la vista = ya
+  impresa, no gasta presupuesto → bajar de golpe no deja huecos y la
+  escritura sigue al ritmo del lector. Click completa; reducedMotion,
+  hoja entera.
+- Lupa legible: fondo PAPER claro (era tinta sobre tinta — errata
+  reconocida), texto INK, caret bronce. 
+- Hovers -40% (VOL_HOVER_MAIN 0.028 / SECTION 0.022).
+- Solapes corregidos: (a) dayMsg del titulo va a la IZQUIERDA de la
+  firma en la misma linea (antes flotaba sobre la mesa de botones) y la
+  firma clampa x>=48 (fuera de la franja del gramofo); (b) linea "fix"
+  del huevo Holloway con tope duro sobre gridTop-11 y divisor debajo;
+  (c) flavor de la sala de sonido se omite si no hay aire sobre los
+  sliders; (d) elipsis al ancho del papel en flavor/fix largos.
+- Bump sincronizado 0.30.0; 25 cronicas con vocabulario de documento
+  real; docs en regla. Espejo 8/8 + balance OK (61 Java; 35/35 sonidos).
+
 ### DECISION 2026-08-24 (duodecima vuelta): v0.29.0 - La vuelta y la lupa
 
 Feedback del owner tras jugar la 0.28.0: "me gusta lo que hiciste con la
@@ -406,8 +434,8 @@ en TODAS las interfaces; y haz un backup antes."
 No implementar planes de gameplay ni los items de "propuestas futuras"/
 "propuestas visibles" de REVISION_MOD.md sin autorizacion expresa del
 owner. La secuencia vigente: activar la CI con `tools/ci/activar-ci.ps1`,
-validar KI-53 a KI-64 en cliente real (en particular reenviar
-el jar 0.29.0 al jugador que reporto el crash y comprobar que el
+validar KI-53 a KI-65 en cliente real (en particular reenviar
+el jar 0.30.0 al jugador que reporto el crash y comprobar que el
 ambiente
 ya se escucha, el sentido del pliegue y la pluma de la cronica, con
 atencion a que los loops nuevos no tapen la musica),

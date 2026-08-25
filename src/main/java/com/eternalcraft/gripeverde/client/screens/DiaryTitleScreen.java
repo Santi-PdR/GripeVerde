@@ -588,11 +588,13 @@ public class DiaryTitleScreen extends Screen {
         // ORDEN NUEVO: nombre nuevo a la izquierda, nombre viejo tachado a la derecha
         // Esto se lee mejor: "el nuevo cronista, el anterior tachado"
 
-        // Firma nueva (izquierda) con temblor sutil
+        // v0.30.0: la firma jamas entra en la franja del gramofo (>>), y el
+        // mensaje del dia se lee a su IZQUIERDA, en la misma linea — antes
+        // flotaba encima y podia pisar la mesa de botones.
         double jitterX = Math.sin(System.currentTimeMillis() / 250.0) * 0.5
                        + Math.sin(System.currentTimeMillis() / 87.0) * 0.3;
         double jitterY = Math.cos(System.currentTimeMillis() / 310.0) * 0.4;
-        int newX = this.width - sw - oldSw - 16 + (int)Math.round(jitterX);
+        int newX = Math.max(48, this.width - sw - oldSw - 16) + (int)Math.round(jitterX);
         int newY = y + (int)Math.round(jitterY);
         // v0.21.25: firma limpia sin sombra.
         g.drawString(this.font, signature,
@@ -612,14 +614,18 @@ public class DiaryTitleScreen extends Screen {
         g.fill(oldX + 2, strikeY - 1, oldX + oldSw - 1, strikeY,
             com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0x00000000, 90));
 
-        // Mensaje del dia real (arriba de todo, alineado a la derecha del nombre viejo)
+        // Mensaje del dia real: a la IZQUIERDA de la firma, en la misma
+        // linea; si no hay aire suficiente (pantalla minuscula), se omite —
+        // nunca pisando botones ni saliendose del vidrio.
         String dayMsg = getDayMessage();
         if (!dayMsg.isEmpty()) {
             int dmw = this.font.width(dayMsg);
-            int dmAlpha = com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
-                com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_LIGHT, 90);
-            g.drawString(this.font, dayMsg,
-                this.width - dmw - 6, y - 10, dmAlpha, false);
+            int dayX = newX - dmw - 8;
+            if (dayX >= 48) {
+                int dmAlpha = com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
+                    com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_LIGHT, 90);
+                g.drawString(this.font, dayMsg, dayX, y, dmAlpha, false);
+            }
         }
     }
 

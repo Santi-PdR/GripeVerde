@@ -3,6 +3,10 @@
 
 
 
+## Version 0.30.0 - The whole leaf
+
+Corrections from the study's elder, carefully noted. The nib no longer writes a single entry while the others stand printed: the whole ledger now writes itself before the reader as they move down its leaves — what was left far above counts as printed, and jumping down never leaves gaps; a single touch finishes it all. The magnifier also learned to be read: its little box is now a label of clear paper with ink lettering, not a dark stain where the word got lost. The buttons' ticks as the hand passes over them lowered their voice. And three oversights of the press are amended: the signature line no longer nears the desk of buttons, the day's notice reads at its left on the same line, and the quotes of the cabinet and the sound room never again end up under buttons or outside the paper.
+
 ## Version 0.29.0 - The way back and the magnifier
 
 The way back turned courteous: returning from a desk to the one before no longer calls the full ink ceremony, only a brief gesture — the leaf falls from above, settles, and that is all; the long sweep, the sprinkles and the drops are now reserved for going forward. And the ledger gains a magnifier: at the foot of the page, to the right, there is a little box where the reader writes a word, and the chronicle carries them from one sighting to the next, marking every line where the word dwells; a gesture closes it and the ledger forgets the question. Also, the desk no longer answers with a dull knock when touched in silence: the owner of this study asked for silence and silence there shall be. And the page-turning had its screws tightened: when there is no ink in the air, the cabinet spends not an instant pretending there is.

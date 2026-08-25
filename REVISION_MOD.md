@@ -364,6 +364,13 @@ proyecto convendría confirmación del owner antes de implementar.
 > numéricos Java sobre los 60 archivos. Contenido de 0.24.0 intacto;
 > para distribuir (incluido Agus): usar **0.24.1**.
 >
+> **ADDENDUM 2026-08-24 (v0.30.0 - La hoja entera):** feedback del
+> owner — la pluma ahora escribe la bitácora entera al ritmo del lector
+> (regla de piso: sin huecos al bajar de golpe), la lupa se arregló
+> (papel claro, letra tinta — era tinta sobre tinta), hovers −40 % y
+> cuatro solapes de texto corregidos (firma/dayMsg del título, línea fix
+> de Holloway en el gabinete, flavor de sonido, elipsis al ancho).
+>
 > **ADDENDUM 2026-08-24 (v0.29.0 - La vuelta y la lupa):** feedback del
 > owner — la transición de regreso ceremonial no gustaba. Rediseño:
 > vuelta cortés (170 ms, banda superior que se repliega; la ceremonia

@@ -5,6 +5,15 @@ Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Version actual
 
+**v0.30.0 - La hoja entera**
+
+La pluma ya no escribe un tramo solo: la bitácora entera se escribe al
+ritmo de tu lectura mientras bajás (lo lejano arriba se da por impreso;
+sin huecos jamás). La lupa se arregló — etiqueta de papel claro con
+letra de tinta, se lee perfecto. Los ticks de hover bajaron la voz. Y
+los textos que quedaban bajo botones (mensaje del día, la línea corregida
+de Holloway, citas de sonido) ya nunca se pisan ni se salen del papel.
+
 **v0.29.0 - La vuelta y la lupa**
 
 Vuelta cortés: regresar de una mesa ya no corre la ceremonia completa de
@@ -119,7 +128,7 @@ y publica el jar como artifact.
 
 ### Estado de entrega
 
-- Implementación vigente: rama `arena/01a02f45-gripeverde` (v0.29.0).
+- Implementación vigente: rama `arena/01a02f45-gripeverde` (v0.30.0).
 - Base: commit `4ca038d` (merge de la PR 14, v0.22.0 ya mergeada).
 - Validación estática y documental completada; árbol local y remoto limpio.
 - La compilación semántica contra Forge corre en el PC del owner y, una vez

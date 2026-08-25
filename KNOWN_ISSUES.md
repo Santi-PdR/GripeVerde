@@ -5,6 +5,37 @@ de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
 que una seccion posterior lo mencione expresamente.
 
+## v0.30.0 - La hoja entera (2026-08-24)
+
+### Cambios cerrados
+- **Backup previo**: `/home/user/GripeVerde-backup-pre-v0.30.0-6ac186f.bundle`
+  (--all, verificado).
+- **Pluma de bitacora entera** (feedback owner: "una parte si otra no
+  quedaba rara"): la escritura cubre desde la entrada vigente hasta el
+  fin del documento, al ritmo del lector; regla de piso (lo lejano
+  arriba de media pantalla ya impreso) — sin huecos al bajar de golpe.
+- **Lupa ilegible corregida** (errata propia): papel claro + letra de
+  tinta (era tinta sobre tinta).
+- **Hovers -40%** (pedido).
+- **Solapes de texto corregidos** (reporte owner): mensaje del dia a la
+  izquierda de la firma (ya no sobre los botones), firma nunca en la
+  franja del gramofo, linea fix de Holloway con clamp sobre la grilla y
+  divisor debajo, flavor de sonido omitido si no hay aire sobre los
+  sliders; elipsis al ancho del papel en citas largas.
+
+### Riesgos activos / KI nuevos
+- **KI-65 (v0.30.0)**: validar en cliente real: (a) la pluma cubre toda
+  la bitacora al bajar (entrada a entrada, pareja), nunca huecos al
+  bajar rapido con la barra, el click lo cierra todo y la segunda visita
+  llega impresa; (b) la lupa se LEE (papel claro/letra tinta) y sigue
+  recorriendo con Enter; (c) los hovers suenan percibiblemente mas bajos
+  sin desaparecer; (d) los textos del titulo (firma + mensaje del dia en
+  fecha especial), del gabinete (sabor + linea fix con Holloway
+  descubierto) y de la sala de sonido NUNCA quedan bajo botones ni fuera
+  del papel en GUI scale 2/3/4 y minimal; (e) regresion nula: vuelta
+  cortes, pluma-gracia, lacre multi-edicion, folio intactos.
+- KI-53 a KI-64 siguen abiertos; jar candidato para Agus: **0.30.0**.
+
 ## v0.29.0 - La vuelta y la lupa (2026-08-24)
 
 ### Cambios cerrados

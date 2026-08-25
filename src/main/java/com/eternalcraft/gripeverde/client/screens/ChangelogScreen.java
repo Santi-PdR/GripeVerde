@@ -78,12 +78,16 @@ public class ChangelogScreen extends Screen {
     private int searchHitPos = -1;
 
     // v0.27.0 (V4): la entrada recien llegada se escribe letra a letra en
-    // esta visita, y solo en esta. Una mano segura: minimo 170 caracteres
-    // por segundo, nunca mas de 6,5 segundos de escritura. Un gesto del
-    // lector (click) la completa al instante; con movimiento reducido la
-    // hoja llega entera, sin escritura.
-    private static final int PEN_CPS = 170;
-    private static final long PEN_MAX_MS = 6500L;
+    // esta visita, y solo en esta. Un gesto del lector (click) la completa
+    // al instante; con movimiento reducido la hoja llega entera.
+    // v0.29.0: — el rasguño acompaña por tramos.
+    // v0.30.0 (feedback del owner): nada de "una parte si, otra no" — la
+    // escritura cubre TODA la bitacora desde la entrada vigente hasta el
+    // final: mientras el lector baja, la pluma lo va alcanzando; lo que
+    // quedo mas de media pantalla por encima se considera ya impreso
+    // (bajar de golpe con la barra jamas deja huecos), y el click sigue
+    // completando todo al instante.
+    private static final int PEN_CPS = 340;
     // Gracia para que el pliegue de 0.26.0 termine de destapar la hoja
     // antes del primer trazo (la pluma no escribe bajo la cortina).
     private static final long PEN_GRACE_MS = 300L;
@@ -354,9 +358,10 @@ public class ChangelogScreen extends Screen {
         penTotalChars = 0;
         if (reducedMotion()) return; // la hoja llega entera, sin escritura
         if (h1Index < 0 || h1Index >= rows.size()) return;
+        // v0.30.0: desde la entrada vigente HASTA EL FIN de la bitacora.
         int end = h1Index + 1;
         int total = rows.get(h1Index).text.length();
-        while (end < rows.size() && rows.get(end).type != LT.H1) {
+        while (end < rows.size()) {
             Row r = rows.get(end);
             if (r.type != LT.GAP && r.type != LT.SEPARATOR) total += r.text.length();
             end++;
@@ -451,9 +456,7 @@ public class ChangelogScreen extends Screen {
                 long nowPen = System.currentTimeMillis();
                 if (penStartMs <= 0L) penStartMs = nowPen;
                 long ageMs = Math.max(0L, nowPen - penStartMs - PEN_GRACE_MS);
-                long fastLane = penTotalChars * ageMs / PEN_MAX_MS;
-                long steady = PEN_CPS * ageMs / 1000L;
-                penBudget = (int) Math.min(penTotalChars, Math.max(fastLane, steady));
+                penBudget = (int) Math.min(penTotalChars, PEN_CPS * ageMs / 1000L);
                 // El rasguño quedo de la pluma: un tramo de texto por golpe.
                 int writtenNow = Math.min(penBudget, penTotalChars);
                 if (writtenNow - penScratchChars >= 42 && nowPen - lastPenScratchMs > 120L) {
@@ -477,7 +480,12 @@ public class ChangelogScreen extends Screen {
                     if (inPenEntry) {
                         int len = (row.type == LT.GAP || row.type == LT.SEPARATOR)
                             ? 0 : row.text.length();
-                        int vis = Math.max(0, Math.min(len, penBudget - penConsumed));
+                        // v0.30.0: lo que quedo mas de media pantalla por
+                        // encima de la vista ya anda impreso y no le gasta
+                        // tinta al presente (bajar de golpe jamas deja huecos).
+                        boolean longGone = (y + h < cy - ch / 2);
+                        int vis = longGone ? len
+                            : Math.max(0, Math.min(len, penBudget - penConsumed));
                         if (vis >= len) {
                             renderRow(g, row, cx, y, cw);
                             if (freshRows.contains(row)) {
@@ -494,7 +502,8 @@ public class ChangelogScreen extends Screen {
                                 drawPenNib(g, row, cx, y, cw, vis);
                             }
                         }
-                        penConsumed += len;
+                        // El pasado lejano no gasta tinta del presente.
+                        penConsumed += longGone ? 0 : len;
                     } else {
                         // v0.29.0: la aparicion actual de la lupa se asienta
                         // sobre un fondo tenue; las demas llevan piquito.
@@ -519,8 +528,13 @@ public class ChangelogScreen extends Screen {
                         }
                     }
                 } else if (inPenEntry) {
-                    penConsumed += (row.type == LT.GAP || row.type == LT.SEPARATOR)
-                        ? 0 : row.text.length();
+                    // v0.30.0: misma regla de piso para filas fuera de vista —
+                    // solo gasta tinta lo cercano a la hoja visible.
+                    boolean longGone = (y + h < cy - ch / 2);
+                    if (!longGone) {
+                        penConsumed += (row.type == LT.GAP || row.type == LT.SEPARATOR)
+                            ? 0 : row.text.length();
+                    }
                 }
                 y += h;
             }
@@ -652,10 +666,12 @@ public class ChangelogScreen extends Screen {
         int cw2 = this.font.width(count);
         g.drawString(this.font, count, sx - 8 - cw2, sy + 3,
             DiaryTheme.withAlpha(DiaryTheme.BRONZE, empty ? 90 : 190), false);
-        // El cuadrito: tinta de fondo, filete bronce (mas vivo si abierto).
+        // v0.30.0: etiqueta de PAPEL clara con letra de tinta — antes era
+        // tinta sobre tinta y la letra no se veia (errata reconocida).
         g.fill(sx - 1, sy - 1, sx + SEARCH_W + 1, sy + SEARCH_H + 1,
             DiaryTheme.withAlpha(DiaryTheme.BRONZE, searchOpen ? 200 : 90));
-        g.fill(sx, sy, sx + SEARCH_W, sy + SEARCH_H, 0xE0120A05);
+        g.fill(sx, sy, sx + SEARCH_W, sy + SEARCH_H,
+            DiaryTheme.withAlpha(DiaryTheme.PAPER, 240));
         boolean en = isEnglishSelected();
         if (empty) {
             if (!searchOpen) {

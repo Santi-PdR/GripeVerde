@@ -1,5 +1,44 @@
 # Eternal Craft: Gripe Verde
 
+## v0.30.0 - La hoja entera
+
+Feedback del owner tras la 0.29.0: la vuelta quedo bien, pero la pluma
+que escribe solo UN tramo queda rara; la letra de la lupa no se veia;
+los ticks de hover muy altos; y hay textos pisados por botones. Backup
+externo previo (`/home/user/GripeVerde-backup-pre-v0.30.0-6ac186f.bundle`,
+--all, verificado).
+
+- **La pluma escribe la bitacora ENTERA** (fusion de sus dos propuestas):
+  desde la entrada vigente hasta el fin del documento, el texto se
+  escribe mientras el lector baja (ritmo 340 chars/s tras 300 ms de
+  gracia). Regla de piso: lo que queda mas de media pantalla por encima
+  se considera impreso y no gasta tinta — bajar de golpe con la barra
+  jamas deja huecos, y quien sube encuentra todo seco. El click sigue
+  completando todo al instante; con movimiento reducido, hoja entera.
+- **La lupa ya se lee**: el cuadrito era tinta sobre tinta (errata
+  reconocida) — ahora es etiqueta de papel claro (`PAPER` al 240) con
+  letra de tinta; caret bronce legible sobre ella.
+- **Ticks de hover -40%**: `VOL_HOVER_MAIN` 0.045→0.028,
+  `VOL_HOVER_SECTION` 0.035→0.022 (pedido expreso). Clicks intactos.
+- **Fixes de solape (reporte del owner)**:
+  - Título: el mensaje del día ya no flota sobre la mesa de botones — se
+    lee a la IZQUIERDA de la firma en la misma línea (se omite si no hay
+    aire), y la firma jamas entra en la franja del gramofo (max clamp
+    x≥48).
+  - Gabinete de opciones: la línea "(no: la tinta ya no seca)" del huevo
+    Holloway quedaba DEBAJO de la primera fila de botones — ahora clamp
+    duro sobre la grilla, divisor siempre por debajo, y flavor/fix con
+    elipsis al ancho del papel.
+  - Sala de sonido: la cita del flavor se omite si no hay aire real
+    sobre los sliders, y con elipsis al ancho del panel.
+- Interfaces debidas: pluma y marcas en pixeles logicos dentro del
+  scissor; clamps de texto probados en GUI scale 2/3/4 y minimal mode;
+  reducedMotion y reduceFlashes respetados en todo lo nuevo (KI-65).
+
+Conteos: 61 Java, 25 lang (93 claves), 25 cronicas, 35 eventos de sonido
+(los 35 en uso; allowlist legacy vacia), 42 OGG. Espejo Python: 8/8 sellos
++ balance OK.
+
 ## v0.29.0 - La vuelta y la lupa
 
 Feedback directo del owner tras jugar la 0.28.0: la cronica gusta, la

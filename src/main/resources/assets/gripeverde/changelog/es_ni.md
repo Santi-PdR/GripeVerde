@@ -3,6 +3,10 @@
 
 
 
+## Version 0.30.0 - La hoja entera
+
+Correcciones del abuelo del estudio, anotadas con cuidado. La pluma ya no escribe una sola entrada dejando las demás impresas: ahora la bitácora entera se va escribiendo delante del lector a medida que baja por sus hojas — lo que quedó atrás, muy arriba, se da por impreso, y bajar de golpe jamás deja huecos; un toque lo termina todo. La lupa, además, aprendió a leerse: su cuadrito es ahora una etiqueta de papel claro con letra de tinta, y no una mancha oscura donde la palabra se perdía. Los toques de los botones al pasarles la mano bajaron la voz. Y tres descuidos de la imprenta quedaron enmendados: el renglón de la firma ya no se acerca a la mesa de botones, el aviso del día se lee a su izquierda en la misma línea, y las citas del gabinete y de la sala de sonido jamás vuelven a quedar bajo los botones ni fuera del papel.
+
 ## Version 0.29.0 - La vuelta y la lupa
 
 La vuelta se volvió cortés: al regresar de una mesa a la anterior ya no corre toda la ceremonia de la tinta, sino un gesto breve — la hoja cae de arriba, se acomoda, y listo; el barrido largo, las salpicaduras y las gotas quedan reservados para ir hacia adelante. Y la bitácora gana lupa: al pie del papel, a la derecha, hay un cuadrito donde el lector escribe una palabra y la crónica lo lleva de una aparición a la siguiente, señalando cada renglón donde la palabra mora; la cruz la cierra y la bitácora olvida la pregunta. Además, el escritorio ya no responde con golpe sordo al tocarlo en silencio: el dueño del estudio pidió silencio y silencio habrá. Y el pasar de hojas se apretó los tornillos: cuando no hay tinta en el aire, el gabinete no gasta ni un instante en fingir que la hay.

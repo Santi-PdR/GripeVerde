@@ -235,9 +235,16 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
         // --- Flavor ---
+        // v0.30.0: solo si hay aire real sobre los sliders; jamas pisado,
+        // jamas al medio. Si el panel es bajo, se omite.
         String flavor = Component.translatable("gripeverde.options.sound.flavor").getString();
-        int flvWC = this.font.width(flavor);
-        g.drawString(this.font, flavor, (this.width - flvWC) / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
+        int sliderTop = this.panelY + this.panelH - 82;
+        if (titleY + 24 + this.font.lineHeight <= sliderTop - 6) {
+            String flavorShown = this.font.width(flavor) <= this.panelW - 32 ? flavor
+                : this.font.plainSubstrByWidth(flavor, Math.max(0, this.panelW - 32 - this.font.width("..."))) + "...";
+            int flvWC = this.font.width(flavorShown);
+            g.drawString(this.font, flavorShown, (this.width - flvWC) / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
+        }
 
         // --- Divisor superior ---
         int divY1 = titleY + 42;

@@ -20,8 +20,9 @@ import java.util.Map;
 public class UiSounds {
 
     // Tuned volumes (base before user settings)
-    private static final float VOL_HOVER_MAIN    = 0.045f;
-    private static final float VOL_HOVER_SECTION = 0.035f;
+    // v0.29.0/0.30.0: el owner pidio los ticks de hover mas bajos (-40%).
+    private static final float VOL_HOVER_MAIN    = 0.028f;
+    private static final float VOL_HOVER_SECTION = 0.022f;
     private static final float VOL_CLICK_MAIN    = 0.22f;
     private static final float VOL_CLICK_SECTION = 0.18f;
     private static final float VOL_BACK          = 0.20f;
