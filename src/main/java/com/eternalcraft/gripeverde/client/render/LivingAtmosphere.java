@@ -34,11 +34,7 @@ public class LivingAtmosphere {
 
     /** Accesibilidad: congela la animacion ambiental sin retirar la composicion. */
     private static boolean reducedMotion() {
-        try {
-            return com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get();
-        } catch (IllegalStateException ignored) {
-            return false;
-        }
+        return com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
     }
 
     private static float time = 0f;

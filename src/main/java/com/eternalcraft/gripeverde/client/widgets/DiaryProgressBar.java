@@ -30,6 +30,10 @@ public final class DiaryProgressBar {
 
     private DiaryProgressBar() {}
 
+    private static boolean reducedMotion() {
+        return com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
+    }
+
     public static void draw(GuiGraphics g, int x, int y, int w, int h, float progress) {
         draw(g, x, y, w, h, progress, null, Style.INK, -1f);
     }
@@ -69,7 +73,8 @@ public final class DiaryProgressBar {
         if (fillW > 0) {
             int pulse = 255;
             if (style == Style.ALERT) {
-                pulse = 200 + (int) (55 * (0.5f + 0.5f * (float) Math.sin(System.currentTimeMillis() / 620.0)));
+                pulse = reducedMotion() ? 228
+                    : 200 + (int) (55 * (0.5f + 0.5f * (float) Math.sin(System.currentTimeMillis() / 620.0)));
             }
             g.fill(innerX, innerY, innerX + fillW, innerY + innerH, DiaryTheme.withAlpha(style.fill, pulse));
             g.fill(innerX, innerY, innerX + fillW, innerY + 1, style.highlight);

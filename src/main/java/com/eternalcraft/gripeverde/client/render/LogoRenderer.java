@@ -12,8 +12,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class LogoRenderer {
 
     private static boolean reducedMotion() {
-        try { return com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get(); }
-        catch (IllegalStateException ignored) { return false; }
+        return com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
     }
 
     // Rotating chronicle note pool. Kept localized so language changes do not

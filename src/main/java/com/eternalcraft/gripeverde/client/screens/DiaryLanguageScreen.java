@@ -40,6 +40,10 @@ public class DiaryLanguageScreen extends Screen {
     private static final int INK_PENDING = 0xFF3A230F;
     private static final int INK_NORMAL  = 0xFF6B4A2E;
 
+    private static boolean reducedMotion() {
+        return com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
+    }
+
     private final Screen parent;
     private final Options options;
     private final LanguageManager languageManager;
@@ -457,7 +461,8 @@ public class DiaryLanguageScreen extends Screen {
                 }
                 String name = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
                     ? "Tongue of the Fog" : "Lengua de la Niebla";
-                int pulse = 90 + (int)(Math.sin(System.currentTimeMillis() / 600.0) * 40);
+                int pulse = reducedMotion() ? 90
+                    : 90 + (int)(Math.sin(System.currentTimeMillis() / 600.0) * 40);
                 int w2 = DiaryLanguageScreen.this.font.width(name);
                 g.drawString(DiaryLanguageScreen.this.font, name,
                     left + FLAG_SLOT + (rowWidth - FLAG_SLOT - w2) / 2,

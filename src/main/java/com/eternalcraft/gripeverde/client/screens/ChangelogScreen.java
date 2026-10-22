@@ -376,8 +376,7 @@ public class ChangelogScreen extends Screen {
     }
 
     private static boolean reducedMotion() {
-        try { return com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get(); }
-        catch (Throwable t) { return false; }
+        return com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
     }
 
     private static boolean reducedFlashes() {
@@ -550,7 +549,7 @@ public class ChangelogScreen extends Screen {
                 int hw = this.font.width(hidden);
                 int hx = cx + (cw - hw) / 2;
                 long pulse = System.currentTimeMillis();
-                int alpha = 120 + (int)(Math.sin(pulse / 640.0) * 40);
+                int alpha = reducedMotion() ? 120 : 120 + (int)(Math.sin(pulse / 640.0) * 40);
                 g.drawString(this.font, hidden, hx, fy, (alpha << 24) | 0x8E6A35, false);
                 g.fill(hx, fy + 11, hx + hw, fy + 12, (Math.min(120, alpha) << 24) | 0x8E6A35);
                 this.hiddenFolioRect = new int[]{ hx - 4, fy - 3, hw + 8, 18 };
@@ -685,7 +684,7 @@ public class ChangelogScreen extends Screen {
         if (searchOpen) {
             String base = this.font.plainSubstrByWidth(searchText.toString(), SEARCH_W - 8);
             int cxp = sx + 4 + this.font.width(base);
-            boolean caretOn = reducedFlashes()
+            boolean caretOn = reducedMotion() || reducedFlashes()
                 || (System.currentTimeMillis() / 530L) % 2 == 0;
             if (caretOn) {
                 g.fill(cxp + 1, sy + 2, cxp + 2, sy + SEARCH_H - 2,
@@ -739,8 +738,8 @@ public class ChangelogScreen extends Screen {
 
     private void drawNibAt(GuiGraphics g, int nx, int ny) {
         int a;
-        if (reducedFlashes()) {
-            a = 170; // destellos reducidos: tinta quieta
+        if (reducedMotion() || reducedFlashes()) {
+            a = 170; // movimiento o destellos reducidos: tinta quieta
         } else {
             a = 150 + (int)(55 * Math.sin(System.currentTimeMillis() / 170.0));
         }

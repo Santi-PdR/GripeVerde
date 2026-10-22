@@ -82,11 +82,7 @@ public class DiaryTitleScreen extends Screen {
     }
 
     private static boolean reducedMotion() {
-        try {
-            return com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get();
-        } catch (IllegalStateException ignored) {
-            return false;
-        }
+        return com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
     }
 
     @Override

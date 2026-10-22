@@ -119,9 +119,12 @@ public final class Discoveries {
         long now = System.currentTimeMillis();
         long remain = toastUntilMs - now;
         long age = now - toastStartMs;
+        boolean reducedMotion = com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
         int alpha = 235;
-        if (age < 320L) alpha = (int)(235 * age / 320L);
-        else if (remain < 600L) alpha = (int)(235 * remain / 600L);
+        if (!reducedMotion) {
+            if (age < 320L) alpha = (int)(235 * age / 320L);
+            else if (remain < 600L) alpha = (int)(235 * remain / 600L);
+        }
         alpha = Math.max(0, Math.min(235, alpha));
 
         boolean english = isEnglish();

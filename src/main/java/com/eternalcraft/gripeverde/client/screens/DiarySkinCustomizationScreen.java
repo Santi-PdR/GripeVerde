@@ -35,6 +35,10 @@ public class DiarySkinCustomizationScreen extends Screen {
 
     private int panelX, panelY;
 
+    private static boolean reducedMotion() {
+        return com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
+    }
+
     // v0.16.0: el espejo de la niebla
     private long mirrorViewUntilMs = 0L;
     private long mirrorViewStartMs = 0L;
@@ -198,8 +202,10 @@ public class DiarySkinCustomizationScreen extends Screen {
                 // Asi te ve la niebla: silueta sin detalles
                 float t = (now - mirrorViewStartMs) / 3000f;
                 int a = 190;
-                if (now - mirrorViewStartMs < 400L) a = (int)(190 * (now - mirrorViewStartMs) / 400L);
-                else if (mirrorViewUntilMs - now < 500L) a = (int)(190 * (mirrorViewUntilMs - now) / 500L);
+                if (!reducedMotion()) {
+                    if (now - mirrorViewStartMs < 400L) a = (int)(190 * (now - mirrorViewStartMs) / 400L);
+                    else if (mirrorViewUntilMs - now < 500L) a = (int)(190 * (mirrorViewUntilMs - now) / 500L);
+                }
                 gfx.fill(0, 0, this.width, this.height, (Math.min(210, a + 20) << 24) | 0x0A0C08);
                 int mx = this.width / 2;
                 int my = this.height / 2;
@@ -238,7 +244,8 @@ public class DiarySkinCustomizationScreen extends Screen {
         gfx.fill(x - 2, y + 4, x, y + 20, frame);
         gfx.fill(x + 18, y + 4, x + 20, y + 20, frame);
         // Vidrio: reflejo tenue que respira
-        float breath = (float)(Math.sin(System.currentTimeMillis() / 1100.0) * 0.5 + 0.5);
+        float breath = reducedMotion() ? 0.5f
+            : (float)(Math.sin(System.currentTimeMillis() / 1100.0) * 0.5 + 0.5);
         int glass = 0xC040384A;
         gfx.fill(x, y, x + 18, y + 24, glass);
         gfx.fill(x + 2, y + 2, x + 8, y + 10, com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0xC8D8E0, 40 + (int)(breath * 30)));

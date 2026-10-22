@@ -151,7 +151,7 @@ public class DiaryPauseScreen extends PauseScreen {
 
 
     public void tick() {
-        animTick++;
+        if (!reducedMotion()) animTick++;
         // v0.16.0: el aliento del otro lado del vidrio.
         try {
             long now = System.currentTimeMillis();
@@ -313,7 +313,7 @@ public class DiaryPauseScreen extends PauseScreen {
                     DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 96));
                 // Solo a oscuras se lee esto
                 long now = System.currentTimeMillis();
-                int pulse = 60 + (int)(Math.sin(now / 650.0) * 24);
+                int pulse = reducedMotion() ? 60 : 60 + (int)(Math.sin(now / 650.0) * 24);
                 boolean en = isEnglishSelected();
                 String dark = en ? "the darkness reads too" : "la oscuridad tambien lee";
                 int dw = this.font.width(dark);
@@ -325,9 +325,11 @@ public class DiaryPauseScreen extends PauseScreen {
             if (breathUntilMs > now) {
                 long age = now - breathStartMs;
                 long remain = breathUntilMs - now;
-                int a = 26;
-                if (age < 1400L) a = (int)(26 * age / 1400L);
-                else if (remain < 1400L) a = (int)(26 * remain / 1400L);
+                int a = reducedMotion() ? 20 : 26;
+                if (!reducedMotion()) {
+                    if (age < 1400L) a = (int)(26 * age / 1400L);
+                    else if (remain < 1400L) a = (int)(26 * remain / 1400L);
+                }
                 if (a > 1) {
                     for (int r = 12; r > 2; r -= 3) {
                         int alpha = a * (13 - r) / 10;
@@ -340,9 +342,11 @@ public class DiaryPauseScreen extends PauseScreen {
             // La segunda sombra
             if (shadowUntilMs > now) {
                 long age = now - shadowStartMs;
-                int a = 40;
-                if (age < 500L) a = (int)(40 * age / 500L);
-                else if (shadowUntilMs - now < 500L) a = (int)(40 * (shadowUntilMs - now) / 500L);
+                int a = reducedMotion() ? 28 : 40;
+                if (!reducedMotion()) {
+                    if (age < 500L) a = (int)(40 * age / 500L);
+                    else if (shadowUntilMs - now < 500L) a = (int)(40 * (shadowUntilMs - now) / 500L);
+                }
                 int sx = px + panelW() - 46;
                 int sy = py + 30;
                 int col = (a << 24) | 0x000000;
@@ -693,11 +697,13 @@ public class DiaryPauseScreen extends PauseScreen {
         if (candleOut) {
             long nowSmoke = System.currentTimeMillis();
             if (nowSmoke < candleSmokeUntilMs) {
-                float t = (nowSmoke % 700L) / 700f;
-                int sx = x + 6 + (int)(Math.sin(nowSmoke / 210.0) * 2);
-                int a = (int)(46 * (1f - t));
+                boolean reduced = reducedMotion();
+                float t = reduced ? 0.5f : (nowSmoke % 700L) / 700f;
+                int sx = x + 6 + (reduced ? 0 : (int)(Math.sin(nowSmoke / 210.0) * 2));
+                int rise = reduced ? 0 : (int)(t * 6);
+                int a = reduced ? 24 : (int)(46 * (1f - t));
                 for (int i = 0; i < 4; i++) {
-                    g.fill(sx + i, y - 4 - i * 3 - (int)(t * 6), sx + i + 1, y - 2 - i * 3 - (int)(t * 6),
+                    g.fill(sx + i, y - 4 - i * 3 - rise, sx + i + 1, y - 2 - i * 3 - rise,
                         (Math.max(4, a - i * 8) << 24) | 0x909090);
                 }
             }
@@ -707,7 +713,7 @@ public class DiaryPauseScreen extends PauseScreen {
         }
 
         // LLAMA ANIMADA — parpadeo sutil
-        int flameFrame = (animTick / 4) % 4;
+        int flameFrame = reducedMotion() ? 1 : (animTick / 4) % 4;
 
         // Halo (cálido, envuelve todo) — v0.21.27: optimizado con fillCircle
         int haloAlpha = 60 + (flameFrame * 15);
@@ -737,6 +743,10 @@ public class DiaryPauseScreen extends PauseScreen {
     @Override
     public boolean isPauseScreen() {
         return true;
+    }
+
+    private static boolean reducedMotion() {
+        return com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
     }
 
     /**

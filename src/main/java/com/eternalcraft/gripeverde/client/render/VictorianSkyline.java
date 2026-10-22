@@ -50,11 +50,7 @@ public class VictorianSkyline {
     private static final java.util.Random WINDOW_RNG = new java.util.Random(WINDOW_SEED_FG);
 
     private static boolean reducedMotion() {
-        try {
-            return com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get();
-        } catch (IllegalStateException ignored) {
-            return false;
-        }
+        return com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
     }
 
     private static final int TOTAL_CHIMNEYS = CHIMNEYS_BG.length + CHIMNEYS_FG.length;

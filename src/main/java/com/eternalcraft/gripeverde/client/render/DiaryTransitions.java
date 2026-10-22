@@ -60,8 +60,7 @@ public final class DiaryTransitions {
     private static boolean splashForward = true;
 
     private static boolean reducedMotionConfig() {
-        try { return com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get(); }
-        catch (Throwable t) { return false; }
+        return com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
     }
 
     private static boolean isCabinetScreen(Screen screen) {

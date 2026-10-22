@@ -289,9 +289,10 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         int fx = this.ambienceSlider.getX() - 16;
         int fy = this.ambienceSlider.getY() + this.ambienceSlider.getHeight() / 2;
         long now = System.currentTimeMillis();
+        boolean reducedMotion = com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
         boolean hot = mouseX >= fx - 4 && mouseX <= fx + 5 && mouseY >= fy - 8 && mouseY <= fy + 5;
         boolean ringing = now < this.forkRingUntilMs;
-        if (ringing) fx += (int) Math.round(Math.sin((this.forkRingUntilMs - now) * 0.55) * 1.0);
+        if (ringing && !reducedMotion) fx += (int) Math.round(Math.sin((this.forkRingUntilMs - now) * 0.55) * 1.0);
         int metal = (hot || ringing) ? 0xFFD8B56A : 0xFF8A6A3D;
         int dimm  = (hot || ringing) ? 0xFF6B4E22 : 0xFF54401F;
         int spread = (hot || ringing) ? 1 : 0;
@@ -301,9 +302,9 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         g.fill(fx - 2 - spread, fy - 6, fx - 1 - spread, fy - 5, dimm);  // puntas
         g.fill(fx + 1 + spread, fy - 6, fx + 2 + spread, fy - 5, dimm);
         if (ringing) {
-            float rr = (this.forkRingUntilMs - now) / 700f; // 1 -> 0
-            int ra = (int)(120 * rr);
-            int rad = 3 + (int)((1f - rr) * 7f);
+            float rr = reducedMotion ? 0.65f : (this.forkRingUntilMs - now) / 700f; // 1 -> 0
+            int ra = reducedMotion ? 78 : (int)(120 * rr);
+            int rad = reducedMotion ? 6 : 3 + (int)((1f - rr) * 7f);
             int rc = (ra << 24) | 0xD8B56A;
             g.fill(fx - rad, fy - 2 - rad, fx + rad, fy - 1 - rad, rc);
             g.fill(fx - rad, fy - 1 + rad, fx + rad, fy + rad, rc);

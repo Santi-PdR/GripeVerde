@@ -111,9 +111,7 @@ public final class PaperTexture {
             for (int i = 0; i < DROP_COUNT; i++) respawnDrop(i, true);
             dropsLastMs = now;
         }
-        boolean reduced;
-        try { reduced = com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get(); }
-        catch (Throwable t) { reduced = false; }
+        boolean reduced = com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
         boolean storm;
         try { storm = com.eternalcraft.gripeverde.client.audio.MenuAmbience.isStormNight(); }
         catch (Throwable t) { storm = false; }

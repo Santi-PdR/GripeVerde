@@ -18,8 +18,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class GreenFluButton extends AbstractButton {
 
     private static boolean reducedMotion() {
-        try { return com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get(); }
-        catch (IllegalStateException ignored) { return false; }
+        return com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
     }
 
     private final Component title;
