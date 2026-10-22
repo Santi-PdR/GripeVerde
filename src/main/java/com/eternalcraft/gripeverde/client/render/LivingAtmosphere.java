@@ -47,6 +47,9 @@ public class LivingAtmosphere {
 
     private static final float[] FOG_OFFSETS = {0f, 0f, 0f};
     private static final float[] FOG_SPEEDS  = {0.3f, 0.2f, 0.25f};
+    private static final float[] FOG_BAND_Y = {0.68f, 0.72f, 0.76f};
+    private static final float[] FOG_BAND_HEIGHT = {0.06f, 0.05f, 0.04f};
+    private static final float[] FOG_BAND_ALPHA = {0.45f, 0.60f, 0.35f};
 
     private static final int SPORE_COUNT = 15;
     private static final float[][] spores = new float[SPORE_COUNT][4];
@@ -438,20 +441,15 @@ public class LivingAtmosphere {
 
     public static void renderFogLow(GuiGraphics g, int w, int h) {
         // Niebla OCRE (no verde) que RESPIRA a 0.3Hz
-        float[][] bands = {
-            {0.68f, 0.06f, 0.45f},
-            {0.72f, 0.05f, 0.60f},
-            {0.76f, 0.04f, 0.35f},
-        };
         // Respiracion lenta global: 0.3Hz = periodo ~3.3s
         // Amplitud +-25% del alpha base
         float breath = (float)(Math.sin(time * 0.3f * 2.0 * Math.PI) * 0.25f + 1f);
-        for (int i = 0; i < bands.length; i++) {
-            int y1 = (int)(h * bands[i][0]);
-            int y2 = (int)(h * (bands[i][0] + bands[i][1]));
+        for (int i = 0; i < FOG_BAND_Y.length; i++) {
+            int y1 = (int)(h * FOG_BAND_Y[i]);
+            int y2 = (int)(h * (FOG_BAND_Y[i] + FOG_BAND_HEIGHT[i]));
             int offset = (int)(FOG_OFFSETS[i % FOG_OFFSETS.length]);
             // Pulse local (variacion rapida) + breath global (respiracion lenta)
-            float pulse = (float)(Math.sin(time * 0.4f + i * 1.2f) * 0.1f + bands[i][2]);
+            float pulse = (float)(Math.sin(time * 0.4f + i * 1.2f) * 0.1f + FOG_BAND_ALPHA[i]);
             float finalPulse = pulse * breath;
             int alpha = Math.max(0, Math.min(255, (int)(finalPulse * 160)));
             // Niebla marron-ocre (miasma victoriano)
