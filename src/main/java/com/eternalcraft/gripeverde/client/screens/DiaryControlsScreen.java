@@ -151,7 +151,7 @@ public class DiaryControlsScreen extends Screen {
         int titleX = this.width / 2;
         int titleY = this.panelY + 10;
         com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
-            g, this.font, titleStr, titleX, titleY, DiaryChrome.INK_TITLE);
+            g, this.font, this.title, titleX, titleY, DiaryChrome.INK_TITLE);
 
         // Subtitulo
         String subtitle = "- " + Component.translatable("gripeverde.options.controls.subtitle").getString() + " -";
