@@ -221,13 +221,10 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         PaperTexture.drawClean(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.LEDGER);
 
         // --- Titulo ---
-        String titleStr = Component.translatable("options.sounds.title").getString();
         int titleX = this.width / 2;
         int titleY = this.panelY + 10;
-        {
-        int _tw = this.font.width(titleStr);
-        g.drawString(this.font, titleStr, titleX - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
-        }
+        com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
+            g, this.font, titleStr, titleX, titleY, DiaryChrome.INK_TITLE);
 
         // --- Subtitulo ---
         String subtitle = "- " + Component.translatable("gripeverde.options.sound.subtitle").getString() + " -";

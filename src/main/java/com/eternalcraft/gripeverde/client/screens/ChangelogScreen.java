@@ -436,9 +436,9 @@ public class ChangelogScreen extends Screen {
         g.fill(px,          py,          px + 1,  py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
         g.fill(px + pw - 1, py,          px + pw, py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
 
-        int tw = this.font.width(this.title);
+        int tw = com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
+            g, this.font, this.title, this.width / 2, py + 8, DiaryTheme.AMBER_FLAME);
         int tx = (this.width - tw) / 2;
-        g.drawString(this.font, this.title, tx, py + 8, DiaryTheme.AMBER_FLAME, false);
         g.fill(tx - 4, py + 18, tx + tw + 4, py + 19, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 150));
 
         this.asteriskRects.clear();

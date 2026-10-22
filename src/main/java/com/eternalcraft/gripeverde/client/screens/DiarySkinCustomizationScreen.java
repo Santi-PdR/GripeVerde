@@ -157,8 +157,8 @@ public class DiarySkinCustomizationScreen extends Screen {
         int cx = this.width / 2;
         int titleY = this.panelY + 12;
         {
-            int tw = this.font.width(this.title);
-            gfx.drawString(this.font, this.title, cx - tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
+            com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
+                gfx, this.font, this.title, cx, titleY, DiaryChrome.INK_TITLE);
         }
 
         // Subtitulo

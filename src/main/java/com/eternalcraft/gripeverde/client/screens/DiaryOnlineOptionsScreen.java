@@ -113,8 +113,8 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
         String titleStr = this.title.getString();
         int titleX = this.width / 2;
         int titleY = this.panelY + 12;
-        int tw = this.font.width(titleStr);
-        g.drawString(this.font, titleStr, titleX - tw / 2, titleY, DiaryChrome.INK_TITLE, false);
+        com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
+            g, this.font, titleStr, titleX, titleY, DiaryChrome.INK_TITLE);
 
         // Subtitulo diegetico
         String subtitle = "- " + Component.translatable("gripeverde.options.online.subtitle").getString() + " -";

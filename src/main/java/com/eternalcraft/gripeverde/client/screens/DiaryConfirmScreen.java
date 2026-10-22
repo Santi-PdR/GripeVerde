@@ -141,9 +141,8 @@ public class DiaryConfirmScreen extends ConfirmScreen {
 
         // Titulo
         int titleY = panelY + 18;
-        String titleStr = this.title.getString();
-        int titleW = this.font.width(titleStr);
-        gfx.drawString(this.font, titleStr, (this.width - titleW) / 2, titleY, DiaryChrome.INK_TITLE, false);
+        com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
+                gfx, this.font, this.title, this.width / 2, titleY, DiaryChrome.INK_TITLE);
 
         // Divisor con rombo
         DiaryChrome.drawInkDivider(gfx, panelX + 24, titleY + 14, panelW - 48);

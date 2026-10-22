@@ -64,9 +64,8 @@ public class DiaryCreditsScreen extends Screen {
 
         int cx = this.width / 2;
         int titleY = panelY + 14;
-        String titleStr = this.title.getString();
-        int tw = this.font.width(titleStr);
-        g.drawString(this.font, titleStr, cx - tw / 2, titleY, DiaryChrome.INK_TITLE, false);
+        com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
+            g, this.font, this.title, cx, titleY, DiaryChrome.INK_TITLE);
 
         String subtitle = "- " + Component.translatable("gripeverde.options.credits.subtitle").getString() + " -";
         int subW = this.font.width(subtitle);

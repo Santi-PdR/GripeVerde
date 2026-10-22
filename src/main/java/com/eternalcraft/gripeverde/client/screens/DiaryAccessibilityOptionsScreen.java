@@ -135,11 +135,9 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         // Titulo
         int cx = this.width / 2;
         int titleY = this.panelY + 12;
-        {
         var _title = Component.translatable("options.accessibility.title");
-        int _tw = this.font.width(_title);
-        gfx.drawString(this.font, _title, cx - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
-        }
+        com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
+            gfx, this.font, _title, cx, titleY, DiaryChrome.INK_TITLE);
 
         // Subtitulo
         int subtitleY = titleY + 12;

@@ -106,8 +106,8 @@ public class DiaryArchiveScreen extends Screen {
 
         // Cabecera
         String titleStr = en ? "Reading Room" : "Sala de consulta";
-        int tw = this.font.width(titleStr);
-        g.drawString(this.font, titleStr, cx - tw / 2, panelY + 10, DiaryChrome.INK_TITLE, false);
+        com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
+            g, this.font, titleStr, cx, panelY + 10, DiaryChrome.INK_TITLE);
         String sub = en ? "- The chronicler's cards -" : "- Las fichas del cronista -";
         int sw = this.font.width(sub);
         g.drawString(this.font, sub, cx - sw / 2, panelY + 23, DiaryChrome.INK_SUBTITLE, false);

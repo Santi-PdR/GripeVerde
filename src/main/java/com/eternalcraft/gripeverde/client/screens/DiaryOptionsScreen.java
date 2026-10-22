@@ -213,9 +213,8 @@ public class DiaryOptionsScreen extends Screen {
         // Titulo en tinta - limpio, sin placa que corte
         int titleY = panelY + PAD_TOP;
         {
-            int titleW = this.font.width(this.title);
-            int titleX = (this.width - titleW) / 2;
-            g.drawString(this.font, this.title, titleX, titleY, DiaryTheme.INK, false);
+            com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
+                g, this.font, this.title, this.width / 2, titleY, DiaryTheme.INK);
 
             // Subtitulo diegetico - sin sombra que divida
             String subtitle = "- " + net.minecraft.network.chat.Component.translatable("gripeverde.options.subtitle").getString() + " -";

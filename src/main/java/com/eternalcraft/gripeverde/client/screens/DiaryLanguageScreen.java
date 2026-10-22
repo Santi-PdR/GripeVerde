@@ -141,9 +141,8 @@ public class DiaryLanguageScreen extends Screen {
         int titleY = this.panelY + PANEL_PAD;
         int cx = this.width / 2;
         {
-            int titleW = this.font.width(this.title);
-            int titleX = (this.width - titleW) / 2;
-            g.drawString(this.font, this.title, titleX, titleY, DiaryChrome.INK_TITLE, false);
+            com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
+                g, this.font, this.title, cx, titleY, DiaryChrome.INK_TITLE);
 
             String subtitle = "- " + Component.translatable("gripeverde.options.language.subtitle").getString() + " -";
             int subWL = this.font.width(subtitle);

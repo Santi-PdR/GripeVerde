@@ -478,17 +478,19 @@ public class DiaryPauseScreen extends PauseScreen {
     private void drawPanelTitle(GuiGraphics g, int px, int py) {
         String title = Component.translatable("gripeverde.pause.title").getString();
         String subtitle = Component.translatable("gripeverde.pause.subtitle").getString();
+        net.minecraft.network.chat.Component displayTitle =
+            com.eternalcraft.gripeverde.client.render.DiaryTypography.display(title);
 
         int centerX = px + panelW() / 2;
         int titleY = py + 24;
         int subtitleY = py + 58;
 
-        int tw = this.font.width(title);
+        int tw = this.font.width(displayTitle);
         // v0.21.25: tinta limpia sin sombra doble.
         g.pose().pushPose();
         g.pose().translate(centerX, titleY, 0);
         g.pose().scale(1.75f, 1.75f, 1f);
-        g.drawString(this.font, title, -tw / 2, 0, DiaryTheme.INK, false);
+        g.drawString(this.font, displayTitle, -tw / 2, 0, DiaryTheme.INK, false);
         g.pose().popPose();
 
         int scaledTw = (int)(tw * 1.75f);

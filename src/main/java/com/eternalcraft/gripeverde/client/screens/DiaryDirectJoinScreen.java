@@ -176,9 +176,8 @@ public class DiaryDirectJoinScreen extends Screen {
 
         // Titulo
         int titleY = panelY + 18;
-        String titleStr = this.title.getString();
-        int titleW = this.font.width(titleStr);
-        gfx.drawString(this.font, titleStr, (this.width - titleW) / 2, titleY, DiaryChrome.INK_TITLE, false);
+        com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
+                gfx, this.font, this.title, this.width / 2, titleY, DiaryChrome.INK_TITLE);
 
         // Subtitulo
         String subtitle = "- " + Component.translatable("gripeverde.direct.subtitle").getString() + " -";
