@@ -80,6 +80,8 @@
     "gripeverde.options.online.subtitle": "Avisos lejanos y listas publicas",
     "gripeverde.options.online.flavor": "Decidid que senales pueden salir del distrito.",
     "gripeverde.options.packs.subtitle": "Archivo de materiales",
+    "gripeverde.options.accessibility.eye": "Ojo de percepcion",
+    "gripeverde.options.accessibility.eye.tooltip": "Activa el ojo para revelar una nota oculta.",
     "gripeverde.options.accessibility.reduced_motion": "Movimiento reducido",
     "gripeverde.options.accessibility.reduced_motion.tooltip": "Congela las animaciones y destellos del ambiente sin quitar detalles de la escena.",
     "gripeverde.options.accessibility.reduce_flashes": "Destellos reducidos",

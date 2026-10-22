@@ -201,7 +201,7 @@ Con Java 17, ejecutar: `.\gradlew.bat clean build`
 El jar se genera en `build\libs\gripeverde-VERSION.jar`
 
 Verificaciones activas en `processResources`:
-- `verifyGripeVerdeLocalization` (JSON válido, 93 claves en paridad y
+- `verifyGripeVerdeLocalization` (JSON válido, 95 claves en paridad y
   v0.23.0 presente en los 25 changelogs).
 - `verifyGripeVerdeSoundAssets` (eventos completos, referencias existentes y ningún OGG huérfano).
 - `verifyGripeVerdeNoDeadCode` (símbolos retirados fuera del código productivo).

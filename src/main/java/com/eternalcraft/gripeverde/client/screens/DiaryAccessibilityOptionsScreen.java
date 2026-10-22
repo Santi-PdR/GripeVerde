@@ -10,10 +10,13 @@ import com.eternalcraft.gripeverde.client.widgets.DiaryToggle;
 import com.eternalcraft.gripeverde.config.ClientConfig;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.AccessibilityOptionsScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 
 public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen {
@@ -30,6 +33,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
     private static final int FOOTER_H = 112;  // divisor + 2 toggles propios + Volver
 
     private DiaryButton btnVolver;
+    private PerceptionEyeButton perceptionEye;
     private DiaryToggle reducedMotionToggle;
     private DiaryToggle reduceFlashesToggle;
     private final SmoothScroll smoothScroll = new SmoothScroll();
@@ -50,6 +54,14 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         this.panelH = Math.min(PANEL_MAX_H, this.height - SCREEN_MARGIN * 2);
         this.panelX = (this.width  - this.panelW) / 2;
         this.panelY = (this.height - this.panelH) / 2;
+
+        this.perceptionEye = new PerceptionEyeButton(
+            this.panelX + 13, this.panelY + 9,
+            Component.translatable("gripeverde.options.accessibility.eye")
+        );
+        this.perceptionEye.setTooltip(Tooltip.create(
+            Component.translatable("gripeverde.options.accessibility.eye.tooltip")));
+        this.addRenderableWidget(this.perceptionEye);
 
         // Suprimir fondo y barras de la lista vanilla
         if (this.list != null) {
@@ -184,51 +196,19 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
 
         // v0.16.0: el ojo de la percepcion, que mira a quien mira
         try {
-            drawPerceptionEye(gfx, mouseX, mouseY);
             com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
             com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(gfx, this.width / 2, this.panelY - 12);
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(gfx, this.width);
         } catch (Throwable ignored) {}
     }
 
-    private int eyeX() { return this.panelX + 22; }
-    private int eyeY() { return this.panelY + 16; }
-
-    private void drawPerceptionEye(GuiGraphics gfx, int mouseX, int mouseY) {
-        int ex = eyeX(), ey = eyeY();
-        boolean hover = mouseX >= ex - 8 && mouseX <= ex + 8 && mouseY >= ey - 6 && mouseY <= ey + 6;
-        // Contorno almendrado
-        int lid = hover ? 0xFF3D2A18 : 0xFF654025;
-        gfx.fill(ex - 6, ey - 1, ex + 6, ey + 1, 0xFFF0E5C8);
-        gfx.fill(ex - 4, ey - 3, ex + 4, ey - 2, lid);
-        gfx.fill(ex - 4, ey + 2, ex + 4, ey + 3, lid);
-        gfx.fill(ex - 7, ey - 1, ex - 6, ey + 1, lid);
-        gfx.fill(ex + 6, ey - 1, ex + 7, ey + 1, lid);
-        boolean reduced = ClientConfig.REDUCED_MOTION.get();
-        // Parpadeo ocasional, desactivado cuando el lector reduce el movimiento.
-        long now = System.currentTimeMillis();
-        boolean blink = !reduced && (now % 6200L) < 180L;
-        if (blink) {
-            gfx.fill(ex - 6, ey - 2, ex + 6, ey + 2, lid);
-            return;
+    private final class PerceptionEyeButton extends AbstractButton {
+        private PerceptionEyeButton(int x, int y, Component label) {
+            super(x, y, 18, 14, label);
         }
-        // Iris que sigue al lector
-        double dx = mouseX - ex, dy = mouseY - ey;
-        int px = 0, py = 0;
-        if (!reduced) {
-            if (Math.abs(dx) > 12) px = dx > 0 ? 2 : -2;
-            else if (Math.abs(dx) > 4) px = dx > 0 ? 1 : -1;
-            if (Math.abs(dy) > 12) py = dy > 0 ? 1 : -1;
-        }
-        gfx.fill(ex - 2 + px, ey - 2 + py, ex + 2 + px, ey + 2 + py, 0xFF8E6A35);
-        gfx.fill(ex - 1 + px, ey - 1 + py, ex + 1 + px, ey + 1 + py, 0xFF1A0F05);
-        gfx.fill(ex - 2 + px, ey - 2 + py, ex - 1 + px, ey - 1 + py, 0xFFD8CAB0);
-    }
 
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0 && mouseX >= eyeX() - 8 && mouseX <= eyeX() + 8
-                && mouseY >= eyeY() - 6 && mouseY <= eyeY() + 6) {
+        @Override
+        public void onPress() {
             try {
                 boolean first = com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
                     com.eternalcraft.gripeverde.client.lore.Discoveries.EYE_FOLLOWS);
@@ -236,9 +216,55 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
                     com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_AMBIENT_OCCASIONAL.get(),
                     0.18f, first ? 0.62f : 0.80f);
             } catch (Throwable ignored) {}
-            return true;
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+
+        @Override
+        public void playDownSound(SoundManager soundManager) {
+            // La nota secreta conserva su sonido propio.
+        }
+
+        @Override
+        protected void renderWidget(GuiGraphics gfx, int mouseX, int mouseY, float partialTick) {
+            int ex = this.getX() + this.width / 2;
+            int ey = this.getY() + this.height / 2;
+            boolean hovered = this.isHoveredOrFocused();
+            int lid = hovered ? 0xFF3D2A18 : 0xFF654025;
+            gfx.fill(ex - 6, ey - 1, ex + 6, ey + 1, 0xFFF0E5C8);
+            gfx.fill(ex - 4, ey - 3, ex + 4, ey - 2, lid);
+            gfx.fill(ex - 4, ey + 2, ex + 4, ey + 3, lid);
+            gfx.fill(ex - 7, ey - 1, ex - 6, ey + 1, lid);
+            gfx.fill(ex + 6, ey - 1, ex + 7, ey + 1, lid);
+            boolean reduced = ClientConfig.REDUCED_MOTION.get();
+            long now = System.currentTimeMillis();
+            if (!reduced && (now % 6200L) < 180L) {
+                gfx.fill(ex - 6, ey - 2, ex + 6, ey + 2, lid);
+            } else {
+                double dx = mouseX - ex, dy = mouseY - ey;
+                int px = 0, py = 0;
+                if (!reduced) {
+                    if (Math.abs(dx) > 12) px = dx > 0 ? 2 : -2;
+                    else if (Math.abs(dx) > 4) px = dx > 0 ? 1 : -1;
+                    if (Math.abs(dy) > 12) py = dy > 0 ? 1 : -1;
+                }
+                gfx.fill(ex - 2 + px, ey - 2 + py, ex + 2 + px, ey + 2 + py, 0xFF8E6A35);
+                gfx.fill(ex - 1 + px, ey - 1 + py, ex + 1 + px, ey + 1 + py, 0xFF1A0F05);
+                gfx.fill(ex - 2 + px, ey - 2 + py, ex - 1 + px, ey - 1 + py, 0xFFD8CAB0);
+            }
+            if (this.isFocused() && !this.isHovered() && this.width > 2 && this.height > 2) {
+                int focus = 0xFFFFE28A;
+                gfx.fill(this.getX(), this.getY(), this.getX() + this.width, this.getY() + 1, focus);
+                gfx.fill(this.getX(), this.getY() + this.height - 1,
+                    this.getX() + this.width, this.getY() + this.height, focus);
+                gfx.fill(this.getX(), this.getY(), this.getX() + 1, this.getY() + this.height, focus);
+                gfx.fill(this.getX() + this.width - 1, this.getY(),
+                    this.getX() + this.width, this.getY() + this.height, focus);
+            }
+        }
+
+        @Override
+        protected void updateWidgetNarration(NarrationElementOutput out) {
+            this.defaultButtonNarrationText(out);
+        }
     }
 
     @Override

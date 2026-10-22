@@ -80,6 +80,8 @@
     "gripeverde.options.online.subtitle": "Distant notices and public listings",
     "gripeverde.options.online.flavor": "Decide which signals may leave the district.",
     "gripeverde.options.packs.subtitle": "Material archive",
+    "gripeverde.options.accessibility.eye": "Perception eye",
+    "gripeverde.options.accessibility.eye.tooltip": "Activate the eye to reveal a hidden note.",
     "gripeverde.options.accessibility.reduced_motion": "Reduced motion",
     "gripeverde.options.accessibility.reduced_motion.tooltip": "Freezes atmospheric animation and flashes without removing scene details.",
     "gripeverde.options.accessibility.reduce_flashes": "Reduced flashes",
