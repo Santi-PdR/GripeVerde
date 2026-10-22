@@ -30,7 +30,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
 
     // Server oficial del mod - siempre presente en la lista.
     private static final String PINNED_NAME = "Ghoul Outbreak Official";
-    private static final String PINNED_IP   = "servercitoGhouls.exaroton.me:24652";
+    private static final String PINNED_IP   = "Outbreak.exaroton.me:24652";
 
     private static final Logger LOGGER = LogUtils.getLogger();
     private int frameLogCounter = 0;
@@ -192,9 +192,14 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         Component labelDirect = cleanLabel("selectServer.direct");
         Component labelAdd    = cleanLabel("selectServer.add");
 
-        int wJoin   = this.font.width(labelJoin) + 28;
-        int wDirect = this.font.width(labelDirect) + 28;
-        int wAdd    = this.font.width(labelAdd) + 28;
+        int[] topWidths = fitButtonWidths(new int[] {
+                this.font.width(labelJoin) + 28,
+                this.font.width(labelDirect) + 28,
+                this.font.width(labelAdd) + 28
+        }, gap);
+        int wJoin = topWidths[0];
+        int wDirect = topWidths[1];
+        int wAdd = topWidths[2];
 
         int topTotalW = wJoin + wDirect + wAdd + gap * 2;
         int topStartX = (this.width - topTotalW) / 2;
@@ -202,15 +207,15 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         this.diarySelect = new DiaryButton(topStartX, topRowY, wJoin, btnH,
                 labelJoin, DiaryButton.Icon.NONE, DiaryButton.Variant.PRIMARY,
                 DiaryButton.SoundProfile.CLEAN,
-                this::onJoin).noEllipsis();
+                this::onJoin);
         this.diaryDirect = new DiaryButton(topStartX + wJoin + gap, topRowY, wDirect, btnH,
                 labelDirect, DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
                 DiaryButton.SoundProfile.CLEAN,
-                this::onDirect).noEllipsis();
+                this::onDirect);
         this.diaryAdd = new DiaryButton(topStartX + wJoin + gap + wDirect + gap, topRowY, wAdd, btnH,
                 labelAdd, DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
                 DiaryButton.SoundProfile.CLEAN,
-                this::onAdd).noEllipsis();
+                this::onAdd);
         this.addRenderableWidget(this.diarySelect);
         this.addRenderableWidget(this.diaryDirect);
         this.addRenderableWidget(this.diaryAdd);
@@ -221,10 +226,16 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         Component labelRefresh = cleanLabel("selectServer.refresh");
         Component labelCancel  = cleanLabel("gui.cancel");
 
-        int wEdit    = this.font.width(labelEdit) + 28;
-        int wDelete  = this.font.width(labelDelete) + 28;
-        int wRefresh = this.font.width(labelRefresh) + 28;
-        int wCancel  = this.font.width(labelCancel) + 28;
+        int[] bottomWidths = fitButtonWidths(new int[] {
+                this.font.width(labelEdit) + 28,
+                this.font.width(labelDelete) + 28,
+                this.font.width(labelRefresh) + 28,
+                this.font.width(labelCancel) + 28
+        }, gap);
+        int wEdit = bottomWidths[0];
+        int wDelete = bottomWidths[1];
+        int wRefresh = bottomWidths[2];
+        int wCancel = bottomWidths[3];
 
         int bottomTotalW = wEdit + wDelete + wRefresh + wCancel + gap * 3;
         int bottomStartX = (this.width - bottomTotalW) / 2;
@@ -232,19 +243,19 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         this.diaryEdit = new DiaryButton(bottomStartX, bottomRowY, wEdit, btnH,
                 labelEdit, DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
                 DiaryButton.SoundProfile.CLEAN,
-                this::onEdit).noEllipsis();
+                this::onEdit);
         this.diaryDelete = new DiaryButton(bottomStartX + wEdit + gap, bottomRowY, wDelete, btnH,
                 labelDelete, DiaryButton.Icon.NONE, DiaryButton.Variant.DANGER,
                 DiaryButton.SoundProfile.CLEAN,
-                this::onDelete).noEllipsis();
+                this::onDelete);
         this.diaryRefresh = new DiaryButton(bottomStartX + wEdit + gap + wDelete + gap, bottomRowY, wRefresh, btnH,
                 labelRefresh, DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
                 DiaryButton.SoundProfile.CLEAN,
-                this::onRefresh).noEllipsis();
+                this::onRefresh);
         this.diaryCancel = new DiaryButton(bottomStartX + wEdit + gap + wDelete + gap + wRefresh + gap, bottomRowY, wCancel, btnH,
                 labelCancel, DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
                 DiaryButton.SoundProfile.BACK,
-                this::onCancel).noEllipsis();
+                this::onCancel);
         this.addRenderableWidget(this.diaryEdit);
         this.addRenderableWidget(this.diaryDelete);
         this.addRenderableWidget(this.diaryRefresh);
@@ -263,6 +274,25 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             else text = text.substring(0, text.length() - 1).trim();
         }
         return Component.literal(text);
+    }
+
+    /** Keep each row inside the screen at low GUI resolutions; DiaryButton truncates labels as needed. */
+    private int[] fitButtonWidths(int[] preferred, int gap) {
+        int gaps = gap * (preferred.length - 1);
+        int available = Math.max(preferred.length * 34,
+                this.width - PANEL_MARGIN_H * 2 - gaps);
+        int preferredTotal = 0;
+        for (int width : preferred) preferredTotal += width;
+        int usable = Math.min(preferredTotal, available);
+        int[] fitted = new int[preferred.length];
+        int assigned = 0;
+        for (int i = 0; i < preferred.length; i++) {
+            fitted[i] = (int) ((long) preferred[i] * usable / preferredTotal);
+            assigned += fitted[i];
+        }
+        // Preserve the exact row width after integer rounding.
+        fitted[fitted.length - 1] += usable - assigned;
+        return fitted;
     }
 
     private void updateDiaryButtonStates() {
