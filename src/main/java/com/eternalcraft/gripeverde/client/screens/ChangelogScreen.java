@@ -71,6 +71,7 @@ public class ChangelogScreen extends Screen {
     private static int lastScrollY = 0;  // Remembered across reopens
     private int maxScroll = 0;
     private int contentTotalH = 0;
+    private int[] rowTops = new int[0];
     private int lastContentW = -1;
     private boolean draggingScrollbar = false;
 
@@ -243,13 +244,17 @@ public class ChangelogScreen extends Screen {
         int cw = contentW();
         this.lastContentW = cw;
         this.rowLayouts.clear();
+        this.rowTops = new int[rows.size() + 1];
         int total = 0;
-        for (Row r : rows) {
+        for (int i = 0; i < rows.size(); i++) {
+            Row r = rows.get(i);
+            this.rowTops[i] = total;
             if (r.type != LT.GAP && r.type != LT.SEPARATOR) {
                 this.rowLayouts.put(r, buildRowLayout(r, cw));
             }
             total += rowHeight(r, cw);
         }
+        this.rowTops[rows.size()] = total;
         this.contentTotalH = total;
         int visible = contentH();
         // v0.16.0: un poco mas alla del ultimo renglon hay sitio para un folio.
@@ -263,6 +268,22 @@ public class ChangelogScreen extends Screen {
         if (smoothScrollY < 0.0D) smoothScrollY = 0.0D;
         if (smoothScrollY > maxScroll) smoothScrollY = maxScroll;
         scrollY = (int)Math.round(smoothScrollY);
+    }
+
+    /** First row whose bottom lies after the requested content-space offset. */
+    private int firstRowAtOrAfter(int contentOffset) {
+        int low = 0;
+        int high = rows.size();
+        while (low < high) {
+            int mid = (low + high) >>> 1;
+            if (this.rowTops[mid + 1] <= contentOffset) low = mid + 1;
+            else high = mid;
+        }
+        return low;
+    }
+
+    private int rowOffset(int index) {
+        return index >= 0 && index < this.rowTops.length ? this.rowTops[index] : this.contentTotalH;
     }
 
     private void setScrollTarget(double value, boolean snap) {
@@ -369,9 +390,7 @@ public class ChangelogScreen extends Screen {
             if (r.type == LT.H1 && r.text.startsWith("Version " + current)) { idx = i; break; }
         }
         if (idx < 0) return; // cronica aun no tiene la entrada; nada que sellar
-        int cw = contentW();
-        int off = 0;
-        for (int i = 0; i < idx; i++) off += rowHeight(rows.get(i), cw);
+        int off = rowOffset(idx);
         off = Math.max(0, off - 6);
         this.newVersionRow = rows.get(idx);
         this.arrivedFreshVersion = true;
@@ -505,10 +524,13 @@ public class ChangelogScreen extends Screen {
                 }
             }
             int penConsumed = 0;
-            int y = cy - scrollY;
-            for (int ri = 0; ri < rows.size(); ri++) {
+            int firstOffset = Math.max(0, scrollY - (penActive ? ch / 2 : 0) - 2);
+            int ri = firstRowAtOrAfter(firstOffset);
+            int y = cy + rowOffset(ri) - scrollY;
+            for (; ri < rows.size(); ri++) {
+                if (y > cy + ch + 2) break;
                 Row row = rows.get(ri);
-                int h = rowHeight(row, cw);
+                int h = this.rowTops[ri + 1] - this.rowTops[ri];
                 boolean inPenEntry = penActive && ri >= penRowStart && ri < penRowEnd;
                 if (y + h >= cy - 2 && y <= cy + ch + 2) {
                     if (inPenEntry) {
@@ -765,9 +787,7 @@ public class ChangelogScreen extends Screen {
             com.eternalcraft.gripeverde.client.audio.UiSounds.scroll();
         }
         int idx = searchHits.get(searchHitPos);
-        int cw = contentW();
-        int off = 0;
-        for (int i = 0; i < idx; i++) off += rowHeight(rows.get(i), cw);
+        int off = rowOffset(idx);
         setScrollTarget(Math.max(0, off - contentH() / 3), false);
     }
 
