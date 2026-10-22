@@ -56,7 +56,7 @@ public class SlimButton extends AbstractButton {
         wasHovered = hovered;
 
         hoverAnim.setTarget(hovered);
-        hoverAnim.tick(partialTick / 20f);
+        hoverAnim.tickRealtime();
 
         int x = this.getX();
         int y = this.getY();

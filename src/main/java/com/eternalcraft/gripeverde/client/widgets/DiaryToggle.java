@@ -111,7 +111,7 @@ public class DiaryToggle extends AbstractButton {
         wasHovered = hovered;
 
         hoverAnim.setTarget(hovered);
-        hoverAnim.tick(partialTick / 20f);
+        hoverAnim.tickRealtime();
         float t = hoverAnim.getEased();
         boolean value = this.valueGetter.get();
 

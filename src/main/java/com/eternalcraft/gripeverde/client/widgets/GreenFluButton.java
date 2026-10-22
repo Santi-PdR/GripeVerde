@@ -47,7 +47,7 @@ public class GreenFluButton extends AbstractButton {
         if(hovered&&!wasHovered) UiSounds.playHover();
         wasHovered=hovered;
         hoverAnim.setTarget(hovered);
-        hoverAnim.tick(partialTick/20f);
+        hoverAnim.tickRealtime();
         float t=hoverAnim.getEased();
         boolean pressed=pressTicks>0&&active;
         if(pressTicks>0) pressTicks--;

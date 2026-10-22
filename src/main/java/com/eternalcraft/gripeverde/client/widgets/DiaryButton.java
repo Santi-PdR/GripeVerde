@@ -77,7 +77,7 @@ public class DiaryButton extends AbstractButton {
         wasHovered=hovered;
 
         hoverAnim.setTarget(hovered);
-        hoverAnim.tick(partialTick/20f);
+        hoverAnim.tickRealtime();
         float t = hoverAnim.getEased();
 
         int pressedOffset = pressed?1:0;
