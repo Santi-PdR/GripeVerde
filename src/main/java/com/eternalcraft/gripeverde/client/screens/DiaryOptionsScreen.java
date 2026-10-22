@@ -78,6 +78,8 @@ public class DiaryOptionsScreen extends Screen {
     // Panel calculado
     private int panelX, panelY, panelW, panelH;
     private int gridTop, col1X, col2X;
+    private int buttonW, buttonH, gapX, gapY, backW, backH;
+    private int padTop, subtitleGap, titleH, titleGap, gapBeforeBack, padBottom, padSides;
 
     // ── v0.16.0: la mesa de trabajo responde ──
 
@@ -99,9 +101,10 @@ public class DiaryOptionsScreen extends Screen {
         flavorIndex = (flavorIndex + 1) % flavorPool.length;
         currentFlavor = flavorPool[flavorIndex];
 
-        int gridH = GRID_ROWS * BTN_H + (GRID_ROWS - 1) * GAP_Y;
-        panelW = BTN_W * 2 + GAP_X + PAD_SIDES * 2;
-        panelH = PAD_TOP + TITLE_H + SUBTITLE_GAP + TITLE_GAP + gridH + GAP_BEFORE_BACK + BACK_H + PAD_BOTTOM;
+        configureResponsiveLayout();
+        int gridH = GRID_ROWS * buttonH + (GRID_ROWS - 1) * gapY;
+        panelH = padTop + titleH + subtitleGap + titleGap + gridH
+            + gapBeforeBack + backH + padBottom;
 
         // v0.16.0: la bisagra cuenta las veces que el gabinete se abre.
         try {
@@ -119,10 +122,10 @@ public class DiaryOptionsScreen extends Screen {
         panelY = (this.height - panelH) / 2;
 
         int cx = this.width / 2;
-        this.gridTop = panelY + PAD_TOP + TITLE_H + SUBTITLE_GAP + TITLE_GAP;
+        this.gridTop = panelY + padTop + titleH + subtitleGap + titleGap;
 
-        this.col1X = cx - BTN_W - GAP_X / 2;
-        this.col2X = cx + GAP_X / 2;
+        this.col1X = cx - buttonW - gapX / 2;
+        this.col2X = cx + gapX / 2;
 
         addBtn(this.col1X, this.gridTop + row(0), "gripeverde.options.button.skin", DiaryButton.Icon.PALETTE, DiaryButton.SoundProfile.OPTION_OPEN, this::openSkin);
         addBtn(this.col2X, this.gridTop + row(0), "gripeverde.options.button.sound", DiaryButton.Icon.SOUND, DiaryButton.SoundProfile.OPTION_OPEN, this::openSound);
@@ -140,8 +143,8 @@ public class DiaryOptionsScreen extends Screen {
         // numero se agrega explicitamente al label: "FOV: 70" / "Campo de vision: 70".
         var mcOptions = Minecraft.getInstance().options;
         int fovX = this.col1X;
-        int fovW = BTN_W * 2 + GAP_X;
-        int fovY = this.gridTop + row(5) + (BTN_H - 20) / 2;
+        int fovW = buttonW * 2 + gapX;
+        int fovY = this.gridTop + row(5) + (buttonH - 20) / 2;
         double fovNorm = (mcOptions.fov().get() - 30.0) / 80.0;
         this.addRenderableWidget(new DiarySlider(fovX, fovY, fovW, 20, fovNorm,
                 v -> {
@@ -150,17 +153,42 @@ public class DiaryOptionsScreen extends Screen {
                 },
                 v -> mcOptions.fov().set((int) Math.round(30.0 + v * 80.0))));
 
-        int backX = cx - BACK_W / 2;
-        int backY = panelY + panelH - PAD_BOTTOM - BACK_H;
-        this.addRenderableWidget(new DiaryButton(backX, backY, BACK_W, BACK_H,
+        int backX = cx - backW / 2;
+        int backY = panelY + panelH - padBottom - backH;
+        this.addRenderableWidget(new DiaryButton(backX, backY, backW, backH,
                 Component.translatable("gripeverde.options.button.done"),
                 DiaryButton.Icon.DOOR, DiaryButton.Variant.PRIMARY,
                 DiaryButton.SoundProfile.BACK,
                 this::onBack));
     }
 
-    private static int row(int i) {
-        return i * (BTN_H + GAP_Y);
+    private void configureResponsiveLayout() {
+        boolean compact = this.height < 350;
+        boolean veryCompact = this.height < 300;
+        buttonH = veryCompact ? 21 : compact ? 24 : BTN_H;
+        gapY = veryCompact ? 3 : compact ? 6 : GAP_Y;
+        gapX = this.width < 400 ? 8 : GAP_X;
+        padTop = veryCompact ? 8 : compact ? 12 : PAD_TOP;
+        titleH = TITLE_H;
+        subtitleGap = veryCompact ? 7 : compact ? 8 : SUBTITLE_GAP;
+        // Keep the flavor line and its divider above the first button row.
+        titleGap = compact ? 18 : TITLE_GAP;
+        gapBeforeBack = compact ? 12 : GAP_BEFORE_BACK;
+        backH = veryCompact ? 20 : compact ? 24 : BACK_H;
+        padBottom = veryCompact ? 8 : compact ? 10 : PAD_BOTTOM;
+        padSides = Math.min(PAD_SIDES, Math.max(12, (this.width - 24) / 10));
+        backW = Math.min(BACK_W, Math.max(96, this.width - 24));
+
+        int maximumPanelW = Math.max(1, this.width - 24);
+        int preferredPanelW = BTN_W * 2 + gapX + PAD_SIDES * 2;
+        panelW = Math.min(preferredPanelW, maximumPanelW);
+        int usableButtonSpace = Math.max(2, panelW - gapX - padSides * 2);
+        buttonW = Math.max(1, Math.min(BTN_W, usableButtonSpace / 2));
+        panelW = buttonW * 2 + gapX + padSides * 2;
+    }
+
+    private int row(int i) {
+        return i * (buttonH + gapY);
     }
 
     // v0.30.0: elipsis fiel para que ninguna cita se salga del papel.
@@ -191,7 +219,7 @@ public class DiaryOptionsScreen extends Screen {
 
     private void addBtn(int x, int y, String translationKey, DiaryButton.Icon icon,
                         DiaryButton.SoundProfile soundProfile, Runnable action) {
-        this.addRenderableWidget(new DiaryButton(x, y, BTN_W, BTN_H,
+        this.addRenderableWidget(new DiaryButton(x, y, buttonW, buttonH,
                 Component.translatable(translationKey), icon, DiaryButton.Variant.SECONDARY,
                 soundProfile, action));
     }
@@ -211,7 +239,7 @@ public class DiaryOptionsScreen extends Screen {
         PaperTexture.drawClean(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.LEDGER);
 
         // Titulo en tinta - limpio, sin placa que corte
-        int titleY = panelY + PAD_TOP;
+        int titleY = panelY + padTop;
         {
             com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
                 g, this.font, this.title, this.width / 2, titleY, DiaryTheme.INK);
@@ -220,7 +248,7 @@ public class DiaryOptionsScreen extends Screen {
             String subtitle = "- " + net.minecraft.network.chat.Component.translatable("gripeverde.options.subtitle").getString() + " -";
             int subW = this.font.width(subtitle);
             int subX = (this.width - subW) / 2;
-            int subY = titleY + TITLE_H + 2;
+            int subY = titleY + titleH + 2;
             g.drawString(this.font, subtitle, subX, subY, DiaryChrome.INK_SUBTITLE, false);
 
             // Rotating flavor quote - tinta muy suave
@@ -264,7 +292,7 @@ public class DiaryOptionsScreen extends Screen {
             DiaryChrome.drawInkDivider(g, panelX + 24, divY1, panelW - 48);
 
             // Divisor horizontal antes del boton Volver
-            int backY = panelY + panelH - PAD_BOTTOM - BACK_H;
+            int backY = panelY + panelH - padBottom - backH;
             int divY2 = backY - 10;
             DiaryChrome.drawInkDivider(g, panelX + 24, divY2, panelW - 48);
 
