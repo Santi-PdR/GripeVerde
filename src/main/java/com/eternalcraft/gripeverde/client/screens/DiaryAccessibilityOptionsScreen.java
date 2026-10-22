@@ -91,8 +91,8 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
             "gripeverde.options.accessibility.reduced_motion.tooltip")));
         this.addRenderableWidget(this.reducedMotionToggle);
 
-        // v0.23.0: ayuda de fotosensibilidad separada (solo destellos/relampagos,
-        // sin congelar movimiento). WCAG 2.3.1 recomienda control especifico.
+        // v0.23.0: ayuda de fotosensibilidad separada (relampagos y destellos de
+        // pantalla completa, sin congelar el resto del movimiento).
         int flashesY = this.panelY + this.panelH - 66;
         this.reduceFlashesToggle = new DiaryToggle(
             toggleX, flashesY, toggleW, 24,

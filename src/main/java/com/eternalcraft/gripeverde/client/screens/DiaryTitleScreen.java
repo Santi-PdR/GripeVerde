@@ -85,6 +85,10 @@ public class DiaryTitleScreen extends Screen {
         return com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
     }
 
+    private static boolean reducedFlashes() {
+        return com.eternalcraft.gripeverde.client.util.ClientAccessibility.reduceFlashes();
+    }
+
     @Override
     protected void init() {
         this.ticks = 0;
@@ -417,8 +421,9 @@ public class DiaryTitleScreen extends Screen {
         try {
             if (!reducedMotion()) drawSealShards(g);
         } catch (Throwable ignored) {}
-        // Easter egg: relampago verde (suprimido con movimiento reducido).
-        if (!reducedMotion() && System.currentTimeMillis() < easterLightningUntilMs) {
+        // Easter egg: relampago verde (suprimido con movimiento o destellos reducidos).
+        if (!reducedMotion() && !reducedFlashes()
+                && System.currentTimeMillis() < easterLightningUntilMs) {
             long rem = easterLightningUntilMs - System.currentTimeMillis();
             int a = (int)(50 * rem / 300L);
             if (a > 2) {
@@ -1061,7 +1066,8 @@ public class DiaryTitleScreen extends Screen {
         easterEggStartedMs = reduced ? now - easterEggMessage.length() * 22L : now;
         easterEggUntilMs = now + 5200L;
         skullShakeUntilMs = reduced ? 0L : now + 520L;
-        easterLightningUntilMs = reduced ? 0L : now + 280L;
+        boolean flashesReduced = reducedFlashes();
+        easterLightningUntilMs = reduced || flashesReduced ? 0L : now + 280L;
 
         if (!reduced) {
             LivingAtmosphere.triggerLightningFlash(1.0f);
@@ -1085,7 +1091,7 @@ public class DiaryTitleScreen extends Screen {
                 0.32f, 0.92f);
             com.eternalcraft.gripeverde.client.audio.UiSounds.notification();
         } catch (Throwable ignored) {}
-        easterFlashUntilMs = reduced ? 0L : now + 400L;
+        easterFlashUntilMs = reduced || flashesReduced ? 0L : now + 400L;
     }
 
     /** v0.24.0: el sello de lacre salta en esquirlas; el papel cae. */
@@ -1140,7 +1146,7 @@ public class DiaryTitleScreen extends Screen {
     private void drawEasterEggMessage(net.minecraft.client.gui.GuiGraphics g) {
         long now = System.currentTimeMillis();
 
-        if (!reducedMotion() && now < easterFlashUntilMs) {
+        if (!reducedMotion() && !reducedFlashes() && now < easterFlashUntilMs) {
             long remainFlash = easterFlashUntilMs - now;
             int flashAlpha = (int)(54 * remainFlash / 400L);
             if (flashAlpha > 2) {

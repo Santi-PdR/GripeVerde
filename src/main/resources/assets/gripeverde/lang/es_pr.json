@@ -83,7 +83,7 @@
     "gripeverde.options.accessibility.reduced_motion": "Movimiento reducido",
     "gripeverde.options.accessibility.reduced_motion.tooltip": "Congela las animaciones y destellos del ambiente sin quitar detalles de la escena.",
     "gripeverde.options.accessibility.reduce_flashes": "Destellos reducidos",
-    "gripeverde.options.accessibility.reduce_flashes.tooltip": "Suprime los destellos de la tormenta y las siluetas del relampago sin congelar el resto de la escena.",
+    "gripeverde.options.accessibility.reduce_flashes.tooltip": "Suprime los relampagos de tormenta y los destellos de pantalla completa de eventos sin congelar el resto de la escena.",
     "gripeverde.subtitle.menu.footsteps": "Pasos a lo lejos",
     "gripeverde.subtitle.menu.wood_creak": "La madera cruje",
     "gripeverde.subtitle.menu.door": "Una puerta rechina",

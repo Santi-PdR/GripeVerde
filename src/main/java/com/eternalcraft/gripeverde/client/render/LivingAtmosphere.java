@@ -18,11 +18,7 @@ public class LivingAtmosphere {
      * lluvia, faroles ni ningun otro movimiento de la escena.
      */
     private static boolean reduceFlashes() {
-        try {
-            return com.eternalcraft.gripeverde.config.ClientConfig.REDUCE_FLASHES.get();
-        } catch (Throwable t) {
-            return false;
-        }
+        return com.eternalcraft.gripeverde.client.util.ClientAccessibility.reduceFlashes();
     }
 
     /**

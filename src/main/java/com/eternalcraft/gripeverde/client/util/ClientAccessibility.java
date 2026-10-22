@@ -15,4 +15,12 @@ public final class ClientAccessibility {
             return false;
         }
     }
+
+    public static boolean reduceFlashes() {
+        try {
+            return ClientConfig.REDUCE_FLASHES.get();
+        } catch (IllegalStateException ignored) {
+            return false;
+        }
+    }
 }

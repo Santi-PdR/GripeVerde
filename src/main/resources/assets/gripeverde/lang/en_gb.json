@@ -83,7 +83,7 @@
     "gripeverde.options.accessibility.reduced_motion": "Reduced motion",
     "gripeverde.options.accessibility.reduced_motion.tooltip": "Freezes atmospheric animation and flashes without removing scene details.",
     "gripeverde.options.accessibility.reduce_flashes": "Reduced flashes",
-    "gripeverde.options.accessibility.reduce_flashes.tooltip": "Suppresses storm flashes and lightning silhouettes without freezing the rest of the scene.",
+    "gripeverde.options.accessibility.reduce_flashes.tooltip": "Suppresses storm lightning and full-screen event flashes without freezing the rest of the scene.",
     "gripeverde.subtitle.menu.footsteps": "Distant footsteps",
     "gripeverde.subtitle.menu.wood_creak": "Wood creaking",
     "gripeverde.subtitle.menu.door": "Door creaking",
