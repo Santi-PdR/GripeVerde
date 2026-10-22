@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
 
 public class ChangelogScreen extends Screen {
@@ -43,8 +44,26 @@ public class ChangelogScreen extends Screen {
         Row(LT t, String s) { this.type = t; this.text = s; }
     }
 
+    private static final class RowLayout {
+        final int height;
+        final int indent;
+        final int prefixWidth;
+        final int dropCapWidth;
+        final List<FormattedCharSequence> lines;
+
+        RowLayout(int height, int indent, int prefixWidth, int dropCapWidth,
+                  List<FormattedCharSequence> lines) {
+            this.height = height;
+            this.indent = indent;
+            this.prefixWidth = prefixWidth;
+            this.dropCapWidth = dropCapWidth;
+            this.lines = lines;
+        }
+    }
+
     private final Screen parent;
     private final List<Row> rows = new ArrayList<>();
+    private final IdentityHashMap<Row, RowLayout> rowLayouts = new IdentityHashMap<>();
     private boolean loadError = false;
     private int scrollY = 0;
     private double smoothScrollY = 0.0D;
@@ -198,22 +217,39 @@ public class ChangelogScreen extends Screen {
             case GAP:       return GAP_H;
             case SEPARATOR: return SEP_H;
             default: {
-                int indent = (row.type == LT.BULLET) ? 10 : 0;
-                int prefixW = (row.type == LT.BULLET) ? this.font.width("\u2022 ") : 0;
-                int available = Math.max(20, contentW - indent - prefixW);
-                List<FormattedCharSequence> wrapped =
-                    this.font.split(Component.literal(row.text), available);
-                int lines = Math.max(1, wrapped.size());
-                return lines * lineHeightFor(row.type);
+                RowLayout cached = contentW == this.lastContentW ? this.rowLayouts.get(row) : null;
+                return (cached != null ? cached : buildRowLayout(row, contentW)).height;
             }
         }
+    }
+
+    private RowLayout buildRowLayout(Row row, int contentW) {
+        int indent = row.type == LT.BULLET ? 10 : 0;
+        int prefixWidth = row.type == LT.BULLET ? this.font.width("\u2022 ") : 0;
+        int dropCapWidth = 0;
+        String text = row.text;
+        if (row.type == LT.H1 && row.text.length() > 1) {
+            String firstLetter = row.text.substring(0, 1);
+            text = row.text.substring(1);
+            dropCapWidth = (int) (this.font.width(firstLetter) * 1.6f) + 2;
+        }
+        int available = Math.max(20, contentW - indent - prefixWidth - dropCapWidth);
+        List<FormattedCharSequence> lines = this.font.split(Component.literal(text), available);
+        int height = Math.max(1, lines.size()) * lineHeightFor(row.type);
+        return new RowLayout(height, indent, prefixWidth, dropCapWidth, lines);
     }
 
     private void recalcMaxScroll() {
         int cw = contentW();
         this.lastContentW = cw;
+        this.rowLayouts.clear();
         int total = 0;
-        for (Row r : rows) total += rowHeight(r, cw);
+        for (Row r : rows) {
+            if (r.type != LT.GAP && r.type != LT.SEPARATOR) {
+                this.rowLayouts.put(r, buildRowLayout(r, cw));
+            }
+            total += rowHeight(r, cw);
+        }
         this.contentTotalH = total;
         int visible = contentH();
         // v0.16.0: un poco mas alla del ultimo renglon hay sitio para un folio.
@@ -787,24 +823,21 @@ public class ChangelogScreen extends Screen {
             default     -> DiaryTheme.INK;
         };
 
-        int indent = (row.type == LT.BULLET) ? 10 : 0;
+        RowLayout layout = this.rowLayouts.get(row);
+        if (layout == null) layout = buildRowLayout(row, maxW);
+        int indent = layout.indent;
         int lh = lineHeightFor(row.type);
 
         if (row.type == LT.BULLET) {
             g.drawString(this.font, "\u2022 ", x + indent, y, color, false);
-            int prefixW = this.font.width("\u2022 ");
-            int available = Math.max(20, maxW - indent - prefixW);
-            List<FormattedCharSequence> wrapped =
-                this.font.split(Component.literal(row.text), available);
             int ly = y;
-            for (FormattedCharSequence fcs : wrapped) {
-                g.drawString(this.font, fcs, x + indent + prefixW, ly, color, false);
+            for (FormattedCharSequence fcs : layout.lines) {
+                g.drawString(this.font, fcs, x + indent + layout.prefixWidth, ly, color, false);
                 ly += lh;
             }
         } else if (row.type == LT.H1 && row.text.length() > 1) {
             // Drop cap: first letter drawn larger in dark ink
             String firstLetter = row.text.substring(0, 1);
-            String rest = row.text.substring(1);
             int capColor = DiaryTheme.INK;
 
             // Nota al margen: asterisco decorativo a la izquierda del H1
@@ -820,22 +853,15 @@ public class ChangelogScreen extends Screen {
             g.drawString(this.font, firstLetter, 0, 0, capColor, false);
             g.pose().popPose();
 
-            int capW = (int)(this.font.width(firstLetter) * capScale) + 2;
-            int available = Math.max(20, maxW - indent - capW);
-            List<FormattedCharSequence> wrapped =
-                this.font.split(Component.literal(rest), available);
             int ly = y;
-            for (int wi = 0; wi < wrapped.size(); wi++) {
-                int lx = (wi == 0) ? x + indent + capW : x + indent;
-                g.drawString(this.font, wrapped.get(wi), lx, ly, color, false);
+            for (int wi = 0; wi < layout.lines.size(); wi++) {
+                int lx = (wi == 0) ? x + indent + layout.dropCapWidth : x + indent;
+                g.drawString(this.font, layout.lines.get(wi), lx, ly, color, false);
                 ly += lh;
             }
         } else {
-            int available = Math.max(20, maxW - indent);
-            List<FormattedCharSequence> wrapped =
-                this.font.split(Component.literal(row.text), available);
             int ly = y;
-            for (FormattedCharSequence fcs : wrapped) {
+            for (FormattedCharSequence fcs : layout.lines) {
                 g.drawString(this.font, fcs, x + indent, ly, color, false);
                 ly += lh;
             }
