@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -107,12 +108,13 @@ public class LogoRenderer {
         drawDecorativeLine(g, cx, topY + 46, 196);
 
         String title = I18n.get("gripeverde.brand.name");
+        Component displayTitle = DiaryTypography.display(Component.literal(title));
         // v0.21.25: titulo limpio sin sombra.
         g.pose().pushPose();
         g.pose().translate(cx, topY + 60, 0);
         g.pose().scale(1.9f, 1.9f, 1f);
-        int tw = font.width(title);
-        g.drawString(font, title, -tw / 2, 0, DiaryTheme.PAPER, false);
+        int tw = font.width(displayTitle);
+        g.drawString(font, displayTitle, -tw / 2, 0, DiaryTheme.PAPER, false);
         g.pose().popPose();
 
         String subtitle = I18n.get("gripeverde.brand.subtitle");

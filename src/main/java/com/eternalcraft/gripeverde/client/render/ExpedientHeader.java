@@ -37,8 +37,9 @@ public final class ExpedientHeader {
         int cx = panelX + panelW / 2;
         int topY = panelY + 12;
         int slide = (int) ((1f - reveal) * 10f);
-        int titleW = font.width(title);
-        gfx.drawString(font, title, cx - titleW / 2, topY + 12 - slide,
+        Component displayTitle = DiaryTypography.display(title);
+        int titleW = font.width(displayTitle);
+        gfx.drawString(font, displayTitle, cx - titleW / 2, topY + 12 - slide,
             DiaryChrome.fadeColor(DiaryChrome.INK_TITLE, reveal), false);
         int dividerY = topY + 30 - slide;
         DiaryChrome.drawInkDivider(gfx, panelX + 18, dividerY, panelW - 36);
