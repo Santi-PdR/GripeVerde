@@ -30,6 +30,7 @@ public class DiaryTitleScreen extends Screen {
     private long ticks = 0;
     private static boolean openCountIncremented = false;
     private SlimButton skipMusicButton;
+    private final SlimButton[] compactMenuButtons = new SlimButton[4];
     private static boolean cinematicMode = false;
     private static long cinematicHintUntilMs = 0L;
 
@@ -74,6 +75,10 @@ public class DiaryTitleScreen extends Screen {
 
     private boolean isMinimalMode() {
         return this.height < MINIMAL_MODE_THRESHOLD;
+    }
+
+    private boolean isCompactMenu() {
+        return this.width < 640 || this.height < 180;
     }
 
     private static boolean reducedMotion() {
@@ -144,6 +149,11 @@ public class DiaryTitleScreen extends Screen {
 
         MenuAmbience.start();
         MenuMusic.start();
+
+        if (isCompactMenu()) {
+            initCompactMenu();
+            return;
+        }
 
         LayoutRegion leftCol = leftColumn();
 
@@ -221,6 +231,47 @@ public class DiaryTitleScreen extends Screen {
             ? "Change the chronicler's piece"
             : "Cambiar la pieza del cronista")));
         this.addRenderableWidget(this.skipMusicButton);
+    }
+
+    /** A compact single-column menu for high GUI scales and short windows. */
+    private void initCompactMenu() {
+        int buttonW = Math.max(1, this.width - 16);
+        compactMenuButtons[0] = new SlimButton(8, 0, buttonW, 20,
+            Component.translatable("gripeverde.title.button.multiplayer"), this::onMultiplayer);
+        compactMenuButtons[1] = new SlimButton(8, 0, buttonW, 20,
+            Component.translatable("gripeverde.title.button.mods"), this::onMods);
+        compactMenuButtons[2] = new SlimButton(8, 0, buttonW, 20,
+            Component.translatable("gripeverde.title.button.options"), this::onOptions);
+        compactMenuButtons[3] = new SlimButton(8, 0, buttonW, 20,
+            Component.translatable("gripeverde.title.button.quit"), () -> this.minecraft.stop());
+        for (SlimButton menuButton : compactMenuButtons) this.addRenderableWidget(menuButton);
+        layoutCompactButtons(com.eternalcraft.gripeverde.client.lore.Discoveries.hasActiveToast());
+
+        SlimButton changelogBtn = new SlimButton(this.width - 22, 2, 18, 18,
+            Component.literal("?"), () -> this.minecraft.setScreen(new ChangelogScreen(this)));
+        changelogBtn.setTooltip(Tooltip.create(Component.translatable("gripeverde.title.button.changelog")));
+        this.addRenderableWidget(changelogBtn);
+
+        this.skipMusicButton = new SlimButton(4, 2, 28, 18, Component.literal(">>"),
+            MenuMusic::skipToNext)
+            .withClickSound(com.eternalcraft.gripeverde.client.audio.UiSounds::clickCreate);
+        this.skipMusicButton.setTooltip(Tooltip.create(Component.literal(isEnglishSelected()
+            ? "Change the chronicler's piece" : "Cambiar la pieza del cronista")));
+        this.addRenderableWidget(this.skipMusicButton);
+    }
+
+    private void layoutCompactButtons(boolean leaveRoomForToast) {
+        int gap = leaveRoomForToast ? 0 : (this.height < 120 ? 2 : 4);
+        int top = leaveRoomForToast ? 46 : (this.height < 84 ? 18 : 24);
+        int bottomMargin = 4;
+        int available = Math.max(40, this.height - top - bottomMargin - gap * 3);
+        int buttonH = Math.max(10, Math.min(20, available / 4));
+        for (int i = 0; i < compactMenuButtons.length; i++) {
+            SlimButton button = compactMenuButtons[i];
+            if (button == null) continue;
+            button.setVisualHeight(buttonH);
+            button.setY(top + i * (buttonH + gap));
+        }
     }
 
     private LayoutRegion leftColumn() {
@@ -324,6 +375,24 @@ public class DiaryTitleScreen extends Screen {
             if (com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.isInspecting()) {
                 com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.drawInspection(
                     g, this.width, this.height, GripeVerdeMod.VERSION);
+                com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
+                return;
+            }
+
+            if (isCompactMenu()) {
+                boolean toastVisible = com.eternalcraft.gripeverde.client.lore.Discoveries.hasActiveToast();
+                layoutCompactButtons(toastVisible);
+                if (!toastVisible) {
+                    String wordmark = this.title.getString();
+                    int maxWidth = Math.max(1, this.width - 76);
+                    if (this.font.width(wordmark) > maxWidth) {
+                        wordmark = this.font.plainSubstrByWidth(wordmark, Math.max(1, maxWidth - 8)) + "...";
+                    }
+                    com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
+                        g, this.font, wordmark, this.width / 2, 5,
+                        com.eternalcraft.gripeverde.client.render.DiaryChrome.INK_TITLE);
+                }
+                super.render(g, mouseX, mouseY, partialTick);
                 com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
                 return;
             }
@@ -730,6 +799,10 @@ public class DiaryTitleScreen extends Screen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         lastInteractionMs = System.currentTimeMillis();
+
+        if (isCompactMenu() && !com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.isInspecting()) {
+            return super.mouseClicked(mouseX, mouseY, button);
+        }
 
         if (button == 0) {
             try {

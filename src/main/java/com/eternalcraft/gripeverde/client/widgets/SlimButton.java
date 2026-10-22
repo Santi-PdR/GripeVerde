@@ -33,6 +33,11 @@ public class SlimButton extends AbstractButton {
         return this;
     }
 
+    /** Adjusts the hitbox and text centering for responsive menu layouts. */
+    public void setVisualHeight(int height) {
+        this.height = Math.max(1, height);
+    }
+
     @Override
     public void onPress() {
         this.clickSound.run();
