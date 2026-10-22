@@ -29,6 +29,11 @@ public class DiaryDirectJoinScreen extends Screen {
     private DiaryTextField ipEdit;
     private DiaryButton selectButton;
     private boolean justOpened = true;
+    private int panelX, panelY, panelW, panelH;
+    private int fieldX, fieldY, fieldW, fieldH, labelY;
+    private int buttonY, cancelButtonY, buttonW, buttonH, buttonGap;
+    private boolean compact;
+    private boolean stackedButtons;
 
     public DiaryDirectJoinScreen(Screen parent, BooleanConsumer callback, ServerData serverData) {
         super(Component.translatable("selectServer.direct"));
@@ -39,18 +44,21 @@ public class DiaryDirectJoinScreen extends Screen {
 
     @Override
     protected void init() {
-        int panelW = Math.min(PANEL_MAX_W, this.width - 40);
-        int panelH = Math.min(PANEL_MAX_H, this.height - 30);
-        int panelX = (this.width - panelW) / 2;
-        int panelY = (this.height - panelH) / 2;
+        panelW = Math.max(1, Math.min(PANEL_MAX_W, this.width - 16));
+        panelH = Math.max(1, Math.min(PANEL_MAX_H, this.height - 16));
+        panelX = (this.width - panelW) / 2;
+        panelY = (this.height - panelH) / 2;
+        compact = panelH < 130 || panelW < 220;
 
-        int fieldW = PANEL_MAX_W - 60;
-        int fieldX = panelX + 30;
-        int fieldH = 20;
-        int ipY = panelY + 76;
+        fieldW = Math.max(1, panelW - 40);
+        fieldX = panelX + (panelW - fieldW) / 2;
+        stackedButtons = panelW < 220;
+        fieldH = compact ? (stackedButtons ? 14 : 16) : 20;
+        labelY = panelY + (compact ? 0 : 62);
+        fieldY = panelY + (compact ? (stackedButtons ? 20 : 31) : 76);
 
         // IP field
-        this.ipEdit = new DiaryTextField(this.font, fieldX, ipY, fieldW, fieldH, ENTER_IP_LABEL);
+        this.ipEdit = new DiaryTextField(this.font, fieldX, fieldY, fieldW, fieldH, ENTER_IP_LABEL);
         this.ipEdit.setMaxLength(128);
         String initial = (this.serverData != null && this.serverData.ip != null) ? this.serverData.ip : "";
         // Vanilla usa "lastServer" del options, aca vamos con lo que traiga ServerData
@@ -64,22 +72,36 @@ public class DiaryDirectJoinScreen extends Screen {
         this.setInitialFocus(this.ipEdit);
 
         // Botones inferiores
-        int btnW = 100;
-        int btnH = 20;
-        int btnY = panelY + PANEL_MAX_H - btnH - 16;
-        int gap = 12;
-        int totalW = btnW * 2 + gap;
-        int startX = (this.width - totalW) / 2;
+        buttonH = compact ? (stackedButtons ? 12 : 15) : 20;
+        buttonGap = compact ? 6 : 12;
+        buttonW = stackedButtons ? Math.max(1, panelW - 32)
+            : Math.max(1, (panelW - 32 - buttonGap) / 2);
+        int buttonBlockH = buttonH * (stackedButtons ? 2 : 1) + (stackedButtons ? 4 : 0);
+        if (compact) {
+            int firstFreeY = fieldY + fieldH + 6;
+            int lastFreeY = panelY + panelH - buttonBlockH - 6;
+            buttonY = firstFreeY + Math.max(0, (lastFreeY - firstFreeY) / 2);
+        } else {
+            buttonY = panelY + panelH - buttonBlockH - 14;
+        }
+        cancelButtonY = buttonY + (stackedButtons ? buttonH + 4 : 0);
+        int totalW = buttonW * 2 + buttonGap;
+        int startX = stackedButtons ? panelX + (panelW - buttonW) / 2
+            : panelX + (panelW - totalW) / 2;
 
-        this.selectButton = new DiaryButton(startX, btnY, btnW, btnH,
+        this.selectButton = new DiaryButton(startX, buttonY, buttonW, buttonH,
                 Component.translatable("selectServer.select"),
-                DiaryButton.Icon.HAND, DiaryButton.Variant.PRIMARY,
+                stackedButtons ? DiaryButton.Icon.HAND
+                    : (buttonW < 82 ? DiaryButton.Icon.NONE : DiaryButton.Icon.HAND), DiaryButton.Variant.PRIMARY,
                 this::onSelect);
         this.addRenderableWidget(this.selectButton);
 
-        DiaryButton cancel = new DiaryButton(startX + btnW + gap, btnY, btnW, btnH,
+        DiaryButton cancel = new DiaryButton(
+                stackedButtons ? startX : startX + buttonW + buttonGap,
+                cancelButtonY, buttonW, buttonH,
                 Component.translatable("gui.cancel"),
-                DiaryButton.Icon.DOOR, DiaryButton.Variant.SECONDARY,
+                stackedButtons ? DiaryButton.Icon.DOOR
+                    : (buttonW < 82 ? DiaryButton.Icon.NONE : DiaryButton.Icon.DOOR), DiaryButton.Variant.SECONDARY,
                 this::onCancel);
         this.addRenderableWidget(cancel);
 
@@ -163,10 +185,6 @@ public class DiaryDirectJoinScreen extends Screen {
         // Overlay atenuador
 
         // Panel pergamino
-        int panelW = Math.min(PANEL_MAX_W, this.width - 40);
-        int panelH = Math.min(PANEL_MAX_H, this.height - 30);
-        int panelX = (this.width - panelW) / 2;
-        int panelY = (this.height - panelH) / 2;
         DiaryChrome.drawPanelShadow(gfx, panelX, panelY, panelW, panelH);
         PaperTexture.drawClean(gfx, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
 
@@ -175,22 +193,28 @@ public class DiaryDirectJoinScreen extends Screen {
         DiaryChrome.drawRegistryTag(gfx, panelX, panelY, panelW, panelH, "REG. XII");
 
         // Titulo
-        int titleY = panelY + 18;
+        int titleY = panelY + (compact ? 3 : 18);
         com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
                 gfx, this.font, this.title, this.width / 2, titleY, DiaryChrome.INK_TITLE);
 
         // Subtitulo
         String subtitle = "- " + Component.translatable("gripeverde.direct.subtitle").getString() + " -";
         int subW = this.font.width(subtitle);
-        gfx.drawString(this.font, subtitle, (this.width - subW) / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
+        if (!compact && panelW >= 220) {
+            gfx.drawString(this.font, subtitle, (this.width - subW) / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
+        }
 
         // Divisor con rombo
-        DiaryChrome.drawInkDivider(gfx, panelX + 24, titleY + 26, panelW - 48);
-        DiaryChrome.drawDivisorLozenge(gfx, this.width / 2, titleY + 26);
+        int dividerY = panelY + (compact ? 17 : 44);
+        int dividerInset = panelW < 220 ? 8 : 12;
+        DiaryChrome.drawInkDivider(gfx, panelX + dividerInset, dividerY, Math.max(1, panelW - dividerInset * 2));
+        DiaryChrome.drawDivisorLozenge(gfx, this.width / 2, dividerY);
 
         // Label IP
         String ipLbl = ENTER_IP_LABEL.getString();
-        gfx.drawString(this.font, ipLbl, panelX + 30, panelY + 62, DiaryChrome.INK_SUBTITLE, false);
+        if (!compact) {
+            gfx.drawString(this.font, ipLbl, panelX + 20, labelY, DiaryChrome.INK_SUBTITLE, false);
+        }
 
         // Widgets
         for (var w : this.renderables) {
