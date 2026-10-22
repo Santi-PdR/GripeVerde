@@ -17,6 +17,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class GreenFluButton extends AbstractButton {
 
+    private static boolean reducedMotion() {
+        try { return com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get(); }
+        catch (IllegalStateException ignored) { return false; }
+    }
+
     private final Component title;
     private final Component subtitle;
     private final ResourceLocation iconTexture;
@@ -104,7 +109,10 @@ public class GreenFluButton extends AbstractButton {
         g.fill(x+2,yDraw+2+barRed,x+5,yDraw+h-2-barRed,barCol);
         // Spark on side bar when hover high
         if(t>0.28f){
-            int sparkY = yDraw+h/2 + (int)(Math.sin(System.currentTimeMillis()/160.0)*(h/4.2));
+            int sparkY = yDraw + h / 2;
+            if (!reducedMotion()) {
+                sparkY += (int)(Math.sin(System.currentTimeMillis() / 160.0) * (h / 4.2));
+            }
             int sparkCol = DiaryTheme.withAlpha(DiaryTheme.AMBER_FLAME, (int)(t*165));
             g.fill(x+6,sparkY,x+8,sparkY+1,sparkCol);
             g.fill(x+6,sparkY+1,x+7,sparkY+2,DiaryTheme.withAlpha(sparkCol&0x00FFFFFF, (int)(t*80)));

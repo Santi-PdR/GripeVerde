@@ -419,7 +419,7 @@ public class DiaryTitleScreen extends Screen {
         } catch (Throwable ignored) {}
         // v0.24.0: esquirlas del sello roto; igual de intocables.
         try {
-            drawSealShards(g);
+            if (!reducedMotion()) drawSealShards(g);
         } catch (Throwable ignored) {}
         // Easter egg: relampago verde (suprimido con movimiento reducido).
         if (!reducedMotion() && System.currentTimeMillis() < easterLightningUntilMs) {
@@ -449,7 +449,7 @@ public class DiaryTitleScreen extends Screen {
     private void drawDawnIfDue(GuiGraphics g) {
         if (!dawnActive) return;
         long t = System.currentTimeMillis();
-        float breath = (float)(Math.sin(t / 9000.0) * 0.5 + 0.5);
+        float breath = reducedMotion() ? 0.5f : (float)(Math.sin(t / 9000.0) * 0.5 + 0.5);
         int a = (int)(10 + breath * 10);
         int top = (int)(this.height * 0.62f);
         int bot = this.height;
@@ -485,7 +485,7 @@ public class DiaryTitleScreen extends Screen {
         } else {
             line = en ? "Do not blink. The fog counts blinks." : "No parpadee. La niebla cuenta los parpadeos.";
         }
-        int pulse = (int)(Math.sin(System.currentTimeMillis() / 700.0) * 22 + 60);
+        int pulse = reducedMotion() ? 60 : (int)(Math.sin(System.currentTimeMillis() / 700.0) * 22 + 60);
         int wTxt = this.font.width(line);
         g.drawString(this.font, line, this.width / 2 - wTxt / 2, this.height / 3 + 24,
             (Math.max(20, pulse) << 24) | 0xA8B890, false);
@@ -513,11 +513,12 @@ public class DiaryTitleScreen extends Screen {
     private void drawGlassPatina(GuiGraphics g) {
         if (this.width < 360 || this.height < 240) return;
         ensurePatinaPoints();
-        long frame = System.currentTimeMillis() / 120L;
+        boolean reduced = reducedMotion();
+        long frame = reduced ? 0L : System.currentTimeMillis() / 120L;
         for (int i = 0; i < PATINA_COUNT; i++) {
             int x = PATINA_X[i];
             int y = PATINA_Y[i];
-            int alpha = 10 + (int)((Math.sin((frame + i * 13) * 0.17) + 1.0) * 7.0);
+            int alpha = reduced ? 17 : 10 + (int)((Math.sin((frame + i * 13) * 0.17) + 1.0) * 7.0);
             int col = (alpha << 24) | 0xC0A06A;
             if (PATINA_KIND[i] == 0) g.fill(x, y, x + 1, y + 4, col);
             else g.fill(x, y, x + 1, y + 1, col);
@@ -525,7 +526,7 @@ public class DiaryTitleScreen extends Screen {
         for (int i = 0; i < 6; i++) {
             int x = 18 + (i * 97) % Math.max(32, this.width - 36);
             int y = 18 + (i * 53) % Math.max(32, this.height - 70);
-            int a = 20 + (int)(Math.sin(System.currentTimeMillis() / 900.0 + i) * 9.0);
+            int a = reduced ? 20 : 20 + (int)(Math.sin(System.currentTimeMillis() / 900.0 + i) * 9.0);
             int col = (Math.max(8, a) << 24) | 0xD8D8C8;
             g.fill(x, y, x + 2, y + 5, col);
             g.fill(x + 1, y + 5, x + 2, y + 8, (Math.max(4, a / 2) << 24) | 0xD8D8C8);
@@ -660,9 +661,9 @@ public class DiaryTitleScreen extends Screen {
         // v0.30.0: la firma jamas entra en la franja del gramofo (>>), y el
         // mensaje del dia se lee a su IZQUIERDA, en la misma linea — antes
         // flotaba encima y podia pisar la mesa de botones.
-        double jitterX = Math.sin(System.currentTimeMillis() / 250.0) * 0.5
+        double jitterX = reducedMotion() ? 0.0 : Math.sin(System.currentTimeMillis() / 250.0) * 0.5
                        + Math.sin(System.currentTimeMillis() / 87.0) * 0.3;
-        double jitterY = Math.cos(System.currentTimeMillis() / 310.0) * 0.4;
+        double jitterY = reducedMotion() ? 0.0 : Math.cos(System.currentTimeMillis() / 310.0) * 0.4;
         int newX = Math.max(48, this.width - sw - oldSw - 16) + (int)Math.round(jitterX);
         int newY = y + (int)Math.round(jitterY);
         // v0.21.25: firma limpia sin sombra.
@@ -1214,7 +1215,7 @@ public class DiaryTitleScreen extends Screen {
             g.drawString(this.font, lines.get(i), boxX + 15, textY + i * this.font.lineHeight, ink, false);
         }
 
-        int pulse = 80 + (int)(Math.sin(now / 120.0) * 45.0);
+        int pulse = reducedMotion() ? 80 : 80 + (int)(Math.sin(now / 120.0) * 45.0);
         int dot = (Math.min(alpha, Math.max(30, pulse)) << 24) | 0x5A7038;
         g.fill(boxX + boxW - 10, boxY + boxH - 10, boxX + boxW - 6, boxY + boxH - 6, dot);
         if (elapsedChars < easterEggMessage.length()) {

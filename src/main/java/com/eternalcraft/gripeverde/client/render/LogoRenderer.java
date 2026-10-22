@@ -11,6 +11,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class LogoRenderer {
 
+    private static boolean reducedMotion() {
+        try { return com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get(); }
+        catch (IllegalStateException ignored) { return false; }
+    }
+
     // Rotating chronicle note pool. Kept localized so language changes do not
     // leave the Title half Spanish, half English.
     private static final String[] YEAR_POOL_ES = {
@@ -99,7 +104,8 @@ public class LogoRenderer {
     public static void draw(GuiGraphics g, int cx, int topY) {
         Font font = Minecraft.getInstance().font;
 
-        float logoPulse = (float)(Math.sin(System.currentTimeMillis() / 820.0) * 0.5 + 0.5);
+        float logoPulse = reducedMotion() ? 0.5f
+            : (float)(Math.sin(System.currentTimeMillis() / 820.0) * 0.5 + 0.5);
         int skullY = topY + 6 + (logoPulse > 0.72f ? 1 : 0);
         // Soft shadow behind skull for depth
         int shadowCol = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 70);
@@ -146,7 +152,8 @@ public class LogoRenderer {
         g.fill(cx - 5, topY + 18, cx - 2, topY + 22, DiaryTheme.INK);
         g.fill(cx + 3, topY + 18, cx + 6, topY + 22, DiaryTheme.INK);
         g.fill(cx + 4, topY + 19, cx + 5, topY + 20, DiaryTheme.PLAGUE_TOXIC);
-        int eyePulse = 90 + (int)(Math.sin(System.currentTimeMillis() / 420.0) * 45.0);
+        int eyePulse = reducedMotion() ? 90
+            : 90 + (int)(Math.sin(System.currentTimeMillis() / 420.0) * 45.0);
         g.fill(cx + 3, topY + 18, cx + 7, topY + 22, (Math.max(20, eyePulse) << 24) | 0x5A7038);
         // v0.16.0: la pupila mira hacia el lector (maximo 1px de sesgo).
         int px = 0, py = 0;
