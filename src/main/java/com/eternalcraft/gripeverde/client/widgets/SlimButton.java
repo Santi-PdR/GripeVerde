@@ -38,6 +38,14 @@ public class SlimButton extends AbstractButton {
         this.height = Math.max(1, height);
     }
 
+    /** Adjusts the complete hitbox for compact grid layouts. */
+    public void setVisualBounds(int x, int y, int width, int height) {
+        this.setX(x);
+        this.setY(y);
+        this.width = Math.max(1, width);
+        this.height = Math.max(1, height);
+    }
+
     @Override
     public void onPress() {
         this.clickSound.run();
@@ -51,7 +59,8 @@ public class SlimButton extends AbstractButton {
 
     @Override
     protected void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        boolean hovered = this.isHovered();
+        boolean keyboardFocused = this.active && this.isFocused() && !this.isMouseOver(mouseX, mouseY);
+        boolean hovered = this.isHovered() || keyboardFocused;
         if (hovered && !wasHovered) UiSounds.playHover();
         wasHovered = hovered;
 
@@ -75,6 +84,16 @@ public class SlimButton extends AbstractButton {
         g.fill(x + 3, y + h - 4, x + w - 3, y + h - 3, DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 80));
         g.fill(x + 4, y + 4, x + 5, y + 5, DiaryTheme.withAlpha(DiaryTheme.GOLD_TARNISHED, 120));
         g.fill(x + w - 5, y + 4, x + w - 4, y + 5, DiaryTheme.withAlpha(DiaryTheme.GOLD_TARNISHED, 120));
+
+        // Keep keyboard focus visible without extending the hitbox or overlapping
+        // compact buttons that may be stacked with no gap in very short windows.
+        if (keyboardFocused && w > 2 && h > 2) {
+            int focus = 0xFFFFE28A;
+            g.fill(x + 1, y + 1, x + w - 1, y + 2, focus);
+            g.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, focus);
+            g.fill(x + 1, y + 1, x + 2, y + h - 1, focus);
+            g.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, focus);
+        }
 
         Font font = Minecraft.getInstance().font;
         String label = ellipsize(font, this.getMessage().getString(), Math.max(8, w - 12));

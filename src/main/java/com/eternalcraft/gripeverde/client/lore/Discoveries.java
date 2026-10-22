@@ -158,6 +158,34 @@ public final class Discoveries {
         g.drawString(mc.font, name, x + 20, y + 18, ink, false);
     }
 
+    /** One-line discovery notice for the compact title menu on short screens. */
+    public static void drawCompactToast(net.minecraft.client.gui.GuiGraphics g, int screenW) {
+        if (!hasActiveToast()) return;
+        Minecraft mc = Minecraft.getInstance();
+        if (mc == null || mc.font == null) return;
+
+        int x = 4;
+        int y = 2;
+        int w = Math.max(1, screenW - 8);
+        g.fill(x, y, x + w, y + 14, 0xE6120C06);
+        g.fill(x, y, x + w, y + 1, 0xFF8E6A35);
+        g.fill(x, y + 13, x + w, y + 14, 0xFF8E6A35);
+        g.fill(x + 5, y + 5, x + 10, y + 10, 0xFF6E1F16);
+        g.fill(x + 6, y + 6, x + 8, y + 8, 0xFFD8A078);
+
+        String header = isEnglish() ? "FOUND" : "HALLAZGO";
+        String name = toastName == null ? "" : toastName;
+        String message = header + " · " + name;
+        int maxWidth = Math.max(1, w - 20);
+        if (mc.font.width(message) > maxWidth) {
+            int ellipsisWidth = mc.font.width("...");
+            message = maxWidth <= ellipsisWidth
+                ? mc.font.plainSubstrByWidth(message, maxWidth)
+                : mc.font.plainSubstrByWidth(message, maxWidth - ellipsisWidth) + "...";
+        }
+        g.drawString(mc.font, message, x + 14, y + 3, 0xFFE6D2A6, false);
+    }
+
     // ── Nombres (ES/EN) ──
     public static String nameFor(String id) {
         boolean en = isEnglish();
