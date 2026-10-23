@@ -40,6 +40,7 @@ public class DiaryControlsScreen extends Screen {
     private final Screen lastScreen;
     private final Options options;
     private int panelX, panelY, panelW, panelH;
+    private boolean compactLayout;
     private boolean smugglerSeen = false;
 
     public DiaryControlsScreen(Screen parent, Options options) {
@@ -59,18 +60,21 @@ public class DiaryControlsScreen extends Screen {
 
     @Override
     protected void init() {
-        this.panelW = Math.min(PANEL_W, this.width - 40);
-        this.panelH = Math.min(PANEL_H, this.height - 30);
+        this.panelW = Math.max(1, Math.min(PANEL_W, this.width - 40));
+        this.panelH = Math.max(1, Math.min(PANEL_H, this.height - 30));
         this.panelX = (this.width - this.panelW) / 2;
         this.panelY = (this.height - this.panelH) / 2;
+        this.compactLayout = this.panelH < 220;
 
         // Grid 2 columnas x 3 filas dentro del panel
-        int gridTop = this.panelY + 50;
-        int rowH = 24;
-        int btnW = 150;
+        int gridTop = this.panelY + (this.compactLayout ? 36 : 58);
+        int rowH = this.compactLayout ? 22 : 24;
         int btnH = 20;
-        int col1X = this.panelX + (this.panelW / 2) - btnW - 4;
-        int col2X = this.panelX + (this.panelW / 2) + 4;
+        int btnW = Math.max(1, Math.min(150, (this.panelW - 32) / 2));
+        int colGap = 8;
+        int gridW = btnW * 2 + colGap;
+        int col1X = this.panelX + (this.panelW - gridW) / 2;
+        int col2X = col1X + btnW + colGap;
 
         // Fila 0: Mouse... | Atajos...
         this.addRenderableWidget(new DiaryButton(
@@ -105,7 +109,7 @@ public class DiaryControlsScreen extends Screen {
             col2X, gridTop + rowH * 2, btnW, btnH);
 
         // Boton Volver Diary
-        int backW = 120;
+        int backW = Math.max(1, Math.min(120, this.panelW - 24));
         int backY = this.panelY + this.panelH - 30;
         this.addRenderableWidget(new DiaryButton(
             (this.width - backW) / 2, backY, backW, btnH,
@@ -149,7 +153,7 @@ public class DiaryControlsScreen extends Screen {
 
         // Titulo
         int titleX = this.width / 2;
-        int titleY = this.panelY + 10;
+        int titleY = this.panelY + (this.compactLayout ? 6 : 10);
         com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
             g, this.font, this.title, titleX, titleY, DiaryChrome.INK_TITLE);
 
@@ -159,14 +163,16 @@ public class DiaryControlsScreen extends Screen {
         g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
         // Flavor
-        String flavor = Component.translatable("gripeverde.options.controls.flavor").getString();
-        int flvWC = this.font.width(flavor);
-        g.drawString(this.font, flavor, (this.width - flvWC) / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
+        if (!this.compactLayout) {
+            String flavor = Component.translatable("gripeverde.options.controls.flavor").getString();
+            int flvWC = this.font.width(flavor);
+            g.drawString(this.font, flavor, (this.width - flvWC) / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
+        }
 
         // Divisores + esquineros
-        int divY1 = titleY + 42;
+        int divY1 = this.panelY + (this.compactLayout ? 30 : 52);
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY1);
-        int divY2 = this.panelY + this.panelH - 38;
+        int divY2 = this.panelY + this.panelH - (this.compactLayout ? 34 : 38);
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
         DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
         DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. III");
