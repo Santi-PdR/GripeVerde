@@ -218,8 +218,17 @@ public class VictorianSkyline {
 
     /** La ventana del atico que parpadea esperando respuesta. */
     private static void renderSignalWindow(GuiGraphics g, int w, int h) {
-        int[] r = signalWindowRect(w, h);
-        int wx = r[0], wy = r[1], ww = r[2], wh = r[3];
+        // Este método corre cada frame; calcular el rectángulo con primitivos
+        // evita crear un int[] para una coordenada que solo se dibuja.
+        float[] b = FG_BUILDINGS[5];
+        int bx1 = (int)(w * b[0]);
+        int by2 = (int)(h * b[1]);
+        int bw = (int)(w * b[2]);
+        int bh = (int)(h * b[3]);
+        int wx = bx1 + (int)(bw * 0.28f);
+        int wy = by2 - bh + Math.max(3, bh / 9);
+        int ww = 6;
+        int wh = 8;
         boolean closed;
         try {
             closed = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("curtains_closed") > 0;
