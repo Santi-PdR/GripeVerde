@@ -59,6 +59,12 @@ public final class SmoothScroll {
         if (list == null) return;
         attach(list);
 
+        if (ClientAccessibility.reducedMotion()) {
+            list.setScrollAmount(clamp(this.target, list));
+            this.target = clamp(list.getScrollAmount(), list);
+            return;
+        }
+
         double current = list.getScrollAmount();
         double diff = this.target - current;
         double next;
