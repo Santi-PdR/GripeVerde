@@ -16,6 +16,7 @@ import net.minecraft.locale.Language;
 import com.eternalcraft.gripeverde.client.screens.DiarySkinCustomizationScreen;
 import com.eternalcraft.gripeverde.client.screens.DiarySoundOptionsScreen;
 import net.minecraft.client.gui.screens.VideoSettingsScreen;
+import net.minecraftforge.client.gui.ModListScreen;
 import net.minecraft.network.chat.Component;
 
 /**
@@ -84,7 +85,7 @@ public class DiaryOptionsScreen extends Screen {
     private static final int SUBTITLE_GAP = 11;
     private static final int TITLE_H = 12;
     private static final int TITLE_GAP = 14;
-    private static final int GRID_ROWS = 6;
+    private static final int GRID_ROWS = 7;
     private static final int GAP_BEFORE_BACK = 16;
     private static final int PAD_BOTTOM = 18;
     private static final int PAD_SIDES = 28;
@@ -154,6 +155,8 @@ public class DiaryOptionsScreen extends Screen {
         addBtn(this.col2X, this.gridTop + row(3), "gripeverde.options.button.accessibility", DiaryButton.Icon.ACCESS, DiaryButton.SoundProfile.OPTION_OPEN, this::openAccessibility);
         addBtn(this.col1X, this.gridTop + row(4), "gripeverde.options.button.online", DiaryButton.Icon.ONLINE, DiaryButton.SoundProfile.OPTION_OPEN, this::openOnline);
         addBtn(this.col2X, this.gridTop + row(4), "gripeverde.options.button.credits", DiaryButton.Icon.CREDITS, DiaryButton.SoundProfile.OPTION_OPEN, this::openCredits);
+        addBtn(this.col1X, this.gridTop + row(5), "gripeverde.options.button.mods", DiaryButton.Icon.MODS, DiaryButton.SoundProfile.OPTION_OPEN,
+                () -> this.minecraft.setScreen(new ModListScreen(this)));
 
         // Slider de campo de vision (como el de OptionsScreen vanilla: 30-110, por defecto 70)
         // OJO: la clave vanilla "options.fov" es solo "FOV" (sin placeholder), por eso el
@@ -161,7 +164,7 @@ public class DiaryOptionsScreen extends Screen {
         var mcOptions = Minecraft.getInstance().options;
         int fovX = this.col1X;
         int fovW = buttonW * 2 + gapX;
-        int fovY = this.gridTop + row(5) + (buttonH - 20) / 2;
+        int fovY = this.gridTop + row(6) + (buttonH - 20) / 2;
         double fovNorm = (mcOptions.fov().get() - 30.0) / 80.0;
         this.addRenderableWidget(new DiarySlider(fovX, fovY, fovW, 20, fovNorm,
                 v -> {

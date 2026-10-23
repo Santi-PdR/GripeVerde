@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Style;
 /** Shared type styles for the cabinet's identity text. */
 public final class DiaryTypography {
     public static final ResourceLocation DISPLAY_FONT =
-        ResourceLocation.fromNamespaceAndPath("gripeverde", "diary_display");
+        ResourceLocation.fromNamespaceAndPath("minecraft", "default");
 
     // Heading Components are stable for the lifetime of a screen. Reuse the
     // styled copy and measured width between render frames.
@@ -61,6 +61,9 @@ public final class DiaryTypography {
             cachedPlainText = plainText;
             cachedSourceStyle = sourceStyle;
             cachedLanguage = language;
+            // Keep these headings on Minecraft's dependable default font. A
+            // bundled TTF provider rendered tofu for menu headings with some
+            // installed font mods/resource packs, while body text stayed legible.
             cachedDisplay = text.copy().withStyle(style -> style.withFont(DISPLAY_FONT));
             cachedMeasureFont = null;
             cachedDisplayWidth = -1;

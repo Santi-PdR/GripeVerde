@@ -27,10 +27,10 @@
     "gripeverde.changelog.error": "Could not load the change log.",
     "gripeverde.title.button.changelog": "Open the Chronicle",
     "gripeverde.poster.decree.warn": "LAMPS OUT AT DUSK",
-    "gripeverde.poster.reward.body.1": "Last seen in Whitechapel.",
+    "gripeverde.poster.reward.body.1": "Whitechapel.",
     "gripeverde.poster.decree.body.1": "Curfew starts at dusk.",
     "gripeverde.poster.decree.body.2": "By order of the Constable.",
-    "gripeverde.poster.reward.body.2": "Approach with caution.",
+    "gripeverde.poster.reward.body.2": "Keep your distance.",
     "gripeverde.poster.reward.title": "WANTED: PATIENT ZERO",
     "gripeverde.poster.reward.prize": "FIFTY SOVEREIGNS",
     "gripeverde.poster.decree.title": "ROYAL DECREE",
@@ -94,5 +94,6 @@
     "gripeverde.subtitle.menu.crows": "Crows cawing",
     "gripeverde.subtitle.menu.chain": "Chains rattling",
     "gripeverde.subtitle.menu.thunder": "Distant thunder",
-    "gripeverde.options.sound.tuning_fork": "Tune the room"
+    "gripeverde.options.sound.tuning_fork": "Tune the room",
+    "gripeverde.options.button.mods": "Installed Mods"
 }

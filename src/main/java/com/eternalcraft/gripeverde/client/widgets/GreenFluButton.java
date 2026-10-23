@@ -83,7 +83,8 @@ public class GreenFluButton extends AbstractButton {
 
     @Override
     protected void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTick){
-        boolean hovered=isHovered();
+        boolean keyboardFocused = active && isFocused() && !isMouseOver(mouseX, mouseY);
+        boolean hovered = isHovered() || keyboardFocused;
         boolean motionReduced = reducedMotion();
         if(hovered&&!wasHovered) UiSounds.playHover();
         wasHovered=hovered;
@@ -180,8 +181,6 @@ public class GreenFluButton extends AbstractButton {
         int titleCol = hoverAnim.lerpColor(DiaryTheme.BONE_WHITE, DiaryTheme.PAPER);
         int subCol = hoverAnim.lerpColor(DiaryTheme.SEPIA_LIGHT, DiaryTheme.OCHRE);
         if(!active){ titleCol=DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID,90); subCol=DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID,70); }
-        // Shadow 1px for title
-        if(active) g.drawString(font,tTitle,textX+1,yDraw+9,DiaryTheme.withAlpha(DiaryTheme.INK_BLACK,70),false);
         g.drawString(font,tTitle,textX,yDraw+8,titleCol,false);
         g.drawString(font,tSub,textX,yDraw+22,subCol,false);
 
@@ -195,7 +194,7 @@ public class GreenFluButton extends AbstractButton {
         }
 
         // Focus ring
-        if(isFocused() && !isMouseOver(mouseX,mouseY) && active){
+        if(keyboardFocused){
             int gold=DiaryTheme.GOLD_TARNISHED;
             g.fill(x-1,yDraw-1,x+w+1,yDraw,gold);
             g.fill(x-1,yDraw+h,x+w+1,yDraw+h+1,gold);

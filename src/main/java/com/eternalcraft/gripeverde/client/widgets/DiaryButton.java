@@ -25,7 +25,7 @@ public class DiaryButton extends AbstractButton {
 
     public enum Variant { PRIMARY, SECONDARY, DANGER }
     public enum SoundProfile { DEFAULT, CLEAN, OPTION_OPEN, BACK, NONE }
-    public enum Icon { NONE, HAND, SCROLL, CHART, GEAR, DOOR, PALETTE, SOUND, EYE, CONTROLS, LANGUAGE, CHAT, PACK, ACCESS, ONLINE, CREDITS }
+    public enum Icon { NONE, HAND, SCROLL, CHART, GEAR, DOOR, PALETTE, SOUND, EYE, CONTROLS, LANGUAGE, CHAT, PACK, MODS, ACCESS, ONLINE, CREDITS }
 
     private final Runnable onClick;
     private final Icon icon;
@@ -317,6 +317,7 @@ public class DiaryButton extends AbstractButton {
             case LANGUAGE -> drawLanguage(g,x,y,col);
             case CHAT -> drawChat(g,x,y,col);
             case PACK -> drawPack(g,x,y,col);
+            case MODS -> drawMods(g,x,y,col);
             case ACCESS -> drawAccess(g,x,y,col);
             case ONLINE -> drawOnline(g,x,y,col);
             case CREDITS -> drawCredits(g,x,y,col);
@@ -335,6 +336,7 @@ public class DiaryButton extends AbstractButton {
     private void drawLanguage(GuiGraphics g,int x,int y,int c){ g.fill(x+1,y+2,x+11,y+9,c); g.fill(x+2,y+3,x+10,y+4,DiaryTheme.PAPER); g.fill(x+3,y+5,x+8,y+6,DiaryTheme.PAPER); g.fill(x+3,y+7,x+9,y+8,DiaryTheme.withAlpha(DiaryTheme.PAPER,180)); }
     private void drawChat(GuiGraphics g,int x,int y,int c){ g.fill(x+1,y+2,x+11,y+8,c); g.fill(x+3,y+8,x+5,y+10,c); g.fill(x+3,y+4,x+9,y+5,DiaryTheme.PAPER); g.fill(x+3,y+6,x+7,y+7,DiaryTheme.PAPER); }
     private void drawPack(GuiGraphics g,int x,int y,int c){ g.fill(x+2,y+2,x+10,y+9,c); g.fill(x+1,y+4,x+9,y+10,DiaryTheme.withAlpha(c,130)); g.fill(x+4,y+3,x+8,y+4,DiaryTheme.PAPER); }
+    private void drawMods(GuiGraphics g,int x,int y,int c){ g.fill(x+1,y+1,x+5,y+5,c); g.fill(x+7,y+1,x+11,y+5,c); g.fill(x+1,y+7,x+5,y+11,c); g.fill(x+7,y+7,x+11,y+11,c); }
     private void drawAccess(GuiGraphics g,int x,int y,int c){ g.fill(x+5,y+1,x+7,y+3,c); g.fill(x+2,y+4,x+10,y+5,c); g.fill(x+5,y+5,x+7,y+10,c); g.fill(x+3,y+8,x+5,y+10,c); g.fill(x+7,y+8,x+9,y+10,c); }
     private void drawOnline(GuiGraphics g,int x,int y,int c){ g.fill(x+5,y+1,x+7,y+10,c); g.fill(x+1,y+4,x+11,y+6,c); g.fill(x+2,y+2,x+10,y+3,DiaryTheme.withAlpha(c,120)); g.fill(x+2,y+7,x+10,y+8,DiaryTheme.withAlpha(c,120)); }
     private void drawCredits(GuiGraphics g,int x,int y,int c){ g.fill(x+3,y+1,x+9,y+9,c); g.fill(x+2,y+2,x+10,y+8,DiaryTheme.withAlpha(c,100)); g.fill(x+5,y+3,x+7,y+6,DiaryTheme.PAPER); g.fill(x+5,y+7,x+7,y+8,DiaryTheme.PAPER); }

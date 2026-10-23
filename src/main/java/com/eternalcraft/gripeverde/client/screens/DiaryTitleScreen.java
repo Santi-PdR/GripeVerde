@@ -524,7 +524,10 @@ public class DiaryTitleScreen extends Screen {
             drawDustIfDue(g);
             drawVigilLine(g);
             com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
-            com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, this.height - 60);
+            int marginaliaY = estimateFirstButtonTop() - this.font.lineHeight - 8;
+            if (marginaliaY > 8) {
+                com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, marginaliaY);
+            }
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
         } catch (Throwable ignored) {}
     }
@@ -753,56 +756,14 @@ public class DiaryTitleScreen extends Screen {
                     : "Dr. S. Pereira (¿otra vez tu?)";
             }
         } catch (Throwable ignored) {}
-        // Nombre viejo tachado: el anterior del pool
-        int oldIdx = (idx + SIGNATURE_POOL_ES.length - 1) % SIGNATURE_POOL_ES.length;
-        String oldSig = signatureFor(oldIdx);
-
         int sw = cachedSignatureWidth(signature, 0);
-        int oldSw = cachedSignatureWidth(oldSig, 1);
         int y = this.height - 12;
-
-        // ORDEN NUEVO: nombre nuevo a la izquierda, nombre viejo tachado a la derecha
-        // Esto se lee mejor: "el nuevo cronista, el anterior tachado"
-
-        // v0.30.0: la firma jamas entra en la franja del gramofo (>>), y el
-        // mensaje del dia se lee a su IZQUIERDA, en la misma linea — antes
-        // flotaba encima y podia pisar la mesa de botones.
-        double jitterX = reducedMotion() ? 0.0 : Math.sin(System.currentTimeMillis() / 250.0) * 0.5
-                       + Math.sin(System.currentTimeMillis() / 87.0) * 0.3;
-        double jitterY = reducedMotion() ? 0.0 : Math.cos(System.currentTimeMillis() / 310.0) * 0.4;
-        int newX = Math.max(48, this.width - sw - oldSw - 16) + (int)Math.round(jitterX);
-        int newY = y + (int)Math.round(jitterY);
-        // v0.21.25: firma limpia sin sombra.
+        // One compact, stationary signature. The old crossed-out name and
+        // date-based footer made the menu busy and animated needlessly.
+        int newX = Math.max(8, this.width - sw - 8);
         g.drawString(this.font, signature,
-            newX, newY,
+            newX, y,
             DiaryTheme.SEPIA_LIGHT, false);
-
-        // Nombre viejo tachado (derecha, mas tenue)
-        int oldX = this.width - oldSw - 6;
-        int oldColor = com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
-            com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_LIGHT, 100);
-        g.drawString(this.font, oldSig, oldX, y, oldColor, false);
-
-        // Tachadura sobre nombre viejo
-        int strikeY = y + 4;
-        g.fill(oldX - 1, strikeY, oldX + oldSw + 1, strikeY + 1,
-            com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0x00000000, 180));
-        g.fill(oldX + 2, strikeY - 1, oldX + oldSw - 1, strikeY,
-            com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0x00000000, 90));
-
-        // Mensaje del dia real: a la IZQUIERDA de la firma, en la misma
-        // linea; si no hay aire suficiente (pantalla minuscula), se omite —
-        // nunca pisando botones ni saliendose del vidrio.
-        String dayMsg = getDayMessage();
-        if (!dayMsg.isEmpty()) {
-            int dmw = cachedSignatureWidth(dayMsg, 2);
-            int dayX = newX - dmw - 8;
-            if (dayX >= 48) {
-                int dmAlpha = com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
-                    com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_LIGHT, 90);
-                g.drawString(this.font, dayMsg, dayX, y, dmAlpha, false);
-            }
-        }
     }
 
     private void onSingleplayer() { this.minecraft.setScreen(new SelectWorldScreen(this)); }
@@ -1390,66 +1351,6 @@ public class DiaryTitleScreen extends Screen {
         }
         return this.signatureWidths[slot];
     }
-
-    // Cache del mensaje del dia: solo se recalcula si cambio la fecha
-    private static String cachedDayMsg = null;
-    private static java.time.LocalDate cachedDayMsgDate = null;
-    private static String cachedDayMsgLang = null;
-
-    /** Mensaje del cronista segun el dia real de la semana + mes especial (cacheado). */
-    private static String getDayMessage() {
-        java.time.LocalDate today = java.time.LocalDate.now();
-        String lang = net.minecraft.client.Minecraft.getInstance().getLanguageManager().getSelected();
-        if (lang == null) lang = "en_us";
-        if (cachedDayMsg != null && today.equals(cachedDayMsgDate)
-                && java.util.Objects.equals(lang, cachedDayMsgLang)) {
-            return cachedDayMsg;
-        }
-        cachedDayMsgDate = today;
-        cachedDayMsgLang = lang;
-        boolean english = isEnglishSelected();
-        int month = today.getMonthValue();
-        int dow = today.getDayOfWeek().getValue();
-
-        String monthBonus = "";
-        if (english) {
-            if (month == 10) monthBonus = " ~ the dead walk";
-            else if (month == 12) monthBonus = " ~ Advent night";
-            else if (month == 1) monthBonus = " ~ new year, same plague";
-        } else {
-            if (month == 10) monthBonus = " ~ los muertos caminan";
-            else if (month == 12) monthBonus = " ~ noche de Adviento";
-            else if (month == 1) monthBonus = " ~ ano nuevo, misma peste";
-        }
-
-        String base;
-        if (english) {
-            switch (dow) {
-                case 1: base = "Monday ~ another week in quarantine"; break;
-                case 2: base = "Tuesday ~ thin rain"; break;
-                case 3: base = "Wednesday ~ no correspondence"; break;
-                case 4: base = "Thursday ~ the market closed"; break;
-                case 5: base = "Friday ~ may God have mercy"; break;
-                case 6: base = "Saturday ~ compulsory rest"; break;
-                case 7: base = "Sunday ~ the bells ring alone"; break;
-                default: base = "";
-            }
-        } else {
-            switch (dow) {
-                case 1: base = "Lunes ~ otra semana en cuarentena"; break;
-                case 2: base = "Martes ~ dia de lluvia fina"; break;
-                case 3: base = "Miercoles ~ sin correspondencia"; break;
-                case 4: base = "Jueves ~ el mercado cerro"; break;
-                case 5: base = "Viernes ~ que Dios se apiade"; break;
-                case 6: base = "Sabado ~ descanso obligado"; break;
-                case 7: base = "Domingo ~ las campanas suenan solas"; break;
-                default: base = "";
-            }
-        }
-        cachedDayMsg = base + monthBonus;
-        return cachedDayMsg;
-    }
-
 
     private void drawShootStarMessage(net.minecraft.client.gui.GuiGraphics g) {
         if (reducedMotion()) return;
