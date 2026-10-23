@@ -76,6 +76,10 @@ public class DiaryTitleScreen extends Screen {
     private static final int[] PATINA_KIND = new int[PATINA_COUNT];
     private static int patinaW = -1;
     private static int patinaH = -1;
+    private final int[] patinaAlpha = new int[PATINA_COUNT];
+    private long patinaAlphaFrame = Long.MIN_VALUE;
+    private boolean patinaAlphaReduced;
+    private boolean patinaAlphaInitialized;
     private boolean reducedMotionThisFrame;
     private boolean reducedFlashesThisFrame;
     private Font signatureWidthsFont;
@@ -600,10 +604,11 @@ public class DiaryTitleScreen extends Screen {
         ensurePatinaPoints();
         boolean reduced = reducedMotion();
         long frame = reduced ? 0L : System.currentTimeMillis() / 120L;
+        refreshPatinaAlpha(reduced, frame);
         for (int i = 0; i < PATINA_COUNT; i++) {
             int x = PATINA_X[i];
             int y = PATINA_Y[i];
-            int alpha = reduced ? 17 : 10 + (int)((Math.sin((frame + i * 13) * 0.17) + 1.0) * 7.0);
+            int alpha = this.patinaAlpha[i];
             int col = (alpha << 24) | 0xC0A06A;
             if (PATINA_KIND[i] == 0) g.fill(x, y, x + 1, y + 4, col);
             else g.fill(x, y, x + 1, y + 1, col);
@@ -616,6 +621,20 @@ public class DiaryTitleScreen extends Screen {
             g.fill(x, y, x + 2, y + 5, col);
             g.fill(x + 1, y + 5, x + 2, y + 8, (Math.max(4, a / 2) << 24) | 0xD8D8C8);
         }
+    }
+
+    private void refreshPatinaAlpha(boolean reduced, long frame) {
+        if (this.patinaAlphaInitialized && reduced == this.patinaAlphaReduced
+                && (reduced || frame == this.patinaAlphaFrame)) {
+            return;
+        }
+        for (int i = 0; i < PATINA_COUNT; i++) {
+            this.patinaAlpha[i] = reduced ? 17
+                : 10 + (int)((Math.sin((frame + i * 13) * 0.17) + 1.0) * 7.0);
+        }
+        this.patinaAlphaReduced = reduced;
+        this.patinaAlphaFrame = frame;
+        this.patinaAlphaInitialized = true;
     }
 
     private void ensurePatinaPoints() {
