@@ -13,6 +13,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +43,8 @@ public class DiaryArchiveScreen extends Screen {
     private int panelX, panelY, panelW, panelH;
     private String viewingDoc = DOC_NONE;
     private int hoverCard = -1;
+    private int keyboardCard = -1;
+    private boolean keyboardNavigatingCards = false;
     private int lastMouseX = -1, lastMouseY = -1;
 
     private static final int CARD_H = 22;
@@ -182,14 +185,17 @@ public class DiaryArchiveScreen extends Screen {
                     int y = cardsTop - gridScrollPx + row * CARD_SCROLL_STEP;
                     String id = Discoveries.ALL[i];
                     boolean disc = ChroniclerMemory.isDiscovered(id);
-                    boolean hover = mouseX >= x && mouseX < x + cardWidth
+                    boolean hover = !keyboardNavigatingCards
+                        && mouseX >= x && mouseX < x + cardWidth
                         && mouseY >= y && mouseY < y + CARD_H
                         && mouseY >= cardsTop && mouseY < cardsBottom;
                     if (hover) hoverCard = i;
+                    boolean focused = keyboardNavigatingCards && keyboardCard == i;
+                    boolean highlighted = hover || focused;
 
                     if (disc) {
                         g.fill(x, y + 1, x + cardWidth, y + CARD_H + 1, DiaryTheme.withAlpha(0x00000000, 38));
-                        g.fill(x, y, x + cardWidth, y + CARD_H, hover ? 0xFFDCCBA0 : 0xFFD2BE8E);
+                        g.fill(x, y, x + cardWidth, y + CARD_H, highlighted ? 0xFFDCCBA0 : 0xFFD2BE8E);
                         g.fill(x, y, x + cardWidth, y + 1, 0xFF8E6A35);
                         g.fill(x, y + CARD_H - 1, x + cardWidth, y + CARD_H, 0xFF8E6A35);
                         g.fill(x, y, x + 1, y + CARD_H, 0xFF8E6A35);
@@ -199,14 +205,21 @@ public class DiaryArchiveScreen extends Screen {
                         String fit = truncate(name, cardWidth - 12);
                         g.drawString(this.font, fit, x + 9, y + 8, DiaryTheme.INK, false);
                     } else {
-                        g.fill(x, y, x + cardWidth, y + CARD_H, DiaryTheme.withAlpha(0x003D2A18, hover ? 30 : 16));
+                        g.fill(x, y, x + cardWidth, y + CARD_H, DiaryTheme.withAlpha(0x003D2A18, highlighted ? 30 : 16));
                         g.fill(x, y, x + cardWidth, y + 1, DiaryTheme.withAlpha(0x008E6A35, 70));
                         g.fill(x, y + CARD_H - 1, x + cardWidth, y + CARD_H, DiaryTheme.withAlpha(0x008E6A35, 70));
                         g.fill(x, y, x + 1, y + CARD_H, DiaryTheme.withAlpha(0x008E6A35, 70));
                         g.fill(x + cardWidth - 1, y, x + cardWidth, y + CARD_H, DiaryTheme.withAlpha(0x008E6A35, 70));
                         int qw = this.font.width("?");
                         g.drawString(this.font, "?", x + (cardWidth - qw) / 2, y + 7,
-                            DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, hover ? 150 : 70), false);
+                            DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, highlighted ? 150 : 70), false);
+                    }
+                    if (focused) {
+                        int focus = 0xFFFFD77A;
+                        g.fill(x + 1, y + 1, x + cardWidth - 1, y + 2, focus);
+                        g.fill(x + 1, y + CARD_H - 2, x + cardWidth - 1, y + CARD_H - 1, focus);
+                        g.fill(x + 1, y + 1, x + 2, y + CARD_H - 1, focus);
+                        g.fill(x + cardWidth - 2, y + 1, x + cardWidth - 1, y + CARD_H - 1, focus);
                     }
                 }
             }
@@ -214,8 +227,10 @@ public class DiaryArchiveScreen extends Screen {
         }
 
         // Texto de la ficha bajo el cursor
-        if (hoverCard >= 0) {
-            String id = Discoveries.ALL[hoverCard];
+        int detailCard = hoverCard >= 0 ? hoverCard
+            : keyboardNavigatingCards ? keyboardCard : -1;
+        if (detailCard >= 0 && detailCard < Discoveries.ALL.length) {
+            String id = Discoveries.ALL[detailCard];
             if (ChroniclerMemory.isDiscovered(id)) {
                 drawC(g, Discoveries.nameFor(id), cx, infoY, DiaryTheme.INK);
             } else {
@@ -460,6 +475,7 @@ public class DiaryArchiveScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        this.keyboardNavigatingCards = false;
         if (!DOC_NONE.equals(viewingDoc)) {
             if (mouseY > panelY + panelH - 56) {
                 viewingDoc = DOC_NONE;
@@ -524,7 +540,58 @@ public class DiaryArchiveScreen extends Screen {
             viewingDoc = DOC_NONE;
             return true;
         }
+        if (DOC_NONE.equals(viewingDoc) && isCardNavigationKey(keyCode)) {
+            moveKeyboardCard(keyCode);
+            return true;
+        }
         return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    private static boolean isCardNavigationKey(int keyCode) {
+        return keyCode == GLFW.GLFW_KEY_LEFT || keyCode == GLFW.GLFW_KEY_RIGHT
+            || keyCode == GLFW.GLFW_KEY_UP || keyCode == GLFW.GLFW_KEY_DOWN
+            || keyCode == GLFW.GLFW_KEY_HOME || keyCode == GLFW.GLFW_KEY_END;
+    }
+
+    private void moveKeyboardCard(int keyCode) {
+        int count = Discoveries.ALL.length;
+        if (count == 0) return;
+        if (keyboardCard < 0 || keyboardCard >= count) {
+            keyboardCard = keyCode == GLFW.GLFW_KEY_END ? count - 1 : 0;
+        } else if (keyCode == GLFW.GLFW_KEY_HOME) {
+            keyboardCard = 0;
+        } else if (keyCode == GLFW.GLFW_KEY_END) {
+            keyboardCard = count - 1;
+        } else {
+            int row = keyboardCard / columns;
+            int col = keyboardCard % columns;
+            switch (keyCode) {
+                case GLFW.GLFW_KEY_LEFT -> col = Math.max(0, col - 1);
+                case GLFW.GLFW_KEY_RIGHT -> col = Math.min(columns - 1, col + 1);
+                case GLFW.GLFW_KEY_UP -> row = Math.max(0, row - 1);
+                case GLFW.GLFW_KEY_DOWN -> row = Math.min((count - 1) / columns, row + 1);
+                default -> { return; }
+            }
+            keyboardCard = Math.min(count - 1, row * columns + col);
+        }
+
+        keyboardNavigatingCards = true;
+        int viewportH = Math.max(0, cardsBottom - cardsTop);
+        int cardTop = (keyboardCard / columns) * CARD_SCROLL_STEP;
+        int cardBottom = cardTop + CARD_H;
+        int currentTop = (int) Math.round(cardScroll);
+        if (cardTop < currentTop) {
+            cardScroll = cardTop;
+        } else if (cardBottom > currentTop + viewportH) {
+            cardScroll = cardBottom - viewportH;
+        }
+        cardScroll = clampScroll(cardScroll, maxCardScroll);
+    }
+
+    @Override
+    public void mouseMoved(double mouseX, double mouseY) {
+        this.keyboardNavigatingCards = false;
+        super.mouseMoved(mouseX, mouseY);
     }
 
     @Override
