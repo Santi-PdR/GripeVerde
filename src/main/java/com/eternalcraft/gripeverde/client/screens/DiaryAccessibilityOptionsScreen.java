@@ -30,7 +30,10 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
 
     // Bandas dentro del panel
     private static final int HEADER_H = 60;   // titulo + subtitulo + flavor + divisor
+    private static final int COMPACT_HEADER_H = 42;
     private static final int FOOTER_H = 112;  // divisor + 2 toggles propios + Volver
+    private static final int COMPACT_FOOTER_H = 90;
+    private static final int COMPACT_HEIGHT = 320;
 
     private DiaryButton btnVolver;
     private PerceptionEyeButton perceptionEye;
@@ -38,6 +41,8 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
     private DiaryToggle reduceFlashesToggle;
     private final SmoothScroll smoothScroll = new SmoothScroll();
     private int panelW, panelH, panelX, panelY;
+    private int headerHeight, footerHeight;
+    private boolean compactLayout;
 
     public DiaryAccessibilityOptionsScreen(Screen parent, Options options) {
         super(parent, options);
@@ -50,10 +55,13 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         super.init();
 
         // Panel adaptativo
-        this.panelW = Math.min(PANEL_MAX_W, this.width  - SCREEN_MARGIN * 2);
-        this.panelH = Math.min(PANEL_MAX_H, this.height - SCREEN_MARGIN * 2);
+        this.panelW = Math.max(1, Math.min(PANEL_MAX_W, this.width  - SCREEN_MARGIN * 2));
+        this.panelH = Math.max(1, Math.min(PANEL_MAX_H, this.height - SCREEN_MARGIN * 2));
         this.panelX = (this.width  - this.panelW) / 2;
         this.panelY = (this.height - this.panelH) / 2;
+        this.compactLayout = this.panelH < COMPACT_HEIGHT;
+        this.headerHeight = this.compactLayout ? COMPACT_HEADER_H : HEADER_H;
+        this.footerHeight = this.compactLayout ? COMPACT_FOOTER_H : FOOTER_H;
 
         this.perceptionEye = new PerceptionEyeButton(
             this.panelX + 13, this.panelY + 9,
@@ -69,8 +77,8 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
             this.list.setRenderTopAndBottom(false);
             this.list.setRenderSelection(false);
             // NO cambiar width - R-VANILLA-LIST-COORDS
-            int listTop    = this.panelY + HEADER_H;
-            int listBottom = this.panelY + this.panelH - FOOTER_H;
+            int listTop    = this.panelY + this.headerHeight;
+            int listBottom = this.panelY + this.panelH - this.footerHeight + 4;
             this.list.updateSize(this.width, this.height, listTop, listBottom);
             this.smoothScroll.snapToCurrent(this.list);
         }
@@ -85,9 +93,11 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         }
 
         // Opciones propias del mod: visibles junto a las opciones de accesibilidad vanilla.
-        int toggleW = Math.min(300, this.panelW - 32);
+        int toggleW = Math.max(1, Math.min(300, this.panelW - 32));
         int toggleX = (this.width - toggleW) / 2;
-        int toggleY = this.panelY + this.panelH - 100;
+        int toggleY = this.compactLayout
+            ? this.panelY + this.panelH - 84
+            : this.panelY + this.panelH - 100;
         this.reducedMotionToggle = new DiaryToggle(
             toggleX, toggleY, toggleW, 24,
             () -> ClientConfig.REDUCED_MOTION.get(),
@@ -105,7 +115,9 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
 
         // v0.23.0: ayuda de fotosensibilidad separada (relampagos y destellos de
         // pantalla completa, sin congelar el resto del movimiento).
-        int flashesY = this.panelY + this.panelH - 66;
+        int flashesY = this.compactLayout
+            ? this.panelY + this.panelH - 56
+            : this.panelY + this.panelH - 66;
         this.reduceFlashesToggle = new DiaryToggle(
             toggleX, flashesY, toggleW, 24,
             () -> ClientConfig.REDUCE_FLASHES.get(),
@@ -122,7 +134,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         this.addRenderableWidget(this.reduceFlashesToggle);
 
         // Boton Volver propio
-        int btnW = 160;
+        int btnW = Math.max(1, Math.min(160, this.panelW - 24));
         int btnH = 20;
         int btnX = (this.width - btnW) / 2;
         int btnY = this.panelY + this.panelH - 28;
@@ -146,7 +158,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
 
         // Titulo
         int cx = this.width / 2;
-        int titleY = this.panelY + 12;
+        int titleY = this.panelY + (this.compactLayout ? 7 : 12);
         var _title = Component.translatable("options.accessibility.title");
         com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
             gfx, this.font, _title, cx, titleY, DiaryChrome.INK_TITLE);
@@ -161,14 +173,14 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
 
         // Flavor
         int flavorY = subtitleY + 13;
-        {
+        if (!this.compactLayout) {
             Component flvC = Component.literal(getRotatingAccFlavor());
             int flvW = this.font.width(flvC);
             gfx.drawString(this.font, flvC, cx - flvW / 2, flavorY, DiaryChrome.INK_FLAVOR, false);
         }
 
         // Divisor superior
-        int divY1 = flavorY + 12;
+        int divY1 = this.panelY + this.headerHeight - 11;
         DiaryChrome.drawInkDivider(gfx, this.panelX, divY1, this.panelW);
 
         // Lista vanilla sin gradientes blancos ni bandejas extra
@@ -178,7 +190,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         }
 
         // Cosmeticos
-        int divY2 = this.panelY + this.panelH - FOOTER_H + 4;
+        int divY2 = this.panelY + this.panelH - this.footerHeight + 4;
         DiaryChrome.drawInkDivider(gfx, this.panelX, divY2, this.panelW);
         DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
         DiaryChrome.drawRegistryTag(gfx, this.panelX, this.panelY, this.panelW, this.panelH, "REG. VI");
