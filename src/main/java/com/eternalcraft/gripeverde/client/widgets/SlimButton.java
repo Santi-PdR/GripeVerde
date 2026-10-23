@@ -2,6 +2,7 @@ package com.eternalcraft.gripeverde.client.widgets;
 
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.util.ClientAccessibility;
 import com.eternalcraft.gripeverde.client.util.EasedValue;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -64,8 +65,11 @@ public class SlimButton extends AbstractButton {
         if (hovered && !wasHovered) UiSounds.playHover();
         wasHovered = hovered;
 
-        hoverAnim.setTarget(hovered);
-        hoverAnim.tickRealtime();
+        if (ClientAccessibility.reducedMotion()) hoverAnim.setImmediately(hovered);
+        else {
+            hoverAnim.setTarget(hovered);
+            hoverAnim.tickRealtime();
+        }
 
         int x = this.getX();
         int y = this.getY();

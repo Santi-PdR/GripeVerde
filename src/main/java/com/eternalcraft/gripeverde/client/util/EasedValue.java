@@ -19,6 +19,12 @@ public class EasedValue {
         this.target = on ? 1f : 0f;
     }
 
+    /** Sets the value without interpolation for reduced-motion preferences. */
+    public void setImmediately(boolean on) {
+        this.current = this.target = on ? 1f : 0f;
+        this.lastTickNanos = System.nanoTime();
+    }
+
     public void tick(float deltaSeconds) {
         float diff = target - current;
         float step = speed * deltaSeconds;

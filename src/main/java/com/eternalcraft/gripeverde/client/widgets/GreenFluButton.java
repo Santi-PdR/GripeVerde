@@ -60,12 +60,16 @@ public class GreenFluButton extends AbstractButton {
     @Override
     protected void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTick){
         boolean hovered=isHovered();
+        boolean motionReduced = reducedMotion();
         if(hovered&&!wasHovered) UiSounds.playHover();
         wasHovered=hovered;
-        hoverAnim.setTarget(hovered);
-        hoverAnim.tickRealtime();
+        if (motionReduced) hoverAnim.setImmediately(hovered);
+        else {
+            hoverAnim.setTarget(hovered);
+            hoverAnim.tickRealtime();
+        }
         float t=hoverAnim.getEased();
-        boolean pressed=pressTicks>0&&active;
+        boolean pressed=pressTicks>0&&active&&!motionReduced;
         if(pressTicks>0) pressTicks--;
 
         int x=getX(), y=getY(), w=width, h=height;
@@ -121,7 +125,7 @@ public class GreenFluButton extends AbstractButton {
         // Spark on side bar when hover high
         if(t>0.28f){
             int sparkY = yDraw + h / 2;
-            if (!reducedMotion()) {
+            if (!motionReduced) {
                 sparkY += (int)(Math.sin(System.currentTimeMillis() / 160.0) * (h / 4.2));
             }
             int sparkCol = DiaryTheme.withAlpha(DiaryTheme.AMBER_FLAME, (int)(t*165));

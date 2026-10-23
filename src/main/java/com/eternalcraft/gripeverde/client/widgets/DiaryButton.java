@@ -2,6 +2,7 @@ package com.eternalcraft.gripeverde.client.widgets;
 
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.util.ClientAccessibility;
 import com.eternalcraft.gripeverde.client.util.EasedValue;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -82,14 +83,18 @@ public class DiaryButton extends AbstractButton {
     protected void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTick){
         int x=getX(), y=getY(), w=width, h=height;
         boolean hovered = isHoveredOrFocused() && active;
-        boolean pressed = pressAnimTicks>0 && active;
+        boolean reducedMotion = ClientAccessibility.reducedMotion();
+        boolean pressed = pressAnimTicks>0 && active && !reducedMotion;
         if(pressAnimTicks>0) pressAnimTicks--;
 
         if(hovered && !wasHovered) UiSounds.playHover();
         wasHovered=hovered;
 
-        hoverAnim.setTarget(hovered);
-        hoverAnim.tickRealtime();
+        if (reducedMotion) hoverAnim.setImmediately(hovered);
+        else {
+            hoverAnim.setTarget(hovered);
+            hoverAnim.tickRealtime();
+        }
         float t = hoverAnim.getEased();
 
         int pressedOffset = pressed?1:0;
