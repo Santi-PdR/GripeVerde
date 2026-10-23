@@ -22,6 +22,10 @@ public final class QuarantineSceneRenderer {
 
     // ── Tick ──
     public static void tick(float delta) {
+        // These animations belong to the front-end diary, never to an in-game
+        // overlay. Besides looking calmer, this avoids advancing unused scene
+        // state while a world or server session is active.
+        if (com.eternalcraft.gripeverde.client.util.ClientAccessibility.hasActiveGameSession()) return;
         AtmosphereRenderer.tick(delta);
         VictorianSkyline.tick(delta);
         LivingAtmosphere.tick(delta);
@@ -53,6 +57,12 @@ public final class QuarantineSceneRenderer {
     // ── Light scene for Diary screens (parchment overlay, street only, no fog/air heavy) ──
     public static void renderDiaryBackground(GuiGraphics g, int w, int h) {
         if (w <= 0 || h <= 0) return;
+        if (com.eternalcraft.gripeverde.client.util.ClientAccessibility.hasActiveGameSession()) {
+            // Preserve the actual game view beneath an interface and dim it
+            // without replacing it with the animated title scene.
+            g.fill(0, 0, w, h, 0xB8060401);
+            return;
+        }
         g.fill(0, 0, w, h, 0xFF060401);
         AtmosphereRenderer.renderSky(g, w, h);
         VictorianSkyline.renderBackground(g, w, h);

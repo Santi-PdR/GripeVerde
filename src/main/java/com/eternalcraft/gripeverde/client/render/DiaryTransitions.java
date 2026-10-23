@@ -1,6 +1,5 @@
 package com.eternalcraft.gripeverde.client.render;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 
@@ -64,22 +63,6 @@ public final class DiaryTransitions {
         return com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
     }
 
-    /**
-     * Detecta tambien el breve tramo de conexion en que el nivel puede ser
-     * null aunque el jugador o el canal de red ya existan. Esto evita iniciar
-     * el velo al abrir interfaces durante la entrada a un mundo/servidor.
-     */
-    private static boolean hasActiveGameSession() {
-        try {
-            Minecraft minecraft = Minecraft.getInstance();
-            return minecraft != null && (minecraft.level != null
-                || minecraft.player != null
-                || minecraft.getConnection() != null);
-        } catch (Throwable ignored) {
-            return false;
-        }
-    }
-
     private static boolean isCabinetScreen(Screen screen) {
         Class<?> cls = screen.getClass();
         if (cls != lastCheckedClass) {
@@ -95,7 +78,7 @@ public final class DiaryTransitions {
      * pliegue segun si la mesa de destino estaba abierta antes.
      */
     public static void noteOpening(Screen from, Screen to) {
-        if (hasActiveGameSession()) {
+        if (com.eternalcraft.gripeverde.client.util.ClientAccessibility.hasActiveGameSession()) {
             current = null;
             NAV.clear();
             pendingHasDirection = false;
@@ -130,7 +113,7 @@ public final class DiaryTransitions {
             current = null;
             return;
         }
-        if (hasActiveGameSession()) {
+        if (com.eternalcraft.gripeverde.client.util.ClientAccessibility.hasActiveGameSession()) {
             current = null;
             NAV.clear();
             pendingHasDirection = false;
