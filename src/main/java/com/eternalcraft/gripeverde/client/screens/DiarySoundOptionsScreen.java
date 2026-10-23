@@ -10,15 +10,18 @@ import com.eternalcraft.gripeverde.client.widgets.DiaryAmbienceSlider;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.SoundOptionsScreen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.client.sounds.SoundManager;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Field;
@@ -51,6 +54,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     private final SmoothScroll smoothScroll = new SmoothScroll();
     private DiaryMusicSlider musicSlider;
     private DiaryAmbienceSlider ambienceSlider;
+    private TuningForkButton tuningForkButton;
 
     public DiarySoundOptionsScreen(Screen parent, Options options) {
         super(parent, options);
@@ -107,6 +111,10 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         int ambSliderY = sliderY + SLIDER_H + 2;
         this.ambienceSlider = new DiaryAmbienceSlider(ambSliderX, ambSliderY, ambSliderW, ambSliderH);
         this.addRenderableWidget(this.ambienceSlider);
+
+        int forkX = ambSliderX - 22;
+        int forkY = ambSliderY + ambSliderH / 2 - 9;
+        this.tuningForkButton = this.addRenderableWidget(new TuningForkButton(forkX, forkY));
 
         // Boton Volver estilo diario
         int btnW = Math.max(1, Math.min(120, this.panelW - 24));
@@ -289,7 +297,10 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
 
     /** v0.24.0: un diapason al margen; pulsado, afina la sala entera. */
     private void drawTuningFork(GuiGraphics g, int mouseX, int mouseY) {
-        if (this.ambienceSlider == null) { this.forkHitboxValid = false; return; }
+        if (this.ambienceSlider == null || this.tuningForkButton == null) {
+            this.forkHitboxValid = false;
+            return;
+        }
         int fx = this.ambienceSlider.getX() - 16;
         int fy = this.ambienceSlider.getY() + this.ambienceSlider.getHeight() / 2;
         long now = System.currentTimeMillis();
@@ -320,6 +331,8 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         this.forkHitW = 14;
         this.forkHitH = 17;
         this.forkHitboxValid = true;
+        this.tuningForkButton.setX(this.forkHitX);
+        this.tuningForkButton.setY(this.forkHitY);
     }
 
     /** v0.24.0: la prueba de tono del gabinete. */
@@ -355,5 +368,38 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     @Override
     public void renderBackground(GuiGraphics g) {
         // Bypass del fondo dirt vanilla
+    }
+
+    private final class TuningForkButton extends AbstractButton {
+        private TuningForkButton(int x, int y) {
+            super(x, y, 14, 17, Component.translatable("gripeverde.options.sound.tuning_fork"));
+        }
+
+        @Override
+        public void onPress() {
+            ringTuningFork();
+        }
+
+        @Override
+        public void playDownSound(SoundManager soundManager) {
+            // ringTuningFork() plays the two-note sound itself.
+        }
+
+        @Override
+        protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+            if (!this.active || !this.isFocused() || this.isMouseOver(mouseX, mouseY)) return;
+            int focus = 0xFFFFD978;
+            int x = this.getX();
+            int y = this.getY();
+            graphics.fill(x, y, x + this.width, y + 1, focus);
+            graphics.fill(x, y + this.height - 1, x + this.width, y + this.height, focus);
+            graphics.fill(x, y, x + 1, y + this.height, focus);
+            graphics.fill(x + this.width - 1, y, x + this.width, y + this.height, focus);
+        }
+
+        @Override
+        protected void updateWidgetNarration(NarrationElementOutput output) {
+            this.defaultButtonNarrationText(output);
+        }
     }
 }
