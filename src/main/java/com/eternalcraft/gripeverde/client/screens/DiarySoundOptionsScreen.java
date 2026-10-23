@@ -164,7 +164,8 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     private boolean silenceHeard = false;
 
     // v0.24.0: el diapason del gabinete (secreto al margen del regulador de ambiente)
-    private int[] forkRect = null;
+    private int forkHitX, forkHitY, forkHitW, forkHitH;
+    private boolean forkHitboxValid;
     private long forkRingUntilMs = 0L;
 
     @Override
@@ -288,7 +289,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
 
     /** v0.24.0: un diapason al margen; pulsado, afina la sala entera. */
     private void drawTuningFork(GuiGraphics g, int mouseX, int mouseY) {
-        if (this.ambienceSlider == null) { this.forkRect = null; return; }
+        if (this.ambienceSlider == null) { this.forkHitboxValid = false; return; }
         int fx = this.ambienceSlider.getX() - 16;
         int fy = this.ambienceSlider.getY() + this.ambienceSlider.getHeight() / 2;
         long now = System.currentTimeMillis();
@@ -314,7 +315,11 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             g.fill(fx - rad, fy - 2 - rad, fx - rad + 1, fy + rad, rc);
             g.fill(fx + rad - 1, fy - 2 - rad, fx + rad, fy + rad, rc);
         }
-        this.forkRect = new int[]{ fx - 6, fy - 9, 14, 17 };
+        this.forkHitX = fx - 6;
+        this.forkHitY = fy - 9;
+        this.forkHitW = 14;
+        this.forkHitH = 17;
+        this.forkHitboxValid = true;
     }
 
     /** v0.24.0: la prueba de tono del gabinete. */
@@ -338,9 +343,9 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0 && this.forkRect != null
-                && mouseX >= this.forkRect[0] && mouseX <= this.forkRect[0] + this.forkRect[2]
-                && mouseY >= this.forkRect[1] && mouseY <= this.forkRect[1] + this.forkRect[3]) {
+        if (button == 0 && this.forkHitboxValid
+                && mouseX >= this.forkHitX && mouseX <= this.forkHitX + this.forkHitW
+                && mouseY >= this.forkHitY && mouseY <= this.forkHitY + this.forkHitH) {
             ringTuningFork();
             return true;
         }
