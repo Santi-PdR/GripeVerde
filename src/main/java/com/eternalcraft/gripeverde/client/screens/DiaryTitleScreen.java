@@ -69,6 +69,8 @@ public class DiaryTitleScreen extends Screen {
     private static final int[] PATINA_KIND = new int[PATINA_COUNT];
     private static int patinaW = -1;
     private static int patinaH = -1;
+    private boolean reducedMotionThisFrame;
+    private boolean reducedFlashesThisFrame;
 
     public DiaryTitleScreen() {
         super(Component.translatable("gripeverde.title.window"));
@@ -82,16 +84,18 @@ public class DiaryTitleScreen extends Screen {
         return this.width < 640 || this.height < 180;
     }
 
-    private static boolean reducedMotion() {
-        return com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
+    private void refreshAccessibilityState() {
+        this.reducedMotionThisFrame = com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
+        this.reducedFlashesThisFrame = com.eternalcraft.gripeverde.client.util.ClientAccessibility.reduceFlashes();
     }
 
-    private static boolean reducedFlashes() {
-        return com.eternalcraft.gripeverde.client.util.ClientAccessibility.reduceFlashes();
-    }
+    private boolean reducedMotion() { return this.reducedMotionThisFrame; }
+
+    private boolean reducedFlashes() { return this.reducedFlashesThisFrame; }
 
     @Override
     protected void init() {
+        refreshAccessibilityState();
         this.ticks = 0;
         // Incrementar contador de aperturas (solo una vez por sesion)
         try {
@@ -401,6 +405,9 @@ public class DiaryTitleScreen extends Screen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        // Snapshot config/session once: many decorative layers consult these
+        // flags, and each direct lookup otherwise rechecks Minecraft state.
+        refreshAccessibilityState();
         // v0.26.0: los faroles reconocen la mano del lector.
         com.eternalcraft.gripeverde.client.render.LivingAtmosphere.setMouse(mouseX, mouseY);
         // Professional centralized scene renderer
