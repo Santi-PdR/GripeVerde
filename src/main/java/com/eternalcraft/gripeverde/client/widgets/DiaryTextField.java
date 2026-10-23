@@ -97,6 +97,10 @@ public class DiaryTextField extends EditBox {
         try { return f.getBoolean(this); } catch (Throwable ignored) { return fallback; }
     }
 
+    public int getSelectionPosition() {
+        return readInt(FIELD_HIGHLIGHT, this.getCursorPosition());
+    }
+
     @SuppressWarnings("unchecked")
     private <T> T readObj(Field f, T fallback) {
         if (f == null) return fallback;

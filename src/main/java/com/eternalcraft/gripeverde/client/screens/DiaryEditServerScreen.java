@@ -32,6 +32,7 @@ public class DiaryEditServerScreen extends Screen {
     private EditBox nameEdit;
     private EditBox ipEdit;
     private DiaryButton doneButton;
+    private DiaryButton cancelButton;
     private boolean justOpened = true;
     private int panelX, panelY, panelW, panelH;
     private int fieldX, fieldW, fieldH, nameY, ipY;
@@ -95,14 +96,14 @@ public class DiaryEditServerScreen extends Screen {
                 this::onDone);
         this.addRenderableWidget(this.doneButton);
 
-        DiaryButton cancel = new DiaryButton(
+        this.cancelButton = new DiaryButton(
                 stackedButtons ? startX : startX + buttonW + buttonGap,
                 cancelButtonY, buttonW, buttonH,
                 Component.translatable("gui.cancel"),
                 stackedButtons ? DiaryButton.Icon.DOOR
                     : (buttonW < 82 ? DiaryButton.Icon.NONE : DiaryButton.Icon.DOOR), DiaryButton.Variant.SECONDARY,
                 this::onCancel);
-        this.addRenderableWidget(cancel);
+        this.addRenderableWidget(this.cancelButton);
 
         this.updateDoneButton();
     }
@@ -141,9 +142,27 @@ public class DiaryEditServerScreen extends Screen {
     public void resize(net.minecraft.client.Minecraft mc, int w, int h) {
         String nameVal = this.nameEdit != null ? this.nameEdit.getValue() : "";
         String ipVal = this.ipEdit != null ? this.ipEdit.getValue() : "";
+        int nameCursor = this.nameEdit != null ? this.nameEdit.getCursorPosition() : 0;
+        int nameSelection = this.nameEdit instanceof DiaryTextField field
+            ? field.getSelectionPosition() : nameCursor;
+        int ipCursor = this.ipEdit != null ? this.ipEdit.getCursorPosition() : 0;
+        int ipSelection = this.ipEdit instanceof DiaryTextField field
+            ? field.getSelectionPosition() : ipCursor;
+        boolean nameFocused = this.getFocused() == this.nameEdit;
+        boolean ipFocused = this.getFocused() == this.ipEdit;
+        boolean doneFocused = this.getFocused() == this.doneButton;
+        boolean cancelFocused = this.getFocused() == this.cancelButton;
         super.resize(mc, w, h);
         this.nameEdit.setValue(nameVal);
         this.ipEdit.setValue(ipVal);
+        this.nameEdit.setCursorPosition(nameCursor);
+        this.nameEdit.setHighlightPos(nameSelection);
+        this.ipEdit.setCursorPosition(ipCursor);
+        this.ipEdit.setHighlightPos(ipSelection);
+        if (nameFocused) this.setFocused(this.nameEdit);
+        else if (ipFocused) this.setFocused(this.ipEdit);
+        else if (doneFocused) this.setFocused(this.doneButton);
+        else if (cancelFocused) this.setFocused(this.cancelButton);
     }
 
     @Override

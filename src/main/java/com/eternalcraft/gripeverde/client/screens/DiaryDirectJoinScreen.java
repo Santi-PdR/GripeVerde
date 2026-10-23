@@ -28,6 +28,7 @@ public class DiaryDirectJoinScreen extends Screen {
 
     private DiaryTextField ipEdit;
     private DiaryButton selectButton;
+    private DiaryButton cancelButton;
     private boolean justOpened = true;
     private int panelX, panelY, panelW, panelH;
     private int fieldX, fieldY, fieldW, fieldH, labelY;
@@ -96,14 +97,14 @@ public class DiaryDirectJoinScreen extends Screen {
                 this::onSelect);
         this.addRenderableWidget(this.selectButton);
 
-        DiaryButton cancel = new DiaryButton(
+        this.cancelButton = new DiaryButton(
                 stackedButtons ? startX : startX + buttonW + buttonGap,
                 cancelButtonY, buttonW, buttonH,
                 Component.translatable("gui.cancel"),
                 stackedButtons ? DiaryButton.Icon.DOOR
                     : (buttonW < 82 ? DiaryButton.Icon.NONE : DiaryButton.Icon.DOOR), DiaryButton.Variant.SECONDARY,
                 this::onCancel);
-        this.addRenderableWidget(cancel);
+        this.addRenderableWidget(this.cancelButton);
 
         this.updateSelectButton();
     }
@@ -171,8 +172,18 @@ public class DiaryDirectJoinScreen extends Screen {
     @Override
     public void resize(net.minecraft.client.Minecraft mc, int w, int h) {
         String ipVal = this.ipEdit != null ? this.ipEdit.getValue() : "";
+        int cursor = this.ipEdit != null ? this.ipEdit.getCursorPosition() : 0;
+        int selection = this.ipEdit != null ? this.ipEdit.getSelectionPosition() : cursor;
+        boolean ipFocused = this.getFocused() == this.ipEdit;
+        boolean selectFocused = this.getFocused() == this.selectButton;
+        boolean cancelFocused = this.getFocused() == this.cancelButton;
         super.resize(mc, w, h);
         this.ipEdit.setValue(ipVal);
+        this.ipEdit.setCursorPosition(cursor);
+        this.ipEdit.setHighlightPos(selection);
+        if (ipFocused) this.setFocused(this.ipEdit);
+        else if (selectFocused) this.setFocused(this.selectButton);
+        else if (cancelFocused) this.setFocused(this.cancelButton);
     }
 
     @Override
