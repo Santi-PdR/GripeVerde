@@ -717,13 +717,20 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             double scrollAmount = 0.0;
             try { scrollAmount = this.vanillaList.getScrollAmount(); } catch (Throwable ignored) {}
 
-            // Buscar el indice de la primera entry LAN
-            int lanIdx = -1;
-            for (int i = 0; i < children.size(); i++) {
-                String cls = children.get(i).getClass().getSimpleName();
-                if (cls.contains("LAN")) {
-                    lanIdx = i;
-                    break;
+            // Vanilla refreshEntries mantiene primero las entradas guardadas,
+            // luego el encabezado LAN y finalmente los servidores detectados.
+            // ServerList.size() da el índice del encabezado en tiempo constante.
+            int lanIdx = this.vanillaServers.size();
+            if (lanIdx >= children.size()
+                    || !children.get(lanIdx).getClass().getSimpleName().contains("LAN")) {
+                // Mantener compatibilidad si otro mod altera el orden de entries.
+                lanIdx = -1;
+                for (int i = 0; i < children.size(); i++) {
+                    String cls = children.get(i).getClass().getSimpleName();
+                    if (cls.contains("LAN")) {
+                        lanIdx = i;
+                        break;
+                    }
                 }
             }
             if (lanIdx == -1) return 0; // no hay LAN header, no hay que recortar
