@@ -1073,6 +1073,11 @@ public class DiaryTitleScreen extends Screen {
     private String easterEggCaseCode = "";
     private long easterEggStartedMs = 0L;
     private long easterEggUntilMs = 0L;
+    private String easterLayoutSource = null;
+    private String easterLayoutVisible = "";
+    private int easterLayoutChars = -1;
+    private int easterLayoutWidth = -1;
+    private java.util.List<net.minecraft.util.FormattedCharSequence> easterLayoutLines = java.util.List.of();
 
     // v0.24.0: el lacre del telegrama cede ante una mano terca (9 golpes seguidos).
     private int sealTapStreak = 0;
@@ -1209,13 +1214,25 @@ public class DiaryTitleScreen extends Screen {
         int elapsedChars = reducedMotion()
             ? easterEggMessage.length()
             : (int)Math.min(easterEggMessage.length(), Math.max(0, (now - easterEggStartedMs) / 22L));
-        String visibleMessage = easterEggMessage.substring(0, elapsedChars);
 
         int boxW = Math.max(220, Math.min(330, this.width - 96));
         // v0.25.2: jamas mas ancho que la propia pantalla (escala GUI 4).
         boxW = Math.min(boxW, Math.max(120, this.width - 16));
-        java.util.List<net.minecraft.util.FormattedCharSequence> lines =
-            this.font.split(Component.literal(visibleMessage), boxW - 34);
+        // El telegrama avanza por caracteres, pero la pantalla puede renderizar
+        // varios frames entre avances. Reutiliza el texto y su wrapping hasta que
+        // cambie el mensaje, el progreso de escritura o el ancho del cuadro.
+        if (this.easterLayoutSource != easterEggMessage
+                || this.easterLayoutChars != elapsedChars
+                || this.easterLayoutWidth != boxW) {
+            this.easterLayoutSource = easterEggMessage;
+            this.easterLayoutChars = elapsedChars;
+            this.easterLayoutWidth = boxW;
+            this.easterLayoutVisible = easterEggMessage.substring(0, elapsedChars);
+            this.easterLayoutLines = this.font.split(
+                Component.literal(this.easterLayoutVisible), boxW - 34);
+        }
+        String visibleMessage = this.easterLayoutVisible;
+        java.util.List<net.minecraft.util.FormattedCharSequence> lines = this.easterLayoutLines;
         // v0.23.2: con la maquina de escribir, el primer fotograma tiene 0 letras y
         // font.split("") devuelve lista VACIA; indexarla crashaba el cliente (AIOOBE
         // reportado en 0.22.0). lineCount jamas puede superar lines.size().
