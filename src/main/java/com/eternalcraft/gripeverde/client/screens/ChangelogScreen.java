@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 
@@ -109,6 +110,7 @@ public class ChangelogScreen extends Screen {
     private boolean searchOpen = false;
     private final StringBuilder searchText = new StringBuilder();
     private final java.util.List<Integer> searchHits = new java.util.ArrayList<>();
+    private final BitSet searchHitRows = new BitSet();
     private int searchHitPos = -1;
 
     // v0.27.0 (V4): la entrada recien llegada se escribe letra a letra en
@@ -581,7 +583,7 @@ public class ChangelogScreen extends Screen {
                         // sobre un fondo tenue; las demas llevan piquito.
                         if (!searchHits.isEmpty() && searchText.length() > 0
                                 && row.type != LT.GAP && row.type != LT.SEPARATOR) {
-                            boolean isHit = searchHits.contains(ri);
+                            boolean isHit = searchHitRows.get(ri);
                             if (isHit) {
                                 boolean isCurrent = searchHitPos >= 0
                                     && ri == searchHits.get(searchHitPos);
@@ -781,6 +783,7 @@ public class ChangelogScreen extends Screen {
     // Recuenta apariciones (texto simple, sin comodines) y salta a la primera.
     private void searchRecalc() {
         searchHits.clear();
+        searchHitRows.clear();
         searchHitPos = -1;
         String needle = searchText.toString().toLowerCase(java.util.Locale.ROOT).trim();
         if (needle.isEmpty()) return;
@@ -789,6 +792,7 @@ public class ChangelogScreen extends Screen {
             if (r.type == LT.GAP || r.type == LT.SEPARATOR) continue;
             if (r.text.toLowerCase(java.util.Locale.ROOT).contains(needle)) {
                 searchHits.add(i);
+                searchHitRows.set(i);
             }
         }
         if (!searchHits.isEmpty()) {
@@ -1013,6 +1017,7 @@ public class ChangelogScreen extends Screen {
                 searchOpen = false;
                 searchText.setLength(0);
                 searchHits.clear();
+                searchHitRows.clear();
                 searchHitPos = -1;
                 return true;
             }
