@@ -1115,7 +1115,15 @@ public class DiaryTitleScreen extends Screen {
     private String easterLayoutVisible = "";
     private int easterLayoutChars = -1;
     private int easterLayoutWidth = -1;
+    private Font easterLayoutFont;
+    private int easterLayoutCaretWidth;
     private java.util.List<net.minecraft.util.FormattedCharSequence> easterLayoutLines = java.util.List.of();
+    private Font easterLabelFont;
+    private String easterLabelCaseCode;
+    private boolean easterLabelEnglish;
+    private String easterLabelStamp = "";
+    private String easterLabelSeal = "";
+    private int easterLabelSealWidth;
 
     // v0.24.0: el lacre del telegrama cede ante una mano terca (9 golpes seguidos).
     private int sealTapStreak = 0;
@@ -1256,20 +1264,33 @@ public class DiaryTitleScreen extends Screen {
         int boxW = Math.max(220, Math.min(330, this.width - 96));
         // v0.25.2: jamas mas ancho que la propia pantalla (escala GUI 4).
         boxW = Math.min(boxW, Math.max(120, this.width - 16));
+        boolean english = isEnglishSelected();
+        if (this.easterLabelFont != this.font || this.easterLabelEnglish != english
+                || !java.util.Objects.equals(this.easterLabelCaseCode, this.easterEggCaseCode)) {
+            this.easterLabelFont = this.font;
+            this.easterLabelEnglish = english;
+            this.easterLabelCaseCode = this.easterEggCaseCode;
+            this.easterLabelStamp = (english ? "CASE " : "CASO ") + this.easterEggCaseCode;
+            this.easterLabelSeal = english ? "UNDER SEAL" : "BAJO SELLO";
+            this.easterLabelSealWidth = this.font.width(this.easterLabelSeal);
+        }
         // El telegrama avanza por caracteres, pero la pantalla puede renderizar
         // varios frames entre avances. Reutiliza el texto y su wrapping hasta que
-        // cambie el mensaje, el progreso de escritura o el ancho del cuadro.
+        // cambie el mensaje, la fuente, el progreso de escritura o el ancho del cuadro.
         if (this.easterLayoutSource != easterEggMessage
                 || this.easterLayoutChars != elapsedChars
-                || this.easterLayoutWidth != boxW) {
+                || this.easterLayoutWidth != boxW
+                || this.easterLayoutFont != this.font) {
             this.easterLayoutSource = easterEggMessage;
             this.easterLayoutChars = elapsedChars;
             this.easterLayoutWidth = boxW;
+            this.easterLayoutFont = this.font;
             this.easterLayoutVisible = easterEggMessage.substring(0, elapsedChars);
             this.easterLayoutLines = this.font.split(
                 Component.literal(this.easterLayoutVisible), boxW - 34);
+            this.easterLayoutCaretWidth = this.font.width(
+                this.font.plainSubstrByWidth(this.easterLayoutVisible, boxW - 44));
         }
-        String visibleMessage = this.easterLayoutVisible;
         java.util.List<net.minecraft.util.FormattedCharSequence> lines = this.easterLayoutLines;
         // v0.23.2: con la maquina de escribir, el primer fotograma tiene 0 letras y
         // font.split("") devuelve lista VACIA; indexarla crashaba el cliente (AIOOBE
@@ -1305,12 +1326,11 @@ public class DiaryTitleScreen extends Screen {
         g.fill(boxX + 8, boxY + 7, boxX + 20, boxY + 8, green);
         g.fill(boxX + boxW - 20, boxY + 7, boxX + boxW - 8, boxY + 8, green);
 
-        String stamp = isEnglishSelected() ? "CASE " + easterEggCaseCode : "CASO " + easterEggCaseCode;
-        g.drawString(this.font, stamp, boxX + 13, boxY + 8, red, false);
-        String seal = isEnglishSelected() ? "UNDER SEAL" : "BAJO SELLO";
-        int sealW = this.font.width(seal);
+        g.drawString(this.font, this.easterLabelStamp, boxX + 13, boxY + 8, red, false);
         // v0.21.25: texto limpio sin sombra.
-        g.drawString(this.font, seal, boxX + boxW - sealW - 13, boxY + 8, DiaryTheme.withAlpha(0xFF241608, alpha), false);
+        g.drawString(this.font, this.easterLabelSeal,
+            boxX + boxW - this.easterLabelSealWidth - 13, boxY + 8,
+            DiaryTheme.withAlpha(0xFF241608, alpha), false);
         g.fill(boxX + 12, boxY + 19, boxX + boxW - 12, boxY + 20, (Math.min(115, alpha) << 24) | 0x422810);
 
         int textY = boxY + 25;
@@ -1322,7 +1342,7 @@ public class DiaryTitleScreen extends Screen {
         int dot = (Math.min(alpha, Math.max(30, pulse)) << 24) | 0x5A7038;
         g.fill(boxX + boxW - 10, boxY + boxH - 10, boxX + boxW - 6, boxY + boxH - 6, dot);
         if (elapsedChars < easterEggMessage.length()) {
-            int cx = boxX + 15 + this.font.width(this.font.plainSubstrByWidth(visibleMessage, boxW - 44));
+            int cx = boxX + 15 + this.easterLayoutCaretWidth;
             g.fill(Math.min(boxX + boxW - 18, cx + 2), boxY + boxH - 13,
                 Math.min(boxX + boxW - 16, cx + 4), boxY + boxH - 5, green);
         }
