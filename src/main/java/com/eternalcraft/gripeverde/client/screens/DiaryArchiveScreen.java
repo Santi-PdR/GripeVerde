@@ -12,6 +12,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.FormattedCharSequence;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * La Sala de consulta (el Archivo).
@@ -47,6 +52,8 @@ public class DiaryArchiveScreen extends Screen {
     private int cardsTop, cardsBottom, infoY, docsY, cardWidth;
     private int maxCardScroll, maxDocumentScroll;
     private double cardScroll, documentScroll;
+    private final Map<String, List<FormattedCharSequence>> wrappedDocumentCache = new HashMap<>();
+    private int wrappedDocumentWidth = -1;
 
     public DiaryArchiveScreen(Screen parent) {
         super(Component.literal(Discoveries.isEnglish() ? "Reading Room" : "Sala de consulta"));
@@ -91,6 +98,7 @@ public class DiaryArchiveScreen extends Screen {
                 viewingDoc = initialDoc;
                 documentScroll = 0;
                 maxDocumentScroll = 0;
+                onDocumentOpened(initialDoc);
             }
             initialDoc = DOC_NONE;
         }
@@ -340,7 +348,16 @@ public class DiaryArchiveScreen extends Screen {
         viewingDoc = document;
         documentScroll = 0;
         maxDocumentScroll = 0;
+        onDocumentOpened(document);
         UiSounds.tab();
+    }
+
+    private void onDocumentOpened(String document) {
+        if (DOC_HOLLOWAY.equals(document)) {
+            Discoveries.discover(Discoveries.CODE_HOLLOWAY);
+        } else if (DOC_FORBIDDEN.equals(document)) {
+            Discoveries.discover(Discoveries.FORBIDDEN_FOLIO);
+        }
     }
 
     private static double clampScroll(double value, int max) {
@@ -384,9 +401,6 @@ public class DiaryArchiveScreen extends Screen {
             ty = drawWrapped(g, textColor(0xFF6E1F16), ty, maxW, tx, en
                 ? "(The rest of the page was torn out.)"
                 : "(El resto de la pagina fue arrancado.)");
-            if (!ChroniclerMemory.isDiscovered(Discoveries.CODE_HOLLOWAY)) {
-                Discoveries.discover(Discoveries.CODE_HOLLOWAY);
-            }
         } else if (DOC_FORBIDDEN.equals(viewingDoc)) {
             // La ficha negra: casi vacia. Una sola linea.
             ty += 40;
@@ -401,7 +415,6 @@ public class DiaryArchiveScreen extends Screen {
             g.fill(sx2 - 6, ty - 3, sx2 + stw + 6, ty - 2, 0xFF6E1F16);
             g.fill(sx2 - 6, ty + 11, sx2 + stw + 6, ty + 12, 0xFF6E1F16);
             g.drawString(this.font, stamp, sx2, ty, 0xFF6E1F16, false);
-            Discoveries.discover(Discoveries.FORBIDDEN_FOLIO);
         }
 
         g.disableScissor();
@@ -419,9 +432,16 @@ public class DiaryArchiveScreen extends Screen {
     private int textColor(int c) { return c; }
 
     private int drawWrapped(GuiGraphics g, int color, int y, int maxW, int x, String text) {
-        java.util.List<net.minecraft.util.FormattedCharSequence> lines =
-            this.font.split(Component.literal(text), maxW);
-        for (net.minecraft.util.FormattedCharSequence fcs : lines) {
+        if (this.wrappedDocumentWidth != maxW) {
+            this.wrappedDocumentCache.clear();
+            this.wrappedDocumentWidth = maxW;
+        }
+        List<FormattedCharSequence> lines = this.wrappedDocumentCache.get(text);
+        if (lines == null) {
+            lines = this.font.split(Component.literal(text), maxW);
+            this.wrappedDocumentCache.put(text, lines);
+        }
+        for (FormattedCharSequence fcs : lines) {
             g.drawString(this.font, fcs, x, y, color, false);
             y += 12;
         }
