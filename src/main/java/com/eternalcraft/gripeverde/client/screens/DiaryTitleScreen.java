@@ -289,7 +289,9 @@ public class DiaryTitleScreen extends Screen {
         boolean compactToastLayout = this.height < 64 || this.width < 220;
         boolean reserveToast = leaveRoomForToast && !compactToastLayout;
         boolean compactToast = leaveRoomForToast && compactToastLayout && this.height >= 36;
-        if (this.height < 96 || this.width < 220) {
+        // Only trade label width for a 2x2 grid when vertical space is the
+        // constraint. Tall, narrow windows still have room for readable rows.
+        if (this.height < 96) {
             int gapX = Math.min(8, Math.max(2, (this.width - 16) / 24));
             int gapY = reserveToast || this.height < 24 ? 0 : 2;
             int top = reserveToast ? 46 : compactToast ? 16
