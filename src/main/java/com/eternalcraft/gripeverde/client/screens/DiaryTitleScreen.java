@@ -16,6 +16,7 @@ import com.eternalcraft.gripeverde.client.theme.LayoutRegion;
 import com.eternalcraft.gripeverde.client.theme.Spacing;
 import com.eternalcraft.gripeverde.client.widgets.GreenFluButton;
 import com.eternalcraft.gripeverde.client.widgets.SlimButton;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
@@ -77,6 +78,9 @@ public class DiaryTitleScreen extends Screen {
     private static int patinaH = -1;
     private boolean reducedMotionThisFrame;
     private boolean reducedFlashesThisFrame;
+    private Font signatureWidthsFont;
+    private final String[] signatureWidthTexts = new String[3];
+    private final int[] signatureWidths = new int[3];
 
     public DiaryTitleScreen() {
         super(Component.translatable("gripeverde.title.window"));
@@ -718,8 +722,8 @@ public class DiaryTitleScreen extends Screen {
         int oldIdx = (idx + SIGNATURE_POOL_ES.length - 1) % SIGNATURE_POOL_ES.length;
         String oldSig = signatureFor(oldIdx);
 
-        int sw = this.font.width(signature);
-        int oldSw = this.font.width(oldSig);
+        int sw = cachedSignatureWidth(signature, 0);
+        int oldSw = cachedSignatureWidth(oldSig, 1);
         int y = this.height - 12;
 
         // ORDEN NUEVO: nombre nuevo a la izquierda, nombre viejo tachado a la derecha
@@ -756,7 +760,7 @@ public class DiaryTitleScreen extends Screen {
         // nunca pisando botones ni saliendose del vidrio.
         String dayMsg = getDayMessage();
         if (!dayMsg.isEmpty()) {
-            int dmw = this.font.width(dayMsg);
+            int dmw = cachedSignatureWidth(dayMsg, 2);
             int dayX = newX - dmw - 8;
             if (dayX >= 48) {
                 int dmAlpha = com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
@@ -1318,6 +1322,18 @@ public class DiaryTitleScreen extends Screen {
         } catch (Throwable ignored) {
             return this.height - 96;
         }
+    }
+
+    private int cachedSignatureWidth(String text, int slot) {
+        if (this.signatureWidthsFont != this.font) {
+            this.signatureWidthsFont = this.font;
+            java.util.Arrays.fill(this.signatureWidthTexts, null);
+        }
+        if (!text.equals(this.signatureWidthTexts[slot])) {
+            this.signatureWidthTexts[slot] = text;
+            this.signatureWidths[slot] = this.font.width(text);
+        }
+        return this.signatureWidths[slot];
     }
 
     // Cache del mensaje del dia: solo se recalcula si cambio la fecha
