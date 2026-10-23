@@ -16,10 +16,10 @@ import net.minecraft.client.gui.screens.Screen;
  * ninguna cuenta por frame (fast path), la elegibilidad de la pantalla se
  * cachea por clase y el modo reducido se resuelve una vez por apertura.
  *
- * Al abrir cualquier pantalla del gabinete (paquete client.screens), una
- * cortina de tinta recorre la pagina revelando la hoja nueva. Con movimiento
- * reducido la transicion es solo un fundido breve, sin barrido,
- * salpicaduras ni gotas. Pantallas vanilla y ajenas quedan intactas.
+ * Al abrir cualquier pantalla del gabinete (paquete client.screens), fuera
+ * de una sesion de juego, una cortina de tinta recorre la pagina revelando la
+ * hoja nueva. Las interfaces abiertas durante una partida no reciben esta
+ * transicion. Con movimiento reducido la transicion es solo un fundido breve.
  */
 public final class DiaryTransitions {
 
@@ -64,10 +64,17 @@ public final class DiaryTransitions {
         return com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
     }
 
-    private static boolean isInWorld() {
+    /**
+     * Detecta tambien el breve tramo de conexion en que el nivel puede ser
+     * null aunque el jugador o el canal de red ya existan. Esto evita iniciar
+     * el velo al abrir interfaces durante la entrada a un mundo/servidor.
+     */
+    private static boolean hasActiveGameSession() {
         try {
             Minecraft minecraft = Minecraft.getInstance();
-            return minecraft != null && minecraft.level != null;
+            return minecraft != null && (minecraft.level != null
+                || minecraft.player != null
+                || minecraft.getConnection() != null);
         } catch (Throwable ignored) {
             return false;
         }
@@ -88,7 +95,8 @@ public final class DiaryTransitions {
      * pliegue segun si la mesa de destino estaba abierta antes.
      */
     public static void noteOpening(Screen from, Screen to) {
-        if (isInWorld()) {
+        if (hasActiveGameSession()) {
+            current = null;
             NAV.clear();
             pendingHasDirection = false;
             return;
@@ -122,7 +130,7 @@ public final class DiaryTransitions {
             current = null;
             return;
         }
-        if (isInWorld()) {
+        if (hasActiveGameSession()) {
             current = null;
             NAV.clear();
             pendingHasDirection = false;
