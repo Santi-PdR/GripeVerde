@@ -214,11 +214,9 @@ public class DiaryButton extends AbstractButton {
             int uy = contentY+font.lineHeight;
             int uAlpha = (int)(t*190);
             int uCol = DiaryTheme.withAlpha(accent, uAlpha);
-            // Slight wavy underline to feel hand-drawn
-            for(int i=0;i<tw;i++){
-                int yOff = (i%3==0)?0: (i%3==1)?1:0;
-                g.fill(textStartX+i, uy+yOff, textStartX+i+1, uy+yOff+1, uCol);
-            }
+            // One continuous ink stroke keeps the hover cue cheap even at
+            // high resolutions, where the label can span hundreds of pixels.
+            g.fill(textStartX, uy, textStartX + tw, uy + 1, uCol);
         }
 
         // Disabled crosshatch faint
