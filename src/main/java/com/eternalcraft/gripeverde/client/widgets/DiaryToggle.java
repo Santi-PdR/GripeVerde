@@ -11,6 +11,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 
 import java.util.function.Consumer;
@@ -35,6 +36,10 @@ public class DiaryToggle extends AbstractButton {
     private final Component baseLabel;
     private final Function<Boolean, Component> valueFormatter;
     private final Runnable onChanged; // opcional, se invoca despues del set()
+    private Language cachedLanguage;
+    private String cachedBaseLabel;
+    private String cachedOffLabel;
+    private String cachedOnLabel;
 
     private final EasedValue hoverAnim = new EasedValue(6f);
     private boolean wasHovered = false;
@@ -85,6 +90,16 @@ public class DiaryToggle extends AbstractButton {
             .append(this.baseLabel)
             .append(": ")
             .append(this.valueFormatter.apply(this.valueGetter.get())));
+    }
+
+    private void refreshDisplayText() {
+        Language language = Language.getInstance();
+        if (this.cachedLanguage == language) return;
+
+        this.cachedLanguage = language;
+        this.cachedBaseLabel = this.baseLabel.getString();
+        this.cachedOffLabel = this.valueFormatter.apply(false).getString();
+        this.cachedOnLabel = this.valueFormatter.apply(true).getString();
     }
 
     @Override
@@ -139,9 +154,9 @@ public class DiaryToggle extends AbstractButton {
         g.fill(x + w - 1, y, x + w, y + h, borderColor);
 
         Font font = Minecraft.getInstance().font;
-        Component valLabel = this.valueFormatter.apply(value);
-        String labelStr = this.baseLabel.getString();
-        String valStr = valLabel.getString();
+        this.refreshDisplayText();
+        String labelStr = this.cachedBaseLabel;
+        String valStr = value ? this.cachedOnLabel : this.cachedOffLabel;
         int plateW = 66;
         int paddingH = 10;
         int maxLabelW = Math.max(24, w - plateW - paddingH * 2 - 8);
