@@ -46,6 +46,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     private static final int SLIDER_H = 20;
 
     private int panelX, panelY, panelW, panelH;
+    private boolean compactLayout;
     private OptionsList reflectedList;
     private final SmoothScroll smoothScroll = new SmoothScroll();
     private DiaryMusicSlider musicSlider;
@@ -59,10 +60,11 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     protected void init() {
         super.init();
 
-        this.panelW = Math.min(PANEL_W, this.width - 40);
-        this.panelH = Math.min(PANEL_H, this.height - 30);
+        this.panelW = Math.max(1, Math.min(PANEL_W, this.width - 40));
+        this.panelH = Math.max(1, Math.min(PANEL_H, this.height - 30));
         this.panelX = (this.width - this.panelW) / 2;
         this.panelY = (this.height - this.panelH) / 2;
+        this.compactLayout = this.panelH < 300;
 
         // Reflection acotada: obtener y estilizar la OptionsList privada
         this.reflectedList = findListField();
@@ -70,8 +72,9 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             this.reflectedList.setRenderBackground(false);
             this.reflectedList.setRenderTopAndBottom(false);
 
-            int listTop = this.panelY + 45;
-            int listBottom = this.panelY + this.panelH - 100; // deja hueco para 2 sliders + divisor + boton
+            int listTop = this.panelY + (this.compactLayout ? 38 : 58);
+            int listBottom = Math.max(listTop + 1, this.panelY + this.panelH
+                - (this.compactLayout ? 84 : 100)); // reserva sliders y boton sin colapsar la lista
             this.reflectedList.updateSize(this.width, this.height, listTop, listBottom);
             this.smoothScroll.snapToCurrent(this.reflectedList);
         }
@@ -91,22 +94,22 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         }
 
         // Slider propio de musica del mod, debajo de la lista
-        int sliderW = this.panelW - 40;
+        int sliderW = Math.max(1, this.panelW - 40);
         int sliderX = this.panelX + 20;
-        int sliderY = this.panelY + this.panelH - 82;
+        int sliderY = this.panelY + this.panelH - (this.compactLayout ? 76 : 82);
         this.musicSlider = new DiaryMusicSlider(sliderX, sliderY, sliderW, SLIDER_H);
         this.addRenderableWidget(this.musicSlider);
 
         // Slider de ambiente: mas pequeno, debajo del de musica
         int ambSliderH = 14;
-        int ambSliderW = sliderW * 3 / 4;  // 75% del ancho del principal
+        int ambSliderW = Math.max(1, sliderW * 3 / 4);  // 75% del ancho del principal
         int ambSliderX = sliderX + (sliderW - ambSliderW) / 2;
         int ambSliderY = sliderY + SLIDER_H + 2;
         this.ambienceSlider = new DiaryAmbienceSlider(ambSliderX, ambSliderY, ambSliderW, ambSliderH);
         this.addRenderableWidget(this.ambienceSlider);
 
         // Boton Volver estilo diario
-        int btnW = 120;
+        int btnW = Math.max(1, Math.min(120, this.panelW - 24));
         int btnH = 20;
         int btnX = (this.width - btnW) / 2;
         int btnY = this.panelY + this.panelH - 30;
@@ -237,7 +240,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         // jamas al medio. Si el panel es bajo, se omite.
         String flavor = Component.translatable("gripeverde.options.sound.flavor").getString();
         int sliderTop = this.panelY + this.panelH - 82;
-        if (titleY + 24 + this.font.lineHeight <= sliderTop - 6) {
+        if (!this.compactLayout && titleY + 24 + this.font.lineHeight <= sliderTop - 6) {
             String flavorShown = this.font.width(flavor) <= this.panelW - 32 ? flavor
                 : this.font.plainSubstrByWidth(flavor, Math.max(0, this.panelW - 32 - this.font.width("..."))) + "...";
             int flvWC = this.font.width(flavorShown);
@@ -245,7 +248,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         }
 
         // --- Divisor superior ---
-        int divY1 = titleY + 42;
+        int divY1 = this.panelY + (this.compactLayout ? 32 : 52);
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY1);
 
         // --- Lista vanilla sin gradientes blancos ni bandejas extra ---
@@ -256,7 +259,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         }
 
         // --- Divisor entre lista y slider ---
-        int divY2 = this.panelY + this.panelH - 88;
+        int divY2 = this.panelY + this.panelH - (this.compactLayout ? 82 : 88);
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
 
         // --- Divisor inferior + esquineros ---
