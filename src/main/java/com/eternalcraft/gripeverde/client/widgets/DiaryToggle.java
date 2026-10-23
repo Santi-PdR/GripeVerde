@@ -40,6 +40,12 @@ public class DiaryToggle extends AbstractButton {
     private String cachedBaseLabel;
     private String cachedOffLabel;
     private String cachedOnLabel;
+    private Font cachedLayoutFont;
+    private int cachedLayoutWidth = -1;
+    private String cachedLabelText;
+    private int cachedLabelTextWidth;
+    private int cachedOffLabelWidth;
+    private int cachedOnLabelWidth;
 
     private final EasedValue hoverAnim = new EasedValue(6f);
     private boolean wasHovered = false;
@@ -100,6 +106,25 @@ public class DiaryToggle extends AbstractButton {
         this.cachedBaseLabel = this.baseLabel.getString();
         this.cachedOffLabel = this.valueFormatter.apply(false).getString();
         this.cachedOnLabel = this.valueFormatter.apply(true).getString();
+        this.cachedLayoutFont = null;
+    }
+
+    private void refreshDisplayLayout(Font font, int maxLabelWidth) {
+        this.refreshDisplayText();
+        if (this.cachedLayoutFont == font && this.cachedLayoutWidth == maxLabelWidth) return;
+
+        this.cachedLayoutFont = font;
+        this.cachedLayoutWidth = maxLabelWidth;
+        this.cachedLabelText = this.cachedBaseLabel;
+        this.cachedLabelTextWidth = font.width(this.cachedLabelText);
+        if (this.cachedLabelTextWidth > maxLabelWidth) {
+            String ellipsis = "...";
+            int room = Math.max(0, maxLabelWidth - font.width(ellipsis));
+            this.cachedLabelText = font.plainSubstrByWidth(this.cachedBaseLabel, room) + ellipsis;
+            this.cachedLabelTextWidth = font.width(this.cachedLabelText);
+        }
+        this.cachedOffLabelWidth = font.width(this.cachedOffLabel);
+        this.cachedOnLabelWidth = font.width(this.cachedOnLabel);
     }
 
     @Override
@@ -154,17 +179,12 @@ public class DiaryToggle extends AbstractButton {
         g.fill(x + w - 1, y, x + w, y + h, borderColor);
 
         Font font = Minecraft.getInstance().font;
-        this.refreshDisplayText();
-        String labelStr = this.cachedBaseLabel;
-        String valStr = value ? this.cachedOnLabel : this.cachedOffLabel;
         int plateW = 66;
         int paddingH = 10;
         int maxLabelW = Math.max(24, w - plateW - paddingH * 2 - 8);
-        if (font.width(labelStr) > maxLabelW) {
-            String ellipsis = "...";
-            int room = Math.max(0, maxLabelW - font.width(ellipsis));
-            labelStr = font.plainSubstrByWidth(labelStr, room) + ellipsis;
-        }
+        this.refreshDisplayLayout(font, maxLabelW);
+        String labelStr = this.cachedLabelText;
+        String valStr = value ? this.cachedOnLabel : this.cachedOffLabel;
 
         int contentY = y + (h - font.lineHeight) / 2;
         int labelColor = hoverAnim.lerpColor(DiaryTheme.INK, DiaryTheme.INK_BLACK);
@@ -197,13 +217,13 @@ public class DiaryToggle extends AbstractButton {
         int valColor = !this.active
             ? DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 120)
             : (value ? hoverAnim.lerpColor(DiaryTheme.REDCOAT_DARK, DiaryTheme.REDCOAT) : DiaryTheme.SEPIA_MID);
-        int valW = font.width(valStr);
+        int valW = value ? this.cachedOnLabelWidth : this.cachedOffLabelWidth;
         g.drawString(font, valStr, plateX + Math.max(5, (plateW - 16 - valW) / 2), contentY, valColor, false);
 
         if (t > 0.1f && this.active) {
             int underlineY = contentY + font.lineHeight;
             int underlineAlpha = (int) (t * 180);
-            g.fill(x + paddingH, underlineY, x + paddingH + Math.min(maxLabelW, font.width(labelStr)), underlineY + 1,
+            g.fill(x + paddingH, underlineY, x + paddingH + Math.min(maxLabelW, this.cachedLabelTextWidth), underlineY + 1,
                 DiaryTheme.withAlpha(accent, underlineAlpha));
         }
 
