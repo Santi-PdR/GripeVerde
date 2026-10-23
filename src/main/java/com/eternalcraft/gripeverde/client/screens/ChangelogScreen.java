@@ -138,7 +138,8 @@ public class ChangelogScreen extends Screen {
     private int visibleAsteriskRectCount = 0;
     private static int binderMarksLit = 0;
     private static long binderGlowUntilMs = 0L;
-    private int[] hiddenFolioRect = null;
+    private final HitRect hiddenFolioRect = new HitRect();
+    private boolean hiddenFolioVisible = false;
 
     public ChangelogScreen(Screen parent) {
         super(Component.literal(pickChangelogTitle()));
@@ -510,7 +511,7 @@ public class ChangelogScreen extends Screen {
         g.fill(tx - 4, py + 18, tx + tw + 4, py + 19, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 150));
 
         this.visibleAsteriskRectCount = 0;
-        this.hiddenFolioRect = null;
+        this.hiddenFolioVisible = false;
         g.enableScissor(cx, cy, cx + cw, cy + ch);
 
         if (loadError) {
@@ -624,7 +625,8 @@ public class ChangelogScreen extends Screen {
                 int alpha = reducedMotion() ? 120 : 120 + (int)(Math.sin(pulse / 640.0) * 40);
                 g.drawString(this.font, hidden, hx, fy, (alpha << 24) | 0x8E6A35, false);
                 g.fill(hx, fy + 11, hx + hw, fy + 12, (Math.min(120, alpha) << 24) | 0x8E6A35);
-                this.hiddenFolioRect = new int[]{ hx - 4, fy - 3, hw + 8, 18 };
+                this.hiddenFolioRect.set(hx - 4, fy - 3, hw + 8, 18);
+                this.hiddenFolioVisible = true;
             }
         }
 
@@ -945,9 +947,10 @@ public class ChangelogScreen extends Screen {
                     }
                 }
                 // v0.16.0: el folio escondido abre la Sala de consulta
-                if (this.hiddenFolioRect != null) {
-                    int[] r = this.hiddenFolioRect;
-                    if (mouseX >= r[0] && mouseX <= r[0] + r[2] && mouseY >= r[1] && mouseY <= r[1] + r[3]) {
+                if (this.hiddenFolioVisible) {
+                    HitRect r = this.hiddenFolioRect;
+                    if (mouseX >= r.x && mouseX <= r.x + r.width
+                            && mouseY >= r.y && mouseY <= r.y + r.height) {
                         com.eternalcraft.gripeverde.client.audio.UiSounds.back();
                         this.minecraft.setScreen(new DiaryArchiveScreen(this));
                         return true;
