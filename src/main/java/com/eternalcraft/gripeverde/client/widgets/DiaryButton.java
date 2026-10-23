@@ -194,7 +194,11 @@ public class DiaryButton extends AbstractButton {
 
         int textStartX, maxTextW;
         int contentY = yDraw + (h - font.lineHeight)/2;
-        if(icon!=Icon.NONE){
+        // Compact pause menus can shrink below the hand-drawn icon's 10 px
+        // height. In that case, center the label instead of drawing the icon
+        // through the button border.
+        boolean drawIcon = icon != Icon.NONE && h >= 12;
+        if(drawIcon){
             int iconX = x+9;
             int iconY = yDraw + (h-10)/2;
             drawIcon(g,iconX,iconY,textColor);
@@ -214,7 +218,7 @@ public class DiaryButton extends AbstractButton {
         g.drawString(font,text,textStartX,contentY,textColor,false);
 
         // Underline on hover (ink stroke)
-        if(t>0.08f && active){
+        if(t>0.08f && active && h >= font.lineHeight + 2){
             int tw = font.width(text);
             int uy = contentY+font.lineHeight;
             int uAlpha = (int)(t*190);
