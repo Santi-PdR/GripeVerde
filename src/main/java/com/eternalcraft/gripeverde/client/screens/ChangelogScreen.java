@@ -61,6 +61,20 @@ public class ChangelogScreen extends Screen {
         }
     }
 
+    private static final class HitRect {
+        int x;
+        int y;
+        int width;
+        int height;
+
+        void set(int x, int y, int width, int height) {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+        }
+    }
+
     private final Screen parent;
     private final List<Row> rows = new ArrayList<>();
     private final IdentityHashMap<Row, RowLayout> rowLayouts = new IdentityHashMap<>();
@@ -120,7 +134,8 @@ public class ChangelogScreen extends Screen {
     private long lastPenScratchMs = 0L;
 
     // v0.16.0: las marcas del encuadernador y el folio escondido
-    private final List<int[]> asteriskRects = new ArrayList<>();
+    private final List<HitRect> asteriskRects = new ArrayList<>();
+    private int visibleAsteriskRectCount = 0;
     private static int binderMarksLit = 0;
     private static long binderGlowUntilMs = 0L;
     private int[] hiddenFolioRect = null;
@@ -494,7 +509,7 @@ public class ChangelogScreen extends Screen {
         int tx = (this.width - tw) / 2;
         g.fill(tx - 4, py + 18, tx + tw + 4, py + 19, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 150));
 
-        this.asteriskRects.clear();
+        this.visibleAsteriskRectCount = 0;
         this.hiddenFolioRect = null;
         g.enableScissor(cx, cy, cx + cw, cy + ch);
 
@@ -864,7 +879,11 @@ public class ChangelogScreen extends Screen {
             int marginColor = DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180);
             g.drawString(this.font, "*", x + indent - 10, y + 4, marginColor, false);
             // v0.16.0: el encuadernador marco algunos con proposito.
-            this.asteriskRects.add(new int[]{ x + indent - 12, y + 2, 8, 10 });
+            if (this.visibleAsteriskRectCount == this.asteriskRects.size()) {
+                this.asteriskRects.add(new HitRect());
+            }
+            this.asteriskRects.get(this.visibleAsteriskRectCount++).set(
+                x + indent - 12, y + 2, 8, 10);
 
             g.pose().pushPose();
             float capScale = 1.6f;
@@ -907,8 +926,10 @@ public class ChangelogScreen extends Screen {
             this.penActive = false;
             try {
                 // v0.16.0: las marcas del encuadernador
-                for (int[] r : this.asteriskRects) {
-                    if (mouseX >= r[0] && mouseX <= r[0] + r[2] && mouseY >= r[1] && mouseY <= r[1] + r[3]) {
+                for (int i = 0; i < this.visibleAsteriskRectCount; i++) {
+                    HitRect r = this.asteriskRects.get(i);
+                    if (mouseX >= r.x && mouseX <= r.x + r.width
+                            && mouseY >= r.y && mouseY <= r.y + r.height) {
                         binderMarksLit++;
                         com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
                             com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_TICK.get(), 0.12f, 1.9f);
