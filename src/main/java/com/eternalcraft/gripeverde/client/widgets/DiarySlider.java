@@ -3,10 +3,12 @@ package com.eternalcraft.gripeverde.client.widgets;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.narration.NarratedElementType;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 
 import java.util.function.DoubleConsumer;
@@ -27,6 +29,12 @@ public class DiarySlider extends AbstractSliderButton {
     private final DoubleFunction<String> labelFormatter;
     private final DoubleConsumer onValueChanged;
     private final boolean applyOnDrag;
+    private Language cachedTextLanguage;
+    private Component cachedTextMessage;
+    private Font cachedTextFont;
+    private int cachedTextWidthLimit = -1;
+    private String cachedText = "";
+    private int cachedTextMeasuredWidth;
 
     public DiarySlider(int x, int y, int w, int h,
                        double initialValue,
@@ -51,6 +59,31 @@ public class DiarySlider extends AbstractSliderButton {
     @Override
     protected void updateMessage() {
         this.setMessage(Component.literal(labelFormatter.apply(this.value)));
+    }
+
+    private void refreshTextCache(Font font, int maxWidth) {
+        Language language = Language.getInstance();
+        if (this.cachedTextLanguage != language) {
+            this.cachedTextLanguage = language;
+            this.updateMessage();
+        }
+
+        Component message = this.getMessage();
+        if (message == this.cachedTextMessage && font == this.cachedTextFont
+                && maxWidth == this.cachedTextWidthLimit) return;
+
+        this.cachedTextMessage = message;
+        this.cachedTextFont = font;
+        this.cachedTextWidthLimit = maxWidth;
+        String text = message.getString();
+        this.cachedTextMeasuredWidth = font.width(text);
+        if (this.cachedTextMeasuredWidth > maxWidth) {
+            String ellipsis = "...";
+            int room = Math.max(0, maxWidth - font.width(ellipsis));
+            text = font.plainSubstrByWidth(text, room) + ellipsis;
+            this.cachedTextMeasuredWidth = font.width(text);
+        }
+        this.cachedText = text;
     }
 
     @Override
@@ -104,18 +137,12 @@ public class DiarySlider extends AbstractSliderButton {
         DiaryChrome.drawDivisorLozenge(g, thumbX + 4, needleTop + 2);
 
         int textColor = hovered ? DiaryTheme.INK_BLACK : DiaryTheme.INK;
-        String msg = ellipsize(Minecraft.getInstance().font, this.getMessage().getString(), Math.max(8, w - 14));
-        int textX = x + w / 2 - Minecraft.getInstance().font.width(msg) / 2;
-        g.drawString(Minecraft.getInstance().font, msg, textX, y + 4, textColor, false);
+        Font font = Minecraft.getInstance().font;
+        this.refreshTextCache(font, Math.max(8, w - 14));
+        int textX = x + w / 2 - this.cachedTextMeasuredWidth / 2;
+        g.drawString(font, this.cachedText, textX, y + 4, textColor, false);
         DiaryFocus.drawKeyboardRing(g, x, y, w, h,
             this.active && this.isFocused() && !this.isMouseOver(mouseX, mouseY));
-    }
-
-    private static String ellipsize(net.minecraft.client.gui.Font font, String text, int maxWidth) {
-        if (font.width(text) <= maxWidth) return text;
-        String ellipsis = "...";
-        int room = Math.max(0, maxWidth - font.width(ellipsis));
-        return font.plainSubstrByWidth(text, room) + ellipsis;
     }
 
     @Override
