@@ -6,11 +6,13 @@ import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import com.eternalcraft.gripeverde.client.widgets.DiarySlider;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import com.eternalcraft.gripeverde.client.screens.DiaryAccessibilityOptionsScreen;
 import com.eternalcraft.gripeverde.client.screens.DiaryChatOptionsScreen;
 import net.minecraft.client.gui.screens.OptionsScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.locale.Language;
 import com.eternalcraft.gripeverde.client.screens.DiarySkinCustomizationScreen;
 import com.eternalcraft.gripeverde.client.screens.DiarySoundOptionsScreen;
 import net.minecraft.client.gui.screens.VideoSettingsScreen;
@@ -50,6 +52,20 @@ public class DiaryOptionsScreen extends Screen {
     private static int flavorIndex = -1;
     private static String flavorLang = null;
     private String currentFlavor;
+    private Language cachedTextLanguage;
+    private Font cachedTextFont;
+    private String cachedFlavorSource;
+    private int cachedTextWidthLimit = Integer.MIN_VALUE;
+    private Component cachedDisplayTitle;
+    private int cachedDisplayTitleWidth;
+    private String cachedSubtitle = "";
+    private int cachedSubtitleWidth;
+    private String cachedFlavorShown = "";
+    private int cachedFlavorWidth;
+    private String cachedFixShown = "";
+    private int cachedFixWidth;
+    private boolean currentFlavorCorrected;
+    private boolean cachedFlavorCorrected;
 
     private final Screen parent;
 
@@ -100,6 +116,7 @@ public class DiaryOptionsScreen extends Screen {
         }
         flavorIndex = (flavorIndex + 1) % flavorPool.length;
         currentFlavor = flavorPool[flavorIndex];
+        this.currentFlavorCorrected = isCurrentFlavorCorrected();
 
         configureResponsiveLayout();
         int gridH = GRID_ROWS * buttonH + (GRID_ROWS - 1) * gapY;
@@ -228,10 +245,13 @@ public class DiaryOptionsScreen extends Screen {
     public void tick() {
         super.tick();
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.tick(1.0f / 20.0f);
+        // Keep the Holloway correction live without querying discovery state on every rendered frame.
+        this.currentFlavorCorrected = isCurrentFlavorCorrected();
     }
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        this.refreshHeaderTextCache();
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
 
         // Panel pergamino
@@ -241,47 +261,33 @@ public class DiaryOptionsScreen extends Screen {
         // Titulo en tinta - limpio, sin placa que corte
         int titleY = panelY + padTop;
         {
-            com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
-                g, this.font, this.title, this.width / 2, titleY, DiaryTheme.INK);
+            g.drawString(this.font, this.cachedDisplayTitle,
+                this.width / 2 - this.cachedDisplayTitleWidth / 2, titleY, DiaryTheme.INK, false);
 
             // Subtitulo diegetico - sin sombra que divida
-            String subtitle = "- " + net.minecraft.network.chat.Component.translatable("gripeverde.options.subtitle").getString() + " -";
-            int subW = this.font.width(subtitle);
-            int subX = (this.width - subW) / 2;
+            int subX = (this.width - this.cachedSubtitleWidth) / 2;
             int subY = titleY + titleH + 2;
-            g.drawString(this.font, subtitle, subX, subY, DiaryChrome.INK_SUBTITLE, false);
+            g.drawString(this.font, this.cachedSubtitle, subX, subY, DiaryChrome.INK_SUBTITLE, false);
 
             // Rotating flavor quote - tinta muy suave
             // v0.30.0: nunca fuera del papel (elipsis al ancho) y la linea
             // "fix" del huevo Holloway jamas pisa la primera fila de botones.
             int flavorBottom = subY + this.font.lineHeight + 1;
             if (currentFlavor != null) {
-                int maxTextW = panelW - 48;
-                String flavorShown = ellipsizeTo(this.font, currentFlavor, maxTextW);
-                int flavorW = this.font.width(flavorShown);
-                int flavorX = (this.width - flavorW) / 2;
+                int flavorX = (this.width - this.cachedFlavorWidth) / 2;
                 int flavorY = subY + this.font.lineHeight + 1;
-                // v0.16.0: el cronista corrige su propia letra tras leer a Holloway.
-                boolean corrected = false;
-                try {
-                    corrected = (currentFlavor.contains("tinta") || currentFlavor.contains("ink"))
-                        && com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.isDiscovered(
-                            com.eternalcraft.gripeverde.client.lore.Discoveries.CODE_HOLLOWAY);
-                } catch (Throwable ignored) {}
-                if (corrected) {
-                    g.drawString(this.font, flavorShown, flavorX, flavorY,
+                if (this.cachedFlavorCorrected) {
+                    g.drawString(this.font, this.cachedFlavorShown, flavorX, flavorY,
                         com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(DiaryChrome.INK_FLAVOR, 110), false);
-                    g.fill(flavorX - 2, flavorY + 4, flavorX + flavorW + 2, flavorY + 5,
+                    g.fill(flavorX - 2, flavorY + 4, flavorX + this.cachedFlavorWidth + 2, flavorY + 5,
                         com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0xFF241608, 120));
-                    String fix = isEnglishSelected() ? "(no: the ink will never dry)" : "(no: la tinta ya no seca)";
-                    String fixShown = ellipsizeTo(this.font, fix, maxTextW);
-                    int fixW = this.font.width(fixShown);
                     // Tope duro: siempre sobre la grilla, nunca debajo.
                     int fixY = Math.min(flavorY + 9, this.gridTop - 11);
-                    g.drawString(this.font, fixShown, this.width / 2 - fixW / 2, fixY, DiaryChrome.INK_FLAVOR, false);
+                    g.drawString(this.font, this.cachedFixShown,
+                        this.width / 2 - this.cachedFixWidth / 2, fixY, DiaryChrome.INK_FLAVOR, false);
                     flavorBottom = fixY + this.font.lineHeight;
                 } else {
-                    g.drawString(this.font, flavorShown, flavorX, flavorY, DiaryChrome.INK_FLAVOR, false);
+                    g.drawString(this.font, this.cachedFlavorShown, flavorX, flavorY, DiaryChrome.INK_FLAVOR, false);
                     flavorBottom = flavorY + this.font.lineHeight;
                 }
             }
@@ -311,6 +317,47 @@ public class DiaryOptionsScreen extends Screen {
             com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, panelY - 14);
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
         } catch (Throwable ignored) {}
+    }
+
+    private boolean isCurrentFlavorCorrected() {
+        if (this.currentFlavor == null
+                || !(this.currentFlavor.contains("tinta") || this.currentFlavor.contains("ink"))) {
+            return false;
+        }
+        try {
+            return com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.isDiscovered(
+                com.eternalcraft.gripeverde.client.lore.Discoveries.CODE_HOLLOWAY);
+        } catch (Throwable ignored) {
+            return false;
+        }
+    }
+
+    private void refreshHeaderTextCache() {
+        Language language = Language.getInstance();
+        Font font = this.font;
+        int widthLimit = Math.max(0, this.panelW - 48);
+        if (language == this.cachedTextLanguage && font == this.cachedTextFont
+                && this.currentFlavor == this.cachedFlavorSource
+                && widthLimit == this.cachedTextWidthLimit
+                && this.currentFlavorCorrected == this.cachedFlavorCorrected) {
+            return;
+        }
+
+        this.cachedTextLanguage = language;
+        this.cachedTextFont = font;
+        this.cachedFlavorSource = this.currentFlavor;
+        this.cachedTextWidthLimit = widthLimit;
+        this.cachedFlavorCorrected = this.currentFlavorCorrected;
+        this.cachedDisplayTitle = com.eternalcraft.gripeverde.client.render.DiaryTypography.display(this.title);
+        this.cachedDisplayTitleWidth = font.width(this.cachedDisplayTitle);
+        this.cachedSubtitle = "- " + Component.translatable("gripeverde.options.subtitle").getString() + " -";
+        this.cachedSubtitleWidth = font.width(this.cachedSubtitle);
+        this.cachedFlavorShown = this.currentFlavor == null
+            ? "" : ellipsizeTo(font, this.currentFlavor, widthLimit);
+        this.cachedFlavorWidth = font.width(this.cachedFlavorShown);
+        String fix = isEnglishSelected() ? "(no: the ink will never dry)" : "(no: la tinta ya no seca)";
+        this.cachedFixShown = ellipsizeTo(font, fix, widthLimit);
+        this.cachedFixWidth = font.width(this.cachedFixShown);
     }
 
 
