@@ -9,6 +9,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -25,6 +26,13 @@ public class GreenFluButton extends AbstractButton {
     private final Component subtitle;
     private final boolean arsenalIcon;
     private final Runnable onClick;
+    private Language cachedTextLanguage;
+    private Component cachedTitleMessage;
+    private Component cachedSubtitleMessage;
+    private Font cachedTextFont;
+    private int cachedTextWidthLimit = -1;
+    private String cachedTitleText = "";
+    private String cachedSubtitleText = "";
     private boolean wasHovered = false;
     private final EasedValue hoverAnim = new EasedValue(5.5f);
     private int pressTicks = 0;
@@ -48,6 +56,21 @@ public class GreenFluButton extends AbstractButton {
         } else {
             this.wearX2 = this.wearY2 = -1;
         }
+    }
+
+    private void refreshTextCache(Font font, int maxWidth) {
+        Language language = Language.getInstance();
+        if (this.cachedTitleMessage == this.title && this.cachedSubtitleMessage == this.subtitle
+                && this.cachedTextLanguage == language && this.cachedTextFont == font
+                && this.cachedTextWidthLimit == maxWidth) return;
+
+        this.cachedTitleMessage = this.title;
+        this.cachedSubtitleMessage = this.subtitle;
+        this.cachedTextLanguage = language;
+        this.cachedTextFont = font;
+        this.cachedTextWidthLimit = maxWidth;
+        this.cachedTitleText = ellipsize(font, this.title.getString(), maxWidth);
+        this.cachedSubtitleText = ellipsize(font, this.subtitle.getString(), maxWidth);
     }
 
     @Override public void onPress(){ UiSounds.playClick(); onClick.run(); }
@@ -150,8 +173,9 @@ public class GreenFluButton extends AbstractButton {
 
         // Text
         int textX=x+44, maxW=Math.max(20,w-54);
-        String tTitle=ellipsize(font,title.getString(),maxW);
-        String tSub=ellipsize(font,subtitle.getString(),maxW);
+        this.refreshTextCache(font, maxW);
+        String tTitle=this.cachedTitleText;
+        String tSub=this.cachedSubtitleText;
         int titleCol = hoverAnim.lerpColor(DiaryTheme.BONE_WHITE, DiaryTheme.PAPER);
         int subCol = hoverAnim.lerpColor(DiaryTheme.SEPIA_LIGHT, DiaryTheme.OCHRE);
         if(!active){ titleCol=DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID,90); subCol=DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID,70); }
