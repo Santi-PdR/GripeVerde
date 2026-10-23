@@ -20,8 +20,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class TextureAssets {
 
     public static final ResourceLocation ICON_BTN_MP =
-        new ResourceLocation("gripeverde", "textures/gui/title/icon_mp.png");
+        ResourceLocation.fromNamespaceAndPath("gripeverde", "textures/gui/title/icon_mp.png");
 
     public static final ResourceLocation ICON_BTN_MODS =
-        new ResourceLocation("gripeverde", "textures/gui/title/icon_mods.png");
+        ResourceLocation.fromNamespaceAndPath("gripeverde", "textures/gui/title/icon_mods.png");
 }

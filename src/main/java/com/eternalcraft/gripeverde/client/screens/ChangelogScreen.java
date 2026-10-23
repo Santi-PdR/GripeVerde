@@ -187,7 +187,7 @@ public class ChangelogScreen extends Screen {
 
     private boolean tryLoad(String lang) {
         try {
-            ResourceLocation loc = new ResourceLocation("gripeverde", "changelog/" + lang + ".md");
+            ResourceLocation loc = ResourceLocation.fromNamespaceAndPath("gripeverde", "changelog/" + lang + ".md");
             InputStream in = this.minecraft.getResourceManager().open(loc);
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
             String line;

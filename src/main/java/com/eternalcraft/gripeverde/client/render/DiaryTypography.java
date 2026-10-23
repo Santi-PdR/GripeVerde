@@ -7,7 +7,8 @@ import net.minecraft.client.gui.GuiGraphics;
 
 /** Shared type styles for the cabinet's identity text. */
 public final class DiaryTypography {
-    public static final ResourceLocation DISPLAY_FONT = new ResourceLocation("gripeverde", "diary_display");
+    public static final ResourceLocation DISPLAY_FONT =
+        ResourceLocation.fromNamespaceAndPath("gripeverde", "diary_display");
 
     private DiaryTypography() {}
 
