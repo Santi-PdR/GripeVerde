@@ -22,6 +22,8 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
     private static final int PANEL_H = 330;
 
     private int panelX, panelY, panelW, panelH;
+    private int backButtonY, backButtonWidth, backButtonHeight;
+    private boolean compactLayout;
     private final SmoothScroll smoothScroll = new SmoothScroll();
     private Language cachedHeaderLanguage;
     private Font cachedHeaderFont;
@@ -41,16 +43,20 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         chatFlavorIndex = CHAT_RNG.nextInt(flavorPool.length);
         super.init();
 
-        this.panelW = Math.min(PANEL_W, this.width - 40);
-        this.panelH = Math.min(PANEL_H, this.height - 30);
+        this.panelW = Math.max(1, Math.min(PANEL_W, this.width - 40));
+        this.panelH = Math.max(1, Math.min(PANEL_H, this.height - 30));
+        this.compactLayout = this.panelH < 190 || this.panelW < 240;
         this.panelX = (this.width - this.panelW) / 2;
         this.panelY = (this.height - this.panelH) / 2;
 
         if (this.list != null) {
             this.list.setRenderBackground(false);
             this.list.setRenderTopAndBottom(false);
-            int listTop = this.panelY + 45;
-            int listBottom = this.panelY + this.panelH - 45;
+            int listTop = Math.max(0, Math.min(Math.max(0, this.height - 1),
+                this.panelY + (this.compactLayout ? 30 : 45)));
+            int listBottom = Math.min(this.height,
+                this.panelY + this.panelH - (this.compactLayout ? 34 : 45));
+            listBottom = Math.max(listTop + 1, listBottom);
             this.list.updateSize(this.width, this.height, listTop, listBottom);
             this.smoothScroll.snapToCurrent(this.list);
         }
@@ -70,12 +76,16 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         }
 
         // Boton Volver estilo diario
-        int btnW = 120;
-        int btnH = 20;
-        int btnX = (this.width - btnW) / 2;
-        int btnY = this.panelY + this.panelH - 30;
+        this.backButtonWidth = Math.max(1, Math.min(120, Math.min(this.panelW - 16, this.width)));
+        this.backButtonHeight = Math.max(1, Math.min(20, Math.min(this.panelH, this.height)));
+        int btnX = Math.max(0, Math.min(this.width - this.backButtonWidth,
+            (this.width - this.backButtonWidth) / 2));
+        this.backButtonY = Math.max(0, Math.min(this.height - this.backButtonHeight,
+            this.compactLayout
+                ? this.panelY + this.panelH - this.backButtonHeight - 4
+                : this.panelY + this.panelH - 30));
         this.addRenderableWidget(new DiaryButton(
-            btnX, btnY, btnW, btnH,
+            btnX, this.backButtonY, this.backButtonWidth, this.backButtonHeight,
             Component.translatable("gripeverde.options.button.done"),
             DiaryButton.Icon.DOOR,
             DiaryButton.Variant.PRIMARY,
@@ -116,27 +126,31 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
 
         // Titulo
         int titleX = this.width / 2;
-        int titleY = this.panelY + 10;
+        int titleY = this.panelY + (this.compactLayout ? 5 : 10);
         com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
             g, this.font, this.cachedTitle, titleX, titleY, DiaryChrome.INK_TITLE);
 
-        // Subtitulo
-        g.drawString(this.font, this.cachedSubtitle, titleX - this.cachedSubtitleWidth / 2,
-            titleY + 12, DiaryChrome.INK_SUBTITLE, false);
+        if (!this.compactLayout) {
+            g.drawString(this.font, this.cachedSubtitle, titleX - this.cachedSubtitleWidth / 2,
+                titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
-        // Flavor rotativo
-        g.drawString(this.font, this.cachedFlavor, (this.width - this.cachedFlavorWidth) / 2,
-            titleY + 24, DiaryChrome.INK_FLAVOR, false);
+            g.drawString(this.font, this.cachedFlavor, (this.width - this.cachedFlavorWidth) / 2,
+                titleY + 24, DiaryChrome.INK_FLAVOR, false);
+        }
 
-        // Divisor superior
-        int divY1 = titleY + 42;
-        DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY1);
-
-        // Divisor inferior + esquineros
-        int divY2 = this.panelY + this.panelH - 38;
-        DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
-        DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
-        DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. V");
+        int dividerInset = Math.min(14, Math.max(0, (this.panelW - 1) / 2));
+        if (this.panelW >= 3) {
+            DiaryChrome.drawInkDividerBetween(g, this.panelX + dividerInset,
+                this.panelX + this.panelW - dividerInset, titleY + (this.compactLayout ? 18 : 42));
+            DiaryChrome.drawInkDividerBetween(g, this.panelX + dividerInset,
+                this.panelX + this.panelW - dividerInset, this.backButtonY - 6);
+        }
+        if (this.panelW >= 48 && this.panelH >= 48) {
+            DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
+        }
+        if (this.panelW >= 200 && this.panelH >= 100) {
+            DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. V");
+        }
 
         // Lista vanilla sin gradientes blancos ni bandejas extra
         if (this.list != null) {
