@@ -10,6 +10,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -23,6 +24,12 @@ public class SlimButton extends AbstractButton {
     private Runnable clickSound = UiSounds::playClick;
     private boolean wasHovered = false;
     private final EasedValue hoverAnim = new EasedValue(6f);
+    private Component cachedMessage;
+    private Language cachedLanguage;
+    private Font cachedFont;
+    private int cachedMaxTextWidth = -1;
+    private int cachedLabelWidth;
+    private String cachedLabel = "";
 
     public SlimButton(int x, int y, int w, int h, Component label, Runnable onClick) {
         super(x, y, w, h, label);
@@ -100,8 +107,10 @@ public class SlimButton extends AbstractButton {
         }
 
         Font font = Minecraft.getInstance().font;
-        String label = ellipsize(font, this.getMessage().getString(), Math.max(8, w - 12));
-        int tw = font.width(label);
+        int maxTextWidth = Math.max(8, w - 12);
+        this.refreshLabelCache(font, maxTextWidth);
+        String label = this.cachedLabel;
+        int tw = this.cachedLabelWidth;
         int textColor = hoverAnim.lerpColor(DiaryTheme.BONE_WHITE, DiaryTheme.PAPER);
         int tx = x + (w - tw) / 2;
         int ty = y + (h - 8) / 2;
@@ -113,6 +122,22 @@ public class SlimButton extends AbstractButton {
         String ellipsis = "...";
         int room = Math.max(0, maxWidth - font.width(ellipsis));
         return font.plainSubstrByWidth(text, room) + ellipsis;
+    }
+
+    private void refreshLabelCache(Font font, int maxWidth) {
+        Component message = this.getMessage();
+        Language language = Language.getInstance();
+        if (message == this.cachedMessage && language == this.cachedLanguage
+                && font == this.cachedFont && maxWidth == this.cachedMaxTextWidth) {
+            return;
+        }
+
+        this.cachedMessage = message;
+        this.cachedLanguage = language;
+        this.cachedFont = font;
+        this.cachedMaxTextWidth = maxWidth;
+        this.cachedLabel = ellipsize(font, message.getString(), maxWidth);
+        this.cachedLabelWidth = font.width(this.cachedLabel);
     }
 
     @Override
