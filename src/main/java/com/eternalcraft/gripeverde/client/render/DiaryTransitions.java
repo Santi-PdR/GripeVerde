@@ -1,5 +1,6 @@
 package com.eternalcraft.gripeverde.client.render;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 
@@ -63,6 +64,15 @@ public final class DiaryTransitions {
         return com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
     }
 
+    private static boolean isInWorld() {
+        try {
+            Minecraft minecraft = Minecraft.getInstance();
+            return minecraft != null && minecraft.level != null;
+        } catch (Throwable ignored) {
+            return false;
+        }
+    }
+
     private static boolean isCabinetScreen(Screen screen) {
         Class<?> cls = screen.getClass();
         if (cls != lastCheckedClass) {
@@ -78,6 +88,11 @@ public final class DiaryTransitions {
      * pliegue segun si la mesa de destino estaba abierta antes.
      */
     public static void noteOpening(Screen from, Screen to) {
+        if (isInWorld()) {
+            NAV.clear();
+            pendingHasDirection = false;
+            return;
+        }
         if (to == null || !isCabinetScreen(to)) {
             pendingHasDirection = false;
             return;
@@ -105,6 +120,12 @@ public final class DiaryTransitions {
     public static void render(Screen screen, GuiGraphics g) {
         if (screen == null || !isCabinetScreen(screen)) {
             current = null;
+            return;
+        }
+        if (isInWorld()) {
+            current = null;
+            NAV.clear();
+            pendingHasDirection = false;
             return;
         }
         long now = System.currentTimeMillis();
