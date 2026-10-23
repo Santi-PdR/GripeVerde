@@ -10,6 +10,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -36,6 +37,13 @@ public class DiaryButton extends AbstractButton {
     private int pressAnimTicks = 0;
     private final int wearSeed;
     private final int wearX1, wearY1, wearX2, wearY2;
+    private Component cachedMessage;
+    private Language cachedLanguage;
+    private Font cachedFont;
+    private int cachedTextWidthLimit = -1;
+    private boolean cachedAllowEllipsis;
+    private String cachedText = "";
+    private int cachedTextWidth;
 
     public DiaryButton(int x, int y, int w, int h, Component label, Icon icon, Variant variant, Runnable onClick) {
         this(x,y,w,h,label,icon,variant,SoundProfile.DEFAULT,onClick);
@@ -188,11 +196,12 @@ public class DiaryButton extends AbstractButton {
 
         // ── Content ──
         Font font = Minecraft.getInstance().font;
-        String text = getMessage().getString();
+        Component message = getMessage();
         int textColor = getTextColor(t);
         if(!active) textColor = DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 110);
 
         int textStartX, maxTextW;
+        String text;
         int contentY = yDraw + (h - font.lineHeight)/2;
         // Compact pause menus can shrink below the hand-drawn icon's 10 px
         // height. In that case, center the label instead of drawing the icon
@@ -204,13 +213,12 @@ public class DiaryButton extends AbstractButton {
             drawIcon(g,iconX,iconY,textColor);
             textStartX = iconX+12+6;
             maxTextW = Math.max(8, x+w-10-textStartX);
+            text = fitText(font, message, maxTextW);
         } else {
             maxTextW = Math.max(8,w-18);
-            text = fitText(font,text,maxTextW);
-            int tw = font.width(text);
-            textStartX = x+(w-tw)/2;
+            text = fitText(font, message, maxTextW);
+            textStartX = x+(w-cachedTextWidth)/2;
         }
-        text = fitText(font,text,maxTextW);
         // Text shadow 1px for active (ink bleed)
         if(active){
             g.drawString(font,text,textStartX+1,contentY+1,DiaryTheme.withAlpha(DiaryTheme.INK_BLACK,40),false);
@@ -219,13 +227,12 @@ public class DiaryButton extends AbstractButton {
 
         // Underline on hover (ink stroke)
         if(t>0.08f && active && h >= font.lineHeight + 2){
-            int tw = font.width(text);
             int uy = contentY+font.lineHeight;
             int uAlpha = (int)(t*190);
             int uCol = DiaryTheme.withAlpha(accent, uAlpha);
             // One continuous ink stroke keeps the hover cue cheap even at
             // high resolutions, where the label can span hundreds of pixels.
-            g.fill(textStartX, uy, textStartX + tw, uy + 1, uCol);
+            g.fill(textStartX, uy, textStartX + cachedTextWidth, uy + 1, uCol);
         }
 
         // Disabled crosshatch faint
@@ -237,12 +244,33 @@ public class DiaryButton extends AbstractButton {
         }
     }
 
-    private String fitText(Font f,String txt,int maxW){
-        if(f.width(txt)<=maxW) return txt;
-        if(!allowEllipsis) return f.plainSubstrByWidth(txt, Math.max(0,maxW));
-        String ell="...";
-        int room=Math.max(0,maxW-f.width(ell));
-        return f.plainSubstrByWidth(txt,room)+ell;
+    private String fitText(Font font, Component message, int maxWidth){
+        Language language = Language.getInstance();
+        if (message == this.cachedMessage && language == this.cachedLanguage
+                && font == this.cachedFont && maxWidth == this.cachedTextWidthLimit
+                && this.allowEllipsis == this.cachedAllowEllipsis) {
+            return this.cachedText;
+        }
+
+        String text = message.getString();
+        if (font.width(text) > maxWidth) {
+            if (!this.allowEllipsis) {
+                text = font.plainSubstrByWidth(text, Math.max(0, maxWidth));
+            } else {
+                String ellipsis = "...";
+                int room = Math.max(0, maxWidth - font.width(ellipsis));
+                text = font.plainSubstrByWidth(text, room) + ellipsis;
+            }
+        }
+
+        this.cachedMessage = message;
+        this.cachedLanguage = language;
+        this.cachedFont = font;
+        this.cachedTextWidthLimit = maxWidth;
+        this.cachedAllowEllipsis = this.allowEllipsis;
+        this.cachedText = text;
+        this.cachedTextWidth = font.width(text);
+        return text;
     }
     private int shiftColor(int col,int shift){
         int a=(col>>>24)&0xFF;
