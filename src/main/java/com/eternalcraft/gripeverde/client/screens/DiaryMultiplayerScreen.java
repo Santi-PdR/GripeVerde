@@ -610,13 +610,16 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             int listBottom = this.vanillaList.getBottom();
             double scrollAmount = 0.0;
             try { scrollAmount = this.vanillaList.getScrollAmount(); } catch (Throwable ignored) {}
+            int rowBase = y0 + 4 - (int) scrollAmount + headerHeight - 2;
+            int firstVisible = firstVisibleEntryIndex(listTop, rowBase, itemHeight);
 
-            for (int i = 0; i < children.size(); i++) {
+            for (int i = firstVisible; i < children.size(); i++) {
                 var entry = children.get(i);
+                int entryTop = rowBase + i * itemHeight;
+                if (entryTop > listBottom) break;
                 String cls = entry.getClass().getSimpleName();
                 if (cls.contains("LAN")) continue; // no dibujar bg detras de LAN
 
-                int entryTop = y0 + 4 - (int) scrollAmount + i * itemHeight + headerHeight - 2;
                 int entryBottom = entryTop + itemHeight;
 
                 if (entryBottom < listTop || entryTop > listBottom) continue;
@@ -666,14 +669,17 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             try {
                 scrollAmount = this.vanillaList.getScrollAmount();
             } catch (Throwable ignored) {}
+            int rowBase = y0 + 4 - (int) scrollAmount + headerHeight;
+            int firstVisible = firstVisibleEntryIndex(listTop, rowBase, itemHeight);
 
-            for (int i = 0; i < children.size(); i++) {
+            for (int i = firstVisible; i < children.size(); i++) {
                 var entry = children.get(i);
+                int entryTop = rowBase + i * itemHeight;
+                if (entryTop > listBottom) break;
                 String cls = entry.getClass().getSimpleName();
                 // Solo subrayar servers reales (no LAN header ni network servers de scan)
                 if (cls.contains("LAN")) continue;
 
-                int entryTop = y0 + 4 - (int) scrollAmount + i * itemHeight + headerHeight;
                 int entryBottom = entryTop + itemHeight - 4;
 
                 if (entryBottom < listTop || entryTop > listBottom) continue;
@@ -727,6 +733,12 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             return Math.max(lanTop - 2, this.vanillaList.getTop());
         } catch (Throwable ignored) {}
         return 0;
+    }
+
+    /** Start one row before the first possible intersection to preserve clipping at partial rows. */
+    private static int firstVisibleEntryIndex(int listTop, int firstRowTop, int itemHeight) {
+        if (itemHeight <= 0) return 0;
+        return Math.max(0, Math.floorDiv(listTop - firstRowTop, itemHeight) - 1);
     }
 
     private static Field resolveIntField(Object target, String officialName, String srgName) {
