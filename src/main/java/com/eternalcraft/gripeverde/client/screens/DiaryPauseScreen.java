@@ -60,6 +60,7 @@ public class DiaryPauseScreen extends PauseScreen {
     private static final java.util.Random PAPER_RNG = new java.util.Random();
     private static final java.util.Random BLOOD_RNG = new java.util.Random();
     private static final java.util.Random BREATH_RNG = new java.util.Random();
+    private boolean compactLayout;
 
     // ── v0.16.0: la pausa responde ──
     private boolean candleOut = false;
@@ -88,6 +89,12 @@ public class DiaryPauseScreen extends PauseScreen {
         int py = panelY();
         int pw = panelW();
         int ph = panelH();
+        this.compactLayout = ph < PANEL_MIN_H;
+
+        if (this.compactLayout) {
+            initCompactButtons(px, py, pw, ph);
+            return;
+        }
 
         // Zona disponible para los 5 botones (entre los dos separadores)
         int contentTop = py + ORN_SEP_TOP + 6;
@@ -103,21 +110,22 @@ public class DiaryPauseScreen extends PauseScreen {
 
         int totalBtnH = bh * 5 + gap * 4;
         int btnStartY = contentTop + Math.max(0, (contentH - totalBtnH) / 2);
-        int btnX = px + (pw - BTN_W) / 2;
+        int btnW = Math.max(1, Math.min(BTN_W, pw - 24));
+        int btnX = px + (pw - btnW) / 2;
 
         // Redefinimos referencia local para el resto del metodo
         final int BH = bh;
         final int BG = gap;
 
         this.addRenderableWidget(new DiaryButton(
-            btnX, btnStartY, BTN_W, BH,
+            btnX, btnStartY, btnW, BH,
             Component.translatable("gripeverde.pause.btn.resume"),
             DiaryButton.Icon.HAND, DiaryButton.Variant.PRIMARY,
             this::resumeGame
         ));
 
         DiaryButton recordsBtn = new DiaryButton(
-            btnX, btnStartY + (BH + BG), BTN_W, BH,
+            btnX, btnStartY + (BH + BG), btnW, BH,
             Component.translatable("gripeverde.pause.btn.records"),
             DiaryButton.Icon.SCROLL, DiaryButton.Variant.SECONDARY,
             this::openRecords
@@ -126,7 +134,7 @@ public class DiaryPauseScreen extends PauseScreen {
         this.addRenderableWidget(recordsBtn);
 
         DiaryButton statsBtn = new DiaryButton(
-            btnX, btnStartY + (BH + BG) * 2, BTN_W, BH,
+            btnX, btnStartY + (BH + BG) * 2, btnW, BH,
             Component.translatable("gripeverde.pause.btn.statistics"),
             DiaryButton.Icon.CHART, DiaryButton.Variant.SECONDARY,
             this::openStats
@@ -135,18 +143,65 @@ public class DiaryPauseScreen extends PauseScreen {
         this.addRenderableWidget(statsBtn);
 
         this.addRenderableWidget(new DiaryButton(
-            btnX, btnStartY + (BH + BG) * 3, BTN_W, BH,
+            btnX, btnStartY + (BH + BG) * 3, btnW, BH,
             Component.translatable("gripeverde.pause.btn.adjustments"),
             DiaryButton.Icon.GEAR, DiaryButton.Variant.SECONDARY,
             this::openAdjustments
         ));
 
         this.addRenderableWidget(new DiaryButton(
-            btnX, btnStartY + (BH + BG) * 4, BTN_W, BH,
+            btnX, btnStartY + (BH + BG) * 4, btnW, BH,
             Component.translatable("gripeverde.pause.btn.leave"),
             DiaryButton.Icon.DOOR, DiaryButton.Variant.DANGER,
             this::onLeave
         ));
+    }
+
+    private void initCompactButtons(int px, int py, int pw, int ph) {
+        int columns = pw >= 220 ? 2 : 1;
+        int rows = (5 + columns - 1) / columns;
+        int gapX = columns == 2 ? 8 : 0;
+        int gapY = columns == 2 ? 4 : 2;
+        int insetX = 12;
+        int buttonW = Math.max(1, (pw - insetX * 2 - gapX * (columns - 1)) / columns);
+        int buttonTop = py + 26;
+        int buttonBottom = py + ph - 4;
+        int availableH = Math.max(1, buttonBottom - buttonTop);
+        int buttonH = Math.max(1, Math.min(BTN_H, (availableH - gapY * (rows - 1)) / rows));
+
+        addCompactButton(0, px, buttonTop, buttonW, buttonH, gapX, gapY, columns,
+            Component.translatable("gripeverde.pause.btn.resume"),
+            DiaryButton.Icon.HAND, DiaryButton.Variant.PRIMARY, this::resumeGame);
+
+        DiaryButton recordsButton = addCompactButton(1, px, buttonTop, buttonW, buttonH, gapX, gapY, columns,
+            Component.translatable("gripeverde.pause.btn.records"),
+            DiaryButton.Icon.SCROLL, DiaryButton.Variant.SECONDARY, this::openRecords);
+        if (this.minecraft.getConnection() == null) recordsButton.active = false;
+
+        DiaryButton statsButton = addCompactButton(2, px, buttonTop, buttonW, buttonH, gapX, gapY, columns,
+            Component.translatable("gripeverde.pause.btn.statistics"),
+            DiaryButton.Icon.CHART, DiaryButton.Variant.SECONDARY, this::openStats);
+        if (this.minecraft.player == null) statsButton.active = false;
+
+        addCompactButton(3, px, buttonTop, buttonW, buttonH, gapX, gapY, columns,
+            Component.translatable("gripeverde.pause.btn.adjustments"),
+            DiaryButton.Icon.GEAR, DiaryButton.Variant.SECONDARY, this::openAdjustments);
+        addCompactButton(4, px, buttonTop, buttonW, buttonH, gapX, gapY, columns,
+            Component.translatable("gripeverde.pause.btn.leave"),
+            DiaryButton.Icon.DOOR, DiaryButton.Variant.DANGER, this::onLeave);
+    }
+
+    private DiaryButton addCompactButton(int index, int px, int top, int buttonW, int buttonH,
+                                        int gapX, int gapY, int columns, Component label,
+                                        DiaryButton.Icon icon, DiaryButton.Variant variant,
+                                        Runnable action) {
+        int column = index % columns;
+        int row = index / columns;
+        int x = px + 12 + column * (buttonW + gapX);
+        int y = top + row * (buttonH + gapY);
+        DiaryButton button = new DiaryButton(x, y, buttonW, buttonH, label, icon, variant, action);
+        this.addRenderableWidget(button);
+        return button;
     }
 
 
@@ -192,9 +247,10 @@ public class DiaryPauseScreen extends PauseScreen {
         if (button == 0) {
             try {
                 int px = panelX(), py = panelY();
-                // La vela: apagarla revela lo que lee la oscuridad.
+                // En modo compacto estos adornos se ocultan para dejar sitio a los controles.
                 int candleX = px + 20, candleY = py + panelH() - 32;
-                if (mouseX >= candleX - 6 && mouseX <= candleX + 20 && mouseY >= candleY - 14 && mouseY <= candleY + 28) {
+                if (!compactLayout && mouseX >= candleX - 6 && mouseX <= candleX + 20
+                        && mouseY >= candleY - 14 && mouseY <= candleY + 28) {
                     candleOut = !candleOut;
                     if (candleOut) {
                         candleSmokeUntilMs = System.currentTimeMillis() + 2600L;
@@ -210,7 +266,8 @@ public class DiaryPauseScreen extends PauseScreen {
                 }
                 // El cuervo cobra su peaje.
                 int ravenX = px + 14, ravenY = py + 22;
-                if (mouseX >= ravenX - 4 && mouseX <= ravenX + 24 && mouseY >= ravenY - 4 && mouseY <= ravenY + 22) {
+                if (!compactLayout && mouseX >= ravenX - 4 && mouseX <= ravenX + 24
+                        && mouseY >= ravenY - 4 && mouseY <= ravenY + 22) {
                     int n = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.bump("ravenClicks");
                     com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
                         com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_CROWS.get(), 0.22f, 1.45f);
@@ -296,18 +353,20 @@ public class DiaryPauseScreen extends PauseScreen {
         drawPanelSeparators(g, px, py);
 
         // Elementos decorativos
-        drawRaven(g, px + 14, py + 22);
+        if (!compactLayout) drawRaven(g, px + 14, py + 22);
 
         super.render(g, mouseX, mouseY, partialTick);
 
         // Elementos que van encima de los botones
-        drawCandle(g, px + 20, py + panelH() - 32);
-        drawSignature(g, px, py);
-        drawWaxSeal(g, px + panelW() - 28, py + panelH() - 26);
+        if (!compactLayout) {
+            drawCandle(g, px + 20, py + panelH() - 32);
+            drawSignature(g, px, py);
+            drawWaxSeal(g, px + panelW() - 28, py + panelH() - 26);
+        }
 
         // ── v0.16.0: lo que trae la oscuridad ──
         try {
-            if (candleOut) {
+            if (candleOut && !compactLayout) {
                 // El panel queda en penumbra
                 g.fill(px + 2, py + 2, px + panelW() - 2, py + panelH() - 2,
                     DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 96));
@@ -322,7 +381,7 @@ public class DiaryPauseScreen extends PauseScreen {
             }
             // El aliento en el vidrio
             long now = System.currentTimeMillis();
-            if (breathUntilMs > now) {
+            if (!compactLayout && breathUntilMs > now) {
                 long age = now - breathStartMs;
                 long remain = breathUntilMs - now;
                 int a = reducedMotion() ? 20 : 26;
@@ -340,7 +399,7 @@ public class DiaryPauseScreen extends PauseScreen {
                 }
             }
             // La segunda sombra
-            if (shadowUntilMs > now) {
+            if (!compactLayout && shadowUntilMs > now) {
                 long age = now - shadowStartMs;
                 int a = reducedMotion() ? 28 : 40;
                 if (!reducedMotion()) {
@@ -486,29 +545,34 @@ public class DiaryPauseScreen extends PauseScreen {
             com.eternalcraft.gripeverde.client.render.DiaryTypography.display(title);
 
         int centerX = px + panelW() / 2;
-        int titleY = py + 24;
+        int titleY = py + (compactLayout ? 4 : 24);
         int subtitleY = py + 58;
-
         int tw = this.font.width(displayTitle);
+        float titleScale = compactLayout
+            ? Math.min(1.35f, Math.max(0.65f, (panelW() - 16f) / Math.max(1, tw)))
+            : 1.75f;
         // v0.21.25: tinta limpia sin sombra doble.
         g.pose().pushPose();
         g.pose().translate(centerX, titleY, 0);
-        g.pose().scale(1.75f, 1.75f, 1f);
+        g.pose().scale(titleScale, titleScale, 1f);
         g.drawString(this.font, displayTitle, -tw / 2, 0, DiaryTheme.INK, false);
         g.pose().popPose();
 
-        int scaledTw = (int)(tw * 1.75f);
-        int ornY = titleY + 5;
-        drawFlourish(g, centerX - scaledTw / 2 - 20, ornY, DiaryTheme.BRONZE, false);
-        drawFlourish(g, centerX + scaledTw / 2 + 4, ornY, DiaryTheme.BRONZE, true);
+        if (!compactLayout) {
+            int scaledTw = (int)(tw * titleScale);
+            int ornY = titleY + 5;
+            drawFlourish(g, centerX - scaledTw / 2 - 20, ornY, DiaryTheme.BRONZE, false);
+            drawFlourish(g, centerX + scaledTw / 2 + 4, ornY, DiaryTheme.BRONZE, true);
 
-        int sw = this.font.width(subtitle);
-        g.drawString(this.font, subtitle,
-            centerX - sw / 2, subtitleY,
-            DiaryTheme.SEPIA_MID, false);
+            int sw = this.font.width(subtitle);
+            g.drawString(this.font, subtitle,
+                centerX - sw / 2, subtitleY,
+                DiaryTheme.SEPIA_MID, false);
+        }
     }
 
     private void drawDateStamp(GuiGraphics g, int px, int py) {
+        if (compactLayout) return;
         String date = "23 · III · 1897";
         int dw = this.font.width(date);
         int dx = px + panelW() - dw - 12;
@@ -540,8 +604,10 @@ public class DiaryPauseScreen extends PauseScreen {
         int lineC = DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 200);
         int accentC = DiaryTheme.BRONZE;
 
-        drawSepLine(g, centerX, py + ORN_SEP_TOP, sepW, lineC, accentC);
-        drawSepLine(g, centerX, py + panelH() - ORN_SEP_BOT_FROM_BOT, sepW, lineC, accentC);
+        drawSepLine(g, centerX, py + (compactLayout ? 22 : ORN_SEP_TOP), sepW, lineC, accentC);
+        if (!compactLayout) {
+            drawSepLine(g, centerX, py + panelH() - ORN_SEP_BOT_FROM_BOT, sepW, lineC, accentC);
+        }
     }
 
     private void drawSepLine(GuiGraphics g, int cx, int y, int width, int lineC, int accentC) {
@@ -554,6 +620,7 @@ public class DiaryPauseScreen extends PauseScreen {
     }
 
     private void drawSignature(GuiGraphics g, int px, int py) {
+        if (compactLayout) return;
         Component sig = Component.literal(isEnglishSelected()
                 ? "Signed: S. Pereira, M.D."
                 : "Firmado: S. Pereira, Medico")
