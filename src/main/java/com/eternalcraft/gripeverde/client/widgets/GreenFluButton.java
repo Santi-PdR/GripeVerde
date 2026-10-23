@@ -23,19 +23,31 @@ public class GreenFluButton extends AbstractButton {
 
     private final Component title;
     private final Component subtitle;
-    private final ResourceLocation iconTexture;
+    private final boolean arsenalIcon;
     private final Runnable onClick;
     private boolean wasHovered = false;
     private final EasedValue hoverAnim = new EasedValue(5.5f);
     private int pressTicks = 0;
-    private final int wearSeed;
-    private final java.util.Random wearRng;
+    private final int wearX1, wearY1, wearX2, wearY2;
 
     public GreenFluButton(int x,int y,int w,int h, Component title, Component subtitle, ResourceLocation icon, Runnable onClick){
         super(x,y,w,h,title);
-        this.title=title; this.subtitle=subtitle; this.iconTexture=icon; this.onClick=onClick;
-        this.wearSeed = (x*29 + y*19 + title.getString().hashCode()) & 0x7fffffff;
-        this.wearRng = new java.util.Random(wearSeed);
+        this.title=title; this.subtitle=subtitle; this.onClick=onClick;
+        this.arsenalIcon = icon != null && icon.getPath().contains("mods");
+        int wearSeed = (x*29 + y*19 + title.getString().hashCode()) & 0x7fffffff;
+        java.util.Random wearRng = new java.util.Random(wearSeed);
+        if (wearRng.nextInt(100) < 40) {
+            this.wearX1 = 48 + wearRng.nextInt(Math.max(1, w - 66));
+            this.wearY1 = 8 + wearRng.nextInt(Math.max(1, h - 16));
+        } else {
+            this.wearX1 = this.wearY1 = -1;
+        }
+        if (wearRng.nextInt(100) < 40) {
+            this.wearX2 = 48 + wearRng.nextInt(Math.max(1, w - 66));
+            this.wearY2 = 8 + wearRng.nextInt(Math.max(1, h - 16));
+        } else {
+            this.wearX2 = this.wearY2 = -1;
+        }
     }
 
     @Override public void onPress(){ UiSounds.playClick(); onClick.run(); }
@@ -148,15 +160,9 @@ public class GreenFluButton extends AbstractButton {
         g.fill(x+44,yDraw+h-7,x+w-18,yDraw+h-6,DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 54));
         // Wear dots
         if(active){
-            wearRng.setSeed(wearSeed);
             int wearCol = DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, 28);
-            for(int i=0;i<2;i++){
-                if(wearRng.nextInt(100)<40){
-                    int wx=x+48+wearRng.nextInt(Math.max(1,w-66));
-                    int wy=yDraw+8+wearRng.nextInt(Math.max(1,h-16));
-                    g.fill(wx,wy,wx+1,wy+1,wearCol);
-                }
-            }
+            if (wearX1 >= 0) g.fill(x + wearX1, yDraw + wearY1, x + wearX1 + 1, yDraw + wearY1 + 1, wearCol);
+            if (wearX2 >= 0) g.fill(x + wearX2, yDraw + wearY2, x + wearX2 + 1, yDraw + wearY2 + 1, wearCol);
         }
 
         // Focus ring
@@ -176,8 +182,7 @@ public class GreenFluButton extends AbstractButton {
     }
 
     private void drawButtonIcon(GuiGraphics g,int x,int y,int col,float hoverT){
-        String path = iconTexture==null?"":iconTexture.getPath();
-        if(path.contains("mods")){
+        if(this.arsenalIcon){
             drawArsenalIcon(g,x,y,col);
         } else {
             drawRegimentIcon(g,x,y,col);
