@@ -9,6 +9,7 @@ import com.eternalcraft.gripeverde.client.widgets.DiaryMusicSlider;
 import com.eternalcraft.gripeverde.client.widgets.DiaryAmbienceSlider;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Options;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.AbstractSelectionList;
@@ -19,6 +20,7 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.SoundOptionsScreen;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.client.sounds.SoundManager;
@@ -43,6 +45,7 @@ import java.lang.reflect.Field;
 public class DiarySoundOptionsScreen extends SoundOptionsScreen {
 
     private static final Logger LOG = LogUtils.getLogger();
+    private static final Component SOUND_TITLE = Component.translatable("options.sounds.title");
 
     private static final int PANEL_W = 340;
     private static final int PANEL_H = 380;
@@ -55,6 +58,14 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     private DiaryMusicSlider musicSlider;
     private DiaryAmbienceSlider ambienceSlider;
     private TuningForkButton tuningForkButton;
+    private Language cachedTextLanguage;
+    private Font cachedTextFont;
+    private String cachedSubtitle = "";
+    private int cachedSubtitleWidth;
+    private String cachedFlavor = "";
+    private String cachedFlavorShown = "";
+    private int cachedFlavorWidthLimit = Integer.MIN_VALUE;
+    private int cachedFlavorShownWidth;
 
     public DiarySoundOptionsScreen(Screen parent, Options options) {
         super(parent, options);
@@ -222,6 +233,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        this.refreshStaticTextCache();
         // --- Escena viva atenuada ---
         // Clear framebuffer + transition fade
         g.fill(0, 0, this.width, this.height, 0xFF000000);
@@ -236,24 +248,21 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         int titleX = this.width / 2;
         int titleY = this.panelY + 10;
         com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
-            g, this.font, Component.translatable("options.sounds.title"),
+            g, this.font, SOUND_TITLE,
             titleX, titleY, DiaryChrome.INK_TITLE);
 
         // --- Subtitulo ---
-        String subtitle = "- " + Component.translatable("gripeverde.options.sound.subtitle").getString() + " -";
-        int subWC = this.font.width(subtitle);
-        g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
+        String subtitle = this.cachedSubtitle;
+        g.drawString(this.font, subtitle, titleX - this.cachedSubtitleWidth / 2,
+            titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
         // --- Flavor ---
         // v0.30.0: solo si hay aire real sobre los sliders; jamas pisado,
         // jamas al medio. Si el panel es bajo, se omite.
-        String flavor = Component.translatable("gripeverde.options.sound.flavor").getString();
         int sliderTop = this.panelY + this.panelH - 82;
         if (!this.compactLayout && titleY + 24 + this.font.lineHeight <= sliderTop - 6) {
-            String flavorShown = this.font.width(flavor) <= this.panelW - 32 ? flavor
-                : this.font.plainSubstrByWidth(flavor, Math.max(0, this.panelW - 32 - this.font.width("..."))) + "...";
-            int flvWC = this.font.width(flavorShown);
-            g.drawString(this.font, flavorShown, (this.width - flvWC) / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
+            g.drawString(this.font, this.cachedFlavorShown,
+                (this.width - this.cachedFlavorShownWidth) / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
         }
 
         // --- Divisor superior ---
@@ -293,6 +302,29 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, this.panelY - 12);
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
         } catch (Throwable ignored) {}
+    }
+
+    private void refreshStaticTextCache() {
+        Language language = Language.getInstance();
+        Font font = this.font;
+        if (language != this.cachedTextLanguage || font != this.cachedTextFont) {
+            this.cachedTextLanguage = language;
+            this.cachedTextFont = font;
+            this.cachedSubtitle = "- "
+                + Component.translatable("gripeverde.options.sound.subtitle").getString() + " -";
+            this.cachedSubtitleWidth = font.width(this.cachedSubtitle);
+            this.cachedFlavor = Component.translatable("gripeverde.options.sound.flavor").getString();
+            this.cachedFlavorWidthLimit = Integer.MIN_VALUE;
+        }
+
+        int flavorWidthLimit = this.panelW - 32;
+        if (flavorWidthLimit == this.cachedFlavorWidthLimit) return;
+        this.cachedFlavorWidthLimit = flavorWidthLimit;
+        this.cachedFlavorShown = font.width(this.cachedFlavor) <= flavorWidthLimit
+            ? this.cachedFlavor
+            : font.plainSubstrByWidth(this.cachedFlavor,
+                Math.max(0, flavorWidthLimit - font.width("..."))) + "...";
+        this.cachedFlavorShownWidth = font.width(this.cachedFlavorShown);
     }
 
     /** v0.24.0: un diapason al margen; pulsado, afina la sala entera. */
