@@ -34,7 +34,7 @@ public class DiaryButton extends AbstractButton {
     private boolean wasHovered = false;
     private int pressAnimTicks = 0;
     private final int wearSeed;
-    private final java.util.Random wearRng;
+    private final int wearX1, wearY1, wearX2, wearY2;
 
     public DiaryButton(int x, int y, int w, int h, Component label, Icon icon, Variant variant, Runnable onClick) {
         this(x,y,w,h,label,icon,variant,SoundProfile.DEFAULT,onClick);
@@ -46,7 +46,19 @@ public class DiaryButton extends AbstractButton {
         this.soundProfile = sp!=null?sp:SoundProfile.DEFAULT;
         this.onClick = onClick;
         this.wearSeed = (x*31 + y*17 + w*13 + h*7) ^ label.getString().hashCode();
-        this.wearRng = new java.util.Random(wearSeed);
+        java.util.Random wearRng = new java.util.Random(wearSeed);
+        int[] firstMark = rollWearMark(wearRng, w, h);
+        int[] secondMark = rollWearMark(wearRng, w, h);
+        this.wearX1 = firstMark[0];
+        this.wearY1 = firstMark[1];
+        this.wearX2 = secondMark[0];
+        this.wearY2 = secondMark[1];
+    }
+
+    private static int[] rollWearMark(java.util.Random rng, int width, int height) {
+        int x = 6 + rng.nextInt(Math.max(1, width - 12));
+        int y = 4 + rng.nextInt(Math.max(1, height - 8));
+        return rng.nextInt(100) < 32 ? new int[]{x, y} : new int[]{-1, -1};
     }
     public DiaryButton(int x,int y,int w,int h,Component label,Runnable onClick){this(x,y,w,h,label,Icon.NONE,Variant.SECONDARY,onClick);}
     public DiaryButton noEllipsis(){this.allowEllipsis=false;return this;}
@@ -152,12 +164,8 @@ public class DiaryButton extends AbstractButton {
         // Wear micro dots near edges (1px) based on seed
         if(active){
             int wear = DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, 34);
-            wearRng.setSeed(wearSeed);
-            for(int i=0;i<2;i++){
-                int wx = x+6+wearRng.nextInt(Math.max(1,w-12));
-                int wy = yDraw+4+wearRng.nextInt(Math.max(1,h-8));
-                if(wearRng.nextInt(100)<32) g.fill(wx,wy,wx+1,wy+1,wear);
-            }
+            if (wearX1 >= 0) g.fill(x + wearX1, yDraw + wearY1, x + wearX1 + 1, yDraw + wearY1 + 1, wear);
+            if (wearX2 >= 0) g.fill(x + wearX2, yDraw + wearY2, x + wearX2 + 1, yDraw + wearY2 + 1, wear);
         }
 
         // Focus ring (keyboard)
