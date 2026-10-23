@@ -83,7 +83,7 @@
     "gripeverde.options.accessibility.eye": "Ojo de percepcion",
     "gripeverde.options.accessibility.eye.tooltip": "Activa el ojo para revelar una nota oculta.",
     "gripeverde.options.accessibility.reduced_motion": "Movimiento reducido",
-    "gripeverde.options.accessibility.reduced_motion.tooltip": "Congela las animaciones y destellos del ambiente sin quitar detalles de la escena.",
+    "gripeverde.options.accessibility.reduced_motion.tooltip": "Congela las animaciones y destellos del ambiente sin quitar detalles de la escena. Las interfaces dentro de un mundo o servidor quedan quietas automáticamente.",
     "gripeverde.options.accessibility.reduce_flashes": "Destellos reducidos",
     "gripeverde.options.accessibility.reduce_flashes.tooltip": "Suprime los relampagos de tormenta y los destellos de pantalla completa de eventos sin congelar el resto de la escena.",
     "gripeverde.subtitle.menu.footsteps": "Pasos a lo lejos",
