@@ -206,6 +206,9 @@ public class DiaryToggle extends AbstractButton {
             g.fill(x + paddingH, underlineY, x + paddingH + Math.min(maxLabelW, font.width(labelStr)), underlineY + 1,
                 DiaryTheme.withAlpha(accent, underlineAlpha));
         }
+
+        DiaryFocus.drawKeyboardRing(g, x, y, w, h,
+            this.active && this.isFocused() && !this.isMouseOver(mouseX, mouseY));
     }
 
     @Override

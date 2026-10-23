@@ -82,6 +82,8 @@ public class DiaryAmbienceSlider extends AbstractSliderButton {
         int textX = x + w / 2 - Minecraft.getInstance().font.width(msg) / 2;
         int textY = y + (h - 8) / 2;
         g.drawString(Minecraft.getInstance().font, msg, textX, textY, textColor, false);
+        DiaryFocus.drawKeyboardRing(g, x, y, w, h,
+            this.active && this.isFocused() && !this.isMouseOver(mouseX, mouseY));
     }
 
     @Override

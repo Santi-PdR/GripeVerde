@@ -107,6 +107,8 @@ public class DiarySlider extends AbstractSliderButton {
         String msg = ellipsize(Minecraft.getInstance().font, this.getMessage().getString(), Math.max(8, w - 14));
         int textX = x + w / 2 - Minecraft.getInstance().font.width(msg) / 2;
         g.drawString(Minecraft.getInstance().font, msg, textX, y + 4, textColor, false);
+        DiaryFocus.drawKeyboardRing(g, x, y, w, h,
+            this.active && this.isFocused() && !this.isMouseOver(mouseX, mouseY));
     }
 
     private static String ellipsize(net.minecraft.client.gui.Font font, String text, int maxWidth) {
