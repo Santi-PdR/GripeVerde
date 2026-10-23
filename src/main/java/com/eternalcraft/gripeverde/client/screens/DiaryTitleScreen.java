@@ -40,6 +40,12 @@ public class DiaryTitleScreen extends Screen {
     private long sessionStartMs = System.currentTimeMillis();
     private long lastInteractionMs = System.currentTimeMillis();
     private boolean dustThisSession = false;
+    private static final int DUST_COUNT = 40;
+    private final int[] dustX = new int[DUST_COUNT];
+    private final int[] dustY = new int[DUST_COUNT];
+    private final int[] dustAlpha = new int[DUST_COUNT];
+    private int dustLayoutW = -1;
+    private int dustLayoutH = -1;
     private boolean dawnActive = false;
     private static long greetingShownUntilMs = 0L;
     private static String greetingText = null;
@@ -517,12 +523,19 @@ public class DiaryTitleScreen extends Screen {
     private static final java.util.Random DUST_RNG = new java.util.Random();
     private void drawDustIfDue(GuiGraphics g) {
         if (!dustThisSession) return;
-        DUST_RNG.setSeed(0xD05E7L ^ (long)this.width);
-        for (int i = 0; i < 40; i++) {
-            int x = DUST_RNG.nextInt(Math.max(1, this.width));
-            int y = DUST_RNG.nextInt(Math.max(1, this.height));
-            int al = 14 + DUST_RNG.nextInt(16);
-            g.fill(x, y, x + 1, y + 1, (al << 24) | 0x9A938A);
+        if (this.width != dustLayoutW || this.height != dustLayoutH) {
+            DUST_RNG.setSeed(0xD05E7L ^ (long)this.width);
+            for (int i = 0; i < DUST_COUNT; i++) {
+                dustX[i] = DUST_RNG.nextInt(Math.max(1, this.width));
+                dustY[i] = DUST_RNG.nextInt(Math.max(1, this.height));
+                dustAlpha[i] = 14 + DUST_RNG.nextInt(16);
+            }
+            dustLayoutW = this.width;
+            dustLayoutH = this.height;
+        }
+        for (int i = 0; i < DUST_COUNT; i++) {
+            g.fill(dustX[i], dustY[i], dustX[i] + 1, dustY[i] + 1,
+                (dustAlpha[i] << 24) | 0x9A938A);
         }
     }
 
