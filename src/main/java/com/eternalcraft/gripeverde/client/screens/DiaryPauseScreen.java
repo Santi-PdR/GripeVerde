@@ -3,12 +3,14 @@ package com.eternalcraft.gripeverde.client.screens;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.GenericDirtMessageScreen;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.achievement.StatsScreen;
 import net.minecraft.client.gui.screens.advancements.AdvancementsScreen;
+import net.minecraft.locale.Language;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
@@ -61,6 +63,14 @@ public class DiaryPauseScreen extends PauseScreen {
     private static final java.util.Random BLOOD_RNG = new java.util.Random();
     private static final java.util.Random BREATH_RNG = new java.util.Random();
     private boolean compactLayout;
+    private Language cachedHeaderLanguage;
+    private Font cachedHeaderFont;
+    private Component cachedDisplayTitle;
+    private int cachedTitleWidth;
+    private String cachedSubtitle = "";
+    private int cachedSubtitleWidth;
+    private int cachedDateWidth;
+    private static final String DATE_STAMP = "23 · III · 1897";
 
     // ── v0.16.0: la pausa responde ──
     private boolean candleOut = false;
@@ -340,6 +350,7 @@ public class DiaryPauseScreen extends PauseScreen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        refreshHeaderCache();
         int overlay = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 180);
         g.fill(0, 0, this.width, this.height, overlay);
 
@@ -539,15 +550,10 @@ public class DiaryPauseScreen extends PauseScreen {
     // ================================================================
 
     private void drawPanelTitle(GuiGraphics g, int px, int py) {
-        String title = Component.translatable("gripeverde.pause.title").getString();
-        String subtitle = Component.translatable("gripeverde.pause.subtitle").getString();
-        net.minecraft.network.chat.Component displayTitle =
-            com.eternalcraft.gripeverde.client.render.DiaryTypography.display(title);
-
         int centerX = px + panelW() / 2;
         int titleY = py + (compactLayout ? 4 : 24);
         int subtitleY = py + 58;
-        int tw = this.font.width(displayTitle);
+        int tw = this.cachedTitleWidth;
         float titleScale = compactLayout
             ? Math.min(1.35f, Math.max(0.65f, (panelW() - 16f) / Math.max(1, tw)))
             : 1.75f;
@@ -555,7 +561,7 @@ public class DiaryPauseScreen extends PauseScreen {
         g.pose().pushPose();
         g.pose().translate(centerX, titleY, 0);
         g.pose().scale(titleScale, titleScale, 1f);
-        g.drawString(this.font, displayTitle, -tw / 2, 0, DiaryTheme.INK, false);
+        g.drawString(this.font, this.cachedDisplayTitle, -tw / 2, 0, DiaryTheme.INK, false);
         g.pose().popPose();
 
         if (!compactLayout) {
@@ -564,20 +570,32 @@ public class DiaryPauseScreen extends PauseScreen {
             drawFlourish(g, centerX - scaledTw / 2 - 20, ornY, DiaryTheme.BRONZE, false);
             drawFlourish(g, centerX + scaledTw / 2 + 4, ornY, DiaryTheme.BRONZE, true);
 
-            int sw = this.font.width(subtitle);
-            g.drawString(this.font, subtitle,
-                centerX - sw / 2, subtitleY,
+            g.drawString(this.font, this.cachedSubtitle,
+                centerX - this.cachedSubtitleWidth / 2, subtitleY,
                 DiaryTheme.SEPIA_MID, false);
         }
     }
 
     private void drawDateStamp(GuiGraphics g, int px, int py) {
         if (compactLayout) return;
-        String date = "23 · III · 1897";
-        int dw = this.font.width(date);
-        int dx = px + panelW() - dw - 12;
+        int dx = px + panelW() - this.cachedDateWidth - 12;
         int dy = py + 12;
-        g.drawString(this.font, date, dx, dy, DiaryTheme.SEPIA_DARK, false);
+        g.drawString(this.font, DATE_STAMP, dx, dy, DiaryTheme.SEPIA_DARK, false);
+    }
+
+    private void refreshHeaderCache() {
+        Language language = Language.getInstance();
+        Font font = this.font;
+        if (language == this.cachedHeaderLanguage && font == this.cachedHeaderFont) return;
+
+        this.cachedHeaderLanguage = language;
+        this.cachedHeaderFont = font;
+        this.cachedDisplayTitle = com.eternalcraft.gripeverde.client.render.DiaryTypography.display(
+            Component.translatable("gripeverde.pause.title").getString());
+        this.cachedTitleWidth = font.width(this.cachedDisplayTitle);
+        this.cachedSubtitle = Component.translatable("gripeverde.pause.subtitle").getString();
+        this.cachedSubtitleWidth = font.width(this.cachedSubtitle);
+        this.cachedDateWidth = font.width(DATE_STAMP);
     }
 
     private void drawFlourish(GuiGraphics g, int x, int y, int color, boolean mirror) {
