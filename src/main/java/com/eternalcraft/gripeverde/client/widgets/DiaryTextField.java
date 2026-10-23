@@ -208,6 +208,9 @@ public class DiaryTextField extends EditBox {
                 g.fill(cursorX, innerY - 1, cursorX + 1, innerY + 9, DiaryTheme.INK);
             }
         }
+
+        DiaryFocus.drawKeyboardRing(g, x, y, w, h,
+                focused && !this.isMouseOver(mouseX, mouseY));
     }
 
     private FormattedCharSequence formatSafe(String text, int startPos) {
