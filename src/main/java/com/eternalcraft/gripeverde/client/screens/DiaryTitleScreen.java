@@ -81,6 +81,10 @@ public class DiaryTitleScreen extends Screen {
     private Font signatureWidthsFont;
     private final String[] signatureWidthTexts = new String[3];
     private final int[] signatureWidths = new int[3];
+    private int columnLayoutW = -1;
+    private int columnLayoutH = -1;
+    private LayoutRegion cachedLeftColumn;
+    private LayoutRegion cachedRightColumn;
 
     public DiaryTitleScreen() {
         super(Component.translatable("gripeverde.title.window"));
@@ -327,15 +331,25 @@ public class DiaryTitleScreen extends Screen {
     }
 
     private LayoutRegion leftColumn() {
-        LayoutRegion screen = LayoutRegion.screen(this.width, this.height);
-        return screen.left(POSTER_W + Spacing.SCREEN_MARGIN * 2)
-                     .inset(Spacing.SCREEN_MARGIN);
+        refreshColumnLayout();
+        return this.cachedLeftColumn;
     }
 
     private LayoutRegion rightColumn() {
+        refreshColumnLayout();
+        return this.cachedRightColumn;
+    }
+
+    private void refreshColumnLayout() {
+        if (this.columnLayoutW == this.width && this.columnLayoutH == this.height
+                && this.cachedLeftColumn != null && this.cachedRightColumn != null) return;
+        this.columnLayoutW = this.width;
+        this.columnLayoutH = this.height;
         LayoutRegion screen = LayoutRegion.screen(this.width, this.height);
+        this.cachedLeftColumn = screen.left(POSTER_W + Spacing.SCREEN_MARGIN * 2)
+            .inset(Spacing.SCREEN_MARGIN);
         int colW = Math.max(WATCH_RADIUS * 2, POSTER_R_W) + Spacing.SCREEN_MARGIN * 2;
-        return screen.right(colW).inset(Spacing.SCREEN_MARGIN);
+        this.cachedRightColumn = screen.right(colW).inset(Spacing.SCREEN_MARGIN);
     }
 
     @Override
