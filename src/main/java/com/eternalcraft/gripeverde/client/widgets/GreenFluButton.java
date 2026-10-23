@@ -1,6 +1,7 @@
 package com.eternalcraft.gripeverde.client.widgets;
 
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
+import com.eternalcraft.gripeverde.client.render.DiaryTypography;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.util.EasedValue;
 import net.minecraft.client.Minecraft;
@@ -31,7 +32,7 @@ public class GreenFluButton extends AbstractButton {
     private Component cachedSubtitleMessage;
     private Font cachedTextFont;
     private int cachedTextWidthLimit = -1;
-    private String cachedTitleText = "";
+    private Component cachedTitleText = Component.empty();
     private String cachedSubtitleText = "";
     private boolean wasHovered = false;
     private final EasedValue hoverAnim = new EasedValue(5.5f);
@@ -69,7 +70,7 @@ public class GreenFluButton extends AbstractButton {
         this.cachedTextLanguage = language;
         this.cachedTextFont = font;
         this.cachedTextWidthLimit = maxWidth;
-        this.cachedTitleText = ellipsize(font, this.title.getString(), maxWidth);
+        this.cachedTitleText = ellipsizeDisplay(font, this.title.getString(), maxWidth);
         this.cachedSubtitleText = ellipsize(font, this.subtitle.getString(), maxWidth);
     }
 
@@ -174,7 +175,7 @@ public class GreenFluButton extends AbstractButton {
         // Text
         int textX=x+44, maxW=Math.max(20,w-54);
         this.refreshTextCache(font, maxW);
-        String tTitle=this.cachedTitleText;
+        Component tTitle=this.cachedTitleText;
         String tSub=this.cachedSubtitleText;
         int titleCol = hoverAnim.lerpColor(DiaryTheme.BONE_WHITE, DiaryTheme.PAPER);
         int subCol = hoverAnim.lerpColor(DiaryTheme.SEPIA_LIGHT, DiaryTheme.OCHRE);
@@ -235,6 +236,18 @@ public class GreenFluButton extends AbstractButton {
         if(f.width(txt)<=maxW) return txt;
         String ell="..."; int room=Math.max(0,maxW-f.width(ell));
         return f.plainSubstrByWidth(txt,room)+ell;
+    }
+    private static Component ellipsizeDisplay(Font font, String text, int maxWidth) {
+        Component display = DiaryTypography.display(text);
+        if (font.width(display) <= maxWidth) return display;
+
+        String ellipsis = "...";
+        int end = text.length();
+        do {
+            end = end > 0 ? text.offsetByCodePoints(end, -1) : 0;
+            display = DiaryTypography.display(text.substring(0, end) + ellipsis);
+        } while (end > 0 && font.width(display) > maxWidth);
+        return display;
     }
     @Override protected void updateWidgetNarration(NarrationElementOutput out){defaultButtonNarrationText(out);}
 }
