@@ -5,12 +5,14 @@ import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import net.minecraft.client.Options;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.ChatOptionsScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
@@ -21,6 +23,13 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
 
     private int panelX, panelY, panelW, panelH;
     private final SmoothScroll smoothScroll = new SmoothScroll();
+    private Language cachedHeaderLanguage;
+    private Font cachedHeaderFont;
+    private String cachedTitle = "";
+    private String cachedSubtitle = "";
+    private int cachedSubtitleWidth;
+    private String cachedFlavor = "";
+    private int cachedFlavorWidth;
 
     public DiaryChatOptionsScreen(Screen parent, Options options) {
         super(parent, options);
@@ -94,6 +103,7 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        this.refreshHeaderTextCache();
         // Escena viva
         // Clear framebuffer + transition fade
         g.fill(0, 0, this.width, this.height, 0xFF000000);
@@ -105,21 +115,18 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         PaperTexture.drawClean(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.CORRESPONDENCE);
 
         // Titulo
-        String titleStr = Component.translatable("options.chat.title").getString();
         int titleX = this.width / 2;
         int titleY = this.panelY + 10;
         com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
-            g, this.font, titleStr, titleX, titleY, DiaryChrome.INK_TITLE);
+            g, this.font, this.cachedTitle, titleX, titleY, DiaryChrome.INK_TITLE);
 
         // Subtitulo
-        String subtitle = "- " + Component.translatable("gripeverde.options.chat.subtitle").getString() + " -";
-        int subWC = this.font.width(subtitle);
-        g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
+        g.drawString(this.font, this.cachedSubtitle, titleX - this.cachedSubtitleWidth / 2,
+            titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
         // Flavor rotativo
-        String flavor = getRotatingChatFlavor();
-        int flvWC = this.font.width(flavor);
-        g.drawString(this.font, flavor, (this.width - flvWC) / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
+        g.drawString(this.font, this.cachedFlavor, (this.width - this.cachedFlavorWidth) / 2,
+            titleY + 24, DiaryChrome.INK_FLAVOR, false);
 
         // Divisor superior
         int divY1 = titleY + 42;
@@ -162,6 +169,21 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
     @Override
     public void onClose() {
         this.minecraft.setScreen(this.lastScreen);
+    }
+
+    private void refreshHeaderTextCache() {
+        Language language = Language.getInstance();
+        Font font = this.font;
+        if (language == this.cachedHeaderLanguage && font == this.cachedHeaderFont) return;
+
+        this.cachedHeaderLanguage = language;
+        this.cachedHeaderFont = font;
+        this.cachedTitle = Component.translatable("options.chat.title").getString();
+        this.cachedSubtitle = "- "
+            + Component.translatable("gripeverde.options.chat.subtitle").getString() + " -";
+        this.cachedSubtitleWidth = font.width(this.cachedSubtitle);
+        this.cachedFlavor = getRotatingChatFlavor();
+        this.cachedFlavorWidth = font.width(this.cachedFlavor);
     }
 
     // Rotating flavor quotes for chat options
