@@ -49,6 +49,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     private Button vanillaSelectBtn;
     private Button vanillaEditBtn;
     private Button vanillaDeleteBtn;
+    private Field listItemHeightField;
+    private Field listY0Field;
+    private Field listHeaderHeightField;
 
     // Nuestros botones Diary
     private DiaryButton diarySelect;
@@ -75,6 +78,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         this.vanillaSelectBtn = resolveField(Button.class, "selectButton", "f_99678_");
         this.vanillaEditBtn = resolveField(Button.class, "editButton", "f_99679_");
         this.vanillaDeleteBtn = resolveField(Button.class, "deleteButton", "f_99680_");
+        this.listItemHeightField = resolveIntField(this.vanillaList, "itemHeight", "f_93387_");
+        this.listY0Field = resolveIntField(this.vanillaList, "y0", "f_93390_");
+        this.listHeaderHeightField = resolveIntField(this.vanillaList, "headerHeight", "f_93395_");
 
         // Ajustar la lista visual (SIN cambiar width, respetando R-VANILLA-LIST-COORDS)
         if (this.vanillaList != null) {
@@ -592,9 +598,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             var children = this.vanillaList.children();
             if (children == null || children.isEmpty()) return;
 
-            int itemHeight = readIntField(this.vanillaList, "itemHeight", "f_93387_");
-            int y0 = readIntField(this.vanillaList, "y0", "f_93390_");
-            int headerHeight = readIntField(this.vanillaList, "headerHeight", "f_93395_");
+            int itemHeight = readIntField(this.vanillaList, this.listItemHeightField);
+            int y0 = readIntField(this.vanillaList, this.listY0Field);
+            int headerHeight = readIntField(this.vanillaList, this.listHeaderHeightField);
 
             if (itemHeight <= 0) return;
 
@@ -645,9 +651,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             var children = this.vanillaList.children();
             if (children == null || children.isEmpty()) return;
 
-            int itemHeight = readIntField(this.vanillaList, "itemHeight", "f_93387_");
-            int y0 = readIntField(this.vanillaList, "y0", "f_93390_");
-            int headerHeight = readIntField(this.vanillaList, "headerHeight", "f_93395_");
+            int itemHeight = readIntField(this.vanillaList, this.listItemHeightField);
+            int y0 = readIntField(this.vanillaList, this.listY0Field);
+            int headerHeight = readIntField(this.vanillaList, this.listHeaderHeightField);
 
             if (itemHeight <= 0) return;
 
@@ -698,9 +704,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         try {
             var children = this.vanillaList.children();
             if (children == null) return 0;
-            int itemHeight = readIntField(this.vanillaList, "itemHeight", "f_93387_");
-            int y0 = readIntField(this.vanillaList, "y0", "f_93390_");
-            int headerHeight = readIntField(this.vanillaList, "headerHeight", "f_93395_");
+            int itemHeight = readIntField(this.vanillaList, this.listItemHeightField);
+            int y0 = readIntField(this.vanillaList, this.listY0Field);
+            int headerHeight = readIntField(this.vanillaList, this.listHeaderHeightField);
             if (itemHeight <= 0) return 0;
             double scrollAmount = 0.0;
             try { scrollAmount = this.vanillaList.getScrollAmount(); } catch (Throwable ignored) {}
@@ -723,23 +729,33 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         return 0;
     }
 
-    private static int readIntField(Object target, String officialName, String srgName) {
+    private static Field resolveIntField(Object target, String officialName, String srgName) {
+        if (target == null) return null;
         try {
-            java.lang.reflect.Field f = null;
             Class<?> cls = target.getClass();
-            // Buscar en toda la jerarquia (los fields estan en la superclase)
-            while (cls != null && f == null) {
-                try { f = cls.getDeclaredField(officialName); } catch (NoSuchFieldException ignored) {}
-                if (f == null) {
-                    try { f = cls.getDeclaredField(srgName); } catch (NoSuchFieldException ignored) {}
-                }
-                if (f == null) cls = cls.getSuperclass();
-            }
-            if (f != null) {
-                f.setAccessible(true);
-                return f.getInt(target);
+            while (cls != null) {
+                try {
+                    Field field = cls.getDeclaredField(officialName);
+                    field.setAccessible(true);
+                    return field;
+                } catch (NoSuchFieldException ignored) {}
+                try {
+                    Field field = cls.getDeclaredField(srgName);
+                    field.setAccessible(true);
+                    return field;
+                } catch (NoSuchFieldException ignored) {}
+                cls = cls.getSuperclass();
             }
         } catch (Throwable ignored) {}
-        return 0;
+        return null;
+    }
+
+    private static int readIntField(Object target, Field field) {
+        if (target == null || field == null) return 0;
+        try {
+            return field.getInt(target);
+        } catch (Throwable ignored) {
+            return 0;
+        }
     }
 }
