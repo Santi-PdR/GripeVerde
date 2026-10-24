@@ -2,6 +2,7 @@ package com.eternalcraft.gripeverde.client.widgets;
 
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.util.ClientAccessibility;
 import com.eternalcraft.gripeverde.client.util.EasedValue;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
@@ -10,6 +11,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 
 import java.util.function.Consumer;
@@ -34,6 +36,16 @@ public class DiaryToggle extends AbstractButton {
     private final Component baseLabel;
     private final Function<Boolean, Component> valueFormatter;
     private final Runnable onChanged; // opcional, se invoca despues del set()
+    private Language cachedLanguage;
+    private String cachedBaseLabel;
+    private String cachedOffLabel;
+    private String cachedOnLabel;
+    private Font cachedLayoutFont;
+    private int cachedLayoutWidth = -1;
+    private String cachedLabelText;
+    private int cachedLabelTextWidth;
+    private int cachedOffLabelWidth;
+    private int cachedOnLabelWidth;
 
     private final EasedValue hoverAnim = new EasedValue(6f);
     private boolean wasHovered = false;
@@ -86,6 +98,35 @@ public class DiaryToggle extends AbstractButton {
             .append(this.valueFormatter.apply(this.valueGetter.get())));
     }
 
+    private void refreshDisplayText() {
+        Language language = Language.getInstance();
+        if (this.cachedLanguage == language) return;
+
+        this.cachedLanguage = language;
+        this.cachedBaseLabel = this.baseLabel.getString();
+        this.cachedOffLabel = this.valueFormatter.apply(false).getString();
+        this.cachedOnLabel = this.valueFormatter.apply(true).getString();
+        this.cachedLayoutFont = null;
+    }
+
+    private void refreshDisplayLayout(Font font, int maxLabelWidth) {
+        this.refreshDisplayText();
+        if (this.cachedLayoutFont == font && this.cachedLayoutWidth == maxLabelWidth) return;
+
+        this.cachedLayoutFont = font;
+        this.cachedLayoutWidth = maxLabelWidth;
+        this.cachedLabelText = this.cachedBaseLabel;
+        this.cachedLabelTextWidth = font.width(this.cachedLabelText);
+        if (this.cachedLabelTextWidth > maxLabelWidth) {
+            String ellipsis = "...";
+            int room = Math.max(0, maxLabelWidth - font.width(ellipsis));
+            this.cachedLabelText = font.plainSubstrByWidth(this.cachedBaseLabel, room) + ellipsis;
+            this.cachedLabelTextWidth = font.width(this.cachedLabelText);
+        }
+        this.cachedOffLabelWidth = font.width(this.cachedOffLabel);
+        this.cachedOnLabelWidth = font.width(this.cachedOnLabel);
+    }
+
     @Override
     public void onPress() {
         boolean current = this.valueGetter.get();
@@ -110,10 +151,20 @@ public class DiaryToggle extends AbstractButton {
         if (hovered && !wasHovered) UiSounds.playHover();
         wasHovered = hovered;
 
-        hoverAnim.setTarget(hovered);
-        hoverAnim.tick(partialTick / 20f);
+        boolean inGameSession = ClientAccessibility.hasActiveGameSession();
+        boolean reducedMotion = inGameSession || ClientAccessibility.reducedMotion();
+        if (reducedMotion) hoverAnim.setImmediately(hovered);
+        else {
+            hoverAnim.setTarget(hovered);
+            hoverAnim.tickRealtime();
+        }
         float t = hoverAnim.getEased();
         boolean value = this.valueGetter.get();
+
+        if (inGameSession) {
+            renderGameplayVersion(g, mouseX, mouseY, x, y, w, h, value);
+            return;
+        }
 
         int outerShadow = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 96);
         g.fill(x + 2, y + h, x + w + 1, y + h + 2, outerShadow);
@@ -135,17 +186,12 @@ public class DiaryToggle extends AbstractButton {
         g.fill(x + w - 1, y, x + w, y + h, borderColor);
 
         Font font = Minecraft.getInstance().font;
-        Component valLabel = this.valueFormatter.apply(value);
-        String labelStr = this.baseLabel.getString();
-        String valStr = valLabel.getString();
         int plateW = 66;
         int paddingH = 10;
         int maxLabelW = Math.max(24, w - plateW - paddingH * 2 - 8);
-        if (font.width(labelStr) > maxLabelW) {
-            String ellipsis = "...";
-            int room = Math.max(0, maxLabelW - font.width(ellipsis));
-            labelStr = font.plainSubstrByWidth(labelStr, room) + ellipsis;
-        }
+        this.refreshDisplayLayout(font, maxLabelW);
+        String labelStr = this.cachedLabelText;
+        String valStr = value ? this.cachedOnLabel : this.cachedOffLabel;
 
         int contentY = y + (h - font.lineHeight) / 2;
         int labelColor = hoverAnim.lerpColor(DiaryTheme.INK, DiaryTheme.INK_BLACK);
@@ -178,15 +224,58 @@ public class DiaryToggle extends AbstractButton {
         int valColor = !this.active
             ? DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 120)
             : (value ? hoverAnim.lerpColor(DiaryTheme.REDCOAT_DARK, DiaryTheme.REDCOAT) : DiaryTheme.SEPIA_MID);
-        int valW = font.width(valStr);
+        int valW = value ? this.cachedOnLabelWidth : this.cachedOffLabelWidth;
         g.drawString(font, valStr, plateX + Math.max(5, (plateW - 16 - valW) / 2), contentY, valColor, false);
 
         if (t > 0.1f && this.active) {
             int underlineY = contentY + font.lineHeight;
             int underlineAlpha = (int) (t * 180);
-            g.fill(x + paddingH, underlineY, x + paddingH + Math.min(maxLabelW, font.width(labelStr)), underlineY + 1,
+            g.fill(x + paddingH, underlineY, x + paddingH + Math.min(maxLabelW, this.cachedLabelTextWidth), underlineY + 1,
                 DiaryTheme.withAlpha(accent, underlineAlpha));
         }
+
+        DiaryFocus.drawKeyboardRing(g, x, y, w, h,
+            this.active && this.isFocused() && !this.isMouseOver(mouseX, mouseY));
+    }
+
+    /** Compact rendering while a world continues drawing behind the screen. */
+    private void renderGameplayVersion(GuiGraphics g, int mouseX, int mouseY,
+                                       int x, int y, int w, int h,
+                                       boolean value) {
+        Font font = Minecraft.getInstance().font;
+        int plateW = 66;
+        int padding = 10;
+        int maxLabelW = Math.max(24, w - plateW - padding * 2 - 8);
+        this.refreshDisplayLayout(font, maxLabelW);
+
+        g.fill(x, y, x + w, y + h, DiaryTheme.PAPER_STAINED);
+        int border = DiaryTheme.SEPIA_DARK;
+        g.fill(x, y, x + w, y + 1, border);
+        g.fill(x, y + h - 1, x + w, y + h, border);
+        g.fill(x, y, x + 1, y + h, border);
+        g.fill(x + w - 1, y, x + w, y + h, border);
+
+        int contentY = y + (h - font.lineHeight) / 2;
+        int color = this.active ? DiaryTheme.INK : DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 150);
+        g.drawString(font, this.cachedLabelText, x + padding, contentY, color, false);
+
+        int plateX = x + w - plateW - 8;
+        int plateY = y + 4;
+        int plateH = Math.max(1, h - 8);
+        g.fill(plateX, plateY, plateX + plateW, plateY + plateH, 0xFFE3D5B2);
+        g.fill(plateX, plateY, plateX + plateW, plateY + 1, border);
+        int slotX = plateX + plateW - 14;
+        int slotY = plateY + 3;
+        int slotH = Math.max(1, plateH - 6);
+        g.fill(slotX, slotY, slotX + 8, slotY + slotH,
+            value ? DiaryTheme.REDCOAT : DiaryTheme.SEPIA_MID);
+        String valueText = value ? this.cachedOnLabel : this.cachedOffLabel;
+        int valueWidth = value ? this.cachedOnLabelWidth : this.cachedOffLabelWidth;
+        g.drawString(font, valueText,
+            plateX + Math.max(4, (plateW - 18 - valueWidth) / 2), contentY, color, false);
+
+        DiaryFocus.drawKeyboardRing(g, x, y, w, h,
+            this.active && this.isFocused() && !this.isMouseOver(mouseX, mouseY));
     }
 
     @Override

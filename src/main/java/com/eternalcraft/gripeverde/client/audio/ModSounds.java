@@ -116,7 +116,7 @@ public class ModSounds {
      * misma firma en el entorno real donde corre el jar reobfuscado.
      */
     private static SoundEvent createSoundEvent(String path) {
-        ResourceLocation id = new ResourceLocation(GripeVerdeMod.MOD_ID, path);
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(GripeVerdeMod.MOD_ID, path);
 
         try {
             java.lang.reflect.Method m = SoundEvent.class.getDeclaredMethod("createVariableRangeEvent", ResourceLocation.class);

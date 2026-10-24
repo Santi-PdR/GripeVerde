@@ -97,6 +97,10 @@ public class DiaryTextField extends EditBox {
         try { return f.getBoolean(this); } catch (Throwable ignored) { return fallback; }
     }
 
+    public int getSelectionPosition() {
+        return readInt(FIELD_HIGHLIGHT, this.getCursorPosition());
+    }
+
     @SuppressWarnings("unchecked")
     private <T> T readObj(Field f, T fallback) {
         if (f == null) return fallback;
@@ -204,6 +208,9 @@ public class DiaryTextField extends EditBox {
                 g.fill(cursorX, innerY - 1, cursorX + 1, innerY + 9, DiaryTheme.INK);
             }
         }
+
+        DiaryFocus.drawKeyboardRing(g, x, y, w, h,
+                focused && !this.isMouseOver(mouseX, mouseY));
     }
 
     private FormattedCharSequence formatSafe(String text, int startPos) {

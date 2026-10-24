@@ -1,6 +1,7 @@
 package com.eternalcraft.gripeverde.client.widgets;
 
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
+import com.eternalcraft.gripeverde.client.render.DiaryTypography;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.util.EasedValue;
 import net.minecraft.client.Minecraft;
@@ -9,6 +10,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -17,21 +19,59 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class GreenFluButton extends AbstractButton {
 
+    private static boolean reducedMotion() {
+        return com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
+    }
+
     private final Component title;
     private final Component subtitle;
-    private final ResourceLocation iconTexture;
+    private final boolean arsenalIcon;
     private final Runnable onClick;
+    private Language cachedTextLanguage;
+    private Component cachedTitleMessage;
+    private Component cachedSubtitleMessage;
+    private Font cachedTextFont;
+    private int cachedTextWidthLimit = -1;
+    private Component cachedTitleText = Component.empty();
+    private String cachedSubtitleText = "";
     private boolean wasHovered = false;
     private final EasedValue hoverAnim = new EasedValue(5.5f);
     private int pressTicks = 0;
-    private final int wearSeed;
-    private final java.util.Random wearRng;
+    private final int wearX1, wearY1, wearX2, wearY2;
 
     public GreenFluButton(int x,int y,int w,int h, Component title, Component subtitle, ResourceLocation icon, Runnable onClick){
         super(x,y,w,h,title);
-        this.title=title; this.subtitle=subtitle; this.iconTexture=icon; this.onClick=onClick;
-        this.wearSeed = (x*29 + y*19 + title.getString().hashCode()) & 0x7fffffff;
-        this.wearRng = new java.util.Random(wearSeed);
+        this.title=title; this.subtitle=subtitle; this.onClick=onClick;
+        this.arsenalIcon = icon != null && icon.getPath().contains("mods");
+        int wearSeed = (x*29 + y*19 + title.getString().hashCode()) & 0x7fffffff;
+        java.util.Random wearRng = new java.util.Random(wearSeed);
+        if (wearRng.nextInt(100) < 40) {
+            this.wearX1 = 48 + wearRng.nextInt(Math.max(1, w - 66));
+            this.wearY1 = 8 + wearRng.nextInt(Math.max(1, h - 16));
+        } else {
+            this.wearX1 = this.wearY1 = -1;
+        }
+        if (wearRng.nextInt(100) < 40) {
+            this.wearX2 = 48 + wearRng.nextInt(Math.max(1, w - 66));
+            this.wearY2 = 8 + wearRng.nextInt(Math.max(1, h - 16));
+        } else {
+            this.wearX2 = this.wearY2 = -1;
+        }
+    }
+
+    private void refreshTextCache(Font font, int maxWidth) {
+        Language language = Language.getInstance();
+        if (this.cachedTitleMessage == this.title && this.cachedSubtitleMessage == this.subtitle
+                && this.cachedTextLanguage == language && this.cachedTextFont == font
+                && this.cachedTextWidthLimit == maxWidth) return;
+
+        this.cachedTitleMessage = this.title;
+        this.cachedSubtitleMessage = this.subtitle;
+        this.cachedTextLanguage = language;
+        this.cachedTextFont = font;
+        this.cachedTextWidthLimit = maxWidth;
+        this.cachedTitleText = ellipsizeDisplay(font, this.title.getString(), maxWidth);
+        this.cachedSubtitleText = ellipsize(font, this.subtitle.getString(), maxWidth);
     }
 
     @Override public void onPress(){ UiSounds.playClick(); onClick.run(); }
@@ -43,13 +83,18 @@ public class GreenFluButton extends AbstractButton {
 
     @Override
     protected void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTick){
-        boolean hovered=isHovered();
+        boolean keyboardFocused = active && isFocused() && !isMouseOver(mouseX, mouseY);
+        boolean hovered = isHovered() || keyboardFocused;
+        boolean motionReduced = reducedMotion();
         if(hovered&&!wasHovered) UiSounds.playHover();
         wasHovered=hovered;
-        hoverAnim.setTarget(hovered);
-        hoverAnim.tick(partialTick/20f);
+        if (motionReduced) hoverAnim.setImmediately(hovered);
+        else {
+            hoverAnim.setTarget(hovered);
+            hoverAnim.tickRealtime();
+        }
         float t=hoverAnim.getEased();
-        boolean pressed=pressTicks>0&&active;
+        boolean pressed=pressTicks>0&&active&&!motionReduced;
         if(pressTicks>0) pressTicks--;
 
         int x=getX(), y=getY(), w=width, h=height;
@@ -104,7 +149,10 @@ public class GreenFluButton extends AbstractButton {
         g.fill(x+2,yDraw+2+barRed,x+5,yDraw+h-2-barRed,barCol);
         // Spark on side bar when hover high
         if(t>0.28f){
-            int sparkY = yDraw+h/2 + (int)(Math.sin(System.currentTimeMillis()/160.0)*(h/4.2));
+            int sparkY = yDraw + h / 2;
+            if (!motionReduced) {
+                sparkY += (int)(Math.sin(System.currentTimeMillis() / 160.0) * (h / 4.2));
+            }
             int sparkCol = DiaryTheme.withAlpha(DiaryTheme.AMBER_FLAME, (int)(t*165));
             g.fill(x+6,sparkY,x+8,sparkY+1,sparkCol);
             g.fill(x+6,sparkY+1,x+7,sparkY+2,DiaryTheme.withAlpha(sparkCol&0x00FFFFFF, (int)(t*80)));
@@ -127,13 +175,12 @@ public class GreenFluButton extends AbstractButton {
 
         // Text
         int textX=x+44, maxW=Math.max(20,w-54);
-        String tTitle=ellipsize(font,title.getString(),maxW);
-        String tSub=ellipsize(font,subtitle.getString(),maxW);
+        this.refreshTextCache(font, maxW);
+        Component tTitle=this.cachedTitleText;
+        String tSub=this.cachedSubtitleText;
         int titleCol = hoverAnim.lerpColor(DiaryTheme.BONE_WHITE, DiaryTheme.PAPER);
         int subCol = hoverAnim.lerpColor(DiaryTheme.SEPIA_LIGHT, DiaryTheme.OCHRE);
         if(!active){ titleCol=DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID,90); subCol=DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID,70); }
-        // Shadow 1px for title
-        if(active) g.drawString(font,tTitle,textX+1,yDraw+9,DiaryTheme.withAlpha(DiaryTheme.INK_BLACK,70),false);
         g.drawString(font,tTitle,textX,yDraw+8,titleCol,false);
         g.drawString(font,tSub,textX,yDraw+22,subCol,false);
 
@@ -141,19 +188,13 @@ public class GreenFluButton extends AbstractButton {
         g.fill(x+44,yDraw+h-7,x+w-18,yDraw+h-6,DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 54));
         // Wear dots
         if(active){
-            wearRng.setSeed(wearSeed);
             int wearCol = DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, 28);
-            for(int i=0;i<2;i++){
-                if(wearRng.nextInt(100)<40){
-                    int wx=x+48+wearRng.nextInt(Math.max(1,w-66));
-                    int wy=yDraw+8+wearRng.nextInt(Math.max(1,h-16));
-                    g.fill(wx,wy,wx+1,wy+1,wearCol);
-                }
-            }
+            if (wearX1 >= 0) g.fill(x + wearX1, yDraw + wearY1, x + wearX1 + 1, yDraw + wearY1 + 1, wearCol);
+            if (wearX2 >= 0) g.fill(x + wearX2, yDraw + wearY2, x + wearX2 + 1, yDraw + wearY2 + 1, wearCol);
         }
 
         // Focus ring
-        if(isFocused() && !isMouseOver(mouseX,mouseY) && active){
+        if(keyboardFocused){
             int gold=DiaryTheme.GOLD_TARNISHED;
             g.fill(x-1,yDraw-1,x+w+1,yDraw,gold);
             g.fill(x-1,yDraw+h,x+w+1,yDraw+h+1,gold);
@@ -169,8 +210,7 @@ public class GreenFluButton extends AbstractButton {
     }
 
     private void drawButtonIcon(GuiGraphics g,int x,int y,int col,float hoverT){
-        String path = iconTexture==null?"":iconTexture.getPath();
-        if(path.contains("mods")){
+        if(this.arsenalIcon){
             drawArsenalIcon(g,x,y,col);
         } else {
             drawRegimentIcon(g,x,y,col);
@@ -195,6 +235,18 @@ public class GreenFluButton extends AbstractButton {
         if(f.width(txt)<=maxW) return txt;
         String ell="..."; int room=Math.max(0,maxW-f.width(ell));
         return f.plainSubstrByWidth(txt,room)+ell;
+    }
+    private static Component ellipsizeDisplay(Font font, String text, int maxWidth) {
+        Component display = DiaryTypography.display(text);
+        if (font.width(display) <= maxWidth) return display;
+
+        String ellipsis = "...";
+        int end = text.length();
+        do {
+            end = end > 0 ? text.offsetByCodePoints(end, -1) : 0;
+            display = DiaryTypography.display(text.substring(0, end) + ellipsis);
+        } while (end > 0 && font.width(display) > maxWidth);
+        return display;
     }
     @Override protected void updateWidgetNarration(NarrationElementOutput out){defaultButtonNarrationText(out);}
 }

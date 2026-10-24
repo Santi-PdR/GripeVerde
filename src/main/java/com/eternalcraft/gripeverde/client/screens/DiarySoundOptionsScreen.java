@@ -9,16 +9,21 @@ import com.eternalcraft.gripeverde.client.widgets.DiaryMusicSlider;
 import com.eternalcraft.gripeverde.client.widgets.DiaryAmbienceSlider;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Options;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.SoundOptionsScreen;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.client.sounds.SoundManager;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Field;
@@ -40,16 +45,27 @@ import java.lang.reflect.Field;
 public class DiarySoundOptionsScreen extends SoundOptionsScreen {
 
     private static final Logger LOG = LogUtils.getLogger();
+    private static final Component SOUND_TITLE = Component.translatable("options.sounds.title");
 
     private static final int PANEL_W = 340;
     private static final int PANEL_H = 380;
     private static final int SLIDER_H = 20;
 
     private int panelX, panelY, panelW, panelH;
+    private boolean compactLayout;
     private OptionsList reflectedList;
     private final SmoothScroll smoothScroll = new SmoothScroll();
     private DiaryMusicSlider musicSlider;
     private DiaryAmbienceSlider ambienceSlider;
+    private TuningForkButton tuningForkButton;
+    private Language cachedTextLanguage;
+    private Font cachedTextFont;
+    private String cachedSubtitle = "";
+    private int cachedSubtitleWidth;
+    private String cachedFlavor = "";
+    private String cachedFlavorShown = "";
+    private int cachedFlavorWidthLimit = Integer.MIN_VALUE;
+    private int cachedFlavorShownWidth;
 
     public DiarySoundOptionsScreen(Screen parent, Options options) {
         super(parent, options);
@@ -59,10 +75,11 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     protected void init() {
         super.init();
 
-        this.panelW = Math.min(PANEL_W, this.width - 40);
-        this.panelH = Math.min(PANEL_H, this.height - 30);
+        this.panelW = Math.max(1, Math.min(PANEL_W, this.width - 40));
+        this.panelH = Math.max(1, Math.min(PANEL_H, this.height - 30));
         this.panelX = (this.width - this.panelW) / 2;
         this.panelY = (this.height - this.panelH) / 2;
+        this.compactLayout = this.panelH < 300;
 
         // Reflection acotada: obtener y estilizar la OptionsList privada
         this.reflectedList = findListField();
@@ -70,8 +87,9 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             this.reflectedList.setRenderBackground(false);
             this.reflectedList.setRenderTopAndBottom(false);
 
-            int listTop = this.panelY + 45;
-            int listBottom = this.panelY + this.panelH - 100; // deja hueco para 2 sliders + divisor + boton
+            int listTop = this.panelY + (this.compactLayout ? 38 : 58);
+            int listBottom = Math.max(listTop + 1, this.panelY + this.panelH
+                - (this.compactLayout ? 84 : 100)); // reserva sliders y boton sin colapsar la lista
             this.reflectedList.updateSize(this.width, this.height, listTop, listBottom);
             this.smoothScroll.snapToCurrent(this.reflectedList);
         }
@@ -91,22 +109,26 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         }
 
         // Slider propio de musica del mod, debajo de la lista
-        int sliderW = this.panelW - 40;
+        int sliderW = Math.max(1, this.panelW - 40);
         int sliderX = this.panelX + 20;
-        int sliderY = this.panelY + this.panelH - 82;
+        int sliderY = this.panelY + this.panelH - (this.compactLayout ? 76 : 82);
         this.musicSlider = new DiaryMusicSlider(sliderX, sliderY, sliderW, SLIDER_H);
         this.addRenderableWidget(this.musicSlider);
 
         // Slider de ambiente: mas pequeno, debajo del de musica
         int ambSliderH = 14;
-        int ambSliderW = sliderW * 3 / 4;  // 75% del ancho del principal
+        int ambSliderW = Math.max(1, sliderW * 3 / 4);  // 75% del ancho del principal
         int ambSliderX = sliderX + (sliderW - ambSliderW) / 2;
         int ambSliderY = sliderY + SLIDER_H + 2;
         this.ambienceSlider = new DiaryAmbienceSlider(ambSliderX, ambSliderY, ambSliderW, ambSliderH);
         this.addRenderableWidget(this.ambienceSlider);
 
+        int forkX = ambSliderX - 22;
+        int forkY = ambSliderY + ambSliderH / 2 - 9;
+        this.tuningForkButton = this.addRenderableWidget(new TuningForkButton(forkX, forkY));
+
         // Boton Volver estilo diario
-        int btnW = 120;
+        int btnW = Math.max(1, Math.min(120, this.panelW - 24));
         int btnH = 20;
         int btnX = (this.width - btnW) / 2;
         int btnY = this.panelY + this.panelH - 30;
@@ -161,7 +183,8 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     private boolean silenceHeard = false;
 
     // v0.24.0: el diapason del gabinete (secreto al margen del regulador de ambiente)
-    private int[] forkRect = null;
+    private int forkHitX, forkHitY, forkHitW, forkHitH;
+    private boolean forkHitboxValid;
     private long forkRingUntilMs = 0L;
 
     @Override
@@ -210,44 +233,38 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        // --- Escena viva atenuada ---
-        // Clear framebuffer + transition fade
-        g.fill(0, 0, this.width, this.height, 0xFF000000);
+        this.refreshStaticTextCache();
+        // The shared renderer already clears the front-end scene or dims the
+        // live world; avoid an extra full-screen opaque pass here.
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
-                // --- Overlay oscuro ---
 
         // --- Pergamino ---
         DiaryChrome.drawPanelShadow(g, this.panelX, this.panelY, this.panelW, this.panelH);
         PaperTexture.drawClean(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.LEDGER);
 
         // --- Titulo ---
-        String titleStr = Component.translatable("options.sounds.title").getString();
         int titleX = this.width / 2;
         int titleY = this.panelY + 10;
-        {
-        int _tw = this.font.width(titleStr);
-        g.drawString(this.font, titleStr, titleX - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
-        }
+        com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
+            g, this.font, SOUND_TITLE,
+            titleX, titleY, DiaryChrome.INK_TITLE);
 
         // --- Subtitulo ---
-        String subtitle = "- " + Component.translatable("gripeverde.options.sound.subtitle").getString() + " -";
-        int subWC = this.font.width(subtitle);
-        g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
+        String subtitle = this.cachedSubtitle;
+        g.drawString(this.font, subtitle, titleX - this.cachedSubtitleWidth / 2,
+            titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
         // --- Flavor ---
         // v0.30.0: solo si hay aire real sobre los sliders; jamas pisado,
         // jamas al medio. Si el panel es bajo, se omite.
-        String flavor = Component.translatable("gripeverde.options.sound.flavor").getString();
         int sliderTop = this.panelY + this.panelH - 82;
-        if (titleY + 24 + this.font.lineHeight <= sliderTop - 6) {
-            String flavorShown = this.font.width(flavor) <= this.panelW - 32 ? flavor
-                : this.font.plainSubstrByWidth(flavor, Math.max(0, this.panelW - 32 - this.font.width("..."))) + "...";
-            int flvWC = this.font.width(flavorShown);
-            g.drawString(this.font, flavorShown, (this.width - flvWC) / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
+        if (!this.compactLayout && titleY + 24 + this.font.lineHeight <= sliderTop - 6) {
+            g.drawString(this.font, this.cachedFlavorShown,
+                (this.width - this.cachedFlavorShownWidth) / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
         }
 
         // --- Divisor superior ---
-        int divY1 = titleY + 42;
+        int divY1 = this.panelY + (this.compactLayout ? 32 : 52);
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY1);
 
         // --- Lista vanilla sin gradientes blancos ni bandejas extra ---
@@ -258,7 +275,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         }
 
         // --- Divisor entre lista y slider ---
-        int divY2 = this.panelY + this.panelH - 88;
+        int divY2 = this.panelY + this.panelH - (this.compactLayout ? 82 : 88);
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
 
         // --- Divisor inferior + esquineros ---
@@ -285,15 +302,42 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         } catch (Throwable ignored) {}
     }
 
+    private void refreshStaticTextCache() {
+        Language language = Language.getInstance();
+        Font font = this.font;
+        if (language != this.cachedTextLanguage || font != this.cachedTextFont) {
+            this.cachedTextLanguage = language;
+            this.cachedTextFont = font;
+            this.cachedSubtitle = "- "
+                + Component.translatable("gripeverde.options.sound.subtitle").getString() + " -";
+            this.cachedSubtitleWidth = font.width(this.cachedSubtitle);
+            this.cachedFlavor = Component.translatable("gripeverde.options.sound.flavor").getString();
+            this.cachedFlavorWidthLimit = Integer.MIN_VALUE;
+        }
+
+        int flavorWidthLimit = this.panelW - 32;
+        if (flavorWidthLimit == this.cachedFlavorWidthLimit) return;
+        this.cachedFlavorWidthLimit = flavorWidthLimit;
+        this.cachedFlavorShown = font.width(this.cachedFlavor) <= flavorWidthLimit
+            ? this.cachedFlavor
+            : font.plainSubstrByWidth(this.cachedFlavor,
+                Math.max(0, flavorWidthLimit - font.width("..."))) + "...";
+        this.cachedFlavorShownWidth = font.width(this.cachedFlavorShown);
+    }
+
     /** v0.24.0: un diapason al margen; pulsado, afina la sala entera. */
     private void drawTuningFork(GuiGraphics g, int mouseX, int mouseY) {
-        if (this.ambienceSlider == null) { this.forkRect = null; return; }
+        if (this.ambienceSlider == null || this.tuningForkButton == null) {
+            this.forkHitboxValid = false;
+            return;
+        }
         int fx = this.ambienceSlider.getX() - 16;
         int fy = this.ambienceSlider.getY() + this.ambienceSlider.getHeight() / 2;
         long now = System.currentTimeMillis();
+        boolean reducedMotion = com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
         boolean hot = mouseX >= fx - 4 && mouseX <= fx + 5 && mouseY >= fy - 8 && mouseY <= fy + 5;
         boolean ringing = now < this.forkRingUntilMs;
-        if (ringing) fx += (int) Math.round(Math.sin((this.forkRingUntilMs - now) * 0.55) * 1.0);
+        if (ringing && !reducedMotion) fx += (int) Math.round(Math.sin((this.forkRingUntilMs - now) * 0.55) * 1.0);
         int metal = (hot || ringing) ? 0xFFD8B56A : 0xFF8A6A3D;
         int dimm  = (hot || ringing) ? 0xFF6B4E22 : 0xFF54401F;
         int spread = (hot || ringing) ? 1 : 0;
@@ -303,16 +347,22 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         g.fill(fx - 2 - spread, fy - 6, fx - 1 - spread, fy - 5, dimm);  // puntas
         g.fill(fx + 1 + spread, fy - 6, fx + 2 + spread, fy - 5, dimm);
         if (ringing) {
-            float rr = (this.forkRingUntilMs - now) / 700f; // 1 -> 0
-            int ra = (int)(120 * rr);
-            int rad = 3 + (int)((1f - rr) * 7f);
+            float rr = reducedMotion ? 0.65f : (this.forkRingUntilMs - now) / 700f; // 1 -> 0
+            int ra = reducedMotion ? 78 : (int)(120 * rr);
+            int rad = reducedMotion ? 6 : 3 + (int)((1f - rr) * 7f);
             int rc = (ra << 24) | 0xD8B56A;
             g.fill(fx - rad, fy - 2 - rad, fx + rad, fy - 1 - rad, rc);
             g.fill(fx - rad, fy - 1 + rad, fx + rad, fy + rad, rc);
             g.fill(fx - rad, fy - 2 - rad, fx - rad + 1, fy + rad, rc);
             g.fill(fx + rad - 1, fy - 2 - rad, fx + rad, fy + rad, rc);
         }
-        this.forkRect = new int[]{ fx - 6, fy - 9, 14, 17 };
+        this.forkHitX = fx - 6;
+        this.forkHitY = fy - 9;
+        this.forkHitW = 14;
+        this.forkHitH = 17;
+        this.forkHitboxValid = true;
+        this.tuningForkButton.setX(this.forkHitX);
+        this.tuningForkButton.setY(this.forkHitY);
     }
 
     /** v0.24.0: la prueba de tono del gabinete. */
@@ -336,9 +386,9 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0 && this.forkRect != null
-                && mouseX >= this.forkRect[0] && mouseX <= this.forkRect[0] + this.forkRect[2]
-                && mouseY >= this.forkRect[1] && mouseY <= this.forkRect[1] + this.forkRect[3]) {
+        if (button == 0 && this.forkHitboxValid
+                && mouseX >= this.forkHitX && mouseX <= this.forkHitX + this.forkHitW
+                && mouseY >= this.forkHitY && mouseY <= this.forkHitY + this.forkHitH) {
             ringTuningFork();
             return true;
         }
@@ -348,5 +398,38 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     @Override
     public void renderBackground(GuiGraphics g) {
         // Bypass del fondo dirt vanilla
+    }
+
+    private final class TuningForkButton extends AbstractButton {
+        private TuningForkButton(int x, int y) {
+            super(x, y, 14, 17, Component.translatable("gripeverde.options.sound.tuning_fork"));
+        }
+
+        @Override
+        public void onPress() {
+            ringTuningFork();
+        }
+
+        @Override
+        public void playDownSound(SoundManager soundManager) {
+            // ringTuningFork() plays the two-note sound itself.
+        }
+
+        @Override
+        protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+            if (!this.active || !this.isFocused() || this.isMouseOver(mouseX, mouseY)) return;
+            int focus = 0xFFFFD978;
+            int x = this.getX();
+            int y = this.getY();
+            graphics.fill(x, y, x + this.width, y + 1, focus);
+            graphics.fill(x, y + this.height - 1, x + this.width, y + this.height, focus);
+            graphics.fill(x, y, x + 1, y + this.height, focus);
+            graphics.fill(x + this.width - 1, y, x + this.width, y + this.height, focus);
+        }
+
+        @Override
+        protected void updateWidgetNarration(NarrationElementOutput output) {
+            this.defaultButtonNarrationText(output);
+        }
     }
 }

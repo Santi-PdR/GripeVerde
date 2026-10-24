@@ -32,7 +32,13 @@ public class DiaryEditServerScreen extends Screen {
     private EditBox nameEdit;
     private EditBox ipEdit;
     private DiaryButton doneButton;
+    private DiaryButton cancelButton;
     private boolean justOpened = true;
+    private int panelX, panelY, panelW, panelH;
+    private int fieldX, fieldW, fieldH, nameY, ipY;
+    private int buttonY, cancelButtonY, buttonW, buttonH, buttonGap;
+    private boolean compact;
+    private boolean stackedButtons;
 
     public DiaryEditServerScreen(Screen parent, BooleanConsumer callback, ServerData serverData) {
         super(Component.translatable("addServer.title"));
@@ -43,17 +49,19 @@ public class DiaryEditServerScreen extends Screen {
 
     @Override
     protected void init() {
-        int panelW = Math.min(PANEL_MAX_W, this.width - 40);
-        int panelH = Math.min(PANEL_MAX_H, this.height - 30);
-        int panelX = (this.width - panelW) / 2;
-        int panelY = (this.height - panelH) / 2;
+        panelW = Math.max(1, Math.min(PANEL_MAX_W, this.width - 16));
+        panelH = Math.max(1, Math.min(PANEL_MAX_H, this.height - 16));
+        panelX = (this.width - panelW) / 2;
+        panelY = (this.height - panelH) / 2;
+        compact = panelH < 164 || panelW < 220;
+        stackedButtons = panelW < 220;
 
-        int fieldW = PANEL_MAX_W - 60;
-        int fieldX = panelX + 30;
-        int fieldH = 20;
+        fieldW = Math.max(1, panelW - 40);
+        fieldX = panelX + (panelW - fieldW) / 2;
+        fieldH = compact ? (stackedButtons ? 14 : 16) : 20;
 
         // Name field
-        int nameY = panelY + 62;
+        nameY = panelY + (compact ? (stackedButtons ? 16 : 18) : 60);
         this.nameEdit = new DiaryTextField(this.font, fieldX, nameY, fieldW, fieldH, Component.translatable("addServer.enterName"));
         this.nameEdit.setMaxLength(64);
         this.nameEdit.setValue(this.serverData.name != null ? this.serverData.name : "");
@@ -62,7 +70,7 @@ public class DiaryEditServerScreen extends Screen {
         this.setInitialFocus(this.nameEdit);
 
         // IP field
-        int ipY = panelY + 108;
+        ipY = panelY + (compact ? (stackedButtons ? 30 : 36) : 104);
         this.ipEdit = new DiaryTextField(this.font, fieldX, ipY, fieldW, fieldH, Component.translatable("addServer.enterIp"));
         this.ipEdit.setMaxLength(128);
         this.ipEdit.setValue(this.serverData.ip != null ? this.serverData.ip : "");
@@ -70,24 +78,32 @@ public class DiaryEditServerScreen extends Screen {
         this.addRenderableWidget(this.ipEdit);
 
         // Botones inferiores
-        int btnW = 100;
-        int btnH = 20;
-        int btnY = panelY + PANEL_MAX_H - btnH - 16;
-        int gap = 12;
-        int totalW = btnW * 2 + gap;
-        int startX = (this.width - totalW) / 2;
+        buttonH = compact ? (stackedButtons ? 11 : 15) : 20;
+        buttonGap = compact ? (stackedButtons ? 3 : 6) : 12;
+        buttonW = stackedButtons ? Math.max(1, panelW - 32)
+            : Math.max(1, (panelW - 32 - buttonGap) / 2);
+        int buttonBlockH = buttonH * (stackedButtons ? 2 : 1) + (stackedButtons ? buttonGap : 0);
+        buttonY = panelY + panelH - buttonBlockH - (compact ? 5 : 14);
+        cancelButtonY = buttonY + (stackedButtons ? buttonH + buttonGap : 0);
+        int totalW = buttonW * 2 + buttonGap;
+        int startX = stackedButtons ? panelX + (panelW - buttonW) / 2
+            : panelX + (panelW - totalW) / 2;
 
-        this.doneButton = new DiaryButton(startX, btnY, btnW, btnH,
+        this.doneButton = new DiaryButton(startX, buttonY, buttonW, buttonH,
                 Component.translatable("addServer.add"),
-                DiaryButton.Icon.SCROLL, DiaryButton.Variant.PRIMARY,
+                stackedButtons ? DiaryButton.Icon.SCROLL
+                    : (buttonW < 82 ? DiaryButton.Icon.NONE : DiaryButton.Icon.SCROLL), DiaryButton.Variant.PRIMARY,
                 this::onDone);
         this.addRenderableWidget(this.doneButton);
 
-        DiaryButton cancel = new DiaryButton(startX + btnW + gap, btnY, btnW, btnH,
+        this.cancelButton = new DiaryButton(
+                stackedButtons ? startX : startX + buttonW + buttonGap,
+                cancelButtonY, buttonW, buttonH,
                 Component.translatable("gui.cancel"),
-                DiaryButton.Icon.DOOR, DiaryButton.Variant.SECONDARY,
+                stackedButtons ? DiaryButton.Icon.DOOR
+                    : (buttonW < 82 ? DiaryButton.Icon.NONE : DiaryButton.Icon.DOOR), DiaryButton.Variant.SECONDARY,
                 this::onCancel);
-        this.addRenderableWidget(cancel);
+        this.addRenderableWidget(this.cancelButton);
 
         this.updateDoneButton();
     }
@@ -126,9 +142,27 @@ public class DiaryEditServerScreen extends Screen {
     public void resize(net.minecraft.client.Minecraft mc, int w, int h) {
         String nameVal = this.nameEdit != null ? this.nameEdit.getValue() : "";
         String ipVal = this.ipEdit != null ? this.ipEdit.getValue() : "";
+        int nameCursor = this.nameEdit != null ? this.nameEdit.getCursorPosition() : 0;
+        int nameSelection = this.nameEdit instanceof DiaryTextField field
+            ? field.getSelectionPosition() : nameCursor;
+        int ipCursor = this.ipEdit != null ? this.ipEdit.getCursorPosition() : 0;
+        int ipSelection = this.ipEdit instanceof DiaryTextField field
+            ? field.getSelectionPosition() : ipCursor;
+        boolean nameFocused = this.getFocused() == this.nameEdit;
+        boolean ipFocused = this.getFocused() == this.ipEdit;
+        boolean doneFocused = this.getFocused() == this.doneButton;
+        boolean cancelFocused = this.getFocused() == this.cancelButton;
         super.resize(mc, w, h);
         this.nameEdit.setValue(nameVal);
         this.ipEdit.setValue(ipVal);
+        this.nameEdit.setCursorPosition(nameCursor);
+        this.nameEdit.setHighlightPos(nameSelection);
+        this.ipEdit.setCursorPosition(ipCursor);
+        this.ipEdit.setHighlightPos(ipSelection);
+        if (nameFocused) this.setFocused(this.nameEdit);
+        else if (ipFocused) this.setFocused(this.ipEdit);
+        else if (doneFocused) this.setFocused(this.doneButton);
+        else if (cancelFocused) this.setFocused(this.cancelButton);
     }
 
     @Override
@@ -141,10 +175,6 @@ public class DiaryEditServerScreen extends Screen {
         // Overlay atenuador
 
         // Panel pergamino
-        int panelW = Math.min(PANEL_MAX_W, this.width - 40);
-        int panelH = Math.min(PANEL_MAX_H, this.height - 30);
-        int panelX = (this.width - panelW) / 2;
-        int panelY = (this.height - panelH) / 2;
         DiaryChrome.drawPanelShadow(gfx, panelX, panelY, panelW, panelH);
         PaperTexture.drawClean(gfx, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
 
@@ -153,26 +183,33 @@ public class DiaryEditServerScreen extends Screen {
         DiaryChrome.drawRegistryTag(gfx, panelX, panelY, panelW, panelH, "REG. XI");
 
         // Titulo
-        int titleY = panelY + 18;
-        String titleStr = this.title.getString();
-        int titleW = this.font.width(titleStr);
-        gfx.drawString(this.font, titleStr, (this.width - titleW) / 2, titleY, DiaryChrome.INK_TITLE, false);
+        int titleY = panelY + (compact ? 3 : 18);
+        com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
+                gfx, this.font, this.title, this.width / 2, titleY, DiaryChrome.INK_TITLE);
 
         // Subtitulo
         String subtitle = "- " + Component.translatable("gripeverde.edit.subtitle").getString() + " -";
         int subW = this.font.width(subtitle);
-        gfx.drawString(this.font, subtitle, (this.width - subW) / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
+        if (!compact && panelW >= 220) {
+            gfx.drawString(this.font, subtitle, (this.width - subW) / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
+        }
 
         // Divisor con rombo
-        DiaryChrome.drawInkDivider(gfx, panelX + 24, titleY + 26, panelW - 48);
-        DiaryChrome.drawDivisorLozenge(gfx, this.width / 2, titleY + 26);
+        int dividerY = panelY + (compact ? (stackedButtons ? 14 : 17) : 44);
+        int dividerInset = panelW < 220 ? 8 : 12;
+        DiaryChrome.drawInkDivider(gfx, panelX + dividerInset, dividerY, Math.max(1, panelW - dividerInset * 2));
+        DiaryChrome.drawDivisorLozenge(gfx, this.width / 2, dividerY);
 
         // Labels de los EditBox
         String nameLbl = NAME_LABEL.getString();
-        gfx.drawString(this.font, nameLbl, panelX + 30, panelY + 48, DiaryChrome.INK_SUBTITLE, false);
+        if (!compact) {
+            gfx.drawString(this.font, nameLbl, panelX + 20, panelY + 48, DiaryChrome.INK_SUBTITLE, false);
+        }
 
         String ipLbl = IP_LABEL.getString();
-        gfx.drawString(this.font, ipLbl, panelX + 30, panelY + 94, DiaryChrome.INK_SUBTITLE, false);
+        if (!compact) {
+            gfx.drawString(this.font, ipLbl, panelX + 20, panelY + 92, DiaryChrome.INK_SUBTITLE, false);
+        }
 
         // Widgets (EditBox + botones Diary)
         for (var w : this.renderables) {

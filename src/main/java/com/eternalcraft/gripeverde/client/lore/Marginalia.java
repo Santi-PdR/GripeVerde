@@ -3,6 +3,7 @@ package com.eternalcraft.gripeverde.client.lore;
 import com.eternalcraft.gripeverde.client.audio.ModSounds;
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 
 /**
@@ -72,6 +73,14 @@ public final class Marginalia {
     private static long activeUntilMs = 0L;
     private static long activeStartMs = 0L;
     private static long lastPollMs = 0L;
+    private static String cachedTextId;
+    private static boolean cachedTextEnglish;
+    private static Font cachedTextFont;
+    private static String cachedText = "";
+    private static String[] cachedCharacters = new String[0];
+    private static int cachedPrefixLength = -1;
+    private static String cachedPrefix = "";
+    private static int cachedPrefixWidth;
 
     /** Toma la proxima nota pendiente (throttle: una por apertura de pantalla). */
     public static synchronized void poll() {
@@ -106,29 +115,32 @@ public final class Marginalia {
         long now = System.currentTimeMillis();
         long age = now - activeStartMs;
         long remain = activeUntilMs - now;
+        boolean reducedMotion = com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
         int alpha = 200;
-        if (age < 900L) alpha = (int)(200 * age / 900L);
-        else if (remain < 1200L) alpha = (int)(200 * remain / 1200L);
+        if (!reducedMotion) {
+            if (age < 900L) alpha = (int)(200 * age / 900L);
+            else if (remain < 1200L) alpha = (int)(200 * remain / 1200L);
+        }
         alpha = Math.max(0, Math.min(200, alpha));
         if (alpha <= 4) return;
 
-        String text = textFor(activeId);
+        String text = refreshTextCache(mc.font);
         if (text == null) return;
 
         // La marginal vive JUSTO fuera del panel, en el margen izquierdo,
         // escrita en vertical ascendente como nota al margen.
         int maxLen = Math.min(text.length(), Math.max(12, panelH / 6));
-        String shown = text.substring(0, (int)Math.min(maxLen, text.length() * Math.min(1.0, age / 2200.0) + 1));
-        if (shown.isEmpty()) return;
+        int visibleLength = reducedMotion ? maxLen
+            : (int)Math.min(maxLen, text.length() * Math.min(1.0, age / 2200.0) + 1);
+        if (visibleLength <= 0) return;
 
         int ink = (alpha << 24) | 0x3D2A18;
         int x = panelX - 8;
         int yStart = panelY + panelH - 22;
         // texto vertical: una letra por fila
-        int lines = Math.min(shown.length(), (panelH - 30) / 7);
+        int lines = Math.min(visibleLength, (panelH - 30) / 7);
         for (int i = 0; i < lines; i++) {
-            char c = shown.charAt(i);
-            g.drawString(mc.font, String.valueOf(c), x, yStart - i * 7, ink, false);
+            g.drawString(mc.font, cachedCharacters[i], x, yStart - i * 7, ink, false);
         }
         // pequeno trazo de pluma debajo
         if (lines > 0) {
@@ -145,20 +157,56 @@ public final class Marginalia {
         long now = System.currentTimeMillis();
         long age = now - activeStartMs;
         long remain = activeUntilMs - now;
+        boolean reducedMotion = com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
         int alpha = 190;
-        if (age < 900L) alpha = (int)(190 * age / 900L);
-        else if (remain < 1200L) alpha = (int)(190 * remain / 1200L);
+        if (!reducedMotion) {
+            if (age < 900L) alpha = (int)(190 * age / 900L);
+            else if (remain < 1200L) alpha = (int)(190 * remain / 1200L);
+        }
         if (alpha <= 4) return;
-        String text = textFor(activeId);
+        String text = refreshTextCache(mc.font);
         if (text == null) return;
-        int chars = (int)Math.min(text.length(), text.length() * Math.min(1.0, age / 2000.0) + 1);
-        String shown = text.substring(0, chars);
-        int w = mc.font.width(shown);
-        g.drawString(mc.font, shown, cx - w / 2, y, (alpha << 24) | 0x3D2A18, false);
+        int chars = reducedMotion ? text.length()
+            : (int)Math.min(text.length(), text.length() * Math.min(1.0, age / 2000.0) + 1);
+        String shown = visiblePrefix(chars);
+        g.drawString(mc.font, shown, cx - cachedPrefixWidth / 2, y, (alpha << 24) | 0x3D2A18, false);
     }
 
-    private static String textFor(String id) {
+    /** Reutiliza el texto y cada glifo hasta que cambie nota, idioma o fuente. */
+    private static String refreshTextCache(Font font) {
         boolean en = Discoveries.isEnglish();
+        if (activeId == null) return null;
+        if (activeId.equals(cachedTextId) && cachedTextEnglish == en && cachedTextFont == font) {
+            return cachedText;
+        }
+
+        cachedTextId = activeId;
+        cachedTextEnglish = en;
+        cachedTextFont = font;
+        cachedText = textFor(activeId, en);
+        cachedCharacters = new String[cachedText == null ? 0 : cachedText.length()];
+        if (cachedText != null) {
+            for (int i = 0; i < cachedText.length(); i++) {
+                cachedCharacters[i] = String.valueOf(cachedText.charAt(i));
+            }
+        }
+        cachedPrefixLength = -1;
+        cachedPrefix = "";
+        cachedPrefixWidth = 0;
+        return cachedText;
+    }
+
+    private static String visiblePrefix(int length) {
+        int safeLength = Math.max(0, Math.min(length, cachedText.length()));
+        if (cachedPrefixLength != safeLength) {
+            cachedPrefixLength = safeLength;
+            cachedPrefix = cachedText.substring(0, safeLength);
+            cachedPrefixWidth = cachedTextFont.width(cachedPrefix);
+        }
+        return cachedPrefix;
+    }
+
+    private static String textFor(String id, boolean en) {
         if (id == null) return null;
         switch (id) {
             case N_READ_YOU:     return en ? "Someone has been reading my files. I know." : "Alguien ha estado leyendo mis fichas. Lo se.";

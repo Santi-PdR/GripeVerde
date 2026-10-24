@@ -33,7 +33,12 @@ public class DiarySkinCustomizationScreen extends Screen {
     private final Map<PlayerModelPart, DiaryButton> partButtons = new EnumMap<>(PlayerModelPart.class);
     private DiaryButton armButton;
 
-    private int panelX, panelY;
+    private int panelX, panelY, panelW, panelH;
+    private boolean compactLayout;
+
+    private static boolean reducedMotion() {
+        return com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
+    }
 
     // v0.16.0: el espejo de la niebla
     private long mirrorViewUntilMs = 0L;
@@ -47,15 +52,18 @@ public class DiarySkinCustomizationScreen extends Screen {
 
     @Override
     protected void init() {
-        int panelW = Math.min(PANEL_MAX_W, this.width - 40);
-        int panelH = Math.min(PANEL_MAX_H, this.height - 30);
-        this.panelX = (this.width  - panelW) / 2;
-        this.panelY = (this.height - panelH) / 2;
+        this.panelW = Math.max(1, Math.min(PANEL_MAX_W, this.width - 40));
+        this.panelH = Math.max(1, Math.min(PANEL_MAX_H, this.height - 30));
+        this.panelX = (this.width  - this.panelW) / 2;
+        this.panelY = (this.height - this.panelH) / 2;
+        this.compactLayout = this.panelH < 210;
+        this.partButtons.clear();
 
-        int gridTop = this.panelY + 74;  // titulo + subtitulo + flavor + divisor
-        int availableGridW = Math.max(BTN_W, panelW - 28);
-        int effectiveBtnW = Math.min(BTN_W, Math.max(110, (availableGridW - BTN_GAP_X) / 2));
-        int col1X   = this.panelX + (panelW - (effectiveBtnW * 2 + BTN_GAP_X)) / 2;
+        int buttonH = this.compactLayout ? 18 : BTN_H;
+        int rowGapY = this.compactLayout ? 1 : BTN_GAP_Y;
+        int gridTop = this.panelY + (this.compactLayout ? 35 : 74);
+        int effectiveBtnW = Math.max(1, Math.min(BTN_W, (this.panelW - 28 - BTN_GAP_X) / 2));
+        int col1X   = this.panelX + (this.panelW - (effectiveBtnW * 2 + BTN_GAP_X)) / 2;
         int col2X   = col1X + effectiveBtnW + BTN_GAP_X;
 
         PlayerModelPart[] parts = PlayerModelPart.values();
@@ -65,10 +73,10 @@ public class DiarySkinCustomizationScreen extends Screen {
             int row = idx / 2;
             int col = idx % 2;
             int x = (col == 0) ? col1X : col2X;
-            int y = gridTop + row * (BTN_H + BTN_GAP_Y);
+            int y = gridTop + row * (buttonH + rowGapY);
 
             DiaryButton btn = new DiaryButton(
-                x, y, effectiveBtnW, BTN_H,
+                x, y, effectiveBtnW, buttonH,
                 buildPartLabel(part),
                 Icon.NONE, Variant.SECONDARY,
                 () -> togglePart(part)
@@ -82,9 +90,9 @@ public class DiarySkinCustomizationScreen extends Screen {
         int row = idx / 2;
         int col = idx % 2;
         int armX = (col == 0) ? col1X : col2X;
-        int armY = gridTop + row * (BTN_H + BTN_GAP_Y);
+        int armY = gridTop + row * (buttonH + rowGapY);
         this.armButton = new DiaryButton(
-            armX, armY, effectiveBtnW, BTN_H,
+            armX, armY, effectiveBtnW, buttonH,
             buildArmLabel(),
             Icon.NONE, Variant.SECONDARY,
             this::toggleArm
@@ -92,11 +100,11 @@ public class DiarySkinCustomizationScreen extends Screen {
         this.addRenderableWidget(this.armButton);
 
         // Boton Volver
-        int btnW = 160;
+        int btnW = Math.max(1, Math.min(160, this.panelW - 24));
         int btnX = (this.width - btnW) / 2;
-        int btnY = this.panelY + panelH - 28;
+        int btnY = this.panelY + this.panelH - 28;
         this.addRenderableWidget(new DiaryButton(
-            btnX, btnY, btnW, BTN_H,
+            btnX, btnY, btnW, 20,
             Component.translatable("gripeverde.options.button.done"),
             Icon.DOOR, Variant.PRIMARY,
             this::onClose
@@ -148,17 +156,15 @@ public class DiarySkinCustomizationScreen extends Screen {
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(gfx, this.width, this.height);
 
         // Pergamino
-        int panelW = Math.min(PANEL_MAX_W, this.width - 40);
-        int panelH = Math.min(PANEL_MAX_H, this.height - 30);
-        DiaryChrome.drawPanelShadow(gfx, this.panelX, this.panelY, panelW, panelH);
-        PaperTexture.drawClean(gfx, this.panelX, this.panelY, panelW, panelH, PaperTexture.PaperKind.MEDICAL);
+        DiaryChrome.drawPanelShadow(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
+        PaperTexture.drawClean(gfx, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.MEDICAL);
 
         // Titulo
         int cx = this.width / 2;
-        int titleY = this.panelY + 12;
+        int titleY = this.panelY + (this.compactLayout ? 6 : 12);
         {
-            int tw = this.font.width(this.title);
-            gfx.drawString(this.font, this.title, cx - tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
+            com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
+                gfx, this.font, this.title, cx, titleY, DiaryChrome.INK_TITLE);
         }
 
         // Subtitulo
@@ -171,23 +177,25 @@ public class DiarySkinCustomizationScreen extends Screen {
 
         // Flavor
         int flavorY = subtitleY + 13;
-        {
+        if (!this.compactLayout) {
             Component flvC = Component.translatable("gripeverde.options.skin.flavor");
             int fw = this.font.width(flvC);
             gfx.drawString(this.font, flvC, cx - fw / 2, flavorY, DiaryChrome.INK_FLAVOR, false);
         }
 
         // Divisor superior
-        int divY1 = flavorY + 12;
-        DiaryChrome.drawInkDivider(gfx, this.panelX, divY1, panelW);
+        int divY1 = this.panelY + (this.compactLayout ? 29 : 57);
+        DiaryChrome.drawInkDivider(gfx, this.panelX, divY1, this.panelW);
 
         // Widgets (DiaryButtons propios)
         super.render(gfx, mouseX, mouseY, delta);
 
         // Divisor inferior + esquineros
-        int divY2 = this.panelY + panelH - 38;
-        DiaryChrome.drawInkDivider(gfx, this.panelX, divY2, panelW);
-        DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, panelW, panelH);
+        if (!this.compactLayout || this.panelH >= 150) {
+            int divY2 = this.panelY + this.panelH - 38;
+            DiaryChrome.drawInkDivider(gfx, this.panelX, divY2, this.panelW);
+        }
+        DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
         DiaryChrome.drawRegistryTagLeft(gfx, this.panelX, this.panelY, "REG. VII");
 
         // v0.16.0: el espejo pequeno, arriba a la derecha del panel
@@ -198,8 +206,10 @@ public class DiarySkinCustomizationScreen extends Screen {
                 // Asi te ve la niebla: silueta sin detalles
                 float t = (now - mirrorViewStartMs) / 3000f;
                 int a = 190;
-                if (now - mirrorViewStartMs < 400L) a = (int)(190 * (now - mirrorViewStartMs) / 400L);
-                else if (mirrorViewUntilMs - now < 500L) a = (int)(190 * (mirrorViewUntilMs - now) / 500L);
+                if (!reducedMotion()) {
+                    if (now - mirrorViewStartMs < 400L) a = (int)(190 * (now - mirrorViewStartMs) / 400L);
+                    else if (mirrorViewUntilMs - now < 500L) a = (int)(190 * (mirrorViewUntilMs - now) / 500L);
+                }
                 gfx.fill(0, 0, this.width, this.height, (Math.min(210, a + 20) << 24) | 0x0A0C08);
                 int mx = this.width / 2;
                 int my = this.height / 2;
@@ -225,7 +235,7 @@ public class DiarySkinCustomizationScreen extends Screen {
         } catch (Throwable ignored) {}
     }
 
-    private int mirrorX() { return this.panelX + Math.min(PANEL_MAX_W, this.width - 40) - 34; }
+    private int mirrorX() { return this.panelX + this.panelW - 34; }
     private int mirrorY() { return this.panelY + 12; }
 
     private void drawMirror(GuiGraphics gfx, int mouseX, int mouseY) {
@@ -238,7 +248,8 @@ public class DiarySkinCustomizationScreen extends Screen {
         gfx.fill(x - 2, y + 4, x, y + 20, frame);
         gfx.fill(x + 18, y + 4, x + 20, y + 20, frame);
         // Vidrio: reflejo tenue que respira
-        float breath = (float)(Math.sin(System.currentTimeMillis() / 1100.0) * 0.5 + 0.5);
+        float breath = reducedMotion() ? 0.5f
+            : (float)(Math.sin(System.currentTimeMillis() / 1100.0) * 0.5 + 0.5);
         int glass = 0xC040384A;
         gfx.fill(x, y, x + 18, y + 24, glass);
         gfx.fill(x + 2, y + 2, x + 8, y + 10, com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0xC8D8E0, 40 + (int)(breath * 30)));

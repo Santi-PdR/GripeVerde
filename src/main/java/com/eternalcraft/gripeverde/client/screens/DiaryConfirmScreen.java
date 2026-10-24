@@ -31,6 +31,10 @@ public class DiaryConfirmScreen extends ConfirmScreen {
     // Guardamos el mensaje propio porque ConfirmScreen.message es private
     private final Component ownMessage;
     private MultiLineLabel ownMultilineMessage;
+    private int panelX, panelY, panelW, panelH;
+    private int messageLayoutWidth = -1;
+    private int messageLineCount;
+    private boolean compactLayout;
 
     public DiaryConfirmScreen(BooleanConsumer callback, Component title, Component message, Screen parent) {
         super(callback, title, message);
@@ -47,6 +51,14 @@ public class DiaryConfirmScreen extends ConfirmScreen {
 
     @Override
     protected void init() {
+        this.panelW = Math.max(1, Math.min(PANEL_MAX_W, this.width - 40));
+        this.panelH = Math.max(1, Math.min(PANEL_MAX_H, this.height - 30));
+        this.panelX = (this.width - this.panelW) / 2;
+        this.panelY = (this.height - this.panelH) / 2;
+        this.compactLayout = this.panelH < 168;
+        this.ownMultilineMessage = null;
+        this.messageLayoutWidth = -1;
+
         super.init();
         UiSounds.notification();
 
@@ -76,13 +88,12 @@ public class DiaryConfirmScreen extends ConfirmScreen {
         }
 
         // Botones Diary propios
-        int btnW = 100;
-        int btnH = 20;
-        int panelY = (this.height - PANEL_MAX_H) / 2;
-        int btnY = panelY + PANEL_MAX_H - btnH - 16;
         int gap = 12;
+        int btnW = Math.max(1, Math.min(100, (this.panelW - 36 - gap) / 2));
+        int btnH = 20;
         int totalW = btnW * 2 + gap;
         int startX = (this.width - totalW) / 2;
+        int btnY = this.panelY + this.panelH - btnH - (this.compactLayout ? 10 : 16);
 
         DiaryButton diaryYes = new DiaryButton(startX, btnY, btnW, btnH,
                 this.yesButton, DiaryButton.Icon.NONE, DiaryButton.Variant.PRIMARY,
@@ -128,33 +139,33 @@ public class DiaryConfirmScreen extends ConfirmScreen {
         // Overlay para atenuar la escena
 
         // Panel pergamino
-        int panelW = Math.min(PANEL_MAX_W, this.width - 40);
-        int panelH = Math.min(PANEL_MAX_H, this.height - 30);
-        int panelX = (this.width - panelW) / 2;
-        int panelY = (this.height - panelH) / 2;
-        DiaryChrome.drawPanelShadow(gfx, panelX, panelY, panelW, panelH);
-        PaperTexture.drawClean(gfx, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
+        DiaryChrome.drawPanelShadow(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
+        PaperTexture.drawClean(gfx, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.OFFICIAL);
 
         // Cosmetica
-        DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, panelW, panelH);
-        DiaryChrome.drawRegistryTag(gfx, panelX, panelY, panelW, panelH, "REG. XIII");
+        DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
+        DiaryChrome.drawRegistryTag(gfx, this.panelX, this.panelY, this.panelW, this.panelH, "REG. XIII");
 
         // Titulo
-        int titleY = panelY + 18;
-        String titleStr = this.title.getString();
-        int titleW = this.font.width(titleStr);
-        gfx.drawString(this.font, titleStr, (this.width - titleW) / 2, titleY, DiaryChrome.INK_TITLE, false);
+        int titleY = this.panelY + (this.compactLayout ? 10 : 18);
+        com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
+                gfx, this.font, this.title, this.width / 2, titleY, DiaryChrome.INK_TITLE);
 
         // Divisor con rombo
-        DiaryChrome.drawInkDivider(gfx, panelX + 24, titleY + 14, panelW - 48);
-        DiaryChrome.drawDivisorLozenge(gfx, this.width / 2, titleY + 14);
+        int dividerY = titleY + (this.compactLayout ? 12 : 14);
+        DiaryChrome.drawInkDivider(gfx, this.panelX + 24, dividerY, Math.max(1, this.panelW - 48));
+        DiaryChrome.drawDivisorLozenge(gfx, this.width / 2, dividerY);
 
         // Mensaje multilinea (propio, no toco el vanilla)
-        if (this.ownMultilineMessage == null && this.ownMessage != null) {
-            this.ownMultilineMessage = MultiLineLabel.create(this.font, this.ownMessage, PANEL_MAX_W - 40);
+        int messageWidth = Math.max(1, this.panelW - 40);
+        if (this.ownMessage != null
+                && (this.ownMultilineMessage == null || this.messageLayoutWidth != messageWidth)) {
+            this.messageLayoutWidth = messageWidth;
+            this.ownMultilineMessage = MultiLineLabel.create(this.font, this.ownMessage, messageWidth);
+            this.messageLineCount = this.font.split(this.ownMessage, messageWidth).size();
         }
         if (this.ownMultilineMessage != null) {
-            int msgY = titleY + 28;
+            int msgY = titleY + (this.compactLayout ? 24 : 28);
             this.ownMultilineMessage.renderCentered(gfx, this.width / 2, msgY, this.font.lineHeight + 2, DiaryChrome.INK_SUBTITLE);
         }
 
@@ -164,9 +175,14 @@ public class DiaryConfirmScreen extends ConfirmScreen {
                 String line = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
                     ? "The cabinet remembers what you destroy."
                     : "El gabinete recuerda lo que destruyes.";
-                int lw = this.font.width(line);
-                gfx.drawString(this.font, line, (this.width - lw) / 2, panelY + panelH - 42,
-                    com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0xFF6E1F16, 150), false);
+                int noteY = this.panelY + this.panelH - 50;
+                int messageY = titleY + (this.compactLayout ? 24 : 28);
+                int messageBottom = messageY + this.messageLineCount * (this.font.lineHeight + 2);
+                if (this.ownMultilineMessage == null || messageBottom + 3 <= noteY) {
+                    int lw = this.font.width(line);
+                    gfx.drawString(this.font, line, (this.width - lw) / 2, noteY,
+                        com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0xFF6E1F16, 150), false);
+                }
             }
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(gfx, this.width);
         } catch (Throwable ignored) {}

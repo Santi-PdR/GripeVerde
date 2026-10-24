@@ -30,18 +30,20 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
 
     // Server oficial del mod - siempre presente en la lista.
     private static final String PINNED_NAME = "Ghoul Outbreak Official";
-    private static final String PINNED_IP   = "servercitoGhouls.exaroton.me:24652";
+    private static final String PINNED_IP   = "Outbreak.exaroton.me:24652";
 
     private static final Logger LOGGER = LogUtils.getLogger();
     private int frameLogCounter = 0;
 
     private static final int PANEL_MARGIN_H = 40;
     private static final int PANEL_MARGIN_V = 40;
-    private static final int LIST_TOP_OFFSET = 50;
-    // Espacio inferior reservado para las 2 filas de botones + divisor
-    private static final int LIST_BOTTOM_OFFSET = 76;
 
     private final Screen parent;
+    private int panelX, panelY, panelW, panelH;
+    private int panelMarginH, panelMarginV;
+    private int listTop, listBottom;
+    private int buttonHeight, buttonGap, rowGap, bottomButtonMargin, headerHeight;
+    private boolean compactLayout, microLayout;
 
     // Referencias resueltas por reflection al vanilla
     private ServerSelectionList vanillaList;
@@ -49,6 +51,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     private Button vanillaSelectBtn;
     private Button vanillaEditBtn;
     private Button vanillaDeleteBtn;
+    private Field listItemHeightField;
+    private Field listY0Field;
+    private Field listHeaderHeightField;
 
     // Nuestros botones Diary
     private DiaryButton diarySelect;
@@ -75,6 +80,11 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         this.vanillaSelectBtn = resolveField(Button.class, "selectButton", "f_99678_");
         this.vanillaEditBtn = resolveField(Button.class, "editButton", "f_99679_");
         this.vanillaDeleteBtn = resolveField(Button.class, "deleteButton", "f_99680_");
+        this.listItemHeightField = resolveIntField(this.vanillaList, "itemHeight", "f_93387_");
+        this.listY0Field = resolveIntField(this.vanillaList, "y0", "f_93390_");
+        this.listHeaderHeightField = resolveIntField(this.vanillaList, "headerHeight", "f_93395_");
+
+        configureResponsiveLayout();
 
         // Ajustar la lista visual (SIN cambiar width, respetando R-VANILLA-LIST-COORDS)
         if (this.vanillaList != null) {
@@ -82,9 +92,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 this.vanillaList.setRenderBackground(false);
                 this.vanillaList.setRenderTopAndBottom(false);
                 // Ajustar solo alto/posicion vertical, dejar width intacto
-                int listTop = PANEL_MARGIN_V + LIST_TOP_OFFSET;
-                int listBottom = this.height - PANEL_MARGIN_V - LIST_BOTTOM_OFFSET;
-                this.vanillaList.updateSize(this.width, this.height, listTop, listBottom);
+                this.vanillaList.updateSize(this.width, this.height, this.listTop, this.listBottom);
                 this.smoothScroll.snapToCurrent(this.vanillaList);
             } catch (Throwable ignored) {}
         }
@@ -178,39 +186,43 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         // Fila inferior: Edit / Delete / Refresh / Cancel
         // Anchos calculados con font.width() para evitar truncado.
 
-        int btnH = 20;
-        int gap = 6;
-        int rowGap = 14;   // separacion entre fila superior e inferior (evita tapar divisor)
+        int btnH = this.buttonHeight;
+        int gap = this.buttonGap;
 
         // Y de las filas - DENTRO del pergamino (panelBottom - offsets)
-        int panelBottom = this.height - PANEL_MARGIN_V;
-        int bottomRowY = panelBottom - btnH - 10;         // ultima fila con margen
-        int topRowY    = bottomRowY - btnH - rowGap;      // fila superior arriba
+        int panelBottom = this.panelY + this.panelH;
+        int bottomRowY = panelBottom - btnH - this.bottomButtonMargin;
+        int topRowY    = bottomRowY - btnH - this.rowGap;
 
         // ---- FILA SUPERIOR: Join / Direct / Add ----
         Component labelJoin   = cleanLabel("selectServer.select");
         Component labelDirect = cleanLabel("selectServer.direct");
         Component labelAdd    = cleanLabel("selectServer.add");
 
-        int wJoin   = this.font.width(labelJoin) + 28;
-        int wDirect = this.font.width(labelDirect) + 28;
-        int wAdd    = this.font.width(labelAdd) + 28;
+        int[] topWidths = fitButtonWidths(new int[] {
+                this.font.width(labelJoin) + 28,
+                this.font.width(labelDirect) + 28,
+                this.font.width(labelAdd) + 28
+        }, gap);
+        int wJoin = topWidths[0];
+        int wDirect = topWidths[1];
+        int wAdd = topWidths[2];
 
         int topTotalW = wJoin + wDirect + wAdd + gap * 2;
-        int topStartX = (this.width - topTotalW) / 2;
+        int topStartX = this.panelX + (this.panelW - topTotalW) / 2;
 
         this.diarySelect = new DiaryButton(topStartX, topRowY, wJoin, btnH,
                 labelJoin, DiaryButton.Icon.NONE, DiaryButton.Variant.PRIMARY,
                 DiaryButton.SoundProfile.CLEAN,
-                this::onJoin).noEllipsis();
+                this::onJoin);
         this.diaryDirect = new DiaryButton(topStartX + wJoin + gap, topRowY, wDirect, btnH,
                 labelDirect, DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
                 DiaryButton.SoundProfile.CLEAN,
-                this::onDirect).noEllipsis();
+                this::onDirect);
         this.diaryAdd = new DiaryButton(topStartX + wJoin + gap + wDirect + gap, topRowY, wAdd, btnH,
                 labelAdd, DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
                 DiaryButton.SoundProfile.CLEAN,
-                this::onAdd).noEllipsis();
+                this::onAdd);
         this.addRenderableWidget(this.diarySelect);
         this.addRenderableWidget(this.diaryDirect);
         this.addRenderableWidget(this.diaryAdd);
@@ -221,30 +233,36 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         Component labelRefresh = cleanLabel("selectServer.refresh");
         Component labelCancel  = cleanLabel("gui.cancel");
 
-        int wEdit    = this.font.width(labelEdit) + 28;
-        int wDelete  = this.font.width(labelDelete) + 28;
-        int wRefresh = this.font.width(labelRefresh) + 28;
-        int wCancel  = this.font.width(labelCancel) + 28;
+        int[] bottomWidths = fitButtonWidths(new int[] {
+                this.font.width(labelEdit) + 28,
+                this.font.width(labelDelete) + 28,
+                this.font.width(labelRefresh) + 28,
+                this.font.width(labelCancel) + 28
+        }, gap);
+        int wEdit = bottomWidths[0];
+        int wDelete = bottomWidths[1];
+        int wRefresh = bottomWidths[2];
+        int wCancel = bottomWidths[3];
 
         int bottomTotalW = wEdit + wDelete + wRefresh + wCancel + gap * 3;
-        int bottomStartX = (this.width - bottomTotalW) / 2;
+        int bottomStartX = this.panelX + (this.panelW - bottomTotalW) / 2;
 
         this.diaryEdit = new DiaryButton(bottomStartX, bottomRowY, wEdit, btnH,
                 labelEdit, DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
                 DiaryButton.SoundProfile.CLEAN,
-                this::onEdit).noEllipsis();
+                this::onEdit);
         this.diaryDelete = new DiaryButton(bottomStartX + wEdit + gap, bottomRowY, wDelete, btnH,
                 labelDelete, DiaryButton.Icon.NONE, DiaryButton.Variant.DANGER,
                 DiaryButton.SoundProfile.CLEAN,
-                this::onDelete).noEllipsis();
+                this::onDelete);
         this.diaryRefresh = new DiaryButton(bottomStartX + wEdit + gap + wDelete + gap, bottomRowY, wRefresh, btnH,
                 labelRefresh, DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
                 DiaryButton.SoundProfile.CLEAN,
-                this::onRefresh).noEllipsis();
+                this::onRefresh);
         this.diaryCancel = new DiaryButton(bottomStartX + wEdit + gap + wDelete + gap + wRefresh + gap, bottomRowY, wCancel, btnH,
                 labelCancel, DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
                 DiaryButton.SoundProfile.BACK,
-                this::onCancel).noEllipsis();
+                this::onCancel);
         this.addRenderableWidget(this.diaryEdit);
         this.addRenderableWidget(this.diaryDelete);
         this.addRenderableWidget(this.diaryRefresh);
@@ -263,6 +281,52 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             else text = text.substring(0, text.length() - 1).trim();
         }
         return Component.literal(text);
+    }
+
+    /** Keep each row inside the screen at low GUI resolutions; DiaryButton truncates labels as needed. */
+    private int[] fitButtonWidths(int[] preferred, int gap) {
+        int gaps = gap * (preferred.length - 1);
+        int available = Math.max(preferred.length, this.panelW - gaps);
+        int preferredTotal = 0;
+        for (int width : preferred) preferredTotal += width;
+        int usable = Math.min(preferredTotal, available);
+        int[] fitted = new int[preferred.length];
+        int weightTotal = 0;
+        for (int width : preferred) weightTotal += Math.max(0, width - 1);
+        int distributable = usable - preferred.length;
+        int assigned = 0;
+        for (int i = 0; i < preferred.length; i++) {
+            int extra = weightTotal == 0 ? 0
+                : (int) ((long) Math.max(0, preferred[i] - 1) * distributable / weightTotal);
+            fitted[i] = 1 + extra;
+            assigned += fitted[i];
+        }
+        // Preserve the exact row width after integer rounding.
+        fitted[fitted.length - 1] += usable - assigned;
+        return fitted;
+    }
+
+    private void configureResponsiveLayout() {
+        this.compactLayout = this.height < 260 || this.width < 360;
+        this.microLayout = this.height < 180;
+        this.panelMarginH = Math.min(PANEL_MARGIN_H, Math.max(4, this.width / 16));
+        this.panelMarginV = Math.min(PANEL_MARGIN_V, Math.max(6, this.height / 12));
+        this.panelX = this.panelMarginH;
+        this.panelY = this.panelMarginV;
+        this.panelW = Math.max(1, this.width - this.panelMarginH * 2);
+        this.panelH = Math.max(1, this.height - this.panelMarginV * 2);
+        this.buttonHeight = this.height < 150 ? 12 : (this.height < 230 ? 16 : 20);
+        this.buttonGap = this.width < 240 ? 2 : (this.width < 360 ? 4 : 6);
+        this.rowGap = this.height < 150 ? 3 : (this.height < 260 ? 5 : 14);
+        this.bottomButtonMargin = this.height < 150 ? 4 : (this.height < 260 ? 5 : 10);
+
+        this.headerHeight = this.microLayout ? 28 : (this.compactLayout ? 44 : 50);
+        this.listTop = Math.max(0, Math.min(Math.max(0, this.height - 1),
+            this.panelY + this.headerHeight));
+        int bottomRowY = this.panelY + this.panelH - this.buttonHeight - this.bottomButtonMargin;
+        int topRowY = bottomRowY - this.buttonHeight - this.rowGap;
+        this.listBottom = Math.min(this.height, topRowY - (this.compactLayout ? 6 : 10));
+        this.listBottom = Math.max(this.listTop + 1, this.listBottom);
     }
 
     private void updateDiaryButtonStates() {
@@ -463,30 +527,40 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
 
         // Overlay atenuador
 
-        // Panel pergamino que ocupa casi toda la pantalla
-        int panelX = PANEL_MARGIN_H;
-        int panelY = PANEL_MARGIN_V;
-        int panelW = this.width - PANEL_MARGIN_H * 2;
-        int panelH = this.height - PANEL_MARGIN_V * 2;
+        // Panel pergamino con los mismos límites usados por lista y botones.
+        int panelX = this.panelX;
+        int panelY = this.panelY;
+        int panelW = this.panelW;
+        int panelH = this.panelH;
         DiaryChrome.drawPanelShadow(gfx, panelX, panelY, panelW, panelH);
         PaperTexture.drawClean(gfx, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
-        DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, panelW, panelH);
-        DiaryChrome.drawRegistryTag(gfx, panelX, panelY, panelW, panelH, "REG. X");
+        if (panelW >= 48 && panelH >= 48) {
+            DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, panelW, panelH);
+        }
+        if (panelW >= 200 && panelH >= 100) {
+            DiaryChrome.drawRegistryTag(gfx, panelX, panelY, panelW, panelH, "REG. X");
+        }
 
         // Titulo
-        int titleY = panelY + 14;
-        String titleStr = this.title.getString();
-        int titleW = this.font.width(titleStr);
-        gfx.drawString(this.font, titleStr, (this.width - titleW) / 2, titleY, DiaryChrome.INK_TITLE, false);
+        int titleY = panelY + (this.microLayout ? 4 : (this.compactLayout ? 6 : 14));
+        com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
+                gfx, this.font, this.title, this.width / 2, titleY, DiaryChrome.INK_TITLE);
 
-        // Subtitulo
-        String subtitle = "- " + Component.translatable("gripeverde.multiplayer.subtitle").getString() + " -";
-        int subW = this.font.width(subtitle);
-        gfx.drawString(this.font, subtitle, (this.width - subW) / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
+        if (!this.compactLayout) {
+            String subtitle = "- " + Component.translatable("gripeverde.multiplayer.subtitle").getString() + " -";
+            int subW = this.font.width(subtitle);
+            gfx.drawString(this.font, subtitle, (this.width - subW) / 2, titleY + 12,
+                DiaryChrome.INK_SUBTITLE, false);
+        }
 
         // Divisor con rombo
-        DiaryChrome.drawInkDivider(gfx, panelX + 24, titleY + 26, panelW - 48);
-        DiaryChrome.drawDivisorLozenge(gfx, this.width / 2, titleY + 26);
+        int headerDividerY = panelY + this.headerHeight - (this.compactLayout ? 8 : 10);
+        if (panelW >= 50) {
+            DiaryChrome.drawInkDivider(gfx, panelX + 24, headerDividerY, panelW - 48);
+        }
+        if (panelW >= 100) {
+            DiaryChrome.drawDivisorLozenge(gfx, this.width / 2, headerDividerY);
+        }
 
         // Lista vanilla (con sus favicons, ping, MOTD, etc.)
         if (this.vanillaList != null) {
@@ -511,17 +585,25 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         }
 
         // Divisor inferior antes de los botones - con rombo central
-        int dividerY = this.height - LIST_BOTTOM_OFFSET + 2;
-        DiaryChrome.drawInkDivider(gfx, panelX + 24, dividerY, panelW - 48);
-        DiaryChrome.drawDivisorLozenge(gfx, this.width / 2, dividerY);
+        int dividerY = this.diaryEdit != null
+            ? this.diaryEdit.getY() - Math.max(3, this.rowGap / 2)
+            : this.height - this.panelMarginV - this.buttonHeight * 2;
+        if (panelW >= 50) {
+            DiaryChrome.drawInkDivider(gfx, panelX + 24, dividerY, panelW - 48);
+        }
+        if (panelW >= 100) {
+            DiaryChrome.drawDivisorLozenge(gfx, this.width / 2, dividerY);
+        }
 
         // Vineta sepia perimetral (marco interno del pergamino)
         int vinAlpha = 0x30422810;
-        int inset = 3;
-        gfx.fill(panelX + inset, panelY + inset, panelX + panelW - inset, panelY + inset + 1, vinAlpha);
-        gfx.fill(panelX + inset, panelY + panelH - inset - 1, panelX + panelW - inset, panelY + panelH - inset, vinAlpha);
-        gfx.fill(panelX + inset, panelY + inset, panelX + inset + 1, panelY + panelH - inset, vinAlpha);
-        gfx.fill(panelX + panelW - inset - 1, panelY + inset, panelX + panelW - inset, panelY + panelH - inset, vinAlpha);
+        if (panelW > 6 && panelH > 6) {
+            int inset = 3;
+            gfx.fill(panelX + inset, panelY + inset, panelX + panelW - inset, panelY + inset + 1, vinAlpha);
+            gfx.fill(panelX + inset, panelY + panelH - inset - 1, panelX + panelW - inset, panelY + panelH - inset, vinAlpha);
+            gfx.fill(panelX + inset, panelY + inset, panelX + inset + 1, panelY + panelH - inset, vinAlpha);
+            gfx.fill(panelX + panelW - inset - 1, panelY + inset, panelX + panelW - inset, panelY + panelH - inset, vinAlpha);
+        }
 
         // Widgets Diary (nuestros botones)
         for (var w : this.renderables) {
@@ -563,9 +645,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             var children = this.vanillaList.children();
             if (children == null || children.isEmpty()) return;
 
-            int itemHeight = readIntField(this.vanillaList, "itemHeight", "f_93387_");
-            int y0 = readIntField(this.vanillaList, "y0", "f_93390_");
-            int headerHeight = readIntField(this.vanillaList, "headerHeight", "f_93395_");
+            int itemHeight = readIntField(this.vanillaList, this.listItemHeightField);
+            int y0 = readIntField(this.vanillaList, this.listY0Field);
+            int headerHeight = readIntField(this.vanillaList, this.listHeaderHeightField);
 
             if (itemHeight <= 0) return;
 
@@ -575,13 +657,16 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             int listBottom = this.vanillaList.getBottom();
             double scrollAmount = 0.0;
             try { scrollAmount = this.vanillaList.getScrollAmount(); } catch (Throwable ignored) {}
+            int rowBase = y0 + 4 - (int) scrollAmount + headerHeight - 2;
+            int firstVisible = firstVisibleEntryIndex(listTop, rowBase, itemHeight);
 
-            for (int i = 0; i < children.size(); i++) {
+            for (int i = firstVisible; i < children.size(); i++) {
                 var entry = children.get(i);
+                int entryTop = rowBase + i * itemHeight;
+                if (entryTop > listBottom) break;
                 String cls = entry.getClass().getSimpleName();
                 if (cls.contains("LAN")) continue; // no dibujar bg detras de LAN
 
-                int entryTop = y0 + 4 - (int) scrollAmount + i * itemHeight + headerHeight - 2;
                 int entryBottom = entryTop + itemHeight;
 
                 if (entryBottom < listTop || entryTop > listBottom) continue;
@@ -616,9 +701,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             var children = this.vanillaList.children();
             if (children == null || children.isEmpty()) return;
 
-            int itemHeight = readIntField(this.vanillaList, "itemHeight", "f_93387_");
-            int y0 = readIntField(this.vanillaList, "y0", "f_93390_");
-            int headerHeight = readIntField(this.vanillaList, "headerHeight", "f_93395_");
+            int itemHeight = readIntField(this.vanillaList, this.listItemHeightField);
+            int y0 = readIntField(this.vanillaList, this.listY0Field);
+            int headerHeight = readIntField(this.vanillaList, this.listHeaderHeightField);
 
             if (itemHeight <= 0) return;
 
@@ -631,14 +716,17 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             try {
                 scrollAmount = this.vanillaList.getScrollAmount();
             } catch (Throwable ignored) {}
+            int rowBase = y0 + 4 - (int) scrollAmount + headerHeight;
+            int firstVisible = firstVisibleEntryIndex(listTop, rowBase, itemHeight);
 
-            for (int i = 0; i < children.size(); i++) {
+            for (int i = firstVisible; i < children.size(); i++) {
                 var entry = children.get(i);
+                int entryTop = rowBase + i * itemHeight;
+                if (entryTop > listBottom) break;
                 String cls = entry.getClass().getSimpleName();
                 // Solo subrayar servers reales (no LAN header ni network servers de scan)
                 if (cls.contains("LAN")) continue;
 
-                int entryTop = y0 + 4 - (int) scrollAmount + i * itemHeight + headerHeight;
                 int entryBottom = entryTop + itemHeight - 4;
 
                 if (entryBottom < listTop || entryTop > listBottom) continue;
@@ -669,20 +757,27 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         try {
             var children = this.vanillaList.children();
             if (children == null) return 0;
-            int itemHeight = readIntField(this.vanillaList, "itemHeight", "f_93387_");
-            int y0 = readIntField(this.vanillaList, "y0", "f_93390_");
-            int headerHeight = readIntField(this.vanillaList, "headerHeight", "f_93395_");
+            int itemHeight = readIntField(this.vanillaList, this.listItemHeightField);
+            int y0 = readIntField(this.vanillaList, this.listY0Field);
+            int headerHeight = readIntField(this.vanillaList, this.listHeaderHeightField);
             if (itemHeight <= 0) return 0;
             double scrollAmount = 0.0;
             try { scrollAmount = this.vanillaList.getScrollAmount(); } catch (Throwable ignored) {}
 
-            // Buscar el indice de la primera entry LAN
-            int lanIdx = -1;
-            for (int i = 0; i < children.size(); i++) {
-                String cls = children.get(i).getClass().getSimpleName();
-                if (cls.contains("LAN")) {
-                    lanIdx = i;
-                    break;
+            // Vanilla refreshEntries mantiene primero las entradas guardadas,
+            // luego el encabezado LAN y finalmente los servidores detectados.
+            // ServerList.size() da el índice del encabezado en tiempo constante.
+            int lanIdx = this.vanillaServers.size();
+            if (lanIdx >= children.size()
+                    || !children.get(lanIdx).getClass().getSimpleName().contains("LAN")) {
+                // Mantener compatibilidad si otro mod altera el orden de entries.
+                lanIdx = -1;
+                for (int i = 0; i < children.size(); i++) {
+                    String cls = children.get(i).getClass().getSimpleName();
+                    if (cls.contains("LAN")) {
+                        lanIdx = i;
+                        break;
+                    }
                 }
             }
             if (lanIdx == -1) return 0; // no hay LAN header, no hay que recortar
@@ -694,23 +789,39 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         return 0;
     }
 
-    private static int readIntField(Object target, String officialName, String srgName) {
+    /** Start one row before the first possible intersection to preserve clipping at partial rows. */
+    private static int firstVisibleEntryIndex(int listTop, int firstRowTop, int itemHeight) {
+        if (itemHeight <= 0) return 0;
+        return Math.max(0, Math.floorDiv(listTop - firstRowTop, itemHeight) - 1);
+    }
+
+    private static Field resolveIntField(Object target, String officialName, String srgName) {
+        if (target == null) return null;
         try {
-            java.lang.reflect.Field f = null;
             Class<?> cls = target.getClass();
-            // Buscar en toda la jerarquia (los fields estan en la superclase)
-            while (cls != null && f == null) {
-                try { f = cls.getDeclaredField(officialName); } catch (NoSuchFieldException ignored) {}
-                if (f == null) {
-                    try { f = cls.getDeclaredField(srgName); } catch (NoSuchFieldException ignored) {}
-                }
-                if (f == null) cls = cls.getSuperclass();
-            }
-            if (f != null) {
-                f.setAccessible(true);
-                return f.getInt(target);
+            while (cls != null) {
+                try {
+                    Field field = cls.getDeclaredField(officialName);
+                    field.setAccessible(true);
+                    return field;
+                } catch (NoSuchFieldException ignored) {}
+                try {
+                    Field field = cls.getDeclaredField(srgName);
+                    field.setAccessible(true);
+                    return field;
+                } catch (NoSuchFieldException ignored) {}
+                cls = cls.getSuperclass();
             }
         } catch (Throwable ignored) {}
-        return 0;
+        return null;
+    }
+
+    private static int readIntField(Object target, Field field) {
+        if (target == null || field == null) return 0;
+        try {
+            return field.getInt(target);
+        } catch (Throwable ignored) {
+            return 0;
+        }
     }
 }

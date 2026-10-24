@@ -4,54 +4,18 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class LogoRenderer {
 
-    // Rotating chronicle note pool. Kept localized so language changes do not
-    // leave the Title half Spanish, half English.
-    private static final String[] YEAR_POOL_ES = {
-        "~ Dia 47 ~ Aun no encuentro respuestas ~",
-        "~ Dia 62 ~ Sobrevivir es todo lo que queda ~",
-        "~ Dia 83 ~ La ciudad respira apenas ~",
-        "~ Dia 91 ~ Ya no cuento a los muertos ~",
-        "~ Dia 104 ~ El silencio pesa mas que el humo ~",
-        "~ Dia 118 ~ Aun no cede la fiebre ~",
-        "~ Dia 133 ~ Escribo para no olvidar ~",
-        "~ Dia 147 ~ El aire sabe a hierro ~",
-        "~ Dia 162 ~ Nadie llama a las puertas ~",
-        "~ Dia 178 ~ Persisto ~",
-        "~ Dia 195 ~ Otro invierno adentro ~",
-        "~ Dia 210 ~ La pluma aun obedece ~",
-        "~ Dia 226 ~ Los faroles vigilan ~",
-        "~ Dia 241 ~ El hierro tambien enferma ~",
-        "~ Dia 259 ~ La lluvia no limpia nada ~",
-        "~ Dia 273 ~ Nadie recuerda el sol ~",
-        "~ Dia 288 ~ La campana no duerme ~",
-        "~ Dia 301 ~ Bajo sello y cuarentena ~"
-    };
-    private static final String[] YEAR_POOL_EN = {
-        "~ Day 47 ~ I still find no answers ~",
-        "~ Day 62 ~ Survival is all that remains ~",
-        "~ Day 83 ~ The city barely breathes ~",
-        "~ Day 91 ~ I no longer count the dead ~",
-        "~ Day 104 ~ Silence weighs more than smoke ~",
-        "~ Day 118 ~ The fever still will not yield ~",
-        "~ Day 133 ~ I write so I do not forget ~",
-        "~ Day 147 ~ The air tastes of iron ~",
-        "~ Day 162 ~ No one knocks anymore ~",
-        "~ Day 178 ~ I persist ~",
-        "~ Day 195 ~ Another winter indoors ~",
-        "~ Day 210 ~ The pen still obeys ~",
-        "~ Day 226 ~ The lamps keep watch ~",
-        "~ Day 241 ~ Even iron grows sick ~",
-        "~ Day 259 ~ The rain cleanses nothing ~",
-        "~ Day 273 ~ No one remembers the sun ~",
-        "~ Day 288 ~ The bell does not sleep ~",
-        "~ Day 301 ~ Under seal and quarantine ~"
-    };
+    private static boolean reducedMotion() {
+        return com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
+    }
+
+    private static final int CHRONICLE_ENTRIES = 18;
 
     private static int yearIndex = -1;
     private static long lastYearRotateMs = 0L;
@@ -62,26 +26,18 @@ public class LogoRenderer {
 
     private static final java.util.Random YEAR_RNG = new java.util.Random();
 
-    private static String getCurrentYear() {
-        String lang = Minecraft.getInstance().getLanguageManager().getSelected();
-        boolean english = lang == null || lang.startsWith("en_") || lang.equals("en_us");
-        String[] pool = english ? YEAR_POOL_EN : YEAR_POOL_ES;
+    private static void advanceChronicleRotation() {
         long now = System.currentTimeMillis();
-        if (yearIndex < 0 || yearIndex >= pool.length || (now - lastYearRotateMs) >= YEAR_ROTATE_MS) {
-            int prev = yearIndex;
+        if (yearIndex < 0 || yearIndex >= CHRONICLE_ENTRIES || (now - lastYearRotateMs) >= YEAR_ROTATE_MS) {
+            int previous = yearIndex;
             int next;
-            if (pool.length <= 1) {
-                next = 0;
-            } else {
-                do {
-                    next = YEAR_RNG.nextInt(pool.length);
-                } while (next == prev);
-            }
+            do {
+                next = YEAR_RNG.nextInt(CHRONICLE_ENTRIES);
+            } while (next == previous);
             yearIndex = next;
             lastYearRotateMs = now;
             rerollRotateInterval();
         }
-        return pool[yearIndex];
     }
 
     /** Public accessor so DiaryTitleScreen can sync signature rotation. */
@@ -98,7 +54,8 @@ public class LogoRenderer {
     public static void draw(GuiGraphics g, int cx, int topY) {
         Font font = Minecraft.getInstance().font;
 
-        float logoPulse = (float)(Math.sin(System.currentTimeMillis() / 820.0) * 0.5 + 0.5);
+        float logoPulse = reducedMotion() ? 0.5f
+            : (float)(Math.sin(System.currentTimeMillis() / 820.0) * 0.5 + 0.5);
         int skullY = topY + 6 + (logoPulse > 0.72f ? 1 : 0);
         // Soft shadow behind skull for depth
         int shadowCol = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 70);
@@ -107,12 +64,13 @@ public class LogoRenderer {
         drawDecorativeLine(g, cx, topY + 46, 196);
 
         String title = I18n.get("gripeverde.brand.name");
+        Component displayTitle = DiaryTypography.display(Component.literal(title));
         // v0.21.25: titulo limpio sin sombra.
         g.pose().pushPose();
         g.pose().translate(cx, topY + 60, 0);
         g.pose().scale(1.9f, 1.9f, 1f);
-        int tw = font.width(title);
-        g.drawString(font, title, -tw / 2, 0, DiaryTheme.PAPER, false);
+        int tw = font.width(displayTitle);
+        g.drawString(font, displayTitle, -tw / 2, 0, DiaryTheme.PAPER, false);
         g.pose().popPose();
 
         String subtitle = I18n.get("gripeverde.brand.subtitle");
@@ -124,12 +82,10 @@ public class LogoRenderer {
         g.drawString(font, subtitle, -sw / 2, 0, DiaryTheme.PLAGUE_TOXIC, false);
         g.pose().popPose();
 
-        String year = getCurrentYear();
-        int yw = font.width(year);
-        int yearY = topY + 122;
-        int stripPad = 8;
-        g.fill(cx - yw / 2 - stripPad, yearY - 1, cx + yw / 2 + stripPad, yearY + 9, DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, 28));
-        g.drawString(font, year, cx - yw / 2, yearY, DiaryTheme.withAlpha(DiaryTheme.SEPIA_LIGHT, 200), false);
+        // Keep the private chronicle rotation for the signature/easter eggs,
+        // but leave the logo area clean: the rotating "Day XX" ticker was
+        // noisy and competed with the main menu.
+        advanceChronicleRotation();
     }
 
     private static void drawTopHatSkull(GuiGraphics g, int cx, int topY) {
@@ -144,7 +100,8 @@ public class LogoRenderer {
         g.fill(cx - 5, topY + 18, cx - 2, topY + 22, DiaryTheme.INK);
         g.fill(cx + 3, topY + 18, cx + 6, topY + 22, DiaryTheme.INK);
         g.fill(cx + 4, topY + 19, cx + 5, topY + 20, DiaryTheme.PLAGUE_TOXIC);
-        int eyePulse = 90 + (int)(Math.sin(System.currentTimeMillis() / 420.0) * 45.0);
+        int eyePulse = reducedMotion() ? 90
+            : 90 + (int)(Math.sin(System.currentTimeMillis() / 420.0) * 45.0);
         g.fill(cx + 3, topY + 18, cx + 7, topY + 22, (Math.max(20, eyePulse) << 24) | 0x5A7038);
         // v0.16.0: la pupila mira hacia el lector (maximo 1px de sesgo).
         int px = 0, py = 0;

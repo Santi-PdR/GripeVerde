@@ -7,7 +7,7 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
 - Version preparada: **v0.23.1**.
 - PR 14 (v0.22.0) ya mergeada en main (`4ca038d`).
 - Rama de trabajo vigente: `arena/01a02f45-gripeverde`.
-- Baseline: 60 Java, 25 locales con 93 claves cada uno, 25 cronicas, 35
+- Baseline: 60 Java, 25 locales con 97 claves cada uno, 25 cronicas, 35
   eventos de sonido, 42 referencias OGG y 42 archivos OGG.
 - El tag/release v0.23.0 no debe crearse hasta cerrar KI-53 con Java 17 y
   una prueba completa en Minecraft (queda tambien el pendiente v0.22.0).
@@ -60,7 +60,7 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
 ## Verificaciones de build activas (processResources)
 
 - `verifyGripeVerdeLocalization` — conjunto exacto de 25 locales, JSON
-  valido, exactamente 93 claves no vacias con paridad frente a `en_us` y
+  valido, exactamente 97 claves no vacias con paridad frente a `en_us` y
   presencia de la version actual en las 25 cronicas in-game.
 - `verifyGripeVerdeSoundAssets` — estructura e identificadores de eventos,
   listas no vacias, referencias existentes y cobertura OGG exacta, sin

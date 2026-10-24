@@ -12,6 +12,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.FormattedCharSequence;
+import org.lwjgl.glfw.GLFW;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * La Sala de consulta (el Archivo).
@@ -37,11 +44,30 @@ public class DiaryArchiveScreen extends Screen {
     private int panelX, panelY, panelW, panelH;
     private String viewingDoc = DOC_NONE;
     private int hoverCard = -1;
+    private int keyboardCard = -1;
+    private boolean keyboardNavigatingCards = false;
     private int lastMouseX = -1, lastMouseY = -1;
 
-    private static final int COLS = 5;
     private static final int CARD_H = 22;
     private static final int CARD_GAP = 5;
+    private static final int CARD_SCROLL_STEP = CARD_H + CARD_GAP;
+
+    private int columns = 5;
+    private int cardsTop, cardsBottom, infoY, docsY, cardWidth;
+    private int maxCardScroll, maxDocumentScroll;
+    private double cardScroll, documentScroll;
+    private Set<String> renderDiscoveries = Set.of();
+    private final Map<String, List<FormattedCharSequence>> wrappedDocumentCache = new HashMap<>();
+    private int wrappedDocumentWidth = -1;
+    private net.minecraft.client.gui.Font cachedArchiveFont;
+    private boolean cachedArchiveEnglish;
+    private int cachedArchiveCardWidth = -1;
+    private int cachedArchivePanelWidth = -1;
+    private String[] archiveNames = new String[0];
+    private String[] archiveHints = new String[0];
+    private String[] archiveCardLabels = new String[0];
+    private int[] archiveNameWidths = new int[0];
+    private int[] archiveHintWidths = new int[0];
 
     public DiaryArchiveScreen(Screen parent) {
         super(Component.literal(Discoveries.isEnglish() ? "Reading Room" : "Sala de consulta"));
@@ -50,16 +76,28 @@ public class DiaryArchiveScreen extends Screen {
 
     @Override
     protected void init() {
-        int desiredW = Math.min(440, this.width - 32);
-        int desiredH = Math.min(404, this.height - 28);
-        panelW = Math.max(280, desiredW);
-        panelH = Math.max(240, desiredH);
+        panelW = Math.max(1, Math.min(440, this.width - 24));
+        panelH = Math.max(1, Math.min(404, this.height - 24));
         panelX = (this.width - panelW) / 2;
         panelY = (this.height - panelH) / 2;
 
-        int backW = 140;
+        columns = panelW < 240 ? 2 : panelW < 340 ? 3 : panelW < 440 ? 4 : 5;
+        cardsTop = panelY + 60;
+        infoY = panelY + panelH - 70;
+        docsY = infoY + 12;
+        cardsBottom = Math.max(cardsTop + CARD_H, infoY - 8);
+        int innerW = Math.max(columns, panelW - 40);
+        cardWidth = Math.max(1, (innerW - (columns - 1) * CARD_GAP) / columns);
+        int rows = (Discoveries.ALL.length + columns - 1) / columns;
+        int contentH = rows * CARD_SCROLL_STEP - CARD_GAP;
+        maxCardScroll = Math.max(0, contentH - (cardsBottom - cardsTop));
+        cardScroll = clampScroll(cardScroll, maxCardScroll);
+        maxDocumentScroll = Math.max(0, maxDocumentScroll);
+
+        int backW = Math.min(140, Math.max(1, panelW - 24));
+        int backH = Math.min(24, panelH);
         this.addRenderableWidget(new DiaryButton(
-            panelX + (panelW - backW) / 2, panelY + panelH - 34, backW, 24,
+            panelX + (panelW - backW) / 2, panelY + panelH - backH - 10, backW, backH,
             Component.translatable("gripeverde.options.button.done"),
             DiaryButton.Icon.DOOR, DiaryButton.Variant.PRIMARY,
             DiaryButton.SoundProfile.BACK,
@@ -70,7 +108,12 @@ public class DiaryArchiveScreen extends Screen {
                 (DOC_TELEGRAM.equals(initialDoc) && ChroniclerMemory.isDiscovered(Discoveries.CODE_1897)) ||
                 (DOC_HOLLOWAY.equals(initialDoc) && ChroniclerMemory.isDiscovered(Discoveries.CODE_HOLLOWAY)) ||
                 (DOC_FORBIDDEN.equals(initialDoc) && ChroniclerMemory.discoveredCount() >= 38);
-            if (allowed) viewingDoc = initialDoc;
+            if (allowed) {
+                viewingDoc = initialDoc;
+                documentScroll = 0;
+                maxDocumentScroll = 0;
+                onDocumentOpened(initialDoc);
+            }
             initialDoc = DOC_NONE;
         }
     }
@@ -88,6 +131,7 @@ public class DiaryArchiveScreen extends Screen {
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         this.lastMouseX = mouseX;
         this.lastMouseY = mouseY;
+        this.renderDiscoveries = ChroniclerMemory.discoveredSnapshot();
         QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
 
         DiaryChrome.drawPanelShadow(g, panelX, panelY, panelW, panelH);
@@ -96,6 +140,7 @@ public class DiaryArchiveScreen extends Screen {
         DiaryChrome.drawRegistryTag(g, panelX, panelY, panelW, panelH, "REG. XIV");
 
         boolean en = Discoveries.isEnglish();
+        if (DOC_NONE.equals(viewingDoc)) refreshArchiveTextCache(en);
         int cx = panelX + panelW / 2;
 
         if (!DOC_NONE.equals(viewingDoc)) {
@@ -106,8 +151,8 @@ public class DiaryArchiveScreen extends Screen {
 
         // Cabecera
         String titleStr = en ? "Reading Room" : "Sala de consulta";
-        int tw = this.font.width(titleStr);
-        g.drawString(this.font, titleStr, cx - tw / 2, panelY + 10, DiaryChrome.INK_TITLE, false);
+        com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
+            g, this.font, titleStr, cx, panelY + 10, DiaryChrome.INK_TITLE);
         String sub = en ? "- The chronicler's cards -" : "- Las fichas del cronista -";
         int sw = this.font.width(sub);
         g.drawString(this.font, sub, cx - sw / 2, panelY + 23, DiaryChrome.INK_SUBTITLE, false);
@@ -135,52 +180,74 @@ public class DiaryArchiveScreen extends Screen {
 
         // Grilla de fichas
         int gridX = panelX + 20;
-        int innerW = panelW - 40;
-        int cw = (innerW - (COLS - 1) * CARD_GAP) / COLS;
-        int gridY = panelY + 60;
+        int innerW = Math.max(columns, panelW - 40);
         hoverCard = -1;
-        for (int i = 0; i < Discoveries.ALL.length; i++) {
-            int col = i % COLS;
-            int row = i / COLS;
-            int x = gridX + col * (cw + CARD_GAP);
-            int y = gridY + row * (CARD_H + CARD_GAP);
-            String id = Discoveries.ALL[i];
-            boolean disc = ChroniclerMemory.isDiscovered(id);
-            boolean hover = mouseX >= x && mouseX < x + cw && mouseY >= y && mouseY < y + CARD_H;
-            if (hover) hoverCard = i;
+        int viewportH = Math.max(0, cardsBottom - cardsTop);
+        if (viewportH > 0) {
+            int gridScrollPx = (int) Math.round(cardScroll);
+            int rowCount = (Discoveries.ALL.length + columns - 1) / columns;
+            int firstRow = Math.max(0, gridScrollPx / CARD_SCROLL_STEP);
+            int lastRow = Math.min(rowCount - 1,
+                (gridScrollPx + viewportH) / CARD_SCROLL_STEP);
+            g.enableScissor(gridX, cardsTop, gridX + innerW, cardsBottom);
+            for (int row = firstRow; row <= lastRow; row++) {
+                for (int col = 0; col < columns; col++) {
+                    int i = row * columns + col;
+                    if (i >= Discoveries.ALL.length) break;
+                    int x = gridX + col * (cardWidth + CARD_GAP);
+                    int y = cardsTop - gridScrollPx + row * CARD_SCROLL_STEP;
+                    String id = Discoveries.ALL[i];
+                    boolean disc = this.renderDiscoveries.contains(id);
+                    boolean hover = !keyboardNavigatingCards
+                        && mouseX >= x && mouseX < x + cardWidth
+                        && mouseY >= y && mouseY < y + CARD_H
+                        && mouseY >= cardsTop && mouseY < cardsBottom;
+                    if (hover) hoverCard = i;
+                    boolean focused = keyboardNavigatingCards && keyboardCard == i;
+                    boolean highlighted = hover || focused;
 
-            if (disc) {
-                g.fill(x, y + 1, x + cw, y + CARD_H + 1, DiaryTheme.withAlpha(0x00000000, 38));
-                g.fill(x, y, x + cw, y + CARD_H, hover ? 0xFFDCCBA0 : 0xFFD2BE8E);
-                g.fill(x, y, x + cw, y + 1, 0xFF8E6A35);
-                g.fill(x, y + CARD_H - 1, x + cw, y + CARD_H, 0xFF8E6A35);
-                g.fill(x, y, x + 1, y + CARD_H, 0xFF8E6A35);
-                g.fill(x + cw - 1, y, x + cw, y + CARD_H, 0xFF8E6A35);
-                // marca de lacre
-                g.fill(x + 3, y + 3, x + 7, y + 7, 0xFF6E1F16);
-                String name = Discoveries.nameFor(id);
-                String fit = truncate(name, cw - 12);
-                g.drawString(this.font, fit, x + 9, y + 8, DiaryTheme.INK, false);
-            } else {
-                g.fill(x, y, x + cw, y + CARD_H, DiaryTheme.withAlpha(0x003D2A18, hover ? 30 : 16));
-                g.fill(x, y, x + cw, y + 1, DiaryTheme.withAlpha(0x008E6A35, 70));
-                g.fill(x, y + CARD_H - 1, x + cw, y + CARD_H, DiaryTheme.withAlpha(0x008E6A35, 70));
-                g.fill(x, y, x + 1, y + CARD_H, DiaryTheme.withAlpha(0x008E6A35, 70));
-                g.fill(x + cw - 1, y, x + cw, y + CARD_H, DiaryTheme.withAlpha(0x008E6A35, 70));
-                String q = "?";
-                int qw = this.font.width(q);
-                g.drawString(this.font, q, x + (cw - qw) / 2, y + 7, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, hover ? 150 : 70), false);
+                    if (disc) {
+                        g.fill(x, y + 1, x + cardWidth, y + CARD_H + 1, DiaryTheme.withAlpha(0x00000000, 38));
+                        g.fill(x, y, x + cardWidth, y + CARD_H, highlighted ? 0xFFDCCBA0 : 0xFFD2BE8E);
+                        g.fill(x, y, x + cardWidth, y + 1, 0xFF8E6A35);
+                        g.fill(x, y + CARD_H - 1, x + cardWidth, y + CARD_H, 0xFF8E6A35);
+                        g.fill(x, y, x + 1, y + CARD_H, 0xFF8E6A35);
+                        g.fill(x + cardWidth - 1, y, x + cardWidth, y + CARD_H, 0xFF8E6A35);
+                        g.fill(x + 3, y + 3, x + 7, y + 7, 0xFF6E1F16);
+                        g.drawString(this.font, archiveCardLabels[i], x + 9, y + 8, DiaryTheme.INK, false);
+                    } else {
+                        g.fill(x, y, x + cardWidth, y + CARD_H, DiaryTheme.withAlpha(0x003D2A18, highlighted ? 30 : 16));
+                        g.fill(x, y, x + cardWidth, y + 1, DiaryTheme.withAlpha(0x008E6A35, 70));
+                        g.fill(x, y + CARD_H - 1, x + cardWidth, y + CARD_H, DiaryTheme.withAlpha(0x008E6A35, 70));
+                        g.fill(x, y, x + 1, y + CARD_H, DiaryTheme.withAlpha(0x008E6A35, 70));
+                        g.fill(x + cardWidth - 1, y, x + cardWidth, y + CARD_H, DiaryTheme.withAlpha(0x008E6A35, 70));
+                        int qw = this.font.width("?");
+                        g.drawString(this.font, "?", x + (cardWidth - qw) / 2, y + 7,
+                            DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, highlighted ? 150 : 70), false);
+                    }
+                    if (focused) {
+                        int focus = 0xFFFFD77A;
+                        g.fill(x + 1, y + 1, x + cardWidth - 1, y + 2, focus);
+                        g.fill(x + 1, y + CARD_H - 2, x + cardWidth - 1, y + CARD_H - 1, focus);
+                        g.fill(x + 1, y + 1, x + 2, y + CARD_H - 1, focus);
+                        g.fill(x + cardWidth - 2, y + 1, x + cardWidth - 1, y + CARD_H - 1, focus);
+                    }
+                }
             }
+            g.disableScissor();
         }
 
         // Texto de la ficha bajo el cursor
-        int infoY = gridY + ((Discoveries.ALL.length + COLS - 1) / COLS) * (CARD_H + CARD_GAP) + 6;
-        if (hoverCard >= 0) {
-            String id = Discoveries.ALL[hoverCard];
-            if (ChroniclerMemory.isDiscovered(id)) {
-                drawC(g, Discoveries.nameFor(id), cx, infoY, DiaryTheme.INK);
+        int detailCard = hoverCard >= 0 ? hoverCard
+            : keyboardNavigatingCards ? keyboardCard : -1;
+        if (detailCard >= 0 && detailCard < Discoveries.ALL.length) {
+            String id = Discoveries.ALL[detailCard];
+            if (this.renderDiscoveries.contains(id)) {
+                drawCachedC(g, archiveNames[detailCard], archiveNameWidths[detailCard],
+                    cx, infoY, DiaryTheme.INK);
             } else {
-                drawC(g, Discoveries.hintFor(id), cx, infoY, DiaryChrome.INK_FLAVOR);
+                drawCachedC(g, archiveHints[detailCard], archiveHintWidths[detailCard],
+                    cx, infoY, DiaryChrome.INK_FLAVOR);
             }
         } else {
             boolean complete = found >= total;
@@ -194,24 +261,30 @@ public class DiaryArchiveScreen extends Screen {
                 int sealCx = cx + mw / 2 + 20;
                 String sig = "SIGILLUM";
                 g.drawString(this.font, sig, sealCx - this.font.width(sig) / 2, infoY - 15, 0xFF8A6A2D, false);
-                drawCompletionSeal(g, sealCx, infoY + 6, 8);
+                drawCompletionSeal(g, sealCx, infoY + 6, 8,
+                    com.eternalcraft.gripeverde.client.util.ClientAccessibility.hasActiveGameSession());
             }
         }
 
         // Papeles sueltos (documentos recuperados)
-        int docsY = infoY + 16;
         DiaryChrome.drawInkDivider(g, panelX + 26, docsY - 4, panelW - 52);
-        int dx = panelX + 26;
-        if (ChroniclerMemory.isDiscovered(Discoveries.CODE_1897)) {
-            drawPaperDoc(g, dx, docsY + 4, en ? "The night of the outbreak" : "La noche del brote", mouseX, mouseY);
-            dx += 130;
+        int docCount = availableDocCount();
+        int docW = documentCardWidth(docCount);
+        int dx = documentCardX(0, docCount, docW);
+        int docY = docsY + 4;
+        if (this.renderDiscoveries.contains(Discoveries.CODE_1897)) {
+            drawPaperDoc(g, dx, docY, docW,
+                en ? "The night of the outbreak" : "La noche del brote", mouseX, mouseY);
+            dx += docW + 6;
         }
-        if (ChroniclerMemory.isDiscovered(Discoveries.CODE_HOLLOWAY)) {
-            drawPaperDoc(g, dx, docsY + 4, en ? "Dr. Holloway's report" : "Informe del Dr. Holloway", mouseX, mouseY);
-            dx += 130;
+        if (this.renderDiscoveries.contains(Discoveries.CODE_HOLLOWAY)) {
+            drawPaperDoc(g, dx, docY, docW,
+                en ? "Dr. Holloway's report" : "Informe del Dr. Holloway", mouseX, mouseY);
+            dx += docW + 6;
         }
         if (ChroniclerMemory.discoveredCount() >= 38) {
-            drawPaperDoc(g, dx, docsY + 4, en ? "A black card" : "Una ficha negra", mouseX, mouseY);
+            drawPaperDoc(g, dx, docY, docW,
+                en ? "A black card" : "Una ficha negra", mouseX, mouseY);
         }
 
         super.render(g, mouseX, mouseY, partialTick);
@@ -221,13 +294,11 @@ public class DiaryArchiveScreen extends Screen {
         com.eternalcraft.gripeverde.client.lore.Marginalia.draw(g, panelX, panelY, panelW, panelH);
 
         // v0.21.3/v0.21.5: la cadena de la limpieza (solo texto, sin mecanica nueva)
-        if (ChroniclerMemory.isDiscovered(Discoveries.ARCHIVE_THINNING)
-                && ChroniclerMemory.isDiscovered(Discoveries.THEME_NEVER_PLAYED)) {
+        if (this.renderDiscoveries.contains(Discoveries.ARCHIVE_THINNING)
+                && this.renderDiscoveries.contains(Discoveries.THEME_NEVER_PLAYED)) {
             Discoveries.discover(Discoveries.BG_TOWN_MEMORY);
-        }
-        if (ChroniclerMemory.isDiscovered(Discoveries.BG_TOWN_MEMORY)
-                && ChroniclerMemory.isDiscovered(Discoveries.ARCHIVE_THINNING)
-                && ChroniclerMemory.isDiscovered(Discoveries.THEME_NEVER_PLAYED)) {
+            // Preserve the same-frame chain: discovering the memory invalidates
+            // the cached snapshot, so register its follow-up in this pass too.
             Discoveries.discover(Discoveries.BUTTONS_NEVER_PRESSED);
         }
 
@@ -246,10 +317,23 @@ public class DiaryArchiveScreen extends Screen {
     }
 
     /** v0.21.13: sello de cera dorado del archivo completado. */
-    private static void drawCompletionSeal(GuiGraphics g, int cx, int cy, int radius) {
+    private static void drawCompletionSeal(GuiGraphics g, int cx, int cy, int radius,
+                                           boolean fastInGame) {
         int gold = 0xFFB8860B;
         int goldDark = 0xFF6B4E16;
         int goldHi = 0xFFE8C860;
+        if (fastInGame) {
+            // Completion is an exceptional state, but its seal is redrawn on
+            // every frame. Keep the stamp legible without its ~70 scanlines.
+            g.fill(cx - 5, cy - 3, cx + 6, cy + 4, gold);
+            g.fill(cx - 4, cy - 5, cx + 5, cy - 3, gold);
+            g.fill(cx - 4, cy + 4, cx + 5, cy + 6, gold);
+            g.fill(cx - 3, cy - 6, cx + 4, cy - 5, gold);
+            g.fill(cx - 4, cy - 3, cx - 2, cy, goldHi);
+            g.fill(cx - 5, cy - 2, cx - 4, cy + 3, goldDark);
+            g.fill(cx + 5, cy - 2, cx + 6, cy + 3, goldDark);
+            return;
+        }
         for (int dy = -radius; dy <= radius; dy++) {
             int dx = (int) Math.sqrt(radius * radius - dy * dy);
             g.fill(cx - dx, cy + dy, cx + dx + 1, cy + dy + 1, gold);
@@ -270,22 +354,64 @@ public class DiaryArchiveScreen extends Screen {
         }
     }
 
-    private void drawPaperDoc(GuiGraphics g, int x, int y, String label, int mx, int my) {
-        boolean hover = mx >= x && mx < x + 124 && my >= y && my < y + 18;
-        g.fill(x, y, x + 124, y + 18, hover ? 0xFFDCCBA0 : 0xFFCFB98C);
-        g.fill(x, y, x + 124, y + 1, 0xFF8E6A35);
-        g.fill(x, y + 17, x + 124, y + 18, 0xFF8E6A35);
+    private void drawPaperDoc(GuiGraphics g, int x, int y, int width,
+                              String label, int mx, int my) {
+        boolean hover = mx >= x && mx < x + width && my >= y && my < y + 18;
+        g.fill(x, y, x + width, y + 18, hover ? 0xFFDCCBA0 : 0xFFCFB98C);
+        g.fill(x, y, x + width, y + 1, 0xFF8E6A35);
+        g.fill(x, y + 17, x + width, y + 18, 0xFF8E6A35);
         g.fill(x, y, x + 1, y + 18, 0xFF8E6A35);
-        g.fill(x + 123, y, x + 124, y + 18, 0xFF8E6A35);
-        String fit = truncate(label, 114);
+        g.fill(x + width - 1, y, x + width, y + 18, 0xFF8E6A35);
+        String fit = truncate(label, Math.max(1, width - 10));
         g.drawString(this.font, fit, x + 5, y + 5, DiaryTheme.INK, false);
     }
 
+    private int availableDocCount() {
+        int count = 0;
+        if (this.renderDiscoveries.contains(Discoveries.CODE_1897)) count++;
+        if (this.renderDiscoveries.contains(Discoveries.CODE_HOLLOWAY)) count++;
+        if (ChroniclerMemory.discoveredCount() >= 38) count++;
+        return count;
+    }
+
+    private int documentCardWidth(int count) {
+        if (count <= 0) return 0;
+        return Math.max(1, Math.min(124, (panelW - 52 - (count - 1) * 6) / count));
+    }
+
+    private int documentCardX(int index, int count, int width) {
+        int totalWidth = count * width + Math.max(0, count - 1) * 6;
+        return panelX + (panelW - totalWidth) / 2 + index * (width + 6);
+    }
+
+    private void openDocument(String document) {
+        viewingDoc = document;
+        documentScroll = 0;
+        maxDocumentScroll = 0;
+        onDocumentOpened(document);
+        UiSounds.tab();
+    }
+
+    private void onDocumentOpened(String document) {
+        if (DOC_HOLLOWAY.equals(document)) {
+            Discoveries.discover(Discoveries.CODE_HOLLOWAY);
+        } else if (DOC_FORBIDDEN.equals(document)) {
+            Discoveries.discover(Discoveries.FORBIDDEN_FOLIO);
+        }
+    }
+
+    private static double clampScroll(double value, int max) {
+        return Math.max(0, Math.min(max, value));
+    }
+
     private void renderDocument(GuiGraphics g, boolean en) {
+        int bodyTop = panelY + 22;
+        int bodyBottom = Math.max(bodyTop + 1, panelY + panelH - 64);
         int tx = panelX + 34;
-        int ty = panelY + 22;
-        int maxW = panelW - 68;
+        int ty = bodyTop - (int) Math.round(documentScroll);
+        int maxW = Math.max(1, panelW - 68);
         int lh = 12;
+        g.enableScissor(panelX + 18, bodyTop, panelX + panelW - 18, bodyBottom);
 
         if (DOC_TELEGRAM.equals(viewingDoc)) {
             ty = drawWrapped(g, textColor(0xFF6E1F16), ty, maxW, tx,
@@ -315,9 +441,6 @@ public class DiaryArchiveScreen extends Screen {
             ty = drawWrapped(g, textColor(0xFF6E1F16), ty, maxW, tx, en
                 ? "(The rest of the page was torn out.)"
                 : "(El resto de la pagina fue arrancado.)");
-            if (!ChroniclerMemory.isDiscovered(Discoveries.CODE_HOLLOWAY)) {
-                Discoveries.discover(Discoveries.CODE_HOLLOWAY);
-            }
         } else if (DOC_FORBIDDEN.equals(viewingDoc)) {
             // La ficha negra: casi vacia. Una sola linea.
             ty += 40;
@@ -332,11 +455,15 @@ public class DiaryArchiveScreen extends Screen {
             g.fill(sx2 - 6, ty - 3, sx2 + stw + 6, ty - 2, 0xFF6E1F16);
             g.fill(sx2 - 6, ty + 11, sx2 + stw + 6, ty + 12, 0xFF6E1F16);
             g.drawString(this.font, stamp, sx2, ty, 0xFF6E1F16, false);
-            Discoveries.discover(Discoveries.FORBIDDEN_FOLIO);
         }
+
+        g.disableScissor();
+        maxDocumentScroll = Math.max(0, ty + (int) Math.round(documentScroll) - bodyBottom);
+        documentScroll = clampScroll(documentScroll, maxDocumentScroll);
 
         // volver con click en cualquier parte baja
         String back = en ? "~ click below to return to the cards ~" : "~ pulsa abajo para volver a las fichas ~";
+        back = truncate(back, Math.max(1, panelW - 24));
         int bw2 = this.font.width(back);
         g.drawString(this.font, back, panelX + (panelW - bw2) / 2, panelY + panelH - 46,
             DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 120), false);
@@ -345,9 +472,16 @@ public class DiaryArchiveScreen extends Screen {
     private int textColor(int c) { return c; }
 
     private int drawWrapped(GuiGraphics g, int color, int y, int maxW, int x, String text) {
-        java.util.List<net.minecraft.util.FormattedCharSequence> lines =
-            this.font.split(Component.literal(text), maxW);
-        for (net.minecraft.util.FormattedCharSequence fcs : lines) {
+        if (this.wrappedDocumentWidth != maxW) {
+            this.wrappedDocumentCache.clear();
+            this.wrappedDocumentWidth = maxW;
+        }
+        List<FormattedCharSequence> lines = this.wrappedDocumentCache.get(text);
+        if (lines == null) {
+            lines = this.font.split(Component.literal(text), maxW);
+            this.wrappedDocumentCache.put(text, lines);
+        }
+        for (FormattedCharSequence fcs : lines) {
             g.drawString(this.font, fcs, x, y, color, false);
             y += 12;
         }
@@ -359,6 +493,43 @@ public class DiaryArchiveScreen extends Screen {
         g.drawString(this.font, s, cx - w2 / 2, y, color, false);
     }
 
+    private void drawCachedC(GuiGraphics g, String s, int width, int cx, int y, int color) {
+        g.drawString(this.font, s, cx - width / 2, y, color, false);
+    }
+
+    /** Recalcula nombres, pistas y medidas solo si cambia idioma, fuente o escala. */
+    private void refreshArchiveTextCache(boolean english) {
+        if (this.cachedArchiveFont == this.font
+                && this.cachedArchiveEnglish == english
+                && this.cachedArchiveCardWidth == cardWidth
+                && this.cachedArchivePanelWidth == panelW
+                && this.archiveNames.length == Discoveries.ALL.length) {
+            return;
+        }
+
+        int count = Discoveries.ALL.length;
+        this.archiveNames = new String[count];
+        this.archiveHints = new String[count];
+        this.archiveCardLabels = new String[count];
+        this.archiveNameWidths = new int[count];
+        this.archiveHintWidths = new int[count];
+        int cardTextWidth = Math.max(8, cardWidth - 12);
+        for (int i = 0; i < count; i++) {
+            String id = Discoveries.ALL[i];
+            String name = Discoveries.nameFor(id, english);
+            String hint = Discoveries.hintFor(id, english);
+            this.archiveNames[i] = name;
+            this.archiveHints[i] = hint;
+            this.archiveCardLabels[i] = truncate(name, cardTextWidth);
+            this.archiveNameWidths[i] = this.font.width(name);
+            this.archiveHintWidths[i] = this.font.width(hint);
+        }
+        this.cachedArchiveFont = this.font;
+        this.cachedArchiveEnglish = english;
+        this.cachedArchiveCardWidth = cardWidth;
+        this.cachedArchivePanelWidth = panelW;
+    }
+
     private String truncate(String s, int maxPx) {
         if (this.font.width(s) <= maxPx) return s;
         return this.font.plainSubstrByWidth(s, Math.max(8, maxPx - 8)) + "...";
@@ -366,38 +537,38 @@ public class DiaryArchiveScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        this.keyboardNavigatingCards = false;
         if (!DOC_NONE.equals(viewingDoc)) {
             if (mouseY > panelY + panelH - 56) {
                 viewingDoc = DOC_NONE;
+                documentScroll = 0;
                 UiSounds.back();
                 return true;
             }
             return super.mouseClicked(mouseX, mouseY, button);
         }
         // Papeles sueltos
-        int infoY = panelY + 60 + ((Discoveries.ALL.length + COLS - 1) / COLS) * (CARD_H + CARD_GAP) + 6;
-        int docsY = infoY + 16 + 4;
-        int dx = panelX + 26;
-        boolean en = Discoveries.isEnglish();
-        if (ChroniclerMemory.isDiscovered(Discoveries.CODE_1897)) {
-            if (mouseX >= dx && mouseX < dx + 124 && mouseY >= docsY && mouseY < docsY + 18) {
-                viewingDoc = DOC_TELEGRAM;
-                UiSounds.tab();
+        int docCount = availableDocCount();
+        int docW = documentCardWidth(docCount);
+        int dx = documentCardX(0, docCount, docW);
+        int docY = docsY + 4;
+        if (this.renderDiscoveries.contains(Discoveries.CODE_1897)) {
+            if (mouseX >= dx && mouseX < dx + docW && mouseY >= docY && mouseY < docY + 18) {
+                openDocument(DOC_TELEGRAM);
                 return true;
             }
-            dx += 130;
+            dx += docW + 6;
         }
-        if (ChroniclerMemory.isDiscovered(Discoveries.CODE_HOLLOWAY)) {
-            if (mouseX >= dx && mouseX < dx + 124 && mouseY >= docsY && mouseY < docsY + 18) {
-                viewingDoc = DOC_HOLLOWAY;
-                UiSounds.tab();
+        if (this.renderDiscoveries.contains(Discoveries.CODE_HOLLOWAY)) {
+            if (mouseX >= dx && mouseX < dx + docW && mouseY >= docY && mouseY < docY + 18) {
+                openDocument(DOC_HOLLOWAY);
                 return true;
             }
-            dx += 130;
+            dx += docW + 6;
         }
         if (ChroniclerMemory.discoveredCount() >= 38) {
-            if (mouseX >= dx && mouseX < dx + 124 && mouseY >= docsY && mouseY < docsY + 18) {
-                viewingDoc = DOC_FORBIDDEN;
+            if (mouseX >= dx && mouseX < dx + docW && mouseY >= docY && mouseY < docY + 18) {
+                openDocument(DOC_FORBIDDEN);
                 try {
                     UiSounds.playCustom(com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_CHAIN.get(), 0.22f, 0.5f);
                 } catch (Throwable ignored) {}
@@ -408,12 +579,81 @@ public class DiaryArchiveScreen extends Screen {
     }
 
     @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+        if (!DOC_NONE.equals(viewingDoc)) {
+            int bodyTop = panelY + 22;
+            int bodyBottom = Math.max(bodyTop + 1, panelY + panelH - 64);
+            if (mouseX >= panelX + 18 && mouseX < panelX + panelW - 18
+                    && mouseY >= bodyTop && mouseY < bodyBottom) {
+                documentScroll = clampScroll(documentScroll - delta * 24, maxDocumentScroll);
+                return true;
+            }
+        } else if (mouseX >= panelX + 18 && mouseX < panelX + panelW - 18
+                && mouseY >= cardsTop && mouseY < cardsBottom) {
+            cardScroll = clampScroll(cardScroll - delta * CARD_SCROLL_STEP * 3, maxCardScroll);
+            return true;
+        }
+        return super.mouseScrolled(mouseX, mouseY, delta);
+    }
+
+    @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (!DOC_NONE.equals(viewingDoc) && keyCode == 256) { // ESC dentro del doc
             viewingDoc = DOC_NONE;
             return true;
         }
+        if (DOC_NONE.equals(viewingDoc) && isCardNavigationKey(keyCode)) {
+            moveKeyboardCard(keyCode);
+            return true;
+        }
         return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    private static boolean isCardNavigationKey(int keyCode) {
+        return keyCode == GLFW.GLFW_KEY_LEFT || keyCode == GLFW.GLFW_KEY_RIGHT
+            || keyCode == GLFW.GLFW_KEY_UP || keyCode == GLFW.GLFW_KEY_DOWN
+            || keyCode == GLFW.GLFW_KEY_HOME || keyCode == GLFW.GLFW_KEY_END;
+    }
+
+    private void moveKeyboardCard(int keyCode) {
+        int count = Discoveries.ALL.length;
+        if (count == 0) return;
+        if (keyboardCard < 0 || keyboardCard >= count) {
+            keyboardCard = keyCode == GLFW.GLFW_KEY_END ? count - 1 : 0;
+        } else if (keyCode == GLFW.GLFW_KEY_HOME) {
+            keyboardCard = 0;
+        } else if (keyCode == GLFW.GLFW_KEY_END) {
+            keyboardCard = count - 1;
+        } else {
+            int row = keyboardCard / columns;
+            int col = keyboardCard % columns;
+            switch (keyCode) {
+                case GLFW.GLFW_KEY_LEFT -> col = Math.max(0, col - 1);
+                case GLFW.GLFW_KEY_RIGHT -> col = Math.min(columns - 1, col + 1);
+                case GLFW.GLFW_KEY_UP -> row = Math.max(0, row - 1);
+                case GLFW.GLFW_KEY_DOWN -> row = Math.min((count - 1) / columns, row + 1);
+                default -> { return; }
+            }
+            keyboardCard = Math.min(count - 1, row * columns + col);
+        }
+
+        keyboardNavigatingCards = true;
+        int viewportH = Math.max(0, cardsBottom - cardsTop);
+        int cardTop = (keyboardCard / columns) * CARD_SCROLL_STEP;
+        int cardBottom = cardTop + CARD_H;
+        int currentTop = (int) Math.round(cardScroll);
+        if (cardTop < currentTop) {
+            cardScroll = cardTop;
+        } else if (cardBottom > currentTop + viewportH) {
+            cardScroll = cardBottom - viewportH;
+        }
+        cardScroll = clampScroll(cardScroll, maxCardScroll);
+    }
+
+    @Override
+    public void mouseMoved(double mouseX, double mouseY) {
+        this.keyboardNavigatingCards = false;
+        super.mouseMoved(mouseX, mouseY);
     }
 
     @Override

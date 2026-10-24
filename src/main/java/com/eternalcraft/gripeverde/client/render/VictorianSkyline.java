@@ -4,6 +4,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @OnlyIn(Dist.CLIENT)
 public class VictorianSkyline {
 
@@ -50,11 +53,7 @@ public class VictorianSkyline {
     private static final java.util.Random WINDOW_RNG = new java.util.Random(WINDOW_SEED_FG);
 
     private static boolean reducedMotion() {
-        try {
-            return com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get();
-        } catch (IllegalStateException ignored) {
-            return false;
-        }
+        return com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
     }
 
     private static final int TOTAL_CHIMNEYS = CHIMNEYS_BG.length + CHIMNEYS_FG.length;
@@ -75,6 +74,48 @@ public class VictorianSkyline {
         {2, 3, 0}
     };
     private static boolean animWindowsInit = false;
+
+    private static WindowLayout backgroundWindowLayout;
+    private static WindowLayout foregroundWindowLayout;
+
+    private static final class WindowLayout {
+        final int width;
+        final int height;
+        final WindowCell[] cells;
+
+        WindowLayout(int width, int height, WindowCell[] cells) {
+            this.width = width;
+            this.height = height;
+            this.cells = cells;
+        }
+    }
+
+    private static final class WindowCell {
+        final int x;
+        final int y;
+        final int width;
+        final int height;
+        final int roll;
+        final int building;
+        final int column;
+        final int animatedIndex;
+        float amberCacheTime = Float.NaN;
+        float sickCacheTime = Float.NaN;
+        int cachedAmber;
+        int cachedSickAlpha;
+
+        WindowCell(int x, int y, int width, int height, int roll,
+                   int building, int column, int animatedIndex) {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            this.roll = roll;
+            this.building = building;
+            this.column = column;
+            this.animatedIndex = animatedIndex;
+        }
+    }
 
     public static void tick(float deltaTime) {
         initSmoke();
@@ -222,8 +263,17 @@ public class VictorianSkyline {
 
     /** La ventana del atico que parpadea esperando respuesta. */
     private static void renderSignalWindow(GuiGraphics g, int w, int h) {
-        int[] r = signalWindowRect(w, h);
-        int wx = r[0], wy = r[1], ww = r[2], wh = r[3];
+        // Este método corre cada frame; calcular el rectángulo con primitivos
+        // evita crear un int[] para una coordenada que solo se dibuja.
+        float[] b = FG_BUILDINGS[5];
+        int bx1 = (int)(w * b[0]);
+        int by2 = (int)(h * b[1]);
+        int bw = (int)(w * b[2]);
+        int bh = (int)(h * b[3]);
+        int wx = bx1 + (int)(bw * 0.28f);
+        int wy = by2 - bh + Math.max(3, bh / 9);
+        int ww = 6;
+        int wh = 8;
         boolean closed;
         try {
             closed = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("curtains_closed") > 0;
@@ -310,16 +360,80 @@ public class VictorianSkyline {
     }
 
     private static void renderWindowsOnBuildings(GuiGraphics g, int w, int h, float[][] buildings, boolean isBg) {
-        long seed = isBg ? WINDOW_SEED_BG : WINDOW_SEED_FG;
-        java.util.Random rng = WINDOW_RNG;
-        rng.setSeed(seed);
+        WindowLayout layout = isBg ? backgroundWindowLayout : foregroundWindowLayout;
+        if (layout == null || layout.width != w || layout.height != h) {
+            layout = createWindowLayout(w, h, buildings, isBg);
+            if (isBg) backgroundWindowLayout = layout;
+            else foregroundWindowLayout = layout;
+        }
+
         int offOnThreshold = isBg ? 8 : 7;
         int amberThreshold  = 9;
+        for (WindowCell cell : layout.cells) {
+            int wx = cell.x;
+            int wy = cell.y;
+            int winW = cell.width;
+            int winH = cell.height;
+
+            if (cell.animatedIndex >= 0) {
+                int amber = (int)(animPhase[cell.animatedIndex] * 160);
+                if (amber > 2) {
+                    g.fill(wx - 1, wy - 1, wx + winW + 1, wy + winH + 1, 0xFF1A0F05);
+                    g.fill(wx, wy, wx + winW, wy + winH,
+                        AtmosphereRenderer.withAlpha(0x00D4941E, amber));
+                    g.fill(wx + winW/2, wy, wx + winW/2 + 1, wy + winH, 0xFF3D2E1A);
+                    g.fill(wx, wy + winH/2, wx + winW, wy + winH/2 + 1, 0xFF3D2E1A);
+                    g.fill(wx - 2, wy - 2, wx + winW + 2, wy + winH + 2,
+                        AtmosphereRenderer.withAlpha(0x00D4941E, amber / 6));
+                } else {
+                    g.fill(wx, wy, wx + winW, wy + winH, 0xFF050302);
+                    g.fill(wx, wy, wx + winW, wy + 1, 0xFF1A1008);
+                }
+                continue;
+            }
+
+            if (cell.roll < offOnThreshold) {
+                g.fill(wx, wy, wx + winW, wy + winH, 0xFF050302);
+                if (!isBg) g.fill(wx, wy, wx + winW, wy + 1, 0xFF1A1008);
+            } else if (cell.roll < amberThreshold) {
+                if (isBg) {
+                    g.fill(wx, wy, wx + winW, wy + winH,
+                        AtmosphereRenderer.withAlpha(0x00A8781E, 110));
+                } else {
+                    int amber = cachedAmber(cell);
+                    g.fill(wx - 1, wy - 1, wx + winW + 1, wy + winH + 1, 0xFF1A0F05);
+                    g.fill(wx, wy, wx + winW, wy + winH,
+                        AtmosphereRenderer.withAlpha(0x00D4941E, amber));
+                    g.fill(wx + winW/2, wy, wx + winW/2 + 1, wy + winH, 0xFF3D2E1A);
+                    g.fill(wx, wy + winH/2, wx + winW, wy + winH/2 + 1, 0xFF3D2E1A);
+                    g.fill(wx - 2, wy - 2, wx + winW + 2, wy + winH + 2,
+                        AtmosphereRenderer.withAlpha(0x00D4941E, amber / 6));
+                }
+            } else if (isBg) {
+                g.fill(wx, wy, wx + winW, wy + winH,
+                    AtmosphereRenderer.withAlpha(0x004A6028, 80));
+            } else {
+                int sickAlpha = cachedSickAlpha(cell);
+                g.fill(wx - 1, wy - 1, wx + winW + 1, wy + winH + 1, 0xFF1A0F05);
+                g.fill(wx, wy, wx + winW, wy + winH,
+                    AtmosphereRenderer.withAlpha(0x005A7038, sickAlpha));
+                g.fill(wx + winW/2, wy, wx + winW/2 + 1, wy + winH, 0xFF1A2810);
+                g.fill(wx, wy + winH/2, wx + winW, wy + winH/2 + 1, 0xFF1A2810);
+                g.fill(wx - 2, wy - 2, wx + winW + 2, wy + winH + 2,
+                    AtmosphereRenderer.withAlpha(0x003A5028, sickAlpha / 5));
+            }
+        }
+    }
+
+    private static WindowLayout createWindowLayout(int w, int h, float[][] buildings, boolean isBg) {
+        java.util.Random rng = WINDOW_RNG;
+        rng.setSeed(isBg ? WINDOW_SEED_BG : WINDOW_SEED_FG);
         // LOD: reduce density on large resolutions to save fill calls
         int lodSkip = 1;
         if (w > 1600) lodSkip = isBg ? 2 : 2;
         else if (w > 1200) lodSkip = isBg ? 2 : 1;
         else if (h < 400) lodSkip = 2;
+        List<WindowCell> cells = new ArrayList<>();
         for (int bi = 0; bi < buildings.length; bi++) {
             float[] b = buildings[bi];
             int bx1 = (int)(w * b[0]);
@@ -337,14 +451,18 @@ public class VictorianSkyline {
 
             for (int row = 0; row < rows; row++) {
                 for (int col = 0; col < cols; col++) {
-                    // LOD skip
-                    boolean isAnimPos = false;
+                    int animIdx = -1;
                     if (!isBg) {
                         for (int aw = 0; aw < ANIM_COUNT; aw++) {
-                            if (ANIM_WINDOWS[aw][0] == bi && ANIM_WINDOWS[aw][1] == row && ANIM_WINDOWS[aw][2] == col) { isAnimPos = true; break; }
+                            if (ANIM_WINDOWS[aw][0] == bi
+                                && ANIM_WINDOWS[aw][1] == row
+                                && ANIM_WINDOWS[aw][2] == col) {
+                                animIdx = aw;
+                                break;
+                            }
                         }
                     }
-                    if (!isAnimPos && lodSkip > 1 && ((row + col) % lodSkip != 0)) {
+                    if (animIdx < 0 && lodSkip > 1 && ((row + col) % lodSkip != 0)) {
                         // Still consume RNG to keep determinism
                         rng.nextInt(2); // winW
                         rng.nextInt(2); // winH
@@ -363,76 +481,29 @@ public class VictorianSkyline {
                     int wx = bx1 + (col * bWidth / cols) + (bWidth / cols / 2) - winW / 2;
                     int wy = by1 + (row * bHeight / rows) + (bHeight / rows / 2) - winH / 2 + 3;
                     int roll = rng.nextInt(10);
-
-                    // Animated windows override: check if this position is in the anim list
-                    int animIdx = -1;
-                    if (!isBg) {
-                        for (int aw = 0; aw < ANIM_COUNT; aw++) {
-                            if (ANIM_WINDOWS[aw][0] == bi
-                                && ANIM_WINDOWS[aw][1] == row
-                                && ANIM_WINDOWS[aw][2] == col) {
-                                animIdx = aw;
-                                break;
-                            }
-                        }
-                    }
-                    if (animIdx >= 0) {
-                        // Draw with animPhase[animIdx] controlling alpha
-                        int amber = (int)(animPhase[animIdx] * 160);
-                        if (amber > 2) {
-                            g.fill(wx - 1, wy - 1, wx + winW + 1, wy + winH + 1, 0xFF1A0F05);
-                            g.fill(wx, wy, wx + winW, wy + winH,
-                                AtmosphereRenderer.withAlpha(0x00D4941E, amber));
-                            g.fill(wx + winW/2, wy, wx + winW/2 + 1, wy + winH, 0xFF3D2E1A);
-                            g.fill(wx, wy + winH/2, wx + winW, wy + winH/2 + 1, 0xFF3D2E1A);
-                            g.fill(wx - 2, wy - 2, wx + winW + 2, wy + winH + 2,
-                                AtmosphereRenderer.withAlpha(0x00D4941E, amber / 6));
-                        } else {
-                            g.fill(wx, wy, wx + winW, wy + winH, 0xFF050302);
-                            g.fill(wx, wy, wx + winW, wy + 1, 0xFF1A1008);
-                        }
-                        continue;
-                    }
-
-                    if (roll < offOnThreshold) {
-                        g.fill(wx, wy, wx + winW, wy + winH, 0xFF050302);
-                        if (!isBg) {
-                            g.fill(wx, wy, wx + winW, wy + 1, 0xFF1A1008);
-                        }
-                    } else if (roll < amberThreshold) {
-                        if (isBg) {
-                            g.fill(wx, wy, wx + winW, wy + winH,
-                                AtmosphereRenderer.withAlpha(0x00A8781E, 110));
-                        } else {
-                            float flicker = (float)(Math.sin(time * (0.5f + bi*0.13f + col*0.17f)) * 0.3f + 0.7f);
-                            int amber = Math.max(40, (int)(flicker * 140));
-                            g.fill(wx - 1, wy - 1, wx + winW + 1, wy + winH + 1, 0xFF1A0F05);
-                            g.fill(wx, wy, wx + winW, wy + winH,
-                                AtmosphereRenderer.withAlpha(0x00D4941E, amber));
-                            g.fill(wx + winW/2, wy, wx + winW/2 + 1, wy + winH, 0xFF3D2E1A);
-                            g.fill(wx, wy + winH/2, wx + winW, wy + winH/2 + 1, 0xFF3D2E1A);
-                            g.fill(wx - 2, wy - 2, wx + winW + 2, wy + winH + 2,
-                                AtmosphereRenderer.withAlpha(0x00D4941E, amber / 6));
-                        }
-                    } else {
-                        if (isBg) {
-                            g.fill(wx, wy, wx + winW, wy + winH,
-                                AtmosphereRenderer.withAlpha(0x004A6028, 80));
-                        } else {
-                            float sickFlicker = (float)(Math.sin(time * (0.8f + bi*0.2f)) * 0.4f + 0.6f);
-                            int sickAlpha = Math.max(30, (int)(sickFlicker * 100));
-                            g.fill(wx - 1, wy - 1, wx + winW + 1, wy + winH + 1, 0xFF1A0F05);
-                            g.fill(wx, wy, wx + winW, wy + winH,
-                                AtmosphereRenderer.withAlpha(0x005A7038, sickAlpha));
-                            g.fill(wx + winW/2, wy, wx + winW/2 + 1, wy + winH, 0xFF1A2810);
-                            g.fill(wx, wy + winH/2, wx + winW, wy + winH/2 + 1, 0xFF1A2810);
-                            g.fill(wx - 2, wy - 2, wx + winW + 2, wy + winH + 2,
-                                AtmosphereRenderer.withAlpha(0x003A5028, sickAlpha / 5));
-                        }
-                    }
+                    cells.add(new WindowCell(wx, wy, winW, winH, roll, bi, col, animIdx));
                 }
             }
         }
+        return new WindowLayout(w, h, cells.toArray(new WindowCell[0]));
+    }
+
+    private static int cachedAmber(WindowCell cell) {
+        if (cell.amberCacheTime != time) {
+            float flicker = (float)(Math.sin(time * (0.5f + cell.building * 0.13f + cell.column * 0.17f)) * 0.3f + 0.7f);
+            cell.cachedAmber = Math.max(40, (int)(flicker * 140));
+            cell.amberCacheTime = time;
+        }
+        return cell.cachedAmber;
+    }
+
+    private static int cachedSickAlpha(WindowCell cell) {
+        if (cell.sickCacheTime != time) {
+            float flicker = (float)(Math.sin(time * (0.8f + cell.building * 0.2f)) * 0.4f + 0.6f);
+            cell.cachedSickAlpha = Math.max(30, (int)(flicker * 100));
+            cell.sickCacheTime = time;
+        }
+        return cell.cachedSickAlpha;
     }
 
     private static void renderChimneys(GuiGraphics g, int w, int h, float[][] chimneys, float[][] parents, boolean isFg) {

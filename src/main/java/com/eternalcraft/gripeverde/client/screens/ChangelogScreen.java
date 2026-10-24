@@ -15,6 +15,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.IdentityHashMap;
 import java.util.List;
 
 public class ChangelogScreen extends Screen {
@@ -43,8 +45,40 @@ public class ChangelogScreen extends Screen {
         Row(LT t, String s) { this.type = t; this.text = s; }
     }
 
+    private static final class RowLayout {
+        final int height;
+        final int indent;
+        final int prefixWidth;
+        final int dropCapWidth;
+        final List<FormattedCharSequence> lines;
+
+        RowLayout(int height, int indent, int prefixWidth, int dropCapWidth,
+                  List<FormattedCharSequence> lines) {
+            this.height = height;
+            this.indent = indent;
+            this.prefixWidth = prefixWidth;
+            this.dropCapWidth = dropCapWidth;
+            this.lines = lines;
+        }
+    }
+
+    private static final class HitRect {
+        int x;
+        int y;
+        int width;
+        int height;
+
+        void set(int x, int y, int width, int height) {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+        }
+    }
+
     private final Screen parent;
     private final List<Row> rows = new ArrayList<>();
+    private final IdentityHashMap<Row, RowLayout> rowLayouts = new IdentityHashMap<>();
     private boolean loadError = false;
     private int scrollY = 0;
     private double smoothScrollY = 0.0D;
@@ -52,6 +86,7 @@ public class ChangelogScreen extends Screen {
     private static int lastScrollY = 0;  // Remembered across reopens
     private int maxScroll = 0;
     private int contentTotalH = 0;
+    private int[] rowTops = new int[0];
     private int lastContentW = -1;
     private boolean draggingScrollbar = false;
 
@@ -75,6 +110,7 @@ public class ChangelogScreen extends Screen {
     private boolean searchOpen = false;
     private final StringBuilder searchText = new StringBuilder();
     private final java.util.List<Integer> searchHits = new java.util.ArrayList<>();
+    private final BitSet searchHitRows = new BitSet();
     private int searchHitPos = -1;
 
     // v0.27.0 (V4): la entrada recien llegada se escribe letra a letra en
@@ -100,10 +136,12 @@ public class ChangelogScreen extends Screen {
     private long lastPenScratchMs = 0L;
 
     // v0.16.0: las marcas del encuadernador y el folio escondido
-    private final List<int[]> asteriskRects = new ArrayList<>();
+    private final List<HitRect> asteriskRects = new ArrayList<>();
+    private int visibleAsteriskRectCount = 0;
     private static int binderMarksLit = 0;
     private static long binderGlowUntilMs = 0L;
-    private int[] hiddenFolioRect = null;
+    private final HitRect hiddenFolioRect = new HitRect();
+    private boolean hiddenFolioVisible = false;
 
     public ChangelogScreen(Screen parent) {
         super(Component.literal(pickChangelogTitle()));
@@ -149,7 +187,7 @@ public class ChangelogScreen extends Screen {
 
     private boolean tryLoad(String lang) {
         try {
-            ResourceLocation loc = new ResourceLocation("gripeverde", "changelog/" + lang + ".md");
+            ResourceLocation loc = ResourceLocation.fromNamespaceAndPath("gripeverde", "changelog/" + lang + ".md");
             InputStream in = this.minecraft.getResourceManager().open(loc);
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
             String line;
@@ -198,22 +236,43 @@ public class ChangelogScreen extends Screen {
             case GAP:       return GAP_H;
             case SEPARATOR: return SEP_H;
             default: {
-                int indent = (row.type == LT.BULLET) ? 10 : 0;
-                int prefixW = (row.type == LT.BULLET) ? this.font.width("\u2022 ") : 0;
-                int available = Math.max(20, contentW - indent - prefixW);
-                List<FormattedCharSequence> wrapped =
-                    this.font.split(Component.literal(row.text), available);
-                int lines = Math.max(1, wrapped.size());
-                return lines * lineHeightFor(row.type);
+                RowLayout cached = contentW == this.lastContentW ? this.rowLayouts.get(row) : null;
+                return (cached != null ? cached : buildRowLayout(row, contentW)).height;
             }
         }
+    }
+
+    private RowLayout buildRowLayout(Row row, int contentW) {
+        int indent = row.type == LT.BULLET ? 10 : 0;
+        int prefixWidth = row.type == LT.BULLET ? this.font.width("\u2022 ") : 0;
+        int dropCapWidth = 0;
+        String text = row.text;
+        if (row.type == LT.H1 && row.text.length() > 1) {
+            String firstLetter = row.text.substring(0, 1);
+            text = row.text.substring(1);
+            dropCapWidth = (int) (this.font.width(firstLetter) * 1.6f) + 2;
+        }
+        int available = Math.max(20, contentW - indent - prefixWidth - dropCapWidth);
+        List<FormattedCharSequence> lines = this.font.split(Component.literal(text), available);
+        int height = Math.max(1, lines.size()) * lineHeightFor(row.type);
+        return new RowLayout(height, indent, prefixWidth, dropCapWidth, lines);
     }
 
     private void recalcMaxScroll() {
         int cw = contentW();
         this.lastContentW = cw;
+        this.rowLayouts.clear();
+        this.rowTops = new int[rows.size() + 1];
         int total = 0;
-        for (Row r : rows) total += rowHeight(r, cw);
+        for (int i = 0; i < rows.size(); i++) {
+            Row r = rows.get(i);
+            this.rowTops[i] = total;
+            if (r.type != LT.GAP && r.type != LT.SEPARATOR) {
+                this.rowLayouts.put(r, buildRowLayout(r, cw));
+            }
+            total += rowHeight(r, cw);
+        }
+        this.rowTops[rows.size()] = total;
         this.contentTotalH = total;
         int visible = contentH();
         // v0.16.0: un poco mas alla del ultimo renglon hay sitio para un folio.
@@ -229,6 +288,22 @@ public class ChangelogScreen extends Screen {
         scrollY = (int)Math.round(smoothScrollY);
     }
 
+    /** First row whose bottom lies after the requested content-space offset. */
+    private int firstRowAtOrAfter(int contentOffset) {
+        int low = 0;
+        int high = rows.size();
+        while (low < high) {
+            int mid = (low + high) >>> 1;
+            if (this.rowTops[mid + 1] <= contentOffset) low = mid + 1;
+            else high = mid;
+        }
+        return low;
+    }
+
+    private int rowOffset(int index) {
+        return index >= 0 && index < this.rowTops.length ? this.rowTops[index] : this.contentTotalH;
+    }
+
     private void setScrollTarget(double value, boolean snap) {
         targetScrollY = Math.max(0.0D, Math.min(maxScroll, value));
         if (snap) {
@@ -238,6 +313,11 @@ public class ChangelogScreen extends Screen {
     }
 
     private void tickSmoothScroll() {
+        if (reducedMotion()) {
+            smoothScrollY = targetScrollY;
+            clampScroll();
+            return;
+        }
         double diff = targetScrollY - smoothScrollY;
         if (Math.abs(diff) < 0.35D) {
             smoothScrollY = targetScrollY;
@@ -333,9 +413,7 @@ public class ChangelogScreen extends Screen {
             if (r.type == LT.H1 && r.text.startsWith("Version " + current)) { idx = i; break; }
         }
         if (idx < 0) return; // cronica aun no tiene la entrada; nada que sellar
-        int cw = contentW();
-        int off = 0;
-        for (int i = 0; i < idx; i++) off += rowHeight(rows.get(i), cw);
+        int off = rowOffset(idx);
         off = Math.max(0, off - 6);
         this.newVersionRow = rows.get(idx);
         this.arrivedFreshVersion = true;
@@ -376,13 +454,11 @@ public class ChangelogScreen extends Screen {
     }
 
     private static boolean reducedMotion() {
-        try { return com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get(); }
-        catch (Throwable t) { return false; }
+        return com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
     }
 
     private static boolean reducedFlashes() {
-        try { return com.eternalcraft.gripeverde.config.ClientConfig.REDUCE_FLASHES.get(); }
-        catch (Throwable t) { return false; }
+        return com.eternalcraft.gripeverde.client.util.ClientAccessibility.reduceFlashes();
     }
 
     // v0.28.0: triple de version. Acepta encabezados "Version X.Y.Z - ..."
@@ -436,13 +512,13 @@ public class ChangelogScreen extends Screen {
         g.fill(px,          py,          px + 1,  py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
         g.fill(px + pw - 1, py,          px + pw, py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
 
-        int tw = this.font.width(this.title);
+        int tw = com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
+            g, this.font, this.title, this.width / 2, py + 8, DiaryTheme.AMBER_FLAME);
         int tx = (this.width - tw) / 2;
-        g.drawString(this.font, this.title, tx, py + 8, DiaryTheme.AMBER_FLAME, false);
         g.fill(tx - 4, py + 18, tx + tw + 4, py + 19, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 150));
 
-        this.asteriskRects.clear();
-        this.hiddenFolioRect = null;
+        this.visibleAsteriskRectCount = 0;
+        this.hiddenFolioVisible = false;
         g.enableScissor(cx, cy, cx + cw, cy + ch);
 
         if (loadError) {
@@ -471,10 +547,13 @@ public class ChangelogScreen extends Screen {
                 }
             }
             int penConsumed = 0;
-            int y = cy - scrollY;
-            for (int ri = 0; ri < rows.size(); ri++) {
+            int firstOffset = Math.max(0, scrollY - (penActive ? ch / 2 : 0) - 2);
+            int ri = firstRowAtOrAfter(firstOffset);
+            int y = cy + rowOffset(ri) - scrollY;
+            for (; ri < rows.size(); ri++) {
+                if (y > cy + ch + 2) break;
                 Row row = rows.get(ri);
-                int h = rowHeight(row, cw);
+                int h = this.rowTops[ri + 1] - this.rowTops[ri];
                 boolean inPenEntry = penActive && ri >= penRowStart && ri < penRowEnd;
                 if (y + h >= cy - 2 && y <= cy + ch + 2) {
                     if (inPenEntry) {
@@ -509,7 +588,7 @@ public class ChangelogScreen extends Screen {
                         // sobre un fondo tenue; las demas llevan piquito.
                         if (!searchHits.isEmpty() && searchText.length() > 0
                                 && row.type != LT.GAP && row.type != LT.SEPARATOR) {
-                            boolean isHit = searchHits.contains(ri);
+                            boolean isHit = searchHitRows.get(ri);
                             if (isHit) {
                                 boolean isCurrent = searchHitPos >= 0
                                     && ri == searchHits.get(searchHitPos);
@@ -550,10 +629,11 @@ public class ChangelogScreen extends Screen {
                 int hw = this.font.width(hidden);
                 int hx = cx + (cw - hw) / 2;
                 long pulse = System.currentTimeMillis();
-                int alpha = 120 + (int)(Math.sin(pulse / 640.0) * 40);
+                int alpha = reducedMotion() ? 120 : 120 + (int)(Math.sin(pulse / 640.0) * 40);
                 g.drawString(this.font, hidden, hx, fy, (alpha << 24) | 0x8E6A35, false);
                 g.fill(hx, fy + 11, hx + hw, fy + 12, (Math.min(120, alpha) << 24) | 0x8E6A35);
-                this.hiddenFolioRect = new int[]{ hx - 4, fy - 3, hw + 8, 18 };
+                this.hiddenFolioRect.set(hx - 4, fy - 3, hw + 8, 18);
+                this.hiddenFolioVisible = true;
             }
         }
 
@@ -685,7 +765,7 @@ public class ChangelogScreen extends Screen {
         if (searchOpen) {
             String base = this.font.plainSubstrByWidth(searchText.toString(), SEARCH_W - 8);
             int cxp = sx + 4 + this.font.width(base);
-            boolean caretOn = reducedFlashes()
+            boolean caretOn = reducedMotion() || reducedFlashes()
                 || (System.currentTimeMillis() / 530L) % 2 == 0;
             if (caretOn) {
                 g.fill(cxp + 1, sy + 2, cxp + 2, sy + SEARCH_H - 2,
@@ -708,6 +788,7 @@ public class ChangelogScreen extends Screen {
     // Recuenta apariciones (texto simple, sin comodines) y salta a la primera.
     private void searchRecalc() {
         searchHits.clear();
+        searchHitRows.clear();
         searchHitPos = -1;
         String needle = searchText.toString().toLowerCase(java.util.Locale.ROOT).trim();
         if (needle.isEmpty()) return;
@@ -716,6 +797,7 @@ public class ChangelogScreen extends Screen {
             if (r.type == LT.GAP || r.type == LT.SEPARATOR) continue;
             if (r.text.toLowerCase(java.util.Locale.ROOT).contains(needle)) {
                 searchHits.add(i);
+                searchHitRows.set(i);
             }
         }
         if (!searchHits.isEmpty()) {
@@ -731,16 +813,14 @@ public class ChangelogScreen extends Screen {
             com.eternalcraft.gripeverde.client.audio.UiSounds.scroll();
         }
         int idx = searchHits.get(searchHitPos);
-        int cw = contentW();
-        int off = 0;
-        for (int i = 0; i < idx; i++) off += rowHeight(rows.get(i), cw);
+        int off = rowOffset(idx);
         setScrollTarget(Math.max(0, off - contentH() / 3), false);
     }
 
     private void drawNibAt(GuiGraphics g, int nx, int ny) {
         int a;
-        if (reducedFlashes()) {
-            a = 170; // destellos reducidos: tinta quieta
+        if (reducedMotion() || reducedFlashes()) {
+            a = 170; // movimiento o destellos reducidos: tinta quieta
         } else {
             a = 150 + (int)(55 * Math.sin(System.currentTimeMillis() / 170.0));
         }
@@ -789,31 +869,32 @@ public class ChangelogScreen extends Screen {
             default     -> DiaryTheme.INK;
         };
 
-        int indent = (row.type == LT.BULLET) ? 10 : 0;
+        RowLayout layout = this.rowLayouts.get(row);
+        if (layout == null) layout = buildRowLayout(row, maxW);
+        int indent = layout.indent;
         int lh = lineHeightFor(row.type);
 
         if (row.type == LT.BULLET) {
             g.drawString(this.font, "\u2022 ", x + indent, y, color, false);
-            int prefixW = this.font.width("\u2022 ");
-            int available = Math.max(20, maxW - indent - prefixW);
-            List<FormattedCharSequence> wrapped =
-                this.font.split(Component.literal(row.text), available);
             int ly = y;
-            for (FormattedCharSequence fcs : wrapped) {
-                g.drawString(this.font, fcs, x + indent + prefixW, ly, color, false);
+            for (FormattedCharSequence fcs : layout.lines) {
+                g.drawString(this.font, fcs, x + indent + layout.prefixWidth, ly, color, false);
                 ly += lh;
             }
         } else if (row.type == LT.H1 && row.text.length() > 1) {
             // Drop cap: first letter drawn larger in dark ink
             String firstLetter = row.text.substring(0, 1);
-            String rest = row.text.substring(1);
             int capColor = DiaryTheme.INK;
 
             // Nota al margen: asterisco decorativo a la izquierda del H1
             int marginColor = DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180);
             g.drawString(this.font, "*", x + indent - 10, y + 4, marginColor, false);
             // v0.16.0: el encuadernador marco algunos con proposito.
-            this.asteriskRects.add(new int[]{ x + indent - 12, y + 2, 8, 10 });
+            if (this.visibleAsteriskRectCount == this.asteriskRects.size()) {
+                this.asteriskRects.add(new HitRect());
+            }
+            this.asteriskRects.get(this.visibleAsteriskRectCount++).set(
+                x + indent - 12, y + 2, 8, 10);
 
             g.pose().pushPose();
             float capScale = 1.6f;
@@ -822,22 +903,15 @@ public class ChangelogScreen extends Screen {
             g.drawString(this.font, firstLetter, 0, 0, capColor, false);
             g.pose().popPose();
 
-            int capW = (int)(this.font.width(firstLetter) * capScale) + 2;
-            int available = Math.max(20, maxW - indent - capW);
-            List<FormattedCharSequence> wrapped =
-                this.font.split(Component.literal(rest), available);
             int ly = y;
-            for (int wi = 0; wi < wrapped.size(); wi++) {
-                int lx = (wi == 0) ? x + indent + capW : x + indent;
-                g.drawString(this.font, wrapped.get(wi), lx, ly, color, false);
+            for (int wi = 0; wi < layout.lines.size(); wi++) {
+                int lx = (wi == 0) ? x + indent + layout.dropCapWidth : x + indent;
+                g.drawString(this.font, layout.lines.get(wi), lx, ly, color, false);
                 ly += lh;
             }
         } else {
-            int available = Math.max(20, maxW - indent);
-            List<FormattedCharSequence> wrapped =
-                this.font.split(Component.literal(row.text), available);
             int ly = y;
-            for (FormattedCharSequence fcs : wrapped) {
+            for (FormattedCharSequence fcs : layout.lines) {
                 g.drawString(this.font, fcs, x + indent, ly, color, false);
                 ly += lh;
             }
@@ -863,8 +937,10 @@ public class ChangelogScreen extends Screen {
             this.penActive = false;
             try {
                 // v0.16.0: las marcas del encuadernador
-                for (int[] r : this.asteriskRects) {
-                    if (mouseX >= r[0] && mouseX <= r[0] + r[2] && mouseY >= r[1] && mouseY <= r[1] + r[3]) {
+                for (int i = 0; i < this.visibleAsteriskRectCount; i++) {
+                    HitRect r = this.asteriskRects.get(i);
+                    if (mouseX >= r.x && mouseX <= r.x + r.width
+                            && mouseY >= r.y && mouseY <= r.y + r.height) {
                         binderMarksLit++;
                         com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
                             com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_TICK.get(), 0.12f, 1.9f);
@@ -880,9 +956,10 @@ public class ChangelogScreen extends Screen {
                     }
                 }
                 // v0.16.0: el folio escondido abre la Sala de consulta
-                if (this.hiddenFolioRect != null) {
-                    int[] r = this.hiddenFolioRect;
-                    if (mouseX >= r[0] && mouseX <= r[0] + r[2] && mouseY >= r[1] && mouseY <= r[1] + r[3]) {
+                if (this.hiddenFolioVisible) {
+                    HitRect r = this.hiddenFolioRect;
+                    if (mouseX >= r.x && mouseX <= r.x + r.width
+                            && mouseY >= r.y && mouseY <= r.y + r.height) {
                         com.eternalcraft.gripeverde.client.audio.UiSounds.back();
                         this.minecraft.setScreen(new DiaryArchiveScreen(this));
                         return true;
@@ -945,6 +1022,7 @@ public class ChangelogScreen extends Screen {
                 searchOpen = false;
                 searchText.setLength(0);
                 searchHits.clear();
+                searchHitRows.clear();
                 searchHitPos = -1;
                 return true;
             }

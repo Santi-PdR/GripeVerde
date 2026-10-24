@@ -9,6 +9,7 @@ import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.screens.Screen;
@@ -40,6 +41,10 @@ public class DiaryLanguageScreen extends Screen {
     private static final int INK_PENDING = 0xFF3A230F;
     private static final int INK_NORMAL  = 0xFF6B4A2E;
 
+    private static boolean reducedMotion() {
+        return com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
+    }
+
     private final Screen parent;
     private final Options options;
     private final LanguageManager languageManager;
@@ -63,6 +68,9 @@ public class DiaryLanguageScreen extends Screen {
     private int listY;
     private int listW;
     private int listH;
+    private int panelPad;
+    private int footerButtonHeight;
+    private boolean stackedFooter;
 
     public DiaryLanguageScreen(Screen parent, Options options, LanguageManager languageManager) {
         super(Component.translatable("gripeverde.options.language.title"));
@@ -76,18 +84,31 @@ public class DiaryLanguageScreen extends Screen {
         this.appliedLanguageCode = this.languageManager.getSelected();
         this.pendingLanguageCode = this.appliedLanguageCode;
 
-        this.panelW = Math.min(PANEL_MAX_W, this.width - 24);
-        this.panelH = Math.min(PANEL_MAX_H, this.height - 24);
+        // GUI scale can leave very little logical space. Keep every widget
+        // dimension positive and switch the footer to a vertical layout
+        // before the two translated labels become cramped.
+        this.panelW = Math.max(1, Math.min(PANEL_MAX_W, this.width - 24));
+        this.panelH = Math.max(1, Math.min(PANEL_MAX_H, this.height - 24));
+        this.panelPad = Math.min(PANEL_PAD, Math.max(0, (Math.min(this.panelW, this.panelH) - 1) / 2));
+        if (this.panelH < 180) {
+            this.panelPad = Math.min(this.panelPad, 6);
+        }
+        this.stackedFooter = this.panelW < 250;
+        this.footerButtonHeight = Math.max(1, Math.min(FOOTER_BTN_H,
+            (this.panelH - this.panelPad * 2 - (this.stackedFooter ? FOOTER_BTN_GAP : 0))
+                / (this.stackedFooter ? 2 : 1)));
         this.panelX = (this.width - this.panelW) / 2;
         this.panelY = (this.height - this.panelH) / 2;
 
-        int titleY = this.panelY + PANEL_PAD;
-        int footerY = this.panelY + this.panelH - PANEL_PAD - FOOTER_BTN_H;
+        int titleY = this.panelY + this.panelPad;
+        int footerY = this.panelY + this.panelH - this.panelPad - this.footerButtonHeight
+            - (this.stackedFooter ? this.footerButtonHeight + FOOTER_BTN_GAP : 0);
+        int headerHeight = this.panelH < 180 ? 34 : 50;
 
-        this.listX = this.panelX + PANEL_PAD;
-        this.listY = titleY + 50;
-        this.listW = this.panelW - PANEL_PAD * 2;
-        this.listH = footerY - FOOTER_GAP - this.listY;
+        this.listX = this.panelX + this.panelPad;
+        this.listY = titleY + headerHeight;
+        this.listW = Math.max(1, this.panelW - this.panelPad * 2);
+        this.listH = Math.max(1, footerY - FOOTER_GAP - this.listY);
         this.languageEntries.clear();
 
         this.languageList = new LanguageList(this.minecraft, this.listX, this.listY, this.listW, this.listH);
@@ -98,15 +119,16 @@ public class DiaryLanguageScreen extends Screen {
         }
         this.smoothScroll.snapToCurrent(this.languageList);
 
-        int footerW = this.panelW - PANEL_PAD * 2;
-        int leftBtnW = (footerW - FOOTER_BTN_GAP) / 2;
-        int rightBtnW = footerW - leftBtnW - FOOTER_BTN_GAP;
+        int footerW = Math.max(1, this.panelW - this.panelPad * 2);
+        int leftBtnW = this.stackedFooter ? footerW : Math.max(1, (footerW - FOOTER_BTN_GAP) / 2);
+        int rightBtnW = this.stackedFooter ? footerW : Math.max(1, footerW - leftBtnW - FOOTER_BTN_GAP);
 
-        int unicodeX = this.panelX + PANEL_PAD;
-        int backX = unicodeX + leftBtnW + FOOTER_BTN_GAP;
+        int unicodeX = this.panelX + this.panelPad;
+        int backX = this.stackedFooter ? unicodeX
+            : unicodeX + leftBtnW + FOOTER_BTN_GAP;
 
         this.unicodeButton = this.addRenderableWidget(new DiaryButton(
-                unicodeX, footerY, leftBtnW, FOOTER_BTN_H,
+                unicodeX, footerY, leftBtnW, this.footerButtonHeight,
                 Component.empty(),
                 DiaryButton.Icon.NONE,
                 DiaryButton.Variant.SECONDARY,
@@ -115,7 +137,8 @@ public class DiaryLanguageScreen extends Screen {
         updateUnicodeButtonLabel();
 
         this.addRenderableWidget(new DiaryButton(
-                backX, footerY, rightBtnW, FOOTER_BTN_H,
+                backX, footerY + (this.stackedFooter ? this.footerButtonHeight + FOOTER_BTN_GAP : 0),
+                rightBtnW, this.footerButtonHeight,
                 Component.translatable("gripeverde.options.button.done"),
                 DiaryButton.Icon.DOOR,
                 DiaryButton.Variant.PRIMARY,
@@ -132,35 +155,35 @@ public class DiaryLanguageScreen extends Screen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        // Clear framebuffer + transition fade
-        g.fill(0, 0, this.width, this.height, 0xFF000000);
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
         DiaryChrome.drawPanelShadow(g, panelX, panelY, panelW, panelH);
         PaperTexture.drawClean(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.ARCHIVE);
 
-        int titleY = this.panelY + PANEL_PAD;
+        int titleY = this.panelY + this.panelPad;
         int cx = this.width / 2;
         {
-            int titleW = this.font.width(this.title);
-            int titleX = (this.width - titleW) / 2;
-            g.drawString(this.font, this.title, titleX, titleY, DiaryChrome.INK_TITLE, false);
+            com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
+                g, this.font, this.title, cx, titleY, DiaryChrome.INK_TITLE);
 
-            String subtitle = "- " + Component.translatable("gripeverde.options.language.subtitle").getString() + " -";
-            int subWL = this.font.width(subtitle);
-            g.drawString(this.font, subtitle, cx - subWL / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
+            int compactHeader = this.panelH < 180 ? 20 : 42;
+            if (this.panelH >= 180) {
+                String subtitle = "- " + Component.translatable("gripeverde.options.language.subtitle").getString() + " -";
+                int subWL = this.font.width(subtitle);
+                g.drawString(this.font, subtitle, cx - subWL / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
-            Component flavor = Component.translatable("gripeverde.options.language.flavor");
-            int flvWL = this.font.width(flavor);
-            g.drawString(this.font, flavor, cx - flvWL / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
+                Component flavor = Component.translatable("gripeverde.options.language.flavor");
+                int flvWL = this.font.width(flavor);
+                g.drawString(this.font, flavor, cx - flvWL / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
+            }
 
-            int divY1 = titleY + 42;
+            int divY1 = titleY + compactHeader;
             DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY1);
         }
 
-        int frameX = this.listX - 4;
-        int frameY = this.listY - 4;
-        int frameW = this.listW + 8;
-        int frameH = this.listH + 8;
+        int frameX = this.listX - Math.min(4, this.listX - this.panelX);
+        int frameY = this.listY - Math.min(4, this.listY - this.panelY);
+        int frameW = Math.max(1, Math.min(this.panelX + this.panelW - frameX, this.listW + 8));
+        int frameH = Math.max(1, Math.min(this.panelY + this.panelH - frameY, this.listH + 8));
 
         // Fondo interno con textura de pergamino (evita cartulina lisa)
         PaperTexture.drawClean(g, frameX, frameY, frameW, frameH);
@@ -174,10 +197,17 @@ public class DiaryLanguageScreen extends Screen {
             this.languageList.render(g, mouseX, mouseY, partialTick);
         }
 
-        int divY2 = this.panelY + this.panelH - PANEL_PAD - FOOTER_BTN_H - 6;
-        DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
-        DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
-        DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. IV");
+        int divY2 = this.panelY + this.panelH - this.panelPad - this.footerButtonHeight
+            - (this.stackedFooter ? this.footerButtonHeight + FOOTER_BTN_GAP : 0) - 6;
+        if (this.panelW >= 30) {
+            DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
+        }
+        if (this.panelW >= 48 && this.panelH >= 48) {
+            DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
+        }
+        if (this.panelW >= 200 && this.panelH >= 100) {
+            DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. IV");
+        }
 
         super.render(g, mouseX, mouseY, partialTick);
 
@@ -262,9 +292,8 @@ public class DiaryLanguageScreen extends Screen {
     private boolean selectFirstMatchingLanguage(String query) {
         String q = query.toLowerCase(java.util.Locale.ROOT);
         for (LanguageEntry entry : this.languageEntries) {
-            String name = entry.info.toComponent().getString().toLowerCase(java.util.Locale.ROOT);
             String code = entry.code.toLowerCase(java.util.Locale.ROOT);
-            if (name.startsWith(q) || code.startsWith(q) || name.contains(q)) {
+            if (entry.searchName.startsWith(q) || code.startsWith(q) || entry.searchName.contains(q)) {
                 this.pendingLanguageCode = entry.code;
                 this.languageList.selectAndCenter(entry);
                 return true;
@@ -432,12 +461,33 @@ public class DiaryLanguageScreen extends Screen {
         private final String code;
         private final LanguageInfo info;
         private final boolean fogTongue;
+        private final String searchName;
+        private final String displayCode;
+        private final String fogName;
+        private final Component languageName;
+        private final Component normalLabel;
+        private final Component pendingLabel;
+        private final Component appliedLabel;
+        private Font measuredFont;
+        private int normalLabelWidth;
+        private int pendingLabelWidth;
+        private int appliedLabelWidth;
+        private int displayCodeWidth;
+        private int fogNameWidth;
         private long lastClickMs = 0L;
 
         private LanguageEntry(String code, LanguageInfo info) {
             this.code = code;
             this.info = info;
             this.fogTongue = false;
+            this.displayCode = code.toUpperCase(java.util.Locale.ROOT);
+            Component name = info.toComponent();
+            this.languageName = name;
+            this.searchName = name.getString().toLowerCase(java.util.Locale.ROOT);
+            this.normalLabel = Component.literal("  ").append(name);
+            this.pendingLabel = Component.literal("> ").append(name);
+            this.appliedLabel = Component.literal("- ").append(name);
+            this.fogName = null;
         }
 
         private LanguageEntry() {
@@ -445,6 +495,27 @@ public class DiaryLanguageScreen extends Screen {
             this.code = "fog";
             this.info = null;
             this.fogTongue = true;
+            this.searchName = "";
+            this.displayCode = "FOG";
+            this.normalLabel = null;
+            this.pendingLabel = null;
+            this.appliedLabel = null;
+            this.fogName = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+                ? "Tongue of the Fog" : "Lengua de la Niebla";
+            this.languageName = null;
+        }
+
+        private void refreshTextMetrics(Font font) {
+            if (this.measuredFont == font) return;
+            this.measuredFont = font;
+            if (this.fogTongue) {
+                this.fogNameWidth = font.width(this.fogName);
+                return;
+            }
+            this.normalLabelWidth = font.width(this.normalLabel);
+            this.pendingLabelWidth = font.width(this.pendingLabel);
+            this.appliedLabelWidth = font.width(this.appliedLabel);
+            this.displayCodeWidth = font.width(this.displayCode);
         }
 
         @Override
@@ -456,13 +527,13 @@ public class DiaryLanguageScreen extends Screen {
                 if (hovered) {
                     g.fill(left + 2, top + 1, left + rowWidth - 2, top + rowHeight - 2, 0x22384028);
                 }
-                String name = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
-                    ? "Tongue of the Fog" : "Lengua de la Niebla";
-                int pulse = 90 + (int)(Math.sin(System.currentTimeMillis() / 600.0) * 40);
-                int w2 = DiaryLanguageScreen.this.font.width(name);
-                g.drawString(DiaryLanguageScreen.this.font, name,
-                    left + FLAG_SLOT + (rowWidth - FLAG_SLOT - w2) / 2,
-                    top + (rowHeight - DiaryLanguageScreen.this.font.lineHeight) / 2,
+                Font font = DiaryLanguageScreen.this.font;
+                this.refreshTextMetrics(font);
+                int pulse = reducedMotion() ? 90
+                    : 90 + (int)(Math.sin(System.currentTimeMillis() / 600.0) * 40);
+                g.drawString(font, this.fogName,
+                    left + FLAG_SLOT + (rowWidth - FLAG_SLOT - this.fogNameWidth) / 2,
+                    top + (rowHeight - font.lineHeight) / 2,
                     (Math.max(30, pulse) << 24) | 0x7A9060, false);
                 // Rombo de tinta en lugar de bandera
                 int dx = left + 8, dy = top + rowHeight / 2;
@@ -505,25 +576,20 @@ public class DiaryLanguageScreen extends Screen {
                 textColor = INK_NORMAL;
             }
 
-            String prefix;
-            if (isPending) {
-                prefix = "> ";
-            } else if (isApplied) {
-                prefix = "- ";
-            } else {
-                prefix = "  ";
-            }
-
-            Component label = Component.literal(prefix).append(this.info.toComponent());
+            Font font = DiaryLanguageScreen.this.font;
+            this.refreshTextMetrics(font);
+            Component label = isPending ? this.pendingLabel
+                : isApplied ? this.appliedLabel : this.normalLabel;
+            int textW = isPending ? this.pendingLabelWidth
+                : isApplied ? this.appliedLabelWidth : this.normalLabelWidth;
 
             // Zona de texto: desde left+FLAG_SLOT hasta left+rowWidth
             int textZoneLeft  = left + FLAG_SLOT;
             int textZoneWidth = rowWidth - FLAG_SLOT;
-            int textW  = DiaryLanguageScreen.this.font.width(label);
             int textX  = textZoneLeft + (textZoneWidth - textW) / 2;
-            int textY  = top + (rowHeight - DiaryLanguageScreen.this.font.lineHeight) / 2;
+            int textY  = top + (rowHeight - font.lineHeight) / 2;
 
-            g.drawString(DiaryLanguageScreen.this.font, label, textX, textY, textColor, false);
+            g.drawString(font, label, textX, textY, textColor, false);
 
             if (isApplied) {
                 int markColor = 0xAA422810;
@@ -532,12 +598,10 @@ public class DiaryLanguageScreen extends Screen {
             }
 
             if (hovered || isPending) {
-                String codeText = this.code.toUpperCase(java.util.Locale.ROOT);
-                int codeW = DiaryLanguageScreen.this.font.width(codeText);
-                int codeX = left + rowWidth - codeW - 16;
+                int codeX = left + rowWidth - this.displayCodeWidth - 16;
                 if (codeX > textZoneLeft + textW + 8) {
                     int codeColor = isPending ? 0xAA1A0F08 : 0x886B4A2E;
-                    g.drawString(DiaryLanguageScreen.this.font, codeText, codeX, textY, codeColor, false);
+                    g.drawString(font, this.displayCode, codeX, textY, codeColor, false);
                 }
             }
         }
@@ -577,7 +641,7 @@ public class DiaryLanguageScreen extends Screen {
         @Override
         public Component getNarration() {
             if (this.fogTongue) return Component.literal("...");
-            return this.info.toComponent();
+            return this.languageName;
         }
     }
 }

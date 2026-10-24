@@ -37,7 +37,7 @@ public final class ClientConfig {
         b.pop();
         b.push("visual");
         REDUCED_MOTION = b
-            .comment("Reducir el movimiento del ambiente del menu (accesibilidad).")
+            .comment("Reducir el movimiento del ambiente del menu (accesibilidad). En mundos y servidores, las interfaces se mantienen quietas automaticamente.")
             .define("reducedMotion", false);
         REDUCE_FLASHES = b
             .comment("Reducir destellos de tormenta (relampagos) sin congelar el resto de la escena (accesibilidad, fotosensibilidad).")

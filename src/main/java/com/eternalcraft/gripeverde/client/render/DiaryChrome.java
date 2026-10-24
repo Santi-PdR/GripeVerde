@@ -77,6 +77,19 @@ public final class DiaryChrome {
         int w = 58;
         int h = 13;
 
+        if (com.eternalcraft.gripeverde.client.util.ClientAccessibility.hasActiveGameSession()) {
+            gfx.fill(x, y, x + w, y + h, STEEL_MID);
+            gfx.fill(x, y, x + w, y + 1, STEEL_EDGE);
+            gfx.fill(x, y + h - 1, x + w, y + h, STEEL_EDGE);
+            gfx.fill(x, y, x + 1, y + h, STEEL_EDGE);
+            gfx.fill(x + w - 1, y, x + w, y + h, STEEL_EDGE);
+            gfx.fill(x + 1, y + 2, x + 2, y + h - 2, PLAGUE);
+            int tw = gfx.drawString(Minecraft.getInstance().font, regCode, x + 2, y + 3,
+                    DiaryTheme.withAlpha(0x002A2620, 235), false);
+            gfx.fill(x + 2 + tw + 2, y + 4, x + 2 + tw + 4, y + 5, STEEL_EDGE);
+            return;
+        }
+
         // base de acero cepillado
         for (int i = 0; i < h; i++) {
             int v = STEEL_MID + (i % 3 == 0 ? 4 : (i % 3 == 1 ? -2 : 0));
@@ -102,6 +115,13 @@ public final class DiaryChrome {
     }
 
     public static void drawInkDivider(GuiGraphics gfx, int x, int y, int w) {
+        if (com.eternalcraft.gripeverde.client.util.ClientAccessibility.hasActiveGameSession()) {
+            if (w <= 0) return;
+            gfx.fill(x, y, x + w, y + 1, 0x70422810);
+            int cx = x + w / 2;
+            gfx.fill(cx - 1, y - 1, cx + 2, y + 2, 0x90422810);
+            return;
+        }
         int fade = Math.max(8, w / 6);
         int cx   = x + w / 2;
         gfx.fillGradient(x,            y, x + fade,     y + 1, 0x00000000, INK_DIVIDER);
@@ -132,6 +152,21 @@ public final class DiaryChrome {
 
     // ── Esquineros victorianos dobles ───────────────────────────────────────
     public static void drawCornerOrnaments(GuiGraphics gfx, int x, int y, int w, int h) {
+        if (com.eternalcraft.gripeverde.client.util.ClientAccessibility.hasActiveGameSession()) {
+            // The world remains visible behind in-game screens. Keep four
+            // small corner marks and skip the layered editorial ornament pass.
+            int color = 0x80422810;
+            int len = Math.min(5, Math.max(2, Math.min(w, h) / 8));
+            gfx.fill(x, y, x + len, y + 1, color);
+            gfx.fill(x, y, x + 1, y + len, color);
+            gfx.fill(x + w - len, y, x + w, y + 1, color);
+            gfx.fill(x + w - 1, y, x + w, y + len, color);
+            gfx.fill(x, y + h - 1, x + len, y + h, color);
+            gfx.fill(x, y + h - len, x + 1, y + h, color);
+            gfx.fill(x + w - len, y + h - 1, x + w, y + h, color);
+            gfx.fill(x + w - 1, y + h - len, x + w, y + h, color);
+            return;
+        }
         int colOut = 0xC0422810;
         int colIn  = 0x80422810;
         int sOut = 12, sIn = 5, off = 3;
@@ -202,6 +237,19 @@ public final class DiaryChrome {
 
         int scrollRight = scrollLeft + 6;
         int trackH = trackY2 - trackY1;
+        if (com.eternalcraft.gripeverde.client.util.ClientAccessibility.hasActiveGameSession()) {
+            if (trackH <= 0) return;
+            int thumbH = Math.min(trackH, Math.max(12,
+                (int) (trackH * trackH / (double) (trackH + maxScroll * 1.2))));
+            double scrollFrac = Math.max(0.0, Math.min(1.0, scrollAmount / maxScroll));
+            int thumbY = trackY1 + (int) ((trackH - thumbH) * scrollFrac);
+            gfx.fill(scrollLeft + 2, trackY1, scrollRight - 2, trackY2, 0x60422810);
+            gfx.fill(scrollLeft, thumbY, scrollRight, thumbY + thumbH, 0xCC6B4A2E);
+            if (thumbH > 2) {
+                gfx.fill(scrollLeft + 1, thumbY + 1, scrollLeft + 2, thumbY + thumbH - 1, 0xD0A67A5A);
+            }
+            return;
+        }
         gfx.fill(scrollLeft, trackY1, scrollRight, trackY2, 0xFFF0E5C8);
         gfx.fill(scrollLeft + 2, trackY1, scrollRight - 2, trackY2, 0x30422810);
         gfx.fill(scrollLeft - 1, trackY1 - 1, scrollRight + 1, trackY1, DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 90));
@@ -248,6 +296,10 @@ public final class DiaryChrome {
 
     // ── Sombra proyectada profesional ───────────────────────────────────────
     public static void drawPanelShadow(GuiGraphics gfx, int x, int y, int w, int h) {
+        if (com.eternalcraft.gripeverde.client.util.ClientAccessibility.hasActiveGameSession()) {
+            gfx.fill(x + 3, y + 3, x + w + 3, y + h + 3, 0x30100600);
+            return;
+        }
         int offset = 7;
         gfx.fill(x + offset - 4, y + offset - 4, x + w + offset + 4, y + h + offset + 4, 0x18100600);
         gfx.fill(x + offset - 2, y + offset - 2, x + w + offset + 2, y + h + offset + 2, 0x3A100600);

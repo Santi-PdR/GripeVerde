@@ -3,12 +3,14 @@ package com.eternalcraft.gripeverde.client.screens;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.GenericDirtMessageScreen;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.achievement.StatsScreen;
 import net.minecraft.client.gui.screens.advancements.AdvancementsScreen;
+import net.minecraft.locale.Language;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
@@ -60,6 +62,19 @@ public class DiaryPauseScreen extends PauseScreen {
     private static final java.util.Random PAPER_RNG = new java.util.Random();
     private static final java.util.Random BLOOD_RNG = new java.util.Random();
     private static final java.util.Random BREATH_RNG = new java.util.Random();
+    private boolean compactLayout;
+    private Language cachedHeaderLanguage;
+    private Font cachedHeaderFont;
+    private Component cachedDisplayTitle;
+    private int cachedTitleWidth;
+    private String cachedSubtitle = "";
+    private int cachedSubtitleWidth;
+    private Component cachedSignature;
+    private int cachedSignatureWidth;
+    private String cachedSignatureAside = "";
+    private int cachedSignatureAsideWidth;
+    private int cachedDateWidth;
+    private static final String DATE_STAMP = "23 · III · 1897";
 
     // ── v0.16.0: la pausa responde ──
     private boolean candleOut = false;
@@ -88,6 +103,12 @@ public class DiaryPauseScreen extends PauseScreen {
         int py = panelY();
         int pw = panelW();
         int ph = panelH();
+        this.compactLayout = ph < PANEL_MIN_H;
+
+        if (this.compactLayout) {
+            initCompactButtons(px, py, pw, ph);
+            return;
+        }
 
         // Zona disponible para los 5 botones (entre los dos separadores)
         int contentTop = py + ORN_SEP_TOP + 6;
@@ -103,21 +124,22 @@ public class DiaryPauseScreen extends PauseScreen {
 
         int totalBtnH = bh * 5 + gap * 4;
         int btnStartY = contentTop + Math.max(0, (contentH - totalBtnH) / 2);
-        int btnX = px + (pw - BTN_W) / 2;
+        int btnW = Math.max(1, Math.min(BTN_W, pw - 24));
+        int btnX = px + (pw - btnW) / 2;
 
         // Redefinimos referencia local para el resto del metodo
         final int BH = bh;
         final int BG = gap;
 
         this.addRenderableWidget(new DiaryButton(
-            btnX, btnStartY, BTN_W, BH,
+            btnX, btnStartY, btnW, BH,
             Component.translatable("gripeverde.pause.btn.resume"),
             DiaryButton.Icon.HAND, DiaryButton.Variant.PRIMARY,
             this::resumeGame
         ));
 
         DiaryButton recordsBtn = new DiaryButton(
-            btnX, btnStartY + (BH + BG), BTN_W, BH,
+            btnX, btnStartY + (BH + BG), btnW, BH,
             Component.translatable("gripeverde.pause.btn.records"),
             DiaryButton.Icon.SCROLL, DiaryButton.Variant.SECONDARY,
             this::openRecords
@@ -126,7 +148,7 @@ public class DiaryPauseScreen extends PauseScreen {
         this.addRenderableWidget(recordsBtn);
 
         DiaryButton statsBtn = new DiaryButton(
-            btnX, btnStartY + (BH + BG) * 2, BTN_W, BH,
+            btnX, btnStartY + (BH + BG) * 2, btnW, BH,
             Component.translatable("gripeverde.pause.btn.statistics"),
             DiaryButton.Icon.CHART, DiaryButton.Variant.SECONDARY,
             this::openStats
@@ -135,23 +157,70 @@ public class DiaryPauseScreen extends PauseScreen {
         this.addRenderableWidget(statsBtn);
 
         this.addRenderableWidget(new DiaryButton(
-            btnX, btnStartY + (BH + BG) * 3, BTN_W, BH,
+            btnX, btnStartY + (BH + BG) * 3, btnW, BH,
             Component.translatable("gripeverde.pause.btn.adjustments"),
             DiaryButton.Icon.GEAR, DiaryButton.Variant.SECONDARY,
             this::openAdjustments
         ));
 
         this.addRenderableWidget(new DiaryButton(
-            btnX, btnStartY + (BH + BG) * 4, BTN_W, BH,
+            btnX, btnStartY + (BH + BG) * 4, btnW, BH,
             Component.translatable("gripeverde.pause.btn.leave"),
             DiaryButton.Icon.DOOR, DiaryButton.Variant.DANGER,
             this::onLeave
         ));
     }
 
+    private void initCompactButtons(int px, int py, int pw, int ph) {
+        int columns = pw >= 220 ? 2 : 1;
+        int rows = (5 + columns - 1) / columns;
+        int gapX = columns == 2 ? 8 : 0;
+        int gapY = columns == 2 ? 4 : 2;
+        int insetX = 12;
+        int buttonW = Math.max(1, (pw - insetX * 2 - gapX * (columns - 1)) / columns);
+        int buttonTop = py + 26;
+        int buttonBottom = py + ph - 4;
+        int availableH = Math.max(1, buttonBottom - buttonTop);
+        int buttonH = Math.max(1, Math.min(BTN_H, (availableH - gapY * (rows - 1)) / rows));
+
+        addCompactButton(0, px, buttonTop, buttonW, buttonH, gapX, gapY, columns,
+            Component.translatable("gripeverde.pause.btn.resume"),
+            DiaryButton.Icon.HAND, DiaryButton.Variant.PRIMARY, this::resumeGame);
+
+        DiaryButton recordsButton = addCompactButton(1, px, buttonTop, buttonW, buttonH, gapX, gapY, columns,
+            Component.translatable("gripeverde.pause.btn.records"),
+            DiaryButton.Icon.SCROLL, DiaryButton.Variant.SECONDARY, this::openRecords);
+        if (this.minecraft.getConnection() == null) recordsButton.active = false;
+
+        DiaryButton statsButton = addCompactButton(2, px, buttonTop, buttonW, buttonH, gapX, gapY, columns,
+            Component.translatable("gripeverde.pause.btn.statistics"),
+            DiaryButton.Icon.CHART, DiaryButton.Variant.SECONDARY, this::openStats);
+        if (this.minecraft.player == null) statsButton.active = false;
+
+        addCompactButton(3, px, buttonTop, buttonW, buttonH, gapX, gapY, columns,
+            Component.translatable("gripeverde.pause.btn.adjustments"),
+            DiaryButton.Icon.GEAR, DiaryButton.Variant.SECONDARY, this::openAdjustments);
+        addCompactButton(4, px, buttonTop, buttonW, buttonH, gapX, gapY, columns,
+            Component.translatable("gripeverde.pause.btn.leave"),
+            DiaryButton.Icon.DOOR, DiaryButton.Variant.DANGER, this::onLeave);
+    }
+
+    private DiaryButton addCompactButton(int index, int px, int top, int buttonW, int buttonH,
+                                        int gapX, int gapY, int columns, Component label,
+                                        DiaryButton.Icon icon, DiaryButton.Variant variant,
+                                        Runnable action) {
+        int column = index % columns;
+        int row = index / columns;
+        int x = px + 12 + column * (buttonW + gapX);
+        int y = top + row * (buttonH + gapY);
+        DiaryButton button = new DiaryButton(x, y, buttonW, buttonH, label, icon, variant, action);
+        this.addRenderableWidget(button);
+        return button;
+    }
+
 
     public void tick() {
-        animTick++;
+        if (!reducedMotion()) animTick++;
         // v0.16.0: el aliento del otro lado del vidrio.
         try {
             long now = System.currentTimeMillis();
@@ -192,9 +261,10 @@ public class DiaryPauseScreen extends PauseScreen {
         if (button == 0) {
             try {
                 int px = panelX(), py = panelY();
-                // La vela: apagarla revela lo que lee la oscuridad.
+                // En modo compacto estos adornos se ocultan para dejar sitio a los controles.
                 int candleX = px + 20, candleY = py + panelH() - 32;
-                if (mouseX >= candleX - 6 && mouseX <= candleX + 20 && mouseY >= candleY - 14 && mouseY <= candleY + 28) {
+                if (!compactLayout && mouseX >= candleX - 6 && mouseX <= candleX + 20
+                        && mouseY >= candleY - 14 && mouseY <= candleY + 28) {
                     candleOut = !candleOut;
                     if (candleOut) {
                         candleSmokeUntilMs = System.currentTimeMillis() + 2600L;
@@ -210,7 +280,8 @@ public class DiaryPauseScreen extends PauseScreen {
                 }
                 // El cuervo cobra su peaje.
                 int ravenX = px + 14, ravenY = py + 22;
-                if (mouseX >= ravenX - 4 && mouseX <= ravenX + 24 && mouseY >= ravenY - 4 && mouseY <= ravenY + 22) {
+                if (!compactLayout && mouseX >= ravenX - 4 && mouseX <= ravenX + 24
+                        && mouseY >= ravenY - 4 && mouseY <= ravenY + 22) {
                     int n = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.bump("ravenClicks");
                     com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
                         com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_CROWS.get(), 0.22f, 1.45f);
@@ -283,37 +354,43 @@ public class DiaryPauseScreen extends PauseScreen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        refreshHeaderCache();
+        boolean inGameSession = com.eternalcraft.gripeverde.client.util.ClientAccessibility.hasActiveGameSession();
         int overlay = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 180);
         g.fill(0, 0, this.width, this.height, overlay);
 
-        drawVignette(g);
+        // The world already renders below this pause screen; the overlay gives
+        // enough contrast without the 160 fill calls of the vignette.
+        if (!inGameSession) drawVignette(g);
 
         int px = panelX();
         int py = panelY();
-        drawPanel(g, px, py, panelW(), panelH());
+        drawPanel(g, px, py, panelW(), panelH(), inGameSession);
         drawPanelTitle(g, px, py);
         drawDateStamp(g, px, py);
         drawPanelSeparators(g, px, py);
 
         // Elementos decorativos
-        drawRaven(g, px + 14, py + 22);
+        if (!compactLayout) drawRaven(g, px + 14, py + 22, inGameSession);
 
         super.render(g, mouseX, mouseY, partialTick);
 
         // Elementos que van encima de los botones
-        drawCandle(g, px + 20, py + panelH() - 32);
-        drawSignature(g, px, py);
-        drawWaxSeal(g, px + panelW() - 28, py + panelH() - 26);
+        if (!compactLayout) {
+            drawCandle(g, px + 20, py + panelH() - 32, inGameSession);
+            drawSignature(g, px, py);
+            drawWaxSeal(g, px + panelW() - 28, py + panelH() - 26, inGameSession);
+        }
 
         // ── v0.16.0: lo que trae la oscuridad ──
         try {
-            if (candleOut) {
+            if (candleOut && !compactLayout) {
                 // El panel queda en penumbra
                 g.fill(px + 2, py + 2, px + panelW() - 2, py + panelH() - 2,
                     DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 96));
                 // Solo a oscuras se lee esto
                 long now = System.currentTimeMillis();
-                int pulse = 60 + (int)(Math.sin(now / 650.0) * 24);
+                int pulse = reducedMotion() ? 60 : 60 + (int)(Math.sin(now / 650.0) * 24);
                 boolean en = isEnglishSelected();
                 String dark = en ? "the darkness reads too" : "la oscuridad tambien lee";
                 int dw = this.font.width(dark);
@@ -322,12 +399,14 @@ public class DiaryPauseScreen extends PauseScreen {
             }
             // El aliento en el vidrio
             long now = System.currentTimeMillis();
-            if (breathUntilMs > now) {
+            if (!compactLayout && breathUntilMs > now) {
                 long age = now - breathStartMs;
                 long remain = breathUntilMs - now;
-                int a = 26;
-                if (age < 1400L) a = (int)(26 * age / 1400L);
-                else if (remain < 1400L) a = (int)(26 * remain / 1400L);
+                int a = reducedMotion() ? 20 : 26;
+                if (!reducedMotion()) {
+                    if (age < 1400L) a = (int)(26 * age / 1400L);
+                    else if (remain < 1400L) a = (int)(26 * remain / 1400L);
+                }
                 if (a > 1) {
                     for (int r = 12; r > 2; r -= 3) {
                         int alpha = a * (13 - r) / 10;
@@ -338,11 +417,13 @@ public class DiaryPauseScreen extends PauseScreen {
                 }
             }
             // La segunda sombra
-            if (shadowUntilMs > now) {
+            if (!compactLayout && shadowUntilMs > now) {
                 long age = now - shadowStartMs;
-                int a = 40;
-                if (age < 500L) a = (int)(40 * age / 500L);
-                else if (shadowUntilMs - now < 500L) a = (int)(40 * (shadowUntilMs - now) / 500L);
+                int a = reducedMotion() ? 28 : 40;
+                if (!reducedMotion()) {
+                    if (age < 500L) a = (int)(40 * age / 500L);
+                    else if (shadowUntilMs - now < 500L) a = (int)(40 * (shadowUntilMs - now) / 500L);
+                }
                 int sx = px + panelW() - 46;
                 int sy = py + 30;
                 int col = (a << 24) | 0x000000;
@@ -374,13 +455,21 @@ public class DiaryPauseScreen extends PauseScreen {
     // PANEL — FIX papel claro real (orden de render corregido)
     // ================================================================
 
-    private void drawPanel(GuiGraphics g, int x, int y, int w, int h) {
+    private void drawPanel(GuiGraphics g, int x, int y, int w, int h, boolean fastInGame) {
         // Sombra
         int shadowColor = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 200);
         g.fill(x + 5, y + 5, x + w + 5, y + h + 5, shadowColor);
 
         // Base opaca — papel crema claro
         g.fill(x, y, x + w, y + h, PAPER_LIGHT);
+
+        if (fastInGame) {
+            // Preserve the same paper silhouette and frame, but skip the
+            // procedural stains, random dots and per-row highlight pass.
+            drawDoubleBorder(g, x, y, w, h);
+            drawCornerOrnaments(g, x, y, w, h);
+            return;
+        }
 
         // ORDEN NUEVO: manchas primero, brillo despues (brillo debe estar encima)
 
@@ -421,15 +510,10 @@ public class DiaryPauseScreen extends PauseScreen {
 
     private void drawBloodSpotWithSplatter(GuiGraphics g, int cx, int cy, int r) {
         for (int dy = -r; dy <= r; dy++) {
-            for (int dx = -r; dx <= r; dx++) {
-                int d2 = dx * dx + dy * dy;
-                if (d2 <= r * r) {
-                    float t = 1f - (float) Math.sqrt(d2) / r;
-                    int alpha = (int)(t * 140);
-                    int c = DiaryTheme.withAlpha(DiaryTheme.BLOOD_DRIED, alpha);
-                    g.fill(cx + dx, cy + dy, cx + dx + 1, cy + dy + 1, c);
-                }
-            }
+            int dx = (int) Math.sqrt(r * r - dy * dy);
+            int alpha = 72 + (r - Math.abs(dy)) * 8;
+            g.fill(cx - dx, cy + dy, cx + dx + 1, cy + dy + 1,
+                DiaryTheme.withAlpha(DiaryTheme.BLOOD_DRIED, alpha));
         }
         g.fill(cx - 2, cy - 2, cx + 2, cy + 2, DiaryTheme.BLOOD_DRIED);
 
@@ -476,38 +560,64 @@ public class DiaryPauseScreen extends PauseScreen {
     // ================================================================
 
     private void drawPanelTitle(GuiGraphics g, int px, int py) {
-        String title = Component.translatable("gripeverde.pause.title").getString();
-        String subtitle = Component.translatable("gripeverde.pause.subtitle").getString();
-
         int centerX = px + panelW() / 2;
-        int titleY = py + 24;
+        int titleY = py + (compactLayout ? 4 : 24);
         int subtitleY = py + 58;
-
-        int tw = this.font.width(title);
+        int tw = this.cachedTitleWidth;
+        float titleScale = compactLayout
+            ? Math.min(1.35f, Math.max(0.65f, (panelW() - 16f) / Math.max(1, tw)))
+            : 1.75f;
         // v0.21.25: tinta limpia sin sombra doble.
         g.pose().pushPose();
         g.pose().translate(centerX, titleY, 0);
-        g.pose().scale(1.75f, 1.75f, 1f);
-        g.drawString(this.font, title, -tw / 2, 0, DiaryTheme.INK, false);
+        g.pose().scale(titleScale, titleScale, 1f);
+        g.drawString(this.font, this.cachedDisplayTitle, -tw / 2, 0, DiaryTheme.INK, false);
         g.pose().popPose();
 
-        int scaledTw = (int)(tw * 1.75f);
-        int ornY = titleY + 5;
-        drawFlourish(g, centerX - scaledTw / 2 - 20, ornY, DiaryTheme.BRONZE, false);
-        drawFlourish(g, centerX + scaledTw / 2 + 4, ornY, DiaryTheme.BRONZE, true);
+        if (!compactLayout) {
+            int scaledTw = (int)(tw * titleScale);
+            int ornY = titleY + 5;
+            drawFlourish(g, centerX - scaledTw / 2 - 20, ornY, DiaryTheme.BRONZE, false);
+            drawFlourish(g, centerX + scaledTw / 2 + 4, ornY, DiaryTheme.BRONZE, true);
 
-        int sw = this.font.width(subtitle);
-        g.drawString(this.font, subtitle,
-            centerX - sw / 2, subtitleY,
-            DiaryTheme.SEPIA_MID, false);
+            g.drawString(this.font, this.cachedSubtitle,
+                centerX - this.cachedSubtitleWidth / 2, subtitleY,
+                DiaryTheme.SEPIA_MID, false);
+        }
     }
 
     private void drawDateStamp(GuiGraphics g, int px, int py) {
-        String date = "23 · III · 1897";
-        int dw = this.font.width(date);
-        int dx = px + panelW() - dw - 12;
+        if (compactLayout) return;
+        int dx = px + panelW() - this.cachedDateWidth - 12;
         int dy = py + 12;
-        g.drawString(this.font, date, dx, dy, DiaryTheme.SEPIA_DARK, false);
+        g.drawString(this.font, DATE_STAMP, dx, dy, DiaryTheme.SEPIA_DARK, false);
+    }
+
+    private void refreshHeaderCache() {
+        Language language = Language.getInstance();
+        Font font = this.font;
+        if (language == this.cachedHeaderLanguage && font == this.cachedHeaderFont) return;
+
+        this.cachedHeaderLanguage = language;
+        this.cachedHeaderFont = font;
+        this.cachedDisplayTitle = com.eternalcraft.gripeverde.client.render.DiaryTypography.display(
+            Component.translatable("gripeverde.pause.title").getString());
+        this.cachedTitleWidth = font.width(this.cachedDisplayTitle);
+        this.cachedSubtitle = Component.translatable("gripeverde.pause.subtitle").getString();
+        this.cachedSubtitleWidth = font.width(this.cachedSubtitle);
+        this.cachedDateWidth = font.width(DATE_STAMP);
+        this.cachedSignature = Component.literal(isEnglishSelected()
+                ? "Signed: S. Pereira, M.D."
+                : "Firmado: S. Pereira, Medico")
+            .withStyle(ChatFormatting.ITALIC);
+        this.cachedSignatureWidth = font.width(this.cachedSignature);
+        boolean hasManyDiscoveries = false;
+        try {
+            hasManyDiscoveries = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.discoveredCount() >= 10;
+        } catch (Throwable ignored) {}
+        this.cachedSignatureAside = hasManyDiscoveries
+            ? (isEnglishSelected() ? "- and of whoever reads -" : "- y de quien lee -") : "";
+        this.cachedSignatureAsideWidth = font.width(this.cachedSignatureAside);
     }
 
     private void drawFlourish(GuiGraphics g, int x, int y, int color, boolean mirror) {
@@ -534,8 +644,10 @@ public class DiaryPauseScreen extends PauseScreen {
         int lineC = DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 200);
         int accentC = DiaryTheme.BRONZE;
 
-        drawSepLine(g, centerX, py + ORN_SEP_TOP, sepW, lineC, accentC);
-        drawSepLine(g, centerX, py + panelH() - ORN_SEP_BOT_FROM_BOT, sepW, lineC, accentC);
+        drawSepLine(g, centerX, py + (compactLayout ? 22 : ORN_SEP_TOP), sepW, lineC, accentC);
+        if (!compactLayout) {
+            drawSepLine(g, centerX, py + panelH() - ORN_SEP_BOT_FROM_BOT, sepW, lineC, accentC);
+        }
     }
 
     private void drawSepLine(GuiGraphics g, int cx, int y, int width, int lineC, int accentC) {
@@ -548,24 +660,17 @@ public class DiaryPauseScreen extends PauseScreen {
     }
 
     private void drawSignature(GuiGraphics g, int px, int py) {
-        Component sig = Component.literal(isEnglishSelected()
-                ? "Signed: S. Pereira, M.D."
-                : "Firmado: S. Pereira, Medico")
-            .withStyle(ChatFormatting.ITALIC);
+        if (compactLayout) return;
         int centerX = px + panelW() / 2;
-        int sw = this.font.width(sig);
         int sy = py + panelH() - ORN_SIGN_FROM_BOT;
         // v0.21.25: firma limpia sin sombra.
-        g.drawString(this.font, sig, centerX - sw / 2, sy, DiaryTheme.SEPIA_DARK, false);
-        // v0.16.0: tras bastantes hallazgos, la firma reconoce al lector.
-        try {
-            if (com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.discoveredCount() >= 10) {
-                String add = isEnglishSelected() ? "- and of whoever reads -" : "- y de quien lee -";
-                int aw = this.font.width(add);
-                g.drawString(this.font, add, centerX - aw / 2, sy - 10,
-                    DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 130), false);
-            }
-        } catch (Throwable ignored) {}
+        g.drawString(this.font, this.cachedSignature, centerX - this.cachedSignatureWidth / 2,
+            sy, DiaryTheme.SEPIA_DARK, false);
+        if (!this.cachedSignatureAside.isEmpty()) {
+            g.drawString(this.font, this.cachedSignatureAside,
+                centerX - this.cachedSignatureAsideWidth / 2, sy - 10,
+                DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 130), false);
+        }
     }
 
     private static boolean isEnglishSelected() {
@@ -577,21 +682,31 @@ public class DiaryPauseScreen extends PauseScreen {
         }
     }
 
-    private void drawWaxSeal(GuiGraphics g, int cx, int cy) {
+    private void drawWaxSeal(GuiGraphics g, int cx, int cy, boolean fastInGame) {
+        if (fastInGame) {
+            // Keep the recognizable seal in the live world without rebuilding
+            // its 29-row, square-root based silhouette every rendered frame.
+            int color = DiaryTheme.BLOOD_DRIED;
+            g.fill(cx - 7, cy - 3, cx + 8, cy + 4, color);
+            g.fill(cx - 5, cy - 5, cx + 6, cy - 3, color);
+            g.fill(cx - 4, cy + 4, cx + 5, cy + 6, color);
+            g.fill(cx - 3, cy - 6, cx + 4, cy - 5, color);
+            int driedEdge = 0xFF351008;
+            g.fill(cx - 5, cy - 1, cx + 6, cy, driedEdge);
+            g.fill(cx - 1, cy - 6, cx + 1, cy + 6, driedEdge);
+            g.fill(cx - 5, cy - 4, cx - 2, cy - 2, DiaryTheme.withAlpha(DiaryTheme.PAPER, 90));
+            return;
+        }
         int r = 14;
         for (int dy = -r; dy <= r; dy++) {
-            for (int dx = -r; dx <= r; dx++) {
-                if (dx * dx + dy * dy <= r * r) {
-                    g.fill(cx + dx, cy + dy, cx + dx + 1, cy + dy + 1, DiaryTheme.WAX_SEAL);
-                }
-            }
-        }
-        for (int dy = -r; dy <= r; dy++) {
-            for (int dx = -r; dx <= r; dx++) {
-                int d2 = dx * dx + dy * dy;
-                if (d2 <= r * r && d2 >= (r - 2) * (r - 2)) {
-                    g.fill(cx + dx, cy + dy, cx + dx + 1, cy + dy + 1, DiaryTheme.BLOOD_DRIED);
-                }
+            int dx = (int) Math.sqrt(r * r - dy * dy);
+            g.fill(cx - dx, cy + dy, cx + dx + 1, cy + dy + 1, DiaryTheme.WAX_SEAL);
+            if (Math.abs(dy) <= r - 2) {
+                int innerDx = (int) Math.sqrt((r - 2) * (r - 2) - dy * dy);
+                g.fill(cx - dx, cy + dy, cx - innerDx, cy + dy + 1, DiaryTheme.BLOOD_DRIED);
+                g.fill(cx + innerDx + 1, cy + dy, cx + dx + 1, cy + dy + 1, DiaryTheme.BLOOD_DRIED);
+            } else {
+                g.fill(cx - dx, cy + dy, cx + dx + 1, cy + dy + 1, DiaryTheme.BLOOD_DRIED);
             }
         }
         g.fill(cx - 7, cy - 7, cx - 3, cy - 4, DiaryTheme.withAlpha(DiaryTheme.PAPER, 90));
@@ -605,7 +720,7 @@ public class DiaryPauseScreen extends PauseScreen {
     // CUERVO POSADO — esquina superior izquierda del panel
     // ================================================================
 
-    private void drawRaven(GuiGraphics g, int x, int y) {
+    private void drawRaven(GuiGraphics g, int x, int y, boolean fastInGame) {
         // Cuervo pequeño, silueta lateral, mirando a la derecha
         // Tamaño: ~20x18 px
 
@@ -613,6 +728,18 @@ public class DiaryPauseScreen extends PauseScreen {
         int darkGray = 0xFF1F1408;
         int highlight = DiaryTheme.SEPIA_DARK;
         int eye = 0xFFD4941E;  // ojo ambar
+
+        if (fastInGame) {
+            // One compact silhouette pass keeps the raven present while
+            // avoiding the layered pixel-art fills on top of a live world.
+            g.fill(x + 2, y + 6, x + 14, y + 14, black);
+            g.fill(x + 4, y + 4, x + 16, y + 8, black);
+            g.fill(x + 15, y + 5, x + 20, y + 6, black);
+            g.fill(x + 5, y + 9, x + 12, y + 11, darkGray);
+            g.fill(x + 14, y + 4, x + 15, y + 5, eye);
+            g.fill(x + 6, y + 14, x + 12, y + 18, black);
+            return;
+        }
 
         // Cuerpo principal (elipse aproximada)
         g.fill(x + 2, y + 6, x + 14, y + 14, black);
@@ -651,7 +778,7 @@ public class DiaryPauseScreen extends PauseScreen {
     // VELA CON LLAMA ANIMADA — esquina inferior izquierda del panel
     // ================================================================
 
-    private void drawCandle(GuiGraphics g, int x, int y) {
+    private void drawCandle(GuiGraphics g, int x, int y, boolean fastInGame) {
         // Vela de sebo con llama animada
         // Tamaño total: ~14x28 (candelero + vela + llama + halo)
         // Coord (x,y) es la base del candelero
@@ -690,12 +817,14 @@ public class DiaryPauseScreen extends PauseScreen {
         // v0.16.0: vela apagada = humo breve, nada de llama.
         if (candleOut) {
             long nowSmoke = System.currentTimeMillis();
-            if (nowSmoke < candleSmokeUntilMs) {
-                float t = (nowSmoke % 700L) / 700f;
-                int sx = x + 6 + (int)(Math.sin(nowSmoke / 210.0) * 2);
-                int a = (int)(46 * (1f - t));
+            if (!fastInGame && nowSmoke < candleSmokeUntilMs) {
+                boolean reduced = reducedMotion();
+                float t = reduced ? 0.5f : (nowSmoke % 700L) / 700f;
+                int sx = x + 6 + (reduced ? 0 : (int)(Math.sin(nowSmoke / 210.0) * 2));
+                int rise = reduced ? 0 : (int)(t * 6);
+                int a = reduced ? 24 : (int)(46 * (1f - t));
                 for (int i = 0; i < 4; i++) {
-                    g.fill(sx + i, y - 4 - i * 3 - (int)(t * 6), sx + i + 1, y - 2 - i * 3 - (int)(t * 6),
+                    g.fill(sx + i, y - 4 - i * 3 - rise, sx + i + 1, y - 2 - i * 3 - rise,
                         (Math.max(4, a - i * 8) << 24) | 0x909090);
                 }
             }
@@ -704,8 +833,15 @@ public class DiaryPauseScreen extends PauseScreen {
             return;
         }
 
+        if (fastInGame) {
+            // Keep the candle recognizable while avoiding its multi-pass halo.
+            g.fill(x + 5, y - 2, x + 8, y + 3, flameOuter);
+            g.fill(x + 6, y - 1, x + 7, y + 2, flameCore);
+            return;
+        }
+
         // LLAMA ANIMADA — parpadeo sutil
-        int flameFrame = (animTick / 4) % 4;
+        int flameFrame = reducedMotion() ? 1 : (animTick / 4) % 4;
 
         // Halo (cálido, envuelve todo) — v0.21.27: optimizado con fillCircle
         int haloAlpha = 60 + (flameFrame * 15);
@@ -735,6 +871,10 @@ public class DiaryPauseScreen extends PauseScreen {
     @Override
     public boolean isPauseScreen() {
         return true;
+    }
+
+    private static boolean reducedMotion() {
+        return com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
     }
 
     /**

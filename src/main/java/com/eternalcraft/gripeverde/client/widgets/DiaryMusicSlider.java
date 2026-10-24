@@ -4,9 +4,11 @@ import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 
 /**
@@ -19,8 +21,15 @@ import net.minecraft.network.chat.Component;
  */
 public class DiaryMusicSlider extends AbstractSliderButton {
 
+    private Language labelLanguage;
+    private Component cachedLabelMessage;
+    private Font cachedLabelFont;
+    private String cachedLabelText = "";
+    private int cachedLabelWidth;
+
     public DiaryMusicSlider(int x, int y, int w, int h) {
         super(x, y, w, h, buildLabel(MenuMusic.getUserVolume()), MenuMusic.getUserVolume());
+        this.labelLanguage = Language.getInstance();
     }
 
     private static Component buildLabel(double v) {
@@ -33,6 +42,21 @@ public class DiaryMusicSlider extends AbstractSliderButton {
     @Override
     protected void updateMessage() {
         this.setMessage(buildLabel(this.value));
+    }
+
+    private void refreshLabelCache(Font font) {
+        Language language = Language.getInstance();
+        if (this.labelLanguage != language) {
+            this.labelLanguage = language;
+            this.updateMessage();
+        }
+
+        Component message = this.getMessage();
+        if (message == this.cachedLabelMessage && font == this.cachedLabelFont) return;
+        this.cachedLabelMessage = message;
+        this.cachedLabelFont = font;
+        this.cachedLabelText = message.getString();
+        this.cachedLabelWidth = font.width(this.cachedLabelText);
     }
 
     @Override
@@ -91,11 +115,15 @@ public class DiaryMusicSlider extends AbstractSliderButton {
         DiaryChrome.drawDivisorLozenge(g, cx, cy);
 
         // Texto centrado con sombra suave
+        Font font = Minecraft.getInstance().font;
+        this.refreshLabelCache(font);
         int textColor = this.isHovered() ? DiaryTheme.INK_BLACK : DiaryTheme.INK;
-        String msg = this.getMessage().getString();
-        int textX = x + w / 2 - Minecraft.getInstance().font.width(msg) / 2;
+        String msg = this.cachedLabelText;
+        int textX = x + w / 2 - this.cachedLabelWidth / 2;
         int textY = y + (h - 8) / 2;
-        g.drawString(Minecraft.getInstance().font, msg, textX, textY, textColor, false);
+        g.drawString(font, msg, textX, textY, textColor, false);
+        DiaryFocus.drawKeyboardRing(g, x, y, w, h,
+            this.active && this.isFocused() && !this.isMouseOver(mouseX, mouseY));
     }
 
     @Override

@@ -162,8 +162,11 @@ public final class HiddenCipher {
         long age = now - telegramFlashStartMs;
         long remain = telegramFlashUntilMs - now;
         int alpha = 235;
-        if (age < 420L) alpha = (int)(235 * age / 420L);
-        else if (remain < 900L) alpha = (int)(235 * remain / 900L);
+        if (!com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion()
+                && !com.eternalcraft.gripeverde.client.util.ClientAccessibility.reduceFlashes()) {
+            if (age < 420L) alpha = (int)(235 * age / 420L);
+            else if (remain < 900L) alpha = (int)(235 * remain / 900L);
+        }
         alpha = Math.max(0, Math.min(235, alpha));
         boolean en = Discoveries.isEnglish();
 
@@ -209,8 +212,11 @@ public final class HiddenCipher {
         long age = now - cleanseFlashStartMs;
         long remain = cleanseFlashUntilMs - now;
         int alpha = 235;
-        if (age < 420L) alpha = (int)(235 * age / 420L);
-        else if (remain < 900L) alpha = (int)(235 * remain / 900L);
+        if (!com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion()
+                && !com.eternalcraft.gripeverde.client.util.ClientAccessibility.reduceFlashes()) {
+            if (age < 420L) alpha = (int)(235 * age / 420L);
+            else if (remain < 900L) alpha = (int)(235 * remain / 900L);
+        }
         alpha = Math.max(0, Math.min(235, alpha));
         boolean en = Discoveries.isEnglish();
 
@@ -256,14 +262,16 @@ public final class HiddenCipher {
         long now = System.currentTimeMillis();
         if (now >= pereiraFlashUntilMs) return;
         long rem = pereiraFlashUntilMs - now;
-        int a = (int)(46 * rem / 900L);
-        if (a > 2) g.fill(0, 0, w, h, (a << 24) | 0x2A3A18);
+        boolean reducedMotion = com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
+        boolean reduceFlashes = com.eternalcraft.gripeverde.client.util.ClientAccessibility.reduceFlashes();
+        int a = reducedMotion ? 24 : (int)(46 * rem / 900L);
+        if (!reducedMotion && !reduceFlashes && a > 2) g.fill(0, 0, w, h, (a << 24) | 0x2A3A18);
         Minecraft mc = Minecraft.getInstance();
         if (mc == null || mc.font == null) return;
         boolean en = Discoveries.isEnglish();
         String msg = en ? "...who is reading?" : "...quien esta leyendo?";
         int mw = mc.font.width(msg);
-        int malpha = Math.min(200, (int)(a * 4.5));
+        int malpha = reducedMotion ? 108 : Math.min(200, (int)(a * 4.5));
         g.drawString(mc.font, msg, w / 2 - mw / 2, h / 2, (malpha << 24) | 0xC8D8A8, false);
     }
 
@@ -278,7 +286,9 @@ public final class HiddenCipher {
         int alpha = 74;
         // el ultimo caracter parpadea
         g.drawString(mc.font, s, 10, h - 44, (alpha << 24) | 0x8E7A55, false);
-        if ((now / 400L) % 2L == 0L) {
+        if (com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion()
+                || com.eternalcraft.gripeverde.client.util.ClientAccessibility.reduceFlashes()
+                || (now / 400L) % 2L == 0L) {
             int cx = 10 + mc.font.width(s);
             g.fill(cx + 1, h - 43, cx + 3, h - 35, (alpha << 24) | 0x8E7A55);
         }

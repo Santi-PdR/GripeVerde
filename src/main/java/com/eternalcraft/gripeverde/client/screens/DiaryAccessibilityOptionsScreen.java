@@ -2,6 +2,7 @@ package com.eternalcraft.gripeverde.client.screens;
 
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
+import com.eternalcraft.gripeverde.client.util.ClientAccessibility;
 import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton.Icon;
@@ -10,10 +11,13 @@ import com.eternalcraft.gripeverde.client.widgets.DiaryToggle;
 import com.eternalcraft.gripeverde.config.ClientConfig;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.AccessibilityOptionsScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 
 public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen {
@@ -27,13 +31,23 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
 
     // Bandas dentro del panel
     private static final int HEADER_H = 60;   // titulo + subtitulo + flavor + divisor
+    private static final int COMPACT_HEADER_H = 42;
     private static final int FOOTER_H = 112;  // divisor + 2 toggles propios + Volver
+    private static final int COMPACT_FOOTER_H = 90;
+    private static final int COMPACT_HEIGHT = 320;
+    private static final int MICRO_HEIGHT = 150;
+    private static final int MICRO_HEADER_H = 28;
+    private static final int MICRO_FOOTER_H = 58;
 
     private DiaryButton btnVolver;
+    private PerceptionEyeButton perceptionEye;
     private DiaryToggle reducedMotionToggle;
     private DiaryToggle reduceFlashesToggle;
     private final SmoothScroll smoothScroll = new SmoothScroll();
     private int panelW, panelH, panelX, panelY;
+    private int headerHeight, footerHeight, toggleHeight, toggleGap, backButtonHeight;
+    private boolean compactLayout;
+    private boolean microLayout;
 
     public DiaryAccessibilityOptionsScreen(Screen parent, Options options) {
         super(parent, options);
@@ -46,10 +60,29 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         super.init();
 
         // Panel adaptativo
-        this.panelW = Math.min(PANEL_MAX_W, this.width  - SCREEN_MARGIN * 2);
-        this.panelH = Math.min(PANEL_MAX_H, this.height - SCREEN_MARGIN * 2);
+        this.panelW = Math.max(1, Math.min(PANEL_MAX_W, this.width  - SCREEN_MARGIN * 2));
+        this.panelH = Math.max(1, Math.min(PANEL_MAX_H, this.height - SCREEN_MARGIN * 2));
         this.panelX = (this.width  - this.panelW) / 2;
         this.panelY = (this.height - this.panelH) / 2;
+        this.compactLayout = this.panelH < COMPACT_HEIGHT;
+        this.microLayout = this.panelH < MICRO_HEIGHT;
+        this.headerHeight = this.microLayout ? MICRO_HEADER_H
+            : (this.compactLayout ? COMPACT_HEADER_H : HEADER_H);
+        this.footerHeight = this.microLayout ? MICRO_FOOTER_H
+            : (this.compactLayout ? COMPACT_FOOTER_H : FOOTER_H);
+        this.toggleHeight = this.microLayout ? 16 : 24;
+        this.toggleGap = this.microLayout ? 3 : 4;
+        this.backButtonHeight = this.microLayout ? 16 : 20;
+
+        this.perceptionEye = new PerceptionEyeButton(
+            this.panelX + 13, this.panelY + 9,
+            Component.translatable("gripeverde.options.accessibility.eye")
+        );
+        this.perceptionEye.visible = this.panelW >= 48 && this.panelH >= 40;
+        this.perceptionEye.active = this.perceptionEye.visible;
+        this.perceptionEye.setTooltip(Tooltip.create(
+            Component.translatable("gripeverde.options.accessibility.eye.tooltip")));
+        this.addRenderableWidget(this.perceptionEye);
 
         // Suprimir fondo y barras de la lista vanilla
         if (this.list != null) {
@@ -57,8 +90,11 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
             this.list.setRenderTopAndBottom(false);
             this.list.setRenderSelection(false);
             // NO cambiar width - R-VANILLA-LIST-COORDS
-            int listTop    = this.panelY + HEADER_H;
-            int listBottom = this.panelY + this.panelH - FOOTER_H;
+            int listTop = Math.max(0, Math.min(Math.max(0, this.height - 1),
+                this.panelY + this.headerHeight));
+            int listBottom = Math.min(this.height,
+                this.panelY + this.panelH - this.footerHeight + 4);
+            listBottom = Math.max(listTop + 1, listBottom);
             this.list.updateSize(this.width, this.height, listTop, listBottom);
             this.smoothScroll.snapToCurrent(this.list);
         }
@@ -73,11 +109,11 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         }
 
         // Opciones propias del mod: visibles junto a las opciones de accesibilidad vanilla.
-        int toggleW = Math.min(300, this.panelW - 32);
+        int toggleW = Math.max(1, Math.min(300, this.panelW - 32));
         int toggleX = (this.width - toggleW) / 2;
-        int toggleY = this.panelY + this.panelH - 100;
+        int toggleY = this.panelY + this.panelH - this.footerHeight + (this.microLayout ? 3 : 6);
         this.reducedMotionToggle = new DiaryToggle(
-            toggleX, toggleY, toggleW, 24,
+            toggleX, toggleY, toggleW, this.toggleHeight,
             () -> ClientConfig.REDUCED_MOTION.get(),
             value -> {
                 ClientConfig.REDUCED_MOTION.set(value);
@@ -91,11 +127,11 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
             "gripeverde.options.accessibility.reduced_motion.tooltip")));
         this.addRenderableWidget(this.reducedMotionToggle);
 
-        // v0.23.0: ayuda de fotosensibilidad separada (solo destellos/relampagos,
-        // sin congelar movimiento). WCAG 2.3.1 recomienda control especifico.
-        int flashesY = this.panelY + this.panelH - 66;
+        // v0.23.0: ayuda de fotosensibilidad separada (relampagos y destellos de
+        // pantalla completa, sin congelar el resto del movimiento).
+        int flashesY = toggleY + this.toggleHeight + this.toggleGap;
         this.reduceFlashesToggle = new DiaryToggle(
-            toggleX, flashesY, toggleW, 24,
+            toggleX, flashesY, toggleW, this.toggleHeight,
             () -> ClientConfig.REDUCE_FLASHES.get(),
             value -> {
                 ClientConfig.REDUCE_FLASHES.set(value);
@@ -110,10 +146,11 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         this.addRenderableWidget(this.reduceFlashesToggle);
 
         // Boton Volver propio
-        int btnW = 160;
-        int btnH = 20;
-        int btnX = (this.width - btnW) / 2;
-        int btnY = this.panelY + this.panelH - 28;
+        int btnW = Math.max(1, Math.min(160, this.panelW - 24));
+        int btnH = this.backButtonHeight;
+        int btnX = Math.max(0, Math.min(this.width - btnW, (this.width - btnW) / 2));
+        int btnY = Math.max(0, Math.min(this.height - btnH,
+            this.panelY + this.panelH - btnH - (this.microLayout ? 4 : 8)));
         this.btnVolver = new DiaryButton(
             btnX, btnY, btnW, btnH,
             Component.translatable("gripeverde.options.button.done"),
@@ -134,16 +171,14 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
 
         // Titulo
         int cx = this.width / 2;
-        int titleY = this.panelY + 12;
-        {
+        int titleY = this.panelY + (this.compactLayout ? 7 : 12);
         var _title = Component.translatable("options.accessibility.title");
-        int _tw = this.font.width(_title);
-        gfx.drawString(this.font, _title, cx - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
-        }
+        com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
+            gfx, this.font, _title, cx, titleY, DiaryChrome.INK_TITLE);
 
         // Subtitulo
         int subtitleY = titleY + 12;
-        {
+        if (!this.microLayout) {
             String subC = "- " + Component.translatable("gripeverde.options.accessibility.subtitle").getString() + " -";
             int subW = this.font.width(subC);
             gfx.drawString(this.font, subC, cx - subW / 2, subtitleY, DiaryChrome.INK_SUBTITLE, false);
@@ -151,15 +186,17 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
 
         // Flavor
         int flavorY = subtitleY + 13;
-        {
+        if (!this.compactLayout) {
             Component flvC = Component.literal(getRotatingAccFlavor());
             int flvW = this.font.width(flvC);
             gfx.drawString(this.font, flvC, cx - flvW / 2, flavorY, DiaryChrome.INK_FLAVOR, false);
         }
 
         // Divisor superior
-        int divY1 = flavorY + 12;
-        DiaryChrome.drawInkDivider(gfx, this.panelX, divY1, this.panelW);
+        int divY1 = this.panelY + this.headerHeight - 11;
+        if (this.panelW >= 3) {
+            DiaryChrome.drawInkDivider(gfx, this.panelX, divY1, this.panelW);
+        }
 
         // Lista vanilla sin gradientes blancos ni bandejas extra
         if (this.list != null) {
@@ -168,10 +205,16 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         }
 
         // Cosmeticos
-        int divY2 = this.panelY + this.panelH - FOOTER_H + 4;
-        DiaryChrome.drawInkDivider(gfx, this.panelX, divY2, this.panelW);
-        DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
-        DiaryChrome.drawRegistryTag(gfx, this.panelX, this.panelY, this.panelW, this.panelH, "REG. VI");
+        int divY2 = this.panelY + this.panelH - this.footerHeight + 4;
+        if (this.panelW >= 3) {
+            DiaryChrome.drawInkDivider(gfx, this.panelX, divY2, this.panelW);
+        }
+        if (this.panelW >= 48 && this.panelH >= 48) {
+            DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
+        }
+        if (this.panelW >= 200 && this.panelH >= 100) {
+            DiaryChrome.drawRegistryTag(gfx, this.panelX, this.panelY, this.panelW, this.panelH, "REG. VI");
+        }
 
         // Controles del pie
         if (this.reducedMotionToggle != null) {
@@ -186,51 +229,19 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
 
         // v0.16.0: el ojo de la percepcion, que mira a quien mira
         try {
-            drawPerceptionEye(gfx, mouseX, mouseY);
             com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
             com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(gfx, this.width / 2, this.panelY - 12);
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(gfx, this.width);
         } catch (Throwable ignored) {}
     }
 
-    private int eyeX() { return this.panelX + 22; }
-    private int eyeY() { return this.panelY + 16; }
-
-    private void drawPerceptionEye(GuiGraphics gfx, int mouseX, int mouseY) {
-        int ex = eyeX(), ey = eyeY();
-        boolean hover = mouseX >= ex - 8 && mouseX <= ex + 8 && mouseY >= ey - 6 && mouseY <= ey + 6;
-        // Contorno almendrado
-        int lid = hover ? 0xFF3D2A18 : 0xFF654025;
-        gfx.fill(ex - 6, ey - 1, ex + 6, ey + 1, 0xFFF0E5C8);
-        gfx.fill(ex - 4, ey - 3, ex + 4, ey - 2, lid);
-        gfx.fill(ex - 4, ey + 2, ex + 4, ey + 3, lid);
-        gfx.fill(ex - 7, ey - 1, ex - 6, ey + 1, lid);
-        gfx.fill(ex + 6, ey - 1, ex + 7, ey + 1, lid);
-        boolean reduced = ClientConfig.REDUCED_MOTION.get();
-        // Parpadeo ocasional, desactivado cuando el lector reduce el movimiento.
-        long now = System.currentTimeMillis();
-        boolean blink = !reduced && (now % 6200L) < 180L;
-        if (blink) {
-            gfx.fill(ex - 6, ey - 2, ex + 6, ey + 2, lid);
-            return;
+    private final class PerceptionEyeButton extends AbstractButton {
+        private PerceptionEyeButton(int x, int y, Component label) {
+            super(x, y, 18, 14, label);
         }
-        // Iris que sigue al lector
-        double dx = mouseX - ex, dy = mouseY - ey;
-        int px = 0, py = 0;
-        if (!reduced) {
-            if (Math.abs(dx) > 12) px = dx > 0 ? 2 : -2;
-            else if (Math.abs(dx) > 4) px = dx > 0 ? 1 : -1;
-            if (Math.abs(dy) > 12) py = dy > 0 ? 1 : -1;
-        }
-        gfx.fill(ex - 2 + px, ey - 2 + py, ex + 2 + px, ey + 2 + py, 0xFF8E6A35);
-        gfx.fill(ex - 1 + px, ey - 1 + py, ex + 1 + px, ey + 1 + py, 0xFF1A0F05);
-        gfx.fill(ex - 2 + px, ey - 2 + py, ex - 1 + px, ey - 1 + py, 0xFFD8CAB0);
-    }
 
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0 && mouseX >= eyeX() - 8 && mouseX <= eyeX() + 8
-                && mouseY >= eyeY() - 6 && mouseY <= eyeY() + 6) {
+        @Override
+        public void onPress() {
             try {
                 boolean first = com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
                     com.eternalcraft.gripeverde.client.lore.Discoveries.EYE_FOLLOWS);
@@ -238,9 +249,54 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
                     com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_AMBIENT_OCCASIONAL.get(),
                     0.18f, first ? 0.62f : 0.80f);
             } catch (Throwable ignored) {}
-            return true;
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+
+        @Override
+        public void playDownSound(SoundManager soundManager) {
+            // La nota secreta conserva su sonido propio.
+        }
+
+        @Override
+        protected void renderWidget(GuiGraphics gfx, int mouseX, int mouseY, float partialTick) {
+            int ex = this.getX() + this.width / 2;
+            int ey = this.getY() + this.height / 2;
+            boolean hovered = this.isHoveredOrFocused();
+            int lid = hovered ? 0xFF3D2A18 : 0xFF654025;
+            gfx.fill(ex - 6, ey - 1, ex + 6, ey + 1, 0xFFF0E5C8);
+            gfx.fill(ex - 4, ey - 3, ex + 4, ey - 2, lid);
+            gfx.fill(ex - 4, ey + 2, ex + 4, ey + 3, lid);
+            gfx.fill(ex - 7, ey - 1, ex - 6, ey + 1, lid);
+            gfx.fill(ex + 6, ey - 1, ex + 7, ey + 1, lid);
+            boolean reduced = ClientAccessibility.reducedMotion();
+            if (!reduced && (System.currentTimeMillis() % 6200L) < 180L) {
+                gfx.fill(ex - 6, ey - 2, ex + 6, ey + 2, lid);
+            } else {
+                double dx = mouseX - ex, dy = mouseY - ey;
+                int px = 0, py = 0;
+                if (!reduced) {
+                    if (Math.abs(dx) > 12) px = dx > 0 ? 2 : -2;
+                    else if (Math.abs(dx) > 4) px = dx > 0 ? 1 : -1;
+                    if (Math.abs(dy) > 12) py = dy > 0 ? 1 : -1;
+                }
+                gfx.fill(ex - 2 + px, ey - 2 + py, ex + 2 + px, ey + 2 + py, 0xFF8E6A35);
+                gfx.fill(ex - 1 + px, ey - 1 + py, ex + 1 + px, ey + 1 + py, 0xFF1A0F05);
+                gfx.fill(ex - 2 + px, ey - 2 + py, ex - 1 + px, ey - 1 + py, 0xFFD8CAB0);
+            }
+            if (this.isFocused() && !this.isHovered() && this.width > 2 && this.height > 2) {
+                int focus = 0xFFFFE28A;
+                gfx.fill(this.getX(), this.getY(), this.getX() + this.width, this.getY() + 1, focus);
+                gfx.fill(this.getX(), this.getY() + this.height - 1,
+                    this.getX() + this.width, this.getY() + this.height, focus);
+                gfx.fill(this.getX(), this.getY(), this.getX() + 1, this.getY() + this.height, focus);
+                gfx.fill(this.getX() + this.width - 1, this.getY(),
+                    this.getX() + this.width, this.getY() + this.height, focus);
+            }
+        }
+
+        @Override
+        protected void updateWidgetNarration(NarrationElementOutput out) {
+            this.defaultButtonNarrationText(out);
+        }
     }
 
     @Override

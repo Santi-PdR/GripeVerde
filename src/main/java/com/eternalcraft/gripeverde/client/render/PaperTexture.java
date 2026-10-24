@@ -54,6 +54,10 @@ public final class PaperTexture {
     public static void draw(GuiGraphics g, int x, int y, int w, int h, PaperKind kind) {
         if (w<=0||h<=0) return;
         g.fill(x,y,x+w,y+h, baseColorFor(kind));
+        // In-world screens already render over the live 3D scene. Skip the
+        // procedural paper layers there; dozens of per-pixel fills per panel
+        // were adding avoidable GPU work while a world kept rendering below.
+        if (com.eternalcraft.gripeverde.client.util.ClientAccessibility.hasActiveGameSession()) return;
         drawVignetteFast(g,x,y,w,h,kind);
         drawStainsOptimized(g,x,y,w,h,kind);
         drawWrinkles(g,x,y,w,h,kind);
@@ -65,6 +69,9 @@ public final class PaperTexture {
     public static void drawClean(GuiGraphics g, int x, int y, int w, int h, PaperKind kind) {
         if (w<=0||h<=0) return;
         g.fill(x,y,x+w,y+h, baseColorFor(kind));
+        // Keep in-world UI readable with a flat stock, while avoiding the
+        // texture, stains, rain and ornament passes on top of a live world.
+        if (com.eternalcraft.gripeverde.client.util.ClientAccessibility.hasActiveGameSession()) return;
         drawWatermark(g,x,y,w,h,kind);
         drawPaperFibersOptimized(g,x,y,w,h,kind);
         drawVignetteFast(g,x,y,w,h,kind);
@@ -111,9 +118,7 @@ public final class PaperTexture {
             for (int i = 0; i < DROP_COUNT; i++) respawnDrop(i, true);
             dropsLastMs = now;
         }
-        boolean reduced;
-        try { reduced = com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get(); }
-        catch (Throwable t) { reduced = false; }
+        boolean reduced = com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
         boolean storm;
         try { storm = com.eternalcraft.gripeverde.client.audio.MenuAmbience.isStormNight(); }
         catch (Throwable t) { storm = false; }

@@ -2,12 +2,14 @@ package com.eternalcraft.gripeverde.client.util;
 
 /**
  * Interpolacion suave 0.0 -> 1.0 con easing.
- * Usar tick() cada frame con deltaSeconds.
+ * Usar tickRealtime() desde render para mantener la misma velocidad a cualquier FPS,
+ * o tick(deltaSeconds) cuando el llamador ya dispone de un delta real.
  */
 public class EasedValue {
     private float current = 0f;
     private float target = 0f;
     private final float speed;
+    private long lastTickNanos = Long.MIN_VALUE;
 
     public EasedValue(float speedPerSecond) {
         this.speed = speedPerSecond;
@@ -15,6 +17,12 @@ public class EasedValue {
 
     public void setTarget(boolean on) {
         this.target = on ? 1f : 0f;
+    }
+
+    /** Sets the value without interpolation for reduced-motion preferences. */
+    public void setImmediately(boolean on) {
+        this.current = this.target = on ? 1f : 0f;
+        this.lastTickNanos = System.nanoTime();
     }
 
     public void tick(float deltaSeconds) {
@@ -27,14 +35,25 @@ public class EasedValue {
         }
     }
 
+    /** Advances using elapsed wall time so render FPS does not change animation speed. */
+    public void tickRealtime() {
+        long now = System.nanoTime();
+        if (lastTickNanos != Long.MIN_VALUE) {
+            float elapsedSeconds = Math.max(0f, Math.min(0.1f,
+                (now - lastTickNanos) / 1_000_000_000f));
+            tick(elapsedSeconds);
+        }
+        lastTickNanos = now;
+    }
+
     public float get() {
         return current;
     }
 
     /** Easing cubic out para movimiento con peso. */
     public float getEased() {
-        float t = current;
-        return 1f - (float) Math.pow(1f - t, 3);
+        float inverse = 1f - current;
+        return 1f - inverse * inverse * inverse;
     }
 
     /** Lerp entre dos colores ARGB usando el valor actual. */

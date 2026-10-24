@@ -2,6 +2,7 @@ package com.eternalcraft.gripeverde.client.widgets;
 
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.util.ClientAccessibility;
 import com.eternalcraft.gripeverde.client.util.EasedValue;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -9,6 +10,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -23,7 +25,7 @@ public class DiaryButton extends AbstractButton {
 
     public enum Variant { PRIMARY, SECONDARY, DANGER }
     public enum SoundProfile { DEFAULT, CLEAN, OPTION_OPEN, BACK, NONE }
-    public enum Icon { NONE, HAND, SCROLL, CHART, GEAR, DOOR, PALETTE, SOUND, EYE, CONTROLS, LANGUAGE, CHAT, PACK, ACCESS, ONLINE, CREDITS }
+    public enum Icon { NONE, HAND, SCROLL, CHART, GEAR, DOOR, PALETTE, SOUND, EYE, CONTROLS, LANGUAGE, CHAT, PACK, MODS, ACCESS, ONLINE, CREDITS }
 
     private final Runnable onClick;
     private final Icon icon;
@@ -34,7 +36,14 @@ public class DiaryButton extends AbstractButton {
     private boolean wasHovered = false;
     private int pressAnimTicks = 0;
     private final int wearSeed;
-    private final java.util.Random wearRng;
+    private final int wearX1, wearY1, wearX2, wearY2;
+    private Component cachedMessage;
+    private Language cachedLanguage;
+    private Font cachedFont;
+    private int cachedTextWidthLimit = -1;
+    private boolean cachedAllowEllipsis;
+    private String cachedText = "";
+    private int cachedTextWidth;
 
     public DiaryButton(int x, int y, int w, int h, Component label, Icon icon, Variant variant, Runnable onClick) {
         this(x,y,w,h,label,icon,variant,SoundProfile.DEFAULT,onClick);
@@ -46,7 +55,19 @@ public class DiaryButton extends AbstractButton {
         this.soundProfile = sp!=null?sp:SoundProfile.DEFAULT;
         this.onClick = onClick;
         this.wearSeed = (x*31 + y*17 + w*13 + h*7) ^ label.getString().hashCode();
-        this.wearRng = new java.util.Random(wearSeed);
+        java.util.Random wearRng = new java.util.Random(wearSeed);
+        int[] firstMark = rollWearMark(wearRng, w, h);
+        int[] secondMark = rollWearMark(wearRng, w, h);
+        this.wearX1 = firstMark[0];
+        this.wearY1 = firstMark[1];
+        this.wearX2 = secondMark[0];
+        this.wearY2 = secondMark[1];
+    }
+
+    private static int[] rollWearMark(java.util.Random rng, int width, int height) {
+        int x = 6 + rng.nextInt(Math.max(1, width - 12));
+        int y = 4 + rng.nextInt(Math.max(1, height - 8));
+        return rng.nextInt(100) < 32 ? new int[]{x, y} : new int[]{-1, -1};
     }
     public DiaryButton(int x,int y,int w,int h,Component label,Runnable onClick){this(x,y,w,h,label,Icon.NONE,Variant.SECONDARY,onClick);}
     public DiaryButton noEllipsis(){this.allowEllipsis=false;return this;}
@@ -70,18 +91,28 @@ public class DiaryButton extends AbstractButton {
     protected void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTick){
         int x=getX(), y=getY(), w=width, h=height;
         boolean hovered = isHoveredOrFocused() && active;
-        boolean pressed = pressAnimTicks>0 && active;
+        boolean inGameSession = ClientAccessibility.hasActiveGameSession();
+        boolean reducedMotion = inGameSession || ClientAccessibility.reducedMotion();
+        boolean pressed = pressAnimTicks>0 && active && !reducedMotion;
         if(pressAnimTicks>0) pressAnimTicks--;
 
         if(hovered && !wasHovered) UiSounds.playHover();
         wasHovered=hovered;
 
-        hoverAnim.setTarget(hovered);
-        hoverAnim.tick(partialTick/20f);
+        if (reducedMotion) hoverAnim.setImmediately(hovered);
+        else {
+            hoverAnim.setTarget(hovered);
+            hoverAnim.tickRealtime();
+        }
         float t = hoverAnim.getEased();
 
         int pressedOffset = pressed?1:0;
         int yDraw = y+pressedOffset;
+
+        if (inGameSession) {
+            renderGameplayVersion(g, mouseX, mouseY, x, yDraw, w, h, t);
+            return;
+        }
 
         // ── Shadows ──
         if(!active){
@@ -152,12 +183,8 @@ public class DiaryButton extends AbstractButton {
         // Wear micro dots near edges (1px) based on seed
         if(active){
             int wear = DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, 34);
-            wearRng.setSeed(wearSeed);
-            for(int i=0;i<2;i++){
-                int wx = x+6+wearRng.nextInt(Math.max(1,w-12));
-                int wy = yDraw+4+wearRng.nextInt(Math.max(1,h-8));
-                if(wearRng.nextInt(100)<32) g.fill(wx,wy,wx+1,wy+1,wear);
-            }
+            if (wearX1 >= 0) g.fill(x + wearX1, yDraw + wearY1, x + wearX1 + 1, yDraw + wearY1 + 1, wear);
+            if (wearX2 >= 0) g.fill(x + wearX2, yDraw + wearY2, x + wearX2 + 1, yDraw + wearY2 + 1, wear);
         }
 
         // Focus ring (keyboard)
@@ -175,25 +202,29 @@ public class DiaryButton extends AbstractButton {
 
         // ── Content ──
         Font font = Minecraft.getInstance().font;
-        String text = getMessage().getString();
+        Component message = getMessage();
         int textColor = getTextColor(t);
         if(!active) textColor = DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 110);
 
         int textStartX, maxTextW;
+        String text;
         int contentY = yDraw + (h - font.lineHeight)/2;
-        if(icon!=Icon.NONE){
+        // Compact pause menus can shrink below the hand-drawn icon's 10 px
+        // height. In that case, center the label instead of drawing the icon
+        // through the button border.
+        boolean drawIcon = icon != Icon.NONE && h >= 12;
+        if(drawIcon){
             int iconX = x+9;
             int iconY = yDraw + (h-10)/2;
             drawIcon(g,iconX,iconY,textColor);
             textStartX = iconX+12+6;
             maxTextW = Math.max(8, x+w-10-textStartX);
+            text = fitText(font, message, maxTextW);
         } else {
             maxTextW = Math.max(8,w-18);
-            text = fitText(font,text,maxTextW);
-            int tw = font.width(text);
-            textStartX = x+(w-tw)/2;
+            text = fitText(font, message, maxTextW);
+            textStartX = x+(w-cachedTextWidth)/2;
         }
-        text = fitText(font,text,maxTextW);
         // Text shadow 1px for active (ink bleed)
         if(active){
             g.drawString(font,text,textStartX+1,contentY+1,DiaryTheme.withAlpha(DiaryTheme.INK_BLACK,40),false);
@@ -201,16 +232,13 @@ public class DiaryButton extends AbstractButton {
         g.drawString(font,text,textStartX,contentY,textColor,false);
 
         // Underline on hover (ink stroke)
-        if(t>0.08f && active){
-            int tw = font.width(text);
+        if(t>0.08f && active && h >= font.lineHeight + 2){
             int uy = contentY+font.lineHeight;
             int uAlpha = (int)(t*190);
             int uCol = DiaryTheme.withAlpha(accent, uAlpha);
-            // Slight wavy underline to feel hand-drawn
-            for(int i=0;i<tw;i++){
-                int yOff = (i%3==0)?0: (i%3==1)?1:0;
-                g.fill(textStartX+i, uy+yOff, textStartX+i+1, uy+yOff+1, uCol);
-            }
+            // One continuous ink stroke keeps the hover cue cheap even at
+            // high resolutions, where the label can span hundreds of pixels.
+            g.fill(textStartX, uy, textStartX + cachedTextWidth, uy + 1, uCol);
         }
 
         // Disabled crosshatch faint
@@ -222,12 +250,151 @@ public class DiaryButton extends AbstractButton {
         }
     }
 
-    private String fitText(Font f,String txt,int maxW){
-        if(f.width(txt)<=maxW) return txt;
-        if(!allowEllipsis) return f.plainSubstrByWidth(txt, Math.max(0,maxW));
-        String ell="...";
-        int room=Math.max(0,maxW-f.width(ell));
-        return f.plainSubstrByWidth(txt,room)+ell;
+    /** Low-fill-count button skin for menus drawn over a live world. */
+    private void renderGameplayVersion(GuiGraphics g, int mouseX, int mouseY,
+                                       int x, int y, int w, int h,
+                                       float hover) {
+        int bg = !active
+            ? DiaryTheme.withAlpha(0xFFD8CAB0, 210)
+            : hoverAnim.lerpColor(DiaryTheme.PAPER_STAINED, 0xFFB89A6E);
+        g.fill(x, y, x + w, y + h, bg);
+        int border = !active
+            ? DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 120)
+            : hoverAnim.lerpColor(DiaryTheme.SEPIA_DARK, getVariantAccent());
+        drawBorder(g, x, y, w, h, border);
+
+        Font font = Minecraft.getInstance().font;
+        Component message = getMessage();
+        int textColor = !active
+            ? DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 150)
+            : getTextColor(hover);
+        int contentY = y + (h - font.lineHeight) / 2;
+        boolean drawIcon = icon != Icon.NONE && h >= 12;
+        int textX;
+        String text;
+        if (drawIcon) {
+            int iconX = x + 9;
+            drawGameplayIcon(g, iconX, y + (h - 10) / 2, textColor);
+            textX = iconX + 18;
+            text = fitText(font, message, Math.max(8, x + w - 10 - textX));
+        } else {
+            text = fitText(font, message, Math.max(8, w - 18));
+            textX = x + (w - cachedTextWidth) / 2;
+        }
+        g.drawString(font, text, textX, contentY, textColor, false);
+        if (isFocused() && !isMouseOver(mouseX, mouseY) && active) {
+            DiaryFocus.drawKeyboardRing(g, x, y, w, h, true);
+        }
+    }
+
+    /** Recognizable low-fill-count pictograms for buttons over a live world. */
+    private void drawGameplayIcon(GuiGraphics g, int x, int y, int color) {
+        switch (icon) {
+            case HAND -> {
+                g.fill(x + 3, y + 2, x + 9, y + 8, color);
+                g.fill(x + 8, y + 4, x + 12, y + 7, color);
+            }
+            case SCROLL -> {
+                g.fill(x + 1, y + 1, x + 3, y + 9, color);
+                g.fill(x + 3, y + 3, x + 9, y + 7, color);
+                g.fill(x + 9, y + 1, x + 11, y + 9, color);
+            }
+            case CHART -> {
+                g.fill(x + 1, y + 6, x + 3, y + 9, color);
+                g.fill(x + 4, y + 3, x + 6, y + 9, color);
+                g.fill(x + 7, y + 5, x + 9, y + 9, color);
+                g.fill(x + 10, y + 2, x + 12, y + 9, color);
+            }
+            case GEAR -> {
+                g.fill(x + 3, y + 3, x + 9, y + 7, color);
+                g.fill(x + 5, y + 1, x + 7, y + 9, color);
+                g.fill(x + 1, y + 4, x + 11, y + 6, color);
+            }
+            case DOOR -> {
+                g.fill(x + 3, y + 1, x + 9, y + 10, color);
+                g.fill(x + 7, y + 5, x + 8, y + 6, DiaryTheme.PAPER);
+            }
+            case PALETTE -> {
+                g.fill(x + 2, y + 2, x + 10, y + 8, color);
+                g.fill(x + 8, y + 6, x + 12, y + 9, color);
+            }
+            case SOUND -> {
+                g.fill(x + 1, y + 4, x + 4, y + 7, color);
+                g.fill(x + 4, y + 2, x + 7, y + 9, color);
+                g.fill(x + 9, y + 3, x + 10, y + 8, color);
+            }
+            case EYE -> {
+                g.fill(x + 1, y + 4, x + 11, y + 6, color);
+                g.fill(x + 5, y + 3, x + 7, y + 7, DiaryTheme.INK_BLACK);
+            }
+            case CONTROLS -> {
+                g.fill(x + 1, y + 3, x + 11, y + 8, color);
+                g.fill(x + 3, y + 5, x + 5, y + 7, DiaryTheme.PAPER);
+                g.fill(x + 8, y + 5, x + 10, y + 7, DiaryTheme.PAPER);
+            }
+            case LANGUAGE -> {
+                g.fill(x + 1, y + 2, x + 11, y + 9, color);
+                g.fill(x + 3, y + 4, x + 9, y + 5, DiaryTheme.PAPER);
+                g.fill(x + 3, y + 7, x + 8, y + 8, DiaryTheme.PAPER);
+            }
+            case CHAT -> {
+                g.fill(x + 1, y + 2, x + 11, y + 8, color);
+                g.fill(x + 3, y + 8, x + 5, y + 10, color);
+            }
+            case PACK -> {
+                g.fill(x + 2, y + 2, x + 10, y + 9, color);
+                g.fill(x + 5, y + 3, x + 7, y + 8, DiaryTheme.PAPER);
+            }
+            case MODS -> {
+                g.fill(x + 1, y + 1, x + 5, y + 5, color);
+                g.fill(x + 7, y + 1, x + 11, y + 5, color);
+                g.fill(x + 1, y + 7, x + 5, y + 11, color);
+                g.fill(x + 7, y + 7, x + 11, y + 11, color);
+            }
+            case ACCESS -> {
+                g.fill(x + 5, y + 1, x + 7, y + 3, color);
+                g.fill(x + 2, y + 4, x + 10, y + 5, color);
+                g.fill(x + 5, y + 5, x + 7, y + 10, color);
+            }
+            case ONLINE -> {
+                g.fill(x + 5, y + 1, x + 7, y + 10, color);
+                g.fill(x + 1, y + 4, x + 11, y + 6, color);
+            }
+            case CREDITS -> {
+                g.fill(x + 3, y + 1, x + 9, y + 9, color);
+                g.fill(x + 5, y + 3, x + 7, y + 7, DiaryTheme.PAPER);
+            }
+            default -> {}
+        }
+    }
+
+    private String fitText(Font font, Component message, int maxWidth){
+        Language language = Language.getInstance();
+        if (message == this.cachedMessage && language == this.cachedLanguage
+                && font == this.cachedFont && maxWidth == this.cachedTextWidthLimit
+                && this.allowEllipsis == this.cachedAllowEllipsis) {
+            return this.cachedText;
+        }
+
+        String text = message.getString();
+        if (font.width(text) > maxWidth) {
+            if (!this.allowEllipsis) {
+                text = font.plainSubstrByWidth(text, Math.max(0, maxWidth));
+            } else {
+                String ellipsis = "...";
+                int room = Math.max(0, maxWidth - font.width(ellipsis));
+                text = font.plainSubstrByWidth(text, room) + ellipsis;
+            }
+        }
+
+        this.cachedMessage = message;
+        this.cachedLanguage = language;
+        this.cachedFont = font;
+        this.cachedTextWidthLimit = maxWidth;
+        this.cachedAllowEllipsis = this.allowEllipsis;
+        this.cachedText = text;
+        this.cachedTextWidth = font.width(text);
+        return text;
     }
     private int shiftColor(int col,int shift){
         int a=(col>>>24)&0xFF;
@@ -274,6 +441,7 @@ public class DiaryButton extends AbstractButton {
             case LANGUAGE -> drawLanguage(g,x,y,col);
             case CHAT -> drawChat(g,x,y,col);
             case PACK -> drawPack(g,x,y,col);
+            case MODS -> drawMods(g,x,y,col);
             case ACCESS -> drawAccess(g,x,y,col);
             case ONLINE -> drawOnline(g,x,y,col);
             case CREDITS -> drawCredits(g,x,y,col);
@@ -292,6 +460,7 @@ public class DiaryButton extends AbstractButton {
     private void drawLanguage(GuiGraphics g,int x,int y,int c){ g.fill(x+1,y+2,x+11,y+9,c); g.fill(x+2,y+3,x+10,y+4,DiaryTheme.PAPER); g.fill(x+3,y+5,x+8,y+6,DiaryTheme.PAPER); g.fill(x+3,y+7,x+9,y+8,DiaryTheme.withAlpha(DiaryTheme.PAPER,180)); }
     private void drawChat(GuiGraphics g,int x,int y,int c){ g.fill(x+1,y+2,x+11,y+8,c); g.fill(x+3,y+8,x+5,y+10,c); g.fill(x+3,y+4,x+9,y+5,DiaryTheme.PAPER); g.fill(x+3,y+6,x+7,y+7,DiaryTheme.PAPER); }
     private void drawPack(GuiGraphics g,int x,int y,int c){ g.fill(x+2,y+2,x+10,y+9,c); g.fill(x+1,y+4,x+9,y+10,DiaryTheme.withAlpha(c,130)); g.fill(x+4,y+3,x+8,y+4,DiaryTheme.PAPER); }
+    private void drawMods(GuiGraphics g,int x,int y,int c){ g.fill(x+1,y+1,x+5,y+5,c); g.fill(x+7,y+1,x+11,y+5,c); g.fill(x+1,y+7,x+5,y+11,c); g.fill(x+7,y+7,x+11,y+11,c); }
     private void drawAccess(GuiGraphics g,int x,int y,int c){ g.fill(x+5,y+1,x+7,y+3,c); g.fill(x+2,y+4,x+10,y+5,c); g.fill(x+5,y+5,x+7,y+10,c); g.fill(x+3,y+8,x+5,y+10,c); g.fill(x+7,y+8,x+9,y+10,c); }
     private void drawOnline(GuiGraphics g,int x,int y,int c){ g.fill(x+5,y+1,x+7,y+10,c); g.fill(x+1,y+4,x+11,y+6,c); g.fill(x+2,y+2,x+10,y+3,DiaryTheme.withAlpha(c,120)); g.fill(x+2,y+7,x+10,y+8,DiaryTheme.withAlpha(c,120)); }
     private void drawCredits(GuiGraphics g,int x,int y,int c){ g.fill(x+3,y+1,x+9,y+9,c); g.fill(x+2,y+2,x+10,y+8,DiaryTheme.withAlpha(c,100)); g.fill(x+5,y+3,x+7,y+6,DiaryTheme.PAPER); g.fill(x+5,y+7,x+7,y+8,DiaryTheme.PAPER); }

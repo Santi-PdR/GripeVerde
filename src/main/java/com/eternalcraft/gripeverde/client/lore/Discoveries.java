@@ -119,9 +119,12 @@ public final class Discoveries {
         long now = System.currentTimeMillis();
         long remain = toastUntilMs - now;
         long age = now - toastStartMs;
+        boolean reducedMotion = com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion();
         int alpha = 235;
-        if (age < 320L) alpha = (int)(235 * age / 320L);
-        else if (remain < 600L) alpha = (int)(235 * remain / 600L);
+        if (!reducedMotion) {
+            if (age < 320L) alpha = (int)(235 * age / 320L);
+            else if (remain < 600L) alpha = (int)(235 * remain / 600L);
+        }
         alpha = Math.max(0, Math.min(235, alpha));
 
         boolean english = isEnglish();
@@ -155,9 +158,41 @@ public final class Discoveries {
         g.drawString(mc.font, name, x + 20, y + 18, ink, false);
     }
 
+    /** One-line discovery notice for the compact title menu on short screens. */
+    public static void drawCompactToast(net.minecraft.client.gui.GuiGraphics g, int screenW) {
+        if (!hasActiveToast()) return;
+        Minecraft mc = Minecraft.getInstance();
+        if (mc == null || mc.font == null) return;
+
+        int x = 4;
+        int y = 2;
+        int w = Math.max(1, screenW - 8);
+        g.fill(x, y, x + w, y + 14, 0xE6120C06);
+        g.fill(x, y, x + w, y + 1, 0xFF8E6A35);
+        g.fill(x, y + 13, x + w, y + 14, 0xFF8E6A35);
+        g.fill(x + 5, y + 5, x + 10, y + 10, 0xFF6E1F16);
+        g.fill(x + 6, y + 6, x + 8, y + 8, 0xFFD8A078);
+
+        String header = isEnglish() ? "FOUND" : "HALLAZGO";
+        String name = toastName == null ? "" : toastName;
+        String message = header + " · " + name;
+        int maxWidth = Math.max(1, w - 20);
+        if (mc.font.width(message) > maxWidth) {
+            int ellipsisWidth = mc.font.width("...");
+            message = maxWidth <= ellipsisWidth
+                ? mc.font.plainSubstrByWidth(message, maxWidth)
+                : mc.font.plainSubstrByWidth(message, maxWidth - ellipsisWidth) + "...";
+        }
+        g.drawString(mc.font, message, x + 14, y + 3, 0xFFE6D2A6, false);
+    }
+
     // ── Nombres (ES/EN) ──
     public static String nameFor(String id) {
-        boolean en = isEnglish();
+        return nameFor(id, isEnglish());
+    }
+
+    /** Resuelve el nombre con el idioma ya conocido por el llamador. */
+    public static String nameFor(String id, boolean en) {
         switch (id) {
             case WATCH_INSCRIPTION: return en ? "The inscription beneath the glass" : "La inscripcion bajo el cristal";
             case WATCH_KEY:         return en ? "A small key falls from time" : "Una llave pequena cae del tiempo";
@@ -217,7 +252,11 @@ public final class Discoveries {
 
     /** Pista breve para fichas sin descubrir (Sala de consulta). */
     public static String hintFor(String id) {
-        boolean en = isEnglish();
+        return hintFor(id, isEnglish());
+    }
+
+    /** Resuelve la pista sin volver a consultar el LanguageManager. */
+    public static String hintFor(String id, boolean en) {
         switch (id) {
             case WATCH_INSCRIPTION: return en ? "Stop the swing. Read what hangs." : "Deten el vaiven. Lee lo que cuelga.";
             case WATCH_KEY:         return en ? "Time keeps more than hours." : "El tiempo guarda mas que horas.";
