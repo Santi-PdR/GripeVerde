@@ -183,7 +183,9 @@ public class DiaryOptionsScreen extends Screen {
     }
 
     private void configureResponsiveLayout() {
-        boolean compact = this.height < 350;
+        // The Mods row adds height; switch to the compressed layout before
+        // the parchment starts clipping on short windows.
+        boolean compact = this.height < 370;
         boolean veryCompact = this.height < 300;
         buttonH = veryCompact ? 21 : compact ? 24 : BTN_H;
         gapY = veryCompact ? 3 : compact ? 6 : GAP_Y;

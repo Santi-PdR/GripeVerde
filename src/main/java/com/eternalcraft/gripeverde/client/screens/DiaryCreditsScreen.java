@@ -5,9 +5,11 @@ import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import org.lwjgl.glfw.GLFW;
@@ -30,6 +32,12 @@ public class DiaryCreditsScreen extends Screen {
     private int bodyTop, bodyBottom, contentHeight, maxScroll;
     private double scroll, targetScroll;
     private boolean compactLayout;
+    private Language cachedHeaderLanguage;
+    private Font cachedHeaderFont;
+    private String cachedSubtitle = "";
+    private int cachedSubtitleWidth;
+    private String cachedFlavor = "";
+    private int cachedFlavorWidth;
 
     public DiaryCreditsScreen(Screen parent) {
         super(Component.translatable("gripeverde.options.credits.title"));
@@ -71,7 +79,8 @@ public class DiaryCreditsScreen extends Screen {
         super.tick();
         QuarantineSceneRenderer.tick(1f / 20f);
         double difference = this.targetScroll - this.scroll;
-        if (Math.abs(difference) < 0.25D) this.scroll = this.targetScroll;
+        if (com.eternalcraft.gripeverde.client.util.ClientAccessibility.reducedMotion()
+                || Math.abs(difference) < 0.25D) this.scroll = this.targetScroll;
         else this.scroll += difference * 0.42D;
     }
 
@@ -107,6 +116,7 @@ public class DiaryCreditsScreen extends Screen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        refreshHeaderTextCache();
         QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
 
         DiaryChrome.drawPanelShadow(g, panelX, panelY, panelW, panelH);
@@ -118,14 +128,12 @@ public class DiaryCreditsScreen extends Screen {
         com.eternalcraft.gripeverde.client.render.DiaryTypography.drawCentered(
             g, this.font, this.title, cx, titleY, DiaryChrome.INK_TITLE);
 
-        String subtitle = "- " + Component.translatable("gripeverde.options.credits.subtitle").getString() + " -";
-        int subW = this.font.width(subtitle);
-        g.drawString(this.font, subtitle, cx - subW / 2, titleY + 14, DiaryChrome.INK_SUBTITLE, false);
+        g.drawString(this.font, this.cachedSubtitle, cx - this.cachedSubtitleWidth / 2,
+            titleY + 14, DiaryChrome.INK_SUBTITLE, false);
 
         if (!this.compactLayout) {
-            String flavor = Component.translatable("gripeverde.options.credits.flavor").getString();
-            int flavW = this.font.width(flavor);
-            g.drawString(this.font, flavor, cx - flavW / 2, titleY + 26, DiaryChrome.INK_FLAVOR, false);
+            g.drawString(this.font, this.cachedFlavor, cx - this.cachedFlavorWidth / 2,
+                titleY + 26, DiaryChrome.INK_FLAVOR, false);
         }
 
         int divY1 = panelY + (this.compactLayout ? 34 : 58);
@@ -153,6 +161,19 @@ public class DiaryCreditsScreen extends Screen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    private void refreshHeaderTextCache() {
+        Language language = Language.getInstance();
+        Font font = this.font;
+        if (language == this.cachedHeaderLanguage && font == this.cachedHeaderFont) return;
+
+        this.cachedHeaderLanguage = language;
+        this.cachedHeaderFont = font;
+        this.cachedSubtitle = "- " + Component.translatable("gripeverde.options.credits.subtitle").getString() + " -";
+        this.cachedSubtitleWidth = font.width(this.cachedSubtitle);
+        this.cachedFlavor = Component.translatable("gripeverde.options.credits.flavor").getString();
+        this.cachedFlavorWidth = font.width(this.cachedFlavor);
     }
 
     private void rebuildCreditRows() {

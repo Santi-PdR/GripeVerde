@@ -313,6 +313,11 @@ public class ChangelogScreen extends Screen {
     }
 
     private void tickSmoothScroll() {
+        if (reducedMotion()) {
+            smoothScrollY = targetScrollY;
+            clampScroll();
+            return;
+        }
         double diff = targetScrollY - smoothScrollY;
         if (Math.abs(diff) < 0.35D) {
             smoothScrollY = targetScrollY;
