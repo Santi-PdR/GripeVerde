@@ -371,7 +371,7 @@ public class DiaryPauseScreen extends PauseScreen {
         drawPanelSeparators(g, px, py);
 
         // Elementos decorativos
-        if (!compactLayout) drawRaven(g, px + 14, py + 22);
+        if (!compactLayout) drawRaven(g, px + 14, py + 22, inGameSession);
 
         super.render(g, mouseX, mouseY, partialTick);
 
@@ -379,7 +379,7 @@ public class DiaryPauseScreen extends PauseScreen {
         if (!compactLayout) {
             drawCandle(g, px + 20, py + panelH() - 32, inGameSession);
             drawSignature(g, px, py);
-            drawWaxSeal(g, px + panelW() - 28, py + panelH() - 26);
+            drawWaxSeal(g, px + panelW() - 28, py + panelH() - 26, inGameSession);
         }
 
         // ── v0.16.0: lo que trae la oscuridad ──
@@ -682,7 +682,21 @@ public class DiaryPauseScreen extends PauseScreen {
         }
     }
 
-    private void drawWaxSeal(GuiGraphics g, int cx, int cy) {
+    private void drawWaxSeal(GuiGraphics g, int cx, int cy, boolean fastInGame) {
+        if (fastInGame) {
+            // Keep the recognizable seal in the live world without rebuilding
+            // its 29-row, square-root based silhouette every rendered frame.
+            int color = DiaryTheme.BLOOD_DRIED;
+            g.fill(cx - 7, cy - 3, cx + 8, cy + 4, color);
+            g.fill(cx - 5, cy - 5, cx + 6, cy - 3, color);
+            g.fill(cx - 4, cy + 4, cx + 5, cy + 6, color);
+            g.fill(cx - 3, cy - 6, cx + 4, cy - 5, color);
+            int driedEdge = 0xFF351008;
+            g.fill(cx - 5, cy - 1, cx + 6, cy, driedEdge);
+            g.fill(cx - 1, cy - 6, cx + 1, cy + 6, driedEdge);
+            g.fill(cx - 5, cy - 4, cx - 2, cy - 2, DiaryTheme.withAlpha(DiaryTheme.PAPER, 90));
+            return;
+        }
         int r = 14;
         for (int dy = -r; dy <= r; dy++) {
             int dx = (int) Math.sqrt(r * r - dy * dy);
@@ -706,7 +720,7 @@ public class DiaryPauseScreen extends PauseScreen {
     // CUERVO POSADO — esquina superior izquierda del panel
     // ================================================================
 
-    private void drawRaven(GuiGraphics g, int x, int y) {
+    private void drawRaven(GuiGraphics g, int x, int y, boolean fastInGame) {
         // Cuervo pequeño, silueta lateral, mirando a la derecha
         // Tamaño: ~20x18 px
 
@@ -714,6 +728,18 @@ public class DiaryPauseScreen extends PauseScreen {
         int darkGray = 0xFF1F1408;
         int highlight = DiaryTheme.SEPIA_DARK;
         int eye = 0xFFD4941E;  // ojo ambar
+
+        if (fastInGame) {
+            // One compact silhouette pass keeps the raven present while
+            // avoiding the layered pixel-art fills on top of a live world.
+            g.fill(x + 2, y + 6, x + 14, y + 14, black);
+            g.fill(x + 4, y + 4, x + 16, y + 8, black);
+            g.fill(x + 15, y + 5, x + 20, y + 6, black);
+            g.fill(x + 5, y + 9, x + 12, y + 11, darkGray);
+            g.fill(x + 14, y + 4, x + 15, y + 5, eye);
+            g.fill(x + 6, y + 14, x + 12, y + 18, black);
+            return;
+        }
 
         // Cuerpo principal (elipse aproximada)
         g.fill(x + 2, y + 6, x + 14, y + 14, black);
