@@ -102,6 +102,13 @@ public final class DiaryChrome {
     }
 
     public static void drawInkDivider(GuiGraphics gfx, int x, int y, int w) {
+        if (com.eternalcraft.gripeverde.client.util.ClientAccessibility.hasActiveGameSession()) {
+            if (w <= 0) return;
+            gfx.fill(x, y, x + w, y + 1, 0x70422810);
+            int cx = x + w / 2;
+            gfx.fill(cx - 1, y - 1, cx + 2, y + 2, 0x90422810);
+            return;
+        }
         int fade = Math.max(8, w / 6);
         int cx   = x + w / 2;
         gfx.fillGradient(x,            y, x + fade,     y + 1, 0x00000000, INK_DIVIDER);
@@ -132,6 +139,21 @@ public final class DiaryChrome {
 
     // ── Esquineros victorianos dobles ───────────────────────────────────────
     public static void drawCornerOrnaments(GuiGraphics gfx, int x, int y, int w, int h) {
+        if (com.eternalcraft.gripeverde.client.util.ClientAccessibility.hasActiveGameSession()) {
+            // The world remains visible behind in-game screens. Keep four
+            // small corner marks and skip the layered editorial ornament pass.
+            int color = 0x80422810;
+            int len = Math.min(5, Math.max(2, Math.min(w, h) / 8));
+            gfx.fill(x, y, x + len, y + 1, color);
+            gfx.fill(x, y, x + 1, y + len, color);
+            gfx.fill(x + w - len, y, x + w, y + 1, color);
+            gfx.fill(x + w - 1, y, x + w, y + len, color);
+            gfx.fill(x, y + h - 1, x + len, y + h, color);
+            gfx.fill(x, y + h - len, x + 1, y + h, color);
+            gfx.fill(x + w - len, y + h - 1, x + w, y + h, color);
+            gfx.fill(x + w - 1, y + h - len, x + w, y + h, color);
+            return;
+        }
         int colOut = 0xC0422810;
         int colIn  = 0x80422810;
         int sOut = 12, sIn = 5, off = 3;
@@ -248,6 +270,10 @@ public final class DiaryChrome {
 
     // ── Sombra proyectada profesional ───────────────────────────────────────
     public static void drawPanelShadow(GuiGraphics gfx, int x, int y, int w, int h) {
+        if (com.eternalcraft.gripeverde.client.util.ClientAccessibility.hasActiveGameSession()) {
+            gfx.fill(x + 3, y + 3, x + w + 3, y + h + 3, 0x30100600);
+            return;
+        }
         int offset = 7;
         gfx.fill(x + offset - 4, y + offset - 4, x + w + offset + 4, y + h + offset + 4, 0x18100600);
         gfx.fill(x + offset - 2, y + offset - 2, x + w + offset + 2, y + h + offset + 2, 0x3A100600);

@@ -108,6 +108,11 @@ public class DiaryButton extends AbstractButton {
         int pressedOffset = pressed?1:0;
         int yDraw = y+pressedOffset;
 
+        if (ClientAccessibility.hasActiveGameSession()) {
+            renderGameplayVersion(g, mouseX, mouseY, x, yDraw, w, h, t);
+            return;
+        }
+
         // ── Shadows ──
         if(!active){
             // Disabled: no shadow, flat
@@ -241,6 +246,43 @@ public class DiaryButton extends AbstractButton {
             for(int cx=x+4;cx<x+w-4;cx+=8){
                 g.fill(cx,yDraw+4,cx+1,yDraw+h-4,cross);
             }
+        }
+    }
+
+    /** Low-fill-count button skin for menus drawn over a live world. */
+    private void renderGameplayVersion(GuiGraphics g, int mouseX, int mouseY,
+                                       int x, int y, int w, int h,
+                                       float hover) {
+        int bg = !active
+            ? DiaryTheme.withAlpha(0xFFD8CAB0, 210)
+            : hoverAnim.lerpColor(DiaryTheme.PAPER_STAINED, 0xFFB89A6E);
+        g.fill(x, y, x + w, y + h, bg);
+        int border = !active
+            ? DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 120)
+            : hoverAnim.lerpColor(DiaryTheme.SEPIA_DARK, getVariantAccent());
+        drawBorder(g, x, y, w, h, border);
+
+        Font font = Minecraft.getInstance().font;
+        Component message = getMessage();
+        int textColor = !active
+            ? DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 150)
+            : getTextColor(hover);
+        int contentY = y + (h - font.lineHeight) / 2;
+        boolean drawIcon = icon != Icon.NONE && h >= 12;
+        int textX;
+        String text;
+        if (drawIcon) {
+            int iconX = x + 9;
+            drawIcon(g, iconX, y + (h - 10) / 2, textColor);
+            textX = iconX + 18;
+            text = fitText(font, message, Math.max(8, x + w - 10 - textX));
+        } else {
+            text = fitText(font, message, Math.max(8, w - 18));
+            textX = x + (w - cachedTextWidth) / 2;
+        }
+        g.drawString(font, text, textX, contentY, textColor, false);
+        if (isFocused() && !isMouseOver(mouseX, mouseY) && active) {
+            DiaryFocus.drawKeyboardRing(g, x, y, w, h, true);
         }
     }
 

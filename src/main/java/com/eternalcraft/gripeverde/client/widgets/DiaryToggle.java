@@ -159,6 +159,11 @@ public class DiaryToggle extends AbstractButton {
         float t = hoverAnim.getEased();
         boolean value = this.valueGetter.get();
 
+        if (ClientAccessibility.hasActiveGameSession()) {
+            renderGameplayVersion(g, mouseX, mouseY, x, y, w, h, value);
+            return;
+        }
+
         int outerShadow = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 96);
         g.fill(x + 2, y + h, x + w + 1, y + h + 2, outerShadow);
         g.fill(x + 3, y + h + 1, x + w + 2, y + h + 3, DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 42));
@@ -226,6 +231,46 @@ public class DiaryToggle extends AbstractButton {
             g.fill(x + paddingH, underlineY, x + paddingH + Math.min(maxLabelW, this.cachedLabelTextWidth), underlineY + 1,
                 DiaryTheme.withAlpha(accent, underlineAlpha));
         }
+
+        DiaryFocus.drawKeyboardRing(g, x, y, w, h,
+            this.active && this.isFocused() && !this.isMouseOver(mouseX, mouseY));
+    }
+
+    /** Compact rendering while a world continues drawing behind the screen. */
+    private void renderGameplayVersion(GuiGraphics g, int mouseX, int mouseY,
+                                       int x, int y, int w, int h,
+                                       boolean value) {
+        Font font = Minecraft.getInstance().font;
+        int plateW = 66;
+        int padding = 10;
+        int maxLabelW = Math.max(24, w - plateW - padding * 2 - 8);
+        this.refreshDisplayLayout(font, maxLabelW);
+
+        g.fill(x, y, x + w, y + h, DiaryTheme.PAPER_STAINED);
+        int border = DiaryTheme.SEPIA_DARK;
+        g.fill(x, y, x + w, y + 1, border);
+        g.fill(x, y + h - 1, x + w, y + h, border);
+        g.fill(x, y, x + 1, y + h, border);
+        g.fill(x + w - 1, y, x + w, y + h, border);
+
+        int contentY = y + (h - font.lineHeight) / 2;
+        int color = this.active ? DiaryTheme.INK : DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 150);
+        g.drawString(font, this.cachedLabelText, x + padding, contentY, color, false);
+
+        int plateX = x + w - plateW - 8;
+        int plateY = y + 4;
+        int plateH = Math.max(1, h - 8);
+        g.fill(plateX, plateY, plateX + plateW, plateY + plateH, 0xFFE3D5B2);
+        g.fill(plateX, plateY, plateX + plateW, plateY + 1, border);
+        int slotX = plateX + plateW - 14;
+        int slotY = plateY + 3;
+        int slotH = Math.max(1, plateH - 6);
+        g.fill(slotX, slotY, slotX + 8, slotY + slotH,
+            value ? DiaryTheme.REDCOAT : DiaryTheme.SEPIA_MID);
+        String valueText = value ? this.cachedOnLabel : this.cachedOffLabel;
+        int valueWidth = value ? this.cachedOnLabelWidth : this.cachedOffLabelWidth;
+        g.drawString(font, valueText,
+            plateX + Math.max(4, (plateW - 18 - valueWidth) / 2), contentY, color, false);
 
         DiaryFocus.drawKeyboardRing(g, x, y, w, h,
             this.active && this.isFocused() && !this.isMouseOver(mouseX, mouseY));
