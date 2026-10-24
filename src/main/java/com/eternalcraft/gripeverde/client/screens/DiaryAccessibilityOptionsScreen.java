@@ -2,6 +2,7 @@ package com.eternalcraft.gripeverde.client.screens;
 
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
+import com.eternalcraft.gripeverde.client.util.ClientAccessibility;
 import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton.Icon;
@@ -266,9 +267,8 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
             gfx.fill(ex - 4, ey + 2, ex + 4, ey + 3, lid);
             gfx.fill(ex - 7, ey - 1, ex - 6, ey + 1, lid);
             gfx.fill(ex + 6, ey - 1, ex + 7, ey + 1, lid);
-            boolean reduced = ClientConfig.REDUCED_MOTION.get();
-            long now = System.currentTimeMillis();
-            if (!reduced && (now % 6200L) < 180L) {
+            boolean reduced = ClientAccessibility.reducedMotion();
+            if (!reduced && (System.currentTimeMillis() % 6200L) < 180L) {
                 gfx.fill(ex - 6, ey - 2, ex + 6, ey + 2, lid);
             } else {
                 double dx = mouseX - ex, dy = mouseY - ey;
