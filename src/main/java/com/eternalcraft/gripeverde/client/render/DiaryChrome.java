@@ -77,6 +77,19 @@ public final class DiaryChrome {
         int w = 58;
         int h = 13;
 
+        if (com.eternalcraft.gripeverde.client.util.ClientAccessibility.hasActiveGameSession()) {
+            gfx.fill(x, y, x + w, y + h, STEEL_MID);
+            gfx.fill(x, y, x + w, y + 1, STEEL_EDGE);
+            gfx.fill(x, y + h - 1, x + w, y + h, STEEL_EDGE);
+            gfx.fill(x, y, x + 1, y + h, STEEL_EDGE);
+            gfx.fill(x + w - 1, y, x + w, y + h, STEEL_EDGE);
+            gfx.fill(x + 1, y + 2, x + 2, y + h - 2, PLAGUE);
+            int tw = gfx.drawString(Minecraft.getInstance().font, regCode, x + 2, y + 3,
+                    DiaryTheme.withAlpha(0x002A2620, 235), false);
+            gfx.fill(x + 2 + tw + 2, y + 4, x + 2 + tw + 4, y + 5, STEEL_EDGE);
+            return;
+        }
+
         // base de acero cepillado
         for (int i = 0; i < h; i++) {
             int v = STEEL_MID + (i % 3 == 0 ? 4 : (i % 3 == 1 ? -2 : 0));
@@ -224,6 +237,19 @@ public final class DiaryChrome {
 
         int scrollRight = scrollLeft + 6;
         int trackH = trackY2 - trackY1;
+        if (com.eternalcraft.gripeverde.client.util.ClientAccessibility.hasActiveGameSession()) {
+            if (trackH <= 0) return;
+            int thumbH = Math.min(trackH, Math.max(12,
+                (int) (trackH * trackH / (double) (trackH + maxScroll * 1.2))));
+            double scrollFrac = Math.max(0.0, Math.min(1.0, scrollAmount / maxScroll));
+            int thumbY = trackY1 + (int) ((trackH - thumbH) * scrollFrac);
+            gfx.fill(scrollLeft + 2, trackY1, scrollRight - 2, trackY2, 0x60422810);
+            gfx.fill(scrollLeft, thumbY, scrollRight, thumbY + thumbH, 0xCC6B4A2E);
+            if (thumbH > 2) {
+                gfx.fill(scrollLeft + 1, thumbY + 1, scrollLeft + 2, thumbY + thumbH - 1, 0xD0A67A5A);
+            }
+            return;
+        }
         gfx.fill(scrollLeft, trackY1, scrollRight, trackY2, 0xFFF0E5C8);
         gfx.fill(scrollLeft + 2, trackY1, scrollRight - 2, trackY2, 0x30422810);
         gfx.fill(scrollLeft - 1, trackY1 - 1, scrollRight + 1, trackY1, DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 90));
