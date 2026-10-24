@@ -69,6 +69,10 @@ public class DiaryPauseScreen extends PauseScreen {
     private int cachedTitleWidth;
     private String cachedSubtitle = "";
     private int cachedSubtitleWidth;
+    private Component cachedSignature;
+    private int cachedSignatureWidth;
+    private String cachedSignatureAside = "";
+    private int cachedSignatureAsideWidth;
     private int cachedDateWidth;
     private static final String DATE_STAMP = "23 · III · 1897";
 
@@ -351,14 +355,17 @@ public class DiaryPauseScreen extends PauseScreen {
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         refreshHeaderCache();
+        boolean inGameSession = com.eternalcraft.gripeverde.client.util.ClientAccessibility.hasActiveGameSession();
         int overlay = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 180);
         g.fill(0, 0, this.width, this.height, overlay);
 
-        drawVignette(g);
+        // The world already renders below this pause screen; the overlay gives
+        // enough contrast without the 160 fill calls of the vignette.
+        if (!inGameSession) drawVignette(g);
 
         int px = panelX();
         int py = panelY();
-        drawPanel(g, px, py, panelW(), panelH());
+        drawPanel(g, px, py, panelW(), panelH(), inGameSession);
         drawPanelTitle(g, px, py);
         drawDateStamp(g, px, py);
         drawPanelSeparators(g, px, py);
@@ -370,7 +377,7 @@ public class DiaryPauseScreen extends PauseScreen {
 
         // Elementos que van encima de los botones
         if (!compactLayout) {
-            drawCandle(g, px + 20, py + panelH() - 32);
+            drawCandle(g, px + 20, py + panelH() - 32, inGameSession);
             drawSignature(g, px, py);
             drawWaxSeal(g, px + panelW() - 28, py + panelH() - 26);
         }
@@ -448,13 +455,21 @@ public class DiaryPauseScreen extends PauseScreen {
     // PANEL — FIX papel claro real (orden de render corregido)
     // ================================================================
 
-    private void drawPanel(GuiGraphics g, int x, int y, int w, int h) {
+    private void drawPanel(GuiGraphics g, int x, int y, int w, int h, boolean fastInGame) {
         // Sombra
         int shadowColor = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 200);
         g.fill(x + 5, y + 5, x + w + 5, y + h + 5, shadowColor);
 
         // Base opaca — papel crema claro
         g.fill(x, y, x + w, y + h, PAPER_LIGHT);
+
+        if (fastInGame) {
+            // Preserve the same paper silhouette and frame, but skip the
+            // procedural stains, random dots and per-row highlight pass.
+            drawDoubleBorder(g, x, y, w, h);
+            drawCornerOrnaments(g, x, y, w, h);
+            return;
+        }
 
         // ORDEN NUEVO: manchas primero, brillo despues (brillo debe estar encima)
 
@@ -495,15 +510,10 @@ public class DiaryPauseScreen extends PauseScreen {
 
     private void drawBloodSpotWithSplatter(GuiGraphics g, int cx, int cy, int r) {
         for (int dy = -r; dy <= r; dy++) {
-            for (int dx = -r; dx <= r; dx++) {
-                int d2 = dx * dx + dy * dy;
-                if (d2 <= r * r) {
-                    float t = 1f - (float) Math.sqrt(d2) / r;
-                    int alpha = (int)(t * 140);
-                    int c = DiaryTheme.withAlpha(DiaryTheme.BLOOD_DRIED, alpha);
-                    g.fill(cx + dx, cy + dy, cx + dx + 1, cy + dy + 1, c);
-                }
-            }
+            int dx = (int) Math.sqrt(r * r - dy * dy);
+            int alpha = 72 + (r - Math.abs(dy)) * 8;
+            g.fill(cx - dx, cy + dy, cx + dx + 1, cy + dy + 1,
+                DiaryTheme.withAlpha(DiaryTheme.BLOOD_DRIED, alpha));
         }
         g.fill(cx - 2, cy - 2, cx + 2, cy + 2, DiaryTheme.BLOOD_DRIED);
 
@@ -596,6 +606,18 @@ public class DiaryPauseScreen extends PauseScreen {
         this.cachedSubtitle = Component.translatable("gripeverde.pause.subtitle").getString();
         this.cachedSubtitleWidth = font.width(this.cachedSubtitle);
         this.cachedDateWidth = font.width(DATE_STAMP);
+        this.cachedSignature = Component.literal(isEnglishSelected()
+                ? "Signed: S. Pereira, M.D."
+                : "Firmado: S. Pereira, Medico")
+            .withStyle(ChatFormatting.ITALIC);
+        this.cachedSignatureWidth = font.width(this.cachedSignature);
+        boolean hasManyDiscoveries = false;
+        try {
+            hasManyDiscoveries = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.discoveredCount() >= 10;
+        } catch (Throwable ignored) {}
+        this.cachedSignatureAside = hasManyDiscoveries
+            ? (isEnglishSelected() ? "- and of whoever reads -" : "- y de quien lee -") : "";
+        this.cachedSignatureAsideWidth = font.width(this.cachedSignatureAside);
     }
 
     private void drawFlourish(GuiGraphics g, int x, int y, int color, boolean mirror) {
@@ -639,24 +661,16 @@ public class DiaryPauseScreen extends PauseScreen {
 
     private void drawSignature(GuiGraphics g, int px, int py) {
         if (compactLayout) return;
-        Component sig = Component.literal(isEnglishSelected()
-                ? "Signed: S. Pereira, M.D."
-                : "Firmado: S. Pereira, Medico")
-            .withStyle(ChatFormatting.ITALIC);
         int centerX = px + panelW() / 2;
-        int sw = this.font.width(sig);
         int sy = py + panelH() - ORN_SIGN_FROM_BOT;
         // v0.21.25: firma limpia sin sombra.
-        g.drawString(this.font, sig, centerX - sw / 2, sy, DiaryTheme.SEPIA_DARK, false);
-        // v0.16.0: tras bastantes hallazgos, la firma reconoce al lector.
-        try {
-            if (com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.discoveredCount() >= 10) {
-                String add = isEnglishSelected() ? "- and of whoever reads -" : "- y de quien lee -";
-                int aw = this.font.width(add);
-                g.drawString(this.font, add, centerX - aw / 2, sy - 10,
-                    DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 130), false);
-            }
-        } catch (Throwable ignored) {}
+        g.drawString(this.font, this.cachedSignature, centerX - this.cachedSignatureWidth / 2,
+            sy, DiaryTheme.SEPIA_DARK, false);
+        if (!this.cachedSignatureAside.isEmpty()) {
+            g.drawString(this.font, this.cachedSignatureAside,
+                centerX - this.cachedSignatureAsideWidth / 2, sy - 10,
+                DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 130), false);
+        }
     }
 
     private static boolean isEnglishSelected() {
@@ -671,18 +685,14 @@ public class DiaryPauseScreen extends PauseScreen {
     private void drawWaxSeal(GuiGraphics g, int cx, int cy) {
         int r = 14;
         for (int dy = -r; dy <= r; dy++) {
-            for (int dx = -r; dx <= r; dx++) {
-                if (dx * dx + dy * dy <= r * r) {
-                    g.fill(cx + dx, cy + dy, cx + dx + 1, cy + dy + 1, DiaryTheme.WAX_SEAL);
-                }
-            }
-        }
-        for (int dy = -r; dy <= r; dy++) {
-            for (int dx = -r; dx <= r; dx++) {
-                int d2 = dx * dx + dy * dy;
-                if (d2 <= r * r && d2 >= (r - 2) * (r - 2)) {
-                    g.fill(cx + dx, cy + dy, cx + dx + 1, cy + dy + 1, DiaryTheme.BLOOD_DRIED);
-                }
+            int dx = (int) Math.sqrt(r * r - dy * dy);
+            g.fill(cx - dx, cy + dy, cx + dx + 1, cy + dy + 1, DiaryTheme.WAX_SEAL);
+            if (Math.abs(dy) <= r - 2) {
+                int innerDx = (int) Math.sqrt((r - 2) * (r - 2) - dy * dy);
+                g.fill(cx - dx, cy + dy, cx - innerDx, cy + dy + 1, DiaryTheme.BLOOD_DRIED);
+                g.fill(cx + innerDx + 1, cy + dy, cx + dx + 1, cy + dy + 1, DiaryTheme.BLOOD_DRIED);
+            } else {
+                g.fill(cx - dx, cy + dy, cx + dx + 1, cy + dy + 1, DiaryTheme.BLOOD_DRIED);
             }
         }
         g.fill(cx - 7, cy - 7, cx - 3, cy - 4, DiaryTheme.withAlpha(DiaryTheme.PAPER, 90));
@@ -742,7 +752,7 @@ public class DiaryPauseScreen extends PauseScreen {
     // VELA CON LLAMA ANIMADA — esquina inferior izquierda del panel
     // ================================================================
 
-    private void drawCandle(GuiGraphics g, int x, int y) {
+    private void drawCandle(GuiGraphics g, int x, int y, boolean fastInGame) {
         // Vela de sebo con llama animada
         // Tamaño total: ~14x28 (candelero + vela + llama + halo)
         // Coord (x,y) es la base del candelero
@@ -781,7 +791,7 @@ public class DiaryPauseScreen extends PauseScreen {
         // v0.16.0: vela apagada = humo breve, nada de llama.
         if (candleOut) {
             long nowSmoke = System.currentTimeMillis();
-            if (nowSmoke < candleSmokeUntilMs) {
+            if (!fastInGame && nowSmoke < candleSmokeUntilMs) {
                 boolean reduced = reducedMotion();
                 float t = reduced ? 0.5f : (nowSmoke % 700L) / 700f;
                 int sx = x + 6 + (reduced ? 0 : (int)(Math.sin(nowSmoke / 210.0) * 2));
@@ -794,6 +804,13 @@ public class DiaryPauseScreen extends PauseScreen {
             }
             // Mecha negra sin llama
             g.fill(x + 6, y + 3, x + 7, y + 5, wick);
+            return;
+        }
+
+        if (fastInGame) {
+            // Keep the candle recognizable while avoiding its multi-pass halo.
+            g.fill(x + 5, y - 2, x + 8, y + 3, flameOuter);
+            g.fill(x + 6, y - 1, x + 7, y + 2, flameCore);
             return;
         }
 
