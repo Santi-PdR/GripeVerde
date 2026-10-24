@@ -31,6 +31,7 @@ public final class FlagRenderer {
 
     // ── registro ─────────────────────────────────────────────────────────────
     private static final Map<String, int[][]> FLAGS = new HashMap<>();
+    private static final Map<String, int[]> FLAG_RUNS = new HashMap<>();
 
     static {
         // ==== INGLES (todas las variantes vanilla) ====
@@ -153,28 +154,53 @@ public final class FlagRenderer {
         FLAGS.put("gl_es",   flagGalicia());
         FLAGS.put("cy_gb",   flagWales());
         FLAGS.put("gd_gb",   flagScotland());
+
+        for (Map.Entry<String, int[][]> entry : FLAGS.entrySet()) {
+            FLAG_RUNS.put(entry.getKey(), encodeRuns(entry.getValue()));
+        }
     }
 
     // ── API ──────────────────────────────────────────────────────────────────
     public static void draw(GuiGraphics gfx, String code, int x, int y) {
-        int[][] flag = code != null ? FLAGS.get(code.toLowerCase()) : null;
-        if (flag != null) drawGrid(gfx, flag, x, y);
+        int[] runs = code != null ? FLAG_RUNS.get(code.toLowerCase(java.util.Locale.ROOT)) : null;
+        if (runs != null) drawGrid(gfx, runs, x, y);
         else drawFallback(gfx, x, y);
     }
 
     public static boolean has(String code) {
-        return code != null && FLAGS.containsKey(code.toLowerCase());
+        return code != null && FLAG_RUNS.containsKey(code.toLowerCase(java.util.Locale.ROOT));
     }
 
     // ── render interno ───────────────────────────────────────────────────────
-    private static void drawGrid(GuiGraphics gfx, int[][] grid, int ox, int oy) {
-        // Base flag pixels
-        for (int r = 0; r < FLAG_H; r++) {
-            for (int c = 0; c < FLAG_W; c++) {
-                int color = grid[r][c];
-                if ((color >>> 24) == 0) continue;
-                gfx.fill(ox + c, oy + r, ox + c + 1, oy + r + 1, color);
+    private static int[] encodeRuns(int[][] grid) {
+        int[] runs = new int[FLAG_W * FLAG_H * 4];
+        int size = 0;
+        for (int y = 0; y < FLAG_H; y++) {
+            int x = 0;
+            while (x < FLAG_W) {
+                int color = grid[y][x];
+                if ((color >>> 24) == 0) {
+                    x++;
+                    continue;
+                }
+                int end = x + 1;
+                while (end < FLAG_W && grid[y][end] == color) end++;
+                runs[size++] = x;
+                runs[size++] = y;
+                runs[size++] = end;
+                runs[size++] = color;
+                x = end;
             }
+        }
+        return java.util.Arrays.copyOf(runs, size);
+    }
+
+    private static void drawGrid(GuiGraphics gfx, int[] runs, int ox, int oy) {
+        // Merge adjacent pixels with the same color into a single horizontal fill.
+        for (int i = 0; i < runs.length; i += 4) {
+            int x1 = runs[i];
+            int y = runs[i + 1];
+            gfx.fill(ox + x1, oy + y, ox + runs[i + 2], oy + y + 1, runs[i + 3]);
         }
         // Embossed archival border: outer shadow + inner parchment highlight
         int outer = 0x80000000; // deep

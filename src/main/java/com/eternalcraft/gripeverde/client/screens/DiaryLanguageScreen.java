@@ -9,6 +9,7 @@ import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.screens.Screen;
@@ -293,9 +294,8 @@ public class DiaryLanguageScreen extends Screen {
     private boolean selectFirstMatchingLanguage(String query) {
         String q = query.toLowerCase(java.util.Locale.ROOT);
         for (LanguageEntry entry : this.languageEntries) {
-            String name = entry.info.toComponent().getString().toLowerCase(java.util.Locale.ROOT);
             String code = entry.code.toLowerCase(java.util.Locale.ROOT);
-            if (name.startsWith(q) || code.startsWith(q) || name.contains(q)) {
+            if (entry.searchName.startsWith(q) || code.startsWith(q) || entry.searchName.contains(q)) {
                 this.pendingLanguageCode = entry.code;
                 this.languageList.selectAndCenter(entry);
                 return true;
@@ -463,12 +463,33 @@ public class DiaryLanguageScreen extends Screen {
         private final String code;
         private final LanguageInfo info;
         private final boolean fogTongue;
+        private final String searchName;
+        private final String displayCode;
+        private final String fogName;
+        private final Component languageName;
+        private final Component normalLabel;
+        private final Component pendingLabel;
+        private final Component appliedLabel;
+        private Font measuredFont;
+        private int normalLabelWidth;
+        private int pendingLabelWidth;
+        private int appliedLabelWidth;
+        private int displayCodeWidth;
+        private int fogNameWidth;
         private long lastClickMs = 0L;
 
         private LanguageEntry(String code, LanguageInfo info) {
             this.code = code;
             this.info = info;
             this.fogTongue = false;
+            this.displayCode = code.toUpperCase(java.util.Locale.ROOT);
+            Component name = info.toComponent();
+            this.languageName = name;
+            this.searchName = name.getString().toLowerCase(java.util.Locale.ROOT);
+            this.normalLabel = Component.literal("  ").append(name);
+            this.pendingLabel = Component.literal("> ").append(name);
+            this.appliedLabel = Component.literal("- ").append(name);
+            this.fogName = null;
         }
 
         private LanguageEntry() {
@@ -476,6 +497,27 @@ public class DiaryLanguageScreen extends Screen {
             this.code = "fog";
             this.info = null;
             this.fogTongue = true;
+            this.searchName = "";
+            this.displayCode = "FOG";
+            this.normalLabel = null;
+            this.pendingLabel = null;
+            this.appliedLabel = null;
+            this.fogName = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+                ? "Tongue of the Fog" : "Lengua de la Niebla";
+            this.languageName = null;
+        }
+
+        private void refreshTextMetrics(Font font) {
+            if (this.measuredFont == font) return;
+            this.measuredFont = font;
+            if (this.fogTongue) {
+                this.fogNameWidth = font.width(this.fogName);
+                return;
+            }
+            this.normalLabelWidth = font.width(this.normalLabel);
+            this.pendingLabelWidth = font.width(this.pendingLabel);
+            this.appliedLabelWidth = font.width(this.appliedLabel);
+            this.displayCodeWidth = font.width(this.displayCode);
         }
 
         @Override
@@ -487,14 +529,13 @@ public class DiaryLanguageScreen extends Screen {
                 if (hovered) {
                     g.fill(left + 2, top + 1, left + rowWidth - 2, top + rowHeight - 2, 0x22384028);
                 }
-                String name = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
-                    ? "Tongue of the Fog" : "Lengua de la Niebla";
+                Font font = DiaryLanguageScreen.this.font;
+                this.refreshTextMetrics(font);
                 int pulse = reducedMotion() ? 90
                     : 90 + (int)(Math.sin(System.currentTimeMillis() / 600.0) * 40);
-                int w2 = DiaryLanguageScreen.this.font.width(name);
-                g.drawString(DiaryLanguageScreen.this.font, name,
-                    left + FLAG_SLOT + (rowWidth - FLAG_SLOT - w2) / 2,
-                    top + (rowHeight - DiaryLanguageScreen.this.font.lineHeight) / 2,
+                g.drawString(font, this.fogName,
+                    left + FLAG_SLOT + (rowWidth - FLAG_SLOT - this.fogNameWidth) / 2,
+                    top + (rowHeight - font.lineHeight) / 2,
                     (Math.max(30, pulse) << 24) | 0x7A9060, false);
                 // Rombo de tinta en lugar de bandera
                 int dx = left + 8, dy = top + rowHeight / 2;
@@ -537,25 +578,20 @@ public class DiaryLanguageScreen extends Screen {
                 textColor = INK_NORMAL;
             }
 
-            String prefix;
-            if (isPending) {
-                prefix = "> ";
-            } else if (isApplied) {
-                prefix = "- ";
-            } else {
-                prefix = "  ";
-            }
-
-            Component label = Component.literal(prefix).append(this.info.toComponent());
+            Font font = DiaryLanguageScreen.this.font;
+            this.refreshTextMetrics(font);
+            Component label = isPending ? this.pendingLabel
+                : isApplied ? this.appliedLabel : this.normalLabel;
+            int textW = isPending ? this.pendingLabelWidth
+                : isApplied ? this.appliedLabelWidth : this.normalLabelWidth;
 
             // Zona de texto: desde left+FLAG_SLOT hasta left+rowWidth
             int textZoneLeft  = left + FLAG_SLOT;
             int textZoneWidth = rowWidth - FLAG_SLOT;
-            int textW  = DiaryLanguageScreen.this.font.width(label);
             int textX  = textZoneLeft + (textZoneWidth - textW) / 2;
-            int textY  = top + (rowHeight - DiaryLanguageScreen.this.font.lineHeight) / 2;
+            int textY  = top + (rowHeight - font.lineHeight) / 2;
 
-            g.drawString(DiaryLanguageScreen.this.font, label, textX, textY, textColor, false);
+            g.drawString(font, label, textX, textY, textColor, false);
 
             if (isApplied) {
                 int markColor = 0xAA422810;
@@ -564,12 +600,10 @@ public class DiaryLanguageScreen extends Screen {
             }
 
             if (hovered || isPending) {
-                String codeText = this.code.toUpperCase(java.util.Locale.ROOT);
-                int codeW = DiaryLanguageScreen.this.font.width(codeText);
-                int codeX = left + rowWidth - codeW - 16;
+                int codeX = left + rowWidth - this.displayCodeWidth - 16;
                 if (codeX > textZoneLeft + textW + 8) {
                     int codeColor = isPending ? 0xAA1A0F08 : 0x886B4A2E;
-                    g.drawString(DiaryLanguageScreen.this.font, codeText, codeX, textY, codeColor, false);
+                    g.drawString(font, this.displayCode, codeX, textY, codeColor, false);
                 }
             }
         }
@@ -609,7 +643,7 @@ public class DiaryLanguageScreen extends Screen {
         @Override
         public Component getNarration() {
             if (this.fogTongue) return Component.literal("...");
-            return this.info.toComponent();
+            return this.languageName;
         }
     }
 }
