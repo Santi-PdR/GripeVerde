@@ -53,6 +53,7 @@ public final class ChroniclerMemory {
     }
 
     private static Data data = null;
+    private static int cachedDiscoveredCount = -1;
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final org.slf4j.Logger LOGGER = com.mojang.logging.LogUtils.getLogger();
     private static final String MEMORY_FILE = "gripeverde-memory.json";
@@ -155,6 +156,7 @@ public final class ChroniclerMemory {
     }
 
     private static synchronized void load() {
+        cachedDiscoveredCount = -1;
         data = new Data();
         Path primary = configPath(MEMORY_FILE);
         Path temporary = configPath(TEMP_FILE);
@@ -391,16 +393,21 @@ public final class ChroniclerMemory {
 
     public static synchronized void markDiscovered(String id) {
         Data d = get();
-        if (d.discovered.add(id)) save();
+        if (d.discovered.add(id)) {
+            cachedDiscoveredCount = -1;
+            save();
+        }
     }
 
     public static synchronized int discoveredCount() {
+        if (cachedDiscoveredCount >= 0) return cachedDiscoveredCount;
         Data data = get();
         int count = 0;
         for (String id : Discoveries.ALL) {
             if (data.discovered.contains(id)) count++;
         }
-        return count;
+        cachedDiscoveredCount = count;
+        return cachedDiscoveredCount;
     }
 
     // ── Objetos del cajon ───────────────────────────────────────────────────
