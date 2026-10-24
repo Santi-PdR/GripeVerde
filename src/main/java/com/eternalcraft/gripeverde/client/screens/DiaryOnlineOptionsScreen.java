@@ -123,10 +123,8 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         this.refreshHeaderTextCache();
-        // Escena viva
-        g.fill(0, 0, this.width, this.height, 0xFF000000);
+        // Let the shared renderer dim the world when opened during a session.
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
-                // Overlay
 
         // Pergamino
         DiaryChrome.drawPanelShadow(g, this.panelX, this.panelY, this.panelW, this.panelH);

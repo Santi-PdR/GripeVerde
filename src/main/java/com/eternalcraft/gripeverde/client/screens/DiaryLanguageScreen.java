@@ -155,8 +155,6 @@ public class DiaryLanguageScreen extends Screen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        // Clear framebuffer + transition fade
-        g.fill(0, 0, this.width, this.height, 0xFF000000);
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
         DiaryChrome.drawPanelShadow(g, panelX, panelY, panelW, panelH);
         PaperTexture.drawClean(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.ARCHIVE);

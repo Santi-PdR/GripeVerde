@@ -234,11 +234,9 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         this.refreshStaticTextCache();
-        // --- Escena viva atenuada ---
-        // Clear framebuffer + transition fade
-        g.fill(0, 0, this.width, this.height, 0xFF000000);
+        // The shared renderer already clears the front-end scene or dims the
+        // live world; avoid an extra full-screen opaque pass here.
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
-                // --- Overlay oscuro ---
 
         // --- Pergamino ---
         DiaryChrome.drawPanelShadow(g, this.panelX, this.panelY, this.panelW, this.panelH);
