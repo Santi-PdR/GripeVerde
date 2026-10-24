@@ -18,6 +18,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * La Sala de consulta (el Archivo).
@@ -55,6 +56,7 @@ public class DiaryArchiveScreen extends Screen {
     private int cardsTop, cardsBottom, infoY, docsY, cardWidth;
     private int maxCardScroll, maxDocumentScroll;
     private double cardScroll, documentScroll;
+    private Set<String> renderDiscoveries = Set.of();
     private final Map<String, List<FormattedCharSequence>> wrappedDocumentCache = new HashMap<>();
     private int wrappedDocumentWidth = -1;
 
@@ -120,6 +122,7 @@ public class DiaryArchiveScreen extends Screen {
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         this.lastMouseX = mouseX;
         this.lastMouseY = mouseY;
+        this.renderDiscoveries = ChroniclerMemory.discoveredSnapshot();
         QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
 
         DiaryChrome.drawPanelShadow(g, panelX, panelY, panelW, panelH);
@@ -184,7 +187,7 @@ public class DiaryArchiveScreen extends Screen {
                     int x = gridX + col * (cardWidth + CARD_GAP);
                     int y = cardsTop - gridScrollPx + row * CARD_SCROLL_STEP;
                     String id = Discoveries.ALL[i];
-                    boolean disc = ChroniclerMemory.isDiscovered(id);
+                    boolean disc = this.renderDiscoveries.contains(id);
                     boolean hover = !keyboardNavigatingCards
                         && mouseX >= x && mouseX < x + cardWidth
                         && mouseY >= y && mouseY < y + CARD_H
@@ -231,7 +234,7 @@ public class DiaryArchiveScreen extends Screen {
             : keyboardNavigatingCards ? keyboardCard : -1;
         if (detailCard >= 0 && detailCard < Discoveries.ALL.length) {
             String id = Discoveries.ALL[detailCard];
-            if (ChroniclerMemory.isDiscovered(id)) {
+            if (this.renderDiscoveries.contains(id)) {
                 drawC(g, Discoveries.nameFor(id), cx, infoY, DiaryTheme.INK);
             } else {
                 drawC(g, Discoveries.hintFor(id), cx, infoY, DiaryChrome.INK_FLAVOR);
@@ -258,12 +261,12 @@ public class DiaryArchiveScreen extends Screen {
         int docW = documentCardWidth(docCount);
         int dx = documentCardX(0, docCount, docW);
         int docY = docsY + 4;
-        if (ChroniclerMemory.isDiscovered(Discoveries.CODE_1897)) {
+        if (this.renderDiscoveries.contains(Discoveries.CODE_1897)) {
             drawPaperDoc(g, dx, docY, docW,
                 en ? "The night of the outbreak" : "La noche del brote", mouseX, mouseY);
             dx += docW + 6;
         }
-        if (ChroniclerMemory.isDiscovered(Discoveries.CODE_HOLLOWAY)) {
+        if (this.renderDiscoveries.contains(Discoveries.CODE_HOLLOWAY)) {
             drawPaperDoc(g, dx, docY, docW,
                 en ? "Dr. Holloway's report" : "Informe del Dr. Holloway", mouseX, mouseY);
             dx += docW + 6;
@@ -280,13 +283,11 @@ public class DiaryArchiveScreen extends Screen {
         com.eternalcraft.gripeverde.client.lore.Marginalia.draw(g, panelX, panelY, panelW, panelH);
 
         // v0.21.3/v0.21.5: la cadena de la limpieza (solo texto, sin mecanica nueva)
-        if (ChroniclerMemory.isDiscovered(Discoveries.ARCHIVE_THINNING)
-                && ChroniclerMemory.isDiscovered(Discoveries.THEME_NEVER_PLAYED)) {
+        if (this.renderDiscoveries.contains(Discoveries.ARCHIVE_THINNING)
+                && this.renderDiscoveries.contains(Discoveries.THEME_NEVER_PLAYED)) {
             Discoveries.discover(Discoveries.BG_TOWN_MEMORY);
-        }
-        if (ChroniclerMemory.isDiscovered(Discoveries.BG_TOWN_MEMORY)
-                && ChroniclerMemory.isDiscovered(Discoveries.ARCHIVE_THINNING)
-                && ChroniclerMemory.isDiscovered(Discoveries.THEME_NEVER_PLAYED)) {
+            // Preserve the same-frame chain: discovering the memory invalidates
+            // the cached snapshot, so register its follow-up in this pass too.
             Discoveries.discover(Discoveries.BUTTONS_NEVER_PRESSED);
         }
 
@@ -343,8 +344,8 @@ public class DiaryArchiveScreen extends Screen {
 
     private int availableDocCount() {
         int count = 0;
-        if (ChroniclerMemory.isDiscovered(Discoveries.CODE_1897)) count++;
-        if (ChroniclerMemory.isDiscovered(Discoveries.CODE_HOLLOWAY)) count++;
+        if (this.renderDiscoveries.contains(Discoveries.CODE_1897)) count++;
+        if (this.renderDiscoveries.contains(Discoveries.CODE_HOLLOWAY)) count++;
         if (ChroniclerMemory.discoveredCount() >= 38) count++;
         return count;
     }
@@ -490,14 +491,14 @@ public class DiaryArchiveScreen extends Screen {
         int docW = documentCardWidth(docCount);
         int dx = documentCardX(0, docCount, docW);
         int docY = docsY + 4;
-        if (ChroniclerMemory.isDiscovered(Discoveries.CODE_1897)) {
+        if (this.renderDiscoveries.contains(Discoveries.CODE_1897)) {
             if (mouseX >= dx && mouseX < dx + docW && mouseY >= docY && mouseY < docY + 18) {
                 openDocument(DOC_TELEGRAM);
                 return true;
             }
             dx += docW + 6;
         }
-        if (ChroniclerMemory.isDiscovered(Discoveries.CODE_HOLLOWAY)) {
+        if (this.renderDiscoveries.contains(Discoveries.CODE_HOLLOWAY)) {
             if (mouseX >= dx && mouseX < dx + docW && mouseY >= docY && mouseY < docY + 18) {
                 openDocument(DOC_HOLLOWAY);
                 return true;

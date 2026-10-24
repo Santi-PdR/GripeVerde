@@ -15,6 +15,7 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -54,6 +55,7 @@ public final class ChroniclerMemory {
 
     private static Data data = null;
     private static int cachedDiscoveredCount = -1;
+    private static Set<String> cachedDiscoveredSnapshot;
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final org.slf4j.Logger LOGGER = com.mojang.logging.LogUtils.getLogger();
     private static final String MEMORY_FILE = "gripeverde-memory.json";
@@ -157,6 +159,7 @@ public final class ChroniclerMemory {
 
     private static synchronized void load() {
         cachedDiscoveredCount = -1;
+        cachedDiscoveredSnapshot = null;
         data = new Data();
         Path primary = configPath(MEMORY_FILE);
         Path temporary = configPath(TEMP_FILE);
@@ -395,8 +398,17 @@ public final class ChroniclerMemory {
         Data d = get();
         if (d.discovered.add(id)) {
             cachedDiscoveredCount = -1;
+            cachedDiscoveredSnapshot = null;
             save();
         }
+    }
+
+    /** Read-only discovery view reused by renderers until the set changes. */
+    public static synchronized Set<String> discoveredSnapshot() {
+        if (cachedDiscoveredSnapshot == null) {
+            cachedDiscoveredSnapshot = Collections.unmodifiableSet(new HashSet<>(get().discovered));
+        }
+        return cachedDiscoveredSnapshot;
     }
 
     public static synchronized int discoveredCount() {
