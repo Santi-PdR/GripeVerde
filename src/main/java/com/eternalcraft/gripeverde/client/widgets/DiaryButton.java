@@ -91,7 +91,8 @@ public class DiaryButton extends AbstractButton {
     protected void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTick){
         int x=getX(), y=getY(), w=width, h=height;
         boolean hovered = isHoveredOrFocused() && active;
-        boolean reducedMotion = ClientAccessibility.reducedMotion();
+        boolean inGameSession = ClientAccessibility.hasActiveGameSession();
+        boolean reducedMotion = inGameSession || ClientAccessibility.reducedMotion();
         boolean pressed = pressAnimTicks>0 && active && !reducedMotion;
         if(pressAnimTicks>0) pressAnimTicks--;
 
@@ -108,7 +109,7 @@ public class DiaryButton extends AbstractButton {
         int pressedOffset = pressed?1:0;
         int yDraw = y+pressedOffset;
 
-        if (ClientAccessibility.hasActiveGameSession()) {
+        if (inGameSession) {
             renderGameplayVersion(g, mouseX, mouseY, x, yDraw, w, h, t);
             return;
         }
@@ -273,7 +274,7 @@ public class DiaryButton extends AbstractButton {
         String text;
         if (drawIcon) {
             int iconX = x + 9;
-            drawIcon(g, iconX, y + (h - 10) / 2, textColor);
+            drawGameplayIcon(g, iconX, y + (h - 10) / 2, textColor);
             textX = iconX + 18;
             text = fitText(font, message, Math.max(8, x + w - 10 - textX));
         } else {
@@ -283,6 +284,87 @@ public class DiaryButton extends AbstractButton {
         g.drawString(font, text, textX, contentY, textColor, false);
         if (isFocused() && !isMouseOver(mouseX, mouseY) && active) {
             DiaryFocus.drawKeyboardRing(g, x, y, w, h, true);
+        }
+    }
+
+    /** Recognizable low-fill-count pictograms for buttons over a live world. */
+    private void drawGameplayIcon(GuiGraphics g, int x, int y, int color) {
+        switch (icon) {
+            case HAND -> {
+                g.fill(x + 3, y + 2, x + 9, y + 8, color);
+                g.fill(x + 8, y + 4, x + 12, y + 7, color);
+            }
+            case SCROLL -> {
+                g.fill(x + 1, y + 1, x + 3, y + 9, color);
+                g.fill(x + 3, y + 3, x + 9, y + 7, color);
+                g.fill(x + 9, y + 1, x + 11, y + 9, color);
+            }
+            case CHART -> {
+                g.fill(x + 1, y + 6, x + 3, y + 9, color);
+                g.fill(x + 4, y + 3, x + 6, y + 9, color);
+                g.fill(x + 7, y + 5, x + 9, y + 9, color);
+                g.fill(x + 10, y + 2, x + 12, y + 9, color);
+            }
+            case GEAR -> {
+                g.fill(x + 3, y + 3, x + 9, y + 7, color);
+                g.fill(x + 5, y + 1, x + 7, y + 9, color);
+                g.fill(x + 1, y + 4, x + 11, y + 6, color);
+            }
+            case DOOR -> {
+                g.fill(x + 3, y + 1, x + 9, y + 10, color);
+                g.fill(x + 7, y + 5, x + 8, y + 6, DiaryTheme.PAPER);
+            }
+            case PALETTE -> {
+                g.fill(x + 2, y + 2, x + 10, y + 8, color);
+                g.fill(x + 8, y + 6, x + 12, y + 9, color);
+            }
+            case SOUND -> {
+                g.fill(x + 1, y + 4, x + 4, y + 7, color);
+                g.fill(x + 4, y + 2, x + 7, y + 9, color);
+                g.fill(x + 9, y + 3, x + 10, y + 8, color);
+            }
+            case EYE -> {
+                g.fill(x + 1, y + 4, x + 11, y + 6, color);
+                g.fill(x + 5, y + 3, x + 7, y + 7, DiaryTheme.INK_BLACK);
+            }
+            case CONTROLS -> {
+                g.fill(x + 1, y + 3, x + 11, y + 8, color);
+                g.fill(x + 3, y + 5, x + 5, y + 7, DiaryTheme.PAPER);
+                g.fill(x + 8, y + 5, x + 10, y + 7, DiaryTheme.PAPER);
+            }
+            case LANGUAGE -> {
+                g.fill(x + 1, y + 2, x + 11, y + 9, color);
+                g.fill(x + 3, y + 4, x + 9, y + 5, DiaryTheme.PAPER);
+                g.fill(x + 3, y + 7, x + 8, y + 8, DiaryTheme.PAPER);
+            }
+            case CHAT -> {
+                g.fill(x + 1, y + 2, x + 11, y + 8, color);
+                g.fill(x + 3, y + 8, x + 5, y + 10, color);
+            }
+            case PACK -> {
+                g.fill(x + 2, y + 2, x + 10, y + 9, color);
+                g.fill(x + 5, y + 3, x + 7, y + 8, DiaryTheme.PAPER);
+            }
+            case MODS -> {
+                g.fill(x + 1, y + 1, x + 5, y + 5, color);
+                g.fill(x + 7, y + 1, x + 11, y + 5, color);
+                g.fill(x + 1, y + 7, x + 5, y + 11, color);
+                g.fill(x + 7, y + 7, x + 11, y + 11, color);
+            }
+            case ACCESS -> {
+                g.fill(x + 5, y + 1, x + 7, y + 3, color);
+                g.fill(x + 2, y + 4, x + 10, y + 5, color);
+                g.fill(x + 5, y + 5, x + 7, y + 10, color);
+            }
+            case ONLINE -> {
+                g.fill(x + 5, y + 1, x + 7, y + 10, color);
+                g.fill(x + 1, y + 4, x + 11, y + 6, color);
+            }
+            case CREDITS -> {
+                g.fill(x + 3, y + 1, x + 9, y + 9, color);
+                g.fill(x + 5, y + 3, x + 7, y + 7, DiaryTheme.PAPER);
+            }
+            default -> {}
         }
     }
 

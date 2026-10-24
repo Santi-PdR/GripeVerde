@@ -151,7 +151,9 @@ public class DiaryToggle extends AbstractButton {
         if (hovered && !wasHovered) UiSounds.playHover();
         wasHovered = hovered;
 
-        if (ClientAccessibility.reducedMotion()) hoverAnim.setImmediately(hovered);
+        boolean inGameSession = ClientAccessibility.hasActiveGameSession();
+        boolean reducedMotion = inGameSession || ClientAccessibility.reducedMotion();
+        if (reducedMotion) hoverAnim.setImmediately(hovered);
         else {
             hoverAnim.setTarget(hovered);
             hoverAnim.tickRealtime();
@@ -159,7 +161,7 @@ public class DiaryToggle extends AbstractButton {
         float t = hoverAnim.getEased();
         boolean value = this.valueGetter.get();
 
-        if (ClientAccessibility.hasActiveGameSession()) {
+        if (inGameSession) {
             renderGameplayVersion(g, mouseX, mouseY, x, y, w, h, value);
             return;
         }
