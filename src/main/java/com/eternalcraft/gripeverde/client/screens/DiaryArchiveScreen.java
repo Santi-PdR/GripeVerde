@@ -251,7 +251,8 @@ public class DiaryArchiveScreen extends Screen {
                 int sealCx = cx + mw / 2 + 20;
                 String sig = "SIGILLUM";
                 g.drawString(this.font, sig, sealCx - this.font.width(sig) / 2, infoY - 15, 0xFF8A6A2D, false);
-                drawCompletionSeal(g, sealCx, infoY + 6, 8);
+                drawCompletionSeal(g, sealCx, infoY + 6, 8,
+                    com.eternalcraft.gripeverde.client.util.ClientAccessibility.hasActiveGameSession());
             }
         }
 
@@ -306,10 +307,23 @@ public class DiaryArchiveScreen extends Screen {
     }
 
     /** v0.21.13: sello de cera dorado del archivo completado. */
-    private static void drawCompletionSeal(GuiGraphics g, int cx, int cy, int radius) {
+    private static void drawCompletionSeal(GuiGraphics g, int cx, int cy, int radius,
+                                           boolean fastInGame) {
         int gold = 0xFFB8860B;
         int goldDark = 0xFF6B4E16;
         int goldHi = 0xFFE8C860;
+        if (fastInGame) {
+            // Completion is an exceptional state, but its seal is redrawn on
+            // every frame. Keep the stamp legible without its ~70 scanlines.
+            g.fill(cx - 5, cy - 3, cx + 6, cy + 4, gold);
+            g.fill(cx - 4, cy - 5, cx + 5, cy - 3, gold);
+            g.fill(cx - 4, cy + 4, cx + 5, cy + 6, gold);
+            g.fill(cx - 3, cy - 6, cx + 4, cy - 5, gold);
+            g.fill(cx - 4, cy - 3, cx - 2, cy, goldHi);
+            g.fill(cx - 5, cy - 2, cx - 4, cy + 3, goldDark);
+            g.fill(cx + 5, cy - 2, cx + 6, cy + 3, goldDark);
+            return;
+        }
         for (int dy = -radius; dy <= radius; dy++) {
             int dx = (int) Math.sqrt(radius * radius - dy * dy);
             g.fill(cx - dx, cy + dy, cx + dx + 1, cy + dy + 1, gold);
