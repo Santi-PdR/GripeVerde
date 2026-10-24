@@ -59,6 +59,15 @@ public class DiaryArchiveScreen extends Screen {
     private Set<String> renderDiscoveries = Set.of();
     private final Map<String, List<FormattedCharSequence>> wrappedDocumentCache = new HashMap<>();
     private int wrappedDocumentWidth = -1;
+    private net.minecraft.client.gui.Font cachedArchiveFont;
+    private boolean cachedArchiveEnglish;
+    private int cachedArchiveCardWidth = -1;
+    private int cachedArchivePanelWidth = -1;
+    private String[] archiveNames = new String[0];
+    private String[] archiveHints = new String[0];
+    private String[] archiveCardLabels = new String[0];
+    private int[] archiveNameWidths = new int[0];
+    private int[] archiveHintWidths = new int[0];
 
     public DiaryArchiveScreen(Screen parent) {
         super(Component.literal(Discoveries.isEnglish() ? "Reading Room" : "Sala de consulta"));
@@ -131,6 +140,7 @@ public class DiaryArchiveScreen extends Screen {
         DiaryChrome.drawRegistryTag(g, panelX, panelY, panelW, panelH, "REG. XIV");
 
         boolean en = Discoveries.isEnglish();
+        if (DOC_NONE.equals(viewingDoc)) refreshArchiveTextCache(en);
         int cx = panelX + panelW / 2;
 
         if (!DOC_NONE.equals(viewingDoc)) {
@@ -204,9 +214,7 @@ public class DiaryArchiveScreen extends Screen {
                         g.fill(x, y, x + 1, y + CARD_H, 0xFF8E6A35);
                         g.fill(x + cardWidth - 1, y, x + cardWidth, y + CARD_H, 0xFF8E6A35);
                         g.fill(x + 3, y + 3, x + 7, y + 7, 0xFF6E1F16);
-                        String name = Discoveries.nameFor(id);
-                        String fit = truncate(name, cardWidth - 12);
-                        g.drawString(this.font, fit, x + 9, y + 8, DiaryTheme.INK, false);
+                        g.drawString(this.font, archiveCardLabels[i], x + 9, y + 8, DiaryTheme.INK, false);
                     } else {
                         g.fill(x, y, x + cardWidth, y + CARD_H, DiaryTheme.withAlpha(0x003D2A18, highlighted ? 30 : 16));
                         g.fill(x, y, x + cardWidth, y + 1, DiaryTheme.withAlpha(0x008E6A35, 70));
@@ -235,9 +243,11 @@ public class DiaryArchiveScreen extends Screen {
         if (detailCard >= 0 && detailCard < Discoveries.ALL.length) {
             String id = Discoveries.ALL[detailCard];
             if (this.renderDiscoveries.contains(id)) {
-                drawC(g, Discoveries.nameFor(id), cx, infoY, DiaryTheme.INK);
+                drawCachedC(g, archiveNames[detailCard], archiveNameWidths[detailCard],
+                    cx, infoY, DiaryTheme.INK);
             } else {
-                drawC(g, Discoveries.hintFor(id), cx, infoY, DiaryChrome.INK_FLAVOR);
+                drawCachedC(g, archiveHints[detailCard], archiveHintWidths[detailCard],
+                    cx, infoY, DiaryChrome.INK_FLAVOR);
             }
         } else {
             boolean complete = found >= total;
@@ -481,6 +491,43 @@ public class DiaryArchiveScreen extends Screen {
     private void drawC(GuiGraphics g, String s, int cx, int y, int color) {
         int w2 = this.font.width(s);
         g.drawString(this.font, s, cx - w2 / 2, y, color, false);
+    }
+
+    private void drawCachedC(GuiGraphics g, String s, int width, int cx, int y, int color) {
+        g.drawString(this.font, s, cx - width / 2, y, color, false);
+    }
+
+    /** Recalcula nombres, pistas y medidas solo si cambia idioma, fuente o escala. */
+    private void refreshArchiveTextCache(boolean english) {
+        if (this.cachedArchiveFont == this.font
+                && this.cachedArchiveEnglish == english
+                && this.cachedArchiveCardWidth == cardWidth
+                && this.cachedArchivePanelWidth == panelW
+                && this.archiveNames.length == Discoveries.ALL.length) {
+            return;
+        }
+
+        int count = Discoveries.ALL.length;
+        this.archiveNames = new String[count];
+        this.archiveHints = new String[count];
+        this.archiveCardLabels = new String[count];
+        this.archiveNameWidths = new int[count];
+        this.archiveHintWidths = new int[count];
+        int cardTextWidth = Math.max(8, cardWidth - 12);
+        for (int i = 0; i < count; i++) {
+            String id = Discoveries.ALL[i];
+            String name = Discoveries.nameFor(id, english);
+            String hint = Discoveries.hintFor(id, english);
+            this.archiveNames[i] = name;
+            this.archiveHints[i] = hint;
+            this.archiveCardLabels[i] = truncate(name, cardTextWidth);
+            this.archiveNameWidths[i] = this.font.width(name);
+            this.archiveHintWidths[i] = this.font.width(hint);
+        }
+        this.cachedArchiveFont = this.font;
+        this.cachedArchiveEnglish = english;
+        this.cachedArchiveCardWidth = cardWidth;
+        this.cachedArchivePanelWidth = panelW;
     }
 
     private String truncate(String s, int maxPx) {

@@ -188,7 +188,11 @@ public final class Discoveries {
 
     // ── Nombres (ES/EN) ──
     public static String nameFor(String id) {
-        boolean en = isEnglish();
+        return nameFor(id, isEnglish());
+    }
+
+    /** Resuelve el nombre con el idioma ya conocido por el llamador. */
+    public static String nameFor(String id, boolean en) {
         switch (id) {
             case WATCH_INSCRIPTION: return en ? "The inscription beneath the glass" : "La inscripcion bajo el cristal";
             case WATCH_KEY:         return en ? "A small key falls from time" : "Una llave pequena cae del tiempo";
@@ -248,7 +252,11 @@ public final class Discoveries {
 
     /** Pista breve para fichas sin descubrir (Sala de consulta). */
     public static String hintFor(String id) {
-        boolean en = isEnglish();
+        return hintFor(id, isEnglish());
+    }
+
+    /** Resuelve la pista sin volver a consultar el LanguageManager. */
+    public static String hintFor(String id, boolean en) {
         switch (id) {
             case WATCH_INSCRIPTION: return en ? "Stop the swing. Read what hangs." : "Deten el vaiven. Lee lo que cuelga.";
             case WATCH_KEY:         return en ? "Time keeps more than hours." : "El tiempo guarda mas que horas.";
