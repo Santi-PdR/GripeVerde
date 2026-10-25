@@ -5,6 +5,10 @@ Ambientación victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Versión actual
 
+**v0.66.0 - Guía para las reglas de Outbreak**
+
+El manual aclara la progresión de los infectados, la importancia de no explorar en solitario y los requisitos que pueden limitar acciones vistas en el chat.
+
 **v0.65.0 - Movimiento reducido y renderizado ágil**
 
 El brillo de los faroles responde al instante cuando el movimiento reducido está activo y el perfil urbano evita repetir búsquedas por ventana en cada fotograma.
