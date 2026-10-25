@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.61.0 - Actualización ligera de servidores
+
+La pantalla multijugador ya no vuelve a leer el archivo de servidores justo antes de abrir una lista nueva. Minecraft carga la lista guardada una vez al inicializar la pantalla y se evita una lectura síncrona duplicada tras agregar, editar, borrar o refrescar.
+
 ## Version 0.60.0 - Movimiento reducido coherente
 
 La opción de movimiento reducido ahora detiene la suavización de botones, los desplazamientos al pulsar, los pulsos decorativos, el balanceo y reflejo del reloj, y la revelación gradual del texto. Las pantallas de partida siguen estáticas con el mundo activo.
