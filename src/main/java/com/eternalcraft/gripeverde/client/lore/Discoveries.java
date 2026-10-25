@@ -115,7 +115,8 @@ public final class Discoveries {
 
     /** Dibuja el sello de descubrimiento arriba a la derecha. Llamar al final del render. */
     public static void drawToast(net.minecraft.client.gui.GuiGraphics g, int screenW) {
-        if (!hasActiveToast()) return;
+        Minecraft mc = Minecraft.getInstance();
+        if (mc == null || mc.level != null || mc.font == null || !hasActiveToast()) return;
         long now = System.currentTimeMillis();
         long remain = toastUntilMs - now;
         long age = now - toastStartMs;
@@ -127,8 +128,6 @@ public final class Discoveries {
         boolean english = isEnglish();
         String header = english ? "DISCOVERY" : "DESCUBRIMIENTO";
         String name = toastName == null ? "" : toastName;
-        Minecraft mc = Minecraft.getInstance();
-        if (mc == null || mc.font == null) return;
         int w1 = mc.font.width(header);
         int w2 = mc.font.width(name);
         int bw = Math.max(w1, w2) + 30;
