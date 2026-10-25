@@ -295,8 +295,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
     }
 
     private static String[] getAccFlavorPool() {
-        String lang = net.minecraft.client.Minecraft.getInstance().getLanguageManager().getSelected();
-        boolean english = lang == null || lang.startsWith("en_") || lang.equals("en_us");
+        boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
         return english ? ACC_FLAVOR_POOL_EN : ACC_FLAVOR_POOL_ES;
     }
 
