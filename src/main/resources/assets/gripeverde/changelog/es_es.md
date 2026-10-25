@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.55.0 - Repaso de textos en español
+
+Se corrigieron tildes omitidas en los textos del menú y se unificó el trato al jugador. No cambian las pantallas ni su comportamiento.
+
 ## Version 0.54.0 - Prueba de sonido clara
 
 El tooltip de prueba explica que usa el nivel actual de efectos de interfaz y que el volumen general de Minecraft también determina si se oye.
