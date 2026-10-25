@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.69.0 - Persist audio sliders on release
+
+- Keep music and ambience volume responsive while dragging.
+- Save each volume setting once when the player releases its slider, instead of writing config repeatedly during the drag.
+
 ## Version 0.68.0 - One-shot menu audio shutdown
 
 - Stop menu music and ambience once when the client enters a world, instead of invoking both stop paths every client tick.
