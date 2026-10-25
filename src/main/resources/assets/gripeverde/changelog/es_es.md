@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.66.0 - Guía de supervivencia de Outbreak
+
+El manual avisa que explorar en solitario deja sin rescate a quien quede pineado, explica que las acciones vistas en el chat pueden tener requisitos y aclara que los rangos altos aumentan las estadísticas generales de los infectados y añaden eventos globales.
+
 ## Version 0.65.0 - Movimiento reducido y renderizado ágil
 
 El brillo de los faroles responde de inmediato con el movimiento reducido. El perfil urbano ahora localiza cada ventana animada una sola vez por renderizado y conserva la escena.
