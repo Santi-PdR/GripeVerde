@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.49.0 - Multiplayer actions for compact screens
+
+- Kept all seven multiplayer actions inside the available panel width at compact resolutions, using short localized labels with full-name tooltips when needed.
+- Clamped the multiplayer title and subtitle to the parchment width. Kept the existing action order and keyboard navigation, with no gameplay animation added.
+
+
 ## Version 0.48.0 - Server forms that fit
 
 - Resized direct-connect and server-edit panels, text fields, and action buttons from the actual viewport and panel dimensions.

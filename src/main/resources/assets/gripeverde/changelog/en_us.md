@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.49.0 - Compact multiplayer actions
+
+The multiplayer actions now fit within the available panel at compact resolutions. Short English and Spanish labels appear when needed, and tooltips retain each full action name. The heading and subtitle stay within the parchment.
+
 ## Version 0.48.0 - Server forms that fit
 
 Direct connect and server editing now derive their panel, input, and button sizes from the visible panel. The controls stay inside the parchment, headings and field labels stay within its width, and the full action labels remain available in tooltips. The hidden-address warning now appears inside the direct-connect panel instead of below the edge of a short window.

@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.49.0 - Acciones multijugador compactas
+
+Las acciones multijugador ahora caben en el panel a resoluciones compactas. Cuando hace falta, se muestran rótulos breves en español e inglés y los tooltips conservan el nombre completo. El título y el subtítulo respetan el ancho del pergamino.
+
 ## Version 0.48.0 - Formularios de servidor adaptables
 
 La conexión directa y la edición de servidores calculan el tamaño del panel, los campos y los botones según el espacio visible. Los controles permanecen dentro del pergamino, los títulos y rótulos respetan su ancho y los tooltips conservan el nombre completo de cada acción. El aviso de dirección desconocida aparece dentro del panel de conexión para que no desaparezca en ventanas bajas.
