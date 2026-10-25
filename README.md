@@ -9,6 +9,14 @@ Ambientación victoriana bajo cuarentena, epidemia Green Flu.
 
 Los botones y otros controles propios del mod ya no animan su respuesta al pasar el cursor o pulsarlos mientras hay un mundo abierto. La portada conserva su acabado atmosférico.
 
+**v0.75.0 - Firma adaptable en la portada**
+
+En ventanas estrechas, la portada muestra solo la firma vigente y la recorta al espacio disponible para evitar que choque con el control de música. En pantallas amplias se conserva la firma anterior tachada.
+
+**v0.74.0 - Encabezados de lectura limpia**
+
+La guía de campo ahora usa el mismo texto centrado sin sombra negra automática que el resto del diario, para mantener títulos y cuerpo con un peso parejo.
+
 **v0.73.0 - Notas fuera de la mesa principal**
 
 Las notas contextuales ya no aparecen sobre los botones de la portada. Se conservan en la cola y se muestran dentro de las páginas de papel al abrirlas.
