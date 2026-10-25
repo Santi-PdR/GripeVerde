@@ -1,5 +1,6 @@
 package com.eternalcraft.gripeverde.client.screens;
 
+import com.eternalcraft.gripeverde.client.lore.ChroniclerMemory;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
@@ -40,7 +41,6 @@ public final class DiaryFieldGuideScreen extends Screen {
     private final List<Integer> sectionOffsets = new ArrayList<>();
     private final List<DiaryButton> sectionWidgets = new ArrayList<>();
     private int panelX, panelY, panelW, panelH;
-    private static int rememberedScrollY;
     private int scrollY;
     private int maxScroll;
     private int contentHeight;
@@ -90,8 +90,8 @@ public final class DiaryFieldGuideScreen extends Screen {
             }
         }
         maxScroll = Math.max(0, contentHeight - viewportHeight());
-        scrollY = Math.min(rememberedScrollY, maxScroll);
-        rememberedScrollY = scrollY;
+        scrollY = Math.min(ChroniclerMemory.fieldGuideScrollY(), maxScroll);
+        ChroniclerMemory.setFieldGuideScrollY(scrollY);
 
         sectionWidgets.clear();
         for (int section = 0; section < SECTION_KEYS.length; section++) {
@@ -236,7 +236,7 @@ public final class DiaryFieldGuideScreen extends Screen {
         int travel = Math.max(1, trackHeight - thumbHeight);
         double fraction = (mouseY - top - thumbHeight / 2.0) / travel;
         scrollY = (int)Math.round(Math.max(0.0, Math.min(1.0, fraction)) * maxScroll);
-        rememberedScrollY = scrollY;
+        ChroniclerMemory.setFieldGuideScrollY(scrollY);
     }
 
     private void positionSectionWidgets() {
@@ -256,7 +256,7 @@ public final class DiaryFieldGuideScreen extends Screen {
 
     private void scrollTo(int target) {
         scrollY = Math.max(0, Math.min(maxScroll, target));
-        rememberedScrollY = scrollY;
+        ChroniclerMemory.setFieldGuideScrollY(scrollY);
         positionSectionWidgets();
     }
 

@@ -1,6 +1,10 @@
 # Eternal Craft: Gripe Verde
 ## Chronicle under seal
 
+## Version 0.39.0 - The bookmark survives a restart
+
+The field guide now remembers your place after you close the game. Open it again and continue with the same passage.
+
 ## Version 0.38.0 - The field guide remembers
 
 Reopen the CEDA field guide during the same game session and it returns to the passage you were reading. Scrolling, chapter jumps, and dragging the scrollbar all keep the bookmark in sync.

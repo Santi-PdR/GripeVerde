@@ -1,6 +1,10 @@
 # Eternal Craft: Gripe Verde
 ## Cronica bajo sello
 
+## Version 0.39.0 - El marcador sobrevive al cierre
+
+El manual de campo conserva dónde ibas incluso después de cerrar el juego. Ábrelo de nuevo y continúa desde el mismo pasaje.
+
 ## Version 0.38.0 - El manual recuerda la lectura
 
 Al volver a abrir el manual de CEDA durante la misma sesión, regresa al pasaje que estabas leyendo. La rueda, los saltos entre capítulos y el arrastre de la barra mantienen actualizado el marcador.

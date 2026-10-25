@@ -50,6 +50,8 @@ public final class ChroniclerMemory {
         // v0.24.0: ultima version de la cronica que el lector ya vio al abrirla.
         // null en memorias viejas (GSON no la rellena); los accesores la sanea.
         public String lastSeenVersion = null;
+        // v0.39.0: ultima posicion del manual de campo entre sesiones.
+        public int fieldGuideScrollY = 0;
     }
 
     private static Data data = null;
@@ -64,7 +66,8 @@ public final class ChroniclerMemory {
      * v0.23.1: version del esquema de la memoria. Cuando el esquema crezca hay
      * que subir esta constante y encadenar el paso N -> N+1 en migrate().
      */
-    private static final int SCHEMA_VERSION = 1;
+    private static final int MAX_FIELD_GUIDE_SCROLL = 100000;
+    private static final int SCHEMA_VERSION = 2;
 
     // Resultados del saludo de apertura de sesion (calculado en beginSession)
     private static int sessionGreetingKind = 0; // 0=ninguno 1=primera 2=regreso 3=mismo dia
@@ -94,6 +97,7 @@ public final class ChroniclerMemory {
         // puede ser JSON valido y aun asi traer numeros imposibles.
         if (parsed.visitCount < 0L) parsed.visitCount = 0L;
         if (parsed.streak < 0) parsed.streak = 0;
+        parsed.fieldGuideScrollY = Math.max(0, Math.min(MAX_FIELD_GUIDE_SCROLL, parsed.fieldGuideScrollY));
         if (parsed.firstVisitDay < -1L) parsed.firstVisitDay = -1L;
         if (parsed.lastVisitDay < -1L) parsed.lastVisitDay = -1L;
         if (parsed.firstVisitDay < 0L && parsed.lastVisitDay >= 0L) {
@@ -129,7 +133,7 @@ public final class ChroniclerMemory {
             return;
         }
         while (parsed.version < SCHEMA_VERSION) {
-            // Sin pasos todavia: el esquema 1 es el actual y original.
+            // v0.39.0 agrega fieldGuideScrollY; Gson completa con 0 los archivos antiguos.
             parsed.version++;
         }
     }
@@ -452,5 +456,20 @@ public final class ChroniclerMemory {
     public static synchronized void setLastSeenVersion(String v) {
         get().lastSeenVersion = (v == null ? "" : v);
         save();
+    }
+
+    // ── v0.39.0: marcador persistente del manual de campo ──────────────────
+
+    public static synchronized int fieldGuideScrollY() {
+        return get().fieldGuideScrollY;
+    }
+
+    public static synchronized void setFieldGuideScrollY(int value) {
+        int safeValue = Math.max(0, Math.min(MAX_FIELD_GUIDE_SCROLL, value));
+        Data d = get();
+        if (d.fieldGuideScrollY != safeValue) {
+            d.fieldGuideScrollY = safeValue;
+            save();
+        }
     }
 }
