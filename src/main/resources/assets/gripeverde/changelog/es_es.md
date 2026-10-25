@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.79.0 - Aclara los controles de sonido
+
+Los reguladores de música y ambiente ahora indican qué categoría de sonido de Minecraft también debe estar activa.
+
 ## Version 0.78.0 - Una guía de campo más clara
 
 El manual de supervivencia ahora separa mejor las notas y da un poco más de aire entre líneas para que los protocolos se lean con facilidad.

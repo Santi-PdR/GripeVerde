@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.79.0 - Explain the sound controls
+
+The music and ambience sliders now explain which Minecraft sound category also needs to be audible.
+
 ## Version 0.78.0 - A clearer field guide
 
 The survivor manual now gives body entries breathing room and uses a slightly taller line rhythm for easier reading.

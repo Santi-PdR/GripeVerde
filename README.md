@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+**v0.79.0 - Guía clara para los controles de sonido**
+
+Los reguladores del mod ahora explican qué categoría de sonido de Minecraft también debe estar activa para oír la música y el ambiente.
+
 **v0.78.0 - Manual de campo más legible**
 
 La guía separa cada nota, da más aire al texto y mantiene el desplazamiento y los marcadores de lectura. El ritmo más claro facilita consultar protocolos durante una partida sin animaciones.
