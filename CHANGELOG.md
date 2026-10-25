@@ -1,5 +1,12 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.46.0 - Responsive options cabinet
+
+- The options cabinet now fits compact window sizes with smaller, carefully spaced controls and a shorter header.
+- Full English and Spanish button names remain available through hover tooltips when labels need truncation.
+- Long title and subtitle text is clipped to the paper panel, and the FOV slider follows the adaptive grid width.
+
+
 ## Version 0.45.0 - UI sound control
 
 - Added a persistent interface SFX volume slider and a test sound button to the sound cabinet.

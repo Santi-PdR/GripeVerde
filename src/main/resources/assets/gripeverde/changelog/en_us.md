@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.46.0 - Responsive options cabinet
+
+The options cabinet now fits compact windows without letting the two-column grid, FOV slider, or Done button spill beyond the paper. In compact layouts, controls and spacing shrink together and decorative flavor copy steps aside. Long English and Spanish labels stay available in hover tooltips, and the title and subtitle respect the panel width.
+
 ## Version 0.45.0 - Interface sound controls
 
 The sound cabinet now has a persistent interface SFX slider and a preview button. It controls menu clicks, hovers, scrolling, notifications and custom UI sounds, while Minecraft's own sound settings remain in effect.
