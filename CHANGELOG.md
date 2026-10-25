@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.64.0 - Menu audio stops with the world
+
+- Stop the menu soundtrack and ambience as soon as a world becomes active, even if the menu screen no longer ticks during connection or gameplay.
+
 ## Version 0.63.0 - Consistent fallback language
 
 - Use Spanish auxiliary copy only for the included es_es locale; unsupported Minecraft languages fall back to English instead of being mislabeled as Spanish.
