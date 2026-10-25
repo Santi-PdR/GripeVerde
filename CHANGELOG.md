@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.67.0 - Safer withdrawal from Outbreak
+
+- Ask for confirmation before disconnecting from a remote co-op session.
+- Make Ctrl+0 follow the opt-in debug shortcut setting instead of disconnecting unconditionally from the pause screen.
+
 ## Version 0.66.0 - Field guide for Outbreak rules
 
 - Warn that solo exploration leaves pinned players without a rescue.
