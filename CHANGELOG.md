@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.75.0 - Compact title signature
+
+- Show only the current signature in narrow title layouts.
+- Fit it between the music control and the right edge to prevent footer overlap.
+- Preserve the crossed-out previous signature on wide layouts.
+
 ## Version 0.74.0 - Lighter field-guide headings
 
 - Use the diary's regular centered text renderer for both field-guide headings.
