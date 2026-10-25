@@ -37,6 +37,7 @@ public final class DiaryFieldGuideScreen extends Screen {
     private final Screen parent;
     private final List<GuideRow> rows = new ArrayList<>();
     private final List<Integer> sectionOffsets = new ArrayList<>();
+    private final List<DiaryButton> sectionWidgets = new ArrayList<>();
     private int panelX, panelY, panelW, panelH;
     private int scrollY;
     private int maxScroll;
@@ -88,6 +89,26 @@ public final class DiaryFieldGuideScreen extends Screen {
         }
         maxScroll = Math.max(0, contentHeight - viewportHeight());
         scrollY = Math.min(scrollY, maxScroll);
+
+        sectionWidgets.clear();
+        for (int section = 0; section < SECTION_KEYS.length; section++) {
+            int targetSection = section;
+            Component heading = Component.translatable(SECTION_KEYS[section][0]);
+            Component narration = Component.empty().append(heading).append(". ");
+            for (String entry : ENTRY_KEYS[section]) {
+                narration.append(Component.translatable(entry)).append(". ");
+            }
+            int headingWidth = Math.max(1, this.font.width(this.font.split(heading, textWidth).get(0)));
+            DiaryButton sectionButton = new DiaryButton(
+                panelX + 20, viewportTop() + sectionOffsets.get(section) - scrollY,
+                headingWidth, LINE_HEIGHT, narration,
+                DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
+                DiaryButton.SoundProfile.NONE,
+                () -> jumpToSection(targetSection));
+            this.addWidget(sectionButton);
+            sectionWidgets.add(sectionButton);
+        }
+        positionSectionWidgets();
     }
 
     private void append(Component text, int width, boolean heading, boolean accent, int gap) {
@@ -135,21 +156,27 @@ public final class DiaryFieldGuideScreen extends Screen {
         g.enableScissor(panelX + 14, top, panelX + panelW - 14, bottom);
         int y = top - scrollY;
         int hoveredSection = headingAt(mouseX, mouseY);
+        int focusedSection = focusedSection();
         int sectionIndex = -1;
         for (GuideRow row : rows) {
             y += row.gapBefore;
             if (row.heading && row.gapBefore > 0) sectionIndex++;
             if (row.text != null) {
-                boolean headingHovered = row.heading && sectionIndex == hoveredSection;
+                boolean headingFocused = row.heading && sectionIndex == focusedSection;
+                boolean headingActive = row.heading
+                    && (sectionIndex == hoveredSection || headingFocused);
                 int color = row.heading
-                    ? (headingHovered ? DiaryTheme.GHOUL_EYE_GLOW
+                    ? (headingActive ? DiaryTheme.GHOUL_EYE_GLOW
                         : row.accent ? DiaryTheme.GHOUL_EYE : DiaryTheme.REDCOAT_DARK)
                     : DiaryTheme.INK;
                 int textX = panelX + 20;
                 int textWidth = this.font.width(row.text);
                 g.drawString(this.font, row.text, textX, y, color, false);
-                if (headingHovered) {
+                if (headingActive) {
                     g.fill(textX, y + LINE_HEIGHT - 1, textX + textWidth, y + LINE_HEIGHT, color);
+                }
+                if (headingFocused) {
+                    g.fill(panelX + 15, y + 3, panelX + 18, y + 6, DiaryTheme.GHOUL_EYE_GLOW);
                 }
                 y += LINE_HEIGHT;
             }
@@ -208,8 +235,24 @@ public final class DiaryFieldGuideScreen extends Screen {
         scrollY = (int)Math.round(Math.max(0.0, Math.min(1.0, fraction)) * maxScroll);
     }
 
+    private void positionSectionWidgets() {
+        for (int section = 0; section < sectionWidgets.size(); section++) {
+            DiaryButton button = sectionWidgets.get(section);
+            button.setX(panelX + 20);
+            button.setY(viewportTop() + sectionOffsets.get(section) - scrollY);
+        }
+    }
+
+    private int focusedSection() {
+        for (int section = 0; section < sectionWidgets.size(); section++) {
+            if (sectionWidgets.get(section).isFocused()) return section;
+        }
+        return -1;
+    }
+
     private void scrollTo(int target) {
         scrollY = Math.max(0, Math.min(maxScroll, target));
+        positionSectionWidgets();
     }
 
     private void jumpToSection(int section) {
@@ -244,6 +287,12 @@ public final class DiaryFieldGuideScreen extends Screen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == GLFW.GLFW_KEY_TAB) {
+            boolean handled = super.keyPressed(keyCode, scanCode, modifiers);
+            int section = focusedSection();
+            if (section >= 0) jumpToSection(section);
+            return handled;
+        }
         if (keyCode >= GLFW.GLFW_KEY_1 && keyCode <= GLFW.GLFW_KEY_6) {
             jumpToSection(keyCode - GLFW.GLFW_KEY_1);
             return true;
@@ -267,6 +316,8 @@ public final class DiaryFieldGuideScreen extends Screen {
         if (button == 0) {
             int section = headingAt(mouseX, mouseY);
             if (section >= 0) {
+                sectionWidgets.get(section).setFocused(true);
+                this.setFocused(sectionWidgets.get(section));
                 jumpToSection(section);
                 return true;
             }
