@@ -149,7 +149,7 @@ public class LogoRenderer {
         g.fill(cx + 3, topY + 18, cx + 7, topY + 22, (Math.max(20, eyePulse) << 24) | 0x5A7038);
         // v0.16.0: la pupila mira hacia el lector (maximo 1px de sesgo).
         int px = 0, py = 0;
-        if (watchedMx >= 0) {
+        if (!MotionPolicy.isReduced() && watchedMx >= 0) {
             double dx = watchedMx - (cx + 4.5);
             double dy = watchedMy - (topY + 19.5);
             if (Math.abs(dx) > 30) px = dx > 0 ? 1 : -1;
