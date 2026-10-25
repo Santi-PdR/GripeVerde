@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.66.0 - Outbreak survival briefing
+
+The field guide now warns against exploring alone, explains that actions shown in chat can have requirements, and clarifies that high difficulty ranks increase general infected stats and add global events.
+
 ## Version 0.65.0 - Complete reduced-motion feedback
 
 - Lantern hover feedback is immediate when reduced motion is enabled.
