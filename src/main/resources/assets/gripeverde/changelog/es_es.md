@@ -1,6 +1,6 @@
 # Eternal Craft: Gripe Verde
 
-## Versión 0.46.0 - Opciones adaptables
+## Version 0.46.0 - Opciones adaptables
 
 El gabinete de opciones ahora cabe en ventanas compactas: la grilla de dos columnas, el deslizador de FOV y el botón de salida se mantienen dentro del papel. En pantallas pequeñas se ajustan los controles y los espacios, y la cita decorativa se oculta para despejar la cabecera. Los nombres completos en español e inglés siguen disponibles en la información al pasar el cursor; el título y el subtítulo respetan el ancho del panel.
 
