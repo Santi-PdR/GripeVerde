@@ -1,8 +1,8 @@
 # Eternal Craft: Gripe Verde
 
-## Version 0.58.0 - Avisos estáticos durante la partida
+## Version 0.59.0 - Servidor oficial siempre a mano
 
-Los avisos de hallazgo y las notas marginales esperan mientras hay un mundo activo. Las notas pendientes se conservan para el menú en vez de leerse, guardarse o sonar desde una pantalla de pausa; así esas pantallas permanecen estáticas y evitan ese trabajo de archivo durante la partida.
+El servidor fijado de Ghoul Outbreak queda en la primera fila del multijugador. Su dirección se actualiza en el sitio y la lista visible se refresca sin crear duplicados.
 
 ## Version 0.57.0 - Niveles de audio visibles
 
