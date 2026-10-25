@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.68.0 - Corte de audio sin trabajo repetido
+
+La música y la ambientación del menú ahora se detienen una sola vez al entrar a un mundo, en lugar de pedirlo en cada tick del cliente. El control se rearma al volver al menú principal.
+
 ## Version 0.67.0 - Salida segura de Outbreak
 
 Al salir de una sesión remota se solicita confirmación. El atajo Ctrl+0 solo funciona si activas la opción de depuración.
