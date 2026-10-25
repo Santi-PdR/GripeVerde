@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.58.0 - Still notices during live play
+
+Discovery toasts and marginal notes now wait while a world is active. Pending notes stay queued instead of being read, saved, or played from a pause screen, keeping those screens static and avoiding that file work during play.
+
 ## Version 0.57.0 - Audio mix status
 
 The sound cabinet subtitle now shows the current music, ambience and interface SFX percentages, even on compact screens. Title tracks now use Minecraft's Music category, and the preview tooltip explains which controls affect the test sound.
