@@ -376,7 +376,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         }
 
         // --- Subtitulo ---
-        String subtitle = "- " + Component.translatable("gripeverde.options.sound.subtitle").getString() + " -";
+        String subtitle = "- " + audioMixSubtitle() + " -";
         subtitle = DiaryChrome.fitText(this.font, subtitle, Math.max(0, this.panelW - 28));
         int subWC = this.font.width(subtitle);
         g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + (compact ? 11 : 12), DiaryChrome.INK_SUBTITLE, false);
