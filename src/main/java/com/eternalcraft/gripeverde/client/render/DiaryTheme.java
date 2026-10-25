@@ -46,6 +46,8 @@ public class DiaryTheme {
     // ─── OJOS DEL GHOUL ────────────────────────
     public static final int GHOUL_EYE        = 0xFF72BFD6;
     public static final int GHOUL_EYE_GLOW   = 0xFFB6EFFA;
+    public static final int GHOUL_INK        = 0xFF285A66; // dark teal ink for text on paper
+    public static final int GHOUL_INK_ACTIVE = 0xFF1D4D59; // focused/hovered paper heading
 
     // ─── SANGRE ────────────────────────────────
     public static final int BLOOD_FRESH    = 0xFF8B1F0F;
