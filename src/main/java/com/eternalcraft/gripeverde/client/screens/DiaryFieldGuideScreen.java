@@ -90,8 +90,20 @@ public final class DiaryFieldGuideScreen extends Screen {
             }
         }
         maxScroll = Math.max(0, contentHeight - viewportHeight());
-        scrollY = Math.min(ChroniclerMemory.fieldGuideScrollY(), maxScroll);
-        ChroniclerMemory.setFieldGuideScrollY(scrollY);
+        int savedSection = ChroniclerMemory.fieldGuideSection();
+        if (savedSection >= 0 && savedSection < sectionOffsets.size()) {
+            int sectionStart = sectionOffsets.get(savedSection);
+            int sectionEnd = savedSection + 1 < sectionOffsets.size()
+                ? sectionOffsets.get(savedSection + 1) : contentHeight;
+            int sectionSpan = Math.max(1, sectionEnd - sectionStart);
+            scrollY = sectionStart + (int)Math.round(
+                sectionSpan * ChroniclerMemory.fieldGuideProgress() / 10000.0);
+        } else {
+            // Older memory files have only a pixel offset; convert it on first open.
+            scrollY = ChroniclerMemory.fieldGuideScrollY();
+        }
+        scrollY = Math.max(0, Math.min(maxScroll, scrollY));
+        rememberBookmark();
 
         sectionWidgets.clear();
         for (int section = 0; section < SECTION_KEYS.length; section++) {
@@ -236,7 +248,24 @@ public final class DiaryFieldGuideScreen extends Screen {
         int travel = Math.max(1, trackHeight - thumbHeight);
         double fraction = (mouseY - top - thumbHeight / 2.0) / travel;
         scrollY = (int)Math.round(Math.max(0.0, Math.min(1.0, fraction)) * maxScroll);
-        ChroniclerMemory.setFieldGuideScrollY(scrollY);
+        rememberBookmark();
+        positionSectionWidgets();
+    }
+
+    private void rememberBookmark() {
+        if (sectionOffsets.isEmpty()) return;
+        int section = 0;
+        while (section + 1 < sectionOffsets.size()
+                && sectionOffsets.get(section + 1) <= scrollY) {
+            section++;
+        }
+        int sectionStart = sectionOffsets.get(section);
+        int sectionEnd = section + 1 < sectionOffsets.size()
+            ? sectionOffsets.get(section + 1) : contentHeight;
+        int sectionSpan = Math.max(1, sectionEnd - sectionStart);
+        double progress = (double)(scrollY - sectionStart) / sectionSpan;
+        int progressTenThousandths = (int)Math.round(Math.max(0.0, Math.min(1.0, progress)) * 10000.0);
+        ChroniclerMemory.setFieldGuideBookmark(section, progressTenThousandths, scrollY);
     }
 
     private void positionSectionWidgets() {
@@ -256,7 +285,7 @@ public final class DiaryFieldGuideScreen extends Screen {
 
     private void scrollTo(int target) {
         scrollY = Math.max(0, Math.min(maxScroll, target));
-        ChroniclerMemory.setFieldGuideScrollY(scrollY);
+        rememberBookmark();
         positionSectionWidgets();
     }
 
