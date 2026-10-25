@@ -187,10 +187,20 @@ public class MenuAmbience {
         }
         return userVolume;
     }
-    public static void setUserVolume(float v){
-        userVolume=Math.max(0f,Math.min(1f,v)); userVolumeLoadedFromConfig=true;
-        try{ com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_VOLUME.set((double)userVolume); com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_VOLUME.save(); }catch(Exception ignored){}
-        // No rebuild aquí, updateLoopVolumes lo hace fluido
+    /** Update the ambience volume while dragging, without writing the config file. */
+    public static void setUserVolumeLive(float v) {
+        userVolume = Math.max(0f, Math.min(1f, v));
+        userVolumeLoadedFromConfig = true;
+    }
+
+    /** Persist the final slider value once the player releases the control. */
+    public static void setUserVolume(float v) {
+        setUserVolumeLive(v);
+        try {
+            com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_VOLUME.set((double) userVolume);
+            com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_VOLUME.save();
+        } catch (Exception ignored) {}
+        // No rebuild here; updateLoopVolumes keeps the audio smooth.
     }
 
     // Volumen fluido sin cortes
