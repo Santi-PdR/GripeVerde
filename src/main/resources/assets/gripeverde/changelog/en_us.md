@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.94.0 - The chronicler speaks
+
+Show session greetings on the title screen as quiet, static paper notes for twelve seconds. Keep them out of compact layouts, fit them to the paper slip, and prevent long vigil lines from overflowing narrow windows.
+
 ## Version 0.93.0 - Find the fallen survivor
 
 Add the body's death-site location to both field-guide recovery notes so teammates know where to search. Keep the instructions mirrored in English and Spanish.
