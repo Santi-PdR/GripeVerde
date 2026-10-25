@@ -11,6 +11,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
+import org.lwjgl.glfw.GLFW;
 
 /** Manual de campo: protocolo cooperativo de la cuarentena. */
 public final class DiaryFieldGuideScreen extends Screen {
@@ -37,6 +38,7 @@ public final class DiaryFieldGuideScreen extends Screen {
     private int scrollY;
     private int maxScroll;
     private int contentHeight;
+    private boolean draggingScrollbar;
     private static final int LINE_HEIGHT = 10;
 
     public DiaryFieldGuideScreen(Screen parent) {
@@ -155,21 +157,93 @@ public final class DiaryFieldGuideScreen extends Screen {
         return this.font.plainSubstrByWidth(text, room) + ellipsis;
     }
 
+    private int scrollbarThumbHeight(int trackHeight) {
+        return Math.max(18, trackHeight * trackHeight / Math.max(trackHeight, contentHeight));
+    }
+
+    private int scrollbarThumbY(int top, int bottom) {
+        int trackHeight = bottom - top;
+        int travel = Math.max(0, trackHeight - scrollbarThumbHeight(trackHeight));
+        return top + travel * scrollY / Math.max(1, maxScroll);
+    }
+
     private void drawScrollbar(GuiGraphics g, int top, int bottom) {
         int trackX = panelX + panelW - 10;
-        int trackH = bottom - top;
+        int trackHeight = bottom - top;
+        int thumbHeight = scrollbarThumbHeight(trackHeight);
         g.fill(trackX, top, trackX + 2, bottom, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 75));
-        int thumbH = Math.max(18, trackH * trackH / Math.max(trackH, contentHeight));
-        int travel = Math.max(0, trackH - thumbH);
-        int thumbY = top + travel * scrollY / Math.max(1, maxScroll);
-        g.fill(trackX - 1, thumbY, trackX + 3, thumbY + thumbH, DiaryTheme.GHOUL_EYE);
+        g.fill(trackX - 1, scrollbarThumbY(top, bottom), trackX + 3,
+            scrollbarThumbY(top, bottom) + thumbHeight, DiaryTheme.GHOUL_EYE);
+    }
+
+    private boolean overScrollbar(double mouseX, double mouseY) {
+        int trackX = panelX + panelW - 10;
+        return maxScroll > 0 && mouseX >= trackX - 4 && mouseX <= trackX + 6
+            && mouseY >= viewportTop() && mouseY <= viewportBottom();
+    }
+
+    private void setScrollFromMouse(double mouseY) {
+        int top = viewportTop();
+        int trackHeight = viewportHeight();
+        int thumbHeight = scrollbarThumbHeight(trackHeight);
+        int travel = Math.max(1, trackHeight - thumbHeight);
+        double fraction = (mouseY - top - thumbHeight / 2.0) / travel;
+        scrollY = (int)Math.round(Math.max(0.0, Math.min(1.0, fraction)) * maxScroll);
+    }
+
+    private void scrollTo(int target) {
+        scrollY = Math.max(0, Math.min(maxScroll, target));
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (maxScroll > 0) {
+            switch (keyCode) {
+                case GLFW.GLFW_KEY_UP -> { scrollTo(scrollY - LINE_HEIGHT * 2); return true; }
+                case GLFW.GLFW_KEY_DOWN -> { scrollTo(scrollY + LINE_HEIGHT * 2); return true; }
+                case GLFW.GLFW_KEY_PAGE_UP -> { scrollTo(scrollY - viewportHeight()); return true; }
+                case GLFW.GLFW_KEY_PAGE_DOWN -> { scrollTo(scrollY + viewportHeight()); return true; }
+                case GLFW.GLFW_KEY_HOME -> { scrollTo(0); return true; }
+                case GLFW.GLFW_KEY_END -> { scrollTo(maxScroll); return true; }
+                default -> { }
+            }
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == 0 && overScrollbar(mouseX, mouseY)) {
+            draggingScrollbar = true;
+            setScrollFromMouse(mouseY);
+            return true;
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        if (draggingScrollbar && button == 0) {
+            setScrollFromMouse(mouseY);
+            return true;
+        }
+        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (draggingScrollbar && button == 0) {
+            draggingScrollbar = false;
+            return true;
+        }
+        return super.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
         if (maxScroll > 0 && mouseX >= panelX && mouseX <= panelX + panelW
                 && mouseY >= viewportTop() && mouseY <= viewportBottom()) {
-            scrollY = Math.max(0, Math.min(maxScroll, scrollY - (int)Math.signum(delta) * 18));
+            scrollTo(scrollY - (int)Math.signum(delta) * 18);
             return true;
         }
         return super.mouseScrolled(mouseX, mouseY, delta);

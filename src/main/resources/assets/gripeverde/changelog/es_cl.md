@@ -3,6 +3,10 @@
 
 
 
+## Version 0.33.0 - Navegacion del manual
+
+El manual de campo ahora se puede recorrer con rueda, flechas y RePág/AvPág; Inicio y Fin saltan al comienzo o al cierre. La barra lateral también responde al arrastre y el pie explica los controles. Las tres formas de navegación respetan los límites del papel y mantienen el regreso al refugio al alcance.
+
 ## Version 0.32.0 - El manual de campo
 
 La copia de campo de CEDA se abre al pulsar el cartel de cuarentena. Reune los protocolos reales del servidor: los ghouls siguen vivos, los ataques PIN exigen rescate, el derribo se revierte con ayuda, la muerte requiere desfibrilador, los recursos menguan y las dificultades escalan. El manual se desplaza con la rueda, vuelve al cartel y adapta sus textos al idioma del juego; unos detalles azul hielo evocan los ojos de los infectados.
