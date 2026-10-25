@@ -105,7 +105,7 @@ tasks.register('verifyGripeVerdeLocalization') {
             throw new GradleException('en_us.json root must be a JSON object')
         }
         def baselineKeys = baseline.keySet() as Set
-        def expectedKeyCount = 143
+        def expectedKeyCount = 148
         def problems = []
         if (baselineKeys.size() != expectedKeyCount) {
             problems << "en_us: expected ${expectedKeyCount} keys, found ${baselineKeys.size()}"
