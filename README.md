@@ -5,6 +5,10 @@ Ambientación victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Versión actual
 
+**v0.58.0 - Avisos quietos durante la partida**
+
+Las pantallas del diario abiertas desde pausa ya no muestran avisos narrativos animados ni consumen notas pendientes. Las marginales esperan al menú, evitando lecturas y escrituras de archivo mientras el mundo está activo.
+
 **v0.57.0 - Niveles de audio visibles**
 
 El gabinete sonoro muestra los niveles actuales de música, ambiente y efectos de interfaz. La banda sonora del menú ahora respeta la categoría Música de Minecraft, y la prueba aclara cómo distinguir el nivel SFX del volumen maestro.
