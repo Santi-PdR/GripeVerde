@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.62.0 - Servidor oficial listo para entrar
+
+Al abrir Multijugador, se selecciona Ghoul Outbreak si no hay otro servidor elegido. El jugador conserva el control y debe pulsar «Entrar» para conectarse.
+
 ## Version 0.61.0 - Actualización ligera de servidores
 
 La pantalla multijugador ya no vuelve a leer el archivo de servidores justo antes de abrir una lista nueva. Minecraft carga la lista guardada una vez al inicializar la pantalla y se evita una lectura síncrona duplicada tras agregar, editar, borrar o refrescar.

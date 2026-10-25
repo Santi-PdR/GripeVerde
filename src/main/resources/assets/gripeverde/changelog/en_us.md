@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.62.0 - Official server ready to join
+
+The pinned Ghoul Outbreak server is selected when Multiplayer opens without an existing selection. The player remains in control and must press Join to connect.
+
 ## Version 0.61.0 - Lighter server-list refresh
 
 The multiplayer screen no longer reads the server file immediately before opening a replacement list. Vanilla loads the saved list once during screen initialization, avoiding a duplicate synchronous disk read after add, edit, delete, or refresh actions.
