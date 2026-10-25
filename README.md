@@ -5,6 +5,10 @@ Ambientación victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Versión actual
 
+**v0.67.0 - Salida remota segura**
+
+El menú de pausa confirma antes de desconectar de una expedición remota. Ctrl+0 solo actúa si se activa el atajo de depuración en la configuración.
+
 **v0.66.0 - Guía para las reglas de Outbreak**
 
 El manual aclara la progresión de los infectados, la importancia de no explorar en solitario y los requisitos que pueden limitar acciones vistas en el chat.
