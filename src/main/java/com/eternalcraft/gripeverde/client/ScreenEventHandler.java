@@ -36,7 +36,9 @@ public class ScreenEventHandler {
     private static boolean ctrlZeroLatch = false;
     // v0.26.0: la vigilia "vuelve a sentarte" solo al regresar, no en la
     // primera apertura del arranque (ver onArriveTitle).
-    private static boolean titleSeenOnce = false;\n    // Prevent repeating menu-audio shutdown on every in-world client tick.\n    private static boolean worldAudioStopHandled = false;
+    private static boolean titleSeenOnce = false;
+    // Prevent repeating menu-audio shutdown on every in-world client tick.
+    private static boolean worldAudioStopHandled = false;
 
     // v0.23.0: accesos tolerantes a config no cargada (defaults seguros)
     private static boolean replaceTitleEnabled() {
