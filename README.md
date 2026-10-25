@@ -5,6 +5,10 @@ Ambientación victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Versión actual
 
+**v0.61.0 - Actualización ligera de servidores**
+
+La lista multijugador ya no vuelve a leer el archivo de servidores justo antes de abrir una lista nueva. Minecraft carga una sola vez los datos guardados al inicializar la pantalla, evitando trabajo de disco duplicado al agregar, editar, borrar o refrescar servidores.
+
 **v0.60.0 - Movimiento reducido coherente**
 
 La opción de movimiento reducido elimina los pulsos, balanceos y efectos de hover de la interfaz, incluidos los botones, el reloj, el logotipo y los destellos de estado.
