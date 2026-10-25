@@ -192,8 +192,8 @@ public final class DiaryFieldGuideScreen extends Screen {
                 boolean headingActive = row.heading
                     && (sectionIndex == hoveredSection || headingFocused);
                 int color = row.heading
-                    ? (headingActive ? DiaryTheme.GHOUL_EYE_GLOW
-                        : row.accent ? DiaryTheme.GHOUL_EYE : DiaryTheme.REDCOAT_DARK)
+                    ? (headingActive ? DiaryTheme.GHOUL_INK_ACTIVE
+                        : row.accent ? DiaryTheme.GHOUL_INK : DiaryTheme.REDCOAT_DARK)
                     : DiaryTheme.INK;
                 int textX = panelX + 20;
                 int textWidth = this.font.width(row.text);
