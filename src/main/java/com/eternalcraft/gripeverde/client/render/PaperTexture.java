@@ -57,16 +57,35 @@ public final class PaperTexture {
     /** Fixed, low-cost field paper for screens rendered over a live world. */
     private static void drawFieldPaper(GuiGraphics g, int x, int y, int w, int h, PaperKind kind) {
         g.fill(x, y, x + w, y + h, baseColorFor(kind));
-        if (w < 4 || h < 4) return;
+        if (w < 16 || h < 16) return;
+
         int edge = DiaryTheme.withAlpha(0xFF735936, 26);
         int fold = DiaryTheme.withAlpha(0xFF735936, 12);
+        int wear = DiaryTheme.withAlpha(0xFF5B3D22, 14);
+        int wornHighlight = DiaryTheme.withAlpha(0xFFFFF0D0, 15);
+
         g.fill(x, y, x + w, y + 1, edge);
         g.fill(x, y + h - 1, x + w, y + h, edge);
         g.fill(x, y, x + 1, y + h, edge);
         g.fill(x + w - 1, y, x + w, y + h, edge);
-        if (kind == PaperKind.OFFICIAL || kind == PaperKind.ARCHIVE) {
+
+        // Fixed corner wear gives the in-world sheet an aged edge without
+        // random texture work, animation, or marks beneath the reading area.
+        int corner = Math.min(12, Math.max(5, w / 24));
+        g.fill(x + 2, y + 1, x + corner, y + 2, wear);
+        g.fill(x + 1, y + 2, x + 2, y + corner, wear);
+        g.fill(x + w - corner, y + 1, x + w - 2, y + 2, wear);
+        g.fill(x + w - 2, y + 2, x + w - 1, y + corner, wear);
+        g.fill(x + 2, y + h - 2, x + corner, y + h - 1, wear);
+        g.fill(x + 1, y + h - corner, x + 2, y + h - 2, wear);
+        g.fill(x + w - corner, y + h - 2, x + w - 2, y + h - 1, wear);
+        g.fill(x + w - 2, y + h - corner, x + w - 1, y + h - 2, wear);
+
+        if (kind == PaperKind.OFFICIAL || kind == PaperKind.ARCHIVE
+                || kind == PaperKind.CORRESPONDENCE) {
             int creaseX = x + w / 3;
             g.fill(creaseX, y + 5, creaseX + 1, y + h - 5, fold);
+            g.fill(creaseX + 1, y + 5, creaseX + 2, y + h - 5, wornHighlight);
         }
     }
 
