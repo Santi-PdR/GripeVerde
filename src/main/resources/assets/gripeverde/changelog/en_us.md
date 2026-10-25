@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.67.0 - Safer withdrawal from Outbreak
+
+Leaving a remote session now asks for confirmation. The Ctrl+0 shortcut only works when the optional debug shortcut is enabled.
+
 ## Version 0.66.0 - Outbreak survival briefing
 
 The field guide now warns against exploring alone, explains that actions shown in chat can have requirements, and clarifies that high difficulty ranks increase general infected stats and add global events.
