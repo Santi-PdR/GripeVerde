@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## v0.43.0 - Efectos quietos durante la partida
+
+El diario ya no suaviza el desplazamiento ni anima destellos, el espejo, el ojo o el diapasón mientras hay un mundo abierto. La navegación responde de inmediato.
+
 ## v0.42.0 - El diario deja respirar la partida
 
 En un mundo, el diario usa un velo y un panel estáticos: pausa cielo, tormenta, grano, partículas, ornamentos animados, transiciones y la interpolación del hover. Las opciones siguen legibles sobre el mundo. El menú principal conserva su ambientación.

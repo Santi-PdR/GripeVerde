@@ -206,7 +206,8 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         gfx.fill(ex - 4, ey + 2, ex + 4, ey + 3, lid);
         gfx.fill(ex - 7, ey - 1, ex - 6, ey + 1, lid);
         gfx.fill(ex + 6, ey - 1, ex + 7, ey + 1, lid);
-        boolean reduced = ClientConfig.REDUCED_MOTION.get();
+        boolean reduced = ClientConfig.REDUCED_MOTION.get()
+            || com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.hasActiveWorld();
         // Parpadeo ocasional, desactivado cuando el lector reduce el movimiento.
         long now = System.currentTimeMillis();
         boolean blink = !reduced && (now % 6200L) < 180L;

@@ -293,7 +293,8 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         long now = System.currentTimeMillis();
         boolean hot = mouseX >= fx - 4 && mouseX <= fx + 5 && mouseY >= fy - 8 && mouseY <= fy + 5;
         boolean ringing = now < this.forkRingUntilMs;
-        if (ringing) fx += (int) Math.round(Math.sin((this.forkRingUntilMs - now) * 0.55) * 1.0);
+        if (ringing && !com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.hasActiveWorld())
+            fx += (int) Math.round(Math.sin((this.forkRingUntilMs - now) * 0.55) * 1.0);
         int metal = (hot || ringing) ? 0xFFD8B56A : 0xFF8A6A3D;
         int dimm  = (hot || ringing) ? 0xFF6B4E22 : 0xFF54401F;
         int spread = (hot || ringing) ? 1 : 0;

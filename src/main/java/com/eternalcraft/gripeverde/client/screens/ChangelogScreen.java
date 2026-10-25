@@ -231,13 +231,18 @@ public class ChangelogScreen extends Screen {
 
     private void setScrollTarget(double value, boolean snap) {
         targetScrollY = Math.max(0.0D, Math.min(maxScroll, value));
-        if (snap) {
+        if (snap || com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.hasActiveWorld()) {
             smoothScrollY = targetScrollY;
         }
         scrollY = (int)Math.round(smoothScrollY);
     }
 
     private void tickSmoothScroll() {
+        if (com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.hasActiveWorld()) {
+            smoothScrollY = targetScrollY;
+            clampScroll();
+            return;
+        }
         double diff = targetScrollY - smoothScrollY;
         if (Math.abs(diff) < 0.35D) {
             smoothScrollY = targetScrollY;
@@ -376,13 +381,17 @@ public class ChangelogScreen extends Screen {
     }
 
     private static boolean reducedMotion() {
-        try { return com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get(); }
-        catch (Throwable t) { return false; }
+        try {
+            return com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get()
+                || com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.hasActiveWorld();
+        } catch (Throwable t) { return false; }
     }
 
     private static boolean reducedFlashes() {
-        try { return com.eternalcraft.gripeverde.config.ClientConfig.REDUCE_FLASHES.get(); }
-        catch (Throwable t) { return false; }
+        try {
+            return com.eternalcraft.gripeverde.config.ClientConfig.REDUCE_FLASHES.get()
+                || com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.hasActiveWorld();
+        } catch (Throwable t) { return false; }
     }
 
     // v0.28.0: triple de version. Acepta encabezados "Version X.Y.Z - ..."
@@ -550,7 +559,7 @@ public class ChangelogScreen extends Screen {
                 int hw = this.font.width(hidden);
                 int hx = cx + (cw - hw) / 2;
                 long pulse = System.currentTimeMillis();
-                int alpha = 120 + (int)(Math.sin(pulse / 640.0) * 40);
+                int alpha = reducedFlashes() ? 120 : 120 + (int)(Math.sin(pulse / 640.0) * 40);
                 g.drawString(this.font, hidden, hx, fy, (alpha << 24) | 0x8E6A35, false);
                 g.fill(hx, fy + 11, hx + hw, fy + 12, (Math.min(120, alpha) << 24) | 0x8E6A35);
                 this.hiddenFolioRect = new int[]{ hx - 4, fy - 3, hw + 8, 18 };
