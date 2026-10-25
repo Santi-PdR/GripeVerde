@@ -1,8 +1,16 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.60.0 - Movimiento reducido coherente
+
+La opción de movimiento reducido ahora detiene la suavización de botones, los desplazamientos al pulsar, los pulsos decorativos, el balanceo y reflejo del reloj, y la revelación gradual del texto. Las pantallas de partida siguen estáticas con el mundo activo.
+
 ## Version 0.59.0 - Servidor oficial siempre a mano
 
 El servidor fijado de Ghoul Outbreak queda en la primera fila del multijugador. Su dirección se actualiza en el sitio y la lista visible se refresca sin crear duplicados.
+
+## Version 0.58.0 - Avisos estáticos durante la partida
+
+Los avisos de hallazgo y las notas marginales esperan mientras hay un mundo activo. Las notas pendientes se conservan para el menú en vez de leerse, guardarse o sonar desde una pantalla de pausa; así esas pantallas permanecen estáticas.
 
 ## Version 0.57.0 - Niveles de audio visibles
 
