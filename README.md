@@ -5,6 +5,10 @@ Ambientación victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Versión actual
 
+**v0.71.0 - Avisos discretos en la portada**
+
+La tarjeta emergente de descubrimiento ya no se superpone a la pantalla principal. Los hallazgos se siguen guardando en el archivo y las notas contextuales se mantienen.
+
 **v0.70.0 - Menú adaptable a pantallas angostas**
 
 En ventanas estrechas, los botones del título se reorganizan para evitar solapamientos; los carteles laterales se ocultan y los controles de música, opciones y salida permanecen accesibles.
