@@ -1,6 +1,6 @@
 # Eternal Craft: Gripe Verde
 
-## Version 0.58.0 - Still notices during live play
+## Version 0.58.0 - Quiet lore during live play
 
 Discovery toasts and marginal notes now wait while a world is active. Pending notes stay queued instead of being read, saved, or played from a pause screen, keeping those screens static and avoiding that file work during play.
 
