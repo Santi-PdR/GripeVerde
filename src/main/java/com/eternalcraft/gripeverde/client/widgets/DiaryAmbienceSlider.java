@@ -41,7 +41,7 @@ public class DiaryAmbienceSlider extends AbstractSliderButton {
     @Override
     protected void onDrag(double mouseX, double mouseY, double dragX, double dragY) {
         super.onDrag(mouseX, mouseY, dragX, dragY);
-        this.applyValue();
+        MenuAmbience.setUserVolumeLive((float) this.value);
     }
 
     @Override

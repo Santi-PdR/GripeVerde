@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.69.0 - Audio fluido sin guardados repetidos
+
+El volumen de música y ambiente sigue cambiando al arrastrar, pero cada ajuste se guarda una sola vez al soltar el deslizador.
+
 ## Version 0.68.0 - Corte de audio sin trabajo repetido
 
 La música y la ambientación del menú ahora se detienen una sola vez al entrar a un mundo, en lugar de pedirlo en cada tick del cliente. El control se rearma al volver al menú principal.

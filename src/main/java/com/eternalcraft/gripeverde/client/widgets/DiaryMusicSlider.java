@@ -47,7 +47,7 @@ public class DiaryMusicSlider extends AbstractSliderButton {
     @Override
     protected void onDrag(double mouseX, double mouseY, double dragX, double dragY) {
         super.onDrag(mouseX, mouseY, dragX, dragY);
-        this.applyValue();
+        MenuMusic.setUserVolumeLive((float) this.value);
     }
 
     @Override
