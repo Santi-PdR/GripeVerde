@@ -211,7 +211,7 @@ public final class Discoveries {
             case SOUND_KEEPER:      return en ? "The cabinet, in tune" : "El gabinete, afinado";
             case STORM_WATCHER:     return en ? "The storm watcher" : "El que mira la tormenta";
             case DROP_CATCHER:      return en ? "Catching the rain" : "Atrapar la lluvia";
-            case CODE_DOCTOR:       return en ? "The doctor still signs" : "El doctor aun firma";
+            case CODE_DOCTOR:       return en ? "The doctor still signs" : "El doctor aún firma";
             case ARCHIVE_THINNING:  return en ? "The archive that grows thinner" : "El archivo que se adelgaza";
             case THEME_NEVER_PLAYED: return en ? "The theme that never played" : "El tema que nunca sonó";
             case BG_TOWN_MEMORY:    return en ? "The street that never existed" : "La calle que nunca existió";
@@ -236,12 +236,12 @@ public final class Discoveries {
             case CODE_1152:         return en ? "Speak the hour of the outbreak." : "Di en voz alta la hora del brote.";
             case CODE_HOLLOWAY:     return en ? "Name the doctor of the elixir." : "Nombra al médico del elixir.";
             case CODE_PEREIRA:      return en ? "Say the chronicler's name to his face." : "Di el nombre del cronista frente a él.";
-            case GHOST_TRACK:       return en ? "Turn the gramophone past its last piece." : "Gira el gramófono más allá de su ultima pieza.";
+            case GHOST_TRACK:       return en ? "Turn the gramophone past its last piece." : "Gira el gramófono más allá de su última pieza.";
             case CANDLE_DARK:       return en ? "Put out the flame in the field pause." : "Apaga la llama de la pausa.";
             case RAVEN_FEATHER:     return en ? "The raven keeps what it is owed." : "El cuervo cobra lo que se le debe.";
             case BREATH:            return en ? "Stay quiet behind the barricade." : "Quédate quieto tras la barricada.";
-            case READER_SHADOW:     return en ? "Find enough, and be found." : "Encuentra bastante, y seras encontrado.";
-            case DRAWER_OPEN:       return en ? "The desk keeps a drawer for small things." : "La mesa guarda un cajon para cosas pequenas.";
+            case READER_SHADOW:     return en ? "Find enough, and be found." : "Encuentra suficientes pistas y deja que te encuentren.";
+            case DRAWER_OPEN:       return en ? "The desk keeps a drawer for small things." : "La mesa guarda un cajón para cosas pequeñas.";
             case DRAWER_COMPLETE:   return en ? "Five small things, one drawer." : "Cinco cosas pequeñas, un cajón.";
             case SMUGGLER_SIGNAL:   return en ? "Hands, keys and field habits hide a sign." : "Manos, llaves y costumbres esconden una señal.";
             case MIRROR:            return en ? "Dress and bearing include a mirror." : "El porte incluye un espejo.";
@@ -257,7 +257,7 @@ public final class Discoveries {
             case WHISPER_ANSWER:    return en ? "When the room whispers, do not wait." : "Cuando la sala susurre, no esperes.";
             case KNOCK_BACK:        return en ? "Knock on the working desk, politely." : "Golpea la mesa de trabajo con educación.";
             case HINGE:             return en ? "Open the cabinet often enough." : "Abre el gabinete suficientes veces.";
-            case NIGHT_WHOLE:       return en ? "Stay until the night ends." : "Quedate hasta que la noche termine.";
+            case NIGHT_WHOLE:       return en ? "Stay until the night ends." : "Quédate hasta que la noche termine.";
             case TIME_SICK:         return en ? "The second hand is unwell. Watch it longer." : "El segundero está enfermo. Obsérvalo más.";
             case STREAK3:           return en ? "Return tomorrow. And the day after." : "Vuelve mañana. Y pasado mañana.";
             case DUST:              return en ? "Leave. For a long while. Come back." : "Vete. Por mucho tiempo. Vuelve.";
@@ -269,7 +269,7 @@ public final class Discoveries {
             case STORM_NIGHT:       return en ? "Some nights the sky leans on the window." : "Hay noches en que el cielo se apoya en la ventana.";
             case SEAL_BREAKER:      return en ? "The telegram seal gives in to a stubborn hand." : "El sello del telegrama cede ante una mano terca.";
             case SOUND_KEEPER:      return en ? "The tuning fork hums where the sliders sleep." : "El diapasón zumba donde duermen los reguladores.";
-            case STORM_WATCHER:     return en ? "On storm nights, stay for the third flash." : "En noche de tormenta, quédate para el tercer relámpago.";
+            case STORM_WATCHER:     return en ? "On storm nights, stay for the third flash." : "En noches de tormenta, quédate para el tercer relámpago.";
             case DROP_CATCHER:      return en ? "The rain falls close enough to touch it." : "La lluvia cae lo bastante cerca como para tocarla.";
             case CODE_DOCTOR:       return en ? "The elixir had a doctor. The office remains." : "El elixir tuvo un médico. El oficio sigue en pie.";
             case ARCHIVE_THINNING:  return en ? "Open the cabinet again and again, until it gives up its old papers." : "Abre el gabinete una y otra vez, hasta que entregue sus papeles viejos.";
