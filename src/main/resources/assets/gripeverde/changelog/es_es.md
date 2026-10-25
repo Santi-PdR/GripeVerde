@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.53.0 - Manual de campo claro
+
+El manual en español ahora usa un trato uniforme, tildes correctas e instrucciones más claras para reanimar al equipo. No cambió el comportamiento del juego ni se añadieron animaciones con la partida activa.
+
 ## Version 0.52.0 - Manual de campo desde la pausa
 
 El menú de pausa ahora abre la guía de campo con una acción secundaria. En diseños compactos se muestra un rótulo breve con el tooltip completo, y la guía vuelve a la pausa. La hoja sobre el mundo permanece estática.

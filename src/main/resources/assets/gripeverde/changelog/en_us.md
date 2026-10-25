@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.53.0 - Clear field manual
+
+The Spanish field guide now uses consistent direct address, corrected accents, and clearer instructions for reviving teammates. No gameplay behavior or active-world animation changed.
+
 ## Version 0.52.0 - Field manual from pause
 
 The pause menu now opens the field guide through a secondary action. Compact layouts show a shorter label while keeping the full tooltip, and the guide returns to pause. Its in-world paper overlay remains static.

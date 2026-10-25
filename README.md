@@ -1,9 +1,23 @@
 # Eternal Craft: Gripe Verde
 
 Mod de interfaz para Minecraft Forge 1.20.1.
-Ambientacion victoriana bajo cuarentena, epidemia Green Flu.
+Ambientación victoriana bajo cuarentena, epidemia Green Flu.
 
-## Version actual
+## Versión actual
+
+**v0.53.0 - Manual de campo claro**
+
+Se pulió la copia española del manual: tratamiento uniforme, tildes corregidas y pasos de reanimación más claros. No cambia el juego ni agrega animaciones mientras la partida está activa.
+
+**v0.52.0 - Manual de campo desde la pausa**
+
+La guía de supervivencia se abre desde el menú de pausa y vuelve al mismo menú. En el mundo activo se mantiene como una hoja fija, sin transición ni fondo móvil.
+
+**v0.51.0 - Protocolo de rescate**
+
+La guía explica el aviso global de jugador atrapado, la liberación de un PIN, el levantamiento de un compañero y el desfibrilador que se encuentra en el botín.
+
+## Historial anterior
 
 **v0.30.0 - La hoja entera**
 
