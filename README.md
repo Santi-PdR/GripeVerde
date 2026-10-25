@@ -5,9 +5,9 @@ Ambientación victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Versión actual
 
-**v0.74.0 - Encabezados de lectura limpia**
+**v0.75.0 - Firma adaptable en la portada**
 
-La guía de campo ahora usa el mismo texto centrado sin sombra negra automática que el resto del diario, para mantener títulos y cuerpo con un peso parejo.
+En ventanas estrechas, la portada muestra solo la firma vigente y la recorta al espacio disponible para evitar que choque con el control de música. En pantallas amplias se conserva la firma anterior tachada.
 
 **v0.73.0 - Notas fuera de la mesa principal**
 
