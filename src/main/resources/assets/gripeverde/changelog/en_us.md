@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.74.0 - Cleaner field-guide headings
+
+The field guide now draws its title and subtitle with the diary's regular centered text style, without Minecraft's automatic dark drop shadow.
+
 ## Version 0.73.0 - Notes away from the main desk
 
 Contextual notes no longer appear over the title controls. They remain queued and appear inside paper screens when opened.
