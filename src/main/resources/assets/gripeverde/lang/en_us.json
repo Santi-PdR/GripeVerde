@@ -146,5 +146,11 @@
     "gripeverde.options.sound.track_now_playing": "Now playing · record %1$s of %2$s",
     "gripeverde.options.sound.track_transition": "Changing to record %1$s of %2$s",
     "gripeverde.options.sound.track_between": "Between records",
-    "gripeverde.options.sound.track_paused": "Menu music stops during expeditions."
+    "gripeverde.options.sound.track_paused": "Menu music stops during expeditions.",
+    "gripeverde.title.greeting.first": "The cabinet opens for the first time.",
+    "gripeverde.title.greeting.return": "The dust did not ask why you returned.",
+    "gripeverde.title.greeting.remembers": "The cabinet remembers your hand.",
+    "gripeverde.title.greeting.vigil": "Another vigil in the same night.",
+    "gripeverde.title.vigil.present": "...are you still there?",
+    "gripeverde.title.vigil.fog": "Do not blink. The fog counts blinks."
 }
