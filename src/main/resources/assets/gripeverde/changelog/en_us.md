@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.68.0 - One-shot menu audio shutdown
+
+Menu music and ambience now stop once when entering a world instead of being asked to stop on every client tick. The guard resets when returning to the title menu.
+
 ## Version 0.67.0 - Safer withdrawal from Outbreak
 
 Leaving a remote session now asks for confirmation. The Ctrl+0 shortcut only works when the optional debug shortcut is enabled.

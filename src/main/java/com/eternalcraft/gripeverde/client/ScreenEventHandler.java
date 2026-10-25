@@ -37,6 +37,8 @@ public class ScreenEventHandler {
     // v0.26.0: la vigilia "vuelve a sentarte" solo al regresar, no en la
     // primera apertura del arranque (ver onArriveTitle).
     private static boolean titleSeenOnce = false;
+    // Prevent repeating menu-audio shutdown on every in-world client tick.
+    private static boolean worldAudioStopHandled = false;
 
     // v0.23.0: accesos tolerantes a config no cargada (defaults seguros)
     private static boolean replaceTitleEnabled() {
@@ -65,13 +67,19 @@ public class ScreenEventHandler {
 
         Minecraft mc = Minecraft.getInstance();
         if (mc == null) return;
-        // v0.64.0: el audio exclusivo del gabinete debe apagarse al entrar
-        // a un mundo, aunque ninguna pantalla del mod siga recibiendo ticks.
+        // Detener el audio del gabinete solo en el borde de entrada al mundo.
+        // El cliente emite ticks durante toda la partida; repetir dos stop()
+        // protegidos en cada tick no aporta nada una vez apagados los sonidos.
         if (mc.level != null) {
-            try { com.eternalcraft.gripeverde.client.audio.MenuMusic.stop(); }
-            catch (Throwable ignored) {}
-            try { com.eternalcraft.gripeverde.client.audio.MenuAmbience.stop(); }
-            catch (Throwable ignored) {}
+            if (!worldAudioStopHandled) {
+                worldAudioStopHandled = true;
+                try { com.eternalcraft.gripeverde.client.audio.MenuMusic.stop(); }
+                catch (Throwable ignored) {}
+                try { com.eternalcraft.gripeverde.client.audio.MenuAmbience.stop(); }
+                catch (Throwable ignored) {}
+            }
+        } else if (worldAudioStopHandled) {
+            worldAudioStopHandled = false;
         }
 
         // v0.23.0: el atajo de depuracion Ctrl+0 queda desactivado por defecto.

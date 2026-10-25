@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.68.0 - One-shot menu audio shutdown
+
+- Stop menu music and ambience once when the client enters a world, instead of invoking both stop paths every client tick.
+- Rearm the one-shot guard after returning to the title menu.
+
 ## Version 0.67.0 - Safer withdrawal from Outbreak
 
 - Ask for confirmation before disconnecting from a remote co-op session.
