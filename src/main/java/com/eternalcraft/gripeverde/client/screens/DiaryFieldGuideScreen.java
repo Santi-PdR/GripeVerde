@@ -162,12 +162,14 @@ public final class DiaryFieldGuideScreen extends Screen {
         DiaryChrome.drawRegistryTag(g, panelX, panelY, panelW, panelH, "REG. IV");
 
         int cx = panelX + panelW / 2;
-        g.drawCenteredString(this.font, Component.translatable("gripeverde.field_guide.title"),
+        DiaryChrome.drawCenteredString(g, this.font,
+            Component.translatable("gripeverde.field_guide.title").getString(),
             cx, panelY + 9, DiaryChrome.INK_TITLE);
 
         String subtitle = fitText(
             Component.translatable("gripeverde.field_guide.subtitle").getString(), panelW - 36);
-        g.drawCenteredString(this.font, subtitle, cx, panelY + 23, DiaryChrome.INK_SUBTITLE);
+        DiaryChrome.drawCenteredString(g, this.font, subtitle,
+            cx, panelY + 23, DiaryChrome.INK_SUBTITLE);
         DiaryChrome.drawInkDivider(g, panelX + 18, panelY + 37, panelW - 36);
 
         g.fill(cx - 8, panelY + 38, cx - 4, panelY + 40, DiaryTheme.GHOUL_EYE);
