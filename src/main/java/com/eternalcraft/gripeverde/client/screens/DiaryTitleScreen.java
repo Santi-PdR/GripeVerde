@@ -1161,12 +1161,12 @@ public class DiaryTitleScreen extends Screen {
         }
     }
 
-    // Cache del mensaje del dia: solo se recalcula si cambio la fecha
+    // Cache del parte diario: solo se recalcula si cambio la fecha o el idioma.
     private static String cachedDayMsg = null;
     private static java.time.LocalDate cachedDayMsgDate = null;
     private static String cachedDayMsgLang = null;
 
-    /** Mensaje del cronista segun el dia real de la semana + mes especial (cacheado). */
+    /** Parte de cuarentena del cronista, distinta cada dia de la semana. */
     private static String getDayMessage() {
         java.time.LocalDate today = java.time.LocalDate.now();
         String lang = net.minecraft.client.Minecraft.getInstance().getLanguageManager().getSelected();
@@ -1179,44 +1179,39 @@ public class DiaryTitleScreen extends Screen {
         cachedDayMsgLang = lang;
         boolean english = isEnglishSelected();
         int month = today.getMonthValue();
-        int dow = today.getDayOfWeek().getValue();
+        String[] dispatches = english
+            ? new String[] {
+                "CEDA insists: only a common flu.",
+                "Blue eyes. They are not dead.",
+                "New mutations stalk the fog.",
+                "Stores run low. Make each round count.",
+                "Pinned: only your crew can free you.",
+                "If you fall, a friend can raise you.",
+                "Regroup before seeking safe shelter."
+            }
+            : new String[] {
+                "CEDA insiste: solo es gripe comun.",
+                "Ojos azules. No estan muertos.",
+                "Mutaciones nuevas acechan la niebla.",
+                "Merman las reservas. Cuida cada bala.",
+                "Atrapado: solo el equipo te libera.",
+                "Si caes, un companero puede alzarte.",
+                "Reagrupaos antes de buscar refugio."
+            };
 
+        // El giro de octubre conserva la verdad del archivo: son ghouls vivos.
         String monthBonus = "";
         if (english) {
-            if (month == 10) monthBonus = " ~ the dead walk";
-            else if (month == 12) monthBonus = " ~ Advent night";
-            else if (month == 1) monthBonus = " ~ new year, same plague";
+            if (month == 10) monthBonus = " ~ ghouls walk";
+            else if (month == 12) monthBonus = " ~ long winter night";
+            else if (month == 1) monthBonus = " ~ same fever";
         } else {
-            if (month == 10) monthBonus = " ~ los muertos caminan";
-            else if (month == 12) monthBonus = " ~ noche de Adviento";
-            else if (month == 1) monthBonus = " ~ ano nuevo, misma peste";
+            if (month == 10) monthBonus = " ~ los ghouls caminan";
+            else if (month == 12) monthBonus = " ~ noche larga";
+            else if (month == 1) monthBonus = " ~ misma fiebre";
         }
 
-        String base;
-        if (english) {
-            switch (dow) {
-                case 1: base = "Monday ~ another week in quarantine"; break;
-                case 2: base = "Tuesday ~ thin rain"; break;
-                case 3: base = "Wednesday ~ no correspondence"; break;
-                case 4: base = "Thursday ~ the market closed"; break;
-                case 5: base = "Friday ~ may God have mercy"; break;
-                case 6: base = "Saturday ~ compulsory rest"; break;
-                case 7: base = "Sunday ~ the bells ring alone"; break;
-                default: base = "";
-            }
-        } else {
-            switch (dow) {
-                case 1: base = "Lunes ~ otra semana en cuarentena"; break;
-                case 2: base = "Martes ~ dia de lluvia fina"; break;
-                case 3: base = "Miercoles ~ sin correspondencia"; break;
-                case 4: base = "Jueves ~ el mercado cerro"; break;
-                case 5: base = "Viernes ~ que Dios se apiade"; break;
-                case 6: base = "Sabado ~ descanso obligado"; break;
-                case 7: base = "Domingo ~ las campanas suenan solas"; break;
-                default: base = "";
-            }
-        }
-        cachedDayMsg = base + monthBonus;
+        cachedDayMsg = dispatches[today.getDayOfWeek().getValue() - 1] + monthBonus;
         return cachedDayMsg;
     }
 

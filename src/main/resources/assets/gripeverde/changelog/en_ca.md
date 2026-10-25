@@ -3,6 +3,10 @@
 
 
 
+## Version 0.31.0 - Quarantine dispatches
+
+The title now posts a different quarantine dispatch each day: CEDA insists it is only a common flu, while blue eyes and mutations tell another story. The notices also warn that supplies dwindle, a teammate must free the pinned survivor, and the group should regroup. In October, the chronicler stops calling the ghouls dead: they are still alive. The dispatch keeps clear of the signature and hides when the window has no room.
+
 ## Version 0.30.0 - The whole leaf
 
 Corrections from the study's elder, carefully noted. The nib no longer writes a single entry while the others stand printed: the whole ledger now writes itself before the reader as they move down its leaves — what was left far above counts as printed, and jumping down never leaves gaps; a single touch finishes it all. The magnifier also learned to be read: its little box is now a label of clear paper with ink lettering, not a dark stain where the word got lost. The buttons' ticks as the hand passes over them lowered their voice. And three oversights of the press are amended: the signature line no longer nears the desk of buttons, the day's notice reads at its left on the same line, and the quotes of the cabinet and the sound room never again end up under buttons or outside the paper.
