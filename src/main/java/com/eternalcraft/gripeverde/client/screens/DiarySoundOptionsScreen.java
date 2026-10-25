@@ -53,6 +53,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     private final SmoothScroll smoothScroll = new SmoothScroll();
     private DiaryMusicSlider musicSlider;
     private DiaryAmbienceSlider ambienceSlider;
+    private DiaryButton ambienceToggleButton;
     private DiarySlider uiVolumeSlider;
     private DiaryButton testUiSoundButton;
 
@@ -143,11 +144,24 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
 
         // El ambiente y los efectos SFX quedan separados para ajustar cada capa.
         int compactH = ambienceSliderHeight();
-        int ambSliderW = Math.max(1, sliderW * 3 / 4);
-        int ambSliderX = sliderX + (sliderW - ambSliderW) / 2;
         int ambSliderY = ambienceSliderY();
+        int ambToggleW = Math.min(86, Math.max(1, sliderW / 3));
+        int ambGap = Math.min(4, Math.max(0, sliderW - ambToggleW - 1));
+        int ambSliderW = Math.max(1, sliderW - ambToggleW - ambGap);
+        int ambSliderX = sliderX;
         this.ambienceSlider = new DiaryAmbienceSlider(ambSliderX, ambSliderY, ambSliderW, compactH);
         this.addRenderableWidget(this.ambienceSlider);
+
+        this.ambienceToggleButton = new DiaryButton(
+            ambSliderX + ambSliderW + ambGap, ambSliderY, ambToggleW, compactH,
+            ambienceToggleLabel(), DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
+            DiaryButton.SoundProfile.DEFAULT, () -> {
+                MenuAmbience.toggleMute();
+                refreshAmbienceToggleButton();
+            }
+        );
+        refreshAmbienceToggleButton();
+        this.addRenderableWidget(this.ambienceToggleButton);
 
         int uiSliderY = uiSliderY();
         int testButtonW = sliderW < 48
@@ -304,6 +318,22 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             percentText(ambience),
             percentText(ClientConfig.UI_VOLUME.get())
         ).getString();
+    }
+
+    private Component ambienceToggleLabel() {
+        return Component.translatable(MenuAmbience.isMuted()
+            ? "gripeverde.options.sound.ambience_off"
+            : "gripeverde.options.sound.ambience_on");
+    }
+
+    private void refreshAmbienceToggleButton() {
+        if (this.ambienceToggleButton == null) return;
+        boolean muted = MenuAmbience.isMuted();
+        this.ambienceToggleButton.setMessage(ambienceToggleLabel());
+        this.ambienceToggleButton.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
+            Component.translatable(muted
+                ? "gripeverde.options.sound.ambience_off.tooltip"
+                : "gripeverde.options.sound.ambience_on.tooltip")));
     }
 
     @Override

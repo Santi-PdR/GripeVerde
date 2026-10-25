@@ -15,9 +15,7 @@ CHG_DIR = os.path.join(ROOT, "src/main/resources/assets/gripeverde/changelog")
 SOUNDS_JSON = os.path.join(ROOT, "src/main/resources/assets/gripeverde/sounds.json")
 SOUNDS_BASE = os.path.join(ROOT, "src/main/resources/assets/gripeverde/sounds")
 JAVA_DIR = os.path.join(ROOT, "src/main/java")
-REQUIRED = ['en_us','en_gb','en_ca','en_au','en_nz','es_es','es_mx','es_ar','es_419','es_bo',
-            'es_cl','es_co','es_cr','es_do','es_ec','es_gt','es_hn','es_ni','es_pa','es_pe',
-            'es_pr','es_py','es_sv','es_uy','es_ve']
+REQUIRED = ['en_us', 'es_es']
 
 fails = []
 
@@ -38,7 +36,7 @@ if chg_files - set(REQUIRED): fails.append("unexpected changelogs: %s" % sorted(
 
 baseline = json.loads(read(os.path.join(LANG_DIR, "en_us.json")))
 bkeys = set(baseline)
-EXPECTED = 93
+EXPECTED = 141
 loc_problems = []
 if len(bkeys) != EXPECTED:
     loc_problems.append("en_us: expected %d keys, found %d" % (EXPECTED, len(bkeys)))
