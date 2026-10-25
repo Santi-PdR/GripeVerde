@@ -403,8 +403,6 @@ public class DiaryTitleScreen extends Screen {
             com.eternalcraft.gripeverde.client.lore.HiddenCipher.drawPereiraFlash(g, this.width, this.height);
             drawDustIfDue(g);
             drawVigilLine(g);
-            com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
-            com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, this.height - 60);
         } catch (Throwable ignored) {}
     }
 
