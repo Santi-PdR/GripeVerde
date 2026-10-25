@@ -3,7 +3,7 @@
 
 ## Version 0.42.0 - El diario deja respirar la partida
 
-En un mundo, el diario usa un velo y un panel estáticos: pausa cielo, tormenta, grano, partículas, ornamentos animados y transiciones; las opciones siguen legibles sobre el mundo. El menú principal conserva su ambientación.
+En un mundo, el diario usa un velo y un panel estáticos: pausa cielo, tormenta, grano, partículas, ornamentos animados, transiciones y la interpolación del hover. Las opciones siguen legibles sobre el mundo. El menú principal conserva su ambientación.
 
 ## Version 0.41.0 - Escalas de dificultad sin censura
 
