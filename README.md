@@ -5,6 +5,10 @@ Ambientación victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Versión actual
 
+**v0.65.0 - Movimiento reducido y renderizado ágil**
+
+El brillo de los faroles responde al instante cuando el movimiento reducido está activo y el perfil urbano evita repetir búsquedas por ventana en cada fotograma.
+
 **v0.64.0 - Audio del menú detenido en partida**
 
 La música y el ambiente del menú se apagan al entrar a un mundo, aunque la pantalla haya dejado de actualizarse al conectar.

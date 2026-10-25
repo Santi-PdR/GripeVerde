@@ -337,14 +337,19 @@ public class VictorianSkyline {
 
             for (int row = 0; row < rows; row++) {
                 for (int col = 0; col < cols; col++) {
-                    // LOD skip
-                    boolean isAnimPos = false;
+                    // Resolve once; animated windows bypass LOD and reuse the same index below.
+                    int animIdx = -1;
                     if (!isBg) {
                         for (int aw = 0; aw < ANIM_COUNT; aw++) {
-                            if (ANIM_WINDOWS[aw][0] == bi && ANIM_WINDOWS[aw][1] == row && ANIM_WINDOWS[aw][2] == col) { isAnimPos = true; break; }
+                            if (ANIM_WINDOWS[aw][0] == bi
+                                && ANIM_WINDOWS[aw][1] == row
+                                && ANIM_WINDOWS[aw][2] == col) {
+                                animIdx = aw;
+                                break;
+                            }
                         }
                     }
-                    if (!isAnimPos && lodSkip > 1 && ((row + col) % lodSkip != 0)) {
+                    if (animIdx < 0 && lodSkip > 1 && ((row + col) % lodSkip != 0)) {
                         // Still consume RNG to keep determinism
                         rng.nextInt(2); // winW
                         rng.nextInt(2); // winH
@@ -364,18 +369,6 @@ public class VictorianSkyline {
                     int wy = by1 + (row * bHeight / rows) + (bHeight / rows / 2) - winH / 2 + 3;
                     int roll = rng.nextInt(10);
 
-                    // Animated windows override: check if this position is in the anim list
-                    int animIdx = -1;
-                    if (!isBg) {
-                        for (int aw = 0; aw < ANIM_COUNT; aw++) {
-                            if (ANIM_WINDOWS[aw][0] == bi
-                                && ANIM_WINDOWS[aw][1] == row
-                                && ANIM_WINDOWS[aw][2] == col) {
-                                animIdx = aw;
-                                break;
-                            }
-                        }
-                    }
                     if (animIdx >= 0) {
                         // Draw with animPhase[animIdx] controlling alpha
                         int amber = (int)(animPhase[animIdx] * 160);

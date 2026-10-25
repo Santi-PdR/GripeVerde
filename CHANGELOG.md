@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.65.0 - Movimiento reducido completo
+
+- El brillo de los faroles ahora responde al cursor sin interpolación cuando el movimiento reducido está activo.
+- Reutilizar la búsqueda de ventanas animadas durante cada renderizado, sin cambiar su aspecto.
+
 ## Version 0.64.0 - Menu audio stops with the world
 
 - Stop the menu soundtrack and ambience as soon as a world becomes active, even if the menu screen no longer ticks during connection or gameplay.

@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.65.0 - Complete reduced-motion feedback
+
+- Lantern hover feedback is immediate when reduced motion is enabled.
+- Reuse the animated-window lookup during each render without changing the scene's appearance.
+
 ## Version 0.64.0 - Menu audio stops in-world
 
 Menu music and ambience now stop as soon as a world becomes active, even when the menu screen no longer ticks during connection or gameplay.
