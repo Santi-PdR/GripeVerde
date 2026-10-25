@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.88.0 - Readable archival ink
+
+- Increase contrast for regular-weight secondary copy and remove an extra fade from the corrected options note.
+- Preserve the typeface weight; keep hierarchy in spacing and color.
+
 ## Version 0.87.0 - Balanced paper grain
 
 - Reduce repeated paper fibre draw calls on full-size menu panels and keep the grain visible with slightly longer fixed strokes.
