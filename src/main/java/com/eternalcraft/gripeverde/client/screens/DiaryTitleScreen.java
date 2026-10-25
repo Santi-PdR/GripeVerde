@@ -353,7 +353,6 @@ public class DiaryTitleScreen extends Screen {
             if (com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.isInspecting()) {
                 com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.drawInspection(
                     g, this.width, this.height, GripeVerdeMod.VERSION);
-                com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
                 return;
             }
 
@@ -406,7 +405,6 @@ public class DiaryTitleScreen extends Screen {
             drawVigilLine(g);
             com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
             com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, this.height - 60);
-            com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
         } catch (Throwable ignored) {}
     }
 

@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.71.0 - Una portada más despejada
+
+Las tarjetas emergentes de descubrimiento ya no se superponen a la pantalla principal. Los hallazgos siguen registrados en el archivo y se conservan las notas contextuales.
+
 ## Version 0.70.0 - Un menú que cabe
 
 Las ventanas angostas reorganizan los botones del título para evitar solapamientos. Los carteles laterales y el reloj se apartan en el modo compacto, y siguen accesibles las opciones, la salida y la música. El cambio solo afecta la pantalla de título: no añade animaciones ni trabajo por tick durante la partida.

@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.71.0 - A quieter title screen
+
+Discovery cards no longer overlay the title screen. Discoveries remain recorded in the archive, and contextual marginal notes are unchanged.
+
 ## Version 0.70.0 - A title menu that fits
 
 Narrow windows now reflow the title actions to avoid overlap. Side posters and the pocket watch step aside in compact layouts, while options, quit, and music controls stay reachable. This change only affects the title screen and adds no in-world animation or tick work.
