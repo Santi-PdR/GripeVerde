@@ -194,7 +194,8 @@ public class DiarySkinCustomizationScreen extends Screen {
         try {
             drawMirror(gfx, mouseX, mouseY);
             long now = System.currentTimeMillis();
-            if (now < mirrorViewUntilMs) {
+            if (!com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.hasActiveWorld()
+                    && now < mirrorViewUntilMs) {
                 // Asi te ve la niebla: silueta sin detalles
                 float t = (now - mirrorViewStartMs) / 3000f;
                 int a = 190;
@@ -238,7 +239,8 @@ public class DiarySkinCustomizationScreen extends Screen {
         gfx.fill(x - 2, y + 4, x, y + 20, frame);
         gfx.fill(x + 18, y + 4, x + 20, y + 20, frame);
         // Vidrio: reflejo tenue que respira
-        float breath = (float)(Math.sin(System.currentTimeMillis() / 1100.0) * 0.5 + 0.5);
+        float breath = com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.hasActiveWorld()
+            ? 0.5f : (float)(Math.sin(System.currentTimeMillis() / 1100.0) * 0.5 + 0.5);
         int glass = 0xC040384A;
         gfx.fill(x, y, x + 18, y + 24, glass);
         gfx.fill(x + 2, y + 2, x + 8, y + 10, com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0xC8D8E0, 40 + (int)(breath * 30)));

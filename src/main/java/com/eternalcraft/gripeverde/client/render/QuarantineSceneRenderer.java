@@ -17,7 +17,7 @@ public final class QuarantineSceneRenderer {
 
     private QuarantineSceneRenderer() {}
 
-    private static boolean hasActiveWorld() {
+    public static boolean hasActiveWorld() {
         Minecraft mc = Minecraft.getInstance();
         return mc != null && mc.level != null;
     }

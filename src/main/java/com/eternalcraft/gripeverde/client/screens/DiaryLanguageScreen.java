@@ -458,7 +458,8 @@ public class DiaryLanguageScreen extends Screen {
                 }
                 String name = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
                     ? "Tongue of the Fog" : "Lengua de la Niebla";
-                int pulse = 90 + (int)(Math.sin(System.currentTimeMillis() / 600.0) * 40);
+                int pulse = com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.hasActiveWorld()
+                    ? 90 : 90 + (int)(Math.sin(System.currentTimeMillis() / 600.0) * 40);
                 int w2 = DiaryLanguageScreen.this.font.width(name);
                 g.drawString(DiaryLanguageScreen.this.font, name,
                     left + FLAG_SLOT + (rowWidth - FLAG_SLOT - w2) / 2,

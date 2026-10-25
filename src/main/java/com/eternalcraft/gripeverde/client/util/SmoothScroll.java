@@ -1,5 +1,6 @@
 package com.eternalcraft.gripeverde.client.util;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractSelectionList;
 
 /**
@@ -58,6 +59,15 @@ public final class SmoothScroll {
     public void tick(AbstractSelectionList<?> list) {
         if (list == null) return;
         attach(list);
+
+        Minecraft mc = Minecraft.getInstance();
+        if (mc != null && mc.level != null) {
+            // Scroll interactions stay immediate while a live world is open.
+            this.target = clamp(this.target, list);
+            list.setScrollAmount(this.target);
+            this.target = list.getScrollAmount();
+            return;
+        }
 
         double current = list.getScrollAmount();
         double diff = this.target - current;

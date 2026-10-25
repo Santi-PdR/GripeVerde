@@ -1,6 +1,10 @@
 # Eternal Craft: Gripe Verde
 ## Chronicle under seal
 
+## Version 0.43.0 - Still effects during a live session
+
+The diary no longer eases scrolling or animates flashes, the mirror, eye or tuning fork while a world is open. Navigation responds immediately.
+
 ## Version 0.42.0 - Let the live world breathe
 
 In a world, the diary now uses a fixed veil and panel. It pauses the animated sky, storm, grain, particles, decorative effects, page transitions and eased button hover while keeping options readable over the world. The title menu keeps its atmosphere.
