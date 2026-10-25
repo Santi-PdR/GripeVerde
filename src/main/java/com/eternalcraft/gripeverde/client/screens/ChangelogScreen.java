@@ -612,10 +612,7 @@ public class ChangelogScreen extends Screen {
 
 
     private static boolean isEnglishSelected() {
-        String lang = "en_us";
-        try { lang = Minecraft.getInstance().getLanguageManager().getSelected(); }
-        catch (Throwable ignored) {}
-        return lang == null || lang.startsWith("en_") || lang.equals("en_us");
+        return com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
     }
 
     /** v0.27.0: el plumín descansa al final del ultimo trazo escrito. */
@@ -1018,11 +1015,7 @@ public class ChangelogScreen extends Screen {
     private static final java.util.Random CHANGELOG_RNG = new java.util.Random();
 
     private static String pickChangelogTitle() {
-        String lang = "en_us";
-        try {
-            lang = Minecraft.getInstance().getLanguageManager().getSelected();
-        } catch (Throwable ignored) {}
-        boolean english = lang == null || lang.startsWith("en_") || lang.equals("en_us");
+        boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
         String[] pool = english ? CHANGELOG_TITLES_EN : CHANGELOG_TITLES_ES;
         return pool[CHANGELOG_RNG.nextInt(pool.length)];
     }

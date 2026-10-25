@@ -436,8 +436,7 @@ public class DiaryTitleScreen extends Screen {
 
     private void drawCinematicHint(GuiGraphics g) {
         if (this.width < 420 || System.currentTimeMillis() > cinematicHintUntilMs) return;
-        String lang = net.minecraft.client.Minecraft.getInstance().getLanguageManager().getSelected();
-        boolean english = lang == null || lang.startsWith("en_") || lang.equals("en_us");
+        boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
         String hint = english ? "F10 to return" : "F10 para volver";
         int x = this.width - this.font.width(hint) - 10;
         int y = this.height - 16;
@@ -703,8 +702,7 @@ public class DiaryTitleScreen extends Screen {
     private static String cachedSubtitleLang = null;
 
     private static boolean isEnglishSelected() {
-        String lang = net.minecraft.client.Minecraft.getInstance().getLanguageManager().getSelected();
-        return lang == null || lang.startsWith("en_") || lang.equals("en_us");
+        return com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
     }
 
     private static String pickRotatingSubtitle(boolean multiplayer) {

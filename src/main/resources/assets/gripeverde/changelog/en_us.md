@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.63.0 - Consistent fallback language
+
+With only English and Spanish resources included, auxiliary UI now uses Spanish only for es_es and English for unsupported Minecraft locales.
+
 ## Version 0.62.0 - Official server ready to join
 
 The pinned Ghoul Outbreak server is selected when Multiplayer opens without an existing selection. The player remains in control and must press Join to connect.

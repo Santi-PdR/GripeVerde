@@ -199,8 +199,7 @@ public class DiaryLanguageScreen extends Screen {
 
     private void drawSearchBuffer(GuiGraphics g) {
         if (this.searchBuffer.isEmpty() || System.currentTimeMillis() > this.searchBufferUntilMs) return;
-        String lang = this.languageManager.getSelected();
-        boolean english = lang == null || lang.startsWith("en_") || lang.equals("en_us");
+        boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
         String msg = (english ? "Search: " : "Buscar: ") + this.searchBuffer;
         int w = this.font.width(msg) + 14;
         int x = this.panelX + this.panelW - w - PANEL_PAD;
@@ -211,8 +210,7 @@ public class DiaryLanguageScreen extends Screen {
     }
 
     private void drawApplyingOverlay(GuiGraphics g) {
-        String lang = this.languageManager.getSelected();
-        boolean english = lang == null || lang.startsWith("en_") || lang.equals("en_us");
+        boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
         String msg = english ? "Applying language..." : "Aplicando idioma...";
         int boxW = Math.max(150, this.font.width(msg) + 34);
         int boxH = 34;

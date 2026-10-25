@@ -210,8 +210,7 @@ public class DiaryOptionsScreen extends Screen {
     }
 
     private static boolean isEnglishSelected() {
-        String lang = currentLanguageCode();
-        return lang.startsWith("en_") || lang.equals("en_us");
+        return com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
     }
 
     private static String[] getFlavorPool() {

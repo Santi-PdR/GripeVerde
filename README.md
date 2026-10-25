@@ -5,6 +5,10 @@ Ambientación victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Versión actual
 
+**v0.63.0 - Idioma de respaldo coherente**
+
+Los textos auxiliares usan español solo cuando Minecraft está en es_es; en cualquier idioma no incluido, el mod recurre al inglés junto con sus traducciones disponibles.
+
 **v0.62.0 - Ghoul Outbreak listo al entrar**
 
 El servidor oficial aparece seleccionado al abrir multijugador si no hay otro seleccionado. El jugador conserva el control y debe pulsar “Entrar” para conectarse.

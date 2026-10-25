@@ -81,8 +81,7 @@ public class AtmosphereRenderer {
     };
 
     private static String pickShootStarMessage() {
-        String lang = net.minecraft.client.Minecraft.getInstance().getLanguageManager().getSelected();
-        boolean english = lang == null || lang.startsWith("en_") || lang.equals("en_us");
+        boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
         String[] pool = english ? SHOOT_STAR_MESSAGES_EN : SHOOT_STAR_MESSAGES_ES;
         return pool[MOON_RNG.nextInt(pool.length)];
     }

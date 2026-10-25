@@ -342,12 +342,7 @@ public class PosterRenderer {
     }
 
     private static boolean isEnglish() {
-        try {
-            String lang = Minecraft.getInstance().getLanguageManager().getSelected();
-            return lang == null || lang.startsWith("en_") || lang.equals("en_us");
-        } catch (Throwable ignored) {
-            return false;
-        }
+        return com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
     }
 
     // ============================================================
