@@ -5,6 +5,10 @@ Ambientación victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Versión actual
 
+**v0.73.0 - Notas fuera de la mesa principal**
+
+Las notas contextuales ya no aparecen sobre los botones de la portada. Se conservan en la cola y se muestran dentro de las páginas de papel al abrirlas.
+
 **v0.72.0 - Control recuperado del ambiente**
 
 El gabinete de sonido vuelve a incluir un interruptor visible para activar o silenciar el ambiente del menú, con estado y ayuda traducidos.
