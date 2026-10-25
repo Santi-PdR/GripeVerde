@@ -1,6 +1,10 @@
 # Eternal Craft: Gripe Verde
 ## Chronicle under seal
 
+## Version 0.38.0 - The field guide remembers
+
+Reopen the CEDA field guide during the same game session and it returns to the passage you were reading. Scrolling, chapter jumps, and dragging the scrollbar all keep the bookmark in sync.
+
 ## Version 0.37.0 - The manual can be heard
 
 The field manual now works with Minecraft's narrator: Tab visits its six chapters and each stop reads the heading and its protocols. Enter jumps to the selected chapter, with a visible blue focus mark on the paper. The footer also lists these controls.
