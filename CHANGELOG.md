@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.76.0 - Static controls during play
+
+- Make custom mod UI controls snap to their current hover and press states while a live world is open.
+- Keep title-menu motion available when no world is loaded.
+- Reuse the shared motion policy so buttons, toggles, and alert accents follow the same rule.
+
 ## Version 0.75.0 - Compact title signature
 
 - Show only the current signature in narrow title layouts.
