@@ -365,7 +365,7 @@ public class DiaryTitleScreen extends Screen {
             drawLogo(g);
             drawSignature(g);
             super.render(g, mouseX, mouseY, partialTick);
-            drawGreeting(g);
+            renderChroniclerNote(g);
             if (overQuarantinePoster(mouseX, mouseY)) {
                 g.renderTooltip(this.font,
                     Component.translatable("gripeverde.poster.quarantine.guide_hint"),
@@ -434,7 +434,7 @@ public class DiaryTitleScreen extends Screen {
     }
 
     /** Saludo de papel, estatico y limitado al menu principal. */
-    private void drawGreeting(GuiGraphics g) {
+    private void renderChroniclerNote(GuiGraphics g) {
         long now = System.currentTimeMillis();
         if (greetingText == null || now >= greetingShownUntilMs || isMinimalMode()) return;
 
