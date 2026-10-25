@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.56.0 - Compact sound cabinet
+
+- Reflowed the sound settings for short windows so the options list, three volume controls, sound test, and return button stay within the paper panel.
+- Kept the menu-only silent-record discovery out of live sessions and removed an opaque prefill that hid the paused world behind its fixed veil.
+- Preserved sound levels, settings, and immediate in-world scrolling.
+
 ## Version 0.55.0 - Spanish copy pass
 
 - Corrected missing accent marks across Spanish menu text and replaced the last Spain-plural instruction with consistent direct address.

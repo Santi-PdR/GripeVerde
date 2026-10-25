@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.56.0 - Compact sound cabinet
+
+The sound cabinet now keeps its options, three volume controls, preview, and return button inside short viewports. In a live world it uses a fixed veil and does not trigger the title-menu silent-record discovery.
+
 ## Version 0.55.0 - Spanish copy pass
 
 Spanish menu text now has corrected accent marks and consistent direct address. The English and Spanish key sets and screen behavior remain unchanged.

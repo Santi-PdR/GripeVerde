@@ -59,14 +59,52 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         super(parent, options);
     }
 
+    /** Keeps the options list and sound controls inside short viewports. */
+    private boolean compactLayout() {
+        return this.panelH < 280;
+    }
+
+    private int listTopY() {
+        return this.panelY + (compactLayout() ? 34 : 58);
+    }
+
+    private int listBottomY() {
+        int desiredBottom = this.panelY + this.panelH - (compactLayout() ? 68 : 118);
+        return Math.max(listTopY() + 1, desiredBottom);
+    }
+
+    private int musicSliderY() {
+        return this.panelY + this.panelH - (compactLayout() ? 64 : 108);
+    }
+
+    private int musicSliderHeight() {
+        return compactLayout() ? 14 : SLIDER_H;
+    }
+
+    private int ambienceSliderY() {
+        return musicSliderY() + musicSliderHeight() + (compactLayout() ? 1 : 2);
+    }
+
+    private int ambienceSliderHeight() {
+        return compactLayout() ? 12 : 14;
+    }
+
+    private int uiSliderY() {
+        return ambienceSliderY() + ambienceSliderHeight() + (compactLayout() ? 1 : 2);
+    }
+
+    private int returnButtonY() {
+        return this.panelY + this.panelH - (compactLayout() ? 21 : 30);
+    }
+
     @Override
     protected void init() {
         super.init();
 
-        this.panelW = Math.min(PANEL_W, this.width - 40);
-        this.panelH = Math.min(PANEL_H, this.height - 30);
+        this.panelW = Math.max(1, Math.min(PANEL_W, this.width - 24));
+        this.panelH = Math.max(120, Math.min(PANEL_H, this.height - 16));
         this.panelX = (this.width - this.panelW) / 2;
-        this.panelY = (this.height - this.panelH) / 2;
+        this.panelY = Math.max(0, (this.height - this.panelH) / 2);
 
         // Reflection acotada: obtener y estilizar la OptionsList privada
         this.reflectedList = findListField();
@@ -74,8 +112,8 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             this.reflectedList.setRenderBackground(false);
             this.reflectedList.setRenderTopAndBottom(false);
 
-            int listTop = this.panelY + 45;
-            int listBottom = this.panelY + this.panelH - 118; // reserva espacio para los tres controles de audio
+            int listTop = listTopY();
+            int listBottom = listBottomY();
             this.reflectedList.updateSize(this.width, this.height, listTop, listBottom);
             this.smoothScroll.snapToCurrent(this.reflectedList);
         }
@@ -95,23 +133,27 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         }
 
         // Slider propio de musica del mod, debajo de la lista
-        int sliderW = this.panelW - 40;
+        int sliderW = Math.max(1, this.panelW - 40);
         int sliderX = this.panelX + 20;
-        int sliderY = this.panelY + this.panelH - 108;
-        this.musicSlider = new DiaryMusicSlider(sliderX, sliderY, sliderW, SLIDER_H);
+        int sliderY = musicSliderY();
+        int musicHeight = musicSliderHeight();
+        this.musicSlider = new DiaryMusicSlider(sliderX, sliderY, sliderW, musicHeight);
         this.addRenderableWidget(this.musicSlider);
 
         // El ambiente y los efectos SFX quedan separados para ajustar cada capa.
-        int compactH = 14;
-        int ambSliderW = sliderW * 3 / 4;
+        int compactH = ambienceSliderHeight();
+        int ambSliderW = Math.max(1, sliderW * 3 / 4);
         int ambSliderX = sliderX + (sliderW - ambSliderW) / 2;
-        int ambSliderY = sliderY + SLIDER_H + 2;
+        int ambSliderY = ambienceSliderY();
         this.ambienceSlider = new DiaryAmbienceSlider(ambSliderX, ambSliderY, ambSliderW, compactH);
         this.addRenderableWidget(this.ambienceSlider);
 
-        int uiSliderY = ambSliderY + compactH + 2;
-        int testButtonW = 58;
-        int uiSliderW = sliderW - testButtonW - 6;
+        int uiSliderY = uiSliderY();
+        int testButtonW = sliderW < 48
+            ? Math.max(1, sliderW / 2)
+            : Math.min(58, Math.max(24, sliderW / 3));
+        int buttonGap = Math.min(6, Math.max(0, sliderW - testButtonW - 1));
+        int uiSliderW = Math.max(1, sliderW - testButtonW - buttonGap);
         this.uiVolumeSlider = new DiarySlider(
             sliderX, uiSliderY, uiSliderW, compactH,
             ClientConfig.UI_VOLUME.get(),
@@ -128,7 +170,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         this.addRenderableWidget(this.uiVolumeSlider);
 
         this.testUiSoundButton = new DiaryButton(
-            sliderX + uiSliderW + 6, uiSliderY, testButtonW, compactH,
+            sliderX + uiSliderW + buttonGap, uiSliderY, testButtonW, compactH,
             Component.translatable("gripeverde.options.sound.test_button"),
             DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
             DiaryButton.SoundProfile.NONE, com.eternalcraft.gripeverde.client.audio.UiSounds::testSound
@@ -138,10 +180,11 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         this.addRenderableWidget(this.testUiSoundButton);
 
         // Boton Volver estilo diario
-        int btnW = 120;
-        int btnH = 20;
-        int btnX = (this.width - btnW) / 2;
-        int btnY = this.panelY + this.panelH - 30;
+        boolean compact = compactLayout();
+        int btnW = Math.max(1, Math.min(120, this.panelW - 24));
+        int btnH = compact ? 18 : 20;
+        int btnX = this.panelX + (this.panelW - btnW) / 2;
+        int btnY = returnButtonY();
         this.addRenderableWidget(new DiaryButton(
             btnX, btnY, btnW, btnH,
             Component.translatable("gripeverde.options.button.done"),
@@ -203,6 +246,11 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         this.smoothScroll.tick(this.reflectedList);
 
         // Si el gramofono queda del todo en cero y el lector se queda, algo late.
+        if (com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.hasActiveWorld()) {
+            // The record-room easter egg belongs to the title menu, never to a live session.
+            silenceStartMs = 0L;
+            return;
+        }
         try {
             if (!silenceHeard && com.eternalcraft.gripeverde.client.audio.MenuMusic.getUserVolume() <= 0.004f) {
                 long now = System.currentTimeMillis();
@@ -242,11 +290,8 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        // --- Escena viva atenuada ---
-        // Clear framebuffer + transition fade
-        g.fill(0, 0, this.width, this.height, 0xFF000000);
+        // Shared background renderer draws the menu scene or a fixed live-world veil.
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
-                // --- Overlay oscuro ---
 
         // --- Pergamino ---
         DiaryChrome.drawPanelShadow(g, this.panelX, this.panelY, this.panelW, this.panelH);
@@ -256,7 +301,8 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         String titleStr = DiaryChrome.fitText(this.font,
             Component.translatable("options.sounds.title").getString(), Math.max(0, this.panelW - 28));
         int titleX = this.width / 2;
-        int titleY = this.panelY + 10;
+        boolean compact = compactLayout();
+        int titleY = this.panelY + (compact ? 4 : 10);
         {
         int _tw = this.font.width(titleStr);
         g.drawString(this.font, titleStr, titleX - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
@@ -266,21 +312,21 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         String subtitle = "- " + Component.translatable("gripeverde.options.sound.subtitle").getString() + " -";
         subtitle = DiaryChrome.fitText(this.font, subtitle, Math.max(0, this.panelW - 28));
         int subWC = this.font.width(subtitle);
-        g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
+        g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + (compact ? 11 : 12), DiaryChrome.INK_SUBTITLE, false);
 
         // --- Flavor ---
         // v0.30.0: solo si hay aire real sobre los sliders; jamas pisado,
         // jamas al medio. Si el panel es bajo, se omite.
         String flavor = Component.translatable("gripeverde.options.sound.flavor").getString();
-        int sliderTop = this.panelY + this.panelH - 108;
-        if (titleY + 24 + this.font.lineHeight <= sliderTop - 6) {
+        int sliderTop = musicSliderY();
+        if (!compact && titleY + 24 + this.font.lineHeight <= sliderTop - 6) {
             String flavorShown = DiaryChrome.fitText(this.font, flavor, Math.max(0, this.panelW - 32));
             int flvWC = this.font.width(flavorShown);
             g.drawString(this.font, flavorShown, (this.width - flvWC) / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
         }
 
         // --- Divisor superior ---
-        int divY1 = titleY + 42;
+        int divY1 = compact ? this.panelY + 30 : titleY + 42;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY1);
 
         // --- Lista vanilla sin gradientes blancos ni bandejas extra ---
@@ -291,11 +337,11 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         }
 
         // --- Divisor entre lista y slider ---
-        int divY2 = this.panelY + this.panelH - 114;
+        int divY2 = compact ? musicSliderY() - 4 : this.panelY + this.panelH - 114;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
 
         // --- Divisor inferior + esquineros ---
-        int divY3 = this.panelY + this.panelH - 50;
+        int divY3 = compact ? returnButtonY() - 2 : this.panelY + this.panelH - 50;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY3);
         DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
         DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. II");
