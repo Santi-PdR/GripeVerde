@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.71.0 - Quiet title notices
+
+- Remove transient discovery cards from the title screen.
+- Keep discoveries recorded in the archive and preserve contextual marginal notes.
+
 ## Version 0.70.0 - Responsive title menu
 
 - Reflow title actions on narrow GUI widths so the main buttons, options, quit, and music controls stay reachable.
