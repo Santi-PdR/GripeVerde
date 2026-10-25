@@ -3,6 +3,10 @@
 
 
 
+## Version 0.32.0 - The field manual
+
+The uncensored CEDA field copy opens from the quarantine poster. It gathers the server's real protocols: ghouls remain alive, PIN attacks require a rescue, downed survivors can be revived, death requires a defibrillator, supplies dwindle, and difficulty tiers escalate. The manual scrolls with the wheel, returns to the poster, follows the game language, and uses ice-blue details for the infected eyes.
+
 ## Version 0.31.0 - Quarantine dispatches
 
 The title now posts a different quarantine dispatch each day: CEDA insists it is only a common flu, while blue eyes and mutations tell another story. The notices also warn that supplies dwindle, a teammate must free the pinned survivor, and the group should regroup. In October, the chronicler stops calling the ghouls dead: they are still alive. The dispatch keeps clear of the signature and hides when the window has no room.

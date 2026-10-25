@@ -42,6 +42,10 @@ public class DiaryTheme {
     public static final int PLAGUE_GREEN   = 0xFF3A5028;
     public static final int PLAGUE_SICK    = 0xFF5A7038;
     public static final int PLAGUE_TOXIC   = 0xFF7A9A48;
+ 
+    // ─── OJOS DEL GHOUL ────────────────────────
+    public static final int GHOUL_EYE        = 0xFF72BFD6;
+    public static final int GHOUL_EYE_GLOW   = 0xFFB6EFFA;
 
     // ─── SANGRE ────────────────────────────────
     public static final int BLOOD_FRESH    = 0xFF8B1F0F;

@@ -91,5 +91,22 @@
     "gripeverde.subtitle.menu.bell": "Distant church bell",
     "gripeverde.subtitle.menu.crows": "Crows cawing",
     "gripeverde.subtitle.menu.chain": "Chains rattling",
-    "gripeverde.subtitle.menu.thunder": "Distant thunder"
+    "gripeverde.subtitle.menu.thunder": "Distant thunder",
+    "gripeverde.poster.quarantine.guide_hint": "Click to read the uncensored field copy.",
+    "gripeverde.field_guide.title": "Survivor's Field Manual",
+    "gripeverde.field_guide.subtitle": "CEDA DISPATCH · UNCENSORED COPY",
+    "gripeverde.field_guide.section.infection": "THE INFECTION",
+    "gripeverde.field_guide.body.infection": "The Green Flu accelerates rabies. Ghouls are alive: blue eyes, extreme adrenaline, and mutations.",
+    "gripeverde.field_guide.section.team": "NEVER TRAVEL ALONE",
+    "gripeverde.field_guide.body.pins": "PIN attacks remove your control. A teammate must free you; the trapped alert sounds for the whole crew.",
+    "gripeverde.field_guide.section.downed": "DOWNED AND DEAD",
+    "gripeverde.field_guide.body.downed": "At 0 hearts you enter the downed state. An ally must hold right click for 5 seconds without taking damage to revive you.",
+    "gripeverde.field_guide.body.dead": "If your incapacity bar reaches 0, you die and spectate without losing inventory. Only a loot defibrillator can bring you back.",
+    "gripeverde.field_guide.section.expedition": "RATIONS AND DIFFICULTY",
+    "gripeverde.field_guide.body.supplies": "Ammunition and supplies may dwindle over time. Count every round and search each safe room.",
+    "gripeverde.field_guide.body.difficulty": "Each level adds challenges, global events, and stronger mobs. INSURGENCY and INFERNUM raise the pressure; other tiers remain in development.",
+    "gripeverde.field_guide.section.regroup": "REGROUP SIGNAL",
+    "gripeverde.field_guide.body.regroup": "The white rally marker tracks allies beyond 3,000 blocks, even across unloaded chunks. Use it to find your crew again.",
+    "gripeverde.field_guide.scroll_hint": "USE THE WHEEL TO READ THE DISPATCH",
+    "gripeverde.field_guide.button.close": "RETURN TO SAFE ROOM"
 }

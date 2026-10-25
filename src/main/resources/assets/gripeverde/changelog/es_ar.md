@@ -3,6 +3,10 @@
 
 
 
+## Version 0.32.0 - El manual de campo
+
+La copia de campo de CEDA se abre al pulsar el cartel de cuarentena. Reune los protocolos reales del servidor: los ghouls siguen vivos, los ataques PIN exigen rescate, el derribo se revierte con ayuda, la muerte requiere desfibrilador, los recursos menguan y las dificultades escalan. El manual se desplaza con la rueda, vuelve al cartel y adapta sus textos al idioma del juego; unos detalles azul hielo evocan los ojos de los infectados.
+
 ## Version 0.31.0 - Partes de cuarentena
 
 La portada ahora publica un parte de cuarentena distinto cada jornada: CEDA insiste en que solo es una gripe, mientras los ojos azules y las mutaciones cuentan otra historia. Los avisos también recuerdan que las reservas menguan, que un compañero debe liberar al atrapado y que el grupo ha de replegarse junto. En octubre, el cronista ya no llama muertos a los ghouls: siguen vivos. El parte conserva el margen de la firma y se oculta si la ventana no ofrece espacio.
