@@ -654,12 +654,7 @@ public class DiaryPauseScreen extends PauseScreen {
     }
 
     private static boolean isEnglishSelected() {
-        try {
-            String lang = net.minecraft.client.Minecraft.getInstance().getLanguageManager().getSelected();
-            return lang == null || lang.startsWith("en_") || lang.equals("en_us");
-        } catch (Throwable ignored) {
-            return false;
-        }
+        return com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
     }
 
     private void drawWaxSeal(GuiGraphics g, int cx, int cy) {
