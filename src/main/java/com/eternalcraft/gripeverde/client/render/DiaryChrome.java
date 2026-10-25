@@ -21,7 +21,7 @@ public final class DiaryChrome {
     // ── Paleta canonica ─────────────────────────────────────────────────────
     public static final int INK_TITLE     = 0xFF241608;
     public static final int INK_SUBTITLE  = 0xFF654025;
-    public static final int INK_FLAVOR    = 0xB864482C;
+    public static final int INK_FLAVOR    = 0xF0604028;
     public static final int INK_DIVIDER   = 0x7A422810;
     public static final int OVERLAY_COL   = 0x5E000000;
 

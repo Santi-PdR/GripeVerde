@@ -275,7 +275,7 @@ public class DiaryOptionsScreen extends Screen {
                 } catch (Throwable ignored) {}
                 if (corrected) {
                     g.drawString(this.font, flavorShown, flavorX, flavorY,
-                        com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(DiaryChrome.INK_FLAVOR, 110), false);
+                        DiaryChrome.INK_FLAVOR, false);
                     g.fill(flavorX - 2, flavorY + 4, flavorX + flavorW + 2, flavorY + 5,
                         com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0xFF241608, 120));
                     String fix = isEnglishSelected() ? "(no: the ink will never dry)" : "(no: la tinta ya no seca)";

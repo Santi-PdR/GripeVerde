@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.88.0 - Tinta de archivo más legible
+
+Oscurecer la tinta regular de textos secundarios y quitar un desvanecido extra de la nota corregida en opciones. La jerarquía sigue marcada por el espacio y el color, sin una fuente más pesada.
+
 ## Version 0.87.0 - Grano de papel equilibrado
 
 Reducir los trazos repetidos del grano en los papeles de menú y conservar la textura con fibras fijas un poco más largas. El papel que se dibuja sobre un mundo activo mantiene su ruta de bajo coste.
