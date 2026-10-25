@@ -3,6 +3,7 @@ package com.eternalcraft.gripeverde.client.widgets;
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.util.EasedValue;
+import com.eternalcraft.gripeverde.client.util.MotionPolicy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -62,7 +63,7 @@ public class DiaryButton extends AbstractButton {
         }
     }
     @Override public boolean mouseClicked(double mx,double my,int btn){
-        if(active&&visible&&clicked(mx,my)) pressAnimTicks=7;
+        if(!MotionPolicy.isReduced()&&active&&visible&&clicked(mx,my)) pressAnimTicks=7;
         return super.mouseClicked(mx,my,btn);
     }
 
@@ -71,23 +72,22 @@ public class DiaryButton extends AbstractButton {
         int x=getX(), y=getY(), w=width, h=height;
         Minecraft mc = Minecraft.getInstance();
         boolean inWorld = mc != null && mc.level != null;
+        boolean motionDisabled = inWorld || MotionPolicy.isReduced();
         boolean hovered = isHoveredOrFocused() && active;
-        boolean pressed = !inWorld && pressAnimTicks>0 && active;
-        if(inWorld) pressAnimTicks=0;
-        else if(pressAnimTicks>0) pressAnimTicks--;
+        boolean pressed = !motionDisabled && pressAnimTicks>0 && active;
+        if(motionDisabled) {
+            pressAnimTicks=0;
+            hoverAnim.snapTo(hovered);
+        } else {
+            if(pressAnimTicks>0) pressAnimTicks--;
+            hoverAnim.setTarget(hovered);
+            hoverAnim.tick(partialTick/20f);
+        }
 
         if(hovered && !wasHovered) UiSounds.playHover();
         wasHovered=hovered;
 
-        float t;
-        if(inWorld) {
-            // No easing during a live session: hover feedback changes in one frame.
-            t = hovered ? 1f : 0f;
-        } else {
-            hoverAnim.setTarget(hovered);
-            hoverAnim.tick(partialTick/20f);
-            t = hoverAnim.getEased();
-        }
+        float t = hoverAnim.getEased();
 
         int pressedOffset = pressed?1:0;
         int yDraw = y+pressedOffset;
