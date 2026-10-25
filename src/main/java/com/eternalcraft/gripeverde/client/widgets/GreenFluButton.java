@@ -3,6 +3,7 @@ package com.eternalcraft.gripeverde.client.widgets;
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.util.EasedValue;
+import com.eternalcraft.gripeverde.client.util.MotionPolicy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -37,7 +38,7 @@ public class GreenFluButton extends AbstractButton {
     @Override public void onPress(){ UiSounds.playClick(); onClick.run(); }
     @Override public void playDownSound(SoundManager sm){}
     @Override public boolean mouseClicked(double mx,double my,int btn){
-        if(active&&visible&&clicked(mx,my)) pressTicks=7;
+        if(!MotionPolicy.isReduced()&&active&&visible&&clicked(mx,my)) pressTicks=7;
         return super.mouseClicked(mx,my,btn);
     }
 
@@ -46,11 +47,16 @@ public class GreenFluButton extends AbstractButton {
         boolean hovered=isHovered();
         if(hovered&&!wasHovered) UiSounds.playHover();
         wasHovered=hovered;
-        hoverAnim.setTarget(hovered);
-        hoverAnim.tick(partialTick/20f);
+        boolean motionDisabled = MotionPolicy.isReduced();
+        if (motionDisabled) hoverAnim.snapTo(hovered);
+        else {
+            hoverAnim.setTarget(hovered);
+            hoverAnim.tick(partialTick/20f);
+        }
         float t=hoverAnim.getEased();
-        boolean pressed=pressTicks>0&&active;
-        if(pressTicks>0) pressTicks--;
+        boolean pressed=!motionDisabled&&pressTicks>0&&active;
+        if (motionDisabled) pressTicks=0;
+        else if(pressTicks>0) pressTicks--;
 
         int x=getX(), y=getY(), w=width, h=height;
         int yDraw=y+(pressed?1:0);
@@ -104,7 +110,7 @@ public class GreenFluButton extends AbstractButton {
         g.fill(x+2,yDraw+2+barRed,x+5,yDraw+h-2-barRed,barCol);
         // Spark on side bar when hover high
         if(t>0.28f){
-            int sparkY = yDraw+h/2 + (int)(Math.sin(System.currentTimeMillis()/160.0)*(h/4.2));
+            int sparkY = motionDisabled ? yDraw+h/2 : yDraw+h/2 + (int)(Math.sin(System.currentTimeMillis()/160.0)*(h/4.2));
             int sparkCol = DiaryTheme.withAlpha(DiaryTheme.AMBER_FLAME, (int)(t*165));
             g.fill(x+6,sparkY,x+8,sparkY+1,sparkCol);
             g.fill(x+6,sparkY+1,x+7,sparkY+2,DiaryTheme.withAlpha(sparkCol&0x00FFFFFF, (int)(t*80)));
