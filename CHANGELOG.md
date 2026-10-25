@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.89.0 - Legible Ghoul headings
+
+- Use dark teal ink for field-guide section headings, including hover and keyboard focus states.
+- Keep the bright Ghoul eye colors on small decorative accents and preserve regular font weight.
+
 ## Version 0.88.0 - Readable archival ink
 
 - Increase contrast for regular-weight secondary copy and remove an extra fade from the corrected options note.
