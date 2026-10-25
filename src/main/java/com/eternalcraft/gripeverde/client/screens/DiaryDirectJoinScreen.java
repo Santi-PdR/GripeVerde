@@ -6,7 +6,6 @@ import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import com.eternalcraft.gripeverde.client.widgets.DiaryTextField;
 import net.minecraft.client.gui.screens.Screen;
@@ -218,11 +217,7 @@ public class DiaryDirectJoinScreen extends Screen {
         gfx.drawString(this.font, ipLbl, panelX + 24, panelY + ipFieldOffset() - 14, DiaryChrome.INK_SUBTITLE, false);
 
         // Widgets
-        for (var w : this.renderables) {
-            if (w instanceof AbstractWidget aw && aw.visible) {
-                w.render(gfx, mouseX, mouseY, partial);
-            }
-        }
+        super.render(gfx, mouseX, mouseY, partial);
 
         // v0.16.0: aviso de la direccion sin mapa
         try {

@@ -6,7 +6,6 @@ import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.EditBox;
 import com.eternalcraft.gripeverde.client.widgets.DiaryTextField;
@@ -212,11 +211,7 @@ public class DiaryEditServerScreen extends Screen {
         gfx.drawString(this.font, ipLbl, panelX + fieldInset, panelY + ipLabelOffset, DiaryChrome.INK_SUBTITLE, false);
 
         // Widgets (EditBox + botones Diary)
-        for (var w : this.renderables) {
-            if (w instanceof AbstractWidget aw && aw.visible) {
-                w.render(gfx, mouseX, mouseY, partial);
-            }
-        }
+        super.render(gfx, mouseX, mouseY, partial);
     }
 
     @Override
