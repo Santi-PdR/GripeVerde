@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.72.0 - Control de ambiente recuperado
+
+El gabinete de sonido incluye un interruptor junto al deslizador de ambiente. El estado y la ayuda aparecen en inglés o español según el idioma del juego.
+
 ## Version 0.71.0 - Una portada más despejada
 
 Las tarjetas emergentes de descubrimiento ya no se superponen a la pantalla principal. Los hallazgos siguen registrados en el archivo y se conservan las notas contextuales.
