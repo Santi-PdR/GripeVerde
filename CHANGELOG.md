@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.72.0 - Ambience control restored
+
+- Add a visible ambience on/off control beside its volume slider in sound settings.
+- Show the current state and a localized tooltip in English and Spanish.
+
 ## Version 0.71.0 - Quiet title notices
 
 - Remove transient discovery cards from the title screen.
