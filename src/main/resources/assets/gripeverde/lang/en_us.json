@@ -128,5 +128,8 @@
     "gripeverde.field_guide.section.rescue_protocol": "FIRST RESPONSE PROTOCOL",
     "gripeverde.field_guide.body.rescue_alert": "A global trapped alert means a teammate is PINNED. They cannot free themselves: reach them and break the PIN.",
     "gripeverde.field_guide.body.rescue_downed": "At 0 hearts, stay beside the downed survivor. Hold right click for 5 seconds without taking damage to revive them.",
-    "gripeverde.field_guide.body.rescue_dead": "If the incapacity bar reaches 0, only a defibrillator found in loot can revive them. Their inventory is kept."
+    "gripeverde.field_guide.body.rescue_dead": "If the incapacity bar reaches 0, only a defibrillator found in loot can revive them. Their inventory is kept.",
+    "gripeverde.pause.btn.field_guide": "FIELD GUIDE",
+    "gripeverde.pause.btn.field_guide.compact": "GUIDE",
+    "gripeverde.field_guide.button.return_to_pause": "RETURN TO PAUSE"
 }

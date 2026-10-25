@@ -109,7 +109,7 @@ public class DiaryPauseScreen extends PauseScreen {
         int contentTop = py + topSeparator + 6;
         int contentBot = py + ph - bottomSeparator - 6;
         int contentH = Math.max(0, contentBot - contentTop);
-        int rows = compactGrid ? 3 : 5;
+        int rows = compactGrid ? 3 : 6;
         int gap = compactGrid ? 3 : BTN_GAP;
         int bh = (contentH - gap * (rows - 1)) / rows;
         int minButtonH = compactGrid ? 12 : 14;
@@ -119,23 +119,23 @@ public class DiaryPauseScreen extends PauseScreen {
         int totalBtnH = bh * rows + gap * (rows - 1);
         int btnStartY = contentTop + Math.max(0, (contentH - totalBtnH) / 2);
         int buttonW = Math.max(96, Math.min(BTN_W, pw - 24));
-        int[] buttonX = new int[5];
-        int[] buttonY = new int[5];
-        int[] buttonWidths = new int[5];
+        int[] buttonX = new int[6];
+        int[] buttonY = new int[6];
+        int[] buttonWidths = new int[6];
         if (compactGrid) {
             int availableButtonW = Math.max(96, pw - 24);
             int columnGap = Math.min(8, Math.max(2, availableButtonW / 12));
             int columnW = Math.max(48, (availableButtonW - columnGap) / 2);
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 6; i++) {
                 int row = i / 2;
                 int column = i % 2;
-                buttonWidths[i] = i == 4 ? pw - 24 : columnW;
-                buttonX[i] = i == 4 ? px + 12 : px + 12 + column * (columnW + columnGap);
+                buttonWidths[i] = columnW;
+                buttonX[i] = px + 12 + column * (columnW + columnGap);
                 buttonY[i] = btnStartY + row * (bh + gap);
             }
         } else {
             int buttonXCentered = px + (pw - buttonW) / 2;
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 6; i++) {
                 buttonX[i] = buttonXCentered;
                 buttonY[i] = btnStartY + i * (bh + gap);
                 buttonWidths[i] = buttonW;
@@ -158,16 +158,28 @@ public class DiaryPauseScreen extends PauseScreen {
         this.addRenderableWidget(createPauseButton(buttonX[3], buttonY[3], buttonWidths[3], bh,
             "gripeverde.pause.btn.adjustments", DiaryButton.Icon.GEAR, DiaryButton.Variant.SECONDARY, this::openAdjustments));
 
+        String fieldGuideLabel = compactGrid
+            ? "gripeverde.pause.btn.field_guide.compact" : "gripeverde.pause.btn.field_guide";
         this.addRenderableWidget(createPauseButton(buttonX[4], buttonY[4], buttonWidths[4], bh,
+            fieldGuideLabel, "gripeverde.pause.btn.field_guide",
+            DiaryButton.Icon.SCROLL, DiaryButton.Variant.SECONDARY, this::openFieldGuide));
+
+        this.addRenderableWidget(createPauseButton(buttonX[5], buttonY[5], buttonWidths[5], bh,
             "gripeverde.pause.btn.leave", DiaryButton.Icon.DOOR, DiaryButton.Variant.DANGER, this::onLeave));
     }
 
 
     private DiaryButton createPauseButton(int x, int y, int width, int height, String key,
                                           DiaryButton.Icon icon, DiaryButton.Variant variant, Runnable action) {
+        return createPauseButton(x, y, width, height, key, key, icon, variant, action);
+    }
+
+    private DiaryButton createPauseButton(int x, int y, int width, int height, String key,
+                                          String tooltipKey, DiaryButton.Icon icon,
+                                          DiaryButton.Variant variant, Runnable action) {
         Component label = Component.translatable(key);
         DiaryButton button = new DiaryButton(x, y, width, height, label, icon, variant, action);
-        button.setTooltip(Tooltip.create(label));
+        button.setTooltip(Tooltip.create(Component.translatable(tooltipKey)));
         return button;
     }
 
@@ -269,6 +281,10 @@ public class DiaryPauseScreen extends PauseScreen {
 
     private void openAdjustments() {
         this.minecraft.setScreen(new DiaryOptionsScreen(this));
+    }
+
+    private void openFieldGuide() {
+        this.minecraft.setScreen(new DiaryFieldGuideScreen(this));
     }
 
     @Override

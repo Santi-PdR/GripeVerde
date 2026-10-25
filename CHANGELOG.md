@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.52.0 - Field manual from pause
+
+- Added a pause-menu shortcut to the field guide, with a compact localized label and full tooltip.
+- Expanded the pause actions into a responsive six-action layout; returning from the guide now goes back to the pause screen with a matching label.
+- Kept the in-world guide as a fixed paper overlay with no screen-transition animation or moving backdrop.
+
 ## Version 0.51.0 - Field rescue protocol
 
 - Added a quick response section to the field guide for the global trapped alert, freeing a PIN, reviving a downed teammate, and the loot-only defibrillator.

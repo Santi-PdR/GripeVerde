@@ -128,5 +128,8 @@
     "gripeverde.field_guide.section.rescue_protocol": "PROTOCOLO DE PRIMERA RESPUESTA",
     "gripeverde.field_guide.body.rescue_alert": "La alerta global de atrapado indica que un compañero está PINEADO. No puede liberarse solo: llega hasta él y rompe el PIN.",
     "gripeverde.field_guide.body.rescue_downed": "Con 0 corazones, quédate junto al superviviente incapacitado. Mantén el clic derecho 5 segundos sin recibir daño para levantarlo.",
-    "gripeverde.field_guide.body.rescue_dead": "Si la barra de incapacidad llega a 0, solo un desfibrilador del botín puede revivirlo. Conserva el inventario."
+    "gripeverde.field_guide.body.rescue_dead": "Si la barra de incapacidad llega a 0, solo un desfibrilador del botín puede revivirlo. Conserva el inventario.",
+    "gripeverde.pause.btn.field_guide": "MANUAL DE CAMPO",
+    "gripeverde.pause.btn.field_guide.compact": "GUÍA",
+    "gripeverde.field_guide.button.return_to_pause": "VOLVER A LA PAUSA"
 }
