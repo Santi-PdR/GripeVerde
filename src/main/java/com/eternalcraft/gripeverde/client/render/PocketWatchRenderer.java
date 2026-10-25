@@ -2,6 +2,7 @@ package com.eternalcraft.gripeverde.client.render;
 
 import com.eternalcraft.gripeverde.client.audio.MenuAmbience;
 import net.minecraft.client.Minecraft;
+import com.eternalcraft.gripeverde.client.util.MotionPolicy;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.RandomSource;
@@ -135,7 +136,7 @@ public class PocketWatchRenderer {
         // La inscripcion grabada en la tapa
         boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
         long age = System.currentTimeMillis() - inspectionStartMs;
-        int chars = (int)Math.min(40, age / 60L);
+        int chars = MotionPolicy.isReduced() ? 40 : (int)Math.min(40, age / 60L);
         String l1 = en ? "S.P. - 11:52" : "S.P. - 11:52";
         String l2 = en ? "may time be gentle with you" : "que el tiempo te sea leve";
         int a1 = Math.min(200, chars * 8);
@@ -157,11 +158,12 @@ public class PocketWatchRenderer {
     public static void draw(GuiGraphics g, int cxAnchor, int cy, int topY, int radius, String version) {
         long now = System.currentTimeMillis();
         long elapsed = now - START_TIME;
+        boolean reducedMotion = MotionPolicy.isReduced();
 
         double swingT = (elapsed % 5000L) / 5000.0 * 2.0 * Math.PI;
-        int swingOffset = (int) Math.round(Math.sin(swingT) * 6.0);
+        int swingOffset = reducedMotion ? 0 : (int) Math.round(Math.sin(swingT) * 6.0);
         // v0.16.0: cuando la campana cuenta trece, el reloj tiembla.
-        if (com.eternalcraft.gripeverde.client.lore.HiddenCipher.isChiming()) {
+        if (!reducedMotion && com.eternalcraft.gripeverde.client.lore.HiddenCipher.isChiming()) {
             swingOffset += (int)(Math.sin(now / 34.0) * 2.4);
         }
         int cx = cxAnchor + swingOffset;
@@ -192,7 +194,7 @@ public class PocketWatchRenderer {
         drawRomanNumeral(g, font, cx, cy + textR, "VI");
         drawRomanNumeral(g, font, cx - textR, cy, "IX");
 
-        drawGlassShine(g, cx, cy, radius - 7, elapsed);
+        if (!reducedMotion) drawGlassShine(g, cx, cy, radius - 7, elapsed);
 
         // Segundero animado con glitch + notificacion de audio
         int secondPos = computeSecondPosition(now);
@@ -243,6 +245,10 @@ public class PocketWatchRenderer {
 
     private static int computeSecondPosition(long now) {
         int baseSec = (int)((now / 1000L) % 60L);
+        if (MotionPolicy.isReduced()) {
+            glitchActive = false;
+            return baseSec;
+        }
 
         // v0.16.0: el tiempo enferma con la sesion: glitches cada vez mas cerca.
         long minGap = Math.max(2800L, 9000L - sessionMinutes() * 600L);
