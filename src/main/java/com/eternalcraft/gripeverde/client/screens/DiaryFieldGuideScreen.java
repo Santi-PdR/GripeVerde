@@ -113,7 +113,7 @@ public final class DiaryFieldGuideScreen extends Screen {
         g.drawCenteredString(this.font, Component.translatable("gripeverde.field_guide.title"),
             cx, panelY + 9, DiaryChrome.INK_TITLE);
 
-        String subtitle = this.font.substrByWidth(
+        String subtitle = fitText(
             Component.translatable("gripeverde.field_guide.subtitle").getString(), panelW - 36);
         g.drawCenteredString(this.font, subtitle, cx, panelY + 23, DiaryChrome.INK_SUBTITLE);
         DiaryChrome.drawInkDivider(g, panelX + 18, panelY + 37, panelW - 36);
@@ -138,7 +138,7 @@ public final class DiaryFieldGuideScreen extends Screen {
         g.disableScissor();
 
         if (maxScroll > 0) drawScrollbar(g, top, bottom);
-        String hint = this.font.substrByWidth(
+        String hint = fitText(
             Component.translatable("gripeverde.field_guide.scroll_hint").getString(), panelW - 32);
         int hintW = this.font.width(hint);
         g.drawString(this.font, hint, cx - hintW / 2, panelY + panelH - 42,
@@ -146,6 +146,13 @@ public final class DiaryFieldGuideScreen extends Screen {
 
         super.render(g, mouseX, mouseY, partialTick);
         com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
+    }
+
+    private String fitText(String text, int maxWidth) {
+        if (this.font.width(text) <= maxWidth) return text;
+        String ellipsis = "...";
+        int room = Math.max(0, maxWidth - this.font.width(ellipsis));
+        return this.font.plainSubstrByWidth(text, room) + ellipsis;
     }
 
     private void drawScrollbar(GuiGraphics g, int top, int bottom) {
