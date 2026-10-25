@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.89.0 - Títulos legibles de la guía
+
+Usar tinta teal oscura en los títulos de sección del manual sobre pergamino, incluidos los estados enfocado y resaltado. El brillo de ojos ghoul queda como adorno y se conserva el peso regular de la fuente.
+
 ## Version 0.88.0 - Tinta de archivo más legible
 
 Oscurecer la tinta regular de textos secundarios y quitar un desvanecido extra de la nota corregida en opciones. La jerarquía sigue marcada por el espacio y el color, sin una fuente más pesada.
