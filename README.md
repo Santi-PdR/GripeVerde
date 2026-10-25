@@ -5,6 +5,10 @@ Ambientación victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Versión actual
 
+**v0.55.0 - Repaso de textos en español**
+
+Se corrigieron tildes omitidas y se unificó el trato al jugador en los textos españoles del menú.
+
 **v0.54.0 - Prueba de sonido clara**
 
 El botón de prueba ahora explica que usa el nivel de efectos de interfaz y que el volumen general de Minecraft también afecta lo que se oye.
