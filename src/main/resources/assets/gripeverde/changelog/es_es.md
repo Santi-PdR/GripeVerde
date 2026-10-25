@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.84.0 - Una mesa de sonido más clara
+
+El gabinete de sonido ahora indica qué disco del menú suena, permite pasar al siguiente desde el deslizador e informa cuando hay un fundido o la música está detenida.
+
 ## Version 0.83.0 - Texto en español más claro
 
 Corregí tildes que faltaban en la cuarentena, la pausa, el manual y las opciones. Unifiqué las instrucciones en segunda persona y aclaré las ayudas de sonido en español.

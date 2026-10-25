@@ -67,7 +67,6 @@
     "gripeverde.options.subtitle": "La mesa de trabajo del cronista",
     "gripeverde.options.accessibility.subtitle": "Auxilios, avisos y percepción",
     "gripeverde.options.sound.subtitle": "Niveles: Música %1$s · Ambiente %2$s · Efectos %3$s",
-    "gripeverde.options.sound.flavor": "Decide cuánto respira la ciudad detrás de la puerta.",
     "gripeverde.options.sound.music_slider": "Gramófono del cronista",
     "gripeverde.options.sound.ambience_slider": "Ambiente del cronista",
     "gripeverde.options.sound.ambience_on": "ACTIVO",
@@ -141,5 +140,11 @@
     "gripeverde.pause.btn.field_guide.compact": "GUÍA",
     "gripeverde.field_guide.button.return_to_pause": "VOLVER A LA PAUSA",
     "gripeverde.options.sound.music_slider.tooltip": "El nivel de música del mod se multiplica por el volumen de la categoría Música de Minecraft. Sube también esa categoría si no oyes las pistas.",
-    "gripeverde.options.sound.ambience_slider.tooltip": "El nivel de ambiente del mod se multiplica por el volumen de Ambiente/Entorno de Minecraft. Sube también esa categoría si no oyes los bucles."
+    "gripeverde.options.sound.ambience_slider.tooltip": "El nivel de ambiente del mod se multiplica por el volumen de Ambiente/Entorno de Minecraft. Sube también esa categoría si no oyes los bucles.",
+    "gripeverde.options.sound.next_track_button": "SIG.",
+    "gripeverde.options.sound.next_track_button.tooltip": "Pasar al siguiente disco con un fundido.",
+    "gripeverde.options.sound.track_now_playing": "Suena el disco %1$s de %2$s",
+    "gripeverde.options.sound.track_transition": "Cambiando al disco %1$s de %2$s",
+    "gripeverde.options.sound.track_between": "Entre discos",
+    "gripeverde.options.sound.track_paused": "La música del menú se detiene durante la expedición."
 }

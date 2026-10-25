@@ -309,7 +309,7 @@ public class DiaryTitleScreen extends Screen {
             }
         } catch (Throwable ignored) {}
         if (this.skipMusicButton != null) {
-            boolean ready = !MenuMusic.isCrossfading();
+            boolean ready = MenuMusic.isActive() && !MenuMusic.isCrossfading();
             this.skipMusicButton.active = ready;
             this.skipMusicButton.setTooltip(Tooltip.create(Component.literal(
                 ready

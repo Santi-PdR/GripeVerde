@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.84.0 - A clearer soundtrack console
+
+The sound cabinet now shows which menu record is playing, gives a compact way to move to the next record, and reports when a transition or pause is underway.
+
 ## Version 0.83.0 - Polished Spanish copy
 
 Correct missing accents in Spanish menu and field-guide text, use consistent direct address, and make the sound controls clearer in Spanish. English strings and localization placeholders remain unchanged.

@@ -52,6 +52,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     private OptionsList reflectedList;
     private final SmoothScroll smoothScroll = new SmoothScroll();
     private DiaryMusicSlider musicSlider;
+    private DiaryButton skipTrackButton;
     private DiaryAmbienceSlider ambienceSlider;
     private DiaryButton ambienceToggleButton;
     private DiarySlider uiVolumeSlider;
@@ -139,10 +140,24 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         int sliderX = this.panelX + 20;
         int sliderY = musicSliderY();
         int musicHeight = musicSliderHeight();
-        this.musicSlider = new DiaryMusicSlider(sliderX, sliderY, sliderW, musicHeight);
+        int skipTrackW = sliderW >= 120 ? Math.min(44, Math.max(32, sliderW / 5)) : 0;
+        int musicControlGap = skipTrackW > 0 ? 4 : 0;
+        int musicSliderW = Math.max(1, sliderW - skipTrackW - musicControlGap);
+        this.musicSlider = new DiaryMusicSlider(sliderX, sliderY, musicSliderW, musicHeight);
         this.musicSlider.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
             Component.translatable("gripeverde.options.sound.music_slider.tooltip")));
         this.addRenderableWidget(this.musicSlider);
+        if (skipTrackW > 0) {
+            this.skipTrackButton = new DiaryButton(
+                sliderX + musicSliderW + musicControlGap, sliderY, skipTrackW, musicHeight,
+                Component.translatable("gripeverde.options.sound.next_track_button"),
+                DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
+                DiaryButton.SoundProfile.DEFAULT, MenuMusic::skipToNext);
+            this.skipTrackButton.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
+                Component.translatable("gripeverde.options.sound.next_track_button.tooltip")));
+            this.skipTrackButton.active = MenuMusic.isActive() && !MenuMusic.isCrossfading();
+            this.addRenderableWidget(this.skipTrackButton);
+        }
 
         // El ambiente y los efectos SFX quedan separados para ajustar cada capa.
         int compactH = ambienceSliderHeight();
@@ -369,7 +384,19 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         // --- Flavor ---
         // v0.30.0: solo si hay aire real sobre los sliders; jamas pisado,
         // jamas al medio. Si el panel es bajo, se omite.
-        String flavor = Component.translatable("gripeverde.options.sound.flavor").getString();
+        int currentTrack = MenuMusic.getCurrentTrackNumber();
+        String flavor;
+        if (currentTrack > 0) {
+            flavor = Component.translatable(
+                MenuMusic.isCrossfading()
+                    ? "gripeverde.options.sound.track_transition"
+                    : "gripeverde.options.sound.track_now_playing",
+                currentTrack, MenuMusic.getTrackCount()).getString();
+        } else {
+            flavor = Component.translatable(MenuMusic.isActive()
+                ? "gripeverde.options.sound.track_between"
+                : "gripeverde.options.sound.track_paused").getString();
+        }
         int sliderTop = musicSliderY();
         if (!compact && titleY + 24 + this.font.lineHeight <= sliderTop - 6) {
             String flavorShown = DiaryChrome.fitText(this.font, flavor, Math.max(0, this.panelW - 32));
@@ -397,6 +424,11 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY3);
         DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
         DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. II");
+
+        // The soundtrack controls stay static in a live world; only enabled state is refreshed.
+        if (this.skipTrackButton != null) {
+            this.skipTrackButton.active = MenuMusic.isActive() && !MenuMusic.isCrossfading();
+        }
 
         // --- Slider + boton (renderables propios) ---
         for (Renderable r : this.renderables) {
