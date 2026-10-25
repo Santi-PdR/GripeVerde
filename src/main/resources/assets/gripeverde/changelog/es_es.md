@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.81.0 - Papel de campo envejecido
+
+Las hojas fijas de las pantallas de partida ahora tienen esquinas gastadas y un pliegue tenue. El efecto usa unos pocos trazos estáticos, sin animaciones ni trabajo por tick durante la partida.
+
 ## Version 0.80.0 - Avisos de descubrimiento que caben
 
 Los sellos de descubrimiento ahora se ajustan a ventanas estrechas y acortan los nombres largos para permanecer dentro de la pantalla. También corregí las tildes de las fichas y pistas del archivo.

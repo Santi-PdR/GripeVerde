@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.81.0 - Aged field paper
+
+- Add restrained, fixed corner wear and a fold highlight to field papers shown over a live world.
+- Keep the effect deterministic and free of animation or per-tick work.
+
 ## Version 0.80.0 - Responsive discovery notices
 
 - Keep discovery seals inside narrow windows and shorten long localized titles before drawing them.

@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.81.0 - Aged field paper
+
+Give fixed in-world paper panels worn corners and a quiet fold highlight. The effect uses a few static fills, with no animation or tick work during play.
+
 ## Version 0.80.0 - Discovery notices that fit
 
 Discovery seals now fit narrow windows and shorten long names to stay inside the screen.
