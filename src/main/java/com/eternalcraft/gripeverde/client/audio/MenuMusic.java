@@ -102,9 +102,15 @@ public class MenuMusic {
         return userVolume;
     }
 
-    public static void setUserVolume(float v) {
+    /** Update the audible volume while dragging, without writing the config file. */
+    public static void setUserVolumeLive(float v) {
         userVolume = Math.max(0f, Math.min(1f, v));
         volumeLoadedFromConfig = true;
+    }
+
+    /** Persist the final slider value once the player releases the control. */
+    public static void setUserVolume(float v) {
+        setUserVolumeLive(v);
         try {
             ClientConfig.MUSIC_VOLUME.set((double) userVolume);
             ClientConfig.MUSIC_VOLUME.save();
