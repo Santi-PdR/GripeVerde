@@ -193,7 +193,7 @@ public final class HiddenCipher {
         String l1 = en ? "TELEGRAM - 23 MARCH 1897 - 11:52 PM" : "TELEGRAMA - 23 MARZO 1897 - 11:52 PM";
         String l2 = en ? "LAST REPORT FROM THE WATCH POST:" : "ÚLTIMO PARTE DEL PUESTO DE VIGÍA:";
         String l3 = en ? "The bell counted thirteen. The watchman did not answer." : "La campana contó trece. El sereno no respondió.";
-        String l4 = en ? "Close the line. No one in. No one out." : "Cierren la linea. Nadie entra. Nadie sale.";
+        String l4 = en ? "Close the line. No one in. No one out." : "Cierren la línea. Nadie entra. Nadie sale.";
         String l5 = en ? "Signed: no one." : "Firmado: nadie.";
         DiaryChrome.drawCenteredString(g, mc.font, l1, x + bw / 2, y + 14, red);
         DiaryChrome.drawCenteredString(g, mc.font, l2, x + bw / 2, y + 30, ink);
