@@ -7,7 +7,7 @@ Ambientación victoriana bajo cuarentena, epidemia Green Flu.
 
 **v0.60.0 - Movimiento reducido coherente**
 
-La opción de movimiento reducido ahora detiene los pulsos, balanceos y transiciones de la interfaz, incluidos botones, reloj, logotipo y destellos de estado.
+La opción de movimiento reducido elimina los pulsos, balanceos y efectos de hover de la interfaz, incluidos los botones, el reloj, el logotipo y los destellos de estado.
 
 **v0.59.0 - Servidor oficial siempre a mano**
 
