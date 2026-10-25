@@ -114,7 +114,7 @@
     "gripeverde.field_guide.body.difficulty": "Available: Easy, Normal, Advanced, and Expert; then INSURGENCY I–V and INFERNUM I–V. BACKBREAKING I–X, DOOMSDAY I–X, and ARMAGEDDON I–X are still in development (WIP). Every tier adds challenges, global events, and stronger ghouls.",
     "gripeverde.field_guide.section.regroup": "REGROUP SIGNAL",
     "gripeverde.field_guide.body.regroup": "The white rally marker tracks allies beyond 3,000 blocks, even across unloaded chunks. Use it to find your crew again.",
-    "gripeverde.field_guide.scroll_hint": "WHEEL · ↑/↓ · PGUP/PGDN · TAB+ENTER · 1–6/CLICK",
+    "gripeverde.field_guide.scroll_hint": "WHEEL/ARROWS · TAB/ENTER · 1–7",
     "gripeverde.field_guide.button.close": "RETURN TO SAFE ROOM",
     "gripeverde.field_guide.section.races": "RACES AND EVOLUTION",
     "gripeverde.field_guide.body.races": "Survivors may be Human, Shark, Cyborg, or one of 300+ races. Evolve from V1 through V4+ by completing tasks or missions tied to your race's rarity.",
@@ -124,5 +124,9 @@
     "gripeverde.options.sound.ui_slider": "Interface effects",
     "gripeverde.options.sound.ui_slider.tooltip": "Adjust menu clicks, hovers and notifications.",
     "gripeverde.options.sound.test_button": "Test",
-    "gripeverde.options.sound.test_button.tooltip": "Play a short interface sound at the current volume."
+    "gripeverde.options.sound.test_button.tooltip": "Play a short interface sound at the current volume.",
+    "gripeverde.field_guide.section.rescue_protocol": "FIRST RESPONSE PROTOCOL",
+    "gripeverde.field_guide.body.rescue_alert": "A global trapped alert means a teammate is PINNED. They cannot free themselves: reach them and break the PIN.",
+    "gripeverde.field_guide.body.rescue_downed": "At 0 hearts, stay beside the downed survivor. Hold right click for 5 seconds without taking damage to revive them.",
+    "gripeverde.field_guide.body.rescue_dead": "If the incapacity bar reaches 0, only a defibrillator found in loot can revive them. Their inventory is kept."
 }

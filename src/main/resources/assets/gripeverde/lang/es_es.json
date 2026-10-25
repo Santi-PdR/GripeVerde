@@ -114,7 +114,7 @@
     "gripeverde.field_guide.body.difficulty": "Disponibles: Fácil, Normal, Avanzado y Experto; luego, INSURGENCY I–V e INFERNUM I–V. BACKBREAKING I–X, DOOMSDAY I–X y ARMAGEDDON I–X siguen en desarrollo (WIP). Cada rango añade desafíos, eventos globales y ghouls más fuertes.",
     "gripeverde.field_guide.section.regroup": "SENAL DE REAGRUPAMIENTO",
     "gripeverde.field_guide.body.regroup": "El icono blanco de encuentro sigue a los aliados a mas de 3.000 bloques, incluso en chunks sin cargar. Usalo para volver al grupo.",
-    "gripeverde.field_guide.scroll_hint": "RUEDA · ↑/↓ · REPÁG/AVPÁG · TAB+ENTER · 1–6/CLIC",
+    "gripeverde.field_guide.scroll_hint": "RUEDA/FLECHAS · TAB/ENTER · 1–7",
     "gripeverde.field_guide.button.close": "VOLVER AL REFUGIO",
     "gripeverde.field_guide.section.races": "RAZAS Y EVOLUCIÓN",
     "gripeverde.field_guide.body.races": "Podéis nacer humanos, tiburones, cíborgs u otra de las más de 300 razas. Evolucionad de V1 a V4+ al completar acciones o misiones según la rareza de vuestra raza.",
@@ -124,5 +124,9 @@
     "gripeverde.options.sound.ui_slider": "Efectos de interfaz",
     "gripeverde.options.sound.ui_slider.tooltip": "Ajusta los clics, los avisos y los sonidos al pasar por botones.",
     "gripeverde.options.sound.test_button": "Probar",
-    "gripeverde.options.sound.test_button.tooltip": "Reproduce un sonido breve con el volumen actual."
+    "gripeverde.options.sound.test_button.tooltip": "Reproduce un sonido breve con el volumen actual.",
+    "gripeverde.field_guide.section.rescue_protocol": "PROTOCOLO DE PRIMERA RESPUESTA",
+    "gripeverde.field_guide.body.rescue_alert": "La alerta global de atrapado indica que un compañero está PINEADO. No puede liberarse solo: llega hasta él y rompe el PIN.",
+    "gripeverde.field_guide.body.rescue_downed": "Con 0 corazones, quédate junto al superviviente incapacitado. Mantén el clic derecho 5 segundos sin recibir daño para levantarlo.",
+    "gripeverde.field_guide.body.rescue_dead": "Si la barra de incapacidad llega a 0, solo un desfibrilador del botín puede revivirlo. Conserva el inventario."
 }

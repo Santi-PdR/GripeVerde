@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.51.0 - Field rescue protocol
+
+- Added a quick response section to the field guide for the global trapped alert, freeing a PIN, reviving a downed teammate, and the loot-only defibrillator.
+- Added keyboard navigation for all seven guide sections while preserving existing saved section bookmarks.
+
 ## Version 0.50.0 - Localized headers fit every panel
 
 - Added a shared single-line fitting helper for localized headers and flavor lines across the remaining settings, archive, and confirmation screens.

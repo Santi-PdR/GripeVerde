@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.51.0 - Protocolo de rescate
+
+La guía de campo ahora incluye una secuencia rápida de rescate: responder al aviso global de atrapado, liberar un PIN, levantar a un compañero incapacitado y usar un desfibrilador del botín si muere. Se puede abrir cualquiera de las siete secciones con las teclas numéricas.
+
 ## Version 0.50.0 - Encabezados adaptados al pergamino
 
 Los títulos, subtítulos y textos de ambiente ahora respetan el ancho del pergamino en las pantallas restantes de ajustes, archivo y confirmación. Los mensajes de confirmación también se ajustan al panel en resoluciones compactas, sin alterar la navegación.
