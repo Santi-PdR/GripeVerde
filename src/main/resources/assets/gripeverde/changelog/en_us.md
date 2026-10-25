@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.54.0 - Sound check guidance
+
+The sound preview tooltip now explains that it uses the current interface SFX level and that Minecraft's master volume still controls audibility.
+
 ## Version 0.53.0 - Clear field manual
 
 The Spanish field guide now uses consistent direct address, corrected accents, and clearer instructions for reviving teammates. No gameplay behavior or active-world animation changed.
