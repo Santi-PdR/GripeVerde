@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.86.0 - Compact discovery notices
+
+Shorten archive discovery notices into a smaller bilingual paper slip with a narrow width cap and a safer text margin. Keep notices off the title screen and suppress them while a world is active.
+
 ## Version 0.85.0 - Weathered recovered papers
 
 Recovered documents in the archive gain a folded corner, softened shadow, and small fixed wear marks. Their labels keep a clear margin and the details render only inside the archive.
