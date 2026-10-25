@@ -3,6 +3,7 @@ package com.eternalcraft.gripeverde.client.render;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 
 /**
  * v0.26.0: el pasar de las hojas.
@@ -85,7 +86,7 @@ public final class DiaryTransitions {
      * pliegue segun si la mesa de destino estaba abierta antes.
      */
     public static void noteOpening(Screen from, Screen to) {
-        if (hasActiveWorld()) {
+        if (to instanceof InventoryScreen || hasActiveWorld()) {
             pendingHasDirection = false;
             current = null;
             return;
@@ -115,7 +116,7 @@ public final class DiaryTransitions {
 
     /** Llamado desde ScreenEvent.Render.Post. Dibuja encima de todo (es un velo). */
     public static void render(Screen screen, GuiGraphics g) {
-        if (hasActiveWorld()) {
+        if (screen instanceof InventoryScreen || hasActiveWorld()) {
             current = null;
             pendingHasDirection = false;
             return;

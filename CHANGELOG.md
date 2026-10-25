@@ -1,5 +1,16 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.44.0 - Clearer survivor screens
+
+- Removed the rotating lower-right quarantine dispatch from the title screen.
+- Updated the pinned community server address to `Outbreak.exaroton.me:24652`.
+- Kept only the primary US English and Spain Spanish locale files.
+- Removed the duplicate text pass that made button lettering look too bold.
+- Raised UI sound levels and kept Minecraft's normal sound controls in charge.
+- Added quiet archival folds to official papers and a fixed, lightweight paper style for screens over a live world.
+- Explicitly bypassed diary transitions for the inventory and while a world is active.
+
+
 ## v0.43.0 - Efectos quietos durante la partida
 
 El diario ya no suaviza el desplazamiento ni anima destellos, el espejo, el ojo o el diapasón mientras hay un mundo abierto. La navegación responde de inmediato.

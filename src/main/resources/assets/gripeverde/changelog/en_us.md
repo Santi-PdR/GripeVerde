@@ -1,4 +1,8 @@
 # Eternal Craft: Gripe Verde
+## Version 0.44.0 - Clearer survivor screens
+
+The title screen no longer shows the rotating lower-right quarantine report. The pinned server is now Outbreak.exaroton.me:24652. Button text is drawn once for a cleaner weight, UI sounds are easier to hear, and archival papers gain subtle static folds. Diary transitions are skipped for the inventory and throughout a live world. Only US English and Spain Spanish remain as packaged locales.
+
 ## Chronicle under seal
 
 ## Version 0.43.0 - Still effects during a live session
