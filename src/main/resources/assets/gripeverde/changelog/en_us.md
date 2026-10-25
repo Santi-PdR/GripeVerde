@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.75.0 - A signature that fits
+
+On narrow title layouts, only the current signature appears, clipped to the space between the music control and the right edge. Wide layouts keep the crossed-out previous signature.
+
 ## Version 0.74.0 - Cleaner field-guide headings
 
 The field guide now draws its title and subtitle with the diary's regular centered text style, without Minecraft's automatic dark drop shadow.
