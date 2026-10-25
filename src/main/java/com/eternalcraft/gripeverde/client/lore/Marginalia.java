@@ -19,6 +19,17 @@ public final class Marginalia {
 
     private Marginalia() {}
 
+ 
+    /** True while a live session owns the screen; lore waits for the title menu. */
+    private static boolean isLiveWorld() {
+        try {
+            Minecraft mc = Minecraft.getInstance();
+            return mc != null && mc.level != null;
+        } catch (Throwable ignored) {
+            return false;
+        }
+    }
+
     // ── Ids de nota ──
     public static final String N_READ_YOU     = "read_you";
     public static final String N_LANGUAGE     = "language";
@@ -75,6 +86,7 @@ public final class Marginalia {
 
     /** Toma la proxima nota pendiente (throttle: una por apertura de pantalla). */
     public static synchronized void poll() {
+        if (isLiveWorld()) return;
         long now = System.currentTimeMillis();
         if (now - lastPollMs < 2500L) return;
         lastPollMs = now;
@@ -100,7 +112,7 @@ public final class Marginalia {
      * (x, y) = esquina superior izquierda del panel; w = ancho.
      */
     public static void draw(GuiGraphics g, int panelX, int panelY, int panelW, int panelH) {
-        if (!hasActive()) return;
+        if (isLiveWorld() || !hasActive()) return;
         Minecraft mc = Minecraft.getInstance();
         if (mc == null || mc.font == null) return;
         long now = System.currentTimeMillis();
@@ -139,7 +151,7 @@ public final class Marginalia {
 
     /** Variante horizontal para pantallas sin margen izquierdo suficiente. */
     public static void drawHorizontal(GuiGraphics g, int cx, int y) {
-        if (!hasActive()) return;
+        if (isLiveWorld() || !hasActive()) return;
         Minecraft mc = Minecraft.getInstance();
         if (mc == null || mc.font == null) return;
         long now = System.currentTimeMillis();
