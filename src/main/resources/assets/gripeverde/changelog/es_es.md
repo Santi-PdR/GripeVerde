@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.73.0 - Notas fuera de la mesa principal
+
+Las notas contextuales ya no se dibujan sobre los controles de la portada. Se conservan en cola y aparecen dentro de las páginas de papel al abrirlas.
+
 ## Version 0.72.0 - Control de ambiente recuperado
 
 El gabinete de sonido incluye un interruptor junto al deslizador de ambiente. El estado y la ayuda aparecen en inglés o español según el idioma del juego.

@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.73.0 - Notes away from the main desk
+
+Contextual notes no longer appear over the title controls. They remain queued and appear inside paper screens when opened.
+
 ## Version 0.72.0 - Ambience control restored
 
 Sound settings now include an on/off control beside the ambience slider. Its current state and tooltip are available in English and Spanish.
