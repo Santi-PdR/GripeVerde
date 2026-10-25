@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.55.0 - Spanish copy pass
+
+Spanish menu text now has corrected accent marks and consistent direct address. The English and Spanish key sets and screen behavior remain unchanged.
+
 ## Version 0.54.0 - Sound check guidance
 
 The sound preview tooltip now explains that it uses the current interface SFX level and that Minecraft's master volume still controls audibility.
