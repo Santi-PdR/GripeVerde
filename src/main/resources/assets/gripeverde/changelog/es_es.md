@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.75.0 - Una firma que cabe
+
+En ventanas angostas, la portada muestra solo la firma actual y la ajusta al espacio entre el control de música y el borde. En pantallas amplias se conserva la firma anterior tachada.
+
 ## Version 0.74.0 - Encabezados más claros en la guía
 
 El título y el subtítulo del manual ahora usan el estilo centrado regular del diario, sin la sombra negra automática de Minecraft.
