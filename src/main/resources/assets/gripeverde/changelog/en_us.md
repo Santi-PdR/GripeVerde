@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.77.0 - Keep your server address
+
+The multiplayer screen now keeps an address you edit for the pinned Ghoul Outbreak entry. Only the previous built-in host is migrated to the current address.
+
 ## Version 0.76.0 - Still controls during play
 
 Mod buttons, toggles, and alert accents now switch immediately instead of animating whenever a world is open. The title menu keeps its atmospheric motion outside gameplay.

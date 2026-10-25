@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.77.0 - Respect the edited server address
+
+- Preserve a custom address entered for the pinned Ghoul Outbreak server.
+- Migrate only the previous built-in host to `Outbreak.exaroton.me:24652`.
+- Continue adding the official entry when it is missing and keep it at the top.
+
 ## Version 0.76.0 - Static controls during play
 
 - Make custom mod UI controls snap to their current hover and press states while a live world is open.

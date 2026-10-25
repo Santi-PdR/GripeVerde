@@ -32,6 +32,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     // Server oficial del mod - siempre presente en la lista.
     private static final String PINNED_NAME = "Ghoul Outbreak Official";
     private static final String PINNED_IP   = "Outbreak.exaroton.me:24652";
+    private static final String PREVIOUS_PINNED_IP = "servercitoGhouls.exaroton.me:24652";
 
     private static final Logger LOGGER = LogUtils.getLogger();
     private int frameLogCounter = 0;
@@ -103,8 +104,8 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     }
 
     /**
-     * Garantiza que el server oficial del mod este en la lista.
-     * Si no existe, lo agrega y guarda. Si existe con otra IP, actualiza la IP.
+     * Keeps the official server entry available and at the top of the list.
+     * Migrates the last built-in address but preserves any address the player edited.
      */
     private void ensurePinnedServer() {
         if (this.vanillaServers == null) return;
@@ -115,7 +116,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 ServerData server = this.vanillaServers.get(i);
                 if (server == null || !PINNED_NAME.equals(server.name)) continue;
                 pinnedIndex = i;
-                if (!PINNED_IP.equals(server.ip)) {
+                if (PREVIOUS_PINNED_IP.equals(server.ip)) {
                     server.ip = PINNED_IP;
                     changed = true;
                 }
