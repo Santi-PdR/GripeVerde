@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.91.0 - Readable archive notes
+
+Show the chronicler's archive note in a compact horizontal paper slip above the records at regular window sizes, keeping the margin fallback for short screens. Restore accents in the Spanish archive status copy.
+
 ## Version 0.90.0 - Localized title greetings
 
 Move chronicler greetings into the English and Spanish language resources. Correct Spanish accents and keep the vigil notes in direct address.
