@@ -204,10 +204,8 @@ public class DiaryButton extends AbstractButton {
             textStartX = x+(w-tw)/2;
         }
         text = fitText(font,text,maxTextW);
-        // Text shadow 1px for active (ink bleed)
-        if(active){
-            g.drawString(font,text,textStartX+1,contentY+1,DiaryTheme.withAlpha(DiaryTheme.INK_BLACK,40),false);
-        }
+        // One clean glyph pass keeps the default font crisp and avoids a doubled,
+        // over-bold look on narrow buttons and non-Latin glyphs.
         g.drawString(font,text,textStartX,contentY,textColor,false);
 
         // Underline on hover (ink stroke)

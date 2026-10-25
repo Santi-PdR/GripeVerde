@@ -105,6 +105,8 @@ public class ScreenEventHandler {
     // v0.26.0: el pasar de las hojas entre pantallas del gabinete.
     @SubscribeEvent
     public static void onScreenRenderPost(ScreenEvent.Render.Post event) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc != null && mc.level != null) return;
         try {
             com.eternalcraft.gripeverde.client.render.DiaryTransitions.render(event.getScreen(), event.getGuiGraphics());
         } catch (Throwable ignored) {}

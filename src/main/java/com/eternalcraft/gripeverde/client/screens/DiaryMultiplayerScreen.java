@@ -30,7 +30,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
 
     // Server oficial del mod - siempre presente en la lista.
     private static final String PINNED_NAME = "Ghoul Outbreak Official";
-    private static final String PINNED_IP   = "servercitoGhouls.exaroton.me:24652";
+    private static final String PINNED_IP   = "Outbreak.exaroton.me:24652";
 
     private static final Logger LOGGER = LogUtils.getLogger();
     private int frameLogCounter = 0;

@@ -49,10 +49,46 @@ public final class PaperTexture {
         return k != PaperKind.MEDICAL; // medical is cleaner
     }
 
+    private static boolean isLiveWorld() {
+        net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
+        return mc != null && mc.level != null;
+    }
+
+    /** Fixed, low-cost field paper for screens rendered over a live world. */
+    private static void drawFieldPaper(GuiGraphics g, int x, int y, int w, int h, PaperKind kind) {
+        g.fill(x, y, x + w, y + h, baseColorFor(kind));
+        if (w < 4 || h < 4) return;
+        int edge = DiaryTheme.withAlpha(0xFF735936, 26);
+        int fold = DiaryTheme.withAlpha(0xFF735936, 12);
+        g.fill(x, y, x + w, y + 1, edge);
+        g.fill(x, y + h - 1, x + w, y + h, edge);
+        g.fill(x, y, x + 1, y + h, edge);
+        g.fill(x + w - 1, y, x + w, y + h, edge);
+        if (kind == PaperKind.OFFICIAL || kind == PaperKind.ARCHIVE) {
+            int creaseX = x + w / 3;
+            g.fill(creaseX, y + 5, creaseX + 1, y + h - 5, fold);
+        }
+    }
+
+    /** Two faint, fixed folds add age without moving or reducing text contrast. */
+    private static void drawArchiveCreases(GuiGraphics g, int x, int y, int w, int h) {
+        int crease = DiaryTheme.withAlpha(0xFF745735, 13);
+        int highlight = DiaryTheme.withAlpha(0xFFFFF0D0, 18);
+        int creaseX = x + w / 3;
+        int creaseY = y + h / 2;
+        g.fill(creaseX, y + 8, creaseX + 1, y + h - 8, crease);
+        g.fill(creaseX + 1, y + 8, creaseX + 2, y + h - 8, highlight);
+        g.fill(x + 8, creaseY, x + w - 8, creaseY + 1, crease);
+    }
+
     // ── Public API ──
     public static void draw(GuiGraphics g, int x, int y, int w, int h) { draw(g,x,y,w,h,PaperKind.DEFAULT); }
     public static void draw(GuiGraphics g, int x, int y, int w, int h, PaperKind kind) {
         if (w<=0||h<=0) return;
+        if (isLiveWorld()) {
+            drawFieldPaper(g, x, y, w, h, kind);
+            return;
+        }
         g.fill(x,y,x+w,y+h, baseColorFor(kind));
         drawVignetteFast(g,x,y,w,h,kind);
         drawStainsOptimized(g,x,y,w,h,kind);
@@ -64,6 +100,10 @@ public final class PaperTexture {
     public static void drawClean(GuiGraphics g, int x, int y, int w, int h) { drawClean(g,x,y,w,h,PaperKind.DEFAULT); }
     public static void drawClean(GuiGraphics g, int x, int y, int w, int h, PaperKind kind) {
         if (w<=0||h<=0) return;
+        if (isLiveWorld()) {
+            drawFieldPaper(g, x, y, w, h, kind);
+            return;
+        }
         g.fill(x,y,x+w,y+h, baseColorFor(kind));
         drawWatermark(g,x,y,w,h,kind);
         drawPaperFibersOptimized(g,x,y,w,h,kind);
@@ -80,6 +120,9 @@ public final class PaperTexture {
             if (kind==PaperKind.OFFICIAL||kind==PaperKind.ARCHIVE) drawFaintRegistryNotches(g,x,y,w,h,kind);
         }
         drawTornEdges(g,x,y,w,h,kind);
+        if (w>=180&&h>=160&&(kind==PaperKind.OFFICIAL||kind==PaperKind.ARCHIVE)) {
+            drawArchiveCreases(g,x,y,w,h);
+        }
         if (w>=180&&h>=180&&kind!=PaperKind.MEDICAL) drawWaxSeal(g,x,y,w,h,kind);
         if (kind!=PaperKind.CORRESPONDENCE && w>200) drawMicroInkDot(g,x,y,w,h,kind);
         drawRainDrops(g,x,y,w,h);

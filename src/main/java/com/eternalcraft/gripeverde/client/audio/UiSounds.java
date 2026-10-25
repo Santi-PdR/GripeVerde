@@ -20,14 +20,14 @@ import java.util.Map;
 public class UiSounds {
 
     // Tuned volumes (base before user settings)
-    // v0.29.0/0.30.0: el owner pidio los ticks de hover mas bajos (-40%).
-    private static final float VOL_HOVER_MAIN    = 0.028f;
-    private static final float VOL_HOVER_SECTION = 0.022f;
-    private static final float VOL_CLICK_MAIN    = 0.22f;
-    private static final float VOL_CLICK_SECTION = 0.18f;
-    private static final float VOL_BACK          = 0.20f;
-    private static final float VOL_SCROLL        = 0.08f;
-    private static final float VOL_NOTIF         = 0.20f;
+    // Audible at default game settings while remaining below notification/music volume.
+    private static final float VOL_HOVER_MAIN    = 0.055f;
+    private static final float VOL_HOVER_SECTION = 0.045f;
+    private static final float VOL_CLICK_MAIN    = 0.36f;
+    private static final float VOL_CLICK_SECTION = 0.30f;
+    private static final float VOL_BACK          = 0.28f;
+    private static final float VOL_SCROLL        = 0.14f;
+    private static final float VOL_NOTIF         = 0.30f;
 
     private static final Map<String, Long> lastPlayed = new HashMap<>();
     private static final Map<String, Long> COOLDOWNS  = new HashMap<>();

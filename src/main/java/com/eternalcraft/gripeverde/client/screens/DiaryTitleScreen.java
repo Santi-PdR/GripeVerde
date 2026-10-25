@@ -606,11 +606,8 @@ public class DiaryTitleScreen extends Screen {
         // v0.30.0: la firma jamas entra en la franja del gramofo (>>), y el
         // mensaje del dia se lee a su IZQUIERDA, en la misma linea — antes
         // flotaba encima y podia pisar la mesa de botones.
-        double jitterX = Math.sin(System.currentTimeMillis() / 250.0) * 0.5
-                       + Math.sin(System.currentTimeMillis() / 87.0) * 0.3;
-        double jitterY = Math.cos(System.currentTimeMillis() / 310.0) * 0.4;
-        int newX = Math.max(48, this.width - sw - oldSw - 16) + (int)Math.round(jitterX);
-        int newY = y + (int)Math.round(jitterY);
+        int newX = Math.max(48, this.width - sw - oldSw - 16);
+        int newY = y;
         // v0.21.25: firma limpia sin sombra.
         g.drawString(this.font, signature,
             newX, newY,
@@ -629,19 +626,6 @@ public class DiaryTitleScreen extends Screen {
         g.fill(oldX + 2, strikeY - 1, oldX + oldSw - 1, strikeY,
             com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0x00000000, 90));
 
-        // Mensaje del dia real: a la IZQUIERDA de la firma, en la misma
-        // linea; si no hay aire suficiente (pantalla minuscula), se omite —
-        // nunca pisando botones ni saliendose del vidrio.
-        String dayMsg = getDayMessage();
-        if (!dayMsg.isEmpty()) {
-            int dmw = this.font.width(dayMsg);
-            int dayX = newX - dmw - 8;
-            if (dayX >= 48) {
-                int dmAlpha = com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
-                    com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_LIGHT, 90);
-                g.drawString(this.font, dayMsg, dayX, y, dmAlpha, false);
-            }
-        }
     }
 
     private void onSingleplayer() { this.minecraft.setScreen(new SelectWorldScreen(this)); }
@@ -1176,61 +1160,6 @@ public class DiaryTitleScreen extends Screen {
             return this.height - 96;
         }
     }
-
-    // Cache del parte diario: solo se recalcula si cambio la fecha o el idioma.
-    private static String cachedDayMsg = null;
-    private static java.time.LocalDate cachedDayMsgDate = null;
-    private static String cachedDayMsgLang = null;
-
-    /** Parte de cuarentena del cronista, distinta cada dia de la semana. */
-    private static String getDayMessage() {
-        java.time.LocalDate today = java.time.LocalDate.now();
-        String lang = net.minecraft.client.Minecraft.getInstance().getLanguageManager().getSelected();
-        if (lang == null) lang = "en_us";
-        if (cachedDayMsg != null && today.equals(cachedDayMsgDate)
-                && java.util.Objects.equals(lang, cachedDayMsgLang)) {
-            return cachedDayMsg;
-        }
-        cachedDayMsgDate = today;
-        cachedDayMsgLang = lang;
-        boolean english = isEnglishSelected();
-        int month = today.getMonthValue();
-        String[] dispatches = english
-            ? new String[] {
-                "CEDA insists: only a common flu.",
-                "Blue eyes. They are not dead.",
-                "New mutations stalk the fog.",
-                "Stores run low. Make each round count.",
-                "Pinned: only your crew can free you.",
-                "If you fall, a friend can raise you.",
-                "Regroup before seeking safe shelter."
-            }
-            : new String[] {
-                "CEDA insiste: solo es gripe comun.",
-                "Ojos azules. No estan muertos.",
-                "Mutaciones nuevas acechan la niebla.",
-                "Merman las reservas. Cuida cada bala.",
-                "Atrapado: solo el equipo te libera.",
-                "Si caes, un companero puede alzarte.",
-                "Reagrupaos antes de buscar refugio."
-            };
-
-        // El giro de octubre conserva la verdad del archivo: son ghouls vivos.
-        String monthBonus = "";
-        if (english) {
-            if (month == 10) monthBonus = " ~ ghouls walk";
-            else if (month == 12) monthBonus = " ~ long winter night";
-            else if (month == 1) monthBonus = " ~ same fever";
-        } else {
-            if (month == 10) monthBonus = " ~ los ghouls caminan";
-            else if (month == 12) monthBonus = " ~ noche larga";
-            else if (month == 1) monthBonus = " ~ misma fiebre";
-        }
-
-        cachedDayMsg = dispatches[today.getDayOfWeek().getValue() - 1] + monthBonus;
-        return cachedDayMsg;
-    }
-
 
     private void drawShootStarMessage(net.minecraft.client.gui.GuiGraphics g) {
         if (reducedMotion()) return;
