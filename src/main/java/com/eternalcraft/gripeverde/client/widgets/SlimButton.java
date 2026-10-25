@@ -3,6 +3,7 @@ package com.eternalcraft.gripeverde.client.widgets;
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.util.EasedValue;
+import com.eternalcraft.gripeverde.client.util.MotionPolicy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -50,8 +51,11 @@ public class SlimButton extends AbstractButton {
         if (hovered && !wasHovered) UiSounds.playHover();
         wasHovered = hovered;
 
-        hoverAnim.setTarget(hovered);
-        hoverAnim.tick(partialTick / 20f);
+        if (MotionPolicy.isReduced()) hoverAnim.snapTo(hovered);
+        else {
+            hoverAnim.setTarget(hovered);
+            hoverAnim.tick(partialTick / 20f);
+        }
 
         int x = this.getX();
         int y = this.getY();
