@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.85.0 - Papeles recuperados y gastados
+
+Los documentos del archivo reciben una esquina doblada, una sombra suave y pequeñas marcas de desgaste fijas. Las etiquetas conservan espacio legible y los detalles se dibujan solo dentro del archivo.
+
 ## Version 0.84.0 - Una mesa de sonido más clara
 
 El gabinete de sonido ahora indica qué disco del menú suena, permite pasar al siguiente desde el deslizador e informa cuando hay un fundido o la música está detenida.
