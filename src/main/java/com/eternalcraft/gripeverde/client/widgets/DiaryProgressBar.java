@@ -2,6 +2,7 @@ package com.eternalcraft.gripeverde.client.widgets;
 
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.util.MotionPolicy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -68,7 +69,7 @@ public final class DiaryProgressBar {
         int fillW = (int) (innerW * progress);
         if (fillW > 0) {
             int pulse = 255;
-            if (style == Style.ALERT) {
+            if (style == Style.ALERT && !MotionPolicy.isReduced()) {
                 pulse = 200 + (int) (55 * (0.5f + 0.5f * (float) Math.sin(System.currentTimeMillis() / 620.0)));
             }
             g.fill(innerX, innerY, innerX + fillW, innerY + innerH, DiaryTheme.withAlpha(style.fill, pulse));

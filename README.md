@@ -5,9 +5,17 @@ Ambientación victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Versión actual
 
+**v0.60.0 - Movimiento reducido coherente**
+
+La opción de movimiento reducido elimina los pulsos, balanceos y efectos de hover de la interfaz, incluidos los botones, el reloj, el logotipo y los destellos de estado.
+
 **v0.59.0 - Servidor oficial siempre a mano**
 
 La entrada fijada de Ghoul Outbreak aparece siempre en la primera fila del multijugador, actualiza su dirección y evita duplicados.
+
+**v0.58.0 - Avisos estáticos durante la partida**
+
+Los avisos de hallazgo y las notas marginales esperan al menú, evitando lecturas, escrituras y sonidos desde pantallas abiertas con el mundo activo.
 
 **v0.57.0 - Niveles de audio visibles**
 
