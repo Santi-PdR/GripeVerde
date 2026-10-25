@@ -21,7 +21,8 @@ public final class DiaryFieldGuideScreen extends Screen {
         { "gripeverde.field_guide.section.team" },
         { "gripeverde.field_guide.section.downed" },
         { "gripeverde.field_guide.section.expedition" },
-        { "gripeverde.field_guide.section.regroup" }
+        { "gripeverde.field_guide.section.regroup" },
+        { "gripeverde.field_guide.section.races" }
     };
 
     private static final String[][] ENTRY_KEYS = {
@@ -29,7 +30,8 @@ public final class DiaryFieldGuideScreen extends Screen {
         { "gripeverde.field_guide.body.pins" },
         { "gripeverde.field_guide.body.downed", "gripeverde.field_guide.body.dead" },
         { "gripeverde.field_guide.body.supplies", "gripeverde.field_guide.body.difficulty" },
-        { "gripeverde.field_guide.body.regroup" }
+        { "gripeverde.field_guide.body.regroup" },
+        { "gripeverde.field_guide.body.races", "gripeverde.field_guide.body.rarities" }
     };
 
     private final Screen parent;

@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## v0.34.0 - Razas del cordón
+
+El manual de campo suma un expediente sobre las razas de los supervivientes: más de 300 posibilidades, desde humanos, tiburones y cíborgs, con evoluciones V1–V4+ sujetas a acciones y misiones propias de cada rareza. También registra la escala completa de rarezas, compartida por razas, artefactos y objetos.
+
 ## v0.33.0 - Navegacion del manual
 
 El manual de campo ahora se puede recorrer con rueda, flechas y RePág/AvPág; Inicio y Fin saltan al comienzo o al cierre. La barra lateral también responde al arrastre y el pie explica los controles. Las tres formas de navegación respetan los límites del papel y mantienen el regreso al refugio al alcance.

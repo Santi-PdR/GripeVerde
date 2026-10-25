@@ -1,6 +1,10 @@
 # Eternal Craft: Gripe Verde
 ## Cronica bajo sello
 
+## Version 0.34.0 - Linajes de supervivientes
+
+El manual de campo registra las razas de supervivientes del servidor: más de 300 posibilidades, entre ellas humanos, tiburones y cíborgs, con evoluciones V1–V4+ que se obtienen mediante acciones y misiones ligadas a cada rareza. También enumera la escala completa de rarezas, compartida por razas, artefactos y objetos.
+
 
 
 ## Version 0.33.0 - Navegacion del manual
