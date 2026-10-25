@@ -365,6 +365,7 @@ public class DiaryTitleScreen extends Screen {
             drawLogo(g);
             drawSignature(g);
             super.render(g, mouseX, mouseY, partialTick);
+            renderChroniclerNote(g);
             if (overQuarantinePoster(mouseX, mouseY)) {
                 g.renderTooltip(this.font,
                     Component.translatable("gripeverde.poster.quarantine.guide_hint"),
@@ -432,7 +433,34 @@ public class DiaryTitleScreen extends Screen {
         }
     }
 
-    /** Saludo del gabinete al iniciar la sesion (12 segundos). */
+    /** Saludo de papel, estatico y limitado al menu principal. */
+    private void renderChroniclerNote(GuiGraphics g) {
+        long now = System.currentTimeMillis();
+        if (greetingText == null || now >= greetingShownUntilMs || isMinimalMode()) return;
+
+        int cardW = Math.min(360, this.width - 32);
+        if (cardW < 96) return;
+        String line = com.eternalcraft.gripeverde.client.render.DiaryChrome
+            .fitText(this.font, greetingText, cardW - 24);
+        if (line.isEmpty()) return;
+
+        int cardH = 24;
+        int x = (this.width - cardW) / 2;
+        // La marca del año termina cerca de y=161; esta ficha empieza debajo.
+        int y = 168;
+        g.fill(x + 2, y + 2, x + cardW + 2, y + cardH + 2,
+            com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
+                com.eternalcraft.gripeverde.client.render.DiaryTheme.INK_BLACK, 72));
+        g.fill(x, y, x + cardW, y + cardH,
+            com.eternalcraft.gripeverde.client.render.DiaryTheme.PAPER_DARK);
+        g.fill(x, y, x + cardW, y + 1,
+            com.eternalcraft.gripeverde.client.render.DiaryTheme.GOLD_TARNISHED);
+        g.fill(x, y + cardH - 1, x + cardW, y + cardH,
+            com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_MID);
+        int textX = x + (cardW - this.font.width(line)) / 2;
+        g.drawString(this.font, line, textX, y + 8,
+            com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_DARK, false);
+    }
 
     /** La vigilia nota cuando el lector se queda quieto demasiado tiempo. */
     private void drawVigilLine(GuiGraphics g) {
@@ -444,6 +472,9 @@ public class DiaryTitleScreen extends Screen {
         } else {
             line = Component.translatable("gripeverde.title.vigil.fog").getString();
         }
+        line = com.eternalcraft.gripeverde.client.render.DiaryChrome
+            .fitText(this.font, line, this.width - 32);
+        if (line.isEmpty()) return;
         int pulse = reducedMotion() ? 60 : (int)(Math.sin(System.currentTimeMillis() / 700.0) * 22 + 60);
         int wTxt = this.font.width(line);
         g.drawString(this.font, line, this.width / 2 - wTxt / 2, this.height / 3 + 24,

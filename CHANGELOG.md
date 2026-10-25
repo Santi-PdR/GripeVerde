@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.94.0 - The chronicler speaks
+
+- Show the session greeting on the title screen as a quiet, static paper note for twelve seconds.
+- Keep the greeting out of compact layouts and active worlds; fit the text to its paper slip.
+- Prevent long English and Spanish vigil lines from spilling beyond narrow title windows.
+
 ## Version 0.93.0 - Recover the fallen
 
 - Add the death-site body location to the field guide's downed and rescue protocols.

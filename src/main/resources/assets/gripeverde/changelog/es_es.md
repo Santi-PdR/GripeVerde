@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.94.0 - El cronista saluda
+
+Mostrar los saludos de sesión en la portada como notas de papel discretas y estáticas durante doce segundos. Ocultarlas en diseños compactos, ajustar su texto al papel y evitar que las frases de vigilia largas se salgan de ventanas estrechas.
+
 ## Version 0.93.0 - Encontrar al superviviente caído
 
 Añadir el lugar donde queda el cadáver a las dos notas de reanimación de la guía para que el equipo sepa dónde buscar. Mantener las instrucciones en inglés y español.
