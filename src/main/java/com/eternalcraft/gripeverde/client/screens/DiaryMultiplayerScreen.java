@@ -7,6 +7,7 @@ import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.ConnectScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -173,87 +174,109 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     }
 
     private void buildDiaryButtons() {
-        // Layout: 2 filas de botones DENTRO del pergamino.
-        // Fila superior: Join / Direct / Add (acciones principales)
-        // Fila inferior: Edit / Delete / Refresh / Cancel
-        // Anchos calculados con font.width() para evitar truncado.
-
         int btnH = 20;
         int gap = 6;
-        int rowGap = 14;   // separacion entre fila superior e inferior (evita tapar divisor)
-
-        // Y de las filas - DENTRO del pergamino (panelBottom - offsets)
+        int rowGap = 14;
         int panelBottom = this.height - PANEL_MARGIN_V;
-        int bottomRowY = panelBottom - btnH - 10;         // ultima fila con margen
-        int topRowY    = bottomRowY - btnH - rowGap;      // fila superior arriba
+        int bottomRowY = panelBottom - btnH - 10;
+        int topRowY = bottomRowY - btnH - rowGap;
+        int availableRowW = Math.max(136, this.width - PANEL_MARGIN_H * 2 - 24);
 
-        // ---- FILA SUPERIOR: Join / Direct / Add ----
-        Component labelJoin   = cleanLabel("selectServer.select");
+        Component labelJoin = cleanLabel("selectServer.select");
         Component labelDirect = cleanLabel("selectServer.direct");
-        Component labelAdd    = cleanLabel("selectServer.add");
+        Component labelAdd = cleanLabel("selectServer.add");
+        Component labelEdit = cleanLabel("selectServer.edit");
+        Component labelDelete = cleanLabel("selectServer.delete");
+        Component labelRefresh = cleanLabel("selectServer.refresh");
+        Component labelCancel = cleanLabel("gui.cancel");
 
-        int wJoin   = this.font.width(labelJoin) + 28;
+        int wJoin = this.font.width(labelJoin) + 28;
         int wDirect = this.font.width(labelDirect) + 28;
-        int wAdd    = this.font.width(labelAdd) + 28;
-
+        int wAdd = this.font.width(labelAdd) + 28;
+        int wEdit = this.font.width(labelEdit) + 28;
+        int wDelete = this.font.width(labelDelete) + 28;
+        int wRefresh = this.font.width(labelRefresh) + 28;
+        int wCancel = this.font.width(labelCancel) + 28;
         int topTotalW = wJoin + wDirect + wAdd + gap * 2;
-        int topStartX = (this.width - topTotalW) / 2;
+        int bottomTotalW = wEdit + wDelete + wRefresh + wCancel + gap * 3;
+        boolean compact = topTotalW > availableRowW || bottomTotalW > availableRowW;
 
-        this.diarySelect = new DiaryButton(topStartX, topRowY, wJoin, btnH,
-                labelJoin, DiaryButton.Icon.NONE, DiaryButton.Variant.PRIMARY,
-                DiaryButton.SoundProfile.CLEAN,
-                this::onJoin).noEllipsis();
-        this.diaryDirect = new DiaryButton(topStartX + wJoin + gap, topRowY, wDirect, btnH,
-                labelDirect, DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
-                DiaryButton.SoundProfile.CLEAN,
-                this::onDirect).noEllipsis();
-        this.diaryAdd = new DiaryButton(topStartX + wJoin + gap + wDirect + gap, topRowY, wAdd, btnH,
-                labelAdd, DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
-                DiaryButton.SoundProfile.CLEAN,
-                this::onAdd).noEllipsis();
+        if (compact) {
+            int compactGap = Math.max(3, Math.min(6, availableRowW / 40));
+            int topButtonW = (availableRowW - compactGap * 2) / 3;
+            int bottomButtonW = (availableRowW - compactGap * 3) / 4;
+            int topStartX = (this.width - availableRowW) / 2;
+            int bottomStartX = topStartX;
+
+            this.diarySelect = createServerActionButton(topStartX, topRowY, topButtonW, btnH,
+                Component.translatable("gripeverde.multiplayer.compact.join"), labelJoin,
+                DiaryButton.Variant.PRIMARY, DiaryButton.SoundProfile.CLEAN, this::onJoin);
+            this.diaryDirect = createServerActionButton(topStartX + topButtonW + compactGap, topRowY, topButtonW, btnH,
+                Component.translatable("gripeverde.multiplayer.compact.direct"), labelDirect,
+                DiaryButton.Variant.SECONDARY, DiaryButton.SoundProfile.CLEAN, this::onDirect);
+            this.diaryAdd = createServerActionButton(topStartX + (topButtonW + compactGap) * 2, topRowY, topButtonW, btnH,
+                Component.translatable("gripeverde.multiplayer.compact.add"), labelAdd,
+                DiaryButton.Variant.SECONDARY, DiaryButton.SoundProfile.CLEAN, this::onAdd);
+
+            this.diaryEdit = createServerActionButton(bottomStartX, bottomRowY, bottomButtonW, btnH,
+                Component.translatable("gripeverde.multiplayer.compact.edit"), labelEdit,
+                DiaryButton.Variant.SECONDARY, DiaryButton.SoundProfile.CLEAN, this::onEdit);
+            this.diaryDelete = createServerActionButton(bottomStartX + bottomButtonW + compactGap, bottomRowY, bottomButtonW, btnH,
+                Component.translatable("gripeverde.multiplayer.compact.delete"), labelDelete,
+                DiaryButton.Variant.DANGER, DiaryButton.SoundProfile.CLEAN, this::onDelete);
+            this.diaryRefresh = createServerActionButton(bottomStartX + (bottomButtonW + compactGap) * 2, bottomRowY, bottomButtonW, btnH,
+                Component.translatable("gripeverde.multiplayer.compact.refresh"), labelRefresh,
+                DiaryButton.Variant.SECONDARY, DiaryButton.SoundProfile.CLEAN, this::onRefresh);
+            this.diaryCancel = createServerActionButton(bottomStartX + (bottomButtonW + compactGap) * 3, bottomRowY, bottomButtonW, btnH,
+                Component.translatable("gripeverde.multiplayer.compact.cancel"), labelCancel,
+                DiaryButton.Variant.SECONDARY, DiaryButton.SoundProfile.BACK, this::onCancel);
+        } else {
+            int topStartX = (this.width - topTotalW) / 2;
+            int bottomStartX = (this.width - bottomTotalW) / 2;
+
+            this.diarySelect = createServerActionButton(topStartX, topRowY, wJoin, btnH, labelJoin, labelJoin,
+                DiaryButton.Variant.PRIMARY, DiaryButton.SoundProfile.CLEAN, this::onJoin);
+            this.diaryDirect = createServerActionButton(topStartX + wJoin + gap, topRowY, wDirect, btnH, labelDirect, labelDirect,
+                DiaryButton.Variant.SECONDARY, DiaryButton.SoundProfile.CLEAN, this::onDirect);
+            this.diaryAdd = createServerActionButton(topStartX + wJoin + gap + wDirect + gap, topRowY, wAdd, btnH, labelAdd, labelAdd,
+                DiaryButton.Variant.SECONDARY, DiaryButton.SoundProfile.CLEAN, this::onAdd);
+
+            this.diaryEdit = createServerActionButton(bottomStartX, bottomRowY, wEdit, btnH, labelEdit, labelEdit,
+                DiaryButton.Variant.SECONDARY, DiaryButton.SoundProfile.CLEAN, this::onEdit);
+            this.diaryDelete = createServerActionButton(bottomStartX + wEdit + gap, bottomRowY, wDelete, btnH, labelDelete, labelDelete,
+                DiaryButton.Variant.DANGER, DiaryButton.SoundProfile.CLEAN, this::onDelete);
+            this.diaryRefresh = createServerActionButton(bottomStartX + wEdit + gap + wDelete + gap, bottomRowY, wRefresh, btnH, labelRefresh, labelRefresh,
+                DiaryButton.Variant.SECONDARY, DiaryButton.SoundProfile.CLEAN, this::onRefresh);
+            this.diaryCancel = createServerActionButton(bottomStartX + wEdit + gap + wDelete + gap + wRefresh + gap, bottomRowY, wCancel, btnH, labelCancel, labelCancel,
+                DiaryButton.Variant.SECONDARY, DiaryButton.SoundProfile.BACK, this::onCancel);
+        }
+
         this.addRenderableWidget(this.diarySelect);
         this.addRenderableWidget(this.diaryDirect);
         this.addRenderableWidget(this.diaryAdd);
-
-        // ---- FILA INFERIOR: Edit / Delete / Refresh / Cancel ----
-        Component labelEdit    = cleanLabel("selectServer.edit");
-        Component labelDelete  = cleanLabel("selectServer.delete");
-        Component labelRefresh = cleanLabel("selectServer.refresh");
-        Component labelCancel  = cleanLabel("gui.cancel");
-
-        int wEdit    = this.font.width(labelEdit) + 28;
-        int wDelete  = this.font.width(labelDelete) + 28;
-        int wRefresh = this.font.width(labelRefresh) + 28;
-        int wCancel  = this.font.width(labelCancel) + 28;
-
-        int bottomTotalW = wEdit + wDelete + wRefresh + wCancel + gap * 3;
-        int bottomStartX = (this.width - bottomTotalW) / 2;
-
-        this.diaryEdit = new DiaryButton(bottomStartX, bottomRowY, wEdit, btnH,
-                labelEdit, DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
-                DiaryButton.SoundProfile.CLEAN,
-                this::onEdit).noEllipsis();
-        this.diaryDelete = new DiaryButton(bottomStartX + wEdit + gap, bottomRowY, wDelete, btnH,
-                labelDelete, DiaryButton.Icon.NONE, DiaryButton.Variant.DANGER,
-                DiaryButton.SoundProfile.CLEAN,
-                this::onDelete).noEllipsis();
-        this.diaryRefresh = new DiaryButton(bottomStartX + wEdit + gap + wDelete + gap, bottomRowY, wRefresh, btnH,
-                labelRefresh, DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
-                DiaryButton.SoundProfile.CLEAN,
-                this::onRefresh).noEllipsis();
-        this.diaryCancel = new DiaryButton(bottomStartX + wEdit + gap + wDelete + gap + wRefresh + gap, bottomRowY, wCancel, btnH,
-                labelCancel, DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
-                DiaryButton.SoundProfile.BACK,
-                this::onCancel).noEllipsis();
         this.addRenderableWidget(this.diaryEdit);
         this.addRenderableWidget(this.diaryDelete);
         this.addRenderableWidget(this.diaryRefresh);
         this.addRenderableWidget(this.diaryCancel);
 
         updateDiaryButtonStates();
-
-        // Segunda pasada defensiva
         hideVanillaButtons();
+    }
+
+    private DiaryButton createServerActionButton(int x, int y, int width, int height, Component visibleLabel,
+                                                 Component fullLabel, DiaryButton.Variant variant,
+                                                 DiaryButton.SoundProfile soundProfile, Runnable action) {
+        DiaryButton button = new DiaryButton(x, y, width, height, visibleLabel, DiaryButton.Icon.NONE,
+            variant, soundProfile, action);
+        button.setTooltip(Tooltip.create(fullLabel));
+        return button;
+    }
+
+    private String ellipsizeTo(String text, int maxWidth) {
+        if (this.font.width(text) <= maxWidth) return text;
+        String ellipsis = "...";
+        int room = Math.max(0, maxWidth - this.font.width(ellipsis));
+        return this.font.plainSubstrByWidth(text, room) + ellipsis;
     }
 
     private Component cleanLabel(String translationKey) {
@@ -475,18 +498,21 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
 
         // Titulo
         int titleY = panelY + 14;
-        String titleStr = this.title.getString();
+        int centerX = panelX + panelW / 2;
+        int headingMaxWidth = Math.max(64, panelW - 32);
+        String titleStr = ellipsizeTo(this.title.getString(), headingMaxWidth);
         int titleW = this.font.width(titleStr);
-        gfx.drawString(this.font, titleStr, (this.width - titleW) / 2, titleY, DiaryChrome.INK_TITLE, false);
+        gfx.drawString(this.font, titleStr, centerX - titleW / 2, titleY, DiaryChrome.INK_TITLE, false);
 
         // Subtitulo
         String subtitle = "- " + Component.translatable("gripeverde.multiplayer.subtitle").getString() + " -";
+        subtitle = ellipsizeTo(subtitle, headingMaxWidth);
         int subW = this.font.width(subtitle);
-        gfx.drawString(this.font, subtitle, (this.width - subW) / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
+        gfx.drawString(this.font, subtitle, centerX - subW / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
         // Divisor con rombo
-        DiaryChrome.drawInkDivider(gfx, panelX + 24, titleY + 26, panelW - 48);
-        DiaryChrome.drawDivisorLozenge(gfx, this.width / 2, titleY + 26);
+        DiaryChrome.drawInkDivider(gfx, panelX + 24, titleY + 26, Math.max(0, panelW - 48));
+        DiaryChrome.drawDivisorLozenge(gfx, centerX, titleY + 26);
 
         // Lista vanilla (con sus favicons, ping, MOTD, etc.)
         if (this.vanillaList != null) {
