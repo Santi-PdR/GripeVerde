@@ -10,6 +10,7 @@ import java.util.List;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.FormattedCharSequence;
 import org.lwjgl.glfw.GLFW;
 
@@ -94,7 +95,7 @@ public final class DiaryFieldGuideScreen extends Screen {
         for (int section = 0; section < SECTION_KEYS.length; section++) {
             int targetSection = section;
             Component heading = Component.translatable(SECTION_KEYS[section][0]);
-            Component narration = Component.empty().append(heading).append(". ");
+            MutableComponent narration = Component.empty().append(heading).append(". ");
             for (String entry : ENTRY_KEYS[section]) {
                 narration.append(Component.translatable(entry)).append(". ");
             }
