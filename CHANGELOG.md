@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.95.0 - Live sound levels
+
+- Show the current mod music, ambience, and interface-effect levels in the sound cabinet subtitle.
+- Keep the readout synchronized with the sliders and the saved accessibility volume settings.
+
 ## Version 0.94.0 - The chronicler speaks
 
 - Show the session greeting on the title screen as a quiet, static paper note for twelve seconds.

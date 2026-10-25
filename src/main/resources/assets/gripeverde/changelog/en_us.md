@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.95.0 - Live sound levels
+
+The sound cabinet now displays the current music, ambience, and interface-effect levels while you adjust them, using the translated labels.
+
 ## Version 0.94.0 - The chronicler speaks
 
 Show session greetings on the title screen as quiet, static paper notes for twelve seconds. Keep them out of compact layouts, fit them to the paper slip, and prevent long vigil lines from overflowing narrow windows.
