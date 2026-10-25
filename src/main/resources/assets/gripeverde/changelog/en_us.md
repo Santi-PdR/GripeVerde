@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.69.0 - Audio sliders without repeated saves
+
+Music and ambience volumes continue changing live while dragging, but each setting is saved once when the slider is released.
+
 ## Version 0.68.0 - One-shot menu audio shutdown
 
 Menu music and ambience now stop once when entering a world instead of being asked to stop on every client tick. The guard resets when returning to the title menu.
