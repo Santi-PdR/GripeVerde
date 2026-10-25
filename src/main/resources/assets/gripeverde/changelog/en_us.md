@@ -1,8 +1,16 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.60.0 - Consistent reduced motion
+
+The reduced-motion option now stops UI hover easing, press movement, decorative pulses, the pocket-watch swing and glass sweep, and typewriter reveal. Gameplay screens remain static while a world is active.
+
 ## Version 0.59.0 - Official server within reach
 
 The pinned Ghoul Outbreak server now stays in the first multiplayer row, updates its address in place, and refreshes the visible list without creating duplicates.
+
+## Version 0.58.0 - Quiet lore during live play
+
+Discovery toasts and marginal notes wait while a world is active. Pending notes stay queued instead of being read, saved, or played from a pause screen, keeping those screens static and avoiding file work during play.
 
 ## Version 0.57.0 - Audio mix status
 
