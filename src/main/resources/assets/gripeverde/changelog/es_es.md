@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.87.0 - Grano de papel equilibrado
+
+Reducir los trazos repetidos del grano en los papeles de menú y conservar la textura con fibras fijas un poco más largas. El papel que se dibuja sobre un mundo activo mantiene su ruta de bajo coste.
+
 ## Version 0.86.0 - Avisos de hallazgo compactos
 
 Reducir los avisos del archivo a una ficha bilingüe más pequeña, con ancho limitado y margen seguro para el texto. Los avisos siguen ocultos en la portada y durante una partida activa.

@@ -429,12 +429,13 @@ public final class PaperTexture {
             case MEDICAL -> 20;
             default -> 60;
         };
-        int count = Math.max(20, Math.min(120, (w*h)/1600 + base/2));
+        // Keep the paper grain detailed while limiting repeated fill calls on full-size menus.
+        int count = Math.max(18, Math.min(80, (w*h)/2200 + base/3));
         int col1 = DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, k==PaperKind.MEDICAL?10:12);
         for (int i=0;i<count;i++){
             int px = x+rnd.nextInt(Math.max(1,w));
             int py = y+rnd.nextInt(Math.max(1,h));
-            int len = 2+rnd.nextInt(2);
+            int len = 3+rnd.nextInt(2);
             g.fill(px,py,px+len,py+1,col1);
         }
     }
