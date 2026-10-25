@@ -1,6 +1,6 @@
 # Eternal Craft: Gripe Verde
 
-## Version 0.58.0 - Still notices during live play
+## Version 0.58.0 - Quiet lore during live play
 
 - Suppress animated discovery toasts while a world is active.
 - Keep queued marginalia untouched during live sessions, avoiding file reads/writes and UI sound playback from pause screens; notes remain available when the player returns to the menu.
