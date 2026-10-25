@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.61.0 - Lighter server-list refresh
+
+- Remove the explicit synchronous server-file reload immediately before vanilla creates the refreshed multiplayer screen; let the new screen load the saved list once.
+
 ## Version 0.60.0 - Consistent reduced motion
 
 - Honor the reduced-motion setting across animated controls, title-screen details, logo and pocket watch; status alerts remain static.

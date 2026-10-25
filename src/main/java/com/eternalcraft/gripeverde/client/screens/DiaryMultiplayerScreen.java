@@ -424,14 +424,8 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     }
 
     private void refreshList() {
-        // Forzar reload sincronico desde disco antes de recrear la pantalla.
-        // Sin esto, el save() previo puede no haber terminado y la lista
-        // se ve "sin cambios".
-        if (this.vanillaServers != null) {
-            try {
-                this.vanillaServers.load();
-            } catch (Throwable ignored) {}
-        }
+        // Saved edits are loaded once by vanilla when the replacement screen initializes.
+        // Avoid a second synchronous disk read immediately before rebuilding the list.
         this.minecraft.setScreen(new DiaryMultiplayerScreen(this.parent));
     }
 
