@@ -96,8 +96,10 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         // Crear nuestros 7 DiaryButton
         buildDiaryButtons();
 
-        // Asegurar que el server oficial este siempre presente
+        // Asegurar que el server oficial este siempre presente.
         ensurePinnedServer();
+        selectPinnedServerIfNothingIsSelected();
+        updateDiaryButtonStates();
     }
 
     /**
@@ -135,6 +137,23 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             if (changed) {
                 this.vanillaServers.save();
                 refreshVisibleServerEntries();
+            }
+        } catch (Throwable ignored) {}
+    }
+
+    /**
+     * Preselect the official server only when the player has no current selection.
+     * Joining still requires an explicit press of the Join button.
+     */
+    private void selectPinnedServerIfNothingIsSelected() {
+        if (this.vanillaList == null || this.vanillaList.getSelected() != null) return;
+        try {
+            for (var entry : this.vanillaList.children()) {
+                ServerData server = extractServerDataFromEntry(entry);
+                if (server != null && PINNED_NAME.equals(server.name)) {
+                    this.vanillaList.setSelected(entry);
+                    return;
+                }
             }
         } catch (Throwable ignored) {}
     }
