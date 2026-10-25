@@ -36,6 +36,7 @@ public final class DiaryFieldGuideScreen extends Screen {
 
     private final Screen parent;
     private final List<GuideRow> rows = new ArrayList<>();
+    private final List<Integer> sectionOffsets = new ArrayList<>();
     private int panelX, panelY, panelW, panelH;
     private int scrollY;
     private int maxScroll;
@@ -78,8 +79,12 @@ public final class DiaryFieldGuideScreen extends Screen {
         }
 
         contentHeight = 0;
+        sectionOffsets.clear();
         for (GuideRow row : rows) {
             contentHeight += row.gapBefore + (row.text == null ? 0 : LINE_HEIGHT);
+            if (row.heading && row.gapBefore > 0) {
+                sectionOffsets.add(contentHeight - (row.text == null ? 0 : LINE_HEIGHT));
+            }
         }
         maxScroll = Math.max(0, contentHeight - viewportHeight());
         scrollY = Math.min(scrollY, maxScroll);
@@ -129,13 +134,23 @@ public final class DiaryFieldGuideScreen extends Screen {
         int bottom = viewportBottom();
         g.enableScissor(panelX + 14, top, panelX + panelW - 14, bottom);
         int y = top - scrollY;
+        int hoveredSection = headingAt(mouseX, mouseY);
+        int sectionIndex = -1;
         for (GuideRow row : rows) {
             y += row.gapBefore;
+            if (row.heading && row.gapBefore > 0) sectionIndex++;
             if (row.text != null) {
+                boolean headingHovered = row.heading && sectionIndex == hoveredSection;
                 int color = row.heading
-                    ? (row.accent ? DiaryTheme.GHOUL_EYE : DiaryTheme.REDCOAT_DARK)
+                    ? (headingHovered ? DiaryTheme.GHOUL_EYE_GLOW
+                        : row.accent ? DiaryTheme.GHOUL_EYE : DiaryTheme.REDCOAT_DARK)
                     : DiaryTheme.INK;
-                g.drawString(this.font, row.text, panelX + 20, y, color, false);
+                int textX = panelX + 20;
+                int textWidth = this.font.width(row.text);
+                g.drawString(this.font, row.text, textX, y, color, false);
+                if (headingHovered) {
+                    g.fill(textX, y + LINE_HEIGHT - 1, textX + textWidth, y + LINE_HEIGHT, color);
+                }
                 y += LINE_HEIGHT;
             }
         }
@@ -197,8 +212,42 @@ public final class DiaryFieldGuideScreen extends Screen {
         scrollY = Math.max(0, Math.min(maxScroll, target));
     }
 
+    private void jumpToSection(int section) {
+        if (section >= 0 && section < sectionOffsets.size()) {
+            scrollTo(sectionOffsets.get(section));
+        }
+    }
+
+    /** Returns the section under the pointer, or -1 when it is not on a heading. */
+    private int headingAt(double mouseX, double mouseY) {
+        if (mouseX < panelX + 16 || mouseX > panelX + panelW - 14
+                || mouseY < viewportTop() || mouseY > viewportBottom()) {
+            return -1;
+        }
+        int y = viewportTop() - scrollY;
+        int section = -1;
+        for (GuideRow row : rows) {
+            y += row.gapBefore;
+            if (row.heading && row.gapBefore > 0) section++;
+            if (row.heading && row.text != null) {
+                int textX = panelX + 20;
+                int textWidth = this.font.width(row.text);
+                if (mouseX >= textX - 2 && mouseX <= textX + textWidth + 2
+                        && mouseY >= y && mouseY < y + LINE_HEIGHT) {
+                    return section;
+                }
+            }
+            if (row.text != null) y += LINE_HEIGHT;
+        }
+        return -1;
+    }
+
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode >= GLFW.GLFW_KEY_1 && keyCode <= GLFW.GLFW_KEY_6) {
+            jumpToSection(keyCode - GLFW.GLFW_KEY_1);
+            return true;
+        }
         if (maxScroll > 0) {
             switch (keyCode) {
                 case GLFW.GLFW_KEY_UP -> { scrollTo(scrollY - LINE_HEIGHT * 2); return true; }
@@ -215,6 +264,13 @@ public final class DiaryFieldGuideScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == 0) {
+            int section = headingAt(mouseX, mouseY);
+            if (section >= 0) {
+                jumpToSection(section);
+                return true;
+            }
+        }
         if (button == 0 && overScrollbar(mouseX, mouseY)) {
             draggingScrollbar = true;
             setScrollFromMouse(mouseY);
