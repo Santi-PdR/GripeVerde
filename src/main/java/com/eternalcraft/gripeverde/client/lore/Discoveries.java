@@ -285,9 +285,9 @@ public final class Discoveries {
         boolean result;
         try {
             String lang = Minecraft.getInstance().getLanguageManager().getSelected();
-            result = lang == null || lang.startsWith("en_");
+            result = lang == null || !"es_es".equals(lang);
         } catch (Throwable t) {
-            result = false;
+            result = true;
         }
         cachedEnglish = result;
         cachedEnglishUntilMs = now + 250L;
