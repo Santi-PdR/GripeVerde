@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.48.0 - Server forms that fit
+
+Direct connect and server editing now derive their panel, input, and button sizes from the visible panel. The controls stay inside the parchment, headings and field labels stay within its width, and the full action labels remain available in tooltips. The hidden-address warning now appears inside the direct-connect panel instead of below the edge of a short window.
+
 ## Version 0.47.0 - Compact survivor pause screen
 
 The pause cabinet now switches to a two-column action layout when the viewport is short, with the leave action spanning the final row. The header and dividers move with the compact layout, long subtitles stay inside the paper, and hover tooltips preserve complete English and Spanish control names. Decorative details step aside when the compact paper needs the room. The in-world panel remains static and keeps the hotbar clear.

@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.48.0 - Server forms that fit
+
+- Resized direct-connect and server-edit panels, text fields, and action buttons from the actual viewport and panel dimensions.
+- Kept both forms' buttons inside their parchment at compact resolutions, clipped long headings and field labels, and retained full action names in hover tooltips.
+- Positioned connection feedback inside the direct-connect panel so it remains visible on short screens.
+
 ## Version 0.47.0 - Compact survivor pause screen
 
 - Reflowed pause actions into a two-column layout when the available viewport is short, keeping the last action full width and above the hotbar.
