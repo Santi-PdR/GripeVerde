@@ -12,7 +12,6 @@ import net.minecraft.client.gui.screens.achievement.StatsScreen;
 import net.minecraft.client.gui.screens.advancements.AdvancementsScreen;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.chat.Component;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.Random;
 
@@ -287,23 +286,34 @@ public class DiaryPauseScreen extends PauseScreen {
         this.minecraft.setScreen(new DiaryFieldGuideScreen(this));
     }
 
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if ((modifiers & GLFW.GLFW_MOD_CONTROL) != 0 && keyCode == GLFW.GLFW_KEY_0) {
-            onLeave();
-            return true;
-        }
-        return super.keyPressed(keyCode, scanCode, modifiers);
-    }
-
     private void onLeave() {
         if (this.minecraft == null || this.minecraft.level == null) {
             return;
         }
 
-        // En Forge 1.20.1, Minecraft.disconnect() no es publico:
-        // usamos clearLevel() y llamamos setScreen explicitamente al final,
-        // que es lo que faltaba en la version anterior y causaba el freeze.
+        if (!this.minecraft.isLocalServer()) {
+            this.minecraft.setScreen(new DiaryConfirmScreen(accepted -> {
+                if (accepted) {
+                    disconnectAndReturnToTitle();
+                } else {
+                    this.minecraft.setScreen(this);
+                }
+            },
+                Component.translatable("gripeverde.pause.leave.confirm.title"),
+                Component.translatable("gripeverde.pause.leave.confirm.message"),
+                Component.translatable("gripeverde.pause.leave.confirm.accept"),
+                Component.translatable("gui.cancel"),
+                this));
+            return;
+        }
+
+        disconnectAndReturnToTitle();
+    }
+
+    private void disconnectAndReturnToTitle() {
+        if (this.minecraft == null || this.minecraft.level == null) return;
+
+        // In Forge 1.20.1, disconnect through clearLevel and set the title explicitly.
         boolean isLocal = this.minecraft.isLocalServer();
         this.minecraft.level.disconnect();
 
@@ -314,8 +324,7 @@ public class DiaryPauseScreen extends PauseScreen {
             this.minecraft.clearLevel();
         }
 
-        // Forzar la vuelta al TitleScreen explicitamente.
-        // ScreenEventHandler lo intercepta y lo reemplaza por DiaryTitleScreen.
+        // ScreenEventHandler replaces this with DiaryTitleScreen.
         this.minecraft.setScreen(new TitleScreen());
     }
 
