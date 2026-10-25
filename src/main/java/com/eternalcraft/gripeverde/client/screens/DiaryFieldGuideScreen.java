@@ -65,7 +65,9 @@ public final class DiaryFieldGuideScreen extends Screen {
         int closeW = Math.min(190, panelW - 24);
         this.addRenderableWidget(new DiaryButton(
             panelX + (panelW - closeW) / 2, panelY + panelH - 31, closeW, 23,
-            Component.translatable("gripeverde.field_guide.button.close"),
+            Component.translatable(parent instanceof DiaryPauseScreen
+                ? "gripeverde.field_guide.button.return_to_pause"
+                : "gripeverde.field_guide.button.close"),
             DiaryButton.Icon.DOOR, DiaryButton.Variant.PRIMARY,
             DiaryButton.SoundProfile.BACK,
             this::onClose));

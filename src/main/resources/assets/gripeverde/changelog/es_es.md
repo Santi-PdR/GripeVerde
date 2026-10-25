@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.52.0 - Manual de campo desde la pausa
+
+El menú de pausa ahora abre la guía de campo con una acción secundaria. En diseños compactos se muestra un rótulo breve con el tooltip completo, y la guía vuelve a la pausa. La hoja sobre el mundo permanece estática.
+
 ## Version 0.51.0 - Protocolo de rescate
 
 La guía de campo ahora incluye una secuencia rápida de rescate: responder al aviso global de atrapado, liberar un PIN, levantar a un compañero incapacitado y usar un desfibrilador del botín si muere. Se puede abrir cualquiera de las siete secciones con las teclas numéricas.
