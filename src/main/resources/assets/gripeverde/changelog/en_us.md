@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.57.0 - Audio mix status
+
+The sound cabinet subtitle now shows the current music, ambience and interface SFX percentages, even on compact screens. Title tracks now use Minecraft's Music category, and the preview tooltip explains which controls affect the test sound.
+
 ## Version 0.56.0 - Compact sound cabinet
 
 The sound cabinet now keeps its options, three volume controls, preview, and return button inside short viewports. In a live world it uses a fixed veil and does not trigger the title-menu silent-record discovery.
