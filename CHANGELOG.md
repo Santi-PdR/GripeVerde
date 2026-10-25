@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.84.0 - A clearer soundtrack console
+
+- Show the current menu record and transition state in the sound cabinet.
+- Add a compact next-record control beside the music slider and disable skipping while a crossfade is underway or the music is stopped.
+- Keep record status localized in English and Spanish and preserve static controls in a live world.
+
 ## Version 0.83.0 - Polished Spanish copy
 
 - Correct missing accents in quarantine posters, the pause screen, the field guide, accessibility text, and sound settings.

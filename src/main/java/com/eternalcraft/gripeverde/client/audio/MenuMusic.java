@@ -365,6 +365,17 @@ public class MenuMusic {
         return active;
     }
 
+    /** One-based playlist position, or 0 while no regular record is playing. */
+    public static int getCurrentTrackNumber() {
+        return active && currentInstance != null && !currentInstance.isStopped() && currentIndex >= 0
+            ? currentIndex + 1
+            : 0;
+    }
+
+    public static int getTrackCount() {
+        return PLAYLIST.size();
+    }
+
     public static boolean isDucking() {
         long now = nowMs();
         return duckUntilMs > now || (duckReleaseStartMs > 0L && now - duckReleaseStartMs < DUCK_RELEASE_MS);

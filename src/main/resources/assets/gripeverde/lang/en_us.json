@@ -67,7 +67,6 @@
     "gripeverde.options.subtitle": "The chronicler's working desk",
     "gripeverde.options.accessibility.subtitle": "Aids, warnings and perception",
     "gripeverde.options.sound.subtitle": "Levels: Music %1$s · Ambience %2$s · SFX %3$s",
-    "gripeverde.options.sound.flavor": "Set how loudly the city breathes behind the door.",
     "gripeverde.options.sound.music_slider": "Chronicler's gramophone",
     "gripeverde.options.sound.ambience_slider": "Chronicler's ambience",
     "gripeverde.options.sound.ambience_on": "ON",
@@ -141,5 +140,11 @@
     "gripeverde.pause.btn.field_guide.compact": "GUIDE",
     "gripeverde.field_guide.button.return_to_pause": "RETURN TO PAUSE",
     "gripeverde.options.sound.music_slider.tooltip": "The menu music level is multiplied by Minecraft's Music category volume. Raise that category too if the music is silent.",
-    "gripeverde.options.sound.ambience_slider.tooltip": "The ambience level is multiplied by Minecraft's Ambient/Environment category volume. Raise that category too if the loops are silent."
+    "gripeverde.options.sound.ambience_slider.tooltip": "The ambience level is multiplied by Minecraft's Ambient/Environment category volume. Raise that category too if the loops are silent.",
+    "gripeverde.options.sound.next_track_button": "NEXT",
+    "gripeverde.options.sound.next_track_button.tooltip": "Crossfade to the next record.",
+    "gripeverde.options.sound.track_now_playing": "Now playing · record %1$s of %2$s",
+    "gripeverde.options.sound.track_transition": "Changing to record %1$s of %2$s",
+    "gripeverde.options.sound.track_between": "Between records",
+    "gripeverde.options.sound.track_paused": "Menu music stops during expeditions."
 }
