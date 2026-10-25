@@ -172,8 +172,8 @@ public class LivingAtmosphere {
 
     public static void tick(float deltaTime) {
         initAll();
-        // v0.26.0: halo de los faroles siguiendo la mano (tambien con movimiento
-        // reducido: no hay movimiento nuevo, solo una respiracion del brillo).
+        boolean reduced = reducedMotion();
+        // Keep cursor feedback immediate when reduced motion is enabled.
         if (lanternPositions != null) {
             if (lanternHover == null || lanternHover.length != lanternPositions.length) {
                 lanternHover = new float[lanternPositions.length];
@@ -182,11 +182,14 @@ public class LivingAtmosphere {
                 int dx = mousePx - lanternPositions[i][0];
                 int dy = mousePy - (lanternPositions[i][1] - 18);
                 float target = (dx * dx + dy * dy) < 30 * 30 ? 1f : 0f;
-                lanternHover[i] += (target - lanternHover[i]) * Math.min(1f, deltaTime * 9f);
-                if (lanternHover[i] < 0.001f && target == 0f) lanternHover[i] = 0f;
+                if (reduced) {
+                    lanternHover[i] = target;
+                } else {
+                    lanternHover[i] += (target - lanternHover[i]) * Math.min(1f, deltaTime * 9f);
+                    if (lanternHover[i] < 0.001f && target == 0f) lanternHover[i] = 0f;
+                }
             }
         }
-        boolean reduced = reducedMotion();
         if (reduced) {
             windGustIntensity = 0f;
             windGustDuration = 0f;
