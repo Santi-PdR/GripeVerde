@@ -203,10 +203,10 @@ public final class Marginalia {
             case N_WHISPER3:     return en ? "The third one asked about you. Answer with three knocks." : "El tercero preguntó por ti. Responde con tres golpes.";
             case N_KEY_HINT:     return en ? "The small key hangs from time, not from a pocket." : "La llave pequeña cuelga del tiempo, no de un bolsillo.";
             case N_DRAWER_HINT:  return en ? "The lower drawer accepts a small key." : "El cajón de abajo acepta una llave pequeña.";
-            case N_SMUGGLER_HINT: return en ? "Crouch and sprint, both set to toggle. The rest, still. That is how contraband enters." : "Agacharse y correr, ambos en alternar. Lo demás, quieto. Así entra el contrabando.";
+            case N_SMUGGLER_HINT: return en ? "Crouch and sprint, both set to toggle. The rest, still. That is how contraband enters." : "Configura agacharse y correr en modo alternar. Mantén quieto el resto; así entra el contrabando.";
             case N_HINGE:        return en ? "The hinge complains now. Oil it with fewer openings." : "La bisagra ya se queja. Menos aperturas la calmarían.";
             case N_STREAK3:      return en ? "Three nights in a row. The plague is not studied this hard." : "Tres noches seguidas. La peste no se estudia con tanto ahínco.";
-            case N_STREAK7:      return en ? "Seven nights. I no longer know if you write, or the fever does." : "Siete noches. Ya no sé si escribes tú, o la fiebre.";
+            case N_STREAK7:      return en ? "Seven nights. I no longer know if you write, or the fever does." : "Siete noches. Ya no sé si escribes tú o la fiebre.";
             case N_DUST:         return en ? "Dust does not ask why anyone returns." : "El polvo no pregunta por qué vuelve nadie.";
             case N_NIGHT:        return en ? "A whole night over the papers. The dawn is sick too." : "Una noche entera frente a los papeles. El alba también enferma.";
             case N_SILENCE:      return en ? "Silence has noise too, if one stays still." : "El silencio también tiene ruido, si uno se queda quieto.";
