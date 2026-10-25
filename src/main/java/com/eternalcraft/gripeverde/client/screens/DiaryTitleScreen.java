@@ -625,6 +625,17 @@ public class DiaryTitleScreen extends Screen {
         int oldSw = this.font.width(oldSig);
         int y = this.height - 12;
 
+        // En ventanas compactas, conserva solo la firma vigente para que no
+        // se cruce con el control de música del borde inferior.
+        if (isCompactLayout()) {
+            String compactSignature = com.eternalcraft.gripeverde.client.render.DiaryChrome
+                .fitText(this.font, signature, this.width - 62);
+            if (!compactSignature.isEmpty()) {
+                g.drawString(this.font, compactSignature, 48, y, DiaryTheme.SEPIA_LIGHT, false);
+            }
+            return;
+        }
+
         // ORDEN NUEVO: nombre nuevo a la izquierda, nombre viejo tachado a la derecha
         // Esto se lee mejor: "el nuevo cronista, el anterior tachado"
 
