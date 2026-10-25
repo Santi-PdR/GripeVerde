@@ -17,6 +17,11 @@ public class EasedValue {
         this.target = on ? 1f : 0f;
     }
 
+    /** Set both endpoints at once for reduced-motion or live-world UI. */
+    public void snapTo(boolean on) {
+        this.current = this.target = on ? 1f : 0f;
+    }
+
     public void tick(float deltaSeconds) {
         float diff = target - current;
         float step = speed * deltaSeconds;
