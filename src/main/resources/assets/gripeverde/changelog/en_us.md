@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.85.0 - Weathered recovered papers
+
+Recovered documents in the archive gain a folded corner, softened shadow, and small fixed wear marks. Their labels keep a clear margin and the details render only inside the archive.
+
 ## Version 0.84.0 - A clearer soundtrack console
 
 The sound cabinet now shows which menu record is playing, gives a compact way to move to the next record, and reports when a transition or pause is underway.

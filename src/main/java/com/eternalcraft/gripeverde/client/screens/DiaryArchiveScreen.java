@@ -274,12 +274,29 @@ public class DiaryArchiveScreen extends Screen {
 
     private void drawPaperDoc(GuiGraphics g, int x, int y, String label, int mx, int my) {
         boolean hover = mx >= x && mx < x + 124 && my >= y && my < y + 18;
-        g.fill(x, y, x + 124, y + 18, hover ? 0xFFDCCBA0 : 0xFFCFB98C);
+        int paper = hover ? 0xFFDCCBA0 : 0xFFCFB98C;
+        g.fill(x + 1, y + 2, x + 124, y + 19, DiaryTheme.withAlpha(0xFF302315, 30));
+        g.fill(x, y, x + 124, y + 18, paper);
         g.fill(x, y, x + 124, y + 1, 0xFF8E6A35);
         g.fill(x, y + 17, x + 124, y + 18, 0xFF8E6A35);
         g.fill(x, y, x + 1, y + 18, 0xFF8E6A35);
         g.fill(x + 123, y, x + 124, y + 18, 0xFF8E6A35);
-        String fit = truncate(label, 114);
+
+        // Desgaste fijo, dibujado solo en las fichas del archivo.
+        g.fill(x + 3, y + 4, x + 4, y + 5, DiaryTheme.withAlpha(0xFF704B24, 105));
+        g.fill(x + 3, y + 10, x + 4, y + 11, DiaryTheme.withAlpha(0xFF704B24, 80));
+        g.fill(x + 6, y + 15, x + 18, y + 16, DiaryTheme.withAlpha(0xFF704B24, 45));
+        g.fill(x + 20, y + 15, x + 25, y + 16, DiaryTheme.withAlpha(0xFF704B24, 28));
+
+        // Esquina doblada con una sombra corta; permanece estática y fuera del texto.
+        g.fill(x + 115, y, x + 123, y + 1, 0xFF8E6A35);
+        g.fill(x + 116, y + 1, x + 123, y + 2, 0xFFE0D0A8);
+        g.fill(x + 117, y + 2, x + 123, y + 3, 0xFFD0BC91);
+        g.fill(x + 118, y + 3, x + 123, y + 4, 0xFFB89E70);
+        g.fill(x + 119, y + 4, x + 123, y + 5, 0xFF8E6A35);
+        g.fill(x + 116, y + 2, x + 117, y + 5, DiaryTheme.withAlpha(0xFF704B24, 115));
+
+        String fit = truncate(label, 106);
         g.drawString(this.font, fit, x + 5, y + 5, DiaryTheme.INK, false);
     }
 
