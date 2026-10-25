@@ -1,6 +1,10 @@
 # Eternal Craft: Gripe Verde
 ## Cronica bajo sello
 
+## Version 0.38.0 - El manual recuerda la lectura
+
+Al volver a abrir el manual de CEDA durante la misma sesión, regresa al pasaje que estabas leyendo. La rueda, los saltos entre capítulos y el arrastre de la barra mantienen actualizado el marcador.
+
 ## Version 0.37.0 - El manual se deja leer
 
 El manual de campo ahora es accesible con el narrador: Tab recorre sus seis capítulos y cada parada anuncia el encabezado junto con sus protocolos. Enter salta al capítulo elegido; el foco queda marcado en azul sobre el papel. El pie también recuerda este recorrido.
