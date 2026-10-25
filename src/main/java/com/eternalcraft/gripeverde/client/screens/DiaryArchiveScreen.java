@@ -105,10 +105,12 @@ public class DiaryArchiveScreen extends Screen {
         }
 
         // Cabecera
-        String titleStr = en ? "Reading Room" : "Sala de consulta";
+        String titleStr = DiaryChrome.fitText(this.font, en ? "Reading Room" : "Sala de consulta",
+            Math.max(0, panelW - 32));
         int tw = this.font.width(titleStr);
         g.drawString(this.font, titleStr, cx - tw / 2, panelY + 10, DiaryChrome.INK_TITLE, false);
-        String sub = en ? "- The chronicler's cards -" : "- Las fichas del cronista -";
+        String sub = DiaryChrome.fitText(this.font,
+            en ? "- The chronicler's cards -" : "- Las fichas del cronista -", Math.max(0, panelW - 32));
         int sw = this.font.width(sub);
         g.drawString(this.font, sub, cx - sw / 2, panelY + 23, DiaryChrome.INK_SUBTITLE, false);
         DiaryChrome.drawInkDivider(g, panelX + 18, panelY + 37, panelW - 36);
@@ -116,8 +118,8 @@ public class DiaryArchiveScreen extends Screen {
         // Progreso + sello de estado
         int found = ChroniclerMemory.discoveredCount();
         int total = Discoveries.ALL.length;
-        String prog = en ? ("cards found: " + found + " of " + total)
-                         : ("fichas halladas: " + found + " de " + total);
+        String prog = DiaryChrome.fitText(this.font, en ? ("cards found: " + found + " of " + total)
+                         : ("fichas halladas: " + found + " de " + total), Math.max(0, panelW - 40));
         g.drawString(this.font, prog, panelX + 20, panelY + 44, DiaryChrome.INK_FLAVOR, false);
 
         String stampTxt;

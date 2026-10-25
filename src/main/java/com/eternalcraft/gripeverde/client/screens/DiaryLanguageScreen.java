@@ -141,15 +141,18 @@ public class DiaryLanguageScreen extends Screen {
         int titleY = this.panelY + PANEL_PAD;
         int cx = this.width / 2;
         {
-            int titleW = this.font.width(this.title);
+            String titleText = DiaryChrome.fitText(this.font, this.title.getString(), Math.max(0, this.panelW - 28));
+            int titleW = this.font.width(titleText);
             int titleX = (this.width - titleW) / 2;
-            g.drawString(this.font, this.title, titleX, titleY, DiaryChrome.INK_TITLE, false);
+            g.drawString(this.font, titleText, titleX, titleY, DiaryChrome.INK_TITLE, false);
 
             String subtitle = "- " + Component.translatable("gripeverde.options.language.subtitle").getString() + " -";
+            subtitle = DiaryChrome.fitText(this.font, subtitle, Math.max(0, this.panelW - 28));
             int subWL = this.font.width(subtitle);
             g.drawString(this.font, subtitle, cx - subWL / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
-            Component flavor = Component.translatable("gripeverde.options.language.flavor");
+            String flavor = DiaryChrome.fitText(this.font,
+                Component.translatable("gripeverde.options.language.flavor").getString(), Math.max(0, this.panelW - 28));
             int flvWL = this.font.width(flavor);
             g.drawString(this.font, flavor, cx - flvWL / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
 
