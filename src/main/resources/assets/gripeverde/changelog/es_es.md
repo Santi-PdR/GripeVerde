@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.64.0 - El audio del menú se detiene en partida
+
+La música y el ambiente del menú se detienen al activarse un mundo, aunque la pantalla deje de actualizarse durante la conexión o la partida.
+
 ## Version 0.63.0 - Idioma de respaldo coherente
 
 Como el mod incluye recursos solo en inglés y español, los textos auxiliares usan español únicamente con es_es e inglés con los demás idiomas de Minecraft.

@@ -5,6 +5,10 @@ Ambientación victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Versión actual
 
+**v0.64.0 - Audio del menú detenido en partida**
+
+La música y el ambiente del menú se apagan al entrar a un mundo, aunque la pantalla haya dejado de actualizarse al conectar.
+
 **v0.63.0 - Idioma de respaldo coherente**
 
 Los textos auxiliares usan español solo cuando Minecraft está en es_es; en cualquier idioma no incluido, el mod recurre al inglés junto con sus traducciones disponibles.
