@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.87.0 - Balanced paper grain
+
+Reduce repeated grain draw calls on full-size menu papers while keeping their fibres visible as slightly longer, fixed strokes. The live-world paper path remains the same.
+
 ## Version 0.86.0 - Compact discovery notices
 
 Shorten archive discovery notices into a smaller bilingual paper slip with a narrow width cap and a safer text margin. Keep notices off the title screen and suppress them while a world is active.
