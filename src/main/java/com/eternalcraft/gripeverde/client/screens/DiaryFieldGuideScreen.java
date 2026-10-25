@@ -24,7 +24,8 @@ public final class DiaryFieldGuideScreen extends Screen {
         { "gripeverde.field_guide.section.downed" },
         { "gripeverde.field_guide.section.expedition" },
         { "gripeverde.field_guide.section.regroup" },
-        { "gripeverde.field_guide.section.races" }
+        { "gripeverde.field_guide.section.races" },
+        { "gripeverde.field_guide.section.rescue_protocol" }
     };
 
     private static final String[][] ENTRY_KEYS = {
@@ -33,7 +34,9 @@ public final class DiaryFieldGuideScreen extends Screen {
         { "gripeverde.field_guide.body.downed", "gripeverde.field_guide.body.dead" },
         { "gripeverde.field_guide.body.supplies", "gripeverde.field_guide.body.difficulty" },
         { "gripeverde.field_guide.body.regroup" },
-        { "gripeverde.field_guide.body.races", "gripeverde.field_guide.body.rarities" }
+        { "gripeverde.field_guide.body.races", "gripeverde.field_guide.body.rarities" },
+        { "gripeverde.field_guide.body.rescue_alert", "gripeverde.field_guide.body.rescue_downed",
+          "gripeverde.field_guide.body.rescue_dead" }
     };
 
     private final Screen parent;
@@ -74,7 +77,8 @@ public final class DiaryFieldGuideScreen extends Screen {
         rows.clear();
         int textWidth = Math.max(148, panelW - 44);
         for (int section = 0; section < SECTION_KEYS.length; section++) {
-            append(Component.translatable(SECTION_KEYS[section][0]), textWidth, true, section == 0, 3);
+            boolean emphasized = section == 0 || section == SECTION_KEYS.length - 1;
+            append(Component.translatable(SECTION_KEYS[section][0]), textWidth, true, emphasized, 3);
             for (String entry : ENTRY_KEYS[section]) {
                 append(Component.translatable(entry), textWidth, false, false, 0);
             }
@@ -327,7 +331,8 @@ public final class DiaryFieldGuideScreen extends Screen {
             if (section >= 0) jumpToSection(section);
             return handled;
         }
-        if (keyCode >= GLFW.GLFW_KEY_1 && keyCode <= GLFW.GLFW_KEY_6) {
+        if (keyCode >= GLFW.GLFW_KEY_1
+                && keyCode < GLFW.GLFW_KEY_1 + SECTION_KEYS.length) {
             jumpToSection(keyCode - GLFW.GLFW_KEY_1);
             return true;
         }
