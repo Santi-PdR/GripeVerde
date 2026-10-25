@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.66.0 - Field guide for Outbreak rules
+
+- Warn that solo exploration leaves pinned players without a rescue.
+- Explain that chat demonstrations may depend on race, evolution, items, or mission requirements.
+- Clarify that higher difficulty ranks raise general infected stats as well as adding challenges and global events.
+
 ## Version 0.65.0 - Movimiento reducido completo
 
 - El brillo de los faroles ahora responde al cursor sin interpolación cuando el movimiento reducido está activo.
