@@ -1,6 +1,10 @@
 # Eternal Craft: Gripe Verde
 ## Cronica bajo sello
 
+## Version 0.40.0 - El marcador sigue el capítulo
+
+El manual ahora recuerda el avance dentro del capítulo: cambiar el tamaño de ventana o la escala de interfaz ya no te envía a otro pasaje. Al arrastrar la barra, los controles narrados también quedan alineados.
+
 ## Version 0.39.0 - El marcador sobrevive al cierre
 
 El manual de campo conserva dónde ibas incluso después de cerrar el juego. Ábrelo de nuevo y continúa desde el mismo pasaje.

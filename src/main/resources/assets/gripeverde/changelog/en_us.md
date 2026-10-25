@@ -1,6 +1,10 @@
 # Eternal Craft: Gripe Verde
 ## Chronicle under seal
 
+## Version 0.40.0 - The bookmark follows the chapter
+
+The field guide now remembers your place within its chapter, so changing the window size or GUI scale will not send you to a different passage. Dragging the scrollbar also keeps narrated chapter controls aligned.
+
 ## Version 0.39.0 - The bookmark survives a restart
 
 The field guide now remembers your place after you close the game. Open it again and continue with the same passage.
