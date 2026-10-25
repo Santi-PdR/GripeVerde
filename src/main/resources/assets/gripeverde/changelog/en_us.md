@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.93.0 - Find the fallen survivor
+
+Add the body's death-site location to both field-guide recovery notes so teammates know where to search. Keep the instructions mirrored in English and Spanish.
+
 ## Version 0.92.0 - Polished Spanish archive copy
 
 Restore accents and opening punctuation in the Spanish telegrams and hidden archive lines. Clarify the contraband note while preserving every discovery condition.

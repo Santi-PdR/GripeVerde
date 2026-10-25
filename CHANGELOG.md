@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.93.0 - Recover the fallen
+
+- Add the death-site body location to the field guide's downed and rescue protocols.
+- Keep the instructions available in English and Spanish.
+
 ## Version 0.92.0 - Polished Spanish archive copy
 
 - Restore accents and opening punctuation in Spanish telegrams and hidden archive lines.
