@@ -187,8 +187,8 @@ public class DiaryArchiveScreen extends Screen {
         } else {
             boolean complete = found >= total;
             String msg = complete
-                ? (en ? "The archive is complete." : "El archivo esta completo.")
-                : (en ? "The missing cards are still out there." : "Las fichas que faltan siguen ahi fuera.");
+                ? (en ? "The archive is complete." : "El archivo está completo.")
+                : (en ? "The missing cards are still out there." : "Las fichas que faltan siguen ahí fuera.");
             drawC(g, msg, cx, infoY,
                 complete ? DiaryTheme.INK : DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 120));
             if (complete) {
@@ -220,7 +220,12 @@ public class DiaryArchiveScreen extends Screen {
 
         // Marginalia del cronista
         com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
-        com.eternalcraft.gripeverde.client.lore.Marginalia.draw(g, panelX, panelY, panelW, panelH);
+        if (panelY >= 20) {
+            com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, panelY - 14);
+        } else {
+            // Keep the narrow-window fallback inside the existing paper margin.
+            com.eternalcraft.gripeverde.client.lore.Marginalia.draw(g, panelX, panelY, panelW, panelH);
+        }
 
         // v0.21.3/v0.21.5: la cadena de la limpieza (solo texto, sin mecanica nueva)
         if (ChroniclerMemory.isDiscovered(Discoveries.ARCHIVE_THINNING)
