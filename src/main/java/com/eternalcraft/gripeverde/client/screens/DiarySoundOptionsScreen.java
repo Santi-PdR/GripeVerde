@@ -2,6 +2,7 @@ package com.eternalcraft.gripeverde.client.screens;
 
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.audio.MenuMusic;
+import com.eternalcraft.gripeverde.client.audio.MenuAmbience;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
@@ -286,6 +287,23 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             }
         }
         return super.mouseScrolled(mouseX, mouseY, delta);
+    }
+
+    private static String percentText(double value) {
+        return Math.round(Math.max(0.0, Math.min(1.0, value)) * 100.0) + "%";
+    }
+
+    /** Shows the effective levels for the three sound layers controlled by this mod. */
+    private String audioMixSubtitle() {
+        double ambience = ClientConfig.AMBIENCE_ENABLED.get()
+            ? MenuAmbience.getUserVolume()
+            : 0.0;
+        return Component.translatable(
+            "gripeverde.options.sound.subtitle",
+            percentText(MenuMusic.getUserVolume()),
+            percentText(ambience),
+            percentText(ClientConfig.UI_VOLUME.get())
+        ).getString();
     }
 
     @Override
