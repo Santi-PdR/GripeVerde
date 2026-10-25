@@ -107,43 +107,55 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     private void ensurePinnedServer() {
         if (this.vanillaServers == null) return;
         try {
-            boolean found = false;
+            int pinnedIndex = -1;
+            boolean changed = false;
             for (int i = 0; i < this.vanillaServers.size(); i++) {
-                ServerData sd = this.vanillaServers.get(i);
-                if (sd == null || sd.name == null) continue;
-                if (PINNED_NAME.equals(sd.name)) {
-                    found = true;
-                    // Si existe pero con IP distinta, actualizar
-                    if (!PINNED_IP.equals(sd.ip)) {
-                        sd.ip = PINNED_IP;
-                        this.vanillaServers.save();
-                    }
-                    break;
+                ServerData server = this.vanillaServers.get(i);
+                if (server == null || !PINNED_NAME.equals(server.name)) continue;
+                pinnedIndex = i;
+                if (!PINNED_IP.equals(server.ip)) {
+                    server.ip = PINNED_IP;
+                    changed = true;
                 }
+                break;
             }
-            if (!found) {
-                ServerData pinned = new ServerData(PINNED_NAME, PINNED_IP, false);
-                this.vanillaServers.add(pinned, false);
+
+            if (pinnedIndex < 0) {
+                this.vanillaServers.add(new ServerData(PINNED_NAME, PINNED_IP, false), false);
+                pinnedIndex = this.vanillaServers.size() - 1;
+                changed = true;
+            }
+
+            // Keep the official server reachable without scrolling a long list.
+            if (pinnedIndex > 0) {
+                this.vanillaServers.swap(pinnedIndex, 0);
+                changed = true;
+            }
+
+            if (changed) {
                 this.vanillaServers.save();
-                // Refrescar la lista visual para que aparezca de inmediato
+                refreshVisibleServerEntries();
+            }
+        } catch (Throwable ignored) {}
+    }
+
+    private void refreshVisibleServerEntries() {
+        if (this.vanillaList == null || this.vanillaServers == null) return;
+        try {
+            java.lang.reflect.Method method = null;
+            try {
+                method = ServerSelectionList.class.getDeclaredMethod(
+                    "updateOnlineServers", ServerList.class);
+            } catch (NoSuchMethodException ignored) {}
+            if (method == null) {
                 try {
-                    // Reload sincronico
-                    this.vanillaServers.load();
-                    // Repopular la lista sin recargar toda la screen
-                    if (this.vanillaList != null) {
-                        java.lang.reflect.Method m = null;
-                        try { m = ServerSelectionList.class.getDeclaredMethod("updateOnlineServers", net.minecraft.client.multiplayer.ServerList.class); }
-                        catch (NoSuchMethodException ignored) {}
-                        if (m == null) {
-                            try { m = ServerSelectionList.class.getDeclaredMethod("m_99797_", net.minecraft.client.multiplayer.ServerList.class); }
-                            catch (NoSuchMethodException ignored) {}
-                        }
-                        if (m != null) {
-                            m.setAccessible(true);
-                            m.invoke(this.vanillaList, this.vanillaServers);
-                        }
-                    }
-                } catch (Throwable ignored) {}
+                    method = ServerSelectionList.class.getDeclaredMethod(
+                        "m_99797_", ServerList.class);
+                } catch (NoSuchMethodException ignored) {}
+            }
+            if (method != null) {
+                method.setAccessible(true);
+                method.invoke(this.vanillaList, this.vanillaServers);
             }
         } catch (Throwable ignored) {}
     }
