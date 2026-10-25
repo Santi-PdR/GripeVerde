@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.74.0 - Lighter field-guide headings
+
+- Use the diary's regular centered text renderer for both field-guide headings.
+- Remove the automatic dark drop shadow that made those headings look heavier than surrounding text.
+
 ## Version 0.73.0 - Keep notes off the main desk
 
 - Keep queued contextual marginalia off the title screen so it cannot overlap the bottom controls.
