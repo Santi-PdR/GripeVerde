@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.86.0 - Avisos de hallazgo compactos
+
+Reducir los avisos del archivo a una ficha bilingüe más pequeña, con ancho limitado y margen seguro para el texto. Los avisos siguen ocultos en la portada y durante una partida activa.
+
 ## Version 0.85.0 - Papeles recuperados y gastados
 
 Los documentos del archivo reciben una esquina doblada, una sombra suave y pequeñas marcas de desgaste fijas. Las etiquetas conservan espacio legible y los detalles se dibujan solo dentro del archivo.

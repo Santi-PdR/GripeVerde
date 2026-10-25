@@ -1,5 +1,14 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.86.0 - Compact discovery notices
+
+- Shorten discovery feedback to a smaller bilingual slip with a 224 px width cap and clearer single-line hierarchy.
+- Preserve the title-screen silence and suppress notices while a world is active.
+
+## Version 0.85.0 - Weathered recovered papers
+
+- Give recovered archive documents fixed paper wear, a folded corner, and a short shadow without adding per-tick work.
+
 ## Version 0.84.0 - A clearer soundtrack console
 
 - Show the current menu record and transition state in the sound cabinet.

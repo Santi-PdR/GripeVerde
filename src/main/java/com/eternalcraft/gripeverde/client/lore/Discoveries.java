@@ -121,43 +121,43 @@ public final class Discoveries {
         long now = System.currentTimeMillis();
         long remain = toastUntilMs - now;
         long age = now - toastStartMs;
-        int alpha = 235;
-        if (age < 320L) alpha = (int)(235 * age / 320L);
-        else if (remain < 600L) alpha = (int)(235 * remain / 600L);
-        alpha = Math.max(0, Math.min(235, alpha));
+        int alpha = 232;
+        if (age < 180L) alpha = (int)(232 * age / 180L);
+        else if (remain < 260L) alpha = (int)(232 * remain / 260L);
+        alpha = Math.max(0, Math.min(232, alpha));
 
         boolean english = isEnglish();
-        String header = english ? "DISCOVERY" : "DESCUBRIMIENTO";
+        String header = english ? "NEW FILE" : "FICHA NUEVA";
         String name = toastName == null ? "" : toastName;
-        int maxToastWidth = Math.min(280, screenW - 20);
-        if (maxToastWidth < 80) return;
+        int maxToastWidth = Math.min(224, screenW - 16);
+        if (maxToastWidth < 76) return;
 
-        int contentWidth = maxToastWidth - 30;
+        int contentWidth = maxToastWidth - 26;
         String visibleHeader = DiaryChrome.fitText(mc.font, header, contentWidth);
         String visibleName = DiaryChrome.fitText(mc.font, name, contentWidth);
         int bw = Math.min(maxToastWidth,
-            Math.max(120, Math.max(mc.font.width(visibleHeader), mc.font.width(visibleName)) + 30));
-        int x = screenW - bw - 10;
-        int y = 12;
+            Math.max(104, Math.max(mc.font.width(visibleHeader), mc.font.width(visibleName)) + 26));
+        int x = screenW - bw - 8;
+        int y = 8;
 
         int paper = (alpha << 24) | 0xE6D2A6;
         int ink = (alpha << 24) | 0x241608;
         int red = (Math.min(215, alpha) << 24) | 0x6E1F16;
         int bronze = (Math.min(190, alpha) << 24) | 0x8E6A35;
 
-        g.fill(x + 2, y + 2, x + bw + 2, y + 34, (Math.min(70, alpha / 3) << 24) | 0x000000);
-        g.fill(x, y, x + bw, y + 32, paper);
+        g.fill(x + 2, y + 2, x + bw + 2, y + 26, (Math.min(60, alpha / 3) << 24) | 0x000000);
+        g.fill(x, y, x + bw, y + 24, paper);
         g.fill(x, y, x + bw, y + 1, bronze);
-        g.fill(x, y + 31, x + bw, y + 32, bronze);
-        g.fill(x, y, x + 1, y + 32, bronze);
-        g.fill(x + bw - 1, y, x + bw, y + 32, bronze);
-        // sello de lacre pequeno
-        g.fill(x + 6, y + 6, x + 14, y + 14, red);
-        g.fill(x + 8, y + 8, x + 12, y + 12, (Math.min(255, alpha) << 24) | 0x8B2A1C);
-        g.fill(x + 7, y + 7, x + 9, y + 8, (Math.min(160, alpha) << 24) | 0xFFAA88);
+        g.fill(x, y + 23, x + bw, y + 24, bronze);
+        g.fill(x, y, x + 1, y + 24, bronze);
+        g.fill(x + bw - 1, y, x + bw, y + 24, bronze);
+        // Sello de lacre reducido para una sola ficha.
+        g.fill(x + 5, y + 8, x + 13, y + 16, red);
+        g.fill(x + 7, y + 10, x + 11, y + 14, (Math.min(255, alpha) << 24) | 0x8B2A1C);
+        g.fill(x + 6, y + 9, x + 8, y + 10, (Math.min(160, alpha) << 24) | 0xFFAA88);
 
-        g.drawString(mc.font, visibleHeader, x + 20, y + 6, red, false);
-        g.drawString(mc.font, visibleName, x + 20, y + 18, ink, false);
+        g.drawString(mc.font, visibleHeader, x + 18, y + 3, red, false);
+        g.drawString(mc.font, visibleName, x + 18, y + 13, ink, false);
     }
 
     // ── Nombres (ES/EN) ──
