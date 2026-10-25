@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.70.0 - Responsive title menu
+
+- Reflow title actions on narrow GUI widths so the main buttons, options, quit, and music controls stay reachable.
+- Hide side posters and the pocket watch in compact layouts to reduce clutter.
+- Keep this layout work on the title screen; it adds no animation or per-tick work in a world or server.
+
 ## Version 0.69.0 - Persist audio sliders on release
 
 - Keep music and ambience volume responsive while dragging.
