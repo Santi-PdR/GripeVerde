@@ -1,8 +1,8 @@
 # Eternal Craft: Gripe Verde
 
-## Version 0.58.0 - Quiet lore during live play
+## Version 0.59.0 - Official server within reach
 
-Discovery toasts and marginal notes now wait while a world is active. Pending notes stay queued instead of being read, saved, or played from a pause screen, keeping those screens static and avoiding that file work during play.
+The pinned Ghoul Outbreak server now stays in the first multiplayer row, updates its address in place, and refreshes the visible list without creating duplicates.
 
 ## Version 0.57.0 - Audio mix status
 
