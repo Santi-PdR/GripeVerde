@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.73.0 - Keep notes off the main desk
+
+- Keep queued contextual marginalia off the title screen so it cannot overlap the bottom controls.
+- Preserve the note for the next paper screen that displays the archive or controls.
+
 ## Version 0.72.0 - Ambience control restored
 
 - Add a visible ambience on/off control beside its volume slider in sound settings.
