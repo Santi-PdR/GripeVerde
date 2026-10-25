@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+**v0.78.0 - Manual de campo más legible**
+
+La guía separa cada nota, da más aire al texto y mantiene el desplazamiento y los marcadores de lectura. El ritmo más claro facilita consultar protocolos durante una partida sin animaciones.
+
 Mod de interfaz para Minecraft Forge 1.20.1.
 Ambientación victoriana bajo cuarentena, epidemia Green Flu.
 

@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.78.0 - A clearer field guide
+
+The survivor manual now gives body entries breathing room and uses a slightly taller line rhythm for easier reading.
+
 ## Version 0.77.0 - Keep your server address
 
 The multiplayer screen now keeps an address you edit for the pinned Ghoul Outbreak entry. Only the previous built-in host is migrated to the current address.
