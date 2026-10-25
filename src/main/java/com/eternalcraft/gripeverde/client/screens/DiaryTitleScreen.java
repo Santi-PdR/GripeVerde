@@ -338,6 +338,11 @@ public class DiaryTitleScreen extends Screen {
             drawLogo(g);
             drawSignature(g);
             super.render(g, mouseX, mouseY, partialTick);
+            if (overQuarantinePoster(mouseX, mouseY)) {
+                g.renderTooltip(this.font,
+                    Component.translatable("gripeverde.poster.quarantine.guide_hint"),
+                    mouseX, mouseY);
+            }
         } else {
             drawCinematicHint(g);
         }
@@ -476,15 +481,25 @@ public class DiaryTitleScreen extends Screen {
     }
 
 
-    private void drawPosterLeft(GuiGraphics g) {
+    private int[] quarantinePosterRect() {
+        if (cinematicMode || isMinimalMode()) return null;
         LayoutRegion leftCol = leftColumn();
         int totalBtnH = BTN_H * 2 + Spacing.GAP_MEDIUM;
         int maxPosterH = leftCol.h - totalBtnH - Spacing.GAP_LARGE * 2;
+        if (maxPosterH < 140) return null;
+        return new int[] { leftCol.x, leftCol.y, POSTER_W, Math.min(POSTER_H_MAX, maxPosterH) };
+    }
 
-        if (maxPosterH < 140) return;
+    private boolean overQuarantinePoster(double mouseX, double mouseY) {
+        int[] rect = quarantinePosterRect();
+        return rect != null && mouseX >= rect[0] && mouseX <= rect[0] + rect[2]
+            && mouseY >= rect[1] && mouseY <= rect[1] + rect[3];
+    }
 
-        int posterH = Math.min(POSTER_H_MAX, maxPosterH);
-        PosterRenderer.drawQuarantineNotice(g, leftCol.x, leftCol.y, POSTER_W, posterH);
+    private void drawPosterLeft(GuiGraphics g) {
+        int[] rect = quarantinePosterRect();
+        if (rect == null) return;
+        PosterRenderer.drawQuarantineNotice(g, rect[0], rect[1], rect[2], rect[3]);
     }
 
     private void drawPocketWatch(GuiGraphics g) {
@@ -762,10 +777,11 @@ public class DiaryTitleScreen extends Screen {
                     return true;
                 }
 
-                // El edicto de cuarentena esta pegado sobre algo.
-                LayoutRegion leftCol = leftColumn();
-                int totalBtnH = BTN_H * 2 + Spacing.GAP_MEDIUM;
-                int maxPosterH = leftCol.h - totalBtnH - Spacing.GAP_LARGE * 2;
+                // v0.32.0: el edicto abre la copia de campo sin censura.
+                if (overQuarantinePoster(mouseX, mouseY)) {
+                    this.minecraft.setScreen(new DiaryFieldGuideScreen(this));
+                    return true;
+                }
 
                 // El cartel del buscado: sostenerle la mirada.
                 if (isWantedPosterShowing()) {

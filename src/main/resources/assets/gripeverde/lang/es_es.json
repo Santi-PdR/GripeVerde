@@ -91,5 +91,22 @@
     "gripeverde.subtitle.menu.bell": "Campana de iglesia a lo lejos",
     "gripeverde.subtitle.menu.crows": "Graznido de cuervos",
     "gripeverde.subtitle.menu.chain": "Cadenas se arrastran",
-    "gripeverde.subtitle.menu.thunder": "Trueno lejano"
+    "gripeverde.subtitle.menu.thunder": "Trueno lejano",
+    "gripeverde.poster.quarantine.guide_hint": "Clic para leer la copia de campo sin censura.",
+    "gripeverde.field_guide.title": "Manual de supervivencia",
+    "gripeverde.field_guide.subtitle": "PARTE DE CEDA · COPIA SIN CENSURA",
+    "gripeverde.field_guide.section.infection": "LA INFECCION",
+    "gripeverde.field_guide.body.infection": "La Gripe Verde acelera la rabia. Los ghouls siguen vivos: ojos azules, adrenalina extrema y mutaciones.",
+    "gripeverde.field_guide.section.team": "NUNCA VIAJES SOLO",
+    "gripeverde.field_guide.body.pins": "Los ataques PIN anulan tu control. Un companero debe liberarte; el aviso de atrapado suena para todo el equipo.",
+    "gripeverde.field_guide.section.downed": "DERRIBO Y MUERTE",
+    "gripeverde.field_guide.body.downed": "Con 0 corazones caes incapacitado. Un aliado debe mantener el clic derecho durante 5 segundos sin recibir dano para levantarte.",
+    "gripeverde.field_guide.body.dead": "Si tu barra de incapacitacion llega a 0, mueres y pasas a espectador sin perder inventario. Solo un desfibrilador del botin te devuelve.",
+    "gripeverde.field_guide.section.expedition": "RACIONES Y DIFICULTAD",
+    "gripeverde.field_guide.body.supplies": "La municion y los suministros pueden menguar con el tiempo. Cuenta cada bala y revisa cada refugio.",
+    "gripeverde.field_guide.body.difficulty": "Cada nivel suma desafios, eventos globales y mobs mas fuertes. INSURGENCY e INFERNUM elevan la presion; otras escalas siguen en desarrollo.",
+    "gripeverde.field_guide.section.regroup": "SENAL DE REAGRUPAMIENTO",
+    "gripeverde.field_guide.body.regroup": "El icono blanco de encuentro sigue a los aliados a mas de 3.000 bloques, incluso en chunks sin cargar. Usalo para volver al grupo.",
+    "gripeverde.field_guide.scroll_hint": "USA LA RUEDA PARA LEER EL PARTE",
+    "gripeverde.field_guide.button.close": "VOLVER AL REFUGIO"
 }
