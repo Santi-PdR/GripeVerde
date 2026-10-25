@@ -1,6 +1,10 @@
 # Eternal Craft: Gripe Verde
 ## Chronicle under seal
 
+## Version 0.34.0 - The survivor lineages
+
+The field manual now records the server's survivor races: more than 300 possibilities, including Humans, Sharks, and Cyborgs, with V1–V4+ evolutions earned through rarity-specific actions and missions. It also lists the full rarity scale shared by races, artifacts, and items.
+
 
 
 ## Version 0.33.0 - Manual navigation
