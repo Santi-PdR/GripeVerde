@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.78.0 - Una guía de campo más clara
+
+El manual de supervivencia ahora separa mejor las notas y da un poco más de aire entre líneas para que los protocolos se lean con facilidad.
+
 ## Version 0.77.0 - Se conserva la dirección del servidor
 
 La pantalla multijugador ahora respeta la IP que edites para la entrada fijada de Ghoul Outbreak. Solo migra el host anterior integrado en versiones viejas.

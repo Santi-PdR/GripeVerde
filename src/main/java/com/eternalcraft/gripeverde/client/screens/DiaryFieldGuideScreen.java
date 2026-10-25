@@ -49,7 +49,9 @@ public final class DiaryFieldGuideScreen extends Screen {
     private int maxScroll;
     private int contentHeight;
     private boolean draggingScrollbar;
-    private static final int LINE_HEIGHT = 10;
+    private static final int LINE_HEIGHT = 11;
+    private static final int PARAGRAPH_GAP = 4;
+    private static final int SECTION_GAP = 6;
 
     public DiaryFieldGuideScreen(Screen parent) {
         super(Component.translatable("gripeverde.field_guide.title"));
@@ -81,11 +83,11 @@ public final class DiaryFieldGuideScreen extends Screen {
         int textWidth = Math.max(148, panelW - 44);
         for (int section = 0; section < SECTION_KEYS.length; section++) {
             boolean emphasized = section == 0 || section == SECTION_KEYS.length - 1;
-            append(Component.translatable(SECTION_KEYS[section][0]), textWidth, true, emphasized, 3);
+            append(Component.translatable(SECTION_KEYS[section][0]), textWidth, true, emphasized, 4);
             for (String entry : ENTRY_KEYS[section]) {
-                append(Component.translatable(entry), textWidth, false, false, 0);
+                append(Component.translatable(entry), textWidth, false, false, PARAGRAPH_GAP);
             }
-            rows.add(new GuideRow(null, false, false, 5));
+            rows.add(new GuideRow(null, false, false, SECTION_GAP));
         }
 
         contentHeight = 0;

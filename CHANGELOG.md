@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.78.0 - More readable field guide
+
+- Add paragraph spacing and increase line height in the survivor field manual.
+- Keep section jumps, scroll bookmarks, and live-world rendering unchanged.
+
 ## Version 0.77.0 - Respect the edited server address
 
 - Preserve a custom address entered for the pinned Ghoul Outbreak server.
