@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.65.0 - Movimiento reducido y renderizado ágil
+
+El brillo de los faroles responde de inmediato con el movimiento reducido. El perfil urbano ahora localiza cada ventana animada una sola vez por renderizado y conserva la escena.
+
 ## Version 0.64.0 - El audio del menú se detiene en partida
 
 La música y el ambiente del menú se detienen al activarse un mundo, aunque la pantalla deje de actualizarse durante la conexión o la partida.
