@@ -139,5 +139,7 @@
     "gripeverde.field_guide.body.rescue_dead": "Si la barra de incapacidad llega a 0, solo un desfibrilador encontrado en el botín puede revivirlo. Al morir, conserva el inventario.",
     "gripeverde.pause.btn.field_guide": "MANUAL DE CAMPO",
     "gripeverde.pause.btn.field_guide.compact": "GUÍA",
-    "gripeverde.field_guide.button.return_to_pause": "VOLVER A LA PAUSA"
+    "gripeverde.field_guide.button.return_to_pause": "VOLVER A LA PAUSA",
+    "gripeverde.options.sound.music_slider.tooltip": "El nivel de música del mod se multiplica por el volumen de la categoría Música de Minecraft. Sube también esa categoría si no oyes las pistas.",
+    "gripeverde.options.sound.ambience_slider.tooltip": "El nivel de ambiente del mod se multiplica por el volumen de Ambiente/Entorno de Minecraft. Sube también esa categoría si no oyes los bucles."
 }

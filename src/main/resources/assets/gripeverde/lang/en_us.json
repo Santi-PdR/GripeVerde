@@ -139,5 +139,7 @@
     "gripeverde.field_guide.body.rescue_dead": "If the incapacity bar reaches 0, only a defibrillator found in loot can revive them. Their inventory is kept.",
     "gripeverde.pause.btn.field_guide": "FIELD GUIDE",
     "gripeverde.pause.btn.field_guide.compact": "GUIDE",
-    "gripeverde.field_guide.button.return_to_pause": "RETURN TO PAUSE"
+    "gripeverde.field_guide.button.return_to_pause": "RETURN TO PAUSE",
+    "gripeverde.options.sound.music_slider.tooltip": "The menu music level is multiplied by Minecraft's Music category volume. Raise that category too if the music is silent.",
+    "gripeverde.options.sound.ambience_slider.tooltip": "The ambience level is multiplied by Minecraft's Ambient/Environment category volume. Raise that category too if the loops are silent."
 }

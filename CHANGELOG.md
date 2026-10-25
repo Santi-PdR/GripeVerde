@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.79.0 - Explain the Minecraft audio categories
+
+- Clarify that menu music also follows Minecraft's Music category.
+- Clarify that menu ambience loops also follow Minecraft's Ambient category.
+- Keep the mod's independent music, ambience, and UI effect controls.
+
 ## Version 0.78.0 - More readable field guide
 
 - Add paragraph spacing and increase line height in the survivor field manual.

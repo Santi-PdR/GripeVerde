@@ -140,6 +140,8 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         int sliderY = musicSliderY();
         int musicHeight = musicSliderHeight();
         this.musicSlider = new DiaryMusicSlider(sliderX, sliderY, sliderW, musicHeight);
+        this.musicSlider.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
+            Component.translatable("gripeverde.options.sound.music_slider.tooltip")));
         this.addRenderableWidget(this.musicSlider);
 
         // El ambiente y los efectos SFX quedan separados para ajustar cada capa.
@@ -150,6 +152,8 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         int ambSliderW = Math.max(1, sliderW - ambToggleW - ambGap);
         int ambSliderX = sliderX;
         this.ambienceSlider = new DiaryAmbienceSlider(ambSliderX, ambSliderY, ambSliderW, compactH);
+        this.ambienceSlider.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
+            Component.translatable("gripeverde.options.sound.ambience_slider.tooltip")));
         this.addRenderableWidget(this.ambienceSlider);
 
         this.ambienceToggleButton = new DiaryButton(
