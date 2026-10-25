@@ -1,6 +1,10 @@
 # Eternal Craft: Gripe Verde
 ## Cronica bajo sello
 
+## Version 0.41.0 - Escalas de dificultad sin censura
+
+El manual ahora enumera las dificultades activas hasta INSURGENCY e INFERNUM, además de los rangos BACKBREAKING, DOOMSDAY y ARMAGEDDON marcados WIP. También explica sus eventos globales y ghouls más fuertes.
+
 ## Version 0.40.0 - El marcador sigue el capítulo
 
 El manual ahora recuerda el avance dentro del capítulo: cambiar el tamaño de ventana o la escala de interfaz ya no te envía a otro pasaje. Al arrastrar la barra, los controles narrados también quedan alineados.

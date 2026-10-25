@@ -104,7 +104,7 @@
     "gripeverde.field_guide.body.dead": "Si tu barra de incapacitacion llega a 0, mueres y pasas a espectador sin perder inventario. Solo un desfibrilador del botin te devuelve.",
     "gripeverde.field_guide.section.expedition": "RACIONES Y DIFICULTAD",
     "gripeverde.field_guide.body.supplies": "La municion y los suministros pueden menguar con el tiempo. Cuenta cada bala y revisa cada refugio.",
-    "gripeverde.field_guide.body.difficulty": "Cada nivel suma desafios, eventos globales y mobs mas fuertes. INSURGENCY e INFERNUM elevan la presion; otras escalas siguen en desarrollo.",
+    "gripeverde.field_guide.body.difficulty": "Disponibles: Fácil, Normal, Avanzado y Experto; luego, INSURGENCY I–V e INFERNUM I–V. BACKBREAKING I–X, DOOMSDAY I–X y ARMAGEDDON I–X siguen en desarrollo (WIP). Cada rango añade desafíos, eventos globales y ghouls más fuertes.",
     "gripeverde.field_guide.section.regroup": "SENAL DE REAGRUPAMIENTO",
     "gripeverde.field_guide.body.regroup": "El icono blanco de encuentro sigue a los aliados a mas de 3.000 bloques, incluso en chunks sin cargar. Usalo para volver al grupo.",
     "gripeverde.field_guide.scroll_hint": "RUEDA · ↑/↓ · REPÁG/AVPÁG · TAB+ENTER · 1–6/CLIC",

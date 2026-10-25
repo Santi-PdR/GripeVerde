@@ -1,6 +1,10 @@
 # Eternal Craft: Gripe Verde
 ## Chronicle under seal
 
+## Version 0.41.0 - Difficulty tiers, unsealed
+
+The field guide now lists the live difficulty ladder through INSURGENCY and INFERNUM, plus the BACKBREAKING, DOOMSDAY, and ARMAGEDDON ranges marked WIP. It explains the added global events and stronger ghouls.
+
 ## Version 0.40.0 - The bookmark follows the chapter
 
 The field guide now remembers your place within its chapter, so changing the window size or GUI scale will not send you to a different passage. Dragging the scrollbar also keeps narrated chapter controls aligned.

@@ -104,7 +104,7 @@
     "gripeverde.field_guide.body.dead": "If your incapacity bar reaches 0, you die and spectate without losing inventory. Only a loot defibrillator can bring you back.",
     "gripeverde.field_guide.section.expedition": "RATIONS AND DIFFICULTY",
     "gripeverde.field_guide.body.supplies": "Ammunition and supplies may dwindle over time. Count every round and search each safe room.",
-    "gripeverde.field_guide.body.difficulty": "Each level adds challenges, global events, and stronger mobs. INSURGENCY and INFERNUM raise the pressure; other tiers remain in development.",
+    "gripeverde.field_guide.body.difficulty": "Available: Easy, Normal, Advanced, and Expert; then INSURGENCY I–V and INFERNUM I–V. BACKBREAKING I–X, DOOMSDAY I–X, and ARMAGEDDON I–X are still in development (WIP). Every tier adds challenges, global events, and stronger ghouls.",
     "gripeverde.field_guide.section.regroup": "REGROUP SIGNAL",
     "gripeverde.field_guide.body.regroup": "The white rally marker tracks allies beyond 3,000 blocks, even across unloaded chunks. Use it to find your crew again.",
     "gripeverde.field_guide.scroll_hint": "WHEEL · ↑/↓ · PGUP/PGDN · TAB+ENTER · 1–6/CLICK",
