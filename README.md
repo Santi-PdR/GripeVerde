@@ -5,6 +5,10 @@ Ambientación victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Versión actual
 
+**v0.70.0 - Menú adaptable a pantallas angostas**
+
+En ventanas estrechas, los botones del título se reorganizan para evitar solapamientos; los carteles laterales se ocultan y los controles de música, opciones y salida permanecen accesibles.
+
 **v0.69.0 - Audio fluido sin guardados repetidos**
 
 Los deslizadores de música y ambiente actualizan el sonido al moverlos y guardan el ajuste una sola vez al soltar el control.
