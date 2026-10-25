@@ -3,6 +3,7 @@ package com.eternalcraft.gripeverde.client.widgets;
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.util.EasedValue;
+import com.eternalcraft.gripeverde.client.util.MotionPolicy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.gui.Font;
@@ -110,8 +111,13 @@ public class DiaryToggle extends AbstractButton {
         if (hovered && !wasHovered) UiSounds.playHover();
         wasHovered = hovered;
 
-        hoverAnim.setTarget(hovered);
-        hoverAnim.tick(partialTick / 20f);
+        Minecraft mc = Minecraft.getInstance();
+        boolean motionDisabled = (mc != null && mc.level != null) || MotionPolicy.isReduced();
+        if (motionDisabled) hoverAnim.snapTo(hovered);
+        else {
+            hoverAnim.setTarget(hovered);
+            hoverAnim.tick(partialTick / 20f);
+        }
         float t = hoverAnim.getEased();
         boolean value = this.valueGetter.get();
 
