@@ -5,6 +5,10 @@ Ambientación victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Versión actual
 
+**v0.77.0 - La dirección del servidor respeta tus cambios**
+
+La pantalla multijugador conserva la IP que edites para el servidor fijado. Solo migra la dirección oficial anterior que usaban versiones viejas del mod.
+
 **v0.76.0 - Controles quietos durante la partida**
 
 Los botones y otros controles propios del mod ya no animan su respuesta al pasar el cursor o pulsarlos mientras hay un mundo abierto. La portada conserva su acabado atmosférico.
