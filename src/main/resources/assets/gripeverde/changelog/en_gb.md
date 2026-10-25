@@ -1,6 +1,10 @@
 # Eternal Craft: Gripe Verde
 ## Chronicle under seal
 
+## Version 0.36.0 - The origin of the fever
+
+The infection file now records how local habits, genetics, and health shape mutations, and reveals the 1800 cover-up. Authorities called the outbreak a common flu; Ghouls remain alive, and the Green Flu does not raise corpses.
+
 ## Version 0.35.0 - Chapter jumps
 
 The manual now jumps straight to any of its six chapters: click a heading or press 1–6. Hovering headings glow and underline to show they are interactive, and the footer includes the new navigation shortcut.

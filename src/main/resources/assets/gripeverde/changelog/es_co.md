@@ -1,6 +1,10 @@
 # Eternal Craft: Gripe Verde
 ## Cronica bajo sello
 
+## Version 0.36.0 - El origen de la fiebre
+
+El expediente de infección ahora registra cómo las costumbres locales, la genética y la salud influyen en las mutaciones, y revela el encubrimiento de 1800. Las autoridades llamaron al brote una gripe común; los ghouls siguen vivos y la Gripe Verde no reanima cadáveres.
+
 ## Version 0.35.0 - Saltos entre capítulos
 
 El manual permite saltar directamente entre sus seis capítulos: haz clic en un encabezado o pulsa 1–6. El título se ilumina y subraya al pasar el cursor para señalar que se puede abrir. El pie resume los nuevos atajos de navegación.
