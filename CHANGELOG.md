@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.91.0 - Readable archive notes
+
+- Set archive marginal notes in a horizontal paper slip above the records at regular window sizes.
+- Keep the existing margin note only on short screens to avoid covering the archive heading.
+- Correct Spanish accents in archive status text.
+
 ## Version 0.90.0 - Bilingual title notes
 
 - Move chronicler greetings and long-idle vigil lines into the English and Spanish language files.
