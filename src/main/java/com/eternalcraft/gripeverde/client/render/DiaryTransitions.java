@@ -1,5 +1,6 @@
 package com.eternalcraft.gripeverde.client.render;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 
@@ -59,6 +60,11 @@ public final class DiaryTransitions {
     private static long splashSeed = 0L;
     private static boolean splashForward = true;
 
+    private static boolean hasActiveWorld() {
+        Minecraft mc = Minecraft.getInstance();
+        return mc != null && mc.level != null;
+    }
+
     private static boolean reducedMotionConfig() {
         try { return com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get(); }
         catch (Throwable t) { return false; }
@@ -79,6 +85,11 @@ public final class DiaryTransitions {
      * pliegue segun si la mesa de destino estaba abierta antes.
      */
     public static void noteOpening(Screen from, Screen to) {
+        if (hasActiveWorld()) {
+            pendingHasDirection = false;
+            current = null;
+            return;
+        }
         if (to == null || !isCabinetScreen(to)) {
             pendingHasDirection = false;
             return;
@@ -104,6 +115,11 @@ public final class DiaryTransitions {
 
     /** Llamado desde ScreenEvent.Render.Post. Dibuja encima de todo (es un velo). */
     public static void render(Screen screen, GuiGraphics g) {
+        if (hasActiveWorld()) {
+            current = null;
+            pendingHasDirection = false;
+            return;
+        }
         if (screen == null || !isCabinetScreen(screen)) {
             current = null;
             return;

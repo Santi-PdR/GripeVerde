@@ -1,6 +1,10 @@
 # Eternal Craft: Gripe Verde
 ## Chronicle under seal
 
+## Version 0.42.0 - Let the live world breathe
+
+In a world, the diary now uses a fixed veil and panel. It pauses the animated sky, storm, grain, particles, decorative effects, page transitions and eased button hover while keeping options readable over the world. The title menu keeps its atmosphere.
+
 ## Version 0.41.0 - Difficulty tiers, unsealed
 
 The field guide now lists the live difficulty ladder through INSURGENCY and INFERNUM, plus the BACKBREAKING, DOOMSDAY, and ARMAGEDDON ranges marked WIP. It explains the added global events and stronger ghouls.

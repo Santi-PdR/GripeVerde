@@ -1,5 +1,6 @@
 package com.eternalcraft.gripeverde.client.render;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -16,6 +17,11 @@ public final class QuarantineSceneRenderer {
 
     private QuarantineSceneRenderer() {}
 
+    private static boolean hasActiveWorld() {
+        Minecraft mc = Minecraft.getInstance();
+        return mc != null && mc.level != null;
+    }
+
     private static boolean reducedMotion() {
         try {
             return com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get();
@@ -26,6 +32,7 @@ public final class QuarantineSceneRenderer {
 
     // ── Tick ──
     public static void tick(float delta) {
+        if (hasActiveWorld()) return;
         AtmosphereRenderer.tick(delta);
         VictorianSkyline.tick(delta);
         LivingAtmosphere.tick(delta);
@@ -57,6 +64,12 @@ public final class QuarantineSceneRenderer {
     // ── Light scene for Diary screens (parchment overlay, street only, no fog/air heavy) ──
     public static void renderDiaryBackground(GuiGraphics g, int w, int h) {
         if (w <= 0 || h <= 0) return;
+        if (hasActiveWorld()) {
+            // Mientras la partida sigue viva, el diario solo aplica un velo fijo.
+            // No dibuja cielo, tormenta, grano ni partículas sobre el mundo.
+            g.fill(0, 0, w, h, 0x99060401);
+            return;
+        }
         g.fill(0, 0, w, h, 0xFF060401);
         AtmosphereRenderer.renderSky(g, w, h);
         VictorianSkyline.renderBackground(g, w, h);

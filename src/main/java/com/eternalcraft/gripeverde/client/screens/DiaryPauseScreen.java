@@ -151,6 +151,7 @@ public class DiaryPauseScreen extends PauseScreen {
 
 
     public void tick() {
+        if (hasActiveWorld()) return;
         animTick++;
         // v0.16.0: el aliento del otro lado del vidrio.
         try {
@@ -283,6 +284,10 @@ public class DiaryPauseScreen extends PauseScreen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        if (hasActiveWorld()) {
+            renderWorldSafe(g, mouseX, mouseY, partialTick);
+            return;
+        }
         int overlay = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 180);
         g.fill(0, 0, this.width, this.height, overlay);
 
@@ -355,6 +360,34 @@ public class DiaryPauseScreen extends PauseScreen {
             com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, py - 12);
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
         } catch (Throwable ignored) {}
+    }
+
+    private boolean hasActiveWorld() {
+        return this.minecraft != null && this.minecraft.level != null;
+    }
+
+    /**
+     * In-world pause overlay: a fixed veil and a small static paper panel.
+     * Skips the animated vignette, blood texture, candle, raven, breath,
+     * shadow and lore polling so the live world keeps its frame budget.
+     */
+    private void renderWorldSafe(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        g.fill(0, 0, this.width, this.height, 0x70000000);
+
+        int px = panelX();
+        int py = panelY();
+        int pw = panelW();
+        int ph = panelH();
+        g.fill(px + 4, py + 4, px + pw + 4, py + ph + 4, 0xA0000000);
+        g.fill(px, py, px + pw, py + ph, DiaryTheme.SEPIA_DARK);
+        g.fill(px + 2, py + 2, px + pw - 2, py + ph - 2, PAPER_LIGHT);
+        g.fill(px + 5, py + 5, px + pw - 5, py + 6, DiaryTheme.BRONZE_DARK);
+        g.fill(px + 5, py + ph - 6, px + pw - 5, py + ph - 5, DiaryTheme.BRONZE_DARK);
+
+        drawPanelTitle(g, px, py);
+        drawDateStamp(g, px, py);
+        drawPanelSeparators(g, px, py);
+        super.render(g, mouseX, mouseY, partialTick);
     }
 
     private void drawVignette(GuiGraphics g) {

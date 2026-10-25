@@ -69,16 +69,25 @@ public class DiaryButton extends AbstractButton {
     @Override
     protected void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTick){
         int x=getX(), y=getY(), w=width, h=height;
+        Minecraft mc = Minecraft.getInstance();
+        boolean inWorld = mc != null && mc.level != null;
         boolean hovered = isHoveredOrFocused() && active;
-        boolean pressed = pressAnimTicks>0 && active;
-        if(pressAnimTicks>0) pressAnimTicks--;
+        boolean pressed = !inWorld && pressAnimTicks>0 && active;
+        if(inWorld) pressAnimTicks=0;
+        else if(pressAnimTicks>0) pressAnimTicks--;
 
         if(hovered && !wasHovered) UiSounds.playHover();
         wasHovered=hovered;
 
-        hoverAnim.setTarget(hovered);
-        hoverAnim.tick(partialTick/20f);
-        float t = hoverAnim.getEased();
+        float t;
+        if(inWorld) {
+            // No easing during a live session: hover feedback changes in one frame.
+            t = hovered ? 1f : 0f;
+        } else {
+            hoverAnim.setTarget(hovered);
+            hoverAnim.tick(partialTick/20f);
+            t = hoverAnim.getEased();
+        }
 
         int pressedOffset = pressed?1:0;
         int yDraw = y+pressedOffset;
@@ -107,7 +116,7 @@ public class DiaryButton extends AbstractButton {
         int bg;
         if(!active) bg = bgDisabled;
         else if(pressed) bg = bgPressed;
-        else bg = hoverAnim.lerpColor(bgBase, bgHover);
+        else bg = inWorld ? (hovered ? bgHover : bgBase) : hoverAnim.lerpColor(bgBase, bgHover);
         g.fill(x,yDraw,x+w,yDraw+h,bg);
 
         // Paper fiber highlight top 1px
@@ -133,7 +142,8 @@ public class DiaryButton extends AbstractButton {
         int accent = getVariantAccent();
         int borderCol;
         if(!active) borderCol = DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 90);
-        else borderCol = hoverAnim.lerpColor(DiaryTheme.SEPIA_DARK, accent);
+        else borderCol = inWorld ? (hovered ? accent : DiaryTheme.SEPIA_DARK)
+                : hoverAnim.lerpColor(DiaryTheme.SEPIA_DARK, accent);
         drawBorder(g,x,yDraw,w,h,borderCol);
 
         // Double inner border for primary
@@ -150,7 +160,7 @@ public class DiaryButton extends AbstractButton {
         g.fill(x+3,yDraw+h-4,x+5,yDraw+h-3,pin);
         g.fill(x+w-5,yDraw+h-4,x+w-3,yDraw+h-3,pin);
         // Wear micro dots near edges (1px) based on seed
-        if(active){
+        if(active && !inWorld){
             int wear = DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, 34);
             wearRng.setSeed(wearSeed);
             for(int i=0;i<2;i++){
@@ -174,7 +184,7 @@ public class DiaryButton extends AbstractButton {
         }
 
         // ── Content ──
-        Font font = Minecraft.getInstance().font;
+        Font font = mc.font;
         String text = getMessage().getString();
         int textColor = getTextColor(t);
         if(!active) textColor = DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 110);
@@ -201,7 +211,7 @@ public class DiaryButton extends AbstractButton {
         g.drawString(font,text,textStartX,contentY,textColor,false);
 
         // Underline on hover (ink stroke)
-        if(t>0.08f && active){
+        if(!inWorld && t>0.08f && active){
             int tw = font.width(text);
             int uy = contentY+font.lineHeight;
             int uAlpha = (int)(t*190);
@@ -214,7 +224,7 @@ public class DiaryButton extends AbstractButton {
         }
 
         // Disabled crosshatch faint
-        if(!active){
+        if(!active && !inWorld){
             int cross = DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 22);
             for(int cx=x+4;cx<x+w-4;cx+=8){
                 g.fill(cx,yDraw+4,cx+1,yDraw+h-4,cross);
@@ -250,6 +260,8 @@ public class DiaryButton extends AbstractButton {
             case DANGER -> { base=DiaryTheme.REDCOAT_DARK; hov=DiaryTheme.REDCOAT; }
             default -> { base=DiaryTheme.INK; hov=DiaryTheme.INK_BLACK; }
         }
+        Minecraft mc = Minecraft.getInstance();
+        if(mc != null && mc.level != null) return hoverT >= 0.5f ? hov : base;
         return hoverAnim.lerpColor(base,hov);
     }
     private void drawBorder(GuiGraphics g,int x,int y,int w,int h,int col){
