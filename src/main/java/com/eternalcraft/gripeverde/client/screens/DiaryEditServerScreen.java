@@ -7,6 +7,7 @@ import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.EditBox;
 import com.eternalcraft.gripeverde.client.widgets.DiaryTextField;
 import net.minecraft.client.gui.screens.Screen;
@@ -34,6 +35,33 @@ public class DiaryEditServerScreen extends Screen {
     private DiaryButton doneButton;
     private boolean justOpened = true;
 
+    private int panelWidth() {
+        return Math.min(PANEL_MAX_W, Math.max(136, this.width - 24));
+    }
+
+    private int panelHeight() {
+        return Math.min(PANEL_MAX_H, Math.max(120, this.height - 24));
+    }
+
+    private boolean compactLayout() {
+        return panelHeight() < 190;
+    }
+
+    private int nameFieldOffset() {
+        return compactLayout() ? 52 : 62;
+    }
+
+    private int ipFieldOffset() {
+        return compactLayout() ? 88 : 108;
+    }
+
+    private static String ellipsizeTo(net.minecraft.client.gui.Font font, String text, int maxWidth) {
+        if (font.width(text) <= maxWidth) return text;
+        String ellipsis = "...";
+        int room = Math.max(0, maxWidth - font.width(ellipsis));
+        return font.plainSubstrByWidth(text, room) + ellipsis;
+    }
+
     public DiaryEditServerScreen(Screen parent, BooleanConsumer callback, ServerData serverData) {
         super(Component.translatable("addServer.title"));
         this.parent = parent;
@@ -43,17 +71,18 @@ public class DiaryEditServerScreen extends Screen {
 
     @Override
     protected void init() {
-        int panelW = Math.min(PANEL_MAX_W, this.width - 40);
-        int panelH = Math.min(PANEL_MAX_H, this.height - 30);
+        int panelW = panelWidth();
+        int panelH = panelHeight();
         int panelX = (this.width - panelW) / 2;
         int panelY = (this.height - panelH) / 2;
 
-        int fieldW = PANEL_MAX_W - 60;
-        int fieldX = panelX + 30;
-        int fieldH = 20;
+        int fieldInset = Math.min(24, Math.max(12, (panelW - 64) / 2));
+        int fieldW = Math.max(64, panelW - fieldInset * 2);
+        int fieldX = panelX + (panelW - fieldW) / 2;
+        int fieldH = compactLayout() ? 18 : 20;
 
         // Name field
-        int nameY = panelY + 62;
+        int nameY = panelY + nameFieldOffset();
         this.nameEdit = new DiaryTextField(this.font, fieldX, nameY, fieldW, fieldH, Component.translatable("addServer.enterName"));
         this.nameEdit.setMaxLength(64);
         this.nameEdit.setValue(this.serverData.name != null ? this.serverData.name : "");
@@ -62,7 +91,7 @@ public class DiaryEditServerScreen extends Screen {
         this.setInitialFocus(this.nameEdit);
 
         // IP field
-        int ipY = panelY + 108;
+        int ipY = panelY + ipFieldOffset();
         this.ipEdit = new DiaryTextField(this.font, fieldX, ipY, fieldW, fieldH, Component.translatable("addServer.enterIp"));
         this.ipEdit.setMaxLength(128);
         this.ipEdit.setValue(this.serverData.ip != null ? this.serverData.ip : "");
@@ -70,23 +99,25 @@ public class DiaryEditServerScreen extends Screen {
         this.addRenderableWidget(this.ipEdit);
 
         // Botones inferiores
-        int btnW = 100;
-        int btnH = 20;
-        int btnY = panelY + PANEL_MAX_H - btnH - 16;
-        int gap = 12;
+        int btnH = compactLayout() ? 18 : 20;
+        int gap = Math.min(12, Math.max(4, panelW - 24 - 112));
+        int btnW = Math.max(48, Math.min(100, (panelW - 24 - gap) / 2));
+        int btnY = panelY + panelH - btnH - (compactLayout() ? 12 : 16);
         int totalW = btnW * 2 + gap;
-        int startX = (this.width - totalW) / 2;
+        int startX = panelX + (panelW - totalW) / 2;
 
         this.doneButton = new DiaryButton(startX, btnY, btnW, btnH,
                 Component.translatable("addServer.add"),
                 DiaryButton.Icon.SCROLL, DiaryButton.Variant.PRIMARY,
                 this::onDone);
+        this.doneButton.setTooltip(Tooltip.create(Component.translatable("addServer.add")));
         this.addRenderableWidget(this.doneButton);
 
         DiaryButton cancel = new DiaryButton(startX + btnW + gap, btnY, btnW, btnH,
                 Component.translatable("gui.cancel"),
                 DiaryButton.Icon.DOOR, DiaryButton.Variant.SECONDARY,
                 this::onCancel);
+        cancel.setTooltip(Tooltip.create(Component.translatable("gui.cancel")));
         this.addRenderableWidget(cancel);
 
         this.updateDoneButton();
@@ -141,8 +172,8 @@ public class DiaryEditServerScreen extends Screen {
         // Overlay atenuador
 
         // Panel pergamino
-        int panelW = Math.min(PANEL_MAX_W, this.width - 40);
-        int panelH = Math.min(PANEL_MAX_H, this.height - 30);
+        int panelW = panelWidth();
+        int panelH = panelHeight();
         int panelX = (this.width - panelW) / 2;
         int panelY = (this.height - panelH) / 2;
         DiaryChrome.drawPanelShadow(gfx, panelX, panelY, panelW, panelH);
@@ -153,26 +184,32 @@ public class DiaryEditServerScreen extends Screen {
         DiaryChrome.drawRegistryTag(gfx, panelX, panelY, panelW, panelH, "REG. XI");
 
         // Titulo
-        int titleY = panelY + 18;
-        String titleStr = this.title.getString();
+        int titleY = panelY + (compactLayout() ? 10 : 18);
+        int centerX = panelX + panelW / 2;
+        String titleStr = ellipsizeTo(this.font, this.title.getString(), Math.max(48, panelW - 28));
         int titleW = this.font.width(titleStr);
-        gfx.drawString(this.font, titleStr, (this.width - titleW) / 2, titleY, DiaryChrome.INK_TITLE, false);
+        gfx.drawString(this.font, titleStr, centerX - titleW / 2, titleY, DiaryChrome.INK_TITLE, false);
 
         // Subtitulo
         String subtitle = "- " + Component.translatable("gripeverde.edit.subtitle").getString() + " -";
+        subtitle = ellipsizeTo(this.font, subtitle, Math.max(48, panelW - 28));
         int subW = this.font.width(subtitle);
-        gfx.drawString(this.font, subtitle, (this.width - subW) / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
+        gfx.drawString(this.font, subtitle, centerX - subW / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
         // Divisor con rombo
-        DiaryChrome.drawInkDivider(gfx, panelX + 24, titleY + 26, panelW - 48);
-        DiaryChrome.drawDivisorLozenge(gfx, this.width / 2, titleY + 26);
+        DiaryChrome.drawInkDivider(gfx, panelX + 20, titleY + 26, panelW - 40);
+        DiaryChrome.drawDivisorLozenge(gfx, centerX, titleY + 26);
 
         // Labels de los EditBox
-        String nameLbl = NAME_LABEL.getString();
-        gfx.drawString(this.font, nameLbl, panelX + 30, panelY + 48, DiaryChrome.INK_SUBTITLE, false);
+        int fieldInset = Math.min(24, Math.max(12, (panelW - 64) / 2));
+        int labelWidth = Math.max(48, panelW - fieldInset * 2);
+        String nameLbl = ellipsizeTo(this.font, NAME_LABEL.getString(), labelWidth);
+        int nameLabelOffset = nameFieldOffset() - (compactLayout() ? 12 : 14);
+        gfx.drawString(this.font, nameLbl, panelX + fieldInset, panelY + nameLabelOffset, DiaryChrome.INK_SUBTITLE, false);
 
-        String ipLbl = IP_LABEL.getString();
-        gfx.drawString(this.font, ipLbl, panelX + 30, panelY + 94, DiaryChrome.INK_SUBTITLE, false);
+        String ipLbl = ellipsizeTo(this.font, IP_LABEL.getString(), labelWidth);
+        int ipLabelOffset = ipFieldOffset() - 14;
+        gfx.drawString(this.font, ipLbl, panelX + fieldInset, panelY + ipLabelOffset, DiaryChrome.INK_SUBTITLE, false);
 
         // Widgets (EditBox + botones Diary)
         for (var w : this.renderables) {

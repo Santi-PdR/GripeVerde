@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.48.0 - Formularios de servidor adaptables
+
+La conexión directa y la edición de servidores calculan el tamaño del panel, los campos y los botones según el espacio visible. Los controles permanecen dentro del pergamino, los títulos y rótulos respetan su ancho y los tooltips conservan el nombre completo de cada acción. El aviso de dirección desconocida aparece dentro del panel de conexión para que no desaparezca en ventanas bajas.
+
 ## Version 0.47.0 - Pausa compacta para sobrevivientes
 
 El gabinete de pausa distribuye sus acciones en dos columnas cuando la ventana tiene poca altura y deja la salida a todo lo ancho en la última fila. La cabecera y los divisores se adaptan, los subtítulos largos permanecen dentro del papel y los tooltips conservan los nombres completos de los controles en inglés y español. Los adornos se apartan cuando ocuparían el espacio de los botones. En partida, el panel sigue estático y despeja la barra rápida.

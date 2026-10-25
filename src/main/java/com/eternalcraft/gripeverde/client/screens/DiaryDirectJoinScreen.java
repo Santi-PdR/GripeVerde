@@ -7,6 +7,7 @@ import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Tooltip;
 import com.eternalcraft.gripeverde.client.widgets.DiaryTextField;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ServerData;
@@ -30,6 +31,25 @@ public class DiaryDirectJoinScreen extends Screen {
     private DiaryButton selectButton;
     private boolean justOpened = true;
 
+    private int panelWidth() {
+        return Math.min(PANEL_MAX_W, Math.max(136, this.width - 24));
+    }
+
+    private int panelHeight() {
+        return Math.min(PANEL_MAX_H, Math.max(120, this.height - 24));
+    }
+
+    private int ipFieldOffset() {
+        return Math.min(76, Math.max(54, panelHeight() - 76));
+    }
+
+    private static String ellipsizeTo(net.minecraft.client.gui.Font font, String text, int maxWidth) {
+        if (font.width(text) <= maxWidth) return text;
+        String ellipsis = "...";
+        int room = Math.max(0, maxWidth - font.width(ellipsis));
+        return font.plainSubstrByWidth(text, room) + ellipsis;
+    }
+
     public DiaryDirectJoinScreen(Screen parent, BooleanConsumer callback, ServerData serverData) {
         super(Component.translatable("selectServer.direct"));
         this.parent = parent;
@@ -39,15 +59,15 @@ public class DiaryDirectJoinScreen extends Screen {
 
     @Override
     protected void init() {
-        int panelW = Math.min(PANEL_MAX_W, this.width - 40);
-        int panelH = Math.min(PANEL_MAX_H, this.height - 30);
+        int panelW = panelWidth();
+        int panelH = panelHeight();
         int panelX = (this.width - panelW) / 2;
         int panelY = (this.height - panelH) / 2;
 
-        int fieldW = PANEL_MAX_W - 60;
-        int fieldX = panelX + 30;
+        int fieldW = Math.max(64, panelW - 48);
+        int fieldX = panelX + (panelW - fieldW) / 2;
         int fieldH = 20;
-        int ipY = panelY + 76;
+        int ipY = panelY + ipFieldOffset();
 
         // IP field
         this.ipEdit = new DiaryTextField(this.font, fieldX, ipY, fieldW, fieldH, ENTER_IP_LABEL);
@@ -64,23 +84,25 @@ public class DiaryDirectJoinScreen extends Screen {
         this.setInitialFocus(this.ipEdit);
 
         // Botones inferiores
-        int btnW = 100;
         int btnH = 20;
-        int btnY = panelY + PANEL_MAX_H - btnH - 16;
-        int gap = 12;
+        int gap = Math.min(12, Math.max(4, panelW - 24 - 112));
+        int btnW = Math.max(48, Math.min(100, (panelW - 24 - gap) / 2));
+        int btnY = panelY + panelH - btnH - 16;
         int totalW = btnW * 2 + gap;
-        int startX = (this.width - totalW) / 2;
+        int startX = panelX + (panelW - totalW) / 2;
 
         this.selectButton = new DiaryButton(startX, btnY, btnW, btnH,
                 Component.translatable("selectServer.select"),
                 DiaryButton.Icon.HAND, DiaryButton.Variant.PRIMARY,
                 this::onSelect);
+        this.selectButton.setTooltip(Tooltip.create(Component.translatable("selectServer.select")));
         this.addRenderableWidget(this.selectButton);
 
         DiaryButton cancel = new DiaryButton(startX + btnW + gap, btnY, btnW, btnH,
                 Component.translatable("gui.cancel"),
                 DiaryButton.Icon.DOOR, DiaryButton.Variant.SECONDARY,
                 this::onCancel);
+        cancel.setTooltip(Tooltip.create(Component.translatable("gui.cancel")));
         this.addRenderableWidget(cancel);
 
         this.updateSelectButton();
@@ -163,8 +185,8 @@ public class DiaryDirectJoinScreen extends Screen {
         // Overlay atenuador
 
         // Panel pergamino
-        int panelW = Math.min(PANEL_MAX_W, this.width - 40);
-        int panelH = Math.min(PANEL_MAX_H, this.height - 30);
+        int panelW = panelWidth();
+        int panelH = panelHeight();
         int panelX = (this.width - panelW) / 2;
         int panelY = (this.height - panelH) / 2;
         DiaryChrome.drawPanelShadow(gfx, panelX, panelY, panelW, panelH);
@@ -175,23 +197,25 @@ public class DiaryDirectJoinScreen extends Screen {
         DiaryChrome.drawRegistryTag(gfx, panelX, panelY, panelW, panelH, "REG. XII");
 
         // Titulo
-        int titleY = panelY + 18;
-        String titleStr = this.title.getString();
+        int titleY = panelY + (panelH < 160 ? 12 : 18);
+        int centerX = panelX + panelW / 2;
+        String titleStr = ellipsizeTo(this.font, this.title.getString(), Math.max(48, panelW - 28));
         int titleW = this.font.width(titleStr);
-        gfx.drawString(this.font, titleStr, (this.width - titleW) / 2, titleY, DiaryChrome.INK_TITLE, false);
+        gfx.drawString(this.font, titleStr, centerX - titleW / 2, titleY, DiaryChrome.INK_TITLE, false);
 
         // Subtitulo
         String subtitle = "- " + Component.translatable("gripeverde.direct.subtitle").getString() + " -";
+        subtitle = ellipsizeTo(this.font, subtitle, Math.max(48, panelW - 28));
         int subW = this.font.width(subtitle);
-        gfx.drawString(this.font, subtitle, (this.width - subW) / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
+        gfx.drawString(this.font, subtitle, centerX - subW / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
         // Divisor con rombo
-        DiaryChrome.drawInkDivider(gfx, panelX + 24, titleY + 26, panelW - 48);
-        DiaryChrome.drawDivisorLozenge(gfx, this.width / 2, titleY + 26);
+        DiaryChrome.drawInkDivider(gfx, panelX + 20, titleY + 26, panelW - 40);
+        DiaryChrome.drawDivisorLozenge(gfx, centerX, titleY + 26);
 
         // Label IP
-        String ipLbl = ENTER_IP_LABEL.getString();
-        gfx.drawString(this.font, ipLbl, panelX + 30, panelY + 62, DiaryChrome.INK_SUBTITLE, false);
+        String ipLbl = ellipsizeTo(this.font, ENTER_IP_LABEL.getString(), Math.max(48, panelW - 48));
+        gfx.drawString(this.font, ipLbl, panelX + 24, panelY + ipFieldOffset() - 14, DiaryChrome.INK_SUBTITLE, false);
 
         // Widgets
         for (var w : this.renderables) {
@@ -206,10 +230,12 @@ public class DiaryDirectJoinScreen extends Screen {
                 String warn = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
                     ? "That address is on no map. The door is not there anymore."
                     : "Esa direccion no esta en ningun mapa. La puerta ya no esta ahi.";
+                warn = ellipsizeTo(this.font, warn, Math.max(48, panelW - 24));
                 int ww = this.font.width(warn);
                 long remain = this.unmappedWarnUntilMs - System.currentTimeMillis();
                 int alpha = remain < 900L ? (int)(210 * remain / 900L) : 210;
-                gfx.drawString(this.font, warn, (this.width - ww) / 2, panelY + panelH + 10,
+                int warnY = panelY + Math.min(ipFieldOffset() + 24, panelH - 52);
+                gfx.drawString(this.font, warn, centerX - ww / 2, warnY,
                     (alpha << 24) | 0xB8A888, false);
             }
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(gfx, this.width);
