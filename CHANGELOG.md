@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## v0.35.0 - Saltos entre capítulos
+
+El manual permite saltar directamente entre sus seis capítulos: haz clic en un encabezado o pulsa 1–6. El título se ilumina y subraya al pasar el cursor para señalar que se puede abrir. El pie resume los nuevos atajos de navegación.
+
 ## v0.34.0 - Razas del cordón
 
 El manual de campo suma un expediente sobre las razas de los supervivientes: más de 300 posibilidades, desde humanos, tiburones y cíborgs, con evoluciones V1–V4+ sujetas a acciones y misiones propias de cada rareza. También registra la escala completa de rarezas, compartida por razas, artefactos y objetos.

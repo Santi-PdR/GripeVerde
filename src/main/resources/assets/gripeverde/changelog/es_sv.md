@@ -1,6 +1,10 @@
 # Eternal Craft: Gripe Verde
 ## Cronica bajo sello
 
+## Version 0.35.0 - Saltos entre capítulos
+
+El manual permite saltar directamente entre sus seis capítulos: haz clic en un encabezado o pulsa 1–6. El título se ilumina y subraya al pasar el cursor para señalar que se puede abrir. El pie resume los nuevos atajos de navegación.
+
 ## Version 0.34.0 - Linajes de supervivientes
 
 El manual de campo registra las razas de supervivientes del servidor: más de 300 posibilidades, entre ellas humanos, tiburones y cíborgs, con evoluciones V1–V4+ que se obtienen mediante acciones y misiones ligadas a cada rareza. También enumera la escala completa de rarezas, compartida por razas, artefactos y objetos.
