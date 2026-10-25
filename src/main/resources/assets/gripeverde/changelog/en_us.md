@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.47.0 - Compact survivor pause screen
+
+The pause cabinet now switches to a two-column action layout when the viewport is short, with the leave action spanning the final row. The header and dividers move with the compact layout, long subtitles stay inside the paper, and hover tooltips preserve complete English and Spanish control names. Decorative details step aside when the compact paper needs the room. The in-world panel remains static and keeps the hotbar clear.
+
 ## Version 0.46.0 - Responsive options cabinet
 
 The options cabinet now fits compact windows without letting the two-column grid, FOV slider, or Done button spill beyond the paper. In compact layouts, controls and spacing shrink together and decorative flavor copy steps aside. Long English and Spanish labels stay available in hover tooltips, and the title and subtitle respect the panel width.

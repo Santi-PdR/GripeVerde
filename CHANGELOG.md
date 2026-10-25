@@ -1,5 +1,12 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.47.0 - Compact survivor pause screen
+
+- Reflowed pause actions into a two-column layout when the available viewport is short, keeping the last action full width and above the hotbar.
+- Adapted the paper header and separators to compact viewports, and clipped long subtitles to the paper width.
+- Added localized hover labels to pause controls and removed decorative overlays from compact layouts when they would collide with actions.
+- Kept the in-world pause panel static and lightweight.
+
 ## Version 0.46.0 - Responsive options cabinet
 
 - The options cabinet now fits compact window sizes with smaller, carefully spaced controls and a shorter header.

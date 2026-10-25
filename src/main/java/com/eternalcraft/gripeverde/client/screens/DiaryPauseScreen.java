@@ -4,6 +4,7 @@ import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.GenericDirtMessageScreen;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.TitleScreen;
@@ -42,12 +43,24 @@ public class DiaryPauseScreen extends PauseScreen {
 
     private int panelW() {
         int available = this.width - MARGIN_SIDE * 2;
-        return Math.min(PANEL_MAX_W, available);
+        return Math.min(PANEL_MAX_W, Math.max(148, available));
     }
     private int panelH() {
-        // Siempre respetar MARGIN_TOP y MARGIN_BOTTOM_MIN sin excepciones
+        // Preserve the hotbar and the minimum top margin while adapting the paper to the viewport.
         int available = this.height - MARGIN_TOP - MARGIN_BOTTOM_MIN;
         return Math.max(0, Math.min(PANEL_MAX_H, available));
+    }
+
+    private boolean compactPauseLayout() {
+        return panelH() < 250 || panelW() < 280;
+    }
+
+    private int separatorTopOffset() {
+        return panelH() < 250 ? 60 : ORN_SEP_TOP;
+    }
+
+    private int separatorBottomOffset() {
+        return panelH() < 250 ? 30 : ORN_SEP_BOT_FROM_BOT;
     }
 
     private static final int BTN_W = 240;
@@ -89,66 +102,74 @@ public class DiaryPauseScreen extends PauseScreen {
         int pw = panelW();
         int ph = panelH();
 
-        // Zona disponible para los 5 botones (entre los dos separadores)
-        int contentTop = py + ORN_SEP_TOP + 6;
-        int contentBot = py + ph - ORN_SEP_BOT_FROM_BOT - 6;
+        // Short viewports use a two-column menu so every action stays above the hotbar.
+        boolean compactGrid = ph < 250;
+        int topSeparator = compactGrid ? 60 : ORN_SEP_TOP;
+        int bottomSeparator = compactGrid ? 30 : ORN_SEP_BOT_FROM_BOT;
+        int contentTop = py + topSeparator + 6;
+        int contentBot = py + ph - bottomSeparator - 6;
         int contentH = Math.max(0, contentBot - contentTop);
+        int rows = compactGrid ? 3 : 5;
+        int gap = compactGrid ? 3 : BTN_GAP;
+        int bh = (contentH - gap * (rows - 1)) / rows;
+        int minButtonH = compactGrid ? 12 : 14;
+        if (bh > BTN_H) bh = BTN_H;
+        if (bh < minButtonH) { bh = minButtonH; gap = 2; }
 
-        // Calcular altura de boton adaptativa
-        // Formula: 5*bh + 4*gap = contentH  =>  bh = (contentH - 4*gap) / 5
-        int gap = BTN_GAP;
-        int bh = (contentH - gap * 4) / 5;
-        if (bh > BTN_H) bh = BTN_H;         // no crecer mas alla del ideal
-        if (bh < 14)    { bh = 14; gap = 2; } // piso minimo legible
-
-        int totalBtnH = bh * 5 + gap * 4;
+        int totalBtnH = bh * rows + gap * (rows - 1);
         int btnStartY = contentTop + Math.max(0, (contentH - totalBtnH) / 2);
-        int btnX = px + (pw - BTN_W) / 2;
+        int buttonW = Math.max(96, Math.min(BTN_W, pw - 24));
+        int[] buttonX = new int[5];
+        int[] buttonY = new int[5];
+        int[] buttonWidths = new int[5];
+        if (compactGrid) {
+            int availableButtonW = Math.max(96, pw - 24);
+            int columnGap = Math.min(8, Math.max(2, availableButtonW / 12));
+            int columnW = Math.max(48, (availableButtonW - columnGap) / 2);
+            for (int i = 0; i < 5; i++) {
+                int row = i / 2;
+                int column = i % 2;
+                buttonWidths[i] = i == 4 ? pw - 24 : columnW;
+                buttonX[i] = i == 4 ? px + 12 : px + 12 + column * (columnW + columnGap);
+                buttonY[i] = btnStartY + row * (bh + gap);
+            }
+        } else {
+            int buttonXCentered = px + (pw - buttonW) / 2;
+            for (int i = 0; i < 5; i++) {
+                buttonX[i] = buttonXCentered;
+                buttonY[i] = btnStartY + i * (bh + gap);
+                buttonWidths[i] = buttonW;
+            }
+        }
 
-        // Redefinimos referencia local para el resto del metodo
-        final int BH = bh;
-        final int BG = gap;
+        this.addRenderableWidget(createPauseButton(buttonX[0], buttonY[0], buttonWidths[0], bh,
+            "gripeverde.pause.btn.resume", DiaryButton.Icon.HAND, DiaryButton.Variant.PRIMARY, this::resumeGame));
 
-        this.addRenderableWidget(new DiaryButton(
-            btnX, btnStartY, BTN_W, BH,
-            Component.translatable("gripeverde.pause.btn.resume"),
-            DiaryButton.Icon.HAND, DiaryButton.Variant.PRIMARY,
-            this::resumeGame
-        ));
-
-        DiaryButton recordsBtn = new DiaryButton(
-            btnX, btnStartY + (BH + BG), BTN_W, BH,
-            Component.translatable("gripeverde.pause.btn.records"),
-            DiaryButton.Icon.SCROLL, DiaryButton.Variant.SECONDARY,
-            this::openRecords
-        );
+        DiaryButton recordsBtn = createPauseButton(buttonX[1], buttonY[1], buttonWidths[1], bh,
+            "gripeverde.pause.btn.records", DiaryButton.Icon.SCROLL, DiaryButton.Variant.SECONDARY, this::openRecords);
         if (this.minecraft.getConnection() == null) recordsBtn.active = false;
         this.addRenderableWidget(recordsBtn);
 
-        DiaryButton statsBtn = new DiaryButton(
-            btnX, btnStartY + (BH + BG) * 2, BTN_W, BH,
-            Component.translatable("gripeverde.pause.btn.statistics"),
-            DiaryButton.Icon.CHART, DiaryButton.Variant.SECONDARY,
-            this::openStats
-        );
+        DiaryButton statsBtn = createPauseButton(buttonX[2], buttonY[2], buttonWidths[2], bh,
+            "gripeverde.pause.btn.statistics", DiaryButton.Icon.CHART, DiaryButton.Variant.SECONDARY, this::openStats);
         if (this.minecraft.player == null) statsBtn.active = false;
         this.addRenderableWidget(statsBtn);
 
-        this.addRenderableWidget(new DiaryButton(
-            btnX, btnStartY + (BH + BG) * 3, BTN_W, BH,
-            Component.translatable("gripeverde.pause.btn.adjustments"),
-            DiaryButton.Icon.GEAR, DiaryButton.Variant.SECONDARY,
-            this::openAdjustments
-        ));
+        this.addRenderableWidget(createPauseButton(buttonX[3], buttonY[3], buttonWidths[3], bh,
+            "gripeverde.pause.btn.adjustments", DiaryButton.Icon.GEAR, DiaryButton.Variant.SECONDARY, this::openAdjustments));
 
-        this.addRenderableWidget(new DiaryButton(
-            btnX, btnStartY + (BH + BG) * 4, BTN_W, BH,
-            Component.translatable("gripeverde.pause.btn.leave"),
-            DiaryButton.Icon.DOOR, DiaryButton.Variant.DANGER,
-            this::onLeave
-        ));
+        this.addRenderableWidget(createPauseButton(buttonX[4], buttonY[4], buttonWidths[4], bh,
+            "gripeverde.pause.btn.leave", DiaryButton.Icon.DOOR, DiaryButton.Variant.DANGER, this::onLeave));
     }
 
+
+    private DiaryButton createPauseButton(int x, int y, int width, int height, String key,
+                                          DiaryButton.Icon icon, DiaryButton.Variant variant, Runnable action) {
+        Component label = Component.translatable(key);
+        DiaryButton button = new DiaryButton(x, y, width, height, label, icon, variant, action);
+        button.setTooltip(Tooltip.create(label));
+        return button;
+    }
 
     public void tick() {
         if (hasActiveWorld()) return;
@@ -297,20 +318,23 @@ public class DiaryPauseScreen extends PauseScreen {
         int py = panelY();
         drawPanel(g, px, py, panelW(), panelH());
         drawPanelTitle(g, px, py);
-        drawDateStamp(g, px, py);
+        if (!compactPauseLayout()) drawDateStamp(g, px, py);
         drawPanelSeparators(g, px, py);
 
-        // Elementos decorativos
-        drawRaven(g, px + 14, py + 22);
+        // Keep decorative art clear of controls in compact windows.
+        if (!compactPauseLayout()) drawRaven(g, px + 14, py + 22);
 
         super.render(g, mouseX, mouseY, partialTick);
 
         // Elementos que van encima de los botones
-        drawCandle(g, px + 20, py + panelH() - 32);
-        drawSignature(g, px, py);
-        drawWaxSeal(g, px + panelW() - 28, py + panelH() - 26);
+        if (!compactPauseLayout()) {
+            drawCandle(g, px + 20, py + panelH() - 32);
+            drawSignature(g, px, py);
+            drawWaxSeal(g, px + panelW() - 28, py + panelH() - 26);
+        }
 
         // ── v0.16.0: lo que trae la oscuridad ──
+        if (!compactPauseLayout()) {
         try {
             if (candleOut) {
                 // El panel queda en penumbra
@@ -360,6 +384,7 @@ public class DiaryPauseScreen extends PauseScreen {
             com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, py - 12);
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
         } catch (Throwable ignored) {}
+        }
     }
 
     private boolean hasActiveWorld() {
@@ -513,26 +538,37 @@ public class DiaryPauseScreen extends PauseScreen {
         String subtitle = Component.translatable("gripeverde.pause.subtitle").getString();
 
         int centerX = px + panelW() / 2;
-        int titleY = py + 24;
-        int subtitleY = py + 58;
+        int compactTitleY = compactPauseLayout() ? 14 : 24;
+        int subtitleY = py + (compactPauseLayout() ? 39 : 58);
+        int titleY = py + compactTitleY;
 
         int tw = this.font.width(title);
-        // v0.21.25: tinta limpia sin sombra doble.
+        float titleScale = compactPauseLayout()
+            ? Math.min(1.45f, Math.max(1.0f, (panelW() - 36.0f) / Math.max(1, tw)))
+            : 1.75f;
         g.pose().pushPose();
         g.pose().translate(centerX, titleY, 0);
-        g.pose().scale(1.75f, 1.75f, 1f);
+        g.pose().scale(titleScale, titleScale, 1f);
         g.drawString(this.font, title, -tw / 2, 0, DiaryTheme.INK, false);
         g.pose().popPose();
 
-        int scaledTw = (int)(tw * 1.75f);
+        int scaledTw = (int)(tw * titleScale);
         int ornY = titleY + 5;
         drawFlourish(g, centerX - scaledTw / 2 - 20, ornY, DiaryTheme.BRONZE, false);
         drawFlourish(g, centerX + scaledTw / 2 + 4, ornY, DiaryTheme.BRONZE, true);
 
-        int sw = this.font.width(subtitle);
-        g.drawString(this.font, subtitle,
+        String shownSubtitle = ellipsizeTo(this.font, subtitle, Math.max(40, panelW() - 28));
+        int sw = this.font.width(shownSubtitle);
+        g.drawString(this.font, shownSubtitle,
             centerX - sw / 2, subtitleY,
             DiaryTheme.SEPIA_MID, false);
+    }
+
+    private static String ellipsizeTo(net.minecraft.client.gui.Font font, String text, int maxWidth) {
+        if (font.width(text) <= maxWidth) return text;
+        String ellipsis = "...";
+        int room = Math.max(0, maxWidth - font.width(ellipsis));
+        return font.plainSubstrByWidth(text, room) + ellipsis;
     }
 
     private void drawDateStamp(GuiGraphics g, int px, int py) {
@@ -563,12 +599,12 @@ public class DiaryPauseScreen extends PauseScreen {
 
     private void drawPanelSeparators(GuiGraphics g, int px, int py) {
         int centerX = px + panelW() / 2;
-        int sepW = panelW() - 60;
+        int sepW = Math.max(24, panelW() - 60);
         int lineC = DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 200);
         int accentC = DiaryTheme.BRONZE;
 
-        drawSepLine(g, centerX, py + ORN_SEP_TOP, sepW, lineC, accentC);
-        drawSepLine(g, centerX, py + panelH() - ORN_SEP_BOT_FROM_BOT, sepW, lineC, accentC);
+        drawSepLine(g, centerX, py + separatorTopOffset(), sepW, lineC, accentC);
+        drawSepLine(g, centerX, py + panelH() - separatorBottomOffset(), sepW, lineC, accentC);
     }
 
     private void drawSepLine(GuiGraphics g, int cx, int y, int width, int lineC, int accentC) {

@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.47.0 - Pausa compacta para sobrevivientes
+
+El gabinete de pausa distribuye sus acciones en dos columnas cuando la ventana tiene poca altura y deja la salida a todo lo ancho en la última fila. La cabecera y los divisores se adaptan, los subtítulos largos permanecen dentro del papel y los tooltips conservan los nombres completos de los controles en inglés y español. Los adornos se apartan cuando ocuparían el espacio de los botones. En partida, el panel sigue estático y despeja la barra rápida.
+
 ## Version 0.46.0 - Opciones adaptables
 
 El gabinete de opciones ahora cabe en ventanas compactas: la grilla de dos columnas, el deslizador de FOV y el botón de salida se mantienen dentro del papel. En pantallas pequeñas se ajustan los controles y los espacios, y la cita decorativa se oculta para despejar la cabecera. Los nombres completos en español e inglés siguen disponibles en la información al pasar el cursor; el título y el subtítulo respetan el ancho del panel.
