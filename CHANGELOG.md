@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## v0.31.0 - Partes de cuarentena
+
+La portada ahora publica un parte de cuarentena distinto cada jornada: CEDA insiste en que solo es una gripe, mientras los ojos azules y las mutaciones cuentan otra historia. Los avisos también recuerdan que las reservas menguan, que un compañero debe liberar al atrapado y que el grupo ha de replegarse junto. En octubre, el cronista ya no llama muertos a los ghouls: siguen vivos. El parte conserva el margen de la firma y se oculta si la ventana no ofrece espacio.
+
 ## v0.30.0 - La hoja entera
 
 Feedback del owner tras la 0.29.0: la vuelta quedo bien, pero la pluma

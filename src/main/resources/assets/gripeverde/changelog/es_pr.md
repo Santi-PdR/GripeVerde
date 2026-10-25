@@ -3,6 +3,10 @@
 
 
 
+## Version 0.31.0 - Partes de cuarentena
+
+La portada ahora publica un parte de cuarentena distinto cada jornada: CEDA insiste en que solo es una gripe, mientras los ojos azules y las mutaciones cuentan otra historia. Los avisos también recuerdan que las reservas menguan, que un compañero debe liberar al atrapado y que el grupo ha de replegarse junto. En octubre, el cronista ya no llama muertos a los ghouls: siguen vivos. El parte conserva el margen de la firma y se oculta si la ventana no ofrece espacio.
+
 ## Version 0.30.0 - La hoja entera
 
 Correcciones del abuelo del estudio, anotadas con cuidado. La pluma ya no escribe una sola entrada dejando las demás impresas: ahora la bitácora entera se va escribiendo delante del lector a medida que baja por sus hojas — lo que quedó atrás, muy arriba, se da por impreso, y bajar de golpe jamás deja huecos; un toque lo termina todo. La lupa, además, aprendió a leerse: su cuadrito es ahora una etiqueta de papel claro con letra de tinta, y no una mancha oscura donde la palabra se perdía. Los toques de los botones al pasarles la mano bajaron la voz. Y tres descuidos de la imprenta quedaron enmendados: el renglón de la firma ya no se acerca a la mesa de botones, el aviso del día se lee a su izquierda en la misma línea, y las citas del gabinete y de la sala de sonido jamás vuelven a quedar bajo los botones ni fuera del papel.
