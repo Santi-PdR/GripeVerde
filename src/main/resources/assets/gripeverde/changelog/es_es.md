@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.57.0 - Niveles de audio visibles
+
+El subtítulo del gabinete muestra los porcentajes actuales de música, ambiente y SFX de interfaz, también en ventanas compactas. Las pistas del menú ahora usan la categoría Música de Minecraft y el tooltip de prueba aclara qué controles afectan el sonido.
+
 ## Version 0.56.0 - Gabinete sonoro compacto
 
 El gabinete mantiene la lista, los tres controles de volumen, la prueba y el regreso dentro del pergamino en ventanas bajas. En un mundo activo conserva el velo fijo y no dispara el hallazgo del gramófono silencioso.
