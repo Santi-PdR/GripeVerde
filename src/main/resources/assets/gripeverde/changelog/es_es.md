@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.56.0 - Gabinete sonoro compacto
+
+El gabinete mantiene la lista, los tres controles de volumen, la prueba y el regreso dentro del pergamino en ventanas bajas. En un mundo activo conserva el velo fijo y no dispara el hallazgo del gramófono silencioso.
+
 ## Version 0.55.0 - Repaso de textos en español
 
 Se corrigieron tildes omitidas en los textos del menú y se unificó el trato al jugador. No cambian las pantallas ni su comportamiento.
