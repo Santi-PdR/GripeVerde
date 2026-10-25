@@ -62,13 +62,24 @@ public class ScreenEventHandler {
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
+
+        Minecraft mc = Minecraft.getInstance();
+        if (mc == null) return;
+        // v0.64.0: el audio exclusivo del gabinete debe apagarse al entrar
+        // a un mundo, aunque ninguna pantalla del mod siga recibiendo ticks.
+        if (mc.level != null) {
+            try { com.eternalcraft.gripeverde.client.audio.MenuMusic.stop(); }
+            catch (Throwable ignored) {}
+            try { com.eternalcraft.gripeverde.client.audio.MenuAmbience.stop(); }
+            catch (Throwable ignored) {}
+        }
+
         // v0.23.0: el atajo de depuracion Ctrl+0 queda desactivado por defecto.
         if (!debugShortcutEnabled()) {
             ctrlZeroLatch = false;
             return;
         }
-        Minecraft mc = Minecraft.getInstance();
-        if (mc == null || mc.level == null || mc.getWindow() == null) {
+        if (mc.level == null || mc.getWindow() == null) {
             ctrlZeroLatch = false;
             return;
         }
