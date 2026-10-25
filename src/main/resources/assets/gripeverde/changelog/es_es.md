@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.74.0 - Encabezados más claros en la guía
+
+El título y el subtítulo del manual ahora usan el estilo centrado regular del diario, sin la sombra negra automática de Minecraft.
+
 ## Version 0.73.0 - Notas fuera de la mesa principal
 
 Las notas contextuales ya no se dibujan sobre los controles de la portada. Se conservan en cola y aparecen dentro de las páginas de papel al abrirlas.
