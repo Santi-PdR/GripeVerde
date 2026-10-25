@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.95.0 - Niveles de sonido en vivo
+
+El gabinete de sonido ahora muestra los niveles actuales de música, ambiente y efectos de interfaz mientras los ajustas, con etiquetas traducidas.
+
 ## Version 0.94.0 - El cronista saluda
 
 Mostrar los saludos de sesión en la portada como notas de papel discretas y estáticas durante doce segundos. Ocultarlas en diseños compactos, ajustar su texto al papel y evitar que las frases de vigilia largas se salgan de ventanas estrechas.
