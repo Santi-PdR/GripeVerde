@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.96.0 - Niveles de sonido de Minecraft
+
+Mostrar junto a los niveles del mod el volumen de las categorías Música y Ambiente de Minecraft para detectar con facilidad si alguna está silenciada.
+
 ## Version 0.95.0 - Niveles de sonido en vivo
 
 El gabinete de sonido ahora muestra los niveles actuales de música, ambiente y efectos de interfaz mientras los ajustas, con etiquetas traducidas.

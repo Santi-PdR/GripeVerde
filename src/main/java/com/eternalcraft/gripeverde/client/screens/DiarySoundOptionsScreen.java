@@ -22,6 +22,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.SoundOptionsScreen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundSource;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Field;
@@ -339,6 +340,21 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         ).getString();
     }
 
+    /** Shows Minecraft's category levels, which multiply the mod's own mix. */
+    private String minecraftMixSubtitle() {
+        float musicLevel = this.minecraft != null
+            ? this.minecraft.options.getSoundSourceVolume(SoundSource.MUSIC)
+            : 0.0f;
+        float ambienceLevel = this.minecraft != null
+            ? this.minecraft.options.getSoundSourceVolume(SoundSource.AMBIENT)
+            : 0.0f;
+        return Component.translatable(
+            "gripeverde.options.sound.minecraft_levels",
+            percentText(musicLevel),
+            percentText(ambienceLevel)
+        ).getString();
+    }
+
     private Component ambienceToggleLabel() {
         return Component.translatable(MenuAmbience.isMuted()
             ? "gripeverde.options.sound.ambience_off"
@@ -376,10 +392,18 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         }
 
         // --- Subtitulo ---
-        String subtitle = "- " + audioMixSubtitle() + " -";
+        String subtitle = "- " + (compact ? minecraftMixSubtitle() : audioMixSubtitle()) + " -";
         subtitle = DiaryChrome.fitText(this.font, subtitle, Math.max(0, this.panelW - 28));
         int subWC = this.font.width(subtitle);
         g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + (compact ? 11 : 12), DiaryChrome.INK_SUBTITLE, false);
+        if (!compact) {
+            String minecraftLevels = "- " + minecraftMixSubtitle() + " -";
+            minecraftLevels = DiaryChrome.fitText(this.font, minecraftLevels,
+                Math.max(0, this.panelW - 28));
+            int mcLevelsW = this.font.width(minecraftLevels);
+            g.drawString(this.font, minecraftLevels, titleX - mcLevelsW / 2,
+                titleY + 22, DiaryChrome.INK_SUBTITLE, false);
+        }
 
         // --- Flavor ---
         // v0.30.0: solo si hay aire real sobre los sliders; jamas pisado,
@@ -398,14 +422,14 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
                 : "gripeverde.options.sound.track_paused").getString();
         }
         int sliderTop = musicSliderY();
-        if (!compact && titleY + 24 + this.font.lineHeight <= sliderTop - 6) {
+        if (!compact && titleY + 32 + this.font.lineHeight <= sliderTop - 6) {
             String flavorShown = DiaryChrome.fitText(this.font, flavor, Math.max(0, this.panelW - 32));
             int flvWC = this.font.width(flavorShown);
-            g.drawString(this.font, flavorShown, (this.width - flvWC) / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
+            g.drawString(this.font, flavorShown, (this.width - flvWC) / 2, titleY + 32, DiaryChrome.INK_FLAVOR, false);
         }
 
         // --- Divisor superior ---
-        int divY1 = compact ? this.panelY + 30 : titleY + 42;
+        int divY1 = compact ? this.panelY + 30 : titleY + 44;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY1);
 
         // --- Lista vanilla sin gradientes blancos ni bandejas extra ---
