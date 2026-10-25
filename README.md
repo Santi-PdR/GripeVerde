@@ -5,6 +5,10 @@ Ambientación victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Versión actual
 
+**v0.57.0 - Niveles de audio visibles**
+
+El gabinete sonoro muestra los niveles actuales de música, ambiente y efectos de interfaz. La banda sonora del menú ahora respeta la categoría Música de Minecraft, y la prueba aclara cómo distinguir el nivel SFX del volumen maestro.
+
 **v0.56.0 - Gabinete sonoro compacto**
 
 El gabinete de sonido se reorganizó para ventanas bajas: la lista, los controles de volumen, la prueba y el botón de regreso permanecen dentro del pergamino. La escena del mundo mantiene un velo fijo y no dispara el hallazgo del gramófono silencioso.

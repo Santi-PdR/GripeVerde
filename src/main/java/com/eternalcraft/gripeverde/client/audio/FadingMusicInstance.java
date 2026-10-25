@@ -18,7 +18,7 @@ public class FadingMusicInstance extends AbstractSoundInstance implements Tickab
     private final long startMs;
 
     public FadingMusicInstance(SoundEvent sound, float initialVolume, long durationMs) {
-        super(sound.getLocation(), SoundSource.AMBIENT, RandomSource.create());
+        super(sound.getLocation(), SoundSource.MUSIC, RandomSource.create());
         this.volume = initialVolume;
         this.dynamicVolume = initialVolume;
         this.pitch = 1.0f;

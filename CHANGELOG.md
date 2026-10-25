@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.57.0 - Audio mix status
+
+- Show the current music, ambience, and interface SFX levels in the sound cabinet subtitle, including on compact screens.
+- Route title music through Minecraft's Music category so its standard sound control affects the soundtrack as expected.
+- Clarify that the sound preview uses the current mod SFX level and that Minecraft's master volume can still mute it.
+
 ## Version 0.56.0 - Compact sound cabinet
 
 - Reflowed the sound settings for short windows so the options list, three volume controls, sound test, and return button stay within the paper panel.
