@@ -5,6 +5,10 @@ Ambientación victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Versión actual
 
+**v0.69.0 - Audio fluido sin guardados repetidos**
+
+Los deslizadores de música y ambiente actualizan el sonido al moverlos y guardan el ajuste una sola vez al soltar el control.
+
 **v0.68.0 - Menos trabajo por tick durante la partida**
 
 Al entrar a un mundo, la música y la ambientación del menú ahora se detienen una sola vez. La comprobación se rearma al volver al menú.
