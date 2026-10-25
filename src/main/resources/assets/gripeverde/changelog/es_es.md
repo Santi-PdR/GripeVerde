@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.76.0 - Controles quietos durante la partida
+
+Los botones, interruptores y avisos del mod cambian al instante, sin animarse mientras hay un mundo abierto. La portada conserva su movimiento ambiental fuera de la partida.
+
 ## Version 0.75.0 - Una firma que cabe
 
 En ventanas angostas, la portada muestra solo la firma actual y la ajusta al espacio entre el control de música y el borde. En pantallas amplias se conserva la firma anterior tachada.
