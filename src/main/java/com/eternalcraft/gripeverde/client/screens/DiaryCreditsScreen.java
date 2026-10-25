@@ -156,10 +156,7 @@ public class DiaryCreditsScreen extends Screen {
     }
 
     private boolean isEnglish() {
-        try {
-            String lang = net.minecraft.client.Minecraft.getInstance().getLanguageManager().getSelected();
-            return lang == null || lang.startsWith("en_");
-        } catch (Throwable ignored) { return true; }
+        return com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
     }
 
     @Override public void renderBackground(GuiGraphics g) {}
