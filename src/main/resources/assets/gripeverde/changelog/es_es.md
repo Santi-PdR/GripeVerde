@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.80.0 - Avisos de descubrimiento que caben
+
+Los sellos de descubrimiento ahora se ajustan a ventanas estrechas y acortan los nombres largos para permanecer dentro de la pantalla. También corregí las tildes de las fichas y pistas del archivo.
+
 ## Version 0.79.0 - Aclara los controles de sonido
 
 Los reguladores de música y ambiente ahora indican qué categoría de sonido de Minecraft también debe estar activa.

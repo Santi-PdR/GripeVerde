@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.80.0 - Responsive discovery notices
+
+- Keep discovery seals inside narrow windows and shorten long localized titles before drawing them.
+- Correct accents across Spanish discovery names and archive hints.
+
 ## Version 0.79.0 - Explain the Minecraft audio categories
 
 - Clarify that menu music also follows Minecraft's Music category.

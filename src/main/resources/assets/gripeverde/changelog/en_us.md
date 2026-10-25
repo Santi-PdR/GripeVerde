@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.80.0 - Discovery notices that fit
+
+Discovery seals now fit narrow windows and shorten long names to stay inside the screen.
+
 ## Version 0.79.0 - Explain the sound controls
 
 The music and ambience sliders now explain which Minecraft sound category also needs to be audible.
