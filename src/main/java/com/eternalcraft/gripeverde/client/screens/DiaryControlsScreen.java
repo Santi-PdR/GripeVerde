@@ -148,7 +148,7 @@ public class DiaryControlsScreen extends Screen {
         PaperTexture.drawClean(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.TECHNICAL);
 
         // Titulo
-        String titleStr = this.title.getString();
+        String titleStr = DiaryChrome.fitText(this.font, this.title.getString(), Math.max(0, this.panelW - 28));
         int titleX = this.width / 2;
         int titleY = this.panelY + 10;
         {
@@ -158,11 +158,13 @@ public class DiaryControlsScreen extends Screen {
 
         // Subtitulo
         String subtitle = "- " + Component.translatable("gripeverde.options.controls.subtitle").getString() + " -";
+        subtitle = DiaryChrome.fitText(this.font, subtitle, Math.max(0, this.panelW - 28));
         int subWC = this.font.width(subtitle);
         g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
         // Flavor
-        String flavor = Component.translatable("gripeverde.options.controls.flavor").getString();
+        String flavor = DiaryChrome.fitText(this.font,
+            Component.translatable("gripeverde.options.controls.flavor").getString(), Math.max(0, this.panelW - 28));
         int flvWC = this.font.width(flavor);
         g.drawString(this.font, flavor, (this.width - flvWC) / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
 

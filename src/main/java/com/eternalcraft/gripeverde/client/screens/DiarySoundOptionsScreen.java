@@ -253,7 +253,8 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         PaperTexture.drawClean(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.LEDGER);
 
         // --- Titulo ---
-        String titleStr = Component.translatable("options.sounds.title").getString();
+        String titleStr = DiaryChrome.fitText(this.font,
+            Component.translatable("options.sounds.title").getString(), Math.max(0, this.panelW - 28));
         int titleX = this.width / 2;
         int titleY = this.panelY + 10;
         {
@@ -263,6 +264,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
 
         // --- Subtitulo ---
         String subtitle = "- " + Component.translatable("gripeverde.options.sound.subtitle").getString() + " -";
+        subtitle = DiaryChrome.fitText(this.font, subtitle, Math.max(0, this.panelW - 28));
         int subWC = this.font.width(subtitle);
         g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
@@ -272,8 +274,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         String flavor = Component.translatable("gripeverde.options.sound.flavor").getString();
         int sliderTop = this.panelY + this.panelH - 108;
         if (titleY + 24 + this.font.lineHeight <= sliderTop - 6) {
-            String flavorShown = this.font.width(flavor) <= this.panelW - 32 ? flavor
-                : this.font.plainSubstrByWidth(flavor, Math.max(0, this.panelW - 32 - this.font.width("..."))) + "...";
+            String flavorShown = DiaryChrome.fitText(this.font, flavor, Math.max(0, this.panelW - 32));
             int flvWC = this.font.width(flavorShown);
             g.drawString(this.font, flavorShown, (this.width - flvWC) / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
         }

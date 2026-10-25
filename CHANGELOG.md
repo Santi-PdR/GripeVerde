@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.50.0 - Localized headers fit every panel
+
+- Added a shared single-line fitting helper for localized headers and flavor lines across the remaining settings, archive, and confirmation screens.
+- Wrapped confirmation text to the actual panel width at compact resolutions. Kept English and Spanish content, existing navigation, and gameplay rendering intact.
+
 ## Version 0.49.0 - Multiplayer actions for compact screens
 
 - Kept all seven multiplayer actions inside the available panel width at compact resolutions, using short localized labels with full-name tooltips when needed.

@@ -141,7 +141,7 @@ public class DiaryConfirmScreen extends ConfirmScreen {
 
         // Titulo
         int titleY = panelY + 18;
-        String titleStr = this.title.getString();
+        String titleStr = DiaryChrome.fitText(this.font, this.title.getString(), Math.max(0, panelW - 48));
         int titleW = this.font.width(titleStr);
         gfx.drawString(this.font, titleStr, (this.width - titleW) / 2, titleY, DiaryChrome.INK_TITLE, false);
 
@@ -151,7 +151,7 @@ public class DiaryConfirmScreen extends ConfirmScreen {
 
         // Mensaje multilinea (propio, no toco el vanilla)
         if (this.ownMultilineMessage == null && this.ownMessage != null) {
-            this.ownMultilineMessage = MultiLineLabel.create(this.font, this.ownMessage, PANEL_MAX_W - 40);
+            this.ownMultilineMessage = MultiLineLabel.create(this.font, this.ownMessage, Math.max(1, panelW - 40));
         }
         if (this.ownMultilineMessage != null) {
             int msgY = titleY + 28;
@@ -164,6 +164,7 @@ public class DiaryConfirmScreen extends ConfirmScreen {
                 String line = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
                     ? "The cabinet remembers what you destroy."
                     : "El gabinete recuerda lo que destruyes.";
+                line = DiaryChrome.fitText(this.font, line, Math.max(0, panelW - 32));
                 int lw = this.font.width(line);
                 gfx.drawString(this.font, line, (this.width - lw) / 2, panelY + panelH - 42,
                     com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0xFF6E1F16, 150), false);

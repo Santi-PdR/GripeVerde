@@ -157,14 +157,16 @@ public class DiarySkinCustomizationScreen extends Screen {
         int cx = this.width / 2;
         int titleY = this.panelY + 12;
         {
-            int tw = this.font.width(this.title);
-            gfx.drawString(this.font, this.title, cx - tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
+            String titleText = DiaryChrome.fitText(this.font, this.title.getString(), Math.max(0, panelW - 28));
+            int tw = this.font.width(titleText);
+            gfx.drawString(this.font, titleText, cx - tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
         }
 
         // Subtitulo
         int subtitleY = titleY + 12;
         {
             String subC = "- " + Component.translatable("gripeverde.options.skin.subtitle").getString() + " -";
+            subC = DiaryChrome.fitText(this.font, subC, Math.max(0, panelW - 28));
             int sw = this.font.width(subC);
             gfx.drawString(this.font, subC, cx - sw / 2, subtitleY, DiaryChrome.INK_SUBTITLE, false);
         }
@@ -172,7 +174,8 @@ public class DiarySkinCustomizationScreen extends Screen {
         // Flavor
         int flavorY = subtitleY + 13;
         {
-            Component flvC = Component.translatable("gripeverde.options.skin.flavor");
+            String flvC = DiaryChrome.fitText(this.font,
+                Component.translatable("gripeverde.options.skin.flavor").getString(), Math.max(0, panelW - 28));
             int fw = this.font.width(flvC);
             gfx.drawString(this.font, flvC, cx - fw / 2, flavorY, DiaryChrome.INK_FLAVOR, false);
         }

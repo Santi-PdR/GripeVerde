@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.50.0 - Encabezados adaptados al pergamino
+
+Los títulos, subtítulos y textos de ambiente ahora respetan el ancho del pergamino en las pantallas restantes de ajustes, archivo y confirmación. Los mensajes de confirmación también se ajustan al panel en resoluciones compactas, sin alterar la navegación.
+
 ## Version 0.49.0 - Acciones multijugador compactas
 
 Las acciones multijugador ahora caben en el panel a resoluciones compactas. Cuando hace falta, se muestran rótulos breves en español e inglés y los tooltips conservan el nombre completo. El título y el subtítulo respetan el ancho del pergamino.

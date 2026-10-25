@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.50.0 - Localized headers fit every panel
+
+Localized titles, subtitles, and flavor lines now fit within the parchment panels across the remaining settings, archive, and confirmation screens. Confirmation messages also wrap to the actual panel width at compact resolutions, keeping text readable without changing navigation.
+
 ## Version 0.49.0 - Compact multiplayer actions
 
 The multiplayer actions now fit within the available panel at compact resolutions. Short English and Spanish labels appear when needed, and tooltips retain each full action name. The heading and subtitle stay within the parchment.

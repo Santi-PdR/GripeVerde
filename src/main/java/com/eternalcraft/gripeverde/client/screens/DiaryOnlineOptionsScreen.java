@@ -110,7 +110,7 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
         PaperTexture.drawClean(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.OFFICIAL);
 
         // Titulo
-        String titleStr = this.title.getString();
+        String titleStr = DiaryChrome.fitText(this.font, this.title.getString(), Math.max(0, this.panelW - 28));
         int titleX = this.width / 2;
         int titleY = this.panelY + 12;
         int tw = this.font.width(titleStr);
@@ -118,9 +118,11 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
 
         // Subtitulo diegetico
         String subtitle = "- " + Component.translatable("gripeverde.options.online.subtitle").getString() + " -";
+        subtitle = DiaryChrome.fitText(this.font, subtitle, Math.max(0, this.panelW - 28));
         int subW = this.font.width(subtitle);
         g.drawString(this.font, subtitle, titleX - subW / 2, titleY + 14, DiaryChrome.INK_SUBTITLE, false);
-        String flavor = Component.translatable("gripeverde.options.online.flavor").getString();
+        String flavor = DiaryChrome.fitText(this.font,
+            Component.translatable("gripeverde.options.online.flavor").getString(), Math.max(0, this.panelW - 28));
         int flavorW = this.font.width(flavor);
         g.drawString(this.font, flavor, titleX - flavorW / 2, titleY + 26, DiaryChrome.INK_FLAVOR, false);
 

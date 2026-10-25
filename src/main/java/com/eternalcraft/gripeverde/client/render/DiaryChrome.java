@@ -193,6 +193,20 @@ public final class DiaryChrome {
         gfx.drawString(font, s, cx - w / 2, y, color, false);
     }
 
+    /**
+     * Keeps localized single-line labels inside their panel while preserving
+     * the start of the text and marking any clipped tail.
+     */
+    public static String fitText(Font font, String text, int maxWidth) {
+        if (font == null || text == null || text.isEmpty()) return "";
+        int limit = Math.max(0, maxWidth);
+        if (font.width(text) <= limit) return text;
+        String ellipsis = "...";
+        int ellipsisWidth = font.width(ellipsis);
+        if (ellipsisWidth > limit) return font.plainSubstrByWidth(text, limit);
+        return font.plainSubstrByWidth(text, limit - ellipsisWidth) + ellipsis;
+    }
+
 
     // ── Scrollbars ───────────────────────────────────────────────────────────
     public static void drawScrollThumb(GuiGraphics gfx, int scrollLeft,
