@@ -1,4 +1,9 @@
 # Eternal Craft: Gripe Verde
+
+## Version 0.45.0 - Interface sound controls
+
+The sound cabinet now has a persistent interface SFX slider and a preview button. It controls menu clicks, hovers, scrolling, notifications and custom UI sounds, while Minecraft's own sound settings remain in effect.
+
 ## Version 0.44.0 - Clearer survivor screens
 
 The title screen no longer shows the rotating lower-right quarantine report. The pinned server is now Outbreak.exaroton.me:24652. Button text is drawn once for a cleaner weight, UI sounds are easier to hear, and archival papers gain subtle static folds. Diary transitions are skipped for the inventory and throughout a live world. Only US English and Spain Spanish remain as packaged locales.

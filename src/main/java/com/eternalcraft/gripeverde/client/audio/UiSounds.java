@@ -49,6 +49,7 @@ public class UiSounds {
         COOLDOWNS.put("modal", 500L);
         COOLDOWNS.put("tab", 80L);
         COOLDOWNS.put("success", 300L);
+        COOLDOWNS.put("test", 350L);
         // v0.26.0: llaves propias para los legacy recableados a sus eventos
         COOLDOWNS.put("clean", 90L);
         COOLDOWNS.put("click_create", 150L);
@@ -94,6 +95,11 @@ public class UiSounds {
 
     public static void notification() {
         safePlay("notif", ModSounds.UI_NOTIFICATION, VOL_NOTIF, 0.98f + rand(0.04f));
+    }
+
+    /** Plays a short preview through the user's UI sound setting and Minecraft controls. */
+    public static void testSound() {
+        safePlay("test", ModSounds.UI_SUCCESS, 0.58f, 1.0f);
     }
 
     // ── Legacy compat ──
@@ -142,7 +148,7 @@ public class UiSounds {
     public static void playRaw(SoundEvent sound, float volume, float pitch) {
         Minecraft mc = Minecraft.getInstance();
         if (mc == null) return;
-        mc.getSoundManager().play(SimpleSoundInstance.forUI(sound, pitch, volume));
+        mc.getSoundManager().play(SimpleSoundInstance.forUI(sound, pitch, scaledVolume(volume)));
     }
 
     public static void playCustom(SoundEvent s, float v, float p) { playRaw(s, v, p); }
@@ -168,7 +174,7 @@ public class UiSounds {
         lastPlayed.put(key, now);
         Minecraft mc = Minecraft.getInstance();
         if (mc == null || mc.getSoundManager() == null) return;
-        mc.getSoundManager().play(SimpleSoundInstance.forUI(sound, pitch, volume));
+        mc.getSoundManager().play(SimpleSoundInstance.forUI(sound, pitch, scaledVolume(volume)));
     }
 
     private static void safePlay(String key, net.minecraftforge.registries.RegistryObject<SoundEvent> ro,
@@ -178,6 +184,14 @@ public class UiSounds {
         try { se = ro.get(); } catch (Exception ex) { return; }
         if (se == null) return;
         play(key, se, volume, pitch);
+    }
+
+    private static float scaledVolume(float volume) {
+        try {
+            return volume * com.eternalcraft.gripeverde.config.ClientConfig.UI_VOLUME.get().floatValue();
+        } catch (Throwable ignored) {
+            return volume;
+        }
     }
 
     private static float rand(float range) {
