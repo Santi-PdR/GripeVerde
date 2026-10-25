@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.83.0 - Texto en español más claro
+
+Corregí tildes que faltaban en la cuarentena, la pausa, el manual y las opciones. Unifiqué las instrucciones en segunda persona y aclaré las ayudas de sonido en español.
+
 ## Version 0.82.0 - Notas del cronista más legibles
 
 Las notas horizontales ahora caben en la ventana y usan una pequeña tira de papel para mejorar el contraste. También recuperé las tildes del texto en español.

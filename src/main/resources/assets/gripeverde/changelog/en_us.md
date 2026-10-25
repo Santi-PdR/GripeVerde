@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.83.0 - Polished Spanish copy
+
+Correct missing accents in Spanish menu and field-guide text, use consistent direct address, and make the sound controls clearer in Spanish. English strings and localization placeholders remain unchanged.
+
 ## Version 0.82.0 - Readable chronicler notes
 
 Horizontal notes now stay within the window and sit on a small paper strip for contrast. Spanish notes also regain their accents.
