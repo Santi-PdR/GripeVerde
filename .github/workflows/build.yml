@@ -31,6 +31,8 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew --no-daemon clean build
+      - name: Verify mirrored assets and localization
+        run: python3 tools/verify_mirrors.py
       - name: Upload mod JAR
         uses: actions/upload-artifact@v4
         with:
