@@ -124,7 +124,7 @@
     "gripeverde.options.sound.ui_slider": "Efectos de interfaz",
     "gripeverde.options.sound.ui_slider.tooltip": "Ajusta los clics, los avisos y los sonidos al pasar por botones.",
     "gripeverde.options.sound.test_button": "Probar",
-    "gripeverde.options.sound.test_button.tooltip": "Reproduce un sonido breve con el volumen actual.",
+    "gripeverde.options.sound.test_button.tooltip": "Prueba este sonido al nivel de efectos actual. Si no se oye, comprueba el volumen general de Minecraft.",
     "gripeverde.field_guide.section.rescue_protocol": "PROTOCOLO DE PRIMERA RESPUESTA",
     "gripeverde.field_guide.body.rescue_alert": "La alerta global de atrapado indica que un compañero está pineado. No puede liberarse por sí solo: ve a ayudarlo y quítale el PIN.",
     "gripeverde.field_guide.body.rescue_downed": "Con 0 corazones, quédate junto al superviviente incapacitado. Mantén pulsado el botón derecho durante 5 segundos, sin recibir daño, para reanimarlo.",
