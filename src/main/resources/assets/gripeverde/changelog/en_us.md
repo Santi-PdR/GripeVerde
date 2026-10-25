@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.76.0 - Still controls during play
+
+Mod buttons, toggles, and alert accents now switch immediately instead of animating whenever a world is open. The title menu keeps its atmospheric motion outside gameplay.
+
 ## Version 0.75.0 - A signature that fits
 
 On narrow title layouts, only the current signature appears, clipped to the space between the music control and the right edge. Wide layouts keep the crossed-out previous signature.
