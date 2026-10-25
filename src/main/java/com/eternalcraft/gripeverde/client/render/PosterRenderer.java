@@ -341,7 +341,7 @@ public class PosterRenderer {
         return pool[quarantineHeaderIndex][lineIdx];
     }
 
-    private static boolean isEnglishSelected() {
+    private static boolean isEnglish() {
         return com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
     }
 
