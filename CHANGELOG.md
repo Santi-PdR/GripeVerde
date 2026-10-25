@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.90.0 - Bilingual title notes
+
+- Move chronicler greetings and long-idle vigil lines into the English and Spanish language files.
+- Restore Spanish accents and use consistent direct address.
+
 ## Version 0.89.0 - Legible Ghoul headings
 
 - Use dark teal ink for field-guide section headings, including hover and keyboard focus states.
