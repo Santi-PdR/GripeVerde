@@ -72,8 +72,12 @@ public class DiaryTitleScreen extends Screen {
         super(Component.translatable("gripeverde.title.window"));
     }
 
+    private boolean isCompactLayout() {
+        return this.width < 620;
+    }
+
     private boolean isMinimalMode() {
-        return this.height < MINIMAL_MODE_THRESHOLD;
+        return this.height < MINIMAL_MODE_THRESHOLD || isCompactLayout();
     }
 
     private static boolean reducedMotion() {
@@ -145,15 +149,24 @@ public class DiaryTitleScreen extends Screen {
         MenuAmbience.start();
         MenuMusic.start();
 
+        boolean compactLayout = isCompactLayout();
         LayoutRegion leftCol = leftColumn();
 
-        int btnX = leftCol.x;
+        int btnX = compactLayout
+            ? Math.max(8, Math.min(20, this.width / 16))
+            : leftCol.x;
+        int mainButtonW = compactLayout
+            ? Math.max(1, Math.min(BTN_W, this.width - btnX * 2))
+            : BTN_W;
         int totalBtnH = BTN_H * 2 + Spacing.GAP_MEDIUM;
-        int btnY = leftCol.anchorY(Anchor.BOT_LEFT, totalBtnH)
+        LayoutRegion buttonColumn = compactLayout
+            ? LayoutRegion.screen(this.width, this.height).inset(btnX)
+            : leftCol;
+        int btnY = buttonColumn.anchorY(Anchor.BOT_LEFT, totalBtnH)
                    - Spacing.GAP_LARGE;
 
         this.addRenderableWidget(new GreenFluButton(
-            btnX, btnY, BTN_W, BTN_H,
+            btnX, btnY, mainButtonW, BTN_H,
             Component.translatable("gripeverde.title.button.multiplayer"),
             Component.literal(pickRotatingSubtitle(true)),
             TextureAssets.ICON_BTN_MP,
@@ -161,7 +174,7 @@ public class DiaryTitleScreen extends Screen {
         ));
 
         this.addRenderableWidget(new GreenFluButton(
-            btnX, btnY + BTN_H + Spacing.GAP_MEDIUM, BTN_W, BTN_H,
+            btnX, btnY + BTN_H + Spacing.GAP_MEDIUM, mainButtonW, BTN_H,
             Component.translatable("gripeverde.title.button.mods"),
             Component.literal(pickRotatingSubtitle(false)),
             TextureAssets.ICON_BTN_MODS,
@@ -171,7 +184,23 @@ public class DiaryTitleScreen extends Screen {
         LayoutRegion rightCol = rightColumn();
         int quitX = rightCol.x + rightCol.w - BTN_SLIM_W;
 
-        if (isMinimalMode()) {
+        if (compactLayout) {
+            int slimGap = Spacing.GAP_SMALL;
+            int slimW = Math.max(48, Math.min(BTN_SLIM_W,
+                (this.width - btnX * 2 - slimGap) / 2));
+            int slimRowW = slimW * 2 + slimGap;
+            int slimX = (this.width - slimRowW) / 2;
+            int slimY = Math.max(8, Math.min(36,
+                btnY - BTN_SLIM_H - slimGap));
+
+            this.addRenderableWidget(new SlimButton(slimX, slimY, slimW, BTN_SLIM_H,
+                Component.translatable("gripeverde.title.button.options"),
+                this::onOptions));
+
+            this.addRenderableWidget(new SlimButton(slimX + slimW + slimGap, slimY, slimW, BTN_SLIM_H,
+                Component.translatable("gripeverde.title.button.quit"),
+                () -> this.minecraft.stop()));
+        } else if (isMinimalMode()) {
             // Modo minimal: Adjustments arriba de Quit (apilados verticalmente)
             int quitY = rightCol.anchorY(Anchor.BOT_LEFT, BTN_SLIM_H)
                         - Spacing.GAP_LARGE;
@@ -209,7 +238,7 @@ public class DiaryTitleScreen extends Screen {
 
         // --- Audio control buttons (bottom-left, discrete) ---
         // Boton >> (skip musica) queda solo (AMB removido, ahora en Sonidos)
-        int skipY = this.height - 28;
+        int skipY = compactLayout ? 8 : this.height - 28;
         int skipX = 8;
         int skipW = 36;
         int skipH = 20;
