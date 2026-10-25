@@ -118,23 +118,22 @@ public class DiaryTitleScreen extends Screen {
                 memorySessionBegun = true;
                 com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.beginSession();
                 int kind = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.sessionGreetingKind();
-                boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
                 long absence = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.sessionAbsenceDays();
                 if (kind == 1) {
-                    greetingText = en ? "The cabinet opens for the first time." : "El gabinete abre por primera vez.";
+                    greetingText = Component.translatable("gripeverde.title.greeting.first").getString();
                     com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
                         com.eternalcraft.gripeverde.client.lore.Marginalia.N_FIRST_NIGHT);
                 } else if (kind == 2 && absence >= 7L) {
-                    greetingText = en ? "The dust did not ask why you returned." : "El polvo no pregunto por que volvias.";
+                    greetingText = Component.translatable("gripeverde.title.greeting.return").getString();
                     dustThisSession = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.consumeDust();
                     com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
                         com.eternalcraft.gripeverde.client.lore.Discoveries.DUST);
                     com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
                         com.eternalcraft.gripeverde.client.lore.Marginalia.N_DUST);
                 } else if (kind == 2) {
-                    greetingText = en ? "The cabinet remembers your hand." : "El gabinete recuerda tu mano.";
+                    greetingText = Component.translatable("gripeverde.title.greeting.remembers").getString();
                 } else if (kind == 3) {
-                    greetingText = en ? "Another vigil in the same night." : "Otra vigilia en la misma noche.";
+                    greetingText = Component.translatable("gripeverde.title.greeting.vigil").getString();
                 }
                 if (greetingText != null) greetingShownUntilMs = System.currentTimeMillis() + 12_000L;
                 if (com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.consumeAnniversary()) {
@@ -439,12 +438,11 @@ public class DiaryTitleScreen extends Screen {
     private void drawVigilLine(GuiGraphics g) {
         long idle = System.currentTimeMillis() - lastInteractionMs;
         if (idle < 60_000L) return;
-        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
         String line;
         if (idle < 150_000L) {
-            line = en ? "...are you still there?" : "...¿sigue ahi?";
+            line = Component.translatable("gripeverde.title.vigil.present").getString();
         } else {
-            line = en ? "Do not blink. The fog counts blinks." : "No parpadee. La niebla cuenta los parpadeos.";
+            line = Component.translatable("gripeverde.title.vigil.fog").getString();
         }
         int pulse = reducedMotion() ? 60 : (int)(Math.sin(System.currentTimeMillis() / 700.0) * 22 + 60);
         int wTxt = this.font.width(line);

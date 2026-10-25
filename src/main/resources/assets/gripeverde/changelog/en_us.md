@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.90.0 - Localized title greetings
+
+Move chronicler greetings into the English and Spanish language resources. Correct Spanish accents and keep the vigil notes in direct address.
+
 ## Version 0.89.0 - Legible Ghoul headings
 
 Use dark teal ink for field-guide section headings on parchment, including the hovered and keyboard-focused states. Keep the Ghoul eye glow as decoration and preserve the regular type weight.

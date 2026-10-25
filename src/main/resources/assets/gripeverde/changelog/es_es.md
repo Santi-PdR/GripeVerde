@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.90.0 - Saludos de portada traducidos
+
+Pasar los saludos del cronista a las traducciones de inglés y español. Corregir tildes y mantener las notas de vigilia en trato directo.
+
 ## Version 0.89.0 - Títulos legibles de la guía
 
 Usar tinta teal oscura en los títulos de sección del manual sobre pergamino, incluidos los estados enfocado y resaltado. El brillo de ojos ghoul queda como adorno y se conserva el peso regular de la fuente.
