@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.83.0 - Polished Spanish copy
+
+- Correct missing accents in quarantine posters, the pause screen, the field guide, accessibility text, and sound settings.
+- Replace plural Spain commands with consistent direct address and clarify Spanish sound controls.
+- Preserve English/Spanish localization keys and formatting placeholders.
+
 ## Version 0.82.0 - Readable chronicler notes
 
 - Keep horizontal marginal notes inside narrow windows and place them on a quiet strip of paper for contrast.
