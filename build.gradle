@@ -5,7 +5,7 @@ plugins {
     id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
 }
 
-version = '0.35.0'
+version = '0.36.0'
 group = 'com.eternalcraft.gripeverde'
 base { archivesName = 'gripeverde' }
 
@@ -108,7 +108,7 @@ tasks.register('verifyGripeVerdeLocalization') {
             throw new GradleException('en_us.json root must be a JSON object')
         }
         def baselineKeys = baseline.keySet() as Set
-        def expectedKeyCount = 113
+        def expectedKeyCount = 115
         def problems = []
         if (baselineKeys.size() != expectedKeyCount) {
             problems << "en_us: expected ${expectedKeyCount} keys, found ${baselineKeys.size()}"

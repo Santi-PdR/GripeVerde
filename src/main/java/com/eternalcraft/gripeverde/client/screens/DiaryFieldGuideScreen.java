@@ -26,7 +26,7 @@ public final class DiaryFieldGuideScreen extends Screen {
     };
 
     private static final String[][] ENTRY_KEYS = {
-        { "gripeverde.field_guide.body.infection" },
+        { "gripeverde.field_guide.body.infection", "gripeverde.field_guide.body.mutation_origins", "gripeverde.field_guide.body.ceda_coverup" },
         { "gripeverde.field_guide.body.pins" },
         { "gripeverde.field_guide.body.downed", "gripeverde.field_guide.body.dead" },
         { "gripeverde.field_guide.body.supplies", "gripeverde.field_guide.body.difficulty" },
