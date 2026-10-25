@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.54.0 - Prueba de sonido clara
+
+El tooltip de prueba explica que usa el nivel actual de efectos de interfaz y que el volumen general de Minecraft también determina si se oye.
+
 ## Version 0.53.0 - Manual de campo claro
 
 El manual en español ahora usa un trato uniforme, tildes correctas e instrucciones más claras para reanimar al equipo. No cambió el comportamiento del juego ni se añadieron animaciones con la partida activa.
