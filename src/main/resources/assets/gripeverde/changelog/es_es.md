@@ -1,4 +1,9 @@
 # Eternal Craft: Gripe Verde
+
+## Version 0.45.0 - Control del sonido de interfaz
+
+El gabinete sonoro ahora incluye un regulador persistente para los efectos SFX de la interfaz y un botón de prueba. Controla clics, sonidos al pasar por botones, desplazamiento, avisos y efectos propios, respetando también los ajustes de audio de Minecraft.
+
 ## Version 0.44.0 - Interfaz más clara para sobrevivir
 
 La pantalla principal ya no muestra el parte de cuarentena giratorio de abajo a la derecha. El servidor fijado ahora es Outbreak.exaroton.me:24652. El texto de los botones se dibuja una sola vez, los sonidos de interfaz se oyen mejor y los papeles de archivo tienen pliegues estáticos y sutiles. Las transiciones del diario se omiten al abrir el inventario y durante toda partida. Se conservan únicamente los idiomas principales: inglés de EE. UU. y español de España.

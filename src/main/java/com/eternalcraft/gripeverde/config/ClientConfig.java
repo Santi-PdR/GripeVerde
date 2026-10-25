@@ -12,6 +12,7 @@ public final class ClientConfig {
     public static final ForgeConfigSpec.DoubleValue MUSIC_VOLUME;
     public static final ForgeConfigSpec.BooleanValue AMBIENCE_ENABLED;
     public static final ForgeConfigSpec.DoubleValue AMBIENCE_VOLUME;
+    public static final ForgeConfigSpec.DoubleValue UI_VOLUME;
     public static final ForgeConfigSpec.IntValue OPEN_COUNT;
     public static final ForgeConfigSpec.BooleanValue REDUCED_MOTION;
     public static final ForgeConfigSpec.BooleanValue REDUCE_FLASHES;
@@ -31,6 +32,9 @@ public final class ClientConfig {
         AMBIENCE_VOLUME = b
             .comment("Volumen de los sonidos ambientales del menu (0.0 - 1.0).")
             .defineInRange("ambienceVolume", 1.0, 0.0, 1.0);
+        UI_VOLUME = b
+            .comment("Volumen de los efectos de interfaz del mod (0.0 - 1.0).")
+            .defineInRange("uiVolume", 1.0, 0.0, 1.0);
         OPEN_COUNT = b
             .comment("Numero de veces que se abrio el juego (contador persistente).")
             .defineInRange("openCount", 0, 0, 999999);

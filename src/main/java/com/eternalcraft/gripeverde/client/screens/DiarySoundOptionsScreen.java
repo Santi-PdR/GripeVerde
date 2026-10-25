@@ -7,6 +7,8 @@ import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import com.eternalcraft.gripeverde.client.widgets.DiaryMusicSlider;
 import com.eternalcraft.gripeverde.client.widgets.DiaryAmbienceSlider;
+import com.eternalcraft.gripeverde.client.widgets.DiarySlider;
+import com.eternalcraft.gripeverde.config.ClientConfig;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
@@ -50,6 +52,8 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     private final SmoothScroll smoothScroll = new SmoothScroll();
     private DiaryMusicSlider musicSlider;
     private DiaryAmbienceSlider ambienceSlider;
+    private DiarySlider uiVolumeSlider;
+    private DiaryButton testUiSoundButton;
 
     public DiarySoundOptionsScreen(Screen parent, Options options) {
         super(parent, options);
@@ -71,7 +75,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             this.reflectedList.setRenderTopAndBottom(false);
 
             int listTop = this.panelY + 45;
-            int listBottom = this.panelY + this.panelH - 100; // deja hueco para 2 sliders + divisor + boton
+            int listBottom = this.panelY + this.panelH - 118; // reserva espacio para los tres controles de audio
             this.reflectedList.updateSize(this.width, this.height, listTop, listBottom);
             this.smoothScroll.snapToCurrent(this.reflectedList);
         }
@@ -93,17 +97,45 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         // Slider propio de musica del mod, debajo de la lista
         int sliderW = this.panelW - 40;
         int sliderX = this.panelX + 20;
-        int sliderY = this.panelY + this.panelH - 82;
+        int sliderY = this.panelY + this.panelH - 108;
         this.musicSlider = new DiaryMusicSlider(sliderX, sliderY, sliderW, SLIDER_H);
         this.addRenderableWidget(this.musicSlider);
 
-        // Slider de ambiente: mas pequeno, debajo del de musica
-        int ambSliderH = 14;
-        int ambSliderW = sliderW * 3 / 4;  // 75% del ancho del principal
+        // El ambiente y los efectos SFX quedan separados para ajustar cada capa.
+        int compactH = 14;
+        int ambSliderW = sliderW * 3 / 4;
         int ambSliderX = sliderX + (sliderW - ambSliderW) / 2;
         int ambSliderY = sliderY + SLIDER_H + 2;
-        this.ambienceSlider = new DiaryAmbienceSlider(ambSliderX, ambSliderY, ambSliderW, ambSliderH);
+        this.ambienceSlider = new DiaryAmbienceSlider(ambSliderX, ambSliderY, ambSliderW, compactH);
         this.addRenderableWidget(this.ambienceSlider);
+
+        int uiSliderY = ambSliderY + compactH + 2;
+        int testButtonW = 58;
+        int uiSliderW = sliderW - testButtonW - 6;
+        this.uiVolumeSlider = new DiarySlider(
+            sliderX, uiSliderY, uiSliderW, compactH,
+            ClientConfig.UI_VOLUME.get(),
+            value -> Component.translatable("gripeverde.options.sound.ui_slider").getString()
+                + ": " + (int) Math.round(value * 100.0) + "%",
+            value -> {
+                ClientConfig.UI_VOLUME.set(value);
+                ClientConfig.UI_VOLUME.save();
+            },
+            false
+        );
+        this.uiVolumeSlider.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
+            Component.translatable("gripeverde.options.sound.ui_slider.tooltip")));
+        this.addRenderableWidget(this.uiVolumeSlider);
+
+        this.testUiSoundButton = new DiaryButton(
+            sliderX + uiSliderW + 6, uiSliderY, testButtonW, compactH,
+            Component.translatable("gripeverde.options.sound.test_button"),
+            DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
+            DiaryButton.SoundProfile.NONE, com.eternalcraft.gripeverde.client.audio.UiSounds::testSound
+        );
+        this.testUiSoundButton.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
+            Component.translatable("gripeverde.options.sound.test_button.tooltip")));
+        this.addRenderableWidget(this.testUiSoundButton);
 
         // Boton Volver estilo diario
         int btnW = 120;
@@ -238,7 +270,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         // v0.30.0: solo si hay aire real sobre los sliders; jamas pisado,
         // jamas al medio. Si el panel es bajo, se omite.
         String flavor = Component.translatable("gripeverde.options.sound.flavor").getString();
-        int sliderTop = this.panelY + this.panelH - 82;
+        int sliderTop = this.panelY + this.panelH - 108;
         if (titleY + 24 + this.font.lineHeight <= sliderTop - 6) {
             String flavorShown = this.font.width(flavor) <= this.panelW - 32 ? flavor
                 : this.font.plainSubstrByWidth(flavor, Math.max(0, this.panelW - 32 - this.font.width("..."))) + "...";
@@ -258,11 +290,11 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         }
 
         // --- Divisor entre lista y slider ---
-        int divY2 = this.panelY + this.panelH - 88;
+        int divY2 = this.panelY + this.panelH - 114;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
 
         // --- Divisor inferior + esquineros ---
-        int divY3 = this.panelY + this.panelH - 38;
+        int divY3 = this.panelY + this.panelH - 50;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY3);
         DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
         DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. II");

@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.45.0 - UI sound control
+
+- Added a persistent interface SFX volume slider and a test sound button to the sound cabinet.
+- The slider controls button, hover, scroll, notification and custom UI sound playback while respecting Minecraft's own audio settings.
+
+
 ## Version 0.44.0 - Clearer survivor screens
 
 - Removed the rotating lower-right quarantine dispatch from the title screen.
