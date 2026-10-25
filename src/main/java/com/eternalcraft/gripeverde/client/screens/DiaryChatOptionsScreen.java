@@ -199,8 +199,7 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
     }
 
     private static String[] getChatFlavorPool() {
-        String lang = net.minecraft.client.Minecraft.getInstance().getLanguageManager().getSelected();
-        boolean english = lang == null || lang.startsWith("en_") || lang.equals("en_us");
+        boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
         return english ? CHAT_FLAVOR_POOL_EN : CHAT_FLAVOR_POOL_ES;
     }
 
