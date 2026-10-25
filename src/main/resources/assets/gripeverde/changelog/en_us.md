@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.82.0 - Readable chronicler notes
+
+Horizontal notes now stay within the window and sit on a small paper strip for contrast. Spanish notes also regain their accents.
+
 ## Version 0.81.0 - Aged field paper
 
 Give fixed in-world paper panels worn corners and a quiet fold highlight. The effect uses a few static fills, with no animation or tick work during play.

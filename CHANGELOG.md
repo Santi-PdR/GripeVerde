@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.82.0 - Readable chronicler notes
+
+- Keep horizontal marginal notes inside narrow windows and place them on a quiet strip of paper for contrast.
+- Restore Spanish accents in the chronicler's notes.
+- Keep notes hidden while a world is active.
+
 ## Version 0.81.0 - Aged field paper
 
 - Add restrained, fixed corner wear and a fold highlight to field papers shown over a live world.
