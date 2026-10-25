@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.63.0 - Idioma de respaldo coherente
+
+Como el mod incluye recursos solo en inglés y español, los textos auxiliares usan español únicamente con es_es e inglés con los demás idiomas de Minecraft.
+
 ## Version 0.62.0 - Servidor oficial listo para entrar
 
 Al abrir Multijugador, se selecciona Ghoul Outbreak si no hay otro servidor elegido. El jugador conserva el control y debe pulsar «Entrar» para conectarse.
