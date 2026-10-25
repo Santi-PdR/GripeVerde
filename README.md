@@ -5,7 +5,7 @@ Ambientación victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Versión actual
 
-**v0.58.0 - Avisos quietos durante la partida**
+**v0.58.0 - Avisos estáticos durante la partida**
 
 Las pantallas del diario abiertas desde pausa ya no muestran avisos narrativos animados ni consumen notas pendientes. Las marginales esperan al menú, evitando lecturas y escrituras de archivo mientras el mundo está activo.
 
