@@ -5,6 +5,12 @@ Ambientación victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Versión actual
 
+## Versión actual
+
+**v0.68.0 - Menos trabajo por tick durante la partida**
+
+Al entrar a un mundo, la música y la ambientación del menú ahora se detienen una sola vez. La comprobación se rearma al volver al menú.
+
 **v0.67.0 - Salida remota segura**
 
 El menú de pausa confirma antes de desconectar de una expedición remota. Ctrl+0 solo actúa si se activa el atajo de depuración en la configuración.
