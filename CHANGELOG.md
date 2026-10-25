@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## v0.37.0 - El manual se deja leer
+
+El manual de campo ahora es accesible con el narrador: Tab recorre sus seis capítulos y cada parada anuncia el encabezado junto con sus protocolos. Enter salta al capítulo elegido; el foco queda marcado en azul sobre el papel. El pie también recuerda este recorrido.
+
 ## v0.36.0 - El origen de la fiebre
 
 El manual amplía el expediente de infección: recoge que la genética, la salud y las costumbres locales influyen en las mutaciones, y revela el encubrimiento de 1800. Las autoridades llamaron al brote una gripe común; los ghouls siguen vivos y la Gripe Verde no reanima cadáveres.

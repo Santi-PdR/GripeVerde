@@ -107,7 +107,7 @@
     "gripeverde.field_guide.body.difficulty": "Cada nivel suma desafios, eventos globales y mobs mas fuertes. INSURGENCY e INFERNUM elevan la presion; otras escalas siguen en desarrollo.",
     "gripeverde.field_guide.section.regroup": "SENAL DE REAGRUPAMIENTO",
     "gripeverde.field_guide.body.regroup": "El icono blanco de encuentro sigue a los aliados a mas de 3.000 bloques, incluso en chunks sin cargar. Usalo para volver al grupo.",
-    "gripeverde.field_guide.scroll_hint": "RUEDA · ↑/↓ · REPÁG/AVPÁG · 1–6 / CLIC EN TÍTULO",
+    "gripeverde.field_guide.scroll_hint": "RUEDA · ↑/↓ · REPÁG/AVPÁG · TAB+ENTER · 1–6/CLIC",
     "gripeverde.field_guide.button.close": "VOLVER AL REFUGIO",
     "gripeverde.field_guide.section.races": "RAZAS Y EVOLUCIÓN",
     "gripeverde.field_guide.body.races": "Puedes nacer humano, tiburón, cíborg u otra de las más de 300 razas. Evoluciona de V1 a V4+ al completar acciones o misiones según la rareza de tu raza.",

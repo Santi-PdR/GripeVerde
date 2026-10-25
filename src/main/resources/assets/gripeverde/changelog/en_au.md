@@ -1,6 +1,10 @@
 # Eternal Craft: Gripe Verde
 ## Chronicle under seal
 
+## Version 0.37.0 - The manual can be heard
+
+The field manual now works with Minecraft's narrator: Tab visits its six chapters and each stop reads the heading and its protocols. Enter jumps to the selected chapter, with a visible blue focus mark on the paper. The footer also lists these controls.
+
 ## Version 0.36.0 - The origin of the fever
 
 The infection file now records how local habits, genetics, and health shape mutations, and reveals the 1800 cover-up. Authorities called the outbreak a common flu; Ghouls remain alive, and the Green Flu does not raise corpses.
