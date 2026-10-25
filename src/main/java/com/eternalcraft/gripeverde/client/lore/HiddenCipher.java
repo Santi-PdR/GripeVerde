@@ -191,9 +191,9 @@ public final class HiddenCipher {
         Minecraft mc = Minecraft.getInstance();
         if (mc == null || mc.font == null) return;
         String l1 = en ? "TELEGRAM - 23 MARCH 1897 - 11:52 PM" : "TELEGRAMA - 23 MARZO 1897 - 11:52 PM";
-        String l2 = en ? "LAST REPORT FROM THE WATCH POST:" : "ULTIMO PARTE DEL PUESTO DE VIGIA:";
-        String l3 = en ? "The bell counted thirteen. The watchman did not answer." : "La campana conto trece. El sereno no respondio.";
-        String l4 = en ? "Close the line. No one in. No one out." : "Cierren la linea. Nadie entra. Nadie sale.";
+        String l2 = en ? "LAST REPORT FROM THE WATCH POST:" : "ÚLTIMO PARTE DEL PUESTO DE VIGÍA:";
+        String l3 = en ? "The bell counted thirteen. The watchman did not answer." : "La campana contó trece. El sereno no respondió.";
+        String l4 = en ? "Close the line. No one in. No one out." : "Cierren la línea. Nadie entra. Nadie sale.";
         String l5 = en ? "Signed: no one." : "Firmado: nadie.";
         DiaryChrome.drawCenteredString(g, mc.font, l1, x + bw / 2, y + 14, red);
         DiaryChrome.drawCenteredString(g, mc.font, l2, x + bw / 2, y + 30, ink);
@@ -239,8 +239,8 @@ public final class HiddenCipher {
         if (mc == null || mc.font == null) return;
         String l1 = en ? "TELEGRAM - 21 AUGUST 1897 - 11:52 PM" : "TELEGRAMA - 21 AGOSTO 1897 - 11:52 PM";
         String l2 = en ? "FROM THE CABINET, AFTER THE CLEANSING:" : "DEL GABINETE, TRAS LA LIMPIEZA:";
-        String l3 = en ? "The archive grew thinner. The theme never played." : "El archivo se adelgazo. El tema nunca sono.";
-        String l4 = en ? "The street never existed. Three ghosts left the house." : "La calle nunca existio. Tres fantasmas dejaron la casa.";
+        String l3 = en ? "The archive grew thinner. The theme never played." : "El archivo se adelgazó. El tema nunca sonó.";
+        String l4 = en ? "The street never existed. Three ghosts left the house." : "La calle nunca existió. Tres fantasmas dejaron la casa.";
         String l5 = en ? "Signed: the chronicler, after the cleansing." : "Firmado: el cronista, tras la limpieza.";
         DiaryChrome.drawCenteredString(g, mc.font, l1, x + bw / 2, y + 14, red);
         DiaryChrome.drawCenteredString(g, mc.font, l2, x + bw / 2, y + 30, ink);
@@ -261,7 +261,7 @@ public final class HiddenCipher {
         Minecraft mc = Minecraft.getInstance();
         if (mc == null || mc.font == null) return;
         boolean en = Discoveries.isEnglish();
-        String msg = en ? "...who is reading?" : "...quien esta leyendo?";
+        String msg = en ? "...who is reading?" : "… ¿Quién está leyendo?";
         int mw = mc.font.width(msg);
         int malpha = Math.min(200, (int)(a * 4.5));
         g.drawString(mc.font, msg, w / 2 - mw / 2, h / 2, (malpha << 24) | 0xC8D8A8, false);

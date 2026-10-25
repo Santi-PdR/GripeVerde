@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.92.0 - Texto de archivo en español
+
+Corregir tildes y signos de apertura en los telegramas y mensajes ocultos. Aclarar la nota del contrabando sin cambiar los requisitos de descubrimiento.
+
 ## Version 0.91.0 - Notas legibles en el archivo
 
 Mostrar las notas del cronista en una tira horizontal de papel sobre las fichas en ventanas normales; conservar el margen vertical en pantallas bajas para no tapar el título. Corregir las tildes del estado del archivo.

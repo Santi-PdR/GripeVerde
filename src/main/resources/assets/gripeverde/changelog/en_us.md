@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.92.0 - Polished Spanish archive copy
+
+Restore accents and opening punctuation in the Spanish telegrams and hidden archive lines. Clarify the contraband note while preserving every discovery condition.
+
 ## Version 0.91.0 - Readable archive notes
 
 Show the chronicler's archive note in a compact horizontal paper slip above the records at regular window sizes, keeping the margin fallback for short screens. Restore accents in the Spanish archive status copy.
