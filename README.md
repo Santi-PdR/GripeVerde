@@ -5,6 +5,10 @@ Ambientación victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Versión actual
 
+**v0.54.0 - Prueba de sonido clara**
+
+El botón de prueba ahora explica que usa el nivel de efectos de interfaz y que el volumen general de Minecraft también afecta lo que se oye.
+
 **v0.53.0 - Manual de campo claro**
 
 Se pulió la copia española del manual: tratamiento uniforme, tildes corregidas y pasos de reanimación más claros. No cambia el juego ni agrega animaciones mientras la partida está activa.

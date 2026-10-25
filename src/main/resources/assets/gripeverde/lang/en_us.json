@@ -124,7 +124,7 @@
     "gripeverde.options.sound.ui_slider": "Interface effects",
     "gripeverde.options.sound.ui_slider.tooltip": "Adjust menu clicks, hovers and notifications.",
     "gripeverde.options.sound.test_button": "Test",
-    "gripeverde.options.sound.test_button.tooltip": "Play a short interface sound at the current volume.",
+    "gripeverde.options.sound.test_button.tooltip": "Preview this interface sound at the current SFX level. If it is silent, check Minecraft's master volume.",
     "gripeverde.field_guide.section.rescue_protocol": "FIRST RESPONSE PROTOCOL",
     "gripeverde.field_guide.body.rescue_alert": "A global trapped alert means a teammate is PINNED. They cannot free themselves: reach them and break the PIN.",
     "gripeverde.field_guide.body.rescue_downed": "At 0 hearts, stay beside the downed survivor. Hold right click for 5 seconds without taking damage to revive them.",
