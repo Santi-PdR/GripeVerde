@@ -3,6 +3,10 @@
 
 
 
+## Version 0.33.0 - Manual navigation
+
+The field manual now scrolls with the wheel, arrow keys, and Page Up/Page Down; Home and End jump to either edge. Its scrollbar can also be dragged, and the footer shows the controls. All three navigation methods stay within the paper and keep the return-to-safe-room button available.
+
 ## Version 0.32.0 - The field manual
 
 The uncensored CEDA field copy opens from the quarantine poster. It gathers the server's real protocols: ghouls remain alive, PIN attacks require a rescue, downed survivors can be revived, death requires a defibrillator, supplies dwindle, and difficulty tiers escalate. The manual scrolls with the wheel, returns to the poster, follows the game language, and uses ice-blue details for the infected eyes.

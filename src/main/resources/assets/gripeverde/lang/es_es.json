@@ -107,6 +107,6 @@
     "gripeverde.field_guide.body.difficulty": "Cada nivel suma desafios, eventos globales y mobs mas fuertes. INSURGENCY e INFERNUM elevan la presion; otras escalas siguen en desarrollo.",
     "gripeverde.field_guide.section.regroup": "SENAL DE REAGRUPAMIENTO",
     "gripeverde.field_guide.body.regroup": "El icono blanco de encuentro sigue a los aliados a mas de 3.000 bloques, incluso en chunks sin cargar. Usalo para volver al grupo.",
-    "gripeverde.field_guide.scroll_hint": "USA LA RUEDA PARA LEER EL PARTE",
+    "gripeverde.field_guide.scroll_hint": "RUEDA · ↑/↓ · REPAG/AVPAG",
     "gripeverde.field_guide.button.close": "VOLVER AL REFUGIO"
 }

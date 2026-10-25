@@ -107,6 +107,6 @@
     "gripeverde.field_guide.body.difficulty": "Each level adds challenges, global events, and stronger mobs. INSURGENCY and INFERNUM raise the pressure; other tiers remain in development.",
     "gripeverde.field_guide.section.regroup": "REGROUP SIGNAL",
     "gripeverde.field_guide.body.regroup": "The white rally marker tracks allies beyond 3,000 blocks, even across unloaded chunks. Use it to find your crew again.",
-    "gripeverde.field_guide.scroll_hint": "USE THE WHEEL TO READ THE DISPATCH",
+    "gripeverde.field_guide.scroll_hint": "WHEEL · ↑/↓ · PGUP/PGDN",
     "gripeverde.field_guide.button.close": "RETURN TO SAFE ROOM"
 }
