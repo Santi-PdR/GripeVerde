@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.82.0 - Notas del cronista más legibles
+
+Las notas horizontales ahora caben en la ventana y usan una pequeña tira de papel para mejorar el contraste. También recuperé las tildes del texto en español.
+
 ## Version 0.81.0 - Papel de campo envejecido
 
 Las hojas fijas de las pantallas de partida ahora tienen esquinas gastadas y un pliegue tenue. El efecto usa unos pocos trazos estáticos, sin animaciones ni trabajo por tick durante la partida.

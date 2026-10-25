@@ -163,10 +163,35 @@ public final class Marginalia {
         if (alpha <= 4) return;
         String text = textFor(activeId);
         if (text == null) return;
+
         int chars = (int)Math.min(text.length(), text.length() * Math.min(1.0, age / 2000.0) + 1);
         String shown = text.substring(0, chars);
-        int w = mc.font.width(shown);
-        g.drawString(mc.font, shown, cx - w / 2, y, (alpha << 24) | 0x3D2A18, false);
+        int screenWidth = mc.getWindow().getGuiScaledWidth();
+        int maxTextWidth = Math.max(0, screenWidth - 48);
+        int textWidth = mc.font.width(shown);
+        if (textWidth > maxTextWidth) {
+            String ellipsis = "...";
+            int ellipsisWidth = mc.font.width(ellipsis);
+            shown = maxTextWidth <= ellipsisWidth
+                ? mc.font.plainSubstrByWidth(shown, maxTextWidth)
+                : mc.font.plainSubstrByWidth(shown, maxTextWidth - ellipsisWidth) + ellipsis;
+            textWidth = mc.font.width(shown);
+        }
+        if (shown.isEmpty()) return;
+
+        int cardWidth = textWidth + 12;
+        int cardX = Math.max(6, Math.min(cx - cardWidth / 2, screenWidth - cardWidth - 6));
+        int cardY = Math.max(2, y - 3);
+        int paper = (Math.min(220, alpha + 24) << 24) | 0x00E8DCB4;
+        int edge = (Math.max(0, alpha / 2) << 24) | 0x00735936;
+        int ink = (alpha << 24) | 0x003D2A18;
+
+        // A small paper strip keeps the chronicler's note readable over the
+        // dark title scene and contained on narrow windows.
+        g.fill(cardX, cardY, cardX + cardWidth, cardY + 13, paper);
+        g.fill(cardX, cardY, cardX + cardWidth, cardY + 1, edge);
+        g.fill(cardX, cardY + 12, cardX + cardWidth, cardY + 13, edge);
+        g.drawString(mc.font, shown, cardX + 6, cardY + 3, ink, false);
     }
 
     private static String textFor(String id) {
@@ -186,12 +211,12 @@ public final class Marginalia {
             case N_NIGHT:        return en ? "A whole night over the papers. The dawn is sick too." : "Una noche entera frente a los papeles. El alba tambien enferma.";
             case N_SILENCE:      return en ? "Silence has noise too, if one stays still." : "El silencio tambien tiene ruido, si uno se queda quieto.";
             case N_DESTROY:      return en ? "The cabinet remembers what you destroy." : "El gabinete recuerda lo que destruyes.";
-            case N_LETTERS:      return en ? "Write no more. No one answers here." : "No escribas mas. Nadie responde aqui.";
+            case N_LETTERS:      return en ? "Write no more. No one answers here." : "No escribas mas. Nadie responde aquí.";
             case N_ANNIVERSARY:  return en ? "A year since you first opened the cabinet. No one else ever did." : "Hace un ano abriste el gabinete por primera vez. Nadie mas lo abrio.";
-            case N_PEREIRA:      return en ? "How do you know that name? Forget it. Forget it now." : "¿Como conoces ese nombre? Olvidalo. Olvidalo ahora.";
-            case N_HOLLOWAY:     return en ? "I read what Holloway wrote. I wish I had not." : "Lei lo que escribio Holloway. Ojala no lo hubiera hecho.";
+            case N_PEREIRA:      return en ? "How do you know that name? Forget it. Forget it now." : "¿Como conoces ese nombre? Olvidalo. Olvídalo ahora.";
+            case N_HOLLOWAY:     return en ? "I read what Holloway wrote. I wish I had not." : "Lei lo que escribió Holloway. Ojala no lo hubiera hecho.";
             case N_READER10:     return en ? "Ten findings. I no longer write alone." : "Diez hallazgos. Ya no escribo solo.";
-            case N_CORRECTION:   return en ? "The ink has not yet dried. No: the ink is no longer drying." : "La tinta aun no seco. No: la tinta ya no seca.";
+            case N_CORRECTION:   return en ? "The ink has not yet dried. No: the ink is no longer drying." : "La tinta aún no secó. No: la tinta ya no seca.";
             case N_FIRST_NIGHT:  return en ? "First night. Everything you touch will remember you." : "Primera noche. Todo lo que toques te recordara.";
             case N_OPEN_COUNT:   return en ? "A hundred openings. The cabinet keeps the hours for you now." : "Cien aperturas. El gabinete ya lleva las horas por ti.";
             case N_MANY_CARDS: {
@@ -203,12 +228,12 @@ public final class Marginalia {
             case N_ARCHIVE_COMPLETE: {
                 int total = Discoveries.ALL.length;
                 return en ? total + " cards. The drawer is empty now. Seal it."
-                          : total + " fichas. El cajon ya esta vacio. Sellalo.";
+                          : total + " fichas. El cajón ya está vacío. Séllalo.";
             }
             case N_STORM:        return en ? "Tonight the sky reads the files aloud." : "Esta noche el cielo lee las fichas en voz alta.";
             case N_SEAL:         return en ? "The wax was old. It was asking to be broken." : "El lacre era viejo. Pedia a gritos que lo rompieran.";
             case N_TUNING:       return en ? "The room now sounds like itself. At last." : "La sala ya suena a si misma. Por fin.";
-            case N_FLASH3:       return en ? "Three flashes and you did not blink. The chronicler counted." : "Tres relampagos y no parpadeaste. El cronista conto.";
+            case N_FLASH3:       return en ? "Three flashes and you did not blink. The chronicler counted." : "Tres relámpagos y no parpadeaste. El cronista contó.";
             case N_DROP:         return en ? "Rain can be held for a second. Then it goes back to the sky." : "La lluvia puede sostenerse un segundo. Luego vuelve al cielo.";
             case N_DOCTOR:       return en ? "The doctor's signature keeps arriving on forms nobody sends." : "La firma del doctor sigue llegando en formularios que nadie envia.";
             default: return null;
