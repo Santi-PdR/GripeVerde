@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.91.0 - Notas legibles en el archivo
+
+Mostrar las notas del cronista en una tira horizontal de papel sobre las fichas en ventanas normales; conservar el margen vertical en pantallas bajas para no tapar el título. Corregir las tildes del estado del archivo.
+
 ## Version 0.90.0 - Saludos de portada traducidos
 
 Pasar los saludos del cronista a las traducciones de inglés y español. Corregir tildes y mantener las notas de vigilia en trato directo.
