@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.93.0 - Encontrar al superviviente caído
+
+Añadir el lugar donde queda el cadáver a las dos notas de reanimación de la guía para que el equipo sepa dónde buscar. Mantener las instrucciones en inglés y español.
+
 ## Version 0.92.0 - Texto de archivo en español
 
 Corregir tildes y signos de apertura en los telegramas y mensajes ocultos. Aclarar la nota del contrabando sin cambiar los requisitos de descubrimiento.
