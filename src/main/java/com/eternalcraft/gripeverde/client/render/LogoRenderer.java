@@ -64,8 +64,7 @@ public class LogoRenderer {
     private static final java.util.Random YEAR_RNG = new java.util.Random();
 
     private static String getCurrentYear() {
-        String lang = Minecraft.getInstance().getLanguageManager().getSelected();
-        boolean english = lang == null || lang.startsWith("en_") || lang.equals("en_us");
+        boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
         String[] pool = english ? YEAR_POOL_EN : YEAR_POOL_ES;
         long now = System.currentTimeMillis();
         if (yearIndex < 0 || yearIndex >= pool.length || (now - lastYearRotateMs) >= YEAR_ROTATE_MS) {
