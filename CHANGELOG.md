@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.96.0 - Minecraft sound levels
+
+- Show Minecraft's Music and Ambient category volumes beside the mod's mix in the sound cabinet.
+- Keep the compact sound layout readable while exposing the system-category levels.
+- Bump localization parity to cover the new bilingual label.
+
 ## Version 0.95.0 - Live sound levels
 
 - Show the current mod music, ambience, and interface-effect levels in the sound cabinet subtitle.
