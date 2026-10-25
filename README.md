@@ -5,6 +5,10 @@ Ambientación victoriana bajo cuarentena, epidemia Green Flu.
 
 ## Versión actual
 
+**v0.62.0 - Ghoul Outbreak listo al entrar**
+
+El servidor oficial aparece seleccionado al abrir multijugador si no hay otro seleccionado. El jugador conserva el control y debe pulsar “Entrar” para conectarse.
+
 **v0.61.0 - Actualización ligera de servidores**
 
 La lista multijugador ya no vuelve a leer el archivo de servidores justo antes de abrir una lista nueva. Minecraft carga una sola vez los datos guardados al inicializar la pantalla, evitando trabajo de disco duplicado al agregar, editar, borrar o refrescar servidores.
