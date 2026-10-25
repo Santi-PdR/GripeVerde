@@ -120,7 +120,8 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             value -> {
                 ClientConfig.UI_VOLUME.set(value);
                 ClientConfig.UI_VOLUME.save();
-            }
+            },
+            false
         );
         this.uiVolumeSlider.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
             Component.translatable("gripeverde.options.sound.ui_slider.tooltip")));
