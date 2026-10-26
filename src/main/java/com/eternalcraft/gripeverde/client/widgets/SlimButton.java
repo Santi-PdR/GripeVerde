@@ -111,7 +111,6 @@ public class SlimButton extends AbstractButton {
         g.fill(x + 7, y + 5, x + 9, y + 6, color);
         g.fill(x + 5, y, x + 7, y + 10, color);
     }
-    }
 
     private static String ellipsize(Font font, String text, int maxWidth) {
         if (font.width(text) <= maxWidth) return text;
