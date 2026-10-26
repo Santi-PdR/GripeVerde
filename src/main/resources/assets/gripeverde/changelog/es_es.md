@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.121.0 - Secciones a la vista
+
+Cada título del manual ahora lleva un número impreso que corresponde a los atajos 1–7 del pie. Así se ve qué sección abrirá cada tecla sin tener que contar los títulos. Las marcas son estáticas y solo aparecen en el manual.
+
 ## Version 0.120.0 - Rescates que se leen completos
 
 El aviso usa frases más cortas para que no se pierda ninguna instrucción en la hoja estrecha: otro compañero libera el PIN, alzar toma cinco segundos, quien ayuda debe evitar golpes y el desfibrilador se encuentra en el botín.
