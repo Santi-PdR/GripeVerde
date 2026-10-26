@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.102.0 - The royal decree
+
+Add a small crown-in-wax seal to the rotating royal decree. Keep it inside the paper border and use static shapes on the title screen only.
+
 ## Version 0.101.0 - Clearer sound guidance
 
 Clarify that Minecraft Master and the matching category both multiply mod music and ambience. Keep the bilingual slider help concise and make the controls to check explicit. Playback and world behavior are unchanged.
