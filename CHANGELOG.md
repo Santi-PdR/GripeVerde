@@ -4,6 +4,10 @@
 
 Menu ambience one-shots now use Minecraft's Ambient sound category, matching the looping beds and the Ambient slider. Music remains in Music, and button effects remain in the UI/Effects path.
 
+## Version 0.132.0 - The gramophone keeps its note
+
+The title-screen music button now rebuilds its tooltip only when the music state or language changes, instead of recreating it every tick.
+
 
 ## Version 0.130.0 - A note in the margins
 
