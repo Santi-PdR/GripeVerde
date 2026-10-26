@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.123.0 - Clouds without frame waste
+
+The title sky now reuses its fixed cloud layout instead of rebuilding it on every frame. Their movement and appearance stay the same, with fewer short-lived allocations while the menu is open.
+
 ## Version 0.122.0 - A stamp with room to breathe
 
 The elixir's FRAUDE mark now sits after the bottle line instead of being forced up from the card's bottom edge. It cannot cover the words on a short sheet, and stays hidden if the notice has no room for it. The title notices also have more visible hand-cut corners, with the ink border following the paper edge. Everything remains still on the title screen.
