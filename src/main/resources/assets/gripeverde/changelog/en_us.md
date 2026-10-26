@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.124.0 - A note from the night watch
+
+The title greetings now sound like the chronicler speaking to someone beside him. They use short, everyday English and keep their place in the Ghoul-era story.
+
 ## Version 0.123.0 - Clouds without frame waste
 
 The title sky now reuses its fixed cloud layout instead of rebuilding it on every frame. Their movement and appearance stay the same, with fewer short-lived allocations while the menu is open.
