@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.130.0 - A note in the margins
+
+Rewrite the smuggler's hint in the chronicler's natural voice in English and Spanish, removing control-like wording while keeping its in-world clue.
+
+
 ## Version 0.129.0 - Words from the watch
 
 Polish the English and Spanish title-screen lines so they sound natural aloud, keep the period tone, and use correct Spanish accents. The button subtitles remain static text and still rotate only in the title screen.
