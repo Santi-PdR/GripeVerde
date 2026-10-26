@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.119.0 - Nadie se queda atrás
+
+Un quinto aviso diario de la CEDA resume cómo auxiliar al equipo: otro compañero debe liberar a quien sufra un PIN, mantener la ayuda cinco segundos sin recibir golpes para alzar a un caído, y encontrar un desfibrilador en el botín para revivir a quien muera. El papel es estático y solo aparece en el menú principal.
+
 ## Version 0.118.0 - Hojas con bordes de otra época
 
 Los avisos ahora tienen esquinas suavemente recortadas, un pequeño pliegue y algunas fibras gastadas. Esos detalles permanecen quietos, también mientras juegas. El sello rojo FRAUDE del elixir tiene su propio espacio bajo el precio y no tapa las letras; la hoja de cuarentena sigue abriendo el manual al tocarla. Las notas del cronista suenan más a alguien contando lo que vivió, en inglés y español.
