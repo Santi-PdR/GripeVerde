@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.131.0 - El ambiente responde a su control
+
+Los sonidos ambientales breves del menú ahora usan la categoría Ambiente de Minecraft, igual que los fondos en bucle y su deslizador. La música sigue en Música y los botones conservan su canal de efectos de interfaz.
+
+
 ## Version 0.130.0 - Una nota al margen
 
 Reescribimos la pista del contrabandista con la voz natural del cronista en inglés y español. Quitamos la frase que parecía indicar un control, pero conservamos la pista dentro de la historia.
