@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.118.0 - Hojas con bordes de otra época
+
+Las esquinas de los avisos ya no parecen cortadas por una máquina: cada hoja tiene un perfil apenas irregular, con pliegues y fibras gastadas que se quedan quietos mientras juegas. El sello rojo del elixir ocupa su propio margen, debajo del precio y sin tapar las letras. En la pantalla principal, la hoja de cuarentena sigue abriendo el manual al tocarla. Las crónicas del narrador cuentan lo que ocurre con palabras de todos los días, tanto en español como en inglés.
+
 ## Version 0.117.0 - Lighter return dust
 
 - Cache the fixed specks shown on the title screen after a long absence.
