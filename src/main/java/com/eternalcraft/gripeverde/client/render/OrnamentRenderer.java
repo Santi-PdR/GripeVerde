@@ -33,9 +33,9 @@ public class OrnamentRenderer {
         int[] stains = stainPattern(x, y, w, h);
         for (int i = 0; i < 8 && stains.length > 0; i++) {
             int offset = i * 4;
-            int sx = x + stains[offset];
-            int sy = y + stains[offset + 1];
             int size = stains[offset + 2];
+            int sx = Math.max(x + 4, Math.min(x + w - size - 4, x + stains[offset]));
+            int sy = Math.max(y + 4, Math.min(y + h - size - 4, y + stains[offset + 1]));
             int stainAlpha = stains[offset + 3];
             g.fill(sx, sy, sx + size, sy + size,
                 AtmosphereRenderer.withAlpha(0x006B5533, stainAlpha));
