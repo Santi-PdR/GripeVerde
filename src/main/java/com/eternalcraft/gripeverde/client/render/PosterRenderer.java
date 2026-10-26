@@ -170,16 +170,20 @@ public class PosterRenderer {
                 cx, cursorY, DiaryTheme.GHOUL_INK_ACTIVE);
         cursorY += 17;
 
-        String[] lines = {
-            I18n.get("gripeverde.poster.ghoul.body.1"),
-            I18n.get("gripeverde.poster.ghoul.body.2"),
-            I18n.get("gripeverde.poster.ghoul.body.3")
-        };
-        for (String line : lines) {
-            DiaryChrome.drawCenteredString(g, font,
-                    DiaryChrome.fitText(font, line, textWidth), cx, cursorY, DiaryTheme.INK_FADED);
-            cursorY += 12;
-        }
+        DiaryChrome.drawCenteredString(g, font,
+                DiaryChrome.fitText(font, I18n.get("gripeverde.poster.ghoul.body.1"), textWidth),
+                cx, cursorY, DiaryTheme.INK_FADED);
+        cursorY += 12;
+
+        DiaryChrome.drawCenteredString(g, font,
+                DiaryChrome.fitText(font, I18n.get("gripeverde.poster.ghoul.body.2"), textWidth),
+                cx, cursorY, DiaryTheme.INK_FADED);
+        cursorY += 12;
+
+        DiaryChrome.drawCenteredString(g, font,
+                DiaryChrome.fitText(font, I18n.get("gripeverde.poster.ghoul.body.3"), textWidth),
+                cx, cursorY, DiaryTheme.INK_FADED);
+        cursorY += 12;
 
         drawThinDivider(g, cx, cursorY + 1, w - 28);
         cursorY += 10;
