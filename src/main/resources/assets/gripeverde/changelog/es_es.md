@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+
+## Version 0.115.0 - Ayudas completas en multijugador
+
+Los botones personalizados de multijugador vuelven a mostrar sus ayudas localizadas tras la breve espera habitual de Minecraft. Los botones compactos conservan su tamaño; la lista, su diseño y la partida no cambian.
+
 ## Version 0.114.0 - Lista de servidores más ligera
 
 Leer las dimensiones de las filas cuando se prepara la lista vanilla y reutilizarlas al dibujar las tarjetas de papel. Así se evitan búsquedas repetidas de campos privados en cada frame sin cambiar la IP oficial, los servidores guardados, el ping ni la búsqueda LAN.
