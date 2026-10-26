@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.102.0 - The royal decree
+
+- Add a fixed crown-in-wax seal to the daily royal decree notice.
+- Keep the seal inside the paper border with a restrained Victorian palette.
+- Use static geometry only on the title screen; no world or inventory animation.
+
 ## Version 0.101.0 - Clearer sound guidance
 
 - Explain that Minecraft Master and the matching category both multiply mod music and ambience.
