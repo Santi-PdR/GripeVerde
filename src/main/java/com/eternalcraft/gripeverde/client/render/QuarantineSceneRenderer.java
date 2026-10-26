@@ -50,6 +50,7 @@ public final class QuarantineSceneRenderer {
 
         AtmosphereRenderer.renderSky(g, w, h);
         VictorianSkyline.renderBackground(g, w, h);
+        VictorianSkyline.renderGhoulWatcher(g, w, h);
         LivingAtmosphere.renderFogLow(g, w, h);
         VictorianSkyline.renderForeground(g, w, h);
         LivingAtmosphere.renderStreetLevel(g, w, h);
