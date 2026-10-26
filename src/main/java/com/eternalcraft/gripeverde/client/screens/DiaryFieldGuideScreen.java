@@ -312,7 +312,7 @@ public final class DiaryFieldGuideScreen extends Screen {
 
     private void positionSectionWidgets() {
         for (int section = 0; section < sectionWidgets.size(); section++) {
-            DiaryButton button = sectionWidgets.get(section);
+            GuideSectionButton button = sectionWidgets.get(section);
             button.setX(panelX + 20);
             button.setY(viewportTop() + sectionOffsets.get(section) - scrollY);
         }
