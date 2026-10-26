@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.114.0 - Lighter server list rendering
+
+- Read vanilla server-list row dimensions after layout and on resize instead of searching private fields for every rendered card.
+- Keep the official server address and all player-edited entries untouched.
+- Preserve the same list layout, artwork, ping, and LAN behavior.
+
 ## Version 0.113.0 - A book instead of a letter
 
 - Replace the language-dependent single-letter guide shortcut with a small engraved open-ledger icon.
