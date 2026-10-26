@@ -235,11 +235,12 @@ public class DiaryTitleScreen extends Screen {
             Component.translatable("gripeverde.title.button.changelog")));
         this.addRenderableWidget(changelogBtn);
 
-        // v0.111.0: manual de campo visible desde la portada, sin depender del cartel.
+        // v0.113.0: icono de libro para reconocer la guia en ambos idiomas.
         SlimButton fieldGuideBtn = new SlimButton(
             this.width - 52, 8, 20, 20,
-            Component.literal("F"),
-            () -> this.minecraft.setScreen(new DiaryFieldGuideScreen(this)));
+            Component.translatable("gripeverde.pause.btn.field_guide"),
+            () -> this.minecraft.setScreen(new DiaryFieldGuideScreen(this)))
+            .withIcon(SlimButton.Icon.OPEN_LEDGER);
         fieldGuideBtn.setTooltip(Tooltip.create(
             Component.translatable("gripeverde.poster.quarantine.guide_hint")));
         this.addRenderableWidget(fieldGuideBtn);
