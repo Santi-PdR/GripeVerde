@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.109.0 - Notas para leer
+
+Las notas del cronista ahora se ajustan a una tarjeta de papel para que no se corte el final de las frases largas. El sello CEDA queda estático, y las notas del archivo siguen pendientes si la pantalla no deja mostrarlas con claridad.
+
 ## Version 0.108.0 - Música bajo control
 
 Pausar o reanudar la banda sonora desde el panel de sonido. La elección queda guardada sin cambiar el nivel de volumen. Los controles de pistas se desactivan durante una partida.
