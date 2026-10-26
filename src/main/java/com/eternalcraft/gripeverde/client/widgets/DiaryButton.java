@@ -187,7 +187,7 @@ public class DiaryButton extends AbstractButton {
         Font font = mc.font;
         String text = getMessage().getString();
         int textColor = getTextColor(t);
-        if(!active) textColor = DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 110);
+        if(!active) textColor = DiaryTheme.SEPIA_DARK;
 
         int textStartX, maxTextW;
         int contentY = yDraw + (h - font.lineHeight)/2;
@@ -197,15 +197,15 @@ public class DiaryButton extends AbstractButton {
             drawIcon(g,iconX,iconY,textColor);
             textStartX = iconX+12+6;
             maxTextW = Math.max(8, x+w-10-textStartX);
+            text = fitText(font,text,maxTextW);
         } else {
             maxTextW = Math.max(8,w-18);
             text = fitText(font,text,maxTextW);
             int tw = font.width(text);
             textStartX = x+(w-tw)/2;
         }
-        text = fitText(font,text,maxTextW);
-        // One clean glyph pass keeps the default font crisp and avoids a doubled,
-        // over-bold look on narrow buttons and non-Latin glyphs.
+        // One unshadowed glyph pass keeps the selected game font crisp and avoids
+        // a doubled, over-bold look on narrow buttons and non-Latin glyphs.
         g.drawString(font,text,textStartX,contentY,textColor,false);
 
         // Underline on hover (ink stroke)
