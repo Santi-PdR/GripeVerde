@@ -5,6 +5,7 @@ import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.util.MotionPolicy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.Font;
 
 /**
  * Marginalia del cronista.
@@ -84,6 +85,11 @@ public final class Marginalia {
     private static long activeUntilMs = 0L;
     private static long activeStartMs = 0L;
     private static long lastPollMs = 0L;
+    private static long lastDeferredMs = 0L;
+    private static String cachedLayoutText;
+    private static int cachedLayoutWidth = -1;
+    private static int cachedLayoutLimit = -1;
+    private static java.util.List<String> cachedLayoutLines = java.util.Collections.emptyList();
 
     /** Toma la proxima nota pendiente (throttle: una por apertura de pantalla). */
     public static synchronized void poll() {
@@ -98,6 +104,7 @@ public final class Marginalia {
         ChroniclerMemory.save();
         activeStartMs = now;
         activeUntilMs = now + 14_000L;
+        lastDeferredMs = 0L;
         try {
             // Rasguno de pluma al aparecer la marginal
             UiSounds.playCustom(ModSounds.UI_SCROLL.get(), 0.10f, 0.55f);
@@ -108,54 +115,47 @@ public final class Marginalia {
         return activeId != null && System.currentTimeMillis() < activeUntilMs;
     }
 
-    /**
-     * Dibuja la marginal activa en el margen del panel indicado.
-     * (x, y) = esquina superior izquierda del panel; w = ancho.
-     */
-    public static void draw(GuiGraphics g, int panelX, int panelY, int panelW, int panelH) {
-        if (isLiveWorld() || !hasActive()) return;
-        Minecraft mc = Minecraft.getInstance();
-        if (mc == null || mc.font == null) return;
+    /** Keeps a note alive while a cramped layout or a discovery seal hides it. */
+    public static synchronized void deferActive() {
+        if (activeId == null) return;
         long now = System.currentTimeMillis();
-        long age = now - activeStartMs;
-        long remain = activeUntilMs - now;
-        boolean reducedMotion = MotionPolicy.isReduced();
-        int alpha = 200;
-        if (!reducedMotion) {
-            if (age < 900L) alpha = (int)(200 * age / 900L);
-            else if (remain < 1200L) alpha = (int)(200 * remain / 1200L);
-        }
-        alpha = Math.max(0, Math.min(200, alpha));
-        if (alpha <= 4) return;
-
-        String text = textFor(activeId);
-        if (text == null) return;
-
-        // La marginal vive JUSTO fuera del panel, en el margen izquierdo,
-        // escrita en vertical ascendente como nota al margen.
-        int maxLen = Math.min(text.length(), Math.max(12, panelH / 6));
-        int visibleChars = reducedMotion ? maxLen
-            : (int)Math.min(maxLen, text.length() * Math.min(1.0, age / 2200.0) + 1);
-        String shown = text.substring(0, visibleChars);
-        if (shown.isEmpty()) return;
-
-        int ink = (alpha << 24) | 0x3D2A18;
-        int x = panelX - 8;
-        int yStart = panelY + panelH - 22;
-        // texto vertical: una letra por fila
-        int lines = Math.min(shown.length(), (panelH - 30) / 7);
-        for (int i = 0; i < lines; i++) {
-            char c = shown.charAt(i);
-            g.drawString(mc.font, String.valueOf(c), x, yStart - i * 7, ink, false);
-        }
-        // pequeno trazo de pluma debajo
-        if (lines > 0) {
-            int ty = yStart - lines * 7;
-            g.fill(x, ty + 2, x + 5, ty + 3, (alpha / 2 << 24) | 0x3D2A18);
-        }
+        if (lastDeferredMs > 0L) activeUntilMs += Math.max(0L, now - lastDeferredMs);
+        lastDeferredMs = now;
     }
 
-    /** Variante horizontal para pantallas sin margen izquierdo suficiente. */
+    private static java.util.List<String> layoutLines(String text, Font font, int maxWidth, int maxLines) {
+        if (text.equals(cachedLayoutText) && maxWidth == cachedLayoutWidth && maxLines == cachedLayoutLimit) {
+            return cachedLayoutLines;
+        }
+        java.util.List<String> lines = new java.util.ArrayList<>();
+        StringBuilder line = new StringBuilder();
+        for (String word : text.split("\\s+")) {
+            String candidate = line.length() == 0 ? word : line + " " + word;
+            if (line.length() > 0 && font.width(candidate) > maxWidth) {
+                lines.add(line.toString());
+                line.setLength(0);
+                line.append(word);
+            } else {
+                if (line.length() > 0) line.append(' ');
+                line.append(word);
+            }
+        }
+        if (line.length() > 0) lines.add(line.toString());
+        if (lines.size() > maxLines) {
+            lines = new java.util.ArrayList<>(lines.subList(0, maxLines));
+            String ellipsis = "...";
+            String last = lines.get(maxLines - 1);
+            int lastWidth = Math.max(0, maxWidth - font.width(ellipsis));
+            lines.set(maxLines - 1, font.plainSubstrByWidth(last, lastWidth) + ellipsis);
+        }
+        cachedLayoutText = text;
+        cachedLayoutWidth = maxWidth;
+        cachedLayoutLimit = maxLines;
+        cachedLayoutLines = java.util.Collections.unmodifiableList(lines);
+        return cachedLayoutLines;
+    }
+
+    /** Draws a legible, word-wrapped chronicler note above the paper panel. */
     public static void drawHorizontal(GuiGraphics g, int cx, int y) {
         if (isLiveWorld() || !hasActive()) return;
         Minecraft mc = Minecraft.getInstance();
@@ -169,39 +169,51 @@ public final class Marginalia {
             if (age < 900L) alpha = (int)(190 * age / 900L);
             else if (remain < 1200L) alpha = (int)(190 * remain / 1200L);
         }
+        alpha = Math.max(0, Math.min(190, alpha));
         if (alpha <= 4) return;
         String text = textFor(activeId);
         if (text == null) return;
 
-        int chars = reducedMotion ? text.length()
-            : (int)Math.min(text.length(), text.length() * Math.min(1.0, age / 2000.0) + 1);
-        String shown = text.substring(0, chars);
-        int screenWidth = mc.getWindow().getGuiScaledWidth();
-        int maxTextWidth = Math.max(0, screenWidth - 48);
-        int textWidth = mc.font.width(shown);
-        if (textWidth > maxTextWidth) {
-            String ellipsis = "...";
-            int ellipsisWidth = mc.font.width(ellipsis);
-            shown = maxTextWidth <= ellipsisWidth
-                ? mc.font.plainSubstrByWidth(shown, maxTextWidth)
-                : mc.font.plainSubstrByWidth(shown, maxTextWidth - ellipsisWidth) + ellipsis;
-            textWidth = mc.font.width(shown);
-        }
+        String shown = text.trim();
         if (shown.isEmpty()) return;
 
-        int cardWidth = textWidth + 12;
-        int cardX = Math.max(6, Math.min(cx - cardWidth / 2, screenWidth - cardWidth - 6));
-        int cardY = Math.max(2, y - 3);
+        int screenWidth = mc.getWindow().getGuiScaledWidth();
+        int maxTextWidth = Math.max(1, screenWidth - 48);
+        int lineHeight = mc.font.lineHeight;
+        int cardBottom = y + 10;
+        int clearTop = Discoveries.hasActiveToast() ? 36 : 2;
+        int availableHeight = cardBottom - clearTop;
+        if (availableHeight < lineHeight + 6) {
+            deferActive();
+            return;
+        }
+        int maxLines = Math.max(1, Math.min(4, (availableHeight - 6) / lineHeight));
+        java.util.List<String> lines = layoutLines(shown, mc.font, maxTextWidth, maxLines);
+        if (lines.isEmpty()) return;
+
+        int textWidth = 0;
+        for (String wrappedLine : lines) textWidth = Math.max(textWidth, mc.font.width(wrappedLine));
+        int cardWidth = Math.min(screenWidth - 8, textWidth + 20);
+        int cardHeight = lines.size() * lineHeight + 6;
+        int cardX = Math.max(4, Math.min(cx - cardWidth / 2, screenWidth - cardWidth - 4));
+        int cardY = Math.max(clearTop, cardBottom - cardHeight);
+        lastDeferredMs = 0L;
         int paper = (Math.min(220, alpha + 24) << 24) | 0x00E8DCB4;
         int edge = (Math.max(0, alpha / 2) << 24) | 0x00735936;
         int ink = (alpha << 24) | 0x003D2A18;
+        int wax = (Math.min(205, alpha) << 24) | 0x006E1F16;
 
-        // A small paper strip keeps the chronicler's note readable over the
-        // dark title scene and contained on narrow windows.
-        g.fill(cardX, cardY, cardX + cardWidth, cardY + 13, paper);
+        // A restrained CEDA seal and paper rule frame the note without motion.
+        g.fill(cardX, cardY, cardX + cardWidth, cardY + cardHeight, paper);
         g.fill(cardX, cardY, cardX + cardWidth, cardY + 1, edge);
-        g.fill(cardX, cardY + 12, cardX + cardWidth, cardY + 13, edge);
-        g.drawString(mc.font, shown, cardX + 6, cardY + 3, ink, false);
+        g.fill(cardX, cardY + cardHeight - 1, cardX + cardWidth, cardY + cardHeight, edge);
+        g.fill(cardX, cardY, cardX + 1, cardY + cardHeight, edge);
+        g.fill(cardX + cardWidth - 1, cardY, cardX + cardWidth, cardY + cardHeight, edge);
+        g.fill(cardX + 5, cardY + 5, cardX + 9, cardY + 9, wax);
+        g.fill(cardX + 6, cardY + 6, cardX + 8, cardY + 7, (alpha << 24) | 0x00A74A38);
+        for (int i = 0; i < lines.size(); i++) {
+            g.drawString(mc.font, lines.get(i), cardX + 13, cardY + 3 + i * lineHeight, ink, false);
+        }
     }
 
     private static String textFor(String id) {
