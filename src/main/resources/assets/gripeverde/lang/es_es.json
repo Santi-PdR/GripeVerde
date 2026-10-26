@@ -155,5 +155,11 @@
     "gripeverde.title.greeting.remembers": "El gabinete recuerda tu mano.",
     "gripeverde.title.greeting.vigil": "Otra vigilia en la misma noche.",
     "gripeverde.title.vigil.present": "...¿sigues ahí?",
-    "gripeverde.title.vigil.fog": "No parpadees. La niebla cuenta tus parpadeos."
+    "gripeverde.title.vigil.fog": "No parpadees. La niebla cuenta tus parpadeos.",
+    "gripeverde.poster.ghoul.header": "NOTA DE CAMPO CEDA",
+    "gripeverde.poster.ghoul.title": "SIGUEN VIVOS",
+    "gripeverde.poster.ghoul.body.1": "Ojos azules. Adrenalina extrema.",
+    "gripeverde.poster.ghoul.body.2": "Cada mutación combate distinto.",
+    "gripeverde.poster.ghoul.body.3": "Un PIN requiere un compañero.",
+    "gripeverde.poster.ghoul.warn": "NUNCA VIAJES SOLO"
 }
