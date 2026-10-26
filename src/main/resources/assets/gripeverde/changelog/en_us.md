@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.109.0 - Notes worth reading
+
+Chronicler notes now wrap onto a compact paper card instead of losing the end of longer lines. The restrained CEDA seal stays static, and archive notes remain queued when a short viewport cannot show them clearly.
+
 ## Version 0.108.0 - Music on command
 
 Pause or resume the menu soundtrack from the sound panel. The choice is saved and does not alter the volume setting. Track controls stay unavailable during a live world.
