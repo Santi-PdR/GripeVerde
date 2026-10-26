@@ -130,15 +130,16 @@ public class PosterRenderer {
     }
 
 
-    /** Panel derecho inferior del menú: rota entre 4 avisos con seed diaria. */
+    /** Panel derecho inferior del menú: rota entre 5 avisos con seed diaria. */
     public static void drawRotatingNoticeRight(GuiGraphics g, int x, int y, int w, int h) {
         long day = System.currentTimeMillis() / 86_400_000L;
-        int variant = (int) Math.floorMod(day, 4L);
+        int variant = (int) Math.floorMod(day, 5L);
         switch (variant) {
             case 1 -> drawRewardNotice(g, x, y, w, h);
             case 2 -> drawDecreeNotice(g, x, y, w, h);
             case 3 -> drawGhoulWarning(g, x, y, w, h);
-            default -> drawPreventionNotice(g, x, y, w, h); // Elixir (existente)
+            case 4 -> drawRescueNotice(g, x, y, w, h);
+            default -> drawPreventionNotice(g, x, y, w, h); // Elixir
         }
     }
 
@@ -197,6 +198,50 @@ public class PosterRenderer {
         g.fill(cx, eyeY - 1, cx + 1, eyeY, DiaryTheme.GHOUL_EYE_GLOW);
         g.fill(cx - 10, eyeY, cx - 7, eyeY + 1, DiaryTheme.SEPIA_MID);
         g.fill(cx + 8, eyeY, cx + 11, eyeY + 1, DiaryTheme.SEPIA_MID);
+    }
+
+    /** Rescue guidance shown only on the static title-screen notice. */
+    private static void drawRescueNotice(GuiGraphics g, int x, int y, int w, int h) {
+        Font font = Minecraft.getInstance().font;
+        OrnamentRenderer.drawPaperPanel(g, x, y, w, h);
+        drawSimpleBorder(g, x, y, w, h, DiaryTheme.GHOUL_INK, DiaryTheme.GHOUL_EYE);
+        drawFoldedPaperCorner(g, x, y, w, h);
+
+        int cx = x + w / 2;
+        int textWidth = Math.max(0, w - 14);
+        boolean compact = h < 160;
+        int cursorY = y + (compact ? 6 : 9);
+
+        DiaryChrome.drawCenteredString(g, font,
+                DiaryChrome.fitText(font, I18n.get("gripeverde.poster.rescue.header"), textWidth),
+                cx, cursorY, DiaryTheme.GHOUL_INK);
+        cursorY += compact ? 10 : 12;
+        drawThinDivider(g, cx, cursorY, w - 28);
+        cursorY += compact ? 6 : 8;
+
+        DiaryChrome.drawCenteredString(g, font,
+                DiaryChrome.fitText(font, I18n.get("gripeverde.poster.rescue.title"), textWidth),
+                cx, cursorY, DiaryTheme.GHOUL_INK_ACTIVE);
+        cursorY += compact ? 14 : 17;
+
+        String[] instructions = {
+            I18n.get("gripeverde.poster.rescue.body.1"),
+            I18n.get("gripeverde.poster.rescue.body.2"),
+            I18n.get("gripeverde.poster.rescue.body.3"),
+            I18n.get("gripeverde.poster.rescue.body.4"),
+            I18n.get("gripeverde.poster.rescue.body.5")
+        };
+        for (String line : instructions) {
+            DiaryChrome.drawCenteredString(g, font, DiaryChrome.fitText(font, line, textWidth),
+                    cx, cursorY, DiaryTheme.INK_FADED);
+            cursorY += compact ? 8 : 10;
+        }
+
+        drawThinDivider(g, cx, cursorY, w - 28);
+        cursorY += compact ? 7 : 9;
+        DiaryChrome.drawCenteredString(g, font,
+                DiaryChrome.fitText(font, I18n.get("gripeverde.poster.rescue.footer"), textWidth),
+                cx, cursorY, DiaryTheme.REDCOAT_DARK);
     }
 
     private static void drawRewardNotice(GuiGraphics g, int x, int y, int w, int h) {
