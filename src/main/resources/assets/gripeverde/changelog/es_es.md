@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.128.0 - Bruma enferma en el horizonte
+
+La ciudad del menú principal gana una bruma verde tenue y fija detrás del perfil urbano, como señal del brote. Solo aparece en el menú, usa unos pocos rellenos translúcidos y no añade animación ni dibujo sobre el mundo.
+
+
 ## Version 0.127.0 - Papel gastado, aviso legible
 
 El aviso del elixir deja el sello de fraude debajo del texto, con margen para que no cubra el precio ni la botella. Las hojas ganan profundidad sutil, un filete interior tenue y bordes de corte irregulares. Son detalles estáticos que solo se dibujan en los papeles del menú.
