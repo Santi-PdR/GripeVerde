@@ -67,7 +67,7 @@
     "gripeverde.options.subtitle": "The chronicler's working desk",
     "gripeverde.options.accessibility.subtitle": "Aids, warnings and perception",
     "gripeverde.options.sound.subtitle": "Levels: Music %1$s · Ambience %2$s · SFX %3$s",
-    "gripeverde.options.sound.minecraft_levels": "Minecraft levels: Music %1$s · Ambient %2$s",
+    "gripeverde.options.sound.minecraft_levels": "Minecraft levels: Master %1$s · Music %2$s · Ambient %3$s",
     "gripeverde.options.sound.music_slider": "Chronicler's gramophone",
     "gripeverde.options.sound.ambience_slider": "Chronicler's ambience",
     "gripeverde.options.sound.ambience_on": "ON",
