@@ -94,6 +94,7 @@ public class DiaryTitleScreen extends Screen {
     @Override
     protected void init() {
         this.ticks = 0;
+        this.skipTooltipInitialized = false;
         // Incrementar contador de aperturas (solo una vez por sesion)
         try {
             if (!openCountIncremented) {
