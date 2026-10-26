@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.107.0 - Eyes in the quarantine
+
+- Add a tiny, fixed pair of blue Ghoul eyes to one distant title-screen window.
+- Place it behind the city fog and keep it out of diary overlays and live worlds.
+- Use fixed pixels only: no new ticks, particles, sound, or gameplay effects.
+
 ## Version 0.106.0 - Steadier paper
 
 - Cache each deterministic paper-stain pattern so repeated menu renders reuse it instead of creating a random generator each frame.
