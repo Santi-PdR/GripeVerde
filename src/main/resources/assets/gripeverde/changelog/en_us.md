@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.106.0 - Steadier paper
+
+Cache each panel's deterministic moisture pattern. The paper keeps the same appearance without creating a random generator on every render. Draw the Ghoul report's three lines directly instead of allocating a temporary array each frame. Gameplay behavior is unchanged.
+
 ## Version 0.105.0 - Quiet notes
 
 Respect Reduced motion in the chronicler's marginal notes, discovery seals, and the sound-panel tuning fork. Notes appear at once and the seal stays steady when the preference is on. With the preference off, the existing menu behavior remains; interfaces during live sessions stay still.
