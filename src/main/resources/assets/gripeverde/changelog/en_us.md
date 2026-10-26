@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.103.0 - CEDA's cover story
+
+Clarify that CEDA concealed the 1800 outbreak as common flu and that Ghouls are living infected survivors, not raised dead. Keep the field-guide layout unchanged.
+
 ## Version 0.102.0 - The royal decree
 
 Add a small crown-in-wax seal to the rotating royal decree. Keep it inside the paper border and use static shapes on the title screen only.
