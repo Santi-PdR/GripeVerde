@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.102.0 - El decreto real
+
+Añadir al decreto real rotativo un pequeño sello de cera con corona. Mantenerlo dentro del borde del papel y usar formas estáticas solo en la pantalla principal.
+
 ## Version 0.101.0 - Guía de sonido más clara
 
 Aclarar que Maestro de Minecraft y la categoría correspondiente multiplican la música y el ambiente del mod. Mantener breves las ayudas bilingües e indicar qué controles revisar. No cambia la reproducción ni el comportamiento durante la partida.
