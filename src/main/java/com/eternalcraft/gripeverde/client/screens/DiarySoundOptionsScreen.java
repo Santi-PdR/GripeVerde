@@ -341,7 +341,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     }
 
     /** Shows Minecraft's master and category levels that multiply the mod's own mix. */
-    private String minecraftMixSubtitle() {
+    private String minecraftMixSubtitle(boolean compact) {
         float masterLevel = this.minecraft != null
             ? this.minecraft.options.getSoundSourceVolume(SoundSource.MASTER)
             : 0.0f;
@@ -352,7 +352,9 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             ? this.minecraft.options.getSoundSourceVolume(SoundSource.AMBIENT)
             : 0.0f;
         return Component.translatable(
-            "gripeverde.options.sound.minecraft_levels",
+            compact
+                ? "gripeverde.options.sound.minecraft_levels.compact"
+                : "gripeverde.options.sound.minecraft_levels",
             percentText(masterLevel),
             percentText(musicLevel),
             percentText(ambienceLevel)
@@ -396,12 +398,12 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         }
 
         // --- Subtitulo ---
-        String subtitle = "- " + (compact ? minecraftMixSubtitle() : audioMixSubtitle()) + " -";
+        String subtitle = "- " + (compact ? minecraftMixSubtitle(true) : audioMixSubtitle()) + " -";
         subtitle = DiaryChrome.fitText(this.font, subtitle, Math.max(0, this.panelW - 28));
         int subWC = this.font.width(subtitle);
         g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + (compact ? 11 : 12), DiaryChrome.INK_SUBTITLE, false);
         if (!compact) {
-            String minecraftLevels = "- " + minecraftMixSubtitle() + " -";
+            String minecraftLevels = "- " + minecraftMixSubtitle(false) + " -";
             minecraftLevels = DiaryChrome.fitText(this.font, minecraftLevels,
                 Math.max(0, this.panelW - 28));
             int mcLevelsW = this.font.width(minecraftLevels);
