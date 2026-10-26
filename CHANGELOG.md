@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.127.0 - Worn paper, clear notice
+
+The elixir notice now keeps its fraud stamp below the copy, with a safe margin from the price and bottle line. Notice sheets gain subtle paper depth, a fine inner rule, and uneven cut edges. All details stay still and only render on menu papers.
+
+
 ## Version 0.126.0 - Words stay on the paper
 
 Every translated line on the quarantine, elixir, reward, and royal decree notices now fits inside the inner paper edge. Scaled titles use the available width too, so Spanish copy cannot spill beyond the border or into the folded corner.
