@@ -433,32 +433,42 @@ public class DiaryTitleScreen extends Screen {
         }
     }
 
-    /** Saludo de papel, estatico y limitado al menu principal. */
+    /** Nota de archivo estatica, limitada al menu principal. */
     private void renderChroniclerNote(GuiGraphics g) {
         long now = System.currentTimeMillis();
         if (greetingText == null || now >= greetingShownUntilMs || isMinimalMode()) return;
 
-        int cardW = Math.min(360, this.width - 32);
-        if (cardW < 96) return;
+        int cardW = Math.min(390, this.width - 32);
+        if (cardW < 180) return;
         String line = com.eternalcraft.gripeverde.client.render.DiaryChrome
             .fitText(this.font, greetingText, cardW - 24);
         if (line.isEmpty()) return;
 
-        int cardH = 24;
+        int cardH = 40;
         int x = (this.width - cardW) / 2;
-        // La marca del año termina cerca de y=161; esta ficha empieza debajo.
+        // La marca del año termina cerca de y=161; la ficha queda debajo.
         int y = 168;
         g.fill(x + 2, y + 2, x + cardW + 2, y + cardH + 2,
             com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
                 com.eternalcraft.gripeverde.client.render.DiaryTheme.INK_BLACK, 72));
-        g.fill(x, y, x + cardW, y + cardH,
-            com.eternalcraft.gripeverde.client.render.DiaryTheme.PAPER_DARK);
-        g.fill(x, y, x + cardW, y + 1,
-            com.eternalcraft.gripeverde.client.render.DiaryTheme.GOLD_TARNISHED);
-        g.fill(x, y + cardH - 1, x + cardW, y + cardH,
-            com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_MID);
+        com.eternalcraft.gripeverde.client.render.PaperTexture.drawClean(
+            g, x, y, cardW, cardH,
+            com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.ARCHIVE);
+
+        String label = Component.translatable("gripeverde.title.greeting.label").getString();
+        label = com.eternalcraft.gripeverde.client.render.DiaryChrome
+            .fitText(this.font, label, cardW / 2 - 18);
+        String registry = "CEDA · 1800";
+        g.drawString(this.font, label, x + 12, y + 5,
+            com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_MID, false);
+        int registryW = this.font.width(registry);
+        g.drawString(this.font, registry, x + cardW - registryW - 12, y + 5,
+            com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_MID, false);
+        g.fill(x + 10, y + 17, x + cardW - 10, y + 18,
+            com.eternalcraft.gripeverde.client.render.DiaryChrome.INK_DIVIDER);
+
         int textX = x + (cardW - this.font.width(line)) / 2;
-        g.drawString(this.font, line, textX, y + 8,
+        g.drawString(this.font, line, textX, y + 24,
             com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_DARK, false);
     }
 

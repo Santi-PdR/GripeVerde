@@ -148,6 +148,7 @@
     "gripeverde.options.sound.track_transition": "Changing to record %1$s of %2$s",
     "gripeverde.options.sound.track_between": "Between records",
     "gripeverde.options.sound.track_paused": "Menu music stops during expeditions.",
+    "gripeverde.title.greeting.label": "CHRONICLER'S FIELD NOTE",
     "gripeverde.title.greeting.first": "The cabinet opens for the first time.",
     "gripeverde.title.greeting.return": "The dust did not ask why you returned.",
     "gripeverde.title.greeting.remembers": "The cabinet remembers your hand.",

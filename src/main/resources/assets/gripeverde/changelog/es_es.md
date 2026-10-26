@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.97.0 - La nota de campo del cronista
+
+Mostrar los saludos del menú en una ficha de archivo más completa, con encabezado en ambos idiomas. Mejorar el espaciado y la jerarquía de tinta con texto de peso normal y fácil de leer. Mantener el detalle de papel estático y limitado a la pantalla principal.
+
 ## Version 0.96.0 - Niveles de sonido de Minecraft
 
 Mostrar junto a los niveles del mod el volumen de las categorías Música y Ambiente de Minecraft para detectar con facilidad si alguna está silenciada.

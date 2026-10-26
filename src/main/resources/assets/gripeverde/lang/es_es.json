@@ -148,6 +148,7 @@
     "gripeverde.options.sound.track_transition": "Cambiando al disco %1$s de %2$s",
     "gripeverde.options.sound.track_between": "Entre discos",
     "gripeverde.options.sound.track_paused": "La música del menú se detiene durante la expedición.",
+    "gripeverde.title.greeting.label": "NOTA DE CAMPO DEL CRONISTA",
     "gripeverde.title.greeting.first": "El gabinete abre por primera vez.",
     "gripeverde.title.greeting.return": "El polvo no preguntó por qué volvías.",
     "gripeverde.title.greeting.remembers": "El gabinete recuerda tu mano.",

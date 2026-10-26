@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.97.0 - The chronicler's field note
+
+Show title greetings on a fuller archive-paper slip with a catalog heading in both languages. Improve spacing and ink hierarchy while keeping the text regular-weight and easy to read. Keep the paper detail static and confined to the title screen.
+
 ## Version 0.96.0 - Minecraft sound levels
 
 Show the Music and Ambient category volumes from Minecraft beside the mod's own levels, making a muted game category easier to spot.
