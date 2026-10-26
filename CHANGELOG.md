@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.108.0 - Music on command
+
+- Add a saved pause and resume control to the sound panel without changing the chosen music level.
+- Keep custom and vanilla menu music suppressed when the user pauses the soundtrack.
+- Disable menu track controls during live gameplay; no new world or inventory animations.
+
 ## Version 0.107.0 - Eyes in the quarantine
 
 - Add a tiny, fixed pair of blue Ghoul eyes to one distant title-screen window.
