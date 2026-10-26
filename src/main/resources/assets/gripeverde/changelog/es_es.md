@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.117.0 - Polvo de regreso más ligero
+
+El patrón de polvo que aparece al volver tras una larga ausencia ahora queda en caché. Cada frame reutiliza las mismas 40 motas y opacidades; solo se recalculan al cambiar el tamaño de la ventana. El efecto sigue estático y limitado a la pantalla de título.
+
 ## Version 0.116.0 - Ayudas accesibles con teclado
 
 Las ayudas completas aparecen tras la breve espera habitual tanto al pasar el cursor como al dar foco de teclado a un botón personalizado de multijugador. Si se usa el teclado, la ayuda se coloca junto al botón. Las interfaces durante la partida siguen quietas.
