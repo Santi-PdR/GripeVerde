@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.110.0 - Clearer button ink
+
+- Keep disabled button labels in dark sepia ink so their muted paper state remains readable.
+- Preserve the single, unshadowed text pass and measure clipped labels only once.
+
 ## Version 0.109.0 - Notes worth reading
 
 - Wrap the chronicler's notes into a small paper card so longer bilingual lines remain readable instead of being cut off at the screen edge.
