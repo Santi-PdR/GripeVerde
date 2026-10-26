@@ -8,6 +8,10 @@ Los sonidos ambientales breves del menú ahora usan la categoría Ambiente de Mi
 
 El botón de música de la pantalla principal ahora actualiza su ayuda solo cuando cambia la reproducción o el idioma, en lugar de reconstruirla en cada pulso.
 
+## Version 0.133.0 - El aviso conserva sus renglones
+
+El aviso que se escribe en la pantalla principal conserva sus renglones y el ancho del cursor hasta que cambian el texto visible, la ventana o la fuente. Así evita repetir el mismo cálculo entre cuadros.
+
 
 ## Version 0.130.0 - Una nota al margen
 
