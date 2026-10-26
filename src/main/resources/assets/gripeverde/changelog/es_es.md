@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.123.0 - Nubes sin trabajo repetido
+
+El cielo del menú ahora reutiliza la forma de sus nubes en vez de reconstruirla en cada frame. Se ven y se mueven igual, pero generan menos objetos temporales mientras el menú está abierto.
+
 ## Version 0.122.0 - Un sello con espacio propio
 
 El sello FRAUDE del elixir ahora va después de la línea de la botella, en vez de subir desde el borde inferior. Así no tapa las palabras cuando la hoja es baja; si no hay sitio, el sello no se dibuja. Las esquinas recortadas también se notan más y el borde de tinta sigue la forma del papel. Todo permanece quieto en el menú principal.
