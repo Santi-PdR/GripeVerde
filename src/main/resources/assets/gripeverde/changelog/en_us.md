@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.112.0 - Clean field guide headings
+
+Section names remain printed on the paper instead of being covered by tiny button panels. Navigation targets stay inside the reading viewport, preserving keyboard and screen-reader access without hover sound or gameplay animation.
+
 ## Version 0.111.0 - Field guide at a glance
 
 Open the bilingual CEDA field guide directly from the title screen with a small, labeled button beside the chronicle control. It uses the existing localized hint and adds no world, inventory, or gameplay animation.
