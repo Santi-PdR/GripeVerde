@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.113.0 - A book instead of a letter
+
+- Replace the language-dependent single-letter guide shortcut with a small engraved open-ledger icon.
+- Keep the button's full localized field-guide name available to keyboard and screen-reader users.
+- Preserve the existing tooltip, sound behavior, title-screen layout, and still gameplay interfaces.
+
 ## Version 0.112.0 - Clean field guide headings
 
 - Keep clickable section names as plain printed headings rather than drawing small button panels over the text.
