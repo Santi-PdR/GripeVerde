@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.105.0 - Quiet notes
+
+- Respect Reduced motion across marginal notes, discovery notices, and the sound-panel tuning fork.
+- Show notes immediately and keep the discovery seal steady when reduced motion is enabled.
+- Keep the same behavior for users who leave the preference off; live-session interfaces stay still.
+
 ## Version 0.104.0 - The field report
 
 - Add a fourth daily title-screen document with CEDA guidance on living Ghouls, mutations, PINs, and staying together.
