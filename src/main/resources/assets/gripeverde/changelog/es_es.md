@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.100.0 - Lectura compacta de sonido
+
+Mantener visibles los porcentajes Maestro, Música y Ambiente de Minecraft en ventanas estrechas con etiquetas concisas. Conservar los nombres completos de las categorías en el diseño normal.
+
 ## Version 0.99.0 - El volumen maestro a la vista
 
 Mostrar el nivel Maestro de Minecraft junto a Música y Ambiente en el gabinete sonoro. Así se ve si el volumen global está silenciado al revisar el audio del menú. La lectura solo consulta los ajustes y no altera el sonido ni la partida.
