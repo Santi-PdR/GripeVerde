@@ -16,8 +16,18 @@ public class OrnamentRenderer {
      * Panel de papel envejecido con sello de cera.
      */
     public static void drawPaperPanel(GuiGraphics g, int x, int y, int w, int h) {
-        // Papel base
-        g.fill(x, y, x + w, y + h, DiaryTheme.PAPER);
+        // The sheet has hand-cut corners rather than a perfect machine rectangle.
+        if (w < 14 || h < 14) {
+            g.fill(x, y, x + w, y + h, DiaryTheme.PAPER);
+        } else {
+            int[] cornerInset = {4, 2, 1, 0};
+            for (int row = 0; row < cornerInset.length; row++) {
+                int inset = cornerInset[row];
+                g.fill(x + inset, y + row, x + w - inset, y + row + 1, DiaryTheme.PAPER);
+                g.fill(x + inset, y + h - row - 1, x + w - inset, y + h - row, DiaryTheme.PAPER);
+            }
+            g.fill(x, y + 4, x + w, y + h - 4, DiaryTheme.PAPER);
+        }
 
         // Manchas deterministas: se calculan una vez por panel y se reutilizan.
         int[] stains = stainPattern(x, y, w, h);
@@ -32,10 +42,21 @@ public class OrnamentRenderer {
         }
 
         // Bordes desgastados (mas oscuros)
-        g.fill(x, y,         x + w, y + 1,     DiaryTheme.PAPER_DARK);
-        g.fill(x, y + h - 1, x + w, y + h,     DiaryTheme.PAPER_DARK);
-        g.fill(x, y,         x + 1, y + h,     DiaryTheme.PAPER_DARK);
-        g.fill(x + w - 1, y, x + w, y + h,     DiaryTheme.PAPER_DARK);
+        if (w < 14 || h < 14) {
+            g.fill(x, y,         x + w, y + 1,     DiaryTheme.PAPER_DARK);
+            g.fill(x, y + h - 1, x + w, y + h,     DiaryTheme.PAPER_DARK);
+            g.fill(x, y,         x + 1, y + h,     DiaryTheme.PAPER_DARK);
+            g.fill(x + w - 1, y, x + w, y + h,     DiaryTheme.PAPER_DARK);
+        } else {
+            int[] cornerInset = {4, 2, 1, 0};
+            for (int row = 0; row < cornerInset.length; row++) {
+                int inset = cornerInset[row];
+                g.fill(x + inset, y + row, x + w - inset, y + row + 1, DiaryTheme.PAPER_DARK);
+                g.fill(x + inset, y + h - row - 1, x + w - inset, y + h - row, DiaryTheme.PAPER_DARK);
+            }
+            g.fill(x, y + 4, x + 1, y + h - 4, DiaryTheme.PAPER_DARK);
+            g.fill(x + w - 1, y + 4, x + w, y + h - 4, DiaryTheme.PAPER_DARK);
+        }
     }
 
     private static final int STAIN_CACHE_SIZE = 64;
