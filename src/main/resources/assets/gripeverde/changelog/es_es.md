@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.124.0 - Una nota durante la guardia
+
+Los saludos del menú ahora suenan como palabras del cronista a alguien que tiene al lado. Son breves, cotidianos y conservan el tono de la época de los Ghouls.
+
 ## Version 0.123.0 - Nubes sin trabajo repetido
 
 El cielo del menú ahora reutiliza la forma de sus nubes en vez de reconstruirla en cada frame. Se ven y se mueven igual, pero generan menos objetos temporales mientras el menú está abierto.
