@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.120.0 - Rescue advice that fits
+
+The rescue notice uses shorter lines so every instruction stays readable on the narrow card: a teammate frees a PIN, a lift takes five seconds, the helper must avoid hits, and a defibrillator comes from loot.
+
 ## Version 0.119.0 - No one left behind
 
 A fifth daily CEDA notice gives the rescue basics: a teammate must free anyone caught in a PIN, hold to lift a fallen survivor for five seconds without taking a hit, and find a defibrillator in the loot to revive the dead. The paper is static and title-screen-only.
