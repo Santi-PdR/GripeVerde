@@ -5,6 +5,7 @@ import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 
+import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
@@ -65,6 +66,8 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     private DiaryButton diaryRefresh;
     private DiaryButton diaryCancel;
     private final SmoothScroll smoothScroll = new SmoothScroll();
+    private DiaryButton tooltipCandidate;
+    private long tooltipCandidateSince;
 
     public DiaryMultiplayerScreen(Screen parent) {
         super(parent);
@@ -581,10 +584,22 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         gfx.fill(panelX + panelW - inset - 1, panelY + inset, panelX + panelW - inset, panelY + panelH - inset, vinAlpha);
 
         // Widgets Diary (nuestros botones)
+        DiaryButton hoveredTooltip = null;
         for (var w : this.renderables) {
             if (w instanceof DiaryButton db && db.visible) {
                 db.render(gfx, mouseX, mouseY, partial);
+                if (db.getTooltip() != null && db.isMouseOver(mouseX, mouseY)) {
+                    hoveredTooltip = db;
+                }
             }
+        }
+
+        // This screen draws its buttons manually, so render their normal delayed tooltips here.
+        if (hoveredTooltip != this.tooltipCandidate) {
+            this.tooltipCandidate = hoveredTooltip;
+            this.tooltipCandidateSince = Util.getMillis();
+        } else if (hoveredTooltip != null && Util.getMillis() - this.tooltipCandidateSince >= 500L) {
+            gfx.renderTooltip(this.font, hoveredTooltip.getTooltip().toCharSequence(this.minecraft), mouseX, mouseY);
         }
 
         // v0.16.0
