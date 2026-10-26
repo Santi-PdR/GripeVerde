@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.109.0 - Notes worth reading
+
+- Wrap the chronicler's notes into a small paper card so longer bilingual lines remain readable instead of being cut off at the screen edge.
+- Keep the note card above its panel, with a quiet CEDA wax mark and no new world or inventory animation.
+- Leave notes queued in the archive when a small viewport has no room for a readable margin.
+
 ## Version 0.108.0 - Music on command
 
 - Add a saved pause and resume control to the sound panel without changing the chosen music level.
