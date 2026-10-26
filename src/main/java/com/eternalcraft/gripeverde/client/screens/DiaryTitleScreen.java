@@ -431,14 +431,30 @@ public class DiaryTitleScreen extends Screen {
     }
 
     /** Polvo por ausencia larga: solo la primera vigilia del regreso. */
+    private static final int RETURN_DUST_COUNT = 40;
     private static final java.util.Random DUST_RNG = new java.util.Random();
+    private static final int[] RETURN_DUST_X = new int[RETURN_DUST_COUNT];
+    private static final int[] RETURN_DUST_Y = new int[RETURN_DUST_COUNT];
+    private static final int[] RETURN_DUST_ALPHA = new int[RETURN_DUST_COUNT];
+    private static int returnDustWidth = -1;
+    private static int returnDustHeight = -1;
+
     private void drawDustIfDue(GuiGraphics g) {
         if (!dustThisSession) return;
-        DUST_RNG.setSeed(0xD05E7L ^ (long)this.width);
-        for (int i = 0; i < 40; i++) {
-            int x = DUST_RNG.nextInt(Math.max(1, this.width));
-            int y = DUST_RNG.nextInt(Math.max(1, this.height));
-            int al = 14 + DUST_RNG.nextInt(16);
+        if (returnDustWidth != this.width || returnDustHeight != this.height) {
+            DUST_RNG.setSeed(0xD05E7L ^ (long)this.width);
+            for (int i = 0; i < RETURN_DUST_COUNT; i++) {
+                RETURN_DUST_X[i] = DUST_RNG.nextInt(Math.max(1, this.width));
+                RETURN_DUST_Y[i] = DUST_RNG.nextInt(Math.max(1, this.height));
+                RETURN_DUST_ALPHA[i] = 14 + DUST_RNG.nextInt(16);
+            }
+            returnDustWidth = this.width;
+            returnDustHeight = this.height;
+        }
+        for (int i = 0; i < RETURN_DUST_COUNT; i++) {
+            int x = RETURN_DUST_X[i];
+            int y = RETURN_DUST_Y[i];
+            int al = RETURN_DUST_ALPHA[i];
             g.fill(x, y, x + 1, y + 1, (al << 24) | 0x9A938A);
         }
     }
