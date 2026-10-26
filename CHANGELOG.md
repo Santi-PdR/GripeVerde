@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.121.0 - Sections you can spot
+
+The field manual now prints a small number beside each section. The numbers match the 1–7 shortcuts shown at the bottom, so readers can see where each jump will take them. The marks are still ink on paper; nothing moves during play.
+
 ## Version 0.120.0 - Rescue advice that fits
 
 The rescue notice now keeps every instruction on the page at narrow sizes. It tells the crew how to free a PIN, lift a fallen survivor, avoid interrupting the rescue, and find a defibrillator.
