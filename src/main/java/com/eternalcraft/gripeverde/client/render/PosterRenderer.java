@@ -133,15 +133,68 @@ public class PosterRenderer {
     }
 
 
-    /** Panel derecho inferior del menú: rota entre 3 avisos con seed diaria. */
+    /** Panel derecho inferior del menú: rota entre 4 avisos con seed diaria. */
     public static void drawRotatingNoticeRight(GuiGraphics g, int x, int y, int w, int h) {
         long day = System.currentTimeMillis() / 86_400_000L;
-        int variant = (int)(Math.abs(day) % 3);
+        int variant = (int) Math.floorMod(day, 4L);
         switch (variant) {
             case 1 -> drawRewardNotice(g, x, y, w, h);
             case 2 -> drawDecreeNotice(g, x, y, w, h);
+            case 3 -> drawGhoulWarning(g, x, y, w, h);
             default -> drawPreventionNotice(g, x, y, w, h); // Elixir (existente)
         }
+    }
+
+    /**
+     * Informe CEDA de lectura rápida. Solo aparece en el cartel estático
+     * de la pantalla principal; nunca se dibuja durante una expedición.
+     */
+    private static void drawGhoulWarning(GuiGraphics g, int x, int y, int w, int h) {
+        Font font = Minecraft.getInstance().font;
+        OrnamentRenderer.drawPaperPanel(g, x, y, w, h);
+        drawSimpleBorder(g, x, y, w, h, DiaryTheme.GHOUL_INK, DiaryTheme.GHOUL_EYE);
+
+        int cx = x + w / 2;
+        int textWidth = Math.max(0, w - 20);
+        int cursorY = y + 10;
+
+        DiaryChrome.drawCenteredString(g, font,
+                DiaryChrome.fitText(font, I18n.get("gripeverde.poster.ghoul.header"), textWidth),
+                cx, cursorY, DiaryTheme.GHOUL_INK);
+        cursorY += 12;
+        drawThinDivider(g, cx, cursorY, w - 28);
+        cursorY += 8;
+
+        DiaryChrome.drawCenteredString(g, font,
+                DiaryChrome.fitText(font, I18n.get("gripeverde.poster.ghoul.title"), textWidth),
+                cx, cursorY, DiaryTheme.GHOUL_INK_ACTIVE);
+        cursorY += 17;
+
+        String[] lines = {
+            I18n.get("gripeverde.poster.ghoul.body.1"),
+            I18n.get("gripeverde.poster.ghoul.body.2"),
+            I18n.get("gripeverde.poster.ghoul.body.3")
+        };
+        for (String line : lines) {
+            DiaryChrome.drawCenteredString(g, font,
+                    DiaryChrome.fitText(font, line, textWidth), cx, cursorY, DiaryTheme.INK_FADED);
+            cursorY += 12;
+        }
+
+        drawThinDivider(g, cx, cursorY + 1, w - 28);
+        cursorY += 10;
+        DiaryChrome.drawCenteredString(g, font,
+                DiaryChrome.fitText(font, I18n.get("gripeverde.poster.ghoul.warn"), textWidth),
+                cx, cursorY, DiaryTheme.REDCOAT_DARK);
+
+        // Sello de ojo dibujado con formas fijas: tinta y acento azul, sin animación.
+        int eyeY = y + h - 18;
+        g.fill(cx - 7, eyeY - 3, cx + 8, eyeY + 3, DiaryTheme.GHOUL_INK);
+        g.fill(cx - 4, eyeY - 2, cx + 5, eyeY + 2, DiaryTheme.GHOUL_EYE);
+        g.fill(cx - 1, eyeY - 2, cx + 2, eyeY + 3, DiaryTheme.GHOUL_INK_ACTIVE);
+        g.fill(cx, eyeY - 1, cx + 1, eyeY, DiaryTheme.GHOUL_EYE_GLOW);
+        g.fill(cx - 10, eyeY, cx - 7, eyeY + 1, DiaryTheme.SEPIA_MID);
+        g.fill(cx + 8, eyeY, cx + 11, eyeY + 1, DiaryTheme.SEPIA_MID);
     }
 
     private static void drawRewardNotice(GuiGraphics g, int x, int y, int w, int h) {
