@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.101.0 - Clearer sound guidance
+
+Clarify that Minecraft Master and the matching category both multiply mod music and ambience. Keep the bilingual slider help concise and make the controls to check explicit. Playback and world behavior are unchanged.
+
 ## Version 0.100.0 - Compact sound readout
 
 Keep Minecraft Master, Music, and Ambient percentages visible on narrow sound screens with concise labels. Retain the complete category names in the regular layout.
