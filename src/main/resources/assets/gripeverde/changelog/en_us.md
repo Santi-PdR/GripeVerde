@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.105.0 - Quiet notes
+
+Respect Reduced motion in the chronicler's marginal notes, discovery seals, and the sound-panel tuning fork. Notes appear at once and the seal stays steady when the preference is on. With the preference off, the existing menu behavior remains; interfaces during live sessions stay still.
+
 ## Version 0.104.0 - The field report
 
 Add a fourth daily title-screen document with CEDA guidance on living Ghouls, mutation behavior, PIN rescues and staying together. Give it a worn-paper treatment and a fixed blue-eye ink mark. The poster is bilingual and static, with no animation in worlds, servers or inventory screens.
