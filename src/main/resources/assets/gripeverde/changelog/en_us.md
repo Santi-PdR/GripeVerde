@@ -8,6 +8,10 @@ Menu ambience one-shots now use Minecraft's Ambient sound category, matching the
 
 The title-screen music button now updates its tooltip only when playback changes or the language changes, rather than rebuilding it every tick.
 
+## Version 0.133.0 - The notice keeps its lines
+
+The title-screen typewriter notice now reuses its wrapped lines and cursor width until the visible text, window size, or font changes, avoiding repeated layout work between frames.
+
 
 ## Version 0.130.0 - A note in the margins
 
