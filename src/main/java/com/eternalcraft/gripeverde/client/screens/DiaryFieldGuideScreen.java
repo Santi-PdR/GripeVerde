@@ -30,6 +30,7 @@ public final class DiaryFieldGuideScreen extends Screen {
         { "gripeverde.field_guide.section.races" },
         { "gripeverde.field_guide.section.rescue_protocol" }
     };
+    private static final String[] SECTION_NUMBERS = { "1", "2", "3", "4", "5", "6", "7" };
 
     private static final String[][] ENTRY_KEYS = {
         { "gripeverde.field_guide.body.infection", "gripeverde.field_guide.body.mutation_origins", "gripeverde.field_guide.body.ceda_coverup" },
@@ -83,7 +84,7 @@ public final class DiaryFieldGuideScreen extends Screen {
 
     private void buildRows() {
         rows.clear();
-        int textWidth = Math.max(148, panelW - 44);
+        int textWidth = Math.max(148, panelW - 48);
         for (int section = 0; section < SECTION_KEYS.length; section++) {
             boolean emphasized = section == 0 || section == SECTION_KEYS.length - 1;
             append(Component.translatable(SECTION_KEYS[section][0]), textWidth, true, emphasized, 4);
@@ -127,9 +128,10 @@ public final class DiaryFieldGuideScreen extends Screen {
                 narration.append(Component.translatable(entry)).append(". ");
             }
             int headingWidth = Math.max(1, this.font.width(this.font.split(heading, textWidth).get(0)));
+            int targetWidth = Math.min(panelW - 36, headingWidth + 16);
             GuideSectionButton sectionButton = new GuideSectionButton(
-                panelX + 20, viewportTop() + sectionOffsets.get(section) - scrollY,
-                headingWidth, LINE_HEIGHT, narration,
+                panelX + 18, viewportTop() + sectionOffsets.get(section) - scrollY,
+                targetWidth, LINE_HEIGHT, narration,
                 () -> jumpToSection(targetSection));
             this.addWidget(sectionButton);
             sectionWidgets.add(sectionButton);
@@ -209,7 +211,8 @@ public final class DiaryFieldGuideScreen extends Screen {
         int sectionIndex = -1;
         for (GuideRow row : rows) {
             y += row.gapBefore;
-            if (row.heading && row.gapBefore > 0) sectionIndex++;
+            boolean sectionStart = row.heading && row.gapBefore > 0;
+            if (sectionStart) sectionIndex++;
             if (row.text != null) {
                 boolean headingFocused = row.heading && sectionIndex == focusedSection;
                 boolean headingActive = row.heading
@@ -226,7 +229,10 @@ public final class DiaryFieldGuideScreen extends Screen {
                         DiaryTheme.withAlpha(rail, 24));
                     g.fill(panelX + 14, calloutTop, panelX + 17, calloutBottom, rail);
                 }
-                int textX = panelX + (row.callout > 0 ? 22 : 20);
+                if (sectionStart) {
+                    g.drawString(this.font, SECTION_NUMBERS[sectionIndex], panelX + 20, y, color, false);
+                }
+                int textX = panelX + (row.heading ? 34 : row.callout > 0 ? 22 : 20);
                 int textWidth = this.font.width(row.text);
                 g.drawString(this.font, row.text, textX, y, color, false);
                 if (headingActive) {
@@ -313,7 +319,7 @@ public final class DiaryFieldGuideScreen extends Screen {
     private void positionSectionWidgets() {
         for (int section = 0; section < sectionWidgets.size(); section++) {
             GuideSectionButton button = sectionWidgets.get(section);
-            button.setX(panelX + 20);
+            button.setX(panelX + 18);
             button.setY(viewportTop() + sectionOffsets.get(section) - scrollY);
         }
     }
@@ -349,9 +355,10 @@ public final class DiaryFieldGuideScreen extends Screen {
             y += row.gapBefore;
             if (row.heading && row.gapBefore > 0) section++;
             if (row.heading && row.text != null) {
-                int textX = panelX + 20;
+                int textX = panelX + 34;
+                int hitLeft = row.gapBefore > 0 ? panelX + 18 : textX - 2;
                 int textWidth = this.font.width(row.text);
-                if (mouseX >= textX - 2 && mouseX <= textX + textWidth + 2
+                if (mouseX >= hitLeft && mouseX <= textX + textWidth + 2
                         && mouseY >= y && mouseY < y + LINE_HEIGHT) {
                     return section;
                 }
