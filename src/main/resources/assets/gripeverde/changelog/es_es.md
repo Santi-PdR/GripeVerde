@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.116.0 - Ayudas accesibles con teclado
+
+Las ayudas completas aparecen tras la breve espera habitual tanto al pasar el cursor como al dar foco de teclado a un botón personalizado de multijugador. Si se usa el teclado, la ayuda se coloca junto al botón. Las interfaces durante la partida siguen quietas.
+
 
 ## Version 0.115.0 - Ayudas completas en multijugador
 
