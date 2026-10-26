@@ -1054,6 +1054,12 @@ public class DiaryTitleScreen extends Screen {
 
     private long lastLogoClickMs = 0L;
     private String easterEggMessage = null;
+    private String cachedEasterEggMessage = null;
+    private int cachedEasterElapsedChars = -1;
+    private int cachedEasterBoxWidth = -1;
+    private net.minecraft.client.gui.Font cachedEasterFont = null;
+    private java.util.List<net.minecraft.util.FormattedCharSequence> cachedEasterLines = java.util.Collections.emptyList();
+    private int cachedEasterCursorTextWidth = 0;
     private String easterEggCaseCode = "";
     private long easterEggStartedMs = 0L;
     private long easterEggUntilMs = 0L;
@@ -1192,13 +1198,23 @@ public class DiaryTitleScreen extends Screen {
         int elapsedChars = reducedMotion()
             ? easterEggMessage.length()
             : (int)Math.min(easterEggMessage.length(), Math.max(0, (now - easterEggStartedMs) / 22L));
-        String visibleMessage = easterEggMessage.substring(0, elapsedChars);
-
         int boxW = Math.max(220, Math.min(330, this.width - 96));
         // v0.25.2: jamas mas ancho que la propia pantalla (escala GUI 4).
         boxW = Math.min(boxW, Math.max(120, this.width - 16));
-        java.util.List<net.minecraft.util.FormattedCharSequence> lines =
-            this.font.split(Component.literal(visibleMessage), boxW - 34);
+        if (easterEggMessage != cachedEasterEggMessage
+                || elapsedChars != cachedEasterElapsedChars
+                || boxW != cachedEasterBoxWidth
+                || this.font != cachedEasterFont) {
+            String visibleMessage = easterEggMessage.substring(0, elapsedChars);
+            cachedEasterLines = this.font.split(Component.literal(visibleMessage), boxW - 34);
+            cachedEasterCursorTextWidth = this.font.width(
+                this.font.plainSubstrByWidth(visibleMessage, boxW - 44));
+            cachedEasterEggMessage = easterEggMessage;
+            cachedEasterElapsedChars = elapsedChars;
+            cachedEasterBoxWidth = boxW;
+            cachedEasterFont = this.font;
+        }
+        java.util.List<net.minecraft.util.FormattedCharSequence> lines = cachedEasterLines;
         // v0.23.2: con la maquina de escribir, el primer fotograma tiene 0 letras y
         // font.split("") devuelve lista VACIA; indexarla crashaba el cliente (AIOOBE
         // reportado en 0.22.0). lineCount jamas puede superar lines.size().
@@ -1250,7 +1266,7 @@ public class DiaryTitleScreen extends Screen {
         int dot = (Math.min(alpha, Math.max(30, pulse)) << 24) | 0x5A7038;
         g.fill(boxX + boxW - 10, boxY + boxH - 10, boxX + boxW - 6, boxY + boxH - 6, dot);
         if (elapsedChars < easterEggMessage.length()) {
-            int cx = boxX + 15 + this.font.width(this.font.plainSubstrByWidth(visibleMessage, boxW - 44));
+            int cx = boxX + 15 + cachedEasterCursorTextWidth;
             g.fill(Math.min(boxX + boxW - 18, cx + 2), boxY + boxH - 13,
                 Math.min(boxX + boxW - 16, cx + 4), boxY + boxH - 5, green);
         }
