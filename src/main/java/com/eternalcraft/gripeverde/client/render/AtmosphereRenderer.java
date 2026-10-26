@@ -15,6 +15,15 @@ public class AtmosphereRenderer {
     private static final float[] CLOUD_SPEEDS = new float[7];
     private static boolean cloudSpeedsInit = false;
 
+    // Fixed title-sky layout; reuse it instead of allocating six arrays per frame.
+    private static final float[][] CLOUDS = {
+        {0.08f, 0.06f, 0.0f,  0.45f, 0.7f},
+        {0.15f, 0.05f, 0.3f,  0.55f, 0.6f},
+        {0.05f, 0.04f, 0.55f, 0.40f, 0.5f},
+        {0.22f, 0.07f, 0.1f,  0.50f, 0.65f},
+        {0.12f, 0.05f, 0.7f,  0.35f, 0.55f},
+    };
+
     private static void initCloudSpeeds() {
         if (cloudSpeedsInit) return;
         // Velocidades base con variacion +-30% por sesion
@@ -501,21 +510,14 @@ public class AtmosphereRenderer {
     }
 
     private static void renderClouds(GuiGraphics g, int w, int h) {
-        float[][] clouds = {
-            {0.08f, 0.06f, 0.0f,  0.45f, 0.7f},
-            {0.15f, 0.05f, 0.3f,  0.55f, 0.6f},
-            {0.05f, 0.04f, 0.55f, 0.40f, 0.5f},
-            {0.22f, 0.07f, 0.1f,  0.50f, 0.65f},
-            {0.12f, 0.05f, 0.7f,  0.35f, 0.55f},
-        };
         int cloudColor = 0x001A0F08;
-        for (int i = 0; i < clouds.length; i++) {
-            int cy    = (int)(h * (clouds[i][0] + clouds[i][1] * 0.5f));
-            int xBase = (int)(w * clouds[i][2]) + (int)(CLOUD_OFFSETS[i]) - 100;
-            int cw    = (int)(w * clouds[i][3]);
-            int ch    = (int)(h * clouds[i][1]);
+        for (int i = 0; i < CLOUDS.length; i++) {
+            int cy    = (int)(h * (CLOUDS[i][0] + CLOUDS[i][1] * 0.5f));
+            int xBase = (int)(w * CLOUDS[i][2]) + (int)(CLOUD_OFFSETS[i]) - 100;
+            int cw    = (int)(w * CLOUDS[i][3]);
+            int ch    = (int)(h * CLOUDS[i][1]);
             int radius = Math.max(8, ch);
-            float pulse = (float)(Math.sin(time * 0.3f + i * 1.3f) * 0.1f + clouds[i][4]);
+            float pulse = (float)(Math.sin(time * 0.3f + i * 1.3f) * 0.1f + CLOUDS[i][4]);
             int alpha = Math.max(0, Math.min(255, (int)(pulse * 180)));
             int blobCount = 2;
             int cappedRadius = Math.min(radius, 20);
