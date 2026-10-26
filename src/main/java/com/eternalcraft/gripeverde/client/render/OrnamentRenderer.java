@@ -20,7 +20,7 @@ public class OrnamentRenderer {
         if (w < 14 || h < 14) {
             g.fill(x, y, x + w, y + h, DiaryTheme.PAPER);
         } else {
-            int[] cornerInset = {4, 2, 1, 0};
+            int[] cornerInset = {6, 4, 2, 1, 0};
             for (int row = 0; row < cornerInset.length; row++) {
                 int inset = cornerInset[row];
                 g.fill(x + inset, y + row, x + w - inset, y + row + 1, DiaryTheme.PAPER);
@@ -48,7 +48,7 @@ public class OrnamentRenderer {
             g.fill(x, y,         x + 1, y + h,     DiaryTheme.PAPER_DARK);
             g.fill(x + w - 1, y, x + w, y + h,     DiaryTheme.PAPER_DARK);
         } else {
-            int[] cornerInset = {4, 2, 1, 0};
+            int[] cornerInset = {6, 4, 2, 1, 0};
             for (int row = 0; row < cornerInset.length; row++) {
                 int inset = cornerInset[row];
                 g.fill(x + inset, y + row, x + w - inset, y + row + 1, DiaryTheme.PAPER_DARK);
