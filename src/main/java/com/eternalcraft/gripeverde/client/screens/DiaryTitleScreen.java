@@ -32,6 +32,9 @@ public class DiaryTitleScreen extends Screen {
     private SlimButton skipMusicButton;
     private static boolean cinematicMode = false;
     private static long cinematicHintUntilMs = 0L;
+    private boolean skipTooltipInitialized = false;
+    private boolean lastSkipTooltipReady = false;
+    private boolean lastSkipTooltipEnglish = false;
 
     // ── v0.16.0: la memoria de la vigilia ───────────────────────────────────
     private static boolean memorySessionBegun = false;
@@ -319,12 +322,18 @@ public class DiaryTitleScreen extends Screen {
         } catch (Throwable ignored) {}
         if (this.skipMusicButton != null) {
             boolean ready = MenuMusic.isActive() && !MenuMusic.isCrossfading();
+            boolean english = isEnglishSelected();
             this.skipMusicButton.active = ready;
-            this.skipMusicButton.setTooltip(Tooltip.create(Component.literal(
-                ready
-                    ? (isEnglishSelected() ? "Change the chronicler's piece" : "Cambiar la pieza del cronista")
-                    : (isEnglishSelected() ? "The gramophone is turning" : "El gramofono esta girando")
-            )));
+            if (!skipTooltipInitialized || ready != lastSkipTooltipReady
+                    || english != lastSkipTooltipEnglish) {
+                String tooltip = ready
+                    ? (english ? "Change the chronicler's piece" : "Cambiar la pieza del cronista")
+                    : (english ? "The gramophone is turning" : "El gramofono esta girando");
+                this.skipMusicButton.setTooltip(Tooltip.create(Component.literal(tooltip)));
+                lastSkipTooltipReady = ready;
+                lastSkipTooltipEnglish = english;
+                skipTooltipInitialized = true;
+            }
         }
     }
 
