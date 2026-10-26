@@ -235,6 +235,15 @@ public class DiaryTitleScreen extends Screen {
             Component.translatable("gripeverde.title.button.changelog")));
         this.addRenderableWidget(changelogBtn);
 
+        // v0.111.0: manual de campo visible desde la portada, sin depender del cartel.
+        SlimButton fieldGuideBtn = new SlimButton(
+            this.width - 52, 8, 20, 20,
+            Component.literal("F"),
+            () -> this.minecraft.setScreen(new DiaryFieldGuideScreen(this)));
+        fieldGuideBtn.setTooltip(Tooltip.create(
+            Component.translatable("gripeverde.poster.quarantine.guide_hint")));
+        this.addRenderableWidget(fieldGuideBtn);
+
         // --- Audio control buttons (bottom-left, discrete) ---
         // Boton >> (skip musica) queda solo (AMB removido, ahora en Sonidos)
         int skipY = compactLayout ? 8 : this.height - 28;
