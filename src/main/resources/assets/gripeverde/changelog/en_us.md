@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.119.0 - No one left behind
+
+A fifth daily CEDA notice gives the rescue basics: a teammate must free anyone caught in a PIN, hold to lift a fallen survivor for five seconds without taking a hit, and find a defibrillator in the loot to revive the dead. The paper is static and title-screen-only.
+
 ## Version 0.118.0 - Pages with a hand-worn edge
 
 The notices now have gently clipped corners, a small fold, and a few worn paper fibres. Their details stay still, including while you play. The elixir's red FRAUDE stamp has its own space below the price, and the quarantine notice still opens the field guide when pressed. The chronicler's notes now sound more like a person telling what happened, in English and Spanish.
