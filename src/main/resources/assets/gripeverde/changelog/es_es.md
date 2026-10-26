@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.108.0 - Música bajo control
+
+Pausar o reanudar la banda sonora desde el panel de sonido. La elección queda guardada sin cambiar el nivel de volumen. Los controles de pistas se desactivan durante una partida.
+
 ## Version 0.107.0 - Ojos en cuarentena
 
 Añadir un par pequeño y fijo de ojos azules de ghoul en una ventana lejana de la pantalla principal. La niebla suaviza el detalle; no aparece en las interfaces del diario ni durante partidas. Son píxeles estáticos, sin ticks, partículas, sonidos ni efectos de juego adicionales.
