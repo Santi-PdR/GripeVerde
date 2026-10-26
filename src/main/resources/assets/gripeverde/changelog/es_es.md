@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.101.0 - Guía de sonido más clara
+
+Aclarar que Maestro de Minecraft y la categoría correspondiente multiplican la música y el ambiente del mod. Mantener breves las ayudas bilingües e indicar qué controles revisar. No cambia la reproducción ni el comportamiento durante la partida.
+
 ## Version 0.100.0 - Lectura compacta de sonido
 
 Mantener visibles los porcentajes Maestro, Música y Ambiente de Minecraft en ventanas estrechas con etiquetas concisas. Conservar los nombres completos de las categorías en el diseño normal.
