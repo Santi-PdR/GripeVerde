@@ -244,6 +244,20 @@ public class PosterRenderer {
         // v0.21.25: tinta oscura sin sombra (consistencia con poster de cuarentena).
         g.drawString(font, warn, -ww / 2, 0, DiaryTheme.INK, false);
         g.pose().popPose();
+
+        // El decreto real lleva un sello fijo, grabado en cera y con corona.
+        drawRoyalWaxSeal(g, x + w - 22, y + h - 22, 8);
+    }
+
+    private static void drawRoyalWaxSeal(GuiGraphics g, int cx, int cy, int radius) {
+        OrnamentRenderer.drawWaxSeal(g, cx, cy, radius);
+        int crown = DiaryTheme.CANDLE_WAX;
+        g.fill(cx - 5, cy + 1, cx + 6, cy + 3, crown);
+        g.fill(cx - 4, cy - 2, cx + 5, cy, crown);
+        g.fill(cx - 5, cy - 4, cx - 3, cy - 1, crown);
+        g.fill(cx - 1, cy - 5, cx + 1, cy - 1, crown);
+        g.fill(cx + 3, cy - 4, cx + 5, cy - 1, crown);
+        g.fill(cx - 6, cy + 3, cx + 7, cy + 4, DiaryTheme.GOLD_TARNISHED);
     }
 
     /** Retrato somero del buscado; sus ojos se mueven si el lector lo sabe. */
