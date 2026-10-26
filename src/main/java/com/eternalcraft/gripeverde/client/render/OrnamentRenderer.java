@@ -19,14 +19,14 @@ public class OrnamentRenderer {
         // Papel base
         g.fill(x, y, x + w, y + h, DiaryTheme.PAPER);
 
-        // Manchas de humedad (puntos aleatorios oscuros)
-        java.util.Random rng = new java.util.Random((long)(x * 31L + y * 17L + w));
-        for (int i = 0; i < 8; i++) {
-            if (w <= 4 || h <= 4) continue;
-            int sx = x + rng.nextInt(w - 4);
-            int sy = y + rng.nextInt(h - 4);
-            int size = 2 + rng.nextInt(3);
-            int stainAlpha = 30 + rng.nextInt(40);
+        // Manchas deterministas: se calculan una vez por panel y se reutilizan.
+        int[] stains = stainPattern(x, y, w, h);
+        for (int i = 0; i < 8 && stains.length > 0; i++) {
+            int offset = i * 4;
+            int sx = x + stains[offset];
+            int sy = y + stains[offset + 1];
+            int size = stains[offset + 2];
+            int stainAlpha = stains[offset + 3];
             g.fill(sx, sy, sx + size, sy + size,
                 AtmosphereRenderer.withAlpha(0x006B5533, stainAlpha));
         }
@@ -36,6 +36,61 @@ public class OrnamentRenderer {
         g.fill(x, y + h - 1, x + w, y + h,     DiaryTheme.PAPER_DARK);
         g.fill(x, y,         x + 1, y + h,     DiaryTheme.PAPER_DARK);
         g.fill(x + w - 1, y, x + w, y + h,     DiaryTheme.PAPER_DARK);
+    }
+
+    private static final int STAIN_CACHE_SIZE = 64;
+    private static final int STAIN_CACHE_MASK = STAIN_CACHE_SIZE - 1;
+    private static final long[] STAIN_CACHE_KEYS = new long[STAIN_CACHE_SIZE];
+    private static final int[][] STAIN_CACHE_VALUES = new int[STAIN_CACHE_SIZE][];
+    private static final int[] EMPTY_STAIN_PATTERN = new int[0];
+
+    /** Render-thread cache; avoids Random and key allocations on every frame. */
+    private static int[] stainPattern(int x, int y, int w, int h) {
+        if (w <= 4 || h <= 4) return EMPTY_STAIN_PATTERN;
+
+        long key = ((long)(x & 0xFFFF) << 48)
+            | ((long)(y & 0xFFFF) << 32)
+            | ((long)(w & 0xFFFF) << 16)
+            | (long)(h & 0xFFFF);
+        long seed = x * 31L + y * 17L + w;
+        long mixed = key;
+        mixed ^= mixed >>> 33;
+        mixed *= 0xff51afd7ed558ccdL;
+        mixed ^= mixed >>> 33;
+        mixed *= 0xc4ceb9fe1a85ec53L;
+        mixed ^= mixed >>> 33;
+        int start = (int)(mixed ^ (mixed >>> 32)) & STAIN_CACHE_MASK;
+        int slot = start;
+
+        for (int probe = 0; probe < STAIN_CACHE_SIZE; probe++) {
+            if (STAIN_CACHE_KEYS[slot] == key) return STAIN_CACHE_VALUES[slot];
+            if (STAIN_CACHE_KEYS[slot] == 0L) {
+                int[] pattern = createStainPattern(seed, w, h);
+                STAIN_CACHE_KEYS[slot] = key;
+                STAIN_CACHE_VALUES[slot] = pattern;
+                return pattern;
+            }
+            slot = (slot + 1) & STAIN_CACHE_MASK;
+        }
+
+        int[] pattern = createStainPattern(seed, w, h);
+        STAIN_CACHE_KEYS[start] = key;
+        STAIN_CACHE_VALUES[start] = pattern;
+        return pattern;
+    }
+
+    /** Keeps the same seeded pattern and draw order as the original renderer. */
+    private static int[] createStainPattern(long seed, int w, int h) {
+        java.util.Random rng = new java.util.Random(seed);
+        int[] pattern = new int[8 * 4];
+        for (int i = 0; i < 8; i++) {
+            int offset = i * 4;
+            pattern[offset] = rng.nextInt(w - 4);
+            pattern[offset + 1] = rng.nextInt(h - 4);
+            pattern[offset + 2] = 2 + rng.nextInt(3);
+            pattern[offset + 3] = 30 + rng.nextInt(40);
+        }
+        return pattern;
     }
 
     /**
