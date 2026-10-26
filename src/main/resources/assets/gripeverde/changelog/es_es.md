@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.103.0 - El encubrimiento de la CEDA
+
+Aclarar que la CEDA ocultó el brote de 1800 bajo el nombre de gripe común y que los ghouls son infectados vivos, no muertos reanimados. Mantener sin cambios el diseño del manual.
+
 ## Version 0.102.0 - El decreto real
 
 Añadir al decreto real rotativo un pequeño sello de cera con corona. Mantenerlo dentro del borde del papel y usar formas estáticas solo en la pantalla principal.
