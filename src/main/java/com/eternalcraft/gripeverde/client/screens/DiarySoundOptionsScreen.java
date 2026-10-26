@@ -55,6 +55,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     private final SmoothScroll smoothScroll = new SmoothScroll();
     private DiaryMusicSlider musicSlider;
     private DiaryButton skipTrackButton;
+    private DiaryButton musicToggleButton;
     private DiaryAmbienceSlider ambienceSlider;
     private DiaryButton ambienceToggleButton;
     private DiarySlider uiVolumeSlider;
@@ -142,16 +143,29 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         int sliderX = this.panelX + 20;
         int sliderY = musicSliderY();
         int musicHeight = musicSliderHeight();
-        int skipTrackW = sliderW >= 120 ? Math.min(44, Math.max(32, sliderW / 5)) : 0;
-        int musicControlGap = skipTrackW > 0 ? 4 : 0;
-        int musicSliderW = Math.max(1, sliderW - skipTrackW - musicControlGap);
+        int toggleTrackW = sliderW >= 100 ? Math.min(46, Math.max(38, sliderW / 6)) : 0;
+        int skipTrackW = sliderW >= 160 ? Math.min(44, Math.max(32, sliderW / 7)) : 0;
+        int musicControlGap = toggleTrackW > 0 ? 4 : 0;
+        int skipTrackGap = skipTrackW > 0 ? 4 : 0;
+        int musicSliderW = Math.max(1, sliderW - toggleTrackW - skipTrackW - musicControlGap - skipTrackGap);
         this.musicSlider = new DiaryMusicSlider(sliderX, sliderY, musicSliderW, musicHeight);
         this.musicSlider.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
             Component.translatable("gripeverde.options.sound.music_slider.tooltip")));
         this.addRenderableWidget(this.musicSlider);
+
+        int musicControlX = sliderX + musicSliderW + musicControlGap;
+        if (toggleTrackW > 0) {
+            this.musicToggleButton = new DiaryButton(
+                musicControlX, sliderY, toggleTrackW, musicHeight,
+                musicToggleLabel(), DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
+                DiaryButton.SoundProfile.DEFAULT, this::toggleMenuMusic);
+            refreshMenuMusicToggleButton();
+            this.addRenderableWidget(this.musicToggleButton);
+            musicControlX += toggleTrackW + skipTrackGap;
+        }
         if (skipTrackW > 0) {
             this.skipTrackButton = new DiaryButton(
-                sliderX + musicSliderW + musicControlGap, sliderY, skipTrackW, musicHeight,
+                musicControlX, sliderY, skipTrackW, musicHeight,
                 Component.translatable("gripeverde.options.sound.next_track_button"),
                 DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
                 DiaryButton.SoundProfile.DEFAULT, MenuMusic::skipToNext);
@@ -368,6 +382,28 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             : "gripeverde.options.sound.ambience_on");
     }
 
+    private Component musicToggleLabel() {
+        return Component.translatable(MenuMusic.isMusicEnabled()
+            ? "gripeverde.options.sound.music_toggle.pause"
+            : "gripeverde.options.sound.music_toggle.resume");
+    }
+
+    private void toggleMenuMusic() {
+        boolean enabled = !MenuMusic.isMusicEnabled();
+        ClientConfig.MENU_MUSIC_ENABLED.set(enabled);
+        ClientConfig.MENU_MUSIC_ENABLED.save();
+        if (enabled) MenuMusic.start();
+        else MenuMusic.stop();
+        refreshMenuMusicToggleButton();
+    }
+
+    private void refreshMenuMusicToggleButton() {
+        if (this.musicToggleButton == null) return;
+        this.musicToggleButton.setMessage(musicToggleLabel());
+        this.musicToggleButton.active =
+            !com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.hasActiveWorld();
+    }
+
     private void refreshAmbienceToggleButton() {
         if (this.ambienceToggleButton == null) return;
         boolean muted = MenuAmbience.isMuted();
@@ -380,6 +416,11 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        refreshMenuMusicToggleButton();
+        if (this.skipTrackButton != null) {
+            this.skipTrackButton.active = MenuMusic.isActive() && !MenuMusic.isCrossfading()
+                && !com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.hasActiveWorld();
+        }
         // Shared background renderer draws the menu scene or a fixed live-world veil.
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
 
