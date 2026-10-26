@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.122.0 - Un sello con espacio propio
+
+El sello FRAUDE del elixir ahora va después de la línea de la botella, en vez de subir desde el borde inferior. Así no tapa las palabras cuando la hoja es baja; si no hay sitio, el sello no se dibuja. Las esquinas recortadas también se notan más y el borde de tinta sigue la forma del papel. Todo permanece quieto en el menú principal.
+
 ## Version 0.121.0 - Secciones a la vista
 
 Cada título del manual ahora lleva un número impreso que corresponde a los atajos 1–7 del pie. Así se ve qué sección abrirá cada tecla sin tener que contar los títulos. Las marcas son estáticas y solo aparecen en el manual.
