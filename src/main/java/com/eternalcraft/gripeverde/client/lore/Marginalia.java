@@ -225,7 +225,7 @@ case N_LANGUAGE:     return en ? "You speak to me in another tongue now. I know 
 case N_WHISPER3:     return en ? "He asked for you again, the third one. Answer with three knocks." : "El tercero volvió a preguntar por ti. Contéstale con tres golpes.";
 case N_KEY_HINT:     return en ? "That little key is tied to the clock. Look where the hands meet." : "La llavecita está atada al reloj. Mira dónde se cruzan las agujas.";
 case N_DRAWER_HINT:  return en ? "The bottom drawer has been waiting for that little key." : "El cajón de abajo lleva tiempo esperando esa llavecita.";
-case N_SMUGGLER_HINT: return en ? "Duck down and run with one quick tap; then leave the rest of the house still. That is how the contraband gets in." : "Agáchate y echa a correr con un solo toque; luego deja quieto el resto de la casa. Así entra el contrabando.";
+case N_SMUGGLER_HINT: return en ? "Duck low and hurry through. Then let the rest of the house go quiet. That is how the contraband slips in." : "Agáchate y cruza de prisa. Luego deja que el resto de la casa vuelva al silencio. Así se cuela el contrabando.";
 case N_HINGE:        return en ? "The hinge has started to groan. I must have opened that drawer too often." : "La bisagra empezó a quejarse. Debí abrir demasiado ese cajón.";
 case N_STREAK3:      return en ? "Third night you have stayed. Even the fever would have given in by now." : "Ya es la tercera noche que te quedas. Hasta la fiebre se habría rendido.";
 case N_STREAK7:      return en ? "A week of nights. I can no longer tell your hand from the fever’s." : "Una semana de noches. Ya no distingo tu letra de la fiebre.";
