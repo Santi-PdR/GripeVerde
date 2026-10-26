@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.120.0 - Rescue advice that fits
+
+The rescue notice now keeps every instruction on the page at narrow sizes. It tells the crew how to free a PIN, lift a fallen survivor, avoid interrupting the rescue, and find a defibrillator.
+
 ## Version 0.119.0 - No one left behind
 
 The daily CEDA papers now include a short rescue notice: a teammate must free anyone caught in a PIN, lift a fallen survivor without taking a hit, and find a defibrillator in the loot if someone dies. It stays on the title screen and never moves during an expedition.
