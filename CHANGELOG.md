@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.119.0 - No one left behind
+
+The daily CEDA papers now include a short rescue notice: a teammate must free anyone caught in a PIN, lift a fallen survivor without taking a hit, and find a defibrillator in the loot if someone dies. It stays on the title screen and never moves during an expedition.
+
 ## Version 0.118.0 - Hojas con bordes de otra época
 
 Las esquinas de los avisos ya no parecen cortadas por una máquina: cada hoja tiene un perfil apenas irregular, con pliegues y fibras gastadas que se quedan quietos mientras juegas. El sello rojo del elixir ocupa su propio margen, debajo del precio y sin tapar las letras. En la pantalla principal, la hoja de cuarentena sigue abriendo el manual al tocarla. Las crónicas del narrador cuentan lo que ocurre con palabras de todos los días, tanto en español como en inglés.
