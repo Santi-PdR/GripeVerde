@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.104.0 - The field report
+
+Add a fourth daily title-screen document with CEDA guidance on living Ghouls, mutation behavior, PIN rescues and staying together. Give it a worn-paper treatment and a fixed blue-eye ink mark. The poster is bilingual and static, with no animation in worlds, servers or inventory screens.
+
 ## Version 0.103.0 - CEDA's cover story
 
 Clarify that CEDA concealed the 1800 outbreak as common flu and that Ghouls are living infected survivors, not raised dead. Keep the field-guide layout unchanged.
