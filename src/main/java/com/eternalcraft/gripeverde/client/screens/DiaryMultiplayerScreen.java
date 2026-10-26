@@ -51,6 +51,10 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     private Button vanillaSelectBtn;
     private Button vanillaEditBtn;
     private Button vanillaDeleteBtn;
+    // Cached after list layout changes; render-time row decoration must not scan fields reflectively.
+    private int vanillaItemHeight;
+    private int vanillaListY0;
+    private int vanillaHeaderHeight;
 
     // Nuestros botones Diary
     private DiaryButton diarySelect;
@@ -90,6 +94,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 this.smoothScroll.snapToCurrent(this.vanillaList);
             } catch (Throwable ignored) {}
         }
+        cacheVanillaListMetrics();
 
         // Ocultar los 7 botones vanilla (los que sabemos + los descubiertos por scan)
         hideVanillaButtons();
@@ -615,9 +620,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             var children = this.vanillaList.children();
             if (children == null || children.isEmpty()) return;
 
-            int itemHeight = readIntField(this.vanillaList, "itemHeight", "f_93387_");
-            int y0 = readIntField(this.vanillaList, "y0", "f_93390_");
-            int headerHeight = readIntField(this.vanillaList, "headerHeight", "f_93395_");
+            int itemHeight = vanillaItemHeight;
+            int y0 = vanillaListY0;
+            int headerHeight = vanillaHeaderHeight;
 
             if (itemHeight <= 0) return;
 
@@ -668,9 +673,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             var children = this.vanillaList.children();
             if (children == null || children.isEmpty()) return;
 
-            int itemHeight = readIntField(this.vanillaList, "itemHeight", "f_93387_");
-            int y0 = readIntField(this.vanillaList, "y0", "f_93390_");
-            int headerHeight = readIntField(this.vanillaList, "headerHeight", "f_93395_");
+            int itemHeight = vanillaItemHeight;
+            int y0 = vanillaListY0;
+            int headerHeight = vanillaHeaderHeight;
 
             if (itemHeight <= 0) return;
 
@@ -721,9 +726,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         try {
             var children = this.vanillaList.children();
             if (children == null) return 0;
-            int itemHeight = readIntField(this.vanillaList, "itemHeight", "f_93387_");
-            int y0 = readIntField(this.vanillaList, "y0", "f_93390_");
-            int headerHeight = readIntField(this.vanillaList, "headerHeight", "f_93395_");
+            int itemHeight = vanillaItemHeight;
+            int y0 = vanillaListY0;
+            int headerHeight = vanillaHeaderHeight;
             if (itemHeight <= 0) return 0;
             double scrollAmount = 0.0;
             try { scrollAmount = this.vanillaList.getScrollAmount(); } catch (Throwable ignored) {}
@@ -744,6 +749,22 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             return Math.max(lanTop - 2, this.vanillaList.getTop());
         } catch (Throwable ignored) {}
         return 0;
+    }
+
+    /**
+     * Reflect once after the list is laid out, then reuse the row metrics while rendering.
+     * These dimensions change on screen resize, not on every frame or scroll event.
+     */
+    private void cacheVanillaListMetrics() {
+        if (this.vanillaList == null) {
+            vanillaItemHeight = 0;
+            vanillaListY0 = 0;
+            vanillaHeaderHeight = 0;
+            return;
+        }
+        vanillaItemHeight = readIntField(this.vanillaList, "itemHeight", "f_93387_");
+        vanillaListY0 = readIntField(this.vanillaList, "y0", "f_93390_");
+        vanillaHeaderHeight = readIntField(this.vanillaList, "headerHeight", "f_93395_");
     }
 
     private static int readIntField(Object target, String officialName, String srgName) {
