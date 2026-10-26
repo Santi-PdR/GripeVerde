@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.116.0 - Keyboard-ready multiplayer hints
+
+- Show full action tooltips when a custom multiplayer button receives keyboard focus, as well as on hover.
+- Keep the familiar 500 ms delay and anchor focused hints to the button.
+- Preserve still gameplay screens and the existing mouse layout.
+
 
 ## Version 0.115.0 - Full multiplayer action hints
 
