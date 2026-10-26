@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.107.0 - Eyes in quarantine
+
+Add a small, fixed pair of blue Ghoul eyes to a distant upper window on the title screen. Fog softens the detail; diary overlays and live worlds do not render it. The scene uses static pixels only, with no extra ticks, particles, sounds, or gameplay effects.
+
 ## Version 0.106.0 - Steadier paper
 
 Cache each panel's deterministic moisture pattern. The paper keeps the same appearance without creating a random generator on every render. Draw the Ghoul report's three lines directly instead of allocating a temporary array each frame. Gameplay behavior is unchanged.
