@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.126.0 - Words stay on the paper
+
+Translated lines on the quarantine, elixir, reward, and royal decree notices now fit inside the paper edge. Scaled headings respect the same width, keeping the English and Spanish copy clear of the border and folded corner.
+
 ## Version 0.125.0 - The empty desk
 
 The long-idle discovery now speaks of an empty desk and the ghosts who gather there instead of naming the controls used to uncover it. Its secret and timing are unchanged.
