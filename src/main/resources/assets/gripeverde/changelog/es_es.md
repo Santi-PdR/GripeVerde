@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.129.0 - Voces de la guardia
+
+Pulimos las frases en inglés y español para que suenen naturales, mantengan el tono de época y respeten las tildes. Los subtítulos de los botones siguen siendo texto estático y solo rotan en la pantalla principal.
+
+
 ## Version 0.128.0 - Bruma enferma en el horizonte
 
 La ciudad del menú principal gana una bruma verde tenue y fija detrás del perfil urbano, como señal del brote. Solo aparece en el menú, usa unos pocos rellenos translúcidos y no añade animación ni dibujo sobre el mundo.
