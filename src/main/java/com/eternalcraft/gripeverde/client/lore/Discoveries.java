@@ -3,6 +3,7 @@ package com.eternalcraft.gripeverde.client.lore;
 import com.eternalcraft.gripeverde.client.audio.ModSounds;
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
+import com.eternalcraft.gripeverde.client.util.MotionPolicy;
 import net.minecraft.client.Minecraft;
 
 /**
@@ -121,9 +122,12 @@ public final class Discoveries {
         long now = System.currentTimeMillis();
         long remain = toastUntilMs - now;
         long age = now - toastStartMs;
+        boolean reducedMotion = MotionPolicy.isReduced();
         int alpha = 232;
-        if (age < 180L) alpha = (int)(232 * age / 180L);
-        else if (remain < 260L) alpha = (int)(232 * remain / 260L);
+        if (!reducedMotion) {
+            if (age < 180L) alpha = (int)(232 * age / 180L);
+            else if (remain < 260L) alpha = (int)(232 * remain / 260L);
+        }
         alpha = Math.max(0, Math.min(232, alpha));
 
         boolean english = isEnglish();
