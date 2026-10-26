@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.130.0 - Una nota al margen
+
+Reescribimos la pista del contrabandista con la voz natural del cronista en inglés y español. Quitamos la frase que parecía indicar un control, pero conservamos la pista dentro de la historia.
+
+
 ## Version 0.129.0 - Voces de la guardia
 
 Pulimos las frases en inglés y español para que suenen naturales, mantengan el tono de época y respeten las tildes. Los subtítulos de los botones siguen siendo texto estático y solo rotan en la pantalla principal.
