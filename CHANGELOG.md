@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.131.0 - Ambient controls reach every layer
+
+Menu ambience one-shots now use Minecraft's Ambient sound category, matching the looping beds and the Ambient slider. Music remains in Music, and button effects remain in the UI/Effects path.
+
+
 ## Version 0.130.0 - A note in the margins
 
 Rewrite the smuggler's hint in the chronicler's natural voice in English and Spanish, removing control-like wording while keeping its in-world clue.
