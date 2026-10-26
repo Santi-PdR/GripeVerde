@@ -220,44 +220,43 @@ public final class Marginalia {
         boolean en = Discoveries.isEnglish();
         if (id == null) return null;
         switch (id) {
-            case N_READ_YOU:     return en ? "Someone has been reading my files. I know." : "Alguien ha estado leyendo mis fichas. Lo sé.";
-            case N_LANGUAGE:     return en ? "You write in another tongue now. I still understand." : "Ahora escribes en otra lengua. Igual te entiendo.";
-            case N_WHISPER3:     return en ? "The third one asked about you. Answer with three knocks." : "El tercero preguntó por ti. Responde con tres golpes.";
-            case N_KEY_HINT:     return en ? "The small key hangs from time, not from a pocket." : "La llave pequeña cuelga del tiempo, no de un bolsillo.";
-            case N_DRAWER_HINT:  return en ? "The lower drawer accepts a small key." : "El cajón de abajo acepta una llave pequeña.";
-            case N_SMUGGLER_HINT: return en ? "Crouch and sprint, both set to toggle. The rest, still. That is how contraband enters." : "Configura agacharse y correr en modo alternar. Mantén quieto el resto; así entra el contrabando.";
-            case N_HINGE:        return en ? "The hinge complains now. Oil it with fewer openings." : "La bisagra ya se queja. Menos aperturas la calmarían.";
-            case N_STREAK3:      return en ? "Three nights in a row. The plague is not studied this hard." : "Tres noches seguidas. La peste no se estudia con tanto ahínco.";
-            case N_STREAK7:      return en ? "Seven nights. I no longer know if you write, or the fever does." : "Siete noches. Ya no sé si escribes tú o la fiebre.";
-            case N_DUST:         return en ? "Dust does not ask why anyone returns." : "El polvo no pregunta por qué vuelve nadie.";
-            case N_NIGHT:        return en ? "A whole night over the papers. The dawn is sick too." : "Una noche entera frente a los papeles. El alba también enferma.";
-            case N_SILENCE:      return en ? "Silence has noise too, if one stays still." : "El silencio también tiene ruido, si uno se queda quieto.";
-            case N_DESTROY:      return en ? "The cabinet remembers what you destroy." : "El gabinete recuerda lo que destruyes.";
-            case N_LETTERS:      return en ? "Write no more. No one answers here." : "No escribas más. Nadie responde aquí.";
-            case N_ANNIVERSARY:  return en ? "A year since you first opened the cabinet. No one else ever did." : "Hace un año abriste el gabinete por primera vez. Nadie más lo abrió.";
-            case N_PEREIRA:      return en ? "How do you know that name? Forget it. Forget it now." : "¿Cómo conoces ese nombre? Olvídalo. Olvídalo ahora.";
-            case N_HOLLOWAY:     return en ? "I read what Holloway wrote. I wish I had not." : "Leí lo que escribió Holloway. Ojalá no lo hubiera hecho.";
-            case N_READER10:     return en ? "Ten findings. I no longer write alone." : "Diez hallazgos. Ya no escribo solo.";
-            case N_CORRECTION:   return en ? "The ink has not yet dried. No: the ink is no longer drying." : "La tinta aún no secó. No: la tinta ya no se seca.";
-            case N_FIRST_NIGHT:  return en ? "First night. Everything you touch will remember you." : "Primera noche. Todo lo que toques te recordará.";
-            case N_OPEN_COUNT:   return en ? "A hundred openings. The cabinet keeps the hours for you now." : "Cien aperturas. El gabinete ya lleva las horas por ti.";
+case N_READ_YOU:     return en ? "Someone has been going through my papers. I saw the pages move." : "Alguien anda hojeando mis papeles. Vi las hojas moverse.";
+case N_LANGUAGE:     return en ? "You speak to me in another tongue now. I know your voice all the same." : "Ahora me hablas en otra lengua. Aun así, reconozco tu voz.";
+case N_WHISPER3:     return en ? "He asked for you again, the third one. Answer with three knocks." : "El tercero volvió a preguntar por ti. Contéstale con tres golpes.";
+case N_KEY_HINT:     return en ? "That little key is tied to the clock. Look where the hands meet." : "La llavecita está atada al reloj. Mira dónde se cruzan las agujas.";
+case N_DRAWER_HINT:  return en ? "The bottom drawer has been waiting for that little key." : "El cajón de abajo lleva tiempo esperando esa llavecita.";
+case N_SMUGGLER_HINT: return en ? "Duck down and run with one quick tap; then leave the rest of the house still. That is how the contraband gets in." : "Agáchate y echa a correr con un solo toque; luego deja quieto el resto de la casa. Así entra el contrabando.";
+case N_HINGE:        return en ? "The hinge has started to groan. I must have opened that drawer too often." : "La bisagra empezó a quejarse. Debí abrir demasiado ese cajón.";
+case N_STREAK3:      return en ? "Third night you have stayed. Even the fever would have given in by now." : "Ya es la tercera noche que te quedas. Hasta la fiebre se habría rendido.";
+case N_STREAK7:      return en ? "A week of nights. I can no longer tell your hand from the fever’s." : "Una semana de noches. Ya no distingo tu letra de la fiebre.";
+case N_DUST:         return en ? "Dust never asks what brought anyone back." : "El polvo no pregunta qué te trajo de vuelta.";
+case N_NIGHT:        return en ? "We stayed with the papers until morning. Even the dawn looks ill." : "Nos quedamos con estos papeles hasta el alba. También ella parece enferma.";
+case N_SILENCE:      return en ? "Stay still long enough, and the quiet begins to answer." : "Si te quedas quieto, el silencio acaba respondiendo.";
+case N_DESTROY:      return en ? "You can burn every page; this house will still remember." : "Puedes quemar cada hoja; esta casa seguirá recordándolo.";
+case N_LETTERS:      return en ? "Please, no more letters. No one is coming back to answer." : "Por favor, no escribas más cartas. Nadie va a volver para contestarlas.";
+case N_ANNIVERSARY:  return en ? "A year ago you first came through that door. I thought I would never see you again." : "Hace un año cruzaste esa puerta por primera vez. Creí que no volvería a verte.";
+case N_PEREIRA:      return en ? "How did you learn that name? Stop asking. Forget you heard it." : "¿De dónde sacaste ese nombre? No preguntes más. Olvida que lo oíste.";
+case N_HOLLOWAY:     return en ? "I read Holloway’s letter. I should have left it sealed." : "Leí la carta de Holloway. Debí dejarla cerrada.";
+case N_READER10:     return en ? "Ten secrets between us. I thought I was alone at this desk." : "Ya compartimos diez secretos. Creí que me quedaría solo en este escritorio.";
+case N_CORRECTION:   return en ? "The ink should have dried by now. Why is it still wet?" : "La tinta ya tendría que haberse secado. ¿Por qué sigue húmeda?";
+case N_FIRST_NIGHT:  return en ? "Your first night in this room. I can already see your hand in the dust." : "Es tu primera noche en esta habitación. Ya veo tu rastro en el polvo.";
+case N_OPEN_COUNT:   return en ? "You have come here a hundred times. I have stopped counting the hours." : "Has vuelto cien veces. Dejé de contar las horas.";
             case N_MANY_CARDS: {
-                // v0.24.0: la cifra sigue al cajon, que ya no siempre tiene cuarenta y pico.
                 int cards = Discoveries.ALL.length - 3;
-                return en ? cards + " cards. Soon the drawer will be empty of secrets."
-                          : cards + " fichas. Pronto el cajón estará vacío de secretos.";
+                return en ? "I have tucked away " + cards + " secrets. At this rate, the drawer will soon be empty."
+                          : "He guardado " + cards + " secretos. A este paso, el cajón pronto se quedará vacío.";
             }
             case N_ARCHIVE_COMPLETE: {
                 int total = Discoveries.ALL.length;
-                return en ? total + " cards. The drawer is empty now. Seal it."
-                          : total + " fichas. El cajón ya está vacío. Séllalo.";
+                return en ? "I have nothing left to hide. " + total + " secrets, all found. Close the drawer now."
+                          : "Ya no me queda nada por esconder. Has encontrado los " + total + " secretos. Cierra el cajón.";
             }
-            case N_STORM:        return en ? "Tonight the sky reads the files aloud." : "Esta noche el cielo lee las fichas en voz alta.";
-            case N_SEAL:         return en ? "The wax was old. It was asking to be broken." : "El lacre era viejo. Pedía a gritos que lo rompieran.";
-            case N_TUNING:       return en ? "The room now sounds like itself. At last." : "La sala ya suena a sí misma. Por fin.";
-            case N_FLASH3:       return en ? "Three flashes and you did not blink. The chronicler counted." : "Tres relámpagos y no parpadeaste. El cronista contó.";
-            case N_DROP:         return en ? "Rain can be held for a second. Then it goes back to the sky." : "La lluvia puede sostenerse un segundo. Luego vuelve al cielo.";
-            case N_DOCTOR:       return en ? "The doctor's signature keeps arriving on forms nobody sends." : "La firma del doctor sigue llegando en formularios que nadie envía.";
+case N_STORM:        return en ? "Tonight the storm is speaking through the papers." : "Esta noche la tormenta habla a través de los papeles.";
+case N_SEAL:         return en ? "That wax was old and brittle. I only had to press." : "Ese lacre estaba viejo y quebradizo. Solo tuve que apretar.";
+case N_TUNING:       return en ? "The room sounds right again. I had missed that." : "La habitación vuelve a sonar como debe. Echaba de menos ese ruido.";
+case N_FLASH3:       return en ? "You watched three flashes without closing your eyes. I counted them." : "Viste tres relámpagos sin cerrar los ojos. Los conté.";
+case N_DROP:         return en ? "For a moment, the rain rests in your palm. Then it climbs back to the clouds." : "Por un instante, la lluvia descansa en tu mano. Luego regresa a las nubes.";
+case N_DOCTOR:       return en ? "There is the doctor’s hand again, on a letter no one sent." : "Otra vez la letra del doctor, en una carta que nadie envió.";
             default: return null;
         }
     }
