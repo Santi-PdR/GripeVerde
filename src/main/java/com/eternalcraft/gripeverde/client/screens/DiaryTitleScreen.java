@@ -376,11 +376,6 @@ public class DiaryTitleScreen extends Screen {
             drawSignature(g);
             super.render(g, mouseX, mouseY, partialTick);
             renderChroniclerNote(g);
-            if (overQuarantinePoster(mouseX, mouseY)) {
-                g.renderTooltip(this.font,
-                    Component.translatable("gripeverde.poster.quarantine.guide_hint"),
-                    mouseX, mouseY);
-            }
         } else {
             drawCinematicHint(g);
         }
