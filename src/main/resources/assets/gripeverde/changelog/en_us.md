@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.111.0 - Field guide at a glance
+
+Open the bilingual CEDA field guide directly from the title screen with a small, labeled button beside the chronicle control. It uses the existing localized hint and adds no world, inventory, or gameplay animation.
+
 ## Version 0.110.0 - Clearer button ink
 
 Disabled button labels use darker sepia ink for clearer reading against the paper. Button text keeps one unshadowed draw pass and avoids duplicate clipping work.
