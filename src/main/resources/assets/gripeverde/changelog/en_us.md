@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.118.0 - Pages with a hand-worn edge
+
+The notices now have gently clipped corners, a small fold, and a few worn paper fibres. Their details stay still, including while you play. The elixir's red FRAUDE stamp has its own space below the price, and the quarantine notice still opens the field guide when pressed. The chronicler's notes now sound more like a person telling what happened, in English and Spanish.
+
 ## Version 0.117.0 - Lighter return dust
 
 Cache the title-screen dust pattern shown after a long absence. Frames reuse the same 40 specks and opacity values; only a window resize recalculates them. The effect remains static and title-screen-only.
