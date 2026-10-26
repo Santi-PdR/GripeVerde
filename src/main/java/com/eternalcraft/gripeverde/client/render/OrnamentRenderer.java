@@ -17,16 +17,18 @@ public class OrnamentRenderer {
      */
     public static void drawPaperPanel(GuiGraphics g, int x, int y, int w, int h) {
         // The sheet has hand-cut corners rather than a perfect machine rectangle.
+        g.fill(x + 2, y + 2, x + w + 2, y + h + 2,
+            DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 72));
         if (w < 14 || h < 14) {
             g.fill(x, y, x + w, y + h, DiaryTheme.PAPER);
         } else {
-            int[] cornerInset = {6, 4, 2, 1, 0};
+            int[] cornerInset = {7, 4, 2, 1, 0, 1, 2};
             for (int row = 0; row < cornerInset.length; row++) {
                 int inset = cornerInset[row];
                 g.fill(x + inset, y + row, x + w - inset, y + row + 1, DiaryTheme.PAPER);
                 g.fill(x + inset, y + h - row - 1, x + w - inset, y + h - row, DiaryTheme.PAPER);
             }
-            g.fill(x, y + 4, x + w, y + h - 4, DiaryTheme.PAPER);
+            g.fill(x, y + 7, x + w, y + h - 7, DiaryTheme.PAPER);
         }
 
         // Manchas deterministas: se calculan una vez por panel y se reutilizan.
@@ -54,8 +56,19 @@ public class OrnamentRenderer {
                 g.fill(x + inset, y + row, x + w - inset, y + row + 1, DiaryTheme.PAPER_DARK);
                 g.fill(x + inset, y + h - row - 1, x + w - inset, y + h - row, DiaryTheme.PAPER_DARK);
             }
-            g.fill(x, y + 4, x + 1, y + h - 4, DiaryTheme.PAPER_DARK);
-            g.fill(x + w - 1, y + 4, x + w, y + h - 4, DiaryTheme.PAPER_DARK);
+            g.fill(x, y + 7, x + 1, y + h - 7, DiaryTheme.PAPER_DARK);
+            g.fill(x + w - 1, y + 7, x + w, y + h - 7, DiaryTheme.PAPER_DARK);
+        }
+
+        // A faint inset rule and broken fibers make the paper feel handled, not cut by a GUI frame.
+        if (w > 28 && h > 28) {
+            int fiber = DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 48);
+            g.fill(x + 5, y + 6, x + w - 5, y + 7, fiber);
+            g.fill(x + 5, y + h - 7, x + w - 5, y + h - 6, fiber);
+            g.fill(x + 5, y + 8, x + 6, y + h - 8, fiber);
+            g.fill(x + w - 6, y + 8, x + w - 5, y + h - 8, fiber);
+            g.fill(x + 9, y + h - 3, x + 15, y + h - 2, DiaryTheme.PAPER_DARK);
+            g.fill(x + w - 18, y + 2, x + w - 12, y + 3, DiaryTheme.PAPER_STAINED);
         }
     }
 
