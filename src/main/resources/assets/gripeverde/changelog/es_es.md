@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.98.0 - Señales de primera respuesta
+
+Añadir guías de color discretas para localizar rápido las instrucciones de PIN, derribo, muerte y desfibrilador. Mantener el texto regular y los controles de teclado y desplazamiento. Las marcas son estáticas y no añaden efectos al mundo.
+
 ## Version 0.97.0 - La nota de campo del cronista
 
 Mostrar los saludos del menú en una ficha de archivo más completa, con encabezado en ambos idiomas. Mejorar el espaciado y la jerarquía de tinta con texto de peso normal y fácil de leer. Mantener el detalle de papel estático y limitado a la pantalla principal.

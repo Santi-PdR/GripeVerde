@@ -85,7 +85,8 @@ public final class DiaryFieldGuideScreen extends Screen {
             boolean emphasized = section == 0 || section == SECTION_KEYS.length - 1;
             append(Component.translatable(SECTION_KEYS[section][0]), textWidth, true, emphasized, 4);
             for (String entry : ENTRY_KEYS[section]) {
-                append(Component.translatable(entry), textWidth, false, false, PARAGRAPH_GAP);
+                append(Component.translatable(entry), textWidth, false, false,
+                    PARAGRAPH_GAP, calloutKind(entry));
             }
             rows.add(new GuideRow(null, false, false, SECTION_GAP));
         }
@@ -136,10 +137,31 @@ public final class DiaryFieldGuideScreen extends Screen {
     }
 
     private void append(Component text, int width, boolean heading, boolean accent, int gap) {
+        append(text, width, heading, accent, gap, 0);
+    }
+
+    private void append(Component text, int width, boolean heading, boolean accent,
+                        int gap, int callout) {
         for (FormattedCharSequence line : this.font.split(text, width)) {
-            rows.add(new GuideRow(line, heading, accent, gap));
+            rows.add(new GuideRow(line, heading, accent, gap, callout));
             gap = 0;
         }
+    }
+
+    private static int calloutKind(String key) {
+        if (key.endsWith(".pins") || key.endsWith(".rescue_alert")) return 1;
+        if (key.endsWith(".downed") || key.endsWith(".rescue_downed")) return 2;
+        if (key.endsWith(".dead") || key.endsWith(".rescue_dead")) return 3;
+        return 0;
+    }
+
+    private static int calloutColor(int callout) {
+        return switch (callout) {
+            case 1 -> DiaryTheme.GHOUL_EYE;
+            case 2 -> DiaryTheme.AMBER_FLAME;
+            case 3 -> DiaryTheme.BLOOD_FRESH;
+            default -> DiaryTheme.SEPIA_MID;
+        };
     }
 
     private int viewportTop() { return panelY + 48; }
@@ -195,7 +217,15 @@ public final class DiaryFieldGuideScreen extends Screen {
                     ? (headingActive ? DiaryTheme.GHOUL_INK_ACTIVE
                         : row.accent ? DiaryTheme.GHOUL_INK : DiaryTheme.REDCOAT_DARK)
                     : DiaryTheme.INK;
-                int textX = panelX + 20;
+                if (!row.heading && row.callout > 0) {
+                    int rail = calloutColor(row.callout);
+                    int calloutTop = y - 2;
+                    int calloutBottom = y + LINE_HEIGHT - 2;
+                    g.fill(panelX + 14, calloutTop, panelX + panelW - 14, calloutBottom,
+                        DiaryTheme.withAlpha(rail, 24));
+                    g.fill(panelX + 14, calloutTop, panelX + 17, calloutBottom, rail);
+                }
+                int textX = panelX + (row.callout > 0 ? 22 : 20);
                 int textWidth = this.font.width(row.text);
                 g.drawString(this.font, row.text, textX, y, color, false);
                 if (headingActive) {
@@ -414,12 +444,19 @@ public final class DiaryFieldGuideScreen extends Screen {
         private final boolean heading;
         private final boolean accent;
         private final int gapBefore;
+        private final int callout;
 
         private GuideRow(FormattedCharSequence text, boolean heading, boolean accent, int gapBefore) {
+            this(text, heading, accent, gapBefore, 0);
+        }
+
+        private GuideRow(FormattedCharSequence text, boolean heading, boolean accent,
+                         int gapBefore, int callout) {
             this.text = text;
             this.heading = heading;
             this.accent = accent;
             this.gapBefore = gapBefore;
+            this.callout = callout;
         }
     }
 }
