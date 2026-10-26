@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.118.0 - Hojas con bordes de otra época
+
+Los avisos ahora tienen esquinas suavemente recortadas, un pequeño pliegue y algunas fibras gastadas. Esos detalles permanecen quietos, también mientras juegas. El sello rojo FRAUDE del elixir tiene su propio espacio bajo el precio y no tapa las letras; la hoja de cuarentena sigue abriendo el manual al tocarla. Las notas del cronista suenan más a alguien contando lo que vivió, en inglés y español.
+
 ## Version 0.117.0 - Polvo de regreso más ligero
 
 El patrón de polvo que aparece al volver tras una larga ausencia ahora queda en caché. Cada frame reutiliza las mismas 40 motas y opacidades; solo se recalculan al cambiar el tamaño de la ventana. El efecto sigue estático y limitado a la pantalla de título.
