@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.128.0 - Sickly glow on the horizon
+
+The title-screen city gains a faint, fixed green haze behind the skyline, hinting at the outbreak. It is menu-only, uses a few translucent fills, and adds no animation or world rendering.
+
+
 ## Version 0.127.0 - Worn paper, clear notice
 
 The elixir notice now keeps its fraud stamp below the copy, with a safe margin from the price and bottle line. Notice sheets gain subtle paper depth, a fine inner rule, and uneven cut edges. All details stay still and only render on menu papers.
