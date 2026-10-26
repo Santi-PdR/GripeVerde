@@ -242,7 +242,7 @@ public class DiaryTitleScreen extends Screen {
             () -> this.minecraft.setScreen(new DiaryFieldGuideScreen(this)))
             .withIcon(SlimButton.Icon.OPEN_LEDGER);
         fieldGuideBtn.setTooltip(Tooltip.create(
-            Component.translatable("gripeverde.poster.quarantine.guide_hint")));
+            Component.translatable("gripeverde.pause.btn.field_guide")));
         this.addRenderableWidget(fieldGuideBtn);
 
         // --- Audio control buttons (bottom-left, discrete) ---
