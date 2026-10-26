@@ -219,7 +219,7 @@ public final class Discoveries {
             case ARCHIVE_THINNING:  return en ? "The archive that grows thinner" : "El archivo que se adelgaza";
             case THEME_NEVER_PLAYED: return en ? "The theme that never played" : "El tema que nunca sonó";
             case BG_TOWN_MEMORY:    return en ? "The street that never existed" : "La calle que nunca existió";
-            case BUTTONS_NEVER_PRESSED: return en ? "The buttons never pressed" : "Los botones que nunca se pulsaron";
+            case BUTTONS_NEVER_PRESSED: return en ? "The empty desk" : "El escritorio vacío";
             default: return "???";
         }
     }
@@ -279,7 +279,7 @@ public final class Discoveries {
             case ARCHIVE_THINNING:  return en ? "Open the cabinet again and again, until it gives up its old papers." : "Abre el gabinete una y otra vez, hasta que entregue sus papeles viejos.";
             case THEME_NEVER_PLAYED: return en ? "Speak the word of the cleansing." : "Pronuncia la palabra de la limpieza.";
             case BG_TOWN_MEMORY:    return en ? "When the archive confesses two ghosts, ask for the third." : "Cuando el archivo confiese dos fantasmas, pide el tercero.";
-            case BUTTONS_NEVER_PRESSED: return en ? "When three ghosts confess, the fourth remembers the unused desk." : "Cuando tres fantasmas confiesen, el cuarto recuerda la mesa sin uso.";
+            case BUTTONS_NEVER_PRESSED: return en ? "When the three ghosts have spoken, wait quietly by the desk." : "Cuando hablen los tres fantasmas, espera en silencio junto al escritorio.";
             default: return "???";
         }
     }
