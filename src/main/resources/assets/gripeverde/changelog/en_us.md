@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.110.0 - Clearer button ink
+
+Disabled button labels use darker sepia ink for clearer reading against the paper. Button text keeps one unshadowed draw pass and avoids duplicate clipping work.
+
 ## Version 0.109.0 - Notes worth reading
 
 Chronicler notes now wrap onto a compact paper card instead of losing the end of longer lines. The restrained CEDA seal stays static, and archive notes remain queued when a short viewport cannot show them clearly.
