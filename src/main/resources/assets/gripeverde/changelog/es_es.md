@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.120.0 - Rescates que se leen completos
+
+El aviso usa frases más cortas para que no se pierda ninguna instrucción en la hoja estrecha: otro compañero libera el PIN, alzar toma cinco segundos, quien ayuda debe evitar golpes y el desfibrilador se encuentra en el botín.
+
 ## Version 0.119.0 - Nadie se queda atrás
 
 Un quinto aviso diario de la CEDA resume cómo auxiliar al equipo: otro compañero debe liberar a quien sufra un PIN, mantener la ayuda cinco segundos sin recibir golpes para alzar a un caído, y encontrar un desfibrilador en el botín para revivir a quien muera. El papel es estático y solo aparece en el menú principal.
