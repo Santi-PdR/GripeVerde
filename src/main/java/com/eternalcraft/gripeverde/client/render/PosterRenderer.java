@@ -14,6 +14,7 @@ public class PosterRenderer {
         Font font = Minecraft.getInstance().font;
         OrnamentRenderer.drawPaperPanel(g, x, y, w, h);
         drawSimpleBorder(g, x, y, w, h, DiaryTheme.INK, DiaryTheme.SEPIA_MID);
+        drawFoldedPaperCorner(g, x, y, w, h);
 
         int cx = x + w / 2;
         int cursorY = y + 10;
@@ -65,38 +66,39 @@ public class PosterRenderer {
         Font font = Minecraft.getInstance().font;
         OrnamentRenderer.drawPaperPanel(g, x, y, w, h);
         drawSimpleBorder(g, x, y, w, h, DiaryTheme.INK, DiaryTheme.SEPIA_MID);
+        drawFoldedPaperCorner(g, x, y, w, h);
 
         int cx = x + w / 2;
-        int cursorY = y + 8;
+        boolean compact = h < 160;
+        int lineStep = compact ? 8 : 10;
+        int cursorY = y + (compact ? 6 : 8);
 
         DiaryChrome.drawCenteredString(g, font, I18n.get("gripeverde.poster.elixir.author"), cx, cursorY, DiaryTheme.INK);
-        cursorY += 12;
+        cursorY += compact ? 9 : 12;
 
         drawThinDivider(g, cx, cursorY, w - 30);
-        cursorY += 6;
+        cursorY += compact ? 5 : 6;
 
         g.pose().pushPose();
         g.pose().translate(cx, cursorY, 0);
-        g.pose().scale(1.2f, 1.2f, 1f);
+        g.pose().scale(compact ? 1.0f : 1.2f, compact ? 1.0f : 1.2f, 1f);
         String am = I18n.get("gripeverde.poster.elixir.title.1");
         int aw = font.width(am);
-        // v0.21.25: tinta oscura sin sombra (consistencia con poster de cuarentena).
         g.drawString(font, am, -aw / 2, 0, DiaryTheme.INK, false);
         g.pose().popPose();
-        cursorY += 14;
+        cursorY += compact ? 10 : 14;
 
         g.pose().pushPose();
         g.pose().translate(cx, cursorY, 0);
-        g.pose().scale(1.4f, 1.4f, 1f);
+        g.pose().scale(compact ? 1.15f : 1.4f, compact ? 1.15f : 1.4f, 1f);
         String el = I18n.get("gripeverde.poster.elixir.title.2");
         int ew = font.width(el);
-        // v0.21.25: tinta oscura sin sombra (consistencia con poster de cuarentena).
         g.drawString(font, el, -ew / 2, 0, DiaryTheme.INK, false);
         g.pose().popPose();
-        cursorY += 18;
+        cursorY += compact ? 14 : 18;
 
         drawThinDivider(g, cx, cursorY, w - 30);
-        cursorY += 6;
+        cursorY += compact ? 5 : 6;
 
         String[] body = {
             I18n.get("gripeverde.poster.elixir.body.1"),
@@ -107,27 +109,22 @@ public class PosterRenderer {
         };
         for (String line : body) {
             DiaryChrome.drawCenteredString(g, font, line, cx, cursorY, DiaryTheme.INK_FADED);
-            cursorY += 10;
+            cursorY += lineStep;
         }
 
-        // v0.16.0: consecuencia permanente. Quien leyo el informe del medico
-        // ve desde entonces la verdad estampada sobre el elixir.
+        // The stamp stays in its own lower margin, below the price and bottle line.
         try {
             if (com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("fraude_stamp") > 0) {
                 String stamp = "FRAUDE";
-                int tw2 = font.width(stamp);
-                int sx = cx - tw2 / 2;
-                // v0.25.2: el sello jamas tapa el cuerpo ni se sale del papel
-                // (escalas GUI 3-4): va tras el texto y dentro del cartel.
-                sx = Math.max(x + 4, Math.min(sx, x + w - tw2 - 4));
-                int sy = Math.max(cursorY + 6, y + h - 46);
-                int maxSy = y + h - 20;
-                if (sy > maxSy) sy = maxSy;
-                g.fill(sx - 4, sy - 3, sx + tw2 + 4, sy - 2, 0xFF5C1508);
-                g.fill(sx - 4, sy + 10, sx + tw2 + 4, sy + 11, 0xFF5C1508);
-                g.fill(sx - 4, sy - 3, sx - 3, sy + 11, 0xFF5C1508);
-                g.fill(sx + tw2 + 3, sy - 3, sx + tw2 + 4, sy + 11, 0xFF5C1508);
-                g.drawString(font, stamp, sx, sy, 0xFF5C1508, false);
+                int stampWidth = font.width(stamp);
+                int stampX = Math.max(x + 4, Math.min(cx - stampWidth / 2, x + w - stampWidth - 4));
+                int maxBaseline = y + h - 15;
+                int stampY = Math.min(Math.max(cursorY + 2, y + h - (compact ? 15 : 22)), maxBaseline);
+                g.fill(stampX - 4, stampY - 3, stampX + stampWidth + 4, stampY - 2, 0xFF5C1508);
+                g.fill(stampX - 4, stampY + 10, stampX + stampWidth + 4, stampY + 11, 0xFF5C1508);
+                g.fill(stampX - 4, stampY - 3, stampX - 3, stampY + 11, 0xFF5C1508);
+                g.fill(stampX + stampWidth + 3, stampY - 3, stampX + stampWidth + 4, stampY + 11, 0xFF5C1508);
+                g.drawString(font, stamp, stampX, stampY, 0xFF5C1508, false);
             }
         } catch (Throwable ignored) {}
     }
@@ -153,6 +150,7 @@ public class PosterRenderer {
         Font font = Minecraft.getInstance().font;
         OrnamentRenderer.drawPaperPanel(g, x, y, w, h);
         drawSimpleBorder(g, x, y, w, h, DiaryTheme.GHOUL_INK, DiaryTheme.GHOUL_EYE);
+        drawFoldedPaperCorner(g, x, y, w, h);
 
         int cx = x + w / 2;
         int textWidth = Math.max(0, w - 20);
@@ -205,6 +203,7 @@ public class PosterRenderer {
         Font font = Minecraft.getInstance().font;
         OrnamentRenderer.drawPaperPanel(g, x, y, w, h);
         drawSimpleBorder(g, x, y, w, h, DiaryTheme.INK, DiaryTheme.SEPIA_MID);
+        drawFoldedPaperCorner(g, x, y, w, h);
 
         int cx = x + w / 2;
         int cursorY = y + 10;
@@ -262,6 +261,7 @@ public class PosterRenderer {
         Font font = Minecraft.getInstance().font;
         OrnamentRenderer.drawPaperPanel(g, x, y, w, h);
         drawSimpleBorder(g, x, y, w, h, DiaryTheme.INK, DiaryTheme.SEPIA_MID);
+        drawFoldedPaperCorner(g, x, y, w, h);
 
         int cx = x + w / 2;
         int cursorY = y + 10;
@@ -352,6 +352,25 @@ public class PosterRenderer {
         g.fill(cx - half, y, cx - gap, y + 1, DiaryTheme.SEPIA_MID);
         g.fill(cx + gap, y, cx + half, y + 1, DiaryTheme.SEPIA_MID);
         g.fill(cx - 1, y - 1, cx + 2, y + 2, DiaryTheme.OCHRE);
+    }
+
+    private static void drawFoldedPaperCorner(GuiGraphics g, int x, int y, int w, int h) {
+        if (w < 50 || h < 60) return;
+        int fold = 11;
+        int right = x + w - 2;
+        for (int row = 0; row < fold; row++) {
+            int start = x + w - fold + row;
+            int top = y + 1 + row;
+            if (start < right) {
+                g.fill(start, top, right, top + 1, DiaryTheme.PAPER_STAINED);
+                g.fill(start, top, start + 1, top + 1, DiaryTheme.PAPER_DARK);
+            }
+        }
+
+        // A few uneven fibres break the machine-cut lower edge without moving the text.
+        g.fill(x + 13, y + h - 2, x + 18, y + h - 1, DiaryTheme.PAPER_STAINED);
+        g.fill(x + 18, y + h - 1, x + 22, y + h, DiaryTheme.PAPER_STAINED);
+        g.fill(x + w - 31, y + h - 1, x + w - 25, y + h, DiaryTheme.PAPER_STAINED);
     }
 
     private static void drawSimpleBorder(GuiGraphics g, int x, int y, int w, int h, int outerColor, int innerColor) {
