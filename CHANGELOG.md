@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.104.0 - The field report
+
+- Add a fourth daily title-screen document with CEDA guidance on living Ghouls, mutations, PINs, and staying together.
+- Give the notice a weathered-paper treatment and a fixed blue-eye ink mark.
+- Keep the poster bilingual and static; it adds no animation to worlds, servers, or inventory screens.
+
 ## Version 0.103.0 - CEDA's cover story
 
 - Name CEDA as the agency that concealed the 1800 outbreak as common flu.
