@@ -585,21 +585,29 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
 
         // Widgets Diary (nuestros botones)
         DiaryButton hoveredTooltip = null;
+        DiaryButton focusedTooltip = null;
         for (var w : this.renderables) {
             if (w instanceof DiaryButton db && db.visible) {
                 db.render(gfx, mouseX, mouseY, partial);
-                if (db.getTooltip() != null && db.isMouseOver(mouseX, mouseY)) {
-                    hoveredTooltip = db;
+                if (db.getTooltip() != null) {
+                    if (db.isMouseOver(mouseX, mouseY)) {
+                        hoveredTooltip = db;
+                    } else if (focusedTooltip == null && db.isFocused()) {
+                        focusedTooltip = db;
+                    }
                 }
             }
         }
 
-        // This screen draws its buttons manually, so render their normal delayed tooltips here.
-        if (hoveredTooltip != this.tooltipCandidate) {
-            this.tooltipCandidate = hoveredTooltip;
+        // This screen draws its buttons manually, so restore delayed tooltips for mouse and keyboard users.
+        DiaryButton tooltipTarget = hoveredTooltip != null ? hoveredTooltip : focusedTooltip;
+        int tooltipX = hoveredTooltip != null ? mouseX : tooltipTarget != null ? tooltipTarget.getX() + tooltipTarget.getWidth() / 2 : mouseX;
+        int tooltipY = hoveredTooltip != null ? mouseY : tooltipTarget != null ? tooltipTarget.getY() + tooltipTarget.getHeight() / 2 : mouseY;
+        if (tooltipTarget != this.tooltipCandidate) {
+            this.tooltipCandidate = tooltipTarget;
             this.tooltipCandidateSince = Util.getMillis();
-        } else if (hoveredTooltip != null && Util.getMillis() - this.tooltipCandidateSince >= 500L) {
-            gfx.renderTooltip(this.font, hoveredTooltip.getTooltip().toCharSequence(this.minecraft), mouseX, mouseY);
+        } else if (tooltipTarget != null && Util.getMillis() - this.tooltipCandidateSince >= 500L) {
+            gfx.renderTooltip(this.font, tooltipTarget.getTooltip().toCharSequence(this.minecraft), tooltipX, tooltipY);
         }
 
         // v0.16.0
