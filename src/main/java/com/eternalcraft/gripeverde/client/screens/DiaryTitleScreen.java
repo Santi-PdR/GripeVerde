@@ -674,7 +674,7 @@ public class DiaryTitleScreen extends Screen {
             if (idx == 0 && com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("pereira_offended") > 0) {
                 signature = isEnglishSelected()
                     ? "Dr. S. Pereira (you again?)"
-                    : "Dr. S. Pereira (¿otra vez tu?)";
+                    : "Dr. S. Pereira (¿otra vez tú?)";
             }
         } catch (Throwable ignored) {}
         // Nombre viejo tachado: el anterior del pool
@@ -736,60 +736,60 @@ public class DiaryTitleScreen extends Screen {
     // Keep them language-aware so the Title does not mix Spanish subtitles with
     // English buttons after changing language.
     private static final String[] MULTIPLAYER_SUBTITLES_ES = {
-        "Luchen junto a sus hermanos",
-        "El regimiento los espera",
-        "Nadie sobrevive en soledad",
-        "Que su sangre sea la ultima",
-        "Marchen al frente",
-        "Que nadie cruce solo la niebla",
-        "La guardia acepta nuevos nombres",
-        "Hay luces en otros barrios",
-        "Compartan el pan y la fiebre",
-        "Los hospedajes abren sus libretas",
-        "Un cordon se sostiene entre todos",
-        "Escriban su nombre en la guardia"
+        "Vayan siempre con los suyos.",
+        "El regimiento los espera.",
+        "Nadie sobrevive en soledad.",
+        "Que la fiebre termine aquí.",
+        "La línea del frente los llama.",
+        "No crucen solos la niebla.",
+        "La guardia aún necesita gente.",
+        "Hay faroles encendidos en otros barrios.",
+        "Compartan el pan, no la fiebre.",
+        "En las posadas apuntan cada llegada.",
+        "El cordón se sostiene entre todos.",
+        "Dejen su nombre con la guardia."
     };
     private static final String[] MULTIPLAYER_SUBTITLES_EN = {
-        "Fight beside your brothers",
-        "The regiment awaits",
-        "No one survives alone",
-        "May your blood be the last",
-        "March to the front",
-        "No one crosses the fog alone",
-        "The guard accepts new names",
-        "There are lights in other districts",
-        "Share the bread and the fever",
-        "The lodgings open their ledgers",
-        "A cordon is held by every hand",
-        "Write your name in the watch"
+        "Stay close to your own.",
+        "The regiment is waiting.",
+        "No one survives alone.",
+        "Let the fever end here.",
+        "The front line is calling.",
+        "Don't cross the fog alone.",
+        "The watch still needs hands.",
+        "Lamps still burn in other wards.",
+        "Share the bread, not the fever.",
+        "The inns keep a record of every arrival.",
+        "The cordon holds because we do.",
+        "Leave your name with the watch."
     };
     private static final String[] MODS_SUBTITLES_ES = {
-        "Preparen su equipamiento",
-        "Revisen los arsenales",
-        "El acero no descansa",
-        "Que instrumentos tenemos hoy",
-        "Reservas de la ultima campana",
-        "Inventario de instrumentos prohibidos",
-        "Las cajas del sanatorio",
-        "Herramientas para una ciudad enferma",
-        "Que piezas sostienen esta noche",
-        "Cada pieza lleva su sello",
-        "Lo que el cordon permite",
-        "Cuenten las lamparas antes de salir"
+        "Revisen cada arma antes de salir.",
+        "El acero aún está frío.",
+        "¿Qué nos queda para esta noche?",
+        "Las últimas reservas de la campana.",
+        "Instrumentos que conviene no nombrar.",
+        "Las cajas del sanatorio siguen cerradas.",
+        "Hay herramientas para una ciudad enferma.",
+        "¿Qué piezas nos quedan?",
+        "Cada pieza lleva su marca.",
+        "El cordón decide qué puede salir.",
+        "Revisen los faroles antes de partir.",
+        "Cuenten las lámparas antes de salir."
     };
     private static final String[] MODS_SUBTITLES_EN = {
-        "Prepare your equipment",
-        "Inspect the arsenals",
-        "Steel does not rest",
-        "What instruments do we have tonight",
-        "Stores from the last bell",
-        "Inventory of forbidden instruments",
-        "The sanatorium crates",
-        "Tools for a sickened city",
-        "What pieces hold this night together",
-        "Every piece bears its seal",
-        "What the cordon allows",
-        "Count the lamps before leaving"
+        "Check each weapon before you leave.",
+        "The steel is still cold.",
+        "What have we left for tonight?",
+        "The last stores from the bell tower.",
+        "Tools best left unnamed.",
+        "The sanatorium crates remain shut.",
+        "Tools for a city gone ill.",
+        "What pieces do we have left?",
+        "Every piece bears its mark.",
+        "The cordon decides what may pass.",
+        "Check the lamps before you leave.",
+        "Count the lamps before setting out."
     };
     private static final java.util.Random SUB_RNG = new java.util.Random();
 
