@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.105.0 - Notas quietas
+
+Respetar «Movimiento reducido» en las notas al margen, los sellos de descubrimiento y el diapasón del panel de sonido. Las notas aparecen completas y el sello queda quieto cuando la opción está activa. Si la opción está desactivada, el menú conserva su comportamiento; las interfaces durante partidas siguen estáticas.
+
 ## Version 0.104.0 - El informe de campo
 
 Añadir un cuarto documento diario a la pantalla principal con consejos de la CEDA sobre ghouls vivos, mutaciones, rescates de PIN y la importancia de permanecer juntos. Darle papel envejecido y una marca fija de tinta con un ojo azul. El cartel es bilingüe y estático: no anima mundos, servidores ni inventarios.
