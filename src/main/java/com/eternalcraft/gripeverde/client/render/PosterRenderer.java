@@ -71,6 +71,10 @@ public class PosterRenderer {
         int cx = x + w / 2;
         boolean compact = h < 160;
         int lineStep = compact ? 8 : 10;
+        boolean showFraudStamp = false;
+        try {
+            showFraudStamp = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("fraude_stamp") > 0;
+        } catch (Throwable ignored) {}
         int cursorY = y + (compact ? 6 : 8);
 
         DiaryChrome.drawCenteredString(g, font, I18n.get("gripeverde.poster.elixir.author"), cx, cursorY, DiaryTheme.INK);
@@ -112,21 +116,22 @@ public class PosterRenderer {
             cursorY += lineStep;
         }
 
-        // The stamp stays in its own lower margin, below the price and bottle line.
-        try {
-            if (com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("fraude_stamp") > 0) {
-                String stamp = "FRAUDE";
-                int stampWidth = font.width(stamp);
-                int stampX = Math.max(x + 4, Math.min(cx - stampWidth / 2, x + w - stampWidth - 4));
-                int maxBaseline = y + h - 15;
-                int stampY = Math.min(Math.max(cursorY + 2, y + h - (compact ? 15 : 22)), maxBaseline);
+        // Place the mark immediately after the bottle line. Pinning it to the
+        // card's bottom edge can put it back on top of the copy in short layouts.
+        if (showFraudStamp) {
+            String stamp = "FRAUDE";
+            int stampWidth = font.width(stamp);
+            int stampX = Math.max(x + 4, Math.min(cx - stampWidth / 2, x + w - stampWidth - 4));
+            int stampY = cursorY + 5;
+            int stampBottom = stampY + 11;
+            if (stampBottom <= y + h - 3) {
                 g.fill(stampX - 4, stampY - 3, stampX + stampWidth + 4, stampY - 2, 0xFF5C1508);
                 g.fill(stampX - 4, stampY + 10, stampX + stampWidth + 4, stampY + 11, 0xFF5C1508);
                 g.fill(stampX - 4, stampY - 3, stampX - 3, stampY + 11, 0xFF5C1508);
                 g.fill(stampX + stampWidth + 3, stampY - 3, stampX + stampWidth + 4, stampY + 11, 0xFF5C1508);
                 g.drawString(font, stamp, stampX, stampY, 0xFF5C1508, false);
             }
-        } catch (Throwable ignored) {}
+        }
     }
 
 
