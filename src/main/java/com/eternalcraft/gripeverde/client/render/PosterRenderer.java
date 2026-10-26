@@ -433,7 +433,7 @@ public class PosterRenderer {
         }
 
         // The ink follows the same shallow, stepped cuts as the paper itself.
-        int[] outerInset = {4, 2, 1, 0};
+        int[] outerInset = {6, 4, 2, 1, 0};
         for (int row = 0; row < outerInset.length; row++) {
             int inset = outerInset[row];
             g.fill(x + inset, y + row, x + w - inset, y + row + 1, outerColor);
@@ -442,7 +442,7 @@ public class PosterRenderer {
         g.fill(x, y + 4, x + 1, y + h - 4, outerColor);
         g.fill(x + w - 1, y + 4, x + w, y + h - 4, outerColor);
 
-        int[] innerInset = {4, 2, 1, 0};
+        int[] innerInset = {6, 4, 2, 1, 0};
         for (int row = 0; row < innerInset.length; row++) {
             int inset = innerInset[row] + 2;
             g.fill(x + inset, y + 2 + row, x + w - inset, y + 3 + row, innerColor);
