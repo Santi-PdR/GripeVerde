@@ -155,5 +155,11 @@
     "gripeverde.title.greeting.remembers": "The cabinet remembers your hand.",
     "gripeverde.title.greeting.vigil": "Another vigil in the same night.",
     "gripeverde.title.vigil.present": "...are you still there?",
-    "gripeverde.title.vigil.fog": "Do not blink. The fog counts blinks."
+    "gripeverde.title.vigil.fog": "Do not blink. The fog counts blinks.",
+    "gripeverde.poster.ghoul.header": "CEDA FIELD NOTE",
+    "gripeverde.poster.ghoul.title": "THEY ARE ALIVE",
+    "gripeverde.poster.ghoul.body.1": "Blue eyes. Extreme adrenaline.",
+    "gripeverde.poster.ghoul.body.2": "Each mutation fights differently.",
+    "gripeverde.poster.ghoul.body.3": "A PIN needs a teammate.",
+    "gripeverde.poster.ghoul.warn": "NEVER TRAVEL ALONE"
 }
