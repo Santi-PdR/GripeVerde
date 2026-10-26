@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.114.0 - Lighter server list rendering
+
+Read the vanilla server-list row dimensions when the list is laid out, then reuse them while rendering its paper cards. This avoids repeated private-field lookups per frame without changing the official address, saved servers, ping display, or LAN scan.
+
 ## Version 0.113.0 - A book instead of a letter
 
 Replace the single “F” with a small open-ledger icon so the field-guide shortcut reads the same in English and Spanish. Its full localized name remains available to keyboard and screen-reader users.
