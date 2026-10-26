@@ -125,6 +125,40 @@ public class VictorianSkyline {
         renderChimneys(g, w, h, CHIMNEYS_BG, BG_BUILDINGS, false);
     }
 
+    /**
+     * A single, fixed pair of Ghoul eyes watches from a distant upper window.
+     * Called only by the title scene; it never overlays a live world.
+     */
+    public static void renderGhoulWatcher(GuiGraphics g, int w, int h) {
+        if (w < 160 || h < 120) return;
+        float[] b = BG_BUILDINGS[1];
+        int bx1 = (int)(w * b[0]);
+        int by2 = (int)(h * b[1]);
+        int bx2 = bx1 + (int)(w * b[2]);
+        int by1 = by2 - (int)(h * b[3]);
+        int bWidth = bx2 - bx1;
+        int bHeight = by2 - by1;
+        int cols = Math.max(1, bWidth / 10);
+        int rows = Math.max(1, bHeight / 12);
+        if (w > 1400) {
+            cols = Math.max(1, cols / 2);
+            rows = Math.max(1, rows / 2);
+        }
+
+        int cellW = bWidth / cols;
+        int cellH = bHeight / rows;
+        int eyeW = Math.max(2, Math.min(3, cellW - 4));
+        int eyeH = Math.max(2, Math.min(3, cellH - 5));
+        int wx = bx1 + (cellW - eyeW) / 2;
+        int wy = by1 + (cellH - eyeH) / 2 + 3;
+
+        g.fill(wx - 1, wy - 1, wx + eyeW + 1, wy + eyeH + 1, 0xFF130D08);
+        g.fill(wx, wy, wx + eyeW, wy + eyeH, 0xFF030405);
+        int eyeY = wy + eyeH / 2;
+        g.fill(wx, eyeY, wx + 1, eyeY + 1, DiaryTheme.GHOUL_EYE);
+        g.fill(wx + eyeW - 1, eyeY, wx + eyeW, eyeY + 1, DiaryTheme.GHOUL_EYE_GLOW);
+    }
+
     // ── v0.16.0: la ventana que responde (atico del edificio 5) ────────────
     private static int signalResponseCount = 0;
     private static long signalRespondUntilMs = 0L;
