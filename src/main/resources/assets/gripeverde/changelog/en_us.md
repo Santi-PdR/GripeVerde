@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.121.0 - Sections you can spot
+
+Each field-manual heading now has a small printed number that matches the 1–7 shortcuts in the footer. Readers can see which section a shortcut opens without counting headings. The marks are static and remain confined to the manual.
+
 ## Version 0.120.0 - Rescue advice that fits
 
 The rescue notice uses shorter lines so every instruction stays readable on the narrow card: a teammate frees a PIN, a lift takes five seconds, the helper must avoid hits, and a defibrillator comes from loot.
