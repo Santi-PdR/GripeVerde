@@ -2,6 +2,7 @@ package com.eternalcraft.gripeverde.client.lore;
 
 import com.eternalcraft.gripeverde.client.audio.ModSounds;
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
+import com.eternalcraft.gripeverde.client.util.MotionPolicy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -118,9 +119,12 @@ public final class Marginalia {
         long now = System.currentTimeMillis();
         long age = now - activeStartMs;
         long remain = activeUntilMs - now;
+        boolean reducedMotion = MotionPolicy.isReduced();
         int alpha = 200;
-        if (age < 900L) alpha = (int)(200 * age / 900L);
-        else if (remain < 1200L) alpha = (int)(200 * remain / 1200L);
+        if (!reducedMotion) {
+            if (age < 900L) alpha = (int)(200 * age / 900L);
+            else if (remain < 1200L) alpha = (int)(200 * remain / 1200L);
+        }
         alpha = Math.max(0, Math.min(200, alpha));
         if (alpha <= 4) return;
 
@@ -130,7 +134,9 @@ public final class Marginalia {
         // La marginal vive JUSTO fuera del panel, en el margen izquierdo,
         // escrita en vertical ascendente como nota al margen.
         int maxLen = Math.min(text.length(), Math.max(12, panelH / 6));
-        String shown = text.substring(0, (int)Math.min(maxLen, text.length() * Math.min(1.0, age / 2200.0) + 1));
+        int visibleChars = reducedMotion ? maxLen
+            : (int)Math.min(maxLen, text.length() * Math.min(1.0, age / 2200.0) + 1);
+        String shown = text.substring(0, visibleChars);
         if (shown.isEmpty()) return;
 
         int ink = (alpha << 24) | 0x3D2A18;
@@ -157,14 +163,18 @@ public final class Marginalia {
         long now = System.currentTimeMillis();
         long age = now - activeStartMs;
         long remain = activeUntilMs - now;
+        boolean reducedMotion = MotionPolicy.isReduced();
         int alpha = 190;
-        if (age < 900L) alpha = (int)(190 * age / 900L);
-        else if (remain < 1200L) alpha = (int)(190 * remain / 1200L);
+        if (!reducedMotion) {
+            if (age < 900L) alpha = (int)(190 * age / 900L);
+            else if (remain < 1200L) alpha = (int)(190 * remain / 1200L);
+        }
         if (alpha <= 4) return;
         String text = textFor(activeId);
         if (text == null) return;
 
-        int chars = (int)Math.min(text.length(), text.length() * Math.min(1.0, age / 2000.0) + 1);
+        int chars = reducedMotion ? text.length()
+            : (int)Math.min(text.length(), text.length() * Math.min(1.0, age / 2000.0) + 1);
         String shown = text.substring(0, chars);
         int screenWidth = mc.getWindow().getGuiScaledWidth();
         int maxTextWidth = Math.max(0, screenWidth - 48);
