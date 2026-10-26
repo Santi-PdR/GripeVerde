@@ -124,7 +124,7 @@ public class PosterRenderer {
             String stamp = "FRAUDE";
             int stampWidth = font.width(stamp);
             int stampX = Math.max(x + 4, Math.min(cx - stampWidth / 2, x + w - stampWidth - 4));
-            int stampY = cursorY + 5;
+            int stampY = Math.max(cursorY + 12, y + h - 20);
             int stampBottom = stampY + 11;
             if (stampBottom <= y + h - 3) {
                 g.fill(stampX - 4, stampY - 3, stampX + stampWidth + 4, stampY - 2, 0xFF5C1508);
