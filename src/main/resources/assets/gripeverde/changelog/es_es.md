@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.110.0 - Tinta más legible
+
+Las etiquetas de los botones desactivados ahora usan tinta sepia más oscura para leerse mejor sobre el papel. El texto conserva un único trazo sin sombra y evita recortar dos veces.
+
 ## Version 0.109.0 - Notas para leer
 
 Las notas del cronista ahora se ajustan a una tarjeta de papel para que no se corte el final de las frases largas. El sello CEDA queda estático, y las notas del archivo siguen pendientes si la pantalla no deja mostrarlas con claridad.
