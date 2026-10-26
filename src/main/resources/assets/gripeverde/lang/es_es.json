@@ -67,7 +67,7 @@
     "gripeverde.options.subtitle": "La mesa de trabajo del cronista",
     "gripeverde.options.accessibility.subtitle": "Auxilios, avisos y percepción",
     "gripeverde.options.sound.subtitle": "Niveles: Música %1$s · Ambiente %2$s · Efectos %3$s",
-    "gripeverde.options.sound.minecraft_levels": "Niveles de Minecraft: Música %1$s · Ambiente %2$s",
+    "gripeverde.options.sound.minecraft_levels": "Niveles de Minecraft: Maestro %1$s · Música %2$s · Ambiente %3$s",
     "gripeverde.options.sound.music_slider": "Gramófono del cronista",
     "gripeverde.options.sound.ambience_slider": "Ambiente del cronista",
     "gripeverde.options.sound.ambience_on": "ACTIVO",

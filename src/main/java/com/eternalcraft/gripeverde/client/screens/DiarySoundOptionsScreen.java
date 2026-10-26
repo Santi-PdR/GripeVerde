@@ -340,8 +340,11 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         ).getString();
     }
 
-    /** Shows Minecraft's category levels, which multiply the mod's own mix. */
+    /** Shows Minecraft's master and category levels that multiply the mod's own mix. */
     private String minecraftMixSubtitle() {
+        float masterLevel = this.minecraft != null
+            ? this.minecraft.options.getSoundSourceVolume(SoundSource.MASTER)
+            : 0.0f;
         float musicLevel = this.minecraft != null
             ? this.minecraft.options.getSoundSourceVolume(SoundSource.MUSIC)
             : 0.0f;
@@ -350,6 +353,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             : 0.0f;
         return Component.translatable(
             "gripeverde.options.sound.minecraft_levels",
+            percentText(masterLevel),
             percentText(musicLevel),
             percentText(ambienceLevel)
         ).getString();

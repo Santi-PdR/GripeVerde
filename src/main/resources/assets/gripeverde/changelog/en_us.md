@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.99.0 - Master volume visibility
+
+Display Minecraft's Master level beside Music and Ambient in the sound cabinet, so a muted master volume is visible while checking menu audio. The readout only observes settings and does not change playback or world behavior.
+
 ## Version 0.98.0 - First-response signals
 
 Use restrained color rails to make PIN, downed, death, and defibrillator instructions easier to find. Preserve the guide's regular-weight text, keyboard controls, and scrolling. The callouts are static and add no world effects.

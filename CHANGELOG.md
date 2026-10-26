@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.99.0 - Master volume visibility
+
+- Show Minecraft's Master, Music, and Ambient levels together in the sound cabinet.
+- Make the last system-wide mute point visible when diagnosing quiet menu audio.
+- Keep the readout observational; it does not change audio or world behavior.
+
 ## Version 0.98.0 - First-response signals
 
 - Give PIN, downed, death, and defibrillator guidance quiet color-coded rails for faster scanning.

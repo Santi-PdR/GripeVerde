@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.99.0 - El volumen maestro a la vista
+
+Mostrar el nivel Maestro de Minecraft junto a Música y Ambiente en el gabinete sonoro. Así se ve si el volumen global está silenciado al revisar el audio del menú. La lectura solo consulta los ajustes y no altera el sonido ni la partida.
+
 ## Version 0.98.0 - Señales de primera respuesta
 
 Añadir guías de color discretas para localizar rápido las instrucciones de PIN, derribo, muerte y desfibrilador. Mantener el texto regular y los controles de teclado y desplazamiento. Las marcas son estáticas y no añaden efectos al mundo.
