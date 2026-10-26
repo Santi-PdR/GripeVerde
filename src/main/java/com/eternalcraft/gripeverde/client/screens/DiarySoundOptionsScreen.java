@@ -5,6 +5,7 @@ import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.audio.MenuAmbience;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.util.SmoothScroll;
+import com.eternalcraft.gripeverde.client.util.MotionPolicy;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import com.eternalcraft.gripeverde.client.widgets.DiaryMusicSlider;
 import com.eternalcraft.gripeverde.client.widgets.DiaryAmbienceSlider;
@@ -486,7 +487,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         long now = System.currentTimeMillis();
         boolean hot = mouseX >= fx - 4 && mouseX <= fx + 5 && mouseY >= fy - 8 && mouseY <= fy + 5;
         boolean ringing = now < this.forkRingUntilMs;
-        if (ringing && !com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.hasActiveWorld())
+        if (ringing && !MotionPolicy.isReduced())
             fx += (int) Math.round(Math.sin((this.forkRingUntilMs - now) * 0.55) * 1.0);
         int metal = (hot || ringing) ? 0xFFD8B56A : 0xFF8A6A3D;
         int dimm  = (hot || ringing) ? 0xFF6B4E22 : 0xFF54401F;
