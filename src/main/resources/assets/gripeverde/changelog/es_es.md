@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.114.0 - Lista de servidores más ligera
+
+Leer las dimensiones de las filas cuando se prepara la lista vanilla y reutilizarlas al dibujar las tarjetas de papel. Así se evitan búsquedas repetidas de campos privados en cada frame sin cambiar la IP oficial, los servidores guardados, el ping ni la búsqueda LAN.
+
 ## Version 0.113.0 - Un libro en vez de una letra
 
 Cambiar la “F” suelta por un icono pequeño de libro abierto, para que el acceso a la guía se entienda igual en español e inglés. El nombre localizado sigue disponible para teclado y lectores de pantalla.
