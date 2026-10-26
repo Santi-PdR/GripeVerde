@@ -129,7 +129,7 @@
     "gripeverde.field_guide.body.races": "Puedes nacer como humano, tiburón, cíborg o una de las más de 300 razas. Puedes evolucionar de V1 a V4+ al completar acciones o misiones según la rareza de tu raza.",
     "gripeverde.field_guide.body.rarities": "Orden de rareza: Común, No común, Raro, Ultra raro, Legendario, Obsainan, Mítico, Godly, Eternal, Fabled. La escala también clasifica artefactos y objetos.",
     "gripeverde.field_guide.body.mutation_origins": "Los hábitos locales, la genética y la salud de cada persona influyen en las mutaciones de los ghouls. Siguen vivos y los impulsa una adrenalina extrema: no supongas que todas las mutaciones se comportan igual.",
-    "gripeverde.field_guide.body.ceda_coverup": "En la cronología del servidor, situada en 1800, las autoridades llamaron al brote una gripe común para evitar el pánico. La Gripe Verde es una mutación viva de la rabia y la influenza; no reanima cadáveres.",
+    "gripeverde.field_guide.body.ceda_coverup": "En la cronología del servidor, situada en 1800, la CEDA ocultó el brote bajo el nombre de «gripe común» para evitar el pánico. La Gripe Verde es una mutación viva de la rabia y la influenza: los ghouls siguen vivos, no son cadáveres reanimados.",
     "gripeverde.options.sound.ui_slider": "Efectos de interfaz",
     "gripeverde.options.sound.ui_slider.tooltip": "Ajusta los clics, los avisos y los sonidos al pasar por botones.",
     "gripeverde.options.sound.test_button": "Probar",
