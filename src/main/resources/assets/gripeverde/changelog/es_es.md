@@ -4,6 +4,10 @@
 
 Los sonidos ambientales breves del menú ahora usan la categoría Ambiente de Minecraft, igual que los fondos en bucle y su deslizador. La música sigue en Música y los botones conservan su canal de efectos de interfaz.
 
+## Version 0.132.0 - La nota del gramófono
+
+El botón de música de la pantalla principal ahora actualiza su ayuda solo cuando cambia la reproducción o el idioma, en lugar de reconstruirla en cada pulso.
+
 
 ## Version 0.130.0 - Una nota al margen
 
