@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.125.0 - The empty desk
+
+The long-idle discovery now speaks of an empty desk and the ghosts who gather there instead of naming the controls used to uncover it. Its secret and timing are unchanged.
+
 ## Version 0.124.0 - A note from the night watch
 
 The title greetings now sound like the chronicler speaking to someone beside him. They use short, everyday English and keep their place in the Ghoul-era story.
