@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.98.0 - First-response signals
+
+- Give PIN, downed, death, and defibrillator guidance quiet color-coded rails for faster scanning.
+- Keep the field guide's copy regular-weight and preserve its existing keyboard and scroll controls.
+- Draw only fixed shapes; no gameplay animation or extra world effects.
+
 ## Version 0.97.0 - The chronicler's field note
 
 - Show title greetings on a fuller archive-paper slip with a catalog heading in both languages.
