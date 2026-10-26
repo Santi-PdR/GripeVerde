@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+
+## Version 0.115.0 - Full multiplayer action hints
+
+The custom multiplayer buttons now show their full localized tooltips after Minecraft's usual short hover delay. Compact buttons stay compact, while the server list, its layout, and live gameplay remain unchanged.
+
 ## Version 0.114.0 - Lighter server list rendering
 
 Read the vanilla server-list row dimensions when the list is laid out, then reuse them while rendering its paper cards. This avoids repeated private-field lookups per frame without changing the official address, saved servers, ping display, or LAN scan.
