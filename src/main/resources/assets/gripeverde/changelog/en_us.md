@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.117.0 - Lighter return dust
+
+Cache the title-screen dust pattern shown after a long absence. Frames reuse the same 40 specks and opacity values; only a window resize recalculates them. The effect remains static and title-screen-only.
+
 ## Version 0.116.0 - Keyboard-ready multiplayer hints
 
 Full action tooltips now appear after the usual short delay when a custom multiplayer button receives keyboard focus, as well as on hover. Focused hints are placed beside their button. Gameplay screens remain still.
