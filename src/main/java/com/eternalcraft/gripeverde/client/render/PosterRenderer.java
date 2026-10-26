@@ -17,11 +17,12 @@ public class PosterRenderer {
         drawFoldedPaperCorner(g, x, y, w, h);
 
         int cx = x + w / 2;
+        int copyWidth = Math.max(0, w - 28);
         int cursorY = y + 10;
 
-        DiaryChrome.drawCenteredString(g, font, getRotatingQuarantineHeader(0), cx, cursorY, DiaryTheme.INK);
+        drawFittedCenteredLine(g, font, getRotatingQuarantineHeader(0), cx, cursorY, DiaryTheme.INK, copyWidth);
         cursorY += 12;
-        DiaryChrome.drawCenteredString(g, font, getRotatingQuarantineHeader(1), cx, cursorY, DiaryTheme.INK);
+        drawFittedCenteredLine(g, font, getRotatingQuarantineHeader(1), cx, cursorY, DiaryTheme.INK, copyWidth);
         cursorY += 16;
 
         drawThinDivider(g, cx, cursorY, w - 30);
@@ -30,7 +31,7 @@ public class PosterRenderer {
         g.pose().pushPose();
         g.pose().translate(cx, cursorY, 0);
         g.pose().scale(1.2f, 1.2f, 1f);
-        String q = I18n.get("gripeverde.poster.quarantine.title");
+        String q = DiaryChrome.fitText(font, I18n.get("gripeverde.poster.quarantine.title"), Math.max(0, (int)(copyWidth / 1.2f)));
         int qw = font.width(q);
         // v0.21.24: tinta oscura sin sombra (se retiro el rojo sombreado).
         g.drawString(font, q, -qw / 2, 0, DiaryTheme.INK, false);
@@ -53,7 +54,7 @@ public class PosterRenderer {
             I18n.get("gripeverde.poster.quarantine.warn.3")
         };
         for (String line : body) {
-            DiaryChrome.drawCenteredString(g, font, line, cx, cursorY, DiaryTheme.INK_FADED);
+            drawFittedCenteredLine(g, font, line, cx, cursorY, DiaryTheme.INK_FADED, copyWidth);
             cursorY += 10;
         }
 
@@ -69,6 +70,7 @@ public class PosterRenderer {
         drawFoldedPaperCorner(g, x, y, w, h);
 
         int cx = x + w / 2;
+        int copyWidth = Math.max(0, w - 28);
         boolean compact = h < 160;
         int lineStep = compact ? 8 : 10;
         boolean showFraudStamp = false;
@@ -112,7 +114,7 @@ public class PosterRenderer {
             I18n.get("gripeverde.poster.elixir.unit")
         };
         for (String line : body) {
-            DiaryChrome.drawCenteredString(g, font, line, cx, cursorY, DiaryTheme.INK_FADED);
+            drawFittedCenteredLine(g, font, line, cx, cursorY, DiaryTheme.INK_FADED, copyWidth);
             cursorY += lineStep;
         }
 
@@ -256,10 +258,12 @@ public class PosterRenderer {
         drawFoldedPaperCorner(g, x, y, w, h);
 
         int cx = x + w / 2;
+        int copyWidth = Math.max(0, w - 28);
         int cursorY = y + 10;
 
         // Encabezado pequeño
         String header = isEnglish() ? "WANTED" : "SE BUSCA";
+        header = DiaryChrome.fitText(font, header, copyWidth);
         int hw = font.width(header);
         g.drawString(font, header, cx - hw / 2, cursorY, DiaryTheme.INK, false);
         cursorY += 11;
@@ -271,7 +275,8 @@ public class PosterRenderer {
         g.pose().pushPose();
         g.pose().translate(cx, cursorY + 3, 0);
         g.pose().scale(1.2f, 1.2f, 1f);
-        String title = I18n.get("gripeverde.poster.reward.title.short");
+        String title = DiaryChrome.fitText(font, I18n.get("gripeverde.poster.reward.title.short"),
+                Math.max(0, (int)(copyWidth / 1.2f)));
         int tw = font.width(title);
         // v0.21.25: tinta oscura sin sombra (consistencia con poster de cuarentena).
         g.drawString(font, title, -tw / 2, 0, DiaryTheme.INK, false);
@@ -288,18 +293,18 @@ public class PosterRenderer {
             cursorY += 30;
         }
 
-        DiaryChrome.drawCenteredString(g, font, I18n.get("gripeverde.poster.reward.body.1"), cx, cursorY, DiaryTheme.INK_FADED);
+        drawFittedCenteredLine(g, font, I18n.get("gripeverde.poster.reward.body.1"), cx, cursorY, DiaryTheme.INK_FADED, copyWidth);
         cursorY += 10;
-        DiaryChrome.drawCenteredString(g, font, I18n.get("gripeverde.poster.reward.body.2"), cx, cursorY, DiaryTheme.INK_FADED);
+        drawFittedCenteredLine(g, font, I18n.get("gripeverde.poster.reward.body.2"), cx, cursorY, DiaryTheme.INK_FADED, copyWidth);
         cursorY += 14;
 
         drawThinDivider(g, cx, cursorY, w - 30);
         cursorY += 8;
 
         // Prize compactado en una sola línea
-        DiaryChrome.drawCenteredString(g, font, I18n.get("gripeverde.poster.reward.prize.short"), cx, cursorY, DiaryTheme.BLOOD_DRIED);
+        drawFittedCenteredLine(g, font, I18n.get("gripeverde.poster.reward.prize.short"), cx, cursorY, DiaryTheme.BLOOD_DRIED, copyWidth);
         cursorY += 10;
-        DiaryChrome.drawCenteredString(g, font, I18n.get("gripeverde.poster.reward.prize.unit"), cx, cursorY, DiaryTheme.BRONZE);
+        drawFittedCenteredLine(g, font, I18n.get("gripeverde.poster.reward.prize.unit"), cx, cursorY, DiaryTheme.BRONZE, copyWidth);
 
         // Sello más pequeño y en posición segura dentro del panel
         OrnamentRenderer.drawWaxSeal(g, x + w - 18, y + h - 18, 7);
@@ -314,9 +319,10 @@ public class PosterRenderer {
         drawFoldedPaperCorner(g, x, y, w, h);
 
         int cx = x + w / 2;
+        int copyWidth = Math.max(0, w - 28);
         int cursorY = y + 10;
 
-        DiaryChrome.drawCenteredString(g, font, I18n.get("gripeverde.poster.decree.header"), cx, cursorY, DiaryTheme.INK);
+        drawFittedCenteredLine(g, font, I18n.get("gripeverde.poster.decree.header"), cx, cursorY, DiaryTheme.INK, copyWidth);
         cursorY += 12;
 
         drawThinDivider(g, cx, cursorY, w - 30);
@@ -325,7 +331,8 @@ public class PosterRenderer {
         g.pose().pushPose();
         g.pose().translate(cx, cursorY + 4, 0);
         g.pose().scale(1.1f, 1.1f, 1f);
-        String title = I18n.get("gripeverde.poster.decree.title");
+        String title = DiaryChrome.fitText(font, I18n.get("gripeverde.poster.decree.title"),
+                Math.max(0, (int)(copyWidth / 1.1f)));
         int tw = font.width(title);
         // v0.21.25: tinta oscura sin sombra (consistencia con poster de cuarentena).
         g.drawString(font, title, -tw / 2, 0, DiaryTheme.INK, false);
@@ -335,9 +342,9 @@ public class PosterRenderer {
         drawThinDivider(g, cx, cursorY, w - 30);
         cursorY += 10;
 
-        DiaryChrome.drawCenteredString(g, font, I18n.get("gripeverde.poster.decree.body.1"), cx, cursorY, DiaryTheme.INK_FADED);
+        drawFittedCenteredLine(g, font, I18n.get("gripeverde.poster.decree.body.1"), cx, cursorY, DiaryTheme.INK_FADED, copyWidth);
         cursorY += 10;
-        DiaryChrome.drawCenteredString(g, font, I18n.get("gripeverde.poster.decree.body.2"), cx, cursorY, DiaryTheme.INK_FADED);
+        drawFittedCenteredLine(g, font, I18n.get("gripeverde.poster.decree.body.2"), cx, cursorY, DiaryTheme.INK_FADED, copyWidth);
         cursorY += 18;
 
         drawThinDivider(g, cx, cursorY, w - 30);
@@ -346,7 +353,8 @@ public class PosterRenderer {
         g.pose().pushPose();
         g.pose().translate(cx, cursorY + 2, 0);
         g.pose().scale(1.1f, 1.1f, 1f);
-        String warn = I18n.get("gripeverde.poster.decree.warn");
+        String warn = DiaryChrome.fitText(font, I18n.get("gripeverde.poster.decree.warn"),
+                Math.max(0, (int)(copyWidth / 1.1f)));
         int ww = font.width(warn);
         // v0.21.25: tinta oscura sin sombra (consistencia con poster de cuarentena).
         g.drawString(font, warn, -ww / 2, 0, DiaryTheme.INK, false);
@@ -394,6 +402,12 @@ public class PosterRenderer {
         int eye = knows ? 0xFFD4941E : 0xFF141008;
         g.fill(x + 11 + shift, y + 10, x + 12 + shift, y + 11, eye);
         g.fill(x + 14 + shift, y + 10, x + 15 + shift, y + 11, eye);
+    }
+
+    private static void drawFittedCenteredLine(GuiGraphics g, Font font, String text,
+                                                int cx, int y, int color, int maxWidth) {
+        DiaryChrome.drawCenteredString(g, font,
+                DiaryChrome.fitText(font, text, Math.max(0, maxWidth)), cx, y, color);
     }
 
     private static void drawThinDivider(GuiGraphics g, int cx, int y, int width) {
