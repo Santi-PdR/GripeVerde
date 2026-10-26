@@ -9,7 +9,10 @@ import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractButton;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.FormattedCharSequence;
@@ -43,7 +46,7 @@ public final class DiaryFieldGuideScreen extends Screen {
     private final Screen parent;
     private final List<GuideRow> rows = new ArrayList<>();
     private final List<Integer> sectionOffsets = new ArrayList<>();
-    private final List<DiaryButton> sectionWidgets = new ArrayList<>();
+    private final List<GuideSectionButton> sectionWidgets = new ArrayList<>();
     private int panelX, panelY, panelW, panelH;
     private int scrollY;
     private int maxScroll;
@@ -124,11 +127,9 @@ public final class DiaryFieldGuideScreen extends Screen {
                 narration.append(Component.translatable(entry)).append(". ");
             }
             int headingWidth = Math.max(1, this.font.width(this.font.split(heading, textWidth).get(0)));
-            DiaryButton sectionButton = new DiaryButton(
+            GuideSectionButton sectionButton = new GuideSectionButton(
                 panelX + 20, viewportTop() + sectionOffsets.get(section) - scrollY,
                 headingWidth, LINE_HEIGHT, narration,
-                DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
-                DiaryButton.SoundProfile.NONE,
                 () -> jumpToSection(targetSection));
             this.addWidget(sectionButton);
             sectionWidgets.add(sectionButton);
@@ -437,6 +438,41 @@ public final class DiaryFieldGuideScreen extends Screen {
     @Override
     public void onClose() {
         this.minecraft.setScreen(parent);
+    }
+
+    /**
+     * Keyboard and screen-reader target for a heading. The screen itself draws the
+     * printed heading under its viewport scissor; the input target must stay invisible
+     * so off-screen sections cannot paint over the guide footer or close button.
+     */
+    private static final class GuideSectionButton extends AbstractButton {
+        private final Runnable action;
+
+        private GuideSectionButton(int x, int y, int width, int height,
+                                   Component narration, Runnable action) {
+            super(x, y, width, height, narration);
+            this.action = action;
+        }
+
+        @Override
+        public void onPress() {
+            action.run();
+        }
+
+        @Override
+        public void playDownSound(SoundManager soundManager) {
+            // Heading navigation is silent; the visible text supplies its own feedback.
+        }
+
+        @Override
+        protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+            // Drawn by DiaryFieldGuideScreen inside the clipped text viewport.
+        }
+
+        @Override
+        protected void updateWidgetNarration(NarrationElementOutput output) {
+            defaultButtonNarrationText(output);
+        }
     }
 
     private static final class GuideRow {
