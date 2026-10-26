@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.126.0 - El texto no se sale del papel
+
+Las líneas traducidas de los avisos de cuarentena, elixir, recompensa y decreto ahora se ajustan al ancho interior de la hoja. Los títulos ampliados también respetan el margen, para que el texto en español no se salga del borde ni del pliegue.
+
 ## Version 0.125.0 - El escritorio vacío
 
 El descubrimiento que aparece tras una larga espera ahora habla de un escritorio vacío y de los fantasmas que se reúnen allí, sin nombrar los controles usados para encontrarlo. El secreto y el momento en que aparece siguen iguales.
