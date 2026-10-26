@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.108.0 - Music on command
+
+Pause or resume the menu soundtrack from the sound panel. The choice is saved and does not alter the volume setting. Track controls stay unavailable during a live world.
+
 ## Version 0.107.0 - Eyes in quarantine
 
 Add a small, fixed pair of blue Ghoul eyes to a distant upper window on the title screen. Fog softens the detail; diary overlays and live worlds do not render it. The scene uses static pixels only, with no extra ticks, particles, sounds, or gameplay effects.
