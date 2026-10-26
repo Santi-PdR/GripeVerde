@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.106.0 - Papel más estable
+
+Guardar el patrón determinista de humedad de cada panel. El papel conserva su aspecto sin crear un generador aleatorio en cada render. Dibujar las tres líneas del informe ghoul directamente, sin reservar un arreglo temporal por frame. El comportamiento de juego no cambia.
+
 ## Version 0.105.0 - Notas quietas
 
 Respetar «Movimiento reducido» en las notas al margen, los sellos de descubrimiento y el diapasón del panel de sonido. Las notas aparecen completas y el sello queda quieto cuando la opción está activa. Si la opción está desactivada, el menú conserva su comportamiento; las interfaces durante partidas siguen estáticas.
