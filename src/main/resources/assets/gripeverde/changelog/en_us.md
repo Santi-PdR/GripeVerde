@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.113.0 - A book instead of a letter
+
+Replace the single “F” with a small open-ledger icon so the field-guide shortcut reads the same in English and Spanish. Its full localized name remains available to keyboard and screen-reader users.
+
 ## Version 0.112.0 - Clean field guide headings
 
 Section names remain printed on the paper instead of being covered by tiny button panels. Navigation targets stay inside the reading viewport, preserving keyboard and screen-reader access without hover sound or gameplay animation.
