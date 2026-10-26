@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.111.0 - Field guide at a glance
+
+- Add a small, labeled field-guide button beside the title-screen chronicle control.
+- Keep it available in compact layouts and route it to the same bilingual guide used by the quarantine poster and pause menu.
+- Use the existing translated guide hint; no new notice, gameplay animation, tick, or world effect.
+
 ## Version 0.110.0 - Clearer button ink
 
 - Keep disabled button labels in dark sepia ink so their muted paper state remains readable.
