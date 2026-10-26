@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.106.0 - Steadier paper
+
+- Cache each deterministic paper-stain pattern so repeated menu renders reuse it instead of creating a random generator each frame.
+- Draw the Ghoul report's three body lines directly, avoiding a temporary array on the title-screen render path.
+- Preserve the paper appearance and static menu-only rendering.
+
 ## Version 0.105.0 - Quiet notes
 
 - Respect Reduced motion across marginal notes, discovery notices, and the sound-panel tuning fork.
