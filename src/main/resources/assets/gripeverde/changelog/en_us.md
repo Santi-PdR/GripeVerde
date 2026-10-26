@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.129.0 - Words from the watch
+
+Polish the English and Spanish title-screen lines so they sound natural aloud, keep the period tone, and use correct Spanish accents. The button subtitles remain static text and still rotate only in the title screen.
+
+
 ## Version 0.128.0 - Sickly glow on the horizon
 
 The title-screen city gains a faint, fixed green haze behind the skyline, hinting at the outbreak. It is menu-only, uses a few translucent fills, and adds no animation or world rendering.
