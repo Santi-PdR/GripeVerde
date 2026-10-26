@@ -36,7 +36,7 @@ if chg_files - set(REQUIRED): fails.append("unexpected changelogs: %s" % sorted(
 
 baseline = json.loads(read(os.path.join(LANG_DIR, "en_us.json")))
 bkeys = set(baseline)
-EXPECTED = 163
+EXPECTED = 165
 loc_problems = []
 if len(bkeys) != EXPECTED:
     loc_problems.append("en_us: expected %d keys, found %d" % (EXPECTED, len(bkeys)))
