@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.125.0 - El escritorio vacío
+
+El descubrimiento que aparece tras una larga espera ahora habla de un escritorio vacío y de los fantasmas que se reúnen allí, sin nombrar los controles usados para encontrarlo. El secreto y el momento en que aparece siguen iguales.
+
 ## Version 0.124.0 - Una nota durante la guardia
 
 Los saludos del menú ahora suenan como palabras del cronista a alguien que tiene al lado. Son breves, cotidianos y conservan el tono de la época de los Ghouls.
