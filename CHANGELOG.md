@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.117.0 - Lighter return dust
+
+- Cache the fixed specks shown on the title screen after a long absence.
+- Reuse their coordinates and opacity on each frame, recalculating only after a window resize.
+- Keep the same still effect and its title-screen-only behavior.
+
 ## Version 0.116.0 - Keyboard-ready multiplayer hints
 
 - Show full action tooltips when a custom multiplayer button receives keyboard focus, as well as on hover.
