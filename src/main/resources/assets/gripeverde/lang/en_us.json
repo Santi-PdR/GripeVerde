@@ -129,7 +129,7 @@
     "gripeverde.field_guide.body.races": "Survivors may be Human, Shark, Cyborg, or one of 300+ races. Evolve from V1 through V4+ by completing tasks or missions tied to your race's rarity.",
     "gripeverde.field_guide.body.rarities": "Rarity order: Common, Uncommon, Rare, Ultra Rare, Legendary, Obsainan, Mythic, Godly, Eternal, Fabled. The same scale classifies artifacts and items.",
     "gripeverde.field_guide.body.mutation_origins": "Local habits, genetics, and a person's health shape Ghoul mutations. They remain alive and driven by extreme adrenaline; never assume one mutation behaves like another.",
-    "gripeverde.field_guide.body.ceda_coverup": "In this server's 1800 timeline, authorities called the outbreak a common flu to prevent panic. The Green Flu is a living rabies-and-influenza mutation; it does not raise corpses.",
+    "gripeverde.field_guide.body.ceda_coverup": "In this server's 1800 timeline, CEDA hid the outbreak under the name \"common flu\" to prevent panic. The Green Flu is a living rabies-and-influenza mutation: Ghouls are infected survivors, not risen corpses.",
     "gripeverde.options.sound.ui_slider": "Interface effects",
     "gripeverde.options.sound.ui_slider.tooltip": "Adjust menu clicks, hovers and notifications.",
     "gripeverde.options.sound.test_button": "Test",
