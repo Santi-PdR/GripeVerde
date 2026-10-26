@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.122.0 - A stamp with room to breathe
+
+The elixir's FRAUDE mark now follows the bottle line instead of being pushed up from the card's bottom edge, so it no longer lands over the words on short sheets. On unusually small layouts it stays off the copy. The title notices also have more clearly cut corners, with the ink border following the same paper edge. These are still marks on a still title screen.
+
 ## Version 0.121.0 - Sections you can spot
 
 The field manual now prints a small number beside each section. The numbers match the 1–7 shortcuts shown at the bottom, so readers can see where each jump will take them. The marks are still ink on paper; nothing moves during play.
