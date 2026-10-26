@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.112.0 - Clean field guide headings
+
+- Keep clickable section names as plain printed headings rather than drawing small button panels over the text.
+- Clip all section navigation to the guide viewport so off-screen headings cannot cover the footer or close control.
+- Preserve keyboard and screen-reader navigation with descriptive, silent heading targets; add no gameplay animation.
+
 ## Version 0.111.0 - Field guide at a glance
 
 - Add a small, labeled field-guide button beside the title-screen chronicle control.
