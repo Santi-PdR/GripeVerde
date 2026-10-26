@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.104.0 - El informe de campo
+
+Añadir un cuarto documento diario a la pantalla principal con consejos de la CEDA sobre ghouls vivos, mutaciones, rescates de PIN y la importancia de permanecer juntos. Darle papel envejecido y una marca fija de tinta con un ojo azul. El cartel es bilingüe y estático: no anima mundos, servidores ni inventarios.
+
 ## Version 0.103.0 - El encubrimiento de la CEDA
 
 Aclarar que la CEDA ocultó el brote de 1800 bajo el nombre de gripe común y que los ghouls son infectados vivos, no muertos reanimados. Mantener sin cambios el diseño del manual.
