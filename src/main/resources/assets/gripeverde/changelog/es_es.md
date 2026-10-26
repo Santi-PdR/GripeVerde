@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.111.0 - Guía de campo a mano
+
+Abrir la guía bilingüe de la CEDA desde un botón pequeño y visible junto al acceso a la crónica. Reutiliza la pista localizada y no añade animaciones durante la partida ni en el inventario.
+
 ## Version 0.110.0 - Tinta más legible
 
 Las etiquetas de los botones desactivados ahora usan tinta sepia más oscura para leerse mejor sobre el papel. El texto conserva un único trazo sin sombra y evita recortar dos veces.
