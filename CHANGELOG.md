@@ -1,5 +1,11 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.100.0 - Compact sound readout
+
+- Keep Minecraft Master, Music, and Ambient percentages visible on narrow sound screens.
+- Use concise bilingual labels without clipping the last category.
+- Preserve the full category names in the regular layout.
+
 ## Version 0.99.0 - Master volume visibility
 
 - Show Minecraft's Master, Music, and Ambient levels together in the sound cabinet.
