@@ -387,6 +387,26 @@ public class ChangelogScreen extends Screen {
         penActive = true;
     }
 
+    private boolean isPenCursorVisible(int progress, int cx, int cy, int ch, int cw) {
+        if (penRowStart < 0 || penRowEnd <= penRowStart) return false;
+        int rowY = cy - scrollY;
+        for (int i = 0; i < penRowStart; i++) rowY += rowHeight(rows.get(i), cw);
+
+        int consumed = 0;
+        for (int i = penRowStart; i < penRowEnd; i++) {
+            Row row = rows.get(i);
+            int height = rowHeight(row, cw);
+            int length = (row.type == LT.GAP || row.type == LT.SEPARATOR)
+                ? 0 : row.text.length();
+            if (length > 0 && progress < consumed + length) {
+                return rowY + height >= cy && rowY <= cy + ch;
+            }
+            consumed += length;
+            rowY += height;
+        }
+        return false;
+    }
+
     private static boolean reducedMotion() {
         try {
             return com.eternalcraft.gripeverde.config.ClientConfig.REDUCED_MOTION.get()
