@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.138.0 - La pluma espera al lector
+
+La crónica ahora se escribe solo cuando el siguiente renglón está a la vista. Al apartarse con el desplazamiento, la tinta se detiene; los tirones de imagen no hacen que la pluma salte y el rasguño suena con menos frecuencia.
+
 ## Version 0.137.0 - La marca del médico encuentra su sitio
 
 El sello de fraude del elixir ahora queda en un espacio propio bajo el texto de la botella y se oculta si el cartel es demasiado bajo. En inglés dice «FRAUD» y en español, «FRAUDE».
