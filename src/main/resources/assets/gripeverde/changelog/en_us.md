@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.136.0 - A light crossing the language barrier
+
+The shooting-star note now follows the chosen English or Spanish language while it is visible and wraps inside the screen on small windows.
+
 ## Version 0.135.0 - A note that crosses the language barrier
 
 The hidden message behind the ministry seal now changes with the selected English or Spanish language, even while the note is still on screen.
