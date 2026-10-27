@@ -1,3 +1,7 @@
+## Version 0.154.0 - Notes from the living
+
+The field guide now reads like a survivor's account instead of a system briefing. Its English and Spanish notes explain how Ghouls change, what to do when a teammate is pinned or downed, and what each difficulty brings, while preserving the server's mechanics.
+
 ## Version 0.153.0 - Clearer letters in the diary
 
 The title screen, options, field guide, and shared controls now use Atkinson Hyperlegible with consistent text measurements. Button labels no longer draw a second dark copy, so they stay crisp against the paper. The font is bundled with its license and adds no animation or rendering work in worlds or inventories.

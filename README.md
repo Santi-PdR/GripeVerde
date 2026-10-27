@@ -1,8 +1,8 @@
 # Eternal Craft: Gripe Verde
 
-**v0.153.0 - Letras claras en el diario**
+**v0.154.0 - Una guía escrita por supervivientes**
 
-La portada, las opciones y la guía de campo usan Atkinson Hyperlegible con medidas de texto coherentes. Las etiquetas de los botones se leen con nitidez, sin una segunda sombra que las engrose. La fuente se aplica solo a las pantallas de menú y no añade animaciones ni trabajo al renderizado del mundo o el inventario.
+El manual cuenta el brote con voz natural y explica, en inglés y español, cómo ayudar a un compañero atrapado o incapacitado y qué esperar de cada dificultad. La tipografía legible y el ambiente de cuarentena victoriana se mantienen en el menú, sin efectos sobre mundos ni inventarios.
 
 **v0.80.0 - Avisos de descubrimiento legibles**
 

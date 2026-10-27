@@ -1,3 +1,7 @@
+## Version 0.154.0 - Apuntes de quienes siguen vivos
+
+La guía de campo ahora suena como el relato de un superviviente y no como un informe técnico. Las notas en inglés y español cuentan cómo cambian los ghouls, qué hacer si un compañero queda atrapado o cae, y qué trae cada dificultad, sin alterar las mecánicas del servidor.
+
 ## Version 0.153.0 - Letras más claras en el diario
 
 La portada, las opciones, la guía de campo y los controles compartidos ahora usan Atkinson Hyperlegible con medidas de texto coherentes. Las etiquetas de los botones ya no dibujan una segunda copia oscura y se leen con más nitidez sobre el papel. La fuente se incluye con su licencia y no añade animaciones ni trabajo de renderizado en mundos o inventarios.
