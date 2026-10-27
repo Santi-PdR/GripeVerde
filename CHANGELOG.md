@@ -1,3 +1,7 @@
+## v0.158.0 - La crónica vuelve a poner las tildes
+
+Las notas de la estrella fugaz y del telegrama sellado recuperaron las tildes y la ñ que se habían perdido. Sus frases en español ahora se leen como fueron escritas.
+
 ## v0.157.0 - Un telegrama que deja respirar la portada
 
 La nota que aparece al tocar el sello ahora es más angosta y dura menos. El secreto permanece, pero el papel vuelve a dejar ver el cielo y las hojas de la portada.

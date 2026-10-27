@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+**v0.158.0 - Notas en español bien escritas**
+
+Las notas secretas de la estrella y del sello ya llevan las tildes y la ñ que faltaban.
+
 **v0.157.0 - Un telegrama menos invasivo**
 
 El mensaje secreto del sello ocupa menos espacio y se retira antes para dejar la portada a la vista.

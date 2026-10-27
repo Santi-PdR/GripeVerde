@@ -1,3 +1,7 @@
+## Version 0.158.0 - Las notas recuperan sus tildes
+
+Las frases de la estrella fugaz y del telegrama sellado recuperaron las tildes y la ñ que faltaban. El texto en inglés no cambió.
+
 ## Version 0.157.0 - Un telegrama menos invasivo
 
 La nota que aparece al tocar el sello ahora es más angosta y dura menos. El secreto permanece, pero se ven mejor el cielo y los avisos de la portada.

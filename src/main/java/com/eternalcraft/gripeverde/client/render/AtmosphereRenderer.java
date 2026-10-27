@@ -68,13 +68,13 @@ public class AtmosphereRenderer {
 
     private static final String[] SHOOT_STAR_MESSAGES_ES = {
         "Un deseo cae del cielo",
-        "Algo cruzo la noche",
-        "Una senal fugaz",
+        "Algo cruzó la noche",
+        "Una señal fugaz",
         "El cielo parpadea",
         "Una brasa cruza el firmamento",
         "La noche firma con fuego",
-        "El cronista pidio un augurio",
-        "La peste tambien mira hacia arriba",
+        "El cronista pidió un augurio",
+        "La peste también mira hacia arriba",
         "Una cicatriz breve en las nubes",
         "El cielo deja caer una astilla"
     };

@@ -1122,13 +1122,13 @@ public class DiaryTitleScreen extends Screen {
     // Easter egg: click en el logo -> expediente sellado aleatorio
     private static final String[] LOGO_EASTER_EGGS_ES = {
         "El reloj del ministerio acaba de marcar una hora que no existe.",
-        "Una carta sin sello respira dentro del cajon del cronista.",
+        "Una carta sin sello respira dentro del cajón del cronista.",
         "La ventana del tercer piso respondio con una luz verde.",
-        "Las ratas dejaron una flecha perfecta apuntando al rio.",
-        "El nombre del ultimo testigo aparecio escrito antes de llegar.",
+        "Las ratas dejaron una flecha perfecta apuntando al río.",
+        "El nombre del último testigo apareció escrito antes de llegar.",
         "La campana conto a los ausentes, no a los vivos.",
         "Hay barro fresco bajo una puerta que nadie ha abierto.",
-        "El gato del tejado pronuncio un apellido y salto a la niebla."
+        "El gato del tejado pronunció un apellido y saltó a la niebla."
     };
     private static final String[] LOGO_EASTER_EGGS_EN = {
         "The ministry clock has just struck an hour that does not exist.",

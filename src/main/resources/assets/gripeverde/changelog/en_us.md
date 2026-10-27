@@ -1,3 +1,7 @@
+## Version 0.158.0 - Spanish notes, properly written
+
+The Spanish captions for the shooting star and sealed telegram now include their missing accents and ñ. English wording is unchanged.
+
 ## Version 0.157.0 - A quieter telegram
 
 The sealed note is narrower and leaves the title screen sooner. The secret remains, but the sky and the printed notices are easier to see.
