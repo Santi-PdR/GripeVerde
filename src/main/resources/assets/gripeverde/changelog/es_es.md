@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.144.0 - El grito que nos hizo volver
+
+Al llegar al apartado de trabajo en equipo, el cronista puede dejar un último recuerdo: un grito que cruzó el pueblo y unos desconocidos que volvieron a buscarse. Aparece una sola vez, en el idioma elegido.
+
 ## Version 0.143.0 - La fiebre aún tenía pulso
 
 Una nota de testigo acompaña ahora el apartado de la infección. Cuenta el momento en que los supervivientes comprendieron que la fiebre no había matado a sus víctimas. Aparece una sola vez, en inglés o español.
