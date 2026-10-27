@@ -137,7 +137,7 @@ public class GreenFluButton extends AbstractButton {
         String tTitle=ellipsize(font,title.getString(),maxW);
         String tSub=ellipsize(font,subtitle.getString(),maxW);
         int titleCol = hoverAnim.lerpColor(DiaryTheme.BONE_WHITE, DiaryTheme.PAPER);
-        int subCol = hoverAnim.lerpColor(DiaryTheme.SEPIA_LIGHT, DiaryTheme.OCHRE);
+        int subCol = hoverAnim.lerpColor(DiaryTheme.SEPIA_LIGHT, DiaryTheme.FIELD_SUBTITLE);
         if(!active){ titleCol=DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID,90); subCol=DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID,70); }
         DiaryTypography.draw(g, font, tTitle, textX, yDraw + 8, titleCol);
         DiaryTypography.draw(g, font, tSub, textX, yDraw + 22, subCol);

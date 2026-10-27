@@ -1,3 +1,7 @@
+## Version 0.161.0 - Clearer button subtitles
+
+The second line on the main buttons keeps stronger contrast against the dark panels, including on hover, while staying within the aged-brass palette.
+
 ## Version 0.160.0 - Clearer settings
 
 Settings categories now use familiar names in English and Spanish. Sound tips say plainly which Minecraft volumes to check, and the rescue note clearly explains what happens to a fallen teammate's inventory and body.

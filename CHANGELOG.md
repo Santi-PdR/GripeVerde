@@ -1,3 +1,7 @@
+## v0.161.0 - Rótulos más legibles
+
+La segunda línea de los botones principales conserva suficiente contraste sobre el fondo oscuro, incluso al pasar el cursor. El tono sigue dentro de la paleta de latón envejecido.
+
 ## v0.160.0 - Ajustes más claros
 
 Se simplificaron los nombres de las secciones de ajustes en inglés y español. Los avisos de sonido explican qué controles revisar sin fórmulas, y la nota de rescate distingue con claridad el inventario y el cuerpo del compañero.

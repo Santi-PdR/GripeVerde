@@ -1,3 +1,7 @@
+**v0.161.0 - Rótulos más legibles**
+
+Ajusté el color de la segunda línea de los botones principales para que siga destacando al pasar el cursor, sin perder el tono de latón envejecido.
+
 **v0.160.0 - Ajustes más claros**
 
 Las secciones de ajustes ahora tienen nombres fáciles de reconocer. Acorté los avisos de sonido y corregí la nota de rescate para que quede claro qué conserva y cómo vuelve el compañero.

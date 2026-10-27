@@ -26,6 +26,8 @@ public class DiaryTheme {
     public static final int BRONZE         = 0xFF6B5028;
     public static final int BRONZE_DARK    = 0xFF3D2E14;
     public static final int GOLD_TARNISHED = 0xFF8A6A2D;
+    // Aged brass that stays legible as the title button darkens on hover.
+    public static final int FIELD_SUBTITLE = 0xFFB89F70;
 
     // ─── ROJO BRITANICO (nuevo acento principal) ─
     public static final int REDCOAT        = 0xFF8B1A15;

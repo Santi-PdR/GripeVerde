@@ -1,3 +1,7 @@
+## Version 0.161.0 - Rótulos más legibles
+
+La segunda línea de los botones principales conserva mejor contraste sobre el fondo oscuro, incluso al pasar el cursor, sin salir de la paleta de latón envejecido.
+
 ## Version 0.160.0 - Ajustes más claros
 
 Las categorías de ajustes usan nombres fáciles de reconocer en inglés y español. Los avisos de sonido indican qué volúmenes revisar y la nota de rescate aclara qué pasa con el inventario y el cuerpo de un compañero caído.
