@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.134.0 - El cronista habla tu idioma
+
+El saludo del cronista, el rótulo de su hoja y la frase de vigilia ahora siguen el inglés o el español elegido. El texto ajustado se conserva hasta que cambian las palabras, el ancho de la ventana o la fuente.
+
 ## Version 0.131.0 - El ambiente responde a su control
 
 Los sonidos ambientales breves del menú ahora usan la categoría Ambiente de Minecraft, igual que los fondos en bucle y su deslizador. La música sigue en Música y los botones conservan su canal de efectos de interfaz.
