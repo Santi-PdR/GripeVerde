@@ -1,4 +1,6 @@
-# Eternal Craft: Gripe Verde
+## Version 0.146.0 - Room for the reward
+
+The wanted poster now keeps its portrait and wax seal clear of the reward lines on shorter windows. The drawing stays fixed to the title screen.
 
 ## Version 0.145.0 - The right address keeps its place
 

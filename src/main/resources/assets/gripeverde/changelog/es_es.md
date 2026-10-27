@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.146.0 - Espacio para la recompensa
+
+El cartel de recompensa ahora deja espacio para que el retrato y el sello no se monten sobre el último renglón en ventanas bajas. El dibujo sigue quieto en la pantalla principal.
+
+
 ## Version 0.145.0 - La dirección correcta conserva su sitio
 
 Si hay una entrada renombrada y otra con la dirección oficial de Outbreak, la pantalla multijugador ahora prioriza la dirección correcta. Si solo queda la entrada renombrada, conserva su nombre y su dirección personalizada.

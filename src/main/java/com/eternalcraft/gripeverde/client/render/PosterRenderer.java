@@ -290,7 +290,7 @@ public class PosterRenderer {
 
         // v0.16.0: el retrato del buscado. Quien le sostiene la mirada
         // descubre que el dibujo tambien mira. Solo si el cartel es alto.
-        if (h >= 150) {
+        if (h >= 160) {
             drawWantedPortrait(g, cx, cursorY, w);
             cursorY += 30;
         }
@@ -308,8 +308,11 @@ public class PosterRenderer {
         cursorY += 10;
         drawFittedCenteredLine(g, font, I18n.get("gripeverde.poster.reward.prize.unit"), cx, cursorY, DiaryTheme.BRONZE, copyWidth);
 
-        // Sello más pequeño y en posición segura dentro del panel
-        OrnamentRenderer.drawWaxSeal(g, x + w - 18, y + h - 18, 7);
+        // At the shortest supported height the footer copy reaches the lower corner.
+        // Keep the wax mark only when a full seal can sit below the last line.
+        if (h >= 130) {
+            OrnamentRenderer.drawWaxSeal(g, x + w - 18, y + h - 18, 7);
+        }
         drawBloodSplatter(g, x, y, w, h, 0x5EAADL);
         drawInkStamp(g, x, y, w, h, 0x5EA100L);
     }

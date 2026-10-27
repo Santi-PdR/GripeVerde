@@ -1,5 +1,10 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.146.0 - Room for the reward
+
+The wanted poster now keeps its portrait and wax seal clear of the reward lines on shorter windows. The drawing stays fixed to the title screen.
+
+
 ## Version 0.145.0 - The right address keeps its place
 
 When both an official Outbreak address and a renamed saved entry exist, the multiplayer page now pins the matching address first. If only the renamed entry remains, its custom address and label stay intact.
