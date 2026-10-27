@@ -1,3 +1,7 @@
+## Version 0.156.0 - Una nota del cielo más ligera
+
+El aviso de la estrella fugaz conserva sus renglones mientras no cambien el mensaje, la letra ni el espacio disponible. Se ve igual, sin volver a partir y medir el mismo texto en cada frame.
+
 ## Version 0.155.0 - Letras claras otra vez
 
 La letra personalizada había dejado cuadros vacíos en la portada. El diario vuelve a la letra normal de Minecraft, y la pista del pequeño ojo suena a nota encontrada, no a instrucción del menú.

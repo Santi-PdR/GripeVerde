@@ -1151,6 +1151,10 @@ public class DiaryTitleScreen extends Screen {
     private net.minecraft.client.gui.Font cachedEasterFont = null;
     private java.util.List<net.minecraft.util.FormattedCharSequence> cachedEasterLines = java.util.Collections.emptyList();
     private int cachedEasterCursorTextWidth = 0;
+    private String cachedShootStarMessage;
+    private int cachedShootStarMaxWidth = -1;
+    private net.minecraft.client.gui.Font cachedShootStarFont;
+    private java.util.List<net.minecraft.util.FormattedCharSequence> cachedShootStarLines = java.util.Collections.emptyList();
     private String easterEggCaseCode = "";
     private long easterEggStartedMs = 0L;
     private long easterEggUntilMs = 0L;
@@ -1398,8 +1402,15 @@ public class DiaryTitleScreen extends Screen {
         int alpha = remain < 800L ? (int)(220 * remain / 800L) : 220;
         int col = (alpha << 24) | 0xE8DCB4;
         int maxWidth = Math.max(40, this.width - 32);
-        java.util.List<net.minecraft.util.FormattedCharSequence> lines =
-            DiaryTypography.split(this.font, Component.literal(ssm), maxWidth);
+        if (!ssm.equals(cachedShootStarMessage)
+                || this.font != cachedShootStarFont
+                || maxWidth != cachedShootStarMaxWidth) {
+            cachedShootStarLines = DiaryTypography.split(this.font, Component.literal(ssm), maxWidth);
+            cachedShootStarMessage = ssm;
+            cachedShootStarFont = this.font;
+            cachedShootStarMaxWidth = maxWidth;
+        }
+        java.util.List<net.minecraft.util.FormattedCharSequence> lines = cachedShootStarLines;
         int totalHeight = lines.size() * this.font.lineHeight;
         int top = Math.max(8, Math.min(this.height / 3, this.height - totalHeight - 8));
         for (int i = 0; i < lines.size(); i++) {

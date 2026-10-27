@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+**v0.156.0 - Avisos estelares más ligeros**
+
+La nota de la estrella fugaz conserva sus líneas ya calculadas mientras el texto, la letra y el ancho no cambian, para no volver a medirla en cada frame.
+
 **v0.155.0 - Letras claras otra vez**
 
 Retiré la fuente que estaba dejando cuadrados en el menú. Los textos vuelven a la letra normal de Minecraft; la portada y las partidas no reciben efectos nuevos.

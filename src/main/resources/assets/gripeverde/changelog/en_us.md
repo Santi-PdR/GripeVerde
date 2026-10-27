@@ -1,3 +1,7 @@
+## Version 0.156.0 - A lighter note from the sky
+
+The shooting-star caption keeps its wrapped lines while the message, font, and available width stay the same. It looks unchanged without splitting and measuring the same text on every frame.
+
 ## Version 0.155.0 - Clear letters again
 
 The custom font had left empty boxes across the title screen. The diary now uses Minecraft's regular lettering, and the little eye's clue reads like a note someone found rather than a menu instruction.

@@ -1,3 +1,7 @@
+## v0.156.0 - El cielo guarda la nota
+
+La frase que acompaña a la estrella fugaz conserva sus renglones mientras no cambien el mensaje, la letra o el espacio disponible. La nota se ve igual, pero la portada deja de volver a partir y medir lo mismo en cada frame.
+
 ## v0.155.0 - Letras legibles
 
 La letra personalizada había dejado cuadros vacíos en la portada. El diario vuelve a la letra normal de Minecraft, y las crónicas mantienen su voz natural. También cambié la pista del pequeño ojo para que suene como una nota encontrada, no como una explicación del menú.
