@@ -54,8 +54,7 @@ public class DiaryTitleScreen extends Screen {
     private int cachedGreetingCardWidth = -1;
     private boolean cachedGreetingEnglish = false;
     private net.minecraft.client.gui.Font cachedGreetingFont = null;
-    private String cachedGreetingLine = "";
-    private int cachedGreetingLineWidth = 0;
+    private java.util.List<net.minecraft.util.FormattedCharSequence> cachedGreetingLines = java.util.Collections.emptyList();
     private String cachedGreetingLabel = "";
     private int cachedGreetingLabelWidth = 0;
     private int cachedGreetingLabelLimit = -1;
@@ -173,7 +172,7 @@ public class DiaryTitleScreen extends Screen {
                 if (greetingText != null) {
                     greetingEnglish = isEnglishSelected();
                     greetingLanguageInitialized = true;
-                    greetingShownUntilMs = System.currentTimeMillis() + 12_000L;
+                    greetingShownUntilMs = System.currentTimeMillis() + 8_000L;
                 }
                 if (com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.consumeAnniversary()) {
                     com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
@@ -524,7 +523,7 @@ public class DiaryTitleScreen extends Screen {
         }
     }
 
-    /** Nota de archivo estatica, limitada al menu principal. */
+    /** Nota de archivo estatica, limitada al carril central de la portada. */
     private void renderChroniclerNote(GuiGraphics g) {
         long now = System.currentTimeMillis();
         if (greetingText == null || now >= greetingShownUntilMs || isMinimalMode()) return;
@@ -537,16 +536,22 @@ public class DiaryTitleScreen extends Screen {
             greetingLanguageInitialized = true;
         }
 
-        int cardW = Math.min(390, this.width - 32);
+        // Reserva el hueco entre los dos carteles para que la nota nunca los tape.
+        LayoutRegion left = leftColumn();
+        LayoutRegion right = rightColumn();
+        int centerLane = right.x - (left.x + left.w);
+        int cardW = Math.min(390, Math.min(this.width - 32, centerLane - 16));
         if (cardW < 180) return;
-        int labelLimit = cardW / 2 - 18;
+
+        String registry = "CEDA · 1800";
+        int registryW = DiaryTypography.width(this.font, registry);
+        int labelLimit = Math.max(48, cardW - registryW - 28);
         if (!java.util.Objects.equals(cachedGreetingSource, greetingText)
                 || cachedGreetingCardWidth != cardW
                 || cachedGreetingEnglish != english
                 || cachedGreetingFont != this.font
                 || cachedGreetingLabelLimit != labelLimit) {
-            cachedGreetingLine = DiaryTypography.fitString(this.font, greetingText, cardW - 24);
-            cachedGreetingLineWidth = DiaryTypography.width(this.font, cachedGreetingLine);
+            cachedGreetingLines = DiaryTypography.split(this.font, greetingText, cardW - 24);
             String label = Component.translatable("gripeverde.title.greeting.label").getString();
             cachedGreetingLabel = DiaryTypography.fitString(this.font, label, labelLimit);
             cachedGreetingLabelWidth = DiaryTypography.width(this.font, cachedGreetingLabel);
@@ -556,31 +561,30 @@ public class DiaryTitleScreen extends Screen {
             cachedGreetingFont = this.font;
             cachedGreetingLabelLimit = labelLimit;
         }
-        if (cachedGreetingLine.isEmpty()) return;
+        if (cachedGreetingLines.isEmpty()) return;
 
-        int cardH = 40;
+        int cardH = 26 + cachedGreetingLines.size() * this.font.lineHeight;
         int x = (this.width - cardW) / 2;
         // La marca del año termina cerca de y=161; la ficha queda debajo.
         int y = 168;
         g.fill(x + 2, y + 2, x + cardW + 2, y + cardH + 2,
-            com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
-                com.eternalcraft.gripeverde.client.render.DiaryTheme.INK_BLACK, 72));
-        com.eternalcraft.gripeverde.client.render.PaperTexture.drawClean(
-            g, x, y, cardW, cardH,
-            com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.ARCHIVE);
+            DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 72));
+        PaperTexture.drawClean(
+            g, x, y, cardW, cardH, PaperTexture.PaperKind.ARCHIVE);
 
-        String registry = "CEDA · 1800";
         DiaryTypography.draw(g, this.font, cachedGreetingLabel, x + 12, y + 5,
-            com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_MID, false);
-        int registryW = DiaryTypography.width(this.font, registry);
+            DiaryTheme.SEPIA_MID, false);
         DiaryTypography.draw(g, this.font, registry, x + cardW - registryW - 12, y + 5,
-            com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_MID, false);
-        g.fill(x + 10, y + 17, x + cardW - 10, y + 18,
-            com.eternalcraft.gripeverde.client.render.DiaryChrome.INK_DIVIDER);
+            DiaryTheme.SEPIA_MID, false);
+        g.fill(x + 10, y + 17, x + cardW - 10, y + 18, DiaryChrome.INK_DIVIDER);
 
-        int textX = x + (cardW - cachedGreetingLineWidth) / 2;
-        DiaryTypography.draw(g, this.font, cachedGreetingLine, textX, y + 24,
-            com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_DARK, false);
+        int textY = y + 21;
+        for (int i = 0; i < cachedGreetingLines.size(); i++) {
+            net.minecraft.util.FormattedCharSequence line = cachedGreetingLines.get(i);
+            int lineW = DiaryTypography.width(this.font, line);
+            DiaryTypography.draw(g, this.font, line, x + (cardW - lineW) / 2,
+                textY + i * this.font.lineHeight, DiaryTheme.SEPIA_DARK, false);
+        }
     }
 
     /** La vigilia nota cuando el lector se queda quieto demasiado tiempo. */

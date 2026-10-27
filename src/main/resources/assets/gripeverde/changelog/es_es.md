@@ -1,6 +1,6 @@
-## Version 0.163.0 - Tinta legible en la noche
+## Version 0.164.0 - Una bienvenida que no tapa los avisos
 
-La nota diaria del superviviente ahora usa una tinta de latón más clara sobre el fondo oscuro de la portada, para que se lea mejor y sin sombra.
+La nota del cronista ahora cabe entre los carteles laterales, ocupa dos renglones si hace falta y desaparece a los ocho segundos.
 
 ## Version 0.161.0 - Rótulos más legibles
 

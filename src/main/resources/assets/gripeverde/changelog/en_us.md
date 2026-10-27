@@ -1,6 +1,6 @@
-## Version 0.163.0 - Ink for the night
+## Version 0.164.0 - A welcome note that stays in its lane
 
-The survivor's day-by-day note now uses brighter brass ink against the dark title backdrop, so it stays readable without a shadow.
+The chronicler's welcome now fits between the side notices, wraps instead of stretching across them, and leaves the page after eight seconds.
 
 ## Version 0.161.0 - Clearer button subtitles
 
