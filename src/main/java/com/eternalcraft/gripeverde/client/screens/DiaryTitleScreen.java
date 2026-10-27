@@ -1197,7 +1197,7 @@ public class DiaryTitleScreen extends Screen {
         easterEggMessage = eggPool[easterEggIndex];
         boolean reduced = reducedMotion();
         easterEggStartedMs = reduced ? now - easterEggMessage.length() * 22L : now;
-        easterEggUntilMs = now + 5200L;
+        easterEggUntilMs = now + 3800L;
         skullShakeUntilMs = reduced ? 0L : now + 520L;
         easterLightningUntilMs = reduced ? 0L : now + 280L;
 
@@ -1304,7 +1304,7 @@ public class DiaryTitleScreen extends Screen {
         int elapsedChars = reducedMotion()
             ? easterEggMessage.length()
             : (int)Math.min(easterEggMessage.length(), Math.max(0, (now - easterEggStartedMs) / 22L));
-        int boxW = Math.max(220, Math.min(330, this.width - 96));
+        int boxW = Math.max(220, Math.min(260, this.width - 96));
         // v0.25.2: jamas mas ancho que la propia pantalla (escala GUI 4).
         boxW = Math.min(boxW, Math.max(120, this.width - 16));
         if (easterEggMessage != cachedEasterEggMessage

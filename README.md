@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+**v0.157.0 - Un telegrama menos invasivo**
+
+El mensaje secreto del sello ocupa menos espacio y se retira antes para dejar la portada a la vista.
+
 **v0.156.0 - Avisos estelares más ligeros**
 
 La nota de la estrella fugaz conserva sus líneas ya calculadas mientras el texto, la letra y el ancho no cambian, para no volver a medirla en cada frame.

@@ -1,3 +1,7 @@
+## v0.157.0 - Un telegrama que deja respirar la portada
+
+La nota que aparece al tocar el sello ahora es más angosta y dura menos. El secreto permanece, pero el papel vuelve a dejar ver el cielo y las hojas de la portada.
+
 ## v0.156.0 - El cielo guarda la nota
 
 La frase que acompaña a la estrella fugaz conserva sus renglones mientras no cambien el mensaje, la letra o el espacio disponible. La nota se ve igual, pero la portada deja de volver a partir y medir lo mismo en cada frame.

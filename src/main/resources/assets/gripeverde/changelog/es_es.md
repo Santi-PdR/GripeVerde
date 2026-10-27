@@ -1,3 +1,7 @@
+## Version 0.157.0 - Un telegrama menos invasivo
+
+La nota que aparece al tocar el sello ahora es más angosta y dura menos. El secreto permanece, pero se ven mejor el cielo y los avisos de la portada.
+
 ## Version 0.156.0 - Una nota del cielo más ligera
 
 El aviso de la estrella fugaz conserva sus renglones mientras no cambien el mensaje, la letra ni el espacio disponible. Se ve igual, sin volver a partir y medir el mismo texto en cada frame.

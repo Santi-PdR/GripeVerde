@@ -1,3 +1,7 @@
+## Version 0.157.0 - A quieter telegram
+
+The sealed note is narrower and leaves the title screen sooner. The secret remains, but the sky and the printed notices are easier to see.
+
 ## Version 0.156.0 - A lighter note from the sky
 
 The shooting-star caption keeps its wrapped lines while the message, font, and available width stay the same. It looks unchanged without splitting and measuring the same text on every frame.
