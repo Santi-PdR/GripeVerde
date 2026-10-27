@@ -576,44 +576,32 @@ public class PosterRenderer {
         0xFF6B4226    // sepia medio (pendiente)
     };
 
-    /** Dibuja un sello de tinta rotativo si el seed lo permite (40% chance). */
+    /** Draws a seeded ink mark in the lower margin, never on top of the notice copy. */
     public static void drawInkStamp(GuiGraphics g, int x, int y, int w, int h, long posterSeed) {
-        java.util.Random rnd = new java.util.Random(posterSeed);
-        if (rnd.nextInt(10) >= 4) return;  // 60% no dibuja
+        if (h < 130 || w < 64) return;
+
+        // Stable seed arithmetic keeps the 40% chance and appearance without a per-frame RNG.
+        long mixed = posterSeed ^ (posterSeed >>> 17) ^ (posterSeed >>> 31);
+        if (Math.floorMod(mixed, 10L) >= 4L) return;
 
         String[] labels = isEnglish() ? STAMP_LABELS_EN : STAMP_LABELS_ES;
-        String label = labels[rnd.nextInt(labels.length)];
-        int col = STAMP_COLORS[rnd.nextInt(STAMP_COLORS.length)];
+        String label = labels[(int) Math.floorMod(mixed >>> 4, (long) labels.length)];
+        int col = STAMP_COLORS[(int) Math.floorMod(mixed >>> 8, (long) STAMP_COLORS.length)];
 
         Font f = Minecraft.getInstance().font;
+        label = DiaryChrome.fitText(f, label, Math.max(0, w - 28));
+        if (label.isBlank()) return;
         int tw = f.width(label);
-        // Posicion: esquina rotativa (0=arriba-izq, 1=arriba-der, 2=abajo-izq, 3=abajo-der)
-        int corner = rnd.nextInt(4);
-        int sx, sy;
-        int pad = 12;
-        switch (corner) {
-            case 0: sx = x + pad; sy = y + pad + 4; break;
-            case 1: sx = x + w - tw - pad; sy = y + pad + 4; break;
-            case 2: sx = x + pad; sy = y + h - pad - 6; break;
-            default: sx = x + w - tw - pad; sy = y + h - pad - 6; break;
-        }
+        int sx = x + 12;
+        int sy = y + h - 18;
 
-        // Rotacion aproximada: shift horizontal por linea
         g.pose().pushPose();
         g.pose().translate(sx, sy, 0);
-        g.pose().translate(tw / 2.0, 3, 0);
-        // No podemos rotar sin transformer, simulamos con offset diagonal
-        g.pose().translate(-tw / 2.0, -3, 0);
-
-        // Borde rectangular alrededor
         g.fill(-3, -2, tw + 3, -1, col);
         g.fill(-3, 10, tw + 3, 11, col);
         g.fill(-3, -2, -2, 11, col);
         g.fill(tw + 2, -2, tw + 3, 11, col);
-
-        // v0.21.25: texto en color sello sin sombra (consistencia con poster de cuarentena).
         g.drawString(f, label, 0, 0, col, false);
-
         g.pose().popPose();
     }
 }

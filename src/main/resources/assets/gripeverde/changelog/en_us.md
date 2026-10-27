@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.147.0 - CEDA dispatch at hand
+
+A small CEDA note on the title screen opens the optional CEDA Dispatch settings when that mod is installed. Both screens now share quiet parchment and sepia styling. Ink stamps stay in the lower paper margin and skip short sheets; their fixed design avoids a random allocation each menu frame. The shortcut adds no gameplay or inventory effects.
+
 ## Version 0.146.0 - Room for the reward
 
 The wanted poster now keeps its portrait and wax seal clear of the reward lines on shorter windows. The drawing stays fixed to the title screen.

@@ -17,7 +17,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class SlimButton extends AbstractButton {
 
-    public enum Icon { NONE, OPEN_LEDGER }
+    public enum Icon { NONE, OPEN_LEDGER, DISPATCH_NOTE }
 
     private final Runnable onClick;
     private Icon icon = Icon.NONE;
@@ -86,6 +86,8 @@ public class SlimButton extends AbstractButton {
         int textColor = hoverAnim.lerpColor(DiaryTheme.BONE_WHITE, DiaryTheme.PAPER);
         if (icon == Icon.OPEN_LEDGER) {
             drawOpenLedger(g, x + (w - 12) / 2, y + (h - 10) / 2, textColor);
+        } else if (icon == Icon.DISPATCH_NOTE) {
+            drawDispatchNote(g, x + (w - 12) / 2, y + (h - 12) / 2, textColor);
         } else {
             Font font = Minecraft.getInstance().font;
             String label = ellipsize(font, this.getMessage().getString(), Math.max(8, w - 12));
@@ -94,6 +96,18 @@ public class SlimButton extends AbstractButton {
             int ty = y + (h - 8) / 2;
             g.drawString(font, label, tx, ty, textColor, false);
         }
+    }
+
+    private static void drawDispatchNote(GuiGraphics g, int x, int y, int color) {
+        // Folded CEDA note with three short ink lines; fixed pixels, no extra animation.
+        g.fill(x + 1, y, x + 9, y + 1, color);
+        g.fill(x, y + 1, x + 10, y + 8, color);
+        g.fill(x + 2, y + 8, x + 9, y + 10, color);
+        g.fill(x + 7, y + 1, x + 9, y + 3, DiaryTheme.REDCOAT);
+        int ink = DiaryTheme.INK;
+        g.fill(x + 2, y + 3, x + 8, y + 4, ink);
+        g.fill(x + 2, y + 5, x + 8, y + 6, ink);
+        g.fill(x + 2, y + 7, x + 6, y + 8, ink);
     }
 
     private static void drawOpenLedger(GuiGraphics g, int x, int y, int color) {

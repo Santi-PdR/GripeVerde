@@ -3,6 +3,8 @@ package com.eternalcraft.gripeverde.client.screens;
 import com.eternalcraft.gripeverde.GripeVerdeMod;
 import com.eternalcraft.gripeverde.client.audio.MenuAmbience;
 import com.eternalcraft.gripeverde.client.audio.MenuMusic;
+import com.eternalcraft.gripeverde.client.integration.CopyLCompatibility;
+
 import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
@@ -274,6 +276,18 @@ public class DiaryTitleScreen extends Screen {
         fieldGuideBtn.setTooltip(Tooltip.create(
             Component.translatable("gripeverde.pause.btn.field_guide")));
         this.addRenderableWidget(fieldGuideBtn);
+
+        // Optional CEDA dispatch slip: quiet, title-screen-only, and absent without CopyL.
+        if (this.width >= 104 && CopyLCompatibility.isAvailable()) {
+            SlimButton dispatchBtn = new SlimButton(
+                this.width - 76, 8, 20, 20,
+                Component.translatable("gripeverde.title.button.copyl"),
+                () -> CopyLCompatibility.openSettings(this))
+                .withIcon(SlimButton.Icon.DISPATCH_NOTE);
+            dispatchBtn.setTooltip(Tooltip.create(
+                Component.translatable("gripeverde.title.button.copyl")));
+            this.addRenderableWidget(dispatchBtn);
+        }
 
         // --- Audio control buttons (bottom-left, discrete) ---
         // Boton >> (skip musica) queda solo (AMB removido, ahora en Sonidos)

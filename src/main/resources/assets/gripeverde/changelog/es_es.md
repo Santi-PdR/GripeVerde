@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.147.0 - El parte de CEDA, a mano
+
+Una nota pequeña de CEDA en la portada abre los ajustes de CEDA Dispatch si el otro mod está instalado. Ambas pantallas comparten papel envejecido y tinta sepia. Los sellos quedan en el margen inferior, se ocultan en hojas bajas y ya no crean un generador aleatorio en cada cuadro del menú. No añaden efectos durante la partida ni en el inventario.
+
 ## Version 0.146.0 - Espacio para la recompensa
 
 El cartel de recompensa ahora deja espacio para que el retrato y el sello no se monten sobre el último renglón en ventanas bajas. El dibujo sigue quieto en la pantalla principal.

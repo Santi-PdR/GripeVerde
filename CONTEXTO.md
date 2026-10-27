@@ -2,13 +2,13 @@
 
 ## Addendum operativo actual (2026-10-27)
 
-- Versión en curso: v0.145.0, rama remota `codex/v0.104-ghoul-warning-poster`, PR #90 abierto contra `main`.
-- CI #503 pasó build, verificación de recursos/localización y carga del JAR de v0.145.0.
+- Versiones en curso: GripeVerde v0.147.0 y CEDA Dispatch (repo Lclient) v3.4.0; los cambios remotos se trabajan por GitHub.
+- El botón opcional de CEDA Dispatch solo aparece cuando el mod ID `copyl` está cargado; no agrega dependencia obligatoria.
 - El código fuente de este trabajo se modifica remotamente por GitHub; no usar ni actualizar un checkout local del repositorio para esta tarea. El ZIP/JAR de CI se maneja temporalmente solo para instalar el artefacto y luego se limpia.
 - Destino de instalación indicado por el owner: `D:\\Minecraft\\SKLauncher\\sklauncher-data-v4\\instances\\test-1\\mods`. La carpeta queda con JAR solamente y una sola versión de GripeVerde; conservar los demás mods.
 - Idiomas principales: inglés y español. El modmenu debe mantener ambas traducciones.
 - Restricción funcional vigente: no añadir animaciones ni efectos de render al mundo activo ni al inventario. Las animaciones de menú respetan las opciones de movimiento reducido y destellos reducidos.
-- Generar el artefacto desde GitHub Actions, verificar su hash y reemplazar únicamente el JAR anterior de GripeVerde. La CI no sustituye una revisión visual en Minecraft cuando el owner pueda hacerla.
+- Ambos modmenus comparten papel y tinta sepia; el ID `copyl`, el formato JSON y las rutas de configuración se conservan. La CI no sustituye una revisión visual en Minecraft cuando el owner pueda hacerla.
 - Las decisiones y rutas bajo este addendum son históricas; si contradicen las instrucciones actuales del owner, prevalecen las instrucciones actuales.
 
 
