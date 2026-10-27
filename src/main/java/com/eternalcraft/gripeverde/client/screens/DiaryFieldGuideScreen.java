@@ -315,6 +315,9 @@ public final class DiaryFieldGuideScreen extends Screen {
         double progress = (double)(scrollY - sectionStart) / sectionSpan;
         int progressTenThousandths = (int)Math.round(Math.max(0.0, Math.min(1.0, progress)) * 10000.0);
         ChroniclerMemory.setFieldGuideBookmark(section, progressTenThousandths, scrollY);
+        if (section == SECTION_KEYS.length - 1) {
+            Marginalia.queueOnce(Marginalia.N_RESCUE);
+        }
     }
 
     private void positionSectionWidgets() {
@@ -341,9 +344,6 @@ public final class DiaryFieldGuideScreen extends Screen {
     private void jumpToSection(int section) {
         if (section >= 0 && section < sectionOffsets.size()) {
             scrollTo(sectionOffsets.get(section));
-            if (section == SECTION_KEYS.length - 1) {
-                Marginalia.queueOnce(Marginalia.N_RESCUE);
-            }
         }
     }
 
