@@ -1,29 +1,17 @@
 # Eternal Craft: Gripe Verde - Contexto maestro
 
-## Addendum operativo actual
+## Addendum operativo actual (2026-10-27)
 
-- Rama fija de Arena de esta sesion: `arena/01a02f45-gripeverde`.
-- La PR 14 (`arena/01a02cee-gripeverde`) ya esta mergeada en main; HEAD base
-  de esta sesion: `4ca038d`. Las menciones de "rama fija
-  arena/01a02cee-gripeverde" que sobreviven en el historico son instantaneas
-  archivadas, no instrucciones.
-- Base respaldada: v0.22.0, commit `4ca038ddab972ca59435353330c9ccda4a86d581`.
-- Implementacion vigente: v0.30.0 en esta rama (ver DECISIONES 2026-08-24
-  decimotercera vuelta, mas abajo).
-- Restricciones funcionales absolutas: escena completa, faroles permanentes,
-  sin kiosco/Heraldo, sin modo automatico por FPS, sin gameplay y sin
-  resourcepacks.
-- Tag/release: deliberadamente ausentes hasta cerrar KI-53 en cliente real.
-- Repositorio local vigente del owner:
-  `C:\Users\santi\Desktop\GripeVerde`.
-- Deploy vigente del owner al destino
-  `C:\Users\santi\AppData\Roaming\.sklauncher\instances\test-1\mods`:
-  comandos PowerShell INLINE (fetch origin + `reset --hard FETCH_HEAD` +
-  `gradlew clean build` + copia del jar por glob), SIN archivos .ps1 nuevos;
-  `tools\deploy.ps1` queda corregido como alternativa equivalente.
-- Regla permanente del owner (2026-08-23): tras CADA modificacion, la
-  entrega termina SIEMPRE con el bloque PowerShell inline completo
-  (actualizar + compilar + desplegar), listo para pegar en su consola.
+- Versión en curso: v0.144.0, rama remota `codex/v0.104-ghoul-warning-poster`, PR #90 abierto contra `main`.
+- CI #503 pasó build, verificación de recursos/localización y carga del JAR de v0.144.0.
+- El código fuente de este trabajo se modifica remotamente por GitHub; no usar ni actualizar un checkout local del repositorio para esta tarea. El ZIP/JAR de CI se maneja temporalmente solo para instalar el artefacto y luego se limpia.
+- Destino de instalación indicado por el owner: `D:\\Minecraft\\SKLauncher\\sklauncher-data-v4\\instances\\test-1\\mods`. La carpeta queda con JAR solamente y una sola versión de GripeVerde; conservar los demás mods.
+- Idiomas principales: inglés y español. El modmenu debe mantener ambas traducciones.
+- Restricción funcional vigente: no añadir animaciones ni efectos de render al mundo activo ni al inventario. Las animaciones de menú respetan las opciones de movimiento reducido y destellos reducidos.
+- Generar el artefacto desde GitHub Actions, verificar su hash y reemplazar únicamente el JAR anterior de GripeVerde. La CI no sustituye una revisión visual en Minecraft cuando el owner pueda hacerla.
+- Las decisiones y rutas bajo este addendum son históricas; si contradicen las instrucciones actuales del owner, prevalecen las instrucciones actuales.
+
+
 
 ### DECISION 2026-08-23: v0.23.0 - El gramófono guarda la palabra
 
