@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.145.0 - La dirección correcta conserva su sitio
+
+Si hay una entrada renombrada y otra con la dirección oficial de Outbreak, la pantalla multijugador ahora prioriza la dirección correcta. Si solo queda la entrada renombrada, conserva su nombre y su dirección personalizada.
+
 ## Version 0.144.0 - El grito que nos hizo volver
 
 Al llegar al apartado de trabajo en equipo, el cronista puede dejar un último recuerdo: un grito que cruzó el pueblo y unos desconocidos que volvieron a buscarse. Aparece una sola vez, en el idioma elegido.

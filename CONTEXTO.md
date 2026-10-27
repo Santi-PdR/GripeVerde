@@ -2,8 +2,8 @@
 
 ## Addendum operativo actual (2026-10-27)
 
-- Versión en curso: v0.144.0, rama remota `codex/v0.104-ghoul-warning-poster`, PR #90 abierto contra `main`.
-- CI #503 pasó build, verificación de recursos/localización y carga del JAR de v0.144.0.
+- Versión en curso: v0.145.0, rama remota `codex/v0.104-ghoul-warning-poster`, PR #90 abierto contra `main`.
+- CI #503 pasó build, verificación de recursos/localización y carga del JAR de v0.145.0.
 - El código fuente de este trabajo se modifica remotamente por GitHub; no usar ni actualizar un checkout local del repositorio para esta tarea. El ZIP/JAR de CI se maneja temporalmente solo para instalar el artefacto y luego se limpia.
 - Destino de instalación indicado por el owner: `D:\\Minecraft\\SKLauncher\\sklauncher-data-v4\\instances\\test-1\\mods`. La carpeta queda con JAR solamente y una sola versión de GripeVerde; conservar los demás mods.
 - Idiomas principales: inglés y español. El modmenu debe mantener ambas traducciones.

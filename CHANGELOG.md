@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.145.0 - The right address keeps its place
+
+When both an official Outbreak address and a renamed saved entry exist, the multiplayer page now pins the matching address first. If only the renamed entry remains, its custom address and label stay intact.
+
 ## Version 0.144.0 - The cry that brought us back
 
 Reaching the teamwork chapter can leave one last recollection from the chronicler: a cry carried across the town, and strangers running back for one another. It appears once, in the chosen language.

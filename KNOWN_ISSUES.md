@@ -5,11 +5,11 @@ de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
 que una seccion posterior lo mencione expresamente.
 
-## ESTADO: DESARROLLO ACTIVO (2026-10-27, v0.144.0)
+## ESTADO: DESARROLLO ACTIVO (2026-10-27, v0.145.0)
 
 Estado comprobado en la rama `codex/v0.104-ghoul-warning-poster` y en el PR #90:
 
-- El CI #503 terminó correctamente para la v0.144.0. El JAR instalado es `gripeverde-0.144.0.jar` en `D:\\Minecraft\\SKLauncher\\sklauncher-data-v4\\instances\\test-1\\mods`.
+- El CI #503 terminó correctamente para la v0.144.0. El JAR instalado es `gripeverde-0.145.0.jar` en `D:\\Minecraft\\SKLauncher\\sklauncher-data-v4\\instances\\test-1\\mods`.
 - El trabajo activo mejora el modmenu con el contexto Ghouls/L4D2 y mantiene inglés y español como idiomas principales.
 - Las transiciones y efectos animados pertenecen al menú: no se agregan animaciones de render al mundo activo ni al inventario. Se respetan Movimiento reducido y Destellos reducidos.
 - La carpeta de mods debe contener únicamente archivos JAR. Al actualizar, se reemplaza solo el JAR de GripeVerde.

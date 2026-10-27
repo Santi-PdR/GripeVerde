@@ -136,31 +136,49 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     }
 
     /**
-     * Keeps the official server entry available and at the top of the list.
-     * Migrates the last built-in address but preserves any address the player edited.
+     * Keeps the official server available at the top of the list.
+     * Prefer a saved official address over a built-in name whose address the player edited.
+     * If no official address exists, preserve the renamed server and its custom address.
      */
     private void ensurePinnedServer() {
         if (this.vanillaServers == null) return;
         try {
             int pinnedIndex = -1;
             boolean changed = false;
+
+            // Resolve the official endpoint first so a custom-address copy cannot eclipse it.
             for (int i = 0; i < this.vanillaServers.size(); i++) {
                 ServerData server = this.vanillaServers.get(i);
-                if (server == null || (!isPinnedName(server.name)
-                        && !isPinnedAddress(server.ip))) continue;
-                pinnedIndex = i;
-                if (matchesServerAddress(server.ip, PREVIOUS_PINNED_IP)) {
-                    server.ip = PINNED_IP;
-                    changed = true;
+                if (server != null && isPinnedAddress(server.ip)) {
+                    pinnedIndex = i;
+                    if (matchesServerAddress(server.ip, PREVIOUS_PINNED_IP)) {
+                        server.ip = PINNED_IP;
+                        changed = true;
+                    }
+                    if (isPinnedName(server.name)) {
+                        String displayName = localizedPinnedName();
+                        if (!displayName.equals(server.name)) {
+                            server.name = displayName;
+                            changed = true;
+                        }
+                    }
+                    break;
                 }
-                if (isPinnedName(server.name)) {
+            }
+
+            // Keep a player-renamed/edited official entry if it is the only saved copy.
+            if (pinnedIndex < 0) {
+                for (int i = 0; i < this.vanillaServers.size(); i++) {
+                    ServerData server = this.vanillaServers.get(i);
+                    if (server == null || !isPinnedName(server.name)) continue;
+                    pinnedIndex = i;
                     String displayName = localizedPinnedName();
                     if (!displayName.equals(server.name)) {
                         server.name = displayName;
                         changed = true;
                     }
+                    break;
                 }
-                break;
             }
 
             if (pinnedIndex < 0) {
