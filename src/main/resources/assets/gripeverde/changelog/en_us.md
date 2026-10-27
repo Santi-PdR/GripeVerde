@@ -1,3 +1,7 @@
+## Version 0.165.0 - The skyline remembers between frames
+
+The attic window and its curtains now keep their saved state in memory for the session. Drawing the title screen no longer creates a position array or checks saved notes every frame.
+
 ## Version 0.164.0 - A welcome note that stays in its lane
 
 The chronicler's welcome now fits between the side notices, wraps instead of stretching across them, and leaves the page after eight seconds.

@@ -1,3 +1,7 @@
+## Version 0.165.0 - El cielo recuerda entre fotogramas
+
+La ventana del ático y sus cortinas conservan en memoria el estado guardado durante la sesión. Dibujar la portada ya no crea un arreglo de posición ni consulta las notas guardadas a cada fotograma.
+
 ## Version 0.164.0 - Una bienvenida que no tapa los avisos
 
 La nota del cronista ahora cabe entre los carteles laterales, ocupa dos renglones si hace falta y desaparece a los ocho segundos.

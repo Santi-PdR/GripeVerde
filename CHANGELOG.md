@@ -1,3 +1,7 @@
+## v0.165.0 - La portada recuerda sin consultar cada fotograma
+
+La luz de la ventana y las cortinas del edificio conservan su estado en memoria durante la sesion. El dibujo de la portada ya no crea un arreglo ni consulta los recuerdos guardados a cada fotograma.
+
 ## v0.162.0 - Foco visible en los iconos
 
 Los botones pequeños de la portada ahora muestran un contorno ámbar al recibir el foco del teclado. El indicador es estático para no añadir movimiento al juego.
