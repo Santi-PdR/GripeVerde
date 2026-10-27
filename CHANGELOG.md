@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.134.0 - The chronicler keeps your tongue
+
+The title greeting, its paper label, and the quiet vigil line now follow the selected English or Spanish language. Their wrapped text is also reused until the words, window width, or font changes.
+
 ## Version 0.131.0 - Ambient controls reach every layer
 
 Menu ambience one-shots now use Minecraft's Ambient sound category, matching the looping beds and the Ambient slider. Music remains in Music, and button effects remain in the UI/Effects path.
