@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.139.0 - El brote conserva su nombre
+
+El servidor fijo de Ghoul Outbreak ahora aparece en el idioma elegido. Se conserva el nombre que cada jugador haya puesto a sus otros servidores y se actualiza la dirección antigua del Outbreak aunque alguien le hubiera cambiado el nombre.
+
 ## Version 0.138.0 - La pluma espera al lector
 
 La crónica ahora se escribe solo cuando el siguiente renglón está a la vista. Al apartarse con el desplazamiento, la tinta se detiene; los tirones de imagen no hacen que la pluma salte y el rasguño suena con menos frecuencia.
