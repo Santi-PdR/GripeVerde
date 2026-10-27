@@ -46,9 +46,17 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             || localizedPinnedName().equals(name);
     }
 
+    private static boolean matchesServerAddress(String address, String expected) {
+        return address != null && address.trim().equalsIgnoreCase(expected);
+    }
+
+    private static boolean isPinnedAddress(String address) {
+        return matchesServerAddress(address, PINNED_IP)
+            || matchesServerAddress(address, PREVIOUS_PINNED_IP);
+    }
+
     private static boolean isPinnedServer(ServerData server) {
-        return server != null && (isPinnedName(server.name)
-            || PINNED_IP.equals(server.ip) || PREVIOUS_PINNED_IP.equals(server.ip));
+        return server != null && (isPinnedName(server.name) || isPinnedAddress(server.ip));
     }
 
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -139,10 +147,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             for (int i = 0; i < this.vanillaServers.size(); i++) {
                 ServerData server = this.vanillaServers.get(i);
                 if (server == null || (!isPinnedName(server.name)
-                        && !PINNED_IP.equals(server.ip)
-                        && !PREVIOUS_PINNED_IP.equals(server.ip))) continue;
+                        && !isPinnedAddress(server.ip))) continue;
                 pinnedIndex = i;
-                if (PREVIOUS_PINNED_IP.equals(server.ip)) {
+                if (matchesServerAddress(server.ip, PREVIOUS_PINNED_IP)) {
                     server.ip = PINNED_IP;
                     changed = true;
                 }
