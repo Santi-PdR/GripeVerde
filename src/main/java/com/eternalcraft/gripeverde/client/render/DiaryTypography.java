@@ -3,7 +3,6 @@ package com.eternalcraft.gripeverde.client.render;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import java.util.List;
 import net.minecraftforge.api.distmarker.Dist;
@@ -11,13 +10,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public final class DiaryTypography {
-    private static final ResourceLocation CHRONICLE_FONT =
-        new ResourceLocation("gripeverde", "chronicle");
-
     private DiaryTypography() {}
 
     public static Component styled(Component text) {
-        return text.copy().withStyle(style -> style.withFont(CHRONICLE_FONT));
+        // Leave text on Minecraft’s built-in font; a missing custom provider renders as empty boxes.
+        return text.copy().withStyle(style -> style.withFont(null));
     }
 
     public static int width(Font font, String text) {

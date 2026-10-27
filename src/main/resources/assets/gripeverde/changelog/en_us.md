@@ -1,3 +1,7 @@
+## Version 0.155.0 - Clear letters again
+
+The custom font had left empty boxes across the title screen. The diary now uses Minecraft's regular lettering, and the little eye's clue reads like a note someone found rather than a menu instruction.
+
 ## Version 0.154.0 - Notes from the living
 
 The field guide now reads like a survivor's account instead of a system briefing. Its English and Spanish notes explain how Ghouls change, what to do when a teammate is pinned or downed, and what each difficulty brings, while preserving the server's mechanics.

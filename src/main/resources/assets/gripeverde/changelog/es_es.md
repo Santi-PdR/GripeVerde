@@ -1,3 +1,7 @@
+## Version 0.155.0 - Letras claras otra vez
+
+La letra personalizada había dejado cuadros vacíos en la portada. El diario vuelve a la letra normal de Minecraft, y la pista del pequeño ojo suena a nota encontrada, no a instrucción del menú.
+
 ## Version 0.154.0 - Apuntes de quienes siguen vivos
 
 La guía de campo ahora suena como el relato de un superviviente y no como un informe técnico. Las notas en inglés y español cuentan cómo cambian los ghouls, qué hacer si un compañero queda atrapado o cae, y qué trae cada dificultad, sin alterar las mecánicas del servidor.

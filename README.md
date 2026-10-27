@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+**v0.155.0 - Letras claras otra vez**
+
+Retiré la fuente que estaba dejando cuadrados en el menú. Los textos vuelven a la letra normal de Minecraft; la portada y las partidas no reciben efectos nuevos.
+
 **v0.154.0 - Una guía escrita por supervivientes**
 
 El manual cuenta el brote con voz natural y explica, en inglés y español, cómo ayudar a un compañero atrapado o incapacitado y qué esperar de cada dificultad. La tipografía legible y el ambiente de cuarentena victoriana se mantienen en el menú, sin efectos sobre mundos ni inventarios.

@@ -1,3 +1,7 @@
+## v0.155.0 - Letras legibles
+
+La letra personalizada había dejado cuadros vacíos en la portada. El diario vuelve a la letra normal de Minecraft, y las crónicas mantienen su voz natural. También cambié la pista del pequeño ojo para que suene como una nota encontrada, no como una explicación del menú.
+
 ## Version 0.154.0 - Notes from the living
 
 The field guide now reads like a survivor's account instead of a system briefing. Its English and Spanish notes explain how Ghouls change, what to do when a teammate is pinned or downed, and what each difficulty brings, while preserving the server's mechanics.
