@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.141.0 - El camino de vuelta por el barro
+
+Al leer el protocolo de rescate, el cronista deja una nota nueva: recuerda a un grupo asustado que volvió por uno de los suyos. Aparece una sola vez, en el idioma elegido, al abrir otra hoja más adelante.
+
 ## Version 0.140.0 - La dirección entre la niebla
 
 El servidor oficial de Outbreak ahora se reconoce aunque su dirección guardada tenga otras mayúsculas o espacios de más. Las direcciones antiguas también se actualizan, así que no aparecerá otra copia del servidor en la lista.
