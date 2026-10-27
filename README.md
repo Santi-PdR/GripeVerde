@@ -1,3 +1,7 @@
+**v0.162.0 - Foco visible en los iconos**
+
+Los botones pequeños de la portada ahora muestran un contorno ámbar cuando reciben el foco del teclado. El indicador es fijo y no añade animaciones.
+
 **v0.161.0 - Rótulos más legibles**
 
 Ajusté el color de la segunda línea de los botones principales para que siga destacando al pasar el cursor, sin perder el tono de latón envejecido.

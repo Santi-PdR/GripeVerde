@@ -1,3 +1,7 @@
+## Version 0.162.0 - Visible focus on compact buttons
+
+Small title-screen buttons now show an amber outline when focused by keyboard. The indicator is static and adds no gameplay animation.
+
 ## Version 0.161.0 - Clearer button subtitles
 
 The second line on the main buttons keeps stronger contrast against the dark panels, including on hover, while staying within the aged-brass palette.

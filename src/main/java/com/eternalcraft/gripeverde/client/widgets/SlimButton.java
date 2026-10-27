@@ -97,6 +97,18 @@ public class SlimButton extends AbstractButton {
             int ty = y + (h - 8) / 2;
             DiaryTypography.draw(g, font, label, tx, ty, textColor);
         }
+
+        // Static keyboard focus ring for compact icon buttons; no motion in or out of a world.
+        if (this.isFocused() && !this.isMouseOver(mouseX, mouseY) && this.active) {
+            int focusGold = 0xFFD0A04A;
+            int focusSoft = DiaryTheme.withAlpha(focusGold, 70);
+            g.fill(x - 1, y - 1, x + w + 1, y, focusGold);
+            g.fill(x - 1, y + h, x + w + 1, y + h + 1, focusGold);
+            g.fill(x - 1, y - 1, x, y + h + 1, focusGold);
+            g.fill(x + w, y - 1, x + w + 1, y + h + 1, focusGold);
+            g.fill(x - 2, y - 2, x + w + 2, y - 1, focusSoft);
+            g.fill(x - 2, y + h + 1, x + w + 2, y + h + 2, focusSoft);
+        }
     }
 
     private static void drawDispatchNote(GuiGraphics g, int x, int y, int color) {

@@ -1,3 +1,7 @@
+## Version 0.162.0 - Foco visible en los iconos
+
+Los botones pequeños de la portada ahora muestran un contorno ámbar al recibir el foco del teclado. El indicador es estático y no añade animaciones durante la partida.
+
 ## Version 0.161.0 - Rótulos más legibles
 
 La segunda línea de los botones principales conserva mejor contraste sobre el fondo oscuro, incluso al pasar el cursor, sin salir de la paleta de latón envejecido.
