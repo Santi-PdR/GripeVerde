@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.140.0 - The address through the fog
+
+The official Outbreak server is now recognized even if its saved address uses different capitalization or has stray spaces. Older addresses are migrated the same way, so the field guide won't add a second copy of the server.
+
 ## Version 0.139.0 - The Outbreak keeps its name
 
 The pinned Ghoul Outbreak server now appears in the selected language. Returning players keep their own server name, while an old saved Outbreak address is updated even if it was renamed.
