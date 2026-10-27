@@ -95,7 +95,10 @@ public class ChangelogScreen extends Screen {
     private int penRowStart = -1;
     private int penRowEnd = -1;
     private int penTotalChars = 0;
-    private long penStartMs = 0L;
+    private int penWrittenChars = 0;
+    private long penLastUpdateMs = 0L;
+    private long penGraceRemainingMs = PEN_GRACE_MS;
+    private long penRateRemainder = 0L;
     private int penScratchChars = 0;
     private long lastPenScratchMs = 0L;
 
@@ -361,6 +364,12 @@ public class ChangelogScreen extends Screen {
         penRowStart = -1;
         penRowEnd = -1;
         penTotalChars = 0;
+        penWrittenChars = 0;
+        penLastUpdateMs = 0L;
+        penGraceRemainingMs = PEN_GRACE_MS;
+        penRateRemainder = 0L;
+        penScratchChars = 0;
+        lastPenScratchMs = 0L;
         if (reducedMotion()) return; // la hoja llega entera, sin escritura
         if (h1Index < 0 || h1Index >= rows.size()) return;
         // v0.30.0: desde la entrada vigente HASTA EL FIN de la bitacora.
@@ -376,8 +385,6 @@ public class ChangelogScreen extends Screen {
         penRowEnd = end;
         penTotalChars = total;
         penActive = true;
-        penStartMs = 0L; // arranca con el primer trazo en pantalla
-        penScratchChars = 0;
     }
 
     private static boolean reducedMotion() {
@@ -459,16 +466,33 @@ public class ChangelogScreen extends Screen {
                 Component.translatable("gripeverde.changelog.error").getString(),
                 cx, cy + 4, DiaryTheme.BLOOD_FRESH, false);
         } else {
-            // v0.27.0: presupuesto de tinta de la pluma para esta pasada.
-            int penBudget = Integer.MAX_VALUE;
+            // Progress only while the next letter is on the visible sheet. A delayed
+            // frame is capped so the nib never jumps across unseen paragraphs.
+            int penBudget = penActive ? penWrittenChars : Integer.MAX_VALUE;
+            boolean penCursorVisible = false;
             if (penActive) {
                 long nowPen = System.currentTimeMillis();
-                if (penStartMs <= 0L) penStartMs = nowPen;
-                long ageMs = Math.max(0L, nowPen - penStartMs - PEN_GRACE_MS);
-                penBudget = (int) Math.min(penTotalChars, PEN_CPS * ageMs / 1000L);
-                // El rasguño quedo de la pluma: un tramo de texto por golpe.
+                if (penLastUpdateMs <= 0L) penLastUpdateMs = nowPen;
+                long elapsed = Math.max(0L, Math.min(100L, nowPen - penLastUpdateMs));
+                penLastUpdateMs = nowPen;
+                penCursorVisible = isPenCursorVisible(
+                    penWrittenChars, cx, cy, ch, cw);
+                if (penCursorVisible) {
+                    long graceUsed = Math.min(elapsed, penGraceRemainingMs);
+                    penGraceRemainingMs -= graceUsed;
+                    elapsed -= graceUsed;
+                    if (elapsed > 0L) {
+                        long rate = elapsed * PEN_CPS + penRateRemainder;
+                        penWrittenChars += (int)(rate / 1000L);
+                        penRateRemainder = rate % 1000L;
+                    }
+                }
+                penBudget = Math.min(penTotalChars, penWrittenChars);
+
+                // A quiet scratch only accompanies letters currently being written in view.
                 int writtenNow = Math.min(penBudget, penTotalChars);
-                if (writtenNow - penScratchChars >= 42 && nowPen - lastPenScratchMs > 120L) {
+                if (penCursorVisible && writtenNow - penScratchChars >= 72
+                        && nowPen - lastPenScratchMs > 220L) {
                     lastPenScratchMs = nowPen;
                     penScratchChars = writtenNow;
                     try {
