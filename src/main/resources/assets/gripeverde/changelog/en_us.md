@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.148.0 - Still paper, lighter frames
+
+The title-screen notices now reuse their translated copy keys and paper-cut details instead of building temporary arrays on every draw. Seeded blood flecks use allocation-free arithmetic in place of a fresh random generator each frame. The marks remain fixed to the menu and never render over the world or inventory.
+
 ## Version 0.147.0 - CEDA dispatch at hand
 
 A small CEDA note on the title screen opens the optional CEDA Dispatch settings when that mod is installed. Both screens now share quiet parchment and sepia styling. Ink stamps stay in the lower paper margin and skip short sheets; their fixed design avoids a random allocation each menu frame. The shortcut adds no gameplay or inventory effects.

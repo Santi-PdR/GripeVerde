@@ -10,6 +10,25 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class PosterRenderer {
 
+    // Reused title-screen copy keys avoid allocating transient arrays on each render.
+    private static final String[] QUARANTINE_COPY_KEYS = {
+        "gripeverde.poster.quarantine.body.1", "gripeverde.poster.quarantine.body.2",
+        "gripeverde.poster.quarantine.body.3", "gripeverde.poster.quarantine.body.4",
+        "gripeverde.poster.quarantine.body.5", "gripeverde.poster.quarantine.body.6", "",
+        "gripeverde.poster.quarantine.warn.1", "gripeverde.poster.quarantine.warn.2",
+        "gripeverde.poster.quarantine.warn.3"
+    };
+    private static final String[] ELIXIR_COPY_KEYS = {
+        "gripeverde.poster.elixir.body.1", "gripeverde.poster.elixir.body.2", "",
+        "gripeverde.poster.elixir.price", "gripeverde.poster.elixir.unit"
+    };
+    private static final String[] RESCUE_COPY_KEYS = {
+        "gripeverde.poster.rescue.body.1", "gripeverde.poster.rescue.body.2",
+        "gripeverde.poster.rescue.body.3", "gripeverde.poster.rescue.body.4",
+        "gripeverde.poster.rescue.body.5"
+    };
+    private static final int[] BORDER_CUT_INSETS = {6, 4, 2, 1, 0};
+
     public static void drawQuarantineNotice(GuiGraphics g, int x, int y, int w, int h) {
         Font font = Minecraft.getInstance().font;
         OrnamentRenderer.drawPaperPanel(g, x, y, w, h);
@@ -41,20 +60,10 @@ public class PosterRenderer {
         drawThinDivider(g, cx, cursorY, w - 30);
         cursorY += 10;
 
-        String[] body = {
-            I18n.get("gripeverde.poster.quarantine.body.1"),
-            I18n.get("gripeverde.poster.quarantine.body.2"),
-            I18n.get("gripeverde.poster.quarantine.body.3"),
-            I18n.get("gripeverde.poster.quarantine.body.4"),
-            I18n.get("gripeverde.poster.quarantine.body.5"),
-            I18n.get("gripeverde.poster.quarantine.body.6"),
-            "",
-            I18n.get("gripeverde.poster.quarantine.warn.1"),
-            I18n.get("gripeverde.poster.quarantine.warn.2"),
-            I18n.get("gripeverde.poster.quarantine.warn.3")
-        };
-        for (String line : body) {
-            drawFittedCenteredLine(g, font, line, cx, cursorY, DiaryTheme.INK_FADED, copyWidth);
+        for (String key : QUARANTINE_COPY_KEYS) {
+            if (!key.isEmpty()) {
+                drawFittedCenteredLine(g, font, I18n.get(key), cx, cursorY, DiaryTheme.INK_FADED, copyWidth);
+            }
             cursorY += 10;
         }
 
@@ -106,15 +115,10 @@ public class PosterRenderer {
         drawThinDivider(g, cx, cursorY, w - 30);
         cursorY += compact ? 5 : 6;
 
-        String[] body = {
-            I18n.get("gripeverde.poster.elixir.body.1"),
-            I18n.get("gripeverde.poster.elixir.body.2"),
-            "",
-            I18n.get("gripeverde.poster.elixir.price"),
-            I18n.get("gripeverde.poster.elixir.unit")
-        };
-        for (String line : body) {
-            drawFittedCenteredLine(g, font, line, cx, cursorY, DiaryTheme.INK_FADED, copyWidth);
+        for (String key : ELIXIR_COPY_KEYS) {
+            if (!key.isEmpty()) {
+                drawFittedCenteredLine(g, font, I18n.get(key), cx, cursorY, DiaryTheme.INK_FADED, copyWidth);
+            }
             cursorY += lineStep;
         }
 
@@ -233,16 +237,8 @@ public class PosterRenderer {
                 cx, cursorY, DiaryTheme.GHOUL_INK_ACTIVE);
         cursorY += compact ? 14 : 17;
 
-        String[] instructions = {
-            I18n.get("gripeverde.poster.rescue.body.1"),
-            I18n.get("gripeverde.poster.rescue.body.2"),
-            I18n.get("gripeverde.poster.rescue.body.3"),
-            I18n.get("gripeverde.poster.rescue.body.4"),
-            I18n.get("gripeverde.poster.rescue.body.5")
-        };
-        for (String line : instructions) {
-            DiaryChrome.drawCenteredString(g, font, DiaryChrome.fitText(font, line, textWidth),
-                    cx, cursorY, DiaryTheme.INK_FADED);
+        for (String key : RESCUE_COPY_KEYS) {
+            drawFittedCenteredLine(g, font, I18n.get(key), cx, cursorY, DiaryTheme.INK_FADED, textWidth);
             cursorY += compact ? 8 : 10;
         }
 
@@ -452,18 +448,16 @@ public class PosterRenderer {
         }
 
         // The ink follows the same shallow, stepped cuts as the paper itself.
-        int[] outerInset = {6, 4, 2, 1, 0};
-        for (int row = 0; row < outerInset.length; row++) {
-            int inset = outerInset[row];
+        for (int row = 0; row < BORDER_CUT_INSETS.length; row++) {
+            int inset = BORDER_CUT_INSETS[row];
             g.fill(x + inset, y + row, x + w - inset, y + row + 1, outerColor);
             g.fill(x + inset, y + h - row - 1, x + w - inset, y + h - row, outerColor);
         }
         g.fill(x, y + 4, x + 1, y + h - 4, outerColor);
         g.fill(x + w - 1, y + 4, x + w, y + h - 4, outerColor);
 
-        int[] innerInset = {6, 4, 2, 1, 0};
-        for (int row = 0; row < innerInset.length; row++) {
-            int inset = innerInset[row] + 2;
+        for (int row = 0; row < BORDER_CUT_INSETS.length; row++) {
+            int inset = BORDER_CUT_INSETS[row] + 2;
             g.fill(x + inset, y + 2 + row, x + w - inset, y + 3 + row, innerColor);
             g.fill(x + inset, y + h - 3 - row, x + w - inset, y + h - 2 - row, innerColor);
         }
@@ -526,39 +520,44 @@ public class PosterRenderer {
     // Manchas de sangre en posters (v0.12.2)
     // ============================================================
 
-    /** 30% chance de dibujar 2-4 pequenas manchas de sangre en el poster.
-     *  Determinista por seed pasado (el mismo poster siempre tendra o no manchas). */
+    /** Draws the same sparse, seeded flecks without allocating a Random per menu frame. */
     public static void drawBloodSplatter(GuiGraphics g, int x, int y, int w, int h, long posterSeed) {
-        java.util.Random rnd = new java.util.Random(posterSeed);
-        if (rnd.nextInt(10) >= 3) return;  // 70% no dibuja
+        int sample = 0;
+        if (boundedSample(posterSeed, sample++, 10) >= 3) return; // 70% clean paper
 
-        int count = 2 + rnd.nextInt(3);
-        int blood = 0xFF5C1508;   // dried blood
-        int fresh = 0xFF8B1F0F;   // fresh blood
-
+        int count = 2 + boundedSample(posterSeed, sample++, 3);
+        int blood = 0xFF5C1508;
+        int fresh = 0xFF8B1F0F;
         for (int i = 0; i < count; i++) {
-            int bx = x + 10 + rnd.nextInt(Math.max(1, w - 20));
-            int by = y + 10 + rnd.nextInt(Math.max(1, h - 20));
-            int sz = 1 + rnd.nextInt(3);
+            int bx = x + 10 + boundedSample(posterSeed, sample++, Math.max(1, w - 20));
+            int by = y + 10 + boundedSample(posterSeed, sample++, Math.max(1, h - 20));
+            int size = 1 + boundedSample(posterSeed, sample++, 3);
 
-            // Blob principal
-            for (int dy = 0; dy < sz; dy++) {
-                for (int dx = 0; dx < sz; dx++) {
-                    if (rnd.nextInt(5) < 4) {  // 80% denso
+            for (int dy = 0; dy < size; dy++) {
+                for (int dx = 0; dx < size; dx++) {
+                    if (boundedSample(posterSeed, sample++, 5) < 4) {
                         g.fill(bx + dx, by + dy, bx + dx + 1, by + dy + 1,
-                               rnd.nextInt(3) == 0 ? fresh : blood);
+                                boundedSample(posterSeed, sample++, 3) == 0 ? fresh : blood);
                     }
                 }
             }
 
-            // Salpicaduras alrededor
-            int splatter = 2 + rnd.nextInt(3);
+            int splatter = 2 + boundedSample(posterSeed, sample++, 3);
             for (int s = 0; s < splatter; s++) {
-                int sx = bx + rnd.nextInt(6) - 3;
-                int sy = by + rnd.nextInt(6) - 3;
+                int sx = bx + boundedSample(posterSeed, sample++, 6) - 3;
+                int sy = by + boundedSample(posterSeed, sample++, 6) - 3;
                 g.fill(sx, sy, sx + 1, sy + 1, blood);
             }
         }
+    }
+
+    /** Stateless bounded pseudo-random sample; title-screen calls allocate no RNG or buffer. */
+    private static int boundedSample(long seed, int index, int bound) {
+        long value = seed + 0x9E3779B97F4A7C15L * (index + 1L);
+        value = (value ^ (value >>> 30)) * 0xBF58476D1CE4E5B9L;
+        value = (value ^ (value >>> 27)) * 0x94D049BB133111EBL;
+        value ^= value >>> 31;
+        return (int) Long.remainderUnsigned(value, bound);
     }
 
     // ============================================================

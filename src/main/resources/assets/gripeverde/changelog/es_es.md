@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.148.0 - Papel quieto, cuadros más ligeros
+
+Los avisos de la portada reutilizan las claves de texto y los cortes del papel, sin crear arreglos temporales en cada dibujo. Las motas de sangre usan una cuenta fija en vez de iniciar un generador aleatorio por cuadro. Las marcas siguen quietas en el menú y no aparecen sobre el mundo ni el inventario.
+
 ## Version 0.147.0 - El parte de CEDA, a mano
 
 Una nota pequeña de CEDA en la portada abre los ajustes de CEDA Dispatch si el otro mod está instalado. Ambas pantallas comparten papel envejecido y tinta sepia. Los sellos quedan en el margen inferior, se ocultan en hojas bajas y ya no crean un generador aleatorio en cada cuadro del menú. No añaden efectos durante la partida ni en el inventario.
