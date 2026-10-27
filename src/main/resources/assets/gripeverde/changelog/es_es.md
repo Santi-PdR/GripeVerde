@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.136.0 - Una luz que cambia de idioma
+
+La nota de la estrella fugaz ahora sigue el inglés o el español seleccionado mientras está visible y se ajusta al ancho de la pantalla en ventanas pequeñas.
+
 ## Version 0.135.0 - Una nota que cambia de idioma
 
 El mensaje oculto tras el sello del ministerio ahora cambia entre inglés y español si se modifica el idioma mientras la nota sigue en pantalla.
