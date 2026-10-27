@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.143.0 - La fiebre aún tenía pulso
+
+Una nota de testigo acompaña ahora el apartado de la infección. Cuenta el momento en que los supervivientes comprendieron que la fiebre no había matado a sus víctimas. Aparece una sola vez, en inglés o español.
+
 ## Version 0.142.0 - La nota espera en la página indicada
 
 La nota del rescate ahora aparece tanto si se llega a esa parte desde las marcas laterales como si se avanza por las páginas o con el teclado. Sigue apareciendo una sola vez.
