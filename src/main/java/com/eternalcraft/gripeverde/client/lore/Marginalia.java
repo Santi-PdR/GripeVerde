@@ -64,6 +64,8 @@ public final class Marginalia {
     public static final String N_FLASH3       = "flash3";
     public static final String N_DROP         = "drop";
     public static final String N_DOCTOR       = "doctor";
+    // v0.141.0
+    public static final String N_RESCUE       = "rescue";
 
     /** Encola una nota (persistente) si no hay ya una igual pendiente. */
     public static synchronized void queue(String noteId) {
@@ -257,6 +259,8 @@ case N_TUNING:       return en ? "The room sounds right again. I had missed that
 case N_FLASH3:       return en ? "You watched three flashes without closing your eyes. I counted them." : "Viste tres relámpagos sin cerrar los ojos. Los conté.";
 case N_DROP:         return en ? "For a moment, the rain rests in your palm. Then it climbs back to the clouds." : "Por un instante, la lluvia descansa en tu mano. Luego regresa a las nubes.";
 case N_DOCTOR:       return en ? "There is the doctor’s hand again, on a letter no one sent." : "Otra vez la letra del doctor, en una carta que nadie envió.";
+case N_RESCUE:       return en ? "The thing dragged the stable boy into the mud before we could reach him. We heard his cry and turned back together. I have never run so fast toward something I feared."
+                                  : "La criatura arrastró al mozo de las caballerizas antes de que pudiéramos alcanzarlo. Oímos su grito y volvimos juntos. Nunca había corrido tan deprisa hacia algo que me daba tanto miedo.";
             default: return null;
         }
     }
