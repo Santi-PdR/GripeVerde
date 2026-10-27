@@ -1108,6 +1108,8 @@ public class DiaryTitleScreen extends Screen {
 
     private long lastLogoClickMs = 0L;
     private String easterEggMessage = null;
+    private int easterEggIndex = -1;
+    private boolean easterEggEnglish = true;
     private String cachedEasterEggMessage = null;
     private int cachedEasterElapsedChars = -1;
     private int cachedEasterBoxWidth = -1;
@@ -1147,11 +1149,13 @@ public class DiaryTitleScreen extends Screen {
         sealTapLastMs = now;
         if (sealTapStreak >= 9) breakWaxSeal();
 
-        String[] eggPool = isEnglishSelected() ? LOGO_EASTER_EGGS_EN : LOGO_EASTER_EGGS_ES;
+        easterEggEnglish = isEnglishSelected();
+        String[] eggPool = easterEggEnglish ? LOGO_EASTER_EGGS_EN : LOGO_EASTER_EGGS_ES;
         int caseNo = 17 + EASTER_RNG.nextInt(80);
         char letter = (char)('A' + EASTER_RNG.nextInt(6));
         easterEggCaseCode = String.format(java.util.Locale.ROOT, "%02d-%c", caseNo, letter);
-        easterEggMessage = eggPool[EASTER_RNG.nextInt(eggPool.length)];
+        easterEggIndex = EASTER_RNG.nextInt(eggPool.length);
+        easterEggMessage = eggPool[easterEggIndex];
         boolean reduced = reducedMotion();
         easterEggStartedMs = reduced ? now - easterEggMessage.length() * 22L : now;
         easterEggUntilMs = now + 5200L;
@@ -1244,6 +1248,15 @@ public class DiaryTitleScreen extends Screen {
         }
 
         if (easterEggMessage == null || now >= easterEggUntilMs) return;
+
+        boolean english = isEnglishSelected();
+        if (english != easterEggEnglish && easterEggIndex >= 0) {
+            String[] eggPool = english ? LOGO_EASTER_EGGS_EN : LOGO_EASTER_EGGS_ES;
+            easterEggMessage = eggPool[Math.min(easterEggIndex, eggPool.length - 1)];
+            easterEggEnglish = english;
+            cachedEasterEggMessage = null;
+            cachedEasterElapsedChars = -1;
+        }
 
         long remain = easterEggUntilMs - now;
         int alpha = remain < 900L ? (int)(230 * remain / 900L) : 230;
