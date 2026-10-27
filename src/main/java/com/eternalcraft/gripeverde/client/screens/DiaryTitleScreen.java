@@ -56,7 +56,6 @@ public class DiaryTitleScreen extends Screen {
     private net.minecraft.client.gui.Font cachedGreetingFont = null;
     private java.util.List<net.minecraft.util.FormattedCharSequence> cachedGreetingLines = java.util.Collections.emptyList();
     private String cachedGreetingLabel = "";
-    private int cachedGreetingLabelWidth = 0;
     private int cachedGreetingLabelLimit = -1;
     private int cachedVigilPhase = -1;
     private int cachedVigilWidth = -1;
@@ -554,7 +553,6 @@ public class DiaryTitleScreen extends Screen {
             cachedGreetingLines = DiaryTypography.split(this.font, greetingText, cardW - 24);
             String label = Component.translatable("gripeverde.title.greeting.label").getString();
             cachedGreetingLabel = DiaryTypography.fitString(this.font, label, labelLimit);
-            cachedGreetingLabelWidth = DiaryTypography.width(this.font, cachedGreetingLabel);
             cachedGreetingSource = greetingText;
             cachedGreetingCardWidth = cardW;
             cachedGreetingEnglish = english;
