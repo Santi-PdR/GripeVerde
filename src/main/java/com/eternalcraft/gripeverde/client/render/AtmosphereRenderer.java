@@ -63,6 +63,8 @@ public class AtmosphereRenderer {
     /** Mensaje breve visible cuando aparece una estrella fugaz. Se limpia automaticamente. */
     public static String shootStarMessage = null;
     public static long shootStarMessageUntilMs = 0L;
+    private static int shootStarMessageIndex = -1;
+    private static boolean shootStarMessageEnglish = true;
 
     private static final String[] SHOOT_STAR_MESSAGES_ES = {
         "Un deseo cae del cielo",
@@ -90,9 +92,18 @@ public class AtmosphereRenderer {
     };
 
     private static String pickShootStarMessage() {
+        shootStarMessageEnglish = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+        String[] pool = shootStarMessageEnglish ? SHOOT_STAR_MESSAGES_EN : SHOOT_STAR_MESSAGES_ES;
+        shootStarMessageIndex = MOON_RNG.nextInt(pool.length);
+        return pool[shootStarMessageIndex];
+    }
+
+    public static void refreshShootStarMessageLanguage() {
         boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+        if (shootStarMessageIndex < 0 || english == shootStarMessageEnglish) return;
         String[] pool = english ? SHOOT_STAR_MESSAGES_EN : SHOOT_STAR_MESSAGES_ES;
-        return pool[MOON_RNG.nextInt(pool.length)];
+        shootStarMessage = pool[Math.min(shootStarMessageIndex, pool.length - 1)];
+        shootStarMessageEnglish = english;
     }
 
     // Trail: guardamos las ultimas 8 posiciones para la estela
