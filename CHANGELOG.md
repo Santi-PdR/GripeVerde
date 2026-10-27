@@ -1,3 +1,7 @@
+## Version 0.152.0 - Ink that stays put
+
+The menu buttons' tiny paper-wear marks are laid out once and reused on every draw. The paper keeps its same look without reseeding and sampling a random generator every frame.
+
 ## Version 0.151.0 - A signal without blinking
 
 When Reduced Motion is on, the attic signal window stays steady instead of flashing its answer. The clue remains available, and the menu atmosphere stays still.

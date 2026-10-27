@@ -1,3 +1,7 @@
+## Version 0.152.0 - Tinta fija, menú más ligero
+
+Las pequeñas marcas de desgaste de cada botón se calculan una sola vez y se reutilizan al dibujarlo. El papel conserva el mismo aspecto sin volver a preparar y consultar números aleatorios en cada frame.
+
 ## Version 0.151.0 - Una señal sin parpadeos
 
 Con «Movimiento reducido» activado, la ventana del ático responde sin parpadear. La pista sigue disponible y el ambiente del menú queda quieto.

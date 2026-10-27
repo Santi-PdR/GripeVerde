@@ -35,7 +35,8 @@ public class DiaryButton extends AbstractButton {
     private boolean wasHovered = false;
     private int pressAnimTicks = 0;
     private final int wearSeed;
-    private final java.util.Random wearRng;
+    private final int wearX1, wearY1, wearX2, wearY2;
+    private final boolean wearVisible1, wearVisible2;
 
     public DiaryButton(int x, int y, int w, int h, Component label, Icon icon, Variant variant, Runnable onClick) {
         this(x,y,w,h,label,icon,variant,SoundProfile.DEFAULT,onClick);
@@ -47,7 +48,15 @@ public class DiaryButton extends AbstractButton {
         this.soundProfile = sp!=null?sp:SoundProfile.DEFAULT;
         this.onClick = onClick;
         this.wearSeed = (x*31 + y*17 + w*13 + h*7) ^ label.getString().hashCode();
-        this.wearRng = new java.util.Random(wearSeed);
+        java.util.Random wearPattern = new java.util.Random(wearSeed);
+        int wearRangeX = Math.max(1, w - 12);
+        int wearRangeY = Math.max(1, h - 8);
+        this.wearX1 = wearPattern.nextInt(wearRangeX);
+        this.wearY1 = wearPattern.nextInt(wearRangeY);
+        this.wearVisible1 = wearPattern.nextInt(100) < 32;
+        this.wearX2 = wearPattern.nextInt(wearRangeX);
+        this.wearY2 = wearPattern.nextInt(wearRangeY);
+        this.wearVisible2 = wearPattern.nextInt(100) < 32;
     }
     public DiaryButton(int x,int y,int w,int h,Component label,Runnable onClick){this(x,y,w,h,label,Icon.NONE,Variant.SECONDARY,onClick);}
     public DiaryButton noEllipsis(){this.allowEllipsis=false;return this;}
@@ -108,7 +117,7 @@ public class DiaryButton extends AbstractButton {
         // ── Background with micro variation ──
         int basePaper = DiaryTheme.PAPER_STAINED;
         // Slight per-instance tint variation from wearSeed to avoid uniform template
-        int tintShift = (Math.abs(wearSeed)%7)-3; // -3..+3
+        int tintShift = Math.floorMod(wearSeed, 7)-3; // -3..+3
         int bgBase = shiftColor(basePaper, tintShift);
         int bgHover = 0xFFB89A6E;
         int bgPressed = 0xFFA08254;
@@ -159,15 +168,11 @@ public class DiaryButton extends AbstractButton {
         g.fill(x+w-5,yDraw+3,x+w-3,yDraw+4,pin);
         g.fill(x+3,yDraw+h-4,x+5,yDraw+h-3,pin);
         g.fill(x+w-5,yDraw+h-4,x+w-3,yDraw+h-3,pin);
-        // Wear micro dots near edges (1px) based on seed
+        // Wear marks are laid out once with the button and reused on every menu draw.
         if(active && !inWorld){
             int wear = DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, 34);
-            wearRng.setSeed(wearSeed);
-            for(int i=0;i<2;i++){
-                int wx = x+6+wearRng.nextInt(Math.max(1,w-12));
-                int wy = yDraw+4+wearRng.nextInt(Math.max(1,h-8));
-                if(wearRng.nextInt(100)<32) g.fill(wx,wy,wx+1,wy+1,wear);
-            }
+            if(wearVisible1) g.fill(x+6+wearX1,yDraw+4+wearY1,x+7+wearX1,yDraw+5+wearY1,wear);
+            if(wearVisible2) g.fill(x+6+wearX2,yDraw+4+wearY2,x+7+wearX2,yDraw+5+wearY2,wear);
         }
 
         // Focus ring (keyboard)
