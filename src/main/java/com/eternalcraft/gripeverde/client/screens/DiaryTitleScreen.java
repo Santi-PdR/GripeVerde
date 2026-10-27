@@ -1351,20 +1351,26 @@ public class DiaryTitleScreen extends Screen {
 
     private void drawShootStarMessage(net.minecraft.client.gui.GuiGraphics g) {
         if (reducedMotion()) return;
-        String ssm = com.eternalcraft.gripeverde.client.render.AtmosphereRenderer.shootStarMessage;
         long untilMs = com.eternalcraft.gripeverde.client.render.AtmosphereRenderer.shootStarMessageUntilMs;
-        if (ssm == null) return;
         long now = System.currentTimeMillis();
         if (now >= untilMs) return;
+
+        com.eternalcraft.gripeverde.client.render.AtmosphereRenderer.refreshShootStarMessageLanguage();
+        String ssm = com.eternalcraft.gripeverde.client.render.AtmosphereRenderer.shootStarMessage;
+        if (ssm == null) return;
+
         long remain = untilMs - now;
         int alpha = remain < 800L ? (int)(220 * remain / 800L) : 220;
         int col = (alpha << 24) | 0xE8DCB4;
-        int shadowCol = (alpha << 24) | 0x000000;
-        int w = this.font.width(ssm);
-        // Posicion: arriba del logo (y ~200 para que sea visible)
-        int cx = this.width / 2 - w / 2;
-        int cy = this.height / 3;
-        // v0.21.25: texto limpio sin sombra.
-        g.drawString(this.font, ssm, cx, cy, col, false);
+        int maxWidth = Math.max(40, this.width - 32);
+        java.util.List<net.minecraft.util.FormattedCharSequence> lines =
+            this.font.split(Component.literal(ssm), maxWidth);
+        int totalHeight = lines.size() * this.font.lineHeight;
+        int top = Math.max(8, Math.min(this.height / 3, this.height - totalHeight - 8));
+        for (int i = 0; i < lines.size(); i++) {
+            net.minecraft.util.FormattedCharSequence line = lines.get(i);
+            int x = Math.max(8, (this.width - this.font.width(line)) / 2);
+            g.drawString(this.font, line, x, top + i * this.font.lineHeight, col, false);
+        }
     }
 }
