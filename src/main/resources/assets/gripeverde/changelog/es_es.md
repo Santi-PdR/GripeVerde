@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.140.0 - La dirección entre la niebla
+
+El servidor oficial de Outbreak ahora se reconoce aunque su dirección guardada tenga otras mayúsculas o espacios de más. Las direcciones antiguas también se actualizan, así que no aparecerá otra copia del servidor en la lista.
+
 ## Version 0.139.0 - El brote conserva su nombre
 
 El servidor fijo de Ghoul Outbreak ahora aparece en el idioma elegido. Se conserva el nombre que cada jugador haya puesto a sus otros servidores y se actualiza la dirección antigua del Outbreak aunque alguien le hubiera cambiado el nombre.
