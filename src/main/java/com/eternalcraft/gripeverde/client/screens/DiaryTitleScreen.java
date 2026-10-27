@@ -44,6 +44,24 @@ public class DiaryTitleScreen extends Screen {
     private boolean dawnActive = false;
     private static long greetingShownUntilMs = 0L;
     private static String greetingText = null;
+    private static String greetingTranslationKey = null;
+    private static boolean greetingEnglish = true;
+    private static boolean greetingLanguageInitialized = false;
+    private String cachedGreetingSource = null;
+    private int cachedGreetingCardWidth = -1;
+    private boolean cachedGreetingEnglish = false;
+    private net.minecraft.client.gui.Font cachedGreetingFont = null;
+    private String cachedGreetingLine = "";
+    private int cachedGreetingLineWidth = 0;
+    private String cachedGreetingLabel = "";
+    private int cachedGreetingLabelWidth = 0;
+    private int cachedGreetingLabelLimit = -1;
+    private int cachedVigilPhase = -1;
+    private int cachedVigilWidth = -1;
+    private boolean cachedVigilEnglish = false;
+    private net.minecraft.client.gui.Font cachedVigilFont = null;
+    private String cachedVigilLine = "";
+    private int cachedVigilTextWidth = 0;
     private long wantedPressStartMs = 0L;
     private boolean wantedPressing = false;
 
@@ -124,22 +142,30 @@ public class DiaryTitleScreen extends Screen {
                 int kind = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.sessionGreetingKind();
                 long absence = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.sessionAbsenceDays();
                 if (kind == 1) {
-                    greetingText = Component.translatable("gripeverde.title.greeting.first").getString();
+                    greetingTranslationKey = "gripeverde.title.greeting.first";
+                    greetingText = Component.translatable(greetingTranslationKey).getString();
                     com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
                         com.eternalcraft.gripeverde.client.lore.Marginalia.N_FIRST_NIGHT);
                 } else if (kind == 2 && absence >= 7L) {
-                    greetingText = Component.translatable("gripeverde.title.greeting.return").getString();
+                    greetingTranslationKey = "gripeverde.title.greeting.return";
+                    greetingText = Component.translatable(greetingTranslationKey).getString();
                     dustThisSession = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.consumeDust();
                     com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
                         com.eternalcraft.gripeverde.client.lore.Discoveries.DUST);
                     com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
                         com.eternalcraft.gripeverde.client.lore.Marginalia.N_DUST);
                 } else if (kind == 2) {
-                    greetingText = Component.translatable("gripeverde.title.greeting.remembers").getString();
+                    greetingTranslationKey = "gripeverde.title.greeting.remembers";
+                    greetingText = Component.translatable(greetingTranslationKey).getString();
                 } else if (kind == 3) {
-                    greetingText = Component.translatable("gripeverde.title.greeting.vigil").getString();
+                    greetingTranslationKey = "gripeverde.title.greeting.vigil";
+                    greetingText = Component.translatable(greetingTranslationKey).getString();
                 }
-                if (greetingText != null) greetingShownUntilMs = System.currentTimeMillis() + 12_000L;
+                if (greetingText != null) {
+                    greetingEnglish = isEnglishSelected();
+                    greetingLanguageInitialized = true;
+                    greetingShownUntilMs = System.currentTimeMillis() + 12_000L;
+                }
                 if (com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.consumeAnniversary()) {
                     com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
                         com.eternalcraft.gripeverde.client.lore.Discoveries.ANNIVERSARY);
@@ -469,11 +495,36 @@ public class DiaryTitleScreen extends Screen {
         long now = System.currentTimeMillis();
         if (greetingText == null || now >= greetingShownUntilMs || isMinimalMode()) return;
 
+        boolean english = isEnglishSelected();
+        if (greetingTranslationKey != null
+                && (!greetingLanguageInitialized || greetingEnglish != english)) {
+            greetingText = Component.translatable(greetingTranslationKey).getString();
+            greetingEnglish = english;
+            greetingLanguageInitialized = true;
+        }
+
         int cardW = Math.min(390, this.width - 32);
         if (cardW < 180) return;
-        String line = com.eternalcraft.gripeverde.client.render.DiaryChrome
-            .fitText(this.font, greetingText, cardW - 24);
-        if (line.isEmpty()) return;
+        int labelLimit = cardW / 2 - 18;
+        if (!java.util.Objects.equals(cachedGreetingSource, greetingText)
+                || cachedGreetingCardWidth != cardW
+                || cachedGreetingEnglish != english
+                || cachedGreetingFont != this.font
+                || cachedGreetingLabelLimit != labelLimit) {
+            cachedGreetingLine = com.eternalcraft.gripeverde.client.render.DiaryChrome
+                .fitText(this.font, greetingText, cardW - 24);
+            cachedGreetingLineWidth = this.font.width(cachedGreetingLine);
+            String label = Component.translatable("gripeverde.title.greeting.label").getString();
+            cachedGreetingLabel = com.eternalcraft.gripeverde.client.render.DiaryChrome
+                .fitText(this.font, label, labelLimit);
+            cachedGreetingLabelWidth = this.font.width(cachedGreetingLabel);
+            cachedGreetingSource = greetingText;
+            cachedGreetingCardWidth = cardW;
+            cachedGreetingEnglish = english;
+            cachedGreetingFont = this.font;
+            cachedGreetingLabelLimit = labelLimit;
+        }
+        if (cachedGreetingLine.isEmpty()) return;
 
         int cardH = 40;
         int x = (this.width - cardW) / 2;
@@ -486,11 +537,8 @@ public class DiaryTitleScreen extends Screen {
             g, x, y, cardW, cardH,
             com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.ARCHIVE);
 
-        String label = Component.translatable("gripeverde.title.greeting.label").getString();
-        label = com.eternalcraft.gripeverde.client.render.DiaryChrome
-            .fitText(this.font, label, cardW / 2 - 18);
         String registry = "CEDA · 1800";
-        g.drawString(this.font, label, x + 12, y + 5,
+        g.drawString(this.font, cachedGreetingLabel, x + 12, y + 5,
             com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_MID, false);
         int registryW = this.font.width(registry);
         g.drawString(this.font, registry, x + cardW - registryW - 12, y + 5,
@@ -498,8 +546,8 @@ public class DiaryTitleScreen extends Screen {
         g.fill(x + 10, y + 17, x + cardW - 10, y + 18,
             com.eternalcraft.gripeverde.client.render.DiaryChrome.INK_DIVIDER);
 
-        int textX = x + (cardW - this.font.width(line)) / 2;
-        g.drawString(this.font, line, textX, y + 24,
+        int textX = x + (cardW - cachedGreetingLineWidth) / 2;
+        g.drawString(this.font, cachedGreetingLine, textX, y + 24,
             com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_DARK, false);
     }
 
@@ -507,18 +555,24 @@ public class DiaryTitleScreen extends Screen {
     private void drawVigilLine(GuiGraphics g) {
         long idle = System.currentTimeMillis() - lastInteractionMs;
         if (idle < 60_000L) return;
-        String line;
-        if (idle < 150_000L) {
-            line = Component.translatable("gripeverde.title.vigil.present").getString();
-        } else {
-            line = Component.translatable("gripeverde.title.vigil.fog").getString();
+        int phase = idle < 150_000L ? 0 : 1;
+        boolean english = isEnglishSelected();
+        if (phase != cachedVigilPhase || this.width != cachedVigilWidth
+                || english != cachedVigilEnglish || this.font != cachedVigilFont) {
+            String line = Component.translatable(phase == 0
+                ? "gripeverde.title.vigil.present"
+                : "gripeverde.title.vigil.fog").getString();
+            cachedVigilLine = com.eternalcraft.gripeverde.client.render.DiaryChrome
+                .fitText(this.font, line, this.width - 32);
+            cachedVigilTextWidth = this.font.width(cachedVigilLine);
+            cachedVigilPhase = phase;
+            cachedVigilWidth = this.width;
+            cachedVigilEnglish = english;
+            cachedVigilFont = this.font;
         }
-        line = com.eternalcraft.gripeverde.client.render.DiaryChrome
-            .fitText(this.font, line, this.width - 32);
-        if (line.isEmpty()) return;
+        if (cachedVigilLine.isEmpty()) return;
         int pulse = reducedMotion() ? 60 : (int)(Math.sin(System.currentTimeMillis() / 700.0) * 22 + 60);
-        int wTxt = this.font.width(line);
-        g.drawString(this.font, line, this.width / 2 - wTxt / 2, this.height / 3 + 24,
+        g.drawString(this.font, cachedVigilLine, this.width / 2 - cachedVigilTextWidth / 2, this.height / 3 + 24,
             (Math.max(20, pulse) << 24) | 0xA8B890, false);
     }
 
