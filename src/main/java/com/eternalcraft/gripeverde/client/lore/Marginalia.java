@@ -66,6 +66,7 @@ public final class Marginalia {
     public static final String N_DOCTOR       = "doctor";
     // v0.141.0
     public static final String N_RESCUE       = "rescue";
+    public static final String N_WITNESS      = "witness";
 
     /** Encola una nota (persistente) si no hay ya una igual pendiente. */
     public static synchronized void queue(String noteId) {
@@ -261,6 +262,8 @@ case N_DROP:         return en ? "For a moment, the rain rests in your palm. The
 case N_DOCTOR:       return en ? "There is the doctor’s hand again, on a letter no one sent." : "Otra vez la letra del doctor, en una carta que nadie envió.";
 case N_RESCUE:       return en ? "The thing dragged the stable boy into the mud before we could reach him. We heard his cry and turned back together. I have never run so fast toward something I feared."
                                   : "La criatura arrastró al mozo de las caballerizas antes de que pudiéramos alcanzarlo. Oímos su grito y volvimos juntos. Nunca había corrido tan deprisa hacia algo que me daba tanto miedo.";
+case N_WITNESS:      return en ? "She was still breathing when we found her. Then the fever took hold, and she ran through the rain as if the wound did not hurt. I still cannot call them dead."
+                                  : "Cuando la encontramos, todavía respiraba. Después la fiebre se apoderó de ella y cruzó la lluvia corriendo, como si la herida no doliera. Todavía no puedo llamarlos muertos.";
             default: return null;
         }
     }
