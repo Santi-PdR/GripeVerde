@@ -13,7 +13,7 @@ Estado comprobado en la rama `codex/v0.104-ghoul-warning-poster` y en el PR #90:
 - Los avisos del título reutilizan claves y cortes de papel; las motas de sangre ya no crean un generador aleatorio por cuadro.
 - El trabajo activo mejora el modmenu con el contexto Ghouls/L4D2 y mantiene inglés y español como idiomas principales.
 - Las transiciones y efectos animados pertenecen al menú: no se agregan animaciones de render al mundo activo ni al inventario. Se respetan Movimiento reducido y Destellos reducidos.
-- La carpeta de mods debe contener únicamente archivos JAR. Al actualizar, se reemplaza solo el JAR de GripeVerde.
+- La carpeta de mods debe contener únicamente archivos JAR. Al actualizar, se reemplazan las versiones anteriores de GripeVerde y CEDA Dispatch; se conservan los demás mods.
 - El ID `copyl`, los formatos y rutas de configuración de CEDA Dispatch se mantienen; el botón opcional no carga si el otro mod está ausente.
 - No se ha hecho una prueba visual del cliente en esta revisión; el CI acredita compilación, recursos y localización, no una validación dentro de Minecraft.
 - El KI-66 y la pausa descritos en los registros históricos de abajo corresponden a agosto de 2026 y ya no representan el estado operativo actual. El rediseño de doble página permanece como idea histórica, no como requisito activo.
