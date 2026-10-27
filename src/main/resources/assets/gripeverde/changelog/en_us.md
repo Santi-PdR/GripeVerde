@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.141.0 - The way back through the mud
+
+Reading the rescue protocol leaves a new note from the chronicler. It is a one-time recollection of a frightened group turning back for one of their own, written in the chosen language and shown on a later page.
+
 ## Version 0.140.0 - The address through the fog
 
 The official Outbreak server is now recognized even if its saved address uses different capitalization or has stray spaces. Older addresses are migrated the same way, so the field guide won't add a second copy of the server.
