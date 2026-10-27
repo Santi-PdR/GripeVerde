@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.143.0 - The fever still had a pulse
+
+A witness's recollection now accompanies the infection chapter. It tells of the moment the survivors understood that the fever had not killed its victims. The note appears once, in English or Spanish.
+
 ## Version 0.142.0 - The note waits at the right page
 
 The rescue recollection now appears whichever way the reader reaches that section: by turning to its mark, scrolling through the pages, or using the keyboard. It remains a one-time note.
