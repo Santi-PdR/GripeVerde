@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.142.0 - La nota espera en la página indicada
+
+La nota del rescate ahora aparece tanto si se llega a esa parte desde las marcas laterales como si se avanza por las páginas o con el teclado. Sigue apareciendo una sola vez.
+
 ## Version 0.141.0 - El camino de vuelta por el barro
 
 Al leer el protocolo de rescate, el cronista deja una nota nueva: recuerda a un grupo asustado que volvió por uno de los suyos. Aparece una sola vez, en el idioma elegido, al abrir otra hoja más adelante.
