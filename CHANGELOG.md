@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.144.0 - The cry that brought us back
+
+Reaching the teamwork chapter can leave one last recollection from the chronicler: a cry carried across the town, and strangers running back for one another. It appears once, in the chosen language.
+
 ## Version 0.143.0 - The fever still had a pulse
 
 A witness's recollection now accompanies the infection chapter. It tells of the moment the survivors understood that the fever had not killed its victims. The note appears once, in English or Spanish.
