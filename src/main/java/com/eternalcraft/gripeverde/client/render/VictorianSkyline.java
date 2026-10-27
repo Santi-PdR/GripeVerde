@@ -186,6 +186,11 @@ public class VictorianSkyline {
         return thirteenthWindowLit;
     }
 
+    /** Invalida la copia en memoria cuando un acertijo cambia el recuerdo del cielo. */
+    public static void invalidateSignalMemoryFlags() {
+        signalMemoryFlagsLoaded = false;
+    }
+
     /** Rect de la ventana-senal del atico (edificio FG 5). */
     public static int[] signalWindowRect(int w, int h) {
         float[] b = FG_BUILDINGS[5];
