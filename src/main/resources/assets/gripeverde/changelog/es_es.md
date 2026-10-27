@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.150.0 - El manual cabe en la hoja
+
+La guía de campo se adapta a ventanas bajas y escalas de GUI altas, ajusta el ancho del texto y mantiene visible el botón para volver. En pantallas compactas, la indicación de lectura sube al encabezado para no tapar el contenido.
+
 ## Version 0.149.0 - Las columnas conservan su sitio
 
 El diseño de las columnas y los límites del aviso izquierdo se reutilizan hasta que cambia el tamaño de la ventana. Al redibujar no se reconstruyen esas regiones en cada cuadro; se conservan la posición del papel y la interacción con el cartel.
