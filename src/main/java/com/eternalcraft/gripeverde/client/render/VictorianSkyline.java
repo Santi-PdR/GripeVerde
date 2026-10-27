@@ -177,6 +177,9 @@ public class VictorianSkyline {
     }
 
     public static boolean isSignalWindowLit(float t) {
+        // Reduced motion keeps this clue steady; it must not use the wall-clock blink.
+        if (reducedMotion()) return (t % 4.2f) < 1.35f;
+
         long now = System.currentTimeMillis();
         if (now < signalRespondUntilMs) {
             // Doble parpadeo rapido de respuesta

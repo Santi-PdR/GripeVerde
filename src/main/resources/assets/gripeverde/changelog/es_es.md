@@ -1,3 +1,7 @@
+## Version 0.151.0 - Una señal sin parpadeos
+
+Con «Movimiento reducido» activado, la ventana del ático responde sin parpadear. La pista sigue disponible y el ambiente del menú queda quieto.
+
 # Eternal Craft: Gripe Verde
 
 ## Version 0.150.0 - El manual cabe en la hoja

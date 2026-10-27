@@ -1,3 +1,7 @@
+## Version 0.151.0 - A signal without blinking
+
+When Reduced Motion is on, the attic signal window stays steady instead of flashing its answer. The clue remains available, and the menu atmosphere stays still.
+
 # Eternal Craft: Gripe Verde
 
 ## Version 0.150.0 - The field guide fits the page
