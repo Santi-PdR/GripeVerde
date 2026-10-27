@@ -5,23 +5,19 @@ de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
 que una seccion posterior lo mencione expresamente.
 
-## ESTADO: REPOSO (2026-08-24, tras la v0.30.0)
+## ESTADO: DESARROLLO ACTIVO (2026-10-27, v0.144.0)
 
-El owner puso el proyecto en pausa y dejo anotada la proxima iteracion
-(detalle completo en CONTEXTO, decimocuarta vuelta):
+Estado comprobado en la rama `codex/v0.104-ghoul-warning-poster` y en el PR #90:
 
-- **KI-66 (proximo)**: tres frentes anotados, NADA implementado aun:
-  (a) pluma: el rasguño debe sonar SOLO si la fila que se escribe esta a
-  la vista, y la tinta no debe correr por zonas fuera de pantalla (el
-  reporte: "se ve extraña cuando ya animo una parte y sigue la otra; el
-  sonido es constante y no para"); (b) rediseño cuaderno doble faz de la
-  cronica (2 hojas, 1 version por hoja, animacion de hoja doblando,
-  render Java puro; lupa/folio/lacre/huevos adaptados; validar GUI 4 con
-  ~170 px por hoja o fallback a hoja simple; reducedMotion sin giro) —
-  NO empezar sin reconfirmar; (c) segunda bajada de volumen de botones
-  (clicks ~-30%).
-- Sigue pendiente la validacion en cliente real de TODO lo entregado
-  (KI-53 a KI-65); jar candidato para Agus: 0.30.0.
+- El CI #503 terminó correctamente para la v0.144.0. El JAR instalado es `gripeverde-0.144.0.jar` en `D:\\Minecraft\\SKLauncher\\sklauncher-data-v4\\instances\\test-1\\mods`.
+- El trabajo activo mejora el modmenu con el contexto Ghouls/L4D2 y mantiene inglés y español como idiomas principales.
+- Las transiciones y efectos animados pertenecen al menú: no se agregan animaciones de render al mundo activo ni al inventario. Se respetan Movimiento reducido y Destellos reducidos.
+- La carpeta de mods debe contener únicamente archivos JAR. Al actualizar, se reemplaza solo el JAR de GripeVerde.
+- Las notas de escritura fuera de pantalla y su sonido se corrigieron en v0.138.0; el nombre y la migración del servidor se ajustaron en v0.139–0.140; el flujo de notas del manual se mejoró en v0.141–0.144.
+- No se ha hecho una prueba visual del cliente en esta revisión; el CI acredita compilación, recursos y localización, no una validación dentro de Minecraft.
+- El KI-66 y la pausa descritos en los registros históricos de abajo corresponden a agosto de 2026 y ya no representan el estado operativo actual. El rediseño de doble página permanece como idea histórica, no como requisito activo.
+
+
 
 ## v0.30.0 - La hoja entera (2026-08-24)
 
