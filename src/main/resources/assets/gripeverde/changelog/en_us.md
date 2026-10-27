@@ -1,3 +1,7 @@
+## Version 0.166.0 - A separate check for the street sounds
+
+The ambience controls now play a brief creak through the same Minecraft channel as rain and wind. This checks the mod volume alongside Minecraft's Ambient and Master levels; the button is disabled during a world.
+
 ## Version 0.165.0 - The skyline remembers between frames
 
 The attic window and its curtains now keep their saved state in memory for the session. Drawing the title screen no longer creates a position array or checks saved notes every frame.

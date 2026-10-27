@@ -72,6 +72,7 @@ public class MenuAmbience {
 
     private static boolean active=false, muted=false, pocketWatchVisible=false;
     private static long lastEventTriggerMs=0L, nextEventDelayMs=0L, lastRareTriggerMs=0L, nextRareDelayMs=0L;
+    private static long lastPreviewMs = 0L;
     private static RegistryObject<SoundEvent> lastEventTriggered=null, lastRareTriggered=null;
     private static long crowsPlayingUntilMs=0L;
     public static boolean isCrowsRecentlyTriggered(){return nowMs()<crowsPlayingUntilMs;}
@@ -225,6 +226,21 @@ public class MenuAmbience {
 
     public static boolean isMuted(){return muted;}
     public static void toggleMute(){setMuted(!muted);}
+
+    /** Plays one short sample through the same Ambient channel and volume as menu ambience. */
+    public static void testSound() {
+        long now = nowMs();
+        if (now - lastPreviewMs < 600L) return;
+        lastPreviewMs = now;
+        if (muted || getUserVolume() < 0.01f) return;
+        Minecraft mc = Minecraft.getInstance();
+        if (mc == null || mc.level != null) return;
+        try {
+            SoundEvent sample = ModSounds.MENU_WOOD_CREAK.get();
+            mc.getSoundManager().play(ambientOneShot(sample, 0.98f, 0.48f * getUserVolume()));
+            MenuMusic.duckFor(1_000L);
+        } catch (Throwable ignored) {}
+    }
 
     public static void start(){
         try{ muted=!com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_ENABLED.get(); }catch(Exception ignored){}

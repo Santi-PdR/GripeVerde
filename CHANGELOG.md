@@ -1,3 +1,7 @@
+## v0.166.0 - Una prueba para el sonido de la calle
+
+El control de ambiente ahora reproduce un crujido breve por el mismo canal de Minecraft que usan la lluvia y el viento. Sirve para comprobar el volumen del mod y los niveles Ambiente y Maestro; el botón queda inactivo durante una partida.
+
 ## v0.165.0 - La portada recuerda sin consultar cada fotograma
 
 La luz de la ventana y las cortinas del edificio conservan su estado en memoria durante la sesion. El dibujo de la portada ya no crea un arreglo ni consulta los recuerdos guardados a cada fotograma.

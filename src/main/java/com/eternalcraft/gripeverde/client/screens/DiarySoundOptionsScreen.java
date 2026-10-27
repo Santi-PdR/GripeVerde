@@ -60,6 +60,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     private DiaryButton ambienceToggleButton;
     private DiarySlider uiVolumeSlider;
     private DiaryButton testUiSoundButton;
+    private DiaryButton testAmbienceSoundButton;
 
     public DiarySoundOptionsScreen(Screen parent, Options options) {
         super(parent, options);
@@ -178,9 +179,11 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         // El ambiente y los efectos SFX quedan separados para ajustar cada capa.
         int compactH = ambienceSliderHeight();
         int ambSliderY = ambienceSliderY();
-        int ambToggleW = Math.min(86, Math.max(1, sliderW / 3));
-        int ambGap = Math.min(4, Math.max(0, sliderW - ambToggleW - 1));
-        int ambSliderW = Math.max(1, sliderW - ambToggleW - ambGap);
+        int ambTestW = sliderW >= 180 ? Math.min(48, Math.max(40, sliderW / 8)) : 0;
+        int ambToggleW = Math.min(82, Math.max(1, (sliderW - (ambTestW > 0 ? ambTestW + 8 : 0)) / 3));
+        int ambGap = ambTestW > 0 ? 4 : Math.min(4, Math.max(0, sliderW - ambToggleW - 1));
+        int ambTestGap = ambTestW > 0 ? 4 : 0;
+        int ambSliderW = Math.max(1, sliderW - ambToggleW - ambTestW - ambGap - ambTestGap);
         int ambSliderX = sliderX;
         this.ambienceSlider = new DiaryAmbienceSlider(ambSliderX, ambSliderY, ambSliderW, compactH);
         this.ambienceSlider.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
@@ -197,6 +200,18 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         );
         refreshAmbienceToggleButton();
         this.addRenderableWidget(this.ambienceToggleButton);
+        if (ambTestW > 0) {
+            this.testAmbienceSoundButton = new DiaryButton(
+                ambSliderX + ambSliderW + ambGap + ambToggleW + ambTestGap, ambSliderY,
+                ambTestW, compactH, Component.translatable("gripeverde.options.sound.test_button"),
+                DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
+                DiaryButton.SoundProfile.NONE, MenuAmbience::testSound);
+            this.testAmbienceSoundButton.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
+                Component.translatable("gripeverde.options.sound.ambience_test.tooltip")));
+            this.testAmbienceSoundButton.active =
+                !com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.hasActiveWorld();
+            this.addRenderableWidget(this.testAmbienceSoundButton);
+        }
 
         int uiSliderY = uiSliderY();
         int testButtonW = sliderW < 48
@@ -420,6 +435,10 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         if (this.skipTrackButton != null) {
             this.skipTrackButton.active = MenuMusic.isActive() && !MenuMusic.isCrossfading()
                 && !com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.hasActiveWorld();
+        }
+        if (this.testAmbienceSoundButton != null) {
+            this.testAmbienceSoundButton.active =
+                !com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.hasActiveWorld();
         }
         // Shared background renderer draws the menu scene or a fixed live-world veil.
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);

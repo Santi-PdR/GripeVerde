@@ -1,3 +1,7 @@
+## Version 0.166.0 - Una prueba para los sonidos de la calle
+
+Los controles de ambiente ahora reproducen un crujido breve por el mismo canal de Minecraft que la lluvia y el viento. Así se comprueba el volumen del mod junto con los niveles Ambiente y Maestro; el botón queda inactivo durante una partida.
+
 ## Version 0.165.0 - El cielo recuerda entre fotogramas
 
 La ventana del ático y sus cortinas conservan en memoria el estado guardado durante la sesión. Dibujar la portada ya no crea un arreglo de posición ni consulta las notas guardadas a cada fotograma.

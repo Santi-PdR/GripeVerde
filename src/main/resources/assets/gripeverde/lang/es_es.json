@@ -173,5 +173,6 @@
     "gripeverde.poster.rescue.body.5": "Lo hallarás en el botín.",
     "gripeverde.poster.rescue.footer": "NO DEJES A NADIE ATRÁS.",
     "gripeverde.title.button.copyl": "Parte de CEDA",
-    "gripeverde.field_guide.scroll_hint.compact": "Desplázate por las notas · 1–7"
+    "gripeverde.field_guide.scroll_hint.compact": "Desplázate por las notas · 1–7",
+    "gripeverde.options.sound.ambience_test.tooltip": "Reproduce un crujido breve con los niveles Ambiente y Maestro de Minecraft. Disponible en la portada."
 }
