@@ -447,24 +447,20 @@ tasks.named('processResources').configure {
 
 tasks.register('verifyGripeVerdeMenuFont') {
     group = 'verification'
-    description = 'Verifies the bundled, licensed high-legibility typeface used by the diary menu.'
+    description = 'Verifies that diary text uses the Minecraft built-in font and no missing custom provider.'
     doLast {
-        def fontFile = file('src/main/resources/assets/gripeverde/font/atkinson_hyperlegible_regular.ttf')
-        def licenseFile = file('src/main/resources/assets/gripeverde/font/OFL.txt')
-        def definitionFile = file('src/main/resources/assets/gripeverde/font/chronicle.json')
-        if (!fontFile.isFile() || fontFile.length() < 10000L) {
-            throw new GradleException('Missing or incomplete Atkinson Hyperlegible font asset')
+        def typographyFile = file('src/main/java/com/eternalcraft/gripeverde/client/render/DiaryTypography.java')
+        def typography = typographyFile.getText('UTF-8')
+        if (!typography.contains('style.withFont(null)')) {
+            throw new GradleException('DiaryTypography must clear custom font overrides and use Minecraft default')
         }
-        if (!licenseFile.isFile() || !licenseFile.getText('UTF-8').contains('SIL OPEN FONT LICENSE Version 1.1')) {
-            throw new GradleException('Missing SIL Open Font License for the bundled typeface')
-        }
-        def definition = new groovy.json.JsonSlurper().parse(definitionFile)
-        def expectedFile = 'gripeverde:font/atkinson_hyperlegible_regular.ttf'
-        def hasProvider = definition instanceof Map &&
-            definition.providers instanceof List &&
-            definition.providers.any { it instanceof Map && it.type == 'ttf' && it.file == expectedFile }
-        if (!hasProvider) {
-            throw new GradleException('chronicle.json must register the bundled Atkinson Hyperlegible TTF')
+        def fontDir = file('src/main/resources/assets/gripeverde/font')
+        def customFonts = fileTree(fontDir) {
+            include '*.json'
+            include '*.ttf'
+        }.files
+        if (!customFonts.isEmpty()) {
+            throw new GradleException("Unexpected custom menu fonts remain: ${customFonts*.name.sort()}")
         }
     }
 }
