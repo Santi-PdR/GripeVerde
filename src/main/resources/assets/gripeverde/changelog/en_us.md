@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.135.0 - A note that crosses the language barrier
+
+The hidden message behind the ministry seal now changes with the selected English or Spanish language, even while the note is still on screen.
+
 ## Version 0.134.0 - The chronicler keeps your tongue
 
 The title greeting, paper label, and quiet vigil line now follow the selected English or Spanish language. Their wrapped text is reused until the words, window width, or font changes.
