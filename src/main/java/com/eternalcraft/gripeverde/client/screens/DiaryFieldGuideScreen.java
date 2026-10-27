@@ -33,6 +33,7 @@ public final class DiaryFieldGuideScreen extends Screen {
     };
     private static final String[] SECTION_NUMBERS = { "1", "2", "3", "4", "5", "6", "7" };
     private static final int INFECTION_SECTION = 0;
+    private static final int TEAM_SECTION = 1;
     private static final int RESCUE_SECTION = SECTION_KEYS.length - 1;
 
     private static final String[][] ENTRY_KEYS = {
@@ -319,6 +320,8 @@ public final class DiaryFieldGuideScreen extends Screen {
         ChroniclerMemory.setFieldGuideBookmark(section, progressTenThousandths, scrollY);
         if (section == INFECTION_SECTION) {
             Marginalia.queueOnce(Marginalia.N_WITNESS);
+        } else if (section == TEAM_SECTION) {
+            Marginalia.queueOnce(Marginalia.N_CALL);
         } else if (section == RESCUE_SECTION) {
             Marginalia.queueOnce(Marginalia.N_RESCUE);
         }
