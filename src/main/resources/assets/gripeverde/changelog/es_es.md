@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.135.0 - Una nota que cambia de idioma
+
+El mensaje oculto tras el sello del ministerio ahora cambia entre inglés y español si se modifica el idioma mientras la nota sigue en pantalla.
+
 ## Version 0.134.0 - El cronista habla tu idioma
 
 El saludo del cronista, el rótulo de su hoja y la frase de vigilia ahora siguen el inglés o el español elegido. El texto ajustado se conserva hasta que cambian las palabras, el ancho de la ventana o la fuente.
