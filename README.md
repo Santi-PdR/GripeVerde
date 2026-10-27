@@ -1,3 +1,7 @@
+**v0.159.0 - Letras sin cuadros**
+
+Los rótulos del diario vuelven a dibujarse como texto normal de Minecraft, igual que el logotipo. Así evitamos estilos de fuente heredados que podían convertir las letras en cuadros vacíos.
+
 # Eternal Craft: Gripe Verde
 
 **v0.158.0 - Notas en español bien escritas**

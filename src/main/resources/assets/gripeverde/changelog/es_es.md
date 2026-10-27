@@ -1,3 +1,7 @@
+## Version 0.159.0 - Letras sin cuadros
+
+Los rótulos del diario ahora se dibujan como texto normal de Minecraft, sin estilos de fuente heredados. La verificación de compilación comprueba que esa ruta siga libre de fuentes personalizadas.
+
 ## Version 0.158.0 - Las notas recuperan sus tildes
 
 Las frases de la estrella fugaz y del telegrama sellado recuperaron las tildes y la ñ que faltaban. El texto en inglés no cambió.

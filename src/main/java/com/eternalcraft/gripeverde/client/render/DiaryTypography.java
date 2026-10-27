@@ -12,17 +12,12 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public final class DiaryTypography {
     private DiaryTypography() {}
 
-    public static Component styled(Component text) {
-        // Leave text on Minecraft’s built-in font; a missing custom provider renders as empty boxes.
-        return text.copy().withStyle(style -> style.withFont(null));
-    }
-
     public static int width(Font font, String text) {
-        return font.width(styled(Component.literal(text)));
+        return font.width(text);
     }
 
     public static int width(Font font, Component text) {
-        return font.width(styled(text));
+        return font.width(text.getString());
     }
 
     public static int width(Font font, FormattedCharSequence text) {
@@ -30,7 +25,7 @@ public final class DiaryTypography {
     }
 
     public static List<FormattedCharSequence> split(Font font, Component text, int maxWidth) {
-        return font.split(styled(text), Math.max(1, maxWidth));
+        return font.split(Component.literal(text.getString()), Math.max(1, maxWidth));
     }
 
     public static List<FormattedCharSequence> split(Font font, String text, int maxWidth) {
@@ -66,7 +61,7 @@ public final class DiaryTypography {
 
     public static void draw(GuiGraphics graphics, Font font, String text,
                             int x, int y, int color, boolean shadow) {
-        graphics.drawString(font, styled(Component.literal(text)), x, y, color, shadow);
+        graphics.drawString(font, text, x, y, color, shadow);
     }
 
     public static void draw(GuiGraphics graphics, Font font, Component text,
@@ -76,7 +71,7 @@ public final class DiaryTypography {
 
     public static void draw(GuiGraphics graphics, Font font, Component text,
                             int x, int y, int color, boolean shadow) {
-        graphics.drawString(font, styled(text), x, y, color, shadow);
+        graphics.drawString(font, text.getString(), x, y, color, shadow);
     }
 
     public static void draw(GuiGraphics graphics, Font font, FormattedCharSequence text,

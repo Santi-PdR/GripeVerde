@@ -5,7 +5,7 @@ plugins {
     id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
 }
 
-version = '0.158.0'
+version = '0.159.0'
 group = 'com.eternalcraft.gripeverde'
 base { archivesName = 'gripeverde' }
 
@@ -447,12 +447,14 @@ tasks.named('processResources').configure {
 
 tasks.register('verifyGripeVerdeMenuFont') {
     group = 'verification'
-    description = 'Verifies that diary text uses the Minecraft built-in font and no missing custom provider.'
+    description = 'Verifies that diary text uses plain Minecraft string rendering and no missing custom provider.'
     doLast {
         def typographyFile = file('src/main/java/com/eternalcraft/gripeverde/client/render/DiaryTypography.java')
         def typography = typographyFile.getText('UTF-8')
-        if (!typography.contains('style.withFont(null)')) {
-            throw new GradleException('DiaryTypography must clear custom font overrides and use Minecraft default')
+        if (!typography.contains('graphics.drawString(font, text, x, y, color, shadow)') ||
+                !typography.contains('graphics.drawString(font, text.getString(), x, y, color, shadow)') ||
+                typography.contains('style.withFont(')) {
+            throw new GradleException('DiaryTypography must render plain strings without custom font styles')
         }
         def fontDir = file('src/main/resources/assets/gripeverde/font')
         def customFonts = fileTree(fontDir) {

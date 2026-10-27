@@ -1,3 +1,7 @@
+## Version 0.159.0 - Clear menu lettering
+
+Diary labels now render as plain Minecraft text, without inherited font styles. The build check guards this path against custom font styles returning.
+
 ## Version 0.158.0 - Spanish notes, properly written
 
 The Spanish captions for the shooting star and sealed telegram now include their missing accents and ñ. English wording is unchanged.
