@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.137.0 - La marca del médico encuentra su sitio
+
+El sello de fraude del elixir ahora queda en un espacio propio bajo el texto de la botella y se oculta si el cartel es demasiado bajo. En inglés dice «FRAUD» y en español, «FRAUDE».
+
 ## Version 0.136.0 - Una luz que cambia de idioma
 
 La nota de la estrella fugaz ahora sigue el inglés o el español seleccionado mientras está visible y se ajusta al ancho de la pantalla en ventanas pequeñas.
