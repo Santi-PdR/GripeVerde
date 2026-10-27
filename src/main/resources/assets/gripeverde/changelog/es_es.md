@@ -1,3 +1,7 @@
+## Version 0.160.0 - Ajustes más claros
+
+Las categorías de ajustes usan nombres fáciles de reconocer en inglés y español. Los avisos de sonido indican qué volúmenes revisar y la nota de rescate aclara qué pasa con el inventario y el cuerpo de un compañero caído.
+
 ## Version 0.159.0 - Letras sin cuadros
 
 Los rótulos del diario ahora se dibujan como texto normal de Minecraft, sin estilos de fuente heredados. La verificación de compilación comprueba que esa ruta siga libre de fuentes personalizadas.

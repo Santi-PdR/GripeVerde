@@ -1,3 +1,7 @@
+## Version 0.160.0 - Clearer settings
+
+Settings categories now use familiar names in English and Spanish. Sound tips say plainly which Minecraft volumes to check, and the rescue note clearly explains what happens to a fallen teammate's inventory and body.
+
 ## Version 0.159.0 - Clear menu lettering
 
 Diary labels now render as plain Minecraft text, without inherited font styles. The build check guards this path against custom font styles returning.

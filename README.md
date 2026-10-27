@@ -1,3 +1,7 @@
+**v0.160.0 - Ajustes más claros**
+
+Las secciones de ajustes ahora tienen nombres fáciles de reconocer. Acorté los avisos de sonido y corregí la nota de rescate para que quede claro qué conserva y cómo vuelve el compañero.
+
 **v0.159.0 - Letras sin cuadros**
 
 Los rótulos del diario vuelven a dibujarse como texto normal de Minecraft, igual que el logotipo. Así evitamos estilos de fuente heredados que podían convertir las letras en cuadros vacíos.
