@@ -67,6 +67,7 @@ public final class Marginalia {
     // v0.141.0
     public static final String N_RESCUE       = "rescue";
     public static final String N_WITNESS      = "witness";
+    public static final String N_CALL         = "call";
 
     /** Encola una nota (persistente) si no hay ya una igual pendiente. */
     public static synchronized void queue(String noteId) {
@@ -264,6 +265,8 @@ case N_RESCUE:       return en ? "The thing dragged the stable boy into the mud 
                                   : "La criatura arrastró al mozo de las caballerizas antes de que pudiéramos alcanzarlo. Oímos su grito y volvimos juntos. Nunca había corrido tan deprisa hacia algo que me daba tanto miedo.";
 case N_WITNESS:      return en ? "She was still breathing when we found her. Then the fever took hold, and she ran through the rain as if the wound did not hurt. I still cannot call them dead."
                                   : "Cuando la encontramos, todavía respiraba. Después la fiebre se apoderó de ella y cruzó la lluvia corriendo, como si la herida no doliera. Todavía no puedo llamarlos muertos.";
+case N_CALL:         return en ? "That cry carried across the whole town. We left our bundles where they lay and ran back for him. I had never seen strangers turn around so quickly for one another."
+                                  : "Ese grito se oyó por todo el pueblo. Dejamos los bultos donde estaban y volvimos corriendo por él. Nunca había visto a unos desconocidos regresar tan deprisa por los demás.";
             default: return null;
         }
     }
