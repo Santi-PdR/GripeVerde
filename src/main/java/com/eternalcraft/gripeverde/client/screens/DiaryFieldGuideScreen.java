@@ -1,6 +1,7 @@
 package com.eternalcraft.gripeverde.client.screens;
 
 import com.eternalcraft.gripeverde.client.lore.ChroniclerMemory;
+import com.eternalcraft.gripeverde.client.lore.Marginalia;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
@@ -340,6 +341,9 @@ public final class DiaryFieldGuideScreen extends Screen {
     private void jumpToSection(int section) {
         if (section >= 0 && section < sectionOffsets.size()) {
             scrollTo(sectionOffsets.get(section));
+            if (section == SECTION_KEYS.length - 1) {
+                Marginalia.queueOnce(Marginalia.N_RESCUE);
+            }
         }
     }
 
