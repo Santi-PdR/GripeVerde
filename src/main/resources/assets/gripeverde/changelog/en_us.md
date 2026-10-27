@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.139.0 - The Outbreak keeps its name
+
+The pinned Ghoul Outbreak server now appears in the selected language. Returning players keep their own server name, while an old saved Outbreak address is updated even if it was renamed.
+
 ## Version 0.138.0 - The pen waits for the reader
 
 The chronicle now writes only while its next line is visible. Scrolling away pauses the ink, long frame delays cannot make it jump ahead, and the quiet scratch follows visible writing less often.
