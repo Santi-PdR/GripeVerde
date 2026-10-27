@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.150.0 - The field guide fits the page
+
+The field guide now fits short windows and high GUI scales, wraps its notes to the paper width, and keeps the return button visible. In compact layouts, the reading hint moves into the heading so it does not compete with the page controls.
+
 ## Version 0.149.0 - Columns that hold their place
 
 The title-screen column layout and left notice bounds are reused until the window size changes. Redraws no longer recreate those layout regions each frame, while paper placement, resize behavior, and poster interaction remain the same.

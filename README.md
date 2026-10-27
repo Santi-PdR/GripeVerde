@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+**v0.150.0 - El manual cabe en la hoja**
+
+La guía de campo se adapta a ventanas bajas y escalas de GUI altas: ajusta el ancho del texto, conserva el desplazamiento y mantiene visible el botón para volver. En pantallas compactas, la indicación de lectura sube al encabezado para no tapar el contenido.
+
 **v0.80.0 - Avisos de descubrimiento legibles**
 
 Los sellos de descubrimiento ahora caben en ventanas estrechas y acortan los títulos largos sin salirse de la pantalla. También corregí tildes en los nombres y pistas en español.

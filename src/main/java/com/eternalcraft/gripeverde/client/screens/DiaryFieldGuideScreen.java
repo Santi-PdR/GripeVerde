@@ -57,6 +57,7 @@ public final class DiaryFieldGuideScreen extends Screen {
     private int maxScroll;
     private int contentHeight;
     private boolean draggingScrollbar;
+    private boolean compactLayout;
     private static final int LINE_HEIGHT = 11;
     private static final int PARAGRAPH_GAP = 4;
     private static final int SECTION_GAP = 6;
@@ -68,14 +69,17 @@ public final class DiaryFieldGuideScreen extends Screen {
 
     @Override
     protected void init() {
-        panelW = Math.min(520, Math.max(196, this.width - 24));
-        panelH = Math.min(430, Math.max(150, this.height - 24));
-        panelX = (this.width - panelW) / 2;
-        panelY = (this.height - panelH) / 2;
+        panelW = Math.min(520, Math.max(1, this.width - 16));
+        panelH = Math.min(430, Math.max(1, this.height - 16));
+        panelX = Math.max(0, (this.width - panelW) / 2);
+        panelY = Math.max(0, (this.height - panelH) / 2);
+        compactLayout = panelW < 360 || panelH < 240;
 
-        int closeW = Math.min(190, panelW - 24);
+        int closeW = Math.min(190, Math.max(1, panelW - (compactLayout ? 16 : 24)));
+        int closeH = compactLayout ? 20 : 23;
+        int closeBottomInset = compactLayout ? 25 : 31;
         this.addRenderableWidget(new DiaryButton(
-            panelX + (panelW - closeW) / 2, panelY + panelH - 31, closeW, 23,
+            panelX + (panelW - closeW) / 2, panelY + panelH - closeBottomInset, closeW, closeH,
             Component.translatable(parent instanceof DiaryPauseScreen
                 ? "gripeverde.field_guide.button.return_to_pause"
                 : "gripeverde.field_guide.button.close"),
@@ -88,7 +92,7 @@ public final class DiaryFieldGuideScreen extends Screen {
 
     private void buildRows() {
         rows.clear();
-        int textWidth = Math.max(148, panelW - 48);
+        int textWidth = Math.max(1, panelW - 48);
         for (int section = 0; section < SECTION_KEYS.length; section++) {
             boolean emphasized = section == 0 || section == SECTION_KEYS.length - 1;
             append(Component.translatable(SECTION_KEYS[section][0]), textWidth, true, emphasized, 4);
@@ -132,7 +136,7 @@ public final class DiaryFieldGuideScreen extends Screen {
                 narration.append(Component.translatable(entry)).append(". ");
             }
             int headingWidth = Math.max(1, this.font.width(this.font.split(heading, textWidth).get(0)));
-            int targetWidth = Math.min(panelW - 36, headingWidth + 16);
+            int targetWidth = Math.max(1, Math.min(panelW - 36, headingWidth + 16));
             GuideSectionButton sectionButton = new GuideSectionButton(
                 panelX + 18, viewportTop() + sectionOffsets.get(section) - scrollY,
                 targetWidth, LINE_HEIGHT, narration,
@@ -171,8 +175,8 @@ public final class DiaryFieldGuideScreen extends Screen {
         };
     }
 
-    private int viewportTop() { return panelY + 48; }
-    private int viewportBottom() { return panelY + panelH - 47; }
+    private int viewportTop() { return panelY + (compactLayout ? 42 : 48); }
+    private int viewportBottom() { return panelY + panelH - (compactLayout ? 30 : 47); }
     private int viewportHeight() { return Math.max(1, viewportBottom() - viewportTop()); }
 
     @Override
@@ -190,15 +194,20 @@ public final class DiaryFieldGuideScreen extends Screen {
         DiaryChrome.drawPanelShadow(g, panelX, panelY, panelW, panelH);
         PaperTexture.drawClean(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.ARCHIVE);
         DiaryChrome.drawCornerOrnaments(g, panelX, panelY, panelW, panelH);
-        DiaryChrome.drawRegistryTag(g, panelX, panelY, panelW, panelH, "REG. IV");
+        if (!compactLayout) {
+            DiaryChrome.drawRegistryTag(g, panelX, panelY, panelW, panelH, "REG. IV");
+        }
 
         int cx = panelX + panelW / 2;
-        DiaryChrome.drawCenteredString(g, this.font,
+        String title = fitText(
             Component.translatable("gripeverde.field_guide.title").getString(),
-            cx, panelY + 9, DiaryChrome.INK_TITLE);
+            Math.max(1, panelW - (compactLayout ? 20 : 36)));
+        DiaryChrome.drawCenteredString(g, this.font, title, cx, panelY + 9, DiaryChrome.INK_TITLE);
 
+        String subtitleKey = compactLayout && maxScroll > 0
+            ? "gripeverde.field_guide.scroll_hint.compact" : "gripeverde.field_guide.subtitle";
         String subtitle = fitText(
-            Component.translatable("gripeverde.field_guide.subtitle").getString(), panelW - 36);
+            Component.translatable(subtitleKey).getString(), Math.max(1, panelW - 36));
         DiaryChrome.drawCenteredString(g, this.font, subtitle,
             cx, panelY + 23, DiaryChrome.INK_SUBTITLE);
         DiaryChrome.drawInkDivider(g, panelX + 18, panelY + 37, panelW - 36);
@@ -251,11 +260,13 @@ public final class DiaryFieldGuideScreen extends Screen {
         g.disableScissor();
 
         if (maxScroll > 0) drawScrollbar(g, top, bottom);
-        String hint = fitText(
-            Component.translatable("gripeverde.field_guide.scroll_hint").getString(), panelW - 32);
-        int hintW = this.font.width(hint);
-        g.drawString(this.font, hint, cx - hintW / 2, panelY + panelH - 42,
-            DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 180), false);
+        if (!compactLayout) {
+            String hint = fitText(
+                Component.translatable("gripeverde.field_guide.scroll_hint").getString(), panelW - 32);
+            int hintW = this.font.width(hint);
+            g.drawString(this.font, hint, cx - hintW / 2, panelY + panelH - 42,
+                DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 180), false);
+        }
 
         super.render(g, mouseX, mouseY, partialTick);
         com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
