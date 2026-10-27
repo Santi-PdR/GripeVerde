@@ -5,12 +5,13 @@ de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
 que una seccion posterior lo mencione expresamente.
 
-## ESTADO: DESARROLLO ACTIVO (2026-10-27, GripeVerde v0.148.0 / CEDA Dispatch 3.4.0)
+## ESTADO: DESARROLLO ACTIVO (2026-10-27, GripeVerde v0.149.0 / CEDA Dispatch 3.4.0)
 
 Estado comprobado en la rama `codex/v0.104-ghoul-warning-poster` y en el PR #90:
 
 - La compilación v0.148.0 conserva el acceso opcional a CEDA Dispatch; la instalación queda con 32 JARs y sin archivos de otros tipos.
 - Los avisos del título reutilizan claves y cortes de papel; las motas de sangre ya no crean un generador aleatorio por cuadro.
+- La geometría de columnas y los límites del cartel izquierdo se guardan hasta que cambia el tamaño de la ventana.
 - El trabajo activo mejora el modmenu con el contexto Ghouls/L4D2 y mantiene inglés y español como idiomas principales.
 - Las transiciones y efectos animados pertenecen al menú: no se agregan animaciones de render al mundo activo ni al inventario. Se respetan Movimiento reducido y Destellos reducidos.
 - La carpeta de mods debe contener únicamente archivos JAR. Al actualizar, se reemplazan las versiones anteriores de GripeVerde y CEDA Dispatch; se conservan los demás mods.

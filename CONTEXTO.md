@@ -2,7 +2,7 @@
 
 ## Addendum operativo actual (2026-10-27)
 
-- Versiones en curso: GripeVerde v0.148.0 y CEDA Dispatch (repo Lclient) v3.4.0; los cambios remotos se trabajan por GitHub.
+- Versiones en curso: GripeVerde v0.149.0 y CEDA Dispatch (repo Lclient) v3.4.0; los cambios remotos se trabajan por GitHub.
 - El botón opcional de CEDA Dispatch solo aparece cuando el mod ID `copyl` está cargado; no agrega dependencia obligatoria.
 - El código fuente de este trabajo se modifica remotamente por GitHub; no usar ni actualizar un checkout local del repositorio para esta tarea. El ZIP/JAR de CI se maneja temporalmente solo para instalar el artefacto y luego se limpia.
 - Destino de instalación indicado por el owner: `D:\\Minecraft\\SKLauncher\\sklauncher-data-v4\\instances\\test-1\\mods`. La carpeta queda con JAR solamente y una sola versión de GripeVerde y CEDA Dispatch; conservar los demás mods.

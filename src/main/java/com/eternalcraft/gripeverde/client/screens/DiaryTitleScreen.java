@@ -84,6 +84,12 @@ public class DiaryTitleScreen extends Screen {
     // Umbral: por debajo de esta altura efectiva, ocultamos TODO lo decorativo
     private static final int MINIMAL_MODE_THRESHOLD = 290;
 
+    private int columnCacheWidth = -1;
+    private int columnCacheHeight = -1;
+    private LayoutRegion cachedLeftColumn;
+    private LayoutRegion cachedRightColumn;
+    private final int[] quarantinePosterBounds = new int[4];
+
     private static final int PATINA_COUNT = 26;
     private static final int[] PATINA_X = new int[PATINA_COUNT];
     private static final int[] PATINA_Y = new int[PATINA_COUNT];
@@ -305,16 +311,29 @@ public class DiaryTitleScreen extends Screen {
         this.addRenderableWidget(this.skipMusicButton);
     }
 
-    private LayoutRegion leftColumn() {
+    private void ensureColumnLayout() {
+        if (columnCacheWidth == this.width && columnCacheHeight == this.height
+                && cachedLeftColumn != null && cachedRightColumn != null) {
+            return;
+        }
+
+        columnCacheWidth = this.width;
+        columnCacheHeight = this.height;
         LayoutRegion screen = LayoutRegion.screen(this.width, this.height);
-        return screen.left(POSTER_W + Spacing.SCREEN_MARGIN * 2)
-                     .inset(Spacing.SCREEN_MARGIN);
+        cachedLeftColumn = screen.left(POSTER_W + Spacing.SCREEN_MARGIN * 2)
+                .inset(Spacing.SCREEN_MARGIN);
+        int colW = Math.max(WATCH_RADIUS * 2, POSTER_R_W) + Spacing.SCREEN_MARGIN * 2;
+        cachedRightColumn = screen.right(colW).inset(Spacing.SCREEN_MARGIN);
+    }
+
+    private LayoutRegion leftColumn() {
+        ensureColumnLayout();
+        return cachedLeftColumn;
     }
 
     private LayoutRegion rightColumn() {
-        LayoutRegion screen = LayoutRegion.screen(this.width, this.height);
-        int colW = Math.max(WATCH_RADIUS * 2, POSTER_R_W) + Spacing.SCREEN_MARGIN * 2;
-        return screen.right(colW).inset(Spacing.SCREEN_MARGIN);
+        ensureColumnLayout();
+        return cachedRightColumn;
     }
 
     @Override
@@ -650,7 +669,12 @@ public class DiaryTitleScreen extends Screen {
         int totalBtnH = BTN_H * 2 + Spacing.GAP_MEDIUM;
         int maxPosterH = leftCol.h - totalBtnH - Spacing.GAP_LARGE * 2;
         if (maxPosterH < 140) return null;
-        return new int[] { leftCol.x, leftCol.y, POSTER_W, Math.min(POSTER_H_MAX, maxPosterH) };
+        int[] bounds = this.quarantinePosterBounds;
+        bounds[0] = leftCol.x;
+        bounds[1] = leftCol.y;
+        bounds[2] = POSTER_W;
+        bounds[3] = Math.min(POSTER_H_MAX, maxPosterH);
+        return bounds;
     }
 
     private boolean overQuarantinePoster(double mouseX, double mouseY) {

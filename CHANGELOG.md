@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.149.0 - Columns that hold their place
+
+The title-screen column layout and left notice bounds are reused until the window size changes. Redraws no longer recreate those layout regions each frame, while paper placement, resize behavior, and poster interaction remain the same.
+
 ## Version 0.148.0 - Still paper, lighter frames
 
 The title-screen notices now reuse their translated copy keys and paper-cut details instead of building temporary arrays on every draw. Seeded blood flecks use allocation-free arithmetic in place of a fresh random generator each frame. The marks remain fixed to the menu and never render over the world or inventory.

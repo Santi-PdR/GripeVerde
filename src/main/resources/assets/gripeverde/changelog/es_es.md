@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.149.0 - Las columnas conservan su sitio
+
+El diseño de las columnas y los límites del aviso izquierdo se reutilizan hasta que cambia el tamaño de la ventana. Al redibujar no se reconstruyen esas regiones en cada cuadro; se conservan la posición del papel y la interacción con el cartel.
+
 ## Version 0.148.0 - Papel quieto, cuadros más ligeros
 
 Los avisos de la portada reutilizan las claves de texto y los cortes del papel, sin crear arreglos temporales en cada dibujo. Las motas de sangre usan una cuenta fija en vez de iniciar un generador aleatorio por cuadro. Las marcas siguen quietas en el menú y no aparecen sobre el mundo ni el inventario.
