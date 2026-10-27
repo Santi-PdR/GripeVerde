@@ -1,6 +1,6 @@
-## Version 0.162.0 - Visible focus on compact buttons
+## Version 0.163.0 - Ink for the night
 
-Small title-screen buttons now show an amber outline when focused by keyboard. The indicator is static and adds no gameplay animation.
+The survivor's day-by-day note now uses brighter brass ink against the dark title backdrop, so it stays readable without a shadow.
 
 ## Version 0.161.0 - Clearer button subtitles
 

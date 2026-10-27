@@ -1,6 +1,6 @@
-## Version 0.162.0 - Foco visible en los iconos
+## Version 0.163.0 - Tinta legible en la noche
 
-Los botones pequeños de la portada ahora muestran un contorno ámbar al recibir el foco del teclado. El indicador es estático y no añade animaciones durante la partida.
+La nota diaria del superviviente ahora usa una tinta de latón más clara sobre el fondo oscuro de la portada, para que se lea mejor y sin sombra.
 
 ## Version 0.161.0 - Rótulos más legibles
 

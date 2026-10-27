@@ -129,7 +129,7 @@ public class LogoRenderer {
         int yearY = topY + 122;
         int stripPad = 8;
         g.fill(cx - yw / 2 - stripPad, yearY - 1, cx + yw / 2 + stripPad, yearY + 9, DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, 28));
-        g.drawString(font, year, cx - yw / 2, yearY, DiaryTheme.withAlpha(DiaryTheme.SEPIA_LIGHT, 200), false);
+        g.drawString(font, year, cx - yw / 2, yearY, DiaryTheme.FIELD_SUBTITLE, false);
     }
 
     private static void drawTopHatSkull(GuiGraphics g, int cx, int topY) {
