@@ -2,6 +2,7 @@ package com.eternalcraft.gripeverde.client.widgets;
 
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.render.DiaryTypography;
 import com.eternalcraft.gripeverde.client.util.EasedValue;
 import com.eternalcraft.gripeverde.client.util.MotionPolicy;
 import net.minecraft.client.Minecraft;
@@ -138,10 +139,8 @@ public class GreenFluButton extends AbstractButton {
         int titleCol = hoverAnim.lerpColor(DiaryTheme.BONE_WHITE, DiaryTheme.PAPER);
         int subCol = hoverAnim.lerpColor(DiaryTheme.SEPIA_LIGHT, DiaryTheme.OCHRE);
         if(!active){ titleCol=DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID,90); subCol=DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID,70); }
-        // Shadow 1px for title
-        if(active) g.drawString(font,tTitle,textX+1,yDraw+9,DiaryTheme.withAlpha(DiaryTheme.INK_BLACK,70),false);
-        g.drawString(font,tTitle,textX,yDraw+8,titleCol,false);
-        g.drawString(font,tSub,textX,yDraw+22,subCol,false);
+        DiaryTypography.draw(g, font, tTitle, textX, yDraw + 8, titleCol);
+        DiaryTypography.draw(g, font, tSub, textX, yDraw + 22, subCol);
 
         // Bottom micro line (steel wear)
         g.fill(x+44,yDraw+h-7,x+w-18,yDraw+h-6,DiaryTheme.withAlpha(DiaryTheme.BRONZE_DARK, 54));
@@ -198,9 +197,7 @@ public class GreenFluButton extends AbstractButton {
         g.fill(x+6,y,x+8,y+2,col); g.fill(x+10,y,x+12,y+2,col);
     }
     private static String ellipsize(Font f,String txt,int maxW){
-        if(f.width(txt)<=maxW) return txt;
-        String ell="..."; int room=Math.max(0,maxW-f.width(ell));
-        return f.plainSubstrByWidth(txt,room)+ell;
+        return DiaryTypography.fitString(f, txt, maxW);
     }
     @Override protected void updateWidgetNarration(NarrationElementOutput out){defaultButtonNarrationText(out);}
 }

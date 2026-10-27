@@ -1,3 +1,7 @@
+## Version 0.153.0 - Letras más claras en el diario
+
+La portada, las opciones, la guía de campo y los controles compartidos ahora usan Atkinson Hyperlegible con medidas de texto coherentes. Las etiquetas de los botones ya no dibujan una segunda copia oscura y se leen con más nitidez sobre el papel. La fuente se incluye con su licencia y no añade animaciones ni trabajo de renderizado en mundos o inventarios.
+
 ## Version 0.152.0 - Tinta fija, menú más ligero
 
 Las pequeñas marcas de desgaste de cada botón se calculan una sola vez y se reutilizan al dibujarlo. El papel conserva el mismo aspecto sin volver a preparar y consultar números aleatorios en cada frame.

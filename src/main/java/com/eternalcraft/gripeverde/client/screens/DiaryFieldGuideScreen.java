@@ -4,6 +4,7 @@ import com.eternalcraft.gripeverde.client.lore.ChroniclerMemory;
 import com.eternalcraft.gripeverde.client.lore.Marginalia;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.render.DiaryTypography;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
@@ -135,7 +136,7 @@ public final class DiaryFieldGuideScreen extends Screen {
             for (String entry : ENTRY_KEYS[section]) {
                 narration.append(Component.translatable(entry)).append(". ");
             }
-            int headingWidth = Math.max(1, this.font.width(this.font.split(heading, textWidth).get(0)));
+            int headingWidth = Math.max(1, DiaryTypography.width(this.font, DiaryTypography.split(this.font, heading, textWidth).get(0)));
             int targetWidth = Math.max(1, Math.min(panelW - 36, headingWidth + 16));
             GuideSectionButton sectionButton = new GuideSectionButton(
                 panelX + 18, viewportTop() + sectionOffsets.get(section) - scrollY,
@@ -153,7 +154,7 @@ public final class DiaryFieldGuideScreen extends Screen {
 
     private void append(Component text, int width, boolean heading, boolean accent,
                         int gap, int callout) {
-        for (FormattedCharSequence line : this.font.split(text, width)) {
+        for (FormattedCharSequence line : DiaryTypography.split(this.font, text, width)) {
             rows.add(new GuideRow(line, heading, accent, gap, callout));
             gap = 0;
         }
@@ -243,11 +244,11 @@ public final class DiaryFieldGuideScreen extends Screen {
                     g.fill(panelX + 14, calloutTop, panelX + 17, calloutBottom, rail);
                 }
                 if (sectionStart) {
-                    g.drawString(this.font, SECTION_NUMBERS[sectionIndex], panelX + 20, y, color, false);
+                    DiaryTypography.draw(g, this.font, SECTION_NUMBERS[sectionIndex], panelX + 20, y, color, false);
                 }
                 int textX = panelX + (row.heading ? 34 : row.callout > 0 ? 22 : 20);
-                int textWidth = this.font.width(row.text);
-                g.drawString(this.font, row.text, textX, y, color, false);
+                int textWidth = DiaryTypography.width(this.font, row.text);
+                DiaryTypography.draw(g, this.font, row.text, textX, y, color, false);
                 if (headingActive) {
                     g.fill(textX, y + LINE_HEIGHT - 1, textX + textWidth, y + LINE_HEIGHT, color);
                 }
@@ -263,8 +264,8 @@ public final class DiaryFieldGuideScreen extends Screen {
         if (!compactLayout) {
             String hint = fitText(
                 Component.translatable("gripeverde.field_guide.scroll_hint").getString(), panelW - 32);
-            int hintW = this.font.width(hint);
-            g.drawString(this.font, hint, cx - hintW / 2, panelY + panelH - 42,
+            int hintW = DiaryTypography.width(this.font, hint);
+            DiaryTypography.draw(g, this.font, hint, cx - hintW / 2, panelY + panelH - 42,
                 DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 180), false);
         }
 
@@ -273,10 +274,8 @@ public final class DiaryFieldGuideScreen extends Screen {
     }
 
     private String fitText(String text, int maxWidth) {
-        if (this.font.width(text) <= maxWidth) return text;
-        String ellipsis = "...";
-        int room = Math.max(0, maxWidth - this.font.width(ellipsis));
-        return this.font.plainSubstrByWidth(text, room) + ellipsis;
+        if (DiaryTypography.width(this.font, text) <= maxWidth) return text;
+        return DiaryTypography.fitString(this.font, text, maxWidth);
     }
 
     private int scrollbarThumbHeight(int trackHeight) {
@@ -379,7 +378,7 @@ public final class DiaryFieldGuideScreen extends Screen {
             if (row.heading && row.text != null) {
                 int textX = panelX + 34;
                 int hitLeft = row.gapBefore > 0 ? panelX + 18 : textX - 2;
-                int textWidth = this.font.width(row.text);
+                int textWidth = DiaryTypography.width(this.font, row.text);
                 if (mouseX >= hitLeft && mouseX <= textX + textWidth + 2
                         && mouseY >= y && mouseY < y + LINE_HEIGHT) {
                     return section;

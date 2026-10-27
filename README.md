@@ -1,8 +1,8 @@
 # Eternal Craft: Gripe Verde
 
-**v0.152.0 - Tinta fija, menú más ligero**
+**v0.153.0 - Letras claras en el diario**
 
-La guía de campo se adapta a ventanas bajas y escalas de GUI altas: ajusta el ancho del texto, conserva el desplazamiento y mantiene visible el botón para volver. En pantallas compactas, la indicación de lectura sube al encabezado para no tapar el contenido.
+La portada, las opciones y la guía de campo usan Atkinson Hyperlegible con medidas de texto coherentes. Las etiquetas de los botones se leen con nitidez, sin una segunda sombra que las engrose. La fuente se aplica solo a las pantallas de menú y no añade animaciones ni trabajo al renderizado del mundo o el inventario.
 
 **v0.80.0 - Avisos de descubrimiento legibles**
 

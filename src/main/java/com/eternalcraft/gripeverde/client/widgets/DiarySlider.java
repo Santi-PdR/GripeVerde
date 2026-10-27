@@ -2,6 +2,7 @@ package com.eternalcraft.gripeverde.client.widgets;
 
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.render.DiaryTypography;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSliderButton;
@@ -105,15 +106,13 @@ public class DiarySlider extends AbstractSliderButton {
 
         int textColor = hovered ? DiaryTheme.INK_BLACK : DiaryTheme.INK;
         String msg = ellipsize(Minecraft.getInstance().font, this.getMessage().getString(), Math.max(8, w - 14));
-        int textX = x + w / 2 - Minecraft.getInstance().font.width(msg) / 2;
-        g.drawString(Minecraft.getInstance().font, msg, textX, y + 4, textColor, false);
+        int textX = x + w / 2 - DiaryTypography.width(Minecraft.getInstance().font, msg) / 2;
+        DiaryTypography.draw(g, Minecraft.getInstance().font, msg, textX, y + 4, textColor);
     }
 
     private static String ellipsize(net.minecraft.client.gui.Font font, String text, int maxWidth) {
-        if (font.width(text) <= maxWidth) return text;
-        String ellipsis = "...";
-        int room = Math.max(0, maxWidth - font.width(ellipsis));
-        return font.plainSubstrByWidth(text, room) + ellipsis;
+        if (DiaryTypography.width(font, text) <= maxWidth) return text;
+        return DiaryTypography.fitString(font, text, maxWidth);
     }
 
     @Override

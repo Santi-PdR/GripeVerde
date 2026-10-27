@@ -1,3 +1,7 @@
+## Version 0.153.0 - Clearer letters in the diary
+
+The title screen, options, field guide, and shared controls now use Atkinson Hyperlegible with consistent text measurements. Button labels no longer draw a second dark copy, so they stay crisp against the paper. The font is bundled with its license and adds no animation or rendering work in worlds or inventories.
+
 ## Version 0.152.0 - Ink that stays put
 
 The menu buttons' tiny paper-wear marks are laid out once and reused on every draw. The paper keeps its same look without reseeding and sampling a random generator every frame.

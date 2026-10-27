@@ -2,6 +2,7 @@ package com.eternalcraft.gripeverde.client.widgets;
 
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.render.DiaryTypography;
 import com.eternalcraft.gripeverde.client.util.EasedValue;
 import com.eternalcraft.gripeverde.client.util.MotionPolicy;
 import net.minecraft.client.Minecraft;
@@ -91,10 +92,10 @@ public class SlimButton extends AbstractButton {
         } else {
             Font font = Minecraft.getInstance().font;
             String label = ellipsize(font, this.getMessage().getString(), Math.max(8, w - 12));
-            int tw = font.width(label);
+            int tw = DiaryTypography.width(font, label);
             int tx = x + (w - tw) / 2;
             int ty = y + (h - 8) / 2;
-            g.drawString(font, label, tx, ty, textColor, false);
+            DiaryTypography.draw(g, font, label, tx, ty, textColor);
         }
     }
 
@@ -127,10 +128,8 @@ public class SlimButton extends AbstractButton {
     }
 
     private static String ellipsize(Font font, String text, int maxWidth) {
-        if (font.width(text) <= maxWidth) return text;
-        String ellipsis = "...";
-        int room = Math.max(0, maxWidth - font.width(ellipsis));
-        return font.plainSubstrByWidth(text, room) + ellipsis;
+        if (DiaryTypography.width(font, text) <= maxWidth) return text;
+        return DiaryTypography.fitString(font, text, maxWidth);
     }
 
     @Override

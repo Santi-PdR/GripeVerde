@@ -2,6 +2,7 @@ package com.eternalcraft.gripeverde.client.widgets;
 
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.render.DiaryTypography;
 import com.eternalcraft.gripeverde.client.util.EasedValue;
 import com.eternalcraft.gripeverde.client.util.MotionPolicy;
 import net.minecraft.client.Minecraft;
@@ -206,16 +207,16 @@ public class DiaryButton extends AbstractButton {
         } else {
             maxTextW = Math.max(8,w-18);
             text = fitText(font,text,maxTextW);
-            int tw = font.width(text);
+            int tw = DiaryTypography.width(font, text);
             textStartX = x+(w-tw)/2;
         }
         // One unshadowed glyph pass keeps the selected game font crisp and avoids
         // a doubled, over-bold look on narrow buttons and non-Latin glyphs.
-        g.drawString(font,text,textStartX,contentY,textColor,false);
+        DiaryTypography.draw(g, font, text, textStartX, contentY, textColor);
 
         // Underline on hover (ink stroke)
         if(!inWorld && t>0.08f && active){
-            int tw = font.width(text);
+            int tw = DiaryTypography.width(font, text);
             int uy = contentY+font.lineHeight;
             int uAlpha = (int)(t*190);
             int uCol = DiaryTheme.withAlpha(accent, uAlpha);
@@ -236,11 +237,8 @@ public class DiaryButton extends AbstractButton {
     }
 
     private String fitText(Font f,String txt,int maxW){
-        if(f.width(txt)<=maxW) return txt;
-        if(!allowEllipsis) return f.plainSubstrByWidth(txt, Math.max(0,maxW));
-        String ell="...";
-        int room=Math.max(0,maxW-f.width(ell));
-        return f.plainSubstrByWidth(txt,room)+ell;
+        if(DiaryTypography.width(f,txt)<=maxW) return txt;
+        return DiaryTypography.fitString(f, txt, maxW, allowEllipsis);
     }
     private int shiftColor(int col,int shift){
         int a=(col>>>24)&0xFF;

@@ -5,7 +5,7 @@ plugins {
     id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
 }
 
-version = '0.152.0'
+version = '0.153.0'
 group = 'com.eternalcraft.gripeverde'
 base { archivesName = 'gripeverde' }
 
@@ -443,4 +443,32 @@ tasks.register('verifyGripeVerdeSoundUsage') {
 
 tasks.named('processResources').configure {
     dependsOn tasks.named('verifyGripeVerdeSoundUsage')
+}
+
+tasks.register('verifyGripeVerdeMenuFont') {
+    group = 'verification'
+    description = 'Verifies the bundled, licensed high-legibility typeface used by the diary menu.'
+    doLast {
+        def fontFile = file('src/main/resources/assets/gripeverde/font/atkinson_hyperlegible_regular.ttf')
+        def licenseFile = file('src/main/resources/assets/gripeverde/font/OFL.txt')
+        def definitionFile = file('src/main/resources/assets/gripeverde/font/chronicle.json')
+        if (!fontFile.isFile() || fontFile.length() < 10000L) {
+            throw new GradleException('Missing or incomplete Atkinson Hyperlegible font asset')
+        }
+        if (!licenseFile.isFile() || !licenseFile.getText('UTF-8').contains('SIL OPEN FONT LICENSE Version 1.1')) {
+            throw new GradleException('Missing SIL Open Font License for the bundled typeface')
+        }
+        def definition = new groovy.json.JsonSlurper().parse(definitionFile)
+        def expectedFile = 'gripeverde:font/atkinson_hyperlegible_regular.ttf'
+        def hasProvider = definition instanceof Map &&
+            definition.providers instanceof List &&
+            definition.providers.any { it instanceof Map && it.type == 'ttf' && it.file == expectedFile }
+        if (!hasProvider) {
+            throw new GradleException('chronicle.json must register the bundled Atkinson Hyperlegible TTF')
+        }
+    }
+}
+
+tasks.named('processResources').configure {
+    dependsOn tasks.named('verifyGripeVerdeMenuFont')
 }

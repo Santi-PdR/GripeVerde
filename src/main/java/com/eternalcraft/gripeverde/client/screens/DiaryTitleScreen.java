@@ -7,6 +7,7 @@ import com.eternalcraft.gripeverde.client.integration.CopyLCompatibility;
 
 import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.render.DiaryTypography;
 import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
 import com.eternalcraft.gripeverde.client.render.LogoRenderer;
 import com.eternalcraft.gripeverde.client.render.PocketWatchRenderer;
@@ -544,13 +545,11 @@ public class DiaryTitleScreen extends Screen {
                 || cachedGreetingEnglish != english
                 || cachedGreetingFont != this.font
                 || cachedGreetingLabelLimit != labelLimit) {
-            cachedGreetingLine = com.eternalcraft.gripeverde.client.render.DiaryChrome
-                .fitText(this.font, greetingText, cardW - 24);
-            cachedGreetingLineWidth = this.font.width(cachedGreetingLine);
+            cachedGreetingLine = DiaryTypography.fitString(this.font, greetingText, cardW - 24);
+            cachedGreetingLineWidth = DiaryTypography.width(this.font, cachedGreetingLine);
             String label = Component.translatable("gripeverde.title.greeting.label").getString();
-            cachedGreetingLabel = com.eternalcraft.gripeverde.client.render.DiaryChrome
-                .fitText(this.font, label, labelLimit);
-            cachedGreetingLabelWidth = this.font.width(cachedGreetingLabel);
+            cachedGreetingLabel = DiaryTypography.fitString(this.font, label, labelLimit);
+            cachedGreetingLabelWidth = DiaryTypography.width(this.font, cachedGreetingLabel);
             cachedGreetingSource = greetingText;
             cachedGreetingCardWidth = cardW;
             cachedGreetingEnglish = english;
@@ -571,16 +570,16 @@ public class DiaryTitleScreen extends Screen {
             com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.ARCHIVE);
 
         String registry = "CEDA · 1800";
-        g.drawString(this.font, cachedGreetingLabel, x + 12, y + 5,
+        DiaryTypography.draw(g, this.font, cachedGreetingLabel, x + 12, y + 5,
             com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_MID, false);
-        int registryW = this.font.width(registry);
-        g.drawString(this.font, registry, x + cardW - registryW - 12, y + 5,
+        int registryW = DiaryTypography.width(this.font, registry);
+        DiaryTypography.draw(g, this.font, registry, x + cardW - registryW - 12, y + 5,
             com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_MID, false);
         g.fill(x + 10, y + 17, x + cardW - 10, y + 18,
             com.eternalcraft.gripeverde.client.render.DiaryChrome.INK_DIVIDER);
 
         int textX = x + (cardW - cachedGreetingLineWidth) / 2;
-        g.drawString(this.font, cachedGreetingLine, textX, y + 24,
+        DiaryTypography.draw(g, this.font, cachedGreetingLine, textX, y + 24,
             com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_DARK, false);
     }
 
@@ -595,9 +594,8 @@ public class DiaryTitleScreen extends Screen {
             String line = Component.translatable(phase == 0
                 ? "gripeverde.title.vigil.present"
                 : "gripeverde.title.vigil.fog").getString();
-            cachedVigilLine = com.eternalcraft.gripeverde.client.render.DiaryChrome
-                .fitText(this.font, line, this.width - 32);
-            cachedVigilTextWidth = this.font.width(cachedVigilLine);
+            cachedVigilLine = DiaryTypography.fitString(this.font, line, this.width - 32);
+            cachedVigilTextWidth = DiaryTypography.width(this.font, cachedVigilLine);
             cachedVigilPhase = phase;
             cachedVigilWidth = this.width;
             cachedVigilEnglish = english;
@@ -605,7 +603,7 @@ public class DiaryTitleScreen extends Screen {
         }
         if (cachedVigilLine.isEmpty()) return;
         int pulse = reducedMotion() ? 60 : (int)(Math.sin(System.currentTimeMillis() / 700.0) * 22 + 60);
-        g.drawString(this.font, cachedVigilLine, this.width / 2 - cachedVigilTextWidth / 2, this.height / 3 + 24,
+        DiaryTypography.draw(g, this.font, cachedVigilLine, this.width / 2 - cachedVigilTextWidth / 2, this.height / 3 + 24,
             (Math.max(20, pulse) << 24) | 0xA8B890, false);
     }
 
@@ -620,11 +618,11 @@ public class DiaryTitleScreen extends Screen {
         if (this.width < 420 || System.currentTimeMillis() > cinematicHintUntilMs) return;
         boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
         String hint = english ? "F10 to return" : "F10 para volver";
-        int x = this.width - this.font.width(hint) - 10;
+        int x = this.width - DiaryTypography.width(this.font, hint) - 10;
         int y = this.height - 16;
         int col = com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
             com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_LIGHT, 100);
-        g.drawString(this.font, hint, x, y, col, false);
+        DiaryTypography.draw(g, this.font, hint, x, y, col, false);
     }
 
     private void drawGlassPatina(GuiGraphics g) {
@@ -783,17 +781,16 @@ public class DiaryTitleScreen extends Screen {
         int oldIdx = (idx + SIGNATURE_POOL_ES.length - 1) % SIGNATURE_POOL_ES.length;
         String oldSig = signatureFor(oldIdx);
 
-        int sw = this.font.width(signature);
-        int oldSw = this.font.width(oldSig);
+        int sw = DiaryTypography.width(this.font, signature);
+        int oldSw = DiaryTypography.width(this.font, oldSig);
         int y = this.height - 12;
 
         // En ventanas compactas, conserva solo la firma vigente para que no
         // se cruce con el control de música del borde inferior.
         if (isCompactLayout()) {
-            String compactSignature = com.eternalcraft.gripeverde.client.render.DiaryChrome
-                .fitText(this.font, signature, this.width - 62);
+            String compactSignature = DiaryTypography.fitString(this.font, signature, this.width - 62);
             if (!compactSignature.isEmpty()) {
-                g.drawString(this.font, compactSignature, 48, y, DiaryTheme.SEPIA_LIGHT, false);
+                DiaryTypography.draw(g, this.font, compactSignature, 48, y, DiaryTheme.SEPIA_LIGHT, false);
             }
             return;
         }
@@ -807,7 +804,7 @@ public class DiaryTitleScreen extends Screen {
         int newX = Math.max(48, this.width - sw - oldSw - 16);
         int newY = y;
         // v0.21.25: firma limpia sin sombra.
-        g.drawString(this.font, signature,
+        DiaryTypography.draw(g, this.font, signature,
             newX, newY,
             DiaryTheme.SEPIA_LIGHT, false);
 
@@ -815,7 +812,7 @@ public class DiaryTitleScreen extends Screen {
         int oldX = this.width - oldSw - 6;
         int oldColor = com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
             com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_LIGHT, 100);
-        g.drawString(this.font, oldSig, oldX, y, oldColor, false);
+        DiaryTypography.draw(g, this.font, oldSig, oldX, y, oldColor, false);
 
         // Tachadura sobre nombre viejo
         int strikeY = y + 4;
@@ -1311,9 +1308,9 @@ public class DiaryTitleScreen extends Screen {
                 || boxW != cachedEasterBoxWidth
                 || this.font != cachedEasterFont) {
             String visibleMessage = easterEggMessage.substring(0, elapsedChars);
-            cachedEasterLines = this.font.split(Component.literal(visibleMessage), boxW - 34);
-            cachedEasterCursorTextWidth = this.font.width(
-                this.font.plainSubstrByWidth(visibleMessage, boxW - 44));
+            cachedEasterLines = DiaryTypography.split(this.font, Component.literal(visibleMessage), boxW - 34);
+            cachedEasterCursorTextWidth = DiaryTypography.width(this.font, 
+                DiaryTypography.fitString(this.font, visibleMessage, boxW - 44, false));
             cachedEasterEggMessage = easterEggMessage;
             cachedEasterElapsedChars = elapsedChars;
             cachedEasterBoxWidth = boxW;
@@ -1355,16 +1352,16 @@ public class DiaryTitleScreen extends Screen {
         g.fill(boxX + boxW - 20, boxY + 7, boxX + boxW - 8, boxY + 8, green);
 
         String stamp = isEnglishSelected() ? "CASE " + easterEggCaseCode : "CASO " + easterEggCaseCode;
-        g.drawString(this.font, stamp, boxX + 13, boxY + 8, red, false);
+        DiaryTypography.draw(g, this.font, stamp, boxX + 13, boxY + 8, red, false);
         String seal = isEnglishSelected() ? "UNDER SEAL" : "BAJO SELLO";
-        int sealW = this.font.width(seal);
+        int sealW = DiaryTypography.width(this.font, seal);
         // v0.21.25: texto limpio sin sombra.
-        g.drawString(this.font, seal, boxX + boxW - sealW - 13, boxY + 8, DiaryTheme.withAlpha(0xFF241608, alpha), false);
+        DiaryTypography.draw(g, this.font, seal, boxX + boxW - sealW - 13, boxY + 8, DiaryTheme.withAlpha(0xFF241608, alpha), false);
         g.fill(boxX + 12, boxY + 19, boxX + boxW - 12, boxY + 20, (Math.min(115, alpha) << 24) | 0x422810);
 
         int textY = boxY + 25;
         for (int i = 0; i < lineCount; i++) {
-            g.drawString(this.font, lines.get(i), boxX + 15, textY + i * this.font.lineHeight, ink, false);
+            DiaryTypography.draw(g, this.font, lines.get(i), boxX + 15, textY + i * this.font.lineHeight, ink, false);
         }
 
         int pulse = 80 + (int)(Math.sin(now / 120.0) * 45.0);
@@ -1402,13 +1399,13 @@ public class DiaryTitleScreen extends Screen {
         int col = (alpha << 24) | 0xE8DCB4;
         int maxWidth = Math.max(40, this.width - 32);
         java.util.List<net.minecraft.util.FormattedCharSequence> lines =
-            this.font.split(Component.literal(ssm), maxWidth);
+            DiaryTypography.split(this.font, Component.literal(ssm), maxWidth);
         int totalHeight = lines.size() * this.font.lineHeight;
         int top = Math.max(8, Math.min(this.height / 3, this.height - totalHeight - 8));
         for (int i = 0; i < lines.size(); i++) {
             net.minecraft.util.FormattedCharSequence line = lines.get(i);
-            int x = Math.max(8, (this.width - this.font.width(line)) / 2);
-            g.drawString(this.font, line, x, top + i * this.font.lineHeight, col, false);
+            int x = Math.max(8, (this.width - DiaryTypography.width(this.font, line)) / 2);
+            DiaryTypography.draw(g, this.font, line, x, top + i * this.font.lineHeight, col, false);
         }
     }
 }
