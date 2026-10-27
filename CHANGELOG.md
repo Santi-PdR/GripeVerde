@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.142.0 - The note waits at the right page
+
+The rescue recollection now appears whichever way the reader reaches that section: by turning to its mark, scrolling through the pages, or using the keyboard. It remains a one-time note.
+
 ## Version 0.141.0 - The way back through the mud
 
 Reading the rescue protocol leaves a new note from the chronicler. It is a one-time recollection of a frightened group turning back for one of their own, written in the chosen language and shown on a later page.
