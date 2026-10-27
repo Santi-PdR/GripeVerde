@@ -8,6 +8,8 @@ import com.eternalcraft.gripeverde.client.integration.CopyLCompatibility;
 import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.render.DiaryTypography;
+import com.eternalcraft.gripeverde.client.render.DiaryChrome;
+import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
 import com.eternalcraft.gripeverde.client.render.LogoRenderer;
 import com.eternalcraft.gripeverde.client.render.PocketWatchRenderer;
