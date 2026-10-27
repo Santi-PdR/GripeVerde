@@ -31,9 +31,25 @@ import java.lang.reflect.Field;
 public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
 
     // Server oficial del mod - siempre presente en la lista.
-    private static final String PINNED_NAME = "Ghoul Outbreak Official";
+    private static final String PINNED_NAME_EN = "Ghoul Outbreak Official";
+    private static final String PINNED_NAME_ES = "Ghoul Outbreak Oficial";
+    private static final String PINNED_NAME_KEY = "gripeverde.multiplayer.pinned_server";
     private static final String PINNED_IP   = "Outbreak.exaroton.me:24652";
     private static final String PREVIOUS_PINNED_IP = "servercitoGhouls.exaroton.me:24652";
+
+    private static String localizedPinnedName() {
+        return Component.translatable(PINNED_NAME_KEY).getString();
+    }
+
+    private static boolean isPinnedName(String name) {
+        return PINNED_NAME_EN.equals(name) || PINNED_NAME_ES.equals(name)
+            || localizedPinnedName().equals(name);
+    }
+
+    private static boolean isPinnedServer(ServerData server) {
+        return server != null && (isPinnedName(server.name)
+            || PINNED_IP.equals(server.ip) || PREVIOUS_PINNED_IP.equals(server.ip));
+    }
 
     private static final Logger LOGGER = LogUtils.getLogger();
     private int frameLogCounter = 0;
@@ -122,17 +138,26 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             boolean changed = false;
             for (int i = 0; i < this.vanillaServers.size(); i++) {
                 ServerData server = this.vanillaServers.get(i);
-                if (server == null || !PINNED_NAME.equals(server.name)) continue;
+                if (server == null || (!isPinnedName(server.name)
+                        && !PINNED_IP.equals(server.ip)
+                        && !PREVIOUS_PINNED_IP.equals(server.ip))) continue;
                 pinnedIndex = i;
                 if (PREVIOUS_PINNED_IP.equals(server.ip)) {
                     server.ip = PINNED_IP;
                     changed = true;
                 }
+                if (isPinnedName(server.name)) {
+                    String displayName = localizedPinnedName();
+                    if (!displayName.equals(server.name)) {
+                        server.name = displayName;
+                        changed = true;
+                    }
+                }
                 break;
             }
 
             if (pinnedIndex < 0) {
-                this.vanillaServers.add(new ServerData(PINNED_NAME, PINNED_IP, false), false);
+                this.vanillaServers.add(new ServerData(localizedPinnedName(), PINNED_IP, false), false);
                 pinnedIndex = this.vanillaServers.size() - 1;
                 changed = true;
             }
@@ -159,7 +184,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         try {
             for (var entry : this.vanillaList.children()) {
                 ServerData server = extractServerDataFromEntry(entry);
-                if (server != null && PINNED_NAME.equals(server.name)) {
+                if (isPinnedServer(server)) {
                     this.vanillaList.setSelected(entry);
                     return;
                 }
