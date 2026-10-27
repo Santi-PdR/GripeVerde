@@ -1,5 +1,9 @@
 # Eternal Craft: Gripe Verde
 
+## Version 0.137.0 - The doctor's mark finds its place
+
+The elixir's fraud mark now sits in a dedicated space below the bottle copy and disappears when a short poster has no room for it. English readers see “FRAUD”; Spanish readers see “FRAUDE.”
+
 ## Version 0.136.0 - A light crossing the language barrier
 
 The shooting-star note now follows the chosen English or Spanish language while it is visible and wraps inside the screen on small windows.
