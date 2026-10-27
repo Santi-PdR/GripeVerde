@@ -32,6 +32,8 @@ public final class DiaryFieldGuideScreen extends Screen {
         { "gripeverde.field_guide.section.rescue_protocol" }
     };
     private static final String[] SECTION_NUMBERS = { "1", "2", "3", "4", "5", "6", "7" };
+    private static final int INFECTION_SECTION = 0;
+    private static final int RESCUE_SECTION = SECTION_KEYS.length - 1;
 
     private static final String[][] ENTRY_KEYS = {
         { "gripeverde.field_guide.body.infection", "gripeverde.field_guide.body.mutation_origins", "gripeverde.field_guide.body.ceda_coverup" },
@@ -315,7 +317,9 @@ public final class DiaryFieldGuideScreen extends Screen {
         double progress = (double)(scrollY - sectionStart) / sectionSpan;
         int progressTenThousandths = (int)Math.round(Math.max(0.0, Math.min(1.0, progress)) * 10000.0);
         ChroniclerMemory.setFieldGuideBookmark(section, progressTenThousandths, scrollY);
-        if (section == SECTION_KEYS.length - 1) {
+        if (section == INFECTION_SECTION) {
+            Marginalia.queueOnce(Marginalia.N_WITNESS);
+        } else if (section == RESCUE_SECTION) {
             Marginalia.queueOnce(Marginalia.N_RESCUE);
         }
     }
