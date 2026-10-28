@@ -15,7 +15,7 @@ CHG_DIR = os.path.join(ROOT, "src/main/resources/assets/gripeverde/changelog")
 SOUNDS_JSON = os.path.join(ROOT, "src/main/resources/assets/gripeverde/sounds.json")
 SOUNDS_BASE = os.path.join(ROOT, "src/main/resources/assets/gripeverde/sounds")
 JAVA_DIR = os.path.join(ROOT, "src/main/java")
-REQUIRED = ['en_us', 'es_es']
+REQUIRED = ["en_us","en_au","en_ca","en_gb","en_nz","es_es","es_ar","es_cl","es_ec","es_mx","es_uy","es_ve"]
 
 fails = []
 

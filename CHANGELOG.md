@@ -1,6 +1,6 @@
 ## v0.167.0 - Más aire en la nota de rescate
 
-La nota de rescate de la portada deja un renglón completo entre cada instrucción, incluso en el cartel compacto. La última frase ya no se pega al divisor y el cartel no añade movimiento ni trabajo durante la partida.
+La nota de rescate de la portada deja un renglón completo entre cada instrucción, incluso en el cartel compacto. La última frase ya no se pega al divisor y el cartel no añade movimiento ni trabajo durante la partida. Se añaden los códigos regionales de inglés y español de Minecraft 1.20.1, incluido el español uruguayo.
 
 ## v0.166.0 - Una prueba para el sonido de la calle
 

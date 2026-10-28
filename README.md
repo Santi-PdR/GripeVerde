@@ -1,6 +1,6 @@
 **v0.167.0 - Más aire en la nota de rescate**
 
-La nota CEDA de rescate separa las instrucciones según la altura real de la fuente para que la última línea no se monte sobre el divisor, también en el cartel compacto.
+La nota CEDA de rescate separa las instrucciones según la altura real de la fuente para que la última línea no se monte sobre el divisor, también en el cartel compacto. El menú incluye inglés y español para las variantes regionales de Minecraft 1.20.1, incluido el español de Uruguay.
 
 **v0.162.0 - Foco visible en los iconos**
 

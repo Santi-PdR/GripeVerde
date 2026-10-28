@@ -6,7 +6,7 @@
 - El botón opcional de CEDA Dispatch solo aparece cuando el mod ID `copyl` está cargado; no agrega dependencia obligatoria.
 - El código fuente de este trabajo se modifica remotamente por GitHub; no usar ni actualizar un checkout local del repositorio para esta tarea. El ZIP/JAR de CI se maneja temporalmente solo para instalar el artefacto y luego se limpia.
 - Destino de instalación indicado por el owner: `D:\\Minecraft\\SKLauncher\\sklauncher-data-v4\\instances\\test-1\\mods`. La carpeta queda con JAR solamente y una sola versión de GripeVerde y CEDA Dispatch; conservar los demás mods.
-- Idiomas principales: inglés y español. El modmenu debe mantener ambas traducciones.
+- Idiomas principales: inglés y español, con sus variantes regionales disponibles en Minecraft 1.20.1 (incluido `es_uy`). Cada variante debe tener sus archivos de idioma y crónica para no caer al inglés.
 - Restricción funcional vigente: no añadir animaciones ni efectos de render al mundo activo ni al inventario. Las animaciones de menú respetan las opciones de movimiento reducido y destellos reducidos.
 - Ambos modmenus comparten papel y tinta sepia; el ID `copyl`, el formato JSON y las rutas de configuración se conservan. La CI no sustituye una revisión visual en Minecraft cuando el owner pueda hacerla.
 - Las decisiones y rutas bajo este addendum son históricas; si contradicen las instrucciones actuales del owner, prevalecen las instrucciones actuales.

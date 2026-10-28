@@ -295,7 +295,7 @@ public final class Discoveries {
         boolean result;
         try {
             String lang = Minecraft.getInstance().getLanguageManager().getSelected();
-            result = lang == null || !"es_es".equals(lang);
+            result = lang == null || !lang.toLowerCase(java.util.Locale.ROOT).startsWith("es");
         } catch (Throwable t) {
             result = true;
         }
