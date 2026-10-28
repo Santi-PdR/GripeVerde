@@ -1,3 +1,7 @@
+## v0.167.0 - Más aire en la nota de rescate
+
+La nota de rescate de la portada deja un renglón completo entre cada instrucción, incluso en el cartel compacto. La última frase ya no se pega al divisor y el cartel no añade movimiento ni trabajo durante la partida.
+
 ## v0.166.0 - Una prueba para el sonido de la calle
 
 El control de ambiente ahora reproduce un crujido breve por el mismo canal de Minecraft que usan la lluvia y el viento. Sirve para comprobar el volumen del mod y los niveles Ambiente y Maestro; el botón queda inactivo durante una partida.

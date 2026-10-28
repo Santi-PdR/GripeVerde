@@ -1,3 +1,7 @@
+**v0.167.0 - Más aire en la nota de rescate**
+
+La nota CEDA de rescate separa las instrucciones según la altura real de la fuente para que la última línea no se monte sobre el divisor, también en el cartel compacto.
+
 **v0.162.0 - Foco visible en los iconos**
 
 Los botones pequeños de la portada ahora muestran un contorno ámbar cuando reciben el foco del teclado. El indicador es fijo y no añade animaciones.

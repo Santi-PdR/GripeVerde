@@ -1,3 +1,7 @@
+## Version 0.167.0 - More room in the rescue notice
+
+The title-screen rescue notice now leaves a full line between instructions, including in the compact poster. The last sentence stays clear of the divider without adding motion or work during gameplay.
+
 ## Version 0.166.0 - A separate check for the street sounds
 
 The ambience controls now play a brief creak through the same Minecraft channel as rain and wind. This checks the mod volume alongside Minecraft's Ambient and Master levels; the button is disabled during a world.

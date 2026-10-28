@@ -237,9 +237,12 @@ public class PosterRenderer {
                 cx, cursorY, DiaryTheme.GHOUL_INK_ACTIVE);
         cursorY += compact ? 14 : 17;
 
+        // Keep a full glyph row plus a pixel of breathing room; the former
+        // compact 8 px step let the last instruction touch the divider.
+        int lineGap = Math.max(10, font.lineHeight + 1);
         for (String key : RESCUE_COPY_KEYS) {
             drawFittedCenteredLine(g, font, I18n.get(key), cx, cursorY, DiaryTheme.INK_FADED, textWidth);
-            cursorY += compact ? 8 : 10;
+            cursorY += lineGap;
         }
 
         drawThinDivider(g, cx, cursorY, w - 28);
