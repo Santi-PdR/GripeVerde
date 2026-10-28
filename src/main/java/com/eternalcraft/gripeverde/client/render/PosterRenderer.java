@@ -70,7 +70,6 @@ public class PosterRenderer {
         if (h >= 220 && w >= 150) {
             // A static period-style portrait gives the quarantine order a clear Ghoul identity.
             drawQuarantineGhoulPortrait(g, x + w - 42, y + h - 68);
-            OrnamentRenderer.drawWaxSeal(g, x + 22, y + h - 22, 12);
         } else {
             OrnamentRenderer.drawWaxSeal(g, x + w - 22, y + h - 22, 12);
         }
