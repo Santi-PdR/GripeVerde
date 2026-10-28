@@ -1,3 +1,7 @@
+## Version 0.170.0 - La partida sigue a la vista
+
+Controles, Chat, Juego en línea e Idioma conservan el mundo visible detrás de sus hojas. Se quitó una capa negra redundante que lo ocultaba al abrir esas pantallas.
+
 ## Version 0.169.0 - Variantes regionales para elegir
 
 Las variantes regionales adicionales del español ahora están declaradas ante Minecraft, para que aparezcan en la lista de idiomas y carguen sus archivos. La compilación verifica sus metadatos junto con las 25 traducciones y crónicas.
