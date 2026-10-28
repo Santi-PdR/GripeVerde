@@ -1,3 +1,7 @@
+## Version 0.171.0 - Un lugar para CEDA Dispatch
+
+En la portada compacta, el control de música y los iconos de acceso ya no se pisan. CEDA Dispatch solo aparece cuando hay ancho para dejar espacio entre ellos.
+
 ## Version 0.170.0 - La partida sigue a la vista
 
 Controles, Chat, Juego en línea e Idioma conservan el mundo visible detrás de sus hojas. Se quitó una capa negra redundante que lo ocultaba al abrir esas pantallas.
