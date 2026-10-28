@@ -1,3 +1,7 @@
+## Version 0.172.0 - A face for the quarantine notice
+
+The title screen's quarantine order now carries a still, blue-eyed Ghoul portrait in its lower margin. Minecraft offers every regional locale translated by the mod, including Spanish (Uruguay), and the build checks all 25 entries.
+
 ## Version 0.171.0 - Room for the dispatch button
 
 On compact title screens, the music control and shortcut icons now keep a clear gap. The CEDA Dispatch icon stays hidden until the row has enough width.
