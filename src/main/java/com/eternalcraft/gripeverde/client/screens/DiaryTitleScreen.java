@@ -285,7 +285,7 @@ public class DiaryTitleScreen extends Screen {
         this.addRenderableWidget(fieldGuideBtn);
 
         // Optional CEDA dispatch slip: quiet, title-screen-only, and absent without CopyL.
-        if (this.width >= 104 && CopyLCompatibility.isAvailable()) {
+        if (this.width >= 124 && CopyLCompatibility.isAvailable()) {
             SlimButton dispatchBtn = new SlimButton(
                 this.width - 76, 8, 20, 20,
                 Component.translatable("gripeverde.title.button.copyl"),
