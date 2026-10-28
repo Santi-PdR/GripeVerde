@@ -1,4 +1,4 @@
-## v0.167.0 - Más aire en la nota de rescate
+## Version 0.167.0 - Más aire en la nota de rescate
 
 La nota de rescate de la portada deja un renglón completo entre cada instrucción, incluso en el cartel compacto. La última frase ya no se pega al divisor y el cartel no añade movimiento ni trabajo durante la partida.
 
