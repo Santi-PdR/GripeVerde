@@ -34,6 +34,14 @@ if lang_files - set(REQUIRED): fails.append("unexpected langs: %s" % sorted(lang
 if set(REQUIRED) - chg_files: fails.append("missing changelogs: %s" % sorted(set(REQUIRED)-chg_files))
 if chg_files - set(REQUIRED): fails.append("unexpected changelogs: %s" % sorted(chg_files-set(REQUIRED)))
 
+pack_metadata = json.loads(read(os.path.join(ROOT, "src/main/resources/pack.mcmeta")))
+declared_languages = set((pack_metadata.get("language") or {}).keys())
+if set(REQUIRED) - declared_languages:
+    fails.append("pack.mcmeta missing selectable locales: %s" % sorted(set(REQUIRED)-declared_languages))
+if declared_languages - set(REQUIRED):
+    fails.append("pack.mcmeta has unexpected locales: %s" % sorted(declared_languages-set(REQUIRED)))
+
+
 baseline = json.loads(read(os.path.join(LANG_DIR, "en_us.json")))
 bkeys = set(baseline)
 EXPECTED = 176
