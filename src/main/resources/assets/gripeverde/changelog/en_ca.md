@@ -1,3 +1,7 @@
+## Version 0.171.0 - Room for the dispatch button
+
+On compact title screens, the music control and shortcut icons now keep a clear gap. The CEDA Dispatch icon stays hidden until the row has enough width.
+
 ## Version 0.170.0 - The field stays open
 
 Controls, Chat, Online and Language now preserve the live world behind their paper panels. A redundant black layer no longer hides the world when those screens open.
