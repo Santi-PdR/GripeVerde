@@ -1,3 +1,7 @@
+## v0.172.0 - Rostro para el aviso de cuarentena
+
+El bando de la portada incorpora un retrato estático de un Ghoul de ojos azules, colocado en el margen inferior para no cubrir el texto. Se declaran en Minecraft las 25 variantes regionales del mod, incluido `es_uy`, y las verificaciones exigen metadatos seleccionables para todas.
+
 ## v0.169.0 - Variantes regionales para elegir
 
 Se declaran ante Minecraft las variantes regionales adicionales del español para que aparezcan en la lista de idiomas. La validación también exige sus metadatos y mantiene comprobados los 25 archivos de traducción y sus crónicas.
