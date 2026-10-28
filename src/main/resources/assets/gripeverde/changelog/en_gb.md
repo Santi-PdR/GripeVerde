@@ -1,3 +1,7 @@
+## Version 0.169.0 - Regional languages you can choose
+
+The additional Spanish regions are now declared to Minecraft, so their language files can be selected from the language list as well as loaded when already selected. The build checks their language metadata along with all 25 translations and chronicles.
+
 ## Version 0.168.0 - English and Spanish, in every region
 
 Every regional English and Spanish language file and field chronicle declared by the project is now bundled. The build checks all 25 locales for valid text, matching keys, and a current chronicle.
