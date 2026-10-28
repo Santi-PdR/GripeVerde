@@ -67,9 +67,51 @@ public class PosterRenderer {
             cursorY += 10;
         }
 
-        OrnamentRenderer.drawWaxSeal(g, x + w - 22, y + h - 22, 12);
+        if (h >= 220 && w >= 150) {
+            // A static period-style portrait gives the quarantine order a clear Ghoul identity.
+            drawQuarantineGhoulPortrait(g, x + w - 42, y + h - 68);
+            OrnamentRenderer.drawWaxSeal(g, x + 22, y + h - 22, 12);
+        } else {
+            OrnamentRenderer.drawWaxSeal(g, x + w - 22, y + h - 22, 12);
+        }
         drawBloodSplatter(g, x, y, w, h, 0x51A11L);
         drawInkStamp(g, x, y, w, h, 0x57A9AL);
+    }
+
+    /** Still ink portrait of a living, blue-eyed Ghoul on the quarantine broadside. */
+    private static void drawQuarantineGhoulPortrait(GuiGraphics g, int x, int y) {
+        int ink = DiaryTheme.GHOUL_INK;
+        int skin = 0xFF718781;
+        int shade = 0xFF4C625F;
+        int coat = 0xFF293B3A;
+
+        // Cropped shoulders and collar, like a rough medical engraving.
+        g.fill(x + 3, y + 25, x + 22, y + 38, ink);
+        g.fill(x + 5, y + 27, x + 20, y + 36, coat);
+        g.fill(x + 9, y + 24, x + 16, y + 29, skin);
+        g.fill(x + 7, y + 29, x + 11, y + 32, 0xFFD4C6A0);
+        g.fill(x + 15, y + 29, x + 19, y + 32, 0xFFD4C6A0);
+
+        // Uneven hairline and a pale, still-living face.
+        g.fill(x + 6, y + 3, x + 17, y + 6, ink);
+        g.fill(x + 4, y + 6, x + 19, y + 10, ink);
+        g.fill(x + 5, y + 9, x + 18, y + 23, skin);
+        g.fill(x + 3, y + 12, x + 6, y + 18, ink);
+        g.fill(x + 17, y + 12, x + 20, y + 17, shade);
+        g.fill(x + 6, y + 8, x + 10, y + 12, shade);
+        g.fill(x + 14, y + 8, x + 18, y + 11, shade);
+        g.fill(x + 7, y + 13, x + 10, y + 15, DiaryTheme.GHOUL_EYE_GLOW);
+        g.fill(x + 14, y + 13, x + 17, y + 15, DiaryTheme.GHOUL_EYE_GLOW);
+        g.fill(x + 8, y + 13, x + 9, y + 16, ink);
+        g.fill(x + 15, y + 13, x + 16, y + 16, ink);
+        g.fill(x + 11, y + 16, x + 13, y + 19, shade);
+        g.fill(x + 9, y + 21, x + 15, y + 23, ink);
+
+        // Cross-hatching keeps it printed, not a bright game icon.
+        g.fill(x + 1, y + 7, x + 3, y + 8, DiaryTheme.SEPIA_MID);
+        g.fill(x + 20, y + 6, x + 22, y + 7, DiaryTheme.SEPIA_MID);
+        g.fill(x + 1, y + 23, x + 4, y + 24, DiaryTheme.SEPIA_MID);
+        g.fill(x + 21, y + 23, x + 24, y + 24, DiaryTheme.SEPIA_MID);
     }
 
     public static void drawPreventionNotice(GuiGraphics g, int x, int y, int w, int h) {
