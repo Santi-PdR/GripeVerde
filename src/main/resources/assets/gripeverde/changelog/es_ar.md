@@ -1,3 +1,7 @@
+## Version 0.172.0 - Un rostro para el aviso de cuarentena
+
+El bando de la portada ahora lleva, en el margen inferior, un retrato fijo de un Ghoul de ojos azules. Minecraft ofrece todas las variantes regionales que traduce el mod, incluido el español de Uruguay, y la compilación comprueba los 25 idiomas.
+
 ## Version 0.171.0 - Un lugar para CEDA Dispatch
 
 En la portada compacta, el control de música y los iconos de acceso ya no se pisan. CEDA Dispatch solo aparece cuando hay ancho para dejar espacio entre ellos.
