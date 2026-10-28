@@ -1,3 +1,7 @@
+## Version 0.168.0 - English and Spanish, in every region
+
+Every regional English and Spanish language file and field chronicle declared by the project is now bundled. The build checks all 25 locales for valid text, matching keys, and a current chronicle.
+
 ## Version 0.167.0 - More room in the rescue notice
 
 The title-screen rescue notice now leaves a full line between instructions, including in the compact poster. The last sentence stays clear of the divider without adding motion or work during gameplay.
