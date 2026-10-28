@@ -1,3 +1,7 @@
+## v0.169.0 - Variantes regionales para elegir
+
+Se declaran ante Minecraft las variantes regionales adicionales del español para que aparezcan en la lista de idiomas. La validación también exige sus metadatos y mantiene comprobados los 25 archivos de traducción y sus crónicas.
+
 ## v0.168.0 - Inglés y español en todas sus regiones
 
 Se completan los 25 códigos regionales declarados: cada uno tiene su archivo de traducción y su crónica. La compilación ahora verifica el conjunto completo, la paridad de claves y la versión vigente de cada crónica.
