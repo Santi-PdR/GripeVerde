@@ -1,3 +1,7 @@
+## Version 0.170.0 - The field stays open
+
+Controls, Chat, Online and Language now preserve the live world behind their paper panels. A redundant black layer no longer hides the world when those screens open.
+
 ## Version 0.169.0 - Regional languages you can choose
 
 The additional Spanish regions are now declared to Minecraft, so their language files can be selected from the language list as well as loaded when already selected. The build checks their language metadata along with all 25 translations and chronicles.
