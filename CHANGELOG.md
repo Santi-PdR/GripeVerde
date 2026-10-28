@@ -1,3 +1,7 @@
+## v0.168.0 - Inglés y español en todas sus regiones
+
+Se completan los 25 códigos regionales declarados: cada uno tiene su archivo de traducción y su crónica. La compilación ahora verifica el conjunto completo, la paridad de claves y la versión vigente de cada crónica.
+
 ## v0.167.0 - Más aire en la nota de rescate
 
 La nota de rescate de la portada deja un renglón completo entre cada instrucción, incluso en el cartel compacto. La última frase ya no se pega al divisor y el cartel no añade movimiento ni trabajo durante la partida. Se añaden los códigos regionales de inglés y español de Minecraft 1.20.1, incluido el español uruguayo.
