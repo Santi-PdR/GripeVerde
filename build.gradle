@@ -5,7 +5,7 @@ plugins {
     id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
 }
 
-version = '0.168.0'
+version = '0.169.0'
 group = 'com.eternalcraft.gripeverde'
 base { archivesName = 'gripeverde' }
 
@@ -111,6 +111,13 @@ tasks.register('verifyGripeVerdeLocalization') {
         def baselineKeys = baseline.keySet() as Set
         def expectedKeyCount = 176
         def problems = []
+        def packMetadata = json.parse(new File('src/main/resources/pack.mcmeta'))
+        def declaredLanguages = (packMetadata.language ?: [:]).keySet() as Set
+        def requiredCustomLanguages = ['es_419', 'es_bo', 'es_co', 'es_cr', 'es_do', 'es_gt', 'es_hn', 'es_ni', 'es_pa', 'es_pe', 'es_pr', 'es_py', 'es_sv'] as Set
+        def missingLanguageMetadata = requiredCustomLanguages - declaredLanguages
+        if (!missingLanguageMetadata.isEmpty()) {
+            problems << 'pack.mcmeta: missing selectable language metadata ' + missingLanguageMetadata.sort().join(', ')
+        }
         if (baselineKeys.size() != expectedKeyCount) {
             problems << "en_us: expected ${expectedKeyCount} keys, found ${baselineKeys.size()}"
         }
