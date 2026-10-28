@@ -4,14 +4,49 @@
         "pack_format": 15
     },
     "language": {
+        "en_au": {
+            "name": "English",
+            "region": "Australia",
+            "bidirectional": false
+        },
+        "en_ca": {
+            "name": "English",
+            "region": "Canada",
+            "bidirectional": false
+        },
+        "en_gb": {
+            "name": "English",
+            "region": "United Kingdom",
+            "bidirectional": false
+        },
+        "en_nz": {
+            "name": "English",
+            "region": "New Zealand",
+            "bidirectional": false
+        },
+        "en_us": {
+            "name": "English",
+            "region": "United States",
+            "bidirectional": false
+        },
         "es_419": {
             "name": "Español",
             "region": "Latinoamérica",
             "bidirectional": false
         },
+        "es_ar": {
+            "name": "Español",
+            "region": "Argentina",
+            "bidirectional": false
+        },
         "es_bo": {
             "name": "Español",
             "region": "Bolivia",
+            "bidirectional": false
+        },
+        "es_cl": {
+            "name": "Español",
+            "region": "Chile",
             "bidirectional": false
         },
         "es_co": {
@@ -29,6 +64,16 @@
             "region": "República Dominicana",
             "bidirectional": false
         },
+        "es_ec": {
+            "name": "Español",
+            "region": "Ecuador",
+            "bidirectional": false
+        },
+        "es_es": {
+            "name": "Español",
+            "region": "España",
+            "bidirectional": false
+        },
         "es_gt": {
             "name": "Español",
             "region": "Guatemala",
@@ -37,6 +82,11 @@
         "es_hn": {
             "name": "Español",
             "region": "Honduras",
+            "bidirectional": false
+        },
+        "es_mx": {
+            "name": "Español",
+            "region": "México",
             "bidirectional": false
         },
         "es_ni": {
@@ -67,6 +117,16 @@
         "es_sv": {
             "name": "Español",
             "region": "El Salvador",
+            "bidirectional": false
+        },
+        "es_uy": {
+            "name": "Español",
+            "region": "Uruguay",
+            "bidirectional": false
+        },
+        "es_ve": {
+            "name": "Español",
+            "region": "Venezuela",
             "bidirectional": false
         }
     }
