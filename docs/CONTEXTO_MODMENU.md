@@ -22,16 +22,17 @@ Actualizado: 2026-11-13
 
 ## Estado confirmado al retomar (2026-11-13)
 
-- El CI de la rama terminó en `success`: run `40763347401` (workflow *Build GripeVerde*),
-  artefacto `GripeVerde-jar`, artifact ID `12849186641`, 8.742.493 bytes,
-  SHA-256 `9520432c3027a3695b4e1246c2f8a3298cdc8ce11ab0cbff517d6fc914508c60`.
-- `0.173.0` compila en verde: cada commit de la rama genera su propio run y su propio
-  artefacto, así que los IDs rotan con la documentación. Al escribir esta nota el último
-  build verde fue run `43447464585` (HEAD `1d1c1f0`), artefacto `GripeVerde-jar` ID
-  `14048237458`, 8.748.351 bytes, digest del ZIP
-  `sha256:746c1ef58752ce6e429d9423a5c09f847872608a63747f79ef33dd7e5bce8158`.
-  Cualquier run verde de la versión instala el mismo `0.173.0`; el digest publicado
-  corresponde al `.zip` del artefacto, no al JAR, cuyo hash solo se obtiene al abrirlo.
+- `0.175.0` **está subida y compilada en verde**: run `43451967235` (workflow *Build
+  GripeVerde*), HEAD `c2fefd3`, artefacto `GripeVerde-jar` ID `14053430102`, 8.750.646
+  bytes, digest del ZIP
+  `sha256:35d23468bff608346ec3c79f2c1c0ddbd275824d0b6de084b2370f6d3150d608`.
+  Cada commit de la rama genera su propio run y su propio artefacto, así que los IDs rotan
+  con la documentación; cualquier run verde de la versión instala el mismo `0.175.0`. El
+  digest publicado corresponde al `.zip` del artefacto, no al JAR, cuyo hash solo se obtiene
+  al abrirlo.
+- Referencias anteriores: `0.174.0` run `43449824926` (`eedfaa9`), `0.173.0` run
+  `43447945730` (`9d81d3d`), `0.172.0` run `40763347401` con SHA-256 del JAR
+  `9520432c3027a3695b4e1246c2f8a3298cdc8ce11ab0cbff517d6fc914508c60`.
 - `0.172.0` **no** se instaló en la instancia del usuario; la carpeta de mods de destino
   sigue siendo `D:\Minecraft\SKLauncher\sklauncher-data-v4\instances\test-1\mods`.
 - **Instalación bloqueada en esta sesión por dos motivos ajenos al mod:** el entorno es
@@ -41,12 +42,12 @@ Actualizado: 2026-11-13
   `tools/install-artifact.ps1`, que valida `mods.toml`, admite `-ExpectedSha256` (el hash del
   JAR ya extraído), reemplaza solo `gripeverde-*.jar` y avisa o aparta cualquier archivo que
   no sea `.jar`. Con el ZIP sin abrir, el hash a contrastar es el del ZIP:
-  `0488c1f12a4692a3425a68749bf549ed2f4c2e708eeb7407e38942fbbc54b5d4`.
+  `35d23468bff608346ec3c79f2c1c0ddbd275824d0b6de084b2370f6d3150d608`.
 - La sesión actual corre en un entorno Linux remoto: `D:\...` no existe como ruta
   montada, así que la instalación queda pendiente de que la carpeta sea accesible.
 - El validador local `python3 tools/verify_mirrors.py` reproduce los sellos de Gradle
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
-  literales y balance) y pasa en verde con `0.173.0`.
+  literales y balance) y pasa en verde con `0.175.0`.
 
 ## Cambios de 0.175.0 — la portada deja de pisar sus propios botones
 
