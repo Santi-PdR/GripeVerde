@@ -25,13 +25,13 @@ Actualizado: 2026-11-13
 - El CI de la rama terminó en `success`: run `40763347401` (workflow *Build GripeVerde*),
   artefacto `GripeVerde-jar`, artifact ID `12849186641`, 8.742.493 bytes,
   SHA-256 `9520432c3027a3695b4e1246c2f8a3298cdc8ce11ab0cbff517d6fc914508c60`.
-- `0.173.0` compila en verde en el HEAD actual (`f8a37c3`): run `43446918149`, artefacto
-  `GripeVerde-jar`, artifact ID `14048003522`, 8.748.398 bytes, digest del ZIP publicado
-  por GitHub `sha256:0488c1f12a4692a3425a68749bf549ed2f4c2e708eeb7407e38942fbbc54b5d4`
-  (es el hash del `.zip` del artefacto, no del JAR: el del JAR solo puede calcularse
-  abriendo el ZIP). Los runs `43446288509`, `43445711477`, `43445167974` y `43440351036`
-  fueron builds previos de la misma versión; cualquiera instala 0.173.0, pero el vigente es
-  `43446918149`. Abajo se explica por qué no se pudo instalar desde aquí.
+- `0.173.0` compila en verde: cada commit de la rama genera su propio run y su propio
+  artefacto, así que los IDs rotan con la documentación. Al escribir esta nota el último
+  build verde fue run `43447464585` (HEAD `1d1c1f0`), artefacto `GripeVerde-jar` ID
+  `14048237458`, 8.748.351 bytes, digest del ZIP
+  `sha256:746c1ef58752ce6e429d9423a5c09f847872608a63747f79ef33dd7e5bce8158`.
+  Cualquier run verde de la versión instala el mismo `0.173.0`; el digest publicado
+  corresponde al `.zip` del artefacto, no al JAR, cuyo hash solo se obtiene al abrirlo.
 - `0.172.0` **no** se instaló en la instancia del usuario; la carpeta de mods de destino
   sigue siendo `D:\Minecraft\SKLauncher\sklauncher-data-v4\instances\test-1\mods`.
 - **Instalación bloqueada en esta sesión por dos motivos ajenos al mod:** el entorno es
