@@ -22,10 +22,11 @@ Actualizado: 2026-11-13
 
 ## Estado confirmado al retomar (2026-11-13)
 
-- `0.175.0` **está subida y compilada en verde**: run `43451967235` (workflow *Build
-  GripeVerde*), HEAD `c2fefd3`, artefacto `GripeVerde-jar` ID `14053430102`, 8.750.646
+- `0.175.0` **está subida y compilada en verde**: run `43452681481` (workflow *Build
+  GripeVerde*), HEAD `c444545`, artefacto `GripeVerde-jar` ID `14051917429`, 8.750.658
   bytes, digest del ZIP
-  `sha256:35d23468bff608346ec3c79f2c1c0ddbd275824d0b6de084b2370f6d3150d608`.
+  `sha256:5d6ddc32d264efc6b9159f419d305ec6472034ba282d16fefe2a2493820e076e`.
+  El run del cambio de código fue `43451967235` (`c2fefd3`).
   Cada commit de la rama genera su propio run y su propio artefacto, así que los IDs rotan
   con la documentación; cualquier run verde de la versión instala el mismo `0.175.0`. El
   digest publicado corresponde al `.zip` del artefacto, no al JAR, cuyo hash solo se obtiene
@@ -42,7 +43,7 @@ Actualizado: 2026-11-13
   `tools/install-artifact.ps1`, que valida `mods.toml`, admite `-ExpectedSha256` (el hash del
   JAR ya extraído), reemplaza solo `gripeverde-*.jar` y avisa o aparta cualquier archivo que
   no sea `.jar`. Con el ZIP sin abrir, el hash a contrastar es el del ZIP:
-  `35d23468bff608346ec3c79f2c1c0ddbd275824d0b6de084b2370f6d3150d608`.
+  `5d6ddc32d264efc6b9159f419d305ec6472034ba282d16fefe2a2493820e076e`.
 - La sesión actual corre en un entorno Linux remoto: `D:\...` no existe como ruta
   montada, así que la instalación queda pendiente de que la carpeta sea accesible.
 - El validador local `python3 tools/verify_mirrors.py` reproduce los sellos de Gradle
