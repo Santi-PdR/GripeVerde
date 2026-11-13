@@ -103,17 +103,25 @@ Hallazgos concretos sobre los dos síntomas reportados:
 5. **`build-output` de Lclient está desactualizado**: publica `version.txt` = 3.3.0 con
    SHA-256 propio, así que no debe usarse como fuente del JAR 3.9.4.
 
-Corrección recomendada en CopyL (fuera de este repositorio, sin tocar todavía):
-eliminar la doble pasada de texto en `MessageEditorScreen` (o desactivar el render propio
-de cada `EditBox`), borrar el `.ttf` y `dispatch.json` ya sin uso, alinear la medición con
-`font.width(...)` del componente real, y añadir al CI de Lclient una comprobación de que
-ningún panel vuelva a aplicar `withFont` sobre recursos opcionales.
+Corrección preparada para CopyL 3.9.5, en `tools/copyl/0001-copyl-3.9.5-one-text-pass.patch`
+(SHA-256 `856be3c7…bef298`, 1.106 líneas, aplicado con `git am` limpio sobre `27854f6`):
+quita la segunda pasada de texto del editor y la subclase `DispatchEditBox`, deja 6 px
+entre los campos y la regla del margen para que las etiquetas no queden bajo las cajas,
+borra el `.ttf`, `dispatch.json` y la licencia sin uso, y hace que el CI de Lclient falle si
+vuelve a empaquetarse algo bajo `assets/copyl/font/`. Sube la versión a 3.9.5.
+
+**Bloqueo del entorno:** la integración de GitHub de esta sesión puede escribir en
+`Santi-PdR/GripeVerde`, pero responde `403 Resource not accessible by integration` al
+crear refs o empujar en `Santi-PdR/Lclient`. Por eso la corrección queda como parche
+reproducible; aplicarlo requiere una sesión con permiso sobre ese repositorio (o hacerlo a
+mano con los pasos de `tools/copyl/README.md`).
 
 ## Pendientes
 
-1. **Decidir con el usuario** si se corrige CopyL en su repositorio (`Santi-PdR/Lclient`,
-   PR #18) con los cambios del punto anterior. Requiere su visto bueno porque toca otro
-   proyecto y otro artefacto.
+1. **Publicar CopyL 3.9.5:** aplicar `tools/copyl/0001-copyl-3.9.5-one-text-pass.patch` en
+   `Santi-PdR/Lclient` (rama `codex/ceda-dispatch-visuals` o PR #18), dejar que el CI
+   genere `CopyL-3.9.5` y sustituir `copyl-3.9.4.jar` en la carpeta de mods. El usuario ya
+   autorizó la corrección; falta un entorno con permiso de escritura sobre Lclient.
 2. **Instalar `0.173.0`** en la carpeta de mods cuando el equipo del usuario sea accesible:
    descargar el artefacto del CI, validar contenido y SHA-256, retirar solo los JAR
    antiguos de GripeVerde (y la versión previa de CopyL si se publica una nueva) y dejar la

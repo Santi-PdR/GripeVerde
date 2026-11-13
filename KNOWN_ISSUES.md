@@ -18,8 +18,10 @@ Estado comprobado en la rama `codex/v0.104-ghoul-warning-poster` y en el PR #90:
   CopyL 3.9.x, no en la integración: una fuente TTF propia (`copyl:dispatch`) introducida en
   3.9.0 y retirada de los textos en 3.9.1 (que aún sigue empaquetada), y un doble dibujo del
   texto de cada `EditBox` tras `graphics.flush()`. La integración de GripeVerde solo abre la
-  pantalla por reflexión. Corrección pendiente en `Santi-PdR/Lclient` y de acuerdo con el
-  owner. Detalle en `docs/CONTEXTO_MODMENU.md`.
+  pantalla por reflexión. La corrección 3.9.5 está preparada y verificada como parche en
+  `tools/copyl/0001-copyl-3.9.5-one-text-pass.patch`; falta publicarla en
+  `Santi-PdR/Lclient`, donde esta sesión no tiene permiso de escritura. Detalle en
+  `docs/CONTEXTO_MODMENU.md`.
 - La carpeta de mods debe contener únicamente archivos JAR. Al actualizar, se reemplazan las
   versiones anteriores de GripeVerde y CEDA Dispatch; se conservan los demás mods.
 - El ID `copyl`, los formatos y rutas de configuración de CEDA Dispatch se mantienen; el
