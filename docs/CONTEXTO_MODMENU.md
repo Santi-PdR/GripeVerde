@@ -18,12 +18,12 @@ Actualizado: 2026-11-13
 
 ## Último estado confirmado
 
-- Commit de código: `34639471ae4fbd10c14d9d09d78bbecb39e09ee9`
+- Último commit de código: `34639471ae4fbd10c14d9d09d78bbecb39e09ee9`\n- Commit de documentación y actualización del PR: `b9ef45ac70163173093f116fd56e18b4d32c0d7a`
 - GitHub Actions run `40763347401`, workflow Build GripeVerde, terminó en `success`.
 - Build, validación de recursos/localización y subida del JAR: correctos.
 - Artefacto: `GripeVerde-jar`, artifact ID `12849186641`, tamaño 8,742,493 bytes, SHA-256 declarado por GitHub: `9520432c3027a3695b4e1246c2f8a3298cdc8ce11ab0cbff517d6fc914508c60`.
 - El JAR de `0.172.0` **no ha sido instalado todavía** en la instancia del usuario. Debe descargarse desde el artefacto de Actions, validar su contenido y checksum, y reemplazar el JAR previo de GripeVerde en la carpeta indicada.
-- La descripción del PR todavía reflejaba principalmente `0.171.0` la última vez que se leyó; actualizarla si se retoma.
+- La descripción del PR #90 se actualizó para reflejar `0.172.0`, el resultado de Actions y los pendientes.
 
 ## Cambios de 0.172.0
 
