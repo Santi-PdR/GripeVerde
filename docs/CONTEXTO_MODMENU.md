@@ -25,13 +25,13 @@ Actualizado: 2026-11-13
 - El CI de la rama terminó en `success`: run `40763347401` (workflow *Build GripeVerde*),
   artefacto `GripeVerde-jar`, artifact ID `12849186641`, 8.742.493 bytes,
   SHA-256 `9520432c3027a3695b4e1246c2f8a3298cdc8ce11ab0cbff517d6fc914508c60`.
-- `0.173.0` compila en verde en el HEAD actual (`6cf7896`): run `43446288509`, artefacto
-  `GripeVerde-jar`, artifact ID `14047114407`, 8.748.377 bytes, digest del ZIP publicado
-  por GitHub `sha256:4e0b7aa1522ab23db9ebafc47c63e5a138213e7755194f55e703aea67ed02f1c`
+- `0.173.0` compila en verde en el HEAD actual (`f8a37c3`): run `43446918149`, artefacto
+  `GripeVerde-jar`, artifact ID `14048003522`, 8.748.398 bytes, digest del ZIP publicado
+  por GitHub `sha256:0488c1f12a4692a3425a68749bf549ed2f4c2e708eeb7407e38942fbbc54b5d4`
   (es el hash del `.zip` del artefacto, no del JAR: el del JAR solo puede calcularse
-  abriendo el ZIP). Los runs `43445711477`, `43445167974` y `43440351036` fueron builds
-  previos de la misma versión; cualquiera de ellos instala 0.173.0, pero el vigente es
-  `43446288509`. Abajo se explica por qué no se pudo instalar desde aquí.
+  abriendo el ZIP). Los runs `43446288509`, `43445711477`, `43445167974` y `43440351036`
+  fueron builds previos de la misma versión; cualquiera instala 0.173.0, pero el vigente es
+  `43446918149`. Abajo se explica por qué no se pudo instalar desde aquí.
 - `0.172.0` **no** se instaló en la instancia del usuario; la carpeta de mods de destino
   sigue siendo `D:\Minecraft\SKLauncher\sklauncher-data-v4\instances\test-1\mods`.
 - **Instalación bloqueada en esta sesión por dos motivos ajenos al mod:** el entorno es
@@ -41,7 +41,7 @@ Actualizado: 2026-11-13
   `tools/install-artifact.ps1`, que valida `mods.toml`, admite `-ExpectedSha256` (el hash del
   JAR ya extraído), reemplaza solo `gripeverde-*.jar` y avisa o aparta cualquier archivo que
   no sea `.jar`. Con el ZIP sin abrir, el hash a contrastar es el del ZIP:
-  `4e0b7aa1522ab23db9ebafc47c63e5a138213e7755194f55e703aea67ed02f1c`.
+  `0488c1f12a4692a3425a68749bf549ed2f4c2e708eeb7407e38942fbbc54b5d4`.
 - La sesión actual corre en un entorno Linux remoto: `D:\...` no existe como ruta
   montada, así que la instalación queda pendiente de que la carpeta sea accesible.
 - El validador local `python3 tools/verify_mirrors.py` reproduce los sellos de Gradle
