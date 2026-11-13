@@ -26,17 +26,21 @@ Actualizado: 2026-11-13
   artefacto `GripeVerde-jar`, artifact ID `12849186641`, 8.742.493 bytes,
   SHA-256 `9520432c3027a3695b4e1246c2f8a3298cdc8ce11ab0cbff517d6fc914508c60`.
 - `0.173.0` compila en verde en el HEAD actual (`afc3ca4`): run `43445167974`, artefacto
-  `GripeVerde-jar`, artifact ID `14046694088`, 8.748.366 bytes. El run `43440351036`
-  (artifact `14044838504`) fue el primero de la versión. Abajo se explica por qué no se
-  pudo instalar desde aquí.
+  `GripeVerde-jar`, artifact ID `14046694088`, 8.748.366 bytes, digest del ZIP publicado
+  por GitHub `sha256:c256392a24ede9ab129dcc56064776925d167bcbb7ecad62aea2718882e9c37f`
+  (es el hash del `.zip` del artefacto, no del JAR: el del JAR solo puede calcularse
+  abriendo el ZIP). El run `43440351036` (artifact `14044838504`) fue el primero de la
+  versión. Abajo se explica por qué no se pudo instalar desde aquí.
 - `0.172.0` **no** se instaló en la instancia del usuario; la carpeta de mods de destino
   sigue siendo `D:\Minecraft\SKLauncher\sklauncher-data-v4\instances\test-1\mods`.
 - **Instalación bloqueada en esta sesión por dos motivos ajenos al mod:** el entorno es
   Linux (la ruta `D:\...` no existe como montaje) y el host de descarga de artefactos
   (`productionresultssa*.blob.core.windows.net`) no es alcanzable desde el sandbox, así que
   tampoco se pudo verificar aquí el SHA-256 del JAR. Queda listo
-  `tools/install-artifact.ps1`, que valida `mods.toml`, admite `-ExpectedSha256`, reemplaza
-  solo `gripeverde-*.jar` y avisa o aparta cualquier archivo que no sea `.jar`.
+  `tools/install-artifact.ps1`, que valida `mods.toml`, admite `-ExpectedSha256` (el hash del
+  JAR ya extraído), reemplaza solo `gripeverde-*.jar` y avisa o aparta cualquier archivo que
+  no sea `.jar`. Con el ZIP sin abrir, el hash a contrastar es el del ZIP:
+  `c256392a24ede9ab129dcc56064776925d167bcbb7ecad62aea2718882e9c37f`.
 - La sesión actual corre en un entorno Linux remoto: `D:\...` no existe como ruta
   montada, así que la instalación queda pendiente de que la carpeta sea accesible.
 - El validador local `python3 tools/verify_mirrors.py` reproduce los sellos de Gradle
