@@ -25,8 +25,16 @@ Actualizado: 2026-11-13
 - El CI de la rama terminó en `success`: run `40763347401` (workflow *Build GripeVerde*),
   artefacto `GripeVerde-jar`, artifact ID `12849186641`, 8.742.493 bytes,
   SHA-256 `9520432c3027a3695b4e1246c2f8a3298cdc8ce11ab0cbff517d6fc914508c60`.
+- `0.173.0` compila en verde: run `43440351036`, artefacto `GripeVerde-jar`, artifact ID
+  `14044838504`, tamaño 8.748.364 bytes. Abajo se explica por qué no se pudo instalar.
 - `0.172.0` **no** se instaló en la instancia del usuario; la carpeta de mods de destino
   sigue siendo `D:\Minecraft\SKLauncher\sklauncher-data-v4\instances\test-1\mods`.
+- **Instalación bloqueada en esta sesión por dos motivos ajenos al mod:** el entorno es
+  Linux (la ruta `D:\...` no existe como montaje) y el host de descarga de artefactos
+  (`productionresultssa*.blob.core.windows.net`) no es alcanzable desde el sandbox, así que
+  tampoco se pudo verificar aquí el SHA-256 del JAR. Queda listo
+  `tools/install-artifact.ps1`, que valida `mods.toml`, admite `-ExpectedSha256`, reemplaza
+  solo `gripeverde-*.jar` y avisa o aparta cualquier archivo que no sea `.jar`.
 - La sesión actual corre en un entorno Linux remoto: `D:\...` no existe como ruta
   montada, así que la instalación queda pendiente de que la carpeta sea accesible.
 - El validador local `python3 tools/verify_mirrors.py` reproduce los sellos de Gradle
@@ -109,7 +117,8 @@ ningún panel vuelva a aplicar `withFont` sobre recursos opcionales.
 2. **Instalar `0.173.0`** en la carpeta de mods cuando el equipo del usuario sea accesible:
    descargar el artefacto del CI, validar contenido y SHA-256, retirar solo los JAR
    antiguos de GripeVerde (y la versión previa de CopyL si se publica una nueva) y dejar la
-   carpeta con archivos `.jar` únicamente.
+   carpeta con archivos `.jar` únicamente. En una máquina Windows con la instancia montada:
+   `powershell -ExecutionPolicy Bypass -File tools\install-artifact.ps1 -ArtifactZip <zip del artefacto>`.
 3. **Revisión visual del usuario** del nuevo aviso Ghoul y del bando: el retrato se validó
    con una simulación de píxeles 1:1 del código, no dentro de Minecraft.
 4. Actualizar la descripción del PR #90 con `0.173.0`, el resultado del CI y estos
