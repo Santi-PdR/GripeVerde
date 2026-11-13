@@ -1,3 +1,7 @@
+**v0.175.0 - El emblema cede ante los botones**
+
+En ventanas bajas el emblema de la portada se encoge entero para no caer sobre los botones, y la ficha del cronista se aparta o espera. La cadena del reloj arranca debajo de los iconos de arriba. Sin cambios durante la partida.
+
 **v0.174.0 - Los carteles vuelven a respirar**
 
 Los cuatro bandos que rotan en la portada se centran como un bloque y ajustan sus espacios en carteles bajos. El precio del elixir ya no se pega al borde inferior. Sin animaciones nuevas fuera de la portada.

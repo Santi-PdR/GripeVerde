@@ -85,6 +85,16 @@ public class DiaryTitleScreen extends Screen {
     // Umbral: por debajo de esta altura efectiva, ocultamos TODO lo decorativo
     private static final int MINIMAL_MODE_THRESHOLD = 290;
 
+    // Ancla superior del emblema en la portada.
+    private static final int LOGO_TOP = 30;
+
+    // Borde inferior de la fila de iconos superiores (20 px de alto en y=8).
+    private static final int ICON_ROW_BOTTOM = 28;
+
+    // Por debajo de esta escala el emblema no se lee: en ventanas extremas se
+    // omite antes que dibujarlo encima de la mesa de botones.
+    private static final float LOGO_MIN_SCALE = 0.5f;
+
     private int columnCacheWidth = -1;
     private int columnCacheHeight = -1;
     private LayoutRegion cachedLeftColumn;
@@ -310,6 +320,31 @@ public class DiaryTitleScreen extends Screen {
             ? "Change the chronicler's piece"
             : "Cambiar la pieza del cronista")));
         this.addRenderableWidget(this.skipMusicButton);
+    }
+
+    /**
+     * Borde superior de la mesa de botones principales, con la misma formula
+     * que usa {@link #init()}. Es la linea que ningun adorno de la portada
+     * puede cruzar.
+     */
+    private int buttonTableTop() {
+        int totalBtnH = BTN_H * 2 + Spacing.GAP_MEDIUM;
+        int inset = isCompactLayout()
+            ? Math.max(8, Math.min(20, this.width / 16))
+            : Spacing.SCREEN_MARGIN;
+        return this.height - inset - totalBtnH - Spacing.GAP_LARGE;
+    }
+
+    /** Escala del emblema: se encoge solo cuando la banda libre se queda corta. */
+    private float logoScale() {
+        float free = buttonTableTop() - Spacing.GAP_MEDIUM - LOGO_TOP;
+        if (free >= LogoRenderer.BLOCK_H) return 1f;
+        return Math.max(LOGO_MIN_SCALE, free / (float) LogoRenderer.BLOCK_H);
+    }
+
+    /** Borde inferior real del emblema ya escalado. */
+    private int logoBottom() {
+        return LOGO_TOP + Math.round(LogoRenderer.BLOCK_H * logoScale());
     }
 
     private void ensureColumnLayout() {
@@ -566,7 +601,15 @@ public class DiaryTitleScreen extends Screen {
         int cardH = 26 + cachedGreetingLines.size() * this.font.lineHeight;
         int x = (this.width - cardW) / 2;
         // La marca del año termina cerca de y=161; la ficha queda debajo.
-        int y = 168;
+        // Nunca sobre la mesa de botones: con y fijo en 168 la ficha caia 46 px
+        // encima de "Multijugador" en 620x290 y 700x300.
+        int y = Math.max(logoBottom() + Spacing.GAP_SMALL, 168);
+        int limit = buttonTableTop() - Spacing.GAP_MEDIUM;
+        if (y + cardH > limit) {
+            if (limit - logoBottom() - Spacing.GAP_SMALL < cardH) return;
+            y = limit - cardH;
+        }
+        if (y < logoBottom() + Spacing.GAP_SMALL) return;
         g.fill(x + 2, y + 2, x + cardW + 2, y + cardH + 2,
             DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 72));
         PaperTexture.drawClean(
@@ -700,7 +743,12 @@ public class DiaryTitleScreen extends Screen {
 
         int cx = rightCol.x + rightCol.w - WATCH_RADIUS - Spacing.GAP_MEDIUM;
         int cy = rightCol.y + WATCH_RADIUS + Spacing.GAP_LARGE;
-        PocketWatchRenderer.draw(g, cx, cy, 0, WATCH_RADIUS, GripeVerdeMod.VERSION);
+        // v0.175.0: la cadena colgaba desde y=0 y cruzaba la fila de iconos de
+        // arriba a la derecha (crónica, guía, CEDA), que ocupa y 8..28 en el
+        // mismo carril. Arranca por debajo de esa fila; si no queda sitio el
+        // propio renderer omite la cadena en vez de dibujar un muñón.
+        int chainTop = Math.max(rightCol.y, ICON_ROW_BOTTOM + Spacing.GAP_SMALL);
+        PocketWatchRenderer.draw(g, cx, cy, chainTop, WATCH_RADIUS, GripeVerdeMod.VERSION);
     }
 
     private void drawPosterRight(GuiGraphics g) {
@@ -727,7 +775,15 @@ public class DiaryTitleScreen extends Screen {
             shakeX = (int)(Math.sin(now / 40.0) * 3 * intensity);
             shakeY = (int)(Math.cos(now / 30.0) * 2 * intensity);
         }
-        LogoRenderer.draw(g, this.width / 2 + shakeX, 30 + shakeY);
+        // v0.175.0: en ventanas bajas el emblema se encoge (nunca se omite si
+        // aun se lee) para no caer sobre la mesa de botones. A 427x240 —el
+        // tamano por defecto a escala GUI 2— el bloque completo invadia 45 px.
+        float logoScale = logoScale();
+        if (buttonTableTop() - Spacing.GAP_MEDIUM - LOGO_TOP
+                < LogoRenderer.BLOCK_H * LOGO_MIN_SCALE) {
+            return;
+        }
+        LogoRenderer.draw(g, this.width / 2 + shakeX, LOGO_TOP + shakeY, logoScale);
 
         // Renderizar particulas verdes cayendo solo cuando el movimiento esta habilitado.
         if (!reducedMotion() && now < eggParticlesUntilMs) {
@@ -943,7 +999,13 @@ public class DiaryTitleScreen extends Screen {
 
                 // El ojo del emblema no esta pintado: mira.
                 int logoCx = w / 2;
-                if (mouseX >= logoCx + 1 && mouseX <= logoCx + 9 && mouseY >= 52 && mouseY <= 60) {
+                // El ojo vive en el bloque sin escalar a y 52..60; con el
+                // emblema encogido hay que llevar el clic a esa misma escala.
+                float eyeScale = logoScale();
+                int eyeCy = LOGO_TOP + Math.round(56 * eyeScale);
+                int eyeHalf = Math.max(3, Math.round(4 * eyeScale));
+                if (mouseX >= logoCx + 1 && mouseX <= logoCx + 9
+                        && mouseY >= eyeCy - eyeHalf && mouseY <= eyeCy + eyeHalf) {
                     com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
                         com.eternalcraft.gripeverde.client.lore.Discoveries.SKULL_WATCHES);
                 }
@@ -1022,10 +1084,14 @@ public class DiaryTitleScreen extends Screen {
             } catch (Throwable ignored) {}
         }
 
-        // Zona del logo: rectangulo central superior
+        // Zona del logo: rectangulo central superior. Alto real del bloque ya
+        // escalado: con una caja fija hasta y=130, en ventanas de 240 px el
+        // borde de "Multijugador" (y=116) disparaba tambien el sello del emblema.
         int logoCx = this.width / 2;
-        boolean overLogo = mouseX >= logoCx - 100 && mouseX <= logoCx + 100
-                        && mouseY >= 30 && mouseY <= 130;
+        int logoBottom = logoBottom();
+        int logoHalf = LogoRenderer.BLOCK_W / 2 + 2;
+        boolean overLogo = mouseX >= logoCx - logoHalf && mouseX <= logoCx + logoHalf
+                        && mouseY >= LOGO_TOP && mouseY <= logoBottom;
         if (overLogo && button == 0) {
             handleLogoClick();
             // No consumir el evento, dejar pasar al super

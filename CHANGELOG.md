@@ -1,3 +1,7 @@
+## v0.175.0 - El emblema cede ante los botones
+
+En ventanas bajas el emblema de la portada deja de crecer hacia la mesa de botones: se encoge entero y baja su ancla si hace falta. A 427x240, el tamaño que da una ventana de 854x480 con escala GUI 2, el bloque completo tapaba 45 px del botón de multijugador. La ficha del cronista sigue la misma regla y se coloca debajo del emblema, o espera si no hay banda libre. La cadena del reloj de bolsillo arranca por debajo de los iconos de acceso y el clic del emblema ya no dispara su sello sobre un botón.
+
 ## v0.174.0 - Los carteles vuelven a respirar
 
 Los cuatro bandos rotativos de la portada se componen como un bloque centrado: nota de rescate, se busca, decreto real y etiqueta del elixir. En carteles altos el texto deja de colgar del borde superior; en los más bajos los pasos se ajustan para que la última línea no toque el filete. El precio del elixir mantiene un renglón de aire sobre el borde inferior.

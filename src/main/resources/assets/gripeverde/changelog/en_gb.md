@@ -1,3 +1,7 @@
+## Version 0.175.0 - The emblem yields before the buttons
+
+On short windows the title emblem now shrinks as a whole instead of growing down into the button table: at 427x240, the size a 854x480 window gets at GUI scale 2, the full block covered forty-five pixels of the buttons. The chronicler's note follows the same rule and steps down or waits when there is no room. The chain of the pocket watch starts below the shortcut icons, and clicking the emblem no longer triggers its seal over the top edge of a button. Nothing new is drawn while you play.
+
 ## Version 0.174.0 - The notices breathe again
 
 The four rotating broadsides (rescue note, wanted poster, royal decree and the elixir label) now compose as one centred block. On tall posters the copy no longer clings to the upper edge, and on the shortest ones the steps tighten so the last line stops crowding the lower rule. On the elixir label the price now always keeps a line of air above the border. Nothing new is drawn while you play.

@@ -7,7 +7,7 @@ Actualizado: 2026-11-13
 - Repositorio: [Santi-PdR/GripeVerde](https://github.com/Santi-PdR/GripeVerde)
 - Rama de trabajo: `codex/v0.104-ghoul-warning-poster`
 - Pull request: [#90](https://github.com/Santi-PdR/GripeVerde/pull/90)
-- Versión de esta rama: `0.173.0` (anterior entregada: `0.172.0`)
+- Versión de esta rama: `0.175.0` (anterior entregada: `0.174.0`)
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
 - El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
   proyecto local del usuario.
@@ -47,6 +47,33 @@ Actualizado: 2026-11-13
 - El validador local `python3 tools/verify_mirrors.py` reproduce los sellos de Gradle
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.173.0`.
+
+## Cambios de 0.175.0 — la portada deja de pisar sus propios botones
+
+Auditoría de layout de `DiaryTitleScreen` con las fórmulas exactas del código. Cuatro
+defectos reproducibles, corregidos solo tras medirlos:
+
+- **Emblema sobre la mesa de botones.** El bloque del emblema (`LogoRenderer`) ocupa
+  `y = 30..161`. La mesa de botones arranca en
+  `height - inset - 88 - 16` (`inset` = 20, o `clamp(width/16, 8, 20)` en modo compacto).
+  A **427x240** —el tamaño por defecto de una ventana 854x480 con escala GUI 2— los botones
+  empiezan en 116, así que el emblema los invadía 45 px; igual en 480x270 (invadía 15 px).
+  Ahora `logoScale()` mide la banda libre y encoge el bloque completo (`BLOCK_H`, `BLOCK_W`)
+  con una transformación de pose alrededor de su ancla; por debajo de `LOGO_MIN_SCALE = 0.5`
+  se omite antes que dibujarlo encima de los botones.
+- **Ficha del cronista.** Estaba clavada en `y = 168`. En 620x290 y 700x300 la mesa de
+  botones empieza en 166 y 176, así que la ficha caía encima de «Multijugador». Ahora se
+  coloca bajo `logoBottom()` y se sube al límite de la mesa, o no se dibuja si no cabe.
+- **Cadena del reloj de bolsillo.** Se dibujaba desde `topY = 0` y cruzaba la fila de
+  iconos superiores (crónica, guía, CEDA), que ocupa `y 8..28` en el mismo carril de la
+  derecha. Arranca en `ICON_ROW_BOTTOM + GAP_SMALL`.
+- **Zona de clic del emblema.** Seguía siendo `y 30..130` con caja fija, de modo que en
+  ventanas de 240 px el borde de «Multijugador» (y=116) disparaba el sello del emblema. Usa
+  el alto real escalado, y el clic del ojo de la calavera se recalcula a la misma escala.
+
+Verificado con la geometría real en 320x240, 427x240, 480x270, 560x315, 620x290, 700x300,
+700x400, 854x480, 1280x720 y 1920x1080: emblema y ficha siempre terminan al menos 8 px por
+encima de la mesa de botones, o se ocultan.
 
 ## Cambios de 0.173.0
 
@@ -129,7 +156,7 @@ mano con los pasos de `tools/copyl/README.md`).
    `Santi-PdR/Lclient` (rama `codex/ceda-dispatch-visuals` o PR #18), dejar que el CI
    genere `CopyL-3.9.5` y sustituir `copyl-3.9.4.jar` en la carpeta de mods. El usuario ya
    autorizó la corrección; falta un entorno con permiso de escritura sobre Lclient.
-2. **Instalar `0.173.0`** en la carpeta de mods cuando el equipo del usuario sea accesible:
+2. **Instalar `0.175.0`** en la carpeta de mods cuando el equipo del usuario sea accesible:
    descargar el artefacto del CI, validar contenido y SHA-256, retirar solo los JAR
    antiguos de GripeVerde (y la versión previa de CopyL si se publica una nueva) y dejar la
    carpeta con archivos `.jar` únicamente. En una máquina Windows con la instancia montada:
