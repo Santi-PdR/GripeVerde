@@ -44,7 +44,7 @@ if declared_languages - set(REQUIRED):
 
 baseline = json.loads(read(os.path.join(LANG_DIR, "en_us.json")))
 bkeys = set(baseline)
-EXPECTED = 176
+EXPECTED = 177
 loc_problems = []
 if len(bkeys) != EXPECTED:
     loc_problems.append("en_us: expected %d keys, found %d" % (EXPECTED, len(bkeys)))

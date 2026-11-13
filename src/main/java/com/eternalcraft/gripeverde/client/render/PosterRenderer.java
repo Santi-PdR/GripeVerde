@@ -27,6 +27,14 @@ public class PosterRenderer {
         "gripeverde.poster.rescue.body.3", "gripeverde.poster.rescue.body.4",
         "gripeverde.poster.rescue.body.5"
     };
+    private static final String[] QUARANTINE_WARN_KEYS = {
+        "gripeverde.poster.quarantine.warn.1",
+        "gripeverde.poster.quarantine.warn.2",
+        "gripeverde.poster.quarantine.warn.3"
+    };
+    // Escala del grabado en el aviso CEDA: el pie del cartel ronda los 36 px y
+    // el sello debe entrar entero sin tocar el texto.
+    private static final float GHOUL_STAMP_SCALE = 0.5f;
     private static final int[] BORDER_CUT_INSETS = {6, 4, 2, 1, 0};
 
     public static void drawQuarantineNotice(GuiGraphics g, int x, int y, int w, int h) {
@@ -35,82 +43,91 @@ public class PosterRenderer {
         drawSimpleBorder(g, x, y, w, h, DiaryTheme.INK, DiaryTheme.SEPIA_MID);
         drawFoldedPaperCorner(g, x, y, w, h);
 
+        // v0.173.0: el bando se compone en dos bloques. Arriba el texto legal,
+        // abajo un pie con el grabado del infectado a la izquierda y la pena a
+        // la derecha. Antes el retrato se posaba sobre la ultima linea.
+        boolean footerPlate = h >= 180 && w >= 150;
+        boolean compact = h < 170;
+        int headerStep = compact ? 10 : 11;
+        int titleStep = compact ? 14 : 16;
+        int lineStep = compact ? 8 : 9;
+        int warnStep = compact ? 9 : 10;
+        int dividerStep = compact ? 5 : 6;
+
         int cx = x + w / 2;
         int copyWidth = Math.max(0, w - 28);
-        int cursorY = y + 10;
+        int cursorY = y + (compact ? 5 : 8);
 
         drawFittedCenteredLine(g, font, getRotatingQuarantineHeader(0), cx, cursorY, DiaryTheme.INK, copyWidth);
-        cursorY += 12;
+        cursorY += headerStep;
         drawFittedCenteredLine(g, font, getRotatingQuarantineHeader(1), cx, cursorY, DiaryTheme.INK, copyWidth);
-        cursorY += 16;
+        cursorY += headerStep;
 
         drawThinDivider(g, cx, cursorY, w - 30);
-        cursorY += 8;
+        cursorY += dividerStep;
 
         g.pose().pushPose();
         g.pose().translate(cx, cursorY, 0);
-        g.pose().scale(1.2f, 1.2f, 1f);
-        String q = DiaryChrome.fitText(font, I18n.get("gripeverde.poster.quarantine.title"), Math.max(0, (int)(copyWidth / 1.2f)));
+        float titleScale = compact ? 1.1f : 1.2f;
+        g.pose().scale(titleScale, titleScale, 1f);
+        String q = DiaryChrome.fitText(font, I18n.get("gripeverde.poster.quarantine.title"),
+                Math.max(0, (int) (copyWidth / titleScale)));
         int qw = font.width(q);
         // v0.21.24: tinta oscura sin sombra (se retiro el rojo sombreado).
         g.drawString(font, q, -qw / 2, 0, DiaryTheme.INK, false);
         g.pose().popPose();
-        cursorY += 18;
+        cursorY += titleStep;
 
         drawThinDivider(g, cx, cursorY, w - 30);
-        cursorY += 10;
+        cursorY += dividerStep;
 
         for (String key : QUARANTINE_COPY_KEYS) {
             if (!key.isEmpty()) {
                 drawFittedCenteredLine(g, font, I18n.get(key), cx, cursorY, DiaryTheme.INK_FADED, copyWidth);
             }
-            cursorY += 10;
+            cursorY += lineStep;
         }
 
-        if (h >= 220 && w >= 150) {
-            // A static period-style portrait gives the quarantine order a clear Ghoul identity.
-            drawQuarantineGhoulPortrait(g, x + w - 42, y + h - 68);
+        if (footerPlate) {
+            int bandTop = cursorY + 3;
+            int bandHeight = Math.max(0, y + h - 5 - bandTop);
+            int plateWidth = Math.max(44, Math.min(58, w - 116));
+            int plateHeight = Math.min(56, bandHeight);
+            // El grabado necesita altura suficiente para leerse como un rostro;
+            // si no la hay, la pena se escribe centrada y sin retrato.
+            if (plateHeight >= 44) {
+                drawGhoulPlate(g, x + 10, bandTop, plateWidth, plateHeight);
+                int warnLeft = x + 16 + plateWidth;
+                int warnWidth = Math.max(0, x + w - 8 - warnLeft);
+                int warnY = bandTop + Math.max(0, (plateHeight - warnStep * 3) / 2);
+                for (int line = 0; line < 3 && warnWidth > 24; line++) {
+                    drawFittedCenteredLine(g, font,
+                            I18n.get("gripeverde.poster.quarantine.warn." + (line + 1)),
+                            warnLeft + warnWidth / 2, warnY, DiaryTheme.REDCOAT_DARK, warnWidth);
+                    warnY += warnStep;
+                }
+            } else {
+                drawStackedQuarantineWarning(g, font, cx, cursorY + 3, copyWidth, warnStep);
+            }
         } else {
-            OrnamentRenderer.drawWaxSeal(g, x + w - 22, y + h - 22, 12);
+            drawStackedQuarantineWarning(g, font, cx, cursorY + 3, copyWidth, warnStep);
+            // El sello de cera solo entra si el ultimo renglon deja aire debajo.
+            int warnBottom = cursorY + 3 + warnStep * 3;
+            if (warnBottom + 24 <= y + h - 4) {
+                OrnamentRenderer.drawWaxSeal(g, x + w - 22, y + h - 22, 12);
+            }
         }
         drawBloodSplatter(g, x, y, w, h, 0x51A11L);
-        drawInkStamp(g, x, y, w, h, 0x57A9AL);
     }
 
-    /** Still ink portrait of a living, blue-eyed Ghoul on the quarantine broadside. */
-    private static void drawQuarantineGhoulPortrait(GuiGraphics g, int x, int y) {
-        int ink = DiaryTheme.GHOUL_INK;
-        int skin = 0xFF718781;
-        int shade = 0xFF4C625F;
-        int coat = 0xFF293B3A;
-
-        // Cropped shoulders and collar, like a rough medical engraving.
-        g.fill(x + 3, y + 25, x + 22, y + 38, ink);
-        g.fill(x + 5, y + 27, x + 20, y + 36, coat);
-        g.fill(x + 9, y + 24, x + 16, y + 29, skin);
-        g.fill(x + 7, y + 29, x + 11, y + 32, 0xFFD4C6A0);
-        g.fill(x + 15, y + 29, x + 19, y + 32, 0xFFD4C6A0);
-
-        // Uneven hairline and a pale, still-living face.
-        g.fill(x + 6, y + 3, x + 17, y + 6, ink);
-        g.fill(x + 4, y + 6, x + 19, y + 10, ink);
-        g.fill(x + 5, y + 9, x + 18, y + 23, skin);
-        g.fill(x + 3, y + 12, x + 6, y + 18, ink);
-        g.fill(x + 17, y + 12, x + 20, y + 17, shade);
-        g.fill(x + 6, y + 8, x + 10, y + 12, shade);
-        g.fill(x + 14, y + 8, x + 18, y + 11, shade);
-        g.fill(x + 7, y + 13, x + 10, y + 15, DiaryTheme.GHOUL_EYE_GLOW);
-        g.fill(x + 14, y + 13, x + 17, y + 15, DiaryTheme.GHOUL_EYE_GLOW);
-        g.fill(x + 8, y + 13, x + 9, y + 16, ink);
-        g.fill(x + 15, y + 13, x + 16, y + 16, ink);
-        g.fill(x + 11, y + 16, x + 13, y + 19, shade);
-        g.fill(x + 9, y + 21, x + 15, y + 23, ink);
-
-        // Cross-hatching keeps it printed, not a bright game icon.
-        g.fill(x + 1, y + 7, x + 3, y + 8, DiaryTheme.SEPIA_MID);
-        g.fill(x + 20, y + 6, x + 22, y + 7, DiaryTheme.SEPIA_MID);
-        g.fill(x + 1, y + 23, x + 4, y + 24, DiaryTheme.SEPIA_MID);
-        g.fill(x + 21, y + 23, x + 24, y + 24, DiaryTheme.SEPIA_MID);
+    /** Pena del bando cuando no hay pie con grabado. */
+    private static void drawStackedQuarantineWarning(GuiGraphics g, Font font, int cx,
+                                                     int y, int copyWidth, int warnStep) {
+        int warnY = y;
+        for (String key : QUARANTINE_WARN_KEYS) {
+            drawFittedCenteredLine(g, font, I18n.get(key), cx, warnY, DiaryTheme.REDCOAT_DARK, copyWidth);
+            warnY += warnStep;
+        }
     }
 
     public static void drawPreventionNotice(GuiGraphics g, int x, int y, int w, int h) {
@@ -207,51 +224,285 @@ public class PosterRenderer {
         drawSimpleBorder(g, x, y, w, h, DiaryTheme.GHOUL_INK, DiaryTheme.GHOUL_EYE);
         drawFoldedPaperCorner(g, x, y, w, h);
 
+        // v0.173.0: la nota se lee como una ficha de campo. Cabecera CEDA en
+        // tinta azul, filete, el grabado del infectado y recien despues el
+        // parte. En carteles bajos el grabado se omite para no pisar el texto.
         int cx = x + w / 2;
         int textWidth = Math.max(0, w - 20);
-        int cursorY = y + 10;
+        boolean showPlate = h >= 160;
+        int captionStep = showPlate ? 18 : 0;
+        int plateWidth = Math.max(64, Math.min(w - 24, 108));
+        int plateSpace = Math.max(40, Math.min(120, h - 111 - captionStep));
+        int slack = showPlate ? Math.max(0, h - 111 - captionStep - plateSpace) : 0;
+
+        int cursorY = y + 9 + Math.min(26, slack / 2);
 
         DiaryChrome.drawCenteredString(g, font,
                 DiaryChrome.fitText(font, I18n.get("gripeverde.poster.ghoul.header"), textWidth),
                 cx, cursorY, DiaryTheme.GHOUL_INK);
-        cursorY += 12;
-        drawThinDivider(g, cx, cursorY, w - 28);
-        cursorY += 8;
+        cursorY += 11;
 
-        DiaryChrome.drawCenteredString(g, font,
-                DiaryChrome.fitText(font, I18n.get("gripeverde.poster.ghoul.title"), textWidth),
-                cx, cursorY, DiaryTheme.GHOUL_INK_ACTIVE);
-        cursorY += 17;
+        drawThinDivider(g, cx, cursorY, w - 30);
+        cursorY += 7;
 
-        DiaryChrome.drawCenteredString(g, font,
-                DiaryChrome.fitText(font, I18n.get("gripeverde.poster.ghoul.body.1"), textWidth),
-                cx, cursorY, DiaryTheme.INK_FADED);
-        cursorY += 12;
+        if (showPlate) {
+            drawGhoulPlate(g, cx - plateWidth / 2, cursorY, plateWidth, plateSpace);
+            cursorY += plateSpace + 4;
 
-        DiaryChrome.drawCenteredString(g, font,
-                DiaryChrome.fitText(font, I18n.get("gripeverde.poster.ghoul.body.2"), textWidth),
-                cx, cursorY, DiaryTheme.INK_FADED);
-        cursorY += 12;
+            // Rotulo de dos renglones bajo el retrato, como en un aviso de epoca.
+            drawGhoulCaption(g, font, cx, cursorY, textWidth);
+            cursorY += captionStep;
+        }
 
-        DiaryChrome.drawCenteredString(g, font,
-                DiaryChrome.fitText(font, I18n.get("gripeverde.poster.ghoul.body.3"), textWidth),
-                cx, cursorY, DiaryTheme.INK_FADED);
-        cursorY += 12;
+        g.pose().pushPose();
+        g.pose().translate(cx, cursorY, 0);
+        g.pose().scale(1.1f, 1.1f, 1f);
+        String title = DiaryChrome.fitText(font, I18n.get("gripeverde.poster.ghoul.title"),
+                Math.max(0, (int) (textWidth / 1.1f)));
+        int titleWidth = font.width(title);
+        g.drawString(font, title, -titleWidth / 2, 0, DiaryTheme.GHOUL_INK_ACTIVE, false);
+        g.pose().popPose();
+        cursorY += 14;
 
-        drawThinDivider(g, cx, cursorY + 1, w - 28);
-        cursorY += 10;
-        DiaryChrome.drawCenteredString(g, font,
-                DiaryChrome.fitText(font, I18n.get("gripeverde.poster.ghoul.warn"), textWidth),
-                cx, cursorY, DiaryTheme.REDCOAT_DARK);
+        drawThinDivider(g, cx, cursorY, w - 30);
+        cursorY += 7;
 
-        // Sello de ojo dibujado con formas fijas: tinta y acento azul, sin animación.
-        int eyeY = y + h - 18;
-        g.fill(cx - 7, eyeY - 3, cx + 8, eyeY + 3, DiaryTheme.GHOUL_INK);
-        g.fill(cx - 4, eyeY - 2, cx + 5, eyeY + 2, DiaryTheme.GHOUL_EYE);
-        g.fill(cx - 1, eyeY - 2, cx + 2, eyeY + 3, DiaryTheme.GHOUL_INK_ACTIVE);
-        g.fill(cx, eyeY - 1, cx + 1, eyeY, DiaryTheme.GHOUL_EYE_GLOW);
-        g.fill(cx - 10, eyeY, cx - 7, eyeY + 1, DiaryTheme.SEPIA_MID);
-        g.fill(cx + 8, eyeY, cx + 11, eyeY + 1, DiaryTheme.SEPIA_MID);
+        for (String key : GHOUL_COPY_KEYS) {
+            drawFittedCenteredLine(g, font, I18n.get(key), cx, cursorY, DiaryTheme.INK_FADED, textWidth);
+            cursorY += 10;
+        }
+
+        // El aviso y su sello CEDA comparten un pie fijo, sin solaparse: el
+        // sello queda en el margen y el texto se limita a su derecha.
+        int footerY = y + h - 20;
+        drawGhoulEyeStamp(g, x + 19, footerY + 4, GHOUL_STAMP_SCALE);
+        int warnX = x + 32;
+        int warnWidth = Math.max(0, x + w - 8 - warnX);
+        drawFittedCenteredLine(g, font, I18n.get("gripeverde.poster.ghoul.warn"),
+                warnX + warnWidth / 2, footerY, DiaryTheme.REDCOAT_DARK, warnWidth);
+    }
+
+    /** Rotulo del grabado: cada renglon se centra por separado. */
+    private static void drawGhoulCaption(GuiGraphics g, Font font, int cx, int y, int maxWidth) {
+        String[] lines = I18n.get("gripeverde.poster.ghoul.caption").split("\n");
+        int lineY = y;
+        for (String line : lines) {
+            DiaryChrome.drawCenteredString(g, font,
+                    DiaryChrome.fitText(font, line, maxWidth), cx, lineY, DiaryTheme.SEPIA_MID);
+            lineY += 9;
+        }
+    }
+
+    /** Renglones del parte de campo; se leen de corrido, uno debajo del otro. */
+    private static final String[] GHOUL_COPY_KEYS = {
+        "gripeverde.poster.ghoul.body.1",
+        "gripeverde.poster.ghoul.body.2",
+        "gripeverde.poster.ghoul.body.3"
+    };
+
+    /**
+     * Una placa de imprenta con el retrato de un Ghoul: papel claro, viñeta,
+     * rayado de tinta y ojos azules. Todo son formas fijas; no hay animación
+     * ni trabajo de render fuera de la portada.
+     */
+    private static void drawGhoulPlate(GuiGraphics g, int x, int y, int w, int h) {
+        int frame = DiaryTheme.GHOUL_INK;
+        int shadow = DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 150);
+
+        g.fill(x + 2, y + 3, x + w + 1, y + h + 2, shadow);
+        g.fill(x, y, x + w, y + h, frame);
+        g.fill(x + 1, y + 1, x + w - 1, y + h - 1, 0xFFDCCEBB);
+        g.fill(x + 2, y + 2, x + w - 2, y + h - 2, 0xFFEFE3C9);
+
+        drawGhoulPortrait(g, x + 3, y + 3, w - 6, h - 6);
+
+        // Esquinas de la placa: pequeños remaches de latón envejecido.
+        int brass = DiaryTheme.GOLD_TARNISHED;
+        g.fill(x + 1, y + 1, x + 3, y + 3, brass);
+        g.fill(x + w - 3, y + 1, x + w - 1, y + 3, brass);
+        g.fill(x + 1, y + h - 3, x + 3, y + h - 1, brass);
+        g.fill(x + w - 3, y + h - 3, x + w - 1, y + h - 1, brass);
+    }
+
+    /**
+     * Rostro de un infectado impreso como grabado de epoca: craneo ovalado,
+     * mandibula angosta, ojos azules encendidos y levita con cuello abierto.
+     * Son formas fijas y se adaptan a la placa recibida; no hay animacion.
+     */
+    private static void drawGhoulPortrait(GuiGraphics g, int x, int y, int w, int h) {
+        int ink = DiaryTheme.GHOUL_INK;
+        int deep = DiaryTheme.GHOUL_INK_ACTIVE;
+        int skin = 0xFFB9CCC7;
+        int skinShade = 0xFF93ABA8;
+        int skinDark = 0xFF6F8C8C;
+        int bone = 0xFFE4EADB;
+        int coat = 0xFF2C4A50;
+        int coatLit = 0xFF436567;
+        int collar = 0xFFC9D2C2;
+
+        int cx = x + w / 2;
+        int headHeight = Math.max(24, (int) (h * 0.60f));
+        int headWidth = Math.max(16, (int) (headHeight * 0.72f));
+        if (headWidth > (int) (w * 0.54f)) headWidth = Math.max(14, (int) (w * 0.54f));
+        if (headWidth > w - 6) headWidth = Math.max(14, w - 6);
+
+        int headX = cx - headWidth / 2;
+        int headY = y + Math.max(2, (int) ((h - headHeight) * 0.44f));
+        float radiusX = headWidth / 2.0f;
+        float radiusY = headHeight * 0.46f;
+        int centreY = headY + (int) (radiusY * 1.02f);
+
+        // Levita y hombros: filas que se abren en embudo, con el borde en tinta.
+        int coatTop = headY + (int) (headHeight * 0.72f);
+        int coatBottom = Math.min(y + h - 2, coatTop + headHeight);
+        int coatRows = Math.max(1, coatBottom - coatTop);
+        for (int row = 0; row < coatRows; row++) {
+            float t = row / (float) coatRows;
+            int spread = Math.min((int) (w * 0.47f), (int) (headWidth * 1.18f));
+            int half = (int) (headWidth * 0.40f + (spread - headWidth * 0.40f) * (float) Math.pow(t, 0.8));
+            int rowY = coatTop + row;
+            g.fill(cx - half, rowY, cx + half, rowY + 1, row % 3 == 0 ? coatLit : coat);
+            g.fill(cx - half, rowY, cx - half + 1, rowY + 1, deep);
+            g.fill(cx + half - 1, rowY, cx + half, rowY + 1, deep);
+        }
+        // Cuello de camisa abierto y solapas de la levita.
+        for (int row = 0; row < coatRows; row++) {
+            float t = row / (float) coatRows;
+            int openHalf = Math.max(1, (int) (headWidth * 0.20f * (0.35f + 0.65f * t)));
+            int rowY = coatTop + row;
+            g.fill(cx - openHalf, rowY, cx + openHalf, rowY + 1, collar);
+            int offset = (int) (headWidth * 0.20f + headWidth * 0.30f * t);
+            g.fill(cx - offset - 1, rowY, cx - offset + 1, rowY + 1, deep);
+            g.fill(cx + offset - 1, rowY, cx + offset + 1, rowY + 1, deep);
+        }
+
+        // Cuello del infectado, entre la mandibula y el cuello de la camisa.
+        int neckHalf = Math.max(3, (int) (headWidth * 0.24f));
+        int neckTop = headY + (int) (headHeight * 0.80f);
+        for (int row = neckTop; row < coatTop + 2; row++) {
+            g.fill(cx - neckHalf, row, cx + neckHalf, row + 1, skinShade);
+            g.fill(cx - neckHalf, row, cx - neckHalf + 1, row + 1, skinDark);
+            g.fill(cx + neckHalf - 1, row, cx + neckHalf, row + 1, skinDark);
+        }
+
+        // Craneo: elipse arriba, mandibula que se angosta hasta el menton.
+        int jawStart = centreY + (int) (radiusY * 0.30f);
+        int chinY = headY + headHeight;
+        int shadowWidth = Math.max(1, (int) (radiusX * 0.14f));
+        for (int row = 0; row < headHeight; row++) {
+            int rowY = headY + row;
+            int half;
+            if (rowY < jawStart) {
+                float t = (rowY - centreY) / radiusY;
+                if (t < -1f || t > 1f) continue;
+                half = (int) (radiusX * Math.sqrt(Math.max(0.0, 1.0 - t * t)));
+            } else {
+                float t = (rowY - jawStart) / (float) Math.max(1, chinY - jawStart);
+                half = (int) (radiusX * (1f - 0.62f * t * t));
+            }
+            if (half <= 0) continue;
+            g.fill(cx - half, rowY, cx + half, rowY + 1, skin);
+            g.fill(cx - half, rowY, cx - half + shadowWidth, rowY + 1, DiaryTheme.withAlpha(skinShade, 190));
+            g.fill(cx - half, rowY, cx - half + 1, rowY + 1, deep);
+            g.fill(cx + half - 1, rowY, cx + half, rowY + 1, deep);
+        }
+        g.fill(cx - Math.max(1, (int) (radiusX * 0.5f)), chinY - 1,
+                cx + Math.max(1, (int) (radiusX * 0.5f)), chinY, deep);
+
+        // Pelo ralo y desigual: la infeccion no respeta la linea del cabello.
+        int hairEnd = centreY - (int) (radiusY * 0.30f);
+        for (int rowY = headY - 1; rowY < hairEnd; rowY++) {
+            float t = (rowY - centreY) / radiusY;
+            if (t < -1f || t > 1f) continue;
+            int half = (int) (radiusX * Math.sqrt(Math.max(0.0, 1.0 - t * t))) + 1;
+            g.fill(cx - half, rowY, cx + half, rowY + 1, ink);
+        }
+        for (int tuft = 0; tuft < 5; tuft++) {
+            int tuftX = cx - (int) (radiusX * 0.85f) + tuft * Math.max(2, (int) (radiusX * 0.42f));
+            int tuftW = Math.max(1, (int) (radiusX * 0.24f));
+            g.fill(tuftX, hairEnd - 1, tuftX + tuftW, hairEnd + (tuft % 2 == 0 ? 0 : 1), ink);
+        }
+        int sideburnTop = headY + (int) (headHeight * 0.18f);
+        for (int row = 0; row < Math.max(2, (int) (headHeight * 0.12f)); row++) {
+            g.fill(cx - (int) radiusX - 1, sideburnTop + row, cx - (int) radiusX + 1, sideburnTop + row + 1, ink);
+            g.fill(cx + (int) radiusX - 1, sideburnTop + row, cx + (int) radiusX + 1, sideburnTop + row + 1, ink);
+        }
+
+        // Orejas.
+        int earY = centreY - (int) (radiusY * 0.05f);
+        g.fill(headX - 2, earY, headX, earY + 4, skinShade);
+        g.fill(headX + headWidth, earY, headX + headWidth + 2, earY + 4, skinShade);
+        g.fill(headX - 2, earY, headX - 1, earY + 1, deep);
+        g.fill(headX + headWidth + 1, earY, headX + headWidth + 2, earY + 1, deep);
+
+        // Cejas pesadas.
+        int browY = centreY - (int) (radiusY * 0.30f);
+        g.fill(cx - (int) (radiusX * 0.72f), browY, cx - (int) (radiusX * 0.18f), browY + 1, ink);
+        g.fill(cx + (int) (radiusX * 0.18f), browY, cx + (int) (radiusX * 0.72f), browY + 1, ink);
+
+        // Ojos: cuenca, esclerotica azul y brillo central.
+        int eyeY = centreY - (int) (radiusY * 0.16f);
+        int eyeW = Math.max(3, (int) (radiusX * 0.46f));
+        int eyeGap = Math.max(2, (int) (radiusX * 0.16f));
+        int socketH = Math.max(3, (int) (radiusY * 0.24f));
+        int leftEye = cx - eyeGap - eyeW;
+        int rightEye = cx + eyeGap;
+        for (int eye = 0; eye < 2; eye++) {
+            int ex = eye == 0 ? leftEye : rightEye;
+            g.fill(ex - 1, eyeY - 1, ex + eyeW + 1, eyeY + socketH + 1, deep);
+            g.fill(ex, eyeY, ex + eyeW, eyeY + socketH, DiaryTheme.GHOUL_EYE);
+            g.fill(ex + eyeW / 2, eyeY + 1, ex + eyeW / 2 + 1, eyeY + socketH - 1,
+                    DiaryTheme.GHOUL_EYE_GLOW);
+            g.fill(ex, eyeY + socketH - 1, ex + eyeW, eyeY + socketH, ink);
+        }
+
+        // Rayado del grabado en los pomulos.
+        for (int line = 0; line < 3; line++) {
+            int hatchY = eyeY + socketH + 2 + line * 2;
+            g.fill(cx - (int) (radiusX * 0.95f), hatchY, cx - (int) (radiusX * 0.72f), hatchY + 1,
+                    DiaryTheme.withAlpha(skinShade, 150));
+            g.fill(cx + (int) (radiusX * 0.72f), hatchY + 1, cx + (int) (radiusX * 0.95f), hatchY + 2,
+                    DiaryTheme.withAlpha(skinShade, 150));
+        }
+
+        // Nariz: caballete, aletas y sombra inferior.
+        int noseTop = eyeY + socketH;
+        int noseBottom = noseTop + Math.max(3, (int) (radiusY * 0.30f));
+        g.fill(cx - 1, noseTop, cx + 1, noseBottom, DiaryTheme.withAlpha(skinShade, 220));
+        g.fill(cx - 3, noseBottom, cx, noseBottom + 1, ink);
+        g.fill(cx + 1, noseBottom, cx + 4, noseBottom + 1, ink);
+        g.fill(cx - 1, noseBottom - 1, cx + 2, noseBottom, DiaryTheme.withAlpha(skinDark, 200));
+
+        // Boca entreabierta con dientes irregulares: no es una sonrisa.
+        int mouthY = noseBottom + Math.max(3, (int) (radiusY * 0.22f));
+        int mouthW = Math.max(5, (int) (radiusX * 0.62f));
+        int mouthH = Math.max(2, (int) (radiusY * 0.12f));
+        g.fill(cx - mouthW / 2, mouthY, cx + mouthW / 2, mouthY + mouthH + 1, ink);
+        for (int tooth = 0; tooth < 3; tooth++) {
+            int toothX = cx - mouthW / 2 + 1 + tooth * Math.max(2, mouthW / 3);
+            g.fill(toothX, mouthY, toothX + 1, mouthY + mouthH, bone);
+        }
+    }
+
+    /** Sello circular CEDA con un ojo azul; sustituye al ojo suelto anterior. */
+    private static void drawGhoulEyeStamp(GuiGraphics g, int cx, int cy, float scale) {
+        int radius = Math.max(7, (int) (9 * scale));
+        int ring = DiaryTheme.GHOUL_INK;
+        int eye = DiaryTheme.GHOUL_EYE;
+
+        // Anillo exterior dibujado por filas para que quede redondo pero firme.
+        for (int dy = -radius; dy <= radius; dy++) {
+            int span = (int) Math.sqrt(radius * radius - dy * dy);
+            int inner = (int) Math.sqrt(Math.max(0, (radius - 2) * (radius - 2) - dy * dy));
+            g.fill(cx - span, cy + dy, cx - inner, cy + dy + 1, ring);
+            g.fill(cx + inner, cy + dy, cx + span, cy + dy + 1, ring);
+        }
+
+        int eyeW = Math.max(4, radius - 1);
+        g.fill(cx - eyeW, cy - 1, cx + eyeW, cy + 2, ring);
+        g.fill(cx - eyeW + 1, cy, cx + eyeW - 1, cy + 1, eye);
+        g.fill(cx - 1, cy - 1, cx + 2, cy + 2, ring);
+        g.fill(cx, cy - 1, cx + 1, cy, DiaryTheme.GHOUL_EYE_GLOW);
     }
 
     /** Rescue guidance shown only on the static title-screen notice. */

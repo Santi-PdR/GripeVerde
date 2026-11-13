@@ -5,19 +5,29 @@ de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
 que una seccion posterior lo mencione expresamente.
 
-## ESTADO: DESARROLLO ACTIVO (2026-10-27, GripeVerde v0.149.0 / CEDA Dispatch 3.4.0)
+## ESTADO: DESARROLLO ACTIVO (2026-11-13, GripeVerde v0.173.0 / CEDA Dispatch 3.9.4)
 
 Estado comprobado en la rama `codex/v0.104-ghoul-warning-poster` y en el PR #90:
 
-- La compilación v0.148.0 conserva el acceso opcional a CEDA Dispatch; la instalación queda con 32 JARs y sin archivos de otros tipos.
-- Los avisos del título reutilizan claves y cortes de papel; las motas de sangre ya no crean un generador aleatorio por cuadro.
-- La geometría de columnas y los límites del cartel izquierdo se guardan hasta que cambia el tamaño de la ventana.
-- El trabajo activo mejora el modmenu con el contexto Ghouls/L4D2 y mantiene inglés y español como idiomas principales.
-- Las transiciones y efectos animados pertenecen al menú: no se agregan animaciones de render al mundo activo ni al inventario. Se respetan Movimiento reducido y Destellos reducidos.
-- La carpeta de mods debe contener únicamente archivos JAR. Al actualizar, se reemplazan las versiones anteriores de GripeVerde y CEDA Dispatch; se conservan los demás mods.
-- El ID `copyl`, los formatos y rutas de configuración de CEDA Dispatch se mantienen; el botón opcional no carga si el otro mod está ausente.
-- No se ha hecho una prueba visual del cliente en esta revisión; el CI acredita compilación, recursos y localización, no una validación dentro de Minecraft.
-- El KI-66 y la pausa descritos en los registros históricos de abajo corresponden a agosto de 2026 y ya no representan el estado operativo actual. El rediseño de doble página permanece como idea histórica, no como requisito activo.
+- `0.173.0` rediseña el aviso CEDA de la portada y el bando de cuarentena: placa de
+  imprenta con retrato del infectado, rótulo de campo y pie sin solapes. Todo estático.
+- El CI de `0.172.0` (run 40763347401) terminó en verde; el JAR de `0.173.0` se genera con
+  el mismo workflow. `0.172.0` nunca llegó a la instancia local del usuario.
+- **KI-79 (CEDA Dispatch / CopyL):** los síntomas reportados por el usuario —texto
+  superpuesto y glifos cuadrados en el editor de mensajes— tienen causa identificada en
+  CopyL 3.9.x, no en la integración: una fuente TTF propia (`copyl:dispatch`) introducida en
+  3.9.0 y retirada de los textos en 3.9.1 (que aún sigue empaquetada), y un doble dibujo del
+  texto de cada `EditBox` tras `graphics.flush()`. La integración de GripeVerde solo abre la
+  pantalla por reflexión. Corrección pendiente en `Santi-PdR/Lclient` y de acuerdo con el
+  owner. Detalle en `docs/CONTEXTO_MODMENU.md`.
+- La carpeta de mods debe contener únicamente archivos JAR. Al actualizar, se reemplazan las
+  versiones anteriores de GripeVerde y CEDA Dispatch; se conservan los demás mods.
+- El ID `copyl`, los formatos y rutas de configuración de CEDA Dispatch se mantienen; el
+  botón opcional no carga si el otro mod está ausente.
+- No se ha hecho una prueba visual del cliente en esta revisión; el CI acredita compilación,
+  recursos y localización, no una validación dentro de Minecraft.
+- El KI-66 y la pausa descritos en los registros históricos de abajo corresponden a agosto
+  de 2026 y ya no representan el estado operativo actual.
 
 
 

@@ -1,3 +1,7 @@
+## v0.173.0 - El aviso tiene un rostro
+
+El bando de cuarentena de la portada abre con un grabado mayor del infectado, enmarcado como placa de imprenta, con ojos azules y rótulo de nota de campo. La orden legal y el sello CEDA ocupan zonas distintas, así que no se superponen en carteles bajos ni estrechos. La nota de campo CEDA reutiliza la misma placa, sustituye el ojo suelto por un sello CEDA y omite el retrato cuando no hay altura. Sin animaciones nuevas fuera de la portada.
+
 ## v0.172.0 - Rostro para el aviso de cuarentena
 
 El bando de la portada incorpora un retrato estático de un Ghoul de ojos azules, colocado en el margen inferior para no cubrir el texto. Se declaran en Minecraft las 25 variantes regionales del mod, incluido `es_uy`, y las verificaciones exigen metadatos seleccionables para todas.

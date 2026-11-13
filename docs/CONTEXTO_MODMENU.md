@@ -7,55 +7,136 @@ Actualizado: 2026-11-13
 - Repositorio: [Santi-PdR/GripeVerde](https://github.com/Santi-PdR/GripeVerde)
 - Rama de trabajo: `codex/v0.104-ghoul-warning-poster`
 - Pull request: [#90](https://github.com/Santi-PdR/GripeVerde/pull/90)
-- Versión de esta rama: `0.172.0`
+- Versión de esta rama: `0.173.0` (anterior entregada: `0.172.0`)
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
-- Trabajar el código directamente en GitHub mediante GitHub MCP. No clonar ni editar el código fuente localmente.
-- No controlar Minecraft ni la PC para hacer pruebas visuales. El usuario pidió explícitamente “no controles PC”.
-- Mantener las interfaces del juego instantáneas y quietas: no añadir animaciones al inventario, pausa o mundo que afecten el gameplay.
-- Al entregar una versión, cambiar la versión y generar el JAR. El usuario indicó que los JAR finales deben quedar en `D:\Minecraft\SKLauncher\sklauncher-data-v4\instances\test-1\mods`, sin dejar versiones anteriores de GripeVerde.
-- En esa carpeta deben quedar únicamente archivos JAR. Conservar los demás mods; reemplazar solo el JAR antiguo de GripeVerde.
-- El estado de esta tarea estaba pausado por pedido del usuario; ya pidió un contexto para continuar con otra IA.
+- El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
+  proyecto local del usuario.
+- No se controla Minecraft ni la PC del usuario para pruebas visuales. El CI acredita
+  compilación, recursos y localización; no sustituye una revisión dentro del juego.
+- Las interfaces del juego se mantienen instantáneas: no se agregan animaciones al
+  inventario, la pausa ni el mundo. Las únicas piezas animadas siguen siendo las del menú
+  y respetan Movimiento reducido y Destellos reducidos.
+- Al entregar una versión: subir la versión, generar el JAR por CI, actualizar la nota y el
+  PR, e instalar el artefacto en la carpeta de mods cuando el equipo del usuario esté
+  accesible.
 
-## Último estado confirmado
+## Estado confirmado al retomar (2026-11-13)
 
-- Último commit de código: `34639471ae4fbd10c14d9d09d78bbecb39e09ee9`\n- Commit de documentación y actualización del PR: `b9ef45ac70163173093f116fd56e18b4d32c0d7a`
-- GitHub Actions run `40763347401`, workflow Build GripeVerde, terminó en `success`.
-- Build, validación de recursos/localización y subida del JAR: correctos.
-- Artefacto: `GripeVerde-jar`, artifact ID `12849186641`, tamaño 8,742,493 bytes, SHA-256 declarado por GitHub: `9520432c3027a3695b4e1246c2f8a3298cdc8ce11ab0cbff517d6fc914508c60`.
-- El JAR de `0.172.0` **no ha sido instalado todavía** en la instancia del usuario. Debe descargarse desde el artefacto de Actions, validar su contenido y checksum, y reemplazar el JAR previo de GripeVerde en la carpeta indicada.
-- La descripción del PR #90 se actualizó para reflejar `0.172.0`, el resultado de Actions y los pendientes.
+- El CI de la rama terminó en `success`: run `40763347401` (workflow *Build GripeVerde*),
+  artefacto `GripeVerde-jar`, artifact ID `12849186641`, 8.742.493 bytes,
+  SHA-256 `9520432c3027a3695b4e1246c2f8a3298cdc8ce11ab0cbff517d6fc914508c60`.
+- `0.172.0` **no** se instaló en la instancia del usuario; la carpeta de mods de destino
+  sigue siendo `D:\Minecraft\SKLauncher\sklauncher-data-v4\instances\test-1\mods`.
+- La sesión actual corre en un entorno Linux remoto: `D:\...` no existe como ruta
+  montada, así que la instalación queda pendiente de que la carpeta sea accesible.
+- El validador local `python3 tools/verify_mirrors.py` reproduce los sellos de Gradle
+  (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
+  literales y balance) y pasa en verde con `0.173.0`.
 
-## Cambios de 0.172.0
+## Cambios de 0.173.0
 
-- Se añadieron las 25 variantes regionales de inglés y español al metadata de idioma del resource pack para que Minecraft pueda ofrecerlas, incluyendo `es_uy` (Español de Uruguay).
-- La comprobación de localización ahora verifica que los 25 idiomas esperados estén declarados. Los archivos de traducción y crónica ya cubren esos mismos 25 locales.
-- La portada incorpora un retrato geométrico estático de un Ghoul en el aviso de cuarentena, solo en hojas grandes. Se intentó dejarlo apartado del sello de tinta.
-- La versión del mod y Gradle se actualizaron a `0.172.0`.
-- El aviso y sus adornos son estáticos y solo se dibujan en la pantalla principal; no agregan animaciones a mundos o inventarios.
+- **Aviso CEDA de la portada (nota de campo Ghoul).** Pasa a leerse como ficha de campo:
+  cabecera CEDA en tinta azul, filete, una placa de imprenta con el retrato del infectado y
+  un rótulo de dos renglones. El retrato se rediseñó por completo (cráneo ovalado,
+  mandíbula angosta, ojos azules con brillo, levita con cuello abierto) y se dibuja con
+  formas fijas, adaptándose al tamaño del cartel. En carteles bajos el retrato se omite en
+  lugar de comprimir el texto.
+- **Pie sin solapes.** El aviso final («NUNCA VIAJES SOLO») y el sello CEDA ocupan zonas
+  distintas: el sello circular de ojo queda en el margen izquierdo y el texto se limita a
+  su derecha. Sustituye al ojo suelto anterior y ya no puede montarse sobre el parte.
+- **Bando de cuarentena.** El retrato del pie se agrandó y ahora convive con la pena en dos
+  columnas; el espaciado se compacta en carteles bajos y el sello de cera solo se dibuja
+  si queda aire real bajo el último renglón.
+- **Nueva clave de idioma** `gripeverde.poster.ghoul.caption` en los 25 locales
+  (inglés/español regional, incluido `es_uy`). El total de claves pasa de 176 a 177 y la
+  validación de Gradle y el espejo en Python se actualizaron.
+- **Integración CEDA Dispatch.** `CopyLCompatibility` ahora registra en `latest.log` la
+  versión instalada de CopyL y si dibuja sus paneles con texto plano o con la fuente
+  personalizada. No cambia la pantalla, que sigue siendo de CopyL.
+- Versión del mod, `build.gradle`, crónicas de los 25 locales, `CHANGELOG.md` y `README.md`
+  actualizados a `0.173.0`.
 
-## Pendientes visibles del usuario
+## Investigación de CEDA Dispatch / CopyL (evidencia)
 
-1. **CEDA Dispatch / CopyL:** la pantalla de edición de mensajes muestra textos duplicados y superpuestos (“Mensaje 1” y el contenido parecen dibujarse dos veces). Otra captura mostró caracteres de cuadros vacíos. El usuario la considera fea y pidió corregir diseño y tipografía. La fuente del problema puede ser CopyL o su integración; no afirmar que está resuelto.
-2. **Aviso CEDA de la pantalla principal:** el usuario lo considera feo y poco acorde al mod; pidió que la entidad se parezca más al Ghoul del mod. La versión actual tiene un retrato pequeño de píxeles, pero todavía no ha sido revisada visualmente por el usuario.
-3. **Revisar el PR:** título actual `v0.172: regional languages and a ghoul quarantine notice`; actualizar el cuerpo con los cambios de 0.172 y el resultado del build.
-4. **Instalar el artefacto:** descargar y reemplazar únicamente el JAR GripeVerde viejo por `0.172.0`; verificar que no queden JARs antiguos de GripeVerde ni archivos que no sean JAR en la carpeta mods.
-5. **Investigar CopyL:** no se localizó el repositorio fuente de CopyL en la búsqueda previa de los repositorios conectados. El JAR local conocido era `copyl-3.9.4.jar`. Buscar de nuevo el repositorio correcto por GitHub MCP o pedir al usuario el enlace si no aparece. No editar el JAR distribuido como sustituto de los fuentes sin evaluar el alcance.
+Repositorio fuente localizado: [Santi-PdR/Lclient](https://github.com/Santi-PdR/Lclient).
+El JAR que usa el usuario, `copyl-3.9.4.jar`, corresponde a la rama
+`codex/ceda-dispatch-visuals` (mods.toml `version="3.9.4"`, PR #18 de ese repo), no a
+`main`, que quedó en 3.3.0.
+
+Hallazgos concretos sobre los dos síntomas reportados:
+
+1. **Caracteres cuadrados (tofu).** El commit `bdf77b8` («Use a clearer typeface across
+   CEDA Dispatch», base 3.9.0) añadió `assets/copyl/font/AtkinsonHyperlegible-Regular.ttf`
+   y `assets/copyl/font/dispatch.json` (proveedor `ttf`, `size: 9`, `oversample: 2`) y pasó
+   todos los textos de los paneles por `DispatchText.styled()`, que aplicaba
+   `style.withFont(copyl:dispatch)`. El commit `22f8c0f` («v3.9.1: use reliable default
+   text in CEDA panels») retiró ese `withFont` y dejó `DispatchText.plain()`, con un
+   comentario explícito: «so an unavailable custom font cannot become tofu boxes». Es
+   decir, el propio CopyL documentó que los cuadros venían de su fuente personalizada.
+   El `.ttf` y su JSON siguen empaquetados aunque ya nadie los usa.
+2. **Textos superpuestos o duplicados.** El editor pasó a un dibujo híbrido:
+   `MessageEditorScreen.render()` llama a `super.render()` (que ya pinta cada `EditBox` con
+   su texto y su sombra mediante `AbstractWidget.render`), después `graphics.flush()` y
+   luego `DispatchEditBox.drawFlatText()` vuelve a pintar el mismo texto sin sombra sobre un
+   `fill` de papel. Son dos pasadas sobre el mismo píxel; además `getScreenX()` se mide con
+   el ancho real de la fuente pero el repintado se desplaza usando `DispatchText.width`,
+   con lo que cualquier diferencia de métrica desplaza el segundo texto. Las etiquetas
+   centradas de `DispatchCard`/`drawCards` también se redibujan tras el flush.
+3. **Integración de GripeVerde.** Es un puente por reflexión
+   (`CopyLSettingsScreen(Screen)`); no envuelve ni sustituye la pantalla, no aplica estilos
+   y no cambia la fuente global, así que no puede producir ni el tofu ni el doble dibujo.
+   Su única vía de efecto visual sería abrir la pantalla equivocada, y CopyL 3.9.4 mantiene
+   la clase y el constructor. El fallo está en CopyL; GripeVerde solo lo abre.
+4. **Pendiente de verificación en cliente.** Confirmar en `latest.log` la línea
+   `CEDA Dispatch x.y.z draws its panels with plain Minecraft text` (o el aviso si está en
+   una versión con fuente) y comprobar si el JAR instalado es 3.9.4. Si el usuario tiene
+   3.9.0–3.9.3, los cuadros se explican por la fuente; si ya tiene 3.9.4, lo que queda es
+   el doble dibujo del editor.
+5. **`build-output` de Lclient está desactualizado**: publica `version.txt` = 3.3.0 con
+   SHA-256 propio, así que no debe usarse como fuente del JAR 3.9.4.
+
+Corrección recomendada en CopyL (fuera de este repositorio, sin tocar todavía):
+eliminar la doble pasada de texto en `MessageEditorScreen` (o desactivar el render propio
+de cada `EditBox`), borrar el `.ttf` y `dispatch.json` ya sin uso, alinear la medición con
+`font.width(...)` del componente real, y añadir al CI de Lclient una comprobación de que
+ningún panel vuelva a aplicar `withFont` sobre recursos opcionales.
+
+## Pendientes
+
+1. **Decidir con el usuario** si se corrige CopyL en su repositorio (`Santi-PdR/Lclient`,
+   PR #18) con los cambios del punto anterior. Requiere su visto bueno porque toca otro
+   proyecto y otro artefacto.
+2. **Instalar `0.173.0`** en la carpeta de mods cuando el equipo del usuario sea accesible:
+   descargar el artefacto del CI, validar contenido y SHA-256, retirar solo los JAR
+   antiguos de GripeVerde (y la versión previa de CopyL si se publica una nueva) y dejar la
+   carpeta con archivos `.jar` únicamente.
+3. **Revisión visual del usuario** del nuevo aviso Ghoul y del bando: el retrato se validó
+   con una simulación de píxeles 1:1 del código, no dentro de Minecraft.
+4. Actualizar la descripción del PR #90 con `0.173.0`, el resultado del CI y estos
+   pendientes.
 
 ## Contexto de estilo y contenido
 
-El mod se inspira en Ghouls/Left 4 Dead 2 y presenta una epidemia ficticia en el año 1800, ocultada como “Gripe Verde”. Los infectados son personas vivas transformadas por una infección acelerada, con piel azulada y ojos azules brillantes. La interfaz debe sentirse como papeles, avisos y anotaciones de época con señales de cuarentena, CEDA, tinta roja y azul Ghoul. El tono de diarios y crónicas debe sonar natural, como testimonios humanos, no como instrucciones técnicas.
+El mod se inspira en Ghouls/Left 4 Dead 2 y presenta una epidemia ficticia en el año 1800,
+ocultada como «Gripe Verde». Los infectados son personas vivas transformadas, con piel
+azulada y ojos azules brillantes: siguen siendo personas, no cadáveres. La interfaz debe
+sentirse como papeles, avisos y anotaciones de época con señales de cuarentena, CEDA, tinta
+roja y azul Ghoul. El tono de diarios y crónicas debe sonar natural, como testimonios
+humanos, no como instrucciones técnicas.
 
-Los idiomas principales son inglés y español, con sus variantes regionales; toda variante `en_*` debe usar inglés y toda variante `es_*` español. No usar otros idiomas.
+Los idiomas principales son inglés y español, con sus variantes regionales; toda variante
+`en_*` debe usar inglés y toda variante `es_*` español. No usar otros idiomas.
 
-## Skills consultadas anteriormente
+## Consejo de diseño vigente
 
-- `minecraft-modding`
-- `ui-skills`
-- `frontend-design`
-- `fix-what-i-pointed-at`
-
-Mantener el consejo de diseño aplicado: interfaces distinguidas y legibles, tipografía vanilla clara cuando las fuentes personalizadas generen tofu, jerarquía visual, sin sombras de texto excesivas, sin solapamientos, y con animación limitada a la portada si acaso. El juego en curso y las pantallas de inventario/pausa deben seguir libres de animaciones añadidas.
+Interfaces distinguidas y legibles, tipografía vanilla clara cuando una fuente personalizada
+pueda producir tofu, jerarquía visual, sin sombras de texto excesivas, sin solapamientos y
+con animación limitada a la portada. El juego en curso y las pantallas de
+inventario/pausa deben seguir libres de animaciones añadidas.
 
 ## Próximo paso técnico recomendado
 
-Al retomar, confirmar acceso a GitHub y permisos de escritura para la carpeta mods, descargar el artefacto `12849186641`, instalar/verificar `0.172.0`, actualizar la descripción del PR, y luego investigar/arreglar el panel CopyL y rediseñar el aviso CEDA/Ghoul en una siguiente versión.
+Confirmar con el usuario si autoriza corregir CopyL en `Santi-PdR/Lclient` (doble pasada de
+texto y fuente huérfana), instalar `0.173.0` cuando la carpeta de mods sea accesible,
+actualizar la descripción del PR #90 y recoger su revisión visual del nuevo aviso antes de
+seguir con la siguiente tanda.

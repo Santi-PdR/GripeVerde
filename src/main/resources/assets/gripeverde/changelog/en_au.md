@@ -1,3 +1,7 @@
+## Version 0.173.0 - The notice has a face
+
+The quarantine notice on the title screen now opens with a larger engraved portrait of an infected man, framed like a printer's plate, with the blue eyes of the Ghouls and a caption that reads as period field copy. Below it, the order keeps its lines apart from the CEDA stamp, so nothing overlaps on short or narrow screens. The rotating CEDA field note follows the same plate, replaces its loose eye mark with a CEDA eye stamp, and hides the portrait when the poster is not tall enough. Everything stays still: nothing new is drawn while you play.
+
 ## Version 0.172.0 - A face for the quarantine notice
 
 The title screen's quarantine order now carries a still, blue-eyed Ghoul portrait in its lower margin. Minecraft offers every regional locale translated by the mod, including Spanish (Uruguay), and the build checks all 25 entries.

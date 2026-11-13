@@ -1,3 +1,7 @@
+## Version 0.173.0 - El aviso tiene un rostro
+
+El aviso de cuarentena de la portada abre ahora con un grabado mayor de un hombre infectado, enmarcado como una placa de imprenta, con los ojos azules de los Ghouls y un rótulo que se lee como nota de campo. Debajo, la orden mantiene sus renglones lejos del sello CEDA, así que nada se superpone en pantallas bajas o estrechas. La nota de campo CEDA sigue la misma placa, cambia el ojo suelto por un sello CEDA y esconde el retrato cuando el cartel no tiene altura suficiente. Todo queda quieto: no se dibuja nada nuevo durante la partida.
+
 ## Version 0.172.0 - Un rostro para el aviso de cuarentena
 
 El bando de la portada ahora lleva, en el margen inferior, un retrato fijo de un Ghoul de ojos azules. Minecraft ofrece todas las variantes regionales que traduce el mod, incluido el español de Uruguay, y la compilación comprueba los 25 idiomas.
