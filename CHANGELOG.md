@@ -1,3 +1,7 @@
+## v0.174.0 - Los carteles vuelven a respirar
+
+Los cuatro bandos rotativos de la portada se componen como un bloque centrado: nota de rescate, se busca, decreto real y etiqueta del elixir. En carteles altos el texto deja de colgar del borde superior; en los más bajos los pasos se ajustan para que la última línea no toque el filete. El precio del elixir mantiene un renglón de aire sobre el borde inferior.
+
 ## v0.173.0 - El aviso tiene un rostro
 
 El bando de cuarentena de la portada abre con un grabado mayor del infectado, enmarcado como placa de imprenta, con ojos azules y rótulo de nota de campo. La orden legal y el sello CEDA ocupan zonas distintas, así que no se superponen en carteles bajos ni estrechos. La nota de campo CEDA reutiliza la misma placa, sustituye el ojo suelto por un sello CEDA y omite el retrato cuando no hay altura. Sin animaciones nuevas fuera de la portada.

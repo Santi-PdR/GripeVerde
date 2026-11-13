@@ -1,3 +1,7 @@
+## Version 0.174.0 - The notices breathe again
+
+The four rotating broadsides (rescue note, wanted poster, royal decree and the elixir label) now compose as one centred block. On tall posters the copy no longer clings to the upper edge, and on the shortest ones the steps tighten so the last line stops crowding the lower rule. On the elixir label the price now always keeps a line of air above the border. Nothing new is drawn while you play.
+
 ## Version 0.173.0 - The notice has a face
 
 The quarantine notice on the title screen now opens with a larger engraved portrait of an infected man, framed like a printer's plate, with the blue eyes of the Ghouls and a caption that reads as period field copy. Below it, the order keeps its lines apart from the CEDA stamp, so nothing overlaps on short or narrow screens. The rotating CEDA field note follows the same plate, replaces its loose eye mark with a CEDA eye stamp, and hides the portrait when the poster is not tall enough. Everything stays still: nothing new is drawn while you play.

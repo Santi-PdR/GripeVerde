@@ -1,3 +1,7 @@
+**v0.174.0 - Los carteles vuelven a respirar**
+
+Los cuatro bandos que rotan en la portada se centran como un bloque y ajustan sus espacios en carteles bajos. El precio del elixir ya no se pega al borde inferior. Sin animaciones nuevas fuera de la portada.
+
 **v0.173.0 - El aviso tiene un rostro**
 
 El aviso de cuarentena de la portada abre con un grabado mayor de un hombre infectado, enmarcado como placa de imprenta y con los ojos azules de los Ghouls. La orden y el sello CEDA ya no comparten espacio, así que no se superponen en pantallas bajas. La nota de campo CEDA usa la misma placa y cambia el ojo suelto por un sello propio. Todo sigue quieto durante la partida.

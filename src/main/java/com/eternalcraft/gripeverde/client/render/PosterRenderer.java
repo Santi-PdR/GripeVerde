@@ -140,17 +140,25 @@ public class PosterRenderer {
         int copyWidth = Math.max(0, w - 28);
         boolean compact = h < 160;
         int lineStep = compact ? 8 : 10;
+        int authorStep = compact ? 9 : 12;
+        int splitStep = compact ? 5 : 6;
+        int titleStep1 = compact ? 10 : 14;
+        int titleStep2 = compact ? 14 : 18;
         boolean showFraudStamp = false;
         try {
             showFraudStamp = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("fraude_stamp") > 0;
         } catch (Throwable ignored) {}
-        int cursorY = y + (compact ? 6 : 8);
+        // v0.174.0: the label block is centred, so a tall bottle notice no
+        // longer floats against the top edge of the sheet.
+        int block = authorStep + splitStep + titleStep1 + titleStep2 + splitStep
+                + ELIXIR_COPY_KEYS.length * lineStep;
+        int cursorY = y + Math.max(compact ? 5 : 8, (h - block) / 2);
 
         DiaryChrome.drawCenteredString(g, font, I18n.get("gripeverde.poster.elixir.author"), cx, cursorY, DiaryTheme.INK);
-        cursorY += compact ? 9 : 12;
+        cursorY += authorStep;
 
         drawThinDivider(g, cx, cursorY, w - 30);
-        cursorY += compact ? 5 : 6;
+        cursorY += splitStep;
 
         g.pose().pushPose();
         g.pose().translate(cx, cursorY, 0);
@@ -159,7 +167,7 @@ public class PosterRenderer {
         int aw = font.width(am);
         g.drawString(font, am, -aw / 2, 0, DiaryTheme.INK, false);
         g.pose().popPose();
-        cursorY += compact ? 10 : 14;
+        cursorY += titleStep1;
 
         g.pose().pushPose();
         g.pose().translate(cx, cursorY, 0);
@@ -168,14 +176,17 @@ public class PosterRenderer {
         int ew = font.width(el);
         g.drawString(font, el, -ew / 2, 0, DiaryTheme.INK, false);
         g.pose().popPose();
-        cursorY += compact ? 14 : 18;
+        cursorY += titleStep2;
 
         drawThinDivider(g, cx, cursorY, w - 30);
-        cursorY += compact ? 5 : 6;
+        cursorY += splitStep;
 
-        for (String key : ELIXIR_COPY_KEYS) {
+        for (int index = 0; index < ELIXIR_COPY_KEYS.length; index++) {
+            String key = ELIXIR_COPY_KEYS[index];
             if (!key.isEmpty()) {
-                drawFittedCenteredLine(g, font, I18n.get(key), cx, cursorY, DiaryTheme.INK_FADED, copyWidth);
+                // The final line keeps a glyph row above the lower border.
+                int lineY = Math.min(cursorY, y + h - 12);
+                drawFittedCenteredLine(g, font, I18n.get(key), cx, lineY, DiaryTheme.INK_FADED, copyWidth);
             }
             cursorY += lineStep;
         }
@@ -515,30 +526,39 @@ public class PosterRenderer {
         int cx = x + w / 2;
         int textWidth = Math.max(0, w - 14);
         boolean compact = h < 160;
-        int cursorY = y + (compact ? 6 : 9);
+        int headerStep = compact ? 10 : 12;
+        int splitStep = compact ? 6 : 8;
+        int titleStep = compact ? 14 : 17;
+        // Full glyph row plus a pixel of breathing room: the old 8 px step let
+        // the last instruction touch the divider.
+        int lineGap = Math.max(compact ? 9 : 10, font.lineHeight + 1);
+        int footerStep = compact ? 7 : 9;
+
+        // v0.174.0: the sheet is composed as one block and centred, so a tall
+        // poster no longer leaves the note pinned to the top edge.
+        int block = headerStep + splitStep + titleStep
+                + RESCUE_COPY_KEYS.length * lineGap + footerStep + 9;
+        int cursorY = y + Math.max(compact ? 5 : 8, (h - block) / 2);
 
         DiaryChrome.drawCenteredString(g, font,
                 DiaryChrome.fitText(font, I18n.get("gripeverde.poster.rescue.header"), textWidth),
                 cx, cursorY, DiaryTheme.GHOUL_INK);
-        cursorY += compact ? 10 : 12;
+        cursorY += headerStep;
         drawThinDivider(g, cx, cursorY, w - 28);
-        cursorY += compact ? 6 : 8;
+        cursorY += splitStep;
 
         DiaryChrome.drawCenteredString(g, font,
                 DiaryChrome.fitText(font, I18n.get("gripeverde.poster.rescue.title"), textWidth),
                 cx, cursorY, DiaryTheme.GHOUL_INK_ACTIVE);
-        cursorY += compact ? 14 : 17;
+        cursorY += titleStep;
 
-        // Keep a full glyph row plus a pixel of breathing room; the former
-        // compact 8 px step let the last instruction touch the divider.
-        int lineGap = Math.max(10, font.lineHeight + 1);
         for (String key : RESCUE_COPY_KEYS) {
             drawFittedCenteredLine(g, font, I18n.get(key), cx, cursorY, DiaryTheme.INK_FADED, textWidth);
             cursorY += lineGap;
         }
 
         drawThinDivider(g, cx, cursorY, w - 28);
-        cursorY += compact ? 7 : 9;
+        cursorY += footerStep;
         DiaryChrome.drawCenteredString(g, font,
                 DiaryChrome.fitText(font, I18n.get("gripeverde.poster.rescue.footer"), textWidth),
                 cx, cursorY, DiaryTheme.REDCOAT_DARK);
@@ -552,17 +572,29 @@ public class PosterRenderer {
 
         int cx = x + w / 2;
         int copyWidth = Math.max(0, w - 28);
-        int cursorY = y + 10;
+        // v0.174.0: short posters get tighter steps so the copy stops fitting
+        // past the paper edge, and the whole block is centred on taller ones.
+        boolean compact = h < 150;
+        boolean portrait = h >= 160;
+        int headerStep = compact ? 10 : 11;
+        int splitStep = compact ? 5 : 6;
+        int titleStep = compact ? 16 : 18;
+        int bodyStep = compact ? 9 : 10;
+        int prizeGap = compact ? 12 : 14;
+        int prizeStep = compact ? 9 : 10;
+        int block = headerStep + splitStep + titleStep + splitStep
+                + (portrait ? 30 : 0) + bodyStep * 2 + prizeGap + prizeStep * 2 + 9;
+        int cursorY = y + Math.max(compact ? 6 : 10, (h - block) / 2);
 
         // Encabezado pequeño
         String header = isEnglish() ? "WANTED" : "SE BUSCA";
         header = DiaryChrome.fitText(font, header, copyWidth);
         int hw = font.width(header);
         g.drawString(font, header, cx - hw / 2, cursorY, DiaryTheme.INK, false);
-        cursorY += 11;
+        cursorY += headerStep;
 
         drawThinDivider(g, cx, cursorY, w - 30);
-        cursorY += 6;
+        cursorY += splitStep;
 
         // Título "PATIENT ZERO" en rojo (escala 1.2 en vez de 1.3 para que quepa)
         g.pose().pushPose();
@@ -574,29 +606,29 @@ public class PosterRenderer {
         // v0.21.25: tinta oscura sin sombra (consistencia con poster de cuarentena).
         g.drawString(font, title, -tw / 2, 0, DiaryTheme.INK, false);
         g.pose().popPose();
-        cursorY += 18;
+        cursorY += titleStep;
 
         drawThinDivider(g, cx, cursorY, w - 30);
-        cursorY += 6;
+        cursorY += splitStep;
 
         // v0.16.0: el retrato del buscado. Quien le sostiene la mirada
         // descubre que el dibujo tambien mira. Solo si el cartel es alto.
-        if (h >= 160) {
+        if (portrait) {
             drawWantedPortrait(g, cx, cursorY, w);
             cursorY += 30;
         }
 
         drawFittedCenteredLine(g, font, I18n.get("gripeverde.poster.reward.body.1"), cx, cursorY, DiaryTheme.INK_FADED, copyWidth);
-        cursorY += 10;
+        cursorY += bodyStep;
         drawFittedCenteredLine(g, font, I18n.get("gripeverde.poster.reward.body.2"), cx, cursorY, DiaryTheme.INK_FADED, copyWidth);
-        cursorY += 14;
+        cursorY += prizeGap;
 
         drawThinDivider(g, cx, cursorY, w - 30);
-        cursorY += 8;
+        cursorY += compact ? 6 : 8;
 
         // Prize compactado en una sola línea
         drawFittedCenteredLine(g, font, I18n.get("gripeverde.poster.reward.prize.short"), cx, cursorY, DiaryTheme.BLOOD_DRIED, copyWidth);
-        cursorY += 10;
+        cursorY += prizeStep;
         drawFittedCenteredLine(g, font, I18n.get("gripeverde.poster.reward.prize.unit"), cx, cursorY, DiaryTheme.BRONZE, copyWidth);
 
         // At the shortest supported height the footer copy reaches the lower corner.
@@ -616,13 +648,23 @@ public class PosterRenderer {
 
         int cx = x + w / 2;
         int copyWidth = Math.max(0, w - 28);
-        int cursorY = y + 10;
+        // v0.174.0: compact steps keep a 125 px block inside a 120 px sheet,
+        // and the block is centred when the poster grows.
+        boolean compact = h < 150;
+        int headerStep = compact ? 10 : 12;
+        int splitStep = compact ? 6 : 8;
+        int titleStep = compact ? 16 : 18;
+        int bodyStep = compact ? 9 : 10;
+        int warningGap = compact ? 12 : 18;
+        int block = headerStep + splitStep + titleStep + splitStep
+                + bodyStep * 2 + warningGap + 12;
+        int cursorY = y + Math.max(compact ? 5 : 10, (h - block) / 2);
 
         drawFittedCenteredLine(g, font, I18n.get("gripeverde.poster.decree.header"), cx, cursorY, DiaryTheme.INK, copyWidth);
-        cursorY += 12;
+        cursorY += headerStep;
 
         drawThinDivider(g, cx, cursorY, w - 30);
-        cursorY += 8;
+        cursorY += splitStep;
 
         g.pose().pushPose();
         g.pose().translate(cx, cursorY + 4, 0);
@@ -633,18 +675,18 @@ public class PosterRenderer {
         // v0.21.25: tinta oscura sin sombra (consistencia con poster de cuarentena).
         g.drawString(font, title, -tw / 2, 0, DiaryTheme.INK, false);
         g.pose().popPose();
-        cursorY += 18;
+        cursorY += titleStep;
 
         drawThinDivider(g, cx, cursorY, w - 30);
-        cursorY += 10;
+        cursorY += compact ? 6 : 10;
 
         drawFittedCenteredLine(g, font, I18n.get("gripeverde.poster.decree.body.1"), cx, cursorY, DiaryTheme.INK_FADED, copyWidth);
-        cursorY += 10;
+        cursorY += bodyStep;
         drawFittedCenteredLine(g, font, I18n.get("gripeverde.poster.decree.body.2"), cx, cursorY, DiaryTheme.INK_FADED, copyWidth);
-        cursorY += 18;
+        cursorY += warningGap;
 
         drawThinDivider(g, cx, cursorY, w - 30);
-        cursorY += 8;
+        cursorY += compact ? 5 : 8;
 
         g.pose().pushPose();
         g.pose().translate(cx, cursorY + 2, 0);
