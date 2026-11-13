@@ -25,8 +25,10 @@ Actualizado: 2026-11-13
 - El CI de la rama terminó en `success`: run `40763347401` (workflow *Build GripeVerde*),
   artefacto `GripeVerde-jar`, artifact ID `12849186641`, 8.742.493 bytes,
   SHA-256 `9520432c3027a3695b4e1246c2f8a3298cdc8ce11ab0cbff517d6fc914508c60`.
-- `0.173.0` compila en verde: run `43440351036`, artefacto `GripeVerde-jar`, artifact ID
-  `14044838504`, tamaño 8.748.364 bytes. Abajo se explica por qué no se pudo instalar.
+- `0.173.0` compila en verde en el HEAD actual (`afc3ca4`): run `43445167974`, artefacto
+  `GripeVerde-jar`, artifact ID `14046694088`, 8.748.366 bytes. El run `43440351036`
+  (artifact `14044838504`) fue el primero de la versión. Abajo se explica por qué no se
+  pudo instalar desde aquí.
 - `0.172.0` **no** se instaló en la instancia del usuario; la carpeta de mods de destino
   sigue siendo `D:\Minecraft\SKLauncher\sklauncher-data-v4\instances\test-1\mods`.
 - **Instalación bloqueada en esta sesión por dos motivos ajenos al mod:** el entorno es
