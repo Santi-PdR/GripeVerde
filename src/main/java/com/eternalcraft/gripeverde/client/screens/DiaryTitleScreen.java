@@ -383,7 +383,7 @@ public class DiaryTitleScreen extends Screen {
      * reales para no duplicar la geometria de init().
      */
     private boolean overAnyButton(double mouseX, double mouseY) {
-        for (net.minecraft.client.gui.components.events.GuiEventListener child : this.children) {
+        for (net.minecraft.client.gui.components.events.GuiEventListener child : this.children()) {
             if (child instanceof net.minecraft.client.gui.components.AbstractWidget widget
                     && widget.visible && widget.isMouseOver(mouseX, mouseY)) {
                 return true;
