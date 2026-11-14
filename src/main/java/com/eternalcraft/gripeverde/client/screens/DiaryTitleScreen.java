@@ -692,7 +692,9 @@ public class DiaryTitleScreen extends Screen {
     private int vigilLineY() {
         int lineH = this.font.lineHeight;
         int y = this.height / 3 + 24;
-        int bandTop = logoBottom() + Spacing.GAP_SMALL;
+        // 8 px bajo el emblema: a 560x315 el filete de la fecha termina en 161 y
+        // con 4 px el susurro quedaba pegado al rotulo.
+        int bandTop = logoBottom() + Spacing.GAP_MEDIUM;
         int bandBottom = buttonTableTop() - Spacing.GAP_SMALL;
         if (y < bandTop || y + lineH > bandBottom) {
             if (bandBottom - bandTop >= lineH) {

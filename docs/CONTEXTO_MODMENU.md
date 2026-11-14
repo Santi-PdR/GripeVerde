@@ -58,15 +58,16 @@ dentro del emblema:
 | Tamaño | Emblema | Susurro antes | Ahora |
 | --- | --- | --- | --- |
 | 427x240 | 30..108 | 104..113, sobre el filete de la fecha | 216..225, al pie sobre la firma |
-| 560x315 | 30..161 | 129..138, sobre «GRIPE VERDE» | 165..174, banda libre |
-| 700x400 | 30..161 | 157..166, sobre el renglón del día | 165..174, banda libre |
+| 560x315 | 30..161 | 129..138, sobre «GRIPE VERDE» | 169..178, banda libre |
+| 700x400 | 30..161 | 157..166, sobre el renglón del día | 169..178, banda libre |
 | 854x480 | 30..161 | 184..193 | 184..193 (sin cambios) |
 | 1024x600 | 30..161 | 224..233 | 224..233 (sin cambios) |
 
 - `vigilLineY()` conserva la posición original cuando ya cae en banda limpia y,
-  si no, busca la banda entre `logoBottom() + GAP_SMALL` y
-  `buttonTableTop() - GAP_SMALL`; cuando no hay ni una línea de alto, baja al
-  pie en `height - 24`, que deja 3 px sobre la firma (`height - 12`).
+  si no, busca la banda entre `logoBottom() + GAP_MEDIUM` (8 px bajo el filete
+  de la fecha) y `buttonTableTop() - GAP_SMALL`; cuando no hay ni una línea de
+  alto, baja al pie en `height - 24`, que deja 3 px sobre la firma
+  (`height - 12`).
 - El susurro nunca coincide con la ficha del cronista: la ficha se muestra 8 s
   al abrir la portada y el susurro exige 60 s sin interacción.
 - `estimateFirstButtonTop()` pasa a devolver `buttonTableTop()`: era otra copia
