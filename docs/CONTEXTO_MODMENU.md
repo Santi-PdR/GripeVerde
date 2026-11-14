@@ -14,8 +14,16 @@ Actualizado: 2026-11-13
 
   Comando vigente (sirve para siempre: resuelve `releases/latest`, no lleva versión escrita):
 
-  ```powershell
-$ProgressPreference='SilentlyContinue'; $m='D:\Minecraft\SKLauncher\sklauncher-data-v4\instances\test-1\mods'; if(-not (Test-Path $m)){throw "No existe $m"}; $a=(Invoke-RestMethod 'https://api.github.com/repos/Santi-PdR/GripeVerde/releases/latest' -UseBasicParsing).assets | Where-Object { $_.name -like 'gripeverde-*.jar' } | Select-Object -First 1; if(-not $a){throw 'El ultimo release no tiene JAR'}; Get-ChildItem $m -Filter '*gripeverde*.jar' -ErrorAction SilentlyContinue | ForEach-Object { try{ Remove-Item $_.FullName -Force -ErrorAction Stop }catch{ throw "Cerra Minecraft y repeti: $($_.Name) esta en uso" } }; $out=Join-Path $m $a.name; Invoke-WebRequest -Uri $a.browser_download_url -OutFile $out -UseBasicParsing; $f=Get-Item $out; if($f.Length -ne $a.size){ throw "Descarga incompleta: $($f.Length) de $($a.size) bytes" }; "OK: $($f.Name) ($($f.Length) bytes) en $m"
+  El original vive en `tools/install-latest.ps1`; **no se pega el texto**, se pega su
+  base64 UTF-16LE con `powershell -NoProfile -EncodedCommand <blob>`, porque la interfaz de
+  chat del usuario convierte URLs en enlaces markdown y escapa `*` y `_` (el 2026-11-13 la pega
+  llegó como `'[https://api.github.com/repos/Santi-PdR](https://api.github.com/repos/Santi-PdR)…'`
+  y la API contestó 404). El blob se regenera así:
+
+  ```python
+  import base64
+  src = open('tools/install-latest.ps1', encoding='utf-8').read()
+  print(base64.b64encode(src.encode('utf-16-le')).decode('ascii'))
   ```
 
 
