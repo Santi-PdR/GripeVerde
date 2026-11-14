@@ -1,3 +1,7 @@
+## v0.178.0 - Ningún adorno roba un clic
+
+Los adornos con clic de la portada (rata, gato, ventana del ático, cartel del buscado) se comprobaban antes que los widgets y varios devolvían `true`, así que el clic no llegaba al botón: a 427x240 la ventana del ático cae 12 px dentro de Multijugador, y por encima de ~300 px de alto la rata cruza la mesa y Ajustes/Salir. Ahora todos preguntan primero por los botones reales. La pausa tenía el mismo problema: su vela tapaba el último botón de la izquierda en ventanas de 235 a 260 px de alto.
+
 ## v0.177.0 - El susurro encuentra su banda
 
 El susurro de la vigilia nacía a un tercio de la altura de la ventana, dentro del emblema en cualquier ventana de menos de ~410 px de alto: a 427x240 cruzaba el filete de la fecha y a 700x400 se posaba sobre el renglón del día. Ahora busca la banda libre entre el emblema y la mesa de botones, y si no cabe ni una línea baja al pie sobre la firma. La mesa de botones se mide con una sola fórmula, compartida con el emblema.

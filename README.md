@@ -1,3 +1,7 @@
+**v0.178.0 - Ningún adorno roba un clic**
+
+La ventana del ático, la rata, el gato y los carteles ya no se comen los clics de los botones: preguntan primero por ellos. La vela de la pausa también. Sin cambios durante la partida.
+
 **v0.177.0 - El susurro encuentra su banda**
 
 El susurro de la vigilia ya no cae dentro del emblema: busca la banda libre entre el emblema y los botones y, si no cabe, baja al pie. Sin cambios durante la partida.

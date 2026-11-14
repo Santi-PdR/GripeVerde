@@ -1,3 +1,7 @@
+## Version 0.178.0 - Ningún adorno roba un clic
+
+Los adornos con clic de la portada se comprobaban antes que los botones y varios respondían primero, así que el clic nunca llegaba: a 427x240 la ventana encendida del ático cae doce píxeles dentro de Multijugador, y en cualquier ventana de más de unos 300 píxeles de alto la rata cruza la mesa de botones y los de Ajustes y Salir. Ahora todo adorno pregunta primero por los botones. La pausa tenía la misma falla con su vela sobre el último botón de la izquierda en ventanas muy bajas.
+
 ## Version 0.177.0 - El susurro encuentra su banda
 
 El susurro de la vigilia nacía a un tercio de la altura de la ventana, que en cualquier ventana de menos de unos 410 píxeles caía dentro del emblema de la portada: a 427x240 cruzaba el filete de la fecha y a 700x400 se posaba sobre el renglón del día. Ahora busca la banda libre entre el emblema y la mesa de botones y, cuando no hay sitio ni para una línea, baja al pie sobre la firma del cronista. La mesa de botones se mide además con una sola fórmula, la misma que usa el emblema para saber dónde termina.

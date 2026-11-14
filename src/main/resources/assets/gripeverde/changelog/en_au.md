@@ -1,3 +1,7 @@
+## Version 0.178.0 - No ornament steals a click
+
+The clickable decorations of the title screen were checked before the buttons and several of them answered first, so the click never arrived: at 427x240 the lit window of the attic falls twelve pixels inside Multiplayer, and in any window taller than about 300 pixels the rat crosses the button table and the Options and Quit buttons. Every decorative spot now asks the buttons first. The pause screen had the same flaw with its candle over the bottom-left button in very short windows.
+
 ## Version 0.177.0 - The whisper finds its band
 
 The vigil whisper used to start at a third of the window height, which landed inside the title emblem in every window shorter than about 410 pixels: at 427x240 it crossed the date rule, and at 700x400 it sat on the day line. It now looks for the free band between the emblem and the button table and, when there is no room for a single line, drops to the footer above the chronicler's signature. The button table is also measured by one formula only, the same one the emblem uses to know where it ends.

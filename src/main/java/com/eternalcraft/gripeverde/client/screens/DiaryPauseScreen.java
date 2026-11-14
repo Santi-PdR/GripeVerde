@@ -88,6 +88,22 @@ public class DiaryPauseScreen extends PauseScreen {
         super(true);
     }
 
+    /**
+     * v0.178.0: la vela y el cuervo se comprobaban antes que los widgets y
+     * devolvian true. En la rejilla de dos columnas de las ventanas bajas la
+     * vela cae 10 px dentro del ultimo boton de la izquierda, asi que apagarla
+     * se comia el clic de "guia de campo".
+     */
+    private boolean overAnyButton(double mouseX, double mouseY) {
+        for (net.minecraft.client.gui.components.events.GuiEventListener child : this.children) {
+            if (child instanceof net.minecraft.client.gui.components.AbstractWidget widget
+                    && widget.visible && widget.isMouseOver(mouseX, mouseY)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private int panelX() { return (this.width - panelW()) / 2; }
     private int panelY() {
         // Pegar el panel al margen superior; si sobra espacio, dejarlo abajo para hotbar
@@ -227,7 +243,9 @@ public class DiaryPauseScreen extends PauseScreen {
                 int px = panelX(), py = panelY();
                 // La vela: apagarla revela lo que lee la oscuridad.
                 int candleX = px + 20, candleY = py + panelH() - 32;
-                if (mouseX >= candleX - 6 && mouseX <= candleX + 20 && mouseY >= candleY - 14 && mouseY <= candleY + 28) {
+                boolean overButton = overAnyButton(mouseX, mouseY);
+                if (!overButton && mouseX >= candleX - 6 && mouseX <= candleX + 20
+                        && mouseY >= candleY - 14 && mouseY <= candleY + 28) {
                     candleOut = !candleOut;
                     if (candleOut) {
                         candleSmokeUntilMs = System.currentTimeMillis() + 2600L;
@@ -243,7 +261,8 @@ public class DiaryPauseScreen extends PauseScreen {
                 }
                 // El cuervo cobra su peaje.
                 int ravenX = px + 14, ravenY = py + 22;
-                if (mouseX >= ravenX - 4 && mouseX <= ravenX + 24 && mouseY >= ravenY - 4 && mouseY <= ravenY + 22) {
+                if (!overButton && mouseX >= ravenX - 4 && mouseX <= ravenX + 24
+                        && mouseY >= ravenY - 4 && mouseY <= ravenY + 22) {
                     int n = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.bump("ravenClicks");
                     com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
                         com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_CROWS.get(), 0.22f, 1.45f);

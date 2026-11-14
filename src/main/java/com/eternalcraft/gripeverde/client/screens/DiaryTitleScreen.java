@@ -374,6 +374,24 @@ public class DiaryTitleScreen extends Screen {
         return LOGO_TOP + Math.round(LogoRenderer.BLOCK_H * logoScale());
     }
 
+    /**
+     * v0.178.0: ningun adorno de la portada puede comerse un clic destinado a un
+     * boton. Los puntos calientes (rata, gato, ventana del atico, carteles) se
+     * comprobaban antes que los widgets y varios devolvian true: a 427x240 la
+     * ventana del atico cae 12 px dentro de "Multijugador" y a 854x480 la rata
+     * pasa por dentro de la mesa y de Ajustes/Salir. Se preguntan los widgets
+     * reales para no duplicar la geometria de init().
+     */
+    private boolean overAnyButton(double mouseX, double mouseY) {
+        for (net.minecraft.client.gui.components.events.GuiEventListener child : this.children) {
+            if (child instanceof net.minecraft.client.gui.components.AbstractWidget widget
+                    && widget.visible && widget.isMouseOver(mouseX, mouseY)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void ensureColumnLayout() {
         if (columnCacheWidth == this.width && columnCacheHeight == this.height
                 && cachedLeftColumn != null && cachedRightColumn != null) {
@@ -1048,6 +1066,7 @@ public class DiaryTitleScreen extends Screen {
                     return true;
                 }
                 int w = this.width, h = this.height;
+                boolean overButton = overAnyButton(mouseX, mouseY);
 
                 // El ojo del emblema no esta pintado: mira.
                 int logoCx = w / 2;
@@ -1066,7 +1085,7 @@ public class DiaryTitleScreen extends Screen {
                 LayoutRegion rightCol = rightColumn();
                 int watchCx = rightCol.x + rightCol.w - WATCH_RADIUS - Spacing.GAP_MEDIUM;
                 int watchCy = rightCol.y + WATCH_RADIUS + Spacing.GAP_LARGE;
-                if (!isMinimalMode()
+                if (!overButton && !isMinimalMode()
                         && mouseX >= watchCx - WATCH_RADIUS - 10 && mouseX <= watchCx + WATCH_RADIUS + 10
                         && mouseY >= watchCy - WATCH_RADIUS - 14 && mouseY <= watchCy + WATCH_RADIUS + 22) {
                     handleWatchClick();
@@ -1074,13 +1093,13 @@ public class DiaryTitleScreen extends Screen {
                 }
 
                 // v0.32.0: el edicto abre la copia de campo sin censura.
-                if (overQuarantinePoster(mouseX, mouseY)) {
+                if (!overButton && overQuarantinePoster(mouseX, mouseY)) {
                     this.minecraft.setScreen(new DiaryFieldGuideScreen(this));
                     return true;
                 }
 
                 // El cartel del buscado: sostenerle la mirada.
-                if (isWantedPosterShowing()) {
+                if (!overButton && isWantedPosterShowing()) {
                     int[] rr = wantedPosterRect();
                     if (rr != null && mouseX >= rr[0] && mouseX <= rr[0] + rr[2]
                             && mouseY >= rr[1] && mouseY <= rr[1] + rr[3]) {
@@ -1094,14 +1113,16 @@ public class DiaryTitleScreen extends Screen {
 
                 // El gato del tejado cobra sus deudas despacio.
                 int[] catR = com.eternalcraft.gripeverde.client.render.VictorianSkyline.catRect(w, h);
-                if (!isMinimalMode() && mouseX >= catR[0] && mouseX <= catR[0] + catR[2]
+                if (!overButton && !isMinimalMode()
+                        && mouseX >= catR[0] && mouseX <= catR[0] + catR[2]
                         && mouseY >= catR[1] && mouseY <= catR[1] + catR[3]) {
                     handleCatClick();
                     return true;
                 }
 
                 // La rata que se detuvo.
-                if (com.eternalcraft.gripeverde.client.render.LivingAtmosphere.ratHit(mouseX, mouseY, w, h)) {
+                if (!overButton
+                        && com.eternalcraft.gripeverde.client.render.LivingAtmosphere.ratHit(mouseX, mouseY, w, h)) {
                     if (com.eternalcraft.gripeverde.client.render.LivingAtmosphere.isRatStanding()) {
                         com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
                             com.eternalcraft.gripeverde.client.lore.Discoveries.RAT_PAUSE);
@@ -1112,7 +1133,8 @@ public class DiaryTitleScreen extends Screen {
 
                 // La ventana del atico espera respuesta.
                 int[] sw = com.eternalcraft.gripeverde.client.render.VictorianSkyline.signalWindowRect(w, h);
-                if (mouseX >= sw[0] - 2 && mouseX <= sw[0] + sw[2] + 2
+                if (!overButton
+                        && mouseX >= sw[0] - 2 && mouseX <= sw[0] + sw[2] + 2
                         && mouseY >= sw[1] - 2 && mouseY <= sw[1] + sw[3] + 2) {
                     com.eternalcraft.gripeverde.client.render.VictorianSkyline.signalWindowClicked();
                     return true;
@@ -1144,7 +1166,7 @@ public class DiaryTitleScreen extends Screen {
         int logoHalf = LogoRenderer.BLOCK_W / 2 + 2;
         boolean overLogo = mouseX >= logoCx - logoHalf && mouseX <= logoCx + logoHalf
                         && mouseY >= LOGO_TOP && mouseY <= logoBottom;
-        if (overLogo && button == 0) {
+        if (overLogo && button == 0 && !overAnyButton(mouseX, mouseY)) {
             handleLogoClick();
             // No consumir el evento, dejar pasar al super
         }

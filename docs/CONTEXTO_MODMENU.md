@@ -7,7 +7,7 @@ Actualizado: 2026-11-13
 - Repositorio: [Santi-PdR/GripeVerde](https://github.com/Santi-PdR/GripeVerde)
 - Rama de trabajo: `codex/v0.104-ghoul-warning-poster`
 - Pull request: [#90](https://github.com/Santi-PdR/GripeVerde/pull/90)
-- Versión de esta rama: `0.177.0` (anterior entregada: `0.176.0`)
+- Versión de esta rama: `0.178.0` (anterior entregada: `0.177.0`)
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
 - El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
   proyecto local del usuario.
@@ -49,6 +49,32 @@ Actualizado: 2026-11-13
 - El validador local `python3 tools/verify_mirrors.py` reproduce los sellos de Gradle
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
+
+## Cambios de 0.178.0 — ningún adorno roba un clic
+
+`DiaryTitleScreen.mouseClicked` comprueba primero los puntos calientes
+decorativos y después llama a `super.mouseClicked`, que es quien reparte el clic
+entre los widgets. Varios de esos adornos devolvían `true`, así que un clic
+destinado a un botón se quedaba en el adorno:
+
+| Adorno | Tamaño | Solape con botones |
+| --- | --- | --- |
+| Ventana del ático (`signalWindowRect`) | 427x240 | 12 px dentro de la pareja (x 254..264, y 138..150 sobre Multijugador 116..204) |
+| Rata (`ratHit`, y = 0,90 h) | 854x480 | 8 px dentro de la mesa y de Ajustes/Salir |
+| Rata | 1280x720 y 1920x1080 | 2 a 8 px dentro de la pareja |
+| Gato (`catRect`) | 427x240 | 7 px, pero ya estaba excluido por `isMinimalMode()` |
+
+- `overAnyButton(mouseX, mouseY)` recorre `this.children` y pregunta a los
+  widgets reales (`AbstractWidget.visible && isMouseOver`), así que no duplica la
+  geometría de `init()` ni puede desincronizarse como las fórmulas repetidas.
+- La bandera se calcula una vez por clic y protege reloj, bando de cuarentena,
+  cartel del buscado, gato, rata, ventana del ático y clic del emblema.
+- `DiaryPauseScreen`: la vela (`y = panelH - 46..panelH - 4`) se metía hasta 12 px
+  dentro del último botón de la izquierda en la rejilla de dos columnas de las
+  ventanas de 235 a 260 px de alto; ahora vela y cuervo también preguntan por los
+  botones.
+- El zumbido del clic sigue igual: si no hay botón debajo, el adorno responde como
+  siempre.
 
 ## Cambios de 0.177.0 — el susurro de la vigilia encuentra su banda
 
@@ -249,6 +275,6 @@ inventario/pausa deben seguir libres de animaciones añadidas.
 
 ## Próximo paso técnico recomendado
 
-Recoger la revisión visual del usuario sobre `0.177.0` (carril de Ajustes y Salir y banda
+Recoger la revisión visual del usuario sobre `0.178.0` (carril de Ajustes y Salir y banda
 del susurro) e instalar el JAR cuando la carpeta de mods sea accesible. CopyL 3.9.5 sigue esperando un
 entorno con permiso de escritura sobre `Santi-PdR/Lclient`.
