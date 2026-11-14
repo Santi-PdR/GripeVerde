@@ -91,11 +91,17 @@ public class SlimButton extends AbstractButton {
             drawDispatchNote(g, x + (w - 12) / 2, y + (h - 12) / 2, textColor);
         } else {
             Font font = Minecraft.getInstance().font;
-            String label = ellipsize(font, this.getMessage().getString(), Math.max(8, w - 12));
+            // v0.186.0: encoje la letra antes que recortarla; asi la etiqueta
+            // entra entera y centrada en cualquier idioma.
+            String label = this.getMessage().getString();
+            int ty = y + (h - font.lineHeight) / 2;
             int tw = DiaryTypography.width(font, label);
-            int tx = x + (w - tw) / 2;
-            int ty = y + (h - 8) / 2;
-            DiaryTypography.draw(g, font, label, tx, ty, textColor);
+            int room = Math.max(8, w - 10);
+            if (tw > room) {
+                DiaryTypography.drawFitted(g, font, label, x + w / 2, ty, room, textColor, 0.62f);
+            } else {
+                DiaryTypography.draw(g, font, label, x + (w - tw) / 2, ty, textColor);
+            }
         }
 
         // Static keyboard focus ring for compact icon buttons; no motion in or out of a world.

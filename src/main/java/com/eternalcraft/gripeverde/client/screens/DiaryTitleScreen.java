@@ -74,11 +74,11 @@ public class DiaryTitleScreen extends Screen {
     // v0.184.0: botones de la portada mas chicos. Dejaban de ser invitacion y
     // pasaban a ser mueble: menos ancho, menos alto y mas aire para el fondo,
     // que es lo que el lector viene a mirar.
-    private static final int BTN_W = 248;
-    private static final int BTN_H = 32;
+    private static final int BTN_W = 264;
+    private static final int BTN_H = 34;
 
-    private static final int BTN_SLIM_W = 112;
-    private static final int BTN_SLIM_H = 26;
+    private static final int BTN_SLIM_W = 126;
+    private static final int BTN_SLIM_H = 28;
 
     private static final int POSTER_W = 180;
     private static final int POSTER_H_MAX = 260;

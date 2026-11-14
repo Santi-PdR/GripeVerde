@@ -349,9 +349,8 @@ public class AtmosphereRenderer {
         float phaseIntensity = getPhaseIlluminationFactor(phase);
         if (phaseIntensity > 0.4f) {
             int haloAlpha = (int)((12 + (int)(moonGlowPulse * 10)) * phaseIntensity);
-            drawSoftBlob(g, cx, cy, radius + 24, haloAlpha,       0x00E8DCB4);
-            drawSoftBlob(g, cx, cy, radius + 14, haloAlpha + 5,   0x00D4C089);
-            drawSoftBlob(g, cx, cy, radius + 8,  haloAlpha + 8,   0x00F0E5C0);
+            drawSoftBlob(g, cx, cy, radius + 22, haloAlpha,     0x00E8DCB4);
+            drawSoftBlob(g, cx, cy, radius + 9,  haloAlpha + 8, 0x00F0E5C0);
         }
 
         // Luna: solo dibujar la parte iluminada segun la fase.
@@ -578,16 +577,31 @@ public class AtmosphereRenderer {
             drawSoftBlob(g, bx, by, br, ba, colorNoAlpha);
         }
     }
-    /** Blob suave: 6 anillos concentricos con alpha decreciente (optimizado). */
+    /**
+     * Blob suave: anillos concentricos con alpha decreciente.
+     *
+     * v0.186.0: cuatro anillos (antes seis) y cada uno dibujado en franjas de dos
+     * pixeles. Era el gasto mas caro del menu —la luna sola pedia tres blobs de
+     * radio 44, casi mil fills por cuadro— y a estos alfas la diferencia no se
+     * ve, pero se ahorra un tercio del trabajo.
+     */
     public static void drawSoftBlob(GuiGraphics g, int cx, int cy, int radius, int coreAlpha, int colorNoAlpha) {
-        if (radius <= 0 || coreAlpha <= 0) return;
-        int steps = radius < 6 ? radius : 6;
+        if (radius <= 0 || coreAlpha < 4) return;
+        int steps = Math.max(1, Math.min(4, radius));
         for (int s = steps; s >= 1; s--) {
             int r = Math.max(1, radius * s / steps);
             float t = (float) s / (float) steps;
             int a = (int) (coreAlpha * (1f - t) * (1f - t) + coreAlpha * 0.15f * (1f - t));
             if (a <= 0) continue;
-            fillCircle(g, cx, cy, r, withAlpha(colorNoAlpha, a));
+            int col = withAlpha(colorNoAlpha, a);
+            for (int dy = -r; dy <= r; dy += 2) {
+                int low = dy;
+                int high = Math.min(dy + 1, r);
+                int dxLow = (int) Math.sqrt(Math.max(0, r * r - low * low));
+                int dxHigh = (int) Math.sqrt(Math.max(0, r * r - high * high));
+                int dx = Math.max(dxLow, dxHigh);
+                g.fill(cx - dx, cy + low, cx + dx + 1, cy + low + 2, col);
+            }
         }
     }
 

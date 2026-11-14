@@ -195,7 +195,7 @@ public class DiaryButton extends AbstractButton {
         int textColor = getTextColor(t);
         if(!active) textColor = DiaryTheme.SEPIA_DARK;
 
-        int textStartX, maxTextW;
+        int textStartX, maxTextW, textDrawnW;
         int contentY = yDraw + (h - font.lineHeight)/2;
         if(icon!=Icon.NONE){
             int iconX = x+9;
@@ -204,26 +204,34 @@ public class DiaryButton extends AbstractButton {
             textStartX = iconX+12+6;
             maxTextW = Math.max(8, x+w-10-textStartX);
             text = fitText(font,text,maxTextW);
+            DiaryTypography.draw(g, font, text, textStartX, contentY, textColor);
+            textDrawnW = DiaryTypography.width(font, text);
         } else {
             maxTextW = Math.max(8,w-18);
-            text = fitText(font,text,maxTextW);
-            int tw = DiaryTypography.width(font, text);
-            textStartX = x+(w-tw)/2;
+            int fullW = DiaryTypography.width(font, text);
+            if (fullW > maxTextW) {
+                // v0.186.0: letra mas chica en vez de puntos suspensivos.
+                textDrawnW = DiaryTypography.drawFitted(g, font, text, x + w / 2, contentY,
+                    maxTextW, textColor, 0.66f);
+                textStartX = x + w / 2 - textDrawnW / 2;
+            } else {
+                // One unshadowed glyph pass keeps the selected game font crisp and
+                // avoids a doubled, over-bold look on narrow buttons.
+                textStartX = x+(w-fullW)/2;
+                DiaryTypography.draw(g, font, text, textStartX, contentY, textColor);
+                textDrawnW = fullW;
+            }
         }
-        // One unshadowed glyph pass keeps the selected game font crisp and avoids
-        // a doubled, over-bold look on narrow buttons and non-Latin glyphs.
-        DiaryTypography.draw(g, font, text, textStartX, contentY, textColor);
 
-        // Underline on hover (ink stroke)
-        if(!inWorld && t>0.08f && active){
-            int tw = DiaryTypography.width(font, text);
+        // Underline on hover (ink stroke); v0.186.0 en tramos de tres pixeles
+        // en vez de uno por pixel (era un fill por letra y por cuadro).
+        if(!inWorld && t>0.08f && active && textDrawnW > 0){
             int uy = contentY+font.lineHeight;
             int uAlpha = (int)(t*190);
             int uCol = DiaryTheme.withAlpha(accent, uAlpha);
-            // Slight wavy underline to feel hand-drawn
-            for(int i=0;i<tw;i++){
-                int yOff = (i%3==0)?0: (i%3==1)?1:0;
-                g.fill(textStartX+i, uy+yOff, textStartX+i+1, uy+yOff+1, uCol);
+            for(int i=0;i<textDrawnW;i+=3){
+                int yOff = (i%6==0)?0:1;
+                g.fill(textStartX+i, uy+yOff, textStartX+Math.min(textDrawnW, i+3), uy+yOff+1, uCol);
             }
         }
 

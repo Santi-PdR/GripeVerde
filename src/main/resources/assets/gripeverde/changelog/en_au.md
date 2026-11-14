@@ -1,3 +1,9 @@
+## Version 0.186.0 - Buttons that breathe and a lighter menu
+
+The cover buttons grew a notch (264x34 for the big ones, 126x28 for the side ones) and the label now shrinks just enough to fit whole and centred instead of being squeezed against the edge: long labels read completely at any window size. The ink underline on hover is drawn in three-pixel runs instead of one pixel at a time.
+
+And the menu weighs less. The moon halo used to ask for three soft blobs of radius forty-four, nearly a thousand fills per frame; now it is two, and each ring is painted in two-pixel bands, so the halo - and the chimney smoke that uses the same brush - costs about a third of what it did. Add to that the previous batch's work: screens no longer re-wrap their text every frame and clipped labels are found by bisection.
+
 ## Version 0.185.0 - Twenty voices and paper that is actually clean
 
 The CEDA sheet goes from ten messages to twenty without changing the file format: the ten you already had keep their place and the ten new ones arrive empty. Pages hold up to twelve rows and turn with the wheel, PgUp and PgDn, or a right click on the label to go back. Ctrl plus 1..9/0 sends that voice without leaving the keyboard, and with Shift it sends voices 11 to 20; Enter moves to the next field. Numbers read in full ink when that voice already has a message, and the footer counts how many do.

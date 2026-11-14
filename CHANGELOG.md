@@ -1,3 +1,10 @@
+## v0.186.0 - Botones que respiran y un menú más liviano
+
+- Portada: `BTN_W 264`, `BTN_H 34`, `BTN_SLIM_W 126`, `BTN_SLIM_H 28`.
+- `DiaryTypography.drawFitted` / `drawFittedLeft`: la etiqueta se encoge (hasta 0.62) antes que recortarse; `SlimButton` y `DiaryButton` la usan.
+- Subrayado de `DiaryButton` en tramos de tres píxeles (antes un `fill` por píxel y por cuadro).
+- `AtmosphereRenderer.drawSoftBlob`: cuatro anillos y franjas de dos píxeles (antes seis anillos por scanline); el halo de la luna pasa de tres blobs a dos. Afecta también al humo de las chimeneas y a las nubes.
+
 ## v0.185.0 - Veinte voces y un papel limpio de verdad
 
 - `DispatchLibrary.SLOT_COUNT` 16→20 (el formato del archivo no cambia; las ranuras viejas conservan su sitio).

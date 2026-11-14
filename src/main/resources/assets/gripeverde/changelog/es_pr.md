@@ -1,3 +1,9 @@
+## Version 0.186.0 - Botones que respiran y un menú más liviano
+
+Los botones de la portada subieron un punto (264×34 los grandes, 126×28 los de costado) y ahora la etiqueta se encoge lo justo para entrar entera y centrada, en vez de quedar apretada contra el borde: en castellano "Abrir el gabinete" y "Apagar la lámpara" ya se leen completos en cualquier tamaño de ventana. El subrayado de tinta al pasar el puntero se dibuja en tramos de tres píxeles en vez de uno por píxel.
+
+Y el menú pesa menos. El halo de la luna pedía tres blobs suaves de radio cuarenta y cuatro, casi mil rellenos por cuadro; ahora son dos y cada anillo se pinta en franjas de dos píxeles, con lo que el halo —y el humo de las chimeneas, que usa el mismo pincel— cuesta cerca de un tercio de lo que costaba. Se suman las mejoras de la tanda anterior: las pantallas ya no vuelven a partir su texto en cada cuadro y los rótulos recortados se buscan por bisección.
+
 ## Version 0.185.0 - Veinte voces y un papel limpio de verdad
 
 El parte de CEDA pasa de diez mensajes a veinte, sin cambiar el formato del archivo: las diez que ya tenías conservan su sitio y las diez nuevas entran vacías. Las páginas admiten hasta doce renglones y se pasan con la rueda, con RePag y AvPag, o con clic derecho en el rótulo para volver atrás. Ctrl más 1..9/0 manda esa voz sin soltar el teclado, y con Shift manda las voces 11 a 20; Enter baja al campo siguiente. Los números se leen en tinta fuerte cuando esa voz ya tiene mensaje y el pie cuenta cuántas van.

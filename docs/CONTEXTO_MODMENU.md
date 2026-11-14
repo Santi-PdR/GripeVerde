@@ -9,7 +9,7 @@ Actualizado: 2026-11-13
   token, igual que el de Photon/Fisk.
 - Rama de trabajo de la sesión: `arena/48be547c-gripeverde` (base `02e85bc`) — la plataforma
   fija el nombre, no se renombra. Todo el trabajo va ahí; el PR sale de esa rama.
-- Versión de esta rama: `0.185.0` (anteriores entregadas: `0.184.2`, `0.184.1`, `0.184.0`, `0.183.0`)
+- Versión de esta rama: `0.186.0` (anteriores entregadas: `0.185.0`, `0.184.2`, `0.184.1`, `0.184.0`, `0.183.0`)
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
 - El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
   proyecto local del usuario.
@@ -106,6 +106,18 @@ Actualizado: 2026-11-13
 - El validador local `python3 tools/verify_mirrors.py` reproduce los sellos de Gradle
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
+
+## Cambios de 0.186.0 — botones que respiran y el menú liviano
+
+- Portada: `BTN_W 264`, `BTN_H 34`, `BTN_SLIM_W 126`, `BTN_SLIM_H 28`; la etiqueta se **encoge**
+  (`DiaryTypography.drawFitted`, mínimo 0.62) en vez de recortarse con puntos suspensivos.
+- Subrayado de `DiaryButton` en tramos de 3 px (antes un `fill` por píxel).
+- `AtmosphereRenderer.drawSoftBlob`: **4 anillos y franjas de 2 px** (antes 6 anillos con un `fill`
+  por scanline); halo de la luna de 3 blobs a 2. El humo de chimeneas y las nubes usan el mismo pincel.
+- **Pendiente de confirmar con el usuario:** el pedido «las hojas devuélvelas». Los periódicos de la
+  portada (`PosterRenderer`: bando, paciente cero, el tren) **no se tocaron nunca**; lo que cambió en
+  0.184.0 fue el papel de los paneles de las 21 pantallas (velo translúcido). Queda por decidir si se
+  quitan los periódicos de la portada o si vuelve el papel de hoja a los paneles.
 
 ## Cambios de 0.185.0 — veinte voces y el papel limpio de verdad
 
