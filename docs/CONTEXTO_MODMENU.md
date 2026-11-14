@@ -7,7 +7,7 @@ Actualizado: 2026-11-13
 - Repositorio: [Santi-PdR/GripeVerde](https://github.com/Santi-PdR/GripeVerde)
 - Rama de trabajo: `codex/v0.104-ghoul-warning-poster`
 - Pull request: [#90](https://github.com/Santi-PdR/GripeVerde/pull/90)
-- Versión de esta rama: `0.176.0` (anterior entregada: `0.175.0`)
+- Versión de esta rama: `0.177.0` (anterior entregada: `0.176.0`)
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
 - El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
   proyecto local del usuario.
@@ -48,6 +48,34 @@ Actualizado: 2026-11-13
 - El validador local `python3 tools/verify_mirrors.py` reproduce los sellos de Gradle
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
+
+## Cambios de 0.177.0 — el susurro de la vigilia encuentra su banda
+
+`drawVigilLine` dibujaba el susurro de la vigilia en `height / 3 + 24`, una
+posición fija que en **todas** las ventanas de menos de unos 410 px de alto caía
+dentro del emblema:
+
+| Tamaño | Emblema | Susurro antes | Ahora |
+| --- | --- | --- | --- |
+| 427x240 | 30..108 | 104..113, sobre el filete de la fecha | 216..225, al pie sobre la firma |
+| 560x315 | 30..161 | 129..138, sobre «GRIPE VERDE» | 165..174, banda libre |
+| 700x400 | 30..161 | 157..166, sobre el renglón del día | 165..174, banda libre |
+| 854x480 | 30..161 | 184..193 | 184..193 (sin cambios) |
+| 1024x600 | 30..161 | 224..233 | 224..233 (sin cambios) |
+
+- `vigilLineY()` conserva la posición original cuando ya cae en banda limpia y,
+  si no, busca la banda entre `logoBottom() + GAP_SMALL` y
+  `buttonTableTop() - GAP_SMALL`; cuando no hay ni una línea de alto, baja al
+  pie en `height - 24`, que deja 3 px sobre la firma (`height - 12`).
+- El susurro nunca coincide con la ficha del cronista: la ficha se muestra 8 s
+  al abrir la portada y el susurro exige 60 s sin interacción.
+- `estimateFirstButtonTop()` pasa a devolver `buttonTableTop()`: era otra copia
+  de la fórmula de la mesa derivada de `leftColumn()`, que en ventanas estrechas
+  no coincide porque el grupo se centra. Ahora emblema, mesa y caja de telegrama
+  comparten una sola fuente de verdad.
+- Auditoría: 17 anchos (320 a 1920) x 15 altos (180 a 1080) = 255 combinaciones,
+  sin fallos de susurro sobre el emblema, sobre la mesa, sobre la firma ni fuera
+  de pantalla.
 
 ## Cambios de 0.176.0 — Ajustes y Salir se apartan del emblema
 
@@ -219,6 +247,6 @@ inventario/pausa deben seguir libres de animaciones añadidas.
 
 ## Próximo paso técnico recomendado
 
-Recoger la revisión visual del usuario sobre `0.176.0` (carril de Ajustes y Salir) e
-instalar el JAR cuando la carpeta de mods sea accesible. CopyL 3.9.5 sigue esperando un
+Recoger la revisión visual del usuario sobre `0.177.0` (carril de Ajustes y Salir y banda
+del susurro) e instalar el JAR cuando la carpeta de mods sea accesible. CopyL 3.9.5 sigue esperando un
 entorno con permiso de escritura sobre `Santi-PdR/Lclient`.

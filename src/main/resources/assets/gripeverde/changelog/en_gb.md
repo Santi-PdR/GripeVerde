@@ -1,3 +1,7 @@
+## Version 0.177.0 - The whisper finds its band
+
+The vigil whisper used to start at a third of the window height, which landed inside the title emblem in every window shorter than about 410 pixels: at 427x240 it crossed the date rule, and at 700x400 it sat on the day line. It now looks for the free band between the emblem and the button table and, when there is no room for a single line, drops to the footer above the chronicler's signature. The button table is also measured by one formula only, the same one the emblem uses to know where it ends.
+
 ## Version 0.176.0 - Options and Quit step aside
 
 In windows narrower than 620 pixels, Options and Quit used to hang from a fixed row at y=36, right on top of the title emblem, which starts at y=30. At 427x240, the size a 854x480 window gets at GUI scale 2, they covered thirty-two pixels of the crest. They now sit in their own rail to the right of Multiplayer and Mods, inside the same band as the button table, and the pair and the rail centre themselves on the emblem's axis. The emblem keeps its size and nothing new is drawn while you play.

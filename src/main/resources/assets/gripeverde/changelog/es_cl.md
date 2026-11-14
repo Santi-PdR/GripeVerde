@@ -1,3 +1,7 @@
+## Version 0.177.0 - El susurro encuentra su banda
+
+El susurro de la vigilia nacía a un tercio de la altura de la ventana, que en cualquier ventana de menos de unos 410 píxeles caía dentro del emblema de la portada: a 427x240 cruzaba el filete de la fecha y a 700x400 se posaba sobre el renglón del día. Ahora busca la banda libre entre el emblema y la mesa de botones y, cuando no hay sitio ni para una línea, baja al pie sobre la firma del cronista. La mesa de botones se mide además con una sola fórmula, la misma que usa el emblema para saber dónde termina.
+
 ## Version 0.176.0 - Ajustes y Salir se apartan
 
 En ventanas de menos de 620 píxeles de ancho, Ajustes y Salir colgaban de una fila fija en y=36, justo encima del emblema de la portada, que empieza en y=30. A 427x240, el tamaño que da una ventana de 854x480 con escala GUI 2, tapaban treinta y dos píxeles del escudo. Ahora ocupan un carril propio a la derecha de Multijugador y Mods, dentro de la misma banda que la mesa de botones, y la pareja y el carril se centran sobre el eje del emblema. El emblema conserva su tamaño y no se dibuja nada nuevo durante la partida.

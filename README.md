@@ -1,3 +1,7 @@
+**v0.177.0 - El susurro encuentra su banda**
+
+El susurro de la vigilia ya no cae dentro del emblema: busca la banda libre entre el emblema y los botones y, si no cabe, baja al pie. Sin cambios durante la partida.
+
 **v0.176.0 - Ajustes y Salir se apartan**
 
 En ventanas estrechas Ajustes y Salir ya no cuelgan encima del emblema: pasan a un carril a la derecha de Multijugador y Mods, dentro de la banda de los botones. Sin cambios durante la partida.

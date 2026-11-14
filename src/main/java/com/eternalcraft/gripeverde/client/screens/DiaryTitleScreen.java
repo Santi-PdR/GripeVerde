@@ -677,8 +677,31 @@ public class DiaryTitleScreen extends Screen {
         }
         if (cachedVigilLine.isEmpty()) return;
         int pulse = reducedMotion() ? 60 : (int)(Math.sin(System.currentTimeMillis() / 700.0) * 22 + 60);
-        DiaryTypography.draw(g, this.font, cachedVigilLine, this.width / 2 - cachedVigilTextWidth / 2, this.height / 3 + 24,
+        DiaryTypography.draw(g, this.font, cachedVigilLine,
+            this.width / 2 - cachedVigilTextWidth / 2, vigilLineY(),
             (Math.max(20, pulse) << 24) | 0xA8B890, false);
+    }
+
+    /**
+     * v0.177.0: el susurro de la vigilia nacia en height/3 + 24, que en cualquier
+     * ventana de menos de ~410 px de alto cae dentro del emblema (a 427x240
+     * cruzaba el filete del ano; a 700x400, el rotulo del dia). Busca la primera
+     * banda libre: la que queda entre el emblema y la mesa de botones y, si no
+     * hay altura para una linea, el pie sobre la firma.
+     */
+    private int vigilLineY() {
+        int lineH = this.font.lineHeight;
+        int y = this.height / 3 + 24;
+        int bandTop = logoBottom() + Spacing.GAP_SMALL;
+        int bandBottom = buttonTableTop() - Spacing.GAP_SMALL;
+        if (y < bandTop || y + lineH > bandBottom) {
+            if (bandBottom - bandTop >= lineH) {
+                y = Math.max(bandTop, Math.min(y, bandBottom - lineH));
+            } else {
+                y = this.height - 24;
+            }
+        }
+        return y;
     }
 
     @Override
@@ -1475,11 +1498,15 @@ public class DiaryTitleScreen extends Screen {
         }
     }
 
+    /**
+     * v0.177.0: la mesa se mide con la misma formula que usa el emblema para
+     * escalarse. Antes se derivaba de leftColumn(), que en ventanas estrechas ya
+     * no coincide con la mesa: el grupo se centra y el margen lateral no es su x.
+     */
     private int estimateFirstButtonTop() {
         try {
-            LayoutRegion leftCol = leftColumn();
-            int totalBtnH = BTN_H * 2 + Spacing.GAP_MEDIUM;
-            return leftCol.anchorY(Anchor.BOT_LEFT, totalBtnH) - Spacing.GAP_LARGE;
+            if (buttonTableTop() > 0) return buttonTableTop();
+            return this.height - 96;
         } catch (Throwable ignored) {
             return this.height - 96;
         }
