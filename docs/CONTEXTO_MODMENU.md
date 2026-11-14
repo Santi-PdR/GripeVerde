@@ -32,8 +32,21 @@ Actualizado: 2026-11-13
   mensaje que dice qué hacer. Verifica `size` y `digest` (sha256) que publica la API del
   asset, comprueba que el ZIP tenga `META-INF/MANIFEST.MF` y `mods.toml`, respalda los
   `*gripeverde*.jar` viejos en `<instancia>\gripeverde-jar-backups` y revierte si algo falla.
-- Queda ofrecido (sin respuesta todavía) pasar el repo a **público**: con eso el comando
-  funcionaría sin credenciales, igual que el de Photon.
+- El usuario **autorizó** pasar el repo a público (2026-11-13), pero **la integración de esta
+  sesión no puede**: `gh repo edit` de esta versión no tiene el flag de consecuencias y
+  `PATCH /repos` con `private=false` devuelve `403 Resource not accessible by integration`
+  (falta permiso de administración). Queda en manos del usuario:
+  `Settings > General > Danger Zone > Change repository visibility > Make public`.
+  Repos hermanos de referencia, todos **públicos**: `Fisk-Superheroes`, `Photon-2`, `Lclient`.
+  Los comandos cortos que el usuario probó con éxito salen de ahí, sin token.
+- Mientras siga privado, `tools/install-latest.ps1` usa token si lo encuentra y, cuando el repo
+  pase a público, funciona igual sin token (el fallback sin credenciales ya está escrito y, si
+  recibe un 404 sin token, avisa exactamente eso).
+- **Cambio de rama de la sesión (2026-11-13):** el checkout pasó a
+  `arena/48be547c-gripeverde`, que arranca en `02e85bc` (0.103.0). Todo el trabajo de
+  0.104→0.181 vive en `codex/v0.104-ghoul-warning-poster` @ `027f5f7`, que es la cabeza del
+  PR #90. La rama de la sesión estaba en 0.173.0; se integró con `-s ours` para conservar su
+  historial y dejar el árbol moderno.
 
 ## Estado confirmado al retomar (2026-11-13)
 
