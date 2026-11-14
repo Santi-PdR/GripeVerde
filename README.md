@@ -1,3 +1,12 @@
+## Instalar la última versión
+
+PowerShell, con el juego cerrado. Baja el `.jar` del último release directo a la carpeta de mods,
+reemplaza el anterior y verifica el tamaño:
+
+```powershell
+$ProgressPreference='SilentlyContinue'; $m='D:\Minecraft\SKLauncher\sklauncher-data-v4\instances\test-1\mods'; if(-not (Test-Path $m)){throw "No existe $m"}; $a=(Invoke-RestMethod 'https://api.github.com/repos/Santi-PdR/GripeVerde/releases/latest' -UseBasicParsing).assets | Where-Object { $_.name -like 'gripeverde-*.jar' } | Select-Object -First 1; if(-not $a){throw 'El ultimo release no tiene JAR'}; Get-ChildItem $m -Filter '*gripeverde*.jar' -ErrorAction SilentlyContinue | ForEach-Object { try{ Remove-Item $_.FullName -Force -ErrorAction Stop }catch{ throw "Cerra Minecraft y repeti: $($_.Name) esta en uso" } }; $out=Join-Path $m $a.name; Invoke-WebRequest -Uri $a.browser_download_url -OutFile $out -UseBasicParsing; $f=Get-Item $out; if($f.Length -ne $a.size){ throw "Descarga incompleta: $($f.Length) de $($a.size) bytes" }; "OK: $($f.Name) ($($f.Length) bytes) en $m"
+```
+
 **v0.181.0 - Los mensajes viejos se vienen con nosotros**
 
 La ficha del parte lee los diez mensajes rápidos de CopyL (nombres, textos y teclas) y se queda con copia propia: CopyL ya puede salir de la carpeta de mods sin perder nada. Clic envía, Shift carga, Ctrl guarda y clic derecho fija la tecla.

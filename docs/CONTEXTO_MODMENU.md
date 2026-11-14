@@ -4,6 +4,22 @@ Actualizado: 2026-11-13
 
 ## Proyecto y reglas de trabajo
 
+- **Entrega de cada versión:** el usuario no descarga archivos del workspace. Al terminar cada
+  tanda hay que darle **un comando de PowerShell para pegar en su shell**, que baja el `.jar` del
+  último release directo a su carpeta de mods, borra el `gripeverde-*.jar` viejo y verifica el
+  tamaño contra la API. No se guarda ninguna copia del JAR en el repositorio ni en el workspace.
+  Tampoco se dispara la descarga desde el sandbox: la red de este entorno solo alcanza
+  `github.com`, `api.github.com` y pocos hosts más, y el binario del release viene de
+  `release-assets.githubusercontent.com` (da `EOF` acá).
+
+  Comando vigente (sirve para siempre: resuelve `releases/latest`, no lleva versión escrita):
+
+  ```powershell
+$ProgressPreference='SilentlyContinue'; $m='D:\Minecraft\SKLauncher\sklauncher-data-v4\instances\test-1\mods'; if(-not (Test-Path $m)){throw "No existe $m"}; $a=(Invoke-RestMethod 'https://api.github.com/repos/Santi-PdR/GripeVerde/releases/latest' -UseBasicParsing).assets | Where-Object { $_.name -like 'gripeverde-*.jar' } | Select-Object -First 1; if(-not $a){throw 'El ultimo release no tiene JAR'}; Get-ChildItem $m -Filter '*gripeverde*.jar' -ErrorAction SilentlyContinue | ForEach-Object { try{ Remove-Item $_.FullName -Force -ErrorAction Stop }catch{ throw "Cerra Minecraft y repeti: $($_.Name) esta en uso" } }; $out=Join-Path $m $a.name; Invoke-WebRequest -Uri $a.browser_download_url -OutFile $out -UseBasicParsing; $f=Get-Item $out; if($f.Length -ne $a.size){ throw "Descarga incompleta: $($f.Length) de $($a.size) bytes" }; "OK: $($f.Name) ($($f.Length) bytes) en $m"
+  ```
+
+
+
 - Repositorio: [Santi-PdR/GripeVerde](https://github.com/Santi-PdR/GripeVerde)
 - Rama de trabajo: `codex/v0.104-ghoul-warning-poster`
 - Pull request: [#90](https://github.com/Santi-PdR/GripeVerde/pull/90)
