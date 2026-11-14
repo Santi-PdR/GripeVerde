@@ -44,7 +44,7 @@ if declared_languages - set(REQUIRED):
 
 baseline = json.loads(read(os.path.join(LANG_DIR, "en_us.json")))
 bkeys = set(baseline)
-EXPECTED = 189
+EXPECTED = 190
 loc_problems = []
 if len(bkeys) != EXPECTED:
     loc_problems.append("en_us: expected %d keys, found %d" % (EXPECTED, len(bkeys)))
@@ -126,7 +126,10 @@ banned = ['ThemeManager','GhoulPalette','ScreenLayout','ScreenTheme','AbstractSc
  'drawVignetteFast','drawStainsOptimized','drawWrinkles',
  'drawFaintRuledMargins','drawCornerPinholes','drawBottomTeaTint',
  'drawPageEdgeBurnish','drawSubtleBindingFibers','drawFaintRegistryNotches',
- 'drawMicroInkDot','drawArchiveCreases','stainChance','incrementOpenCount']
+ 'drawMicroInkDot','drawArchiveCreases','stainChance','incrementOpenCount',
+ # v0.188.0: los periodicos de la portada salieron; el arte queda en el historial.
+ 'PosterRenderer','OrnamentRenderer','drawPaperPanel','drawFoldedPaperCorner',
+ 'drawQuarantineNotice','drawRotatingNoticeRight','drawBloodSplatter','drawInkStamp']
 pat = re.compile(r"(?i)\b(?:" + "|".join(banned) + r")\b")
 dc_problems = []
 java_files = glob.glob(JAVA_DIR + "/**/*.java", recursive=True)

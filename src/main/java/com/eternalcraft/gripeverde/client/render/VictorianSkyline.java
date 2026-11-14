@@ -9,6 +9,21 @@ public class VictorianSkyline {
 
     private static float time = 0f;
 
+    /**
+     * v0.188.0: la tercera capa, la mas lejana: tejados y torres apenas insinuados
+     * sobre la niebla. Da profundidad a la ciudad que queda a la vista ahora que
+     * la portada no tiene periodicos encima. Formato {x, baseY, ancho, alto}.
+     */
+    private static final float[][] FAR_BUILDINGS = {
+        {-0.02f, 0.60f, 0.07f, 0.14f}, {0.05f, 0.62f, 0.05f, 0.10f},
+        {0.11f, 0.58f, 0.06f, 0.17f}, {0.19f, 0.61f, 0.08f, 0.12f},
+        {0.28f, 0.59f, 0.05f, 0.15f}, {0.35f, 0.63f, 0.09f, 0.10f},
+        {0.45f, 0.57f, 0.06f, 0.18f}, {0.52f, 0.61f, 0.07f, 0.13f},
+        {0.60f, 0.58f, 0.05f, 0.16f}, {0.67f, 0.62f, 0.08f, 0.11f},
+        {0.76f, 0.57f, 0.06f, 0.19f}, {0.83f, 0.60f, 0.07f, 0.14f},
+        {0.91f, 0.58f, 0.07f, 0.16f}, {0.97f, 0.62f, 0.06f, 0.12f},
+    };
+
     private static final float[][] BG_BUILDINGS = {
         {0.00f, 0.70f, 0.08f, 0.22f}, {0.07f, 0.75f, 0.06f, 0.15f},
         {0.12f, 0.65f, 0.07f, 0.26f}, {0.18f, 0.72f, 0.09f, 0.18f},
@@ -109,6 +124,7 @@ public class VictorianSkyline {
     }
 
     public static void renderBackground(GuiGraphics g, int w, int h) {
+        renderFarSkyline(g, w, h);
         int colorBg = 0xFF1A1208;
         for (float[] b : BG_BUILDINGS) {
             int x1 = (int)(w * b[0]);
@@ -123,6 +139,33 @@ public class VictorianSkyline {
         }
         renderWindowsOnBuildings(g, w, h, BG_BUILDINGS, true);
         renderChimneys(g, w, h, CHIMNEYS_BG, BG_BUILDINGS, false);
+    }
+
+    /**
+     * v0.188.0: capa lejana de la ciudad. Dos fills por tejado y seis ventanas
+     * fijas: cuesta casi nada y da la sensacion de que la avenida sigue mas alla
+     * de la niebla.
+     */
+    private static void renderFarSkyline(GuiGraphics g, int w, int h) {
+        int farWall = 0xFF2A2116;
+        int farEdge = 0xFF332A1C;
+        for (float[] b : FAR_BUILDINGS) {
+            int x1 = (int) (w * b[0]);
+            int y2 = (int) (h * b[1]);
+            int x2 = x1 + (int) (w * b[2]);
+            int y1 = y2 - (int) (h * b[3]);
+            if (x2 <= 0 || x1 >= w) continue;
+            g.fill(x1, y1, x2, Math.min(y2, (int) (h * 0.72f)), farWall);
+            g.fill(x1, y1, x2, y1 + 1, farEdge);
+        }
+        // Ventanas lejanas: puntos fijos, sin animacion (no compiten con las de
+        // la ciudad cercana).
+        int lit = 0x3A4A2E14;
+        for (int i = 0; i < 6; i++) {
+            int x = (int) (w * (0.09f + i * 0.155f));
+            int y = (int) (h * (0.53f + (i % 3) * 0.02f));
+            g.fill(x, y, x + 2, y + 1, lit);
+        }
     }
 
     /**
@@ -669,22 +712,15 @@ public class VictorianSkyline {
         int h1 = totalH / 3;
         int h2 = totalH / 3;
 
-        // Segmento 1 vertical (2px ancho)
-        for (int y = startY; y < startY + h1; y++) {
-            g.fill(startX, y, startX + 2, y + 1, crackColor);
-        }
-        // Zigzag 1: diagonal derecha
+        // v0.188.0: los tres tramos tienen x fija, asi que cada uno es un solo
+        // rectangulo. Antes eran mas de cien fills de un pixel por cuadro.
         int x2 = startX + 3;
         int y2start = startY + h1;
-        for (int y = y2start; y < y2start + h2; y++) {
-            g.fill(x2, y, x2 + 2, y + 1, crackColor);
-        }
-        // Zigzag 2: vuelve a la izquierda
         int x3 = x2 - 4;
         int y3start = y2start + h2;
-        for (int y = y3start; y < endY; y++) {
-            g.fill(x3, y, x3 + 2, y + 1, crackColor);
-        }
+        g.fill(startX, startY, startX + 2, startY + h1, crackColor);
+        g.fill(x2, y2start, x2 + 2, y2start + h2, crackColor);
+        g.fill(x3, y3start, x3 + 2, endY, crackColor);
 
         // Ramificaciones diagonales pequenas (grietas menores)
         for (int i = 0; i < 3; i++) {

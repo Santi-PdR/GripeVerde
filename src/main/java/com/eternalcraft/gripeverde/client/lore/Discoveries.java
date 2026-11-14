@@ -22,8 +22,6 @@ public final class Discoveries {
     // ── Ids canonicos ──
     public static final String WATCH_INSCRIPTION = "watch_inscription";
     public static final String WATCH_KEY         = "watch_key";
-    public static final String POSTER_PEEL       = "poster_peel";
-    public static final String WANTED_EYES       = "wanted_eyes";
     public static final String AVENUE_DARK       = "avenue_dark";
     public static final String SIGNAL_WINDOW     = "signal_window";
     public static final String RAT_PAUSE         = "rat_pause";
@@ -166,8 +164,6 @@ public final class Discoveries {
         switch (id) {
             case WATCH_INSCRIPTION: return en ? "The inscription beneath the glass" : "La inscripción bajo el cristal";
             case WATCH_KEY:         return en ? "A small key falls from time" : "Una llave pequeña cae del tiempo";
-            case POSTER_PEEL:       return en ? "What the edict was hiding" : "Lo que el edicto escondía";
-            case WANTED_EYES:       return en ? "The wrong face" : "El rostro equivocado";
             case AVENUE_DARK:       return en ? "The avenue goes dark" : "La avenida a oscuras";
             case SIGNAL_WINDOW:     return en ? "The window that answered" : "La ventana que respondió";
             case RAT_PAUSE:         return en ? "The rat that stopped" : "La rata que se detuvo";
@@ -222,8 +218,6 @@ public final class Discoveries {
         switch (id) {
             case WATCH_INSCRIPTION: return en ? "Stop the swing. Read what hangs." : "Detén el vaivén. Lee lo que cuelga.";
             case WATCH_KEY:         return en ? "Time keeps more than hours." : "El tiempo guarda más que horas.";
-            case POSTER_PEEL:       return en ? "The edict is pasted over something." : "El edicto está pegado sobre algo.";
-            case WANTED_EYES:       return en ? "Hold the gaze of the wanted man." : "Sostén la mirada del buscado.";
             case AVENUE_DARK:       return en ? "The gas can be refused." : "El gas puede rechazarse.";
             case SIGNAL_WINDOW:     return en ? "A light is waiting for an answer." : "Una luz espera respuesta.";
             case RAT_PAUSE:         return en ? "Not every crossing is a hurry." : "No todo cruce es una huida.";
@@ -294,7 +288,7 @@ public final class Discoveries {
 
     /** Lista ordenada de todos los ids, para la Sala de consulta. */
     public static final String[] ALL = {
-        WATCH_INSCRIPTION, WATCH_KEY, POSTER_PEEL, WANTED_EYES, AVENUE_DARK,
+        WATCH_INSCRIPTION, WATCH_KEY,   AVENUE_DARK,
         SIGNAL_WINDOW, RAT_PAUSE, CAT_SCRAP, CODE_1897,
         CODE_HOLLOWAY, GHOST_TRACK, CANDLE_DARK,
         RAVEN_FEATHER, BREATH, READER_SHADOW, DRAWER_OPEN, DRAWER_COMPLETE,

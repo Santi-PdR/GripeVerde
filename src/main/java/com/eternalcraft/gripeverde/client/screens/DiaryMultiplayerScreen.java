@@ -264,9 +264,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     }
 
     private void buildDiaryButtons() {
-        int btnH = 20;
+        int btnH = 22;   // v0.188.0: un poco mas de cuerpo, sin tocar la lista
         int gap = 6;
-        int rowGap = 14;
+        int rowGap = 12;
         int panelBottom = this.height - PANEL_MARGIN_V;
         int bottomRowY = panelBottom - btnH - 10;
         int topRowY = bottomRowY - btnH - rowGap;
@@ -594,6 +594,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         int subW = this.font.width(subtitle);
         gfx.drawString(this.font, subtitle, centerX - subW / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
+        // v0.188.0: cuantos servidores hay anotados, en el margen del titulo.
+        drawServerCount(gfx, panelX, panelW, titleY);
+
         // Divisor con rombo
         DiaryChrome.drawInkDivider(gfx, panelX + 24, titleY + 26, Math.max(0, panelW - 48));
         DiaryChrome.drawDivisorLozenge(gfx, centerX, titleY + 26);
@@ -687,6 +690,31 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
      * Dibuja una banda sepia oscura detras de cada server (tipo tarjeta victoriana).
      * Da contraste al texto blanco/verde vanilla que sobre pergamino se lee mal.
      */
+    /**
+     * v0.188.0: el numero de servidores anotados, arriba a la derecha del titulo.
+     * Si la lista esta vacia, en cambio, deja dicho como empezar.
+     */
+    private void drawServerCount(GuiGraphics gfx, int panelX, int panelW, int titleY) {
+        int count = 0;
+        try {
+            count = this.vanillaServers == null ? 0 : this.vanillaServers.size();
+        } catch (Throwable ignored) {}
+        boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+        String text;
+        if (count <= 0) {
+            text = english ? "none yet" : "ninguno anotado";
+        } else if (count == 1) {
+            text = english ? "1 entry" : "1 anotado";
+        } else {
+            text = english ? count + " entries" : count + " anotados";
+        }
+        int textW = this.font.width(text);
+        int x = panelX + panelW - textW - 20;
+        int y = titleY + 4;
+        if (x < panelX + 20) return;   // panel angosto: no vale la pena
+        gfx.drawString(this.font, text, x, y, DiaryChrome.INK_SUBTITLE, false);
+    }
+
     private void drawEntryBackgrounds(GuiGraphics gfx) {
         if (this.vanillaList == null) return;
         try {

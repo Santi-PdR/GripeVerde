@@ -432,11 +432,26 @@ public class DiaryLanguageScreen extends Screen {
         private final LanguageInfo info;
         private final boolean fogTongue;
         private long lastClickMs = 0L;
+        // v0.188.0: la etiqueta y su ancho se arman una vez, no en cada cuadro.
+        private final String labelIdle;
+        private final String labelPending;
+        private final String labelApplied;
+        private final int widthIdle;
+        private final int widthPending;
+        private final int widthApplied;
 
         private LanguageEntry(String code, LanguageInfo info) {
             this.code = code;
             this.info = info;
             this.fogTongue = false;
+            String name = info == null ? "" : info.toComponent().getString();
+            this.labelIdle = "  " + name;
+            this.labelPending = "> " + name;
+            this.labelApplied = "- " + name;
+            net.minecraft.client.gui.Font font = DiaryLanguageScreen.this.font;
+            this.widthIdle = font == null ? 0 : font.width(this.labelIdle);
+            this.widthPending = font == null ? 0 : font.width(this.labelPending);
+            this.widthApplied = font == null ? 0 : font.width(this.labelApplied);
         }
 
         private LanguageEntry() {
@@ -444,6 +459,12 @@ public class DiaryLanguageScreen extends Screen {
             this.code = "fog";
             this.info = null;
             this.fogTongue = true;
+            this.labelIdle = "";
+            this.labelPending = "";
+            this.labelApplied = "";
+            this.widthIdle = 0;
+            this.widthPending = 0;
+            this.widthApplied = 0;
         }
 
         @Override
@@ -505,21 +526,16 @@ public class DiaryLanguageScreen extends Screen {
                 textColor = INK_NORMAL;
             }
 
-            String prefix;
-            if (isPending) {
-                prefix = "> ";
-            } else if (isApplied) {
-                prefix = "- ";
-            } else {
-                prefix = "  ";
-            }
-
-            Component label = Component.literal(prefix).append(this.info.toComponent());
+            // v0.188.0: etiqueta y ancho ya calculados en el constructor.
+            String label = isPending ? this.labelPending
+                : isApplied ? this.labelApplied : this.labelIdle;
+            int textW = isPending ? this.widthPending
+                : isApplied ? this.widthApplied : this.widthIdle;
+            if (textW == 0) textW = DiaryLanguageScreen.this.font.width(label);
 
             // Zona de texto: desde left+FLAG_SLOT hasta left+rowWidth
             int textZoneLeft  = left + FLAG_SLOT;
             int textZoneWidth = rowWidth - FLAG_SLOT;
-            int textW  = DiaryLanguageScreen.this.font.width(label);
             int textX  = textZoneLeft + (textZoneWidth - textW) / 2;
             int textY  = top + (rowHeight - DiaryLanguageScreen.this.font.lineHeight) / 2;
 

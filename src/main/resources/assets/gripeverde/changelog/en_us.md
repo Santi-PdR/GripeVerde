@@ -1,3 +1,11 @@
+## Version 0.188.0 - The city without newspapers, and with searchlights
+
+The newspapers are gone from the cover: no quarantine notice, no patient-zero "wanted" sheet, no train, no person, and no more holding your gaze on the poster. The two files that drew them went with them, along with their methods and the two discoveries that could only be unlocked there. The avenue is on show instead: a third layer of rooftops barely hinted through the fog gives it depth, and two watch searchlights sweep the sky very slowly, crossed, twenty fills per beam.
+
+And it weighs less. The flags in the language window are painted in runs of the same colour instead of pixel by pixel: a twelve-by-eight flag went from nearly a hundred fills to about twenty-five, and every visible row has one. The labels in that list are no longer built every frame: the name and its width are worked out once, when the window opens. The crack on the left-hand building cost over a hundred one-pixel fills per frame and is now three rectangles. The server screen shows how many are saved in the top right corner, and its buttons have a little more body.
+
+The CEDA sheet is reachable from the pause screen: a new button writes to CEDA without leaving the game.
+
 ## Version 0.187.0 - The diary sheets come back
 
 Now it is clear: when you asked to remove "the sheets" you meant the newspapers on the cover, not the paper of the screens. So the paper comes back to the twenty-one diary screens: panels are opaque sheets again - 243 out of 255 - with their inner rule, three stains and two fibers, always the same for the same panel, because they derive from its position instead of being rolled every frame. What does not come back is the watermark, the wax seal and the drops: that was the clutter inside the sheet. The posters in the background (the quarantine notice, the patient-zero "wanted" sheet) stay exactly where they were.

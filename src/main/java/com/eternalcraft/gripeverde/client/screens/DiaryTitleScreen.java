@@ -12,7 +12,6 @@ import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
 import com.eternalcraft.gripeverde.client.render.LogoRenderer;
 import com.eternalcraft.gripeverde.client.render.PocketWatchRenderer;
-import com.eternalcraft.gripeverde.client.render.PosterRenderer;
 import com.eternalcraft.gripeverde.client.render.TextureAssets;
 import com.eternalcraft.gripeverde.client.render.VictorianSkyline;
 import com.eternalcraft.gripeverde.client.theme.Anchor;
@@ -68,8 +67,6 @@ public class DiaryTitleScreen extends Screen {
     private net.minecraft.client.gui.Font cachedVigilFont = null;
     private String cachedVigilLine = "";
     private int cachedVigilTextWidth = 0;
-    private long wantedPressStartMs = 0L;
-    private boolean wantedPressing = false;
 
     // v0.184.0: botones de la portada mas chicos. Dejaban de ser invitacion y
     // pasaban a ser mueble: menos ancho, menos alto y mas aire para el fondo,
@@ -80,13 +77,11 @@ public class DiaryTitleScreen extends Screen {
     private static final int BTN_SLIM_W = 126;
     private static final int BTN_SLIM_H = 28;
 
-    private static final int POSTER_W = 180;
-    private static final int POSTER_H_MAX = 260;
-
+    // v0.188.0: la portada ya no tiene periodicos. La franja izquierda queda del
+    // ancho de la mesa de botones y la derecha, del reloj y su cadena.
+    private static final int LEFT_COLUMN_W = 180;
     private static final int WATCH_RADIUS = 42;
-
-    private static final int POSTER_R_W = 180;
-    private static final int POSTER_R_H_MAX = 180;
+    private static final int WATCH_COLUMN_W = WATCH_RADIUS * 2 + 20;
 
     // Umbral: por debajo de esta altura efectiva, ocultamos TODO lo decorativo
     private static final int MINIMAL_MODE_THRESHOLD = 290;
@@ -105,7 +100,6 @@ public class DiaryTitleScreen extends Screen {
     private int columnCacheHeight = -1;
     private LayoutRegion cachedLeftColumn;
     private LayoutRegion cachedRightColumn;
-    private final int[] quarantinePosterBounds = new int[4];
 
     private static final int PATINA_COUNT = 26;
     private static final int[] PATINA_X = new int[PATINA_COUNT];
@@ -408,9 +402,9 @@ public class DiaryTitleScreen extends Screen {
         columnCacheWidth = this.width;
         columnCacheHeight = this.height;
         LayoutRegion screen = LayoutRegion.screen(this.width, this.height);
-        cachedLeftColumn = screen.left(POSTER_W + Spacing.SCREEN_MARGIN * 2)
+        cachedLeftColumn = screen.left(LEFT_COLUMN_W + Spacing.SCREEN_MARGIN * 2)
                 .inset(Spacing.SCREEN_MARGIN);
-        int colW = Math.max(WATCH_RADIUS * 2, POSTER_R_W) + Spacing.SCREEN_MARGIN * 2;
+        int colW = WATCH_COLUMN_W + Spacing.SCREEN_MARGIN * 2;
         cachedRightColumn = screen.right(colW).inset(Spacing.SCREEN_MARGIN);
     }
 
@@ -518,8 +512,8 @@ public class DiaryTitleScreen extends Screen {
             }
 
             if (!isMinimalMode()) {
-                drawPosterLeft(g);
-                drawPosterRight(g);
+                // v0.188.0: fuera los periodicos de la portada (bando de
+                // cuarentena y "se busca"); queda la ciudad al fondo.
                 drawPocketWatch(g);
             }
 
@@ -811,32 +805,6 @@ public class DiaryTitleScreen extends Screen {
     }
 
 
-    private int[] quarantinePosterRect() {
-        if (cinematicMode || isMinimalMode()) return null;
-        LayoutRegion leftCol = leftColumn();
-        int totalBtnH = BTN_H * 2 + Spacing.GAP_MEDIUM;
-        int maxPosterH = leftCol.h - totalBtnH - Spacing.GAP_LARGE * 2;
-        if (maxPosterH < 140) return null;
-        int[] bounds = this.quarantinePosterBounds;
-        bounds[0] = leftCol.x;
-        bounds[1] = leftCol.y;
-        bounds[2] = POSTER_W;
-        bounds[3] = Math.min(POSTER_H_MAX, maxPosterH);
-        return bounds;
-    }
-
-    private boolean overQuarantinePoster(double mouseX, double mouseY) {
-        int[] rect = quarantinePosterRect();
-        return rect != null && mouseX >= rect[0] && mouseX <= rect[0] + rect[2]
-            && mouseY >= rect[1] && mouseY <= rect[1] + rect[3];
-    }
-
-    private void drawPosterLeft(GuiGraphics g) {
-        int[] rect = quarantinePosterRect();
-        if (rect == null) return;
-        PosterRenderer.drawQuarantineNotice(g, rect[0], rect[1], rect[2], rect[3]);
-    }
-
     private void drawPocketWatch(GuiGraphics g) {
         LayoutRegion rightCol = rightColumn();
         int diameter = WATCH_RADIUS * 2 + 30; // + espacio para cadena y label
@@ -852,21 +820,6 @@ public class DiaryTitleScreen extends Screen {
         // propio renderer omite la cadena en vez de dibujar un muñón.
         int chainTop = Math.max(rightCol.y, ICON_ROW_BOTTOM + Spacing.GAP_SMALL);
         PocketWatchRenderer.draw(g, cx, cy, chainTop, WATCH_RADIUS, GripeVerdeMod.VERSION);
-    }
-
-    private void drawPosterRight(GuiGraphics g) {
-        LayoutRegion rightCol = rightColumn();
-        int topReserved = (WATCH_RADIUS * 2) + 30 + Spacing.GAP_LARGE;
-        int botReserved = BTN_SLIM_H + Spacing.GAP_LARGE * 2;
-        int available = rightCol.h - topReserved - botReserved;
-
-        if (available < 120) return;
-
-        int posterH = Math.min(POSTER_R_H_MAX, available);
-        int posterX = rightCol.x + rightCol.w - POSTER_R_W;
-        int posterY = rightCol.y + topReserved;
-
-        PosterRenderer.drawRotatingNoticeRight(g, posterX, posterY, POSTER_R_W, posterH);
     }
 
     private void drawLogo(GuiGraphics g) {
@@ -1125,22 +1078,6 @@ public class DiaryTitleScreen extends Screen {
                     return true;
                 }
 
-                // v0.32.0: el edicto abre la copia de campo sin censura.
-                if (!overButton && overQuarantinePoster(mouseX, mouseY)) {
-                    this.minecraft.setScreen(new DiaryFieldGuideScreen(this));
-                    return true;
-                }
-
-                // El cartel del buscado: sostenerle la mirada.
-                if (!overButton && isWantedPosterShowing()) {
-                    int[] rr = wantedPosterRect();
-                    if (rr != null && mouseX >= rr[0] && mouseX <= rr[0] + rr[2]
-                            && mouseY >= rr[1] && mouseY <= rr[1] + rr[3]) {
-                        wantedPressing = true;
-                        wantedPressStartMs = System.currentTimeMillis();
-                    }
-                }
-
                 // Los faroles de la avenida: v0.21.29 easter egg removido.
                 // (Las linternas ya no se pueden apagar)
 
@@ -1209,22 +1146,6 @@ public class DiaryTitleScreen extends Screen {
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         lastInteractionMs = System.currentTimeMillis();
-        if (wantedPressing && button == 0) {
-            wantedPressing = false;
-            long held = System.currentTimeMillis() - wantedPressStartMs;
-            if (held >= 1400L) {
-                try {
-                    boolean first = com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
-                        com.eternalcraft.gripeverde.client.lore.Discoveries.WANTED_EYES);
-                    if (first) {
-                        com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.setCounter("wanted_eyes", 1);
-                    }
-                    com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
-                        com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_AMBIENT_OCCASIONAL.get(),
-                        0.16f, 0.66f);
-                } catch (Throwable ignored) {}
-            }
-        }
         return super.mouseReleased(mouseX, mouseY, button);
     }
 
@@ -1279,23 +1200,6 @@ public class DiaryTitleScreen extends Screen {
     }
 
     /** El cartel derecho rota a diario; solo el del buscado acepta miradas largas. */
-    private boolean isWantedPosterShowing() {
-        long day = System.currentTimeMillis() / 86_400_000L;
-        return (int)(Math.abs(day) % 3) == 1;
-    }
-
-    private int[] wantedPosterRect() {
-        if (isMinimalMode()) return null;
-        LayoutRegion rightCol = rightColumn();
-        int topReserved = (WATCH_RADIUS * 2) + 30 + Spacing.GAP_LARGE;
-        int botReserved = BTN_SLIM_H + Spacing.GAP_LARGE * 2;
-        int available = rightCol.h - topReserved - botReserved;
-        if (available < 120) return null;
-        int posterH = Math.min(POSTER_R_H_MAX, available);
-        int posterX = rightCol.x + rightCol.w - POSTER_R_W;
-        int posterY = rightCol.y + topReserved;
-        return new int[]{ posterX, posterY, POSTER_R_W, posterH };
-    }
     // Easter egg: click en el logo -> expediente sellado aleatorio
     private static final String[] LOGO_EASTER_EGGS_ES = {
         "El reloj del ministerio acaba de marcar una hora que no existe.",

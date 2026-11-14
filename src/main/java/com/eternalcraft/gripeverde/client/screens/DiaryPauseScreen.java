@@ -124,7 +124,7 @@ public class DiaryPauseScreen extends PauseScreen {
         int contentTop = py + topSeparator + 6;
         int contentBot = py + ph - bottomSeparator - 6;
         int contentH = Math.max(0, contentBot - contentTop);
-        int rows = compactGrid ? 3 : 6;
+        int rows = compactGrid ? 4 : 7;   // v0.188.0: entra el parte de CEDA
         int gap = compactGrid ? 3 : BTN_GAP;
         int bh = (contentH - gap * (rows - 1)) / rows;
         int minButtonH = compactGrid ? 12 : 14;
@@ -134,14 +134,14 @@ public class DiaryPauseScreen extends PauseScreen {
         int totalBtnH = bh * rows + gap * (rows - 1);
         int btnStartY = contentTop + Math.max(0, (contentH - totalBtnH) / 2);
         int buttonW = Math.max(96, Math.min(BTN_W, pw - 24));
-        int[] buttonX = new int[6];
-        int[] buttonY = new int[6];
-        int[] buttonWidths = new int[6];
+        int[] buttonX = new int[7];
+        int[] buttonY = new int[7];
+        int[] buttonWidths = new int[7];
         if (compactGrid) {
             int availableButtonW = Math.max(96, pw - 24);
             int columnGap = Math.min(8, Math.max(2, availableButtonW / 12));
             int columnW = Math.max(48, (availableButtonW - columnGap) / 2);
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < 7; i++) {
                 int row = i / 2;
                 int column = i % 2;
                 buttonWidths[i] = columnW;
@@ -150,7 +150,7 @@ public class DiaryPauseScreen extends PauseScreen {
             }
         } else {
             int buttonXCentered = px + (pw - buttonW) / 2;
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < 7; i++) {
                 buttonX[i] = buttonXCentered;
                 buttonY[i] = btnStartY + i * (bh + gap);
                 buttonWidths[i] = buttonW;
@@ -179,8 +179,19 @@ public class DiaryPauseScreen extends PauseScreen {
             fieldGuideLabel, "gripeverde.pause.btn.field_guide",
             DiaryButton.Icon.SCROLL, DiaryButton.Variant.SECONDARY, this::openFieldGuide));
 
+        // v0.188.0: el parte de CEDA se abre tambien desde la pausa, que es donde
+        // se lo necesita: escribir el mensaje rapido sin salir de la partida.
         this.addRenderableWidget(createPauseButton(buttonX[5], buttonY[5], buttonWidths[5], bh,
+            "gripeverde.pause.btn.ceda", DiaryButton.Icon.CHAT, DiaryButton.Variant.SECONDARY,
+            this::openDispatch));
+
+        this.addRenderableWidget(createPauseButton(buttonX[6], buttonY[6], buttonWidths[6], bh,
             "gripeverde.pause.btn.leave", DiaryButton.Icon.DOOR, DiaryButton.Variant.DANGER, this::onLeave));
+    }
+
+    /** v0.188.0: el parte de CEDA desde la pausa, sin cerrar la partida. */
+    private void openDispatch() {
+        this.minecraft.setScreen(new DiaryDispatchScreen(this));
     }
 
     private DiaryButton createPauseButton(int x, int y, int width, int height, String key,

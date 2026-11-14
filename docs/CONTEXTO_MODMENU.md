@@ -9,7 +9,7 @@ Actualizado: 2026-11-13
   token, igual que el de Photon/Fisk.
 - Rama de trabajo de la sesión: `arena/48be547c-gripeverde` (base `02e85bc`) — la plataforma
   fija el nombre, no se renombra. Todo el trabajo va ahí; el PR sale de esa rama.
-- Versión de esta rama: `0.187.0` (anteriores entregadas: `0.186.0`, `0.185.0`, `0.184.2`, `0.184.1`, `0.184.0`, `0.183.0`)
+- Versión de esta rama: `0.188.0` (anteriores entregadas: `0.187.0`, `0.186.0`, `0.185.0`, `0.184.2`, `0.184.1`, `0.184.0`, `0.183.0`)
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
 - El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
   proyecto local del usuario.
@@ -112,6 +112,30 @@ Actualizado: 2026-11-13
 - El validador local `python3 tools/verify_mirrors.py` reproduce los sellos de Gradle
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
+
+## Cambios de 0.188.0 — la ciudad sin periódicos y con reflectores
+
+- **Los periódicos de la portada se fueron del todo.** Se borraron `PosterRenderer` (943 líneas) y
+  `OrnamentRenderer` (156, sólo lo usaba el otro), más `drawPosterLeft`/`drawPosterRight`,
+  `overQuarantinePoster`, `wantedPosterRect`, `wantedPressing`/`wantedPressStartMs` y las dos
+  apariciones que sólo se desbloqueaban ahí (`Discoveries.WANTED_EYES` y `POSTER_PEEL`). Los nombres
+  están en la lista `banned` de `tools/verify_mirrors.py`. El arte queda en el historial (tag `v0.187.0`).
+- **Layout de la portada sin `POSTER_*`**: `LEFT_COLUMN_W = 180` y
+  `WATCH_COLUMN_W = WATCH_RADIUS * 2 + 20`; la x de la mesa de botones y la del reloj quedan idénticas
+  a 0.187.0, y la ficha del cronista conserva su carril.
+- **Fondo de la portada**: `VictorianSkyline.renderFarSkyline` (capa lejana: 14 rectángulos + 6 ventanas
+  fijas, color `0xFF2A2116`) llamada antes de `BG_BUILDINGS`, y `AtmosphereRenderer.renderSearchlights`
+  (dos haces cruzados, 18 tramos de 2 px cada uno, `0x00D8C48A`; con movimiento reducido se quedan
+  quietos y en ventanas menores a 480×240 no se dibujan). Se llama desde
+  `QuarantineSceneRenderer.renderTitleScene`, entre el skyline y el primer plano.
+- **Optimización de esta tanda**: `FlagRenderer.drawGrid` pinta cada fila por tramos del mismo color
+  (`~100 → ~25` rellenos por bandera); `DiaryLanguageScreen.LanguageEntry` memoriza etiqueta y ancho en
+  el constructor (tres variantes: normal, pendiente, aplicada); `VictorianSkyline.renderCrack` eran
+  tres bucles de un píxel de alto por cuadro y ahora son tres rectángulos.
+- **Multijugador**: botones de `20` a `22` px de alto con `rowGap` 12, y contador de servidores anotados
+  arriba a la derecha del título (`drawServerCount`, sin claves nuevas).
+- **Pausa**: botón `gripeverde.pause.btn.ceda` (icono `CHAT`) que abre `DiaryDispatchScreen` sobre la
+  pausa; la rejilla pasa a 7 filas y a 4×2 cuando `ph < 250`. Clave nueva → 190 por lengua.
 
 ## Cambios de 0.187.0 — vuelven las hojas del diario
 

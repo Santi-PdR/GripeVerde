@@ -1,3 +1,12 @@
+## v0.188.0 - La ciudad sin periódicos y con reflectores
+
+- **Fuera los periódicos de la portada**: se borran `PosterRenderer` (943 líneas) y `OrnamentRenderer` (156), junto con `drawPosterLeft`, `drawPosterRight`, `overQuarantinePoster`, `wantedPosterRect`, el estado de pulsación y las dos apariciones que sólo se desbloqueaban ahí (`WANTED_EYES`, `POSTER_PEEL`). Los nombres quedan prohibidos en el verificador.
+- `DiaryTitleScreen`: layout recalculado sin `POSTER_*` → `LEFT_COLUMN_W = 180`, `WATCH_COLUMN_W = WATCH_RADIUS * 2 + 20` (la x de los botones y del reloj no se mueve).
+- **Fondo nuevo**: `VictorianSkyline.renderFarSkyline` (tercera capa de tejados, 14 rectángulos + 6 ventanas fijas) y `AtmosphereRenderer.renderSearchlights` (dos haces cruzados, 18 tramos cada uno, quietos con movimiento reducido).
+- **Optimización**: `FlagRenderer.drawGrid` pinta por tramos RLE (~100 → ~25 rellenos por bandera); `DiaryLanguageScreen` memoriza etiqueta y ancho por entrada; la grieta de `VictorianSkyline.renderCrack` pasa de ~100 fills de 1 px a 3 rectángulos.
+- **Multijugador**: botones de 20 → 22 px, más aire entre filas y contador de servidores anotados arriba a la derecha.
+- **Pausa**: botón nuevo `gripeverde.pause.btn.ceda` que abre `DiaryDispatchScreen` sin salir de la partida (7 filas / 4×2 en ventanas bajas); clave 190 en las 25 lenguas.
+
 ## v0.187.0 - Vuelven las hojas del diario
 
 - `PaperTexture.drawSheet(x, y, w, h[, PaperKind])`: hoja opaca (`SHEET_ALPHA = 243`) con filete interior, tres manchas y dos fibras **deterministas** (derivadas del panel, sin RNG por cuadro); unas once llamadas de relleno por panel.

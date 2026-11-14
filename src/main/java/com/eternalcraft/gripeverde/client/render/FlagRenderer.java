@@ -168,12 +168,19 @@ public final class FlagRenderer {
 
     // ── render interno ───────────────────────────────────────────────────────
     private static void drawGrid(GuiGraphics gfx, int[][] grid, int ox, int oy) {
-        // Base flag pixels
+        // Base flag pixels.
+        // v0.188.0: cada fila se pinta por tramos del mismo color (RLE) en vez de
+        // pixel por pixel. Una bandera de 12x8 pasaba de casi cien fills a unos
+        // veinticinco, y esto se dibuja por cada renglon visible de la ventana
+        // de idioma.
         for (int r = 0; r < FLAG_H; r++) {
-            for (int c = 0; c < FLAG_W; c++) {
+            int c = 0;
+            while (c < FLAG_W) {
                 int color = grid[r][c];
+                int start = c;
+                while (c < FLAG_W && grid[r][c] == color) c++;
                 if ((color >>> 24) == 0) continue;
-                gfx.fill(ox + c, oy + r, ox + c + 1, oy + r + 1, color);
+                gfx.fill(ox + start, oy + r, ox + c, oy + r + 1, color);
             }
         }
         // Embossed archival border: outer shadow + inner parchment highlight

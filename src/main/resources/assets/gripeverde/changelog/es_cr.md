@@ -1,3 +1,11 @@
+## Version 0.188.0 - La ciudad sin periodicos y con reflectores
+
+Los periodicos de la portada se fueron: no queda el bando de cuarentena, no queda el "se busca" del paciente cero, ni el tren, ni la persona, ni el gesto de sostenerle la mirada al cartel. Con ellos se fueron los dos archivos que los dibujaban, sus metodos, y las dos apariciones que solo se desbloqueaban ahi. En su lugar la avenida quedo a la vista: una tercera capa de tejados apenas insinuada sobre la niebla le da fondo, y dos reflectores de la guardia barren el cielo muy despacio, cruzados, con veinte rellenos por haz.
+
+Y pesa menos. Las banderas de la ventana de idioma se pintan por tramos del mismo color en vez de pixel por pixel: una bandera de doce por ocho pasaba de casi cien rellenos a unos veinticinco, y cada renglon visible tiene la suya. Las etiquetas de esa lista ya no se arman en cada cuadro: el nombre y su ancho se calculan una vez, al abrir la ventana. La grieta del edificio de la izquierda eran mas de cien rellenos de un pixel por cuadro y ahora son tres rectangulos. El menu de servidores muestra cuantos hay anotados arriba a la derecha y sus botones tienen un poco mas de cuerpo.
+
+El parte de CEDA entra en la pausa: hay un boton nuevo para escribirle a CEDA sin salir de la partida.
+
 ## Version 0.187.0 - Vuelven las hojas del diario
 
 Me quedó claro: cuando pediste sacar "las hojas" hablabas de los periódicos de la portada, no del papel de las pantallas. Así que el papel vuelve a las veintiuna pantallas del diario: los paneles son otra vez hojas opacas —243 de 255— con su filete interior, tres manchas y dos fibras, las mismas siempre para el mismo panel, porque se derivan de su posición y no se sortean en cada cuadro. Lo que no vuelve es la marca de agua, el sello de cera ni las gotas: eso era lo que sobraba dentro de la hoja. Los periódicos del fondo (el bando de cuarentena, el "se busca" del paciente cero) siguen donde estaban, intactos.

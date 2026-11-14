@@ -257,6 +257,54 @@ public class AtmosphereRenderer {
         }
     }
 
+    /**
+     * v0.188.0: los reflectores de la guardia barriendo la niebla.
+     *
+     * Sin los periodicos, la ciudad quedo a la vista y el cielo medio vacio. Dos
+     * haces palidos que se cruzan muy despacio le dan vida y cuentan lo que pasa
+     * afuera sin agregar un solo objeto nuevo: veinte fills por haz, y con
+     * movimiento reducido quedan quietos.
+     */
+    public static void renderSearchlights(GuiGraphics g, int w, int h) {
+        if (w <= 0 || h <= 0) return;
+        if (w < 480 || h < 240) return;   // en ventanas minimas no hay cielo que barrer
+        int color = 0x00D8C48A;
+        float sway = reducedMotion() ? 0.35f : (float) (Math.sin(time * 0.11f) * 0.5f + 0.5f);
+        int baseY = (int) (h * 0.62f);
+        // Torre izquierda: barre hacia la derecha; torre derecha: al reves.
+        // Angulos medidos sobre la pantalla (y crece hacia abajo): negativos = hacia arriba.
+        drawBeam(g, (int) (w * 0.16f), baseY, -0.74f + sway * 0.30f, (int) (w * 0.44f), 9, 26, color);
+        drawBeam(g, (int) (w * 0.84f), baseY, -2.40f - sway * 0.30f, (int) (w * 0.40f), 8, 20, color);
+    }
+
+    /**
+     * Un haz: veintidos tramos que se tocan entre si (cada uno une el punto
+     * anterior con el actual, asi que no quedan huecos por mas inclinado que
+     * vaya) y se van ensanchando y apagando hacia la punta.
+     */
+    private static void drawBeam(GuiGraphics g, int ox, int oy, float angle, int length,
+                                 int maxHalf, int alpha, int colorNoAlpha) {
+        final int steps = 22;
+        double dx = Math.cos(angle);
+        double dy = Math.sin(angle);
+        int prevX = ox;
+        int prevHalf = 1;
+        for (int i = 1; i <= steps; i++) {
+            float p = i / (float) steps;
+            int x = ox + (int) (dx * length * p);
+            int y = oy + (int) (dy * length * p);
+            int half = 1 + (int) (maxHalf * p);
+            int a = (int) (alpha * (1f - p * 0.8f));
+            int x1 = Math.min(prevX, x);
+            int x2 = Math.max(prevX, x) + 1;
+            int h = Math.max(prevHalf, half);
+            prevX = x;
+            prevHalf = half;
+            if (a <= 1 || x2 <= x1) continue;
+            g.fill(x1, y - h, x2, y + h, withAlpha(colorNoAlpha, a));
+        }
+    }
+
     public static void renderSky(GuiGraphics g, int w, int h) {
         // Guard: cuando la ventana pierde foco o se minimiza (Alt+Tab, F11),
         // w o h pueden ser 0. Random.nextInt(0) lanza IllegalArgumentException

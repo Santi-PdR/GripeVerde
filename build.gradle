@@ -5,7 +5,7 @@ plugins {
     id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
 }
 
-version = '0.187.0'
+version = '0.188.0'
 group = 'com.eternalcraft.gripeverde'
 base { archivesName = 'gripeverde' }
 
@@ -109,7 +109,7 @@ tasks.register('verifyGripeVerdeLocalization') {
             throw new GradleException('en_us.json root must be a JSON object')
         }
         def baselineKeys = baseline.keySet() as Set
-        def expectedKeyCount = 189
+        def expectedKeyCount = 190
         def problems = []
         def packMetadata = json.parse(new File('src/main/resources/pack.mcmeta'))
         def declaredLanguages = (packMetadata.language ?: [:]).keySet() as Set
