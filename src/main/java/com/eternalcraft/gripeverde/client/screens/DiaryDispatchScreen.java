@@ -71,7 +71,6 @@ public class DiaryDispatchScreen extends Screen {
 
     private int awaitingSlot = -1;
     private int hoveredSlot = -1;
-    private int hoveredToggle = -1;
     private boolean dirty;
     private long lastEditMs;
     private String statusKey = "";
@@ -119,6 +118,7 @@ public class DiaryDispatchScreen extends Screen {
                 Component.translatable("gripeverde.dispatch.slot.label", slot + 1));
             field.setMaxLength(MAX_TEXT);
             field.setValue(DispatchLibrary.message(slot));
+            field.setHint(Component.translatable("gripeverde.dispatch.slot.empty"));
             final int index = slot;
             field.setResponder(text -> this.onTextChanged(index, text));
             this.fields.add(field);

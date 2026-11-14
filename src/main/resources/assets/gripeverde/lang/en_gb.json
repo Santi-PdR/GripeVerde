@@ -184,5 +184,6 @@
   "gripeverde.dispatch.slot.cleared": "Key cleared",
   "gripeverde.dispatch.slot.label": "Message %s",
   "gripeverde.dispatch.page": "▸ %s/%s",
-  "gripeverde.dispatch.saved": "Saved"
+  "gripeverde.dispatch.saved": "Saved",
+  "gripeverde.dispatch.slot.empty": "Type the message…"
 }

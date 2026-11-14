@@ -9,7 +9,7 @@ Actualizado: 2026-11-13
   token, igual que el de Photon/Fisk.
 - Rama de trabajo de la sesión: `arena/48be547c-gripeverde` (base `02e85bc`) — la plataforma
   fija el nombre, no se renombra. Todo el trabajo va ahí; el PR sale de esa rama.
-- Versión de esta rama: `0.184.0` (anterior entregada: `0.183.0`)
+- Versión de esta rama: `0.184.1` (anteriores entregadas: `0.184.0`, `0.183.0`)
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
 - El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
   proyecto local del usuario.
@@ -132,7 +132,7 @@ Tanda de correcciones grandes, casi toda de interfaz:
   antes volvía a cortar todo el texto en cada cuadro para saber dónde cae el scroll.
 - `verify_mirrors.py` gana identificadores prohibidos nuevos (`HiddenCipher`, `onCharTyped`,
   `isChiming`, `asteriskRects`, `hiddenFolioRect`, `BINDER_MARKS`, `drawNewSeal`) para que
-  nada de eso vuelva. Claves de idioma: **186** (antes 201).
+  nada de eso vuelva. Claves de idioma: **187** (antes 201).
 
 ## Cambios de 0.183.0 — ningún adorno contesta antes que los botones
 

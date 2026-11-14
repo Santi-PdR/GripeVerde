@@ -10,7 +10,9 @@ import java.util.Random;
 public final class PaperTexture {
 
     /** Opacidad del velo de las pantallas (0-255). Mas bajo deja ver mas fondo. */
-    private static final int VEIL_ALPHA = 196;
+    // v0.184.0: 172 de 255 (67 %). Con 196 el papel tapaba el fondo casi como una
+    // hoja; con 172 la tinta oscura se lee igual y la escena se adivina debajo.
+    private static final int VEIL_ALPHA = 172;
 
     private static final long SEED = 189011974L;
     private static int openCount = 0;

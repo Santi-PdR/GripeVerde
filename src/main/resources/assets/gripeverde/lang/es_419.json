@@ -184,5 +184,6 @@
   "gripeverde.dispatch.slot.cleared": "Tecla borrada",
   "gripeverde.dispatch.slot.label": "Mensaje %s",
   "gripeverde.dispatch.page": "▸ %s/%s",
-  "gripeverde.dispatch.saved": "Guardado"
+  "gripeverde.dispatch.saved": "Guardado",
+  "gripeverde.dispatch.slot.empty": "Escribí el mensaje…"
 }

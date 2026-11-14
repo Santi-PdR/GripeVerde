@@ -1,3 +1,8 @@
+## v0.184.1 - El velo se aclara y el campo vacío se explica
+
+- `PaperTexture.VEIL_ALPHA` 196→172 (67 %): la tinta se lee, el fondo se adivina; ya no parece una hoja tapando la escena.
+- `DiaryDispatchScreen`: los campos vacíos muestran la pista `gripeverde.dispatch.slot.empty` (clave nueva en los 25 idiomas, 187 en total) y se retira un campo sin uso.
+
 ## v0.184.0 - El diario se saca la hoja de encima
 
 - `DiaryDispatchScreen` rehecha: lista de diez mensajes con campo y tecla; sin ENVIAR ni ENVIAR TODO (el mensaje sale con su tecla), autoguardado a los 700 ms y al cerrar, paginación `▸ n/total`. Clic en la tecla escucha, Esc cancela, Supr o clic derecho borra.
@@ -8,7 +13,7 @@
 - Portada: `BTN_W 248`, `BTN_H 32`, `BTN_SLIM_W 112`, `BTN_SLIM_H 26` (antes 300×40 y 130×32).
 - Huevos: `HiddenCipher` eliminado con `code_1152`, `code_pereira` y `code_doctor`, y fuera las marcas del encuadernador y el folio escondido. Quedan sólo los del fondo.
 - Velocidad: `ChangelogScreen` memoriza el alto de cada renglón (`ensureRowHeights`/`heightAt`) en vez de volver a cortar toda la crónica por cuadro.
-- `verify_mirrors.py`: identificadores prohibidos nuevos (`HiddenCipher`, `onCharTyped`, `isChiming`, `asteriskRects`, `hiddenFolioRect`, `BINDER_MARKS`, `drawNewSeal`). Claves de idioma: 186.
+- `verify_mirrors.py`: identificadores prohibidos nuevos (`HiddenCipher`, `onCharTyped`, `isChiming`, `asteriskRects`, `hiddenFolioRect`, `BINDER_MARKS`, `drawNewSeal`).
 
 ## v0.183.0 - Ningún adorno contesta antes que los botones
 
