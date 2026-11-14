@@ -1,3 +1,7 @@
+**v0.179.0 - El cronista habla en toda ventana**
+
+Cuando la ficha de saludo no cabe, el cronista deja su frase en una línea centrada en la cabecera: ya se le oye en ventanas estrechas y en las anchas y bajas. Si la ficha cabe, todo queda igual.
+
 **v0.178.0 - Ningún adorno roba un clic**
 
 La ventana del ático, la rata, el gato y los carteles ya no se comen los clics de los botones: preguntan primero por ellos. La vela de la pausa también. Sin cambios durante la partida.

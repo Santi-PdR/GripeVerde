@@ -1,3 +1,7 @@
+## Version 0.179.0 - The chronicler speaks in every window
+
+The greeting card needs a lane 180 pixels wide and forty-four pixels tall, so in windows narrower than about 620 pixels - and in wide ones under about 330 pixels tall - the chronicler said nothing at all. Now, when the card does not fit, the same sentence appears as a single centred line in the header, between the music control and the shortcut icons, trimmed to the free width. When the card fits, everything stays as it was.
+
 ## Version 0.178.0 - No ornament steals a click
 
 The clickable decorations of the title screen were checked before the buttons and several of them answered first, so the click never arrived: at 427x240 the lit window of the attic falls twelve pixels inside Multiplayer, and in any window taller than about 300 pixels the rat crosses the button table and the Options and Quit buttons. Every decorative spot now asks the buttons first. The pause screen had the same flaw with its candle over the bottom-left button in very short windows.

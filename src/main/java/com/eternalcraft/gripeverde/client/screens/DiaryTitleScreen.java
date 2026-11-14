@@ -59,6 +59,10 @@ public class DiaryTitleScreen extends Screen {
     private java.util.List<net.minecraft.util.FormattedCharSequence> cachedGreetingLines = java.util.Collections.emptyList();
     private String cachedGreetingLabel = "";
     private int cachedGreetingLabelLimit = -1;
+    private String cachedGreetingHeaderLine = "";
+    private String cachedGreetingHeaderSource = null;
+    private int cachedGreetingHeaderLimit = -1;
+    private net.minecraft.client.gui.Font cachedGreetingHeaderFont = null;
     private int cachedVigilPhase = -1;
     private int cachedVigilWidth = -1;
     private boolean cachedVigilEnglish = false;
@@ -604,10 +608,10 @@ public class DiaryTitleScreen extends Screen {
         }
     }
 
-    /** Nota de archivo estatica, limitada al carril central de la portada. */
+    /** Nota de archivo: ficha completa si cabe, o una linea en la cabecera. */
     private void renderChroniclerNote(GuiGraphics g) {
         long now = System.currentTimeMillis();
-        if (greetingText == null || now >= greetingShownUntilMs || isMinimalMode()) return;
+        if (greetingText == null || now >= greetingShownUntilMs) return;
 
         boolean english = isEnglishSelected();
         if (greetingTranslationKey != null
@@ -617,12 +621,23 @@ public class DiaryTitleScreen extends Screen {
             greetingLanguageInitialized = true;
         }
 
+        if (drawChroniclerCard(g, english)) return;
+        // v0.179.0: si la ficha no cabe —ventanas estrechas o bajas— el cronista
+        // no se calla: deja la misma frase en una linea en la cabecera, entre el
+        // control de musica y los iconos de acceso.
+        drawGreetingHeader(g);
+    }
+
+    /** Intenta la ficha completa; devuelve false cuando no hay hueco. */
+    private boolean drawChroniclerCard(GuiGraphics g, boolean english) {
+        if (isMinimalMode()) return false;
+
         // Reserva el hueco entre los dos carteles para que la nota nunca los tape.
         LayoutRegion left = leftColumn();
         LayoutRegion right = rightColumn();
         int centerLane = right.x - (left.x + left.w);
         int cardW = Math.min(390, Math.min(this.width - 32, centerLane - 16));
-        if (cardW < 180) return;
+        if (cardW < 180) return false;
 
         String registry = "CEDA · 1800";
         int registryW = DiaryTypography.width(this.font, registry);
@@ -641,7 +656,7 @@ public class DiaryTitleScreen extends Screen {
             cachedGreetingFont = this.font;
             cachedGreetingLabelLimit = labelLimit;
         }
-        if (cachedGreetingLines.isEmpty()) return;
+        if (cachedGreetingLines.isEmpty()) return false;
 
         int cardH = 26 + cachedGreetingLines.size() * this.font.lineHeight;
         int x = (this.width - cardW) / 2;
@@ -651,10 +666,10 @@ public class DiaryTitleScreen extends Screen {
         int y = Math.max(logoBottom() + Spacing.GAP_SMALL, 168);
         int limit = buttonTableTop() - Spacing.GAP_MEDIUM;
         if (y + cardH > limit) {
-            if (limit - logoBottom() - Spacing.GAP_SMALL < cardH) return;
+            if (limit - logoBottom() - Spacing.GAP_SMALL < cardH) return false;
             y = limit - cardH;
         }
-        if (y < logoBottom() + Spacing.GAP_SMALL) return;
+        if (y < logoBottom() + Spacing.GAP_SMALL) return false;
         g.fill(x + 2, y + 2, x + cardW + 2, y + cardH + 2,
             DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 72));
         PaperTexture.drawClean(
@@ -673,6 +688,29 @@ public class DiaryTitleScreen extends Screen {
             DiaryTypography.draw(g, this.font, line, x + (cardW - lineW) / 2,
                 textY + i * this.font.lineHeight, DiaryTheme.SEPIA_DARK, false);
         }
+        return true;
+    }
+
+    /**
+     * v0.179.0: la misma frase en una linea cuando la ficha no cabe. La cabecera
+     * central estaba libre en todos los tamanos (musica en x 8..44, iconos desde
+     * width-76), asi que se recorta a width-160 y se centra en y=10.
+     */
+    private void drawGreetingHeader(GuiGraphics g) {
+        int limitW = Math.max(60, this.width - 160);
+        if (cachedGreetingHeaderLimit != limitW
+                || this.font != cachedGreetingHeaderFont
+                || !java.util.Objects.equals(cachedGreetingHeaderSource, greetingText)) {
+            cachedGreetingHeaderLine = DiaryTypography.fitString(this.font, greetingText, limitW);
+            cachedGreetingHeaderLimit = limitW;
+            cachedGreetingHeaderSource = greetingText;
+            cachedGreetingHeaderFont = this.font;
+        }
+        if (cachedGreetingHeaderLine.isEmpty()) return;
+        int lineW = DiaryTypography.width(this.font, cachedGreetingHeaderLine);
+        DiaryTypography.draw(g, this.font, cachedGreetingHeaderLine,
+            (this.width - lineW) / 2, 10,
+            DiaryTheme.withAlpha(DiaryTheme.PAPER, 190), false);
     }
 
     /** La vigilia nota cuando el lector se queda quieto demasiado tiempo. */

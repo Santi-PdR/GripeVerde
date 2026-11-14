@@ -7,7 +7,7 @@ Actualizado: 2026-11-13
 - Repositorio: [Santi-PdR/GripeVerde](https://github.com/Santi-PdR/GripeVerde)
 - Rama de trabajo: `codex/v0.104-ghoul-warning-poster`
 - Pull request: [#90](https://github.com/Santi-PdR/GripeVerde/pull/90)
-- Versión de esta rama: `0.178.0` (anterior entregada: `0.177.0`)
+- Versión de esta rama: `0.179.0` (anterior entregada: `0.178.0`)
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
 - El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
   proyecto local del usuario.
@@ -48,6 +48,29 @@ Actualizado: 2026-11-13
 - El validador local `python3 tools/verify_mirrors.py` reproduce los sellos de Gradle
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
+
+## Cambios de 0.179.0 — el cronista habla en toda ventana
+
+`renderChroniclerNote()` salía en silencio en cuanto `isMinimalMode()` era cierto
+(toda ventana de menos de 620 px de ancho, o de menos de 290 px de alto), y
+también cuando la ficha no tenía carril (`cardW < 180`) o altura. Resultado: en
+427x240 —la ventana por defecto— el saludo del cronista **nunca** se veía.
+
+- `drawChroniclerCard()` es ahora la ficha completa y devuelve `false` en vez de
+  salir por su cuenta: carril menor de 180 px, sin altura entre `logoBottom()` y
+  `buttonTableTop()`, o lista de líneas vacía.
+- `drawGreetingHeader()` dibuja la misma frase en **una línea centrada en y=10**,
+  recortada a `width - 160` con `fitString`. La cabecera estaba libre en todos los
+  tamaños: el control de música ocupa x 8..44 y los iconos de acceso empiezan en
+  `width - 76`, así que quedan 36 px a la izquierda y 4 px a la derecha.
+- Se cachea por ancho, fuente y texto, como el resto de notas de la portada.
+- Cuando la ficha cabe, no cambia nada: 620x360, 700x400, 854x480, 1024x600,
+  1280x720 y 1920x1080 siguen con ficha (390x44, o 204/224/284 donde el carril
+  manda). Pasan a cabecera 320..619 px de ancho y las anchas por debajo de
+  ~330 px de alto (620x290, 700x300, 720x340, 854x240).
+- Sin colisión con el susurro de la vigilia: la cabecera está en y=10..19 y
+  `vigilLineY()` nunca devuelve menos de `logoBottom() + GAP_MEDIUM` ni más abajo
+  del pie.
 
 ## Cambios de 0.178.0 — ningún adorno roba un clic
 
@@ -274,6 +297,6 @@ inventario/pausa deben seguir libres de animaciones añadidas.
 
 ## Próximo paso técnico recomendado
 
-Recoger la revisión visual del usuario sobre `0.178.0` (carril de Ajustes y Salir y banda
+Recoger la revisión visual del usuario sobre `0.179.0` (carril de Ajustes y Salir y banda
 del susurro) e instalar el JAR cuando la carpeta de mods sea accesible. CopyL 3.9.5 sigue esperando un
 entorno con permiso de escritura sobre `Santi-PdR/Lclient`.

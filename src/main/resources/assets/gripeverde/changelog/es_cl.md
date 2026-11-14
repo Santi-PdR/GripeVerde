@@ -1,3 +1,7 @@
+## Version 0.179.0 - El cronista habla en toda ventana
+
+La ficha de saludo necesita un carril de 180 píxeles de ancho y cuarenta y cuatro de alto, así que en ventanas de menos de unos 620 píxeles —y en las anchas de menos de unos 330 de alto— el cronista no decía nada. Ahora, cuando la ficha no cabe, la misma frase aparece como una línea centrada en la cabecera, entre el control de música y los iconos de acceso, recortada al ancho libre. Si la ficha cabe, todo queda como estaba.
+
 ## Version 0.178.0 - Ningún adorno roba un clic
 
 Los adornos con clic de la portada se comprobaban antes que los botones y varios respondían primero, así que el clic nunca llegaba: a 427x240 la ventana encendida del ático cae doce píxeles dentro de Multijugador, y en cualquier ventana de más de unos 300 píxeles de alto la rata cruza la mesa de botones y los de Ajustes y Salir. Ahora todo adorno pregunta primero por los botones. La pausa tenía la misma falla con su vela sobre el último botón de la izquierda en ventanas muy bajas.
