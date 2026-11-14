@@ -7,7 +7,7 @@ Actualizado: 2026-11-13
 - Repositorio: [Santi-PdR/GripeVerde](https://github.com/Santi-PdR/GripeVerde)
 - Rama de trabajo: `codex/v0.104-ghoul-warning-poster`
 - Pull request: [#90](https://github.com/Santi-PdR/GripeVerde/pull/90)
-- Versión de esta rama: `0.180.0` (anterior entregada: `0.179.0`)
+- Versión de esta rama: `0.181.0` (anterior entregada: `0.180.0`)
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
 - El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
   proyecto local del usuario.
@@ -22,23 +22,16 @@ Actualizado: 2026-11-13
 
 ## Estado confirmado al retomar (2026-11-13)
 
-- `0.180.0` **publicada y en verde**: commit de código `2fc259c`, run `43549058805`
-  (*Build mod*, espejos, subida del JAR y `publish` en verde). El JAR ya no viaja
-  como ZIP de artefacto: el job `publish` lo adjunta a un release, así que la
-  descarga es directa a
+- `0.181.0` **publicada y en verde**: commit de código `421be29`, run `43550635643`
+  (un intento previo `8d995dc` cayó por reimportar `net.minecraft.util.Util`; el
+  comentario automático del PR lo señaló en tres líneas).
+  `https://github.com/Santi-PdR/GripeVerde/releases/download/v0.181.0/gripeverde-0.181.0.jar`
+  (9.440.233 bytes).
+- `0.180.0` **publicada y en verde**: commit de código `2fc259c`, run `43549058805`.
+  El JAR ya no viaja como ZIP de artefacto: el job `publish` lo adjunta a un
+  release, así que la descarga es directa a
   `https://github.com/Santi-PdR/GripeVerde/releases/download/v0.180.0/gripeverde-0.180.0.jar`
-  (9.416.179 bytes). `0.179.0` quedó igual en
-  `https://github.com/Santi-PdR/GripeVerde/releases/download/v0.179.0/gripeverde-0.179.0.jar`
-  (9.395.836 bytes).
-- Antes de llegar ahí hubo tres intentos rojos: `c964dc7` y `a0b4c9e` (import
-  equivocado: `Util` vive en `net.minecraft`, no en `net.minecraft.util`) y el
-  run previo a la corrección. El log de un run no se puede leer sin sesión, así
-  que el job `build` ahora **escribe los errores como comentario del PR**
-  (paso `Report build errors in the pull request`, `pull-requests: write`); así
-  se encontró el import.
-- Para republicar un release: `release-tag.txt` marca el tag y el job `publish`
-  solo crea el release si coincide con `build.gradle` y no existe todavía. Un
-  push normal no publica nada y un release viejo nunca se sobrescribe.
+  (9.416.179 bytes).
 - `0.179.0`: commit `8ee47fc`, run `43545600000`, artefacto `14094161283`,
   8.753.677 bytes (ZIP).
 - Referencias anteriores: `0.178.0` run `43543676142` (`7cd9d9f`; el primer intento
@@ -62,6 +55,37 @@ Actualizado: 2026-11-13
 - El validador local `python3 tools/verify_mirrors.py` reproduce los sellos de Gradle
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
+
+## Cambios de 0.181.0 — los mensajes de CopyL se vienen con nosotros
+
+CopyL guardaba los diez mensajes rápidos en `config/copyl-messages.json`
+(`names[10]`, `messages[10]`, `keyCodes[10]`, con `-1` libre, teclas GLFW crudas
+y botones de mouse como `1000 + n`), y la tecla de apertura en `config/copyl.json`
+(`openKey`, Alt derecho por defecto; `lclient.json` como legado). Desinstalarlo se
+llevaba todo eso puesto.
+
+- **`client/integration/DispatchLibrary`**: lee esos archivos **una sola vez** y
+  guarda la copia propia en `config/gripeverde-dispatch.json`
+  (`importedFrom`, `openKey`, `slots[]` con `name`, `message`, `key`). Nunca
+  escribe ni borra archivos de CopyL. Normaliza igual que CopyL: una sola línea,
+  texto ≤ 256, nombre ≤ 24, tecla válida o `-1`.
+- **`client/DispatchHotkeys`**: sondea el estado físico del teclado (sin
+  `KeyMapping`, para no tocar `options.txt`) y envía la ranura al flanco de
+  bajada; `/algo` va por `sendCommand`, el resto por `sendChat`. Se **apaga
+  entero mientras CopyL esté instalado** (`CopyLCompatibility.isAvailable()`),
+  así ningún mensaje sale dos veces. La tecla de apertura levanta la ficha.
+- **La ficha**: con `panelW >= 420` la ficha mide hasta 520 de ancho y abre una
+  **columna de diez ranuras** a la derecha (nombre a la izquierda, tecla a la
+  derecha, 22 px por fila); en ventanas angostas las ranuras son una **tira de
+  chips numerados** arriba del formulario. Clic envía, `Shift`+clic carga el
+  texto en el primer renglón libre, `Ctrl`+clic guarda el renglón en esa ranura y
+  clic derecho fija tecla (Esc cancela, Supr borra).
+- La línea de estado avisa: cuántas ranuras tienen texto, que CopyL está
+  instalado y sus teclas dormidas, y la ayuda de la ranura bajo el puntero.
+- **Idiomas**: 9 claves nuevas × 25 locales; el espejo pasa de 191 a **200**.
+- **Para el usuario**: se puede sacar `copyl-*.jar` de `mods` sin perder los
+  mensajes; al primer arranque la ficha los importa y los atajos pasan a
+  responder. Si CopyL sigue instalado, siguen mandando los suyos.
 
 ## Cambios de 0.180.0 — el parte tiene su propia mesa
 
@@ -346,7 +370,7 @@ inventario/pausa deben seguir libres de animaciones añadidas.
 
 ## Próximo paso técnico recomendado
 
-Recoger la revisión visual del usuario sobre `0.180.0` (aire y carril del parte de CEDA) e
-instalar el JAR desde el release cuando la carpeta de mods sea accesible. Queda pendiente llevar el
+Que el usuario pruebe `0.181.0` sacando CopyL de `mods`: la ficha importa los diez mensajes al primer
+arranque y los atajos pasan a responder. Revisar a ojo la columna de ranuras. Queda pendiente llevar el
 mismo aire a las pantallas de CopyL: el push a `Santi-PdR/Lclient` sigue en 403, así que ese cambio
 viaja como parche en `tools/copyl/`.
