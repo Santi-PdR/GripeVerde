@@ -1,3 +1,7 @@
+## v0.181.0 - Los mensajes viejos se vienen con nosotros
+
+`DispatchLibrary` lee `config/copyl-messages.json` (nombres, textos y teclas de las diez ranuras) y `copyl.json`/`lclient.json` (tecla de apertura) una sola vez, y guarda la copia propia en `config/gripeverde-dispatch.json`. `DispatchHotkeys` honra esas teclas cuando CopyL no está instalado (chat, o comando si el texto empieza con `/`), con guarda de flanco para que mantener apretado no dispare tanda. La ficha muestra las ranuras en columna (≥420 px de ancho) o como tira de chips: clic envía, Shift carga, Ctrl guarda la línea, clic derecho fija tecla. 9 claves nuevas × 25 idiomas (200 en el espejo).
+
 ## v0.180.0 - El parte tiene su propia mesa
 
 El parte de CEDA era un puente por reflexión: solo aparecía con CopyL instalado y abría su pantalla. Ahora es una página del diario (`DiaryDispatchScreen`): ocho renglones numerados, 12 px de aire entre ellos, carril de 34 px para los números y dos filas de botones. Enter envía el renglón actual, Tab baja, el borrador sobrevive al cerrar y el envío en tanda espera 10 ticks entre mensajes. El acceso de la portada está siempre (ya no depende de CopyL) y el panel de CopyL, si está, se abre desde la ficha. 14 claves nuevas × 25 idiomas (191 en el espejo).

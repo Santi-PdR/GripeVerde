@@ -1,3 +1,7 @@
+**v0.181.0 - Los mensajes viejos se vienen con nosotros**
+
+La ficha del parte lee los diez mensajes rápidos de CopyL (nombres, textos y teclas) y se queda con copia propia: CopyL ya puede salir de la carpeta de mods sin perder nada. Clic envía, Shift carga, Ctrl guarda y clic derecho fija la tecla.
+
 **v0.180.0 - El parte tiene su propia mesa**
 
 El parte de CEDA deja de depender de CopyL: es una página del diario con ocho renglones numerados, aire entre uno y otro, Enter para enviar y Tab para bajar. El borrador queda al cerrar la ficha y el envío en tanda espera medio segundo entre mensajes. Con CopyL instalado, su panel se abre desde la esquina.

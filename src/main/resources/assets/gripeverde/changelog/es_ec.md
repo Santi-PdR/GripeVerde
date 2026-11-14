@@ -1,3 +1,7 @@
+## Version 0.181.0 - Los mensajes viejos se vienen con nosotros
+
+CopyL guardaba diez mensajes rápidos en su propio archivo de config, así que desinstalarlo se los llevaba puestos. Ahora esta ficha lee ese archivo una sola vez —nombres, textos y teclas— y se queda con una copia propia en gripeverde-dispatch.json, así que CopyL puede salir de mods sin que se pierda nada. Las diez ranuras van a la derecha de la ficha, o como una tira de números en ventanas angostas: un clic envía, Shift+clic la carga en un renglón, Ctrl+clic guarda el renglón que estás escribiendo en esa ranura y con clic derecho le ponés tecla. Mientras CopyL siga instalado mandan sus teclas, para que ningún mensaje salga dos veces.
+
 ## Version 0.180.0 - El parte tiene su propia mesa
 
 El parte de CEDA era un puente por reflexión que solo existía con CopyL instalado y abría una pantalla ajena. Ahora es una página de este diario: ocho renglones numerados sobre papel rayado, doce píxeles de aire entre uno y otro, un carril para los números y dos filas de botones con espacio de sobra. Enter envía el renglón en el que estás y Tab baja al siguiente; el borrador queda si cerrás la página, y el envío en tanda espacia los mensajes medio segundo para que el servidor no lo lea como spam. Donde estaba el papelito viejo ahora hay siempre una entrada, y el panel de CEDA de CopyL —cuando está instalado— se abre desde la esquina de la ficha.

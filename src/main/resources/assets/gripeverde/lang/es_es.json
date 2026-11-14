@@ -189,5 +189,14 @@
     "gripeverde.dispatch.button.send_all": "ENVIAR TODO",
     "gripeverde.dispatch.button.clear": "LIMPIAR",
     "gripeverde.dispatch.button.back": "VOLVER",
-    "gripeverde.dispatch.copyl": "Abrir el panel de CEDA"
+    "gripeverde.dispatch.copyl": "Abrir el panel de CEDA",
+    "gripeverde.dispatch.ready.slots": "%s mensajes guardados: su tecla los manda, o hacé clic",
+    "gripeverde.dispatch.ready.copyl": "CopyL está instalado: sus teclas quedan apagadas hasta sacarlo",
+    "gripeverde.dispatch.slot.nokey": "sin tecla",
+    "gripeverde.dispatch.slot.hint": "Clic envía · Shift carga · Ctrl guarda la línea · Clic derecho fija tecla",
+    "gripeverde.dispatch.slot.listen": "Apretá una tecla para esta ranura · Supr la borra · Esc cancela",
+    "gripeverde.dispatch.slot.bound": "Tecla guardada",
+    "gripeverde.dispatch.slot.cleared": "Tecla borrada",
+    "gripeverde.dispatch.slot.loaded": "Cargado en la ficha",
+    "gripeverde.dispatch.slot.saved": "Línea guardada en la ranura"
 }

@@ -1,3 +1,7 @@
+## Version 0.181.0 - The old messages come along
+
+CopyL kept ten quick messages in its own config file, so uninstalling it threw them away. This sheet now reads that file once - names, texts and keys - and keeps its own copy in gripeverde-dispatch.json, so CopyL can leave the mods folder with nothing lost. The ten slots sit on the right of the sheet, or as a row of numbered chips in narrow windows: click one to send it, Shift-click to load it into a line, Ctrl-click to save the line you are writing into that slot, and right-click to give it a key. While CopyL is still installed its own keys stay in charge, so nothing is ever sent twice.
+
 ## Version 0.180.0 - The dispatch has its own desk
 
 The CEDA slip used to be a reflection bridge that only existed when CopyL was installed and opened someone else's screen. It is now a page of this diary: eight numbered lines on ruled paper, twelve pixels of air between them, a gutter for the numbers and two rows of buttons with room to breathe. Enter sends the line you are on and Tab walks down; the draft stays if you close the page, and the batch send spaces the messages half a second apart so the server does not read it as spam. Where the old slip used to sit there is now always a way in, and the CEDA panel of CopyL - when it is installed - opens from the corner of the sheet.

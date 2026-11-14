@@ -189,5 +189,14 @@
   "gripeverde.dispatch.button.send_all": "SEND ALL",
   "gripeverde.dispatch.button.clear": "CLEAR",
   "gripeverde.dispatch.button.back": "BACK",
-  "gripeverde.dispatch.copyl": "Open the CEDA panel"
+  "gripeverde.dispatch.copyl": "Open the CEDA panel",
+  "gripeverde.dispatch.ready.slots": "%s saved messages, press their key or click one",
+  "gripeverde.dispatch.ready.copyl": "CopyL is installed: its keys stay off until you remove it",
+  "gripeverde.dispatch.slot.nokey": "no key",
+  "gripeverde.dispatch.slot.hint": "Click sends - Shift loads - Ctrl saves the line - Right click sets a key",
+  "gripeverde.dispatch.slot.listen": "Press a key for this slot - Delete clears it - Esc cancels",
+  "gripeverde.dispatch.slot.bound": "Key saved",
+  "gripeverde.dispatch.slot.cleared": "Key cleared",
+  "gripeverde.dispatch.slot.loaded": "Loaded into the sheet",
+  "gripeverde.dispatch.slot.saved": "Line saved in the slot"
 }
