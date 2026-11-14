@@ -22,17 +22,16 @@ Actualizado: 2026-11-13
 
 ## Estado confirmado al retomar (2026-11-13)
 
-- `0.175.0` **está subida y compilada en verde**: run `43452681481` (workflow *Build
-  GripeVerde*), HEAD `c444545`, artefacto `GripeVerde-jar` ID `14051917429`, 8.750.658
-  bytes, digest del ZIP
-  `sha256:5d6ddc32d264efc6b9159f419d305ec6472034ba282d16fefe2a2493820e076e`.
-  El run del cambio de código fue `43451967235` (`c2fefd3`).
-  Cada commit de la rama genera su propio run y su propio artefacto, así que los IDs rotan
-  con la documentación; cualquier run verde de la versión instala el mismo `0.175.0`. El
-  digest publicado corresponde al `.zip` del artefacto, no al JAR, cuyo hash solo se obtiene
-  al abrirlo.
-- Referencias anteriores: `0.174.0` run `43449824926` (`eedfaa9`), `0.173.0` run
-  `43447945730` (`9d81d3d`), `0.172.0` run `40763347401` con SHA-256 del JAR
+- `0.176.0` **subida y compilada en verde**: el commit de código es `531a91d`, con run
+  `43538221683` (*Build mod* de Gradle, verificación de espejos y subida del JAR en verde),
+  artefacto `GripeVerde-jar` ID `14090912659`, 8.751.302 bytes, digest del ZIP
+  `sha256:1486bcc957ac0cced5becf85d4ab8ad294b7e55e6f75171498165799ca49e951`. Cada commit
+  de la rama genera su propio run y su propio artefacto, así que los IDs rotan con la
+  documentación; cualquier run verde de la versión instala el mismo `0.176.0`. El digest
+  publicado corresponde al `.zip`, no al JAR.
+- Referencias anteriores: `0.175.0` run `43453123285` (`754b224`), `0.174.0` run
+  `43449824926` (`eedfaa9`), `0.173.0` run `43447945730` (`9d81d3d`), `0.172.0` run
+  `40763347401` con SHA-256 del JAR
   `9520432c3027a3695b4e1246c2f8a3298cdc8ce11ab0cbff517d6fc914508c60`.
 - `0.172.0` **no** se instaló en la instancia del usuario; la carpeta de mods de destino
   sigue siendo `D:\Minecraft\SKLauncher\sklauncher-data-v4\instances\test-1\mods`.
