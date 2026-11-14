@@ -22,15 +22,23 @@ Actualizado: 2026-11-13
 
 ## Estado confirmado al retomar (2026-11-13)
 
-- `0.180.0` **publicada**: commit de código `6ae747e`, run `43548714189` en verde
-  (los dos intentos anteriores `c964dc7` y el del CI sin `[release]` cayeron por un
-  import equivocado: `Util` vive en `net.minecraft`, no en `net.minecraft.util`).
-  El JAR ya no se entrega como ZIP de artefacto: el job `publish` lo adjunta a un
-  release, así que la descarga es directa a
+- `0.180.0` **publicada y en verde**: commit de código `2fc259c`, run `43549058805`
+  (*Build mod*, espejos, subida del JAR y `publish` en verde). El JAR ya no viaja
+  como ZIP de artefacto: el job `publish` lo adjunta a un release, así que la
+  descarga es directa a
   `https://github.com/Santi-PdR/GripeVerde/releases/download/v0.180.0/gripeverde-0.180.0.jar`
-  (9.416.176 bytes). `0.179.0` quedó igual en
+  (9.416.179 bytes). `0.179.0` quedó igual en
   `https://github.com/Santi-PdR/GripeVerde/releases/download/v0.179.0/gripeverde-0.179.0.jar`
   (9.395.836 bytes).
+- Antes de llegar ahí hubo tres intentos rojos: `c964dc7` y `a0b4c9e` (import
+  equivocado: `Util` vive en `net.minecraft`, no en `net.minecraft.util`) y el
+  run previo a la corrección. El log de un run no se puede leer sin sesión, así
+  que el job `build` ahora **escribe los errores como comentario del PR**
+  (paso `Report build errors in the pull request`, `pull-requests: write`); así
+  se encontró el import.
+- Para republicar un release: `release-tag.txt` marca el tag y el job `publish`
+  solo crea el release si coincide con `build.gradle` y no existe todavía. Un
+  push normal no publica nada y un release viejo nunca se sobrescribe.
 - `0.179.0`: commit `8ee47fc`, run `43545600000`, artefacto `14094161283`,
   8.753.677 bytes (ZIP).
 - Referencias anteriores: `0.178.0` run `43543676142` (`7cd9d9f`; el primer intento
