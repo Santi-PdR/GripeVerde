@@ -22,12 +22,13 @@ Actualizado: 2026-11-13
 
 ## Estado confirmado al retomar (2026-11-13)
 
-- `0.176.0` **subida y compilada en verde**: el commit de código es `531a91d`, con run
-  `43538221683` (*Build mod* de Gradle, verificación de espejos y subida del JAR en verde),
-  artefacto `GripeVerde-jar` ID `14090912659`, 8.751.302 bytes, digest del ZIP
-  `sha256:1486bcc957ac0cced5becf85d4ab8ad294b7e55e6f75171498165799ca49e951`. Cada commit
+- `0.177.0` **subida y compilada en verde**: el último commit de código es `d9e7a52`, con
+  run `43539899164` (*Build mod* de Gradle, verificación de espejos y subida del JAR en
+  verde); el commit anterior, `0669b8a`, tuvo el run `43539527151` también verde. Artefacto
+  `GripeVerde-jar` ID `14090464741`, 8.751.918 bytes, digest del ZIP
+  `sha256:d20787d8ff9a7a66992dfb8dab4f3fc4da920441068bdcbadd6fe23f9965a866`. Cada commit
   de la rama genera su propio run y su propio artefacto, así que los IDs rotan con la
-  documentación; cualquier run verde de la versión instala el mismo `0.176.0`. El digest
+  documentación; cualquier run verde de la versión instala el mismo `0.177.0`. El digest
   publicado corresponde al `.zip`, no al JAR.
 - Referencias anteriores: `0.175.0` run `43453123285` (`754b224`), `0.174.0` run
   `43449824926` (`eedfaa9`), `0.173.0` run `43447945730` (`9d81d3d`), `0.172.0` run
