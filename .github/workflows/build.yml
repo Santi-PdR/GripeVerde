@@ -26,6 +26,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -39,7 +42,30 @@ jobs:
       - name: Build mod
         run: |
           chmod +x gradlew
-          ./gradlew --no-daemon clean build
+          set -o pipefail
+          ./gradlew --no-daemon clean build 2>&1 | tee /tmp/build.log
+      # El log de un run no se puede leer sin sesion en el navegador; en cambio
+      # un comentario en el PR si. Cuando el build falla, el error queda escrito
+      # ahi mismo, con las lineas .java: N y las ultimas cuarenta del log.
+      - name: Report build errors in the pull request
+        if: failure() && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          {
+            grep -nE '(\.java:[0-9]+|error:|What went wrong|Execution failed)' /tmp/build.log | head -40 || true
+            echo '---'
+            tail -n 40 /tmp/build.log || true
+          } > /tmp/report.txt || true
+          {
+            echo 'El build fallo. Extracto del log:'
+            echo '```'
+            cat /tmp/report.txt
+            echo '```'
+          } > /tmp/body.md || true
+          gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body-file /tmp/body.md
       - name: Verify mirrored assets and localization
         run: python3 tools/verify_mirrors.py
       - name: Upload mod JAR
