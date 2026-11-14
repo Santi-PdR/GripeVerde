@@ -1,3 +1,9 @@
+## Version 0.185.0 - Veinte voces y un papel limpio de verdad
+
+El parte de CEDA pasa de diez mensajes a veinte, sin cambiar el formato del archivo: las diez que ya tenías conservan su sitio y las diez nuevas entran vacías. Las páginas admiten hasta doce renglones y se pasan con la rueda, con RePag y AvPag, o con clic derecho en el rótulo para volver atrás. Ctrl más 1..9/0 manda esa voz sin soltar el teclado, y con Shift manda las voces 11 a 20; Enter baja al campo siguiente. Los números se leen en tinta fuerte cuando esa voz ya tiene mensaje y el pie cuenta cuántas van.
+
+El papel de las pantallas terminó de limpiarse: se borraron los veintitrés métodos de adornos que ya no llamaba nadie —marca de agua, sello de cera, gotas, fibras, manchas, arrugas, muescas, tea y quemado de borde— y quedó sólo el velo con su filete y la paleta de cada tipo de papel. El verificador prohíbe esos nombres para que no vuelvan por costumbre. También se fue el sello de cera del panel de pausa, que además de ser un adorno en la hoja costaba más de mil rellenos por cuadro con sus dos bucles píxel por píxel. Y los textos recortados de los rótulos ya no se arman letra por letra: se buscan por bisección, que es lo que se nota cuando la ventana es chica.
+
 ## Version 0.184.2 - Dieciséis voces en el parte
 
 El parte de CEDA pasa de diez mensajes a dieciséis, con su tecla propia cada uno y el mismo autoguardado: las diez que ya tenías conservan su sitio y las seis nuevas entran vacías. Las páginas de la ficha admiten hasta doce renglones antes de repartirse, así que en una ventana normal entran casi todas de una vez.

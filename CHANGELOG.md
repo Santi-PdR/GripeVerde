@@ -1,3 +1,12 @@
+## v0.185.0 - Veinte voces y un papel limpio de verdad
+
+- `DispatchLibrary.SLOT_COUNT` 16→20 (el formato del archivo no cambia; las ranuras viejas conservan su sitio).
+- `DiaryDispatchScreen`: paginación con rueda, RePag/AvPag y clic derecho en el rótulo; hasta doce renglones por página; `Ctrl`+`1..9/0` manda la voz y con `Shift` las 11..20; `Enter` pasa al campo siguiente; números en tinta fuerte cuando la voz tiene mensaje y conteo de voces con texto en el pie.
+- `PaperTexture` reducido a `drawVeil` + paleta: se borran 23 métodos de adornos que ya no se llamaban (marca de agua, sello, gotas, fibras, manchas, arrugas, muescas, tea, borde quemado) y se retira `incrementOpenCount`.
+- `DiaryPauseScreen`: fuera el sello de cera del panel (dos bucles píxel por píxel, más de mil fills por cuadro).
+- `DiaryTypography.fitString`: búsqueda binaria por puntos de código en vez de armar la cadena carácter por carácter.
+- `verify_mirrors.py`: prohibidos los nombres de los adornos retirados.
+
 ## v0.184.2 - Dieciséis voces en el parte
 
 - `DispatchLibrary.SLOT_COUNT` 10→16: el formato del archivo no cambia, las ranuras viejas conservan su sitio y las nuevas entran vacías.

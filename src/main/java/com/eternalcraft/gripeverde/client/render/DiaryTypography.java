@@ -42,16 +42,19 @@ public final class DiaryTypography {
         if (width(font, text) <= available) return text;
 
         String suffix = ellipsis ? "…" : "";
-        StringBuilder prefix = new StringBuilder(text.length());
-        for (int offset = 0; offset < text.length();) {
-            int codePoint = text.codePointAt(offset);
-            int next = offset + Character.charCount(codePoint);
-            String candidate = prefix.toString() + new String(Character.toChars(codePoint)) + suffix;
-            if (width(font, candidate) > available) break;
-            prefix.appendCodePoint(codePoint);
-            offset = next;
+        if (width(font, suffix) > available) return "";
+        // v0.185.0: busqueda binaria sobre los puntos de codigo. Antes se armaba
+        // la cadena caracter por caracter y se medía cada intento: cuadratico por
+        // rotulo, y esto se llama varias veces por cuadro en las cabeceras.
+        int[] points = text.codePoints().toArray();
+        int lo = 0;
+        int hi = points.length;
+        while (lo < hi) {
+            int mid = (lo + hi + 1) >>> 1;
+            String candidate = new String(points, 0, mid) + suffix;
+            if (width(font, candidate) <= available) lo = mid; else hi = mid - 1;
         }
-        return prefix + suffix;
+        return new String(points, 0, lo) + suffix;
     }
 
     public static void draw(GuiGraphics graphics, Font font, String text,

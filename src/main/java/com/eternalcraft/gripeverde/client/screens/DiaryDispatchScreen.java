@@ -1,5 +1,6 @@
 package com.eternalcraft.gripeverde.client.screens;
 
+import com.eternalcraft.gripeverde.client.DispatchHotkeys;
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.integration.CopyLCompatibility;
 import com.eternalcraft.gripeverde.client.integration.DispatchLibrary;
@@ -14,19 +15,21 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Las dieciseis voces del parte de CEDA.
+ * Las veinte voces del parte de CEDA.
  *
  * v0.184.0: la ficha se rehizo entera porque no se entendia. Antes habia ocho
  * renglones para escribir a mano, diez ranuras al costado y dos botones de
  * envio; ahora cada renglon de la lista es un mensaje guardado, con su campo de
  * texto y su tecla a la derecha, y nada mas: no hay envio desde la ficha, el
  * mensaje sale con su tecla cuando estas jugando. v0.184.2: las voces pasan de
- * diez a dieciseis y se reparten en paginas de hasta doce.
+ * diez a veinte y se reparten en paginas de hasta doce, con rueda, RePag/AvPag
+ * y clic derecho en el rotulo para volver.
  *
  * - Clic en la tecla: la ficha escucha; la proxima tecla que aprietes queda
  *   asignada (Esc cancela, Supr la borra, clic derecho tambien la borra).
@@ -211,11 +214,27 @@ public class DiaryDispatchScreen extends Screen {
             && mouseY >= this.toggleY - 2 && mouseY <= this.toggleY + 11;
     }
 
+    /** v0.185.0: pasar de pagina sin apuntar al rotulo. */
+    private void turnPage(int delta) {
+        if (this.pageCount <= 1) return;
+        this.page = Math.floorMod(this.page + delta, this.pageCount);
+        this.awaitingSlot = -1;
+        this.rebuildWidgets();
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+        if (this.pageCount > 1) {
+            this.turnPage(delta < 0 ? 1 : -1);
+            return true;
+        }
+        return super.mouseScrolled(mouseX, mouseY, delta);
+    }
+
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (this.overToggle(mouseX, mouseY)) {
-            this.page = (this.page + 1) % this.pageCount;
-            this.rebuildWidgets();
+            this.turnPage(button == 1 ? -1 : 1);
             return true;
         }
         int row = this.rowAt(mouseX, mouseY);
@@ -254,6 +273,29 @@ public class DiaryDispatchScreen extends Screen {
             this.saveIfNeeded(true);
             this.setStatus("gripeverde.dispatch.slot.bound");
             return true;
+        }
+        // v0.185.0: Ctrl+1..9/0 manda esa voz y Ctrl+Shift+1..9/0 las voces 11..20.
+        // No es envio en lote: cada atajo manda una sola, igual que su tecla.
+        if ((modifiers & GLFW.GLFW_MOD_CONTROL) != 0
+                && keyCode >= GLFW.GLFW_KEY_0 && keyCode <= GLFW.GLFW_KEY_9) {
+            int digit = keyCode - GLFW.GLFW_KEY_0;
+            int slot = digit == 0 ? 9 : digit - 1;
+            if ((modifiers & GLFW.GLFW_MOD_SHIFT) != 0) slot += 10;
+            if (DispatchHotkeys.send(this.minecraft, slot)) {
+                this.setStatus("gripeverde.dispatch.slot.sent");
+            }
+            return true;
+        }
+        if ((keyCode == 266 || keyCode == 267) && this.pageCount > 1) { // RePag / AvPag
+            this.turnPage(keyCode == 266 ? -1 : 1);
+            return true;
+        }
+        if (keyCode == 257 && !this.fields.isEmpty()) { // Enter: siguiente campo
+            int current = this.fields.indexOf(this.getFocused());
+            if (current >= 0) {
+                this.setFocused(this.fields.get((current + 1) % this.fields.size()));
+                return true;
+            }
         }
         if (keyCode == 258 && !this.fields.isEmpty()) { // Tab
             int current = this.fields.indexOf(this.getFocused());
@@ -303,9 +345,11 @@ public class DiaryDispatchScreen extends Screen {
             int slot = this.rowSlots.get(i);
             int y = field.getY();
 
+            // v0.185.0: el numero dice de un vistazo si esa voz ya tiene mensaje.
+            boolean hasText = !DispatchLibrary.message(slot).isBlank();
             String number = String.format("%02d", slot + 1);
             gfx.drawString(this.font, number, this.fieldX - 6 - this.font.width(number), y + 4,
-                DiaryChrome.INK_SUBTITLE, false);
+                hasText ? DiaryChrome.INK_TITLE : 0x70887766, false);
 
             boolean listening = this.awaitingSlot == slot;
             boolean hover = this.hoveredSlot == slot;
@@ -330,6 +374,13 @@ public class DiaryDispatchScreen extends Screen {
         String note = this.footerNote();
         gfx.drawString(this.font, ellipsize(note, Math.max(40, this.panelW - 40 - this.toggleW)),
             this.panelX + 20, this.toggleY, DiaryChrome.INK_SUBTITLE, false);
+        if (this.pageCount > 1 && this.statusKey.isEmpty()) {
+            String count = Component.translatable("gripeverde.dispatch.slot.count",
+                DispatchLibrary.countWithText(), DispatchLibrary.SLOT_COUNT).getString()
+                + "  \u00b7  Ctrl+1..0";
+            gfx.drawString(this.font, count, this.panelX + 20, this.toggleY + 12,
+                DiaryChrome.INK_FLAVOR, false);
+        }
 
         if (this.pageCount > 1) {
             int color = this.overToggle(mouseX, mouseY) ? DiaryChrome.INK_TITLE : DiaryChrome.INK_FLAVOR;

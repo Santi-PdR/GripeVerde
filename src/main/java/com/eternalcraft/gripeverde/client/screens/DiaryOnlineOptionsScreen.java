@@ -40,7 +40,6 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
     @Override
     protected void init() {
         super.init();
-        com.eternalcraft.gripeverde.client.render.PaperTexture.incrementOpenCount();
 
         this.panelW = Math.min(PANEL_W, this.width - 40);
         this.panelH = Math.min(PANEL_H, this.height - 30);

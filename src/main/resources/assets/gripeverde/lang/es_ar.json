@@ -185,5 +185,7 @@
   "gripeverde.dispatch.slot.label": "Mensaje %s",
   "gripeverde.dispatch.page": "▸ %s/%s",
   "gripeverde.dispatch.saved": "Guardado",
-  "gripeverde.dispatch.slot.empty": "Escribí el mensaje…"
+  "gripeverde.dispatch.slot.empty": "Escribí el mensaje…",
+  "gripeverde.dispatch.slot.count": "%s de %s voces tienen mensaje",
+  "gripeverde.dispatch.slot.sent": "Enviado"
 }

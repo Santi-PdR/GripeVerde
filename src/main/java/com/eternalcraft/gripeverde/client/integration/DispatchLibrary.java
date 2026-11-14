@@ -34,9 +34,9 @@ public final class DispatchLibrary {
 
     private static final Logger LOGGER = LogManager.getLogger("GripeVerde/DispatchLibrary");
 
-    // v0.184.2: dieciseis voces en vez de diez. El formato del archivo no cambia:
+    // v0.185.0: veinte voces en vez de diez. El formato del archivo no cambia:
     // las que ya existian conservan su sitio y las nuevas entran vacias.
-    public static final int SLOT_COUNT = 16;
+    public static final int SLOT_COUNT = 20;
     public static final int UNBOUND = -1;
     private static final int MOUSE_BASE = 1000;
     private static final int MAX_MESSAGE_LENGTH = 256;

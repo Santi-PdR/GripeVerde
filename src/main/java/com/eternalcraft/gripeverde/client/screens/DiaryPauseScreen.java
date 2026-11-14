@@ -183,7 +183,6 @@ public class DiaryPauseScreen extends PauseScreen {
             "gripeverde.pause.btn.leave", DiaryButton.Icon.DOOR, DiaryButton.Variant.DANGER, this::onLeave));
     }
 
-
     private DiaryButton createPauseButton(int x, int y, int width, int height, String key,
                                           DiaryButton.Icon icon, DiaryButton.Variant variant, Runnable action) {
         return createPauseButton(x, y, width, height, key, key, icon, variant, action);
@@ -374,7 +373,8 @@ public class DiaryPauseScreen extends PauseScreen {
         if (!compactPauseLayout()) {
             drawCandle(g, px + 20, py + panelH() - 32);
             drawSignature(g, px, py);
-            drawWaxSeal(g, px + panelW() - 28, py + panelH() - 26);
+            // v0.185.0: fuera el sello de cera del panel (y sus dos bucles de
+            // 615 fills por cuadro); el papel ya no lleva adornos.
         }
 
         // ── v0.16.0: lo que trae la oscuridad ──
@@ -683,30 +683,6 @@ public class DiaryPauseScreen extends PauseScreen {
 
     private static boolean isEnglishSelected() {
         return com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
-    }
-
-    private void drawWaxSeal(GuiGraphics g, int cx, int cy) {
-        int r = 14;
-        for (int dy = -r; dy <= r; dy++) {
-            for (int dx = -r; dx <= r; dx++) {
-                if (dx * dx + dy * dy <= r * r) {
-                    g.fill(cx + dx, cy + dy, cx + dx + 1, cy + dy + 1, DiaryTheme.WAX_SEAL);
-                }
-            }
-        }
-        for (int dy = -r; dy <= r; dy++) {
-            for (int dx = -r; dx <= r; dx++) {
-                int d2 = dx * dx + dy * dy;
-                if (d2 <= r * r && d2 >= (r - 2) * (r - 2)) {
-                    g.fill(cx + dx, cy + dy, cx + dx + 1, cy + dy + 1, DiaryTheme.BLOOD_DRIED);
-                }
-            }
-        }
-        g.fill(cx - 7, cy - 7, cx - 3, cy - 4, DiaryTheme.withAlpha(DiaryTheme.PAPER, 90));
-
-        String year = "1897";
-        int tw = this.font.width(year);
-        g.drawString(this.font, year, cx - tw / 2, cy - 3, DiaryTheme.PAPER, false);
     }
 
     // ================================================================

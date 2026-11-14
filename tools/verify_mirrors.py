@@ -44,7 +44,7 @@ if declared_languages - set(REQUIRED):
 
 baseline = json.loads(read(os.path.join(LANG_DIR, "en_us.json")))
 bkeys = set(baseline)
-EXPECTED = 187
+EXPECTED = 189
 loc_problems = []
 if len(bkeys) != EXPECTED:
     loc_problems.append("en_us: expected %d keys, found %d" % (EXPECTED, len(bkeys)))
@@ -119,7 +119,14 @@ banned = ['ThemeManager','GhoulPalette','ScreenLayout','ScreenTheme','AbstractSc
  'drawSignalStation','drawBottomNotice','drawSpecimenFooter','computePublicSignal',
  'drawLedgerDetails','drawOrnamentalDivider',
  'HiddenCipher','onCharTyped','isChiming','asteriskRects','hiddenFolioRect',
- 'binderMarksLit','BINDER_MARKS','drawNewSeal']
+ 'binderMarksLit','BINDER_MARKS','drawNewSeal',
+ # v0.185.0: el papel ya no se adorna; estos nombres no vuelven.
+ 'drawClean','drawWatermark','drawRainDrops','drawTornEdges',
+ 'drawPaperFibersOptimized','drawCoffeeStain','drawBloodMist','drawFieldPaper',
+ 'drawVignetteFast','drawStainsOptimized','drawWrinkles',
+ 'drawFaintRuledMargins','drawCornerPinholes','drawBottomTeaTint',
+ 'drawPageEdgeBurnish','drawSubtleBindingFibers','drawFaintRegistryNotches',
+ 'drawMicroInkDot','drawArchiveCreases','stainChance','incrementOpenCount']
 pat = re.compile(r"(?i)\b(?:" + "|".join(banned) + r")\b")
 dc_problems = []
 java_files = glob.glob(JAVA_DIR + "/**/*.java", recursive=True)

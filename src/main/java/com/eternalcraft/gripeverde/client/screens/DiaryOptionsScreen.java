@@ -95,7 +95,6 @@ public class DiaryOptionsScreen extends Screen {
 
     @Override
     protected void init() {
-        com.eternalcraft.gripeverde.client.render.PaperTexture.incrementOpenCount();
         // Rotate flavor quote each time options screen opens, respecting language.
         String[] flavorPool = getFlavorPool();
         String currentLang = currentLanguageCode();

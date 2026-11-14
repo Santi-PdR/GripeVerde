@@ -9,7 +9,7 @@ Actualizado: 2026-11-13
   token, igual que el de Photon/Fisk.
 - Rama de trabajo de la sesión: `arena/48be547c-gripeverde` (base `02e85bc`) — la plataforma
   fija el nombre, no se renombra. Todo el trabajo va ahí; el PR sale de esa rama.
-- Versión de esta rama: `0.184.2` (anteriores entregadas: `0.184.1`, `0.184.0`, `0.183.0`)
+- Versión de esta rama: `0.185.0` (anteriores entregadas: `0.184.2`, `0.184.1`, `0.184.0`, `0.183.0`)
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
 - El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
   proyecto local del usuario.
@@ -107,12 +107,26 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.185.0 — veinte voces y el papel limpio de verdad
+
+- **CEDA con veinte voces** (`DispatchLibrary.SLOT_COUNT = 20`), sin cambiar el formato del archivo.
+  Paginación con **rueda**, **RePag/AvPag** y **clic derecho** en el rótulo; hasta doce renglones por
+  página. `Ctrl`+`1..9/0` manda la voz y con `Shift` las 11..20; `Enter` baja al campo siguiente. Los
+  números van en tinta fuerte cuando la voz ya tiene mensaje y el pie cuenta cuántas van
+  (`gripeverde.dispatch.slot.count`, clave nueva).
+- **`PaperTexture` reducido a lo que se usa**: `drawVeil` (dos sobrecargas), `PaperKind` y la paleta.
+  Se borraron 23 métodos de adornos que ya nadie llamaba y `incrementOpenCount`; el verificador
+  prohíbe esos nombres (`drawClean`, `drawWatermark`, `drawWaxSeal`, `drawRainDrops`, …).
+- **Fuera el sello de cera del panel de pausa**: era un adorno en la hoja y costaba dos bucles
+  píxel por píxel (más de mil `fill` por cuadro).
+- **`DiaryTypography.fitString` por bisección** en vez de armar la cadena carácter por carácter.
+
 ## Cambios de 0.184.0 — el diario se saca la hoja de encima
 
 Tanda de correcciones grandes, casi toda de interfaz:
 
 - **Parte de CEDA rehecho.** `DiaryDispatchScreen` ya no tiene renglones libres ni ranuras
-  al costado: es una lista de mensajes (dieciséis desde 0.184.2), cada uno con su campo y su tecla a la derecha.
+  al costado: es una lista de mensajes (veinte desde 0.185.0), cada uno con su campo y su tecla a la derecha.
   Se fueron ENVIAR y ENVIAR TODO (no hay envío en lote desde la ficha; el mensaje sale con su
   tecla mientras jugás). Clic en la tecla deja la ficha escuchando, Esc cancela, Supr o clic
   derecho borra. Autoguardado a los 700 ms de la última letra y otra vez al cerrar. Si no
@@ -138,7 +152,7 @@ Tanda de correcciones grandes, casi toda de interfaz:
   antes volvía a cortar todo el texto en cada cuadro para saber dónde cae el scroll.
 - `verify_mirrors.py` gana identificadores prohibidos nuevos (`HiddenCipher`, `onCharTyped`,
   `isChiming`, `asteriskRects`, `hiddenFolioRect`, `BINDER_MARKS`, `drawNewSeal`) para que
-  nada de eso vuelva. Claves de idioma: **187** (antes 201).
+  nada de eso vuelva. Claves de idioma: **189** (antes 201).
 
 ## Cambios de 0.183.0 — ningún adorno contesta antes que los botones
 

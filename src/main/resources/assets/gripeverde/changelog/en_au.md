@@ -1,3 +1,9 @@
+## Version 0.185.0 - Twenty voices and paper that is actually clean
+
+The CEDA sheet goes from ten messages to twenty without changing the file format: the ten you already had keep their place and the ten new ones arrive empty. Pages hold up to twelve rows and turn with the wheel, PgUp and PgDn, or a right click on the label to go back. Ctrl plus 1..9/0 sends that voice without leaving the keyboard, and with Shift it sends voices 11 to 20; Enter moves to the next field. Numbers read in full ink when that voice already has a message, and the footer counts how many do.
+
+The screen paper is finished cleaning: the twenty-three ornament methods nobody called any more are gone - watermark, wax seal, drops, fibers, stains, wrinkles, notches, tea tint and burnt edges - leaving only the veil with its rule and the palette of each paper stock. The verifier bans those names so they never come back out of habit. The wax seal on the pause panel is gone too: besides being an ornament on the sheet, it cost over a thousand fills per frame in two pixel-by-pixel loops. And clipped label text is no longer assembled letter by letter: it is found by bisection, which is what shows when the window is small.
+
 ## Version 0.184.2 - Sixteen voices on the dispatch sheet
 
 The CEDA sheet goes from ten messages to sixteen, each with its own key and the same autosave: the ten you already had keep their place and the six new ones arrive empty. A page now holds up to twelve rows before splitting, so a normal window shows almost all of them at once.
