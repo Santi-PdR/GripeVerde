@@ -1,3 +1,7 @@
+**v0.180.0 - El parte tiene su propia mesa**
+
+El parte de CEDA deja de depender de CopyL: es una página del diario con ocho renglones numerados, aire entre uno y otro, Enter para enviar y Tab para bajar. El borrador queda al cerrar la ficha y el envío en tanda espera medio segundo entre mensajes. Con CopyL instalado, su panel se abre desde la esquina.
+
 **v0.179.0 - El cronista habla en toda ventana**
 
 Cuando la ficha de saludo no cabe, el cronista deja su frase en una línea centrada en la cabecera: ya se le oye en ventanas estrechas y en las anchas y bajas. Si la ficha cabe, todo queda igual.

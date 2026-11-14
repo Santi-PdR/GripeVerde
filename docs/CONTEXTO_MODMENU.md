@@ -7,7 +7,7 @@ Actualizado: 2026-11-13
 - Repositorio: [Santi-PdR/GripeVerde](https://github.com/Santi-PdR/GripeVerde)
 - Rama de trabajo: `codex/v0.104-ghoul-warning-poster`
 - Pull request: [#90](https://github.com/Santi-PdR/GripeVerde/pull/90)
-- Versión de esta rama: `0.179.0` (anterior entregada: `0.178.0`)
+- Versión de esta rama: `0.180.0` (anterior entregada: `0.179.0`)
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
 - El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
   proyecto local del usuario.
@@ -22,10 +22,17 @@ Actualizado: 2026-11-13
 
 ## Estado confirmado al retomar (2026-11-13)
 
-- `0.179.0` **subida y compilada en verde al primer intento**: commit de código `8ee47fc`,
-  run `43545600000` (*Build mod* de Gradle, verificación de espejos y subida del JAR en
-  verde). Artefacto `GripeVerde-jar` ID `14094161283`, 8.753.677 bytes, digest del ZIP
-  `sha256:134a5ddd56dd072550314134a94ec0fc159b5a0a11a4a2bd081d032d2469ef2c`.
+- `0.180.0` **publicada**: commit de código `6ae747e`, run `43548714189` en verde
+  (los dos intentos anteriores `c964dc7` y el del CI sin `[release]` cayeron por un
+  import equivocado: `Util` vive en `net.minecraft`, no en `net.minecraft.util`).
+  El JAR ya no se entrega como ZIP de artefacto: el job `publish` lo adjunta a un
+  release, así que la descarga es directa a
+  `https://github.com/Santi-PdR/GripeVerde/releases/download/v0.180.0/gripeverde-0.180.0.jar`
+  (9.416.176 bytes). `0.179.0` quedó igual en
+  `https://github.com/Santi-PdR/GripeVerde/releases/download/v0.179.0/gripeverde-0.179.0.jar`
+  (9.395.836 bytes).
+- `0.179.0`: commit `8ee47fc`, run `43545600000`, artefacto `14094161283`,
+  8.753.677 bytes (ZIP).
 - Referencias anteriores: `0.178.0` run `43543676142` (`7cd9d9f`; el primer intento
   `29e88f3` no compiló por leer el campo `this.children`), `0.177.0` run `43539899164`
   (`d9e7a52`), `0.176.0` run `43538221683` (`531a91d`), `0.175.0` run `43453123285`
@@ -47,6 +54,41 @@ Actualizado: 2026-11-13
 - El validador local `python3 tools/verify_mirrors.py` reproduce los sellos de Gradle
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
+
+## Cambios de 0.180.0 — el parte tiene su propia mesa
+
+El acceso de CEDA de la portada era un puente por reflexión: solo aparecía si
+`ModList` encontraba `copyl` y abría `CopyLSettingsScreen` de otro mod. Ahora el
+formulario es nuestro (`DiaryDispatchScreen`) y el puente queda solo como puerta
+opcional dentro de la ficha.
+
+- **Siempre hay entrada**: el icono de la portada (x = `width - 76`, 20x20) ya no
+  depende de CopyL; con CopyL instalado, su panel se abre desde la esquina
+  superior derecha de la ficha (20x20, icono `DISPATCH_NOTE`).
+- **Aire de sobra**: ocho renglones (`MAX_LINES`) de 16 px con **12 px de hueco**
+  (`ROW_STEP = 28`), carril de **34 px** para el número (`01`..`08`) y un filete
+  de tinta antes del pie. CopyL apilaba los renglones sin carril ni hueco.
+- **Pie en dos filas** (`FOOTER_H = 84`): línea de estado y cuatro botones
+  (ENVIAR, ENVIAR TODO, LIMPIAR, VOLVER) con 10 px entre ellos y `btnInset` de
+  12 a 22 px según el ancho.
+- **Comportamiento**: `Enter` envía el renglón enfocado (o el primero con texto) y
+  pasa al siguiente; `Tab`/`Shift+Tab` recorren los renglones; el envío en tanda
+  espera **10 ticks** entre mensajes; el borrador vive en un `static String[]`
+  para que cerrar la ficha no borre lo escrito. Sin conexión, el estado avisa y
+  no se envía nada (`player.connection == null`).
+- **Tamaños**: la ficha mide `min(400, max(240, width - 24))` por
+  `min(380, max(190, height - 24))`; los renglones visibles salen de
+  `(rowsBottom - rowsTop) / 28` acotado a 3..8. Con el tope viejo de 300 px de
+  alto solo cabían 5, así que la ficha creció a 380: ahora 320x240 y 427x240 dan
+  3 renglones, 480x270 da 4, 640x360 da 7 y desde 700x400 hasta 1920x1080 dan
+  los 8 completos.
+- **Idiomas**: 14 claves nuevas (`gripeverde.dispatch.*`) en los 25 locales; el
+  espejo pasa de 177 a **191** claves y se actualizó en `verify_mirrors.py` y en
+  `build.gradle`.
+- **Entrega**: `release-tag.txt` marca la versión a publicar; el job `publish`
+  solo crea el release si el tag coincide con `build.gradle` y el release no
+  existe, así que un push normal no publica nada y nunca se sobrescribe un
+  release viejo con un build nuevo.
 
 ## Cambios de 0.179.0 — el cronista habla en toda ventana
 
@@ -296,6 +338,7 @@ inventario/pausa deben seguir libres de animaciones añadidas.
 
 ## Próximo paso técnico recomendado
 
-Recoger la revisión visual del usuario sobre `0.179.0` (carril de Ajustes y Salir y banda
-del susurro) e instalar el JAR cuando la carpeta de mods sea accesible. CopyL 3.9.5 sigue esperando un
-entorno con permiso de escritura sobre `Santi-PdR/Lclient`.
+Recoger la revisión visual del usuario sobre `0.180.0` (aire y carril del parte de CEDA) e
+instalar el JAR desde el release cuando la carpeta de mods sea accesible. Queda pendiente llevar el
+mismo aire a las pantallas de CopyL: el push a `Santi-PdR/Lclient` sigue en 403, así que ese cambio
+viaja como parche en `tools/copyl/`.

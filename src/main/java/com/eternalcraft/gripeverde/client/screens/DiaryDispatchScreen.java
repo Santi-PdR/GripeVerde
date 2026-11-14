@@ -32,7 +32,8 @@ import java.util.List;
 public class DiaryDispatchScreen extends Screen {
 
     private static final int PANEL_MAX_W = 400;
-    private static final int PANEL_MAX_H = 300;
+    /** 380 de alto: 56 de cabecera + 84 de pie dejan sitio a los ocho renglones. */
+    private static final int PANEL_MAX_H = 380;
     private static final int MAX_LINES = 8;
     private static final int MAX_LINE_LEN = 200;
 
