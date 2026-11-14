@@ -1,3 +1,7 @@
+**v0.183.0 - Ningún adorno contesta antes que los botones**
+
+El manual de campo y el archivo ya no se comen los clics de los botones, el manual gana aire entre renglones, párrafos y secciones, y en el parte de CEDA Ctrl+1..0 manda la ranura de ese número.
+
 **v0.182.0 - La crónica respira**
 
 El historial de cambios deja de estar apretado: más aire entre renglones, títulos y versiones, margen que sigue a la ventana y botones que ya no roban clics ni sobresalen en ventanas chicas.

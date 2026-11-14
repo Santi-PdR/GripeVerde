@@ -41,7 +41,9 @@ public class DiaryArchiveScreen extends Screen {
 
     private static final int COLS = 5;
     private static final int CARD_H = 22;
-    private static final int CARD_GAP = 5;
+    // v0.183.0: dos pixeles mas entre tarjetas y los botones se consultan antes
+    // que los papeles sueltos y que la banda de cierre del documento abierto.
+    private static final int CARD_GAP = 7;
 
     public DiaryArchiveScreen(Screen parent) {
         super(Component.literal(Discoveries.isEnglish() ? "Reading Room" : "Sala de consulta"));
@@ -389,6 +391,9 @@ public class DiaryArchiveScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (DiaryChrome.overAnyWidget(this, mouseX, mouseY)) {
+            return super.mouseClicked(mouseX, mouseY, button);
+        }
         if (!DOC_NONE.equals(viewingDoc)) {
             if (mouseY > panelY + panelH - 56) {
                 viewingDoc = DOC_NONE;

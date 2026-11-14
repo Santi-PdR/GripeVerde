@@ -438,6 +438,14 @@ public class DiaryDispatchScreen extends Screen {
             this.sendFocusedLine();
             return true;
         }
+        // v0.183.0: Ctrl+1..0 manda la ranura de ese numero sin soltar el teclado.
+        if (hasControlDown()) {
+            int slot = digitSlot(keyCode);
+            if (slot >= 0) {
+                this.sendSlot(slot);
+                return true;
+            }
+        }
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
@@ -579,6 +587,15 @@ public class DiaryDispatchScreen extends Screen {
         if (this.minecraft != null) {
             this.minecraft.setScreen(this.parent);
         }
+    }
+
+    /** Ctrl+1..9 mandan las ranuras 0..8 y Ctrl+0 la decima. */
+    private static int digitSlot(int keyCode) {
+        if (keyCode >= 49 && keyCode <= 57) return keyCode - 49;
+        if (keyCode == 48) return 9;
+        if (keyCode >= 321 && keyCode <= 329) return keyCode - 321;
+        if (keyCode == 320) return 9;
+        return -1;
     }
 
     private static String ellipsize(net.minecraft.client.gui.Font font, String text, int maxWidth) {

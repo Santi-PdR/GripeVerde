@@ -193,7 +193,7 @@
   "gripeverde.dispatch.ready.slots": "%s mensajes guardados: su tecla los manda, o hacé clic",
   "gripeverde.dispatch.ready.copyl": "CopyL está instalado: sus teclas quedan apagadas hasta sacarlo",
   "gripeverde.dispatch.slot.nokey": "sin tecla",
-  "gripeverde.dispatch.slot.hint": "Clic envía · Shift carga · Ctrl guarda la línea · Clic derecho fija tecla",
+  "gripeverde.dispatch.slot.hint": "Clic envía · Shift carga · Ctrl guarda la línea · Ctrl+1..0 manda una ranura · Clic derecho fija tecla",
   "gripeverde.dispatch.slot.listen": "Apretá una tecla para esta ranura · Supr la borra · Esc cancela",
   "gripeverde.dispatch.slot.bound": "Tecla guardada",
   "gripeverde.dispatch.slot.cleared": "Tecla borrada",

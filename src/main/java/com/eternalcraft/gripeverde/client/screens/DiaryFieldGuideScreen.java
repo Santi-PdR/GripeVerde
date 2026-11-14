@@ -59,9 +59,11 @@ public final class DiaryFieldGuideScreen extends Screen {
     private int contentHeight;
     private boolean draggingScrollbar;
     private boolean compactLayout;
-    private static final int LINE_HEIGHT = 11;
-    private static final int PARAGRAPH_GAP = 4;
-    private static final int SECTION_GAP = 6;
+    // v0.183.0: el manual tambien respira (12 px de renglon, 7 entre parrafos,
+    // 10 entre secciones); los titulos se consultan despues que los botones.
+    private static final int LINE_HEIGHT = 12;
+    private static final int PARAGRAPH_GAP = 7;
+    private static final int SECTION_GAP = 10;
 
     public DiaryFieldGuideScreen(Screen parent) {
         super(Component.translatable("gripeverde.field_guide.title"));
@@ -418,7 +420,7 @@ public final class DiaryFieldGuideScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0) {
+        if (button == 0 && !DiaryChrome.overAnyWidget(this, mouseX, mouseY)) {
             int section = headingAt(mouseX, mouseY);
             if (section >= 0) {
                 sectionWidgets.get(section).setFocused(true);

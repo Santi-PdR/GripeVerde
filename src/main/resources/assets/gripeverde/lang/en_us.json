@@ -193,7 +193,7 @@
     "gripeverde.dispatch.ready.slots": "%s saved messages, press their key or click one",
     "gripeverde.dispatch.ready.copyl": "CopyL is installed: its keys stay off until you remove it",
     "gripeverde.dispatch.slot.nokey": "no key",
-    "gripeverde.dispatch.slot.hint": "Click sends - Shift loads - Ctrl saves the line - Right click sets a key",
+    "gripeverde.dispatch.slot.hint": "Click sends · Shift loads · Ctrl saves the line · Ctrl+1..0 sends a slot · Right click sets a key",
     "gripeverde.dispatch.slot.listen": "Press a key for this slot - Delete clears it - Esc cancels",
     "gripeverde.dispatch.slot.bound": "Key saved",
     "gripeverde.dispatch.slot.cleared": "Key cleared",

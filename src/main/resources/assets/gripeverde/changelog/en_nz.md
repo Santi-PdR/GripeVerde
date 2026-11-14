@@ -1,3 +1,7 @@
+## Version 0.183.0 - No ornament answers before the buttons
+
+Three reading screens still asked their decorations first: the field guide jumped to a section when you clicked its heading, the archive opened a loose paper or closed an open document on any click in the last fifty-six pixels, and the change log did the same with its binder marks. All of them now ask the real buttons first, through one shared helper, which is the rule the cover has followed since 0.178.0. The field guide also breathes: twelve pixels per line, seven between paragraphs and ten between sections, where it used to be eleven, four and six. The archive keeps seven pixels between cards instead of five. In the CEDA sheet, Ctrl and a digit now sends that slot without leaving the keyboard.
+
 ## Version 0.182.0 - The chronicle breathes
 
 The change log was the densest sheet in the diary: eleven pixels between lines, ten between paragraphs and a fixed margin of fifty-six that left only 208 pixels of paper in a 320-pixel window. Every line now gets a pixel, titles two and the gap between paragraphs three; the rule between versions grows from twelve to sixteen so entries do not touch. The side margin follows the window instead of being fixed, which gives the chronicle 240 pixels where it used to have 208. The close button is measured against the sheet, so it no longer sticks out in tiny windows, and the binder marks and the hidden folio now ask the buttons first, the same rule the cover has followed since 0.178.0. The wheel no longer plays a page sound when there is nothing to scroll.

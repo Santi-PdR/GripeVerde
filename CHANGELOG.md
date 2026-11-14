@@ -1,3 +1,11 @@
+## v0.183.0 - Ningún adorno contesta antes que los botones
+
+- `DiaryChrome.overAnyWidget(screen, x, y)`: un solo ayudante (usa `this.children()` y `isActive()`) para que los adornos con clic pregunten primero por los widgets.
+- `DiaryFieldGuideScreen`: guarda de widgets antes de `headingAt()`; aire con `LINE_HEIGHT` 11→12, `PARAGRAPH_GAP` 4→7 y `SECTION_GAP` 6→10.
+- `DiaryArchiveScreen`: los botones se consultan antes que los papeles sueltos y que la banda de cierre (`panelH - 56`), que se quedaba clics de widgets; `CARD_GAP` 5→7.
+- `ChangelogScreen`: pasa a usar el ayudante compartido (se borra la copia local de 0.182.0).
+- `DiaryDispatchScreen`: `Ctrl`+`1`..`9`/`0` (y teclado numérico) manda la ranura de ese número; la ayuda de la ranura lo dice en los 25 idiomas.
+
 ## v0.182.0 - La crónica respira
 
 `ChangelogScreen` era la hoja más apretada del diario y la única sin auditar (22 `return true`). Ritmo nuevo: `LINE_H` 11→12, `H1_LINE_H` 16→18, `H2`/`BOLD` 13→14, `GAP_H` 10→13, `SEP_H` 12→16, `PAD_Y` 26→30. El margen lateral pasa de 56 fijo a `clamp(12, width/8, 56)`, así que a 320 px el panel crece de 208 a 240. El botón Cerrar se mide contra el panel (`min(130, panelW-24)`, mínimo 84) y ya no sobresale en ventanas mínimas. Las marcas del encuadernador y el folio escondido ahora preguntan primero por los widgets (`overAnyWidget`, con `this.children()`), como la portada desde 0.178.0. La rueda no suena ni se queda el gesto cuando `maxScroll == 0`. El CI además compila `arena/**`.

@@ -914,7 +914,7 @@ public class ChangelogScreen extends Screen {
             setScrollFromMouse(mouseY);
             return true;
         }
-        if (button == 0 && !overAnyWidget(mouseX, mouseY)) {
+        if (button == 0 && !DiaryChrome.overAnyWidget(this, mouseX, mouseY)) {
             // v0.27.0: un gesto del lector y la pluma termina de golpe.
             this.penActive = false;
             try {
@@ -947,23 +947,6 @@ public class ChangelogScreen extends Screen {
             } catch (Throwable ignored) {}
         }
         return super.mouseClicked(mouseX, mouseY, button);
-    }
-
-    /**
-     * v0.182.0: las marcas del encuadernador y el folio escondido se preguntan
-     * despues que los botones reales, como en la portada desde 0.178.0.
-     */
-    private boolean overAnyWidget(double mouseX, double mouseY) {
-        for (var child : this.children()) {
-            if (child instanceof net.minecraft.client.gui.components.AbstractWidget widget
-                    && widget.visible) {
-                if (mouseX >= widget.getX() && mouseX <= widget.getX() + widget.getWidth()
-                        && mouseY >= widget.getY() && mouseY <= widget.getY() + widget.getHeight()) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     @Override

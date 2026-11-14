@@ -132,6 +132,29 @@ public final class DiaryChrome {
         gfx.fill(cx,     cy,     cx + 1, cy + 1, 0x70F3E9CE);
     }
 
+    /**
+     * v0.183.0: true si el puntero esta sobre un widget visible de la pantalla.
+     *
+     * Los adornos con clic (marcas del encuadernador, folio escondido, titulos de
+     * seccion) se consultaban antes que los botones y se quedaban con el gesto.
+     * Ahora cada pantalla pregunta primero por sus widgets con este helper, que
+     * usa children() y no el campo protegido.
+     */
+    public static boolean overAnyWidget(net.minecraft.client.gui.screens.Screen screen,
+                                        double mouseX, double mouseY) {
+        if (screen == null) return false;
+        for (var child : screen.children()) {
+            if (child instanceof net.minecraft.client.gui.components.AbstractWidget widget
+                    && widget.visible && widget.isActive()) {
+                if (mouseX >= widget.getX() && mouseX <= widget.getX() + widget.getWidth()
+                        && mouseY >= widget.getY() && mouseY <= widget.getY() + widget.getHeight()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     // ── Esquineros victorianos dobles ───────────────────────────────────────
     public static void drawCornerOrnaments(GuiGraphics gfx, int x, int y, int w, int h) {
         int colOut = 0xC0422810;
