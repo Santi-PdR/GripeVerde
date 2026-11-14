@@ -200,18 +200,28 @@ public class DiaryTitleScreen extends Screen {
         boolean compactLayout = isCompactLayout();
         LayoutRegion leftCol = leftColumn();
 
-        int btnX = compactLayout
-            ? Math.max(8, Math.min(20, this.width / 16))
-            : leftCol.x;
+        int compactRail = compactLayout ? compactSlimRailWidth() : 0;
+        int compactEdge = compactInset();
         int mainButtonW = compactLayout
-            ? Math.max(1, Math.min(BTN_W, this.width - btnX * 2))
+            ? Math.max(60, Math.min(BTN_W, this.width - compactEdge * 2
+                - (compactRail > 0 ? compactRail + Spacing.GAP_SMALL : 0)))
             : BTN_W;
+        // El grupo (pareja + carril) se centra: a 320 px ocupa justo el ancho
+        // interior y en ventanas mas anchas queda sobre el eje del emblema.
+        int compactGroupW = mainButtonW
+            + (compactRail > 0 ? compactRail + Spacing.GAP_SMALL : 0);
+        int btnX = compactLayout
+            ? Math.max(compactEdge, (this.width - compactGroupW) / 2)
+            : leftCol.x;
         int totalBtnH = BTN_H * 2 + Spacing.GAP_MEDIUM;
         LayoutRegion buttonColumn = compactLayout
             ? LayoutRegion.screen(this.width, this.height).inset(btnX)
             : leftCol;
-        int btnY = buttonColumn.anchorY(Anchor.BOT_LEFT, totalBtnH)
-                   - Spacing.GAP_LARGE;
+        // La mesa arranca donde dice buttonTableTop(): es la misma linea que
+        // usa el emblema para decidir su escala, asi que no pueden discrepar.
+        int btnY = compactLayout
+            ? buttonTableTop()
+            : buttonColumn.anchorY(Anchor.BOT_LEFT, totalBtnH) - Spacing.GAP_LARGE;
 
         this.addRenderableWidget(new GreenFluButton(
             btnX, btnY, mainButtonW, BTN_H,
@@ -233,19 +243,21 @@ public class DiaryTitleScreen extends Screen {
         int quitX = rightCol.x + rightCol.w - BTN_SLIM_W;
 
         if (compactLayout) {
-            int slimGap = Spacing.GAP_SMALL;
-            int slimW = Math.max(48, Math.min(BTN_SLIM_W,
-                (this.width - btnX * 2 - slimGap) / 2));
-            int slimRowW = slimW * 2 + slimGap;
-            int slimX = (this.width - slimRowW) / 2;
-            int slimY = Math.max(8, Math.min(36,
-                btnY - BTN_SLIM_H - slimGap));
+            // v0.176.0: Ajustes y Salir suben a un carril a la derecha de la
+            // pareja principal, dentro de la misma banda vertical de la mesa.
+            // La mesa ya no toca el emblema, asi que no hay solape posible.
+            int railW = compactRail;
+            int railX = btnX + mainButtonW + Spacing.GAP_SMALL;
+            railX = Math.max(btnX, Math.min(railX, this.width - 4 - railW));
+            int railStackH = BTN_SLIM_H * 2 + Spacing.GAP_SMALL;
+            int railY = btnY + Math.max(0, (totalBtnH - railStackH) / 2);
 
-            this.addRenderableWidget(new SlimButton(slimX, slimY, slimW, BTN_SLIM_H,
+            this.addRenderableWidget(new SlimButton(railX, railY, railW, BTN_SLIM_H,
                 Component.translatable("gripeverde.title.button.options"),
                 this::onOptions));
 
-            this.addRenderableWidget(new SlimButton(slimX + slimW + slimGap, slimY, slimW, BTN_SLIM_H,
+            this.addRenderableWidget(new SlimButton(railX, railY + BTN_SLIM_H + Spacing.GAP_SMALL,
+                railW, BTN_SLIM_H,
                 Component.translatable("gripeverde.title.button.quit"),
                 () -> this.minecraft.stop()));
         } else if (isMinimalMode()) {
@@ -329,10 +341,25 @@ public class DiaryTitleScreen extends Screen {
      */
     private int buttonTableTop() {
         int totalBtnH = BTN_H * 2 + Spacing.GAP_MEDIUM;
-        int inset = isCompactLayout()
-            ? Math.max(8, Math.min(20, this.width / 16))
-            : Spacing.SCREEN_MARGIN;
+        int inset = isCompactLayout() ? compactInset() : Spacing.SCREEN_MARGIN;
         return this.height - inset - totalBtnH - Spacing.GAP_LARGE;
+    }
+
+    /** Margen lateral de la portada compacta: el mismo que usan los botones. */
+    private int compactInset() {
+        return Math.max(8, Math.min(20, this.width / 16));
+    }
+
+    /**
+     * v0.176.0: ancho del carril donde viven Ajustes y Salir en ventanas
+     * estrechas. Antes colgaban de una fila fija en y=36..68, justo encima del
+     * emblema (y=30..108 a 427x240): 32 px de botones sobre el escudo en todas
+     * las ventanas de menos de 620 px. El carril ocupa como mucho el 28 % del
+     * ancho interior para que la pareja principal conserve rotulo y subtitulo.
+     */
+    private int compactSlimRailWidth() {
+        int inner = Math.max(0, this.width - compactInset() * 2);
+        return Math.max(40, Math.min(110, inner * 28 / 100));
     }
 
     /** Escala del emblema: se encoge solo cuando la banda libre se queda corta. */

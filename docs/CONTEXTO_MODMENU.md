@@ -7,7 +7,7 @@ Actualizado: 2026-11-13
 - Repositorio: [Santi-PdR/GripeVerde](https://github.com/Santi-PdR/GripeVerde)
 - Rama de trabajo: `codex/v0.104-ghoul-warning-poster`
 - Pull request: [#90](https://github.com/Santi-PdR/GripeVerde/pull/90)
-- Versión de esta rama: `0.175.0` (anterior entregada: `0.174.0`)
+- Versión de esta rama: `0.176.0` (anterior entregada: `0.175.0`)
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
 - El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
   proyecto local del usuario.
@@ -49,6 +49,37 @@ Actualizado: 2026-11-13
 - El validador local `python3 tools/verify_mirrors.py` reproduce los sellos de Gradle
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
+
+## Cambios de 0.176.0 — Ajustes y Salir se apartan del emblema
+
+Defecto que la auditoría de 0.175.0 no vio porque solo comparaba el emblema con
+la pareja principal: en **todas** las ventanas de menos de 620 px de ancho, la
+fila de Ajustes y Salir se colocaba en `y = max(8, min(36, btnY - 36))`, o sea
+en `y = 36..68`, justo sobre el emblema, que empieza en `LOGO_TOP = 30`. A
+427x240 el escudo ocupa `y = 30..108` y los dos botones tapaban 32 px de su
+franja media; a 560x315 tapaban 32 px de un emblema que ahí llega hasta 161.
+
+- La pareja principal y el carril comparten banda vertical: el carril vive en
+  `[btnY + (88 - 68) / 2, ...]`, o sea dentro de la mesa, que el emblema ya
+  respeta desde 0.175.0. No hay solape posible por construcción, no por cálculo
+  de distancias.
+- `compactSlimRailWidth() = clamp(28 % del ancho interior, 40, 110)`: el carril
+  nunca se lleva más de lo que la pareja necesita para su rótulo y subtítulo.
+- El grupo (pareja + 4 px + carril) se centra con
+  `btnX = max(compactInset, (width - groupW) / 2)`; a 320 px ocupa justo el
+  ancho interior (198 + 4 + 78 = 280) y en ventanas más anchas queda sobre el
+  eje del emblema, como los carteles.
+- `btnY` en compacto pasa a ser `buttonTableTop()` directamente: antes se
+  derivaba de `LayoutRegion.screen(...).inset(btnX)`, y con el grupo centrado
+  `btnX` ya no es el margen, así que ambas fórmulas podían discrepar.
+- `compactInset()` centraliza el margen compacto que estaba repetido en
+  `init()` y en `buttonTableTop()`.
+
+Auditoría: 13 anchos (320 a 619) x 10 altos (180 a 480) = 130 combinaciones, sin
+fallos de carril fuera de pantalla, carril sobre la pareja, carril fuera de la
+banda, emblema sobre la mesa, aire menor que `GAP_MEDIUM`, pareja menor de
+120 px ni carril menor de 64 px. Las ventanas de 620 px o más no cambian
+(conservan Ajustes y Salir en la columna derecha).
 
 ## Cambios de 0.175.0 — la portada deja de pisar sus propios botones
 
@@ -189,7 +220,6 @@ inventario/pausa deben seguir libres de animaciones añadidas.
 
 ## Próximo paso técnico recomendado
 
-Confirmar con el usuario si autoriza corregir CopyL en `Santi-PdR/Lclient` (doble pasada de
-texto y fuente huérfana), instalar `0.173.0` cuando la carpeta de mods sea accesible,
-actualizar la descripción del PR #90 y recoger su revisión visual del nuevo aviso antes de
-seguir con la siguiente tanda.
+Recoger la revisión visual del usuario sobre `0.176.0` (carril de Ajustes y Salir) e
+instalar el JAR cuando la carpeta de mods sea accesible. CopyL 3.9.5 sigue esperando un
+entorno con permiso de escritura sobre `Santi-PdR/Lclient`.

@@ -1,3 +1,7 @@
+## v0.176.0 - Ajustes y Salir se apartan
+
+En ventanas de menos de 620 px de ancho, Ajustes y Salir colgaban de una fila fija en y=36, encima del emblema, que empieza en y=30. A 427x240 —el tamaño de una ventana de 854x480 con escala GUI 2— tapaban 32 px del escudo. Ahora van en un carril propio a la derecha de Multijugador y Mods, dentro de la banda de la mesa de botones, y el grupo se centra sobre el eje del emblema. Sin cambios durante la partida.
+
 ## v0.175.0 - El emblema cede ante los botones
 
 En ventanas bajas el emblema de la portada deja de crecer hacia la mesa de botones: se encoge entero y baja su ancla si hace falta. A 427x240, el tamaño que da una ventana de 854x480 con escala GUI 2, el bloque completo tapaba 45 px del botón de multijugador. La ficha del cronista sigue la misma regla y se coloca debajo del emblema, o espera si no hay banda libre. La cadena del reloj de bolsillo arranca por debajo de los iconos de acceso y el clic del emblema ya no dispara su sello sobre un botón.

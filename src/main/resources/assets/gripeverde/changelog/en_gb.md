@@ -1,3 +1,7 @@
+## Version 0.176.0 - Options and Quit step aside
+
+In windows narrower than 620 pixels, Options and Quit used to hang from a fixed row at y=36, right on top of the title emblem, which starts at y=30. At 427x240, the size a 854x480 window gets at GUI scale 2, they covered thirty-two pixels of the crest. They now sit in their own rail to the right of Multiplayer and Mods, inside the same band as the button table, and the pair and the rail centre themselves on the emblem's axis. The emblem keeps its size and nothing new is drawn while you play.
+
 ## Version 0.175.0 - The emblem yields before the buttons
 
 On short windows the title emblem now shrinks as a whole instead of growing down into the button table: at 427x240, the size a 854x480 window gets at GUI scale 2, the full block covered forty-five pixels of the buttons. The chronicler's note follows the same rule and steps down or waits when there is no room. The chain of the pocket watch starts below the shortcut icons, and clicking the emblem no longer triggers its seal over the top edge of a button. Nothing new is drawn while you play.

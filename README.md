@@ -1,3 +1,7 @@
+**v0.176.0 - Ajustes y Salir se apartan**
+
+En ventanas estrechas Ajustes y Salir ya no cuelgan encima del emblema: pasan a un carril a la derecha de Multijugador y Mods, dentro de la banda de los botones. Sin cambios durante la partida.
+
 **v0.175.0 - El emblema cede ante los botones**
 
 En ventanas bajas el emblema de la portada se encoge entero para no caer sobre los botones, y la ficha del cronista se aparta o espera. La cadena del reloj arranca debajo de los iconos de arriba. Sin cambios durante la partida.
