@@ -50,6 +50,7 @@ public final class QuarantineSceneRenderer {
 
         AtmosphereRenderer.renderSky(g, w, h);
         VictorianSkyline.renderBackground(g, w, h);
+        VictorianSkyline.renderGhoulWatcher(g, w, h);
         LivingAtmosphere.renderFogLow(g, w, h);
         VictorianSkyline.renderForeground(g, w, h);
         LivingAtmosphere.renderStreetLevel(g, w, h);
@@ -59,6 +60,7 @@ public final class QuarantineSceneRenderer {
         renderFilmGrain(g, w, h);
         renderAtmosphericDust(g, w, h);
         renderDistantFactoryGlow(g, w, h);
+        renderInfectedHorizon(g, w, h);
     }
 
     // ── Light scene for Diary screens (parchment overlay, street only, no fog/air heavy) ──
@@ -152,6 +154,20 @@ public final class QuarantineSceneRenderer {
             int sz = (i%3==0)?2:1;
             g.fill(dx,dy,dx+sz,dy+sz,col);
         }
+    }
+
+    /** Static, menu-only toxic haze behind the skyline; no gameplay or per-frame allocations. */
+    private static void renderInfectedHorizon(GuiGraphics g, int w, int h) {
+        if (h < 320 || w < 500) return;
+        int horizon = (int)(h * 0.67f);
+        int center = (int)(w * 0.77f);
+        int spread = Math.max(24, w / 12);
+        g.fill(center - spread * 2, horizon, center + spread * 2, horizon + Math.max(5, h / 32),
+            AtmosphereRenderer.withAlpha(0x003A5028, 7));
+        g.fill(center - spread, horizon + 2, center + spread, horizon + Math.max(7, h / 22),
+            AtmosphereRenderer.withAlpha(0x003A5028, 11));
+        g.fill(center - spread / 2, horizon + 4, center + spread / 2, horizon + Math.max(9, h / 18),
+            AtmosphereRenderer.withAlpha(0x004B6230, 13));
     }
 
     private static void renderDistantFactoryGlow(GuiGraphics g, int w, int h){

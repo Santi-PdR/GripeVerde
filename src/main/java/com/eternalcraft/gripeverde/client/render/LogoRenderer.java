@@ -95,7 +95,37 @@ public class LogoRenderer {
         watchedMx = mx; watchedMy = my;
     }
 
+    /** Alto del bloque del emblema (toga, filete, titulo, subtitulo y nota del dia). */
+    public static final int BLOCK_H = 131;
+
+    /** Ancho de referencia del bloque (el filete decorativo). */
+    public static final int BLOCK_W = 196;
+
     public static void draw(GuiGraphics g, int cx, int topY) {
+        draw(g, cx, topY, 1f);
+    }
+
+    /**
+     * Dibuja el emblema completo escalado alrededor de su ancla superior.
+     *
+     * <p>En ventanas bajas la portada necesita encoger el emblema para que no
+     * invada la mesa de botones; la escala se aplica a TODO el bloque, asi el
+     * conjunto baja de altura sin perder proporcion.</p>
+     */
+    public static void draw(GuiGraphics g, int cx, int topY, float scale) {
+        if (scale >= 0.999f) {
+            drawBlock(g, cx, topY);
+            return;
+        }
+        g.pose().pushPose();
+        g.pose().translate(cx, topY, 0);
+        g.pose().scale(scale, scale, 1f);
+        g.pose().translate(-cx, -topY, 0);
+        drawBlock(g, cx, topY);
+        g.pose().popPose();
+    }
+
+    private static void drawBlock(GuiGraphics g, int cx, int topY) {
         Font font = Minecraft.getInstance().font;
 
         float logoPulse = MotionPolicy.isReduced() ? 0.5f : (float)(Math.sin(System.currentTimeMillis() / 820.0) * 0.5 + 0.5);
@@ -129,7 +159,7 @@ public class LogoRenderer {
         int yearY = topY + 122;
         int stripPad = 8;
         g.fill(cx - yw / 2 - stripPad, yearY - 1, cx + yw / 2 + stripPad, yearY + 9, DiaryTheme.withAlpha(DiaryTheme.PAPER_DARK, 28));
-        g.drawString(font, year, cx - yw / 2, yearY, DiaryTheme.withAlpha(DiaryTheme.SEPIA_LIGHT, 200), false);
+        g.drawString(font, year, cx - yw / 2, yearY, DiaryTheme.FIELD_SUBTITLE, false);
     }
 
     private static void drawTopHatSkull(GuiGraphics g, int cx, int topY) {

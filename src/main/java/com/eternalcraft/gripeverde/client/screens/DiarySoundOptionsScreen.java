@@ -5,6 +5,7 @@ import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.audio.MenuAmbience;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.util.SmoothScroll;
+import com.eternalcraft.gripeverde.client.util.MotionPolicy;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import com.eternalcraft.gripeverde.client.widgets.DiaryMusicSlider;
 import com.eternalcraft.gripeverde.client.widgets.DiaryAmbienceSlider;
@@ -54,10 +55,12 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     private final SmoothScroll smoothScroll = new SmoothScroll();
     private DiaryMusicSlider musicSlider;
     private DiaryButton skipTrackButton;
+    private DiaryButton musicToggleButton;
     private DiaryAmbienceSlider ambienceSlider;
     private DiaryButton ambienceToggleButton;
     private DiarySlider uiVolumeSlider;
     private DiaryButton testUiSoundButton;
+    private DiaryButton testAmbienceSoundButton;
 
     public DiarySoundOptionsScreen(Screen parent, Options options) {
         super(parent, options);
@@ -141,16 +144,29 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         int sliderX = this.panelX + 20;
         int sliderY = musicSliderY();
         int musicHeight = musicSliderHeight();
-        int skipTrackW = sliderW >= 120 ? Math.min(44, Math.max(32, sliderW / 5)) : 0;
-        int musicControlGap = skipTrackW > 0 ? 4 : 0;
-        int musicSliderW = Math.max(1, sliderW - skipTrackW - musicControlGap);
+        int toggleTrackW = sliderW >= 100 ? Math.min(46, Math.max(38, sliderW / 6)) : 0;
+        int skipTrackW = sliderW >= 160 ? Math.min(44, Math.max(32, sliderW / 7)) : 0;
+        int musicControlGap = toggleTrackW > 0 ? 4 : 0;
+        int skipTrackGap = skipTrackW > 0 ? 4 : 0;
+        int musicSliderW = Math.max(1, sliderW - toggleTrackW - skipTrackW - musicControlGap - skipTrackGap);
         this.musicSlider = new DiaryMusicSlider(sliderX, sliderY, musicSliderW, musicHeight);
         this.musicSlider.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
             Component.translatable("gripeverde.options.sound.music_slider.tooltip")));
         this.addRenderableWidget(this.musicSlider);
+
+        int musicControlX = sliderX + musicSliderW + musicControlGap;
+        if (toggleTrackW > 0) {
+            this.musicToggleButton = new DiaryButton(
+                musicControlX, sliderY, toggleTrackW, musicHeight,
+                musicToggleLabel(), DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
+                DiaryButton.SoundProfile.DEFAULT, this::toggleMenuMusic);
+            refreshMenuMusicToggleButton();
+            this.addRenderableWidget(this.musicToggleButton);
+            musicControlX += toggleTrackW + skipTrackGap;
+        }
         if (skipTrackW > 0) {
             this.skipTrackButton = new DiaryButton(
-                sliderX + musicSliderW + musicControlGap, sliderY, skipTrackW, musicHeight,
+                musicControlX, sliderY, skipTrackW, musicHeight,
                 Component.translatable("gripeverde.options.sound.next_track_button"),
                 DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
                 DiaryButton.SoundProfile.DEFAULT, MenuMusic::skipToNext);
@@ -163,9 +179,11 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         // El ambiente y los efectos SFX quedan separados para ajustar cada capa.
         int compactH = ambienceSliderHeight();
         int ambSliderY = ambienceSliderY();
-        int ambToggleW = Math.min(86, Math.max(1, sliderW / 3));
-        int ambGap = Math.min(4, Math.max(0, sliderW - ambToggleW - 1));
-        int ambSliderW = Math.max(1, sliderW - ambToggleW - ambGap);
+        int ambTestW = sliderW >= 180 ? Math.min(48, Math.max(40, sliderW / 8)) : 0;
+        int ambToggleW = Math.min(82, Math.max(1, (sliderW - (ambTestW > 0 ? ambTestW + 8 : 0)) / 3));
+        int ambGap = ambTestW > 0 ? 4 : Math.min(4, Math.max(0, sliderW - ambToggleW - 1));
+        int ambTestGap = ambTestW > 0 ? 4 : 0;
+        int ambSliderW = Math.max(1, sliderW - ambToggleW - ambTestW - ambGap - ambTestGap);
         int ambSliderX = sliderX;
         this.ambienceSlider = new DiaryAmbienceSlider(ambSliderX, ambSliderY, ambSliderW, compactH);
         this.ambienceSlider.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
@@ -182,6 +200,18 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         );
         refreshAmbienceToggleButton();
         this.addRenderableWidget(this.ambienceToggleButton);
+        if (ambTestW > 0) {
+            this.testAmbienceSoundButton = new DiaryButton(
+                ambSliderX + ambSliderW + ambGap + ambToggleW + ambTestGap, ambSliderY,
+                ambTestW, compactH, Component.translatable("gripeverde.options.sound.test_button"),
+                DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
+                DiaryButton.SoundProfile.NONE, MenuAmbience::testSound);
+            this.testAmbienceSoundButton.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
+                Component.translatable("gripeverde.options.sound.ambience_test.tooltip")));
+            this.testAmbienceSoundButton.active =
+                !com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.hasActiveWorld();
+            this.addRenderableWidget(this.testAmbienceSoundButton);
+        }
 
         int uiSliderY = uiSliderY();
         int testButtonW = sliderW < 48
@@ -367,6 +397,28 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             : "gripeverde.options.sound.ambience_on");
     }
 
+    private Component musicToggleLabel() {
+        return Component.translatable(MenuMusic.isMusicEnabled()
+            ? "gripeverde.options.sound.music_toggle.pause"
+            : "gripeverde.options.sound.music_toggle.resume");
+    }
+
+    private void toggleMenuMusic() {
+        boolean enabled = !MenuMusic.isMusicEnabled();
+        ClientConfig.MENU_MUSIC_ENABLED.set(enabled);
+        ClientConfig.MENU_MUSIC_ENABLED.save();
+        if (enabled) MenuMusic.start();
+        else MenuMusic.stop();
+        refreshMenuMusicToggleButton();
+    }
+
+    private void refreshMenuMusicToggleButton() {
+        if (this.musicToggleButton == null) return;
+        this.musicToggleButton.setMessage(musicToggleLabel());
+        this.musicToggleButton.active =
+            !com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.hasActiveWorld();
+    }
+
     private void refreshAmbienceToggleButton() {
         if (this.ambienceToggleButton == null) return;
         boolean muted = MenuAmbience.isMuted();
@@ -379,6 +431,15 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        refreshMenuMusicToggleButton();
+        if (this.skipTrackButton != null) {
+            this.skipTrackButton.active = MenuMusic.isActive() && !MenuMusic.isCrossfading()
+                && !com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.hasActiveWorld();
+        }
+        if (this.testAmbienceSoundButton != null) {
+            this.testAmbienceSoundButton.active =
+                !com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.hasActiveWorld();
+        }
         // Shared background renderer draws the menu scene or a fixed live-world veil.
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
 
@@ -486,7 +547,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         long now = System.currentTimeMillis();
         boolean hot = mouseX >= fx - 4 && mouseX <= fx + 5 && mouseY >= fy - 8 && mouseY <= fy + 5;
         boolean ringing = now < this.forkRingUntilMs;
-        if (ringing && !com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.hasActiveWorld())
+        if (ringing && !MotionPolicy.isReduced())
             fx += (int) Math.round(Math.sin((this.forkRingUntilMs - now) * 0.55) * 1.0);
         int metal = (hot || ringing) ? 0xFFD8B56A : 0xFF8A6A3D;
         int dimm  = (hot || ringing) ? 0xFF6B4E22 : 0xFF54401F;

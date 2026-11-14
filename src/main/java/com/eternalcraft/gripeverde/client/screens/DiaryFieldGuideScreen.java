@@ -1,15 +1,20 @@
 package com.eternalcraft.gripeverde.client.screens;
 
 import com.eternalcraft.gripeverde.client.lore.ChroniclerMemory;
+import com.eternalcraft.gripeverde.client.lore.Marginalia;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.render.DiaryTypography;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractButton;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.FormattedCharSequence;
@@ -27,6 +32,10 @@ public final class DiaryFieldGuideScreen extends Screen {
         { "gripeverde.field_guide.section.races" },
         { "gripeverde.field_guide.section.rescue_protocol" }
     };
+    private static final String[] SECTION_NUMBERS = { "1", "2", "3", "4", "5", "6", "7" };
+    private static final int INFECTION_SECTION = 0;
+    private static final int TEAM_SECTION = 1;
+    private static final int RESCUE_SECTION = SECTION_KEYS.length - 1;
 
     private static final String[][] ENTRY_KEYS = {
         { "gripeverde.field_guide.body.infection", "gripeverde.field_guide.body.mutation_origins", "gripeverde.field_guide.body.ceda_coverup" },
@@ -43,12 +52,13 @@ public final class DiaryFieldGuideScreen extends Screen {
     private final Screen parent;
     private final List<GuideRow> rows = new ArrayList<>();
     private final List<Integer> sectionOffsets = new ArrayList<>();
-    private final List<DiaryButton> sectionWidgets = new ArrayList<>();
+    private final List<GuideSectionButton> sectionWidgets = new ArrayList<>();
     private int panelX, panelY, panelW, panelH;
     private int scrollY;
     private int maxScroll;
     private int contentHeight;
     private boolean draggingScrollbar;
+    private boolean compactLayout;
     private static final int LINE_HEIGHT = 11;
     private static final int PARAGRAPH_GAP = 4;
     private static final int SECTION_GAP = 6;
@@ -60,14 +70,17 @@ public final class DiaryFieldGuideScreen extends Screen {
 
     @Override
     protected void init() {
-        panelW = Math.min(520, Math.max(196, this.width - 24));
-        panelH = Math.min(430, Math.max(150, this.height - 24));
-        panelX = (this.width - panelW) / 2;
-        panelY = (this.height - panelH) / 2;
+        panelW = Math.min(520, Math.max(1, this.width - 16));
+        panelH = Math.min(430, Math.max(1, this.height - 16));
+        panelX = Math.max(0, (this.width - panelW) / 2);
+        panelY = Math.max(0, (this.height - panelH) / 2);
+        compactLayout = panelW < 360 || panelH < 240;
 
-        int closeW = Math.min(190, panelW - 24);
+        int closeW = Math.min(190, Math.max(1, panelW - (compactLayout ? 16 : 24)));
+        int closeH = compactLayout ? 20 : 23;
+        int closeBottomInset = compactLayout ? 25 : 31;
         this.addRenderableWidget(new DiaryButton(
-            panelX + (panelW - closeW) / 2, panelY + panelH - 31, closeW, 23,
+            panelX + (panelW - closeW) / 2, panelY + panelH - closeBottomInset, closeW, closeH,
             Component.translatable(parent instanceof DiaryPauseScreen
                 ? "gripeverde.field_guide.button.return_to_pause"
                 : "gripeverde.field_guide.button.close"),
@@ -80,7 +93,7 @@ public final class DiaryFieldGuideScreen extends Screen {
 
     private void buildRows() {
         rows.clear();
-        int textWidth = Math.max(148, panelW - 44);
+        int textWidth = Math.max(1, panelW - 48);
         for (int section = 0; section < SECTION_KEYS.length; section++) {
             boolean emphasized = section == 0 || section == SECTION_KEYS.length - 1;
             append(Component.translatable(SECTION_KEYS[section][0]), textWidth, true, emphasized, 4);
@@ -123,12 +136,11 @@ public final class DiaryFieldGuideScreen extends Screen {
             for (String entry : ENTRY_KEYS[section]) {
                 narration.append(Component.translatable(entry)).append(". ");
             }
-            int headingWidth = Math.max(1, this.font.width(this.font.split(heading, textWidth).get(0)));
-            DiaryButton sectionButton = new DiaryButton(
-                panelX + 20, viewportTop() + sectionOffsets.get(section) - scrollY,
-                headingWidth, LINE_HEIGHT, narration,
-                DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
-                DiaryButton.SoundProfile.NONE,
+            int headingWidth = Math.max(1, DiaryTypography.width(this.font, DiaryTypography.split(this.font, heading, textWidth).get(0)));
+            int targetWidth = Math.max(1, Math.min(panelW - 36, headingWidth + 16));
+            GuideSectionButton sectionButton = new GuideSectionButton(
+                panelX + 18, viewportTop() + sectionOffsets.get(section) - scrollY,
+                targetWidth, LINE_HEIGHT, narration,
                 () -> jumpToSection(targetSection));
             this.addWidget(sectionButton);
             sectionWidgets.add(sectionButton);
@@ -142,7 +154,7 @@ public final class DiaryFieldGuideScreen extends Screen {
 
     private void append(Component text, int width, boolean heading, boolean accent,
                         int gap, int callout) {
-        for (FormattedCharSequence line : this.font.split(text, width)) {
+        for (FormattedCharSequence line : DiaryTypography.split(this.font, text, width)) {
             rows.add(new GuideRow(line, heading, accent, gap, callout));
             gap = 0;
         }
@@ -164,8 +176,8 @@ public final class DiaryFieldGuideScreen extends Screen {
         };
     }
 
-    private int viewportTop() { return panelY + 48; }
-    private int viewportBottom() { return panelY + panelH - 47; }
+    private int viewportTop() { return panelY + (compactLayout ? 42 : 48); }
+    private int viewportBottom() { return panelY + panelH - (compactLayout ? 30 : 47); }
     private int viewportHeight() { return Math.max(1, viewportBottom() - viewportTop()); }
 
     @Override
@@ -183,15 +195,20 @@ public final class DiaryFieldGuideScreen extends Screen {
         DiaryChrome.drawPanelShadow(g, panelX, panelY, panelW, panelH);
         PaperTexture.drawClean(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.ARCHIVE);
         DiaryChrome.drawCornerOrnaments(g, panelX, panelY, panelW, panelH);
-        DiaryChrome.drawRegistryTag(g, panelX, panelY, panelW, panelH, "REG. IV");
+        if (!compactLayout) {
+            DiaryChrome.drawRegistryTag(g, panelX, panelY, panelW, panelH, "REG. IV");
+        }
 
         int cx = panelX + panelW / 2;
-        DiaryChrome.drawCenteredString(g, this.font,
+        String title = fitText(
             Component.translatable("gripeverde.field_guide.title").getString(),
-            cx, panelY + 9, DiaryChrome.INK_TITLE);
+            Math.max(1, panelW - (compactLayout ? 20 : 36)));
+        DiaryChrome.drawCenteredString(g, this.font, title, cx, panelY + 9, DiaryChrome.INK_TITLE);
 
+        String subtitleKey = compactLayout && maxScroll > 0
+            ? "gripeverde.field_guide.scroll_hint.compact" : "gripeverde.field_guide.subtitle";
         String subtitle = fitText(
-            Component.translatable("gripeverde.field_guide.subtitle").getString(), panelW - 36);
+            Component.translatable(subtitleKey).getString(), Math.max(1, panelW - 36));
         DiaryChrome.drawCenteredString(g, this.font, subtitle,
             cx, panelY + 23, DiaryChrome.INK_SUBTITLE);
         DiaryChrome.drawInkDivider(g, panelX + 18, panelY + 37, panelW - 36);
@@ -208,7 +225,8 @@ public final class DiaryFieldGuideScreen extends Screen {
         int sectionIndex = -1;
         for (GuideRow row : rows) {
             y += row.gapBefore;
-            if (row.heading && row.gapBefore > 0) sectionIndex++;
+            boolean sectionStart = row.heading && row.gapBefore > 0;
+            if (sectionStart) sectionIndex++;
             if (row.text != null) {
                 boolean headingFocused = row.heading && sectionIndex == focusedSection;
                 boolean headingActive = row.heading
@@ -225,9 +243,12 @@ public final class DiaryFieldGuideScreen extends Screen {
                         DiaryTheme.withAlpha(rail, 24));
                     g.fill(panelX + 14, calloutTop, panelX + 17, calloutBottom, rail);
                 }
-                int textX = panelX + (row.callout > 0 ? 22 : 20);
-                int textWidth = this.font.width(row.text);
-                g.drawString(this.font, row.text, textX, y, color, false);
+                if (sectionStart) {
+                    DiaryTypography.draw(g, this.font, SECTION_NUMBERS[sectionIndex], panelX + 20, y, color, false);
+                }
+                int textX = panelX + (row.heading ? 34 : row.callout > 0 ? 22 : 20);
+                int textWidth = DiaryTypography.width(this.font, row.text);
+                DiaryTypography.draw(g, this.font, row.text, textX, y, color, false);
                 if (headingActive) {
                     g.fill(textX, y + LINE_HEIGHT - 1, textX + textWidth, y + LINE_HEIGHT, color);
                 }
@@ -240,21 +261,21 @@ public final class DiaryFieldGuideScreen extends Screen {
         g.disableScissor();
 
         if (maxScroll > 0) drawScrollbar(g, top, bottom);
-        String hint = fitText(
-            Component.translatable("gripeverde.field_guide.scroll_hint").getString(), panelW - 32);
-        int hintW = this.font.width(hint);
-        g.drawString(this.font, hint, cx - hintW / 2, panelY + panelH - 42,
-            DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 180), false);
+        if (!compactLayout) {
+            String hint = fitText(
+                Component.translatable("gripeverde.field_guide.scroll_hint").getString(), panelW - 32);
+            int hintW = DiaryTypography.width(this.font, hint);
+            DiaryTypography.draw(g, this.font, hint, cx - hintW / 2, panelY + panelH - 42,
+                DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 180), false);
+        }
 
         super.render(g, mouseX, mouseY, partialTick);
         com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
     }
 
     private String fitText(String text, int maxWidth) {
-        if (this.font.width(text) <= maxWidth) return text;
-        String ellipsis = "...";
-        int room = Math.max(0, maxWidth - this.font.width(ellipsis));
-        return this.font.plainSubstrByWidth(text, room) + ellipsis;
+        if (DiaryTypography.width(this.font, text) <= maxWidth) return text;
+        return DiaryTypography.fitString(this.font, text, maxWidth);
     }
 
     private int scrollbarThumbHeight(int trackHeight) {
@@ -307,12 +328,19 @@ public final class DiaryFieldGuideScreen extends Screen {
         double progress = (double)(scrollY - sectionStart) / sectionSpan;
         int progressTenThousandths = (int)Math.round(Math.max(0.0, Math.min(1.0, progress)) * 10000.0);
         ChroniclerMemory.setFieldGuideBookmark(section, progressTenThousandths, scrollY);
+        if (section == INFECTION_SECTION) {
+            Marginalia.queueOnce(Marginalia.N_WITNESS);
+        } else if (section == TEAM_SECTION) {
+            Marginalia.queueOnce(Marginalia.N_CALL);
+        } else if (section == RESCUE_SECTION) {
+            Marginalia.queueOnce(Marginalia.N_RESCUE);
+        }
     }
 
     private void positionSectionWidgets() {
         for (int section = 0; section < sectionWidgets.size(); section++) {
-            DiaryButton button = sectionWidgets.get(section);
-            button.setX(panelX + 20);
+            GuideSectionButton button = sectionWidgets.get(section);
+            button.setX(panelX + 18);
             button.setY(viewportTop() + sectionOffsets.get(section) - scrollY);
         }
     }
@@ -348,9 +376,10 @@ public final class DiaryFieldGuideScreen extends Screen {
             y += row.gapBefore;
             if (row.heading && row.gapBefore > 0) section++;
             if (row.heading && row.text != null) {
-                int textX = panelX + 20;
-                int textWidth = this.font.width(row.text);
-                if (mouseX >= textX - 2 && mouseX <= textX + textWidth + 2
+                int textX = panelX + 34;
+                int hitLeft = row.gapBefore > 0 ? panelX + 18 : textX - 2;
+                int textWidth = DiaryTypography.width(this.font, row.text);
+                if (mouseX >= hitLeft && mouseX <= textX + textWidth + 2
                         && mouseY >= y && mouseY < y + LINE_HEIGHT) {
                     return section;
                 }
@@ -437,6 +466,41 @@ public final class DiaryFieldGuideScreen extends Screen {
     @Override
     public void onClose() {
         this.minecraft.setScreen(parent);
+    }
+
+    /**
+     * Keyboard and screen-reader target for a heading. The screen itself draws the
+     * printed heading under its viewport scissor; the input target must stay invisible
+     * so off-screen sections cannot paint over the guide footer or close button.
+     */
+    private static final class GuideSectionButton extends AbstractButton {
+        private final Runnable action;
+
+        private GuideSectionButton(int x, int y, int width, int height,
+                                   Component narration, Runnable action) {
+            super(x, y, width, height, narration);
+            this.action = action;
+        }
+
+        @Override
+        public void onPress() {
+            action.run();
+        }
+
+        @Override
+        public void playDownSound(SoundManager soundManager) {
+            // Heading navigation is silent; the visible text supplies its own feedback.
+        }
+
+        @Override
+        protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+            // Drawn by DiaryFieldGuideScreen inside the clipped text viewport.
+        }
+
+        @Override
+        protected void updateWidgetNarration(NarrationElementOutput output) {
+            defaultButtonNarrationText(output);
+        }
     }
 
     private static final class GuideRow {

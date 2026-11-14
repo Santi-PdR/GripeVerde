@@ -100,8 +100,6 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        // Escena viva
-        g.fill(0, 0, this.width, this.height, 0xFF000000);
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
                 // Overlay
 

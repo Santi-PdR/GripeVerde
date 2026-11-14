@@ -1,4 +1,89 @@
+## Instalar la última versión
+
+PowerShell, con el juego cerrado. Baja el `.jar` del último release directo a la carpeta de mods,
+reemplaza el anterior y verifica el tamaño:
+
+```powershell
+$ProgressPreference='SilentlyContinue'; $m='D:\Minecraft\SKLauncher\sklauncher-data-v4\instances\test-1\mods'; if(-not (Test-Path $m)){throw "No existe $m"}; $a=(Invoke-RestMethod 'https://api.github.com/repos/Santi-PdR/GripeVerde/releases/latest' -UseBasicParsing).assets | Where-Object { $_.name -like 'gripeverde-*.jar' } | Select-Object -First 1; if(-not $a){throw 'El ultimo release no tiene JAR'}; Get-ChildItem $m -Filter '*gripeverde*.jar' -ErrorAction SilentlyContinue | ForEach-Object { try{ Remove-Item $_.FullName -Force -ErrorAction Stop }catch{ throw "Cerra Minecraft y repeti: $($_.Name) esta en uso" } }; $out=Join-Path $m $a.name; Invoke-WebRequest -Uri $a.browser_download_url -OutFile $out -UseBasicParsing; $f=Get-Item $out; if($f.Length -ne $a.size){ throw "Descarga incompleta: $($f.Length) de $($a.size) bytes" }; "OK: $($f.Name) ($($f.Length) bytes) en $m"
+```
+
+**v0.181.0 - Los mensajes viejos se vienen con nosotros**
+
+La ficha del parte lee los diez mensajes rápidos de CopyL (nombres, textos y teclas) y se queda con copia propia: CopyL ya puede salir de la carpeta de mods sin perder nada. Clic envía, Shift carga, Ctrl guarda y clic derecho fija la tecla.
+
+**v0.180.0 - El parte tiene su propia mesa**
+
+El parte de CEDA deja de depender de CopyL: es una página del diario con ocho renglones numerados, aire entre uno y otro, Enter para enviar y Tab para bajar. El borrador queda al cerrar la ficha y el envío en tanda espera medio segundo entre mensajes. Con CopyL instalado, su panel se abre desde la esquina.
+
+**v0.179.0 - El cronista habla en toda ventana**
+
+Cuando la ficha de saludo no cabe, el cronista deja su frase en una línea centrada en la cabecera: ya se le oye en ventanas estrechas y en las anchas y bajas. Si la ficha cabe, todo queda igual.
+
+**v0.178.0 - Ningún adorno roba un clic**
+
+La ventana del ático, la rata, el gato y los carteles ya no se comen los clics de los botones: preguntan primero por ellos. La vela de la pausa también. Sin cambios durante la partida.
+
+**v0.177.0 - El susurro encuentra su banda**
+
+El susurro de la vigilia ya no cae dentro del emblema: busca la banda libre entre el emblema y los botones y, si no cabe, baja al pie. Sin cambios durante la partida.
+
+**v0.176.0 - Ajustes y Salir se apartan**
+
+En ventanas estrechas Ajustes y Salir ya no cuelgan encima del emblema: pasan a un carril a la derecha de Multijugador y Mods, dentro de la banda de los botones. Sin cambios durante la partida.
+
+**v0.175.0 - El emblema cede ante los botones**
+
+En ventanas bajas el emblema de la portada se encoge entero para no caer sobre los botones, y la ficha del cronista se aparta o espera. La cadena del reloj arranca debajo de los iconos de arriba. Sin cambios durante la partida.
+
+**v0.174.0 - Los carteles vuelven a respirar**
+
+Los cuatro bandos que rotan en la portada se centran como un bloque y ajustan sus espacios en carteles bajos. El precio del elixir ya no se pega al borde inferior. Sin animaciones nuevas fuera de la portada.
+
+**v0.173.0 - El aviso tiene un rostro**
+
+El aviso de cuarentena de la portada abre con un grabado mayor de un hombre infectado, enmarcado como placa de imprenta y con los ojos azules de los Ghouls. La orden y el sello CEDA ya no comparten espacio, así que no se superponen en pantallas bajas. La nota de campo CEDA usa la misma placa y cambia el ojo suelto por un sello propio. Todo sigue quieto durante la partida.
+
+**v0.167.0 - Más aire en la nota de rescate**
+
+La nota CEDA de rescate separa las instrucciones según la altura real de la fuente para que la última línea no se monte sobre el divisor, también en el cartel compacto. El menú incluye inglés y español para las variantes regionales de Minecraft 1.20.1, incluido el español de Uruguay.
+
+**v0.162.0 - Foco visible en los iconos**
+
+Los botones pequeños de la portada ahora muestran un contorno ámbar cuando reciben el foco del teclado. El indicador es fijo y no añade animaciones.
+
+**v0.161.0 - Rótulos más legibles**
+
+Ajusté el color de la segunda línea de los botones principales para que siga destacando al pasar el cursor, sin perder el tono de latón envejecido.
+
+**v0.160.0 - Ajustes más claros**
+
+Las secciones de ajustes ahora tienen nombres fáciles de reconocer. Acorté los avisos de sonido y corregí la nota de rescate para que quede claro qué conserva y cómo vuelve el compañero.
+
+**v0.159.0 - Letras sin cuadros**
+
+Los rótulos del diario vuelven a dibujarse como texto normal de Minecraft, igual que el logotipo. Así evitamos estilos de fuente heredados que podían convertir las letras en cuadros vacíos.
+
 # Eternal Craft: Gripe Verde
+
+**v0.158.0 - Notas en español bien escritas**
+
+Las notas secretas de la estrella y del sello ya llevan las tildes y la ñ que faltaban.
+
+**v0.157.0 - Un telegrama menos invasivo**
+
+El mensaje secreto del sello ocupa menos espacio y se retira antes para dejar la portada a la vista.
+
+**v0.156.0 - Avisos estelares más ligeros**
+
+La nota de la estrella fugaz conserva sus líneas ya calculadas mientras el texto, la letra y el ancho no cambian, para no volver a medirla en cada frame.
+
+**v0.155.0 - Letras claras otra vez**
+
+Retiré la fuente que estaba dejando cuadrados en el menú. Los textos vuelven a la letra normal de Minecraft; la portada y las partidas no reciben efectos nuevos.
+
+**v0.154.0 - Una guía escrita por supervivientes**
+
+El manual cuenta el brote con voz natural y explica, en inglés y español, cómo ayudar a un compañero atrapado o incapacitado y qué esperar de cada dificultad. La tipografía legible y el ambiente de cuarentena victoriana se mantienen en el menú, sin efectos sobre mundos ni inventarios.
 
 **v0.80.0 - Avisos de descubrimiento legibles**
 

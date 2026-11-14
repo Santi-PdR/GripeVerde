@@ -10,8 +10,9 @@
 $ErrorActionPreference = "Stop"
 
 $Repo    = "C:\Users\santi\Desktop\GripeVerde"
-$Mods    = "C:\Users\santi\AppData\Roaming\.sklauncher\instances\test-1\mods"
-$Branch  = "arena/01a02f45-gripeverde"
+$Mods    = "D:\Minecraft\SKLauncher\sklauncher-data-v4\instances\test-1\mods"
+# v0.173.0: la rama del PR vigente; antes apuntaba a una sesion ya cerrada.
+$Branch  = "codex/v0.104-ghoul-warning-poster"
 
 Set-Location $Repo
 
@@ -42,3 +43,4 @@ if (-not $JarFile) { throw "No se genero el jar en build\libs" }
 Copy-Item $JarFile.FullName $Mods -Force
 Get-Item (Join-Path $Mods $JarFile.Name)
 Write-Host "OK: comprobar en el cliente que el reloj del Title muestra v$Version"
+Write-Host "Si solo quieres instalar el JAR del CI, usa tools\install-artifact.ps1."

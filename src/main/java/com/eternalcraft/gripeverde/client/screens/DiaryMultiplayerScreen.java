@@ -5,6 +5,7 @@ import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 
+import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
@@ -30,9 +31,33 @@ import java.lang.reflect.Field;
 public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
 
     // Server oficial del mod - siempre presente en la lista.
-    private static final String PINNED_NAME = "Ghoul Outbreak Official";
+    private static final String PINNED_NAME_EN = "Ghoul Outbreak Official";
+    private static final String PINNED_NAME_ES = "Ghoul Outbreak Oficial";
+    private static final String PINNED_NAME_KEY = "gripeverde.multiplayer.pinned_server";
     private static final String PINNED_IP   = "Outbreak.exaroton.me:24652";
     private static final String PREVIOUS_PINNED_IP = "servercitoGhouls.exaroton.me:24652";
+
+    private static String localizedPinnedName() {
+        return Component.translatable(PINNED_NAME_KEY).getString();
+    }
+
+    private static boolean isPinnedName(String name) {
+        return PINNED_NAME_EN.equals(name) || PINNED_NAME_ES.equals(name)
+            || localizedPinnedName().equals(name);
+    }
+
+    private static boolean matchesServerAddress(String address, String expected) {
+        return address != null && address.trim().equalsIgnoreCase(expected);
+    }
+
+    private static boolean isPinnedAddress(String address) {
+        return matchesServerAddress(address, PINNED_IP)
+            || matchesServerAddress(address, PREVIOUS_PINNED_IP);
+    }
+
+    private static boolean isPinnedServer(ServerData server) {
+        return server != null && (isPinnedName(server.name) || isPinnedAddress(server.ip));
+    }
 
     private static final Logger LOGGER = LogUtils.getLogger();
     private int frameLogCounter = 0;
@@ -51,6 +76,10 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     private Button vanillaSelectBtn;
     private Button vanillaEditBtn;
     private Button vanillaDeleteBtn;
+    // Cached after list layout changes; render-time row decoration must not scan fields reflectively.
+    private int vanillaItemHeight;
+    private int vanillaListY0;
+    private int vanillaHeaderHeight;
 
     // Nuestros botones Diary
     private DiaryButton diarySelect;
@@ -61,6 +90,8 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     private DiaryButton diaryRefresh;
     private DiaryButton diaryCancel;
     private final SmoothScroll smoothScroll = new SmoothScroll();
+    private DiaryButton tooltipCandidate;
+    private long tooltipCandidateSince;
 
     public DiaryMultiplayerScreen(Screen parent) {
         super(parent);
@@ -90,6 +121,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 this.smoothScroll.snapToCurrent(this.vanillaList);
             } catch (Throwable ignored) {}
         }
+        cacheVanillaListMetrics();
 
         // Ocultar los 7 botones vanilla (los que sabemos + los descubiertos por scan)
         hideVanillaButtons();
@@ -104,27 +136,53 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     }
 
     /**
-     * Keeps the official server entry available and at the top of the list.
-     * Migrates the last built-in address but preserves any address the player edited.
+     * Keeps the official server available at the top of the list.
+     * Prefer a saved official address over a built-in name whose address the player edited.
+     * If no official address exists, preserve the renamed server and its custom address.
      */
     private void ensurePinnedServer() {
         if (this.vanillaServers == null) return;
         try {
             int pinnedIndex = -1;
             boolean changed = false;
+
+            // Resolve the official endpoint first so a custom-address copy cannot eclipse it.
             for (int i = 0; i < this.vanillaServers.size(); i++) {
                 ServerData server = this.vanillaServers.get(i);
-                if (server == null || !PINNED_NAME.equals(server.name)) continue;
-                pinnedIndex = i;
-                if (PREVIOUS_PINNED_IP.equals(server.ip)) {
-                    server.ip = PINNED_IP;
-                    changed = true;
+                if (server != null && isPinnedAddress(server.ip)) {
+                    pinnedIndex = i;
+                    if (matchesServerAddress(server.ip, PREVIOUS_PINNED_IP)) {
+                        server.ip = PINNED_IP;
+                        changed = true;
+                    }
+                    if (isPinnedName(server.name)) {
+                        String displayName = localizedPinnedName();
+                        if (!displayName.equals(server.name)) {
+                            server.name = displayName;
+                            changed = true;
+                        }
+                    }
+                    break;
                 }
-                break;
+            }
+
+            // Keep a player-renamed/edited official entry if it is the only saved copy.
+            if (pinnedIndex < 0) {
+                for (int i = 0; i < this.vanillaServers.size(); i++) {
+                    ServerData server = this.vanillaServers.get(i);
+                    if (server == null || !isPinnedName(server.name)) continue;
+                    pinnedIndex = i;
+                    String displayName = localizedPinnedName();
+                    if (!displayName.equals(server.name)) {
+                        server.name = displayName;
+                        changed = true;
+                    }
+                    break;
+                }
             }
 
             if (pinnedIndex < 0) {
-                this.vanillaServers.add(new ServerData(PINNED_NAME, PINNED_IP, false), false);
+                this.vanillaServers.add(new ServerData(localizedPinnedName(), PINNED_IP, false), false);
                 pinnedIndex = this.vanillaServers.size() - 1;
                 changed = true;
             }
@@ -151,7 +209,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         try {
             for (var entry : this.vanillaList.children()) {
                 ServerData server = extractServerDataFromEntry(entry);
-                if (server != null && PINNED_NAME.equals(server.name)) {
+                if (isPinnedServer(server)) {
                     this.vanillaList.setSelected(entry);
                     return;
                 }
@@ -576,10 +634,30 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         gfx.fill(panelX + panelW - inset - 1, panelY + inset, panelX + panelW - inset, panelY + panelH - inset, vinAlpha);
 
         // Widgets Diary (nuestros botones)
+        DiaryButton hoveredTooltip = null;
+        DiaryButton focusedTooltip = null;
         for (var w : this.renderables) {
             if (w instanceof DiaryButton db && db.visible) {
                 db.render(gfx, mouseX, mouseY, partial);
+                if (db.getTooltip() != null) {
+                    if (db.isMouseOver(mouseX, mouseY)) {
+                        hoveredTooltip = db;
+                    } else if (focusedTooltip == null && db.isFocused()) {
+                        focusedTooltip = db;
+                    }
+                }
             }
+        }
+
+        // This screen draws its buttons manually, so restore delayed tooltips for mouse and keyboard users.
+        DiaryButton tooltipTarget = hoveredTooltip != null ? hoveredTooltip : focusedTooltip;
+        int tooltipX = hoveredTooltip != null ? mouseX : tooltipTarget != null ? tooltipTarget.getX() + tooltipTarget.getWidth() / 2 : mouseX;
+        int tooltipY = hoveredTooltip != null ? mouseY : tooltipTarget != null ? tooltipTarget.getY() + tooltipTarget.getHeight() / 2 : mouseY;
+        if (tooltipTarget != this.tooltipCandidate) {
+            this.tooltipCandidate = tooltipTarget;
+            this.tooltipCandidateSince = Util.getMillis();
+        } else if (tooltipTarget != null && Util.getMillis() - this.tooltipCandidateSince >= 500L) {
+            gfx.renderTooltip(this.font, tooltipTarget.getTooltip().toCharSequence(this.minecraft), tooltipX, tooltipY);
         }
 
         // v0.16.0
@@ -615,9 +693,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             var children = this.vanillaList.children();
             if (children == null || children.isEmpty()) return;
 
-            int itemHeight = readIntField(this.vanillaList, "itemHeight", "f_93387_");
-            int y0 = readIntField(this.vanillaList, "y0", "f_93390_");
-            int headerHeight = readIntField(this.vanillaList, "headerHeight", "f_93395_");
+            int itemHeight = vanillaItemHeight;
+            int y0 = vanillaListY0;
+            int headerHeight = vanillaHeaderHeight;
 
             if (itemHeight <= 0) return;
 
@@ -668,9 +746,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             var children = this.vanillaList.children();
             if (children == null || children.isEmpty()) return;
 
-            int itemHeight = readIntField(this.vanillaList, "itemHeight", "f_93387_");
-            int y0 = readIntField(this.vanillaList, "y0", "f_93390_");
-            int headerHeight = readIntField(this.vanillaList, "headerHeight", "f_93395_");
+            int itemHeight = vanillaItemHeight;
+            int y0 = vanillaListY0;
+            int headerHeight = vanillaHeaderHeight;
 
             if (itemHeight <= 0) return;
 
@@ -721,9 +799,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         try {
             var children = this.vanillaList.children();
             if (children == null) return 0;
-            int itemHeight = readIntField(this.vanillaList, "itemHeight", "f_93387_");
-            int y0 = readIntField(this.vanillaList, "y0", "f_93390_");
-            int headerHeight = readIntField(this.vanillaList, "headerHeight", "f_93395_");
+            int itemHeight = vanillaItemHeight;
+            int y0 = vanillaListY0;
+            int headerHeight = vanillaHeaderHeight;
             if (itemHeight <= 0) return 0;
             double scrollAmount = 0.0;
             try { scrollAmount = this.vanillaList.getScrollAmount(); } catch (Throwable ignored) {}
@@ -744,6 +822,22 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             return Math.max(lanTop - 2, this.vanillaList.getTop());
         } catch (Throwable ignored) {}
         return 0;
+    }
+
+    /**
+     * Reflect once after the list is laid out, then reuse the row metrics while rendering.
+     * These dimensions change on screen resize, not on every frame or scroll event.
+     */
+    private void cacheVanillaListMetrics() {
+        if (this.vanillaList == null) {
+            vanillaItemHeight = 0;
+            vanillaListY0 = 0;
+            vanillaHeaderHeight = 0;
+            return;
+        }
+        vanillaItemHeight = readIntField(this.vanillaList, "itemHeight", "f_93387_");
+        vanillaListY0 = readIntField(this.vanillaList, "y0", "f_93390_");
+        vanillaHeaderHeight = readIntField(this.vanillaList, "headerHeight", "f_93395_");
     }
 
     private static int readIntField(Object target, String officialName, String srgName) {

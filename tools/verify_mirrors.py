@@ -15,7 +15,7 @@ CHG_DIR = os.path.join(ROOT, "src/main/resources/assets/gripeverde/changelog")
 SOUNDS_JSON = os.path.join(ROOT, "src/main/resources/assets/gripeverde/sounds.json")
 SOUNDS_BASE = os.path.join(ROOT, "src/main/resources/assets/gripeverde/sounds")
 JAVA_DIR = os.path.join(ROOT, "src/main/java")
-REQUIRED = ['en_us', 'es_es']
+REQUIRED = ["en_us", "en_au", "en_ca", "en_gb", "en_nz", "es_es", "es_mx", "es_ar", "es_419", "es_bo", "es_cl", "es_co", "es_cr", "es_do", "es_ec", "es_gt", "es_hn", "es_ni", "es_pa", "es_pe", "es_pr", "es_py", "es_sv", "es_uy", "es_ve"]
 
 fails = []
 
@@ -34,9 +34,17 @@ if lang_files - set(REQUIRED): fails.append("unexpected langs: %s" % sorted(lang
 if set(REQUIRED) - chg_files: fails.append("missing changelogs: %s" % sorted(set(REQUIRED)-chg_files))
 if chg_files - set(REQUIRED): fails.append("unexpected changelogs: %s" % sorted(chg_files-set(REQUIRED)))
 
+pack_metadata = json.loads(read(os.path.join(ROOT, "src/main/resources/pack.mcmeta")))
+declared_languages = set((pack_metadata.get("language") or {}).keys())
+if set(REQUIRED) - declared_languages:
+    fails.append("pack.mcmeta missing selectable locales: %s" % sorted(set(REQUIRED)-declared_languages))
+if declared_languages - set(REQUIRED):
+    fails.append("pack.mcmeta has unexpected locales: %s" % sorted(declared_languages-set(REQUIRED)))
+
+
 baseline = json.loads(read(os.path.join(LANG_DIR, "en_us.json")))
 bkeys = set(baseline)
-EXPECTED = 157
+EXPECTED = 200
 loc_problems = []
 if len(bkeys) != EXPECTED:
     loc_problems.append("en_us: expected %d keys, found %d" % (EXPECTED, len(bkeys)))

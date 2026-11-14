@@ -1,4 +1,315 @@
+## Version 0.181.0 - Los mensajes viejos se vienen con nosotros
+
+CopyL guardaba diez mensajes rápidos en su propio archivo de config, así que desinstalarlo se los llevaba puestos. Ahora esta ficha lee ese archivo una sola vez —nombres, textos y teclas— y se queda con una copia propia en gripeverde-dispatch.json, así que CopyL puede salir de mods sin que se pierda nada. Las diez ranuras van a la derecha de la ficha, o como una tira de números en ventanas angostas: un clic envía, Shift+clic la carga en un renglón, Ctrl+clic guarda el renglón que estás escribiendo en esa ranura y con clic derecho le ponés tecla. Mientras CopyL siga instalado mandan sus teclas, para que ningún mensaje salga dos veces.
+
+## Version 0.180.0 - El parte tiene su propia mesa
+
+El parte de CEDA era un puente por reflexión que solo existía con CopyL instalado y abría una pantalla ajena. Ahora es una página de este diario: ocho renglones numerados sobre papel rayado, doce píxeles de aire entre uno y otro, un carril para los números y dos filas de botones con espacio de sobra. Enter envía el renglón en el que estás y Tab baja al siguiente; el borrador queda si cerrás la página, y el envío en tanda espacia los mensajes medio segundo para que el servidor no lo lea como spam. Donde estaba el papelito viejo ahora hay siempre una entrada, y el panel de CEDA de CopyL —cuando está instalado— se abre desde la esquina de la ficha.
+
+## Version 0.179.0 - El cronista habla en toda ventana
+
+La ficha de saludo necesita un carril de 180 píxeles de ancho y cuarenta y cuatro de alto, así que en ventanas de menos de unos 620 píxeles —y en las anchas de menos de unos 330 de alto— el cronista no decía nada. Ahora, cuando la ficha no cabe, la misma frase aparece como una línea centrada en la cabecera, entre el control de música y los iconos de acceso, recortada al ancho libre. Si la ficha cabe, todo queda como estaba.
+
+## Version 0.178.0 - Ningún adorno roba un clic
+
+Los adornos con clic de la portada se comprobaban antes que los botones y varios respondían primero, así que el clic nunca llegaba: a 427x240 la ventana encendida del ático cae doce píxeles dentro de Multijugador, y en cualquier ventana de más de unos 300 píxeles de alto la rata cruza la mesa de botones y los de Ajustes y Salir. Ahora todo adorno pregunta primero por los botones. La pausa tenía la misma falla con su vela sobre el último botón de la izquierda en ventanas muy bajas.
+
+## Version 0.177.0 - El susurro encuentra su banda
+
+El susurro de la vigilia nacía a un tercio de la altura de la ventana, que en cualquier ventana de menos de unos 410 píxeles caía dentro del emblema de la portada: a 427x240 cruzaba el filete de la fecha y a 700x400 se posaba sobre el renglón del día. Ahora busca la banda libre entre el emblema y la mesa de botones y, cuando no hay sitio ni para una línea, baja al pie sobre la firma del cronista. La mesa de botones se mide además con una sola fórmula, la misma que usa el emblema para saber dónde termina.
+
+## Version 0.176.0 - Ajustes y Salir se apartan
+
+En ventanas de menos de 620 píxeles de ancho, Ajustes y Salir colgaban de una fila fija en y=36, justo encima del emblema de la portada, que empieza en y=30. A 427x240, el tamaño que da una ventana de 854x480 con escala GUI 2, tapaban treinta y dos píxeles del escudo. Ahora ocupan un carril propio a la derecha de Multijugador y Mods, dentro de la misma banda que la mesa de botones, y la pareja y el carril se centran sobre el eje del emblema. El emblema conserva su tamaño y no se dibuja nada nuevo durante la partida.
+
+## Version 0.175.0 - El emblema cede ante los botones
+
+En ventanas bajas el emblema de la portada se encoge entero en lugar de crecer hacia la mesa de botones: a 427x240, el tamaño que da una ventana de 854x480 con escala GUI 2, el bloque completo tapaba cuarenta y cinco píxeles de los botones. La ficha del cronista sigue la misma regla y baja o espera cuando no hay sitio. La cadena del reloj de bolsillo arranca por debajo de los iconos de acceso, y hacer clic en el emblema ya no dispara su sello sobre el borde de un botón. No se dibuja nada nuevo durante la partida.
+
+## Version 0.174.0 - Los carteles vuelven a respirar
+
+Los cuatro bandos que rotan en la portada (nota de rescate, se busca, decreto real y etiqueta del elixir) ahora se componen como un solo bloque centrado. En los carteles altos el texto ya no queda pegado al borde superior, y en los más bajos los espacios se ajustan para que la última línea deje de apretar el filete inferior. En la etiqueta del elixir, el precio conserva siempre un renglón de aire sobre el borde. No se dibuja nada nuevo durante la partida.
+
+## Version 0.173.0 - El aviso tiene un rostro
+
+El aviso de cuarentena de la portada abre ahora con un grabado mayor de un hombre infectado, enmarcado como una placa de imprenta, con los ojos azules de los Ghouls y un rótulo que se lee como nota de campo. Debajo, la orden mantiene sus renglones lejos del sello CEDA, así que nada se superpone en pantallas bajas o estrechas. La nota de campo CEDA sigue la misma placa, cambia el ojo suelto por un sello CEDA y esconde el retrato cuando el cartel no tiene altura suficiente. Todo queda quieto: no se dibuja nada nuevo durante la partida.
+
+## Version 0.172.0 - Un rostro para el aviso de cuarentena
+
+El bando de la portada ahora lleva, en el margen inferior, un retrato fijo de un Ghoul de ojos azules. Minecraft ofrece todas las variantes regionales que traduce el mod, incluido el español de Uruguay, y la compilación comprueba los 25 idiomas.
+
+## Version 0.171.0 - Un lugar para CEDA Dispatch
+
+En la portada compacta, el control de música y los iconos de acceso ya no se pisan. CEDA Dispatch solo aparece cuando hay ancho para dejar espacio entre ellos.
+
+## Version 0.170.0 - La partida sigue a la vista
+
+Controles, Chat, Juego en línea e Idioma conservan el mundo visible detrás de sus hojas. Se quitó una capa negra redundante que lo ocultaba al abrir esas pantallas.
+
+## Version 0.169.0 - Variantes regionales para elegir
+
+Las variantes regionales adicionales del español ahora están declaradas ante Minecraft, para que aparezcan en la lista de idiomas y carguen sus archivos. La compilación verifica sus metadatos junto con las 25 traducciones y crónicas.
+
+## Version 0.168.0 - Cada región, en su idioma
+
+El menú incluye los archivos de idioma y la crónica de las 25 variantes regionales de inglés y español que declara el proyecto. La compilación comprueba sus textos, claves y crónicas.
+
+## Version 0.167.0 - Más aire en la nota de rescate
+
+La nota de rescate de la portada deja un renglón completo entre cada instrucción, incluso en el cartel compacto. La última frase ya no se pega al divisor y el cartel no añade movimiento ni trabajo durante la partida.
+
+## Version 0.166.0 - Una prueba para los sonidos de la calle
+
+Los controles de ambiente ahora reproducen un crujido breve por el mismo canal de Minecraft que la lluvia y el viento. Así se comprueba el volumen del mod junto con los niveles Ambiente y Maestro; el botón queda inactivo durante una partida.
+
+## Version 0.165.0 - El cielo recuerda entre fotogramas
+
+La ventana del ático y sus cortinas conservan en memoria el estado guardado durante la sesión. Dibujar la portada ya no crea un arreglo de posición ni consulta las notas guardadas a cada fotograma.
+
+## Version 0.164.0 - Una bienvenida que no tapa los avisos
+
+La nota del cronista ahora cabe entre los carteles laterales, ocupa dos renglones si hace falta y desaparece a los ocho segundos.
+
+## Version 0.161.0 - Rótulos más legibles
+
+La segunda línea de los botones principales conserva mejor contraste sobre el fondo oscuro, incluso al pasar el cursor, sin salir de la paleta de latón envejecido.
+
+## Version 0.160.0 - Ajustes más claros
+
+Las categorías de ajustes usan nombres fáciles de reconocer en inglés y español. Los avisos de sonido indican qué volúmenes revisar y la nota de rescate aclara qué pasa con el inventario y el cuerpo de un compañero caído.
+
+## Version 0.159.0 - Letras sin cuadros
+
+Los rótulos del diario ahora se dibujan como texto normal de Minecraft, sin estilos de fuente heredados. La verificación de compilación comprueba que esa ruta siga libre de fuentes personalizadas.
+
+## Version 0.158.0 - Las notas recuperan sus tildes
+
+Las frases de la estrella fugaz y del telegrama sellado recuperaron las tildes y la ñ que faltaban. El texto en inglés no cambió.
+
+## Version 0.157.0 - Un telegrama menos invasivo
+
+La nota que aparece al tocar el sello ahora es más angosta y dura menos. El secreto permanece, pero se ven mejor el cielo y los avisos de la portada.
+
+## Version 0.156.0 - Una nota del cielo más ligera
+
+El aviso de la estrella fugaz conserva sus renglones mientras no cambien el mensaje, la letra ni el espacio disponible. Se ve igual, sin volver a partir y medir el mismo texto en cada frame.
+
+## Version 0.155.0 - Letras claras otra vez
+
+La letra personalizada había dejado cuadros vacíos en la portada. El diario vuelve a la letra normal de Minecraft, y la pista del pequeño ojo suena a nota encontrada, no a instrucción del menú.
+
+## Version 0.154.0 - Apuntes de quienes siguen vivos
+
+La guía de campo ahora suena como el relato de un superviviente y no como un informe técnico. Las notas en inglés y español cuentan cómo cambian los ghouls, qué hacer si un compañero queda atrapado o cae, y qué trae cada dificultad, sin alterar las mecánicas del servidor.
+
+## Version 0.153.0 - Letras más claras en el diario
+
+La portada, las opciones, la guía de campo y los controles compartidos ahora usan Atkinson Hyperlegible con medidas de texto coherentes. Las etiquetas de los botones ya no dibujan una segunda copia oscura y se leen con más nitidez sobre el papel. La fuente se incluye con su licencia y no añade animaciones ni trabajo de renderizado en mundos o inventarios.
+
+## Version 0.152.0 - Tinta fija, menú más ligero
+
+Las pequeñas marcas de desgaste de cada botón se calculan una sola vez y se reutilizan al dibujarlo. El papel conserva el mismo aspecto sin volver a preparar y consultar números aleatorios en cada frame.
+
+## Version 0.151.0 - Una señal sin parpadeos
+
+Con «Movimiento reducido» activado, la ventana del ático responde sin parpadear. La pista sigue disponible y el ambiente del menú queda quieto.
+
 # Eternal Craft: Gripe Verde
+
+## Version 0.150.0 - El manual cabe en la hoja
+
+La guía de campo se adapta a ventanas bajas y escalas de GUI altas, ajusta el ancho del texto y mantiene visible el botón para volver. En pantallas compactas, la indicación de lectura sube al encabezado para no tapar el contenido.
+
+## Version 0.149.0 - Las columnas conservan su sitio
+
+El diseño de las columnas y los límites del aviso izquierdo se reutilizan hasta que cambia el tamaño de la ventana. Al redibujar no se reconstruyen esas regiones en cada cuadro; se conservan la posición del papel y la interacción con el cartel.
+
+## Version 0.148.0 - Papel quieto, cuadros más ligeros
+
+Los avisos de la portada reutilizan las claves de texto y los cortes del papel, sin crear arreglos temporales en cada dibujo. Las motas de sangre usan una cuenta fija en vez de iniciar un generador aleatorio por cuadro. Las marcas siguen quietas en el menú y no aparecen sobre el mundo ni el inventario.
+
+## Version 0.147.0 - El parte de CEDA, a mano
+
+Una nota pequeña de CEDA en la portada abre los ajustes de CEDA Dispatch si el otro mod está instalado. Ambas pantallas comparten papel envejecido y tinta sepia. Los sellos quedan en el margen inferior, se ocultan en hojas bajas y ya no crean un generador aleatorio en cada cuadro del menú. No añaden efectos durante la partida ni en el inventario.
+
+## Version 0.146.0 - Espacio para la recompensa
+
+El cartel de recompensa ahora deja espacio para que el retrato y el sello no se monten sobre el último renglón en ventanas bajas. El dibujo sigue quieto en la pantalla principal.
+
+
+## Version 0.145.0 - La dirección correcta conserva su sitio
+
+Si hay una entrada renombrada y otra con la dirección oficial de Outbreak, la pantalla multijugador ahora prioriza la dirección correcta. Si solo queda la entrada renombrada, conserva su nombre y su dirección personalizada.
+
+## Version 0.144.0 - El grito que nos hizo volver
+
+Al llegar al apartado de trabajo en equipo, el cronista puede dejar un último recuerdo: un grito que cruzó el pueblo y unos desconocidos que volvieron a buscarse. Aparece una sola vez, en el idioma elegido.
+
+## Version 0.143.0 - La fiebre aún tenía pulso
+
+Una nota de testigo acompaña ahora el apartado de la infección. Cuenta el momento en que los supervivientes comprendieron que la fiebre no había matado a sus víctimas. Aparece una sola vez, en inglés o español.
+
+## Version 0.142.0 - La nota espera en la página indicada
+
+La nota del rescate ahora aparece tanto si se llega a esa parte desde las marcas laterales como si se avanza por las páginas o con el teclado. Sigue apareciendo una sola vez.
+
+## Version 0.141.0 - El camino de vuelta por el barro
+
+Al leer el protocolo de rescate, el cronista deja una nota nueva: recuerda a un grupo asustado que volvió por uno de los suyos. Aparece una sola vez, en el idioma elegido, al abrir otra hoja más adelante.
+
+## Version 0.140.0 - La dirección entre la niebla
+
+El servidor oficial de Outbreak ahora se reconoce aunque su dirección guardada tenga otras mayúsculas o espacios de más. Las direcciones antiguas también se actualizan, así que no aparecerá otra copia del servidor en la lista.
+
+## Version 0.139.0 - El brote conserva su nombre
+
+El servidor fijo de Ghoul Outbreak ahora aparece en el idioma elegido. Se conserva el nombre que cada jugador haya puesto a sus otros servidores y se actualiza la dirección antigua del Outbreak aunque alguien le hubiera cambiado el nombre.
+
+## Version 0.138.0 - La pluma espera al lector
+
+La crónica ahora se escribe solo cuando el siguiente renglón está a la vista. Al apartarse con el desplazamiento, la tinta se detiene; los tirones de imagen no hacen que la pluma salte y el rasguño suena con menos frecuencia.
+
+## Version 0.137.0 - La marca del médico encuentra su sitio
+
+El sello de fraude del elixir ahora queda en un espacio propio bajo el texto de la botella y se oculta si el cartel es demasiado bajo. En inglés dice «FRAUD» y en español, «FRAUDE».
+
+## Version 0.136.0 - Una luz que cambia de idioma
+
+La nota de la estrella fugaz ahora sigue el inglés o el español seleccionado mientras está visible y se ajusta al ancho de la pantalla en ventanas pequeñas.
+
+## Version 0.135.0 - Una nota que cambia de idioma
+
+El mensaje oculto tras el sello del ministerio ahora cambia entre inglés y español si se modifica el idioma mientras la nota sigue en pantalla.
+
+## Version 0.134.0 - El cronista habla tu idioma
+
+El saludo del cronista, el rótulo de su hoja y la frase de vigilia ahora siguen el inglés o el español elegido. El texto ajustado se conserva hasta que cambian las palabras, el ancho de la ventana o la fuente.
+
+## Version 0.131.0 - El ambiente responde a su control
+
+Los sonidos ambientales breves del menú ahora usan la categoría Ambiente de Minecraft, igual que los fondos en bucle y su deslizador. La música sigue en Música y los botones conservan su canal de efectos de interfaz.
+
+## Version 0.132.0 - La nota del gramófono
+
+El botón de música de la pantalla principal ahora actualiza su ayuda solo cuando cambia la reproducción o el idioma, en lugar de reconstruirla en cada pulso.
+
+## Version 0.133.0 - El aviso conserva sus renglones
+
+El aviso que se escribe en la pantalla principal conserva sus renglones y el ancho del cursor hasta que cambian el texto visible, la ventana o la fuente. Así evita repetir el mismo cálculo entre cuadros.
+
+
+## Version 0.130.0 - Una nota al margen
+
+Reescribimos la pista del contrabandista con la voz natural del cronista en inglés y español. Quitamos la frase que parecía indicar un control, pero conservamos la pista dentro de la historia.
+
+
+## Version 0.129.0 - Voces de la guardia
+
+Pulimos las frases en inglés y español para que suenen naturales, mantengan el tono de época y respeten las tildes. Los subtítulos de los botones siguen siendo texto estático y solo rotan en la pantalla principal.
+
+
+## Version 0.128.0 - Bruma enferma en el horizonte
+
+La ciudad del menú principal gana una bruma verde tenue y fija detrás del perfil urbano, como señal del brote. Solo aparece en el menú, usa unos pocos rellenos translúcidos y no añade animación ni dibujo sobre el mundo.
+
+
+## Version 0.127.0 - Papel gastado, aviso legible
+
+El aviso del elixir deja el sello de fraude debajo del texto, con margen para que no cubra el precio ni la botella. Las hojas ganan profundidad sutil, un filete interior tenue y bordes de corte irregulares. Son detalles estáticos que solo se dibujan en los papeles del menú.
+
+
+## Version 0.126.0 - El texto no se sale del papel
+
+Las líneas traducidas de los avisos de cuarentena, elixir, recompensa y decreto ahora se ajustan al ancho interior de la hoja. Los títulos ampliados también respetan el margen, para que el texto en español no se salga del borde ni del pliegue.
+
+## Version 0.125.0 - El escritorio vacío
+
+El descubrimiento que aparece tras una larga espera ahora habla de un escritorio vacío y de los fantasmas que se reúnen allí, sin nombrar los controles usados para encontrarlo. El secreto y el momento en que aparece siguen iguales.
+
+## Version 0.124.0 - Una nota durante la guardia
+
+Los saludos del menú ahora suenan como palabras del cronista a alguien que tiene al lado. Son breves, cotidianos y conservan el tono de la época de los Ghouls.
+
+## Version 0.123.0 - Nubes sin trabajo repetido
+
+El cielo del menú ahora reutiliza la forma de sus nubes en vez de reconstruirla en cada frame. Se ven y se mueven igual, pero generan menos objetos temporales mientras el menú está abierto.
+
+## Version 0.122.0 - Un sello con espacio propio
+
+El sello FRAUDE del elixir ahora va después de la línea de la botella, en vez de subir desde el borde inferior. Así no tapa las palabras cuando la hoja es baja; si no hay sitio, el sello no se dibuja. Las esquinas recortadas también se notan más y el borde de tinta sigue la forma del papel. Todo permanece quieto en el menú principal.
+
+## Version 0.121.0 - Secciones a la vista
+
+Cada título del manual ahora lleva un número impreso que corresponde a los atajos 1–7 del pie. Así se ve qué sección abrirá cada tecla sin tener que contar los títulos. Las marcas son estáticas y solo aparecen en el manual.
+
+## Version 0.120.0 - Rescates que se leen completos
+
+El aviso usa frases más cortas para que no se pierda ninguna instrucción en la hoja estrecha: otro compañero libera el PIN, alzar toma cinco segundos, quien ayuda debe evitar golpes y el desfibrilador se encuentra en el botín.
+
+## Version 0.119.0 - Nadie se queda atrás
+
+Un quinto aviso diario de la CEDA resume cómo auxiliar al equipo: otro compañero debe liberar a quien sufra un PIN, mantener la ayuda cinco segundos sin recibir golpes para alzar a un caído, y encontrar un desfibrilador en el botín para revivir a quien muera. El papel es estático y solo aparece en el menú principal.
+
+## Version 0.118.0 - Hojas con bordes de otra época
+
+Los avisos ahora tienen esquinas suavemente recortadas, un pequeño pliegue y algunas fibras gastadas. Esos detalles permanecen quietos, también mientras juegas. El sello rojo FRAUDE del elixir tiene su propio espacio bajo el precio y no tapa las letras; la hoja de cuarentena sigue abriendo el manual al tocarla. Las notas del cronista suenan más a alguien contando lo que vivió, en inglés y español.
+
+## Version 0.117.0 - Polvo de regreso más ligero
+
+El patrón de polvo que aparece al volver tras una larga ausencia ahora queda en caché. Cada frame reutiliza las mismas 40 motas y opacidades; solo se recalculan al cambiar el tamaño de la ventana. El efecto sigue estático y limitado a la pantalla de título.
+
+## Version 0.116.0 - Ayudas accesibles con teclado
+
+Las ayudas completas aparecen tras la breve espera habitual tanto al pasar el cursor como al dar foco de teclado a un botón personalizado de multijugador. Si se usa el teclado, la ayuda se coloca junto al botón. Las interfaces durante la partida siguen quietas.
+
+
+## Version 0.115.0 - Ayudas completas en multijugador
+
+Los botones personalizados de multijugador vuelven a mostrar sus ayudas localizadas tras la breve espera habitual de Minecraft. Los botones compactos conservan su tamaño; la lista, su diseño y la partida no cambian.
+
+## Version 0.114.0 - Lista de servidores más ligera
+
+Leer las dimensiones de las filas cuando se prepara la lista vanilla y reutilizarlas al dibujar las tarjetas de papel. Así se evitan búsquedas repetidas de campos privados en cada frame sin cambiar la IP oficial, los servidores guardados, el ping ni la búsqueda LAN.
+
+## Version 0.113.0 - Un libro en vez de una letra
+
+Cambiar la “F” suelta por un icono pequeño de libro abierto, para que el acceso a la guía se entienda igual en español e inglés. El nombre localizado sigue disponible para teclado y lectores de pantalla.
+
+## Version 0.112.0 - Encabezados limpios en la guía
+
+Los nombres de sección siguen impresos en el papel, sin paneles de botón encima. Las zonas de navegación quedan dentro del área de lectura y conservan el acceso por teclado y lector de pantalla, sin sonido de hover ni animaciones durante la partida.
+
+## Version 0.111.0 - Guía de campo a mano
+
+Abrir la guía bilingüe de la CEDA desde un botón pequeño y visible junto al acceso a la crónica. Reutiliza la pista localizada y no añade animaciones durante la partida ni en el inventario.
+
+## Version 0.110.0 - Tinta más legible
+
+Las etiquetas de los botones desactivados ahora usan tinta sepia más oscura para leerse mejor sobre el papel. El texto conserva un único trazo sin sombra y evita recortar dos veces.
+
+## Version 0.109.0 - Notas para leer
+
+Las notas del cronista ahora se ajustan a una tarjeta de papel para que no se corte el final de las frases largas. El sello CEDA queda estático, y las notas del archivo siguen pendientes si la pantalla no deja mostrarlas con claridad.
+
+## Version 0.108.0 - Música bajo control
+
+Pausar o reanudar la banda sonora desde el panel de sonido. La elección queda guardada sin cambiar el nivel de volumen. Los controles de pistas se desactivan durante una partida.
+
+## Version 0.107.0 - Ojos en cuarentena
+
+Añadir un par pequeño y fijo de ojos azules de ghoul en una ventana lejana de la pantalla principal. La niebla suaviza el detalle; no aparece en las interfaces del diario ni durante partidas. Son píxeles estáticos, sin ticks, partículas, sonidos ni efectos de juego adicionales.
+
+## Version 0.106.0 - Papel más estable
+
+Guardar el patrón determinista de humedad de cada panel. El papel conserva su aspecto sin crear un generador aleatorio en cada render. Dibujar las tres líneas del informe ghoul directamente, sin reservar un arreglo temporal por frame. El comportamiento de juego no cambia.
+
+## Version 0.105.0 - Notas quietas
+
+Respetar «Movimiento reducido» en las notas al margen, los sellos de descubrimiento y el diapasón del panel de sonido. Las notas aparecen completas y el sello queda quieto cuando la opción está activa. Si la opción está desactivada, el menú conserva su comportamiento; las interfaces durante partidas siguen estáticas.
+
+## Version 0.104.0 - El informe de campo
+
+Añadir un cuarto documento diario a la pantalla principal con consejos de la CEDA sobre ghouls vivos, mutaciones, rescates de PIN y la importancia de permanecer juntos. Darle papel envejecido y una marca fija de tinta con un ojo azul. El cartel es bilingüe y estático: no anima mundos, servidores ni inventarios.
 
 ## Version 0.103.0 - El encubrimiento de la CEDA
 

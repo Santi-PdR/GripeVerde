@@ -218,13 +218,12 @@ public class DiaryArchiveScreen extends Screen {
 
         super.render(g, mouseX, mouseY, partialTick);
 
-        // Marginalia del cronista
-        com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
+        // Preserve notes when the archive panel leaves no readable margin.
         if (panelY >= 20) {
+            com.eternalcraft.gripeverde.client.lore.Marginalia.poll();
             com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, panelY - 14);
         } else {
-            // Keep the narrow-window fallback inside the existing paper margin.
-            com.eternalcraft.gripeverde.client.lore.Marginalia.draw(g, panelX, panelY, panelW, panelH);
+            com.eternalcraft.gripeverde.client.lore.Marginalia.deferActive();
         }
 
         // v0.21.3/v0.21.5: la cadena de la limpieza (solo texto, sin mecanica nueva)

@@ -4,6 +4,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSelectionList;
+import net.minecraft.network.chat.Component;
+import com.eternalcraft.gripeverde.client.render.DiaryTypography;
 
 
 /**
@@ -189,8 +191,8 @@ public final class DiaryChrome {
     /** v0.21.9: texto centrado con la font del gabinete (consolidacion). */
     public static void drawCenteredString(GuiGraphics gfx, Font font, String s, int cx, int y, int color) {
         if (s == null) return;
-        int w = font.width(s);
-        gfx.drawString(font, s, cx - w / 2, y, color, false);
+        int w = DiaryTypography.width(font, s);
+        DiaryTypography.draw(gfx, font, s, cx - w / 2, y, color);
     }
 
     /**

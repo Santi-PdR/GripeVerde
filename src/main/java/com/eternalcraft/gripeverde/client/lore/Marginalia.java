@@ -2,8 +2,10 @@ package com.eternalcraft.gripeverde.client.lore;
 
 import com.eternalcraft.gripeverde.client.audio.ModSounds;
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
+import com.eternalcraft.gripeverde.client.util.MotionPolicy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.Font;
 
 /**
  * Marginalia del cronista.
@@ -62,6 +64,10 @@ public final class Marginalia {
     public static final String N_FLASH3       = "flash3";
     public static final String N_DROP         = "drop";
     public static final String N_DOCTOR       = "doctor";
+    // v0.141.0
+    public static final String N_RESCUE       = "rescue";
+    public static final String N_WITNESS      = "witness";
+    public static final String N_CALL         = "call";
 
     /** Encola una nota (persistente) si no hay ya una igual pendiente. */
     public static synchronized void queue(String noteId) {
@@ -83,6 +89,11 @@ public final class Marginalia {
     private static long activeUntilMs = 0L;
     private static long activeStartMs = 0L;
     private static long lastPollMs = 0L;
+    private static long lastDeferredMs = 0L;
+    private static String cachedLayoutText;
+    private static int cachedLayoutWidth = -1;
+    private static int cachedLayoutLimit = -1;
+    private static java.util.List<String> cachedLayoutLines = java.util.Collections.emptyList();
 
     /** Toma la proxima nota pendiente (throttle: una por apertura de pantalla). */
     public static synchronized void poll() {
@@ -97,6 +108,7 @@ public final class Marginalia {
         ChroniclerMemory.save();
         activeStartMs = now;
         activeUntilMs = now + 14_000L;
+        lastDeferredMs = 0L;
         try {
             // Rasguno de pluma al aparecer la marginal
             UiSounds.playCustom(ModSounds.UI_SCROLL.get(), 0.10f, 0.55f);
@@ -107,49 +119,47 @@ public final class Marginalia {
         return activeId != null && System.currentTimeMillis() < activeUntilMs;
     }
 
-    /**
-     * Dibuja la marginal activa en el margen del panel indicado.
-     * (x, y) = esquina superior izquierda del panel; w = ancho.
-     */
-    public static void draw(GuiGraphics g, int panelX, int panelY, int panelW, int panelH) {
-        if (isLiveWorld() || !hasActive()) return;
-        Minecraft mc = Minecraft.getInstance();
-        if (mc == null || mc.font == null) return;
+    /** Keeps a note alive while a cramped layout or a discovery seal hides it. */
+    public static synchronized void deferActive() {
+        if (activeId == null) return;
         long now = System.currentTimeMillis();
-        long age = now - activeStartMs;
-        long remain = activeUntilMs - now;
-        int alpha = 200;
-        if (age < 900L) alpha = (int)(200 * age / 900L);
-        else if (remain < 1200L) alpha = (int)(200 * remain / 1200L);
-        alpha = Math.max(0, Math.min(200, alpha));
-        if (alpha <= 4) return;
-
-        String text = textFor(activeId);
-        if (text == null) return;
-
-        // La marginal vive JUSTO fuera del panel, en el margen izquierdo,
-        // escrita en vertical ascendente como nota al margen.
-        int maxLen = Math.min(text.length(), Math.max(12, panelH / 6));
-        String shown = text.substring(0, (int)Math.min(maxLen, text.length() * Math.min(1.0, age / 2200.0) + 1));
-        if (shown.isEmpty()) return;
-
-        int ink = (alpha << 24) | 0x3D2A18;
-        int x = panelX - 8;
-        int yStart = panelY + panelH - 22;
-        // texto vertical: una letra por fila
-        int lines = Math.min(shown.length(), (panelH - 30) / 7);
-        for (int i = 0; i < lines; i++) {
-            char c = shown.charAt(i);
-            g.drawString(mc.font, String.valueOf(c), x, yStart - i * 7, ink, false);
-        }
-        // pequeno trazo de pluma debajo
-        if (lines > 0) {
-            int ty = yStart - lines * 7;
-            g.fill(x, ty + 2, x + 5, ty + 3, (alpha / 2 << 24) | 0x3D2A18);
-        }
+        if (lastDeferredMs > 0L) activeUntilMs += Math.max(0L, now - lastDeferredMs);
+        lastDeferredMs = now;
     }
 
-    /** Variante horizontal para pantallas sin margen izquierdo suficiente. */
+    private static java.util.List<String> layoutLines(String text, Font font, int maxWidth, int maxLines) {
+        if (text.equals(cachedLayoutText) && maxWidth == cachedLayoutWidth && maxLines == cachedLayoutLimit) {
+            return cachedLayoutLines;
+        }
+        java.util.List<String> lines = new java.util.ArrayList<>();
+        StringBuilder line = new StringBuilder();
+        for (String word : text.split("\\s+")) {
+            String candidate = line.length() == 0 ? word : line + " " + word;
+            if (line.length() > 0 && font.width(candidate) > maxWidth) {
+                lines.add(line.toString());
+                line.setLength(0);
+                line.append(word);
+            } else {
+                if (line.length() > 0) line.append(' ');
+                line.append(word);
+            }
+        }
+        if (line.length() > 0) lines.add(line.toString());
+        if (lines.size() > maxLines) {
+            lines = new java.util.ArrayList<>(lines.subList(0, maxLines));
+            String ellipsis = "...";
+            String last = lines.get(maxLines - 1);
+            int lastWidth = Math.max(0, maxWidth - font.width(ellipsis));
+            lines.set(maxLines - 1, font.plainSubstrByWidth(last, lastWidth) + ellipsis);
+        }
+        cachedLayoutText = text;
+        cachedLayoutWidth = maxWidth;
+        cachedLayoutLimit = maxLines;
+        cachedLayoutLines = java.util.Collections.unmodifiableList(lines);
+        return cachedLayoutLines;
+    }
+
+    /** Draws a legible, word-wrapped chronicler note above the paper panel. */
     public static void drawHorizontal(GuiGraphics g, int cx, int y) {
         if (isLiveWorld() || !hasActive()) return;
         Minecraft mc = Minecraft.getInstance();
@@ -157,85 +167,106 @@ public final class Marginalia {
         long now = System.currentTimeMillis();
         long age = now - activeStartMs;
         long remain = activeUntilMs - now;
+        boolean reducedMotion = MotionPolicy.isReduced();
         int alpha = 190;
-        if (age < 900L) alpha = (int)(190 * age / 900L);
-        else if (remain < 1200L) alpha = (int)(190 * remain / 1200L);
+        if (!reducedMotion) {
+            if (age < 900L) alpha = (int)(190 * age / 900L);
+            else if (remain < 1200L) alpha = (int)(190 * remain / 1200L);
+        }
+        alpha = Math.max(0, Math.min(190, alpha));
         if (alpha <= 4) return;
         String text = textFor(activeId);
         if (text == null) return;
 
-        int chars = (int)Math.min(text.length(), text.length() * Math.min(1.0, age / 2000.0) + 1);
-        String shown = text.substring(0, chars);
-        int screenWidth = mc.getWindow().getGuiScaledWidth();
-        int maxTextWidth = Math.max(0, screenWidth - 48);
-        int textWidth = mc.font.width(shown);
-        if (textWidth > maxTextWidth) {
-            String ellipsis = "...";
-            int ellipsisWidth = mc.font.width(ellipsis);
-            shown = maxTextWidth <= ellipsisWidth
-                ? mc.font.plainSubstrByWidth(shown, maxTextWidth)
-                : mc.font.plainSubstrByWidth(shown, maxTextWidth - ellipsisWidth) + ellipsis;
-            textWidth = mc.font.width(shown);
-        }
+        String shown = text.trim();
         if (shown.isEmpty()) return;
 
-        int cardWidth = textWidth + 12;
-        int cardX = Math.max(6, Math.min(cx - cardWidth / 2, screenWidth - cardWidth - 6));
-        int cardY = Math.max(2, y - 3);
+        int screenWidth = mc.getWindow().getGuiScaledWidth();
+        int maxTextWidth = Math.max(1, screenWidth - 48);
+        int lineHeight = mc.font.lineHeight;
+        int cardBottom = y + 10;
+        int clearTop = Discoveries.hasActiveToast() ? 36 : 2;
+        int availableHeight = cardBottom - clearTop;
+        if (availableHeight < lineHeight + 6) {
+            deferActive();
+            return;
+        }
+        int maxLines = Math.max(1, Math.min(4, (availableHeight - 6) / lineHeight));
+        java.util.List<String> lines = layoutLines(shown, mc.font, maxTextWidth, maxLines);
+        if (lines.isEmpty()) return;
+
+        int textWidth = 0;
+        for (String wrappedLine : lines) textWidth = Math.max(textWidth, mc.font.width(wrappedLine));
+        int cardWidth = Math.min(screenWidth - 8, textWidth + 20);
+        int cardHeight = lines.size() * lineHeight + 6;
+        int cardX = Math.max(4, Math.min(cx - cardWidth / 2, screenWidth - cardWidth - 4));
+        int cardY = Math.max(clearTop, cardBottom - cardHeight);
+        lastDeferredMs = 0L;
         int paper = (Math.min(220, alpha + 24) << 24) | 0x00E8DCB4;
         int edge = (Math.max(0, alpha / 2) << 24) | 0x00735936;
         int ink = (alpha << 24) | 0x003D2A18;
+        int wax = (Math.min(205, alpha) << 24) | 0x006E1F16;
 
-        // A small paper strip keeps the chronicler's note readable over the
-        // dark title scene and contained on narrow windows.
-        g.fill(cardX, cardY, cardX + cardWidth, cardY + 13, paper);
+        // A restrained CEDA seal and paper rule frame the note without motion.
+        g.fill(cardX, cardY, cardX + cardWidth, cardY + cardHeight, paper);
         g.fill(cardX, cardY, cardX + cardWidth, cardY + 1, edge);
-        g.fill(cardX, cardY + 12, cardX + cardWidth, cardY + 13, edge);
-        g.drawString(mc.font, shown, cardX + 6, cardY + 3, ink, false);
+        g.fill(cardX, cardY + cardHeight - 1, cardX + cardWidth, cardY + cardHeight, edge);
+        g.fill(cardX, cardY, cardX + 1, cardY + cardHeight, edge);
+        g.fill(cardX + cardWidth - 1, cardY, cardX + cardWidth, cardY + cardHeight, edge);
+        g.fill(cardX + 5, cardY + 5, cardX + 9, cardY + 9, wax);
+        g.fill(cardX + 6, cardY + 6, cardX + 8, cardY + 7, (alpha << 24) | 0x00A74A38);
+        for (int i = 0; i < lines.size(); i++) {
+            g.drawString(mc.font, lines.get(i), cardX + 13, cardY + 3 + i * lineHeight, ink, false);
+        }
     }
 
     private static String textFor(String id) {
         boolean en = Discoveries.isEnglish();
         if (id == null) return null;
         switch (id) {
-            case N_READ_YOU:     return en ? "Someone has been reading my files. I know." : "Alguien ha estado leyendo mis fichas. Lo sé.";
-            case N_LANGUAGE:     return en ? "You write in another tongue now. I still understand." : "Ahora escribes en otra lengua. Igual te entiendo.";
-            case N_WHISPER3:     return en ? "The third one asked about you. Answer with three knocks." : "El tercero preguntó por ti. Responde con tres golpes.";
-            case N_KEY_HINT:     return en ? "The small key hangs from time, not from a pocket." : "La llave pequeña cuelga del tiempo, no de un bolsillo.";
-            case N_DRAWER_HINT:  return en ? "The lower drawer accepts a small key." : "El cajón de abajo acepta una llave pequeña.";
-            case N_SMUGGLER_HINT: return en ? "Crouch and sprint, both set to toggle. The rest, still. That is how contraband enters." : "Configura agacharse y correr en modo alternar. Mantén quieto el resto; así entra el contrabando.";
-            case N_HINGE:        return en ? "The hinge complains now. Oil it with fewer openings." : "La bisagra ya se queja. Menos aperturas la calmarían.";
-            case N_STREAK3:      return en ? "Three nights in a row. The plague is not studied this hard." : "Tres noches seguidas. La peste no se estudia con tanto ahínco.";
-            case N_STREAK7:      return en ? "Seven nights. I no longer know if you write, or the fever does." : "Siete noches. Ya no sé si escribes tú o la fiebre.";
-            case N_DUST:         return en ? "Dust does not ask why anyone returns." : "El polvo no pregunta por qué vuelve nadie.";
-            case N_NIGHT:        return en ? "A whole night over the papers. The dawn is sick too." : "Una noche entera frente a los papeles. El alba también enferma.";
-            case N_SILENCE:      return en ? "Silence has noise too, if one stays still." : "El silencio también tiene ruido, si uno se queda quieto.";
-            case N_DESTROY:      return en ? "The cabinet remembers what you destroy." : "El gabinete recuerda lo que destruyes.";
-            case N_LETTERS:      return en ? "Write no more. No one answers here." : "No escribas más. Nadie responde aquí.";
-            case N_ANNIVERSARY:  return en ? "A year since you first opened the cabinet. No one else ever did." : "Hace un año abriste el gabinete por primera vez. Nadie más lo abrió.";
-            case N_PEREIRA:      return en ? "How do you know that name? Forget it. Forget it now." : "¿Cómo conoces ese nombre? Olvídalo. Olvídalo ahora.";
-            case N_HOLLOWAY:     return en ? "I read what Holloway wrote. I wish I had not." : "Leí lo que escribió Holloway. Ojalá no lo hubiera hecho.";
-            case N_READER10:     return en ? "Ten findings. I no longer write alone." : "Diez hallazgos. Ya no escribo solo.";
-            case N_CORRECTION:   return en ? "The ink has not yet dried. No: the ink is no longer drying." : "La tinta aún no secó. No: la tinta ya no se seca.";
-            case N_FIRST_NIGHT:  return en ? "First night. Everything you touch will remember you." : "Primera noche. Todo lo que toques te recordará.";
-            case N_OPEN_COUNT:   return en ? "A hundred openings. The cabinet keeps the hours for you now." : "Cien aperturas. El gabinete ya lleva las horas por ti.";
+case N_READ_YOU:     return en ? "Someone has been going through my papers. I saw the pages move." : "Alguien anda hojeando mis papeles. Vi las hojas moverse.";
+case N_LANGUAGE:     return en ? "You speak to me in another tongue now. I know your voice all the same." : "Ahora me hablas en otra lengua. Aun así, reconozco tu voz.";
+case N_WHISPER3:     return en ? "He asked for you again, the third one. Answer with three knocks." : "El tercero volvió a preguntar por ti. Contéstale con tres golpes.";
+case N_KEY_HINT:     return en ? "That little key is tied to the clock. Look where the hands meet." : "La llavecita está atada al reloj. Mira dónde se cruzan las agujas.";
+case N_DRAWER_HINT:  return en ? "The bottom drawer has been waiting for that little key." : "El cajón de abajo lleva tiempo esperando esa llavecita.";
+case N_SMUGGLER_HINT: return en ? "Duck low and hurry through. Then let the rest of the house go quiet. That is how the contraband slips in." : "Agáchate y cruza de prisa. Luego deja que el resto de la casa vuelva al silencio. Así se cuela el contrabando.";
+case N_HINGE:        return en ? "The hinge has started to groan. I must have opened that drawer too often." : "La bisagra empezó a quejarse. Debí abrir demasiado ese cajón.";
+case N_STREAK3:      return en ? "Third night you have stayed. Even the fever would have given in by now." : "Ya es la tercera noche que te quedas. Hasta la fiebre se habría rendido.";
+case N_STREAK7:      return en ? "A week of nights. I can no longer tell your hand from the fever’s." : "Una semana de noches. Ya no distingo tu letra de la fiebre.";
+case N_DUST:         return en ? "Dust never asks what brought anyone back." : "El polvo no pregunta qué te trajo de vuelta.";
+case N_NIGHT:        return en ? "We stayed with the papers until morning. Even the dawn looks ill." : "Nos quedamos con estos papeles hasta el alba. También ella parece enferma.";
+case N_SILENCE:      return en ? "Stay still long enough, and the quiet begins to answer." : "Si te quedas quieto, el silencio acaba respondiendo.";
+case N_DESTROY:      return en ? "You can burn every page; this house will still remember." : "Puedes quemar cada hoja; esta casa seguirá recordándolo.";
+case N_LETTERS:      return en ? "Please, no more letters. No one is coming back to answer." : "Por favor, no escribas más cartas. Nadie va a volver para contestarlas.";
+case N_ANNIVERSARY:  return en ? "A year ago you first came through that door. I thought I would never see you again." : "Hace un año cruzaste esa puerta por primera vez. Creí que no volvería a verte.";
+case N_PEREIRA:      return en ? "How did you learn that name? Stop asking. Forget you heard it." : "¿De dónde sacaste ese nombre? No preguntes más. Olvida que lo oíste.";
+case N_HOLLOWAY:     return en ? "I read Holloway’s letter. I should have left it sealed." : "Leí la carta de Holloway. Debí dejarla cerrada.";
+case N_READER10:     return en ? "Ten secrets between us. I thought I was alone at this desk." : "Ya compartimos diez secretos. Creí que me quedaría solo en este escritorio.";
+case N_CORRECTION:   return en ? "The ink should have dried by now. Why is it still wet?" : "La tinta ya tendría que haberse secado. ¿Por qué sigue húmeda?";
+case N_FIRST_NIGHT:  return en ? "Your first night in this room. I can already see your hand in the dust." : "Es tu primera noche en esta habitación. Ya veo tu rastro en el polvo.";
+case N_OPEN_COUNT:   return en ? "You have come here a hundred times. I have stopped counting the hours." : "Has vuelto cien veces. Dejé de contar las horas.";
             case N_MANY_CARDS: {
-                // v0.24.0: la cifra sigue al cajon, que ya no siempre tiene cuarenta y pico.
                 int cards = Discoveries.ALL.length - 3;
-                return en ? cards + " cards. Soon the drawer will be empty of secrets."
-                          : cards + " fichas. Pronto el cajón estará vacío de secretos.";
+                return en ? "I have tucked away " + cards + " secrets. At this rate, the drawer will soon be empty."
+                          : "He guardado " + cards + " secretos. A este paso, el cajón pronto se quedará vacío.";
             }
             case N_ARCHIVE_COMPLETE: {
                 int total = Discoveries.ALL.length;
-                return en ? total + " cards. The drawer is empty now. Seal it."
-                          : total + " fichas. El cajón ya está vacío. Séllalo.";
+                return en ? "I have nothing left to hide. " + total + " secrets, all found. Close the drawer now."
+                          : "Ya no me queda nada por esconder. Has encontrado los " + total + " secretos. Cierra el cajón.";
             }
-            case N_STORM:        return en ? "Tonight the sky reads the files aloud." : "Esta noche el cielo lee las fichas en voz alta.";
-            case N_SEAL:         return en ? "The wax was old. It was asking to be broken." : "El lacre era viejo. Pedía a gritos que lo rompieran.";
-            case N_TUNING:       return en ? "The room now sounds like itself. At last." : "La sala ya suena a sí misma. Por fin.";
-            case N_FLASH3:       return en ? "Three flashes and you did not blink. The chronicler counted." : "Tres relámpagos y no parpadeaste. El cronista contó.";
-            case N_DROP:         return en ? "Rain can be held for a second. Then it goes back to the sky." : "La lluvia puede sostenerse un segundo. Luego vuelve al cielo.";
-            case N_DOCTOR:       return en ? "The doctor's signature keeps arriving on forms nobody sends." : "La firma del doctor sigue llegando en formularios que nadie envía.";
+case N_STORM:        return en ? "Tonight the storm is speaking through the papers." : "Esta noche la tormenta habla a través de los papeles.";
+case N_SEAL:         return en ? "That wax was old and brittle. I only had to press." : "Ese lacre estaba viejo y quebradizo. Solo tuve que apretar.";
+case N_TUNING:       return en ? "The room sounds right again. I had missed that." : "La habitación vuelve a sonar como debe. Echaba de menos ese ruido.";
+case N_FLASH3:       return en ? "You watched three flashes without closing your eyes. I counted them." : "Viste tres relámpagos sin cerrar los ojos. Los conté.";
+case N_DROP:         return en ? "For a moment, the rain rests in your palm. Then it climbs back to the clouds." : "Por un instante, la lluvia descansa en tu mano. Luego regresa a las nubes.";
+case N_DOCTOR:       return en ? "There is the doctor’s hand again, on a letter no one sent." : "Otra vez la letra del doctor, en una carta que nadie envió.";
+case N_RESCUE:       return en ? "The thing dragged the stable boy into the mud before we could reach him. We heard his cry and turned back together. I have never run so fast toward something I feared."
+                                  : "La criatura arrastró al mozo de las caballerizas antes de que pudiéramos alcanzarlo. Oímos su grito y volvimos juntos. Nunca había corrido tan deprisa hacia algo que me daba tanto miedo.";
+case N_WITNESS:      return en ? "She was still breathing when we found her. Then the fever took hold, and she ran through the rain as if the wound did not hurt. I still cannot call them dead."
+                                  : "Cuando la encontramos, todavía respiraba. Después la fiebre se apoderó de ella y cruzó la lluvia corriendo, como si la herida no doliera. Todavía no puedo llamarlos muertos.";
+case N_CALL:         return en ? "That cry carried across the whole town. We left our bundles where they lay and ran back for him. I had never seen strangers turn around so quickly for one another."
+                                  : "Ese grito se oyó por todo el pueblo. Dejamos los bultos donde estaban y volvimos corriendo por él. Nunca había visto a unos desconocidos regresar tan deprisa por los demás.";
             default: return null;
         }
     }

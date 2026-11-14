@@ -3,8 +3,12 @@ package com.eternalcraft.gripeverde.client.screens;
 import com.eternalcraft.gripeverde.GripeVerdeMod;
 import com.eternalcraft.gripeverde.client.audio.MenuAmbience;
 import com.eternalcraft.gripeverde.client.audio.MenuMusic;
+
 import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.render.DiaryTypography;
+import com.eternalcraft.gripeverde.client.render.DiaryChrome;
+import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.LivingAtmosphere;
 import com.eternalcraft.gripeverde.client.render.LogoRenderer;
 import com.eternalcraft.gripeverde.client.render.PocketWatchRenderer;
@@ -32,6 +36,9 @@ public class DiaryTitleScreen extends Screen {
     private SlimButton skipMusicButton;
     private static boolean cinematicMode = false;
     private static long cinematicHintUntilMs = 0L;
+    private boolean skipTooltipInitialized = false;
+    private boolean lastSkipTooltipReady = false;
+    private boolean lastSkipTooltipEnglish = false;
 
     // ── v0.16.0: la memoria de la vigilia ───────────────────────────────────
     private static boolean memorySessionBegun = false;
@@ -41,6 +48,26 @@ public class DiaryTitleScreen extends Screen {
     private boolean dawnActive = false;
     private static long greetingShownUntilMs = 0L;
     private static String greetingText = null;
+    private static String greetingTranslationKey = null;
+    private static boolean greetingEnglish = true;
+    private static boolean greetingLanguageInitialized = false;
+    private String cachedGreetingSource = null;
+    private int cachedGreetingCardWidth = -1;
+    private boolean cachedGreetingEnglish = false;
+    private net.minecraft.client.gui.Font cachedGreetingFont = null;
+    private java.util.List<net.minecraft.util.FormattedCharSequence> cachedGreetingLines = java.util.Collections.emptyList();
+    private String cachedGreetingLabel = "";
+    private int cachedGreetingLabelLimit = -1;
+    private String cachedGreetingHeaderLine = "";
+    private String cachedGreetingHeaderSource = null;
+    private int cachedGreetingHeaderLimit = -1;
+    private net.minecraft.client.gui.Font cachedGreetingHeaderFont = null;
+    private int cachedVigilPhase = -1;
+    private int cachedVigilWidth = -1;
+    private boolean cachedVigilEnglish = false;
+    private net.minecraft.client.gui.Font cachedVigilFont = null;
+    private String cachedVigilLine = "";
+    private int cachedVigilTextWidth = 0;
     private long wantedPressStartMs = 0L;
     private boolean wantedPressing = false;
 
@@ -60,6 +87,22 @@ public class DiaryTitleScreen extends Screen {
 
     // Umbral: por debajo de esta altura efectiva, ocultamos TODO lo decorativo
     private static final int MINIMAL_MODE_THRESHOLD = 290;
+
+    // Ancla superior del emblema en la portada.
+    private static final int LOGO_TOP = 30;
+
+    // Borde inferior de la fila de iconos superiores (20 px de alto en y=8).
+    private static final int ICON_ROW_BOTTOM = 28;
+
+    // Por debajo de esta escala el emblema no se lee: en ventanas extremas se
+    // omite antes que dibujarlo encima de la mesa de botones.
+    private static final float LOGO_MIN_SCALE = 0.5f;
+
+    private int columnCacheWidth = -1;
+    private int columnCacheHeight = -1;
+    private LayoutRegion cachedLeftColumn;
+    private LayoutRegion cachedRightColumn;
+    private final int[] quarantinePosterBounds = new int[4];
 
     private static final int PATINA_COUNT = 26;
     private static final int[] PATINA_X = new int[PATINA_COUNT];
@@ -91,6 +134,7 @@ public class DiaryTitleScreen extends Screen {
     @Override
     protected void init() {
         this.ticks = 0;
+        this.skipTooltipInitialized = false;
         // Incrementar contador de aperturas (solo una vez por sesion)
         try {
             if (!openCountIncremented) {
@@ -120,22 +164,30 @@ public class DiaryTitleScreen extends Screen {
                 int kind = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.sessionGreetingKind();
                 long absence = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.sessionAbsenceDays();
                 if (kind == 1) {
-                    greetingText = Component.translatable("gripeverde.title.greeting.first").getString();
+                    greetingTranslationKey = "gripeverde.title.greeting.first";
+                    greetingText = Component.translatable(greetingTranslationKey).getString();
                     com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
                         com.eternalcraft.gripeverde.client.lore.Marginalia.N_FIRST_NIGHT);
                 } else if (kind == 2 && absence >= 7L) {
-                    greetingText = Component.translatable("gripeverde.title.greeting.return").getString();
+                    greetingTranslationKey = "gripeverde.title.greeting.return";
+                    greetingText = Component.translatable(greetingTranslationKey).getString();
                     dustThisSession = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.consumeDust();
                     com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
                         com.eternalcraft.gripeverde.client.lore.Discoveries.DUST);
                     com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
                         com.eternalcraft.gripeverde.client.lore.Marginalia.N_DUST);
                 } else if (kind == 2) {
-                    greetingText = Component.translatable("gripeverde.title.greeting.remembers").getString();
+                    greetingTranslationKey = "gripeverde.title.greeting.remembers";
+                    greetingText = Component.translatable(greetingTranslationKey).getString();
                 } else if (kind == 3) {
-                    greetingText = Component.translatable("gripeverde.title.greeting.vigil").getString();
+                    greetingTranslationKey = "gripeverde.title.greeting.vigil";
+                    greetingText = Component.translatable(greetingTranslationKey).getString();
                 }
-                if (greetingText != null) greetingShownUntilMs = System.currentTimeMillis() + 12_000L;
+                if (greetingText != null) {
+                    greetingEnglish = isEnglishSelected();
+                    greetingLanguageInitialized = true;
+                    greetingShownUntilMs = System.currentTimeMillis() + 8_000L;
+                }
                 if (com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.consumeAnniversary()) {
                     com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
                         com.eternalcraft.gripeverde.client.lore.Discoveries.ANNIVERSARY);
@@ -151,18 +203,28 @@ public class DiaryTitleScreen extends Screen {
         boolean compactLayout = isCompactLayout();
         LayoutRegion leftCol = leftColumn();
 
-        int btnX = compactLayout
-            ? Math.max(8, Math.min(20, this.width / 16))
-            : leftCol.x;
+        int compactRail = compactLayout ? compactSlimRailWidth() : 0;
+        int compactEdge = compactInset();
         int mainButtonW = compactLayout
-            ? Math.max(1, Math.min(BTN_W, this.width - btnX * 2))
+            ? Math.max(60, Math.min(BTN_W, this.width - compactEdge * 2
+                - (compactRail > 0 ? compactRail + Spacing.GAP_SMALL : 0)))
             : BTN_W;
+        // El grupo (pareja + carril) se centra: a 320 px ocupa justo el ancho
+        // interior y en ventanas mas anchas queda sobre el eje del emblema.
+        int compactGroupW = mainButtonW
+            + (compactRail > 0 ? compactRail + Spacing.GAP_SMALL : 0);
+        int btnX = compactLayout
+            ? Math.max(compactEdge, (this.width - compactGroupW) / 2)
+            : leftCol.x;
         int totalBtnH = BTN_H * 2 + Spacing.GAP_MEDIUM;
         LayoutRegion buttonColumn = compactLayout
             ? LayoutRegion.screen(this.width, this.height).inset(btnX)
             : leftCol;
-        int btnY = buttonColumn.anchorY(Anchor.BOT_LEFT, totalBtnH)
-                   - Spacing.GAP_LARGE;
+        // La mesa arranca donde dice buttonTableTop(): es la misma linea que
+        // usa el emblema para decidir su escala, asi que no pueden discrepar.
+        int btnY = compactLayout
+            ? buttonTableTop()
+            : buttonColumn.anchorY(Anchor.BOT_LEFT, totalBtnH) - Spacing.GAP_LARGE;
 
         this.addRenderableWidget(new GreenFluButton(
             btnX, btnY, mainButtonW, BTN_H,
@@ -184,19 +246,21 @@ public class DiaryTitleScreen extends Screen {
         int quitX = rightCol.x + rightCol.w - BTN_SLIM_W;
 
         if (compactLayout) {
-            int slimGap = Spacing.GAP_SMALL;
-            int slimW = Math.max(48, Math.min(BTN_SLIM_W,
-                (this.width - btnX * 2 - slimGap) / 2));
-            int slimRowW = slimW * 2 + slimGap;
-            int slimX = (this.width - slimRowW) / 2;
-            int slimY = Math.max(8, Math.min(36,
-                btnY - BTN_SLIM_H - slimGap));
+            // v0.176.0: Ajustes y Salir suben a un carril a la derecha de la
+            // pareja principal, dentro de la misma banda vertical de la mesa.
+            // La mesa ya no toca el emblema, asi que no hay solape posible.
+            int railW = compactRail;
+            int railX = btnX + mainButtonW + Spacing.GAP_SMALL;
+            railX = Math.max(btnX, Math.min(railX, this.width - 4 - railW));
+            int railStackH = BTN_SLIM_H * 2 + Spacing.GAP_SMALL;
+            int railY = btnY + Math.max(0, (totalBtnH - railStackH) / 2);
 
-            this.addRenderableWidget(new SlimButton(slimX, slimY, slimW, BTN_SLIM_H,
+            this.addRenderableWidget(new SlimButton(railX, railY, railW, BTN_SLIM_H,
                 Component.translatable("gripeverde.title.button.options"),
                 this::onOptions));
 
-            this.addRenderableWidget(new SlimButton(slimX + slimW + slimGap, slimY, slimW, BTN_SLIM_H,
+            this.addRenderableWidget(new SlimButton(railX, railY + BTN_SLIM_H + Spacing.GAP_SMALL,
+                railW, BTN_SLIM_H,
                 Component.translatable("gripeverde.title.button.quit"),
                 () -> this.minecraft.stop()));
         } else if (isMinimalMode()) {
@@ -235,6 +299,29 @@ public class DiaryTitleScreen extends Screen {
             Component.translatable("gripeverde.title.button.changelog")));
         this.addRenderableWidget(changelogBtn);
 
+        // v0.113.0: icono de libro para reconocer la guia en ambos idiomas.
+        SlimButton fieldGuideBtn = new SlimButton(
+            this.width - 52, 8, 20, 20,
+            Component.translatable("gripeverde.pause.btn.field_guide"),
+            () -> this.minecraft.setScreen(new DiaryFieldGuideScreen(this)))
+            .withIcon(SlimButton.Icon.OPEN_LEDGER);
+        fieldGuideBtn.setTooltip(Tooltip.create(
+            Component.translatable("gripeverde.pause.btn.field_guide")));
+        this.addRenderableWidget(fieldGuideBtn);
+
+        // v0.180.0: el parte de CEDA ya es nuestro (DiaryDispatchScreen), asi que el
+        // acceso esta siempre; CopyL, si esta instalado, se abre desde adentro.
+        if (this.width >= 124) {
+            SlimButton dispatchBtn = new SlimButton(
+                this.width - 76, 8, 20, 20,
+                Component.translatable("gripeverde.title.button.copyl"),
+                () -> this.minecraft.setScreen(new DiaryDispatchScreen(this)))
+                .withIcon(SlimButton.Icon.DISPATCH_NOTE);
+            dispatchBtn.setTooltip(Tooltip.create(
+                Component.translatable("gripeverde.title.button.copyl")));
+            this.addRenderableWidget(dispatchBtn);
+        }
+
         // --- Audio control buttons (bottom-left, discrete) ---
         // Boton >> (skip musica) queda solo (AMB removido, ahora en Sonidos)
         int skipY = compactLayout ? 8 : this.height - 28;
@@ -251,16 +338,87 @@ public class DiaryTitleScreen extends Screen {
         this.addRenderableWidget(this.skipMusicButton);
     }
 
-    private LayoutRegion leftColumn() {
+    /**
+     * Borde superior de la mesa de botones principales, con la misma formula
+     * que usa {@link #init()}. Es la linea que ningun adorno de la portada
+     * puede cruzar.
+     */
+    private int buttonTableTop() {
+        int totalBtnH = BTN_H * 2 + Spacing.GAP_MEDIUM;
+        int inset = isCompactLayout() ? compactInset() : Spacing.SCREEN_MARGIN;
+        return this.height - inset - totalBtnH - Spacing.GAP_LARGE;
+    }
+
+    /** Margen lateral de la portada compacta: el mismo que usan los botones. */
+    private int compactInset() {
+        return Math.max(8, Math.min(20, this.width / 16));
+    }
+
+    /**
+     * v0.176.0: ancho del carril donde viven Ajustes y Salir en ventanas
+     * estrechas. Antes colgaban de una fila fija en y=36..68, justo encima del
+     * emblema (y=30..108 a 427x240): 32 px de botones sobre el escudo en todas
+     * las ventanas de menos de 620 px. El carril ocupa como mucho el 28 % del
+     * ancho interior para que la pareja principal conserve rotulo y subtitulo.
+     */
+    private int compactSlimRailWidth() {
+        int inner = Math.max(0, this.width - compactInset() * 2);
+        return Math.max(40, Math.min(110, inner * 28 / 100));
+    }
+
+    /** Escala del emblema: se encoge solo cuando la banda libre se queda corta. */
+    private float logoScale() {
+        float free = buttonTableTop() - Spacing.GAP_MEDIUM - LOGO_TOP;
+        if (free >= LogoRenderer.BLOCK_H) return 1f;
+        return Math.max(LOGO_MIN_SCALE, free / (float) LogoRenderer.BLOCK_H);
+    }
+
+    /** Borde inferior real del emblema ya escalado. */
+    private int logoBottom() {
+        return LOGO_TOP + Math.round(LogoRenderer.BLOCK_H * logoScale());
+    }
+
+    /**
+     * v0.178.0: ningun adorno de la portada puede comerse un clic destinado a un
+     * boton. Los puntos calientes (rata, gato, ventana del atico, carteles) se
+     * comprobaban antes que los widgets y varios devolvian true: a 427x240 la
+     * ventana del atico cae 12 px dentro de "Multijugador" y a 854x480 la rata
+     * pasa por dentro de la mesa y de Ajustes/Salir. Se preguntan los widgets
+     * reales para no duplicar la geometria de init().
+     */
+    private boolean overAnyButton(double mouseX, double mouseY) {
+        for (net.minecraft.client.gui.components.events.GuiEventListener child : this.children()) {
+            if (child instanceof net.minecraft.client.gui.components.AbstractWidget widget
+                    && widget.visible && widget.isMouseOver(mouseX, mouseY)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void ensureColumnLayout() {
+        if (columnCacheWidth == this.width && columnCacheHeight == this.height
+                && cachedLeftColumn != null && cachedRightColumn != null) {
+            return;
+        }
+
+        columnCacheWidth = this.width;
+        columnCacheHeight = this.height;
         LayoutRegion screen = LayoutRegion.screen(this.width, this.height);
-        return screen.left(POSTER_W + Spacing.SCREEN_MARGIN * 2)
-                     .inset(Spacing.SCREEN_MARGIN);
+        cachedLeftColumn = screen.left(POSTER_W + Spacing.SCREEN_MARGIN * 2)
+                .inset(Spacing.SCREEN_MARGIN);
+        int colW = Math.max(WATCH_RADIUS * 2, POSTER_R_W) + Spacing.SCREEN_MARGIN * 2;
+        cachedRightColumn = screen.right(colW).inset(Spacing.SCREEN_MARGIN);
+    }
+
+    private LayoutRegion leftColumn() {
+        ensureColumnLayout();
+        return cachedLeftColumn;
     }
 
     private LayoutRegion rightColumn() {
-        LayoutRegion screen = LayoutRegion.screen(this.width, this.height);
-        int colW = Math.max(WATCH_RADIUS * 2, POSTER_R_W) + Spacing.SCREEN_MARGIN * 2;
-        return screen.right(colW).inset(Spacing.SCREEN_MARGIN);
+        ensureColumnLayout();
+        return cachedRightColumn;
     }
 
     @Override
@@ -309,12 +467,18 @@ public class DiaryTitleScreen extends Screen {
         } catch (Throwable ignored) {}
         if (this.skipMusicButton != null) {
             boolean ready = MenuMusic.isActive() && !MenuMusic.isCrossfading();
+            boolean english = isEnglishSelected();
             this.skipMusicButton.active = ready;
-            this.skipMusicButton.setTooltip(Tooltip.create(Component.literal(
-                ready
-                    ? (isEnglishSelected() ? "Change the chronicler's piece" : "Cambiar la pieza del cronista")
-                    : (isEnglishSelected() ? "The gramophone is turning" : "El gramofono esta girando")
-            )));
+            if (!skipTooltipInitialized || ready != lastSkipTooltipReady
+                    || english != lastSkipTooltipEnglish) {
+                String tooltip = ready
+                    ? (english ? "Change the chronicler's piece" : "Cambiar la pieza del cronista")
+                    : (english ? "The gramophone is turning" : "El gramofono esta girando");
+                this.skipMusicButton.setTooltip(Tooltip.create(Component.literal(tooltip)));
+                lastSkipTooltipReady = ready;
+                lastSkipTooltipEnglish = english;
+                skipTooltipInitialized = true;
+            }
         }
     }
 
@@ -366,11 +530,6 @@ public class DiaryTitleScreen extends Screen {
             drawSignature(g);
             super.render(g, mouseX, mouseY, partialTick);
             renderChroniclerNote(g);
-            if (overQuarantinePoster(mouseX, mouseY)) {
-                g.renderTooltip(this.font,
-                    Component.translatable("gripeverde.poster.quarantine.guide_hint"),
-                    mouseX, mouseY);
-            }
         } else {
             drawCinematicHint(g);
         }
@@ -421,74 +580,186 @@ public class DiaryTitleScreen extends Screen {
     }
 
     /** Polvo por ausencia larga: solo la primera vigilia del regreso. */
+    private static final int RETURN_DUST_COUNT = 40;
     private static final java.util.Random DUST_RNG = new java.util.Random();
+    private static final int[] RETURN_DUST_X = new int[RETURN_DUST_COUNT];
+    private static final int[] RETURN_DUST_Y = new int[RETURN_DUST_COUNT];
+    private static final int[] RETURN_DUST_ALPHA = new int[RETURN_DUST_COUNT];
+    private static int returnDustWidth = -1;
+    private static int returnDustHeight = -1;
+
     private void drawDustIfDue(GuiGraphics g) {
         if (!dustThisSession) return;
-        DUST_RNG.setSeed(0xD05E7L ^ (long)this.width);
-        for (int i = 0; i < 40; i++) {
-            int x = DUST_RNG.nextInt(Math.max(1, this.width));
-            int y = DUST_RNG.nextInt(Math.max(1, this.height));
-            int al = 14 + DUST_RNG.nextInt(16);
+        if (returnDustWidth != this.width || returnDustHeight != this.height) {
+            DUST_RNG.setSeed(0xD05E7L ^ (long)this.width);
+            for (int i = 0; i < RETURN_DUST_COUNT; i++) {
+                RETURN_DUST_X[i] = DUST_RNG.nextInt(Math.max(1, this.width));
+                RETURN_DUST_Y[i] = DUST_RNG.nextInt(Math.max(1, this.height));
+                RETURN_DUST_ALPHA[i] = 14 + DUST_RNG.nextInt(16);
+            }
+            returnDustWidth = this.width;
+            returnDustHeight = this.height;
+        }
+        for (int i = 0; i < RETURN_DUST_COUNT; i++) {
+            int x = RETURN_DUST_X[i];
+            int y = RETURN_DUST_Y[i];
+            int al = RETURN_DUST_ALPHA[i];
             g.fill(x, y, x + 1, y + 1, (al << 24) | 0x9A938A);
         }
     }
 
-    /** Nota de archivo estatica, limitada al menu principal. */
+    /** Nota de archivo: ficha completa si cabe, o una linea en la cabecera. */
     private void renderChroniclerNote(GuiGraphics g) {
         long now = System.currentTimeMillis();
-        if (greetingText == null || now >= greetingShownUntilMs || isMinimalMode()) return;
+        if (greetingText == null || now >= greetingShownUntilMs) return;
 
-        int cardW = Math.min(390, this.width - 32);
-        if (cardW < 180) return;
-        String line = com.eternalcraft.gripeverde.client.render.DiaryChrome
-            .fitText(this.font, greetingText, cardW - 24);
-        if (line.isEmpty()) return;
+        boolean english = isEnglishSelected();
+        if (greetingTranslationKey != null
+                && (!greetingLanguageInitialized || greetingEnglish != english)) {
+            greetingText = Component.translatable(greetingTranslationKey).getString();
+            greetingEnglish = english;
+            greetingLanguageInitialized = true;
+        }
 
-        int cardH = 40;
+        if (drawChroniclerCard(g, english)) return;
+        // v0.179.0: si la ficha no cabe —ventanas estrechas o bajas— el cronista
+        // no se calla: deja la misma frase en una linea en la cabecera, entre el
+        // control de musica y los iconos de acceso.
+        drawGreetingHeader(g);
+    }
+
+    /** Intenta la ficha completa; devuelve false cuando no hay hueco. */
+    private boolean drawChroniclerCard(GuiGraphics g, boolean english) {
+        if (isMinimalMode()) return false;
+
+        // Reserva el hueco entre los dos carteles para que la nota nunca los tape.
+        LayoutRegion left = leftColumn();
+        LayoutRegion right = rightColumn();
+        int centerLane = right.x - (left.x + left.w);
+        int cardW = Math.min(390, Math.min(this.width - 32, centerLane - 16));
+        if (cardW < 180) return false;
+
+        String registry = "CEDA · 1800";
+        int registryW = DiaryTypography.width(this.font, registry);
+        int labelLimit = Math.max(48, cardW - registryW - 28);
+        if (!java.util.Objects.equals(cachedGreetingSource, greetingText)
+                || cachedGreetingCardWidth != cardW
+                || cachedGreetingEnglish != english
+                || cachedGreetingFont != this.font
+                || cachedGreetingLabelLimit != labelLimit) {
+            cachedGreetingLines = DiaryTypography.split(this.font, greetingText, cardW - 24);
+            String label = Component.translatable("gripeverde.title.greeting.label").getString();
+            cachedGreetingLabel = DiaryTypography.fitString(this.font, label, labelLimit);
+            cachedGreetingSource = greetingText;
+            cachedGreetingCardWidth = cardW;
+            cachedGreetingEnglish = english;
+            cachedGreetingFont = this.font;
+            cachedGreetingLabelLimit = labelLimit;
+        }
+        if (cachedGreetingLines.isEmpty()) return false;
+
+        int cardH = 26 + cachedGreetingLines.size() * this.font.lineHeight;
         int x = (this.width - cardW) / 2;
         // La marca del año termina cerca de y=161; la ficha queda debajo.
-        int y = 168;
+        // Nunca sobre la mesa de botones: con y fijo en 168 la ficha caia 46 px
+        // encima de "Multijugador" en 620x290 y 700x300.
+        int y = Math.max(logoBottom() + Spacing.GAP_SMALL, 168);
+        int limit = buttonTableTop() - Spacing.GAP_MEDIUM;
+        if (y + cardH > limit) {
+            if (limit - logoBottom() - Spacing.GAP_SMALL < cardH) return false;
+            y = limit - cardH;
+        }
+        if (y < logoBottom() + Spacing.GAP_SMALL) return false;
         g.fill(x + 2, y + 2, x + cardW + 2, y + cardH + 2,
-            com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
-                com.eternalcraft.gripeverde.client.render.DiaryTheme.INK_BLACK, 72));
-        com.eternalcraft.gripeverde.client.render.PaperTexture.drawClean(
-            g, x, y, cardW, cardH,
-            com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.ARCHIVE);
+            DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 72));
+        PaperTexture.drawClean(
+            g, x, y, cardW, cardH, PaperTexture.PaperKind.ARCHIVE);
 
-        String label = Component.translatable("gripeverde.title.greeting.label").getString();
-        label = com.eternalcraft.gripeverde.client.render.DiaryChrome
-            .fitText(this.font, label, cardW / 2 - 18);
-        String registry = "CEDA · 1800";
-        g.drawString(this.font, label, x + 12, y + 5,
-            com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_MID, false);
-        int registryW = this.font.width(registry);
-        g.drawString(this.font, registry, x + cardW - registryW - 12, y + 5,
-            com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_MID, false);
-        g.fill(x + 10, y + 17, x + cardW - 10, y + 18,
-            com.eternalcraft.gripeverde.client.render.DiaryChrome.INK_DIVIDER);
+        DiaryTypography.draw(g, this.font, cachedGreetingLabel, x + 12, y + 5,
+            DiaryTheme.SEPIA_MID, false);
+        DiaryTypography.draw(g, this.font, registry, x + cardW - registryW - 12, y + 5,
+            DiaryTheme.SEPIA_MID, false);
+        g.fill(x + 10, y + 17, x + cardW - 10, y + 18, DiaryChrome.INK_DIVIDER);
 
-        int textX = x + (cardW - this.font.width(line)) / 2;
-        g.drawString(this.font, line, textX, y + 24,
-            com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_DARK, false);
+        int textY = y + 21;
+        for (int i = 0; i < cachedGreetingLines.size(); i++) {
+            net.minecraft.util.FormattedCharSequence line = cachedGreetingLines.get(i);
+            int lineW = DiaryTypography.width(this.font, line);
+            DiaryTypography.draw(g, this.font, line, x + (cardW - lineW) / 2,
+                textY + i * this.font.lineHeight, DiaryTheme.SEPIA_DARK, false);
+        }
+        return true;
+    }
+
+    /**
+     * v0.179.0: la misma frase en una linea cuando la ficha no cabe. La cabecera
+     * central estaba libre en todos los tamanos (musica en x 8..44, iconos desde
+     * width-76), asi que se recorta a width-160 y se centra en y=10.
+     */
+    private void drawGreetingHeader(GuiGraphics g) {
+        int limitW = Math.max(60, this.width - 160);
+        if (cachedGreetingHeaderLimit != limitW
+                || this.font != cachedGreetingHeaderFont
+                || !java.util.Objects.equals(cachedGreetingHeaderSource, greetingText)) {
+            cachedGreetingHeaderLine = DiaryTypography.fitString(this.font, greetingText, limitW);
+            cachedGreetingHeaderLimit = limitW;
+            cachedGreetingHeaderSource = greetingText;
+            cachedGreetingHeaderFont = this.font;
+        }
+        if (cachedGreetingHeaderLine.isEmpty()) return;
+        int lineW = DiaryTypography.width(this.font, cachedGreetingHeaderLine);
+        DiaryTypography.draw(g, this.font, cachedGreetingHeaderLine,
+            (this.width - lineW) / 2, 10,
+            DiaryTheme.withAlpha(DiaryTheme.PAPER, 190), false);
     }
 
     /** La vigilia nota cuando el lector se queda quieto demasiado tiempo. */
     private void drawVigilLine(GuiGraphics g) {
         long idle = System.currentTimeMillis() - lastInteractionMs;
         if (idle < 60_000L) return;
-        String line;
-        if (idle < 150_000L) {
-            line = Component.translatable("gripeverde.title.vigil.present").getString();
-        } else {
-            line = Component.translatable("gripeverde.title.vigil.fog").getString();
+        int phase = idle < 150_000L ? 0 : 1;
+        boolean english = isEnglishSelected();
+        if (phase != cachedVigilPhase || this.width != cachedVigilWidth
+                || english != cachedVigilEnglish || this.font != cachedVigilFont) {
+            String line = Component.translatable(phase == 0
+                ? "gripeverde.title.vigil.present"
+                : "gripeverde.title.vigil.fog").getString();
+            cachedVigilLine = DiaryTypography.fitString(this.font, line, this.width - 32);
+            cachedVigilTextWidth = DiaryTypography.width(this.font, cachedVigilLine);
+            cachedVigilPhase = phase;
+            cachedVigilWidth = this.width;
+            cachedVigilEnglish = english;
+            cachedVigilFont = this.font;
         }
-        line = com.eternalcraft.gripeverde.client.render.DiaryChrome
-            .fitText(this.font, line, this.width - 32);
-        if (line.isEmpty()) return;
+        if (cachedVigilLine.isEmpty()) return;
         int pulse = reducedMotion() ? 60 : (int)(Math.sin(System.currentTimeMillis() / 700.0) * 22 + 60);
-        int wTxt = this.font.width(line);
-        g.drawString(this.font, line, this.width / 2 - wTxt / 2, this.height / 3 + 24,
+        DiaryTypography.draw(g, this.font, cachedVigilLine,
+            this.width / 2 - cachedVigilTextWidth / 2, vigilLineY(),
             (Math.max(20, pulse) << 24) | 0xA8B890, false);
+    }
+
+    /**
+     * v0.177.0: el susurro de la vigilia nacia en height/3 + 24, que en cualquier
+     * ventana de menos de ~410 px de alto cae dentro del emblema (a 427x240
+     * cruzaba el filete del ano; a 700x400, el rotulo del dia). Busca la primera
+     * banda libre: la que queda entre el emblema y la mesa de botones y, si no
+     * hay altura para una linea, el pie sobre la firma.
+     */
+    private int vigilLineY() {
+        int lineH = this.font.lineHeight;
+        int y = this.height / 3 + 24;
+        // 8 px bajo el emblema: a 560x315 el filete de la fecha termina en 161 y
+        // con 4 px el susurro quedaba pegado al rotulo.
+        int bandTop = logoBottom() + Spacing.GAP_MEDIUM;
+        int bandBottom = buttonTableTop() - Spacing.GAP_SMALL;
+        if (y < bandTop || y + lineH > bandBottom) {
+            if (bandBottom - bandTop >= lineH) {
+                y = Math.max(bandTop, Math.min(y, bandBottom - lineH));
+            } else {
+                y = this.height - 24;
+            }
+        }
+        return y;
     }
 
     @Override
@@ -502,11 +773,11 @@ public class DiaryTitleScreen extends Screen {
         if (this.width < 420 || System.currentTimeMillis() > cinematicHintUntilMs) return;
         boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
         String hint = english ? "F10 to return" : "F10 para volver";
-        int x = this.width - this.font.width(hint) - 10;
+        int x = this.width - DiaryTypography.width(this.font, hint) - 10;
         int y = this.height - 16;
         int col = com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
             com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_LIGHT, 100);
-        g.drawString(this.font, hint, x, y, col, false);
+        DiaryTypography.draw(g, this.font, hint, x, y, col, false);
     }
 
     private void drawGlassPatina(GuiGraphics g) {
@@ -551,7 +822,12 @@ public class DiaryTitleScreen extends Screen {
         int totalBtnH = BTN_H * 2 + Spacing.GAP_MEDIUM;
         int maxPosterH = leftCol.h - totalBtnH - Spacing.GAP_LARGE * 2;
         if (maxPosterH < 140) return null;
-        return new int[] { leftCol.x, leftCol.y, POSTER_W, Math.min(POSTER_H_MAX, maxPosterH) };
+        int[] bounds = this.quarantinePosterBounds;
+        bounds[0] = leftCol.x;
+        bounds[1] = leftCol.y;
+        bounds[2] = POSTER_W;
+        bounds[3] = Math.min(POSTER_H_MAX, maxPosterH);
+        return bounds;
     }
 
     private boolean overQuarantinePoster(double mouseX, double mouseY) {
@@ -575,7 +851,12 @@ public class DiaryTitleScreen extends Screen {
 
         int cx = rightCol.x + rightCol.w - WATCH_RADIUS - Spacing.GAP_MEDIUM;
         int cy = rightCol.y + WATCH_RADIUS + Spacing.GAP_LARGE;
-        PocketWatchRenderer.draw(g, cx, cy, 0, WATCH_RADIUS, GripeVerdeMod.VERSION);
+        // v0.175.0: la cadena colgaba desde y=0 y cruzaba la fila de iconos de
+        // arriba a la derecha (crónica, guía, CEDA), que ocupa y 8..28 en el
+        // mismo carril. Arranca por debajo de esa fila; si no queda sitio el
+        // propio renderer omite la cadena en vez de dibujar un muñón.
+        int chainTop = Math.max(rightCol.y, ICON_ROW_BOTTOM + Spacing.GAP_SMALL);
+        PocketWatchRenderer.draw(g, cx, cy, chainTop, WATCH_RADIUS, GripeVerdeMod.VERSION);
     }
 
     private void drawPosterRight(GuiGraphics g) {
@@ -602,7 +883,15 @@ public class DiaryTitleScreen extends Screen {
             shakeX = (int)(Math.sin(now / 40.0) * 3 * intensity);
             shakeY = (int)(Math.cos(now / 30.0) * 2 * intensity);
         }
-        LogoRenderer.draw(g, this.width / 2 + shakeX, 30 + shakeY);
+        // v0.175.0: en ventanas bajas el emblema se encoge (nunca se omite si
+        // aun se lee) para no caer sobre la mesa de botones. A 427x240 —el
+        // tamano por defecto a escala GUI 2— el bloque completo invadia 45 px.
+        float logoScale = logoScale();
+        if (buttonTableTop() - Spacing.GAP_MEDIUM - LOGO_TOP
+                < LogoRenderer.BLOCK_H * LOGO_MIN_SCALE) {
+            return;
+        }
+        LogoRenderer.draw(g, this.width / 2 + shakeX, LOGO_TOP + shakeY, logoScale);
 
         // Renderizar particulas verdes cayendo solo cuando el movimiento esta habilitado.
         if (!reducedMotion() && now < eggParticlesUntilMs) {
@@ -653,24 +942,23 @@ public class DiaryTitleScreen extends Screen {
             if (idx == 0 && com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("pereira_offended") > 0) {
                 signature = isEnglishSelected()
                     ? "Dr. S. Pereira (you again?)"
-                    : "Dr. S. Pereira (¿otra vez tu?)";
+                    : "Dr. S. Pereira (¿otra vez tú?)";
             }
         } catch (Throwable ignored) {}
         // Nombre viejo tachado: el anterior del pool
         int oldIdx = (idx + SIGNATURE_POOL_ES.length - 1) % SIGNATURE_POOL_ES.length;
         String oldSig = signatureFor(oldIdx);
 
-        int sw = this.font.width(signature);
-        int oldSw = this.font.width(oldSig);
+        int sw = DiaryTypography.width(this.font, signature);
+        int oldSw = DiaryTypography.width(this.font, oldSig);
         int y = this.height - 12;
 
         // En ventanas compactas, conserva solo la firma vigente para que no
         // se cruce con el control de música del borde inferior.
         if (isCompactLayout()) {
-            String compactSignature = com.eternalcraft.gripeverde.client.render.DiaryChrome
-                .fitText(this.font, signature, this.width - 62);
+            String compactSignature = DiaryTypography.fitString(this.font, signature, this.width - 62);
             if (!compactSignature.isEmpty()) {
-                g.drawString(this.font, compactSignature, 48, y, DiaryTheme.SEPIA_LIGHT, false);
+                DiaryTypography.draw(g, this.font, compactSignature, 48, y, DiaryTheme.SEPIA_LIGHT, false);
             }
             return;
         }
@@ -684,7 +972,7 @@ public class DiaryTitleScreen extends Screen {
         int newX = Math.max(48, this.width - sw - oldSw - 16);
         int newY = y;
         // v0.21.25: firma limpia sin sombra.
-        g.drawString(this.font, signature,
+        DiaryTypography.draw(g, this.font, signature,
             newX, newY,
             DiaryTheme.SEPIA_LIGHT, false);
 
@@ -692,7 +980,7 @@ public class DiaryTitleScreen extends Screen {
         int oldX = this.width - oldSw - 6;
         int oldColor = com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
             com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_LIGHT, 100);
-        g.drawString(this.font, oldSig, oldX, y, oldColor, false);
+        DiaryTypography.draw(g, this.font, oldSig, oldX, y, oldColor, false);
 
         // Tachadura sobre nombre viejo
         int strikeY = y + 4;
@@ -715,60 +1003,60 @@ public class DiaryTitleScreen extends Screen {
     // Keep them language-aware so the Title does not mix Spanish subtitles with
     // English buttons after changing language.
     private static final String[] MULTIPLAYER_SUBTITLES_ES = {
-        "Luchen junto a sus hermanos",
-        "El regimiento los espera",
-        "Nadie sobrevive en soledad",
-        "Que su sangre sea la ultima",
-        "Marchen al frente",
-        "Que nadie cruce solo la niebla",
-        "La guardia acepta nuevos nombres",
-        "Hay luces en otros barrios",
-        "Compartan el pan y la fiebre",
-        "Los hospedajes abren sus libretas",
-        "Un cordon se sostiene entre todos",
-        "Escriban su nombre en la guardia"
+        "Vayan siempre con los suyos.",
+        "El regimiento los espera.",
+        "Nadie sobrevive en soledad.",
+        "Que la fiebre termine aquí.",
+        "La línea del frente los llama.",
+        "No crucen solos la niebla.",
+        "La guardia aún necesita gente.",
+        "Hay faroles encendidos en otros barrios.",
+        "Compartan el pan, no la fiebre.",
+        "En las posadas apuntan cada llegada.",
+        "El cordón se sostiene entre todos.",
+        "Dejen su nombre con la guardia."
     };
     private static final String[] MULTIPLAYER_SUBTITLES_EN = {
-        "Fight beside your brothers",
-        "The regiment awaits",
-        "No one survives alone",
-        "May your blood be the last",
-        "March to the front",
-        "No one crosses the fog alone",
-        "The guard accepts new names",
-        "There are lights in other districts",
-        "Share the bread and the fever",
-        "The lodgings open their ledgers",
-        "A cordon is held by every hand",
-        "Write your name in the watch"
+        "Stay close to your own.",
+        "The regiment is waiting.",
+        "No one survives alone.",
+        "Let the fever end here.",
+        "The front line is calling.",
+        "Don't cross the fog alone.",
+        "The watch still needs hands.",
+        "Lamps still burn in other wards.",
+        "Share the bread, not the fever.",
+        "The inns keep a record of every arrival.",
+        "The cordon holds because we do.",
+        "Leave your name with the watch."
     };
     private static final String[] MODS_SUBTITLES_ES = {
-        "Preparen su equipamiento",
-        "Revisen los arsenales",
-        "El acero no descansa",
-        "Que instrumentos tenemos hoy",
-        "Reservas de la ultima campana",
-        "Inventario de instrumentos prohibidos",
-        "Las cajas del sanatorio",
-        "Herramientas para una ciudad enferma",
-        "Que piezas sostienen esta noche",
-        "Cada pieza lleva su sello",
-        "Lo que el cordon permite",
-        "Cuenten las lamparas antes de salir"
+        "Revisen cada arma antes de salir.",
+        "El acero aún está frío.",
+        "¿Qué nos queda para esta noche?",
+        "Las últimas reservas de la campana.",
+        "Instrumentos que conviene no nombrar.",
+        "Las cajas del sanatorio siguen cerradas.",
+        "Hay herramientas para una ciudad enferma.",
+        "¿Qué piezas nos quedan?",
+        "Cada pieza lleva su marca.",
+        "El cordón decide qué puede salir.",
+        "Revisen los faroles antes de partir.",
+        "Cuenten las lámparas antes de salir."
     };
     private static final String[] MODS_SUBTITLES_EN = {
-        "Prepare your equipment",
-        "Inspect the arsenals",
-        "Steel does not rest",
-        "What instruments do we have tonight",
-        "Stores from the last bell",
-        "Inventory of forbidden instruments",
-        "The sanatorium crates",
-        "Tools for a sickened city",
-        "What pieces hold this night together",
-        "Every piece bears its seal",
-        "What the cordon allows",
-        "Count the lamps before leaving"
+        "Check each weapon before you leave.",
+        "The steel is still cold.",
+        "What have we left for tonight?",
+        "The last stores from the bell tower.",
+        "Tools best left unnamed.",
+        "The sanatorium crates remain shut.",
+        "Tools for a city gone ill.",
+        "What pieces do we have left?",
+        "Every piece bears its mark.",
+        "The cordon decides what may pass.",
+        "Check the lamps before you leave.",
+        "Count the lamps before setting out."
     };
     private static final java.util.Random SUB_RNG = new java.util.Random();
 
@@ -816,10 +1104,17 @@ public class DiaryTitleScreen extends Screen {
                     return true;
                 }
                 int w = this.width, h = this.height;
+                boolean overButton = overAnyButton(mouseX, mouseY);
 
                 // El ojo del emblema no esta pintado: mira.
                 int logoCx = w / 2;
-                if (mouseX >= logoCx + 1 && mouseX <= logoCx + 9 && mouseY >= 52 && mouseY <= 60) {
+                // El ojo vive en el bloque sin escalar a y 52..60; con el
+                // emblema encogido hay que llevar el clic a esa misma escala.
+                float eyeScale = logoScale();
+                int eyeCy = LOGO_TOP + Math.round(56 * eyeScale);
+                int eyeHalf = Math.max(3, Math.round(4 * eyeScale));
+                if (mouseX >= logoCx + 1 && mouseX <= logoCx + 9
+                        && mouseY >= eyeCy - eyeHalf && mouseY <= eyeCy + eyeHalf) {
                     com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
                         com.eternalcraft.gripeverde.client.lore.Discoveries.SKULL_WATCHES);
                 }
@@ -828,7 +1123,7 @@ public class DiaryTitleScreen extends Screen {
                 LayoutRegion rightCol = rightColumn();
                 int watchCx = rightCol.x + rightCol.w - WATCH_RADIUS - Spacing.GAP_MEDIUM;
                 int watchCy = rightCol.y + WATCH_RADIUS + Spacing.GAP_LARGE;
-                if (!isMinimalMode()
+                if (!overButton && !isMinimalMode()
                         && mouseX >= watchCx - WATCH_RADIUS - 10 && mouseX <= watchCx + WATCH_RADIUS + 10
                         && mouseY >= watchCy - WATCH_RADIUS - 14 && mouseY <= watchCy + WATCH_RADIUS + 22) {
                     handleWatchClick();
@@ -836,13 +1131,13 @@ public class DiaryTitleScreen extends Screen {
                 }
 
                 // v0.32.0: el edicto abre la copia de campo sin censura.
-                if (overQuarantinePoster(mouseX, mouseY)) {
+                if (!overButton && overQuarantinePoster(mouseX, mouseY)) {
                     this.minecraft.setScreen(new DiaryFieldGuideScreen(this));
                     return true;
                 }
 
                 // El cartel del buscado: sostenerle la mirada.
-                if (isWantedPosterShowing()) {
+                if (!overButton && isWantedPosterShowing()) {
                     int[] rr = wantedPosterRect();
                     if (rr != null && mouseX >= rr[0] && mouseX <= rr[0] + rr[2]
                             && mouseY >= rr[1] && mouseY <= rr[1] + rr[3]) {
@@ -856,14 +1151,16 @@ public class DiaryTitleScreen extends Screen {
 
                 // El gato del tejado cobra sus deudas despacio.
                 int[] catR = com.eternalcraft.gripeverde.client.render.VictorianSkyline.catRect(w, h);
-                if (!isMinimalMode() && mouseX >= catR[0] && mouseX <= catR[0] + catR[2]
+                if (!overButton && !isMinimalMode()
+                        && mouseX >= catR[0] && mouseX <= catR[0] + catR[2]
                         && mouseY >= catR[1] && mouseY <= catR[1] + catR[3]) {
                     handleCatClick();
                     return true;
                 }
 
                 // La rata que se detuvo.
-                if (com.eternalcraft.gripeverde.client.render.LivingAtmosphere.ratHit(mouseX, mouseY, w, h)) {
+                if (!overButton
+                        && com.eternalcraft.gripeverde.client.render.LivingAtmosphere.ratHit(mouseX, mouseY, w, h)) {
                     if (com.eternalcraft.gripeverde.client.render.LivingAtmosphere.isRatStanding()) {
                         com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
                             com.eternalcraft.gripeverde.client.lore.Discoveries.RAT_PAUSE);
@@ -874,7 +1171,8 @@ public class DiaryTitleScreen extends Screen {
 
                 // La ventana del atico espera respuesta.
                 int[] sw = com.eternalcraft.gripeverde.client.render.VictorianSkyline.signalWindowRect(w, h);
-                if (mouseX >= sw[0] - 2 && mouseX <= sw[0] + sw[2] + 2
+                if (!overButton
+                        && mouseX >= sw[0] - 2 && mouseX <= sw[0] + sw[2] + 2
                         && mouseY >= sw[1] - 2 && mouseY <= sw[1] + sw[3] + 2) {
                     com.eternalcraft.gripeverde.client.render.VictorianSkyline.signalWindowClicked();
                     return true;
@@ -898,11 +1196,15 @@ public class DiaryTitleScreen extends Screen {
             } catch (Throwable ignored) {}
         }
 
-        // Zona del logo: rectangulo central superior
+        // Zona del logo: rectangulo central superior. Alto real del bloque ya
+        // escalado: con una caja fija hasta y=130, en ventanas de 240 px el
+        // borde de "Multijugador" (y=116) disparaba tambien el sello del emblema.
         int logoCx = this.width / 2;
-        boolean overLogo = mouseX >= logoCx - 100 && mouseX <= logoCx + 100
-                        && mouseY >= 30 && mouseY <= 130;
-        if (overLogo && button == 0) {
+        int logoBottom = logoBottom();
+        int logoHalf = LogoRenderer.BLOCK_W / 2 + 2;
+        boolean overLogo = mouseX >= logoCx - logoHalf && mouseX <= logoCx + logoHalf
+                        && mouseY >= LOGO_TOP && mouseY <= logoBottom;
+        if (overLogo && button == 0 && !overAnyButton(mouseX, mouseY)) {
             handleLogoClick();
             // No consumir el evento, dejar pasar al super
         }
@@ -1002,13 +1304,13 @@ public class DiaryTitleScreen extends Screen {
     // Easter egg: click en el logo -> expediente sellado aleatorio
     private static final String[] LOGO_EASTER_EGGS_ES = {
         "El reloj del ministerio acaba de marcar una hora que no existe.",
-        "Una carta sin sello respira dentro del cajon del cronista.",
+        "Una carta sin sello respira dentro del cajón del cronista.",
         "La ventana del tercer piso respondio con una luz verde.",
-        "Las ratas dejaron una flecha perfecta apuntando al rio.",
-        "El nombre del ultimo testigo aparecio escrito antes de llegar.",
+        "Las ratas dejaron una flecha perfecta apuntando al río.",
+        "El nombre del último testigo apareció escrito antes de llegar.",
         "La campana conto a los ausentes, no a los vivos.",
         "Hay barro fresco bajo una puerta que nadie ha abierto.",
-        "El gato del tejado pronuncio un apellido y salto a la niebla."
+        "El gato del tejado pronunció un apellido y saltó a la niebla."
     };
     private static final String[] LOGO_EASTER_EGGS_EN = {
         "The ministry clock has just struck an hour that does not exist.",
@@ -1023,6 +1325,18 @@ public class DiaryTitleScreen extends Screen {
 
     private long lastLogoClickMs = 0L;
     private String easterEggMessage = null;
+    private int easterEggIndex = -1;
+    private boolean easterEggEnglish = true;
+    private String cachedEasterEggMessage = null;
+    private int cachedEasterElapsedChars = -1;
+    private int cachedEasterBoxWidth = -1;
+    private net.minecraft.client.gui.Font cachedEasterFont = null;
+    private java.util.List<net.minecraft.util.FormattedCharSequence> cachedEasterLines = java.util.Collections.emptyList();
+    private int cachedEasterCursorTextWidth = 0;
+    private String cachedShootStarMessage;
+    private int cachedShootStarMaxWidth = -1;
+    private net.minecraft.client.gui.Font cachedShootStarFont;
+    private java.util.List<net.minecraft.util.FormattedCharSequence> cachedShootStarLines = java.util.Collections.emptyList();
     private String easterEggCaseCode = "";
     private long easterEggStartedMs = 0L;
     private long easterEggUntilMs = 0L;
@@ -1056,14 +1370,16 @@ public class DiaryTitleScreen extends Screen {
         sealTapLastMs = now;
         if (sealTapStreak >= 9) breakWaxSeal();
 
-        String[] eggPool = isEnglishSelected() ? LOGO_EASTER_EGGS_EN : LOGO_EASTER_EGGS_ES;
+        easterEggEnglish = isEnglishSelected();
+        String[] eggPool = easterEggEnglish ? LOGO_EASTER_EGGS_EN : LOGO_EASTER_EGGS_ES;
         int caseNo = 17 + EASTER_RNG.nextInt(80);
         char letter = (char)('A' + EASTER_RNG.nextInt(6));
         easterEggCaseCode = String.format(java.util.Locale.ROOT, "%02d-%c", caseNo, letter);
-        easterEggMessage = eggPool[EASTER_RNG.nextInt(eggPool.length)];
+        easterEggIndex = EASTER_RNG.nextInt(eggPool.length);
+        easterEggMessage = eggPool[easterEggIndex];
         boolean reduced = reducedMotion();
         easterEggStartedMs = reduced ? now - easterEggMessage.length() * 22L : now;
-        easterEggUntilMs = now + 5200L;
+        easterEggUntilMs = now + 3800L;
         skullShakeUntilMs = reduced ? 0L : now + 520L;
         easterLightningUntilMs = reduced ? 0L : now + 280L;
 
@@ -1154,6 +1470,15 @@ public class DiaryTitleScreen extends Screen {
 
         if (easterEggMessage == null || now >= easterEggUntilMs) return;
 
+        boolean english = isEnglishSelected();
+        if (english != easterEggEnglish && easterEggIndex >= 0) {
+            String[] eggPool = english ? LOGO_EASTER_EGGS_EN : LOGO_EASTER_EGGS_ES;
+            easterEggMessage = eggPool[Math.min(easterEggIndex, eggPool.length - 1)];
+            easterEggEnglish = english;
+            cachedEasterEggMessage = null;
+            cachedEasterElapsedChars = -1;
+        }
+
         long remain = easterEggUntilMs - now;
         int alpha = remain < 900L ? (int)(230 * remain / 900L) : 230;
         alpha = Math.max(0, Math.min(230, alpha));
@@ -1161,13 +1486,23 @@ public class DiaryTitleScreen extends Screen {
         int elapsedChars = reducedMotion()
             ? easterEggMessage.length()
             : (int)Math.min(easterEggMessage.length(), Math.max(0, (now - easterEggStartedMs) / 22L));
-        String visibleMessage = easterEggMessage.substring(0, elapsedChars);
-
-        int boxW = Math.max(220, Math.min(330, this.width - 96));
+        int boxW = Math.max(220, Math.min(260, this.width - 96));
         // v0.25.2: jamas mas ancho que la propia pantalla (escala GUI 4).
         boxW = Math.min(boxW, Math.max(120, this.width - 16));
-        java.util.List<net.minecraft.util.FormattedCharSequence> lines =
-            this.font.split(Component.literal(visibleMessage), boxW - 34);
+        if (easterEggMessage != cachedEasterEggMessage
+                || elapsedChars != cachedEasterElapsedChars
+                || boxW != cachedEasterBoxWidth
+                || this.font != cachedEasterFont) {
+            String visibleMessage = easterEggMessage.substring(0, elapsedChars);
+            cachedEasterLines = DiaryTypography.split(this.font, Component.literal(visibleMessage), boxW - 34);
+            cachedEasterCursorTextWidth = DiaryTypography.width(this.font, 
+                DiaryTypography.fitString(this.font, visibleMessage, boxW - 44, false));
+            cachedEasterEggMessage = easterEggMessage;
+            cachedEasterElapsedChars = elapsedChars;
+            cachedEasterBoxWidth = boxW;
+            cachedEasterFont = this.font;
+        }
+        java.util.List<net.minecraft.util.FormattedCharSequence> lines = cachedEasterLines;
         // v0.23.2: con la maquina de escribir, el primer fotograma tiene 0 letras y
         // font.split("") devuelve lista VACIA; indexarla crashaba el cliente (AIOOBE
         // reportado en 0.22.0). lineCount jamas puede superar lines.size().
@@ -1203,33 +1538,37 @@ public class DiaryTitleScreen extends Screen {
         g.fill(boxX + boxW - 20, boxY + 7, boxX + boxW - 8, boxY + 8, green);
 
         String stamp = isEnglishSelected() ? "CASE " + easterEggCaseCode : "CASO " + easterEggCaseCode;
-        g.drawString(this.font, stamp, boxX + 13, boxY + 8, red, false);
+        DiaryTypography.draw(g, this.font, stamp, boxX + 13, boxY + 8, red, false);
         String seal = isEnglishSelected() ? "UNDER SEAL" : "BAJO SELLO";
-        int sealW = this.font.width(seal);
+        int sealW = DiaryTypography.width(this.font, seal);
         // v0.21.25: texto limpio sin sombra.
-        g.drawString(this.font, seal, boxX + boxW - sealW - 13, boxY + 8, DiaryTheme.withAlpha(0xFF241608, alpha), false);
+        DiaryTypography.draw(g, this.font, seal, boxX + boxW - sealW - 13, boxY + 8, DiaryTheme.withAlpha(0xFF241608, alpha), false);
         g.fill(boxX + 12, boxY + 19, boxX + boxW - 12, boxY + 20, (Math.min(115, alpha) << 24) | 0x422810);
 
         int textY = boxY + 25;
         for (int i = 0; i < lineCount; i++) {
-            g.drawString(this.font, lines.get(i), boxX + 15, textY + i * this.font.lineHeight, ink, false);
+            DiaryTypography.draw(g, this.font, lines.get(i), boxX + 15, textY + i * this.font.lineHeight, ink, false);
         }
 
         int pulse = 80 + (int)(Math.sin(now / 120.0) * 45.0);
         int dot = (Math.min(alpha, Math.max(30, pulse)) << 24) | 0x5A7038;
         g.fill(boxX + boxW - 10, boxY + boxH - 10, boxX + boxW - 6, boxY + boxH - 6, dot);
         if (elapsedChars < easterEggMessage.length()) {
-            int cx = boxX + 15 + this.font.width(this.font.plainSubstrByWidth(visibleMessage, boxW - 44));
+            int cx = boxX + 15 + cachedEasterCursorTextWidth;
             g.fill(Math.min(boxX + boxW - 18, cx + 2), boxY + boxH - 13,
                 Math.min(boxX + boxW - 16, cx + 4), boxY + boxH - 5, green);
         }
     }
 
+    /**
+     * v0.177.0: la mesa se mide con la misma formula que usa el emblema para
+     * escalarse. Antes se derivaba de leftColumn(), que en ventanas estrechas ya
+     * no coincide con la mesa: el grupo se centra y el margen lateral no es su x.
+     */
     private int estimateFirstButtonTop() {
         try {
-            LayoutRegion leftCol = leftColumn();
-            int totalBtnH = BTN_H * 2 + Spacing.GAP_MEDIUM;
-            return leftCol.anchorY(Anchor.BOT_LEFT, totalBtnH) - Spacing.GAP_LARGE;
+            if (buttonTableTop() > 0) return buttonTableTop();
+            return this.height - 96;
         } catch (Throwable ignored) {
             return this.height - 96;
         }
@@ -1237,20 +1576,33 @@ public class DiaryTitleScreen extends Screen {
 
     private void drawShootStarMessage(net.minecraft.client.gui.GuiGraphics g) {
         if (reducedMotion()) return;
-        String ssm = com.eternalcraft.gripeverde.client.render.AtmosphereRenderer.shootStarMessage;
         long untilMs = com.eternalcraft.gripeverde.client.render.AtmosphereRenderer.shootStarMessageUntilMs;
-        if (ssm == null) return;
         long now = System.currentTimeMillis();
         if (now >= untilMs) return;
+
+        com.eternalcraft.gripeverde.client.render.AtmosphereRenderer.refreshShootStarMessageLanguage();
+        String ssm = com.eternalcraft.gripeverde.client.render.AtmosphereRenderer.shootStarMessage;
+        if (ssm == null) return;
+
         long remain = untilMs - now;
         int alpha = remain < 800L ? (int)(220 * remain / 800L) : 220;
         int col = (alpha << 24) | 0xE8DCB4;
-        int shadowCol = (alpha << 24) | 0x000000;
-        int w = this.font.width(ssm);
-        // Posicion: arriba del logo (y ~200 para que sea visible)
-        int cx = this.width / 2 - w / 2;
-        int cy = this.height / 3;
-        // v0.21.25: texto limpio sin sombra.
-        g.drawString(this.font, ssm, cx, cy, col, false);
+        int maxWidth = Math.max(40, this.width - 32);
+        if (!ssm.equals(cachedShootStarMessage)
+                || this.font != cachedShootStarFont
+                || maxWidth != cachedShootStarMaxWidth) {
+            cachedShootStarLines = DiaryTypography.split(this.font, Component.literal(ssm), maxWidth);
+            cachedShootStarMessage = ssm;
+            cachedShootStarFont = this.font;
+            cachedShootStarMaxWidth = maxWidth;
+        }
+        java.util.List<net.minecraft.util.FormattedCharSequence> lines = cachedShootStarLines;
+        int totalHeight = lines.size() * this.font.lineHeight;
+        int top = Math.max(8, Math.min(this.height / 3, this.height - totalHeight - 8));
+        for (int i = 0; i < lines.size(); i++) {
+            net.minecraft.util.FormattedCharSequence line = lines.get(i);
+            int x = Math.max(8, (this.width - DiaryTypography.width(this.font, line)) / 2);
+            DiaryTypography.draw(g, this.font, line, x, top + i * this.font.lineHeight, col, false);
+        }
     }
 }

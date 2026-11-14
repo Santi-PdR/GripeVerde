@@ -3,6 +3,7 @@ package com.eternalcraft.gripeverde.client.lore;
 import com.eternalcraft.gripeverde.client.audio.ModSounds;
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
+import com.eternalcraft.gripeverde.client.util.MotionPolicy;
 import net.minecraft.client.Minecraft;
 
 /**
@@ -121,9 +122,12 @@ public final class Discoveries {
         long now = System.currentTimeMillis();
         long remain = toastUntilMs - now;
         long age = now - toastStartMs;
+        boolean reducedMotion = MotionPolicy.isReduced();
         int alpha = 232;
-        if (age < 180L) alpha = (int)(232 * age / 180L);
-        else if (remain < 260L) alpha = (int)(232 * remain / 260L);
+        if (!reducedMotion) {
+            if (age < 180L) alpha = (int)(232 * age / 180L);
+            else if (remain < 260L) alpha = (int)(232 * remain / 260L);
+        }
         alpha = Math.max(0, Math.min(232, alpha));
 
         boolean english = isEnglish();
@@ -186,7 +190,7 @@ public final class Discoveries {
             case SMUGGLER_SIGNAL:   return en ? "The smuggler's signal" : "La señal del contrabandista";
             case MIRROR:            return en ? "How the fog sees you" : "Cómo te ve la niebla";
             case LETTERS:           return en ? "The unanswered letters" : "Las cartas sin respuesta";
-            case EYE_FOLLOWS:       return en ? "Perception watches back" : "La percepción también mira";
+            case EYE_FOLLOWS:       return en ? "The little eye in the corner" : "El ojito de la esquina";
             case GUESTBOOK:         return en ? "Signed, in the visitor's book" : "Firmado en el libro de visitas";
             case FOG_TONGUE:        return en ? "The impossible tongue" : "La lengua imposible";
             case BINDER_MARKS:      return en ? "The binder's marks" : "Las marcas del encuadernador";
@@ -215,7 +219,7 @@ public final class Discoveries {
             case ARCHIVE_THINNING:  return en ? "The archive that grows thinner" : "El archivo que se adelgaza";
             case THEME_NEVER_PLAYED: return en ? "The theme that never played" : "El tema que nunca sonó";
             case BG_TOWN_MEMORY:    return en ? "The street that never existed" : "La calle que nunca existió";
-            case BUTTONS_NEVER_PRESSED: return en ? "The buttons never pressed" : "Los botones que nunca se pulsaron";
+            case BUTTONS_NEVER_PRESSED: return en ? "The empty desk" : "El escritorio vacío";
             default: return "???";
         }
     }
@@ -246,7 +250,7 @@ public final class Discoveries {
             case SMUGGLER_SIGNAL:   return en ? "Hands, keys and field habits hide a sign." : "Manos, llaves y costumbres esconden una señal.";
             case MIRROR:            return en ? "Dress and bearing include a mirror." : "El porte incluye un espejo.";
             case LETTERS:           return en ? "Write to the district that does not answer." : "Escribe al barrio que no responde.";
-            case EYE_FOLLOWS:       return en ? "Perception aids watch their watcher." : "Las ayudas de percepción vigilan a quien vigila.";
+            case EYE_FOLLOWS:       return en ? "That little eye seems to be alive." : "Ese ojito parece estar vivo.";
             case GUESTBOOK:         return en ? "The atlas of lodgings keeps a register." : "El atlas de hospederías lleva un registro.";
             case FOG_TONGUE:        return en ? "Some tongues are only spoken by the found." : "Hay lenguas que solo hablan los encontrados.";
             case BINDER_MARKS:      return en ? "The chronicle's margins keep marks." : "Los márgenes de la crónica guardan marcas.";
@@ -275,7 +279,7 @@ public final class Discoveries {
             case ARCHIVE_THINNING:  return en ? "Open the cabinet again and again, until it gives up its old papers." : "Abre el gabinete una y otra vez, hasta que entregue sus papeles viejos.";
             case THEME_NEVER_PLAYED: return en ? "Speak the word of the cleansing." : "Pronuncia la palabra de la limpieza.";
             case BG_TOWN_MEMORY:    return en ? "When the archive confesses two ghosts, ask for the third." : "Cuando el archivo confiese dos fantasmas, pide el tercero.";
-            case BUTTONS_NEVER_PRESSED: return en ? "When three ghosts confess, the fourth remembers the unused desk." : "Cuando tres fantasmas confiesen, el cuarto recuerda la mesa sin uso.";
+            case BUTTONS_NEVER_PRESSED: return en ? "When the three ghosts have spoken, wait quietly by the desk." : "Cuando hablen los tres fantasmas, espera en silencio junto al escritorio.";
             default: return "???";
         }
     }
@@ -291,7 +295,7 @@ public final class Discoveries {
         boolean result;
         try {
             String lang = Minecraft.getInstance().getLanguageManager().getSelected();
-            result = lang == null || !"es_es".equals(lang);
+            result = lang == null || !lang.toLowerCase(java.util.Locale.ROOT).startsWith("es");
         } catch (Throwable t) {
             result = true;
         }
