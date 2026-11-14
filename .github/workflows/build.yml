@@ -55,7 +55,12 @@ jobs:
   # el workflow, para no ampliar permisos del build normal.
   publish:
     needs: build
-    if: github.event_name == 'workflow_dispatch' && inputs.publish_release == true
+    # Se publica a mano (workflow_dispatch) o con la marca [release] en el
+    # mensaje del commit, porque el token de esta sesion no puede disparar
+    # workflows por API (403 actions: write).
+    if: |
+      (github.event_name == 'workflow_dispatch' && inputs.publish_release == true)
+      || (github.event_name == 'push' && contains(github.event.head_commit.message, '[release]'))
     runs-on: ubuntu-latest
     permissions:
       contents: write
