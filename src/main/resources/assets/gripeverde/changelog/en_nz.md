@@ -1,3 +1,7 @@
+## Version 0.182.0 - The chronicle breathes
+
+The change log was the densest sheet in the diary: eleven pixels between lines, ten between paragraphs and a fixed margin of fifty-six that left only 208 pixels of paper in a 320-pixel window. Every line now gets a pixel, titles two and the gap between paragraphs three; the rule between versions grows from twelve to sixteen so entries do not touch. The side margin follows the window instead of being fixed, which gives the chronicle 240 pixels where it used to have 208. The close button is measured against the sheet, so it no longer sticks out in tiny windows, and the binder marks and the hidden folio now ask the buttons first, the same rule the cover has followed since 0.178.0. The wheel no longer plays a page sound when there is nothing to scroll.
+
 ## Version 0.181.0 - The old messages come along
 
 CopyL kept ten quick messages in its own config file, so uninstalling it threw them away. This sheet now reads that file once - names, texts and keys - and keeps its own copy in gripeverde-dispatch.json, so CopyL can leave the mods folder with nothing lost. The ten slots sit on the right of the sheet, or as a row of numbered chips in narrow windows: click one to send it, Shift-click to load it into a line, Ctrl-click to save the line you are writing into that slot, and right-click to give it a key. While CopyL is still installed its own keys stay in charge, so nothing is ever sent twice.

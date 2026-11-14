@@ -1,3 +1,7 @@
+## v0.182.0 - La crónica respira
+
+`ChangelogScreen` era la hoja más apretada del diario y la única sin auditar (22 `return true`). Ritmo nuevo: `LINE_H` 11→12, `H1_LINE_H` 16→18, `H2`/`BOLD` 13→14, `GAP_H` 10→13, `SEP_H` 12→16, `PAD_Y` 26→30. El margen lateral pasa de 56 fijo a `clamp(12, width/8, 56)`, así que a 320 px el panel crece de 208 a 240. El botón Cerrar se mide contra el panel (`min(130, panelW-24)`, mínimo 84) y ya no sobresale en ventanas mínimas. Las marcas del encuadernador y el folio escondido ahora preguntan primero por los widgets (`overAnyWidget`, con `this.children()`), como la portada desde 0.178.0. La rueda no suena ni se queda el gesto cuando `maxScroll == 0`. El CI además compila `arena/**`.
+
 ## v0.181.0 - Los mensajes viejos se vienen con nosotros
 
 `DispatchLibrary` lee `config/copyl-messages.json` (nombres, textos y teclas de las diez ranuras) y `copyl.json`/`lclient.json` (tecla de apertura) una sola vez, y guarda la copia propia en `config/gripeverde-dispatch.json`. `DispatchHotkeys` honra esas teclas cuando CopyL no está instalado (chat, o comando si el texto empieza con `/`), con guarda de flanco para que mantener apretado no dispare tanda. La ficha muestra las ranuras en columna (≥420 px de ancho) o como tira de chips: clic envía, Shift carga, Ctrl guarda la línea, clic derecho fija tecla. 9 claves nuevas × 25 idiomas (200 en el espejo).

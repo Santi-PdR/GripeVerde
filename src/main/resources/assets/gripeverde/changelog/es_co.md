@@ -1,3 +1,7 @@
+## Version 0.182.0 - La crónica respira
+
+El historial era la hoja más apretada del diario: once píxeles entre renglones, diez entre párrafos y un margen fijo de cincuenta y seis que en una ventana de 320 px dejaba solo 208 de papel. Ahora cada renglón gana un píxel, los títulos dos y el hueco entre párrafos tres; el filete entre versiones pasa de doce a dieciséis para que las entradas no se toquen. El margen lateral sigue a la ventana en vez de ser fijo, así que la crónica tiene 240 px donde antes tenía 208. El botón de cerrar se mide contra la hoja, así que ya no sobresale en ventanas mínimas, y las marcas del encuadernador y el folio escondido preguntan primero por los botones, la misma regla que sigue la portada desde 0.178.0. La rueda ya no suena a página cuando no hay nada que recorrer.
+
 ## Version 0.181.0 - Los mensajes viejos se vienen con nosotros
 
 CopyL guardaba diez mensajes rápidos en su propio archivo de config, así que desinstalarlo se los llevaba puestos. Ahora esta ficha lee ese archivo una sola vez —nombres, textos y teclas— y se queda con una copia propia en gripeverde-dispatch.json, así que CopyL puede salir de mods sin que se pierda nada. Las diez ranuras van a la derecha de la ficha, o como una tira de números en ventanas angostas: un clic envía, Shift+clic la carga en un renglón, Ctrl+clic guarda el renglón que estás escribiendo en esa ranura y con clic derecho le ponés tecla. Mientras CopyL siga instalado mandan sus teclas, para que ningún mensaje salga dos veces.

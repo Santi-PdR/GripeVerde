@@ -1,3 +1,7 @@
+**v0.182.0 - La crónica respira**
+
+El historial de cambios deja de estar apretado: más aire entre renglones, títulos y versiones, margen que sigue a la ventana y botones que ya no roban clics ni sobresalen en ventanas chicas.
+
 ## Instalar la última versión
 
 PowerShell, con el juego cerrado. Baja el `.jar` del último release directo a la carpeta de mods,

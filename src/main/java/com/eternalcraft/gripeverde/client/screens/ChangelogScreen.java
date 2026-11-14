@@ -23,17 +23,20 @@ public class ChangelogScreen extends Screen {
     private static final int PANEL_TOP  = 34;
     private static final int PANEL_BOT  = 54;
     private static final int PAD_X      = 18;
-    private static final int PAD_Y      = 26;
+    private static final int PAD_Y      = 30;
     private static final int CLOSE_W    = 130;
     private static final int CLOSE_H    = 28;
     private static final int SCROLL_SPD = 28;
 
-    private static final int LINE_H    = 11;
-    private static final int H1_LINE_H = 16;
-    private static final int H2_LINE_H = 13;
-    private static final int BOLD_LINE_H = 13;
-    private static final int GAP_H     = 10;
-    private static final int SEP_H     = 12;
+    // v0.182.0: la cronica respira. Cada renglon gana un pixel, los titulos dos y
+    // el hueco entre parrafos tres; el filete de version pasa de 12 a 16 para que
+    // las entradas no se toquen.
+    private static final int LINE_H    = 12;
+    private static final int H1_LINE_H = 18;
+    private static final int H2_LINE_H = 14;
+    private static final int BOLD_LINE_H = 14;
+    private static final int GAP_H     = 13;
+    private static final int SEP_H     = 16;
 
     private enum LT { H1, H2, BULLET, TEXT, GAP, SEPARATOR, BOLD }
 
@@ -127,9 +130,10 @@ public class ChangelogScreen extends Screen {
         recalcMaxScroll();
         jumpToFreshVersion();
 
-        int bx = (this.width - CLOSE_W) / 2;
+        int closeW = Math.max(84, Math.min(CLOSE_W, panelW() - 24));
+        int bx = panelX() + (panelW() - closeW) / 2;
         int by = this.height - CLOSE_H - 10;
-        this.addRenderableWidget(new SlimButton(bx, by, CLOSE_W, CLOSE_H,
+        this.addRenderableWidget(new SlimButton(bx, by, closeW, CLOSE_H,
             Component.translatable("gripeverde.changelog.button.close"),
             this::onClose));
     }
@@ -290,9 +294,11 @@ public class ChangelogScreen extends Screen {
         setScrollTarget(Math.max(0.0, Math.min(1.0, t)) * maxScroll, true);
     }
 
-    private int panelX() { return PANEL_MX; }
+    /** v0.182.0: en ventanas angostas el margen fijo se comia el panel. */
+    private int panelMx() { return Math.max(12, Math.min(PANEL_MX, this.width / 8)); }
+    private int panelX() { return panelMx(); }
     private int panelY() { return PANEL_TOP; }
-    private int panelW() { return this.width  - PANEL_MX * 2; }
+    private int panelW() { return Math.max(120, this.width - panelMx() * 2); }
     private int panelH() { return this.height - PANEL_TOP - PANEL_BOT; }
     private int contentX() { return panelX() + PAD_X; }
     private int contentY() { return panelY() + PAD_Y + 10; }
@@ -745,7 +751,7 @@ public class ChangelogScreen extends Screen {
     }
 
     private int searchBoxX() {
-        return PANEL_MX + panelW() - 14 - SEARCH_W;
+        return panelX() + panelW() - 14 - SEARCH_W;
     }
 
     private boolean overSearchBox(double mouseX, double mouseY) {
@@ -908,7 +914,7 @@ public class ChangelogScreen extends Screen {
             setScrollFromMouse(mouseY);
             return true;
         }
-        if (button == 0) {
+        if (button == 0 && !overAnyWidget(mouseX, mouseY)) {
             // v0.27.0: un gesto del lector y la pluma termina de golpe.
             this.penActive = false;
             try {
@@ -943,6 +949,23 @@ public class ChangelogScreen extends Screen {
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
+    /**
+     * v0.182.0: las marcas del encuadernador y el folio escondido se preguntan
+     * despues que los botones reales, como en la portada desde 0.178.0.
+     */
+    private boolean overAnyWidget(double mouseX, double mouseY) {
+        for (var child : this.children()) {
+            if (child instanceof net.minecraft.client.gui.components.AbstractWidget widget
+                    && widget.visible) {
+                if (mouseX >= widget.getX() && mouseX <= widget.getX() + widget.getWidth()
+                        && mouseY >= widget.getY() && mouseY <= widget.getY() + widget.getHeight()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
         if (this.draggingScrollbar) {
@@ -963,7 +986,15 @@ public class ChangelogScreen extends Screen {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+        // v0.182.0: sin cronica que recorrer, la rueda no hace ruido ni se queda el gesto.
+        if (this.maxScroll <= 0) {
+            return super.mouseScrolled(mouseX, mouseY, delta);
+        }
+        double before = this.targetScrollY;
         scrollBy((int)(-Math.signum(delta) * SCROLL_SPD));
+        if (Math.abs(before - this.targetScrollY) < 0.1D) {
+            return true;
+        }
         // Sonido de pagina: throttle 200ms entre scrolls consecutivos
         long now = System.currentTimeMillis();
         if (now - lastScrollSoundMs > 200L) {
