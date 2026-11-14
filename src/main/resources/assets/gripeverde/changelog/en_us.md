@@ -1,4 +1,315 @@
+## Version 0.181.0 - The old messages come along
+
+CopyL kept ten quick messages in its own config file, so uninstalling it threw them away. This sheet now reads that file once - names, texts and keys - and keeps its own copy in gripeverde-dispatch.json, so CopyL can leave the mods folder with nothing lost. The ten slots sit on the right of the sheet, or as a row of numbered chips in narrow windows: click one to send it, Shift-click to load it into a line, Ctrl-click to save the line you are writing into that slot, and right-click to give it a key. While CopyL is still installed its own keys stay in charge, so nothing is ever sent twice.
+
+## Version 0.180.0 - The dispatch has its own desk
+
+The CEDA slip used to be a reflection bridge that only existed when CopyL was installed and opened someone else's screen. It is now a page of this diary: eight numbered lines on ruled paper, twelve pixels of air between them, a gutter for the numbers and two rows of buttons with room to breathe. Enter sends the line you are on and Tab walks down; the draft stays if you close the page, and the batch send spaces the messages half a second apart so the server does not read it as spam. Where the old slip used to sit there is now always a way in, and the CEDA panel of CopyL - when it is installed - opens from the corner of the sheet.
+
+## Version 0.179.0 - The chronicler speaks in every window
+
+The greeting card needs a lane 180 pixels wide and forty-four pixels tall, so in windows narrower than about 620 pixels - and in wide ones under about 330 pixels tall - the chronicler said nothing at all. Now, when the card does not fit, the same sentence appears as a single centred line in the header, between the music control and the shortcut icons, trimmed to the free width. When the card fits, everything stays as it was.
+
+## Version 0.178.0 - No ornament steals a click
+
+The clickable decorations of the title screen were checked before the buttons and several of them answered first, so the click never arrived: at 427x240 the lit window of the attic falls twelve pixels inside Multiplayer, and in any window taller than about 300 pixels the rat crosses the button table and the Options and Quit buttons. Every decorative spot now asks the buttons first. The pause screen had the same flaw with its candle over the bottom-left button in very short windows.
+
+## Version 0.177.0 - The whisper finds its band
+
+The vigil whisper used to start at a third of the window height, which landed inside the title emblem in every window shorter than about 410 pixels: at 427x240 it crossed the date rule, and at 700x400 it sat on the day line. It now looks for the free band between the emblem and the button table and, when there is no room for a single line, drops to the footer above the chronicler's signature. The button table is also measured by one formula only, the same one the emblem uses to know where it ends.
+
+## Version 0.176.0 - Options and Quit step aside
+
+In windows narrower than 620 pixels, Options and Quit used to hang from a fixed row at y=36, right on top of the title emblem, which starts at y=30. At 427x240, the size a 854x480 window gets at GUI scale 2, they covered thirty-two pixels of the crest. They now sit in their own rail to the right of Multiplayer and Mods, inside the same band as the button table, and the pair and the rail centre themselves on the emblem's axis. The emblem keeps its size and nothing new is drawn while you play.
+
+## Version 0.175.0 - The emblem yields before the buttons
+
+On short windows the title emblem now shrinks as a whole instead of growing down into the button table: at 427x240, the size a 854x480 window gets at GUI scale 2, the full block covered forty-five pixels of the buttons. The chronicler's note follows the same rule and steps down or waits when there is no room. The chain of the pocket watch starts below the shortcut icons, and clicking the emblem no longer triggers its seal over the top edge of a button. Nothing new is drawn while you play.
+
+## Version 0.174.0 - The notices breathe again
+
+The four rotating broadsides (rescue note, wanted poster, royal decree and the elixir label) now compose as one centred block. On tall posters the copy no longer clings to the upper edge, and on the shortest ones the steps tighten so the last line stops crowding the lower rule. On the elixir label the price now always keeps a line of air above the border. Nothing new is drawn while you play.
+
+## Version 0.173.0 - The notice has a face
+
+The quarantine notice on the title screen now opens with a larger engraved portrait of an infected man, framed like a printer's plate, with the blue eyes of the Ghouls and a caption that reads as period field copy. Below it, the order keeps its lines apart from the CEDA stamp, so nothing overlaps on short or narrow screens. The rotating CEDA field note follows the same plate, replaces its loose eye mark with a CEDA eye stamp, and hides the portrait when the poster is not tall enough. Everything stays still: nothing new is drawn while you play.
+
+## Version 0.172.0 - A face for the quarantine notice
+
+The title screen's quarantine order now carries a still, blue-eyed Ghoul portrait in its lower margin. Minecraft offers every regional locale translated by the mod, including Spanish (Uruguay), and the build checks all 25 entries.
+
+## Version 0.171.0 - Room for the dispatch button
+
+On compact title screens, the music control and shortcut icons now keep a clear gap. The CEDA Dispatch icon stays hidden until the row has enough width.
+
+## Version 0.170.0 - The field stays open
+
+Controls, Chat, Online and Language now preserve the live world behind their paper panels. A redundant black layer no longer hides the world when those screens open.
+
+## Version 0.169.0 - Regional languages you can choose
+
+The additional Spanish regions are now declared to Minecraft, so their language files can be selected from the language list as well as loaded when already selected. The build checks their language metadata along with all 25 translations and chronicles.
+
+## Version 0.168.0 - English and Spanish, in every region
+
+Every regional English and Spanish language file and field chronicle declared by the project is now bundled. The build checks all 25 locales for valid text, matching keys, and a current chronicle.
+
+## Version 0.167.0 - More room in the rescue notice
+
+The title-screen rescue notice now leaves a full line between instructions, including in the compact poster. The last sentence stays clear of the divider without adding motion or work during gameplay.
+
+## Version 0.166.0 - A separate check for the street sounds
+
+The ambience controls now play a brief creak through the same Minecraft channel as rain and wind. This checks the mod volume alongside Minecraft's Ambient and Master levels; the button is disabled during a world.
+
+## Version 0.165.0 - The skyline remembers between frames
+
+The attic window and its curtains now keep their saved state in memory for the session. Drawing the title screen no longer creates a position array or checks saved notes every frame.
+
+## Version 0.164.0 - A welcome note that stays in its lane
+
+The chronicler's welcome now fits between the side notices, wraps instead of stretching across them, and leaves the page after eight seconds.
+
+## Version 0.161.0 - Clearer button subtitles
+
+The second line on the main buttons keeps stronger contrast against the dark panels, including on hover, while staying within the aged-brass palette.
+
+## Version 0.160.0 - Clearer settings
+
+Settings categories now use familiar names in English and Spanish. Sound tips say plainly which Minecraft volumes to check, and the rescue note clearly explains what happens to a fallen teammate's inventory and body.
+
+## Version 0.159.0 - Clear menu lettering
+
+Diary labels now render as plain Minecraft text, without inherited font styles. The build check guards this path against custom font styles returning.
+
+## Version 0.158.0 - Spanish notes, properly written
+
+The Spanish captions for the shooting star and sealed telegram now include their missing accents and ñ. English wording is unchanged.
+
+## Version 0.157.0 - A quieter telegram
+
+The sealed note is narrower and leaves the title screen sooner. The secret remains, but the sky and the printed notices are easier to see.
+
+## Version 0.156.0 - A lighter note from the sky
+
+The shooting-star caption keeps its wrapped lines while the message, font, and available width stay the same. It looks unchanged without splitting and measuring the same text on every frame.
+
+## Version 0.155.0 - Clear letters again
+
+The custom font had left empty boxes across the title screen. The diary now uses Minecraft's regular lettering, and the little eye's clue reads like a note someone found rather than a menu instruction.
+
+## Version 0.154.0 - Notes from the living
+
+The field guide now reads like a survivor's account instead of a system briefing. Its English and Spanish notes explain how Ghouls change, what to do when a teammate is pinned or downed, and what each difficulty brings, while preserving the server's mechanics.
+
+## Version 0.153.0 - Clearer letters in the diary
+
+The title screen, options, field guide, and shared controls now use Atkinson Hyperlegible with consistent text measurements. Button labels no longer draw a second dark copy, so they stay crisp against the paper. The font is bundled with its license and adds no animation or rendering work in worlds or inventories.
+
+## Version 0.152.0 - Ink that stays put
+
+The menu buttons' tiny paper-wear marks are laid out once and reused on every draw. The paper keeps its same look without reseeding and sampling a random generator every frame.
+
+## Version 0.151.0 - A signal without blinking
+
+When Reduced Motion is on, the attic signal window stays steady instead of flashing its answer. The clue remains available, and the menu atmosphere stays still.
+
 # Eternal Craft: Gripe Verde
+
+## Version 0.150.0 - The field guide fits the page
+
+The field guide now fits short windows and high GUI scales, wraps its notes to the paper width, and keeps the return button visible. In compact layouts, the reading hint moves into the heading instead of crowding the page.
+
+## Version 0.149.0 - Columns that hold their place
+
+The title-screen column layout and left notice bounds are reused until the window size changes. Redraws no longer recreate those layout regions each frame, while paper placement, resize behavior, and poster interaction remain the same.
+
+## Version 0.148.0 - Still paper, lighter frames
+
+The title-screen notices now reuse their translated copy keys and paper-cut details instead of building temporary arrays on every draw. Seeded blood flecks use allocation-free arithmetic in place of a fresh random generator each frame. The marks remain fixed to the menu and never render over the world or inventory.
+
+## Version 0.147.0 - CEDA dispatch at hand
+
+A small CEDA note on the title screen opens the optional CEDA Dispatch settings when that mod is installed. Both screens now share quiet parchment and sepia styling. Ink stamps stay in the lower paper margin and skip short sheets; their fixed design avoids a random allocation each menu frame. The shortcut adds no gameplay or inventory effects.
+
+## Version 0.146.0 - Room for the reward
+
+The wanted poster now keeps its portrait and wax seal clear of the reward lines on shorter windows. The drawing stays fixed to the title screen.
+
+
+## Version 0.145.0 - The right address keeps its place
+
+When both an official Outbreak address and a renamed saved entry exist, the multiplayer page now pins the matching address first. If only the renamed entry remains, its custom address and label stay intact.
+
+## Version 0.144.0 - The cry that brought us back
+
+Reaching the teamwork chapter can leave one last recollection from the chronicler: a cry carried across the town, and strangers running back for one another. It appears once, in the chosen language.
+
+## Version 0.143.0 - The fever still had a pulse
+
+A witness's recollection now accompanies the infection chapter. It tells of the moment the survivors understood that the fever had not killed its victims. The note appears once, in English or Spanish.
+
+## Version 0.142.0 - The note waits at the right page
+
+The rescue recollection now appears whichever way the reader reaches that section: by turning to its mark, scrolling through the pages, or using the keyboard. It remains a one-time note.
+
+## Version 0.141.0 - The way back through the mud
+
+Reading the rescue protocol leaves a new note from the chronicler. It is a one-time recollection of a frightened group turning back for one of their own, written in the chosen language and shown on a later page.
+
+## Version 0.140.0 - The address through the fog
+
+The official Outbreak server is now recognized even if its saved address uses different capitalization or has stray spaces. Older addresses are migrated the same way, so the field guide won't add a second copy of the server.
+
+## Version 0.139.0 - The Outbreak keeps its name
+
+The pinned Ghoul Outbreak server now appears in the selected language. Returning players keep their own server name, while an old saved Outbreak address is updated even if it was renamed.
+
+## Version 0.138.0 - The pen waits for the reader
+
+The chronicle now writes only while its next line is visible. Scrolling away pauses the ink, long frame delays cannot make it jump ahead, and the quiet scratch follows visible writing less often.
+
+## Version 0.137.0 - The doctor's mark finds its place
+
+The elixir's fraud mark now sits in a dedicated space below the bottle copy and disappears when a short poster has no room for it. English readers see “FRAUD”; Spanish readers see “FRAUDE.”
+
+## Version 0.136.0 - A light crossing the language barrier
+
+The shooting-star note now follows the chosen English or Spanish language while it is visible and wraps inside the screen on small windows.
+
+## Version 0.135.0 - A note that crosses the language barrier
+
+The hidden message behind the ministry seal now changes with the selected English or Spanish language, even while the note is still on screen.
+
+## Version 0.134.0 - The chronicler keeps your tongue
+
+The title greeting, paper label, and quiet vigil line now follow the selected English or Spanish language. Their wrapped text is reused until the words, window width, or font changes.
+
+## Version 0.131.0 - Ambient controls reach every layer
+
+Menu ambience one-shots now use Minecraft's Ambient sound category, matching the looping beds and the Ambient slider. Music remains in Music, and button effects remain in the UI/Effects path.
+
+## Version 0.132.0 - The gramophone keeps its note
+
+The title-screen music button now updates its tooltip only when playback changes or the language changes, rather than rebuilding it every tick.
+
+## Version 0.133.0 - The notice keeps its lines
+
+The title-screen typewriter notice now reuses its wrapped lines and cursor width until the visible text, window size, or font changes, avoiding repeated layout work between frames.
+
+
+## Version 0.130.0 - A note in the margins
+
+Rewrite the smuggler's hint in the chronicler's natural voice in English and Spanish, removing control-like wording while keeping its in-world clue.
+
+
+## Version 0.129.0 - Words from the watch
+
+Polish the English and Spanish title-screen lines so they sound natural aloud, keep the period tone, and use correct Spanish accents. The button subtitles remain static text and still rotate only in the title screen.
+
+
+## Version 0.128.0 - Sickly glow on the horizon
+
+The title-screen city gains a faint, fixed green haze behind the skyline, hinting at the outbreak. It is menu-only, uses a few translucent fills, and adds no animation or world rendering.
+
+
+## Version 0.127.0 - Worn paper, clear notice
+
+The elixir notice now keeps its fraud stamp below the copy, with a safe margin from the price and bottle line. Notice sheets gain subtle paper depth, a fine inner rule, and uneven cut edges. All details stay still and only render on menu papers.
+
+
+## Version 0.126.0 - Words stay on the paper
+
+Translated lines on the quarantine, elixir, reward, and royal decree notices now fit inside the paper edge. Scaled headings respect the same width, keeping the English and Spanish copy clear of the border and folded corner.
+
+## Version 0.125.0 - The empty desk
+
+The long-idle discovery now speaks of an empty desk and the ghosts who gather there instead of naming the controls used to uncover it. Its secret and timing are unchanged.
+
+## Version 0.124.0 - A note from the night watch
+
+The title greetings now sound like the chronicler speaking to someone beside him. They use short, everyday English and keep their place in the Ghoul-era story.
+
+## Version 0.123.0 - Clouds without frame waste
+
+The title sky now reuses its fixed cloud layout instead of rebuilding it on every frame. Their movement and appearance stay the same, with fewer short-lived allocations while the menu is open.
+
+## Version 0.122.0 - A stamp with room to breathe
+
+The elixir's FRAUDE mark now sits after the bottle line instead of being forced up from the card's bottom edge. It cannot cover the words on a short sheet, and stays hidden if the notice has no room for it. The title notices also have more visible hand-cut corners, with the ink border following the paper edge. Everything remains still on the title screen.
+
+## Version 0.121.0 - Sections you can spot
+
+Each field-manual heading now has a small printed number that matches the 1–7 shortcuts in the footer. Readers can see which section a shortcut opens without counting headings. The marks are static and remain confined to the manual.
+
+## Version 0.120.0 - Rescue advice that fits
+
+The rescue notice uses shorter lines so every instruction stays readable on the narrow card: a teammate frees a PIN, a lift takes five seconds, the helper must avoid hits, and a defibrillator comes from loot.
+
+## Version 0.119.0 - No one left behind
+
+A fifth daily CEDA notice gives the rescue basics: a teammate must free anyone caught in a PIN, hold to lift a fallen survivor for five seconds without taking a hit, and find a defibrillator in the loot to revive the dead. The paper is static and title-screen-only.
+
+## Version 0.118.0 - Pages with a hand-worn edge
+
+The notices now have gently clipped corners, a small fold, and a few worn paper fibres. Their details stay still, including while you play. The elixir's red FRAUDE stamp has its own space below the price, and the quarantine notice still opens the field guide when pressed. The chronicler's notes now sound more like a person telling what happened, in English and Spanish.
+
+## Version 0.117.0 - Lighter return dust
+
+Cache the title-screen dust pattern shown after a long absence. Frames reuse the same 40 specks and opacity values; only a window resize recalculates them. The effect remains static and title-screen-only.
+
+## Version 0.116.0 - Keyboard-ready multiplayer hints
+
+Full action tooltips now appear after the usual short delay when a custom multiplayer button receives keyboard focus, as well as on hover. Focused hints are placed beside their button. Gameplay screens remain still.
+
+
+## Version 0.115.0 - Full multiplayer action hints
+
+The custom multiplayer buttons now show their full localized tooltips after Minecraft's usual short hover delay. Compact buttons stay compact, while the server list, its layout, and live gameplay remain unchanged.
+
+## Version 0.114.0 - Lighter server list rendering
+
+Read the vanilla server-list row dimensions when the list is laid out, then reuse them while rendering its paper cards. This avoids repeated private-field lookups per frame without changing the official address, saved servers, ping display, or LAN scan.
+
+## Version 0.113.0 - A book instead of a letter
+
+Replace the single “F” with a small open-ledger icon so the field-guide shortcut reads the same in English and Spanish. Its full localized name remains available to keyboard and screen-reader users.
+
+## Version 0.112.0 - Clean field guide headings
+
+Section names remain printed on the paper instead of being covered by tiny button panels. Navigation targets stay inside the reading viewport, preserving keyboard and screen-reader access without hover sound or gameplay animation.
+
+## Version 0.111.0 - Field guide at a glance
+
+Open the bilingual CEDA field guide directly from the title screen with a small, labeled button beside the chronicle control. It uses the existing localized hint and adds no world, inventory, or gameplay animation.
+
+## Version 0.110.0 - Clearer button ink
+
+Disabled button labels use darker sepia ink for clearer reading against the paper. Button text keeps one unshadowed draw pass and avoids duplicate clipping work.
+
+## Version 0.109.0 - Notes worth reading
+
+Chronicler notes now wrap onto a compact paper card instead of losing the end of longer lines. The restrained CEDA seal stays static, and archive notes remain queued when a short viewport cannot show them clearly.
+
+## Version 0.108.0 - Music on command
+
+Pause or resume the menu soundtrack from the sound panel. The choice is saved and does not alter the volume setting. Track controls stay unavailable during a live world.
+
+## Version 0.107.0 - Eyes in quarantine
+
+Add a small, fixed pair of blue Ghoul eyes to a distant upper window on the title screen. Fog softens the detail; diary overlays and live worlds do not render it. The scene uses static pixels only, with no extra ticks, particles, sounds, or gameplay effects.
+
+## Version 0.106.0 - Steadier paper
+
+Cache each panel's deterministic moisture pattern. The paper keeps the same appearance without creating a random generator on every render. Draw the Ghoul report's three lines directly instead of allocating a temporary array each frame. Gameplay behavior is unchanged.
+
+## Version 0.105.0 - Quiet notes
+
+Respect Reduced motion in the chronicler's marginal notes, discovery seals, and the sound-panel tuning fork. Notes appear at once and the seal stays steady when the preference is on. With the preference off, the existing menu behavior remains; interfaces during live sessions stay still.
+
+## Version 0.104.0 - The field report
+
+Add a fourth daily title-screen document with CEDA guidance on living Ghouls, mutation behavior, PIN rescues and staying together. Give it a worn-paper treatment and a fixed blue-eye ink mark. The poster is bilingual and static, with no animation in worlds, servers or inventory screens.
 
 ## Version 0.103.0 - CEDA's cover story
 

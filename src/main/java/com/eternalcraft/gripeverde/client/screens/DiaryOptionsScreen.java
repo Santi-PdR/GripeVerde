@@ -2,6 +2,7 @@ package com.eternalcraft.gripeverde.client.screens;
 
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.render.DiaryTypography;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import com.eternalcraft.gripeverde.client.widgets.DiarySlider;
@@ -194,10 +195,7 @@ public class DiaryOptionsScreen extends Screen {
 
     // v0.30.0: elipsis fiel para que ninguna cita se salga del papel.
     private static String ellipsizeTo(net.minecraft.client.gui.Font font, String txt, int maxW) {
-        if (font.width(txt) <= maxW) return txt;
-        String ell = "...";
-        int room = Math.max(0, maxW - font.width(ell));
-        return font.plainSubstrByWidth(txt, room) + ell;
+        return DiaryTypography.fitString(font, txt, maxW);
     }
 
     private static String currentLanguageCode() {
@@ -243,18 +241,18 @@ public class DiaryOptionsScreen extends Screen {
         // Titulo en tinta - limpio, sin placa que corte
         int titleY = panelY + padTop;
         {
-            Component shownTitle = Component.literal(ellipsizeTo(this.font, this.title.getString(), Math.max(40, panelW - 24)));
-            int titleW = this.font.width(shownTitle);
+            Component shownTitle = Component.literal(DiaryTypography.fitString(this.font, this.title.getString(), Math.max(40, panelW - 24)));
+            int titleW = DiaryTypography.width(this.font, shownTitle);
             int titleX = (this.width - titleW) / 2;
-            g.drawString(this.font, shownTitle, titleX, titleY, DiaryTheme.INK, false);
+            DiaryTypography.draw(g, this.font, shownTitle, titleX, titleY, DiaryTheme.INK, false);
 
             // Subtitulo diegetico - sin sombra que divida
             String subtitle = "- " + net.minecraft.network.chat.Component.translatable("gripeverde.options.subtitle").getString() + " -";
-            subtitle = ellipsizeTo(this.font, subtitle, Math.max(40, panelW - 24));
-            int subW = this.font.width(subtitle);
+            subtitle = DiaryTypography.fitString(this.font, subtitle, Math.max(40, panelW - 24));
+            int subW = DiaryTypography.width(this.font, subtitle);
             int subX = (this.width - subW) / 2;
             int subY = titleY + TITLE_H + 2;
-            g.drawString(this.font, subtitle, subX, subY, DiaryChrome.INK_SUBTITLE, false);
+            DiaryTypography.draw(g, this.font, subtitle, subX, subY, DiaryChrome.INK_SUBTITLE, false);
 
             // Rotating flavor quote - tinta muy suave
             // v0.30.0: nunca fuera del papel (elipsis al ancho) y la linea
@@ -262,8 +260,8 @@ public class DiaryOptionsScreen extends Screen {
             int flavorBottom = subY + this.font.lineHeight + 1;
             if (currentFlavor != null && !compactLayout) {
                 int maxTextW = panelW - 48;
-                String flavorShown = ellipsizeTo(this.font, currentFlavor, maxTextW);
-                int flavorW = this.font.width(flavorShown);
+                String flavorShown = DiaryTypography.fitString(this.font, currentFlavor, maxTextW);
+                int flavorW = DiaryTypography.width(this.font, flavorShown);
                 int flavorX = (this.width - flavorW) / 2;
                 int flavorY = subY + this.font.lineHeight + 1;
                 // v0.16.0: el cronista corrige su propia letra tras leer a Holloway.
@@ -274,19 +272,19 @@ public class DiaryOptionsScreen extends Screen {
                             com.eternalcraft.gripeverde.client.lore.Discoveries.CODE_HOLLOWAY);
                 } catch (Throwable ignored) {}
                 if (corrected) {
-                    g.drawString(this.font, flavorShown, flavorX, flavorY,
+                    DiaryTypography.draw(g, this.font, flavorShown, flavorX, flavorY,
                         DiaryChrome.INK_FLAVOR, false);
                     g.fill(flavorX - 2, flavorY + 4, flavorX + flavorW + 2, flavorY + 5,
                         com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0xFF241608, 120));
                     String fix = isEnglishSelected() ? "(no: the ink will never dry)" : "(no: la tinta ya no seca)";
-                    String fixShown = ellipsizeTo(this.font, fix, maxTextW);
-                    int fixW = this.font.width(fixShown);
+                    String fixShown = DiaryTypography.fitString(this.font, fix, maxTextW);
+                    int fixW = DiaryTypography.width(this.font, fixShown);
                     // Tope duro: siempre sobre la grilla, nunca debajo.
                     int fixY = Math.min(flavorY + 9, this.gridTop - 11);
-                    g.drawString(this.font, fixShown, this.width / 2 - fixW / 2, fixY, DiaryChrome.INK_FLAVOR, false);
+                    DiaryTypography.draw(g, this.font, fixShown, this.width / 2 - fixW / 2, fixY, DiaryChrome.INK_FLAVOR, false);
                     flavorBottom = fixY + this.font.lineHeight;
                 } else {
-                    g.drawString(this.font, flavorShown, flavorX, flavorY, DiaryChrome.INK_FLAVOR, false);
+                    DiaryTypography.draw(g, this.font, flavorShown, flavorX, flavorY, DiaryChrome.INK_FLAVOR, false);
                     flavorBottom = flavorY + this.font.lineHeight;
                 }
             }

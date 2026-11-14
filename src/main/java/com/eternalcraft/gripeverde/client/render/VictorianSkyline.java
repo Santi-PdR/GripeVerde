@@ -125,9 +125,71 @@ public class VictorianSkyline {
         renderChimneys(g, w, h, CHIMNEYS_BG, BG_BUILDINGS, false);
     }
 
+    /**
+     * A single, fixed pair of Ghoul eyes watches from a distant upper window.
+     * Called only by the title scene; it never overlays a live world.
+     */
+    public static void renderGhoulWatcher(GuiGraphics g, int w, int h) {
+        if (w < 160 || h < 120) return;
+        float[] b = BG_BUILDINGS[1];
+        int bx1 = (int)(w * b[0]);
+        int by2 = (int)(h * b[1]);
+        int bx2 = bx1 + (int)(w * b[2]);
+        int by1 = by2 - (int)(h * b[3]);
+        int bWidth = bx2 - bx1;
+        int bHeight = by2 - by1;
+        int cols = Math.max(1, bWidth / 10);
+        int rows = Math.max(1, bHeight / 12);
+        if (w > 1400) {
+            cols = Math.max(1, cols / 2);
+            rows = Math.max(1, rows / 2);
+        }
+
+        int cellW = bWidth / cols;
+        int cellH = bHeight / rows;
+        int eyeW = Math.max(2, Math.min(3, cellW - 4));
+        int eyeH = Math.max(2, Math.min(3, cellH - 5));
+        int wx = bx1 + (cellW - eyeW) / 2;
+        int wy = by1 + (cellH - eyeH) / 2 + 3;
+
+        g.fill(wx - 1, wy - 1, wx + eyeW + 1, wy + eyeH + 1, 0xFF130D08);
+        g.fill(wx, wy, wx + eyeW, wy + eyeH, 0xFF030405);
+        int eyeY = wy + eyeH / 2;
+        g.fill(wx, eyeY, wx + 1, eyeY + 1, DiaryTheme.GHOUL_EYE);
+        g.fill(wx + eyeW - 1, eyeY, wx + eyeW, eyeY + 1, DiaryTheme.GHOUL_EYE_GLOW);
+    }
+
     // ── v0.16.0: la ventana que responde (atico del edificio 5) ────────────
     private static int signalResponseCount = 0;
     private static long signalRespondUntilMs = 0L;
+    private static boolean signalMemoryFlagsLoaded = false;
+    private static boolean signalCurtainsClosed = false;
+    private static boolean thirteenthWindowLit = false;
+
+    /** Lee una sola vez por sesion los dos recuerdos usados por el cielo animado. */
+    private static void loadSignalMemoryFlags() {
+        if (signalMemoryFlagsLoaded) return;
+        try {
+            signalCurtainsClosed = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("curtains_closed") > 0;
+            thirteenthWindowLit = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("thirteenth_window") > 0;
+            signalMemoryFlagsLoaded = true;
+        } catch (Throwable ignored) {}
+    }
+
+    private static boolean areSignalCurtainsClosed() {
+        loadSignalMemoryFlags();
+        return signalCurtainsClosed;
+    }
+
+    private static boolean isThirteenthWindowLit() {
+        loadSignalMemoryFlags();
+        return thirteenthWindowLit;
+    }
+
+    /** Invalida la copia en memoria cuando un acertijo cambia el recuerdo del cielo. */
+    public static void invalidateSignalMemoryFlags() {
+        signalMemoryFlagsLoaded = false;
+    }
 
     /** Rect de la ventana-senal del atico (edificio FG 5). */
     public static int[] signalWindowRect(int w, int h) {
@@ -143,6 +205,9 @@ public class VictorianSkyline {
     }
 
     public static boolean isSignalWindowLit(float t) {
+        // Reduced motion keeps this clue steady; it must not use the wall-clock blink.
+        if (reducedMotion()) return (t % 4.2f) < 1.35f;
+
         long now = System.currentTimeMillis();
         if (now < signalRespondUntilMs) {
             // Doble parpadeo rapido de respuesta
@@ -154,11 +219,7 @@ public class VictorianSkyline {
     /** El lector senala la ventana. Devuelve true si la ventana respondio. */
     public static boolean signalWindowClicked() {
         long now = System.currentTimeMillis();
-        boolean curtainsClosed = false;
-        try {
-            curtainsClosed = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("curtains_closed") > 0;
-        } catch (Throwable ignored) {}
-        if (curtainsClosed) return false;
+        if (areSignalCurtainsClosed()) return false;
         if (!isSignalWindowLit(time)) return false;
         signalResponseCount++;
         signalRespondUntilMs = now + 1500L;
@@ -169,6 +230,8 @@ public class VictorianSkyline {
         if (signalResponseCount >= 3) {
             try {
                 com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.setCounter("curtains_closed", 1);
+                signalCurtainsClosed = true;
+                signalMemoryFlagsLoaded = true;
                 com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
                     com.eternalcraft.gripeverde.client.lore.Discoveries.SIGNAL_WINDOW);
             } catch (Throwable ignored) {}
@@ -222,13 +285,16 @@ public class VictorianSkyline {
 
     /** La ventana del atico que parpadea esperando respuesta. */
     private static void renderSignalWindow(GuiGraphics g, int w, int h) {
-        int[] r = signalWindowRect(w, h);
-        int wx = r[0], wy = r[1], ww = r[2], wh = r[3];
-        boolean closed;
-        try {
-            closed = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("curtains_closed") > 0;
-        } catch (Throwable t) { closed = false; }
-        if (closed) {
+        float[] b = FG_BUILDINGS[5];
+        int bx1 = (int)(w * b[0]);
+        int by2 = (int)(h * b[1]);
+        int bw = (int)(w * b[2]);
+        int bh = (int)(h * b[3]);
+        int by1 = by2 - bh;
+        int wx = bx1 + (int)(bw * 0.28f);
+        int wy = by1 + Math.max(3, bh / 9);
+        int ww = 6, wh = 8;
+        if (areSignalCurtainsClosed()) {
             // Cortinas echadas para siempre
             g.fill(wx - 1, wy - 1, wx + ww + 1, wy + wh + 1, 0xFF1A0F05);
             g.fill(wx, wy, wx + ww, wy + wh, 0xFF141008);
@@ -253,11 +319,7 @@ public class VictorianSkyline {
 
     /** Consecuencia permanente: la ventana del piso que no existe. */
     private static void renderThirteenthFloor(GuiGraphics g, int w, int h) {
-        boolean lit;
-        try {
-            lit = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("thirteenth_window") > 0;
-        } catch (Throwable t) { lit = false; }
-        if (!lit) return;
+        if (!isThirteenthWindowLit()) return;
         float[] b = FG_BUILDINGS[1];
         int bx1 = (int)(w * b[0]);
         int by2 = (int)(h * b[1]);

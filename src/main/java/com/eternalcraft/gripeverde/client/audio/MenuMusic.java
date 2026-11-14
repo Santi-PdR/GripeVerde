@@ -180,6 +180,11 @@ public class MenuMusic {
     public static void start() {
         Minecraft mc = Minecraft.getInstance();
         if (mc == null) return;
+        if (!isMusicEnabled()) {
+            stop();
+            suppressVanillaMenuMusic(mc);
+            return;
+        }
 
         // Si ya esta activo Y la musica esta sonando realmente, ignorar
         if (active && currentInstance != null && mc.getSoundManager().isActive(currentInstance)) {
@@ -244,6 +249,11 @@ public class MenuMusic {
             return;
         }
 
+        if (!isMusicEnabled()) {
+            if (active) stop();
+            suppressVanillaMenuMusic(mc);
+            return;
+        }
         if (!active) return;
 
         // La vieja banda sonora no toca mientras el gramofono del gabinete gira.
@@ -363,6 +373,14 @@ public class MenuMusic {
 
     public static boolean isActive() {
         return active;
+    }
+
+    public static boolean isMusicEnabled() {
+        try {
+            return ClientConfig.MENU_MUSIC_ENABLED.get();
+        } catch (IllegalStateException ignored) {
+            return true;
+        }
     }
 
     /** One-based playlist position, or 0 while no regular record is playing. */

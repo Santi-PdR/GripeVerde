@@ -70,6 +70,7 @@ public final class HiddenCipher {
             nextChimeMs = System.currentTimeMillis() + 400L;
             if (first) {
                 ChroniclerMemory.setCounter("thirteenth_window", 1);
+                com.eternalcraft.gripeverde.client.render.VictorianSkyline.invalidateSignalMemoryFlags();
             }
         } else if (s.endsWith("HOLLOWAY")) {
             buffer.setLength(0);

@@ -5,23 +5,33 @@ de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
 que una seccion posterior lo mencione expresamente.
 
-## ESTADO: REPOSO (2026-08-24, tras la v0.30.0)
+## ESTADO: DESARROLLO ACTIVO (2026-11-13, GripeVerde v0.173.0 / CEDA Dispatch 3.9.4)
 
-El owner puso el proyecto en pausa y dejo anotada la proxima iteracion
-(detalle completo en CONTEXTO, decimocuarta vuelta):
+Estado comprobado en la rama `codex/v0.104-ghoul-warning-poster` y en el PR #90:
 
-- **KI-66 (proximo)**: tres frentes anotados, NADA implementado aun:
-  (a) pluma: el rasguño debe sonar SOLO si la fila que se escribe esta a
-  la vista, y la tinta no debe correr por zonas fuera de pantalla (el
-  reporte: "se ve extraña cuando ya animo una parte y sigue la otra; el
-  sonido es constante y no para"); (b) rediseño cuaderno doble faz de la
-  cronica (2 hojas, 1 version por hoja, animacion de hoja doblando,
-  render Java puro; lupa/folio/lacre/huevos adaptados; validar GUI 4 con
-  ~170 px por hoja o fallback a hoja simple; reducedMotion sin giro) —
-  NO empezar sin reconfirmar; (c) segunda bajada de volumen de botones
-  (clicks ~-30%).
-- Sigue pendiente la validacion en cliente real de TODO lo entregado
-  (KI-53 a KI-65); jar candidato para Agus: 0.30.0.
+- `0.173.0` rediseña el aviso CEDA de la portada y el bando de cuarentena: placa de
+  imprenta con retrato del infectado, rótulo de campo y pie sin solapes. Todo estático.
+- El CI de `0.172.0` (run 40763347401) terminó en verde; el JAR de `0.173.0` se genera con
+  el mismo workflow. `0.172.0` nunca llegó a la instancia local del usuario.
+- **KI-79 (CEDA Dispatch / CopyL):** los síntomas reportados por el usuario —texto
+  superpuesto y glifos cuadrados en el editor de mensajes— tienen causa identificada en
+  CopyL 3.9.x, no en la integración: una fuente TTF propia (`copyl:dispatch`) introducida en
+  3.9.0 y retirada de los textos en 3.9.1 (que aún sigue empaquetada), y un doble dibujo del
+  texto de cada `EditBox` tras `graphics.flush()`. La integración de GripeVerde solo abre la
+  pantalla por reflexión. La corrección 3.9.5 está preparada y verificada como parche en
+  `tools/copyl/0001-copyl-3.9.5-one-text-pass.patch`; falta publicarla en
+  `Santi-PdR/Lclient`, donde esta sesión no tiene permiso de escritura. Detalle en
+  `docs/CONTEXTO_MODMENU.md`.
+- La carpeta de mods debe contener únicamente archivos JAR. Al actualizar, se reemplazan las
+  versiones anteriores de GripeVerde y CEDA Dispatch; se conservan los demás mods.
+- El ID `copyl`, los formatos y rutas de configuración de CEDA Dispatch se mantienen; el
+  botón opcional no carga si el otro mod está ausente.
+- No se ha hecho una prueba visual del cliente en esta revisión; el CI acredita compilación,
+  recursos y localización, no una validación dentro de Minecraft.
+- El KI-66 y la pausa descritos en los registros históricos de abajo corresponden a agosto
+  de 2026 y ya no representan el estado operativo actual.
+
+
 
 ## v0.30.0 - La hoja entera (2026-08-24)
 

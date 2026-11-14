@@ -2,6 +2,7 @@ package com.eternalcraft.gripeverde.client.widgets;
 
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.render.DiaryTypography;
 import com.eternalcraft.gripeverde.client.util.EasedValue;
 import com.eternalcraft.gripeverde.client.util.MotionPolicy;
 import net.minecraft.client.Minecraft;
@@ -147,16 +148,14 @@ public class DiaryToggle extends AbstractButton {
         int plateW = 66;
         int paddingH = 10;
         int maxLabelW = Math.max(24, w - plateW - paddingH * 2 - 8);
-        if (font.width(labelStr) > maxLabelW) {
-            String ellipsis = "...";
-            int room = Math.max(0, maxLabelW - font.width(ellipsis));
-            labelStr = font.plainSubstrByWidth(labelStr, room) + ellipsis;
+        if (DiaryTypography.width(font, labelStr) > maxLabelW) {
+            labelStr = DiaryTypography.fitString(font, labelStr, maxLabelW);
         }
 
         int contentY = y + (h - font.lineHeight) / 2;
         int labelColor = hoverAnim.lerpColor(DiaryTheme.INK, DiaryTheme.INK_BLACK);
         if (!this.active) labelColor = DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 120);
-        g.drawString(font, labelStr, x + paddingH, contentY, labelColor, false);
+        DiaryTypography.draw(g, font, labelStr, x + paddingH, contentY, labelColor);
 
         // placa mecanica a la derecha
         int plateX = x + w - plateW - 8;
@@ -184,13 +183,13 @@ public class DiaryToggle extends AbstractButton {
         int valColor = !this.active
             ? DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 120)
             : (value ? hoverAnim.lerpColor(DiaryTheme.REDCOAT_DARK, DiaryTheme.REDCOAT) : DiaryTheme.SEPIA_MID);
-        int valW = font.width(valStr);
-        g.drawString(font, valStr, plateX + Math.max(5, (plateW - 16 - valW) / 2), contentY, valColor, false);
+        int valW = DiaryTypography.width(font, valStr);
+        DiaryTypography.draw(g, font, valStr, plateX + Math.max(5, (plateW - 16 - valW) / 2), contentY, valColor);
 
         if (t > 0.1f && this.active) {
             int underlineY = contentY + font.lineHeight;
             int underlineAlpha = (int) (t * 180);
-            g.fill(x + paddingH, underlineY, x + paddingH + Math.min(maxLabelW, font.width(labelStr)), underlineY + 1,
+            g.fill(x + paddingH, underlineY, x + paddingH + Math.min(maxLabelW, DiaryTypography.width(font, labelStr)), underlineY + 1,
                 DiaryTheme.withAlpha(accent, underlineAlpha));
         }
     }

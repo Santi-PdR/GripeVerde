@@ -2,6 +2,7 @@ package com.eternalcraft.gripeverde.client.widgets;
 
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.render.DiaryTypography;
 import com.eternalcraft.gripeverde.client.util.EasedValue;
 import com.eternalcraft.gripeverde.client.util.MotionPolicy;
 import net.minecraft.client.Minecraft;
@@ -17,7 +18,10 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class SlimButton extends AbstractButton {
 
+    public enum Icon { NONE, OPEN_LEDGER, DISPATCH_NOTE }
+
     private final Runnable onClick;
+    private Icon icon = Icon.NONE;
     // v0.26.0: sonido de prensado intercambiable (los botones normales usan
     // el pestillo de laton de siempre; el gramofono toca "pieza nueva").
     private Runnable clickSound = UiSounds::playClick;
@@ -27,6 +31,11 @@ public class SlimButton extends AbstractButton {
     public SlimButton(int x, int y, int w, int h, Component label, Runnable onClick) {
         super(x, y, w, h, label);
         this.onClick = onClick;
+    }
+
+    public SlimButton withIcon(Icon icon) {
+        this.icon = icon == null ? Icon.NONE : icon;
+        return this;
     }
 
     public SlimButton withClickSound(Runnable sound) {
@@ -75,20 +84,64 @@ public class SlimButton extends AbstractButton {
         g.fill(x + 4, y + 4, x + 5, y + 5, DiaryTheme.withAlpha(DiaryTheme.GOLD_TARNISHED, 120));
         g.fill(x + w - 5, y + 4, x + w - 4, y + 5, DiaryTheme.withAlpha(DiaryTheme.GOLD_TARNISHED, 120));
 
-        Font font = Minecraft.getInstance().font;
-        String label = ellipsize(font, this.getMessage().getString(), Math.max(8, w - 12));
-        int tw = font.width(label);
         int textColor = hoverAnim.lerpColor(DiaryTheme.BONE_WHITE, DiaryTheme.PAPER);
-        int tx = x + (w - tw) / 2;
-        int ty = y + (h - 8) / 2;
-        g.drawString(font, label, tx, ty, textColor, false);
+        if (icon == Icon.OPEN_LEDGER) {
+            drawOpenLedger(g, x + (w - 12) / 2, y + (h - 10) / 2, textColor);
+        } else if (icon == Icon.DISPATCH_NOTE) {
+            drawDispatchNote(g, x + (w - 12) / 2, y + (h - 12) / 2, textColor);
+        } else {
+            Font font = Minecraft.getInstance().font;
+            String label = ellipsize(font, this.getMessage().getString(), Math.max(8, w - 12));
+            int tw = DiaryTypography.width(font, label);
+            int tx = x + (w - tw) / 2;
+            int ty = y + (h - 8) / 2;
+            DiaryTypography.draw(g, font, label, tx, ty, textColor);
+        }
+
+        // Static keyboard focus ring for compact icon buttons; no motion in or out of a world.
+        if (this.isFocused() && !this.isMouseOver(mouseX, mouseY) && this.active) {
+            int focusGold = 0xFFD0A04A;
+            int focusSoft = DiaryTheme.withAlpha(focusGold, 70);
+            g.fill(x - 1, y - 1, x + w + 1, y, focusGold);
+            g.fill(x - 1, y + h, x + w + 1, y + h + 1, focusGold);
+            g.fill(x - 1, y - 1, x, y + h + 1, focusGold);
+            g.fill(x + w, y - 1, x + w + 1, y + h + 1, focusGold);
+            g.fill(x - 2, y - 2, x + w + 2, y - 1, focusSoft);
+            g.fill(x - 2, y + h + 1, x + w + 2, y + h + 2, focusSoft);
+        }
+    }
+
+    private static void drawDispatchNote(GuiGraphics g, int x, int y, int color) {
+        // Folded CEDA note with three short ink lines; fixed pixels, no extra animation.
+        g.fill(x + 1, y, x + 9, y + 1, color);
+        g.fill(x, y + 1, x + 10, y + 8, color);
+        g.fill(x + 2, y + 8, x + 9, y + 10, color);
+        g.fill(x + 7, y + 1, x + 9, y + 3, DiaryTheme.REDCOAT);
+        int ink = DiaryTheme.INK;
+        g.fill(x + 2, y + 3, x + 8, y + 4, ink);
+        g.fill(x + 2, y + 5, x + 8, y + 6, ink);
+        g.fill(x + 2, y + 7, x + 6, y + 8, ink);
+    }
+
+    private static void drawOpenLedger(GuiGraphics g, int x, int y, int color) {
+        // Two readable page silhouettes and a spine, using the same pixel-ink language as the diary.
+        g.fill(x + 1, y + 1, x + 5, y + 2, color);
+        g.fill(x, y + 2, x + 2, y + 8, color);
+        g.fill(x + 2, y + 7, x + 5, y + 9, color);
+        g.fill(x + 3, y + 3, x + 5, y + 4, color);
+        g.fill(x + 3, y + 5, x + 5, y + 6, color);
+
+        g.fill(x + 7, y + 1, x + 11, y + 2, color);
+        g.fill(x + 10, y + 2, x + 12, y + 8, color);
+        g.fill(x + 7, y + 7, x + 10, y + 9, color);
+        g.fill(x + 7, y + 3, x + 9, y + 4, color);
+        g.fill(x + 7, y + 5, x + 9, y + 6, color);
+        g.fill(x + 5, y, x + 7, y + 10, color);
     }
 
     private static String ellipsize(Font font, String text, int maxWidth) {
-        if (font.width(text) <= maxWidth) return text;
-        String ellipsis = "...";
-        int room = Math.max(0, maxWidth - font.width(ellipsis));
-        return font.plainSubstrByWidth(text, room) + ellipsis;
+        if (DiaryTypography.width(font, text) <= maxWidth) return text;
+        return DiaryTypography.fitString(font, text, maxWidth);
     }
 
     @Override

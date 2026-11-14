@@ -3,7 +3,9 @@ package com.eternalcraft.gripeverde.client.audio;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
@@ -70,6 +72,7 @@ public class MenuAmbience {
 
     private static boolean active=false, muted=false, pocketWatchVisible=false;
     private static long lastEventTriggerMs=0L, nextEventDelayMs=0L, lastRareTriggerMs=0L, nextRareDelayMs=0L;
+    private static long lastPreviewMs = 0L;
     private static RegistryObject<SoundEvent> lastEventTriggered=null, lastRareTriggered=null;
     private static long crowsPlayingUntilMs=0L;
     public static boolean isCrowsRecentlyTriggered(){return nowMs()<crowsPlayingUntilMs;}
@@ -129,8 +132,8 @@ public class MenuAmbience {
         Minecraft mc=Minecraft.getInstance(); if(mc==null) return;
         try{
             // El susurro responde: dos voces, una mas grave.
-            mc.getSoundManager().play(SimpleSoundInstance.forUI(ModSounds.MENU_AMBIENT_OCCASIONAL.get(),0.50f,0.20f*getUserVolume()));
-            mc.getSoundManager().play(SimpleSoundInstance.forUI(ModSounds.MENU_AMBIENT_OCCASIONAL.get(),0.38f,0.16f*getUserVolume()));
+            mc.getSoundManager().play(ambientOneShot(ModSounds.MENU_AMBIENT_OCCASIONAL.get(),0.50f,0.20f*getUserVolume()));
+            mc.getSoundManager().play(ambientOneShot(ModSounds.MENU_AMBIENT_OCCASIONAL.get(),0.38f,0.16f*getUserVolume()));
         }catch(Exception ignored){}
         try{
             int n = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.bump("whisperAnswers");
@@ -157,7 +160,7 @@ public class MenuAmbience {
         try{
             SoundEvent se=ModSounds.MENU_TICK.get();
             float pitch=randomFloatBetween(TICK_PITCH_MIN,TICK_PITCH_MAX);
-            mc.getSoundManager().play(SimpleSoundInstance.forUI(se,pitch,TICK_VOLUME*getUserVolume()));
+            mc.getSoundManager().play(ambientOneShot(se,pitch,TICK_VOLUME*getUserVolume()));
         }catch(Exception e){ if(DEBUG_LOGGING) LOGGER.warn("[MenuAmbience] Tick no disponible"); }
     }
 
@@ -223,6 +226,21 @@ public class MenuAmbience {
 
     public static boolean isMuted(){return muted;}
     public static void toggleMute(){setMuted(!muted);}
+
+    /** Plays one short sample through the same Ambient channel and volume as menu ambience. */
+    public static void testSound() {
+        long now = nowMs();
+        if (now - lastPreviewMs < 600L) return;
+        lastPreviewMs = now;
+        if (muted || getUserVolume() < 0.01f) return;
+        Minecraft mc = Minecraft.getInstance();
+        if (mc == null || mc.level != null) return;
+        try {
+            SoundEvent sample = ModSounds.MENU_WOOD_CREAK.get();
+            mc.getSoundManager().play(ambientOneShot(sample, 0.98f, 0.48f * getUserVolume()));
+            MenuMusic.duckFor(1_000L);
+        } catch (Throwable ignored) {}
+    }
 
     public static void start(){
         try{ muted=!com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_ENABLED.get(); }catch(Exception ignored){}
@@ -320,7 +338,7 @@ public class MenuAmbience {
         try{
             SoundEvent se=chosen.sound.get();
             float pitch=randomFloatBetween(chosen.pitchMin,chosen.pitchMax);
-            mc.getSoundManager().play(SimpleSoundInstance.forUI(se,pitch,chosen.volume*getUserVolume()));
+            mc.getSoundManager().play(ambientOneShot(se,pitch,chosen.volume*getUserVolume()));
             if(isEvents) lastEventTriggered=chosen.sound;
             else{
                 lastRareTriggered=chosen.sound;
@@ -346,6 +364,13 @@ public class MenuAmbience {
     }
     private static long randomBetween(long min,long max){ if(max<=min) return min; return min+(long)(RNG.nextDouble()*(max-min)); }
     private static float randomFloatBetween(float min,float max){ if(max<=min) return min; return min+RNG.nextFloat()*(max-min); }
+
+    /** Non-positional one-shot in Minecraft's Ambient category, matching the loop slider. */
+    private static SimpleSoundInstance ambientOneShot(SoundEvent sound,float pitch,float volume) {
+        return new SimpleSoundInstance(sound.getLocation(), SoundSource.AMBIENT, volume, pitch,
+            RandomSource.create(), false, 0, SoundInstance.Attenuation.NONE,
+            0.0, 0.0, 0.0, true);
+    }
 
     private static LoopingAmbienceInstance buildLoopInstance(SoundEvent sound,float volume){
         return new LoopingAmbienceInstance(sound.getLocation(), volume);

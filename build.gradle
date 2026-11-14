@@ -5,7 +5,7 @@ plugins {
     id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
 }
 
-version = '0.103.0'
+version = '0.181.0'
 group = 'com.eternalcraft.gripeverde'
 base { archivesName = 'gripeverde' }
 
@@ -74,7 +74,11 @@ tasks.register('verifyGripeVerdeLocalization') {
     doLast {
         def langDir = file('src/main/resources/assets/gripeverde/lang')
         def changelogDir = file('src/main/resources/assets/gripeverde/changelog')
-        def requiredLangs = ['en_us', 'es_es']
+        def requiredLangs = [
+            'en_us', 'en_au', 'en_ca', 'en_gb', 'en_nz',
+            'es_es', 'es_mx', 'es_ar', 'es_419', 'es_bo', 'es_cl', 'es_co', 'es_cr', 'es_do',
+            'es_ec', 'es_gt', 'es_hn', 'es_ni', 'es_pa', 'es_pe', 'es_pr', 'es_py', 'es_sv', 'es_uy', 'es_ve'
+        ]
         def requiredSet = requiredLangs as Set
         def availableLangs = fileTree(langDir) { include '*.json' }.files.collect {
             it.name - '.json'
@@ -105,8 +109,15 @@ tasks.register('verifyGripeVerdeLocalization') {
             throw new GradleException('en_us.json root must be a JSON object')
         }
         def baselineKeys = baseline.keySet() as Set
-        def expectedKeyCount = 157
+        def expectedKeyCount = 200
         def problems = []
+        def packMetadata = json.parse(new File('src/main/resources/pack.mcmeta'))
+        def declaredLanguages = (packMetadata.language ?: [:]).keySet() as Set
+        def requiredCustomLanguages = requiredSet
+        def missingLanguageMetadata = requiredCustomLanguages - declaredLanguages
+        if (!missingLanguageMetadata.isEmpty()) {
+            problems << 'pack.mcmeta: missing selectable language metadata ' + missingLanguageMetadata.sort().join(', ')
+        }
         if (baselineKeys.size() != expectedKeyCount) {
             problems << "en_us: expected ${expectedKeyCount} keys, found ${baselineKeys.size()}"
         }
@@ -371,11 +382,15 @@ tasks.named('processResources').configure {
 
 tasks.register('verifyGripeVerdeSubtitles') {
     group = 'verification'
-    description = 'Fails if a non-empty sounds.json subtitle key is missing or blank in any of the 25 lang files.'
+    description = 'Fails if a non-empty sounds.json subtitle key is missing or blank in every supported English and Spanish regional locale.'
     doLast {
         def soundsJson = file('src/main/resources/assets/gripeverde/sounds.json')
         def parsed = new groovy.json.JsonSlurper().parse(soundsJson)
-        def required = ['en_us', 'es_es']
+        def required = [
+            'en_us', 'en_au', 'en_ca', 'en_gb', 'en_nz',
+            'es_es', 'es_mx', 'es_ar', 'es_419', 'es_bo', 'es_cl', 'es_co', 'es_cr', 'es_do',
+            'es_ec', 'es_gt', 'es_hn', 'es_ni', 'es_pa', 'es_pe', 'es_pr', 'es_py', 'es_sv', 'es_uy', 'es_ve'
+        ]
         def json = new groovy.json.JsonSlurper()
         def langDir = file('src/main/resources/assets/gripeverde/lang')
         def langs = [:]
@@ -443,4 +458,30 @@ tasks.register('verifyGripeVerdeSoundUsage') {
 
 tasks.named('processResources').configure {
     dependsOn tasks.named('verifyGripeVerdeSoundUsage')
+}
+
+tasks.register('verifyGripeVerdeMenuFont') {
+    group = 'verification'
+    description = 'Verifies that diary text uses plain Minecraft string rendering and no missing custom provider.'
+    doLast {
+        def typographyFile = file('src/main/java/com/eternalcraft/gripeverde/client/render/DiaryTypography.java')
+        def typography = typographyFile.getText('UTF-8')
+        if (!typography.contains('graphics.drawString(font, text, x, y, color, shadow)') ||
+                !typography.contains('graphics.drawString(font, text.getString(), x, y, color, shadow)') ||
+                typography.contains('style.withFont(')) {
+            throw new GradleException('DiaryTypography must render plain strings without custom font styles')
+        }
+        def fontDir = file('src/main/resources/assets/gripeverde/font')
+        def customFonts = fileTree(fontDir) {
+            include '*.json'
+            include '*.ttf'
+        }.files
+        if (!customFonts.isEmpty()) {
+            throw new GradleException("Unexpected custom menu fonts remain: ${customFonts*.name.sort()}")
+        }
+    }
+}
+
+tasks.named('processResources').configure {
+    dependsOn tasks.named('verifyGripeVerdeMenuFont')
 }
