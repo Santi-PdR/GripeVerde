@@ -11,7 +11,7 @@ Actualizado: 2026-11-13
   token; el de GripeVerde no puede.
 - Rama de trabajo: `codex/v0.104-ghoul-warning-poster`
 - Pull request: [#90](https://github.com/Santi-PdR/GripeVerde/pull/90)
-- Versión de esta rama: `0.182.0` (anterior entregada: `0.181.0`)
+- Versión de esta rama: `0.183.0` (anterior entregada: `0.182.0`)
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
 - El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
   proyecto local del usuario.
@@ -50,6 +50,14 @@ Actualizado: 2026-11-13
 
 ## Estado confirmado al retomar (2026-11-13)
 
+- `0.183.0` **publicada y en verde**: commit `26a2767`, run `43559194671` (`build` y
+  `publish` en verde). `https://github.com/Santi-PdR/GripeVerde/releases/download/v0.183.0/gripeverde-0.183.0.jar`
+  (9.453.806 bytes, `sha256:0eeed14773484cb9d79b2071c2006e40beebd5aa57e154489a8bc1761792f9ef`).
+  El intento previo `8ced11e` cayó por un import faltante de `DiaryChrome` en
+  `ChangelogScreen`.
+- **Rutina del usuario:** cuando dice «Sigue» hay que trabajar el mod al menos 30 minutos
+  (mejoras, errores, interfaces, fondo, efectos, acciones, fuentes) y cerrar con un resumen
+  en lista de lo añadido.
 - `0.182.0` **publicada y en verde** desde la rama de la sesión: commit `a5d2bfd`,
   run `43558073201` (`build` y `publish` en verde).
   `https://github.com/Santi-PdR/GripeVerde/releases/download/v0.182.0/gripeverde-0.182.0.jar`
@@ -91,6 +99,27 @@ Actualizado: 2026-11-13
 - El validador local `python3 tools/verify_mirrors.py` reproduce los sellos de Gradle
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
+
+## Cambios de 0.183.0 — ningún adorno contesta antes que los botones
+
+Quedaban tres pantallas de lectura donde un adorno con clic se consultaba antes que los
+widgets, la misma falla que la portada dejó atrás en 0.178.0.
+
+- **`DiaryChrome.overAnyWidget(screen, x, y)`**: ayudante único (usa `screen.children()` y
+  `widget.isActive()`), pensado para que cada pantalla pregunte primero por sus botones.
+- **`DiaryFieldGuideScreen`**: `headingAt()` sólo corre si el clic no cayó en un widget; aire
+  nuevo con `LINE_HEIGHT` 11→12, `PARAGRAPH_GAP` 4→7 y `SECTION_GAP` 6→10.
+- **`DiaryArchiveScreen`**: los widgets se consultan antes que los papeles sueltos y que la
+  banda de cierre (`panelY + panelH - 56`), que se quedaba clics; `CARD_GAP` 5→7.
+- **`ChangelogScreen`**: usa el ayudante compartido (se borra la copia local de 0.182.0).
+- **`DiaryDispatchScreen`**: `Ctrl`+`1`..`9` y `Ctrl`+`0` (también teclado numérico) mandan esa
+  ranura; la ayuda de la ranura lo dice en los 25 idiomas.
+- **Lint nuevo en `tools/verify_mirrors.py`**: rechaza `net.minecraft.util.Util` (no existe: es
+  `net.minecraft.Util`) y cualquier clase de apoyo usada sin import (se omiten misma clase,
+  mismo paquete y nombres completos). Probado en negativo: al quitar el import de
+  `DiaryChrome` el verificador falla con `ChangelogScreen.java: usa DiaryChrome sin importarlo`.
+- **CI**: el lint corre **antes** de Gradle (falla en segundos, no en dos minutos) y un push
+  sin PR ahora escribe el error como **comentario de commit** (`contents: write`).
 
 ## Cambios de 0.182.0 — la crónica respira
 
