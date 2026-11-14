@@ -11,7 +11,7 @@ Actualizado: 2026-11-13
   token; el de GripeVerde no puede.
 - Rama de trabajo: `codex/v0.104-ghoul-warning-poster`
 - Pull request: [#90](https://github.com/Santi-PdR/GripeVerde/pull/90)
-- Versión de esta rama: `0.181.0` (anterior entregada: `0.180.0`)
+- Versión de esta rama: `0.182.0` (anterior entregada: `0.181.0`)
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
 - El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
   proyecto local del usuario.
@@ -50,6 +50,14 @@ Actualizado: 2026-11-13
 
 ## Estado confirmado al retomar (2026-11-13)
 
+- `0.182.0` **publicada y en verde** desde la rama de la sesión: commit `a5d2bfd`,
+  run `43558073201` (`build` y `publish` en verde).
+  `https://github.com/Santi-PdR/GripeVerde/releases/download/v0.182.0/gripeverde-0.182.0.jar`
+  (9.447.525 bytes, `sha256:9ea5102c09f527c1acd404f3cf9c467e122d6bc188d7766e4be4e540b9db7e14`).
+- El repo **ya es público** (el usuario lo cambió en Settings): el comando corto de
+  instalación vuelve a funcionar sin token, como el de Photon/Fisk.
+- `.github/workflows/build.yml` también compila `arena/**`, así que la rama de la sesión tiene
+  sus propios runs y releases.
 - `0.181.0` **publicada y en verde**: commit de código `421be29`, run `43550635643`
   (un intento previo `8d995dc` cayó por reimportar `net.minecraft.util.Util`; el
   comentario automático del PR lo señaló en tres líneas).
@@ -83,6 +91,23 @@ Actualizado: 2026-11-13
 - El validador local `python3 tools/verify_mirrors.py` reproduce los sellos de Gradle
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
+
+## Cambios de 0.182.0 — la crónica respira
+
+`ChangelogScreen` (1066 líneas) era la hoja más apretada del diario y la única que nunca se
+había auditado: 22 `return true` entre lupa, barra, marcas del encuadernador y folio escondido.
+
+- **Ritmo**: `LINE_H` 11→12, `H1_LINE_H` 16→18, `H2_LINE_H` y `BOLD_LINE_H` 13→14, `GAP_H`
+  10→13, `SEP_H` 12→16, `PAD_Y` 26→30.
+- **Margen lateral**: `PANEL_MX = 56` fijo pasó a `panelMx() = clamp(12, width/8, 56)`. A 320 px
+  el panel crece de 208 a 240 de ancho; `panelW()` tiene piso de 120.
+- **Botón Cerrar**: `closeW = clamp(84, min(130, panelW-24))` y centrado sobre el panel; en
+  ventanas mínimas ya no sobresale de la hoja.
+- **Clics**: las marcas del encuadernador y el folio escondido se consultan **después** de los
+  widgets (`overAnyWidget()` con `this.children()`, igual que la portada desde 0.178.0).
+- **Rueda**: si `maxScroll <= 0` devuelve `super.mouseScrolled` y no suena; si el gesto no movió
+  nada, tampoco.
+- **CI**: `.github/workflows/build.yml` compila también `arena/**`.
 
 ## Cambios de 0.181.0 — los mensajes de CopyL se vienen con nosotros
 
