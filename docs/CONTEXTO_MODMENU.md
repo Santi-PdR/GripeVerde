@@ -4,31 +4,11 @@ Actualizado: 2026-11-13
 
 ## Proyecto y reglas de trabajo
 
-- **Entrega de cada versión:** el usuario no descarga archivos del workspace. Al terminar cada
-  tanda hay que darle **un comando de PowerShell para pegar en su shell**, que baja el `.jar` del
-  último release directo a su carpeta de mods, borra el `gripeverde-*.jar` viejo y verifica el
-  tamaño contra la API. No se guarda ninguna copia del JAR en el repositorio ni en el workspace.
-  Tampoco se dispara la descarga desde el sandbox: la red de este entorno solo alcanza
-  `github.com`, `api.github.com` y pocos hosts más, y el binario del release viene de
-  `release-assets.githubusercontent.com` (da `EOF` acá).
-
-  Comando vigente (sirve para siempre: resuelve `releases/latest`, no lleva versión escrita):
-
-  El original vive en `tools/install-latest.ps1`; **no se pega el texto**, se pega su
-  base64 UTF-16LE con `powershell -NoProfile -EncodedCommand <blob>`, porque la interfaz de
-  chat del usuario convierte URLs en enlaces markdown y escapa `*` y `_` (el 2026-11-13 la pega
-  llegó como `'[https://api.github.com/repos/Santi-PdR](https://api.github.com/repos/Santi-PdR)…'`
-  y la API contestó 404). El blob se regenera así:
-
-  ```python
-  import base64
-  src = open('tools/install-latest.ps1', encoding='utf-8').read()
-  print(base64.b64encode(src.encode('utf-16-le')).decode('ascii'))
-  ```
-
-
-
-- Repositorio: [Santi-PdR/GripeVerde](https://github.com/Santi-PdR/GripeVerde)
+- Repositorio: [Santi-PdR/GripeVerde](https://github.com/Santi-PdR/GripeVerde) — **privado**
+  (`visibility: private`, confirmado con la API). Consecuencia: sin credenciales, la API de
+  releases y los assets responden **404**, aunque todo exista. El repo hermano
+  `Santi-PdR/Photon-2` es público, y por eso el script de instalación de Photon funciona sin
+  token; el de GripeVerde no puede.
 - Rama de trabajo: `codex/v0.104-ghoul-warning-poster`
 - Pull request: [#90](https://github.com/Santi-PdR/GripeVerde/pull/90)
 - Versión de esta rama: `0.181.0` (anterior entregada: `0.180.0`)
@@ -40,9 +20,20 @@ Actualizado: 2026-11-13
 - Las interfaces del juego se mantienen instantáneas: no se agregan animaciones al
   inventario, la pausa ni el mundo. Las únicas piezas animadas siguen siendo las del menú
   y respetan Movimiento reducido y Destellos reducidos.
-- Al entregar una versión: subir la versión, generar el JAR por CI, actualizar la nota y el
-  PR, e instalar el artefacto en la carpeta de mods cuando el equipo del usuario esté
-  accesible.
+- **Entrega de cada versión:** el usuario no descarga archivos del workspace. Al terminar cada
+  tanda hay que darle **un script de PowerShell para pegar**, que baja el `.jar` del último
+  release directo a su carpeta de mods, respalda el anterior y verifica tamaño y SHA-256 contra
+  lo que publica la API. No se guarda ninguna copia del JAR en el repositorio ni en el workspace.
+  Tampoco se dispara la descarga desde el sandbox: la red de este entorno solo alcanza
+  `github.com`, `api.github.com` y pocos hosts más, y el binario del release viene de
+  `release-assets.githubusercontent.com` (da `EOF` acá).
+- El script vive en `tools/install-latest.ps1` y usa, en este orden: `$env:GITHUB_TOKEN`,
+  `gh auth token`, `git credential fill` (host github.com). Si no hay ninguna, corta con un
+  mensaje que dice qué hacer. Verifica `size` y `digest` (sha256) que publica la API del
+  asset, comprueba que el ZIP tenga `META-INF/MANIFEST.MF` y `mods.toml`, respalda los
+  `*gripeverde*.jar` viejos en `<instancia>\gripeverde-jar-backups` y revierte si algo falla.
+- Queda ofrecido (sin respuesta todavía) pasar el repo a **público**: con eso el comando
+  funcionaría sin credenciales, igual que el de Photon.
 
 ## Estado confirmado al retomar (2026-11-13)
 
