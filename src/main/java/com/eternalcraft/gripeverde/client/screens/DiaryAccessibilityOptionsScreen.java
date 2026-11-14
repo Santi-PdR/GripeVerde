@@ -130,7 +130,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
 
         // Panel pergamino
         DiaryChrome.drawPanelShadow(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
-        PaperTexture.drawVeil(gfx, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.OFFICIAL);
+        PaperTexture.drawSheet(gfx, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.OFFICIAL);
 
         // Titulo
         int cx = this.width / 2;

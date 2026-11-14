@@ -1,3 +1,9 @@
+## v0.187.0 - Vuelven las hojas del diario
+
+- `PaperTexture.drawSheet(x, y, w, h[, PaperKind])`: hoja opaca (`SHEET_ALPHA = 243`) con filete interior, tres manchas y dos fibras **deterministas** (derivadas del panel, sin RNG por cuadro); unas once llamadas de relleno por panel.
+- Las 21 pantallas y `DiaryChrome.drawPanel` vuelven a la hoja: `drawVeil` deja de usarse (queda disponible).
+- Los periódicos de la portada (`PosterRenderer`) siguen intactos.
+
 ## v0.186.0 - Botones que respiran y un menú más liviano
 
 - Portada: `BTN_W 264`, `BTN_H 34`, `BTN_SLIM_W 126`, `BTN_SLIM_H 28`.

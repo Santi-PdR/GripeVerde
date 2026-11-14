@@ -667,7 +667,7 @@ public class DiaryTitleScreen extends Screen {
         if (y < logoBottom() + Spacing.GAP_SMALL) return false;
         g.fill(x + 2, y + 2, x + cardW + 2, y + cardH + 2,
             DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 72));
-        PaperTexture.drawVeil(
+        PaperTexture.drawSheet(
             g, x, y, cardW, cardH, PaperTexture.PaperKind.ARCHIVE);
 
         DiaryTypography.draw(g, this.font, cachedGreetingLabel, x + 12, y + 5,

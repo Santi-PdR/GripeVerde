@@ -318,7 +318,7 @@ public class DiaryDispatchScreen extends Screen {
         }
 
         DiaryChrome.drawPanelShadow(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
-        PaperTexture.drawVeil(gfx, this.panelX, this.panelY, this.panelW, this.panelH,
+        PaperTexture.drawSheet(gfx, this.panelX, this.panelY, this.panelW, this.panelH,
             PaperTexture.PaperKind.OFFICIAL);
         DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
 

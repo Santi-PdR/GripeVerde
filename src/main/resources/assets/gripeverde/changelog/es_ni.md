@@ -1,3 +1,7 @@
+## Version 0.187.0 - Vuelven las hojas del diario
+
+Me quedó claro: cuando pediste sacar "las hojas" hablabas de los periódicos de la portada, no del papel de las pantallas. Así que el papel vuelve a las veintiuna pantallas del diario: los paneles son otra vez hojas opacas —243 de 255— con su filete interior, tres manchas y dos fibras, las mismas siempre para el mismo panel, porque se derivan de su posición y no se sortean en cada cuadro. Lo que no vuelve es la marca de agua, el sello de cera ni las gotas: eso era lo que sobraba dentro de la hoja. Los periódicos del fondo (el bando de cuarentena, el "se busca" del paciente cero) siguen donde estaban, intactos.
+
 ## Version 0.186.0 - Botones que respiran y un menú más liviano
 
 Los botones de la portada subieron un punto (264×34 los grandes, 126×28 los de costado) y ahora la etiqueta se encoge lo justo para entrar entera y centrada, en vez de quedar apretada contra el borde: en castellano "Abrir el gabinete" y "Apagar la lámpara" ya se leen completos en cualquier tamaño de ventana. El subrayado de tinta al pasar el puntero se dibuja en tramos de tres píxeles en vez de uno por píxel.

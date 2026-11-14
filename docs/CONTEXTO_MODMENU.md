@@ -9,7 +9,7 @@ Actualizado: 2026-11-13
   token, igual que el de Photon/Fisk.
 - Rama de trabajo de la sesión: `arena/48be547c-gripeverde` (base `02e85bc`) — la plataforma
   fija el nombre, no se renombra. Todo el trabajo va ahí; el PR sale de esa rama.
-- Versión de esta rama: `0.186.0` (anteriores entregadas: `0.185.0`, `0.184.2`, `0.184.1`, `0.184.0`, `0.183.0`)
+- Versión de esta rama: `0.187.0` (anteriores entregadas: `0.186.0`, `0.185.0`, `0.184.2`, `0.184.1`, `0.184.0`, `0.183.0`)
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
 - El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
   proyecto local del usuario.
@@ -106,6 +106,19 @@ Actualizado: 2026-11-13
 - El validador local `python3 tools/verify_mirrors.py` reproduce los sellos de Gradle
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
+
+## Cambios de 0.187.0 — vuelven las hojas del diario
+
+El usuario aclaró que su pedido de sacar «hojas» se refería a los **periódicos de la portada**, no
+al papel de las pantallas. Por eso:
+
+- `PaperTexture.drawSheet(...)` vuelve a poner hoja opaca (`SHEET_ALPHA = 243`) con filete interior,
+  tres manchas y dos fibras derivadas del panel (deterministas, sin RNG por cuadro): unas once
+  llamadas de relleno por panel, la mitad que la hoja de 0.183.0.
+- Las **21 pantallas** y `DiaryChrome.drawPanel` usan `drawSheet`; `drawVeil` deja de usarse.
+- Los periódicos (`PosterRenderer.drawQuarantineNotice`, `drawRotatingNoticeRight`) **no se tocan**:
+  siguen en la portada. Si el usuario quiere que salgan, es un cambio de una línea en
+  `DiaryTitleScreen.drawPosterLeft/drawPosterRight`.
 
 ## Cambios de 0.186.0 — botones que respiran y el menú liviano
 

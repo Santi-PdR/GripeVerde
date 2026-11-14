@@ -151,7 +151,7 @@ public class DiarySkinCustomizationScreen extends Screen {
         int panelW = Math.min(PANEL_MAX_W, this.width - 40);
         int panelH = Math.min(PANEL_MAX_H, this.height - 30);
         DiaryChrome.drawPanelShadow(gfx, this.panelX, this.panelY, panelW, panelH);
-        PaperTexture.drawVeil(gfx, this.panelX, this.panelY, panelW, panelH, PaperTexture.PaperKind.MEDICAL);
+        PaperTexture.drawSheet(gfx, this.panelX, this.panelY, panelW, panelH, PaperTexture.PaperKind.MEDICAL);
 
         // Titulo
         int cx = this.width / 2;

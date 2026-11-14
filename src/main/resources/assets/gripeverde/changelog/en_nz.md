@@ -1,3 +1,7 @@
+## Version 0.187.0 - The diary sheets come back
+
+Now it is clear: when you asked to remove "the sheets" you meant the newspapers on the cover, not the paper of the screens. So the paper comes back to the twenty-one diary screens: panels are opaque sheets again - 243 out of 255 - with their inner rule, three stains and two fibers, always the same for the same panel, because they derive from its position instead of being rolled every frame. What does not come back is the watermark, the wax seal and the drops: that was the clutter inside the sheet. The posters in the background (the quarantine notice, the patient-zero "wanted" sheet) stay exactly where they were.
+
 ## Version 0.186.0 - Buttons that breathe and a lighter menu
 
 The cover buttons grew a notch (264x34 for the big ones, 126x28 for the side ones) and the label now shrinks just enough to fit whole and centred instead of being squeezed against the edge: long labels read completely at any window size. The ink underline on hover is drawn in three-pixel runs instead of one pixel at a time.

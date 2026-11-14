@@ -576,7 +576,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         int panelW = this.width - PANEL_MARGIN_H * 2;
         int panelH = this.height - PANEL_MARGIN_V * 2;
         DiaryChrome.drawPanelShadow(gfx, panelX, panelY, panelW, panelH);
-        PaperTexture.drawVeil(gfx, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
+        PaperTexture.drawSheet(gfx, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
         DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, panelW, panelH);
         DiaryChrome.drawRegistryTag(gfx, panelX, panelY, panelW, panelH, "REG. X");
 

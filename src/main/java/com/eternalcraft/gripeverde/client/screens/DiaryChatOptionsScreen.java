@@ -99,7 +99,7 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
 
         // Pergamino
         DiaryChrome.drawPanelShadow(g, this.panelX, this.panelY, this.panelW, this.panelH);
-        PaperTexture.drawVeil(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.CORRESPONDENCE);
+        PaperTexture.drawSheet(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.CORRESPONDENCE);
 
         // Titulo
         String titleStr = DiaryChrome.fitText(this.font,

@@ -235,7 +235,7 @@ public class DiaryOptionsScreen extends Screen {
 
         // Panel pergamino
         DiaryChrome.drawPanelShadow(g, panelX, panelY, panelW, panelH);
-        PaperTexture.drawVeil(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.LEDGER);
+        PaperTexture.drawSheet(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.LEDGER);
 
         // Titulo en tinta - limpio, sin placa que corte
         int titleY = panelY + padTop;

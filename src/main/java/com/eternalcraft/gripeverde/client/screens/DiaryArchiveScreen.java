@@ -93,7 +93,7 @@ public class DiaryArchiveScreen extends Screen {
         QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
 
         DiaryChrome.drawPanelShadow(g, panelX, panelY, panelW, panelH);
-        PaperTexture.drawVeil(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.ARCHIVE);
+        PaperTexture.drawSheet(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.ARCHIVE);
         DiaryChrome.drawCornerOrnaments(g, panelX, panelY, panelW, panelH);
         DiaryChrome.drawRegistryTag(g, panelX, panelY, panelW, panelH, "REG. XIV");
 

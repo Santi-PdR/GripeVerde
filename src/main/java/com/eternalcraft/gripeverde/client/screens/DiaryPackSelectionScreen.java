@@ -82,7 +82,7 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         int by = 6;
         int bw = this.width - 20;
         int bh = this.height - 20;
-        PaperTexture.drawVeil(g, bx, by, bw, bh, PaperTexture.PaperKind.ARCHIVE);
+        PaperTexture.drawSheet(g, bx, by, bw, bh, PaperTexture.PaperKind.ARCHIVE);
         DiaryChrome.drawCornerOrnaments(g, bx, by, bw, bh);
 
         // Cabecera de seccion (el titulo vanilla se dibuja en y=16 sobre el pergamino)
