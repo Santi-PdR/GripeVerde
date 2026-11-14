@@ -128,6 +128,45 @@ for f in java_files:
         if pat.search(t): dc_problems.append("%s:%d: %s" % (os.path.basename(f), n, t))
 if dc_problems: fails.append("DEAD CODE:\n" + "\n".join(dc_problems))
 
+# v0.183.0: errores que el compilador caza pero que costaban un ciclo de CI entero.
+# 1) net.minecraft.util.Util no existe (es net.minecraft.Util).
+# 2) una clase de apoyo usada con "Clase." pero sin su import.
+SUPPORT = {
+    "DiaryChrome": "client.render",
+    "DiaryTheme": "client.render",
+    "DiaryTypography": "client.render",
+    "PaperTexture": "client.render",
+    "QuarantineSceneRenderer": "client.render",
+    "SlimButton": "client.widgets",
+    "DiaryButton": "client.widgets",
+    "DiaryTextField": "client.widgets",
+}
+import_problems = []
+for f in java_files:
+    text = read(f)
+    if "net.minecraft.util.Util" in text:
+        import_problems.append("%s: net.minecraft.util.Util no existe (usar net.minecraft.Util)"
+                               % os.path.basename(f))
+    pkg = ""
+    for line in text.splitlines():
+        line = line.strip()
+        if line.startswith("package "):
+            pkg = line[len("package "):].rstrip(";")
+            break
+    for cls, owner in SUPPORT.items():
+        if (cls + ".") not in text:
+            continue
+        if pkg.endswith(owner):          # misma clase o mismo paquete: no hace falta import
+            continue
+        if ("." + cls + ";") in text or ("class " + cls) in text:
+            continue
+        dotted = owner.replace(".", ".") + "." + cls + "."
+        if dotted in text:               # nombre completo en linea: legal sin import
+            continue
+        import_problems.append("%s: usa %s sin importarlo" % (os.path.basename(f), cls))
+if import_problems:
+    fails.append("IMPORTS:\n" + "\n".join(sorted(set(import_problems))))
+
 # 4) verifyGripeVerdeVersionSync
 gsrc = read(os.path.join(JAVA_DIR, "com/eternalcraft/gripeverde/GripeVerdeMod.java"))
 mm = re.search(r'VERSION\s*=\s*"([^"]+)"', gsrc); assert mm, "VERSION const missing"

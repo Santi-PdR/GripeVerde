@@ -1,5 +1,6 @@
 package com.eternalcraft.gripeverde.client.screens;
 
+import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.widgets.SlimButton;
 import net.minecraft.client.Minecraft;
