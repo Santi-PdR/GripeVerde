@@ -49,50 +49,51 @@ jobs:
           path: build/libs/gripeverde-*.jar
           if-no-files-found: error
 
-  # v0.179.0: el JAR como asset de release, para tener una descarga directa.
-  # Solo corre cuando se dispara a mano con publish_release=true, asi que un
-  # push normal no crea tags ni releases. contents: write va en este job, no en
-  # el workflow, para no ampliar permisos del build normal.
+  # v0.179.0: el JAR como asset de release, para tener una descarga directa
+  # (.jar, no el zip del artefacto). Solo publica cuando release-tag.txt coincide
+  # con la version de build.gradle, asi que un push normal no crea nada y un
+  # release nunca se sobrescribe con el build de otra version.
   publish:
     needs: build
-    # Se publica a mano (workflow_dispatch) o con la marca [release] en el
-    # mensaje del commit, porque el token de esta sesion no puede disparar
-    # workflows por API (403 actions: write).
-    if: |
-      (github.event_name == 'workflow_dispatch' && inputs.publish_release == true)
-      || (github.event_name == 'push' && contains(github.event.head_commit.message, '[release]'))
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Read release marker
+        id: marker
+        run: |
+          set -euo pipefail
+          MARKER="$(head -n1 release-tag.txt 2>/dev/null | tr -d '[:space:]' || true)"
+          VERSION="$(grep -m1 '^version = ' build.gradle | cut -d"'" -f2)"
+          TAG_INPUT="${{ inputs.release_tag }}"
+          if [ -n "$TAG_INPUT" ]; then MARKER="$TAG_INPUT"; fi
+          echo "marker=$MARKER version=$VERSION"
+          if [ -n "$MARKER" ] && [ "$MARKER" = "v$VERSION" ]; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+            echo "tag=$MARKER" >> "$GITHUB_OUTPUT"
+          else
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          fi
       - name: Download JAR
+        if: steps.marker.outputs.publish == 'true'
         uses: actions/download-artifact@v4
         with:
           name: GripeVerde-jar
           path: dist
       - name: Publish release
+        if: steps.marker.outputs.publish == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG_INPUT: ${{ inputs.release_tag }}
+          TAG: ${{ steps.marker.outputs.tag }}
         run: |
           set -euo pipefail
           ls -l dist
-          TAG="$TAG_INPUT"
-          if [ -z "$TAG" ]; then
-            VERSION="$(grep -m1 '^version = ' build.gradle | cut -d"'" -f2)"
-            TAG="v$VERSION"
-          fi
-          if [ -z "$TAG" ] || [ "$TAG" = "v" ]; then
-            echo "No pude resolver el tag del release" >&2
-            exit 1
-          fi
-          awk '/^## v/{n++} n<2' CHANGELOG.md > /tmp/release-notes.md || true
-          echo "publicando $TAG"
           if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release upload "$TAG" dist/*.jar --clobber --repo "$GITHUB_REPOSITORY"
+            echo "el release $TAG ya existe; no lo sobrescribo"
           else
+            awk '/^## v/{n++} n<2' CHANGELOG.md > /tmp/release-notes.md || true
             gh release create "$TAG" dist/*.jar --repo "$GITHUB_REPOSITORY" --title "GripeVerde $TAG" --notes-file /tmp/release-notes.md
           fi
           gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json tagName,assets --jq '"release \(.tagName)", (.assets[] | "\(.name) \(.size) \(.url)")'
