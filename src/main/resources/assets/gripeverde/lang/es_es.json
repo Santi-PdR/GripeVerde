@@ -175,5 +175,19 @@
     "gripeverde.poster.rescue.footer": "NO DEJES A NADIE ATRÁS.",
     "gripeverde.title.button.copyl": "Parte de CEDA",
     "gripeverde.field_guide.scroll_hint.compact": "Desplázate por las notas · 1–7",
-    "gripeverde.options.sound.ambience_test.tooltip": "Reproduce un crujido breve con los niveles Ambiente y Maestro de Minecraft. Disponible en la portada."
+    "gripeverde.options.sound.ambience_test.tooltip": "Reproduce un crujido breve con los niveles Ambiente y Maestro de Minecraft. Disponible en la portada.",
+    "gripeverde.dispatch.title": "Parte de CEDA",
+    "gripeverde.dispatch.subtitle": "Puesto de enlace · 1800",
+    "gripeverde.dispatch.hint": "Escribí el parte, un renglón por mensaje",
+    "gripeverde.dispatch.line": "Renglón %s del parte",
+    "gripeverde.dispatch.offline": "Sin conexión: los renglones quedan en el borrador",
+    "gripeverde.dispatch.ready": "Enter envía un renglón · Tab baja de renglón",
+    "gripeverde.dispatch.sent": "Renglón enviado",
+    "gripeverde.dispatch.queued": "Mandando los renglones, uno cada medio segundo",
+    "gripeverde.dispatch.empty": "No hay nada para enviar",
+    "gripeverde.dispatch.button.send": "ENVIAR",
+    "gripeverde.dispatch.button.send_all": "ENVIAR TODO",
+    "gripeverde.dispatch.button.clear": "LIMPIAR",
+    "gripeverde.dispatch.button.back": "VOLVER",
+    "gripeverde.dispatch.copyl": "Abrir el panel de CEDA"
 }

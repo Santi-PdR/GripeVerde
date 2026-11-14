@@ -175,5 +175,19 @@
   "gripeverde.poster.rescue.footer": "STAY WITH YOUR CREW.",
   "gripeverde.title.button.copyl": "CEDA dispatch",
   "gripeverde.field_guide.scroll_hint.compact": "Scroll the notes · 1–7",
-  "gripeverde.options.sound.ambience_test.tooltip": "Play a short creak through Minecraft's Ambient and Master levels. Available on the title screen."
+  "gripeverde.options.sound.ambience_test.tooltip": "Play a short creak through Minecraft's Ambient and Master levels. Available on the title screen.",
+  "gripeverde.dispatch.title": "CEDA dispatch",
+  "gripeverde.dispatch.subtitle": "Relay post · 1800",
+  "gripeverde.dispatch.hint": "Write the dispatch, one line per message",
+  "gripeverde.dispatch.line": "Dispatch line %s",
+  "gripeverde.dispatch.offline": "No connection: the lines stay in the draft",
+  "gripeverde.dispatch.ready": "Enter sends a line · Tab moves down",
+  "gripeverde.dispatch.sent": "Line sent",
+  "gripeverde.dispatch.queued": "Sending the lines, one every half second",
+  "gripeverde.dispatch.empty": "Nothing to send",
+  "gripeverde.dispatch.button.send": "SEND",
+  "gripeverde.dispatch.button.send_all": "SEND ALL",
+  "gripeverde.dispatch.button.clear": "CLEAR",
+  "gripeverde.dispatch.button.back": "BACK",
+  "gripeverde.dispatch.copyl": "Open the CEDA panel"
 }

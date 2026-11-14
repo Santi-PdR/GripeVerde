@@ -1,3 +1,7 @@
+## v0.180.0 - El parte tiene su propia mesa
+
+El parte de CEDA era un puente por reflexión: solo aparecía con CopyL instalado y abría su pantalla. Ahora es una página del diario (`DiaryDispatchScreen`): ocho renglones numerados, 12 px de aire entre ellos, carril de 34 px para los números y dos filas de botones. Enter envía el renglón actual, Tab baja, el borrador sobrevive al cerrar y el envío en tanda espera 10 ticks entre mensajes. El acceso de la portada está siempre (ya no depende de CopyL) y el panel de CopyL, si está, se abre desde la ficha. 14 claves nuevas × 25 idiomas (191 en el espejo).
+
 ## v0.179.0 - El cronista habla en toda ventana
 
 La ficha de saludo pide 180 px de carril y 44 px de alto, así que en ventanas de menos de ~620 px de ancho (y en las anchas de menos de ~330 px de alto) el cronista se quedaba callado. Ahora, cuando la ficha no cabe, la misma frase sale como una línea centrada en la cabecera, entre el control de música y los iconos, recortada a `width - 160`. Si la ficha cabe, nada cambia.

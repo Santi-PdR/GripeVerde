@@ -1,3 +1,7 @@
+## Version 0.180.0 - El parte tiene su propia mesa
+
+El parte de CEDA era un puente por reflexión que solo existía con CopyL instalado y abría una pantalla ajena. Ahora es una página de este diario: ocho renglones numerados sobre papel rayado, doce píxeles de aire entre uno y otro, un carril para los números y dos filas de botones con espacio de sobra. Enter envía el renglón en el que estás y Tab baja al siguiente; el borrador queda si cerrás la página, y el envío en tanda espacia los mensajes medio segundo para que el servidor no lo lea como spam. Donde estaba el papelito viejo ahora hay siempre una entrada, y el panel de CEDA de CopyL —cuando está instalado— se abre desde la esquina de la ficha.
+
 ## Version 0.179.0 - El cronista habla en toda ventana
 
 La ficha de saludo necesita un carril de 180 píxeles de ancho y cuarenta y cuatro de alto, así que en ventanas de menos de unos 620 píxeles —y en las anchas de menos de unos 330 de alto— el cronista no decía nada. Ahora, cuando la ficha no cabe, la misma frase aparece como una línea centrada en la cabecera, entre el control de música y los iconos de acceso, recortada al ancho libre. Si la ficha cabe, todo queda como estaba.

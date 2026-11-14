@@ -3,7 +3,6 @@ package com.eternalcraft.gripeverde.client.screens;
 import com.eternalcraft.gripeverde.GripeVerdeMod;
 import com.eternalcraft.gripeverde.client.audio.MenuAmbience;
 import com.eternalcraft.gripeverde.client.audio.MenuMusic;
-import com.eternalcraft.gripeverde.client.integration.CopyLCompatibility;
 
 import com.eternalcraft.gripeverde.client.render.AtmosphereRenderer;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
@@ -310,12 +309,13 @@ public class DiaryTitleScreen extends Screen {
             Component.translatable("gripeverde.pause.btn.field_guide")));
         this.addRenderableWidget(fieldGuideBtn);
 
-        // Optional CEDA dispatch slip: quiet, title-screen-only, and absent without CopyL.
-        if (this.width >= 124 && CopyLCompatibility.isAvailable()) {
+        // v0.180.0: el parte de CEDA ya es nuestro (DiaryDispatchScreen), asi que el
+        // acceso esta siempre; CopyL, si esta instalado, se abre desde adentro.
+        if (this.width >= 124) {
             SlimButton dispatchBtn = new SlimButton(
                 this.width - 76, 8, 20, 20,
                 Component.translatable("gripeverde.title.button.copyl"),
-                () -> CopyLCompatibility.openSettings(this))
+                () -> this.minecraft.setScreen(new DiaryDispatchScreen(this)))
                 .withIcon(SlimButton.Icon.DISPATCH_NOTE);
             dispatchBtn.setTooltip(Tooltip.create(
                 Component.translatable("gripeverde.title.button.copyl")));

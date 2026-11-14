@@ -1,3 +1,7 @@
+## Version 0.180.0 - The dispatch has its own desk
+
+The CEDA slip used to be a reflection bridge that only existed when CopyL was installed and opened someone else's screen. It is now a page of this diary: eight numbered lines on ruled paper, twelve pixels of air between them, a gutter for the numbers and two rows of buttons with room to breathe. Enter sends the line you are on and Tab walks down; the draft stays if you close the page, and the batch send spaces the messages half a second apart so the server does not read it as spam. Where the old slip used to sit there is now always a way in, and the CEDA panel of CopyL - when it is installed - opens from the corner of the sheet.
+
 ## Version 0.179.0 - The chronicler speaks in every window
 
 The greeting card needs a lane 180 pixels wide and forty-four pixels tall, so in windows narrower than about 620 pixels - and in wide ones under about 330 pixels tall - the chronicler said nothing at all. Now, when the card does not fit, the same sentence appears as a single centred line in the header, between the music control and the shortcut icons, trimmed to the free width. When the card fits, everything stays as it was.
