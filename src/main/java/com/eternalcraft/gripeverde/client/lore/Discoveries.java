@@ -29,9 +29,7 @@ public final class Discoveries {
     public static final String RAT_PAUSE         = "rat_pause";
     public static final String CAT_SCRAP         = "cat_scrap";
     public static final String CODE_1897         = "code_1897";
-    public static final String CODE_1152         = "code_1152";
     public static final String CODE_HOLLOWAY     = "code_holloway";
-    public static final String CODE_PEREIRA      = "code_pereira";
     public static final String GHOST_TRACK       = "ghost_track";
     public static final String CANDLE_DARK       = "candle_dark";
     public static final String RAVEN_FEATHER     = "raven_feather";
@@ -45,7 +43,6 @@ public final class Discoveries {
     public static final String EYE_FOLLOWS       = "eye_follows";
     public static final String GUESTBOOK         = "guestbook";
     public static final String FOG_TONGUE        = "fog_tongue";
-    public static final String BINDER_MARKS      = "binder_marks";
     public static final String BROKEN_SEAL       = "broken_seal";
     public static final String SILENCE_LISTENS   = "silence_listens";
     public static final String DESTROYER         = "destroyer";
@@ -69,7 +66,6 @@ public final class Discoveries {
     // v0.25.0: el que mira la tormenta, la lluvia tocable y el oficio del doctor
     public static final String STORM_WATCHER     = "storm_watcher";
     public static final String DROP_CATCHER      = "drop_catcher";
-    public static final String CODE_DOCTOR       = "code_doctor";
 
     // v0.21.3: fichas de la limpieza (solo texto, sin mecanica nueva)
     public static final String ARCHIVE_THINNING  = "archive_thinning";
@@ -177,9 +173,7 @@ public final class Discoveries {
             case RAT_PAUSE:         return en ? "The rat that stopped" : "La rata que se detuvo";
             case CAT_SCRAP:         return en ? "The cat's gift" : "El regalo del gato";
             case CODE_1897:         return en ? "The night of the outbreak" : "La noche del brote";
-            case CODE_1152:         return en ? "The hour that does not exist" : "La hora que no existe";
             case CODE_HOLLOWAY:     return en ? "The doctor's confession" : "La confesión del médico";
-            case CODE_PEREIRA:      return en ? "A name spoken aloud" : "Un nombre dicho en voz alta";
             case GHOST_TRACK:       return en ? "The piece never recorded" : "La pieza nunca grabada";
             case CANDLE_DARK:       return en ? "What the dark reads" : "Lo que lee la oscuridad";
             case RAVEN_FEATHER:     return en ? "The raven's toll" : "El peaje del cuervo";
@@ -193,7 +187,6 @@ public final class Discoveries {
             case EYE_FOLLOWS:       return en ? "The little eye in the corner" : "El ojito de la esquina";
             case GUESTBOOK:         return en ? "Signed, in the visitor's book" : "Firmado en el libro de visitas";
             case FOG_TONGUE:        return en ? "The impossible tongue" : "La lengua imposible";
-            case BINDER_MARKS:      return en ? "The binder's marks" : "Las marcas del encuadernador";
             case BROKEN_SEAL:       return en ? "The broken seal" : "El sello roto";
             case SILENCE_LISTENS:   return en ? "Silence listens" : "El silencio escucha";
             case DESTROYER:         return en ? "The cabinet remembers" : "El gabinete recuerda";
@@ -215,7 +208,6 @@ public final class Discoveries {
             case SOUND_KEEPER:      return en ? "The cabinet, in tune" : "El gabinete, afinado";
             case STORM_WATCHER:     return en ? "The storm watcher" : "El que mira la tormenta";
             case DROP_CATCHER:      return en ? "Catching the rain" : "Atrapar la lluvia";
-            case CODE_DOCTOR:       return en ? "The doctor still signs" : "El doctor aún firma";
             case ARCHIVE_THINNING:  return en ? "The archive that grows thinner" : "El archivo que se adelgaza";
             case THEME_NEVER_PLAYED: return en ? "The theme that never played" : "El tema que nunca sonó";
             case BG_TOWN_MEMORY:    return en ? "The street that never existed" : "La calle que nunca existió";
@@ -237,9 +229,7 @@ public final class Discoveries {
             case RAT_PAUSE:         return en ? "Not every crossing is a hurry." : "No todo cruce es una huida.";
             case CAT_SCRAP:         return en ? "The roof cat pays its debts slowly." : "El gato del tejado paga sus deudas despacio.";
             case CODE_1897:         return en ? "Some years deserve to be spoken." : "Hay años que merecen decirse.";
-            case CODE_1152:         return en ? "Speak the hour of the outbreak." : "Di en voz alta la hora del brote.";
             case CODE_HOLLOWAY:     return en ? "Name the doctor of the elixir." : "Nombra al médico del elixir.";
-            case CODE_PEREIRA:      return en ? "Say the chronicler's name to his face." : "Di el nombre del cronista frente a él.";
             case GHOST_TRACK:       return en ? "Turn the gramophone past its last piece." : "Gira el gramófono más allá de su última pieza.";
             case CANDLE_DARK:       return en ? "Put out the flame in the field pause." : "Apaga la llama de la pausa.";
             case RAVEN_FEATHER:     return en ? "The raven keeps what it is owed." : "El cuervo cobra lo que se le debe.";
@@ -253,7 +243,6 @@ public final class Discoveries {
             case EYE_FOLLOWS:       return en ? "That little eye seems to be alive." : "Ese ojito parece estar vivo.";
             case GUESTBOOK:         return en ? "The atlas of lodgings keeps a register." : "El atlas de hospederías lleva un registro.";
             case FOG_TONGUE:        return en ? "Some tongues are only spoken by the found." : "Hay lenguas que solo hablan los encontrados.";
-            case BINDER_MARKS:      return en ? "The chronicle's margins keep marks." : "Los márgenes de la crónica guardan marcas.";
             case BROKEN_SEAL:       return en ? "Attributions end under a seal." : "Las atribuciones terminan bajo un sello.";
             case SILENCE_LISTENS:   return en ? "Lower the gramophone until nothing is left." : "Baja el gramófono hasta que no quede nada.";
             case DESTROYER:         return en ? "Destroy what the cabinet asks you to destroy." : "Destruye lo que el gabinete te pide destruir.";
@@ -275,7 +264,6 @@ public final class Discoveries {
             case SOUND_KEEPER:      return en ? "The tuning fork hums where the sliders sleep." : "El diapasón zumba donde duermen los reguladores.";
             case STORM_WATCHER:     return en ? "On storm nights, stay for the third flash." : "En noches de tormenta, quédate para el tercer relámpago.";
             case DROP_CATCHER:      return en ? "The rain falls close enough to touch it." : "La lluvia cae lo bastante cerca como para tocarla.";
-            case CODE_DOCTOR:       return en ? "The elixir had a doctor. The office remains." : "El elixir tuvo un médico. El oficio sigue en pie.";
             case ARCHIVE_THINNING:  return en ? "Open the cabinet again and again, until it gives up its old papers." : "Abre el gabinete una y otra vez, hasta que entregue sus papeles viejos.";
             case THEME_NEVER_PLAYED: return en ? "Speak the word of the cleansing." : "Pronuncia la palabra de la limpieza.";
             case BG_TOWN_MEMORY:    return en ? "When the archive confesses two ghosts, ask for the third." : "Cuando el archivo confiese dos fantasmas, pide el tercero.";
@@ -308,16 +296,16 @@ public final class Discoveries {
     public static final String[] ALL = {
         WATCH_INSCRIPTION, WATCH_KEY, POSTER_PEEL, WANTED_EYES, AVENUE_DARK,
         SIGNAL_WINDOW, RAT_PAUSE, CAT_SCRAP, CODE_1897,
-        CODE_1152, CODE_HOLLOWAY, CODE_PEREIRA, GHOST_TRACK, CANDLE_DARK,
+        CODE_HOLLOWAY, GHOST_TRACK, CANDLE_DARK,
         RAVEN_FEATHER, BREATH, READER_SHADOW, DRAWER_OPEN, DRAWER_COMPLETE,
         SMUGGLER_SIGNAL, MIRROR, LETTERS, EYE_FOLLOWS, GUESTBOOK,
-        FOG_TONGUE, BINDER_MARKS, BROKEN_SEAL, SILENCE_LISTENS, DESTROYER,
+        FOG_TONGUE, BROKEN_SEAL, SILENCE_LISTENS, DESTROYER,
         ADDRESS_13, WHISPER_ANSWER, KNOCK_BACK, HINGE, NIGHT_WHOLE,
         TIME_SICK, STREAK3, DUST, ANNIVERSARY, FORBIDDEN_FOLIO,
         COFFIN_CART, WEATHERVANE, SKULL_WATCHES,
         ARCHIVE_THINNING, THEME_NEVER_PLAYED, BG_TOWN_MEMORY,
         BUTTONS_NEVER_PRESSED,
         STORM_NIGHT, SEAL_BREAKER, SOUND_KEEPER,
-        STORM_WATCHER, DROP_CATCHER, CODE_DOCTOR
+        STORM_WATCHER, DROP_CATCHER
     };
 }

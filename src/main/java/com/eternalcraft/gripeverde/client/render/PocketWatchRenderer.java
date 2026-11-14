@@ -162,10 +162,6 @@ public class PocketWatchRenderer {
 
         double swingT = (elapsed % 5000L) / 5000.0 * 2.0 * Math.PI;
         int swingOffset = reducedMotion ? 0 : (int) Math.round(Math.sin(swingT) * 6.0);
-        // v0.16.0: cuando la campana cuenta trece, el reloj tiembla.
-        if (!reducedMotion && com.eternalcraft.gripeverde.client.lore.HiddenCipher.isChiming()) {
-            swingOffset += (int)(Math.sin(now / 34.0) * 2.4);
-        }
         int cx = cxAnchor + swingOffset;
 
         drawLongChain(g, cxAnchor, topY, cx, cy - radius);

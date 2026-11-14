@@ -195,7 +195,7 @@ public final class DiaryFieldGuideScreen extends Screen {
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
         DiaryChrome.drawPanelShadow(g, panelX, panelY, panelW, panelH);
-        PaperTexture.drawClean(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.ARCHIVE);
+        PaperTexture.drawVeil(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.ARCHIVE);
         DiaryChrome.drawCornerOrnaments(g, panelX, panelY, panelW, panelH);
         if (!compactLayout) {
             DiaryChrome.drawRegistryTag(g, panelX, panelY, panelW, panelH, "REG. IV");

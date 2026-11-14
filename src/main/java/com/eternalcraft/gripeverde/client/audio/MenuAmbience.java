@@ -365,9 +365,10 @@ public class MenuAmbience {
     private static long randomBetween(long min,long max){ if(max<=min) return min; return min+(long)(RNG.nextDouble()*(max-min)); }
     private static float randomFloatBetween(float min,float max){ if(max<=min) return min; return min+RNG.nextFloat()*(max-min); }
 
-    /** Non-positional one-shot in Minecraft's Ambient category, matching the loop slider. */
+    /** One-shot no posicional en el canal MASTER, igual que el bucle del ambiente. */
     private static SimpleSoundInstance ambientOneShot(SoundEvent sound,float pitch,float volume) {
-        return new SimpleSoundInstance(sound.getLocation(), SoundSource.AMBIENT, volume, pitch,
+        // v0.184.0: MASTER; el ambiente del mod no depende del slider vanilla "Ambiente".
+        return new SimpleSoundInstance(sound.getLocation(), SoundSource.MASTER, volume, pitch,
             RandomSource.create(), false, 0, SoundInstance.Attenuation.NONE,
             0.0, 0.0, 0.0, true);
     }

@@ -106,11 +106,8 @@ public class ChangelogScreen extends Screen {
     private int penScratchChars = 0;
     private long lastPenScratchMs = 0L;
 
-    // v0.16.0: las marcas del encuadernador y el folio escondido
-    private final List<int[]> asteriskRects = new ArrayList<>();
-    private static int binderMarksLit = 0;
-    private static long binderGlowUntilMs = 0L;
-    private int[] hiddenFolioRect = null;
+    // v0.184.0: fuera los secretos de clic (marcas del encuadernador y folio
+    // escondido). Los unicos huevos que quedan son los del fondo.
 
     public ChangelogScreen(Screen parent) {
         super(Component.literal(pickChangelogTitle()));
@@ -125,6 +122,7 @@ public class ChangelogScreen extends Screen {
         this.targetScrollY = lastScrollY;
         this.loadError = false;
         this.rows.clear();
+        this.rowHeightCacheW = -1;   // v0.184.0: la cronica cambio, alto nuevo
         this.lastContentW = -1;
 
         loadAndParse();
@@ -201,6 +199,28 @@ public class ChangelogScreen extends Screen {
         };
     }
 
+    // v0.184.0: alto de cada renglon memorizado. Antes, para saber donde cae el
+    // scroll, se volvia a partir el texto de TODA la cronica en cada frame:
+    // miles de cortes de linea por cuadro en la cronica completa. Ahora se
+    // mide una vez por ancho de hoja y se guarda.
+    private int[] rowHeightCache = new int[0];
+    private int rowHeightCacheW = -1;
+
+    private void ensureRowHeights(int contentW) {
+        if (this.rowHeightCacheW == contentW && this.rowHeightCache.length == rows.size()) return;
+        int n = rows.size();
+        int[] cache = new int[n];
+        for (int i = 0; i < n; i++) cache[i] = rowHeight(rows.get(i), contentW);
+        this.rowHeightCache = cache;
+        this.rowHeightCacheW = contentW;
+    }
+
+    private int heightAt(int index, int contentW) {
+        ensureRowHeights(contentW);
+        if (index < 0 || index >= this.rowHeightCache.length) return 0;
+        return this.rowHeightCache[index];
+    }
+
     private int rowHeight(Row row, int contentW) {
         switch (row.type) {
             case GAP:       return GAP_H;
@@ -221,11 +241,11 @@ public class ChangelogScreen extends Screen {
         int cw = contentW();
         this.lastContentW = cw;
         int total = 0;
-        for (Row r : rows) total += rowHeight(r, cw);
+        ensureRowHeights(cw);
+        for (int h : this.rowHeightCache) total += h;
         this.contentTotalH = total;
         int visible = contentH();
-        // v0.16.0: un poco mas alla del ultimo renglon hay sitio para un folio.
-        this.maxScroll = Math.max(0, total - visible) + 28;
+        this.maxScroll = Math.max(0, total - visible);
         clampScroll();
     }
 
@@ -350,7 +370,7 @@ public class ChangelogScreen extends Screen {
         if (idx < 0) return; // cronica aun no tiene la entrada; nada que sellar
         int cw = contentW();
         int off = 0;
-        for (int i = 0; i < idx; i++) off += rowHeight(rows.get(i), cw);
+        for (int i = 0; i < idx; i++) off += heightAt(i, cw);
         off = Math.max(0, off - 6);
         this.newVersionRow = rows.get(idx);
         this.arrivedFreshVersion = true;
@@ -397,12 +417,12 @@ public class ChangelogScreen extends Screen {
     private boolean isPenCursorVisible(int progress, int cx, int cy, int ch, int cw) {
         if (penRowStart < 0 || penRowEnd <= penRowStart) return false;
         int rowY = cy - scrollY;
-        for (int i = 0; i < penRowStart; i++) rowY += rowHeight(rows.get(i), cw);
+        for (int i = 0; i < penRowStart; i++) rowY += heightAt(i, cw);
 
         int consumed = 0;
         for (int i = penRowStart; i < penRowEnd; i++) {
             Row row = rows.get(i);
-            int height = rowHeight(row, cw);
+            int height = heightAt(i, cw);
             int length = (row.type == LT.GAP || row.type == LT.SEPARATOR)
                 ? 0 : row.text.length();
             if (length > 0 && progress < consumed + length) {
@@ -448,18 +468,29 @@ public class ChangelogScreen extends Screen {
         return 0;
     }
 
-    /** v0.24.0: sello de lacre junto a la entrada recien llegada. */
-    private void drawNewSeal(GuiGraphics g, int x, int y, int maxW) {
+    /**
+     * v0.184.0: sello de lacre de la entrada recien llegada.
+     *
+     * Antes se dibujaba pegado al borde derecho y por encima del renglon; en
+     * ventanas bajas el recorte de la hoja le comia la mitad de arriba y se
+     * leia "NUEV". Ahora el sello se mide completo y se mete a la fuerza
+     * dentro del area visible, asi siempre se lee entero.
+     */
+    private void drawFreshStamp(GuiGraphics g, int x, int y, int maxW, int clipTop, int clipBottom) {
         String txt = isEnglishSelected() ? "NEW" : "NUEVO";
         int tw = this.font.width(txt);
-        int sx = x + maxW - tw - 12;
+        int w = tw + 9;
+        int h = 12;
+        int sx = x + maxW - w - 6;
         int sy = y - 3;
+        if (sy + h > clipBottom - 1) sy = clipBottom - 1 - h;
+        if (sy < clipTop + 1) sy = clipTop + 1;
+        if (sy + h > clipBottom - 1) return;   // no cabe entero: mejor sin sello que cortado
         int wax = 0xFF7A2415;
-        g.fill(sx - 2, sy - 1, sx + tw + 5, sy + 11, wax);
-        g.fill(sx - 3, sy, sx + tw + 6, sy + 10, wax);
-        g.fill(sx - 1, sy + 1, sx + tw + 4, sy + 9, 0xFF8B2A1C);
-        g.fill(sx, sy + 1, sx + 3, sy + 2, 0x60E8A080);
-        g.drawString(this.font, txt, sx + 1, sy + 2, 0xFFEAD9B0, false);
+        g.fill(sx, sy, sx + w, sy + h, wax);
+        g.fill(sx + 1, sy + 1, sx + w - 1, sy + h - 1, 0xFF8B2A1C);
+        g.fill(sx + 1, sy + 1, sx + 4, sy + 2, 0x60E8A080);
+        g.drawString(this.font, txt, sx + (w - tw) / 2, sy + 2, 0xFFEAD9B0, false);
     }
 
     @Override
@@ -473,7 +504,7 @@ public class ChangelogScreen extends Screen {
 
         g.fill(0, 0, this.width, this.height, 0xD0100D08);
 
-        com.eternalcraft.gripeverde.client.render.PaperTexture.drawClean(g, px, py, pw, ph, com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.ARCHIVE);
+        com.eternalcraft.gripeverde.client.render.PaperTexture.drawVeil(g, px, py, pw, ph, com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.ARCHIVE);
         g.fill(px,          py,          px + pw, py + 1,      DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
         g.fill(px,          py + ph - 1, px + pw, py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
         g.fill(px,          py,          px + 1,  py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
@@ -484,8 +515,6 @@ public class ChangelogScreen extends Screen {
         g.drawString(this.font, this.title, tx, py + 8, DiaryTheme.AMBER_FLAME, false);
         g.fill(tx - 4, py + 18, tx + tw + 4, py + 19, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 150));
 
-        this.asteriskRects.clear();
-        this.hiddenFolioRect = null;
         g.enableScissor(cx, cy, cx + cw, cy + ch);
 
         if (loadError) {
@@ -534,7 +563,7 @@ public class ChangelogScreen extends Screen {
             int y = cy - scrollY;
             for (int ri = 0; ri < rows.size(); ri++) {
                 Row row = rows.get(ri);
-                int h = rowHeight(row, cw);
+                int h = heightAt(ri, cw);
                 boolean inPenEntry = penActive && ri >= penRowStart && ri < penRowEnd;
                 if (y + h >= cy - 2 && y <= cy + ch + 2) {
                     if (inPenEntry) {
@@ -549,7 +578,7 @@ public class ChangelogScreen extends Screen {
                         if (vis >= len) {
                             renderRow(g, row, cx, y, cw);
                             if (freshRows.contains(row)) {
-                                drawNewSeal(g, cx, y, cw);
+                                drawFreshStamp(g, cx, y, cw, cy, cy + ch);
                             }
                         } else {
                             // La pluma aun no llego: se dibuja lo escrito y el
@@ -584,7 +613,7 @@ public class ChangelogScreen extends Screen {
                         }
                         renderRow(g, row, cx, y, cw);
                         if (freshRows.contains(row)) {
-                            drawNewSeal(g, cx, y, cw);
+                            drawFreshStamp(g, cx, y, cw, cy, cy + ch);
                         }
                     }
                 } else if (inPenEntry) {
@@ -600,20 +629,6 @@ public class ChangelogScreen extends Screen {
             }
             if (penActive && penBudget >= penTotalChars) {
                 penActive = false; // la tinta seco: escritura terminada
-            }
-            // v0.16.0: despues del ultimo renglon, un folio que no figura en la cronica.
-            int fy = cy - scrollY + this.contentTotalH + 8;
-            if (fy >= cy - 12 && fy <= cy + ch + 4) {
-                boolean en = isEnglishSelected();
-                String hidden = en ? "~ there is a room behind the last folio ~"
-                                   : "~ hay una sala detras del ultimo folio ~";
-                int hw = this.font.width(hidden);
-                int hx = cx + (cw - hw) / 2;
-                long pulse = System.currentTimeMillis();
-                int alpha = reducedFlashes() ? 120 : 120 + (int)(Math.sin(pulse / 640.0) * 40);
-                g.drawString(this.font, hidden, hx, fy, (alpha << 24) | 0x8E6A35, false);
-                g.fill(hx, fy + 11, hx + hw, fy + 12, (Math.min(120, alpha) << 24) | 0x8E6A35);
-                this.hiddenFolioRect = new int[]{ hx - 4, fy - 3, hw + 8, 18 };
             }
         }
 
@@ -790,7 +805,7 @@ public class ChangelogScreen extends Screen {
         int idx = searchHits.get(searchHitPos);
         int cw = contentW();
         int off = 0;
-        for (int i = 0; i < idx; i++) off += rowHeight(rows.get(i), cw);
+        for (int i = 0; i < idx; i++) off += heightAt(i, cw);
         setScrollTarget(Math.max(0, off - contentH() / 3), false);
     }
 
@@ -869,8 +884,6 @@ public class ChangelogScreen extends Screen {
             // Nota al margen: asterisco decorativo a la izquierda del H1
             int marginColor = DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180);
             g.drawString(this.font, "*", x + indent - 10, y + 4, marginColor, false);
-            // v0.16.0: el encuadernador marco algunos con proposito.
-            this.asteriskRects.add(new int[]{ x + indent - 12, y + 2, 8, 10 });
 
             g.pose().pushPose();
             float capScale = 1.6f;
@@ -918,34 +931,6 @@ public class ChangelogScreen extends Screen {
         if (button == 0 && !DiaryChrome.overAnyWidget(this, mouseX, mouseY)) {
             // v0.27.0: un gesto del lector y la pluma termina de golpe.
             this.penActive = false;
-            try {
-                // v0.16.0: las marcas del encuadernador
-                for (int[] r : this.asteriskRects) {
-                    if (mouseX >= r[0] && mouseX <= r[0] + r[2] && mouseY >= r[1] && mouseY <= r[1] + r[3]) {
-                        binderMarksLit++;
-                        com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
-                            com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_TICK.get(), 0.12f, 1.9f);
-                        if (binderMarksLit >= 3) {
-                            binderMarksLit = 0;
-                            boolean first = com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
-                                com.eternalcraft.gripeverde.client.lore.Discoveries.BINDER_MARKS);
-                            if (first) binderGlowUntilMs = System.currentTimeMillis() + 5000L;
-                            com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
-                                com.eternalcraft.gripeverde.client.audio.ModSounds.UI_NOTIFICATION.get(), 0.16f, 0.80f);
-                        }
-                        return true;
-                    }
-                }
-                // v0.16.0: el folio escondido abre la Sala de consulta
-                if (this.hiddenFolioRect != null) {
-                    int[] r = this.hiddenFolioRect;
-                    if (mouseX >= r[0] && mouseX <= r[0] + r[2] && mouseY >= r[1] && mouseY <= r[1] + r[3]) {
-                        com.eternalcraft.gripeverde.client.audio.UiSounds.back();
-                        this.minecraft.setScreen(new DiaryArchiveScreen(this));
-                        return true;
-                    }
-                }
-            } catch (Throwable ignored) {}
         }
         return super.mouseClicked(mouseX, mouseY, button);
     }

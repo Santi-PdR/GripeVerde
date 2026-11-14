@@ -133,7 +133,7 @@ public class DiaryConfirmScreen extends ConfirmScreen {
         int panelX = (this.width - panelW) / 2;
         int panelY = (this.height - panelH) / 2;
         DiaryChrome.drawPanelShadow(gfx, panelX, panelY, panelW, panelH);
-        PaperTexture.drawClean(gfx, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
+        PaperTexture.drawVeil(gfx, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
 
         // Cosmetica
         DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, panelW, panelH);

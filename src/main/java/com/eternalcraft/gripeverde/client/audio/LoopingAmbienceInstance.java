@@ -16,7 +16,8 @@ public class LoopingAmbienceInstance extends AbstractSoundInstance implements Ti
     private float dynamicVolume = 0f;
 
     public LoopingAmbienceInstance(ResourceLocation loc, float initialVolume) {
-        super(loc, SoundSource.AMBIENT, RandomSource.create());
+        // v0.184.0: canal MASTER para que el slider "Ambiente" de vanilla no toque el mod.
+        super(loc, SoundSource.MASTER, RandomSource.create());
         this.volume = initialVolume;
         this.dynamicVolume = initialVolume;
         this.pitch = 1.0f;

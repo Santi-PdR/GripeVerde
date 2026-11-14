@@ -44,7 +44,7 @@ if declared_languages - set(REQUIRED):
 
 baseline = json.loads(read(os.path.join(LANG_DIR, "en_us.json")))
 bkeys = set(baseline)
-EXPECTED = 200
+EXPECTED = 186
 loc_problems = []
 if len(bkeys) != EXPECTED:
     loc_problems.append("en_us: expected %d keys, found %d" % (EXPECTED, len(bkeys)))
@@ -117,7 +117,9 @@ banned = ['ThemeManager','GhoulPalette','ScreenLayout','ScreenTheme','AbstractSc
  'getOpenCount','drawSolidBlob','drawRowBands','openTelemetry','scrollToSection','drawGreeting',
  'drawSelectionLedger','drawHeraldTicker','drawStatusPill','drawCorrespondenceRack',
  'drawSignalStation','drawBottomNotice','drawSpecimenFooter','computePublicSignal',
- 'drawLedgerDetails','drawOrnamentalDivider']
+ 'drawLedgerDetails','drawOrnamentalDivider',
+ 'HiddenCipher','onCharTyped','isChiming','asteriskRects','hiddenFolioRect',
+ 'binderMarksLit','BINDER_MARKS','drawNewSeal']
 pat = re.compile(r"(?i)\b(?:" + "|".join(banned) + r")\b")
 dc_problems = []
 java_files = glob.glob(JAVA_DIR + "/**/*.java", recursive=True)

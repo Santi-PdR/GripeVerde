@@ -59,7 +59,7 @@ public class DiaryCreditsScreen extends Screen {
         QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
 
         DiaryChrome.drawPanelShadow(g, panelX, panelY, panelW, panelH);
-        PaperTexture.drawClean(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
+        PaperTexture.drawVeil(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
         drawOfficialFrame(g);
 
         int cx = this.width / 2;

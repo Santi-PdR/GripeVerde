@@ -18,7 +18,10 @@ public class FadingMusicInstance extends AbstractSoundInstance implements Tickab
     private final long startMs;
 
     public FadingMusicInstance(SoundEvent sound, float initialVolume, long durationMs) {
-        super(sound.getLocation(), SoundSource.MUSIC, RandomSource.create());
+        // v0.184.0: canal MASTER en vez de MUSIC. La banda sonora del mod ya no se
+        // apaga ni se atenua con el slider "Musica" de Minecraft: manda el slider
+        // propio del cronista y, por encima, el volumen maestro general.
+        super(sound.getLocation(), SoundSource.MASTER, RandomSource.create());
         this.volume = initialVolume;
         this.dynamicVolume = initialVolume;
         this.pitch = 1.0f;

@@ -207,7 +207,7 @@ public final class DiaryChrome {
     public static void renderPanelBase(GuiGraphics gfx, int x, int y, int w, int h, int accent,
                                        PaperTexture.PaperKind kind) {
         drawPanelScaffold(gfx, x, y, w, h, accent);
-        PaperTexture.drawClean(gfx, x, y, w, h, kind);
+        PaperTexture.drawVeil(gfx, x, y, w, h, kind);
         drawCornerOrnaments(gfx, x, y, w, h);
     }
 

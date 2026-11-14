@@ -134,7 +134,7 @@ public class DiaryLanguageScreen extends Screen {
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
         DiaryChrome.drawPanelShadow(g, panelX, panelY, panelW, panelH);
-        PaperTexture.drawClean(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.ARCHIVE);
+        PaperTexture.drawVeil(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.ARCHIVE);
 
         int titleY = this.panelY + PANEL_PAD;
         int cx = this.width / 2;
@@ -164,7 +164,7 @@ public class DiaryLanguageScreen extends Screen {
         int frameH = this.listH + 8;
 
         // Fondo interno con textura de pergamino (evita cartulina lisa)
-        PaperTexture.drawClean(g, frameX, frameY, frameW, frameH);
+        PaperTexture.drawVeil(g, frameX, frameY, frameW, frameH);
         // Marco tinta 1px
         g.fill(frameX, frameY, frameX + frameW, frameY + 1, 0x5A3A2416);
         g.fill(frameX, frameY + frameH - 1, frameX + frameW, frameY + frameH, 0x5A3A2416);

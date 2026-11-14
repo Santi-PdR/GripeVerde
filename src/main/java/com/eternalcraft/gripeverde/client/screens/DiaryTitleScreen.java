@@ -71,11 +71,14 @@ public class DiaryTitleScreen extends Screen {
     private long wantedPressStartMs = 0L;
     private boolean wantedPressing = false;
 
-    private static final int BTN_W = 300;
-    private static final int BTN_H = 40;
+    // v0.184.0: botones de la portada mas chicos. Dejaban de ser invitacion y
+    // pasaban a ser mueble: menos ancho, menos alto y mas aire para el fondo,
+    // que es lo que el lector viene a mirar.
+    private static final int BTN_W = 248;
+    private static final int BTN_H = 32;
 
-    private static final int BTN_SLIM_W = 130;
-    private static final int BTN_SLIM_H = 32;
+    private static final int BTN_SLIM_W = 112;
+    private static final int BTN_SLIM_H = 26;
 
     private static final int POSTER_W = 180;
     private static final int POSTER_H_MAX = 260;
@@ -426,8 +429,6 @@ public class DiaryTitleScreen extends Screen {
         this.ticks++;
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.tick(1f / 20f);
         try {
-            com.eternalcraft.gripeverde.client.lore.HiddenCipher.tick();
-
             // El tiempo enferma: el segundero ya no disimula.
             if (com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.isTimeSick()) {
                 com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
@@ -493,12 +494,9 @@ public class DiaryTitleScreen extends Screen {
     @Override
     public boolean charTyped(char codePoint, int modifiers) {
         lastInteractionMs = System.currentTimeMillis();
-        // v0.16.0: el telegrafo oculto oye lo que el lector escribe en la vigilia.
-        try {
-            if (com.eternalcraft.gripeverde.client.lore.HiddenCipher.onCharTyped(codePoint)) {
-                return true;
-            }
-        } catch (Throwable ignored) {}
+        // v0.184.0: fuera el huevo de teclear cifras y fechas en la portada.
+        // La vigilia ya no escucha lo que se escribe; los unicos secretos que
+        // quedan viven en el fondo (imagenes y rincones de la avenida).
         return super.charTyped(codePoint, modifiers);
     }
 
@@ -557,9 +555,6 @@ public class DiaryTitleScreen extends Screen {
 
         // ── v0.16.0: capas nuevas de la vigilia ──
         try {
-            com.eternalcraft.gripeverde.client.lore.HiddenCipher.drawBuffer(g, this.width, this.height);
-            com.eternalcraft.gripeverde.client.lore.HiddenCipher.drawTelegram(g, this.width, this.height);
-            com.eternalcraft.gripeverde.client.lore.HiddenCipher.drawPereiraFlash(g, this.width, this.height);
             drawDustIfDue(g);
             drawVigilLine(g);
         } catch (Throwable ignored) {}
@@ -672,7 +667,7 @@ public class DiaryTitleScreen extends Screen {
         if (y < logoBottom() + Spacing.GAP_SMALL) return false;
         g.fill(x + 2, y + 2, x + cardW + 2, y + cardH + 2,
             DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 72));
-        PaperTexture.drawClean(
+        PaperTexture.drawVeil(
             g, x, y, cardW, cardH, PaperTexture.PaperKind.ARCHIVE);
 
         DiaryTypography.draw(g, this.font, cachedGreetingLabel, x + 12, y + 5,

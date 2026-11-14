@@ -9,6 +9,9 @@ import java.util.Random;
  */
 public final class PaperTexture {
 
+    /** Opacidad del velo de las pantallas (0-255). Mas bajo deja ver mas fondo. */
+    private static final int VEIL_ALPHA = 196;
+
     private static final long SEED = 189011974L;
     private static int openCount = 0;
     public static void incrementOpenCount() { if (openCount < 12) openCount++; }
@@ -114,6 +117,30 @@ public final class PaperTexture {
         drawWrinkles(g,x,y,w,h,kind);
         drawBloodMist(g,x,y,w,h,kind);
         drawRainDrops(g,x,y,w,h);
+    }
+
+    /**
+     * v0.184.0: la hoja de las pantallas, sin adornos.
+     *
+     * El usuario pidio ver el fondo del menu a traves de los paneles y sacar los
+     * dibujos de la hoja (el "robot" del centro era la marca de agua, mas el
+     * sello de cera, las gotas y las fibras). Esto deja un velo de papel
+     * translucido con su filete: se lee la tinta oscura, se ve el fondo, y cada
+     * panel cuesta cuatro fills en vez de cuarenta.
+     */
+    public static void drawVeil(GuiGraphics g, int x, int y, int w, int h) {
+        drawVeil(g, x, y, w, h, PaperKind.DEFAULT);
+    }
+
+    public static void drawVeil(GuiGraphics g, int x, int y, int w, int h, PaperKind kind) {
+        if (w <= 0 || h <= 0) return;
+        int paper = baseColorFor(kind);
+        g.fill(x, y, x + w, y + h, DiaryTheme.withAlpha(paper, VEIL_ALPHA));
+        int edge = 0x70422810;
+        g.fill(x, y, x + w, y + 1, edge);
+        g.fill(x, y + h - 1, x + w, y + h, edge);
+        g.fill(x, y, x + 1, y + h, edge);
+        g.fill(x + w - 1, y, x + w, y + h, edge);
     }
 
     public static void drawClean(GuiGraphics g, int x, int y, int w, int h) { drawClean(g,x,y,w,h,PaperKind.DEFAULT); }

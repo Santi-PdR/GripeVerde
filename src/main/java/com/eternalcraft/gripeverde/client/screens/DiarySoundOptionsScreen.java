@@ -23,7 +23,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.SoundOptionsScreen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundSource;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Field;
@@ -357,40 +356,6 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         return Math.round(Math.max(0.0, Math.min(1.0, value)) * 100.0) + "%";
     }
 
-    /** Shows the effective levels for the three sound layers controlled by this mod. */
-    private String audioMixSubtitle() {
-        double ambience = ClientConfig.AMBIENCE_ENABLED.get()
-            ? MenuAmbience.getUserVolume()
-            : 0.0;
-        return Component.translatable(
-            "gripeverde.options.sound.subtitle",
-            percentText(MenuMusic.getUserVolume()),
-            percentText(ambience),
-            percentText(ClientConfig.UI_VOLUME.get())
-        ).getString();
-    }
-
-    /** Shows Minecraft's master and category levels that multiply the mod's own mix. */
-    private String minecraftMixSubtitle(boolean compact) {
-        float masterLevel = this.minecraft != null
-            ? this.minecraft.options.getSoundSourceVolume(SoundSource.MASTER)
-            : 0.0f;
-        float musicLevel = this.minecraft != null
-            ? this.minecraft.options.getSoundSourceVolume(SoundSource.MUSIC)
-            : 0.0f;
-        float ambienceLevel = this.minecraft != null
-            ? this.minecraft.options.getSoundSourceVolume(SoundSource.AMBIENT)
-            : 0.0f;
-        return Component.translatable(
-            compact
-                ? "gripeverde.options.sound.minecraft_levels.compact"
-                : "gripeverde.options.sound.minecraft_levels",
-            percentText(masterLevel),
-            percentText(musicLevel),
-            percentText(ambienceLevel)
-        ).getString();
-    }
-
     private Component ambienceToggleLabel() {
         return Component.translatable(MenuAmbience.isMuted()
             ? "gripeverde.options.sound.ambience_off"
@@ -445,7 +410,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
 
         // --- Pergamino ---
         DiaryChrome.drawPanelShadow(g, this.panelX, this.panelY, this.panelW, this.panelH);
-        PaperTexture.drawClean(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.LEDGER);
+        PaperTexture.drawVeil(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.LEDGER);
 
         // --- Titulo ---
         String titleStr = DiaryChrome.fitText(this.font,
@@ -458,19 +423,8 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         g.drawString(this.font, titleStr, titleX - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
         }
 
-        // --- Subtitulo ---
-        String subtitle = "- " + (compact ? minecraftMixSubtitle(true) : audioMixSubtitle()) + " -";
-        subtitle = DiaryChrome.fitText(this.font, subtitle, Math.max(0, this.panelW - 28));
-        int subWC = this.font.width(subtitle);
-        g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + (compact ? 11 : 12), DiaryChrome.INK_SUBTITLE, false);
-        if (!compact) {
-            String minecraftLevels = "- " + minecraftMixSubtitle(false) + " -";
-            minecraftLevels = DiaryChrome.fitText(this.font, minecraftLevels,
-                Math.max(0, this.panelW - 28));
-            int mcLevelsW = this.font.width(minecraftLevels);
-            g.drawString(this.font, minecraftLevels, titleX - mcLevelsW / 2,
-                titleY + 22, DiaryChrome.INK_SUBTITLE, false);
-        }
+        // v0.184.0: fuera los renglones "Niveles: ..." y "Niveles de Minecraft: ...".
+        // El usuario no los quiere; queda el titulo y, si hay aire, el disco sonando.
 
         // --- Flavor ---
         // v0.30.0: solo si hay aire real sobre los sliders; jamas pisado,
@@ -489,14 +443,15 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
                 : "gripeverde.options.sound.track_paused").getString();
         }
         int sliderTop = musicSliderY();
-        if (!compact && titleY + 32 + this.font.lineHeight <= sliderTop - 6) {
+        int flavorY = titleY + (compact ? 11 : 13);
+        if (flavorY + this.font.lineHeight <= sliderTop - 4) {
             String flavorShown = DiaryChrome.fitText(this.font, flavor, Math.max(0, this.panelW - 32));
             int flvWC = this.font.width(flavorShown);
-            g.drawString(this.font, flavorShown, (this.width - flvWC) / 2, titleY + 32, DiaryChrome.INK_FLAVOR, false);
+            g.drawString(this.font, flavorShown, (this.width - flvWC) / 2, flavorY, DiaryChrome.INK_FLAVOR, false);
         }
 
         // --- Divisor superior ---
-        int divY1 = compact ? this.panelY + 30 : titleY + 44;
+        int divY1 = compact ? this.panelY + 28 : titleY + 32;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY1);
 
         // --- Lista vanilla sin gradientes blancos ni bandejas extra ---

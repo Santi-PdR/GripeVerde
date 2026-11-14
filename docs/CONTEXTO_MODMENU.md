@@ -4,14 +4,12 @@ Actualizado: 2026-11-13
 
 ## Proyecto y reglas de trabajo
 
-- Repositorio: [Santi-PdR/GripeVerde](https://github.com/Santi-PdR/GripeVerde) — **privado**
-  (`visibility: private`, confirmado con la API). Consecuencia: sin credenciales, la API de
-  releases y los assets responden **404**, aunque todo exista. El repo hermano
-  `Santi-PdR/Photon-2` es público, y por eso el script de instalación de Photon funciona sin
-  token; el de GripeVerde no puede.
-- Rama de trabajo: `codex/v0.104-ghoul-warning-poster`
-- Pull request: [#90](https://github.com/Santi-PdR/GripeVerde/pull/90)
-- Versión de esta rama: `0.183.0` (anterior entregada: `0.182.0`)
+- Repositorio: [Santi-PdR/GripeVerde](https://github.com/Santi-PdR/GripeVerde) — **público**
+  (`visibility: public`, confirmado con la API). El script corto de instalación funciona sin
+  token, igual que el de Photon/Fisk.
+- Rama de trabajo de la sesión: `arena/48be547c-gripeverde` (base `02e85bc`) — la plataforma
+  fija el nombre, no se renombra. Todo el trabajo va ahí; el PR sale de esa rama.
+- Versión de esta rama: `0.184.0` (anterior entregada: `0.183.0`)
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
 - El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
   proyecto local del usuario.
@@ -99,6 +97,39 @@ Actualizado: 2026-11-13
 - El validador local `python3 tools/verify_mirrors.py` reproduce los sellos de Gradle
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
+
+## Cambios de 0.184.0 — el diario se saca la hoja de encima
+
+Tanda de correcciones grandes, casi toda de interfaz:
+
+- **Parte de CEDA rehecho.** `DiaryDispatchScreen` ya no tiene renglones libres ni ranuras
+  al costado: es una lista de diez mensajes, cada uno con su campo y su tecla a la derecha.
+  Se fueron ENVIAR y ENVIAR TODO (no hay envío en lote desde la ficha; el mensaje sale con su
+  tecla mientras jugás). Clic en la tecla deja la ficha escuchando, Esc cancela, Supr o clic
+  derecho borra. Autoguardado a los 700 ms de la última letra y otra vez al cerrar. Si no
+  caben diez, paginación con el rótulo `▸ página/total` en el pie.
+- **Fuera los renglones de niveles** de la ficha de sonido (`Niveles: …` y `Niveles de
+  Minecraft: …`); quedan el título y el disco que suena. Se retiraron también sus tres claves
+  de idioma.
+- **La música del cronista ya no depende de la música vanilla:** música y ambiente del mod
+  emiten por el canal `MASTER` (`FadingMusicInstance`, `LoopingAmbienceInstance`,
+  `MenuAmbience.ambientOneShot`), así que los sliders Música y Ambiente de Minecraft no los
+  apagan ni los atenúan. Manda el slider propio y, por encima, el maestro.
+- **Ninguna pantalla dibuja hojas con adornos.** `PaperTexture.drawVeil` deja un velo
+  translúcido (`VEIL_ALPHA = 196`) y un filete: se ve el fondo del menú, sin marca de agua
+  (el "robot" del centro), sin sello de cera, sin gotas ni fibras. 21 pantallas migradas.
+- **Sello NUEVO entero.** `drawFreshStamp` mide el lacre completo y lo mete dentro del área
+  visible; si no cabe entero, no se dibuja, en vez de aparecer cortado como "NUEV".
+- **Botones de portada más chicos:** `BTN_W 248`, `BTN_H 32`, `BTN_SLIM_W 112`,
+  `BTN_SLIM_H 26` (antes 300×40 y 130×32).
+- **Fuera el huevo de teclear cifras y fechas:** `HiddenCipher` eliminado, junto con los tres códigos que
+  sólo él abría (`code_1152`, `code_pereira`, `code_doctor`). También se fueron las marcas del encuadernador y el folio escondido de la
+  crónica. Los únicos huevos que quedan son los del fondo.
+- **Velocidad:** la crónica memoriza el alto de cada renglón (`ensureRowHeights`/`heightAt`);
+  antes volvía a cortar todo el texto en cada cuadro para saber dónde cae el scroll.
+- `verify_mirrors.py` gana identificadores prohibidos nuevos (`HiddenCipher`, `onCharTyped`,
+  `isChiming`, `asteriskRects`, `hiddenFolioRect`, `BINDER_MARKS`, `drawNewSeal`) para que
+  nada de eso vuelva. Claves de idioma: **186** (antes 201).
 
 ## Cambios de 0.183.0 — ningún adorno contesta antes que los botones
 

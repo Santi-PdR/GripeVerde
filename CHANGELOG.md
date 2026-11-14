@@ -1,3 +1,15 @@
+## v0.184.0 - El diario se saca la hoja de encima
+
+- `DiaryDispatchScreen` rehecha: lista de diez mensajes con campo y tecla; sin ENVIAR ni ENVIAR TODO (el mensaje sale con su tecla), autoguardado a los 700 ms y al cerrar, paginación `▸ n/total`. Clic en la tecla escucha, Esc cancela, Supr o clic derecho borra.
+- `DiarySoundOptionsScreen`: fuera `Niveles: …` y `Niveles de Minecraft: …`; quedan el título y el disco sonando, y se retiran las tres claves de idioma.
+- Música y ambiente del mod al canal `MASTER` (`FadingMusicInstance`, `LoopingAmbienceInstance`, `MenuAmbience.ambientOneShot`): el slider de música de vanilla ya no los apaga.
+- `PaperTexture.drawVeil` (velo `VEIL_ALPHA = 196` + filete) en 21 pantallas: se ve el fondo, sin marca de agua, sello de cera ni gotas.
+- `drawFreshStamp`: el sello NUEVO se mide entero y se mete dentro del área visible, o no se dibuja; nunca aparece cortado.
+- Portada: `BTN_W 248`, `BTN_H 32`, `BTN_SLIM_W 112`, `BTN_SLIM_H 26` (antes 300×40 y 130×32).
+- Huevos: `HiddenCipher` eliminado con `code_1152`, `code_pereira` y `code_doctor`, y fuera las marcas del encuadernador y el folio escondido. Quedan sólo los del fondo.
+- Velocidad: `ChangelogScreen` memoriza el alto de cada renglón (`ensureRowHeights`/`heightAt`) en vez de volver a cortar toda la crónica por cuadro.
+- `verify_mirrors.py`: identificadores prohibidos nuevos (`HiddenCipher`, `onCharTyped`, `isChiming`, `asteriskRects`, `hiddenFolioRect`, `BINDER_MARKS`, `drawNewSeal`). Claves de idioma: 186.
+
 ## v0.183.0 - Ningún adorno contesta antes que los botones
 
 - `DiaryChrome.overAnyWidget(screen, x, y)`: un solo ayudante (usa `this.children()` y `isActive()`) para que los adornos con clic pregunten primero por los widgets.

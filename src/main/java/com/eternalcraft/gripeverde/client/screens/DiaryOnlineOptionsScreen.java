@@ -105,7 +105,7 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
 
         // Pergamino
         DiaryChrome.drawPanelShadow(g, this.panelX, this.panelY, this.panelW, this.panelH);
-        PaperTexture.drawClean(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.OFFICIAL);
+        PaperTexture.drawVeil(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.OFFICIAL);
 
         // Titulo
         String titleStr = DiaryChrome.fitText(this.font, this.title.getString(), Math.max(0, this.panelW - 28));
