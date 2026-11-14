@@ -22,16 +22,15 @@ Actualizado: 2026-11-13
 
 ## Estado confirmado al retomar (2026-11-13)
 
-- `0.178.0` **subida y compilada en verde**: commit de código `7cd9d9f`, run
-  `43543676142` (*Build mod* de Gradle, verificación de espejos y subida del JAR en verde).
-  El primer intento (`29e88f3`, run `43543329237`) **no compiló**: `overAnyButton()` leía el
-  campo `this.children`, que no es accesible desde la pantalla; el CI lo marcó y se cambió
-  por el método público `this.children()`, que es lo que ya usaba el resto del proyecto. Ese
-  run fallido es la razón de que el número de esta versión sea posterior al del commit.
-- Referencias anteriores: `0.177.0` run `43539899164` (`d9e7a52`), `0.176.0` run
-  `43538221683` (`531a91d`), `0.175.0` run `43453123285` (`754b224`), `0.174.0` run
-  `43449824926` (`eedfaa9`), `0.173.0` run `43447945730` (`9d81d3d`), `0.172.0` run
-  `40763347401` con SHA-256 del JAR
+- `0.179.0` **subida y compilada en verde al primer intento**: commit de código `8ee47fc`,
+  run `43545600000` (*Build mod* de Gradle, verificación de espejos y subida del JAR en
+  verde). Artefacto `GripeVerde-jar` ID `14094161283`, 8.753.677 bytes, digest del ZIP
+  `sha256:134a5ddd56dd072550314134a94ec0fc159b5a0a11a4a2bd081d032d2469ef2c`.
+- Referencias anteriores: `0.178.0` run `43543676142` (`7cd9d9f`; el primer intento
+  `29e88f3` no compiló por leer el campo `this.children`), `0.177.0` run `43539899164`
+  (`d9e7a52`), `0.176.0` run `43538221683` (`531a91d`), `0.175.0` run `43453123285`
+  (`754b224`), `0.174.0` run `43449824926` (`eedfaa9`), `0.173.0` run `43447945730`
+  (`9d81d3d`), `0.172.0` run `40763347401` con SHA-256 del JAR
   `9520432c3027a3695b4e1246c2f8a3298cdc8ce11ab0cbff517d6fc914508c60`.
 - `0.172.0` **no** se instaló en la instancia del usuario; la carpeta de mods de destino
   sigue siendo `D:\Minecraft\SKLauncher\sklauncher-data-v4\instances\test-1\mods`.
