@@ -1,3 +1,7 @@
+## Version 0.184.2 - Sixteen voices on the dispatch sheet
+
+The CEDA sheet goes from ten messages to sixteen, each with its own key and the same autosave: the ten you already had keep their place and the six new ones arrive empty. A page now holds up to twelve rows before splitting, so a normal window shows almost all of them at once.
+
 ## Version 0.184.1 - The veil lightens and the empty field explains itself
 
 The paper veil drops from 196 to 172 out of 255: dark ink is still readable, but the menu background now shows through instead of being covered like a sheet. In the CEDA dispatch sheet every empty field shows a faint hint ("Type the message...") so it is obvious what goes in each row, and a leftover from the previous version is gone.

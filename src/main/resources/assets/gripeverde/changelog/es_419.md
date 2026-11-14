@@ -1,3 +1,7 @@
+## Version 0.184.2 - Dieciséis voces en el parte
+
+El parte de CEDA pasa de diez mensajes a dieciséis, con su tecla propia cada uno y el mismo autoguardado: las diez que ya tenías conservan su sitio y las seis nuevas entran vacías. Las páginas de la ficha admiten hasta doce renglones antes de repartirse, así que en una ventana normal entran casi todas de una vez.
+
 ## Version 0.184.1 - El velo se aclara y el campo vacío se explica
 
 El velo de papel bajó de 196 a 172 de 255: se sigue leyendo la tinta oscura, pero el fondo del menú ahora se adivina de verdad por debajo en vez de quedar tapado como con una hoja. En el parte de CEDA, cada campo vacío muestra una pista tenue ("Escribí el mensaje…") para que se entienda qué va en cada renglón, y se limpió un resto de la versión anterior.

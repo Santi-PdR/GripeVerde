@@ -1,3 +1,8 @@
+## v0.184.2 - Dieciséis voces en el parte
+
+- `DispatchLibrary.SLOT_COUNT` 10→16: el formato del archivo no cambia, las ranuras viejas conservan su sitio y las nuevas entran vacías.
+- `DiaryDispatchScreen`: hasta doce renglones por página antes de paginar (antes diez), y el comentario de cabecera al día.
+
 ## v0.184.1 - El velo se aclara y el campo vacío se explica
 
 - `PaperTexture.VEIL_ALPHA` 196→172 (67 %): la tinta se lee, el fondo se adivina; ya no parece una hoja tapando la escena.

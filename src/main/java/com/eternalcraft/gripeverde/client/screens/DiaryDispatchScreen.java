@@ -19,20 +19,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Las diez voces del parte de CEDA.
+ * Las dieciseis voces del parte de CEDA.
  *
  * v0.184.0: la ficha se rehizo entera porque no se entendia. Antes habia ocho
  * renglones para escribir a mano, diez ranuras al costado y dos botones de
  * envio; ahora cada renglon de la lista es un mensaje guardado, con su campo de
  * texto y su tecla a la derecha, y nada mas: no hay envio desde la ficha, el
- * mensaje sale con su tecla cuando estas jugando.
+ * mensaje sale con su tecla cuando estas jugando. v0.184.2: las voces pasan de
+ * diez a dieciseis y se reparten en paginas de hasta doce.
  *
  * - Clic en la tecla: la ficha escucha; la proxima tecla que aprietes queda
  *   asignada (Esc cancela, Supr la borra, clic derecho tambien la borra).
  * - Autoguardado: cada cambio se escribe en config/gripeverde-dispatch.json
  *   medio segundo despues de la ultima tecla, y al cerrar la ficha.
- * - Si la ventana es baja, las diez voces se reparten en paginas y el pie dice
- *   como pasar a la siguiente.
+ * - Si la ventana es baja, las voces se reparten en paginas y el pie dice como
+ *   pasar a la siguiente.
  *
  * La importacion desde CopyL sigue en DispatchLibrary y los atajos en
  * DispatchHotkeys; aca solo se edita lo que ya esta guardado.
@@ -97,7 +98,7 @@ public class DiaryDispatchScreen extends Screen {
         this.rowsTop = titleY + 40;
         int rowsBottom = this.panelY + this.panelH - 58;
         int fit = Math.max(1, (rowsBottom - this.rowsTop) / ROW_STEP);
-        this.perPage = Math.min(DispatchLibrary.SLOT_COUNT, Math.min(10, fit));
+        this.perPage = Math.min(DispatchLibrary.SLOT_COUNT, Math.min(12, fit));
         this.pageCount = (DispatchLibrary.SLOT_COUNT + this.perPage - 1) / this.perPage;
         if (this.page >= this.pageCount) this.page = 0;
 

@@ -9,7 +9,7 @@ Actualizado: 2026-11-13
   token, igual que el de Photon/Fisk.
 - Rama de trabajo de la sesión: `arena/48be547c-gripeverde` (base `02e85bc`) — la plataforma
   fija el nombre, no se renombra. Todo el trabajo va ahí; el PR sale de esa rama.
-- Versión de esta rama: `0.184.1` (anteriores entregadas: `0.184.0`, `0.183.0`)
+- Versión de esta rama: `0.184.2` (anteriores entregadas: `0.184.1`, `0.184.0`, `0.183.0`)
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
 - El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
   proyecto local del usuario.
@@ -109,7 +109,7 @@ Actualizado: 2026-11-13
 Tanda de correcciones grandes, casi toda de interfaz:
 
 - **Parte de CEDA rehecho.** `DiaryDispatchScreen` ya no tiene renglones libres ni ranuras
-  al costado: es una lista de diez mensajes, cada uno con su campo y su tecla a la derecha.
+  al costado: es una lista de mensajes (dieciséis desde 0.184.2), cada uno con su campo y su tecla a la derecha.
   Se fueron ENVIAR y ENVIAR TODO (no hay envío en lote desde la ficha; el mensaje sale con su
   tecla mientras jugás). Clic en la tecla deja la ficha escuchando, Esc cancela, Supr o clic
   derecho borra. Autoguardado a los 700 ms de la última letra y otra vez al cerrar. Si no
