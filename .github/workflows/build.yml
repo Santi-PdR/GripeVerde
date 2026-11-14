@@ -5,6 +5,15 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+    inputs:
+      publish_release:
+        description: 'Publicar el JAR como release de GitHub (descarga directa, sin zip)'
+        type: boolean
+        default: false
+      release_tag:
+        description: 'Tag del release; vacio usa la version de build.gradle con prefijo v'
+        required: false
+        default: ''
 
 permissions:
   contents: read
@@ -39,3 +48,46 @@ jobs:
           name: GripeVerde-jar
           path: build/libs/gripeverde-*.jar
           if-no-files-found: error
+
+  # v0.179.0: el JAR como asset de release, para tener una descarga directa.
+  # Solo corre cuando se dispara a mano con publish_release=true, asi que un
+  # push normal no crea tags ni releases. contents: write va en este job, no en
+  # el workflow, para no ampliar permisos del build normal.
+  publish:
+    needs: build
+    if: github.event_name == 'workflow_dispatch' && inputs.publish_release == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download JAR
+        uses: actions/download-artifact@v4
+        with:
+          name: GripeVerde-jar
+          path: dist
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_INPUT: ${{ inputs.release_tag }}
+        run: |
+          set -euo pipefail
+          ls -l dist
+          TAG="$TAG_INPUT"
+          if [ -z "$TAG" ]; then
+            VERSION="$(grep -m1 '^version = ' build.gradle | cut -d"'" -f2)"
+            TAG="v$VERSION"
+          fi
+          if [ -z "$TAG" ] || [ "$TAG" = "v" ]; then
+            echo "No pude resolver el tag del release" >&2
+            exit 1
+          fi
+          awk '/^## v/{n++} n<2' CHANGELOG.md > /tmp/release-notes.md || true
+          echo "publicando $TAG"
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" dist/*.jar --clobber --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create "$TAG" dist/*.jar --repo "$GITHUB_REPOSITORY" --title "GripeVerde $TAG" --notes-file /tmp/release-notes.md
+          fi
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json tagName,assets --jq '"release \(.tagName)", (.assets[] | "\(.name) \(.size) \(.url)")'
