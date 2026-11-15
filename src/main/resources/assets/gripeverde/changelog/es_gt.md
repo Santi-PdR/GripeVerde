@@ -1,3 +1,11 @@
+## Version 0.206.0 - Fachadas y banderas
+
+Las fachadas de la ciudad -posicion, alto y ancho escalados, y con ellas la puerta de cada edificio- se recalculaban en cada cuadro, edificio por edificio, en el fondo y en el frente. Solo dependen del tamano de la pantalla, asi que ahora se resuelven una vez por resolucion: los tejados dejan de multiplicar y restar para volver a poner los mismos ladrillos.
+
+Las banderas de la ventana de idioma ya venian pintandose por tramos de color desde la 0.188.0, pero cada bandera recorria su rejilla -once filas por dieciseis celdas- en cada cuadro y por cada renglon visible. Ahora cada bandera deja sus tramos guardados y dibujarla es recorrer esa lista. Los tres tonos del marco, que se componian bandera por bandera, quedan fijos al cargar.
+
+Misma estampa, mismas banderas, menos cuentas.
+
 ## Version 0.205.0 - Las listas largas y las chimeneas
 
 La lista de lenguas medía el nombre de la lengua de la niebla, el rotulo de cada renglon -si aun no tenia ancho- y el codigo que aparece al pasar el puntero, todo otra vez por cuadro y por fila. Ahora esas medidas salen de la memoria comun. En el archivo, los sellos de los documentos, la firma del lacre y la leyenda de vuelta se miden una vez.

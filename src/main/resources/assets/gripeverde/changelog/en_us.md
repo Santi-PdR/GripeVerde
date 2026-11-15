@@ -1,3 +1,11 @@
+## Version 0.206.0 - Facades and flags
+
+The city facades - position, scaled height and width, and with them each building's door - were recomputed on every frame, building by building, in the background and in the foreground. They only depend on the screen size, so they are now resolved once per resolution: the roofs stop multiplying and subtracting just to lay the same bricks again.
+
+The language window flags have been painted in colour runs since 0.188.0, but each flag walked its grid - eleven rows by sixteen cells - on every frame and for every visible row. Now each flag leaves its runs stored and drawing it is walking that list. The three frame tones, composed flag by flag, are fixed when the class loads.
+
+Same look, same flags, fewer sums.
+
 ## Version 0.205.0 - Long lists and chimneys
 
 The language list measured the fog tongue's name, each row's label - if it did not have a width yet - and the code that appears under the pointer, all over again on every frame and every row. Those measurements now come from the shared memory. In the archive, the document stamps, the wax signature and the return caption are measured once.

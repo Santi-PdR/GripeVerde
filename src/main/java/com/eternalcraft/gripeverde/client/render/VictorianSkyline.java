@@ -123,14 +123,65 @@ public class VictorianSkyline {
         }
     }
 
+    // v0.206.0: las fachadas -posicion, alto y ancho escalados- solo cambian con
+    // el tamano de la pantalla. Se resuelven una vez por resolucion y los tejados
+    // dejan de rehacer las multiplicaciones en cada cuadro.
+    private static int facadeLayoutW = -1;
+    private static int facadeLayoutH = -1;
+    private static int[] bgX1 = new int[0];
+    private static int[] bgX2 = new int[0];
+    private static int[] bgY1 = new int[0];
+    private static int[] bgY2 = new int[0];
+    private static int[] fgX1 = new int[0];
+    private static int[] fgX2 = new int[0];
+    private static int[] fgY1 = new int[0];
+    private static int[] fgY2 = new int[0];
+    private static float[] fgScaledW = new float[0];
+    private static float[] fgScaledH = new float[0];
+
+    private static void ensureFacadeLayout(int w, int h) {
+        if (facadeLayoutW == w && facadeLayoutH == h) return;
+        facadeLayoutW = w;
+        facadeLayoutH = h;
+        if (bgX1.length != BG_BUILDINGS.length) {
+            bgX1 = new int[BG_BUILDINGS.length];
+            bgX2 = new int[BG_BUILDINGS.length];
+            bgY1 = new int[BG_BUILDINGS.length];
+            bgY2 = new int[BG_BUILDINGS.length];
+            fgX1 = new int[FG_BUILDINGS.length];
+            fgX2 = new int[FG_BUILDINGS.length];
+            fgY1 = new int[FG_BUILDINGS.length];
+            fgY2 = new int[FG_BUILDINGS.length];
+            fgScaledW = new float[FG_BUILDINGS.length];
+            fgScaledH = new float[FG_BUILDINGS.length];
+        }
+        for (int i = 0; i < BG_BUILDINGS.length; i++) {
+            float[] b = BG_BUILDINGS[i];
+            bgX1[i] = (int)(w * b[0]);
+            bgY2[i] = (int)(h * b[1]);
+            bgX2[i] = bgX1[i] + (int)(w * b[2]);
+            bgY1[i] = bgY2[i] - (int)(h * b[3]);
+        }
+        for (int i = 0; i < FG_BUILDINGS.length; i++) {
+            float[] b = FG_BUILDINGS[i];
+            fgScaledW[i] = w * b[2];
+            fgScaledH[i] = h * b[3];
+            fgX1[i] = (int)(w * b[0]);
+            fgY2[i] = (int)(h * b[1]);
+            fgX2[i] = fgX1[i] + (int)fgScaledW[i];
+            fgY1[i] = fgY2[i] - (int)fgScaledH[i];
+        }
+    }
+
     public static void renderBackground(GuiGraphics g, int w, int h) {
         renderFarSkyline(g, w, h);
+        ensureFacadeLayout(w, h);
         int colorBg = 0xFF1A1208;
-        for (float[] b : BG_BUILDINGS) {
-            int x1 = (int)(w * b[0]);
-            int y2 = (int)(h * b[1]);
-            int x2 = x1 + (int)(w * b[2]);
-            int y1 = y2 - (int)(h * b[3]);
+        for (int i = 0; i < bgX1.length; i++) {
+            int x1 = bgX1[i];
+            int y2 = bgY2[i];
+            int x2 = bgX2[i];
+            int y1 = bgY1[i];
             g.fill(x1, y1, x2, y2, colorBg);
             int roofColor = 0xFF2A1E10;
             for (int px = x1; px < x2; px += 5) {
@@ -297,19 +348,20 @@ public class VictorianSkyline {
 
     public static void renderForeground(GuiGraphics g, int w, int h) {
         int colorFg = 0xFF0F0805;
-        for (float[] b : FG_BUILDINGS) {
-            int x1 = (int)(w * b[0]);
-            int y2 = (int)(h * b[1]);
-            int x2 = x1 + (int)(w * b[2]);
-            int y1 = y2 - (int)(h * b[3]);
+        ensureFacadeLayout(w, h);
+        for (int i = 0; i < fgX1.length; i++) {
+            int x1 = fgX1[i];
+            int y2 = fgY2[i];
+            int x2 = fgX2[i];
+            int y1 = fgY1[i];
             g.fill(x1, y1, x2, y2, colorFg);
             int roofColor = 0xFF1F1408;
             for (int px = x1; px < x2; px += 4) {
                 g.fill(px, y1 - 3, px + 3, y1, roofColor);
             }
             g.fill(x1 - 2, y1, x2 + 2, y1 + 2, 0xFF2A1E10);
-            int doorW = Math.max(3, (int)(w * b[2] * 0.15f));
-            int doorH = Math.max(6, (int)(h * b[3] * 0.15f));
+            int doorW = Math.max(3, (int)(fgScaledW[i] * 0.15f));
+            int doorH = Math.max(6, (int)(fgScaledH[i] * 0.15f));
             int doorX = x1 + (x2 - x1) / 2 - doorW / 2;
             int doorY = y2 - doorH;
             g.fill(doorX, doorY, doorX + doorW, y2, 0xFF080503);

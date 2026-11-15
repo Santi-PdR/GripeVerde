@@ -12,6 +12,12 @@ public final class FlagRenderer {
     public static final int FLAG_W = 16;
     public static final int FLAG_H = 11;
 
+    // v0.206.0: tonos fijos del marco de archivo (antes se componian por bandera).
+    private static final int FRAME_OUTER = 0x80000000;
+    private static final int FRAME_INNER_LIGHT = DiaryTheme.withAlpha(0x00FFFFFF, 28);
+    private static final int FRAME_INNER_DARK = DiaryTheme.withAlpha(0x00000000, 52);
+    private static final int FRAME_FOLD = DiaryTheme.withAlpha(0x00FFFFFF, 38);
+
     private FlagRenderer() {}
 
     // ── paleta ───────────────────────────────────────────────────────────────
@@ -167,12 +173,22 @@ public final class FlagRenderer {
     }
 
     // ── render interno ───────────────────────────────────────────────────────
-    private static void drawGrid(GuiGraphics gfx, int[][] grid, int ox, int oy) {
-        // Base flag pixels.
-        // v0.188.0: cada fila se pinta por tramos del mismo color (RLE) en vez de
-        // pixel por pixel. Una bandera de 12x8 pasaba de casi cien fills a unos
-        // veinticinco, y esto se dibuja por cada renglon visible de la ventana
-        // de idioma.
+    /**
+     * v0.206.0: los tramos de color de cada bandera se resuelven una sola vez.
+     *
+     * La 0.188.0 ya habia bajado de casi cien rellenos a unos veinticinco
+     * juntando pixeles iguales, pero el recorrido de la rejilla -once filas x
+     * dieciseis celdas por bandera y por renglon visible- se repetia en cada
+     * cuadro. Ahora cada rejilla deja sus tramos guardados como
+     * {fila, x1, x2, color} y dibujar es solo recorrer esa lista.
+     */
+    private static final java.util.IdentityHashMap<int[][], int[]> FLAG_RUNS = new java.util.IdentityHashMap<>();
+
+    private static int[] runsOf(int[][] grid) {
+        int[] cached = FLAG_RUNS.get(grid);
+        if (cached != null) return cached;
+        int[] runs = new int[FLAG_W * FLAG_H * 4];
+        int n = 0;
         for (int r = 0; r < FLAG_H; r++) {
             int c = 0;
             while (c < FLAG_W) {
@@ -180,13 +196,28 @@ public final class FlagRenderer {
                 int start = c;
                 while (c < FLAG_W && grid[r][c] == color) c++;
                 if ((color >>> 24) == 0) continue;
-                gfx.fill(ox + start, oy + r, ox + c, oy + r + 1, color);
+                runs[n++] = r;
+                runs[n++] = start;
+                runs[n++] = c;
+                runs[n++] = color;
             }
         }
+        int[] trimmed = java.util.Arrays.copyOf(runs, n);
+        FLAG_RUNS.put(grid, trimmed);
+        return trimmed;
+    }
+
+    private static void drawGrid(GuiGraphics gfx, int[][] grid, int ox, int oy) {
+        int[] runs = runsOf(grid);
+        for (int i = 0; i < runs.length; i += 4) {
+            int row = runs[i];
+            gfx.fill(ox + runs[i + 1], oy + row, ox + runs[i + 2], oy + row + 1, runs[i + 3]);
+        }
         // Embossed archival border: outer shadow + inner parchment highlight
-        int outer = 0x80000000; // deep
-        int innerLight = DiaryTheme.withAlpha(0x00FFFFFF, 28);
-        int innerDark = DiaryTheme.withAlpha(0x00000000, 52);
+        // v0.206.0: estos tres tonos no cambian; ya no se componen por bandera.
+        int outer = FRAME_OUTER;
+        int innerLight = FRAME_INNER_LIGHT;
+        int innerDark = FRAME_INNER_DARK;
         // Outer
         gfx.fill(ox-1, oy-1, ox+FLAG_W+1, oy, outer);
         gfx.fill(ox-1, oy+FLAG_H, ox+FLAG_W+1, oy+FLAG_H+1, outer);
@@ -196,7 +227,7 @@ public final class FlagRenderer {
         gfx.fill(ox, oy, ox+FLAG_W, oy+1, innerLight);
         gfx.fill(ox, oy+FLAG_H-1, ox+FLAG_W, oy+FLAG_H, innerDark);
         // Micro fold bottom right
-        gfx.fill(ox+FLAG_W-2, oy+FLAG_H-2, ox+FLAG_W-1, oy+FLAG_H-1, DiaryTheme.withAlpha(0x00FFFFFF, 38));
+        gfx.fill(ox+FLAG_W-2, oy+FLAG_H-2, ox+FLAG_W-1, oy+FLAG_H-1, FRAME_FOLD);
     }
 
     private static void drawFallback(GuiGraphics gfx, int x, int y) {

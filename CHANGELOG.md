@@ -1,3 +1,10 @@
+## v0.206.0 - Fachadas y banderas
+
+- `VictorianSkyline`: `ensureFacadeLayout(w,h)` cachea rectángulos de fachada de fondo y frente (`bgX1..`, `fgX1..`,
+  `fgScaledW/H`); `renderBackground` y `renderForeground` los recorren.
+- `FlagRenderer`: `runsOf(grid)` con `FLAG_RUNS` (IdentityHashMap) precalcula los tramos de color de cada bandera;
+  los tonos del marco pasan a constantes.
+
 ## v0.205.0 - Las listas largas y las chimeneas
 
 - `DiaryLanguageScreen`: nombre de la lengua de la niebla, rótulo de cada fila y código medidos con
