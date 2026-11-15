@@ -1,3 +1,13 @@
+## v0.221.0 - Portada limpia, bitacora convertida en diario y papel envejecido
+
+- `DiaryTitleScreen`: fuera `drawGlassPatina`, el huevo del emblema (`handleLogoClick`/`breakWaxSeal`,
+  mensajes, esquirlas, particulas, relampago) y el boton de manual de campo; el diario ocupa su sitio.
+- `ChangelogScreen(parent, diaryMode)`: carga `diary/bitacora_es|en.md`, hoja rasgada, tachaduras (`LT.STRIKE`),
+  subrayado a lapiz y mancha de tinta en las fechas, boton "Versiones".
+- `PaperTexture`: `drawAge` (humedad, suciedad, bordes gastados) en toda hoja, `drawTornSheet`/`drawTornSeam`.
+- `DiaryChrome`: `drawInkBlot`, `drawPencilRule`, `drawStrike`.
+- Nuevo `assets/gripeverde/diary/bitacora_{es,en}.md`: el diario de supervivencia con todo el lore del servidor.
+
 ## v0.220.0 - El archivo muestra su avance
 
 - `DiaryArchiveScreen`: barra de avance de 1 px bajo el recuento (ocre `0xFF8A6A2D`, marca verde al completar);

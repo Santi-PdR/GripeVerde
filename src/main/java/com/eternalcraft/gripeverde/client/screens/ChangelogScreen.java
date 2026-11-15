@@ -2,6 +2,7 @@ package com.eternalcraft.gripeverde.client.screens;
 
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.render.DiaryTypography;
 import com.eternalcraft.gripeverde.client.widgets.SlimButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -40,7 +41,7 @@ public class ChangelogScreen extends Screen {
     private static final int GAP_H     = 13;
     private static final int SEP_H     = 16;
 
-    private enum LT { H1, H2, BULLET, TEXT, GAP, SEPARATOR, BOLD }
+    private enum LT { H1, H2, BULLET, TEXT, GAP, SEPARATOR, BOLD, STRIKE }
 
     /**
      * v0.199.0: las lineas en que se parte un renglon solo dependen de su texto
@@ -136,9 +137,30 @@ public class ChangelogScreen extends Screen {
     // v0.184.0: fuera los secretos de clic (marcas del encuadernador y folio
     // escondido). Los unicos huevos que quedan son los del fondo.
 
+    /**
+     * v0.221.0: la misma hoja sirve para dos lecturas. La bitacora tecnica
+     * (registro de versiones) y el diario de supervivencia, que es lo que el
+     * lector pidio ver en la portada: el cuaderno de quien aguanta el brote,
+     * con sus fechas, sus tachaduras y sus notas al margen.
+     */
+    private final boolean diaryMode;
+
     public ChangelogScreen(Screen parent) {
-        super(Component.literal(pickChangelogTitle()));
+        this(parent, false);
+    }
+
+    public ChangelogScreen(Screen parent, boolean diaryMode) {
+        super(Component.literal(diaryMode ? pickDiaryTitle() : pickChangelogTitle()));
         this.parent = parent;
+        this.diaryMode = diaryMode;
+    }
+
+    private static String pickDiaryTitle() {
+        boolean english = false;
+        try {
+            english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+        } catch (Throwable ignored) {}
+        return english ? "Survival diary" : "Diario de supervivencia";
     }
 
     @Override
@@ -162,6 +184,16 @@ public class ChangelogScreen extends Screen {
         this.addRenderableWidget(new SlimButton(bx, by, closeW, CLOSE_H,
             Component.translatable("gripeverde.changelog.button.close"),
             this::onClose));
+
+        // v0.221.0: el diario es lo de la portada; el registro tecnico de
+        // versiones sigue a mano, en un boton chico a la izquierda del pie.
+        if (this.diaryMode && panelW() >= 260) {
+            boolean english = isEnglishSelected();
+            int logW = 76;
+            this.addRenderableWidget(new SlimButton(panelX() + 10, by + 6, logW, 18,
+                Component.literal(english ? "Versions" : "Versiones"),
+                () -> this.minecraft.setScreen(new ChangelogScreen(this, false))));
+        }
     }
 
     private void loadAndParse() {
@@ -182,7 +214,11 @@ public class ChangelogScreen extends Screen {
 
     private boolean tryLoad(String lang) {
         try {
-            ResourceLocation loc = new ResourceLocation("gripeverde", "changelog/" + lang + ".md");
+            String path = this.diaryMode
+                ? (lang != null && lang.toLowerCase(java.util.Locale.ROOT).startsWith("en")
+                    ? "diary/bitacora_en.md" : "diary/bitacora_es.md")
+                : "changelog/" + lang + ".md";
+            ResourceLocation loc = new ResourceLocation("gripeverde", path);
             InputStream in = this.minecraft.getResourceManager().open(loc);
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
             String line;
@@ -210,6 +246,8 @@ public class ChangelogScreen extends Screen {
         if (s.startsWith("## "))    return new Row(LT.H1, s.substring(3).trim());
         if (s.startsWith("### "))   return new Row(LT.H2, s.substring(4).trim());
         if (s.startsWith("- "))     return new Row(LT.BULLET, s.substring(2).trim());
+        // v0.221.0: renglon tachado, como quien se arrepiente a mitad de frase.
+        if (s.startsWith("~~ "))    return new Row(LT.STRIKE, s.substring(3).trim());
         String trimmed = s.trim();
         if (trimmed.length() >= 4 && trimmed.startsWith("**") && trimmed.endsWith("**")) {
             return new Row(LT.BOLD, trimmed.substring(2, trimmed.length() - 2).trim());
@@ -549,7 +587,13 @@ public class ChangelogScreen extends Screen {
         // detras y esquinas de tinta sobre el filete, en vez de flotar plana
         // sobre el fondo.
         DiaryChrome.drawPanelShadow(g, px, py, pw, ph);
-        com.eternalcraft.gripeverde.client.render.PaperTexture.drawSheet(g, px, py, pw, ph, com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.ARCHIVE);
+        if (this.diaryMode) {
+            // v0.221.0: el diario es una hoja rasgada, no un panel prolijo.
+            com.eternalcraft.gripeverde.client.render.PaperTexture.drawTornSheet(
+                g, px, py, pw, ph, com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.CORRESPONDENCE);
+        } else {
+            com.eternalcraft.gripeverde.client.render.PaperTexture.drawSheet(g, px, py, pw, ph, com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.ARCHIVE);
+        }
         g.fill(px,          py,          px + pw, py + 1,      DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
         g.fill(px,          py + ph - 1, px + pw, py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
         g.fill(px,          py,          px + 1,  py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
@@ -900,6 +944,12 @@ public class ChangelogScreen extends Screen {
         if (row.type == LT.GAP) return;
 
         if (row.type == LT.SEPARATOR) {
+            if (this.diaryMode) {
+                // v0.221.0: entre fragmento y fragmento, el papel esta roto.
+                com.eternalcraft.gripeverde.client.render.PaperTexture.drawTornSeam(
+                    g, x + 8, y + 6, Math.max(20, maxW - 16), row.hashCode());
+                return;
+            }
             int lineY = y + 5;
             int sepX1 = x + 20;
             int sepX2 = x + maxW - 20;
@@ -975,7 +1025,18 @@ public class ChangelogScreen extends Screen {
             int ly = y;
             for (FormattedCharSequence fcs : wrapped) {
                 g.drawString(this.font, fcs, x + indent, ly, color, false);
+                if (this.diaryMode && row.type == LT.STRIKE) {
+                    // v0.221.0: lo tachado se cruza con dos trazos de pluma.
+                    DiaryChrome.drawStrike(g, x + indent - 1, ly,
+                        Math.min(available, DiaryTypography.width(this.font, fcs) + 2), LINE_H);
+                }
                 ly += lh;
+            }
+            if (this.diaryMode && row.type == LT.H1) {
+                // v0.221.0: la fecha se subraya a lapiz y deja su mancha al margen.
+                int ruleW = Math.min(maxW, DiaryTypography.width(this.font, row.text) + 6);
+                DiaryChrome.drawPencilRule(g, x, y + H1_LINE_H - 4, ruleW, row.hashCode());
+                DiaryChrome.drawInkBlot(g, x + 1, y + 5, 1, true);
             }
         }
     }

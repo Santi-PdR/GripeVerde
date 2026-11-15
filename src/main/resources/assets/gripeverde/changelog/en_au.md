@@ -1,3 +1,13 @@
+## Version 0.221.0 - The cover is cleaned and the logbook becomes a diary
+
+The cover had two extra things up top: a dirty pane of glass over the scene, and a hidden egg that answered when the emblem was pressed. Both are gone. The field manual access left too; it now lives only in the pause screen, where it is needed.
+
+The gap the manual leaves is taken by the diary. What used to be the mod's logbook - a list of versions - is now the notebook of whoever survives: torn sheets, dates instead of version numbers, margin notes, ink blots and the occasional sentence struck out in regret.
+
+The technical version log is still at hand: a small "Versions" button sits at the foot of the diary.
+
+And the paper of every screen aged: panels now carry damp stains, dirt, worn edges and an ageing that darkens towards the borders.
+
 ## Version 0.220.0 - The archive shows its progress
 
 The reading room said how many cards had been found with a sentence: "cards found: twelve of forty-six". You had to read it to know how the search was going.

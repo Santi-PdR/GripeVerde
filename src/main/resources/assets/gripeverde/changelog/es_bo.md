@@ -1,3 +1,13 @@
+## Version 0.221.0 - La portada se limpia y la bitacora se vuelve diario
+
+La portada tenia dos cosas de mas arriba: un cristal sucio sobre la escena y un huevo escondido que respondia al pulsar el emblema. Las dos se fueron. Tambien salio el acceso al manual de campo, que ahora vive solo en la pausa, donde se necesita.
+
+En el hueco que deja el manual queda el diario. Lo que antes era la bitacora del mod -una lista de versiones- ahora es el cuaderno de quien sobrevive: hojas rasgadas, fechas en vez de numeros de version, notas al margen, manchas de tinta y alguna frase tachada por arrepentimiento.
+
+El registro tecnico de versiones sigue a mano: hay un boton chico, "Versiones", al pie del diario.
+
+Y el papel de todas las pantallas envejecio: los paneles llevan manchas de humedad, suciedad, bordes gastados y un envejecido que oscurece hacia los bordes.
+
 ## Version 0.220.0 - El archivo muestra su avance
 
 La sala de consulta decia cuantas fichas se habian hallado con una frase: "fichas halladas: doce de cuarenta y seis". Habia que leerla para saber como iba la busqueda.

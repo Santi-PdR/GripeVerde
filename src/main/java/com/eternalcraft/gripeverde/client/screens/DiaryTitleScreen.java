@@ -101,10 +101,6 @@ public class DiaryTitleScreen extends Screen {
     private LayoutRegion cachedLeftColumn;
     private LayoutRegion cachedRightColumn;
 
-    private static final int PATINA_COUNT = 26;
-    private static final int[] PATINA_X = new int[PATINA_COUNT];
-    private static final int[] PATINA_Y = new int[PATINA_COUNT];
-    private static final int[] PATINA_KIND = new int[PATINA_COUNT];
     private static int patinaW = -1;
     private static int patinaH = -1;
 
@@ -288,23 +284,25 @@ public class DiaryTitleScreen extends Screen {
                 () -> this.minecraft.stop()));
         }
 
-        SlimButton changelogBtn = new SlimButton(
-            this.width - 28, 8, 20, 20,
-            Component.literal("?"),
-            () -> this.minecraft.setScreen(new ChangelogScreen(this)));
-        changelogBtn.setTooltip(Tooltip.create(
-            Component.translatable("gripeverde.title.button.changelog")));
-        this.addRenderableWidget(changelogBtn);
-
-        // v0.113.0: icono de libro para reconocer la guia en ambos idiomas.
-        SlimButton fieldGuideBtn = new SlimButton(
+        // v0.221.0: el manual de campo sale de la portada (el lector lo pidio
+        // quitar) y en su sitio queda el diario de supervivencia, que es lo que
+        // antes era la bitacora: el cuaderno del que sobrevive, no el registro
+        // tecnico del mod.
+        SlimButton diaryBtn = new SlimButton(
             this.width - 52, 8, 20, 20,
-            Component.translatable("gripeverde.pause.btn.field_guide"),
-            () -> this.minecraft.setScreen(new DiaryFieldGuideScreen(this)))
+            Component.literal(isEnglishSelected() ? "Diary" : "Diario"),
+            () -> {
+                try {
+                    com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                        com.eternalcraft.gripeverde.client.audio.ModSounds.UI_PAPER_FALL.get(),
+                        0.30f, 1.0f);
+                } catch (Throwable ignored) {}
+                this.minecraft.setScreen(new ChangelogScreen(this, true));
+            })
             .withIcon(SlimButton.Icon.OPEN_LEDGER);
-        fieldGuideBtn.setTooltip(Tooltip.create(
-            Component.translatable("gripeverde.pause.btn.field_guide")));
-        this.addRenderableWidget(fieldGuideBtn);
+        diaryBtn.setTooltip(Tooltip.create(
+            Component.literal(isEnglishSelected() ? "Survival diary" : "Diario de supervivencia")));
+        this.addRenderableWidget(diaryBtn);
 
         // v0.180.0: el parte de CEDA ya es nuestro (DiaryDispatchScreen), asi que el
         // acceso esta siempre; CopyL, si esta instalado, se abre desde adentro.
@@ -500,7 +498,6 @@ public class DiaryTitleScreen extends Screen {
         com.eternalcraft.gripeverde.client.render.LivingAtmosphere.setMouse(mouseX, mouseY);
         // Professional centralized scene renderer
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderTitleScene(g, this.width, this.height);
-        drawGlassPatina(g);
         drawDawnIfDue(g);
 
         if (!cinematicMode) {
@@ -526,25 +523,9 @@ public class DiaryTitleScreen extends Screen {
             drawCinematicHint(g);
         }
 
-        // Overlays interactivos (arriba de todo)
-        // v0.23.2: es decoracion pura; jamas debe tumbar el render del cliente
-        // (en 0.22.0 un AIOOBE aqui crasheaba en bucle la sesion).
-        try {
-            drawEasterEggMessage(g);
-        } catch (Throwable ignored) {}
-        // v0.24.0: esquirlas del sello roto; igual de intocables.
-        try {
-            drawSealShards(g);
-        } catch (Throwable ignored) {}
-        // Easter egg: relampago verde (suprimido con movimiento reducido).
-        if (!reducedMotion() && System.currentTimeMillis() < easterLightningUntilMs) {
-            long rem = easterLightningUntilMs - System.currentTimeMillis();
-            int a = (int)(50 * rem / 300L);
-            if (a > 2) {
-                g.fill(0, 0, this.width, this.height, (a << 24) | 0x3A5028);
-            }
-        }
-
+        // v0.221.0: fuera los adornos de la cabecera. Ya no hay cristal sobre la
+        // escena ni huevo que se dispare pulsando el emblema; la vigilia se
+        // queda con el cielo, la ciudad y lo que de verdad esta pasando.
         drawShootStarMessage(g);
 
         // ── v0.16.0: capas nuevas de la vigilia ──
@@ -769,40 +750,7 @@ public class DiaryTitleScreen extends Screen {
         DiaryTypography.draw(g, this.font, hint, x, y, col, false);
     }
 
-    private void drawGlassPatina(GuiGraphics g) {
-        if (this.width < 360 || this.height < 240) return;
-        ensurePatinaPoints();
-        boolean still = reducedMotion();
-        long frame = still ? 0L : System.currentTimeMillis() / 120L;
-        for (int i = 0; i < PATINA_COUNT; i++) {
-            int x = PATINA_X[i];
-            int y = PATINA_Y[i];
-            int alpha = still ? 14 : 10 + (int)((Math.sin((frame + i * 13) * 0.17) + 1.0) * 7.0);
-            int col = (alpha << 24) | 0xC0A06A;
-            if (PATINA_KIND[i] == 0) g.fill(x, y, x + 1, y + 4, col);
-            else g.fill(x, y, x + 1, y + 1, col);
-        }
-        for (int i = 0; i < 6; i++) {
-            int x = 18 + (i * 97) % Math.max(32, this.width - 36);
-            int y = 18 + (i * 53) % Math.max(32, this.height - 70);
-            int a = still ? 20 : 20 + (int)(Math.sin(System.currentTimeMillis() / 900.0 + i) * 9.0);
-            int col = (Math.max(8, a) << 24) | 0xD8D8C8;
-            g.fill(x, y, x + 2, y + 5, col);
-            g.fill(x + 1, y + 5, x + 2, y + 8, (Math.max(4, a / 2) << 24) | 0xD8D8C8);
-        }
-    }
 
-    private void ensurePatinaPoints() {
-        if (patinaW == this.width && patinaH == this.height) return;
-        patinaW = this.width;
-        patinaH = this.height;
-        java.util.Random rng = new java.util.Random(0x5A11EEDL ^ (long)this.width * 31L ^ (long)this.height * 17L);
-        for (int i = 0; i < PATINA_COUNT; i++) {
-            PATINA_X[i] = rng.nextInt(Math.max(1, this.width));
-            PATINA_Y[i] = rng.nextInt(Math.max(1, this.height));
-            PATINA_KIND[i] = rng.nextInt(4) == 0 ? 0 : 1;
-        }
-    }
 
 
     private void drawPocketWatch(GuiGraphics g) {
@@ -823,14 +771,6 @@ public class DiaryTitleScreen extends Screen {
     }
 
     private void drawLogo(GuiGraphics g) {
-        long now = System.currentTimeMillis();
-        int shakeX = 0, shakeY = 0;
-        if (!reducedMotion() && now < skullShakeUntilMs) {
-            long remain = skullShakeUntilMs - now;
-            float intensity = (float) remain / 600f;
-            shakeX = (int)(Math.sin(now / 40.0) * 3 * intensity);
-            shakeY = (int)(Math.cos(now / 30.0) * 2 * intensity);
-        }
         // v0.175.0: en ventanas bajas el emblema se encoge (nunca se omite si
         // aun se lee) para no caer sobre la mesa de botones. A 427x240 —el
         // tamano por defecto a escala GUI 2— el bloque completo invadia 45 px.
@@ -839,27 +779,8 @@ public class DiaryTitleScreen extends Screen {
                 < LogoRenderer.BLOCK_H * LOGO_MIN_SCALE) {
             return;
         }
-        LogoRenderer.draw(g, this.width / 2 + shakeX, LOGO_TOP + shakeY, logoScale);
+        LogoRenderer.draw(g, this.width / 2, LOGO_TOP, logoScale);
 
-        // Renderizar particulas verdes cayendo solo cuando el movimiento esta habilitado.
-        if (!reducedMotion() && now < eggParticlesUntilMs) {
-            float dt = 0.05f;
-            for (int p = 0; p < EGG_PARTICLE_COUNT; p++) {
-                if (eggParticles[p][4] <= 0f) continue;
-                eggParticles[p][0] += eggParticles[p][2] * dt * 60;
-                eggParticles[p][1] += eggParticles[p][3] * dt * 60;
-                eggParticles[p][4] -= 0.008f;  // fade
-                if (eggParticles[p][4] < 0f) eggParticles[p][4] = 0f;
-
-                int alpha = (int)(eggParticles[p][4] * 200);
-                if (alpha > 3) {
-                    int col = (alpha << 24) | 0x5A7038;  // verde toxico
-                    int px = (int) eggParticles[p][0];
-                    int py = (int) eggParticles[p][1];
-                    g.fill(px, py, px + 2, py + 2, col);
-                }
-            }
-        }
     }
 
     // Rotating signature pool, synced with LogoRenderer year via yearIndex.
@@ -1153,10 +1074,6 @@ public class DiaryTitleScreen extends Screen {
         int logoHalf = LogoRenderer.BLOCK_W / 2 + 2;
         boolean overLogo = mouseX >= logoCx - logoHalf && mouseX <= logoCx + logoHalf
                         && mouseY >= LOGO_TOP && mouseY <= logoBottom;
-        if (overLogo && button == 0 && !overAnyButton(mouseX, mouseY)) {
-            handleLogoClick();
-            // No consumir el evento, dejar pasar al super
-        }
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
@@ -1276,205 +1193,9 @@ public class DiaryTitleScreen extends Screen {
     private static final java.util.Random EASTER_RNG = new java.util.Random();
     private static final java.util.Random PARTICLE_RNG = new java.util.Random();
 
-    private void handleLogoClick() {
-        long now = System.currentTimeMillis();
-        if (now - lastLogoClickMs < 260L) return;
-        lastLogoClickMs = now;
 
-        // v0.24.0: golpear el sello una y otra vez, sin dejarlo respirar.
-        if (now - sealTapLastMs <= 1500L) sealTapStreak++; else sealTapStreak = 1;
-        sealTapLastMs = now;
-        if (sealTapStreak >= 9) breakWaxSeal();
 
-        easterEggEnglish = isEnglishSelected();
-        String[] eggPool = easterEggEnglish ? LOGO_EASTER_EGGS_EN : LOGO_EASTER_EGGS_ES;
-        int caseNo = 17 + EASTER_RNG.nextInt(80);
-        char letter = (char)('A' + EASTER_RNG.nextInt(6));
-        easterEggCaseCode = String.format(java.util.Locale.ROOT, "%02d-%c", caseNo, letter);
-        easterEggIndex = EASTER_RNG.nextInt(eggPool.length);
-        easterEggMessage = eggPool[easterEggIndex];
-        boolean reduced = reducedMotion();
-        easterEggStartedMs = reduced ? now - easterEggMessage.length() * 22L : now;
-        easterEggUntilMs = now + 3800L;
-        skullShakeUntilMs = reduced ? 0L : now + 520L;
-        easterLightningUntilMs = reduced ? 0L : now + 280L;
 
-        if (!reduced) {
-            LivingAtmosphere.triggerLightningFlash(1.0f);
-            eggParticlesUntilMs = now + 2600L;
-            int logoCx = this.width / 2;
-            int logoCy = 45;
-            for (int p = 0; p < EGG_PARTICLE_COUNT; p++) {
-                eggParticles[p][0] = logoCx + (float)(PARTICLE_RNG.nextDouble() * 34 - 17);
-                eggParticles[p][1] = logoCy + (float)(PARTICLE_RNG.nextDouble() * 12);
-                eggParticles[p][2] = (float)(PARTICLE_RNG.nextDouble() * 1.6 - 0.8);
-                eggParticles[p][3] = (float)(PARTICLE_RNG.nextDouble() * 0.9 + 0.8);
-                eggParticles[p][4] = 1.0f;
-            }
-        } else {
-            eggParticlesUntilMs = 0L;
-        }
-
-        try {
-            com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
-                com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_CHAIN.get(),
-                0.32f, 0.92f);
-            com.eternalcraft.gripeverde.client.audio.UiSounds.notification();
-        } catch (Throwable ignored) {}
-        easterFlashUntilMs = reduced ? 0L : now + 400L;
-    }
-
-    /** v0.24.0: el sello de lacre salta en esquirlas; el papel cae. */
-    private void breakWaxSeal() {
-        sealTapStreak = 0;
-        long now = System.currentTimeMillis();
-        boolean reduced = reducedMotion();
-        int cx = this.width / 2;
-        int cy = 45;
-        for (int i = 0; i < sealShards.length; i++) {
-            sealShards[i][0] = cx + (float)(SEAL_RNG.nextDouble() * 22 - 11);
-            sealShards[i][1] = cy + (float)(SEAL_RNG.nextDouble() * 10 - 5);
-            sealShards[i][2] = (float)(SEAL_RNG.nextDouble() * 140 - 70);
-            sealShards[i][3] = -20f - (float)(SEAL_RNG.nextDouble() * 120);
-        }
-        sealShardsStartMs = now;
-        sealShardsUntilMs = reduced ? 0L : now + 1500L;
-        try {
-            com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
-                com.eternalcraft.gripeverde.client.audio.ModSounds.UI_PAPER_FALL.get(), 0.9f, 0.78f);
-            com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
-                com.eternalcraft.gripeverde.client.audio.ModSounds.UI_CLICK_HEAVY.get(), 0.40f, 1.38f);
-        } catch (Throwable ignored) {}
-        try {
-            com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
-                com.eternalcraft.gripeverde.client.lore.Discoveries.SEAL_BREAKER);
-            com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
-                com.eternalcraft.gripeverde.client.lore.Marginalia.N_SEAL);
-        } catch (Throwable ignored) {}
-    }
-
-    /** v0.24.0: esquirlas de lacre con gravedad; pura decoracion. */
-    private void drawSealShards(net.minecraft.client.gui.GuiGraphics g) {
-        long now = System.currentTimeMillis();
-        if (sealShardsStartMs == 0L || now >= sealShardsUntilMs) return;
-        float t = (now - sealShardsStartMs) / 1000f;
-        float fade = (sealShardsUntilMs - now) / 1500f;
-        int alpha = (int)(220 * Math.min(1f, fade * 2f));
-        if (alpha <= 3) return;
-        int wax = (alpha << 24) | 0x7A2415;
-        int waxLight = (Math.min(alpha, 140) << 24) | 0xB8402A;
-        for (float[] sh : sealShards) {
-            float x = sh[0] + sh[2] * t;
-            float y = sh[1] + sh[3] * t + 380f * t * t;
-            if (y > this.height) continue;
-            int px = (int) x, py = (int) y;
-            g.fill(px, py, px + 2, py + 2, wax);
-            g.fill(px, py, px + 1, py + 1, waxLight);
-        }
-    }
-
-    private void drawEasterEggMessage(net.minecraft.client.gui.GuiGraphics g) {
-        long now = System.currentTimeMillis();
-
-        if (!reducedMotion() && now < easterFlashUntilMs) {
-            long remainFlash = easterFlashUntilMs - now;
-            int flashAlpha = (int)(54 * remainFlash / 400L);
-            if (flashAlpha > 2) {
-                g.fill(0, 0, this.width, this.height, (flashAlpha << 24) | 0x4A6428);
-            }
-        }
-
-        if (easterEggMessage == null || now >= easterEggUntilMs) return;
-
-        boolean english = isEnglishSelected();
-        if (english != easterEggEnglish && easterEggIndex >= 0) {
-            String[] eggPool = english ? LOGO_EASTER_EGGS_EN : LOGO_EASTER_EGGS_ES;
-            easterEggMessage = eggPool[Math.min(easterEggIndex, eggPool.length - 1)];
-            easterEggEnglish = english;
-            cachedEasterEggMessage = null;
-            cachedEasterElapsedChars = -1;
-        }
-
-        long remain = easterEggUntilMs - now;
-        int alpha = remain < 900L ? (int)(230 * remain / 900L) : 230;
-        alpha = Math.max(0, Math.min(230, alpha));
-
-        int elapsedChars = reducedMotion()
-            ? easterEggMessage.length()
-            : (int)Math.min(easterEggMessage.length(), Math.max(0, (now - easterEggStartedMs) / 22L));
-        int boxW = Math.max(220, Math.min(260, this.width - 96));
-        // v0.25.2: jamas mas ancho que la propia pantalla (escala GUI 4).
-        boxW = Math.min(boxW, Math.max(120, this.width - 16));
-        if (easterEggMessage != cachedEasterEggMessage
-                || elapsedChars != cachedEasterElapsedChars
-                || boxW != cachedEasterBoxWidth
-                || this.font != cachedEasterFont) {
-            String visibleMessage = easterEggMessage.substring(0, elapsedChars);
-            cachedEasterLines = DiaryTypography.split(this.font, Component.literal(visibleMessage), boxW - 34);
-            cachedEasterCursorTextWidth = DiaryTypography.width(this.font, 
-                DiaryTypography.fitString(this.font, visibleMessage, boxW - 44, false));
-            cachedEasterEggMessage = easterEggMessage;
-            cachedEasterElapsedChars = elapsedChars;
-            cachedEasterBoxWidth = boxW;
-            cachedEasterFont = this.font;
-        }
-        java.util.List<net.minecraft.util.FormattedCharSequence> lines = cachedEasterLines;
-        // v0.23.2: con la maquina de escribir, el primer fotograma tiene 0 letras y
-        // font.split("") devuelve lista VACIA; indexarla crashaba el cliente (AIOOBE
-        // reportado en 0.22.0). lineCount jamas puede superar lines.size().
-        int lineCount = Math.min(3, lines.size());
-        int boxH = 31 + Math.max(1, lineCount) * this.font.lineHeight;
-
-        int buttonTop = estimateFirstButtonTop();
-        int safeTop = isMinimalMode() ? 76 : 166;
-        // v0.25.2: en escalas GUI 3-4 la banda libre se achica y el orden de los
-        // clamps importa — el segundo volvia a clavar el cartel SOBRE la mesa de
-        // botones (reporte del owner). Regla: jamas pisar botones, jamas salir
-        // por arriba; si no hay banda libre, sube sobre la franja del logo.
-        int maxTop = buttonTop - boxH - 10;
-        int boxY = (maxTop >= safeTop) ? safeTop + (maxTop - safeTop) / 2
-                                       : Math.max(8, maxTop);
-        int boxX = (this.width - boxW) / 2;
-
-        int paper = (alpha << 24) | 0xE6D2A6;
-        int ink = (alpha << 24) | 0x241608;
-        int bronze = (Math.min(205, alpha) << 24) | 0x8E6A35;
-        int green = (Math.min(180, alpha) << 24) | 0x5A7038;
-        int red = (Math.min(210, alpha) << 24) | 0x6E1F16;
-        int shadow = (Math.min(80, alpha / 2) << 24) | 0x000000;
-
-        // Thin telegram slip: sits between logo and lower buttons, never over controls.
-        g.fill(boxX + 3, boxY + 4, boxX + boxW + 4, boxY + boxH + 5, shadow);
-        g.fill(boxX, boxY, boxX + boxW, boxY + boxH, paper);
-        g.fill(boxX, boxY, boxX + boxW, boxY + 1, bronze);
-        g.fill(boxX, boxY + boxH - 1, boxX + boxW, boxY + boxH, bronze);
-        g.fill(boxX, boxY, boxX + 1, boxY + boxH, bronze);
-        g.fill(boxX + boxW - 1, boxY, boxX + boxW, boxY + boxH, bronze);
-        g.fill(boxX + 8, boxY + 7, boxX + 20, boxY + 8, green);
-        g.fill(boxX + boxW - 20, boxY + 7, boxX + boxW - 8, boxY + 8, green);
-
-        String stamp = isEnglishSelected() ? "CASE " + easterEggCaseCode : "CASO " + easterEggCaseCode;
-        DiaryTypography.draw(g, this.font, stamp, boxX + 13, boxY + 8, red, false);
-        String seal = isEnglishSelected() ? "UNDER SEAL" : "BAJO SELLO";
-        int sealW = DiaryTypography.width(this.font, seal);
-        // v0.21.25: texto limpio sin sombra.
-        DiaryTypography.draw(g, this.font, seal, boxX + boxW - sealW - 13, boxY + 8, DiaryTheme.withAlpha(0xFF241608, alpha), false);
-        g.fill(boxX + 12, boxY + 19, boxX + boxW - 12, boxY + 20, (Math.min(115, alpha) << 24) | 0x422810);
-
-        int textY = boxY + 25;
-        for (int i = 0; i < lineCount; i++) {
-            DiaryTypography.draw(g, this.font, lines.get(i), boxX + 15, textY + i * this.font.lineHeight, ink, false);
-        }
-
-        int pulse = 80 + (int)(Math.sin(now / 120.0) * 45.0);
-        int dot = (Math.min(alpha, Math.max(30, pulse)) << 24) | 0x5A7038;
-        g.fill(boxX + boxW - 10, boxY + boxH - 10, boxX + boxW - 6, boxY + boxH - 6, dot);
-        if (elapsedChars < easterEggMessage.length()) {
-            int cx = boxX + 15 + cachedEasterCursorTextWidth;
-            g.fill(Math.min(boxX + boxW - 18, cx + 2), boxY + boxH - 13,
-                Math.min(boxX + boxW - 16, cx + 4), boxY + boxH - 5, green);
-        }
-    }
 
     /**
      * v0.177.0: la mesa se mide con la misma formula que usa el emblema para

@@ -63,6 +63,48 @@ public final class DiaryChrome {
     }
 
     // ── Divisor horizontal con fade + rombo central ─────────────────────────
+    /**
+     * v0.221.0: mancha de tinta. Un nucleo, dos brazos y una gota aparte: lo
+     * justo para que parezca que la pluma se detuvo demasiado tiempo.
+     */
+    public static void drawInkBlot(GuiGraphics gfx, int cx, int cy, int size, boolean dark) {
+        int core = dark ? withAlpha(0x001A1108, 150) : withAlpha(0x006B5533, 90);
+        int soft = dark ? withAlpha(0x001A1108, 60) : withAlpha(0x006B5533, 40);
+        gfx.fill(cx - size, cy, cx + size, cy + 1, core);
+        gfx.fill(cx - size / 2, cy - 1, cx + size / 2, cy + 2, core);
+        gfx.fill(cx - size - 1, cy + 1, cx - size / 2, cy + 2, soft);
+        gfx.fill(cx + size / 2, cy + 1, cx + size + 1, cy + 2, soft);
+        gfx.fill(cx + size + 1, cy + 2, cx + size + 2, cy + 3, soft);
+    }
+
+    /**
+     * v0.221.0: subrayado de lapiz. Trazo con huecos y un segundo renglon
+     * torcido debajo, como quien repasa sin levantar la mano.
+     */
+    public static void drawPencilRule(GuiGraphics gfx, int x, int y, int w, int seed) {
+        int col = withAlpha(0x00422810, 120);
+        int faint = withAlpha(0x00422810, 70);
+        int offset = 0;
+        int i = 0;
+        while (offset < w) {
+            int step = 4 + Math.floorMod(seed + i * 2654435761, 7);
+            int len = Math.min(w - offset, step);
+            int dy = Math.floorMod(seed + i * 40503, 3) == 0 ? 1 : 0;
+            gfx.fill(x + offset, y + dy, x + offset + len, y + dy + 1, i % 3 == 2 ? faint : col);
+            offset += len + 1;
+            i++;
+        }
+        gfx.fill(x + 2, y + 3, x + Math.max(4, w - 3), y + 4, faint);
+    }
+
+    /** v0.221.0: tachadura: dos trazos que cruzan el renglon. */
+    public static void drawStrike(GuiGraphics gfx, int x, int y, int w, int lineH) {
+        int col = withAlpha(0x001A1108, 130);
+        int mid = y + lineH / 2;
+        gfx.fill(x, mid, x + w, mid + 1, col);
+        gfx.fill(x + 1, mid - 1, x + w - 1, mid, withAlpha(0x001A1108, 70));
+    }
+
     public static void drawRegistryTag(GuiGraphics gfx, int panelX, int panelY, int panelW,
                                        int panelH, String regCode) {
         if (panelW < 330) return; // paneles muy chicos: se omite para no chocar
