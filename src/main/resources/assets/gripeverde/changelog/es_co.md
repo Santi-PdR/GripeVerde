@@ -1,3 +1,11 @@
+## Version 0.208.0 - La luna guarda su forma
+
+La luna se dibujaba resolviendo su forma en cada cuadro: fila por fila, con una o dos raices por fila para saber donde empieza y donde acaba la luz, y ademas decidiendo en cada fila si la sombra de la fase tapaba el borde, el centro o los dos lados. Esa cuenta da exactamente lo mismo durante todo el dia: solo cambia con el radio y con la fase.
+
+Ahora la forma se resuelve una vez por radio y fase y se guarda como tramos -fila, desde, hasta- relativos al centro. Dibujar la luna es recorrer esa lista y pintar. La luna nueva tambien reusa la forma del circulo para su halo tenue, y el metodo que partia las fases crecientes y menguantes por scanline desaparece: su trabajo lo hace ahora el trazado memorizado.
+
+Se ve igual, pixel por pixel. Deja de hacer raices cuadradas sesenta veces por segundo.
+
 ## Version 0.207.0 - La calle recuerda sus adoquines
 
 La calle se armaba desde cero en cada cuadro: cuantas hileras de adoquines hay, cuantas columnas le tocan a cada hilera, donde cae cada junta, donde late el reflejo humedo central, cuanto miden las cunetas y donde empieza la banda oscura del pie. Nada de eso depende del tiempo: solo del alto de la pantalla, que ademas elige el juego de medidas -seis hileras y veinticuatro columnas en pantallas altas, tres y doce en las pequenas-.

@@ -1,3 +1,8 @@
+## v0.208.0 - La luna guarda su forma
+
+- `AtmosphereRenderer`: `moonSpans(radius, shape)` memoriza los tramos de la luna por radio y fase;
+  `drawMoonSpans` los pinta. `renderMoonPhase` sólo elige la forma y `renderMoonPhaseDifference` desaparece.
+
 ## v0.207.0 - La calle recuerda sus adoquines
 
 - `LivingAtmosphere`: `ensureStreetLayout(w,h)` resuelve por resolución hileras, columnas, juntas, acera, cunetas,

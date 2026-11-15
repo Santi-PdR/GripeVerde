@@ -1,3 +1,11 @@
+## Version 0.208.0 - The moon keeps its shape
+
+The moon was drawn by resolving its shape on every frame: row by row, with one or two square roots per row to find where the light starts and ends, and deciding on each row whether the phase shadow covered the edge, the middle or both sides. That sum gives exactly the same answer all day: it only changes with the radius and the phase.
+
+Now the shape is resolved once per radius and phase and stored as spans - row, from, to - relative to the centre. Drawing the moon is walking that list and painting. The new moon also reuses the circle shape for its faint halo, and the method that split waxing and waning phases scanline by scanline disappears: its work is done by the memorised outline.
+
+It looks the same, pixel by pixel. It stops taking square roots sixty times a second.
+
 ## Version 0.207.0 - The street remembers its cobbles
 
 The street was built from scratch on every frame: how many cobble rows there are, how many columns each row gets, where each seam falls, where the central wet sheen breathes, how wide the gutters are and where the dark band at the foot begins. None of that depends on time: only on the height of the screen, which also picks the whole set of measurements - six rows and twenty-four columns on tall screens, three and twelve on small ones.

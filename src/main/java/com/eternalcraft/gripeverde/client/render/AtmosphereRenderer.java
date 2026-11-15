@@ -435,7 +435,7 @@ public class AtmosphereRenderer {
         if (phase == 0) {
             // Nueva: solo halo muy tenue
             int newMoonHint = AtmosphereRenderer.withAlpha(0x00E8DCB4, 8);
-            fillCircle(g, cx, cy, radius, newMoonHint);
+            drawMoonSpans(g, cx, cy, radius, 4, newMoonHint);
         } else {
             // Recorte iluminado sin disco oscuro atras
             renderMoonPhase(g, cx, cy, radius, phase);
@@ -471,6 +471,85 @@ public class AtmosphereRenderer {
 
     /** Dibuja SOLO la parte iluminada del disco lunar segun la fase.
      *  Optimizado: usa intervalos por scanline en vez de loops por pixel (reduce de O(r^2) a O(r)). */
+    /**
+     * v0.208.0: la forma de la luna se resuelve una sola vez por radio y fase.
+     *
+     * Cada fase recorria sus filas -y cada fila pedia una o dos raices- para
+     * decidir donde empieza y donde acaba la luz. Esa cuenta da lo mismo en
+     * todos los cuadros del dia, asi que ahora se guarda como tramos
+     * {fila, x1, x2} relativos al centro y dibujar es recorrerlos.
+     */
+    private static int moonShapeRadius = -1;
+    private static int moonShapeCode = -1;
+    private static int[] moonSpans = new int[0];
+
+    private static int[] moonSpans(int radius, int shape) {
+        if (moonShapeRadius == radius && moonShapeCode == shape) return moonSpans;
+        int[] out = new int[(2 * radius + 3) * 6];
+        int n = 0;
+        int r2 = radius * radius;
+        if (shape == 4) {
+            for (int dy = -radius; dy <= radius; dy++) {
+                int dx = (int) Math.sqrt((double)(r2 - dy * dy));
+                out[n++] = dy; out[n++] = -dx; out[n++] = dx + 1;
+            }
+        } else if (shape == 2 || shape == 6) {
+            for (int dy = -radius; dy <= radius; dy++) {
+                int dx = (int) Math.sqrt((double)radius * radius - (double)dy * dy);
+                if (dx < 0) continue;
+                out[n++] = dy;
+                if (shape == 2) { out[n++] = 0; out[n++] = dx + 1; }
+                else { out[n++] = -dx; out[n++] = 0; }
+            }
+        } else {
+            int cxShadow = shape == 1 ? -radius / 2
+                : shape == 7 ? radius / 2
+                : shape == 3 ? -radius - 1
+                : radius + 1;
+            int rs2 = radius * radius;
+            for (int dy = -radius; dy <= radius; dy++) {
+                int dy2 = dy * dy;
+                if (dy2 > r2) continue;
+                int dxOuter = (int) Math.sqrt(r2 - dy2);
+                int fullL = -dxOuter;
+                int fullR = dxOuter;
+                if (dy2 > rs2) {
+                    out[n++] = dy; out[n++] = fullL; out[n++] = fullR + 1;
+                    continue;
+                }
+                int dxShadow = (int) Math.sqrt(rs2 - dy2);
+                int shL = cxShadow - dxShadow;
+                int shR = cxShadow + dxShadow;
+                if (fullR < shL || fullL > shR) {
+                    out[n++] = dy; out[n++] = fullL; out[n++] = fullR + 1;
+                } else if (shL <= fullL && shR >= fullR) {
+                    continue;
+                } else if (shL <= fullL) {
+                    int nl = shR + 1;
+                    if (nl <= fullR) { out[n++] = dy; out[n++] = nl; out[n++] = fullR + 1; }
+                } else if (shR >= fullR) {
+                    int nr = shL - 1;
+                    if (fullL <= nr) { out[n++] = dy; out[n++] = fullL; out[n++] = nr + 1; }
+                } else {
+                    if (fullL <= shL - 1) { out[n++] = dy; out[n++] = fullL; out[n++] = shL; }
+                    if (shR + 1 <= fullR) { out[n++] = dy; out[n++] = shR + 1; out[n++] = fullR + 1; }
+                }
+            }
+        }
+        moonSpans = java.util.Arrays.copyOf(out, n);
+        moonShapeRadius = radius;
+        moonShapeCode = shape;
+        return moonSpans;
+    }
+
+    private static void drawMoonSpans(GuiGraphics g, int cx, int cy, int radius, int shape, int color) {
+        int[] spans = moonSpans(radius, shape);
+        for (int i = 0; i < spans.length; i += 3) {
+            int dy = spans[i];
+            g.fill(cx + spans[i + 1], cy + dy, cx + spans[i + 2], cy + dy + 1, color);
+        }
+    }
+
     private static void renderMoonPhase(GuiGraphics g, int cx, int cy, int radius, int phase) {
         int moonLight = DiaryTheme.MOON_WHITE;
 
@@ -478,83 +557,26 @@ public class AtmosphereRenderer {
             case 0: // new: nada iluminado
                 break;
             case 4: // full: disco completo + crateres
-                fillCircle(g, cx, cy, radius, moonLight);
+                drawMoonSpans(g, cx, cy, radius, 4, moonLight);
                 g.fill(cx - 3, cy - 2, cx - 1, cy,     0xFFB8AB88);
                 g.fill(cx + 1, cy + 1, cx + 3, cy + 3, 0xFFB8AB88);
                 g.fill(cx - 1, cy + 2, cx,     cy + 3, 0xFFB8AB88);
                 break;
             case 2: // first quarter: mitad derecha
-                for (int dy = -radius; dy <= radius; dy++) {
-                    int dx = (int) Math.sqrt((double)radius * radius - (double)dy * dy);
-                    if (dx < 0) continue;
-                    g.fill(cx, cy + dy, cx + dx + 1, cy + dy + 1, moonLight);
-                }
+                drawMoonSpans(g, cx, cy, radius, 2, moonLight);
                 break;
             case 6: // last quarter: mitad izquierda
-                for (int dy = -radius; dy <= radius; dy++) {
-                    int dx = (int) Math.sqrt((double)radius * radius - (double)dy * dy);
-                    if (dx < 0) continue;
-                    g.fill(cx - dx, cy + dy, cx, cy + dy + 1, moonLight);
-                }
+                drawMoonSpans(g, cx, cy, radius, 6, moonLight);
                 break;
             case 1: // waxing crescent: arco derecho
-                renderMoonPhaseDifference(g, cx, cy, radius, cx - radius / 2, radius);
-                break;
             case 7: // waning crescent: arco izquierdo
-                renderMoonPhaseDifference(g, cx, cy, radius, cx + radius / 2, radius);
-                break;
             case 3: // waxing gibbous: casi llena, sombra izquierda
-                renderMoonPhaseDifference(g, cx, cy, radius, cx - radius - 1, radius);
-                break;
             case 5: // waning gibbous: casi llena, sombra derecha
-                renderMoonPhaseDifference(g, cx, cy, radius, cx + radius + 1, radius);
+                drawMoonSpans(g, cx, cy, radius, phase, moonLight);
                 break;
         }
     }
 
-    /** Dibuja full circle minus shadow circle usando intervalos scanline (O(r) fills). */
-    private static void renderMoonPhaseDifference(GuiGraphics g, int cx, int cy, int radius, int cxShadow, int rShadow) {
-        int moonLight = DiaryTheme.MOON_WHITE;
-        int r2 = radius * radius;
-        int rs2 = rShadow * rShadow;
-        for (int dy = -radius; dy <= radius; dy++) {
-            int dy2 = dy * dy;
-            if (dy2 > r2) continue;
-            int dxOuter = (int) Math.sqrt(r2 - dy2);
-            int fullL = cx - dxOuter;
-            int fullR = cx + dxOuter;
-
-            // Shadow interval on this scanline
-            if (dy2 > rs2) {
-                // No shadow overlap in Y, draw full
-                g.fill(fullL, cy + dy, fullR + 1, cy + dy + 1, moonLight);
-                continue;
-            }
-            int dxShadow = (int) Math.sqrt(rs2 - dy2);
-            int shL = cxShadow - dxShadow;
-            int shR = cxShadow + dxShadow;
-
-            if (fullR < shL || fullL > shR) {
-                // No overlap
-                g.fill(fullL, cy + dy, fullR + 1, cy + dy + 1, moonLight);
-            } else if (shL <= fullL && shR >= fullR) {
-                // Fully shadowed
-                continue;
-            } else if (shL <= fullL) {
-                // Shadow covers left part
-                int nl = shR + 1;
-                if (nl <= fullR) g.fill(nl, cy + dy, fullR + 1, cy + dy + 1, moonLight);
-            } else if (shR >= fullR) {
-                // Shadow covers right part
-                int nr = shL - 1;
-                if (fullL <= nr) g.fill(fullL, cy + dy, nr + 1, cy + dy + 1, moonLight);
-            } else {
-                // Shadow in middle -> two caps
-                if (fullL <= shL - 1) g.fill(fullL, cy + dy, shL, cy + dy + 1, moonLight);
-                if (shR + 1 <= fullR) g.fill(shR + 1, cy + dy, fullR + 1, cy + dy + 1, moonLight);
-            }
-        }
-    }
 
     /** Renderiza la estrella fugaz con trail (llamado desde renderSky). */
     private static void renderShootingStar(GuiGraphics g, int w, int h) {
@@ -728,13 +750,6 @@ public class AtmosphereRenderer {
                 int dx = (int) Math.max(dxLow, dxHigh);
                 g.fill(cx - dx, cy + low, cx + dx + 1, cy + low + rowStep, col);
             }
-        }
-    }
-
-    private static void fillCircle(GuiGraphics g, int cx, int cy, int r, int color) {
-        for (int dy = -r; dy <= r; dy++) {
-            int dx = (int) Math.sqrt((double)(r * r - dy * dy));
-            g.fill(cx - dx, cy + dy, cx + dx + 1, cy + dy + 1, color);
         }
     }
 
