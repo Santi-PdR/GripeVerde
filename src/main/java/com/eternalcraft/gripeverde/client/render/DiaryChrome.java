@@ -141,7 +141,7 @@ public final class DiaryChrome {
 
     /** Igual que {@link #tr(String)} pero recortado al ancho pedido. */
     public static String trFit(String key, net.minecraft.client.gui.Font font, int maxWidth) {
-        return fitText(font, tr(key), maxWidth);
+        return fitCached(font, tr(key), maxWidth);
     }
 
     public static void drawInkDivider(GuiGraphics gfx, int x, int y, int w) {

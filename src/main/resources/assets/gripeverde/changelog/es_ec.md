@@ -1,3 +1,11 @@
+## Version 0.209.0 - El pincel blando y la cuenta del idioma
+
+El pincel con que se pintan la luna, las nubes y el humo de las chimeneas dibuja anillos hechos de franjas horizontales. Cada franja pedia dos raices cuadradas para saber cuanto ancho tiene el anillo a esa altura: unas sesenta y seis por blob de radio cuarenta y cuatro, y la luna sola pide dos. El radio y el alto de franja son siempre los mismos, asi que ahora el ancho de cada franja se guarda por radio y el pincel solo decide el alfa de cada anillo, que es lo unico que cambia.
+
+De paso, el atajo que traduce y ajusta una clave de una vez reusa la memoria de recortes en vez de rehacer el ajuste.
+
+Mismos anillos, misma blandura, misma luna.
+
 ## Version 0.208.0 - La luna guarda su forma
 
 La luna se dibujaba resolviendo su forma en cada cuadro: fila por fila, con una o dos raices por fila para saber donde empieza y donde acaba la luz, y ademas decidiendo en cada fila si la sombra de la fase tapaba el borde, el centro o los dos lados. Esa cuenta da exactamente lo mismo durante todo el dia: solo cambia con el radio y con la fase.

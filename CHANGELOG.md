@@ -1,3 +1,9 @@
+## v0.209.0 - El pincel blando y la cuenta del idioma
+
+- `AtmosphereRenderer.drawSoftBlob`: `blobBands(r, rowStep)` con `BLOB_BANDS` memoriza el ancho de cada franja
+  por radio; sólo el alfa del anillo se calcula por cuadro.
+- `DiaryChrome.trFit` usa `fitCached`.
+
 ## v0.208.0 - La luna guarda su forma
 
 - `AtmosphereRenderer`: `moonSpans(radius, shape)` memoriza los tramos de la luna por radio y fase;

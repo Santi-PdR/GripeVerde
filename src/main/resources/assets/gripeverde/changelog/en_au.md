@@ -1,3 +1,11 @@
+## Version 0.209.0 - The soft brush and the language count
+
+The brush that paints the moon, the clouds and the chimney smoke draws rings made of horizontal bands. Each band asked for two square roots to know how wide the ring is at that height: about sixty-six for a blob of radius forty-four, and the moon alone asks for two. The radius and the band height are always the same, so now the width of each band is stored per radius and the brush only decides the alpha of each ring, which is the only thing that changes.
+
+While at it, the shortcut that translates and fits a key in one go reuses the clip memory instead of redoing the fit.
+
+Same rings, same softness, same moon.
+
 ## Version 0.208.0 - The moon keeps its shape
 
 The moon was drawn by resolving its shape on every frame: row by row, with one or two square roots per row to find where the light starts and ends, and deciding on each row whether the phase shadow covered the edge, the middle or both sides. That sum gives exactly the same answer all day: it only changes with the radius and the phase.

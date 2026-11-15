@@ -730,6 +730,38 @@ public class AtmosphereRenderer {
      * sumaban mas de mil quinientos rellenos por cuadro- bajan a un tercio, y
      * quedan igual de blandos, o mas.
      */
+    /**
+     * v0.209.0: las franjas de cada anillo del pincel blando se resuelven una vez.
+     *
+     * Cada anillo recorria sus franjas horizontales pidiendo dos raices por
+     * franja -unas sesenta y seis por blob de radio 44-, y el mismo radio vuelve
+     * en cada cuadro: la luna, las nubes y cada penacho de humo. Ahora el ancho
+     * de cada franja se guarda por radio y alto de franja; del anillo solo queda
+     * el alfa, que si cambia.
+     */
+    private static final java.util.HashMap<Integer, int[]> BLOB_BANDS = new java.util.HashMap<>();
+
+    private static int[] blobBands(int r, int rowStep) {
+        int key = (r << 3) | rowStep;
+        int[] cached = BLOB_BANDS.get(key);
+        if (cached != null) return cached;
+        int[] out = new int[((2 * r) / rowStep + 2) * 2];
+        int n = 0;
+        for (int dy = -r; dy <= r; dy += rowStep) {
+            int low = dy;
+            int high = Math.min(dy + rowStep - 1, r);
+            double dxLow = Math.sqrt(Math.max(0, (double) r * r - (double) low * low));
+            double dxHigh = Math.sqrt(Math.max(0, (double) r * r - (double) high * high));
+            int dx = (int) Math.max(dxLow, dxHigh);
+            out[n++] = low;
+            out[n++] = dx;
+        }
+        int[] trimmed = java.util.Arrays.copyOf(out, n);
+        if (BLOB_BANDS.size() >= 128) BLOB_BANDS.clear();
+        BLOB_BANDS.put(key, trimmed);
+        return trimmed;
+    }
+
     public static void drawSoftBlob(GuiGraphics g, int cx, int cy, int radius, int coreAlpha, int colorNoAlpha) {
         if (radius <= 0 || coreAlpha < 4) return;
         int steps = radius >= 14 ? 3 : 2;
@@ -742,12 +774,10 @@ public class AtmosphereRenderer {
             int a = (int) (coreAlpha * (0.22f + 0.55f * t));
             if (a <= 0) continue;
             int col = withAlpha(colorNoAlpha, a);
-            for (int dy = -r; dy <= r; dy += rowStep) {
-                int low = dy;
-                int high = Math.min(dy + rowStep - 1, r);
-                double dxLow = Math.sqrt(Math.max(0, (double) r * r - (double) low * low));
-                double dxHigh = Math.sqrt(Math.max(0, (double) r * r - (double) high * high));
-                int dx = (int) Math.max(dxLow, dxHigh);
+            int[] bands = blobBands(r, rowStep);
+            for (int i = 0; i < bands.length; i += 2) {
+                int low = bands[i];
+                int dx = bands[i + 1];
                 g.fill(cx - dx, cy + low, cx + dx + 1, cy + low + rowStep, col);
             }
         }
