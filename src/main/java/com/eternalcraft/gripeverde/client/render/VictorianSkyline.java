@@ -197,25 +197,62 @@ public class VictorianSkyline {
      * fijas: cuesta casi nada y da la sensacion de que la avenida sigue mas alla
      * de la niebla.
      */
-    private static void renderFarSkyline(GuiGraphics g, int w, int h) {
-        int farWall = 0xFF2A2116;
-        int farEdge = 0xFF332A1C;
+    // v0.216.0: la ciudad lejana se mide una vez por resolucion.
+    //
+    // Catorce edificios por cuatro conversiones cada uno, mas los seis puntos de
+    // luz, se recalculaban en cada cuadro aunque no dependen del tiempo: solo del
+    // tamano de la ventana. Ahora se resuelven al cambiar la resolucion y dibujar
+    // es recorrer los rectangulos ya decididos.
+    private static int farLayoutW = -1;
+    private static int farLayoutH = -1;
+    private static int[] farRects = new int[0];      // x1, y1, x2, y2 por edificio
+    private static int[] farWindows = new int[0];    // x, y por ventana lejana
+
+    private static void ensureFarLayout(int w, int h) {
+        if (farLayoutW == w && farLayoutH == h) return;
+        farLayoutW = w;
+        farLayoutH = h;
+        int wallBottom = (int) (h * 0.72f);
+        int[] rects = new int[FAR_BUILDINGS.length * 4];
+        int n = 0;
         for (float[] b : FAR_BUILDINGS) {
             int x1 = (int) (w * b[0]);
             int y2 = (int) (h * b[1]);
             int x2 = x1 + (int) (w * b[2]);
             int y1 = y2 - (int) (h * b[3]);
             if (x2 <= 0 || x1 >= w) continue;
-            g.fill(x1, y1, x2, Math.min(y2, (int) (h * 0.72f)), farWall);
+            rects[n++] = x1;
+            rects[n++] = y1;
+            rects[n++] = x2;
+            rects[n++] = Math.min(y2, wallBottom);
+        }
+        farRects = java.util.Arrays.copyOf(rects, n);
+        int[] wins = new int[12];
+        int m = 0;
+        for (int i = 0; i < 6; i++) {
+            wins[m++] = (int) (w * (0.09f + i * 0.155f));
+            wins[m++] = (int) (h * (0.53f + (i % 3) * 0.02f));
+        }
+        farWindows = wins;
+    }
+
+    private static void renderFarSkyline(GuiGraphics g, int w, int h) {
+        ensureFarLayout(w, h);
+        int farWall = 0xFF2A2116;
+        int farEdge = 0xFF332A1C;
+        for (int i = 0; i < farRects.length; i += 4) {
+            int x1 = farRects[i];
+            int y1 = farRects[i + 1];
+            int x2 = farRects[i + 2];
+            int y2 = farRects[i + 3];
+            g.fill(x1, y1, x2, y2, farWall);
             g.fill(x1, y1, x2, y1 + 1, farEdge);
         }
         // Ventanas lejanas: puntos fijos, sin animacion (no compiten con las de
         // la ciudad cercana).
         int lit = 0x3A4A2E14;
-        for (int i = 0; i < 6; i++) {
-            int x = (int) (w * (0.09f + i * 0.155f));
-            int y = (int) (h * (0.53f + (i % 3) * 0.02f));
-            g.fill(x, y, x + 2, y + 1, lit);
+        for (int i = 0; i < farWindows.length; i += 2) {
+            g.fill(farWindows[i], farWindows[i + 1], farWindows[i] + 2, farWindows[i + 1] + 1, lit);
         }
     }
 
@@ -223,28 +260,44 @@ public class VictorianSkyline {
      * A single, fixed pair of Ghoul eyes watches from a distant upper window.
      * Called only by the title scene; it never overlays a live world.
      */
+    // v0.216.0: la ventana del ghoul se resuelve tambien una vez por resolucion.
+    private static int ghoulLayoutW = -1;
+    private static int ghoulLayoutH = -1;
+    private static int ghoulWx;
+    private static int ghoulWy;
+    private static int ghoulEw;
+    private static int ghoulEh;
+
     public static void renderGhoulWatcher(GuiGraphics g, int w, int h) {
         if (w < 160 || h < 120) return;
-        float[] b = BG_BUILDINGS[1];
-        int bx1 = (int)(w * b[0]);
-        int by2 = (int)(h * b[1]);
-        int bx2 = bx1 + (int)(w * b[2]);
-        int by1 = by2 - (int)(h * b[3]);
-        int bWidth = bx2 - bx1;
-        int bHeight = by2 - by1;
-        int cols = Math.max(1, bWidth / 10);
-        int rows = Math.max(1, bHeight / 12);
-        if (w > 1400) {
-            cols = Math.max(1, cols / 2);
-            rows = Math.max(1, rows / 2);
+        if (ghoulLayoutW != w || ghoulLayoutH != h) {
+            ghoulLayoutW = w;
+            ghoulLayoutH = h;
+            float[] b = BG_BUILDINGS[1];
+            int bx1 = (int)(w * b[0]);
+            int by2 = (int)(h * b[1]);
+            int bx2 = bx1 + (int)(w * b[2]);
+            int by1 = by2 - (int)(h * b[3]);
+            int bWidth = bx2 - bx1;
+            int bHeight = by2 - by1;
+            int cols = Math.max(1, bWidth / 10);
+            int rows = Math.max(1, bHeight / 12);
+            if (w > 1400) {
+                cols = Math.max(1, cols / 2);
+                rows = Math.max(1, rows / 2);
+            }
+            int cellW = bWidth / cols;
+            int cellH = bHeight / rows;
+            ghoulEw = Math.max(2, Math.min(3, cellW - 4));
+            ghoulEh = Math.max(2, Math.min(3, cellH - 5));
+            ghoulWx = bx1 + (cellW - ghoulEw) / 2;
+            ghoulWy = by1 + (cellH - ghoulEh) / 2 + 3;
         }
 
-        int cellW = bWidth / cols;
-        int cellH = bHeight / rows;
-        int eyeW = Math.max(2, Math.min(3, cellW - 4));
-        int eyeH = Math.max(2, Math.min(3, cellH - 5));
-        int wx = bx1 + (cellW - eyeW) / 2;
-        int wy = by1 + (cellH - eyeH) / 2 + 3;
+        int wx = ghoulWx;
+        int wy = ghoulWy;
+        int eyeW = ghoulEw;
+        int eyeH = ghoulEh;
 
         g.fill(wx - 1, wy - 1, wx + eyeW + 1, wy + eyeH + 1, 0xFF130D08);
         g.fill(wx, wy, wx + eyeW, wy + eyeH, 0xFF030405);

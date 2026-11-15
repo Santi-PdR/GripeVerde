@@ -1,3 +1,8 @@
+## v0.216.0 - La ciudad lejana se mide una vez
+
+- `VictorianSkyline`: `ensureFarLayout(w,h)` resuelve `farRects`/`farWindows` por resolución para `renderFarSkyline`;
+  `renderGhoulWatcher` guarda `ghoulWx/Wy/Ew/Eh` en vez de recalcular la ventana.
+
 ## v0.215.0 - Los campos de texto dejan de repetir su recorte
 
 - `DiaryTextField`: el recorte visible se guarda (`lastVisibleValue/DisplayPos/InnerW/Text`) y `formatSafe`

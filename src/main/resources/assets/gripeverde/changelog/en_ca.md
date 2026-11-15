@@ -1,3 +1,11 @@
+## Version 0.216.0 - The distant city is measured once
+
+The three layers of the city are drawn on every frame, but not all of them change: the farthest one - the rooftops barely hinted above the fog, with their six points of light - depends only on the size of the window.
+
+Now that layer is resolved when the resolution changes: fourteen buildings and six windows are noted as rectangles, and drawing means walking through them. The ghoul's window, the one watching from the attic, is measured only once too.
+
+The distant city looks the same, with the same pale edge on every roof.
+
 ## Version 0.215.0 - Text fields stop repeating their crop
 
 When a server name is typed or the archive is searched, the text field paints its contents on every frame. To do so it split the text from the scroll position, cropped it to the box width and built two formatted pieces - the part before the cursor and the part after - even when none of that had changed since the previous frame.

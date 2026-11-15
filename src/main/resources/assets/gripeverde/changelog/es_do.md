@@ -1,3 +1,11 @@
+## Version 0.216.0 - La ciudad lejana se mide una vez
+
+Las tres capas de la ciudad se dibujan en cada cuadro, pero no todas cambian: la mas lejana -los tejados apenas insinuados sobre la niebla, con sus seis puntos de luz- solo depende del tamano de la ventana.
+
+Ahora esa capa se resuelve al cambiar la resolucion: catorce edificios y seis ventanas quedan apuntados como rectangulos y dibujar es recorrerlos. La ventana del ghoul, la que mira desde el atico, tambien se mide una sola vez.
+
+La ciudad lejana se ve igual, con el mismo filo claro en cada tejado.
+
 ## Version 0.215.0 - Los campos de texto dejan de repetir su recorte
 
 Cuando se escribe un nombre de servidor o se busca en el archivo, el campo de texto pinta su contenido en cada cuadro. Para hacerlo partia el texto desde el desplazamiento, lo recortaba al ancho de la caja y armaba dos tramos con formato -lo anterior y lo posterior al cursor-, aunque nada de eso hubiera cambiado desde el cuadro anterior.
