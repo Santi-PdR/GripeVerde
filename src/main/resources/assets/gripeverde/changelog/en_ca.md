@@ -1,3 +1,11 @@
+## Version 0.205.0 - Long lists and chimneys
+
+The language list measured the fog tongue's name, each row's label - if it did not have a width yet - and the code that appears under the pointer, all over again on every frame and every row. Those measurements now come from the shared memory. In the archive, the document stamps, the wax signature and the return caption are measured once.
+
+The city chimneys resolved their body on every frame: they looked up the parent building, scaled its position and subtracted the height. That only depends on the screen, so it is kept per resolution, like the smoke mouths and the window layout.
+
+Same city, same lists: fewer sums per frame.
+
 ## Version 0.204.0 - Buttons, levers and plates measure once too
 
 The previous sweep left the pieces out: every button, every lever, every slider and every progress bar measured its label on every frame to centre it or to decide whether it fit. Now they all share the same width memory the screens already used, so a label is measured once per text and font.

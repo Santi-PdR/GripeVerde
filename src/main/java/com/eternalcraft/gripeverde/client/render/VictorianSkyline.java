@@ -664,11 +664,44 @@ public class VictorianSkyline {
         }
     }
 
-    private static void renderChimneys(GuiGraphics g, int w, int h, float[][] chimneys, float[][] parents, boolean isFg) {
-        int chimneyColor = isFg ? 0xFF150C05 : 0xFF1F1208;
-        int brickColor   = isFg ? 0xFF1F1408 : 0xFF2A1810;
-        for (float[] c : chimneys) {
+    // v0.205.0: el cuerpo de cada chimenea se resolvia en cada cuadro (padre,
+    // escalas y restas). Depende solo del tamano de la pantalla, asi que se
+    // guarda por resolucion igual que las bocas de humo.
+    private static int chimLayoutW = -1;
+    private static int chimLayoutH = -1;
+    private static int[] chimBgX1 = new int[0];
+    private static int[] chimBgX2 = new int[0];
+    private static int[] chimBgY1 = new int[0];
+    private static int[] chimBgY2 = new int[0];
+    private static int[] chimFgX1 = new int[0];
+    private static int[] chimFgX2 = new int[0];
+    private static int[] chimFgY1 = new int[0];
+    private static int[] chimFgY2 = new int[0];
+
+    private static void ensureChimneyLayout(int w, int h) {
+        if (chimLayoutW == w && chimLayoutH == h) return;
+        chimLayoutW = w;
+        chimLayoutH = h;
+        if (chimBgX1.length != CHIMNEYS_BG.length) {
+            chimBgX1 = new int[CHIMNEYS_BG.length];
+            chimBgX2 = new int[CHIMNEYS_BG.length];
+            chimBgY1 = new int[CHIMNEYS_BG.length];
+            chimBgY2 = new int[CHIMNEYS_BG.length];
+            chimFgX1 = new int[CHIMNEYS_FG.length];
+            chimFgX2 = new int[CHIMNEYS_FG.length];
+            chimFgY1 = new int[CHIMNEYS_FG.length];
+            chimFgY2 = new int[CHIMNEYS_FG.length];
+        }
+        fillChimneyRects(w, h, CHIMNEYS_BG, BG_BUILDINGS, chimBgX1, chimBgX2, chimBgY1, chimBgY2);
+        fillChimneyRects(w, h, CHIMNEYS_FG, FG_BUILDINGS, chimFgX1, chimFgX2, chimFgY1, chimFgY2);
+    }
+
+    private static void fillChimneyRects(int w, int h, float[][] chimneys, float[][] parents,
+            int[] x1s, int[] x2s, int[] y1s, int[] y2s) {
+        for (int ci = 0; ci < chimneys.length; ci++) {
+            float[] c = chimneys[ci];
             int idx = (int) c[1];
+            x1s[ci] = NO_ANCHOR;
             if (idx >= parents.length) continue;
             float[] parent = parents[idx];
             int px1 = (int)(w * parent[0]);
@@ -680,6 +713,27 @@ public class VictorianSkyline {
             int cx2 = cx1 + (int)(w * c[2]);
             int cy2 = py1;
             int cy1 = cy2 - (int)(h * c[3]);
+            x1s[ci] = cx1;
+            x2s[ci] = cx2;
+            y1s[ci] = cy1;
+            y2s[ci] = cy2;
+        }
+    }
+
+    private static void renderChimneys(GuiGraphics g, int w, int h, float[][] chimneys, float[][] parents, boolean isFg) {
+        ensureChimneyLayout(w, h);
+        int chimneyColor = isFg ? 0xFF150C05 : 0xFF1F1208;
+        int brickColor   = isFg ? 0xFF1F1408 : 0xFF2A1810;
+        int[] x1s = isFg ? chimFgX1 : chimBgX1;
+        int[] x2s = isFg ? chimFgX2 : chimBgX2;
+        int[] y1s = isFg ? chimFgY1 : chimBgY1;
+        int[] y2s = isFg ? chimFgY2 : chimBgY2;
+        for (int ci = 0; ci < x1s.length; ci++) {
+            int cx1 = x1s[ci];
+            if (cx1 == NO_ANCHOR) continue;
+            int cx2 = x2s[ci];
+            int cy1 = y1s[ci];
+            int cy2 = y2s[ci];
             g.fill(cx1, cy1, cx2, cy2, chimneyColor);
             g.fill(cx1 - 2, cy1 - 2, cx2 + 2, cy1 + 2, chimneyColor);
             for (int y = cy1 + 3; y < cy2; y += 3) {

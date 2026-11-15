@@ -1,3 +1,11 @@
+## Version 0.205.0 - Las listas largas y las chimeneas
+
+La lista de lenguas medía el nombre de la lengua de la niebla, el rotulo de cada renglon -si aun no tenia ancho- y el codigo que aparece al pasar el puntero, todo otra vez por cuadro y por fila. Ahora esas medidas salen de la memoria comun. En el archivo, los sellos de los documentos, la firma del lacre y la leyenda de vuelta se miden una vez.
+
+Las chimeneas de la ciudad resolvian su cuerpo en cada cuadro: buscaban el edificio padre, escalaban su posicion y restaban alto. Eso solo depende de la pantalla, asi que se guarda por resolucion, igual que las bocas de humo y el trazado de las ventanas.
+
+Misma ciudad, mismas listas: menos cuentas por cuadro.
+
 ## Version 0.204.0 - Los botones, las palancas y las placas tambien miden una vez
 
 El barrido de la tanda anterior dejo fuera las piezas sueltas: cada boton, cada palanca, cada deslizador y cada barra de progreso medía su rotulo en cada cuadro para centrarlo o para decidir si entraba. Ahora todos comparten la misma memoria de anchos que ya usaban las pantallas, asi que un rotulo se mide una vez por texto y fuente.

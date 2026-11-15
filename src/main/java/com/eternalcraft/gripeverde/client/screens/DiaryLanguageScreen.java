@@ -540,7 +540,7 @@ public class DiaryLanguageScreen extends Screen {
                     ? "Tongue of the Fog" : "Lengua de la Niebla";
                 int pulse = com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.hasActiveWorld()
                     ? 90 : 90 + (int)(Math.sin(System.currentTimeMillis() / 600.0) * 40);
-                int w2 = DiaryLanguageScreen.this.font.width(name);
+                int w2 = DiaryChrome.widthCached(DiaryLanguageScreen.this.font, name);
                 g.drawString(DiaryLanguageScreen.this.font, name,
                     left + FLAG_SLOT + (rowWidth - FLAG_SLOT - w2) / 2,
                     top + (rowHeight - DiaryLanguageScreen.this.font.lineHeight) / 2,
@@ -597,7 +597,7 @@ public class DiaryLanguageScreen extends Screen {
                 : isApplied ? this.labelApplied : this.labelIdle;
             int textW = isPending ? this.widthPending
                 : isApplied ? this.widthApplied : this.widthIdle;
-            if (textW == 0) textW = DiaryLanguageScreen.this.font.width(label);
+            if (textW == 0) textW = DiaryChrome.widthCached(DiaryLanguageScreen.this.font, label);
 
             // Zona de texto: desde left+FLAG_SLOT hasta left+rowWidth
             int textZoneLeft  = left + FLAG_SLOT;
@@ -615,7 +615,8 @@ public class DiaryLanguageScreen extends Screen {
 
             if (hovered || isPending) {
                 String codeText = this.code.toUpperCase(java.util.Locale.ROOT);
-                int codeW = DiaryLanguageScreen.this.font.width(codeText);
+                // v0.205.0: el ancho del código de la lengua se mide una vez.
+                int codeW = DiaryChrome.widthCached(DiaryLanguageScreen.this.font, codeText);
                 int codeX = left + rowWidth - codeW - 16;
                 if (codeX > textZoneLeft + textW + 8) {
                     int codeColor = isPending ? 0xAA1A0F08 : 0x886B4A2E;

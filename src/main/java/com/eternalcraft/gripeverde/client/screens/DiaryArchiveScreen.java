@@ -233,10 +233,10 @@ public class DiaryArchiveScreen extends Screen {
             drawC(g, msg, cx, infoY,
                 complete ? DiaryTheme.INK : DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 120));
             if (complete) {
-                int mw = this.font.width(msg);
+                int mw = DiaryChrome.widthCached(this.font, msg);
                 int sealCx = cx + mw / 2 + 20;
                 String sig = "SIGILLUM";
-                g.drawString(this.font, sig, sealCx - this.font.width(sig) / 2, infoY - 15, 0xFF8A6A2D, false);
+                g.drawString(this.font, sig, sealCx - DiaryChrome.widthCached(this.font, sig) / 2, infoY - 15, 0xFF8A6A2D, false);
                 drawCompletionSeal(g, sealCx, infoY + 6, 8);
             }
         }
@@ -390,7 +390,7 @@ public class DiaryArchiveScreen extends Screen {
                 : "El cronista no existe. Solo quedan sus lectores.");
             ty += 30;
             String stamp = en ? "SEALED FOREVER" : "SELLADO PARA SIEMPRE";
-            int stw = this.font.width(stamp);
+            int stw = DiaryChrome.widthCached(this.font, stamp);
             int sx2 = panelX + (panelW - stw) / 2;
             g.fill(sx2 - 6, ty - 3, sx2 + stw + 6, ty + 12, DiaryTheme.withAlpha(0xFF6E1F16, 30));
             g.fill(sx2 - 6, ty - 3, sx2 + stw + 6, ty - 2, 0xFF6E1F16);
@@ -401,7 +401,7 @@ public class DiaryArchiveScreen extends Screen {
 
         // volver con click en cualquier parte baja
         String back = en ? "~ click below to return to the cards ~" : "~ pulsa abajo para volver a las fichas ~";
-        int bw2 = this.font.width(back);
+        int bw2 = DiaryChrome.widthCached(this.font, back);
         g.drawString(this.font, back, panelX + (panelW - bw2) / 2, panelY + panelH - 46,
             DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 120), false);
     }

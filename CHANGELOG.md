@@ -1,3 +1,9 @@
+## v0.205.0 - Las listas largas y las chimeneas
+
+- `DiaryLanguageScreen`: nombre de la lengua de la niebla, rótulo de cada fila y código medidos con
+  `DiaryChrome.widthCached`; `DiaryArchiveScreen`: sellos, firma del lacre y leyenda de vuelta también.
+- `VictorianSkyline`: `ensureChimneyLayout`/`fillChimneyRects` cachean el cuerpo de cada chimenea por resolución.
+
 ## v0.204.0 - Los botones, las palancas y las placas tambien miden una vez
 
 - `DiaryChrome.drawCenteredString` usa `widthCached`.
