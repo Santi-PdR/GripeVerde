@@ -9,7 +9,7 @@ Actualizado: 2026-11-13
   token, igual que el de Photon/Fisk.
 - Rama de trabajo de la sesión: `arena/48be547c-gripeverde` (base `02e85bc`) — la plataforma
   fija el nombre, no se renombra. Todo el trabajo va ahí; el PR sale de esa rama.
-- Versión de esta rama: `0.190.0` (anteriores entregadas: `0.189.0`, `0.188.0`, `0.187.0`, `0.186.0`, `0.185.0`, `0.184.2`, `0.184.1`, `0.183.0`)
+- Versión de esta rama: `0.191.0` (anteriores entregadas: `0.190.0`, `0.189.0`, `0.188.0`, `0.187.0`, `0.186.0`, `0.185.0`, `0.184.2`, `0.184.1`, `0.183.0`)
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
 - El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
   proyecto local del usuario.
@@ -122,6 +122,14 @@ Actualizado: 2026-11-13
 - El validador local `python3 tools/verify_mirrors.py` reproduce los sellos de Gradle
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
+
+## Cambios de 0.191.0 — ventanas, humo y asfalto
+
+- `VictorianSkyline.renderWindowsOnBuildings`: `lodSkip` a 1600 px = **3** (antes 2), divisores FG 16/18 (antes 14/16),
+  ventana encendida FG sin travesaño horizontal (5 → 4 fills). Las ventanas bajan a ~la mitad.
+- Tres tonos de luz en las ventanas del fondo, deterministas por `(row, col, bi)`.
+- `renderSmokeGroup`: 3 puffs por chimenea, `sz` ×1.35.
+- `LivingAtmosphere.renderStreet`: sin juntas en la hilera lejana + filo de agua por hilera.
 
 ## Cambios de 0.190.0 — el cielo y los blobs blandos
 

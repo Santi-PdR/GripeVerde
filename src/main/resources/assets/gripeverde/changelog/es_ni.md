@@ -1,3 +1,9 @@
+## Version 0.191.0 - La ciudad enciende otras luces
+
+Las ventanas del skyline eran el gasto mas grande que quedaba en el fondo: mas de mil rellenos por cuadro a 1080p, entre las quince casas del fondo y las nueve de adelante. A partir de 1600 pixeles de ancho ahora se dibuja una de cada tres -antes una de cada dos- y las fachadas de primer plano ganaron aire: los mismos edificios, con las ventanas un poco mas separadas. Cada ventana encendida tenia un travesano horizontal que a ese tamano no se lee; se fue, y quedan el marco, el vidrio, la jamba y el halo. En total, las ventanas cuestan cerca de la mitad.
+
+Y no todo es quitar: las ventanas encendidas del fondo dejaron de ser todas del mismo ambar. Hay tres luces -gas frio, ambar pleno y vela vieja- repartidas por la fachada segun el sitio, y eso hace que la ciudad parezca habitada por gente distinta. El humo de las chimeneas perdio un puff de cada cuatro y gano tamano, asi que la pluma se lee igual. Y la calle: la hilera de adoquines mas lejana ya no lleva juntas, porque queda bajo la niebla y el cordon, y en cambio cada hilera lleva un filo de agua en el borde de arriba, que es lo que hace que el asfalto se lea mojado.
+
 ## Version 0.190.0 - El cielo cuesta un tercio
 
 El pincel de los blobs blandos -el que dibuja el halo de la luna, las nubes y el humo de las chimeneas- era lo mas caro del fondo: mas de mil quinientos rellenos por cuadro entre los tres. Gastaba un anillo de mas porque al de afuera le tocaba alpha cero y no se veia, y dibujaba en franjas de dos pixeles aunque el blob midiera sesenta. Ahora el anillo exterior lleva alpha propio, asi que con menos anillos el blob conserva su radio, y las franjas crecen con el tamano: los tres juntos bajan a un tercio y quedan igual de blandos, o mas. Las estrellas brillantes gastaban cinco rellenos en cruz; ahora son un halo y el nucleo, dos, y se leen mas redondas.

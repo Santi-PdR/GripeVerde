@@ -420,10 +420,13 @@ public class VictorianSkyline {
         rng.setSeed(seed);
         int offOnThreshold = isBg ? 8 : 7;
         int amberThreshold  = 9;
-        // LOD: reduce density on large resolutions to save fill calls
+        // LOD: reduce density on large resolutions to save fill calls.
+        // v0.191.0: las ventanas son el gasto mas grande que quedaba en el fondo
+        // (mas de mil rellenos por cuadro a 1080p). A partir de 1600 px de ancho
+        // se dibuja una de cada tres: la fachada se lee igual y cuesta un tercio.
         int lodSkip = 1;
-        if (w > 1600) lodSkip = isBg ? 2 : 2;
-        else if (w > 1200) lodSkip = isBg ? 2 : 1;
+        if (w > 1600) lodSkip = 3;
+        else if (w > 1200) lodSkip = 2;
         else if (h < 400) lodSkip = 2;
         for (int bi = 0; bi < buildings.length; bi++) {
             float[] b = buildings[bi];
@@ -433,8 +436,8 @@ public class VictorianSkyline {
             int by1 = by2 - (int)(h * b[3]);
             int bWidth  = bx2 - bx1;
             int bHeight = by2 - by1;
-            int cols = Math.max(1, bWidth  / (isBg ? 10 : 14));
-            int rows = Math.max(1, bHeight / (isBg ? 12 : 16));
+            int cols = Math.max(1, bWidth  / (isBg ? 10 : 16));
+            int rows = Math.max(1, bHeight / (isBg ? 12 : 18));
             if (isBg && w > 1400) {
                 cols = Math.max(1, cols / 2);
                 rows = Math.max(1, rows / 2);
@@ -478,11 +481,13 @@ public class VictorianSkyline {
                         // Draw with animPhase[animIdx] controlling alpha
                         int amber = (int)(animPhase[animIdx] * 160);
                         if (amber > 2) {
+                            // v0.191.0: sin el travesano horizontal, que a este
+                            // tamano no se lee; el marco, el vidrio, la jamba y el
+                            // halo siguen haciendo la ventana.
                             g.fill(wx - 1, wy - 1, wx + winW + 1, wy + winH + 1, 0xFF1A0F05);
                             g.fill(wx, wy, wx + winW, wy + winH,
                                 AtmosphereRenderer.withAlpha(0x00D4941E, amber));
                             g.fill(wx + winW/2, wy, wx + winW/2 + 1, wy + winH, 0xFF3D2E1A);
-                            g.fill(wx, wy + winH/2, wx + winW, wy + winH/2 + 1, 0xFF3D2E1A);
                             g.fill(wx - 2, wy - 2, wx + winW + 2, wy + winH + 2,
                                 AtmosphereRenderer.withAlpha(0x00D4941E, amber / 6));
                         } else {
@@ -499,8 +504,23 @@ public class VictorianSkyline {
                         }
                     } else if (roll < amberThreshold) {
                         if (isBg) {
+                            // v0.191.0: tres tonos de luz segun el sitio en la
+                            // fachada. Cuesta lo mismo y la ciudad deja de tener
+                            // todas las ventanas del mismo ambar.
+                            int tone = Math.floorMod(row * 7 + col * 13 + bi * 5, 6);
+                            int tint;
+                            int toneAlpha;
+                            if (tone == 0) {
+                                tint = 0x00C8B060; toneAlpha = 96;      // gas frio
+                            } else if (tone == 1) {
+                                tint = 0x00E0A83C; toneAlpha = 128;     // ambar pleno
+                            } else if (tone == 2) {
+                                tint = 0x008A6A20; toneAlpha = 88;      // vela vieja
+                            } else {
+                                tint = 0x00A8781E; toneAlpha = 110;
+                            }
                             g.fill(wx, wy, wx + winW, wy + winH,
-                                AtmosphereRenderer.withAlpha(0x00A8781E, 110));
+                                AtmosphereRenderer.withAlpha(tint, toneAlpha));
                         } else {
                             float flicker = (float)(Math.sin(time * (0.5f + bi*0.13f + col*0.17f)) * 0.3f + 0.7f);
                             int amber = Math.max(40, (int)(flicker * 140));
@@ -604,7 +624,9 @@ public class VictorianSkyline {
             int cx1 = px1 + (int)(pw * c[0]);
             int cw  = (int)(w * c[2]);
             int cy1 = py1 - (int)(h * c[3]);
-            for (int pi = 0; pi < 4; pi++) {
+            // v0.191.0: tres puffs por chimenea en vez de cuatro y un 10% mas
+            // grandes: la pluma se lee igual y cuesta un cuarto menos.
+            for (int pi = 0; pi < 3; pi++) {
                 int pIdx = (baseIdx + ci) * 8 + pi;
                 if (pIdx >= smokeParticles.length) break;
                 float[] p = smokeParticles[pIdx];
@@ -612,7 +634,7 @@ public class VictorianSkyline {
                 float windDeep = (float)(Math.sin(time * 0.13f + ci * 0.5f) * 3f);
                 int sx = cx1 + (int)(cw * p[0]) + (int)(windX * Math.abs(p[1]) * 2f) + (int)(windDeep * p[1] * 4f);
                 int sy = cy1 + (int)(h * p[1]);
-                int sz = (int)(p[3] * 1.2f);  // 20% mas grande (bajado de 40%)
+                int sz = (int)(p[3] * 1.35f);  // v0.191.0: 10% mas que antes
                 int sA = Math.max(0, Math.min(255, (int)(p[2] * maxAlpha)));
                 // Color mas oscuro: 0x00403020 en vez de 0x00705F45 (evita blanco por saturacion)
                 AtmosphereRenderer.drawSoftBlob(g, sx, sy, sz, sA, 0x00403020);

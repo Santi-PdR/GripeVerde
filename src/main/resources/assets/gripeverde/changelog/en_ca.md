@@ -1,3 +1,9 @@
+## Version 0.191.0 - The city lights different lamps
+
+The skyline windows were the biggest bill left in the background: over a thousand fills per frame at 1080p, across the fifteen houses at the back and the nine in front. From 1600 pixels wide it now draws one in three - it used to be one in two - and the foreground facades got some air: the same buildings, with the windows a little further apart. Every lit window had a horizontal transom that does not read at that size; it is gone, leaving the frame, the glass, the jamb and the halo. All told, the windows cost about half of what they did.
+
+And not everything is subtraction: the lit windows at the back are no longer all the same amber. There are three lights - cold gas, full amber and old candle - spread across the facade by position, and that makes the city feel lived in by different people. The chimney smoke lost one puff in four and gained size, so the plume reads the same. And the street: the furthest row of cobbles no longer carries joints, since it sits under the fog and the kerb, while every row now gets a lip of water along its top edge, which is what makes the asphalt read as wet.
+
 ## Version 0.190.0 - The sky costs a third
 
 The soft-blob brush - the one that paints the moon halo, the clouds and the chimney smoke - was the most expensive thing in the background: over fifteen hundred fills per frame between the three. It spent one ring too many because the outer one got a zero alpha and never showed, and it drew in two-pixel bands even when the blob was sixty wide. Now the outer ring carries its own alpha, so with fewer rings the blob keeps its radius, and the bands grow with the size: the three together drop to a third and look just as soft, if not softer. Bright stars spent five fills in a cross; now they are a halo and a core, two, and read rounder.

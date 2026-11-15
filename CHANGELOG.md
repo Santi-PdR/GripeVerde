@@ -1,3 +1,10 @@
+## v0.191.0 - La ciudad enciende otras luces
+
+- `VictorianSkyline.renderWindowsOnBuildings`: LOD `lodSkip` 2 → **3** a partir de 1600 px; fachadas de primer plano con divisores 14/16 → **16/18**; ventana encendida de primer plano 5 → **4 fills** (sin travesaño horizontal). Las ventanas quedan en ~la mitad.
+- Ventanas encendidas del fondo con **tres tonos** (`0x00C8B060` gas frío, `0x00E0A83C` ámbar pleno, `0x008A6A20` vela vieja) elegidos por sitio (`floorMod(row*7 + col*13 + bi*5, 6)`).
+- `renderSmokeGroup`: 4 → **3 puffs** por chimenea, `sz` ×1.2 → **×1.35**.
+- `LivingAtmosphere.renderStreet`: la hilera más lejana no dibuja juntas y cada hilera lleva un filo de agua (`0x007C6740`, α `seamAlpha/4`).
+
 ## v0.190.0 - El cielo cuesta un tercio
 
 - `AtmosphereRenderer.drawSoftBlob` (halo de la luna, nubes y humo de chimeneas): anillos 4 → **3/2** y franjas de 2 px → **2-4 px según radio**, con el anillo exterior a alpha propio (antes le tocaba 0 y no se veía). Los tres usos bajan de ~1.500 a ~500 rellenos por cuadro.

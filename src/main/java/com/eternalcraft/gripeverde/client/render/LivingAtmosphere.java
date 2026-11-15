@@ -654,10 +654,18 @@ public class LivingAtmosphere {
             int blockW = Math.max(8, w / cols);
             int offset = (row % 2 == 0) ? 0 : blockW / 2;
 
-            for (int x = -offset; x < w; x += blockW) {
-                g.fill(x, y1 + 1, x + 1, y2,
-                    AtmosphereRenderer.withAlpha(0x0024140B, seamAlpha));
+            // v0.191.0: la fila mas lejana no lleva juntas -queda bajo la niebla y
+            // el cordon, y era la que mas columnas tiene-; en cambio cada fila
+            // recibe un filo de agua en el borde de arriba, que es lo que hace que
+            // la calle se lea mojada.
+            if (row > 0) {
+                for (int x = -offset; x < w; x += blockW) {
+                    g.fill(x, y1 + 1, x + 1, y2,
+                        AtmosphereRenderer.withAlpha(0x0024140B, seamAlpha));
+                }
             }
+            g.fill(0, y1 + 1, w, y1 + 2,
+                AtmosphereRenderer.withAlpha(0x007C6740, Math.max(10, seamAlpha / 4)));
         }
 
         // Reflejo humedo central
