@@ -1,3 +1,11 @@
+## Version 0.203.0 - General sweep: every screen measures once
+
+Almost every window of the cabinet repeats the same gesture: fit three header lines - title, subtitle and sentence - measure them and centre them. That happened on every frame, one by one. Now the fitting and the measuring live in one shared place and the seventeen screens use it: if the text was already measured for that width and that font, it is reused as is. The cache empties itself only when you change the language.
+
+The options screens came in - accessibility, chat, controls, online, sound -, plus confirmation, packs, skin, direct join, server editing, the CEDA sheet, the cover and the chronicle. The cover's compact signature, also trimmed on every frame, is memorised on its own.
+
+Same words, same place, same positions. What does not change simply stops being measured sixty times a second.
+
 ## Version 0.202.0 - Credits and the reading room measure their header once
 
 The credits fitted their title, their subtitle and the sentence above - trimming them if they did not fit - and measured them again on every frame to centre them; they did the same with the version and the footer note. Now all of that is built once and only rebuilt when the title, the language or the panel width changes. The label and value columns of the registry, which measured their indent on every line, keep that width from the first time.

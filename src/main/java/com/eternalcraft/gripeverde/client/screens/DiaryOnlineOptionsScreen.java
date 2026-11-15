@@ -107,20 +107,20 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
         PaperTexture.drawSheet(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.OFFICIAL);
 
         // Titulo
-        String titleStr = DiaryChrome.fitText(this.font, this.title.getString(), Math.max(0, this.panelW - 28));
+        String titleStr = DiaryChrome.fitCached(this.font, this.title.getString(), Math.max(0, this.panelW - 28));
         int titleX = this.width / 2;
         int titleY = this.panelY + 12;
-        int tw = this.font.width(titleStr);
+        int tw = DiaryChrome.widthCached(this.font, titleStr);
         g.drawString(this.font, titleStr, titleX - tw / 2, titleY, DiaryChrome.INK_TITLE, false);
 
         // Subtitulo diegetico
         String subtitle = "- " + DiaryChrome.tr("gripeverde.options.online.subtitle") + " -";
-        subtitle = DiaryChrome.fitText(this.font, subtitle, Math.max(0, this.panelW - 28));
-        int subW = this.font.width(subtitle);
+        subtitle = DiaryChrome.fitCached(this.font, subtitle, Math.max(0, this.panelW - 28));
+        int subW = DiaryChrome.widthCached(this.font, subtitle);
         g.drawString(this.font, subtitle, titleX - subW / 2, titleY + 14, DiaryChrome.INK_SUBTITLE, false);
-        String flavor = DiaryChrome.fitText(this.font,
+        String flavor = DiaryChrome.fitCached(this.font,
             DiaryChrome.tr("gripeverde.options.online.flavor"), Math.max(0, this.panelW - 28));
-        int flavorW = this.font.width(flavor);
+        int flavorW = DiaryChrome.widthCached(this.font, flavor);
         g.drawString(this.font, flavor, titleX - flavorW / 2, titleY + 26, DiaryChrome.INK_FLAVOR, false);
 
         // Divisor

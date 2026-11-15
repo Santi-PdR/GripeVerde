@@ -1,3 +1,9 @@
+## v0.203.0 - Barrido general: todas las pantallas miden una vez
+
+- `DiaryChrome`: `fitCached`, `widthCached` y `trFitCached` con `FIT_CACHE`/`WIDTH_CACHE` (tope 256, vaciado
+  al cambiar de idioma). Sustituyen las llamadas por cuadro en 15 pantallas.
+- `DiaryTitleScreen`: la firma compacta (`fitString`) y los anchos de firma quedan memorizados.
+
 ## v0.202.0 - Los creditos y la sala de consulta miden su cabecera una vez
 
 - `DiaryCreditsScreen`: `refreshTextCache()` memoriza título/subtítulo/sentencia, versión y nota del pie;

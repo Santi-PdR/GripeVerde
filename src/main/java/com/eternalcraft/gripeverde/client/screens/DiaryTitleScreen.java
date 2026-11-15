@@ -882,6 +882,12 @@ public class DiaryTitleScreen extends Screen {
         return pool[idx % pool.length];
     }
 
+    // v0.203.0: firma compacta memorizada.
+    private String cachedCompactSig = "";
+    private String cachedCompactSigSrc = "";
+    private int cachedCompactSigWidth = -1;
+    private net.minecraft.client.gui.Font cachedCompactSigFont;
+
     private void drawSignature(GuiGraphics g) {
         int idx = com.eternalcraft.gripeverde.client.render.LogoRenderer.getYearIndex();
         String signature = signatureFor(idx);
@@ -897,14 +903,25 @@ public class DiaryTitleScreen extends Screen {
         int oldIdx = (idx + SIGNATURE_POOL_ES.length - 1) % SIGNATURE_POOL_ES.length;
         String oldSig = signatureFor(oldIdx);
 
-        int sw = DiaryTypography.width(this.font, signature);
-        int oldSw = DiaryTypography.width(this.font, oldSig);
+        // v0.203.0: los anchos de las firmas se miden una vez por texto.
+        int sw = DiaryChrome.widthCached(this.font, signature);
+        int oldSw = DiaryChrome.widthCached(this.font, oldSig);
         int y = this.height - 12;
 
         // En ventanas compactas, conserva solo la firma vigente para que no
         // se cruce con el control de música del borde inferior.
         if (isCompactLayout()) {
-            String compactSignature = DiaryTypography.fitString(this.font, signature, this.width - 62);
+            // v0.203.0: el recorte de la firma compacta se repite en cada cuadro
+            // con la misma firma y el mismo ancho; se guarda el resultado.
+            int sigLimit = this.width - 62;
+            if (this.cachedCompactSigFont != this.font || this.cachedCompactSigWidth != sigLimit
+                    || !this.cachedCompactSigSrc.equals(signature)) {
+                this.cachedCompactSig = DiaryTypography.fitString(this.font, signature, sigLimit);
+                this.cachedCompactSigFont = this.font;
+                this.cachedCompactSigWidth = sigLimit;
+                this.cachedCompactSigSrc = signature;
+            }
+            String compactSignature = this.cachedCompactSig;
             if (!compactSignature.isEmpty()) {
                 DiaryTypography.draw(g, this.font, compactSignature, 48, y, DiaryTheme.SEPIA_LIGHT, false);
             }

@@ -413,13 +413,13 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         PaperTexture.drawSheet(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.LEDGER);
 
         // --- Titulo ---
-        String titleStr = DiaryChrome.fitText(this.font,
+        String titleStr = DiaryChrome.fitCached(this.font,
             DiaryChrome.tr("options.sounds.title"), Math.max(0, this.panelW - 28));
         int titleX = this.width / 2;
         boolean compact = compactLayout();
         int titleY = this.panelY + (compact ? 4 : 10);
         {
-        int _tw = this.font.width(titleStr);
+        int _tw = DiaryChrome.widthCached(this.font, titleStr);
         g.drawString(this.font, titleStr, titleX - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
         }
 
@@ -445,8 +445,8 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         int sliderTop = musicSliderY();
         int flavorY = titleY + (compact ? 11 : 13);
         if (flavorY + this.font.lineHeight <= sliderTop - 4) {
-            String flavorShown = DiaryChrome.fitText(this.font, flavor, Math.max(0, this.panelW - 32));
-            int flvWC = this.font.width(flavorShown);
+            String flavorShown = DiaryChrome.fitCached(this.font, flavor, Math.max(0, this.panelW - 32));
+            int flvWC = DiaryChrome.widthCached(this.font, flavorShown);
             g.drawString(this.font, flavorShown, (this.width - flvWC) / 2, flavorY, DiaryChrome.INK_FLAVOR, false);
         }
 

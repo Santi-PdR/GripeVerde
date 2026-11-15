@@ -145,24 +145,24 @@ public class DiaryControlsScreen extends Screen {
         PaperTexture.drawSheet(g, this.panelX, this.panelY, this.panelW, this.panelH, PaperTexture.PaperKind.TECHNICAL);
 
         // Titulo
-        String titleStr = DiaryChrome.fitText(this.font, this.title.getString(), Math.max(0, this.panelW - 28));
+        String titleStr = DiaryChrome.fitCached(this.font, this.title.getString(), Math.max(0, this.panelW - 28));
         int titleX = this.width / 2;
         int titleY = this.panelY + 10;
         {
-        int _tw = this.font.width(titleStr);
+        int _tw = DiaryChrome.widthCached(this.font, titleStr);
         g.drawString(this.font, titleStr, titleX - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
         }
 
         // Subtitulo
         String subtitle = "- " + DiaryChrome.tr("gripeverde.options.controls.subtitle") + " -";
-        subtitle = DiaryChrome.fitText(this.font, subtitle, Math.max(0, this.panelW - 28));
-        int subWC = this.font.width(subtitle);
+        subtitle = DiaryChrome.fitCached(this.font, subtitle, Math.max(0, this.panelW - 28));
+        int subWC = DiaryChrome.widthCached(this.font, subtitle);
         g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
         // Flavor
-        String flavor = DiaryChrome.fitText(this.font,
+        String flavor = DiaryChrome.fitCached(this.font,
             DiaryChrome.tr("gripeverde.options.controls.flavor"), Math.max(0, this.panelW - 28));
-        int flvWC = this.font.width(flavor);
+        int flvWC = DiaryChrome.widthCached(this.font, flavor);
         g.drawString(this.font, flavor, (this.width - flvWC) / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
 
         // Divisores + esquineros

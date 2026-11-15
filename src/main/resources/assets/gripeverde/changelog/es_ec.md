@@ -1,3 +1,11 @@
+## Version 0.203.0 - Barrido general: todas las pantallas miden una vez
+
+Casi todas las ventanas del gabinete repiten el mismo gesto: ajustar tres lineas de cabecera -titulo, subtitulo y sentencia-, medirlas y centrarlas. Eso se hacia en cada cuadro, uno por uno. Ahora el ajuste y la medida se guardan en un solo sitio comun y las diecisiete pantallas lo comparten: si el texto ya se midio para ese ancho y esa fuente, se reusa tal cual. El cache se vacia solo cuando cambias de idioma.
+
+Entraron las pantallas de opciones -accesibilidad, chat, controles, online, sonido-, la confirmacion, los paquetes, la piel, la union directa, la edicion de servidores, la ficha de CEDA, la portada y la cronica. La firma compacta de la portada, que se recortaba tambien en cada cuadro, queda memorizada aparte.
+
+Mismas palabras, mismo sitio, mismas posiciones. Solo deja de medirse a sesenta por segundo lo que no cambia.
+
 ## Version 0.202.0 - Los creditos y la sala de consulta miden su cabecera una vez
 
 Los creditos ajustaban su titulo, su subtitulo y la sentencia de arriba -recortandolos si no cabian- y volvian a medirlos en cada cuadro para centrarlos; lo mismo hacian con la version y con la nota del pie. Ahora todo eso se arma una vez y solo se rehace si cambia el titulo, el idioma o el ancho del panel. Las columnas de etiqueta y valor de la ficha, que median su sangria en cada linea, guardan ese ancho la primera vez.

@@ -157,8 +157,8 @@ public class DiarySkinCustomizationScreen extends Screen {
         int cx = this.width / 2;
         int titleY = this.panelY + 12;
         {
-            String titleText = DiaryChrome.fitText(this.font, this.title.getString(), Math.max(0, panelW - 28));
-            int tw = this.font.width(titleText);
+            String titleText = DiaryChrome.fitCached(this.font, this.title.getString(), Math.max(0, panelW - 28));
+            int tw = DiaryChrome.widthCached(this.font, titleText);
             gfx.drawString(this.font, titleText, cx - tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
         }
 
@@ -166,17 +166,17 @@ public class DiarySkinCustomizationScreen extends Screen {
         int subtitleY = titleY + 12;
         {
             String subC = "- " + DiaryChrome.tr("gripeverde.options.skin.subtitle") + " -";
-            subC = DiaryChrome.fitText(this.font, subC, Math.max(0, panelW - 28));
-            int sw = this.font.width(subC);
+            subC = DiaryChrome.fitCached(this.font, subC, Math.max(0, panelW - 28));
+            int sw = DiaryChrome.widthCached(this.font, subC);
             gfx.drawString(this.font, subC, cx - sw / 2, subtitleY, DiaryChrome.INK_SUBTITLE, false);
         }
 
         // Flavor
         int flavorY = subtitleY + 13;
         {
-            String flvC = DiaryChrome.fitText(this.font,
+            String flvC = DiaryChrome.fitCached(this.font,
                 DiaryChrome.tr("gripeverde.options.skin.flavor"), Math.max(0, panelW - 28));
-            int fw = this.font.width(flvC);
+            int fw = DiaryChrome.widthCached(this.font, flvC);
             gfx.drawString(this.font, flvC, cx - fw / 2, flavorY, DiaryChrome.INK_FLAVOR, false);
         }
 
@@ -220,7 +220,7 @@ public class DiarySkinCustomizationScreen extends Screen {
                 gfx.fill(mx + 2, my - 25, mx + 3, my - 24, eye);
                 String line = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
                     ? "this is how the fog sees you" : "asi te ve la niebla";
-                int lw = this.font.width(line);
+                int lw = DiaryChrome.widthCached(this.font, line);
                 gfx.drawString(this.font, line, mx - lw / 2, my + 44, (a << 24) | 0x8A9A70, false);
             }
             com.eternalcraft.gripeverde.client.lore.Marginalia.poll();

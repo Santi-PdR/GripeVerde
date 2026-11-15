@@ -356,13 +356,13 @@ public class DiaryDispatchScreen extends Screen {
         int centerX = this.panelX + this.panelW / 2;
         String title = ellipsize(DiaryChrome.tr("gripeverde.dispatch.title"),
             Math.max(64, this.panelW - 60));
-        gfx.drawString(this.font, title, centerX - this.font.width(title) / 2, titleY,
+        gfx.drawString(this.font, title, centerX - DiaryChrome.widthCached(this.font, title) / 2, titleY,
             DiaryChrome.INK_TITLE, false);
 
         String subtitle = ellipsize(
             "- " + DiaryChrome.tr("gripeverde.dispatch.subtitle") + " -",
             Math.max(64, this.panelW - 40));
-        gfx.drawString(this.font, subtitle, centerX - this.font.width(subtitle) / 2, titleY + 12,
+        gfx.drawString(this.font, subtitle, centerX - DiaryChrome.widthCached(this.font, subtitle) / 2, titleY + 12,
             DiaryChrome.INK_SUBTITLE, false);
 
         DiaryChrome.drawInkDivider(gfx, this.panelX + 18, titleY + 30, this.panelW - 36);
@@ -379,7 +379,7 @@ public class DiaryDispatchScreen extends Screen {
             boolean hasText = !DispatchLibrary.message(slot).isBlank();
             String number = slot >= 0 && slot < SLOT_NUMBERS.length
                 ? SLOT_NUMBERS[slot] : Integer.toString(slot + 1);
-            gfx.drawString(this.font, number, this.fieldX - 6 - this.font.width(number), y + 4,
+            gfx.drawString(this.font, number, this.fieldX - 6 - DiaryChrome.widthCached(this.font, number), y + 4,
                 hasText ? DiaryChrome.INK_TITLE : 0x70887766, false);
 
             boolean listening = this.awaitingSlot == slot;
@@ -395,7 +395,7 @@ public class DiaryDispatchScreen extends Screen {
             boolean bound = listening || DispatchLibrary.isBound(slot);
             String shown = ellipsize(key, this.keyW - 8);
             gfx.drawString(this.font, shown,
-                this.keyX + (this.keyW - this.font.width(shown)) / 2, y + 4,
+                this.keyX + (this.keyW - DiaryChrome.widthCached(this.font, shown)) / 2, y + 4,
                 bound ? DiaryChrome.INK_TITLE : 0x99887766, false);
         }
 

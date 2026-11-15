@@ -88,8 +88,8 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         // Cabecera de seccion (el titulo vanilla se dibuja en y=16 sobre el pergamino)
         int cx = this.width / 2;
         String subtitle = "- " + DiaryChrome.tr("gripeverde.options.packs.subtitle") + " -";
-        subtitle = DiaryChrome.fitText(this.font, subtitle, Math.max(0, bw - 48));
-        int sw = this.font.width(subtitle);
+        subtitle = DiaryChrome.fitCached(this.font, subtitle, Math.max(0, bw - 48));
+        int sw = DiaryChrome.widthCached(this.font, subtitle);
         g.drawString(this.font, subtitle, cx - sw / 2, by + 26, DiaryChrome.INK_SUBTITLE, false);
         DiaryChrome.drawInkDivider(g, bx + 24, by + 40, bw - 48);
 
@@ -98,7 +98,7 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
 
         // Pie: sello institucional
         String footer = "EC-QV/1897";
-        int fw = this.font.width(footer);
+        int fw = DiaryChrome.widthCached(this.font, footer);
         g.drawString(this.font, footer, cx - fw / 2, by + bh - 30, DiaryChrome.INK_FLAVOR, false);
         DiaryChrome.drawInkDivider(g, bx + 24, by + bh - 36, bw - 48);
     }

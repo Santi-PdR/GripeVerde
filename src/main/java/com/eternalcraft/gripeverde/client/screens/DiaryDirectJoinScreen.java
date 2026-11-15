@@ -199,13 +199,13 @@ public class DiaryDirectJoinScreen extends Screen {
         int titleY = panelY + (panelH < 160 ? 12 : 18);
         int centerX = panelX + panelW / 2;
         String titleStr = ellipsizeTo(this.font, this.title.getString(), Math.max(48, panelW - 28));
-        int titleW = this.font.width(titleStr);
+        int titleW = DiaryChrome.widthCached(this.font, titleStr);
         gfx.drawString(this.font, titleStr, centerX - titleW / 2, titleY, DiaryChrome.INK_TITLE, false);
 
         // Subtitulo
         String subtitle = "- " + DiaryChrome.tr("gripeverde.direct.subtitle") + " -";
         subtitle = ellipsizeTo(this.font, subtitle, Math.max(48, panelW - 28));
-        int subW = this.font.width(subtitle);
+        int subW = DiaryChrome.widthCached(this.font, subtitle);
         gfx.drawString(this.font, subtitle, centerX - subW / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
         // Divisor con rombo
@@ -226,7 +226,7 @@ public class DiaryDirectJoinScreen extends Screen {
                     ? "That address is on no map. The door is not there anymore."
                     : "Esa direccion no esta en ningun mapa. La puerta ya no esta ahi.";
                 warn = ellipsizeTo(this.font, warn, Math.max(48, panelW - 24));
-                int ww = this.font.width(warn);
+                int ww = DiaryChrome.widthCached(this.font, warn);
                 long remain = this.unmappedWarnUntilMs - System.currentTimeMillis();
                 int alpha = remain < 900L ? (int)(210 * remain / 900L) : 210;
                 int warnY = panelY + Math.min(ipFieldOffset() + 24, panelH - 52);

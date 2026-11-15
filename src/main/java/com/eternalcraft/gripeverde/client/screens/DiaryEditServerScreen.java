@@ -186,13 +186,13 @@ public class DiaryEditServerScreen extends Screen {
         int titleY = panelY + (compactLayout() ? 10 : 18);
         int centerX = panelX + panelW / 2;
         String titleStr = ellipsizeTo(this.font, this.title.getString(), Math.max(48, panelW - 28));
-        int titleW = this.font.width(titleStr);
+        int titleW = DiaryChrome.widthCached(this.font, titleStr);
         gfx.drawString(this.font, titleStr, centerX - titleW / 2, titleY, DiaryChrome.INK_TITLE, false);
 
         // Subtitulo
         String subtitle = "- " + DiaryChrome.tr("gripeverde.edit.subtitle") + " -";
         subtitle = ellipsizeTo(this.font, subtitle, Math.max(48, panelW - 28));
-        int subW = this.font.width(subtitle);
+        int subW = DiaryChrome.widthCached(this.font, subtitle);
         gfx.drawString(this.font, subtitle, centerX - subW / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
         // Divisor con rombo

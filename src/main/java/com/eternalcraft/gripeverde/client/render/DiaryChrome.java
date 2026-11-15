@@ -127,6 +127,8 @@ public final class DiaryChrome {
         if (!code.equals(cachedLangCode)) {
             cachedLangCode = code;
             TRANSLATION_CACHE.clear();
+            FIT_CACHE.clear();
+            WIDTH_CACHE.clear();
         }
         String value = TRANSLATION_CACHE.get(key);
         if (value == null) {
@@ -269,6 +271,48 @@ public final class DiaryChrome {
         int ellipsisWidth = font.width(ellipsis);
         if (ellipsisWidth > limit) return font.plainSubstrByWidth(text, limit);
         return font.plainSubstrByWidth(text, limit - ellipsisWidth) + ellipsis;
+    }
+
+    // v0.203.0: casi todas las pantallas ajustan las mismas tres lineas de
+    // cabecera -titulo, subtitulo y sentencia- en cada cuadro, y luego las
+    // vuelven a medir para centrarlas. Ambas cosas se guardan aqui: por el
+    // texto de entrada (que incluye el idioma ya resuelto), el ancho disponible
+    // y la fuente. El cache se vacia cuando cambia el idioma.
+    private static final java.util.HashMap<String, String> FIT_CACHE = new java.util.HashMap<>();
+    private static final java.util.HashMap<String, Integer> WIDTH_CACHE = new java.util.HashMap<>();
+
+    private static String textKey(Font font, int width, String text) {
+        return System.identityHashCode(font) + "/" + width + "/" + text;
+    }
+
+    /** Igual que {@link #fitText} pero memorizado (seguro por cuadro). */
+    public static String fitCached(Font font, String text, int maxWidth) {
+        if (font == null || text == null || text.isEmpty()) return "";
+        int limit = Math.max(0, maxWidth);
+        String key = textKey(font, limit, text);
+        String cached = FIT_CACHE.get(key);
+        if (cached != null) return cached;
+        String fitted = fitText(font, text, limit);
+        if (FIT_CACHE.size() >= 256) FIT_CACHE.clear();
+        FIT_CACHE.put(key, fitted);
+        return fitted;
+    }
+
+    /** Ancho de un texto ya resuelto, medido una sola vez por fuente. */
+    public static int widthCached(Font font, String text) {
+        if (font == null || text == null || text.isEmpty()) return 0;
+        String key = textKey(font, 0, text);
+        Integer cached = WIDTH_CACHE.get(key);
+        if (cached != null) return cached;
+        int width = font.width(text);
+        if (WIDTH_CACHE.size() >= 256) WIDTH_CACHE.clear();
+        WIDTH_CACHE.put(key, width);
+        return width;
+    }
+
+    /** Traduccion memorizada y ajustada de una clave. */
+    public static String trFitCached(String key, Font font, int maxWidth) {
+        return fitCached(font, tr(key), maxWidth);
     }
 
 

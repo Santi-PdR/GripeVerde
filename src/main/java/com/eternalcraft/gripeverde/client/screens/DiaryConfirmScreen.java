@@ -141,8 +141,8 @@ public class DiaryConfirmScreen extends ConfirmScreen {
 
         // Titulo
         int titleY = panelY + 18;
-        String titleStr = DiaryChrome.fitText(this.font, this.title.getString(), Math.max(0, panelW - 48));
-        int titleW = this.font.width(titleStr);
+        String titleStr = DiaryChrome.fitCached(this.font, this.title.getString(), Math.max(0, panelW - 48));
+        int titleW = DiaryChrome.widthCached(this.font, titleStr);
         gfx.drawString(this.font, titleStr, (this.width - titleW) / 2, titleY, DiaryChrome.INK_TITLE, false);
 
         // Divisor con rombo
@@ -164,8 +164,8 @@ public class DiaryConfirmScreen extends ConfirmScreen {
                 String line = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
                     ? "The cabinet remembers what you destroy."
                     : "El gabinete recuerda lo que destruyes.";
-                line = DiaryChrome.fitText(this.font, line, Math.max(0, panelW - 32));
-                int lw = this.font.width(line);
+                line = DiaryChrome.fitCached(this.font, line, Math.max(0, panelW - 32));
+                int lw = DiaryChrome.widthCached(this.font, line);
                 gfx.drawString(this.font, line, (this.width - lw) / 2, panelY + panelH - 42,
                     com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0xFF6E1F16, 150), false);
             }

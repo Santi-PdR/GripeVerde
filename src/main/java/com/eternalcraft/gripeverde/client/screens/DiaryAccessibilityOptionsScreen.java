@@ -136,9 +136,9 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         int cx = this.width / 2;
         int titleY = this.panelY + 12;
         {
-        String _title = DiaryChrome.fitText(this.font,
+        String _title = DiaryChrome.fitCached(this.font,
             DiaryChrome.tr("options.accessibility.title"), Math.max(0, this.panelW - 32));
-        int _tw = this.font.width(_title);
+        int _tw = DiaryChrome.widthCached(this.font, _title);
         gfx.drawString(this.font, _title, cx - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
         }
 
@@ -146,16 +146,16 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         int subtitleY = titleY + 12;
         {
             String subC = "- " + DiaryChrome.tr("gripeverde.options.accessibility.subtitle") + " -";
-            subC = DiaryChrome.fitText(this.font, subC, Math.max(0, this.panelW - 32));
-            int subW = this.font.width(subC);
+            subC = DiaryChrome.fitCached(this.font, subC, Math.max(0, this.panelW - 32));
+            int subW = DiaryChrome.widthCached(this.font, subC);
             gfx.drawString(this.font, subC, cx - subW / 2, subtitleY, DiaryChrome.INK_SUBTITLE, false);
         }
 
         // Flavor
         int flavorY = subtitleY + 13;
         {
-            String flvC = DiaryChrome.fitText(this.font, getRotatingAccFlavor(), Math.max(0, this.panelW - 32));
-            int flvW = this.font.width(flvC);
+            String flvC = DiaryChrome.fitCached(this.font, getRotatingAccFlavor(), Math.max(0, this.panelW - 32));
+            int flvW = DiaryChrome.widthCached(this.font, flvC);
             gfx.drawString(this.font, flvC, cx - flvW / 2, flavorY, DiaryChrome.INK_FLAVOR, false);
         }
 
