@@ -1,3 +1,9 @@
+## Version 0.219.0 - The chronicle rests like the other sheets
+
+The changelog was the only sheet in the cabinet that floated flat over the background: the others carry their shadow behind, their ink corners on all four angles and the registry plate in the upper corner.
+
+Now the chronicle does too. It keeps its bronze rule, which sets it apart from the rest, but it rests on the desk like any other paper. The registry plate only appears when the title leaves room, so as not to cover it in narrow windows.
+
 ## Version 0.218.0 - The reading room has a keyboard
 
 Until now the archive cards only answered the mouse: you had to pass over each one to read its name, and only the three loose papers at the foot could be opened with a click.

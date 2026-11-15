@@ -545,14 +545,24 @@ public class ChangelogScreen extends Screen {
 
         g.fill(0, 0, this.width, this.height, 0xD0100D08);
 
+        // v0.219.0: la cronica se apoya igual que las demas hojas: sombra por
+        // detras y esquinas de tinta sobre el filete, en vez de flotar plana
+        // sobre el fondo.
+        DiaryChrome.drawPanelShadow(g, px, py, pw, ph);
         com.eternalcraft.gripeverde.client.render.PaperTexture.drawSheet(g, px, py, pw, ph, com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.ARCHIVE);
         g.fill(px,          py,          px + pw, py + 1,      DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
         g.fill(px,          py + ph - 1, px + pw, py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
         g.fill(px,          py,          px + 1,  py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
         g.fill(px + pw - 1, py,          px + pw, py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
+        DiaryChrome.drawCornerOrnaments(g, px, py, pw, ph);
 
         int tw = com.eternalcraft.gripeverde.client.render.DiaryTypography.width(this.font, this.title);
         int tx = (this.width - tw) / 2;
+        // v0.219.0: la chapa de registro, como en el resto de las hojas; solo si
+        // el titulo deja hueco a la derecha.
+        if (pw >= 400 && tx + tw < px + pw - 78) {
+            DiaryChrome.drawRegistryTag(g, px, py, pw, ph, "REG. XV");
+        }
         g.drawString(this.font, this.title, tx, py + 8, DiaryTheme.AMBER_FLAME, false);
         g.fill(tx - 4, py + 18, tx + tw + 4, py + 19, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 150));
 

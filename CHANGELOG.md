@@ -1,3 +1,7 @@
+## v0.219.0 - La cronica se apoya como las demas hojas
+
+- `ChangelogScreen`: `drawPanelShadow` + `drawCornerOrnaments` y `drawRegistryTag` ("REG. XV") cuando el título deja hueco.
+
 ## v0.218.0 - La sala de consulta se recorre con el teclado
 
 - `DiaryArchiveScreen`: `focusCard` con esquinas de foco (`drawFocusCorners`), flechas + Enter (`keyPressed`),

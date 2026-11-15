@@ -1,3 +1,9 @@
+## Version 0.219.0 - La cronica se apoya como las demas hojas
+
+El archivo de cambios era la unica hoja del gabinete que flotaba plana sobre el fondo: las demas llevan su sombra por detras, sus esquinas de tinta en los cuatro angulos y la chapa de registro en la esquina alta.
+
+Ahora la cronica tambien. Conserva su filete de bronce, que la distingue del resto, pero se apoya en la mesa como cualquier otro papel. La chapa de registro aparece solo cuando el titulo deja hueco, para no taparlo en ventanas angostas.
+
 ## Version 0.218.0 - La sala de consulta se recorre con el teclado
 
 Hasta ahora las fichas del archivo solo respondian al raton: habia que pasar por encima de cada una para leer su nombre y solo los tres papeles sueltos del pie se podian abrir con un clic.
