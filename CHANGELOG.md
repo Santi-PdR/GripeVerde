@@ -1,3 +1,9 @@
+## v0.210.0 - Las ultimas traducciones y el ancho de los rotulos
+
+- Las 11 últimas llamadas a `Component.translatable(...).getString()` pasan por `DiaryChrome.tr(...)`
+  (CEDA, guía de campo, multijugador, portada): ninguna traducción se resuelve a mano.
+- `DiaryTypography.drawFitted`/`drawFittedLeft` usan `widthMemo` (`WIDTH_MEMO`, tope 512).
+
 ## v0.209.0 - El pincel blando y la cuenta del idioma
 
 - `AtmosphereRenderer.drawSoftBlob`: `blobBands(r, rowStep)` con `BLOB_BANDS` memoriza el ancho de cada franja

@@ -303,7 +303,7 @@ public final class DiaryFieldGuideScreen extends Screen {
             DiaryChrome.tr("gripeverde.field_guide.title"),
             Math.max(1, panelW - (compactLayout ? 20 : 36)));
         this.headerSubtitle = fitText(
-            Component.translatable(subKey).getString(), Math.max(1, panelW - 36));
+            DiaryChrome.tr(subKey), Math.max(1, panelW - 36));
         this.headerHint = fitText(
             DiaryChrome.tr("gripeverde.field_guide.scroll_hint"), panelW - 32);
         // v0.197.0: la pista del pie se centra al construir la cabecera, no en

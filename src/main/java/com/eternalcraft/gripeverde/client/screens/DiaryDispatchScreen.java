@@ -423,7 +423,7 @@ public class DiaryDispatchScreen extends Screen {
 
     private String footerNote() {
         if (!this.statusKey.isEmpty() && Util.getMillis() < this.statusUntil) {
-            return Component.translatable(this.statusKey).getString();
+            return DiaryChrome.tr(this.statusKey);
         }
         return DiaryChrome.tr("gripeverde.dispatch.slot.hint");
     }

@@ -1,3 +1,11 @@
+## Version 0.210.0 - Las ultimas traducciones y el ancho de los rotulos
+
+Quedaba un punado de sitios donde el texto traducido se volvia a resolver cada vez: la clave del estado en la ficha de CEDA, la pista del pie de la guia de campo, el nombre fijado del servidor, el saludo de la portada y los nombres de los idiomas. Todos pasan ahora por la memoria de traducciones que ya tenia el gabinete, que se vacia sola al cambiar de lengua. Ya no queda ninguna traduccion resuelta a mano en la interfaz.
+
+El ajuste de rotulos -el que encoge la letra hasta que entra en su boton- pedia el ancho del texto cada vez que dibujaba. Ese ancho no cambia, asi que se guarda en la tipografia y se reusa.
+
+Misma letra, mismas palabras, mismo tamano.
+
 ## Version 0.209.0 - El pincel blando y la cuenta del idioma
 
 El pincel con que se pintan la luna, las nubes y el humo de las chimeneas dibuja anillos hechos de franjas horizontales. Cada franja pedia dos raices cuadradas para saber cuanto ancho tiene el anillo a esa altura: unas sesenta y seis por blob de radio cuarenta y cuatro, y la luna sola pide dos. El radio y el alto de franja son siempre los mismos, asi que ahora el ancho de cada franja se guarda por radio y el pincel solo decide el alfa de cada anillo, que es lo unico que cambia.

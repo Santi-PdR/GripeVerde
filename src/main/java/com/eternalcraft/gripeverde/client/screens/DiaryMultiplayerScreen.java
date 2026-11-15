@@ -38,7 +38,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     private static final String PREVIOUS_PINNED_IP = "servercitoGhouls.exaroton.me:24652";
 
     private static String localizedPinnedName() {
-        return Component.translatable(PINNED_NAME_KEY).getString();
+        return DiaryChrome.tr(PINNED_NAME_KEY);
     }
 
     private static boolean isPinnedName(String name) {
@@ -398,7 +398,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     }
 
     private Component cleanLabel(String translationKey) {
-        String text = Component.translatable(translationKey).getString().trim();
+        String text = DiaryChrome.tr(translationKey).trim();
         while (text.endsWith("...") || text.endsWith("…")) {
             if (text.endsWith("...")) text = text.substring(0, text.length() - 3).trim();
             else text = text.substring(0, text.length() - 1).trim();
@@ -441,7 +441,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     /** Busca un boton vanilla iterando children() y comparando el Component message.
      *  Mas robusto que reflection porque siempre tiene la referencia fresca. */
     private Button findVanillaButtonByLabel(String translationKey) {
-        String expected = Component.translatable(translationKey).getString();
+        String expected = DiaryChrome.tr(translationKey);
         for (var child : this.children()) {
             if (child instanceof Button b) {
                 String label = b.getMessage().getString();

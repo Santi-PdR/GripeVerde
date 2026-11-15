@@ -1,3 +1,11 @@
+## Version 0.210.0 - The last translations and the width of labels
+
+A handful of places were still resolving translated text every time: the status key on the CEDA sheet, the field guide footer hint, the pinned server name, the cover greeting and the language names. All of them now go through the translation memory the cabinet already had, which empties itself when the language changes. There is no translation resolved by hand left in the interface.
+
+The label fitting - the one that shrinks the letter until it fits its button - asked for the text width every time it drew. That width does not change, so it is stored in the typography and reused.
+
+Same letter, same words, same size.
+
 ## Version 0.209.0 - The soft brush and the language count
 
 The brush that paints the moon, the clouds and the chimney smoke draws rings made of horizontal bands. Each band asked for two square roots to know how wide the ring is at that height: about sixty-six for a blob of radius forty-four, and the moon alone asks for two. The radius and the band height are always the same, so now the width of each band is stored per radius and the brush only decides the alpha of each ring, which is the only thing that changes.

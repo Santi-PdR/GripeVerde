@@ -105,10 +105,24 @@ public final class DiaryTypography {
      *
      * @return el ancho real que ocupa el texto ya dibujado
      */
+    // v0.210.0: el recorte/ajuste de un rotulo pregunta su ancho en cada cuadro
+    // (cada boton, cada vez). El ancho de un texto no cambia: se guarda.
+    private static final java.util.HashMap<String, Integer> WIDTH_MEMO = new java.util.HashMap<>();
+
+    private static int widthMemo(Font font, String text) {
+        String key = System.identityHashCode(font) + "/" + text;
+        Integer cached = WIDTH_MEMO.get(key);
+        if (cached != null) return cached;
+        int width = font.width(text);
+        if (WIDTH_MEMO.size() >= 512) WIDTH_MEMO.clear();
+        WIDTH_MEMO.put(key, width);
+        return width;
+    }
+
     public static int drawFitted(GuiGraphics graphics, Font font, String text,
                                  int centerX, int topY, int maxWidth, int color, float minScale) {
         if (text == null || text.isEmpty()) return 0;
-        int tw = font.width(text);
+        int tw = widthMemo(font, text);
         if (tw <= 0) return 0;
         float scale = tw <= maxWidth ? 1f : Math.max(minScale, maxWidth / (float) tw);
         if (scale >= 1f) {
@@ -129,7 +143,7 @@ public final class DiaryTypography {
     public static int drawFittedLeft(GuiGraphics graphics, Font font, String text,
                                      int leftX, int topY, int maxWidth, int color, float minScale) {
         if (text == null || text.isEmpty()) return 0;
-        int tw = font.width(text);
+        int tw = widthMemo(font, text);
         if (tw <= 0) return 0;
         float scale = tw <= maxWidth ? 1f : Math.max(minScale, maxWidth / (float) tw);
         if (scale >= 1f) {

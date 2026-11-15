@@ -162,12 +162,12 @@ public class DiaryTitleScreen extends Screen {
                 long absence = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.sessionAbsenceDays();
                 if (kind == 1) {
                     greetingTranslationKey = "gripeverde.title.greeting.first";
-                    greetingText = Component.translatable(greetingTranslationKey).getString();
+                    greetingText = DiaryChrome.tr(greetingTranslationKey);
                     com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
                         com.eternalcraft.gripeverde.client.lore.Marginalia.N_FIRST_NIGHT);
                 } else if (kind == 2 && absence >= 7L) {
                     greetingTranslationKey = "gripeverde.title.greeting.return";
-                    greetingText = Component.translatable(greetingTranslationKey).getString();
+                    greetingText = DiaryChrome.tr(greetingTranslationKey);
                     dustThisSession = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.consumeDust();
                     com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
                         com.eternalcraft.gripeverde.client.lore.Discoveries.DUST);
@@ -175,10 +175,10 @@ public class DiaryTitleScreen extends Screen {
                         com.eternalcraft.gripeverde.client.lore.Marginalia.N_DUST);
                 } else if (kind == 2) {
                     greetingTranslationKey = "gripeverde.title.greeting.remembers";
-                    greetingText = Component.translatable(greetingTranslationKey).getString();
+                    greetingText = DiaryChrome.tr(greetingTranslationKey);
                 } else if (kind == 3) {
                     greetingTranslationKey = "gripeverde.title.greeting.vigil";
-                    greetingText = Component.translatable(greetingTranslationKey).getString();
+                    greetingText = DiaryChrome.tr(greetingTranslationKey);
                 }
                 if (greetingText != null) {
                     greetingEnglish = isEnglishSelected();
@@ -605,7 +605,7 @@ public class DiaryTitleScreen extends Screen {
         boolean english = isEnglishSelected();
         if (greetingTranslationKey != null
                 && (!greetingLanguageInitialized || greetingEnglish != english)) {
-            greetingText = Component.translatable(greetingTranslationKey).getString();
+            greetingText = DiaryChrome.tr(greetingTranslationKey);
             greetingEnglish = english;
             greetingLanguageInitialized = true;
         }
