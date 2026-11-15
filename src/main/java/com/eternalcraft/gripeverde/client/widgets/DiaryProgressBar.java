@@ -89,10 +89,12 @@ public final class DiaryProgressBar {
         }
 
         if (label != null && !label.isEmpty()) {
-            int lw = Minecraft.getInstance().font.width(label);
+            // v0.204.0: ancho memorizado por texto.
+            net.minecraft.client.gui.Font font = Minecraft.getInstance().font;
+            int lw = DiaryChrome.widthCached(font, label);
             int lx = x + (w - lw) / 2;
             int ly = y + (h - 8) / 2;
-            g.drawString(Minecraft.getInstance().font, label, lx, ly, DiaryTheme.INK, false);
+            g.drawString(font, label, lx, ly, DiaryTheme.INK, false);
         }
     }
 }

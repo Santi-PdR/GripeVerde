@@ -1,5 +1,7 @@
 package com.eternalcraft.gripeverde.client.widgets;
 
+import com.eternalcraft.gripeverde.client.render.DiaryChrome;
+
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.render.DiaryTypography;
@@ -95,7 +97,7 @@ public class SlimButton extends AbstractButton {
             // entra entera y centrada en cualquier idioma.
             String label = this.getMessage().getString();
             int ty = y + (h - font.lineHeight) / 2;
-            int tw = DiaryTypography.width(font, label);
+            int tw = DiaryChrome.widthCached(font, label);
             int room = Math.max(8, w - 10);
             if (tw > room) {
                 DiaryTypography.drawFitted(g, font, label, x + w / 2, ty, room, textColor, 0.62f);
@@ -146,7 +148,7 @@ public class SlimButton extends AbstractButton {
     }
 
     private static String ellipsize(Font font, String text, int maxWidth) {
-        if (DiaryTypography.width(font, text) <= maxWidth) return text;
+        if (DiaryChrome.widthCached(font, text) <= maxWidth) return text;
         return DiaryTypography.fitString(font, text, maxWidth);
     }
 

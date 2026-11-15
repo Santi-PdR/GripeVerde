@@ -1,3 +1,11 @@
+## Version 0.204.0 - Los botones, las palancas y las placas tambien miden una vez
+
+El barrido de la tanda anterior dejo fuera las piezas sueltas: cada boton, cada palanca, cada deslizador y cada barra de progreso medía su rotulo en cada cuadro para centrarlo o para decidir si entraba. Ahora todos comparten la misma memoria de anchos que ya usaban las pantallas, asi que un rotulo se mide una vez por texto y fuente.
+
+El centrado comun del gabinete tambien entra: es el que colocan casi todas las cabeceras, y medía cada vez que se le pedia dibujar. Los deslizadores de ambiente y de musica, que pedían la fuente tres veces en la misma linea, ahora la toman una sola vez.
+
+Mismo aspecto, mismos centrados; menos cuentas repetidas.
+
 ## Version 0.203.0 - Barrido general: todas las pantallas miden una vez
 
 Casi todas las ventanas del gabinete repiten el mismo gesto: ajustar tres lineas de cabecera -titulo, subtitulo y sentencia-, medirlas y centrarlas. Eso se hacia en cada cuadro, uno por uno. Ahora el ajuste y la medida se guardan en un solo sitio comun y las diecisiete pantallas lo comparten: si el texto ya se midio para ese ancho y esa fuente, se reusa tal cual. El cache se vacia solo cuando cambias de idioma.

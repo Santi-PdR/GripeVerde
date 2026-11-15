@@ -1,5 +1,7 @@
 package com.eternalcraft.gripeverde.client.widgets;
 
+import com.eternalcraft.gripeverde.client.render.DiaryChrome;
+
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.render.DiaryTypography;
@@ -157,7 +159,7 @@ public class DiaryToggle extends AbstractButton {
         int plateW = 66;
         int paddingH = 10;
         int maxLabelW = Math.max(24, w - plateW - paddingH * 2 - 8);
-        if (DiaryTypography.width(font, labelStr) > maxLabelW) {
+        if (DiaryChrome.widthCached(font, labelStr) > maxLabelW) {
             labelStr = DiaryTypography.fitString(font, labelStr, maxLabelW);
         }   // el recorte ya queda memorizado en DiaryTypography
 
@@ -192,13 +194,13 @@ public class DiaryToggle extends AbstractButton {
         int valColor = !this.active
             ? DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 120)
             : (value ? hoverAnim.lerpColor(DiaryTheme.REDCOAT_DARK, DiaryTheme.REDCOAT) : DiaryTheme.SEPIA_MID);
-        int valW = DiaryTypography.width(font, valStr);
+        int valW = DiaryChrome.widthCached(font, valStr);
         DiaryTypography.draw(g, font, valStr, plateX + Math.max(5, (plateW - 16 - valW) / 2), contentY, valColor);
 
         if (t > 0.1f && this.active) {
             int underlineY = contentY + font.lineHeight;
             int underlineAlpha = (int) (t * 180);
-            g.fill(x + paddingH, underlineY, x + paddingH + Math.min(maxLabelW, DiaryTypography.width(font, labelStr)), underlineY + 1,
+            g.fill(x + paddingH, underlineY, x + paddingH + Math.min(maxLabelW, DiaryChrome.widthCached(font, labelStr)), underlineY + 1,
                 DiaryTheme.withAlpha(accent, underlineAlpha));
         }
     }

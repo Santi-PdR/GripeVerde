@@ -1,3 +1,11 @@
+## Version 0.204.0 - Buttons, levers and plates measure once too
+
+The previous sweep left the pieces out: every button, every lever, every slider and every progress bar measured its label on every frame to centre it or to decide whether it fit. Now they all share the same width memory the screens already used, so a label is measured once per text and font.
+
+The cabinet's shared centring goes in too: nearly every header places text through it, and it measured each time it was asked to draw. The ambience and music sliders, which asked for the font three times on the same line, now take it once.
+
+Same look, same centring; fewer repeated sums.
+
 ## Version 0.203.0 - General sweep: every screen measures once
 
 Almost every window of the cabinet repeats the same gesture: fit three header lines - title, subtitle and sentence - measure them and centre them. That happened on every frame, one by one. Now the fitting and the measuring live in one shared place and the seventeen screens use it: if the text was already measured for that width and that font, it is reused as is. The cache empties itself only when you change the language.

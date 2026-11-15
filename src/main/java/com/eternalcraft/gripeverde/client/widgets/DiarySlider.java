@@ -108,7 +108,7 @@ public class DiarySlider extends AbstractSliderButton {
         int textColor = hovered ? DiaryTheme.INK_BLACK : DiaryTheme.INK;
         Font font = Minecraft.getInstance().font;
         String msg = ellipsize(font, cachedMessage(), Math.max(8, w - 14));
-        int textX = x + w / 2 - DiaryTypography.width(font, msg) / 2;
+        int textX = x + w / 2 - DiaryChrome.widthCached(font, msg) / 2;
         DiaryTypography.draw(g, font, msg, textX, y + 4, textColor);
     }
 
@@ -126,7 +126,7 @@ public class DiarySlider extends AbstractSliderButton {
     }
 
     private static String ellipsize(net.minecraft.client.gui.Font font, String text, int maxWidth) {
-        if (DiaryTypography.width(font, text) <= maxWidth) return text;
+        if (DiaryChrome.widthCached(font, text) <= maxWidth) return text;
         return DiaryTypography.fitString(font, text, maxWidth);
     }
 

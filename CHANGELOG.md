@@ -1,3 +1,9 @@
+## v0.204.0 - Los botones, las palancas y las placas tambien miden una vez
+
+- `DiaryChrome.drawCenteredString` usa `widthCached`.
+- `DiaryToggle`, `DiarySlider`, `SlimButton`, `DiaryProgressBar`, `DiaryAmbienceSlider` y `DiaryMusicSlider`
+  miden sus rótulos por `DiaryChrome.widthCached` (y toman la fuente una vez).
+
 ## v0.203.0 - Barrido general: todas las pantallas miden una vez
 
 - `DiaryChrome`: `fitCached`, `widthCached` y `trFitCached` con `FIT_CACHE`/`WIDTH_CACHE` (tope 256, vaciado

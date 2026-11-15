@@ -93,9 +93,11 @@ public class DiaryMusicSlider extends AbstractSliderButton {
         // Texto centrado con sombra suave
         int textColor = this.isHovered() ? DiaryTheme.INK_BLACK : DiaryTheme.INK;
         String msg = this.getMessage().getString();
-        int textX = x + w / 2 - Minecraft.getInstance().font.width(msg) / 2;
+        // v0.204.0: el rotulo se media en cada cuadro; el ancho se guarda.
+        net.minecraft.client.gui.Font font = Minecraft.getInstance().font;
+        int textX = x + w / 2 - DiaryChrome.widthCached(font, msg) / 2;
         int textY = y + (h - 8) / 2;
-        g.drawString(Minecraft.getInstance().font, msg, textX, textY, textColor, false);
+        g.drawString(font, msg, textX, textY, textColor, false);
     }
 
     @Override
