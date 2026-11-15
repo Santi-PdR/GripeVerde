@@ -1,3 +1,11 @@
+## Version 0.193.0 - Menos cuentas por cuadro en las pantallas de texto
+
+La guia de campo dibujaba todas sus filas en cada cuadro y medía el ancho de cada una para subrayar los titulos, aunque el recorte de pantalla tapara la mitad: ahora lo que quedo arriba de la vista no se mide ni se dibuja, y cuando se pasa del fondo se corta. Cada fila guarda su ancho la primera vez que lo necesita, y el titulo, el subtitulo y la pista de scroll se recortan una vez por lengua y ancho en vez de en cada cuadro.
+
+La sala de consulta medía y recortaba el nombre de sus cuarenta y seis fichas en cada cuadro, y cada parrafo de los documentos se volvia a partir en lineas; las dos cosas quedan memorizadas hasta que cambia la fuente, el ancho o la cantidad de fichas halladas.
+
+Y lo que sirve en todas partes: el recorte de rotulos -esa busqueda que mira cuanto entra antes de los puntos suspensivos- ahora se acuerda del resultado. Se llama varias veces por cuadro en cabeceras, botones y listas, y con la letra igual, el ancho igual y el mismo texto el resultado es el mismo. La memoria se tira entera cuando cambia la fuente o cuando crece de mas, asi que no puede quedarse con una respuesta vieja.
+
 ## Version 0.192.0 - Las nubes, de blob a masa
 
 Las nubes se dibujaban con el pincel de blobs blandos: dos por nube, unos treinta rellenos cada uno, mas de trescientos por cuadro entre las cinco. Ahora cada nube son dos masas de bandas horizontales que siguen la elipse -dieciseis rellenos-, y contra un cielo tan oscuro el contorno queda igual de blando que antes.

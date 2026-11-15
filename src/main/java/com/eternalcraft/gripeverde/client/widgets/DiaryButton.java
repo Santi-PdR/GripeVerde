@@ -203,12 +203,12 @@ public class DiaryButton extends AbstractButton {
             drawIcon(g,iconX,iconY,textColor);
             textStartX = iconX+12+6;
             maxTextW = Math.max(8, x+w-10-textStartX);
-            text = fitText(font,text,maxTextW);
+            text = cachedFit(font,text,maxTextW);
             DiaryTypography.draw(g, font, text, textStartX, contentY, textColor);
-            textDrawnW = DiaryTypography.width(font, text);
+            textDrawnW = cachedWidth(font, text);
         } else {
             maxTextW = Math.max(8,w-18);
-            int fullW = DiaryTypography.width(font, text);
+            int fullW = cachedWidth(font, text);
             if (fullW > maxTextW) {
                 // v0.186.0: letra mas chica en vez de puntos suspensivos.
                 textDrawnW = DiaryTypography.drawFitted(g, font, text, x + w / 2, contentY,
@@ -242,6 +242,42 @@ public class DiaryButton extends AbstractButton {
                 g.fill(cx,yDraw+4,cx+1,yDraw+h-4,cross);
             }
         }
+    }
+
+    // v0.193.0: el rotulo recortado y su ancho se calculan una vez por texto,
+    // fuente y ancho disponible. Antes se median (y a veces se bisecaban) en
+    // cada cuadro, en cada boton de la pantalla.
+    private Font cachedFitFont;
+    private String cachedFitSource;
+    private String cachedFitValue;
+    private int cachedFitMaxW = -1;
+    private Font cachedLenFont;
+    private String cachedLenSource;
+    private int cachedLenValue = -1;
+
+    private String cachedFit(Font f, String txt, int maxW) {
+        if (this.cachedFitFont == f && this.cachedFitMaxW == maxW
+                && this.cachedFitSource != null && this.cachedFitSource.equals(txt)) {
+            return this.cachedFitValue;
+        }
+        String value = fitText(f, txt, maxW);
+        this.cachedFitFont = f;
+        this.cachedFitSource = txt;
+        this.cachedFitMaxW = maxW;
+        this.cachedFitValue = value;
+        return value;
+    }
+
+    private int cachedWidth(Font f, String txt) {
+        if (this.cachedLenFont == f && this.cachedLenSource != null
+                && this.cachedLenSource.equals(txt)) {
+            return this.cachedLenValue;
+        }
+        int value = DiaryTypography.width(f, txt);
+        this.cachedLenFont = f;
+        this.cachedLenSource = txt;
+        this.cachedLenValue = value;
+        return value;
     }
 
     private String fitText(Font f,String txt,int maxW){

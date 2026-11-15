@@ -142,6 +142,7 @@ public class DiaryArchiveScreen extends Screen {
         int innerW = panelW - 40;
         int cw = (innerW - (COLS - 1) * CARD_GAP) / COLS;
         int gridY = panelY + 60;
+        ensureCardLabels(cw, found);
         hoverCard = -1;
         for (int i = 0; i < Discoveries.ALL.length; i++) {
             int col = i % COLS;
@@ -162,18 +163,15 @@ public class DiaryArchiveScreen extends Screen {
                 g.fill(x + cw - 1, y, x + cw, y + CARD_H, 0xFF8E6A35);
                 // marca de lacre
                 g.fill(x + 3, y + 3, x + 7, y + 7, 0xFF6E1F16);
-                String name = Discoveries.nameFor(id);
-                String fit = truncate(name, cw - 12);
-                g.drawString(this.font, fit, x + 9, y + 8, DiaryTheme.INK, false);
+                g.drawString(this.font, this.cardLabels[i], x + 9, y + 8, DiaryTheme.INK, false);
             } else {
                 g.fill(x, y, x + cw, y + CARD_H, DiaryTheme.withAlpha(0x003D2A18, hover ? 30 : 16));
                 g.fill(x, y, x + cw, y + 1, DiaryTheme.withAlpha(0x008E6A35, 70));
                 g.fill(x, y + CARD_H - 1, x + cw, y + CARD_H, DiaryTheme.withAlpha(0x008E6A35, 70));
                 g.fill(x, y, x + 1, y + CARD_H, DiaryTheme.withAlpha(0x008E6A35, 70));
                 g.fill(x + cw - 1, y, x + cw, y + CARD_H, DiaryTheme.withAlpha(0x008E6A35, 70));
-                String q = "?";
-                int qw = this.font.width(q);
-                g.drawString(this.font, q, x + (cw - qw) / 2, y + 7, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, hover ? 150 : 70), false);
+                g.drawString(this.font, "?", x + (cw - this.questionW) / 2, y + 7,
+                    DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, hover ? 150 : 70), false);
             }
         }
 
@@ -369,9 +367,45 @@ public class DiaryArchiveScreen extends Screen {
 
     private int textColor(int c) { return c; }
 
+    // v0.193.0: las cuarenta y seis fichas medían y recortaban su nombre en cada
+    // cuadro, y cada parrafo de los documentos se volvia a partir en lineas. Se
+    // memoriza por fuente, ancho y cantidad de fichas halladas.
+    private net.minecraft.client.gui.Font cardLabelFont;
+    private int cardLabelCw = -1;
+    private int cardLabelFound = -1;
+    private final String[] cardLabels = new String[Discoveries.ALL.length];
+    private int questionW = 4;
+    private final java.util.Map<String, java.util.List<net.minecraft.util.FormattedCharSequence>> wrapCache =
+        new java.util.HashMap<>();
+    private net.minecraft.client.gui.Font wrapCacheFont;
+    private int wrapCacheMaxW = -1;
+
+    private void ensureCardLabels(int cw, int found) {
+        if (this.cardLabelFont == this.font && this.cardLabelCw == cw && this.cardLabelFound == found) {
+            return;
+        }
+        this.cardLabelFont = this.font;
+        this.cardLabelCw = cw;
+        this.cardLabelFound = found;
+        this.questionW = this.font.width("?");
+        for (int i = 0; i < Discoveries.ALL.length; i++) {
+            String id = Discoveries.ALL[i];
+            this.cardLabels[i] = ChroniclerMemory.isDiscovered(id)
+                ? truncate(Discoveries.nameFor(id), cw - 12) : "?";
+        }
+    }
+
     private int drawWrapped(GuiGraphics g, int color, int y, int maxW, int x, String text) {
-        java.util.List<net.minecraft.util.FormattedCharSequence> lines =
-            this.font.split(Component.literal(text), maxW);
+        if (this.wrapCacheFont != this.font || this.wrapCacheMaxW != maxW) {
+            this.wrapCache.clear();
+            this.wrapCacheFont = this.font;
+            this.wrapCacheMaxW = maxW;
+        }
+        java.util.List<net.minecraft.util.FormattedCharSequence> lines = this.wrapCache.get(text);
+        if (lines == null) {
+            lines = this.font.split(Component.literal(text), maxW);
+            this.wrapCache.put(text, lines);
+        }
         for (net.minecraft.util.FormattedCharSequence fcs : lines) {
             g.drawString(this.font, fcs, x, y, color, false);
             y += 12;

@@ -36,8 +36,46 @@ public final class DiaryTypography {
         return fitString(font, text, maxWidth, true);
     }
 
+    /**
+     * v0.193.0: memoria de recortes.
+     *
+     * fitString se llama varias veces por cuadro en las cabeceras, los rotulos de
+     * botones y las listas, y cada llamada mide la cadena por biseccion. El
+     * resultado solo depende de la fuente, del ancho y del texto, asi que se
+     * guarda y se repite tal cual. La memoria se tira entera cuando cambia la
+     * fuente (idioma o pack de recursos) o cuando crece demasiado.
+     */
+    private static Font fitMemoFont;
+    // Ancho y modo como primer nivel, texto como segundo: sin claves armadas a
+    // mano, no hay forma de que dos recortes distintos caigan en la misma casilla.
+    private static final java.util.HashMap<String, java.util.HashMap<String, String>> FIT_MEMO =
+        new java.util.HashMap<>();
+    private static final int FIT_MEMO_BUCKET_MAX = 256;
+    private static final int FIT_MEMO_BUCKETS_MAX = 48;
+
     public static String fitString(Font font, String text, int maxWidth, boolean ellipsis) {
         if (text == null || text.isEmpty()) return "";
+        if (font == null) return text;
+        if (fitMemoFont != font) {
+            FIT_MEMO.clear();
+            fitMemoFont = font;
+        }
+        String bucketKey = maxWidth + (ellipsis ? "e" : "p");
+        java.util.HashMap<String, String> bucket = FIT_MEMO.get(bucketKey);
+        if (bucket == null) {
+            if (FIT_MEMO.size() >= FIT_MEMO_BUCKETS_MAX) FIT_MEMO.clear();
+            bucket = new java.util.HashMap<>();
+            FIT_MEMO.put(bucketKey, bucket);
+        }
+        String memo = bucket.get(text);
+        if (memo != null) return memo;
+        String value = fitStringUncached(font, text, maxWidth, ellipsis);
+        if (bucket.size() >= FIT_MEMO_BUCKET_MAX) bucket.clear();
+        bucket.put(text, value);
+        return value;
+    }
+
+    private static String fitStringUncached(Font font, String text, int maxWidth, boolean ellipsis) {
         int available = Math.max(0, maxWidth);
         if (width(font, text) <= available) return text;
 

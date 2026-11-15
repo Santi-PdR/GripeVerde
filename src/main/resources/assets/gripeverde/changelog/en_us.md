@@ -1,3 +1,11 @@
+## Version 0.193.0 - Fewer sums per frame on the text screens
+
+The field guide drew every row on every frame and measured each one's width to underline the headings, even when the scissor covered half of them: now whatever sits above the viewport is neither measured nor drawn, and once it goes past the bottom it stops. Each row keeps its width the first time it needs it, and the title, subtitle and scroll hint are clipped once per language and width instead of every frame.
+
+The reading room measured and clipped the name of its forty-six cards on every frame, and every paragraph of the documents was split into lines again and again; both are now remembered until the font, the width or the number of cards found changes.
+
+And the part that helps everywhere: label clipping - that search for how much fits before the ellipsis - now remembers its answer. It is called several times per frame in headers, buttons and lists, and with the same font, the same width and the same text the answer is the same. The memory is dropped whole when the font changes or when it grows too big, so it can never serve a stale answer.
+
 ## Version 0.192.0 - Clouds, from blob to mass
 
 The clouds were painted with the soft-blob brush: two per cloud, about thirty fills each, over three hundred per frame across the five. Now each cloud is two masses of horizontal bands that follow the ellipse - sixteen fills - and against such a dark sky the outline stays just as soft as before.

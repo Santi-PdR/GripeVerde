@@ -1,3 +1,13 @@
+## v0.193.0 - Menos cuentas por cuadro en las pantallas de texto
+
+- `DiaryFieldGuideScreen`: **culling** de filas fuera del viewport (arriba no se mide ni se dibuja, abajo corta) +
+  `GuideRow.cachedWidth` + cabecera (`title`/`subtitle`/`hint`) memorizada por fuente y ancho (`refreshHeaderCache`).
+- `DiaryArchiveScreen`: `ensureCardLabels(cw, found)` cachea los 46 rótulos (y el ancho de `?`); `drawWrapped` cachea
+  `font.split` por texto y ancho.
+- `DiaryTypography.fitString`: **memo** de recortes con dos niveles (ancho+modo → texto), 48/256 topes y limpieza al
+  cambiar la fuente. Beneficia botones, toggles, sliders y cabeceras.
+- `DiaryButton`: `cachedFit`/`cachedWidth` por texto, fuente y ancho.
+
 ## v0.192.0 - Las nubes, de blob a masa
 
 - `AtmosphereRenderer.renderClouds`: dos `drawSoftBlob` por nube (~30 fills cada uno, ~310 por cuadro) → dos **masas de bandas**

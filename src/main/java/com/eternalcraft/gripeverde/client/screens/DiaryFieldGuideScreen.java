@@ -202,16 +202,9 @@ public final class DiaryFieldGuideScreen extends Screen {
         }
 
         int cx = panelX + panelW / 2;
-        String title = fitText(
-            Component.translatable("gripeverde.field_guide.title").getString(),
-            Math.max(1, panelW - (compactLayout ? 20 : 36)));
-        DiaryChrome.drawCenteredString(g, this.font, title, cx, panelY + 9, DiaryChrome.INK_TITLE);
-
-        String subtitleKey = compactLayout && maxScroll > 0
-            ? "gripeverde.field_guide.scroll_hint.compact" : "gripeverde.field_guide.subtitle";
-        String subtitle = fitText(
-            Component.translatable(subtitleKey).getString(), Math.max(1, panelW - 36));
-        DiaryChrome.drawCenteredString(g, this.font, subtitle,
+        refreshHeaderCache(compactLayout, maxScroll);
+        DiaryChrome.drawCenteredString(g, this.font, this.headerTitle, cx, panelY + 9, DiaryChrome.INK_TITLE);
+        DiaryChrome.drawCenteredString(g, this.font, this.headerSubtitle,
             cx, panelY + 23, DiaryChrome.INK_SUBTITLE);
         DiaryChrome.drawInkDivider(g, panelX + 18, panelY + 37, panelW - 36);
 
@@ -229,6 +222,14 @@ public final class DiaryFieldGuideScreen extends Screen {
             y += row.gapBefore;
             boolean sectionStart = row.heading && row.gapBefore > 0;
             if (sectionStart) sectionIndex++;
+            // v0.193.0: lo que quedo arriba de la vista no se mide ni se dibuja
+            // (el scissor lo tapaba pero el costo se pagaba igual), y cuando se
+            // paso del fondo se corta: las filas estan en orden.
+            if (y + LINE_HEIGHT < top - 4) {
+                if (row.text != null) y += LINE_HEIGHT;
+                continue;
+            }
+            if (y > bottom + 4) break;
             if (row.text != null) {
                 boolean headingFocused = row.heading && sectionIndex == focusedSection;
                 boolean headingActive = row.heading
@@ -249,7 +250,8 @@ public final class DiaryFieldGuideScreen extends Screen {
                     DiaryTypography.draw(g, this.font, SECTION_NUMBERS[sectionIndex], panelX + 20, y, color, false);
                 }
                 int textX = panelX + (row.heading ? 34 : row.callout > 0 ? 22 : 20);
-                int textWidth = DiaryTypography.width(this.font, row.text);
+                if (row.cachedWidth < 0) row.cachedWidth = DiaryTypography.width(this.font, row.text);
+                int textWidth = row.cachedWidth;
                 DiaryTypography.draw(g, this.font, row.text, textX, y, color, false);
                 if (headingActive) {
                     g.fill(textX, y + LINE_HEIGHT - 1, textX + textWidth, y + LINE_HEIGHT, color);
@@ -264,8 +266,7 @@ public final class DiaryFieldGuideScreen extends Screen {
 
         if (maxScroll > 0) drawScrollbar(g, top, bottom);
         if (!compactLayout) {
-            String hint = fitText(
-                Component.translatable("gripeverde.field_guide.scroll_hint").getString(), panelW - 32);
+            String hint = this.headerHint;
             int hintW = DiaryTypography.width(this.font, hint);
             DiaryTypography.draw(g, this.font, hint, cx - hintW / 2, panelY + panelH - 42,
                 DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 180), false);
@@ -278,6 +279,34 @@ public final class DiaryFieldGuideScreen extends Screen {
     private String fitText(String text, int maxWidth) {
         if (DiaryTypography.width(this.font, text) <= maxWidth) return text;
         return DiaryTypography.fitString(this.font, text, maxWidth);
+    }
+
+    // v0.193.0: los textos de cabecera se recortan una vez por lengua y ancho,
+    // no en cada cuadro.
+    private net.minecraft.client.gui.Font headerFont;
+    private int headerPanelW = -1;
+    private String headerTitle = "";
+    private String headerSubtitle = "";
+    private String headerHint = "";
+    private String headerSubtitleKey = "";
+
+    private void refreshHeaderCache(boolean compact, int maxScrollValue) {
+        String subKey = compact && maxScrollValue > 0
+            ? "gripeverde.field_guide.scroll_hint.compact" : "gripeverde.field_guide.subtitle";
+        if (this.headerFont == this.font && this.headerPanelW == this.panelW
+                && this.headerSubtitleKey.equals(subKey)) {
+            return;
+        }
+        this.headerFont = this.font;
+        this.headerPanelW = this.panelW;
+        this.headerSubtitleKey = subKey;
+        this.headerTitle = fitText(
+            Component.translatable("gripeverde.field_guide.title").getString(),
+            Math.max(1, panelW - (compactLayout ? 20 : 36)));
+        this.headerSubtitle = fitText(
+            Component.translatable(subKey).getString(), Math.max(1, panelW - 36));
+        this.headerHint = fitText(
+            Component.translatable("gripeverde.field_guide.scroll_hint").getString(), panelW - 32);
     }
 
     private int scrollbarThumbHeight(int trackHeight) {
@@ -511,6 +540,8 @@ public final class DiaryFieldGuideScreen extends Screen {
         private final boolean accent;
         private final int gapBefore;
         private final int callout;
+        /** v0.193.0: ancho medido una vez, la primera vez que hace falta. */
+        private int cachedWidth = -1;
 
         private GuideRow(FormattedCharSequence text, boolean heading, boolean accent, int gapBefore) {
             this(text, heading, accent, gapBefore, 0);
