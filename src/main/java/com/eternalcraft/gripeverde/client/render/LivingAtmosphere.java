@@ -566,7 +566,37 @@ public class LivingAtmosphere {
         g.fill(w - margin, h - margin, w, h, AtmosphereRenderer.withAlpha(0x00000000, cornerAlpha));
     }
 
-    public static void renderStreet(GuiGraphics g, int w, int h) {
+    // v0.207.0: la calle se armaba en cada cuadro -cuantas hileras, cuantas
+    // columnas por hilera, donde cae cada junta y donde late el reflejo-. Nada
+    // de eso depende del tiempo: solo del tamano de la pantalla. Se resuelve una
+    // vez por resolucion y dibujar es recorrer lo ya decidido.
+    private static int streetLayoutW = -1;
+    private static int streetLayoutH = -1;
+    private static int stTop;
+    private static int stBottom;
+    private static int stHeight;
+    private static int stCurbLightEnd;
+    private static int stCurbShadowEnd;
+    private static int stUpperBandTop;
+    private static int stUpperBandBot;
+    private static int stSheenTop;
+    private static int stSheenBottom;
+    private static int stSheenInset;
+    private static int stSheenAlpha;
+    private static int stSeamAlpha;
+    private static int stReflTop;
+    private static int stGutterW;
+    private static int stBottomBandTop;
+    private static int[] stRowY1 = new int[0];
+    private static int[] stRowY2 = new int[0];
+    private static int[] stRowOffset = new int[0];
+    private static int[] stRowStep = new int[0];
+
+    private static void ensureStreetLayout(int w, int h) {
+        if (streetLayoutW == w && streetLayoutH == h) return;
+        streetLayoutW = w;
+        streetLayoutH = h;
+
         int streetTop;
         int rowCount;
         int topCols;
@@ -616,33 +646,40 @@ public class LivingAtmosphere {
 
         int streetBottom = h;
         int streetH = streetBottom - streetTop;
-        if (streetH <= 0) return;
+        stTop = streetTop;
+        stBottom = streetBottom;
+        stHeight = streetH;
+        stSheenAlpha = sheenAlpha;
+        stSeamAlpha = seamAlpha;
+        if (streetH <= 0) {
+            stRowY1 = new int[0];
+            stRowY2 = new int[0];
+            stRowOffset = new int[0];
+            stRowStep = new int[0];
+            return;
+        }
 
-        // Masa principal de calle mojada
-        g.fill(0, streetTop, w, streetBottom, 0xFF25180F);
-
-        // Acera lejana / borde de encuentro con el skyline
         int curbLightEnd = Math.min(streetBottom, streetTop + curbHighlightH);
         int curbShadowEnd = Math.min(streetBottom, curbLightEnd + curbShadowH);
-        g.fill(0, streetTop, w, curbLightEnd, 0xFF725739);
-        g.fill(0, curbLightEnd, w, curbShadowEnd, 0xFF433020);
+        stCurbLightEnd = curbLightEnd;
+        stCurbShadowEnd = curbShadowEnd;
 
-        // Banda superior para que la calle no lea como bloque plano
         int upperBandTop = streetTop + Math.max(2, streetH / 8);
         int upperBandBot = Math.min(streetBottom, upperBandTop + Math.max(2, streetH / 12));
-        g.fill(0, upperBandTop, w, upperBandBot,
-            AtmosphereRenderer.withAlpha(0x00523A25, 96));
+        stUpperBandTop = upperBandTop;
+        stUpperBandBot = upperBandBot;
 
-        // Filas de adoquines en perspectiva
+        if (stRowY1.length != rowCount) {
+            stRowY1 = new int[rowCount];
+            stRowY2 = new int[rowCount];
+            stRowOffset = new int[rowCount];
+            stRowStep = new int[rowCount];
+        }
         for (int row = 0; row < rowCount; row++) {
             int y1 = streetTop + row * streetH / rowCount;
             int y2 = streetTop + (row + 1) * streetH / rowCount;
-            if (y2 <= y1) continue;
-
-            if (row > 0) {
-                g.fill(0, y1, w, y1 + 1, 0xFF342116);
-            }
-
+            stRowY1[row] = y1;
+            stRowY2[row] = y2;
             int cols;
             if (rowCount <= 1) {
                 cols = bottomCols;
@@ -650,18 +687,57 @@ public class LivingAtmosphere {
                 cols = topCols - ((topCols - bottomCols) * row / (rowCount - 1));
             }
             cols = Math.max(6, cols);
-
             int blockW = Math.max(8, w / cols);
-            int offset = (row % 2 == 0) ? 0 : blockW / 2;
+            stRowOffset[row] = (row % 2 == 0) ? 0 : blockW / 2;
+            // v0.194.0: en las hileras del medio una junta de cada dos; la
+            // ultima -la mas cercana, la que se mira- las lleva todas.
+            stRowStep[row] = (row == rowCount - 1) ? blockW : blockW * 2;
+        }
 
-            // v0.191.0: la fila mas lejana no lleva juntas -queda bajo la niebla y
-            // el cordon, y era la que mas columnas tiene-; en cambio cada fila
-            // recibe un filo de agua en el borde de arriba, que es lo que hace que
-            // la calle se lea mojada.
+        int sheenTop = streetTop + streetH / 3;
+        int sheenBottom = Math.min(streetBottom, sheenTop + Math.max(2, streetH / 9));
+        stSheenTop = sheenTop;
+        stSheenBottom = sheenBottom;
+        stSheenInset = Math.max(10, w / 9);
+        stReflTop = streetTop + Math.max(2, streetH / 5);
+        stGutterW = Math.max(4, w / 18);
+        stBottomBandTop = streetBottom - Math.max(4, streetH / 7);
+    }
+
+    public static void renderStreet(GuiGraphics g, int w, int h) {
+        ensureStreetLayout(w, h);
+        int streetTop = stTop;
+        int streetBottom = stBottom;
+        int streetH = stHeight;
+        if (streetH <= 0) return;
+
+        // Masa principal de calle mojada
+        g.fill(0, streetTop, w, streetBottom, 0xFF25180F);
+
+        // Acera lejana / borde de encuentro con el skyline
+        int curbLightEnd = stCurbLightEnd;
+        g.fill(0, streetTop, w, curbLightEnd, 0xFF725739);
+        g.fill(0, curbLightEnd, w, stCurbShadowEnd, 0xFF433020);
+
+        // Banda superior para que la calle no lea como bloque plano
+        g.fill(0, stUpperBandTop, w, stUpperBandBot,
+            AtmosphereRenderer.withAlpha(0x00523A25, 96));
+
+        // Filas de adoquines en perspectiva
+        int seamAlpha = stSeamAlpha;
+        for (int row = 0; row < stRowY1.length; row++) {
+            int y1 = stRowY1[row];
+            int y2 = stRowY2[row];
+            if (y2 <= y1) continue;
+
             if (row > 0) {
-                // v0.194.0: en las hileras del medio una junta de cada dos; la
-                // ultima -la mas cercana, la que se mira- las lleva todas.
-                int step = (row == rowCount - 1) ? blockW : blockW * 2;
+                g.fill(0, y1, w, y1 + 1, 0xFF342116);
+                // v0.191.0: la fila mas lejana no lleva juntas -queda bajo la niebla y
+                // el cordon, y era la que mas columnas tiene-; en cambio cada fila
+                // recibe un filo de agua en el borde de arriba, que es lo que hace que
+                // la calle se lea mojada.
+                int step = stRowStep[row];
+                int offset = stRowOffset[row];
                 for (int x = -offset; x < w; x += step) {
                     g.fill(x, y1 + 1, x + 1, y2,
                         AtmosphereRenderer.withAlpha(0x0024140B, seamAlpha));
@@ -672,18 +748,15 @@ public class LivingAtmosphere {
         }
 
         // Reflejo humedo central
-        int sheenTop = streetTop + streetH / 3;
-        int sheenBottom = Math.min(streetBottom, sheenTop + Math.max(2, streetH / 9));
-        int sheenInset = Math.max(10, w / 9);
-        g.fill(sheenInset, sheenTop, w - sheenInset, sheenBottom,
-            AtmosphereRenderer.withAlpha(0x00927A55, sheenAlpha));
+        g.fill(stSheenInset, stSheenTop, w - stSheenInset, stSheenBottom,
+            AtmosphereRenderer.withAlpha(0x00927A55, stSheenAlpha));
 
         // v0.190.0: el reflejo de la luna en el asfalto mojado. Un degradado
         // vertical y tres destellos que respiran: cuatro rellenos y la calle
         // deja de ser una losa pareja debajo del cielo.
         int moonX = AtmosphereRenderer.moonCenterX(w);
         int moonHalf = Math.max(14, w / 30);
-        int reflTop = streetTop + Math.max(2, streetH / 5);
+        int reflTop = stReflTop;
         if (reflTop < streetBottom - 3) {
             AtmosphereRenderer.fillGradientV(g, moonX - moonHalf, reflTop,
                 moonX + moonHalf, streetBottom,
@@ -700,15 +773,14 @@ public class LivingAtmosphere {
         }
 
         // Cunetas laterales mas oscuras
-        int gutterW = Math.max(4, w / 18);
+        int gutterW = stGutterW;
         g.fill(0, curbLightEnd, gutterW, streetBottom,
             AtmosphereRenderer.withAlpha(0x00000000, 28));
         g.fill(w - gutterW, curbLightEnd, w, streetBottom,
             AtmosphereRenderer.withAlpha(0x00000000, 28));
 
         // Peso visual en la base para rematar el plano
-        int bottomBandTop = streetBottom - Math.max(4, streetH / 7);
-        g.fill(0, bottomBandTop, w, streetBottom,
+        g.fill(0, stBottomBandTop, w, streetBottom,
             AtmosphereRenderer.withAlpha(0x00130C07, 52));
     }
 

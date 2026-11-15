@@ -1,3 +1,8 @@
+## v0.207.0 - La calle recuerda sus adoquines
+
+- `LivingAtmosphere`: `ensureStreetLayout(w,h)` resuelve por resolución hileras, columnas, juntas, acera, cunetas,
+  reflejo y banda del pie (`stTop`, `stRowY1/Y2/Offset/Step`, `stSheen*`, `stGutterW`, ...); `renderStreet` los usa.
+
 ## v0.206.0 - Fachadas y banderas
 
 - `VictorianSkyline`: `ensureFacadeLayout(w,h)` cachea rectángulos de fachada de fondo y frente (`bgX1..`, `fgX1..`,

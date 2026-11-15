@@ -1,3 +1,9 @@
+## Version 0.207.0 - La calle recuerda sus adoquines
+
+La calle se armaba desde cero en cada cuadro: cuantas hileras de adoquines hay, cuantas columnas le tocan a cada hilera, donde cae cada junta, donde late el reflejo humedo central, cuanto miden las cunetas y donde empieza la banda oscura del pie. Nada de eso depende del tiempo: solo del alto de la pantalla, que ademas elige el juego de medidas -seis hileras y veinticuatro columnas en pantallas altas, tres y doce en las pequenas-.
+
+Ahora ese juego de medidas se resuelve una vez por resolucion y dibujar la calle es recorrer lo ya decidido. El reflejo de la luna y sus tres destellos siguen latiendo, porque esos si respiran; las juntas, los brillos y la acera no cambian ni un pixel.
+
 ## Version 0.206.0 - Fachadas y banderas
 
 Las fachadas de la ciudad -posicion, alto y ancho escalados, y con ellas la puerta de cada edificio- se recalculaban en cada cuadro, edificio por edificio, en el fondo y en el frente. Solo dependen del tamano de la pantalla, asi que ahora se resuelven una vez por resolucion: los tejados dejan de multiplicar y restar para volver a poner los mismos ladrillos.

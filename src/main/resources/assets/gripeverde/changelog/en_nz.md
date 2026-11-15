@@ -1,3 +1,9 @@
+## Version 0.207.0 - The street remembers its cobbles
+
+The street was built from scratch on every frame: how many cobble rows there are, how many columns each row gets, where each seam falls, where the central wet sheen breathes, how wide the gutters are and where the dark band at the foot begins. None of that depends on time: only on the height of the screen, which also picks the whole set of measurements - six rows and twenty-four columns on tall screens, three and twelve on small ones.
+
+Now that set is resolved once per resolution and drawing the street is walking what was already decided. The moon's reflection and its three sparkles keep breathing, because those do; the seams, the highlights and the kerb do not change by a single pixel.
+
 ## Version 0.206.0 - Facades and flags
 
 The city facades - position, scaled height and width, and with them each building's door - were recomputed on every frame, building by building, in the background and in the foreground. They only depend on the screen size, so they are now resolved once per resolution: the roofs stop multiplying and subtracting just to lay the same bricks again.
