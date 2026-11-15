@@ -93,6 +93,7 @@ public final class Marginalia {
     private static String cachedLayoutText;
     private static int cachedLayoutWidth = -1;
     private static int cachedLayoutLimit = -1;
+    private static int cachedLayoutLinesWidth = 0;
     private static java.util.List<String> cachedLayoutLines = java.util.Collections.emptyList();
 
     /** Toma la proxima nota pendiente (throttle: una por apertura de pantalla). */
@@ -152,10 +153,13 @@ public final class Marginalia {
             int lastWidth = Math.max(0, maxWidth - font.width(ellipsis));
             lines.set(maxLines - 1, font.plainSubstrByWidth(last, lastWidth) + ellipsis);
         }
+        int widest = 0;
+        for (String line2 : lines) widest = Math.max(widest, font.width(line2));
         cachedLayoutText = text;
         cachedLayoutWidth = maxWidth;
         cachedLayoutLimit = maxLines;
         cachedLayoutLines = java.util.Collections.unmodifiableList(lines);
+        cachedLayoutLinesWidth = widest;
         return cachedLayoutLines;
     }
 
@@ -195,8 +199,8 @@ public final class Marginalia {
         java.util.List<String> lines = layoutLines(shown, mc.font, maxTextWidth, maxLines);
         if (lines.isEmpty()) return;
 
-        int textWidth = 0;
-        for (String wrappedLine : lines) textWidth = Math.max(textWidth, mc.font.width(wrappedLine));
+        // v0.211.0: el ancho del bloque ya se midio al repartir las lineas.
+        int textWidth = cachedLayoutLinesWidth;
         int cardWidth = Math.min(screenWidth - 8, textWidth + 20);
         int cardHeight = lines.size() * lineHeight + 6;
         int cardX = Math.max(4, Math.min(cx - cardWidth / 2, screenWidth - cardWidth - 4));

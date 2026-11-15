@@ -1,3 +1,11 @@
+## Version 0.211.0 - The discovery seal and the margin note
+
+The new file seal is drawn in the top right corner while it lasts, and on every frame it clipped its header and its name and measured them again to know how wide the plate is. Now that clipping and those measurements are stored and only rebuilt if the file, the language or the screen width changes.
+
+The margin note already memorised where its text breaks into lines, but then it measured each line again to know how wide the widest block is. That measurement now happens while splitting the lines and is stored with them.
+
+Same seal, same note; what does not change stops being measured.
+
 ## Version 0.210.0 - The last translations and the width of labels
 
 A handful of places were still resolving translated text every time: the status key on the CEDA sheet, the field guide footer hint, the pinned server name, the cover greeting and the language names. All of them now go through the translation memory the cabinet already had, which empties itself when the language changes. There is no translation resolved by hand left in the interface.

@@ -109,6 +109,15 @@ public final class Discoveries {
         return toastName != null && System.currentTimeMillis() < toastUntilMs;
     }
 
+    // v0.211.0: memorias del sello de descubrimiento.
+    private static net.minecraft.client.gui.Font memToastFont;
+    private static int memToastWidth = -1;
+    private static String memToastName = "";
+    private static boolean memToastEnglish = false;
+    private static String memVisibleHeader = "";
+    private static String memVisibleName = "";
+    private static int memToastBoxWidth = 0;
+
     /** Dibuja el sello de descubrimiento arriba a la derecha. Llamar al final del render. */
     public static void drawToast(net.minecraft.client.gui.GuiGraphics g, int screenW) {
         Minecraft mc = Minecraft.getInstance();
@@ -130,11 +139,27 @@ public final class Discoveries {
         int maxToastWidth = Math.min(224, screenW - 16);
         if (maxToastWidth < 76) return;
 
+        // v0.211.0: el sello se dibuja cada cuadro mientras dura; el recorte y las
+        // dos medidas se guardan y sólo se rehacen si cambia la ficha o el ancho.
         int contentWidth = maxToastWidth - 26;
-        String visibleHeader = DiaryChrome.fitText(mc.font, header, contentWidth);
-        String visibleName = DiaryChrome.fitText(mc.font, name, contentWidth);
-        int bw = Math.min(maxToastWidth,
-            Math.max(104, Math.max(mc.font.width(visibleHeader), mc.font.width(visibleName)) + 26));
+        String visibleHeader;
+        String visibleName;
+        int bw;
+        if (memToastFont != mc.font || memToastWidth != contentWidth
+                || !memToastName.equals(name) || memToastEnglish != english) {
+            memToastFont = mc.font;
+            memToastWidth = contentWidth;
+            memToastName = name;
+            memToastEnglish = english;
+            memVisibleHeader = DiaryChrome.fitText(mc.font, header, contentWidth);
+            memVisibleName = DiaryChrome.fitText(mc.font, name, contentWidth);
+            memToastBoxWidth = Math.min(maxToastWidth,
+                Math.max(104, Math.max(mc.font.width(memVisibleHeader),
+                    mc.font.width(memVisibleName)) + 26));
+        }
+        visibleHeader = memVisibleHeader;
+        visibleName = memVisibleName;
+        bw = Math.min(maxToastWidth, memToastBoxWidth);
         int x = screenW - bw - 8;
         int y = 8;
 

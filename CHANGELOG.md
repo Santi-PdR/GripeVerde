@@ -1,3 +1,8 @@
+## v0.211.0 - El sello de descubrimiento y la nota al margen
+
+- `Discoveries.drawToast`: recorte de cabecera/nombre y ancho de la placa memorizados (`memToast*`, `memVisible*`).
+- `Marginalia.layoutLines`: guarda `cachedLayoutLinesWidth`; `drawHorizontal` ya no remide cada línea.
+
 ## v0.210.0 - Las ultimas traducciones y el ancho de los rotulos
 
 - Las 11 últimas llamadas a `Component.translatable(...).getString()` pasan por `DiaryChrome.tr(...)`

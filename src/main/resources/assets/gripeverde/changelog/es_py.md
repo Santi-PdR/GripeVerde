@@ -1,3 +1,11 @@
+## Version 0.211.0 - El sello de descubrimiento y la nota al margen
+
+El sello de ficha nueva se dibuja arriba a la derecha mientras dura, y en cada cuadro recortaba su cabecera y su nombre y volvia a medirlos para saber cuanto ancho tiene la placa. Ahora ese recorte y esas medidas se guardan y solo se rehacen si cambia la ficha, el idioma o el ancho de pantalla.
+
+La nota al margen ya memorizaba en que lineas se parte su texto, pero despues volvia a medir cada linea para saber cuanto mide el bloque mas ancho. Esa medida se hace ahora al repartir las lineas y queda guardada con ellas.
+
+Mismo sello, misma nota; deja de medirse lo que no cambia.
+
 ## Version 0.210.0 - Las ultimas traducciones y el ancho de los rotulos
 
 Quedaba un punado de sitios donde el texto traducido se volvia a resolver cada vez: la clave del estado en la ficha de CEDA, la pista del pie de la guia de campo, el nombre fijado del servidor, el saludo de la portada y los nombres de los idiomas. Todos pasan ahora por la memoria de traducciones que ya tenia el gabinete, que se vacia sola al cambiar de lengua. Ya no queda ninguna traduccion resuelta a mano en la interfaz.
