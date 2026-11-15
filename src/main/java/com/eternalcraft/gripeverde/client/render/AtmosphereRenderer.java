@@ -293,17 +293,34 @@ public class AtmosphereRenderer {
      * anterior con el actual, asi que no quedan huecos por mas inclinado que
      * vaya) y se van ensanchando y apagando hacia la punta.
      */
-    private static void drawBeam(GuiGraphics g, int ox, int oy, float angle, int length,
-                                 int maxHalf, int alpha, int colorNoAlpha) {
-        final int steps = 22;
+    /**
+     * v0.212.0: la geometria del haz se memoriza por angulo.
+     *
+     * Cada haz son veintidos tramos que se tocan y se van abriendo: la cuenta
+     * -coseno, seno y un tramo por paso- se repetia entera en cada cuadro para
+     * las dos torres, aunque el vaiven solo cambia un pelo de un cuadro al
+     * siguiente. El angulo se agrupa en pasos de 1/1024 de radian (menos de medio
+     * pixel en la punta) y los tramos se guardan relativos al origen; del haz
+     * solo queda pintarlos.
+     */
+    private static final java.util.HashMap<Integer, int[]> BEAM_MEMO = new java.util.HashMap<>();
+
+    private static int[] beamSegments(int angleBucket, int length, int maxHalf, int alpha, int colorNoAlpha) {
+        int key = (((angleBucket * 1000003) ^ (length * 997)) ^ (maxHalf * 31) ^ alpha) * 31
+            + (colorNoAlpha & 0xFF);
+        int[] cached = BEAM_MEMO.get(key);
+        if (cached != null) return cached;
+        float angle = angleBucket / 1024f;
+        int[] out = new int[22 * 5];
+        int n = 0;
         double dx = Math.cos(angle);
         double dy = Math.sin(angle);
-        int prevX = ox;
+        int prevX = 0;
         int prevHalf = 1;
-        for (int i = 1; i <= steps; i++) {
-            float p = i / (float) steps;
-            int x = ox + (int) (dx * length * p);
-            int y = oy + (int) (dy * length * p);
+        for (int i = 1; i <= 22; i++) {
+            float p = i / 22f;
+            int x = (int) (dx * length * p);
+            int y = (int) (dy * length * p);
             int half = 1 + (int) (maxHalf * p);
             int a = (int) (alpha * (1f - p * 0.8f));
             int x1 = Math.min(prevX, x);
@@ -312,7 +329,26 @@ public class AtmosphereRenderer {
             prevX = x;
             prevHalf = half;
             if (a <= 1 || x2 <= x1) continue;
-            g.fill(x1, y - h, x2, y + h, withAlpha(colorNoAlpha, a));
+            out[n++] = x1;
+            out[n++] = x2;
+            out[n++] = y;
+            out[n++] = h;
+            out[n++] = a;
+        }
+        int[] trimmed = java.util.Arrays.copyOf(out, n);
+        if (BEAM_MEMO.size() >= 256) BEAM_MEMO.clear();
+        BEAM_MEMO.put(key, trimmed);
+        return trimmed;
+    }
+
+    private static void drawBeam(GuiGraphics g, int ox, int oy, float angle, int length,
+                                 int maxHalf, int alpha, int colorNoAlpha) {
+        int[] segs = beamSegments(Math.round(angle * 1024f), length, maxHalf, alpha, colorNoAlpha);
+        for (int i = 0; i < segs.length; i += 5) {
+            int h = segs[i + 3];
+            g.fill(ox + segs[i], oy + segs[i + 2] - h,
+                ox + segs[i + 1], oy + segs[i + 2] + h,
+                withAlpha(colorNoAlpha, segs[i + 4]));
         }
     }
 

@@ -1,3 +1,11 @@
+## Version 0.212.0 - La geometria de los haces de las torres
+
+Cada haz de las torres se compone de veintidos tramos que se tocan y se van abriendo y apagando hacia la punta. Esa cuenta -coseno, seno, y un tramo por paso- se repetia entera en cada cuadro para las dos torres, aunque el vaiven de la luz solo cambia un pelo de un cuadro al siguiente.
+
+Ahora el angulo se agrupa en pasos finisimos -de un milesimo de radian, menos de medio pixel en la punta- y los tramos se guardan relativos al origen del haz. Cuando la luz vuelve a pasar por un angulo parecido, basta con pintar lo que ya estaba calculado.
+
+Los dos haces siguen barriendo igual, con la misma apertura y el mismo desvanecido.
+
 ## Version 0.211.0 - El sello de descubrimiento y la nota al margen
 
 El sello de ficha nueva se dibuja arriba a la derecha mientras dura, y en cada cuadro recortaba su cabecera y su nombre y volvia a medirlos para saber cuanto ancho tiene la placa. Ahora ese recorte y esas medidas se guardan y solo se rehacen si cambia la ficha, el idioma o el ancho de pantalla.

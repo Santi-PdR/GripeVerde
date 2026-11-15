@@ -1,3 +1,11 @@
+## Version 0.212.0 - The geometry of the tower beams
+
+Each tower beam is made of twenty-two segments that touch and keep widening and fading towards the tip. That sum - cosine, sine, and one segment per step - was repeated in full on every frame for both towers, even though the light's sway only shifts a hair from one frame to the next.
+
+Now the angle is grouped into very fine steps - a thousandth of a radian, less than half a pixel at the tip - and the segments are stored relative to the beam's origin. When the light swings past a similar angle again, all that is left is to paint what was already computed.
+
+Both beams still sweep the same, with the same spread and the same fade.
+
 ## Version 0.211.0 - The discovery seal and the margin note
 
 The new file seal is drawn in the top right corner while it lasts, and on every frame it clipped its header and its name and measured them again to know how wide the plate is. Now that clipping and those measurements are stored and only rebuilt if the file, the language or the screen width changes.

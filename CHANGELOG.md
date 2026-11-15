@@ -1,3 +1,8 @@
+## v0.212.0 - La geometria de los haces de las torres
+
+- `AtmosphereRenderer.drawBeam`: `beamSegments(angleBucket, ...)` con `BEAM_MEMO` (ángulo en pasos de 1/1024 rad,
+  tope 256) memoriza los tramos relativos al origen; el vaivén ya no recalcula la haces.
+
 ## v0.211.0 - El sello de descubrimiento y la nota al margen
 
 - `Discoveries.drawToast`: recorte de cabecera/nombre y ancho de la placa memorizados (`memToast*`, `memVisible*`).
