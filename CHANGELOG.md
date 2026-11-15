@@ -1,3 +1,10 @@
+## v0.198.0 - El humo de las chimeneas tiene sus bocas fijas
+
+- `VictorianSkyline`: `ensureSmokeAnchors`/`fillSmokeAnchors` cachean por resolución la boca de cada chimenea
+  (`smokeBg*`/`smokeFg*`, centinela `NO_ANCHOR`); `renderSmokeGroup` recibe los arrays ya resueltos.
+- `renderSmokeGroup`: la deriva por chimenea (`windDeep`) sale del bucle de partículas, y los puffs fuera de
+  pantalla o con alpha < 6 no llegan a `drawSoftBlob`.
+
 ## v0.197.0 - La ciudad y la guia dejan de medir
 
 - `VictorianSkyline`: el trazado de las ventanas (posicion, tamano, suerte y color) se resuelve una vez por

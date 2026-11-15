@@ -1,3 +1,9 @@
+## Version 0.198.0 - El humo de las chimeneas tiene sus bocas fijas
+
+Cada penacho de humo preguntaba en cada cuadro a que edificio pertenecia su chimenea, sacaba la posicion del padre, la escalaba y volvia a derivar la altura. Y la deriva de la pluma -el vaiven lento que la inclina hacia un lado u otro- se calculaba una vez por particula, aunque solo depende de la chimenea. Ahora las bocas se resuelven una vez por resolucion, la deriva sale del bucle interior y los penachos que ya salieron por arriba de la pantalla, o que quedaron por debajo de la calle, ni se piden al pincel.
+
+Nada nuevo a la vista: la misma pluma, inclinada igual, con tres puffs por chimenea y el mismo color.
+
 ## Version 0.197.0 - La ciudad y la guia dejan de medir
 
 Las ventanas de la ciudad se sorteaban en cada cuadro: el generador aleatorio recorria edificio por edificio, repartia filas y columnas, dividia para colocar cada hueco y decidia si estaba apagada, encendida o enferma. Nada de eso depende del tiempo, solo del tamano de la pantalla. Ahora el trazado se resuelve una vez por resolucion y se guarda: en cada cuadro solo queda el relleno, y en la ciudad del fondo incluso el color ya viene resuelto, porque alli las ventanas no parpadean. Cambia el tamano de la ventana y el trazado se rehace.

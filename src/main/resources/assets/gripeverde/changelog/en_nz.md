@@ -1,3 +1,9 @@
+## Version 0.198.0 - The chimney smoke has its mouths fixed
+
+Every puff of smoke asked on each frame which building its chimney belonged to, pulled the parent's position, scaled it, and worked out the height again. And the plume's drift - the slow sway that leans it one way or the other - was computed once per particle, although it only depends on the chimney. Now the mouths are resolved once per resolution, the drift moved out of the inner loop, and puffs that already left the top of the screen, or that fell below the street, are not even asked for.
+
+Nothing new to look at: the same plume, leaning the same way, with three puffs per chimney and the same colour.
+
 ## Version 0.197.0 - The city and the guide stop measuring
 
 The city windows used to be drawn by lottery on every frame: the random generator walked building by building, split rows and columns, divided to place each opening, and decided whether it was dark, lit or sick. None of that depends on time, only on the screen size. Now the layout is resolved once per resolution and kept: each frame only has the fill left, and in the background city even the colour comes already resolved, because those windows do not flicker. Resize the window and the layout is built again.

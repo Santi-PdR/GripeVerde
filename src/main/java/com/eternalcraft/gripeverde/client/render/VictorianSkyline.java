@@ -713,18 +713,41 @@ public class VictorianSkyline {
         }
     }
 
-    private static void renderSmoke(GuiGraphics g, int w, int h) {
-        // Wind variable: sinusoidal principal + segunda componente lenta
-        float windX = (float)(Math.sin(time * 0.2f) * 8f + Math.sin(time * 0.07f) * 4f);
-        renderSmokeGroup(g, w, h, CHIMNEYS_BG, BG_BUILDINGS, 0, windX, 90);
-        renderSmokeGroup(g, w, h, CHIMNEYS_FG, FG_BUILDINGS, CHIMNEYS_BG.length, windX * 1.5f, 110);
+    // v0.198.0: la boca de cada chimenea (x, ancho del penacho y altura) solo
+    // depende del tamano de la pantalla, como el trazado de las ventanas. Se
+    // resuelve una vez por resolucion y el humo se ahorra el reparto de padres.
+    private static final int NO_ANCHOR = Integer.MIN_VALUE;
+    private static int smokeLayoutW = -1;
+    private static int smokeLayoutH = -1;
+    private static int[] smokeBgX = new int[0];
+    private static int[] smokeBgW = new int[0];
+    private static int[] smokeBgTop = new int[0];
+    private static int[] smokeFgX = new int[0];
+    private static int[] smokeFgW = new int[0];
+    private static int[] smokeFgTop = new int[0];
+
+    private static void ensureSmokeAnchors(int w, int h) {
+        if (smokeLayoutW == w && smokeLayoutH == h) return;
+        smokeLayoutW = w;
+        smokeLayoutH = h;
+        if (smokeBgX.length != CHIMNEYS_BG.length) {
+            smokeBgX = new int[CHIMNEYS_BG.length];
+            smokeBgW = new int[CHIMNEYS_BG.length];
+            smokeBgTop = new int[CHIMNEYS_BG.length];
+            smokeFgX = new int[CHIMNEYS_FG.length];
+            smokeFgW = new int[CHIMNEYS_FG.length];
+            smokeFgTop = new int[CHIMNEYS_FG.length];
+        }
+        fillSmokeAnchors(w, h, CHIMNEYS_BG, BG_BUILDINGS, smokeBgX, smokeBgW, smokeBgTop);
+        fillSmokeAnchors(w, h, CHIMNEYS_FG, FG_BUILDINGS, smokeFgX, smokeFgW, smokeFgTop);
     }
 
-    private static void renderSmokeGroup(GuiGraphics g, int w, int h, float[][] chimneys, float[][] parents,
-                                      int baseIdx, float windX, int maxAlpha) {
+    private static void fillSmokeAnchors(int w, int h, float[][] chimneys, float[][] parents,
+            int[] xs, int[] widths, int[] tops) {
         for (int ci = 0; ci < chimneys.length; ci++) {
             float[] c = chimneys[ci];
             int idx = (int) c[1];
+            xs[ci] = NO_ANCHOR;
             if (idx >= parents.length) continue;
             float[] parent = parents[idx];
             int px1 = (int)(w * parent[0]);
@@ -732,21 +755,45 @@ public class VictorianSkyline {
             int py2 = (int)(h * parent[1]);
             int ph  = (int)(h * parent[3]);
             int py1 = py2 - ph;
-            int cx1 = px1 + (int)(pw * c[0]);
-            int cw  = (int)(w * c[2]);
-            int cy1 = py1 - (int)(h * c[3]);
+            xs[ci] = px1 + (int)(pw * c[0]);
+            widths[ci] = (int)(w * c[2]);
+            tops[ci] = py1 - (int)(h * c[3]);
+        }
+    }
+
+    private static void renderSmoke(GuiGraphics g, int w, int h) {
+        ensureSmokeAnchors(w, h);
+        // Wind variable: sinusoidal principal + segunda componente lenta
+        float windX = (float)(Math.sin(time * 0.2f) * 8f + Math.sin(time * 0.07f) * 4f);
+        renderSmokeGroup(g, w, h, smokeBgX, smokeBgW, smokeBgTop, 0, windX, 90);
+        renderSmokeGroup(g, w, h, smokeFgX, smokeFgW, smokeFgTop, CHIMNEYS_BG.length, windX * 1.5f, 110);
+    }
+
+    private static void renderSmokeGroup(GuiGraphics g, int w, int h, int[] xs, int[] widths, int[] tops,
+                                      int baseIdx, float windX, int maxAlpha) {
+        for (int ci = 0; ci < xs.length; ci++) {
+            int cx1 = xs[ci];
+            if (cx1 == NO_ANCHOR) continue;
+            int cw = widths[ci];
+            int cy1 = tops[ci];
+            // v0.198.0: la deriva de esta chimenea se calculaba por particula;
+            // solo depende de la chimenea, asi que sale del bucle interior.
+            float windDeep = (float)(Math.sin(time * 0.13f + ci * 0.5f) * 3f);
             // v0.191.0: tres puffs por chimenea en vez de cuatro y un 10% mas
             // grandes: la pluma se lee igual y cuesta un cuarto menos.
             for (int pi = 0; pi < 3; pi++) {
                 int pIdx = (baseIdx + ci) * 8 + pi;
                 if (pIdx >= smokeParticles.length) break;
                 float[] p = smokeParticles[pIdx];
-                // Wind variable: componente sinusoidal principal + drift secundario
-                float windDeep = (float)(Math.sin(time * 0.13f + ci * 0.5f) * 3f);
                 int sx = cx1 + (int)(cw * p[0]) + (int)(windX * Math.abs(p[1]) * 2f) + (int)(windDeep * p[1] * 4f);
                 int sy = cy1 + (int)(h * p[1]);
                 int sz = (int)(p[3] * 1.35f);  // v0.191.0: 10% mas que antes
+                // v0.198.0: un penacho que salio por arriba de la pantalla (o
+                // quedo por debajo de la calle) no se dibuja: el scissor ya lo
+                // tapaba, pero el pincel cobraba igual.
+                if (sy + sz < 0 || sy - sz > h) continue;
                 int sA = Math.max(0, Math.min(255, (int)(p[2] * maxAlpha)));
+                if (sA < 6) continue;
                 // Color mas oscuro: 0x00403020 en vez de 0x00705F45 (evita blanco por saturacion)
                 AtmosphereRenderer.drawSoftBlob(g, sx, sy, sz, sA, 0x00403020);
             }
