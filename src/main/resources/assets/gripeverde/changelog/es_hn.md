@@ -1,3 +1,11 @@
+## Version 0.218.0 - La sala de consulta se recorre con el teclado
+
+Hasta ahora las fichas del archivo solo respondian al raton: habia que pasar por encima de cada una para leer su nombre y solo los tres papeles sueltos del pie se podian abrir con un clic.
+
+Ahora las fichas se recorren con las flechas y se abren con Enter. La ficha marcada lleva cuatro esquinas de lacre, discretas, para no taparle el borde, y el foco acompaña al raton: si se mira una ficha con el puntero, Enter abre esa misma. Una pista minima aparece al pie mientras haya una ficha marcada.
+
+Las fichas que faltan siguen sin abrirse: solo se dejan leer en voz baja.
+
 ## Version 0.217.0 - Dos luces que ahora se ven
 
 Las dos torres tienen su lampara en lo alto, y hasta ahora eran dos puntos de color: el haz salia de la nada y costaba entender de donde venia la luz. Ahora cada lampara se abre en un halo corto, apenas un soplo, y el haz arranca de algo que se ve.

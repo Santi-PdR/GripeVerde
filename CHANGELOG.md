@@ -1,3 +1,8 @@
+## v0.218.0 - La sala de consulta se recorre con el teclado
+
+- `DiaryArchiveScreen`: `focusCard` con esquinas de foco (`drawFocusCorners`), flechas + Enter (`keyPressed`),
+  `cardAt(...)`/`openCard(...)`/`docForCard(...)` para abrir la ficha pulsada y pista de teclado al pie.
+
 ## v0.217.0 - Dos luces que ahora se ven
 
 - `AtmosphereRenderer.renderSearchlights`: halo de radio 8 sobre la lámpara de cada torre (`drawSoftBlob`).

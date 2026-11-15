@@ -1,3 +1,11 @@
+## Version 0.218.0 - The reading room has a keyboard
+
+Until now the archive cards only answered the mouse: you had to pass over each one to read its name, and only the three loose papers at the foot could be opened with a click.
+
+Now the cards are walked with the arrow keys and opened with Enter. The marked card carries four discreet corners of sealing wax, so as not to cover its border, and the focus follows the mouse: if a card is being looked at with the pointer, Enter opens that same one. A tiny hint appears at the foot while a card is marked.
+
+The missing cards still do not open: they only let themselves be read in a low voice.
+
 ## Version 0.217.0 - Two lights you can now see
 
 Both towers have their lamp up top, and until now they were two dots of colour: the beam came out of nowhere and it was hard to tell where the light started. Now each lamp opens into a short halo, barely a breath, and the beam begins on something visible.

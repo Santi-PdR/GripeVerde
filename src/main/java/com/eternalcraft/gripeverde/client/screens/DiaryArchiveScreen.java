@@ -38,6 +38,9 @@ public class DiaryArchiveScreen extends Screen {
     private String viewingDoc = DOC_NONE;
     private int hoverCard = -1;
     private int lastMouseX = -1, lastMouseY = -1;
+    // v0.218.0: la grilla se puede recorrer con el teclado; esta es la ficha
+    // marcada (-1 = ninguna). El raton sigue funcionando igual.
+    private int focusCard = -1;
 
     private static final int COLS = 5;
     private static final int CARD_H = 22;
@@ -193,7 +196,11 @@ public class DiaryArchiveScreen extends Screen {
             String id = Discoveries.ALL[i];
             boolean disc = ChroniclerMemory.isDiscovered(id);
             boolean hover = mouseX >= x && mouseX < x + cw && mouseY >= y && mouseY < y + CARD_H;
-            if (hover) hoverCard = i;
+            if (hover) {
+                hoverCard = i;
+                // v0.218.0: el foco sigue al raton, asi Enter abre lo que se esta mirando.
+                focusCard = i;
+            }
 
             if (disc) {
                 g.fill(x, y + 1, x + cw, y + CARD_H + 1, DiaryTheme.withAlpha(0x00000000, 38));
@@ -214,6 +221,7 @@ public class DiaryArchiveScreen extends Screen {
                 g.drawString(this.font, "?", x + (cw - this.questionW) / 2, y + 7,
                     DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, hover ? 150 : 70), false);
             }
+            if (i == focusCard) drawFocusCorners(g, x, y, cw, CARD_H);
         }
 
         // Texto de la ficha bajo el cursor
@@ -239,6 +247,14 @@ public class DiaryArchiveScreen extends Screen {
                 g.drawString(this.font, sig, sealCx - DiaryChrome.widthCached(this.font, sig) / 2, infoY - 15, 0xFF8A6A2D, false);
                 drawCompletionSeal(g, sealCx, infoY + 6, 8);
             }
+        }
+
+        // v0.218.0: pista de teclado, discreta y solo cuando hay ficha marcada.
+        if (focusCard >= 0) {
+            String hint = en ? "arrows: move  -  enter: open" : "flechas: recorrer  -  enter: abrir";
+            int hw = DiaryChrome.widthCached(this.font, hint);
+            g.drawString(this.font, hint, cx - hw / 2, panelY + panelH - 46,
+                DiaryTheme.withAlpha(DiaryChrome.INK_FLAVOR, 120), false);
         }
 
         // Papeles sueltos (documentos recuperados)
@@ -343,6 +359,64 @@ public class DiaryArchiveScreen extends Screen {
 
         String fit = truncate(label, 106);
         g.drawString(this.font, fit, x + 5, y + 5, DiaryTheme.INK, false);
+    }
+
+    /**
+     * v0.218.0: esquinas de foco. Cuatro angulos de dos trazos, sin recuadro
+     * completo, para que la ficha marcada se distinga sin taparle el borde.
+     */
+    private void drawFocusCorners(GuiGraphics g, int x, int y, int w, int h) {
+        int c = 0xFF5C0A08;
+        int len = Math.min(6, Math.max(3, w / 6));
+        // superior izquierda
+        g.fill(x, y + 1, x + len, y + 2, c);
+        g.fill(x, y + 1, x + 1, y + len, c);
+        // superior derecha
+        g.fill(x + w - len, y + 1, x + w, y + 2, c);
+        g.fill(x + w - 1, y + 1, x + w, y + len, c);
+        // inferior izquierda
+        g.fill(x, y + h - 2, x + len, y + h - 1, c);
+        g.fill(x, y + h - len, x + 1, y + h - 1, c);
+        // inferior derecha
+        g.fill(x + w - len, y + h - 2, x + w, y + h - 1, c);
+        g.fill(x + w - 1, y + h - len, x + w, y + h - 1, c);
+    }
+
+    /** v0.218.0: que ficha abre que documento (vacio si no abre ninguno). */
+    private static String docForCard(String id) {
+        if (Discoveries.CODE_1897.equals(id)) return DOC_TELEGRAM;
+        if (Discoveries.CODE_HOLLOWAY.equals(id)) return DOC_HOLLOWAY;
+        if (Discoveries.FORBIDDEN_FOLIO.equals(id)) return DOC_FORBIDDEN;
+        return DOC_NONE;
+    }
+
+    /** v0.218.0: que ficha cae bajo el raton (-1 si ninguna). */
+    private int cardAt(double mouseX, double mouseY) {
+        int gridX = panelX + 20;
+        int innerW = panelW - 40;
+        int cw = (innerW - (COLS - 1) * CARD_GAP) / COLS;
+        int gridY = panelY + 60;
+        int rows = (Discoveries.ALL.length + COLS - 1) / COLS;
+        if (mouseX < gridX || mouseY < gridY) return -1;
+        int col = (int) ((mouseX - gridX) / (cw + CARD_GAP));
+        int row = (int) ((mouseY - gridY) / (CARD_H + CARD_GAP));
+        if (col < 0 || col >= COLS || row < 0 || row >= rows) return -1;
+        int x = gridX + col * (cw + CARD_GAP);
+        int y = gridY + row * (CARD_H + CARD_GAP);
+        if (mouseX >= x + cw || mouseY >= y + CARD_H) return -1;
+        int index = row * COLS + col;
+        return index < Discoveries.ALL.length ? index : -1;
+    }
+
+    private boolean openCard(int index) {
+        if (index < 0 || index >= Discoveries.ALL.length) return false;
+        String id = Discoveries.ALL[index];
+        if (!ChroniclerMemory.isDiscovered(id)) return false;
+        String doc = docForCard(id);
+        if (DOC_NONE.equals(doc)) return false;
+        viewingDoc = doc;
+        UiSounds.tab();
+        return true;
     }
 
     private void renderDocument(GuiGraphics g, boolean en) {
@@ -477,6 +551,12 @@ public class DiaryArchiveScreen extends Screen {
             }
             return super.mouseClicked(mouseX, mouseY, button);
         }
+        // v0.218.0: la ficha que se pulsa se abre igual que con Enter.
+        int clickedCard = cardAt(mouseX, mouseY);
+        if (clickedCard >= 0) {
+            focusCard = clickedCard;
+            if (openCard(clickedCard)) return true;
+        }
         // Papeles sueltos
         int infoY = panelY + 60 + ((Discoveries.ALL.length + COLS - 1) / COLS) * (CARD_H + CARD_GAP) + 6;
         int docsY = infoY + 16 + 4;
@@ -515,6 +595,31 @@ public class DiaryArchiveScreen extends Screen {
         if (!DOC_NONE.equals(viewingDoc) && keyCode == 256) { // ESC dentro del doc
             viewingDoc = DOC_NONE;
             return true;
+        }
+        // v0.218.0: recorrer las fichas con las flechas y abrir con Enter.
+        if (DOC_NONE.equals(viewingDoc)) {
+            int total = Discoveries.ALL.length;
+            int step = 0;
+            if (keyCode == 263) step = -1;        // izquierda
+            else if (keyCode == 262) step = 1;    // derecha
+            else if (keyCode == 265) step = -COLS; // arriba
+            else if (keyCode == 264) step = COLS;  // abajo
+            if (step != 0) {
+                if (focusCard < 0) focusCard = 0;
+                else {
+                    int next = focusCard + step;
+                    // arriba/abajo sin salirse de la grilla: si cae fuera, se queda.
+                    if (next >= 0 && next < total) focusCard = next;
+                }
+                UiSounds.tab();
+                return true;
+            }
+            if (keyCode == 257 || keyCode == 335) { // Enter / Enter del teclado numerico
+                if (focusCard >= 0) {
+                    openCard(focusCard);
+                    return true;
+                }
+            }
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
