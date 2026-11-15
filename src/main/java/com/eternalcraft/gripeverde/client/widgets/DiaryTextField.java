@@ -87,6 +87,12 @@ public class DiaryTextField extends EditBox {
         return null;
     }
 
+    // v0.215.0: memoria del recorte visible (ver renderWidget).
+    private String lastVisibleValue;
+    private int lastVisibleDisplayPos = Integer.MIN_VALUE;
+    private int lastVisibleInnerW = Integer.MIN_VALUE;
+    private String lastVisibleText = "";
+
     private int readInt(Field f, int fallback) {
         if (f == null) return fallback;
         try { return f.getInt(this); } catch (Throwable ignored) { return fallback; }
@@ -152,8 +158,19 @@ public class DiaryTextField extends EditBox {
         int innerX = x + 4;
         int innerY = y + (h - 8) / 2;
 
-        String tail = value.substring(displayPos);
-        String visible = font.plainSubstrByWidth(tail, innerW);
+        // v0.215.0: mientras el texto, el desplazamiento y el ancho no cambien, el
+        // recorte visible es el mismo; no se vuelve a partir ni a medir.
+        String visible;
+        if (value == lastVisibleValue && displayPos == lastVisibleDisplayPos
+                && innerW == lastVisibleInnerW) {
+            visible = lastVisibleText;
+        } else {
+            visible = font.plainSubstrByWidth(value.substring(displayPos), innerW);
+            lastVisibleValue = value;
+            lastVisibleDisplayPos = displayPos;
+            lastVisibleInnerW = innerW;
+            lastVisibleText = visible;
+        }
 
         int cursorRel = cursor - displayPos;
         boolean cursorInside = cursorRel >= 0 && cursorRel <= visible.length();
@@ -206,7 +223,30 @@ public class DiaryTextField extends EditBox {
         }
     }
 
+    // v0.215.0: el campo pregunta dos veces por cuadro -tramo previo y posterior al
+    // cursor- y cada respuesta armaba un objeto nuevo. Dos casillas alcanzan: una
+    // para cada tramo, y se renuevan solas cuando el texto cambia.
+    private String fmtTextA;
+    private String fmtTextB;
+    private int fmtStartA = Integer.MIN_VALUE;
+    private int fmtStartB = Integer.MIN_VALUE;
+    private FormattedCharSequence fmtSeqA;
+    private FormattedCharSequence fmtSeqB;
+
     private FormattedCharSequence formatSafe(String text, int startPos) {
+        if (startPos == fmtStartA && fmtSeqA != null && (text == fmtTextA || text.equals(fmtTextA))) return fmtSeqA;
+        if (startPos == fmtStartB && fmtSeqB != null && (text == fmtTextB || text.equals(fmtTextB))) return fmtSeqB;
+        FormattedCharSequence seq = formatSafeUncached(text, startPos);
+        fmtTextB = fmtTextA;
+        fmtStartB = fmtStartA;
+        fmtSeqB = fmtSeqA;
+        fmtTextA = text;
+        fmtStartA = startPos;
+        fmtSeqA = seq;
+        return seq;
+    }
+
+    private FormattedCharSequence formatSafeUncached(String text, int startPos) {
         if (FIELD_FORMATTER == null) {
             return FormattedCharSequence.forward(text, Style.EMPTY);
         }

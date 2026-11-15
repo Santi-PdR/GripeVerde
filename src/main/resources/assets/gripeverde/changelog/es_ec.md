@@ -1,3 +1,9 @@
+## Version 0.215.0 - Los campos de texto dejan de repetir su recorte
+
+Cuando se escribe un nombre de servidor o se busca en el archivo, el campo de texto pinta su contenido en cada cuadro. Para hacerlo partia el texto desde el desplazamiento, lo recortaba al ancho de la caja y armaba dos tramos con formato -lo anterior y lo posterior al cursor-, aunque nada de eso hubiera cambiado desde el cuadro anterior.
+
+Ahora el recorte se guarda mientras el texto, el desplazamiento y el ancho sigan iguales, y los dos tramos con formato tienen su casilla: se renuevan solos cuando la frase cambia. El cursor sigue parpadeando al mismo ritmo y la seleccion se dibuja en el mismo sitio.
+
 ## Version 0.214.0 - La hora y la niebla dejan de preguntarse
 
 Dos cuentas que se repetian en cada cuadro sin necesidad.

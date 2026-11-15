@@ -1,3 +1,9 @@
+## Version 0.215.0 - Text fields stop repeating their crop
+
+When a server name is typed or the archive is searched, the text field paints its contents on every frame. To do so it split the text from the scroll position, cropped it to the box width and built two formatted pieces - the part before the cursor and the part after - even when none of that had changed since the previous frame.
+
+Now the crop is kept while the text, the scroll position and the width stay the same, and the two formatted pieces have their own slot: they refresh on their own when the sentence changes. The cursor still blinks at the same pace and the selection is drawn in the same place.
+
 ## Version 0.214.0 - The hour and the fog stop asking
 
 Two sums that were repeated on every frame for no reason.

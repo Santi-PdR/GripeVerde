@@ -1,3 +1,8 @@
+## v0.215.0 - Los campos de texto dejan de repetir su recorte
+
+- `DiaryTextField`: el recorte visible se guarda (`lastVisibleValue/DisplayPos/InnerW/Text`) y `formatSafe`
+  tiene dos casillas (`fmtSeqA/B`) para los tramos previo y posterior al cursor.
+
 ## v0.214.0 - La hora y la niebla dejan de preguntarse
 
 - `LivingAtmosphere.renderVignette`: la hora real se cachea un minuto (`realHour()`), en vez de `LocalTime.now()` por cuadro.
