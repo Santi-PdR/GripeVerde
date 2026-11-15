@@ -1,3 +1,9 @@
+## Version 0.196.0 - El parte de CEDA deja de armar sus renglones
+
+En la ficha de CEDA, cada renglon visible armaba en cada cuadro el numero de la voz -con `String.format`, que para dos digitos es caro- y el nombre de su tecla, que ademas armaba un componente y copiaba el texto traducido. Ahora los veinte numeros se arman una sola vez al cargar la clase, y el nombre de cada tecla se pide unicamente cuando esa voz cambia de tecla: se guarda junto con la tecla que lo produjo, asi que no puede quedar desactualizado si reasignas mientras la ficha esta abierta.
+
+Es una tanda corta y sin cambios a la vista: la ficha se ve igual, solo se arma menos veces por segundo.
+
 ## Version 0.195.0 - Las pantallas dejan de traducir sesenta veces por segundo
 
 Cada pantalla resolvia sus rotulos fijos con `Component.translatable(...).getString()` dentro del dibujo: armar el componente, buscar la clave en la tabla de la lengua y copiar el texto, sesenta veces por segundo, para el mismo titulo de siempre. Ahora hay una sola memoria de traducciones en el diario -`DiaryChrome.tr`-: la cadena se pide una vez y se guarda, y la memoria entera se tira cuando cambia la lengua elegida, asi que nunca queda una traduccion vieja. Se fueron treinta y cuatro llamadas por cuadro repartidas en veinte pantallas.

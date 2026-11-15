@@ -1,3 +1,9 @@
+## Version 0.196.0 - The CEDA sheet stops building its rows
+
+On the CEDA sheet, every visible row built its voice number on every frame - with `String.format`, which is expensive for two digits - and the name of its key, which also built a component and copied the translated text. Now the twenty numbers are built once when the class loads, and each key name is asked for only when that voice changes key: it is stored together with the key that produced it, so it cannot go stale if you rebind while the sheet is open.
+
+A short batch with nothing new to look at: the sheet looks the same, it is just built fewer times per second.
+
 ## Version 0.195.0 - Screens stop translating sixty times a second
 
 Every screen resolved its fixed labels with `Component.translatable(...).getString()` inside the drawing code: build the component, look the key up in the language table and copy the text, sixty times a second, for the same title as always. Now there is a single translation memory in the diary - `DiaryChrome.tr` - the string is asked for once and kept, and the whole memory is dropped when the selected language changes, so a stale translation can never linger. Thirty-four calls per frame are gone across twenty screens.

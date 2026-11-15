@@ -1,3 +1,8 @@
+## v0.196.0 - El parte de CEDA deja de armar sus renglones
+
+- `DiaryDispatchScreen`: `SLOT_NUMBERS` (20 cadenas "01".."20") en lugar de `String.format("%02d", ...)` por fila y cuadro;
+  `keyLabel(slot)` cachea el nombre de la tecla junto al binding que lo produjo (`DispatchLibrary.key`).
+
 ## v0.195.0 - Las pantallas dejan de traducir sesenta veces por segundo
 
 - **`DiaryChrome.tr(key)`**: memoria de traducciones invalidada por `LanguageManager.getSelected()`; `trFit(key, font, maxW)`

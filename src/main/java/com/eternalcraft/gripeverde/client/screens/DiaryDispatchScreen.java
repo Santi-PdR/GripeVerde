@@ -187,6 +187,36 @@ public class DiaryDispatchScreen extends Screen {
         this.statusUntil = Util.getMillis() + STATUS_MS;
     }
 
+    // v0.196.0: el numero de cada voz y el nombre de su tecla se piden una vez.
+    // Antes se armaban con String.format y con keyName(...).getString() por cada
+    // renglon visible en cada cuadro.
+    private static final String[] SLOT_NUMBERS = new String[DispatchLibrary.SLOT_COUNT];
+    static {
+        for (int i = 0; i < SLOT_NUMBERS.length; i++) {
+            int n = i + 1;
+            SLOT_NUMBERS[i] = n < 10 ? "0" + n : Integer.toString(n);
+        }
+    }
+    private String[] keyLabels;
+    private int[] keyBindings;
+
+    private String keyLabel(int slot) {
+        if (this.keyLabels == null) {
+            this.keyLabels = new String[DispatchLibrary.SLOT_COUNT];
+            this.keyBindings = new int[DispatchLibrary.SLOT_COUNT];
+            java.util.Arrays.fill(this.keyBindings, Integer.MIN_VALUE);
+        }
+        if (slot < 0 || slot >= this.keyLabels.length) {
+            return DispatchLibrary.keyName(slot).getString();
+        }
+        int binding = DispatchLibrary.key(slot);
+        if (this.keyLabels[slot] == null || this.keyBindings[slot] != binding) {
+            this.keyBindings[slot] = binding;
+            this.keyLabels[slot] = DispatchLibrary.keyName(slot).getString();
+        }
+        return this.keyLabels[slot];
+    }
+
     @Override
     public void tick() {
         for (DiaryTextField field : this.fields) {
@@ -347,7 +377,8 @@ public class DiaryDispatchScreen extends Screen {
 
             // v0.185.0: el numero dice de un vistazo si esa voz ya tiene mensaje.
             boolean hasText = !DispatchLibrary.message(slot).isBlank();
-            String number = String.format("%02d", slot + 1);
+            String number = slot >= 0 && slot < SLOT_NUMBERS.length
+                ? SLOT_NUMBERS[slot] : Integer.toString(slot + 1);
             gfx.drawString(this.font, number, this.fieldX - 6 - this.font.width(number), y + 4,
                 hasText ? DiaryChrome.INK_TITLE : 0x70887766, false);
 
@@ -360,7 +391,7 @@ public class DiaryDispatchScreen extends Screen {
             gfx.fill(this.keyX, y + ROW_H - 1, this.keyX + this.keyW, y + ROW_H,
                 DiaryChrome.INK_DIVIDER);
 
-            String key = listening ? "..." : DispatchLibrary.keyName(slot).getString();
+            String key = listening ? "..." : keyLabel(slot);
             boolean bound = listening || DispatchLibrary.isBound(slot);
             String shown = ellipsize(key, this.keyW - 8);
             gfx.drawString(this.font, shown,
