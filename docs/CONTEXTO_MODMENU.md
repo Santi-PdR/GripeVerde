@@ -48,6 +48,9 @@ Actualizado: 2026-11-13
 
 ## Estado confirmado al retomar (2026-11-13)
 
+- `0.196.0` **publicada y en verde**: commit `1cb5ae5`, run `43673361232` (`build` y `publish` en verde).
+  `https://github.com/Santi-PdR/GripeVerde/releases/download/v0.196.0/gripeverde-0.196.0.jar`
+  (9.539.559 bytes, `sha256:b11fd71b430a7aa4d803c11d46027858a5b00be42b12a04b6e5102abf5b3288a`).
 - `0.195.0` **publicada y en verde**: commit `e047359`, run `43672735772` (`build` y `publish` en verde).
   `https://github.com/Santi-PdR/GripeVerde/releases/download/v0.195.0/gripeverde-0.195.0.jar`
   (9.534.213 bytes, `sha256:f5ba3395f4dec0029e9533a9363c33868a166474013e7ba319d7e331ad49c2a0`).
