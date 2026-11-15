@@ -1,3 +1,9 @@
+## Version 0.199.0 - La cronica deja de partir sus renglones en cada cuadro
+
+La pantalla de la cronica sabia cuanto medía cada renglon -eso ya estaba memorizado desde la 0.184.0-, pero para escribirlo volvia a partir el texto en lineas cada cuadro: una por cada renglon visible, y algunas de esas lineas son parrafos largos. Ahora el corte se guarda en el propio renglon, junto al ancho con el que se hizo, y lo reusan tanto la escritura como la medida del alto: un corte por renglon y por ancho de hoja, y nada mas. El folio del pie tambien se armaba y se medía en cada cuadro; ahora se guarda hasta que cambias de pagina.
+
+Si escribes con la pluma todavia en marcha, el renglon que se esta escribiendo se parte igual que antes, porque su texto cambia letra a letra.
+
 ## Version 0.198.0 - El humo de las chimeneas tiene sus bocas fijas
 
 Cada penacho de humo preguntaba en cada cuadro a que edificio pertenecia su chimenea, sacaba la posicion del padre, la escalaba y volvia a derivar la altura. Y la deriva de la pluma -el vaiven lento que la inclina hacia un lado u otro- se calculaba una vez por particula, aunque solo depende de la chimenea. Ahora las bocas se resuelven una vez por resolucion, la deriva sale del bucle interior y los penachos que ya salieron por arriba de la pantalla, o que quedaron por debajo de la calle, ni se piden al pincel.

@@ -1,3 +1,9 @@
+## Version 0.199.0 - The chronicle stops splitting its rows every frame
+
+The chronicle screen knew how tall each row was - that has been memorised since 0.184.0 - but to write it down it split the text into lines again on every frame: once per visible row, and some of those rows are long paragraphs. Now the cut is stored inside the row itself, next to the width it was made for, and both the writing and the height measuring reuse it: one cut per row and per sheet width, and nothing more. The footer folio was also built and measured on every frame; now it is kept until you turn the page.
+
+If you read with the pen still writing, the row being written splits exactly as before, because its text changes letter by letter.
+
 ## Version 0.198.0 - The chimney smoke has its mouths fixed
 
 Every puff of smoke asked on each frame which building its chimney belonged to, pulled the parent's position, scaled it, and worked out the height again. And the plume's drift - the slow sway that leans it one way or the other - was computed once per particle, although it only depends on the chimney. Now the mouths are resolved once per resolution, the drift moved out of the inner loop, and puffs that already left the top of the screen, or that fell below the street, are not even asked for.

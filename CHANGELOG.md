@@ -1,3 +1,9 @@
+## v0.199.0 - La cronica deja de partir sus renglones en cada cuadro
+
+- `ChangelogScreen`: `WrapCache` dentro de `Row` (`whole`/`body`) memoriza las líneas de cada renglón por ancho;
+  `rowHeight` y `renderRow` comparten el mismo corte.
+- El folio del pie se guarda (`cachedFolio*`) y sólo se rehace al cambiar de página o de fuente.
+
 ## v0.198.0 - El humo de las chimeneas tiene sus bocas fijas
 
 - `VictorianSkyline`: `ensureSmokeAnchors`/`fillSmokeAnchors` cachean por resolución la boca de cada chimenea

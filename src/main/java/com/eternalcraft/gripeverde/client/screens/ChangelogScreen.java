@@ -4,6 +4,7 @@ import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.widgets.SlimButton;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -41,9 +42,35 @@ public class ChangelogScreen extends Screen {
 
     private enum LT { H1, H2, BULLET, TEXT, GAP, SEPARATOR, BOLD }
 
+    /**
+     * v0.199.0: las lineas en que se parte un renglon solo dependen de su texto
+     * y del ancho disponible. Se guardan y se reusan en todos los cuadros, y
+     * tambien al medir el alto del renglon, que hacia el mismo corte.
+     */
+    private static final class WrapCache {
+        private String source;
+        private int width = -1;
+        private List<FormattedCharSequence> lines;
+
+        List<FormattedCharSequence> of(Font font, String text, int available) {
+            if (this.lines != null && this.width == available && this.source == text) {
+                return this.lines;
+            }
+            List<FormattedCharSequence> wrapped = font.split(Component.literal(text), available);
+            this.source = text;
+            this.width = available;
+            this.lines = wrapped;
+            return wrapped;
+        }
+    }
+
     private static final class Row {
         final LT type;
         final String text;
+        /** El renglon entero: lo que miden los altos y lo que escribe el cuerpo. */
+        final WrapCache whole = new WrapCache();
+        /** El cuerpo del H1, sin la capital grande. */
+        final WrapCache body = new WrapCache();
         Row(LT t, String s) { this.type = t; this.text = s; }
     }
 
@@ -206,6 +233,15 @@ public class ChangelogScreen extends Screen {
     private int[] rowHeightCache = new int[0];
     private int rowHeightCacheW = -1;
 
+    // v0.199.0: el folio del pie se armaba y se medía en cada cuadro; ahora se
+    // guarda y sólo se rehace cuando cambia la página o la fuente.
+    private String cachedFolio = "";
+    private int cachedFolioWidth = 0;
+    private int cachedFolioCur = -1;
+    private int cachedFolioPages = -1;
+    private Font cachedFolioFont;
+    private boolean foliosReady = false;
+
     private void ensureRowHeights(int contentW) {
         if (this.rowHeightCacheW == contentW && this.rowHeightCache.length == rows.size()) return;
         int n = rows.size();
@@ -229,9 +265,7 @@ public class ChangelogScreen extends Screen {
                 int indent = (row.type == LT.BULLET) ? 10 : 0;
                 int prefixW = (row.type == LT.BULLET) ? this.font.width("\u2022 ") : 0;
                 int available = Math.max(20, contentW - indent - prefixW);
-                List<FormattedCharSequence> wrapped =
-                    this.font.split(Component.literal(row.text), available);
-                int lines = Math.max(1, wrapped.size());
+                int lines = Math.max(1, row.whole.of(this.font, row.text, available).size());
                 return lines * lineHeightFor(row.type);
             }
         }
@@ -651,8 +685,17 @@ public class ChangelogScreen extends Screen {
             int pages = Math.max(1, (int) Math.ceil((maxScroll + ch) / (double) ch));
             int cur = Math.max(1, Math.min(pages,
                 (int) Math.floor(scrollY / (double) Math.max(1, ch)) + 1));
-            String folio = "folio " + cur + " \u00b7 " + pages;
-            int fw = this.font.width(folio);
+            if (!foliosReady || cachedFolioCur != cur || cachedFolioPages != pages
+                    || cachedFolioFont != this.font) {
+                cachedFolio = "folio " + cur + " \u00b7 " + pages;
+                cachedFolioWidth = this.font.width(cachedFolio);
+                cachedFolioCur = cur;
+                cachedFolioPages = pages;
+                cachedFolioFont = this.font;
+                foliosReady = true;
+            }
+            String folio = cachedFolio;
+            int fw = cachedFolioWidth;
             int fx = px + (pw - fw) / 2;
             int fy = py + ph - 16;
             int searchLeft = px + pw - 14 - SEARCH_W - 44; // lupa + contador
@@ -868,8 +911,7 @@ public class ChangelogScreen extends Screen {
             g.drawString(this.font, "\u2022 ", x + indent, y, color, false);
             int prefixW = this.font.width("\u2022 ");
             int available = Math.max(20, maxW - indent - prefixW);
-            List<FormattedCharSequence> wrapped =
-                this.font.split(Component.literal(row.text), available);
+            List<FormattedCharSequence> wrapped = row.whole.of(this.font, row.text, available);
             int ly = y;
             for (FormattedCharSequence fcs : wrapped) {
                 g.drawString(this.font, fcs, x + indent + prefixW, ly, color, false);
@@ -894,8 +936,7 @@ public class ChangelogScreen extends Screen {
 
             int capW = (int)(this.font.width(firstLetter) * capScale) + 2;
             int available = Math.max(20, maxW - indent - capW);
-            List<FormattedCharSequence> wrapped =
-                this.font.split(Component.literal(rest), available);
+            List<FormattedCharSequence> wrapped = row.body.of(this.font, rest, available);
             int ly = y;
             for (int wi = 0; wi < wrapped.size(); wi++) {
                 int lx = (wi == 0) ? x + indent + capW : x + indent;
@@ -904,8 +945,7 @@ public class ChangelogScreen extends Screen {
             }
         } else {
             int available = Math.max(20, maxW - indent);
-            List<FormattedCharSequence> wrapped =
-                this.font.split(Component.literal(row.text), available);
+            List<FormattedCharSequence> wrapped = row.whole.of(this.font, row.text, available);
             int ly = y;
             for (FormattedCharSequence fcs : wrapped) {
                 g.drawString(this.font, fcs, x + indent, ly, color, false);
