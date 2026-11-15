@@ -1,3 +1,9 @@
+## v0.213.0 - Medir la letra una sola vez
+
+- `DiaryTypography.width(font, String|Component)` pasa por `widthMemo`, ahora atado a la fuente (`widthMemoFont`):
+  la clave es el texto pelado y la memoria se tira al cambiar tipografía o idioma.
+- `ChangelogScreen`: titulo, sello y prefijo de viñeta miden con `DiaryChrome.widthCached`.
+
 ## v0.212.0 - La geometria de los haces de las torres
 
 - `AtmosphereRenderer.drawBeam`: `beamSegments(angleBucket, ...)` con `BEAM_MEMO` (ángulo en pasos de 1/1024 rad,

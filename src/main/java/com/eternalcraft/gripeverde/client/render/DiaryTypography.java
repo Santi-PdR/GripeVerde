@@ -13,11 +13,11 @@ public final class DiaryTypography {
     private DiaryTypography() {}
 
     public static int width(Font font, String text) {
-        return font.width(text);
+        return widthMemo(font, text);
     }
 
     public static int width(Font font, Component text) {
-        return font.width(text.getString());
+        return widthMemo(font, text.getString());
     }
 
     public static int width(Font font, FormattedCharSequence text) {
@@ -107,15 +107,22 @@ public final class DiaryTypography {
      */
     // v0.210.0: el recorte/ajuste de un rotulo pregunta su ancho en cada cuadro
     // (cada boton, cada vez). El ancho de un texto no cambia: se guarda.
+    // v0.213.0: la memoria se ata a la fuente en vez de meterla en la clave: al
+    // cambiar la fuente (idioma, pack de recursos) se tira entera, y la clave
+    // pasa a ser el texto pelado, sin armar una cadena por consulta.
     private static final java.util.HashMap<String, Integer> WIDTH_MEMO = new java.util.HashMap<>();
+    private static Font widthMemoFont;
 
     private static int widthMemo(Font font, String text) {
-        String key = System.identityHashCode(font) + "/" + text;
-        Integer cached = WIDTH_MEMO.get(key);
+        if (font != widthMemoFont) {
+            WIDTH_MEMO.clear();
+            widthMemoFont = font;
+        }
+        Integer cached = WIDTH_MEMO.get(text);
         if (cached != null) return cached;
         int width = font.width(text);
         if (WIDTH_MEMO.size() >= 512) WIDTH_MEMO.clear();
-        WIDTH_MEMO.put(key, width);
+        WIDTH_MEMO.put(text, width);
         return width;
     }
 

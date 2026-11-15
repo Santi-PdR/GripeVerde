@@ -1,3 +1,11 @@
+## Version 0.213.0 - Measuring the type once
+
+The width of a line does not change while the line stays the same. Even so, the screens kept asking for it on every frame: the title measured its greeting, its registry and its notices; the changelog measured its title, its stamp and the dot of every bullet with each blink of the cursor.
+
+Now every text measurement goes through a single memo tied to the typeface: while the lettering is the same, the width is already noted and there is nothing to count. When the language or the resource pack changes, the memo is dropped whole and refills on its own.
+
+It looks exactly the same; it just measures a great deal less.
+
 ## Version 0.212.0 - The geometry of the tower beams
 
 Each tower beam is made of twenty-two segments that touch and keep widening and fading towards the tip. That sum - cosine, sine, and one segment per step - was repeated in full on every frame for both towers, even though the light's sway only shifts a hair from one frame to the next.

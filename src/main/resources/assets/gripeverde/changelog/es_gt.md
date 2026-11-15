@@ -1,3 +1,11 @@
+## Version 0.213.0 - Medir la letra una sola vez
+
+El ancho de un renglon no cambia mientras el renglon sea el mismo. Aun asi, las pantallas lo volvian a preguntar en cada cuadro: la portada medía su saludo, su registro y sus avisos; el archivo de cambios medía su titulo, su sello y el punto de cada vineta con cada parpadeo del cursor.
+
+Ahora todas las medidas de texto pasan por una unica memoria atada a la tipografia: mientras la letra sea la misma, el ancho ya esta apuntado y no hay nada que contar. Cuando cambia el idioma o el pack de recursos, la memoria se tira entera y se vuelve a llenar sola.
+
+Se ve exactamente igual; simplemente se mide mucho menos.
+
 ## Version 0.212.0 - La geometria de los haces de las torres
 
 Cada haz de las torres se compone de veintidos tramos que se tocan y se van abriendo y apagando hacia la punta. Esa cuenta -coseno, seno, y un tramo por paso- se repetia entera en cada cuadro para las dos torres, aunque el vaiven de la luz solo cambia un pelo de un cuadro al siguiente.

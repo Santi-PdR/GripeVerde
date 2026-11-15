@@ -270,7 +270,7 @@ public class ChangelogScreen extends Screen {
             case SEPARATOR: return SEP_H;
             default: {
                 int indent = (row.type == LT.BULLET) ? 10 : 0;
-                int prefixW = (row.type == LT.BULLET) ? this.font.width("\u2022 ") : 0;
+                int prefixW = (row.type == LT.BULLET) ? DiaryChrome.widthCached(this.font, "\u2022 ") : 0;
                 int available = Math.max(20, contentW - indent - prefixW);
                 int lines = Math.max(1, row.whole.of(this.font, row.text, available).size());
                 return lines * lineHeightFor(row.type);
@@ -519,7 +519,7 @@ public class ChangelogScreen extends Screen {
      */
     private void drawFreshStamp(GuiGraphics g, int x, int y, int maxW, int clipTop, int clipBottom) {
         String txt = isEnglishSelected() ? "NEW" : "NUEVO";
-        int tw = this.font.width(txt);
+        int tw = DiaryChrome.widthCached(this.font, txt);
         int w = tw + 9;
         int h = 12;
         int sx = x + maxW - w - 6;
@@ -551,7 +551,7 @@ public class ChangelogScreen extends Screen {
         g.fill(px,          py,          px + 1,  py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
         g.fill(px + pw - 1, py,          px + pw, py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
 
-        int tw = this.font.width(this.title);
+        int tw = DiaryChrome.widthCached(this.font, this.title);
         int tx = (this.width - tw) / 2;
         g.drawString(this.font, this.title, tx, py + 8, DiaryTheme.AMBER_FLAME, false);
         g.fill(tx - 4, py + 18, tx + tw + 4, py + 19, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 150));
@@ -741,7 +741,7 @@ public class ChangelogScreen extends Screen {
         int available;
         String body = shown;
         if (fullRow.type == LT.BULLET) {
-            extraX = this.font.width("\u2022 ");
+            extraX = DiaryChrome.widthCached(this.font, "\u2022 ");
             available = Math.max(20, maxW - indent - extraX);
         } else if (fullRow.type == LT.H1) {
             if (shown.length() <= 1) {
@@ -925,7 +925,7 @@ public class ChangelogScreen extends Screen {
 
         if (row.type == LT.BULLET) {
             g.drawString(this.font, "\u2022 ", x + indent, y, color, false);
-            int prefixW = this.font.width("\u2022 ");
+            int prefixW = DiaryChrome.widthCached(this.font, "\u2022 ");
             int available = Math.max(20, maxW - indent - prefixW);
             List<FormattedCharSequence> wrapped = row.whole.of(this.font, row.text, available);
             int ly = y;
