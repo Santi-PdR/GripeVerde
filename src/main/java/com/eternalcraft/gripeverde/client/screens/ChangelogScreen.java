@@ -551,7 +551,7 @@ public class ChangelogScreen extends Screen {
         g.fill(px,          py,          px + 1,  py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
         g.fill(px + pw - 1, py,          px + pw, py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
 
-        int tw = DiaryChrome.widthCached(this.font, this.title);
+        int tw = com.eternalcraft.gripeverde.client.render.DiaryTypography.width(this.font, this.title);
         int tx = (this.width - tw) / 2;
         g.drawString(this.font, this.title, tx, py + 8, DiaryTheme.AMBER_FLAME, false);
         g.fill(tx - 4, py + 18, tx + tw + 4, py + 19, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 150));
