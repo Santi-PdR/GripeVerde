@@ -1,3 +1,9 @@
+## Version 0.223.0 - Las fechas se escriben enteras
+
+En el diario las entradas se abren con una fecha, y la fecha se estaba dibujando con la letra capital grande de los titulos: el "14" de octubre arrancaba con un uno enorme y el resto enana, como un cartel, no como un cuaderno.
+
+Ahora la fecha va entera, del mismo tamano, en tinta oscura. Debajo queda el subrayado a lapiz, con sus huecos, y la mancha de la pluma al margen.
+
 ## Version 0.222.0 - Todas las hojas envejecen igual
 
 El papel nuevo se notaba. La sala de consulta, los creditos y los ajustes todavia se dibujaban como hojas de borde recto, y la pausa tenia su propio pincel de papel sin una sola mancha de humedad.

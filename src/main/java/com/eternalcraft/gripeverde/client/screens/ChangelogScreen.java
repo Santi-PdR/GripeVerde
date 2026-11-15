@@ -972,6 +972,21 @@ public class ChangelogScreen extends Screen {
             return;
         }
 
+        // v0.223.0: en el diario la fecha no lleva capitular: se escribe entera,
+        // en tinta oscura, y debajo va el subrayado a lapiz con su mancha.
+        if (this.diaryMode && row.type == LT.H1) {
+            List<FormattedCharSequence> wrapped = row.whole.of(this.font, row.text, Math.max(20, maxW));
+            int ly = y;
+            for (FormattedCharSequence fcs : wrapped) {
+                g.drawString(this.font, fcs, x, ly, DiaryChrome.INK_TITLE, false);
+                ly += lh;
+            }
+            int ruleW = Math.min(maxW, Math.max(24, DiaryTypography.width(this.font, row.text) + 6));
+            DiaryChrome.drawPencilRule(g, x, ly - 6, ruleW, row.hashCode());
+            DiaryChrome.drawInkBlot(g, x + 1, ly - 9, 1, true);
+            return;
+        }
+
         int color = switch (row.type) {
             case H1     -> DiaryTheme.AMBER_FLAME;
             case H2     -> DiaryTheme.SEPIA_LIGHT;

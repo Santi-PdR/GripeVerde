@@ -1,3 +1,9 @@
+## Version 0.223.0 - Dates are written in full
+
+In the diary each entry opens with a date, and the date was being drawn with the big drop cap used for titles: the "14" of October started with a huge one and the rest in miniature, like a poster, not like a notebook.
+
+Now the date runs whole, at one size, in dark ink. Below it remains the pencil underline, with its gaps, and the pen blot in the margin.
+
 ## Version 0.222.0 - Every sheet ages the same way
 
 The new paper stood out. The reading room, the credits and the adjustments were still drawn as sheets with straight edges, and the pause screen had its own paper brush without a single damp stain.
