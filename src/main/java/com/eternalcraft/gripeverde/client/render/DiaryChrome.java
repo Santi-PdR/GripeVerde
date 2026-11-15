@@ -87,7 +87,7 @@ public final class DiaryChrome {
         int offset = 0;
         int i = 0;
         while (offset < w) {
-            int step = 4 + Math.floorMod(seed + i * 2654435761, 7);
+            int step = 4 + Math.floorMod(seed + i * 0x5BD1E995, 7);
             int len = Math.min(w - offset, step);
             int dy = Math.floorMod(seed + i * 40503, 3) == 0 ? 1 : 0;
             gfx.fill(x + offset, y + dy, x + offset + len, y + dy + 1, i % 3 == 2 ? faint : col);
