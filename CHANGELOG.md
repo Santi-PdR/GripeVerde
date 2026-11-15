@@ -1,3 +1,10 @@
+## v0.200.0 - La ventana de idioma memoriza su cabecera
+
+- `DiaryLanguageScreen`: `refreshHeaderCache()` guarda título/subtítulo/sentencia ya ajustados y centrados
+  (`headerTitle*`, `headerSub*`, `headerFlavor*`); la cuenta de lenguas cachea su frase y su ancho.
+- `ChangelogScreen`: el contador de la lupa (`countSearchText`/`countSearchW`) sólo se rehace al cambiar la
+  búsqueda, la aparición actual o la fuente.
+
 ## v0.199.0 - La cronica deja de partir sus renglones en cada cuadro
 
 - `ChangelogScreen`: `WrapCache` dentro de `Row` (`whole`/`body`) memoriza las líneas de cada renglón por ancho;

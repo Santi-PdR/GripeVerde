@@ -1,3 +1,11 @@
+## Version 0.200.0 - The language window memorises its header
+
+Two hundred batches. The language window fitted three header lines - the title, the subtitle and the sentence below - and measured them on every frame to centre them; now they are built once and only rebuilt when the title, the language or the panel width changes. The count of languages in the margin, which also built its phrase and measured it every frame, is cached the same way.
+
+While at it, the chronicle's search counter was built and measured on every frame even though it only changes when you type a search or jump from hit to hit.
+
+Everything looks exactly as before: the same words, in the same place.
+
 ## Version 0.199.0 - The chronicle stops splitting its rows every frame
 
 The chronicle screen knew how tall each row was - that has been memorised since 0.184.0 - but to write it down it split the text into lines again on every frame: once per visible row, and some of those rows are long paragraphs. Now the cut is stored inside the row itself, next to the width it was made for, and both the writing and the height measuring reuse it: one cut per row and per sheet width, and nothing more. The footer folio was also built and measured on every frame; now it is kept until you turn the page.

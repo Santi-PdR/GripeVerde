@@ -235,6 +235,13 @@ public class ChangelogScreen extends Screen {
 
     // v0.199.0: el folio del pie se armaba y se medía en cada cuadro; ahora se
     // guarda y sólo se rehace cuando cambia la página o la fuente.
+    private String countSearchText = "";
+    private int countSearchW = 0;
+    private int countSearchHits = -1;
+    private int countSearchPos = -2;
+    private boolean countSearchEmpty = false;
+    private Font countSearchFont;
+
     private String cachedFolio = "";
     private int cachedFolioWidth = 0;
     private int cachedFolioCur = -1;
@@ -770,15 +777,24 @@ public class ChangelogScreen extends Screen {
         int sy = py + ph - 19;
         boolean empty = searchText.length() == 0;
         // Contador de apariciones a la izquierda del cuadro.
-        String count;
-        if (empty) {
-            count = isEnglishSelected() ? "/ or ctrl+f" : "/ o ctrl+f";
-        } else if (searchHits.isEmpty()) {
-            count = "0";
-        } else {
-            count = (searchHitPos + 1) + "/" + searchHits.size();
+        // v0.200.0: la frase del contador se armaba y se medida en cada cuadro.
+        if (this.countSearchEmpty != empty || this.countSearchHits != searchHits.size()
+                || this.countSearchPos != searchHitPos || this.countSearchFont != this.font) {
+            this.countSearchEmpty = empty;
+            this.countSearchHits = searchHits.size();
+            this.countSearchPos = searchHitPos;
+            this.countSearchFont = this.font;
+            if (empty) {
+                this.countSearchText = isEnglishSelected() ? "/ or ctrl+f" : "/ o ctrl+f";
+            } else if (searchHits.isEmpty()) {
+                this.countSearchText = "0";
+            } else {
+                this.countSearchText = (searchHitPos + 1) + "/" + searchHits.size();
+            }
+            this.countSearchW = this.font.width(this.countSearchText);
         }
-        int cw2 = this.font.width(count);
+        String count = this.countSearchText;
+        int cw2 = this.countSearchW;
         g.drawString(this.font, count, sx - 8 - cw2, sy + 3,
             DiaryTheme.withAlpha(DiaryTheme.BRONZE, empty ? 90 : 190), false);
         // v0.30.0: etiqueta de PAPEL clara con letra de tinta — antes era

@@ -1,3 +1,11 @@
+## Version 0.200.0 - La ventana de idioma memoriza su cabecera
+
+Doscientas tandas. La ventana de idioma ajustaba tres lineas de cabecera -el titulo, el subtitulo y la sentencia- y las media en cada cuadro para centrarlas; ahora se arman una sola vez y solo se rehacen cuando cambia el titulo, el idioma o el ancho del panel. La cuenta de lenguas del margen, que tambien armaba su frase y la medía cada cuadro, se guarda igual.
+
+De paso, en la cronica el contador de la lupa se armaba y se medía en cada cuadro aunque solo cambie al escribir una busqueda o al saltar de aparicion en aparicion.
+
+Todo se ve exactamente como antes: son las mismas frases, en el mismo sitio.
+
 ## Version 0.199.0 - La cronica deja de partir sus renglones en cada cuadro
 
 La pantalla de la cronica sabia cuanto medía cada renglon -eso ya estaba memorizado desde la 0.184.0-, pero para escribirlo volvia a partir el texto en lineas cada cuadro: una por cada renglon visible, y algunas de esas lineas son parrafos largos. Ahora el corte se guarda en el propio renglon, junto al ancho con el que se hizo, y lo reusan tanto la escritura como la medida del alto: un corte por renglon y por ancho de hoja, y nada mas. El folio del pie tambien se armaba y se medía en cada cuadro; ahora se guarda hasta que cambias de pagina.

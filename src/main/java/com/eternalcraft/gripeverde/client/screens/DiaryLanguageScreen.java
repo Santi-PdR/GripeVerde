@@ -9,6 +9,7 @@ import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.screens.Screen;
@@ -139,20 +140,10 @@ public class DiaryLanguageScreen extends Screen {
         int titleY = this.panelY + PANEL_PAD;
         int cx = this.width / 2;
         {
-            String titleText = DiaryChrome.fitText(this.font, this.title.getString(), Math.max(0, this.panelW - 28));
-            int titleW = this.font.width(titleText);
-            int titleX = (this.width - titleW) / 2;
-            g.drawString(this.font, titleText, titleX, titleY, DiaryChrome.INK_TITLE, false);
-
-            String subtitle = "- " + DiaryChrome.tr("gripeverde.options.language.subtitle") + " -";
-            subtitle = DiaryChrome.fitText(this.font, subtitle, Math.max(0, this.panelW - 28));
-            int subWL = this.font.width(subtitle);
-            g.drawString(this.font, subtitle, cx - subWL / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
-
-            String flavor = DiaryChrome.fitText(this.font,
-                DiaryChrome.tr("gripeverde.options.language.flavor"), Math.max(0, this.panelW - 28));
-            int flvWL = this.font.width(flavor);
-            g.drawString(this.font, flavor, cx - flvWL / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
+            refreshHeaderCache();
+            g.drawString(this.font, this.headerTitle, this.headerTitleX, titleY, DiaryChrome.INK_TITLE, false);
+            g.drawString(this.font, this.headerSubtitle, this.headerSubX, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
+            g.drawString(this.font, this.headerFlavor, this.headerFlavorX, titleY + 24, DiaryChrome.INK_FLAVOR, false);
 
             int divY1 = titleY + 42;
             DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY1);
@@ -196,6 +187,46 @@ public class DiaryLanguageScreen extends Screen {
         } catch (Throwable ignored) {}
     }
 
+    // v0.200.0: la cabecera de la ventana se ajustaba, se medía y se centraba en
+    // cada cuadro; ahora se arma sólo cuando cambia el título, el idioma o el
+    // ancho del panel.
+    private Font headerFont;
+    private int headerPanelW = -1;
+    private String headerTitleSrc = "";
+    private String headerTitle = "";
+    private int headerTitleX = 0;
+    private String headerSubtitle = "";
+    private int headerSubX = 0;
+    private String headerFlavor = "";
+    private int headerFlavorX = 0;
+
+    private void refreshHeaderCache() {
+        String titleSrc = this.title.getString();
+        if (this.headerFont == this.font && this.headerPanelW == this.panelW
+                && this.headerTitleSrc.equals(titleSrc)) {
+            return;
+        }
+        this.headerFont = this.font;
+        this.headerPanelW = this.panelW;
+        this.headerTitleSrc = titleSrc;
+        int limit = Math.max(0, this.panelW - 28);
+        this.headerTitle = DiaryChrome.fitText(this.font, titleSrc, limit);
+        this.headerTitleX = (this.width - this.font.width(this.headerTitle)) / 2;
+        this.headerSubtitle = DiaryChrome.fitText(this.font,
+            "- " + DiaryChrome.tr("gripeverde.options.language.subtitle") + " -", limit);
+        this.headerSubX = this.width / 2 - this.font.width(this.headerSubtitle) / 2;
+        this.headerFlavor = DiaryChrome.fitText(this.font,
+            DiaryChrome.tr("gripeverde.options.language.flavor"), limit);
+        this.headerFlavorX = this.width / 2 - this.font.width(this.headerFlavor) / 2;
+    }
+
+    // La cuenta de lenguas también armaba su frase y la medía por cuadro.
+    private String countText = "";
+    private int countTextW = 0;
+    private int countTotal = -1;
+    private boolean countEnglish = false;
+    private Font countFont;
+
     /**
      * v0.195.0: cuantas lenguas hay registradas, en el margen izquierdo del
      * titulo (la derecha la ocupa la placa REG. IV). Si el panel es angosto no
@@ -209,13 +240,19 @@ public class DiaryLanguageScreen extends Screen {
         } catch (Throwable ignored) {}
         if (total <= 0) return;
         boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
-        String text = english
-            ? (total == 1 ? "1 language" : total + " languages")
-            : (total == 1 ? "1 lengua" : total + " lenguas");
+        if (this.countTotal != total || this.countEnglish != english || this.countFont != this.font) {
+            this.countText = english
+                ? (total == 1 ? "1 language" : total + " languages")
+                : (total == 1 ? "1 lengua" : total + " lenguas");
+            this.countTextW = this.font.width(this.countText);
+            this.countTotal = total;
+            this.countEnglish = english;
+            this.countFont = this.font;
+        }
         int x = this.panelX + 20;
         int y = titleY + 4;
-        if (x + this.font.width(text) > this.panelX + this.panelW - 78) return;
-        g.drawString(this.font, text, x, y, DiaryChrome.INK_SUBTITLE, false);
+        if (x + this.countTextW > this.panelX + this.panelW - 78) return;
+        g.drawString(this.font, this.countText, x, y, DiaryChrome.INK_SUBTITLE, false);
     }
 
     private void drawSearchBuffer(GuiGraphics g) {
