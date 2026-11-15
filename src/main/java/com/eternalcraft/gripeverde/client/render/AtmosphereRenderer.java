@@ -273,8 +273,15 @@ public class AtmosphereRenderer {
         int baseY = (int) (h * 0.62f);
         // Torre izquierda: barre hacia la derecha; torre derecha: al reves.
         // Angulos medidos sobre la pantalla (y crece hacia abajo): negativos = hacia arriba.
-        drawBeam(g, (int) (w * 0.16f), baseY, -0.74f + sway * 0.30f, (int) (w * 0.44f), 9, 26, color);
-        drawBeam(g, (int) (w * 0.84f), baseY, -2.40f - sway * 0.30f, (int) (w * 0.40f), 8, 20, color);
+        int leftX = (int) (w * 0.16f);
+        int rightX = (int) (w * 0.84f);
+        drawBeam(g, leftX, baseY, -0.74f + sway * 0.30f, (int) (w * 0.44f), 9, 26, color);
+        drawBeam(g, rightX, baseY, -2.40f - sway * 0.30f, (int) (w * 0.40f), 8, 20, color);
+        // v0.190.0: la lampara de cada torre, para que el haz salga de algun lado.
+        g.fill(leftX - 1, baseY - 3, leftX + 2, baseY, withAlpha(color, 120));
+        g.fill(leftX - 2, baseY, leftX + 3, baseY + 1, withAlpha(color, 70));
+        g.fill(rightX - 1, baseY - 3, rightX + 2, baseY, withAlpha(color, 110));
+        g.fill(rightX - 2, baseY, rightX + 3, baseY + 1, withAlpha(color, 65));
     }
 
     /**
@@ -331,6 +338,17 @@ public class AtmosphereRenderer {
         int glowAlpha = 18 + (int)(Math.sin(time * 0.22f) * 5f);
         g.fill(0, glowTop, w, glowBot, withAlpha(0x004A2E18, glowAlpha));
 
+        // v0.190.0: una franja fria justo encima del resplandor ambar. El cielo
+        // deja de ser una sola rampa calida y el borde de la ciudad se lee mejor
+        // contra el fondo; la linea de horizonte lo cierra abajo.
+        int coolTop = Math.max(0, glowTop - Math.max(10, h / 16));
+        int coolAlpha = 12 + (int)(Math.sin(time * 0.17f + 1.6f) * 4f);
+        if (glowTop > coolTop && coolAlpha > 1) {
+            g.fill(0, coolTop, w, glowTop, withAlpha(0x00182A38, coolAlpha));
+        }
+        int horizonY = Math.min(h - 1, glowBot);
+        g.fill(0, horizonY, w, horizonY + 1, withAlpha(0x001A1208, 40));
+
         // Efecto vela al marcar las 12: overlay muy sutil que parpadea
         try {
             if (com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.isNearNoon()) {
@@ -358,13 +376,12 @@ public class AtmosphereRenderer {
             int alpha = baseAlpha + (int)(twinkle * (peakAlpha - baseAlpha));
             int color = (alpha << 24) | 0xE8DCB4;
             if (bright) {
-                int edgeAlpha = Math.max(0, alpha / 3);
-                int edgeColor = (edgeAlpha << 24) | 0xE8DCB4;
+                // v0.190.0: un halo y el nucleo, en vez de cinco rectangulos en
+                // cruz. Se lee mas redondo y son dos rellenos por estrella.
+                int haloAlpha = Math.max(2, alpha / 4);
+                int haloColor = (haloAlpha << 24) | 0xE8DCB4;
+                g.fill(sx - 1, sy - 1, sx + 3, sy + 3, haloColor);
                 g.fill(sx, sy, sx + 2, sy + 2, color);
-                g.fill(sx - 1, sy, sx, sy + 2, edgeColor);
-                g.fill(sx + 2, sy, sx + 3, sy + 2, edgeColor);
-                g.fill(sx, sy - 1, sx + 2, sy, edgeColor);
-                g.fill(sx, sy + 2, sx + 2, sy + 3, edgeColor);
             } else {
                 g.fill(sx, sy, sx + 1, sy + 1, color);
             }
@@ -386,8 +403,16 @@ public class AtmosphereRenderer {
     }
 
 
+    /**
+     * v0.190.0: donde cae la luna en horizontal, para que la calle mojada pueda
+     * devolver su reflejo sin repetir la cuenta en otro archivo.
+     */
+    public static int moonCenterX(int w) {
+        return (int) (w * 0.75f);
+    }
+
     private static void renderMoon(GuiGraphics g, int w, int h) {
-        int cx = (int)(w * 0.75f);
+        int cx = moonCenterX(w);
         int cy = (int)(h * 0.18f);
         int radius = (int)(w * 0.025f);
 
@@ -633,22 +658,35 @@ public class AtmosphereRenderer {
      * radio 44, casi mil fills por cuadro— y a estos alfas la diferencia no se
      * ve, pero se ahorra un tercio del trabajo.
      */
+    /**
+     * Un blob blando: anillos concentricos pintados en franjas horizontales.
+     *
+     * v0.190.0: los anillos y el alto de las franjas se adaptan al tamano, y el
+     * anillo exterior lleva alpha propio (antes le tocaba cero y no se veia, asi
+     * que habia que gastar un anillo de mas para que el blob tuviera su radio).
+     * La luna, las nubes y el humo de las chimeneas -los tres usan este pincel y
+     * sumaban mas de mil quinientos rellenos por cuadro- bajan a un tercio, y
+     * quedan igual de blandos, o mas.
+     */
     public static void drawSoftBlob(GuiGraphics g, int cx, int cy, int radius, int coreAlpha, int colorNoAlpha) {
         if (radius <= 0 || coreAlpha < 4) return;
-        int steps = Math.max(1, Math.min(4, radius));
+        int steps = radius >= 14 ? 3 : 2;
+        int rowStep = radius >= 24 ? 4 : radius >= 12 ? 3 : 2;
+        int span = Math.max(1, steps - 1);
         for (int s = steps; s >= 1; s--) {
             int r = Math.max(1, radius * s / steps);
-            float t = (float) s / (float) steps;
-            int a = (int) (coreAlpha * (1f - t) * (1f - t) + coreAlpha * 0.15f * (1f - t));
+            // t va de 0 en el anillo de afuera a 1 en el nucleo.
+            float t = (steps - s) / (float) span;
+            int a = (int) (coreAlpha * (0.22f + 0.55f * t));
             if (a <= 0) continue;
             int col = withAlpha(colorNoAlpha, a);
-            for (int dy = -r; dy <= r; dy += 2) {
+            for (int dy = -r; dy <= r; dy += rowStep) {
                 int low = dy;
-                int high = Math.min(dy + 1, r);
-                int dxLow = (int) Math.sqrt(Math.max(0, r * r - low * low));
-                int dxHigh = (int) Math.sqrt(Math.max(0, r * r - high * high));
-                int dx = Math.max(dxLow, dxHigh);
-                g.fill(cx - dx, cy + low, cx + dx + 1, cy + low + 2, col);
+                int high = Math.min(dy + rowStep - 1, r);
+                double dxLow = Math.sqrt(Math.max(0, (double) r * r - (double) low * low));
+                double dxHigh = Math.sqrt(Math.max(0, (double) r * r - (double) high * high));
+                int dx = (int) Math.max(dxLow, dxHigh);
+                g.fill(cx - dx, cy + low, cx + dx + 1, cy + low + rowStep, col);
             }
         }
     }

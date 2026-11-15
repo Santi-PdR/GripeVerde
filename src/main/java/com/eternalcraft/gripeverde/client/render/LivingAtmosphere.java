@@ -667,6 +667,27 @@ public class LivingAtmosphere {
         g.fill(sheenInset, sheenTop, w - sheenInset, sheenBottom,
             AtmosphereRenderer.withAlpha(0x00927A55, sheenAlpha));
 
+        // v0.190.0: el reflejo de la luna en el asfalto mojado. Un degradado
+        // vertical y tres destellos que respiran: cuatro rellenos y la calle
+        // deja de ser una losa pareja debajo del cielo.
+        int moonX = AtmosphereRenderer.moonCenterX(w);
+        int moonHalf = Math.max(14, w / 30);
+        int reflTop = streetTop + Math.max(2, streetH / 5);
+        if (reflTop < streetBottom - 3) {
+            AtmosphereRenderer.fillGradientV(g, moonX - moonHalf, reflTop,
+                moonX + moonHalf, streetBottom,
+                AtmosphereRenderer.withAlpha(0x00CFC49C, 26),
+                AtmosphereRenderer.withAlpha(0x00CFC49C, 0));
+            for (int i = 0; i < 3; i++) {
+                float wob = (float) Math.sin(time * 0.9f + i * 2.1f);
+                int shimW = (int) (moonHalf * (0.45f + 0.25f * wob));
+                int shimY = reflTop + (streetBottom - reflTop) * (i + 1) / 4;
+                int shimA = Math.max(4, 20 - i * 5);
+                g.fill(moonX - shimW, shimY, moonX + shimW, shimY + 1,
+                    AtmosphereRenderer.withAlpha(0x00E6DDBA, shimA));
+            }
+        }
+
         // Cunetas laterales mas oscuras
         int gutterW = Math.max(4, w / 18);
         g.fill(0, curbLightEnd, gutterW, streetBottom,

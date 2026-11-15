@@ -1,3 +1,11 @@
+## v0.190.0 - El cielo cuesta un tercio
+
+- `AtmosphereRenderer.drawSoftBlob` (halo de la luna, nubes y humo de chimeneas): anillos 4 → **3/2** y franjas de 2 px → **2-4 px según radio**, con el anillo exterior a alpha propio (antes le tocaba 0 y no se veía). Los tres usos bajan de ~1.500 a ~500 rellenos por cuadro.
+- `renderStars`: estrella brillante 5 fills en cruz → **2** (halo + núcleo).
+- `renderSkyGradient`: franja fría `0x00182A38` sobre el resplandor ámbar + línea de horizonte (`0x001A1208`, α40).
+- `renderSearchlights`: lámpara de cada torre (2 fills por torre).
+- `AtmosphereRenderer.moonCenterX(w)` público; `LivingAtmosphere.renderStreet` dibuja el **reflejo de la luna** en el asfalto (un `fillGradientV` + 3 destellos).
+
 ## v0.189.0 - La pausa que ya no reza trescientas veces
 
 - `DiaryPauseScreen.drawPanel`: el brillo del panel era un `fill` por fila (~300/cuadro) → **2 `fillGradient`** (sube hasta el 40 % de la altura y baja).

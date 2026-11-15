@@ -9,7 +9,7 @@ Actualizado: 2026-11-13
   token, igual que el de Photon/Fisk.
 - Rama de trabajo de la sesión: `arena/48be547c-gripeverde` (base `02e85bc`) — la plataforma
   fija el nombre, no se renombra. Todo el trabajo va ahí; el PR sale de esa rama.
-- Versión de esta rama: `0.189.0` (anteriores entregadas: `0.188.0`, `0.187.0`, `0.186.0`, `0.185.0`, `0.184.2`, `0.184.1`, `0.183.0`)
+- Versión de esta rama: `0.190.0` (anteriores entregadas: `0.189.0`, `0.188.0`, `0.187.0`, `0.186.0`, `0.185.0`, `0.184.2`, `0.184.1`, `0.183.0`)
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
 - El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
   proyecto local del usuario.
@@ -119,6 +119,16 @@ Actualizado: 2026-11-13
 - El validador local `python3 tools/verify_mirrors.py` reproduce los sellos de Gradle
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
+
+## Cambios de 0.190.0 — el cielo y los blobs blandos
+
+- `AtmosphereRenderer.drawSoftBlob`: el anillo exterior ahora lleva alpha (`0.22 + 0.55·t`), así que el radio se conserva
+  con menos anillos: `steps = radius >= 14 ? 3 : 2`, `rowStep = radius >= 24 ? 4 : radius >= 12 ? 3 : 2`. Halo de la luna,
+  nubes y humo pasan de ~1.500 a ~500 rellenos por cuadro.
+- `renderStars`: brillantes con halo + núcleo (5 → 2 fills).
+- `renderSkyGradient`: franja fría `0x00182A38` encima del resplandor ámbar + línea de horizonte.
+- `renderSearchlights`: lámpara en cada torre.
+- `moonCenterX(w)` público; `LivingAtmosphere.renderStreet`: reflejo de la luna (`fillGradientV` + 3 destellos).
 
 ## Cambios de 0.189.0 — menos rellenos en la pausa
 

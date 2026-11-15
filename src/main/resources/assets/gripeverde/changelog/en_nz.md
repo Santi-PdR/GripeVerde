@@ -1,3 +1,9 @@
+## Version 0.190.0 - The sky costs a third
+
+The soft-blob brush - the one that paints the moon halo, the clouds and the chimney smoke - was the most expensive thing in the background: over fifteen hundred fills per frame between the three. It spent one ring too many because the outer one got a zero alpha and never showed, and it drew in two-pixel bands even when the blob was sixty wide. Now the outer ring carries its own alpha, so with fewer rings the blob keeps its radius, and the bands grow with the size: the three together drop to a third and look just as soft, if not softer. Bright stars spent five fills in a cross; now they are a halo and a core, two, and read rounder.
+
+And the sky changed a little: a cool band just above the amber glow of the horizon, which separates the city from the backdrop and gives it air, and a horizon line that closes the edge. The two watchtowers finally have their lamp, and the wet asphalt returns the moon's reflection with three glimmers that breathe.
+
 ## Version 0.189.0 - The pause screen stops praying three hundred times
 
 The pause screen was the most expensive of all, and not because of what it shows: the panel gloss was painted with one fill per row - about three hundred calls per frame - when that gloss only changes from top to bottom, so it is now two gradients, one rising to forty per cent of the height and one falling back. The vignette spent forty one-pixel steps per edge, a hundred and sixty fills: with ten four-pixel bands it looks the same and costs eight times less. And the two blood stains on the paper were drawn pixel by pixel, a hundred and thirteen fills each; now every row of the circle is a single run and the gradient is left vertical, which is all you can see at that size. All told, the pause went from nearly six hundred and fifty fill calls per frame to about eighty-five.

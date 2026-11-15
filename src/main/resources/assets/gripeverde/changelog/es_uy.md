@@ -1,3 +1,9 @@
+## Version 0.190.0 - El cielo cuesta un tercio
+
+El pincel de los blobs blandos -el que dibuja el halo de la luna, las nubes y el humo de las chimeneas- era lo mas caro del fondo: mas de mil quinientos rellenos por cuadro entre los tres. Gastaba un anillo de mas porque al de afuera le tocaba alpha cero y no se veia, y dibujaba en franjas de dos pixeles aunque el blob midiera sesenta. Ahora el anillo exterior lleva alpha propio, asi que con menos anillos el blob conserva su radio, y las franjas crecen con el tamano: los tres juntos bajan a un tercio y quedan igual de blandos, o mas. Las estrellas brillantes gastaban cinco rellenos en cruz; ahora son un halo y el nucleo, dos, y se leen mas redondas.
+
+Y el cielo cambio un poco: una franja fria justo encima del resplandor ambar del horizonte, que separa la ciudad del fondo y le da aire, y una linea de horizonte que cierra el borde. Las dos torres de los reflectores tienen por fin su lampara, y el asfalto mojado devuelve el reflejo de la luna con tres destellos que respiran.
+
 ## Version 0.189.0 - La pausa que ya no reza trescientas veces
 
 La pantalla de pausa era la mas cara de todas, y no por lo que muestra: el brillo del panel se dibujaba con un relleno por cada fila -unas trescientas llamadas por cuadro- cuando ese brillo solo cambia de arriba abajo, asi que ahora son dos gradientes, uno que sube hasta el cuarenta por ciento de la altura y otro que vuelve a bajar. La vinneta gastaba cuarenta pasos de un pixel por cada lado, ciento sesenta rellenos: con diez bandas de cuatro pixeles se ve igual y cuesta ocho veces menos. Y las dos manchas de sangre del papel se dibujaban pixel por pixel, ciento trece rellenos cada una; ahora cada fila del circulo es un solo tramo y el degradado quedo en vertical, que es lo unico que se alcanza a ver a ese tamano. En total, la pausa paso de casi seiscientas cincuenta llamadas de relleno por cuadro a unas ochenta y cinco.
