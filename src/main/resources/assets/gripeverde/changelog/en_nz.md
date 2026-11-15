@@ -1,3 +1,9 @@
+## Version 0.222.0 - Every sheet ages the same way
+
+The new paper stood out. The reading room, the credits and the adjustments were still drawn as sheets with straight edges, and the pause screen had its own paper brush without a single damp stain.
+
+Now those three sheets arrive torn at the top and bottom, with chips flaking off, and the pause screen receives the same damp stains, dirt and worn edge as the rest of the notebook. The tear is always the same for the same sheet size: nothing trembles from one frame to the next.
+
 ## Version 0.221.0 - The cover is cleaned and the logbook becomes a diary
 
 The cover had two extra things up top: a dirty pane of glass over the scene, and a hidden egg that answered when the emblem was pressed. Both are gone. The field manual access left too; it now lives only in the pause screen, where it is needed.

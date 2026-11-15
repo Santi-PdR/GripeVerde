@@ -1,3 +1,9 @@
+## Version 0.222.0 - Todas las hojas envejecen igual
+
+El papel nuevo se notaba. La sala de consulta, los creditos y los ajustes todavia se dibujaban como hojas de borde recto, y la pausa tenia su propio pincel de papel sin una sola mancha de humedad.
+
+Ahora esas tres hojas llegan rasgadas arriba y abajo, con esquirlas que se desprenden, y la pausa recibe las mismas manchas de humedad, la suciedad y el borde gastado que el resto del cuaderno. El desgarro es siempre el mismo para el mismo tamano de hoja: nada tiembla de un cuadro a otro.
+
 ## Version 0.221.0 - La portada se limpia y la bitacora se vuelve diario
 
 La portada tenia dos cosas de mas arriba: un cristal sucio sobre la escena y un huevo escondido que respondia al pulsar el emblema. Las dos se fueron. Tambien salio el acceso al manual de campo, que ahora vive solo en la pausa, donde se necesita.

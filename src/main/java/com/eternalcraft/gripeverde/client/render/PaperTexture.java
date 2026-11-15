@@ -101,6 +101,16 @@ public final class PaperTexture {
      * hoja base de cada panel, siempre derivado de su geometria (mismas manchas
      * para el mismo panel, sin RNG por cuadro) y con un puñado de rellenos.
      */
+    /**
+     * v0.222.0: el envejecido, para las hojas que se pintan a mano (la pausa
+     * tiene su propio pincel de papel).
+     */
+    public static void drawWear(GuiGraphics g, int x, int y, int w, int h) {
+        if (g == null || w <= 0 || h <= 0) return;
+        int seed = (x * 73856093) ^ (y * 19349663) ^ (w * 83492791) ^ (h * 297121507);
+        drawAge(g, x, y, w, h, seed ^ 0x27D4EB2D);
+    }
+
     private static void drawAge(GuiGraphics g, int x, int y, int w, int h, int seed) {
         // Envejecido general: la hoja se oscurece hacia los bordes.
         g.fill(x, y, x + w, y + 2, DiaryTheme.withAlpha(0x006B5533, 16));

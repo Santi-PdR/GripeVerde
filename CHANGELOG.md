@@ -1,3 +1,8 @@
+## v0.222.0 - Todas las hojas envejecen igual
+
+- `PaperTexture.drawWear` público (para hojas pintadas a mano) y `drawTornSheet` en archivo, créditos y ajustes.
+- `DiaryPauseScreen`: el panel recibe `PaperTexture.drawWear` además de sus manchas de sangre.
+
 ## v0.221.0 - Portada limpia, bitacora convertida en diario y papel envejecido
 
 - `DiaryTitleScreen`: fuera `drawGlassPatina`, el huevo del emblema (`handleLogoClick`/`breakWaxSeal`,

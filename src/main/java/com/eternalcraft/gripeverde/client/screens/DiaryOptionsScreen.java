@@ -264,7 +264,8 @@ public class DiaryOptionsScreen extends Screen {
 
         // Panel pergamino
         DiaryChrome.drawPanelShadow(g, panelX, panelY, panelW, panelH);
-        PaperTexture.drawSheet(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.LEDGER);
+        // v0.222.0: hoja rasgada, como el resto del cuaderno.
+        PaperTexture.drawTornSheet(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.LEDGER);
 
         // Titulo en tinta - limpio, sin placa que corte
         int titleY = panelY + padTop;

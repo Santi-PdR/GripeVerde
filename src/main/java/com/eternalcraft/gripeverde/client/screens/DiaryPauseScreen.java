@@ -3,6 +3,7 @@ package com.eternalcraft.gripeverde.client.screens;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -515,6 +516,8 @@ public class DiaryPauseScreen extends PauseScreen {
 
         // 2. Textura minima (puntitos sepia)
         drawPaperTextureMinimal(g, x, y, w, h);
+        // v0.222.0: manchas de humedad y suciedad, igual que el resto de las hojas.
+        PaperTexture.drawWear(g, x, y, w, h);
 
         // 3. Brillo del panel.
         // v0.189.0: era un relleno por cada fila del panel (trescientas llamadas

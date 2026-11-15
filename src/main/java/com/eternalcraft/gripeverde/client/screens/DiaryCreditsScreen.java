@@ -103,7 +103,8 @@ public class DiaryCreditsScreen extends Screen {
         QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
 
         DiaryChrome.drawPanelShadow(g, panelX, panelY, panelW, panelH);
-        PaperTexture.drawSheet(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
+        // v0.222.0: hoja rasgada, como el resto del cuaderno.
+        PaperTexture.drawTornSheet(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
         drawOfficialFrame(g);
 
         int cx = this.width / 2;

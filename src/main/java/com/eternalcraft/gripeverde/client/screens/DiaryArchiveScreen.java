@@ -144,7 +144,8 @@ public class DiaryArchiveScreen extends Screen {
         QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
 
         DiaryChrome.drawPanelShadow(g, panelX, panelY, panelW, panelH);
-        PaperTexture.drawSheet(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.ARCHIVE);
+        // v0.222.0: hoja rasgada, como el resto del cuaderno.
+        PaperTexture.drawTornSheet(g, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.ARCHIVE);
         DiaryChrome.drawCornerOrnaments(g, panelX, panelY, panelW, panelH);
         DiaryChrome.drawRegistryTag(g, panelX, panelY, panelW, panelH, "REG. XIV");
 
