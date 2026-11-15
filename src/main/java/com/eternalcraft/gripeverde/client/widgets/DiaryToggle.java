@@ -34,6 +34,10 @@ public class DiaryToggle extends AbstractButton {
     private final Supplier<Boolean> valueGetter;
     private final Consumer<Boolean> valueSetter;
     private final Component baseLabel;
+    // v0.194.0: el rotulo y el valor se traducen una vez, no en cada cuadro.
+    private final String baseLabelStr;
+    private Component cachedValLabel;
+    private String cachedValStr;
     private final Function<Boolean, Component> valueFormatter;
     private final Runnable onChanged; // opcional, se invoca despues del set()
 
@@ -65,6 +69,7 @@ public class DiaryToggle extends AbstractButton {
         this.valueGetter = valueGetter;
         this.valueSetter = valueSetter;
         this.baseLabel = baseLabel;
+        this.baseLabelStr = baseLabel == null ? "" : baseLabel.getString();
         this.valueFormatter = valueFormatter != null ? valueFormatter : DiaryToggle::defaultFormatter;
         this.onChanged = onChanged;
         updateNarrationMessage();
@@ -143,14 +148,18 @@ public class DiaryToggle extends AbstractButton {
 
         Font font = Minecraft.getInstance().font;
         Component valLabel = this.valueFormatter.apply(value);
-        String labelStr = this.baseLabel.getString();
-        String valStr = valLabel.getString();
+        String labelStr = this.baseLabelStr;
+        if (this.cachedValLabel == null || !this.cachedValLabel.equals(valLabel)) {
+            this.cachedValLabel = valLabel;
+            this.cachedValStr = valLabel == null ? "" : valLabel.getString();
+        }
+        String valStr = this.cachedValStr;
         int plateW = 66;
         int paddingH = 10;
         int maxLabelW = Math.max(24, w - plateW - paddingH * 2 - 8);
         if (DiaryTypography.width(font, labelStr) > maxLabelW) {
             labelStr = DiaryTypography.fitString(font, labelStr, maxLabelW);
-        }
+        }   // el recorte ya queda memorizado en DiaryTypography
 
         int contentY = y + (h - font.lineHeight) / 2;
         int labelColor = hoverAnim.lerpColor(DiaryTheme.INK, DiaryTheme.INK_BLACK);

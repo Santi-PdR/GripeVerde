@@ -4,6 +4,7 @@ import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.render.DiaryTypography;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -105,9 +106,23 @@ public class DiarySlider extends AbstractSliderButton {
         DiaryChrome.drawDivisorLozenge(g, thumbX + 4, needleTop + 2);
 
         int textColor = hovered ? DiaryTheme.INK_BLACK : DiaryTheme.INK;
-        String msg = ellipsize(Minecraft.getInstance().font, this.getMessage().getString(), Math.max(8, w - 14));
-        int textX = x + w / 2 - DiaryTypography.width(Minecraft.getInstance().font, msg) / 2;
-        DiaryTypography.draw(g, Minecraft.getInstance().font, msg, textX, y + 4, textColor);
+        Font font = Minecraft.getInstance().font;
+        String msg = ellipsize(font, cachedMessage(), Math.max(8, w - 14));
+        int textX = x + w / 2 - DiaryTypography.width(font, msg) / 2;
+        DiaryTypography.draw(g, font, msg, textX, y + 4, textColor);
+    }
+
+    // v0.194.0: el texto del slider se resuelve solo cuando cambia.
+    private Component cachedMsgComponent;
+    private String cachedMsgString = "";
+
+    private String cachedMessage() {
+        Component message = this.getMessage();
+        if (this.cachedMsgComponent == null || !this.cachedMsgComponent.equals(message)) {
+            this.cachedMsgComponent = message;
+            this.cachedMsgString = message == null ? "" : message.getString();
+        }
+        return this.cachedMsgString;
     }
 
     private static String ellipsize(net.minecraft.client.gui.Font font, String text, int maxWidth) {

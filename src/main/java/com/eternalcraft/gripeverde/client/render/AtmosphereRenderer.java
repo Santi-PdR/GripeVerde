@@ -282,6 +282,10 @@ public class AtmosphereRenderer {
         g.fill(leftX - 2, baseY, leftX + 3, baseY + 1, withAlpha(color, 70));
         g.fill(rightX - 1, baseY - 3, rightX + 2, baseY, withAlpha(color, 110));
         g.fill(rightX - 2, baseY, rightX + 3, baseY + 1, withAlpha(color, 65));
+        // v0.194.0: la luz de cada torre cae tambien sobre el suelo.
+        int spill = Math.max(10, w / 40);
+        g.fill(leftX - spill, baseY + 1, leftX + spill, baseY + 2, withAlpha(color, 16));
+        g.fill(rightX - spill, baseY + 1, rightX + spill, baseY + 2, withAlpha(color, 16));
     }
 
     /**

@@ -1,3 +1,9 @@
+## Version 0.194.0 - Options that do not translate every frame
+
+The options screen resolved the translation of its subtitle and clipped the title on every frame; now the header is built once per language and width, and is only rebuilt when the language or the window size changes. Toggles translated their label every frame and sliders built and measured their text every frame: the toggle label is translated when it is constructed, and the toggle value and the slider text are only resolved when they actually change.
+
+On the street, the middle rows of cobbles carry one joint in two - the last one, the one you look at, carries them all - and the light of the two watchtower lamps also falls on the ground, a faint line that ties the lamp to the asphalt.
+
 ## Version 0.193.0 - Fewer sums per frame on the text screens
 
 The field guide drew every row on every frame and measured each one's width to underline the headings, even when the scissor covered half of them: now whatever sits above the viewport is neither measured nor drawn, and once it goes past the bottom it stops. Each row keeps its width the first time it needs it, and the title, subtitle and scroll hint are clipped once per language and width instead of every frame.

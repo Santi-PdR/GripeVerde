@@ -229,6 +229,35 @@ public class DiaryOptionsScreen extends Screen {
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.tick(1.0f / 20.0f);
     }
 
+    // v0.194.0: la cabecera de la pantalla se recorta una vez por fuente y ancho,
+    // no en cada cuadro (la traduccion tampoco se resuelve en cada cuadro).
+    private net.minecraft.client.gui.Font headerFont;
+    private int headerPanelW = -1;
+    private String headerTitleSrc = "";
+    private String headerTitleOut = "";
+    private String headerSubtitleOut = "";
+
+    private String headerTitleFitted() {
+        String title = this.title.getString();
+        if (this.headerFont != this.font || this.headerPanelW != this.panelW
+                || !this.headerTitleSrc.equals(title)) {
+            this.headerFont = this.font;
+            this.headerPanelW = this.panelW;
+            this.headerTitleSrc = title;
+            int maxW = Math.max(40, panelW - 24);
+            this.headerTitleOut = DiaryTypography.fitString(this.font, title, maxW);
+            String sub = "- " + net.minecraft.network.chat.Component
+                .translatable("gripeverde.options.subtitle").getString() + " -";
+            this.headerSubtitleOut = DiaryTypography.fitString(this.font, sub, maxW);
+        }
+        return this.headerTitleOut;
+    }
+
+    private String headerSubtitleFitted() {
+        headerTitleFitted();
+        return this.headerSubtitleOut;
+    }
+
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
@@ -240,14 +269,13 @@ public class DiaryOptionsScreen extends Screen {
         // Titulo en tinta - limpio, sin placa que corte
         int titleY = panelY + padTop;
         {
-            Component shownTitle = Component.literal(DiaryTypography.fitString(this.font, this.title.getString(), Math.max(40, panelW - 24)));
+            Component shownTitle = Component.literal(headerTitleFitted());
             int titleW = DiaryTypography.width(this.font, shownTitle);
             int titleX = (this.width - titleW) / 2;
             DiaryTypography.draw(g, this.font, shownTitle, titleX, titleY, DiaryTheme.INK, false);
 
             // Subtitulo diegetico - sin sombra que divida
-            String subtitle = "- " + net.minecraft.network.chat.Component.translatable("gripeverde.options.subtitle").getString() + " -";
-            subtitle = DiaryTypography.fitString(this.font, subtitle, Math.max(40, panelW - 24));
+            String subtitle = headerSubtitleFitted();
             int subW = DiaryTypography.width(this.font, subtitle);
             int subX = (this.width - subW) / 2;
             int subY = titleY + TITLE_H + 2;

@@ -1,3 +1,12 @@
+## v0.194.0 - Opciones que no traducen en cada cuadro
+
+- `DiaryOptionsScreen`: cabecera (título + subtítulo) memorizada por fuente y ancho (`headerTitleFitted`/`headerSubtitleFitted`),
+  sin `translatable(...).getString()` por cuadro.
+- `DiaryToggle`: `baseLabelStr` traducido en el constructor; valor cacheado por `Component` (`cachedValLabel`/`cachedValStr`).
+- `DiarySlider`: `cachedMessage()` y una sola llamada a `Minecraft.getInstance().font` por cuadro.
+- `LivingAtmosphere.renderStreet`: juntas de adoquines cada dos columnas en las hileras del medio (la última las conserva todas).
+- `renderSearchlights`: derrame de luz de 1 px en el suelo bajo cada torre.
+
 ## v0.193.0 - Menos cuentas por cuadro en las pantallas de texto
 
 - `DiaryFieldGuideScreen`: **culling** de filas fuera del viewport (arriba no se mide ni se dibuja, abajo corta) +

@@ -1,3 +1,9 @@
+## Version 0.194.0 - Opciones que no traducen en cada cuadro
+
+La pantalla de opciones resolvia la traduccion de su subtitulo y recortaba el titulo en cada cuadro; ahora la cabecera se arma una vez por lengua y ancho, y solo se vuelve a armar cuando cambia el idioma o el tamano de la ventana. Los toggles traducían su rotulo en cada cuadro y los sliders armaban y medían su texto en cada cuadro: el rotulo del toggle se traduce al construirse, y el valor del toggle y el texto del slider solo se resuelven cuando cambian de verdad.
+
+En la calle, las hileras del medio de adoquines llevan una junta de cada dos -la ultima, la que se mira, las lleva todas-, y la luz de las dos torres de los reflectores cae tambien sobre el suelo, una linea tenue que ata la lampara con el asfalto.
+
 ## Version 0.193.0 - Menos cuentas por cuadro en las pantallas de texto
 
 La guia de campo dibujaba todas sus filas en cada cuadro y medía el ancho de cada una para subrayar los titulos, aunque el recorte de pantalla tapara la mitad: ahora lo que quedo arriba de la vista no se mide ni se dibuja, y cuando se pasa del fondo se corta. Cada fila guarda su ancho la primera vez que lo necesita, y el titulo, el subtitulo y la pista de scroll se recortan una vez por lengua y ancho en vez de en cada cuadro.

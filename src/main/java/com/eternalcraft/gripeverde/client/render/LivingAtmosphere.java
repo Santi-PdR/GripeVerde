@@ -659,7 +659,10 @@ public class LivingAtmosphere {
             // recibe un filo de agua en el borde de arriba, que es lo que hace que
             // la calle se lea mojada.
             if (row > 0) {
-                for (int x = -offset; x < w; x += blockW) {
+                // v0.194.0: en las hileras del medio una junta de cada dos; la
+                // ultima -la mas cercana, la que se mira- las lleva todas.
+                int step = (row == rowCount - 1) ? blockW : blockW * 2;
+                for (int x = -offset; x < w; x += step) {
                     g.fill(x, y1 + 1, x + 1, y2,
                         AtmosphereRenderer.withAlpha(0x0024140B, seamAlpha));
                 }
