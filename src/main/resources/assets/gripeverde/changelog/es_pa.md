@@ -1,3 +1,11 @@
+## Version 0.214.0 - La hora y la niebla dejan de preguntarse
+
+Dos cuentas que se repetian en cada cuadro sin necesidad.
+
+La primera era la hora: el velo de la noche preguntaba al reloj del sistema si ya habia pasado de las ocho, y lo hacia con su objeto de fecha y su zona horaria cada vez que se dibujaba la portada. Ahora la hora se consulta una vez por minuto y se guarda; el velo sigue cayendo a la misma hora exacta.
+
+La segunda era la niebla. Cada franja baja se pintaba en dos mitades pegadas del mismo color y la misma transparencia. Ahora cada franja se pinta de una sola pasada: el mismo dibujo, la mitad de trabajo. Las medidas de las franjas tambien eran fijas y se armaban de nuevo en cada cuadro; quedan apuntadas de una vez.
+
 ## Version 0.213.0 - Medir la letra una sola vez
 
 El ancho de un renglon no cambia mientras el renglon sea el mismo. Aun asi, las pantallas lo volvian a preguntar en cada cuadro: la portada medía su saludo, su registro y sus avisos; el archivo de cambios medía su titulo, su sello y el punto de cada vineta con cada parpadeo del cursor.

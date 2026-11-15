@@ -1,3 +1,11 @@
+## Version 0.214.0 - The hour and the fog stop asking
+
+Two sums that were repeated on every frame for no reason.
+
+The first was the hour: the night veil asked the system clock whether it was past eight, and it did so with its date object and its time zone every time the title was drawn. Now the hour is read once a minute and kept; the veil still falls at exactly the same time.
+
+The second was the fog. Every low band was painted in two touching halves of the same colour and the same transparency. Now each band is painted in a single pass: the same drawing, half the work. The band measurements were fixed too and were rebuilt on every frame; they are now noted once.
+
 ## Version 0.213.0 - Measuring the type once
 
 The width of a line does not change while the line stays the same. Even so, the screens kept asking for it on every frame: the title measured its greeting, its registry and its notices; the changelog measured its title, its stamp and the dot of every bullet with each blink of the cursor.

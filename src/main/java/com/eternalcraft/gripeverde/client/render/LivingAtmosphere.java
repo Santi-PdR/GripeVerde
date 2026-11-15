@@ -439,13 +439,16 @@ public class LivingAtmosphere {
         paperScraps[i][4] = 0.5f + (float)RND.nextFloat();
     }
 
+    // v0.214.0: las franjas de niebla son fijas; no hace falta armarlas por cuadro.
+    private static final float[][] FOG_LOW_BANDS = {
+        {0.68f, 0.06f, 0.45f},
+        {0.72f, 0.05f, 0.60f},
+        {0.76f, 0.04f, 0.35f},
+    };
+
     public static void renderFogLow(GuiGraphics g, int w, int h) {
         // Niebla OCRE (no verde) que RESPIRA a 0.3Hz
-        float[][] bands = {
-            {0.68f, 0.06f, 0.45f},
-            {0.72f, 0.05f, 0.60f},
-            {0.76f, 0.04f, 0.35f},
-        };
+        float[][] bands = FOG_LOW_BANDS;
         // Respiracion lenta global: 0.3Hz = periodo ~3.3s
         // Amplitud +-25% del alpha base
         float breath = (float)(Math.sin(time * 0.3f * 2.0 * Math.PI) * 0.25f + 1f);
@@ -461,8 +464,8 @@ public class LivingAtmosphere {
             int fogColor = AtmosphereRenderer.withAlpha(0x004A3820, alpha);
             int startX = -100 + (offset % w) - w;
             int bandW = (int)(w * 1.5f);
-            g.fill(startX,         y1, startX + bandW,     y2, fogColor);
-            g.fill(startX + bandW, y1, startX + bandW * 2, y2, fogColor);
+            // v0.214.0: las dos mitades del mismo color se pintan de una vez.
+            g.fill(startX, y1, startX + bandW * 2, y2, fogColor);
         }
     }
 
@@ -537,9 +540,24 @@ public class LivingAtmosphere {
         renderLightningForks(g, w, h);
     }
 
+    // v0.214.0: la hora del reloj real se consultaba en cada cuadro -dos veces
+    // por pantalla, con su objeto de fecha y su zona horaria-, y solo sirve para
+    // decidir si es de noche. Basta con refrescarla una vez por minuto.
+    private static int realHourCached = -1;
+    private static long realHourCachedAtMs = Long.MIN_VALUE;
+
+    private static int realHour() {
+        long now = nowMs();
+        if (realHourCached < 0 || now - realHourCachedAtMs > 60000L) {
+            realHourCached = java.time.LocalTime.now().getHour();
+            realHourCachedAtMs = now;
+        }
+        return realHourCached;
+    }
+
     public static void renderVignette(GuiGraphics g, int w, int h) {
         // Real system hour: if between 20-06, add extra dark overlay
-        int realHour = java.time.LocalTime.now().getHour();
+        int realHour = realHour();
         boolean isNightIRL = realHour >= 20 || realHour < 6;
         if (isNightIRL) {
             int nightOverlayAlpha = 32;

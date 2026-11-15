@@ -1,3 +1,8 @@
+## v0.214.0 - La hora y la niebla dejan de preguntarse
+
+- `LivingAtmosphere.renderVignette`: la hora real se cachea un minuto (`realHour()`), en vez de `LocalTime.now()` por cuadro.
+- `LivingAtmosphere.renderFogLow`: franjas en `FOG_LOW_BANDS` (constante) y una sola pasada por franja en vez de dos mitades.
+
 ## v0.213.0 - Medir la letra una sola vez
 
 - `DiaryTypography.width(font, String|Component)` pasa por `widthMemo`, ahora atado a la fuente (`widthMemoFont`):
