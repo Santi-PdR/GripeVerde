@@ -9,7 +9,7 @@ Actualizado: 2026-11-13
   token, igual que el de Photon/Fisk.
 - Rama de trabajo de la sesión: `arena/48be547c-gripeverde` (base `02e85bc`) — la plataforma
   fija el nombre, no se renombra. Todo el trabajo va ahí; el PR sale de esa rama.
-- Versión de esta rama: `0.194.0` (anteriores entregadas: `0.193.0`, `0.192.0`, `0.191.0`, `0.190.0`, `0.189.0`, `0.188.0`, `0.187.0`, `0.186.0`, `0.185.0`, `0.184.2`, `0.184.1`, `0.183.0`)
+- Versión de esta rama: `0.195.0` (anteriores entregadas: `0.194.0`, `0.193.0`, `0.192.0`, `0.191.0`, `0.190.0`, `0.189.0`, `0.188.0`, `0.187.0`, `0.186.0`, `0.185.0`, `0.184.2`, `0.184.1`, `0.183.0`)
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
 - El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
   proyecto local del usuario.
@@ -134,6 +134,13 @@ Actualizado: 2026-11-13
 - El validador local `python3 tools/verify_mirrors.py` reproduce los sellos de Gradle
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
+
+## Cambios de 0.195.0 — traducciones memorizadas
+
+- `DiaryChrome.tr(key)` + `trFit(key, font, maxW)`: memoria invalidada por `LanguageManager.getSelected()`; 34 llamadas
+  por cuadro reemplazadas en 20 pantallas/widgets (el import se agregó donde faltaba).
+- `DiaryLanguageScreen.drawLanguageCount(g, titleY)`: contador de lenguas a la izquierda del título (`panelW >= 300`,
+  margen derecho reservado para REG. IV).
 
 ## Cambios de 0.194.0 — opciones y calle
 

@@ -103,7 +103,7 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
 
         // Titulo
         String titleStr = DiaryChrome.fitText(this.font,
-            Component.translatable("options.chat.title").getString(), Math.max(0, this.panelW - 28));
+            DiaryChrome.tr("options.chat.title"), Math.max(0, this.panelW - 28));
         int titleX = this.width / 2;
         int titleY = this.panelY + 10;
         {
@@ -112,7 +112,7 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         }
 
         // Subtitulo
-        String subtitle = "- " + Component.translatable("gripeverde.options.chat.subtitle").getString() + " -";
+        String subtitle = "- " + DiaryChrome.tr("gripeverde.options.chat.subtitle") + " -";
         subtitle = DiaryChrome.fitText(this.font, subtitle, Math.max(0, this.panelW - 28));
         int subWC = this.font.width(subtitle);
         g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);

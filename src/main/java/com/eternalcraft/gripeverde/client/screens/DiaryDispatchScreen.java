@@ -324,13 +324,13 @@ public class DiaryDispatchScreen extends Screen {
 
         int titleY = this.panelY + (compactLayout() ? 10 : 14);
         int centerX = this.panelX + this.panelW / 2;
-        String title = ellipsize(Component.translatable("gripeverde.dispatch.title").getString(),
+        String title = ellipsize(DiaryChrome.tr("gripeverde.dispatch.title"),
             Math.max(64, this.panelW - 60));
         gfx.drawString(this.font, title, centerX - this.font.width(title) / 2, titleY,
             DiaryChrome.INK_TITLE, false);
 
         String subtitle = ellipsize(
-            "- " + Component.translatable("gripeverde.dispatch.subtitle").getString() + " -",
+            "- " + DiaryChrome.tr("gripeverde.dispatch.subtitle") + " -",
             Math.max(64, this.panelW - 40));
         gfx.drawString(this.font, subtitle, centerX - this.font.width(subtitle) / 2, titleY + 12,
             DiaryChrome.INK_SUBTITLE, false);
@@ -394,7 +394,7 @@ public class DiaryDispatchScreen extends Screen {
         if (!this.statusKey.isEmpty() && Util.getMillis() < this.statusUntil) {
             return Component.translatable(this.statusKey).getString();
         }
-        return Component.translatable("gripeverde.dispatch.slot.hint").getString();
+        return DiaryChrome.tr("gripeverde.dispatch.slot.hint");
     }
 
     @Override

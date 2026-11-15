@@ -144,18 +144,19 @@ public class DiaryLanguageScreen extends Screen {
             int titleX = (this.width - titleW) / 2;
             g.drawString(this.font, titleText, titleX, titleY, DiaryChrome.INK_TITLE, false);
 
-            String subtitle = "- " + Component.translatable("gripeverde.options.language.subtitle").getString() + " -";
+            String subtitle = "- " + DiaryChrome.tr("gripeverde.options.language.subtitle") + " -";
             subtitle = DiaryChrome.fitText(this.font, subtitle, Math.max(0, this.panelW - 28));
             int subWL = this.font.width(subtitle);
             g.drawString(this.font, subtitle, cx - subWL / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
             String flavor = DiaryChrome.fitText(this.font,
-                Component.translatable("gripeverde.options.language.flavor").getString(), Math.max(0, this.panelW - 28));
+                DiaryChrome.tr("gripeverde.options.language.flavor"), Math.max(0, this.panelW - 28));
             int flvWL = this.font.width(flavor);
             g.drawString(this.font, flavor, cx - flvWL / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
 
             int divY1 = titleY + 42;
             DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY1);
+            drawLanguageCount(g, titleY);
         }
 
         int frameX = this.listX - 4;
@@ -193,6 +194,28 @@ public class DiaryLanguageScreen extends Screen {
             com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, this.panelY - 12);
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
         } catch (Throwable ignored) {}
+    }
+
+    /**
+     * v0.195.0: cuantas lenguas hay registradas, en el margen izquierdo del
+     * titulo (la derecha la ocupa la placa REG. IV). Si el panel es angosto no
+     * se dibuja: no vale la pena apretar.
+     */
+    private void drawLanguageCount(GuiGraphics g, int titleY) {
+        if (this.panelW < 300) return;
+        int total = 0;
+        try {
+            total = this.languageManager.getLanguages().size();
+        } catch (Throwable ignored) {}
+        if (total <= 0) return;
+        boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+        String text = english
+            ? (total == 1 ? "1 language" : total + " languages")
+            : (total == 1 ? "1 lengua" : total + " lenguas");
+        int x = this.panelX + 20;
+        int y = titleY + 4;
+        if (x + this.font.width(text) > this.panelX + this.panelW - 78) return;
+        g.drawString(this.font, text, x, y, DiaryChrome.INK_SUBTITLE, false);
     }
 
     private void drawSearchBuffer(GuiGraphics g) {

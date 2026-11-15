@@ -114,12 +114,12 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
         g.drawString(this.font, titleStr, titleX - tw / 2, titleY, DiaryChrome.INK_TITLE, false);
 
         // Subtitulo diegetico
-        String subtitle = "- " + Component.translatable("gripeverde.options.online.subtitle").getString() + " -";
+        String subtitle = "- " + DiaryChrome.tr("gripeverde.options.online.subtitle") + " -";
         subtitle = DiaryChrome.fitText(this.font, subtitle, Math.max(0, this.panelW - 28));
         int subW = this.font.width(subtitle);
         g.drawString(this.font, subtitle, titleX - subW / 2, titleY + 14, DiaryChrome.INK_SUBTITLE, false);
         String flavor = DiaryChrome.fitText(this.font,
-            Component.translatable("gripeverde.options.online.flavor").getString(), Math.max(0, this.panelW - 28));
+            DiaryChrome.tr("gripeverde.options.online.flavor"), Math.max(0, this.panelW - 28));
         int flavorW = this.font.width(flavor);
         g.drawString(this.font, flavor, titleX - flavorW / 2, titleY + 26, DiaryChrome.INK_FLAVOR, false);
 

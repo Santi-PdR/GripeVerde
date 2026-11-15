@@ -1,3 +1,9 @@
+## Version 0.195.0 - Screens stop translating sixty times a second
+
+Every screen resolved its fixed labels with `Component.translatable(...).getString()` inside the drawing code: build the component, look the key up in the language table and copy the text, sixty times a second, for the same title as always. Now there is a single translation memory in the diary - `DiaryChrome.tr` - the string is asked for once and kept, and the whole memory is dropped when the selected language changes, so a stale translation can never linger. Thirty-four calls per frame are gone across twenty screens.
+
+And the language window says how many languages are registered, in the left margin of the title - the right one is taken by the REG. IV plate - so you know at a glance how much there is to choose from. If the panel is narrow it simply is not drawn: no point squeezing it.
+
 ## Version 0.194.0 - Options that do not translate every frame
 
 The options screen resolved the translation of its subtitle and clipped the title on every frame; now the header is built once per language and width, and is only rebuilt when the language or the window size changes. Toggles translated their label every frame and sliders built and measured their text every frame: the toggle label is translated when it is constructed, and the toggle value and the slider text are only resolved when they actually change.

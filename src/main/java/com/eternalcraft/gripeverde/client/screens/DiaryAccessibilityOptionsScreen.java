@@ -137,7 +137,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         int titleY = this.panelY + 12;
         {
         String _title = DiaryChrome.fitText(this.font,
-            Component.translatable("options.accessibility.title").getString(), Math.max(0, this.panelW - 32));
+            DiaryChrome.tr("options.accessibility.title"), Math.max(0, this.panelW - 32));
         int _tw = this.font.width(_title);
         gfx.drawString(this.font, _title, cx - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
         }
@@ -145,7 +145,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         // Subtitulo
         int subtitleY = titleY + 12;
         {
-            String subC = "- " + Component.translatable("gripeverde.options.accessibility.subtitle").getString() + " -";
+            String subC = "- " + DiaryChrome.tr("gripeverde.options.accessibility.subtitle") + " -";
             subC = DiaryChrome.fitText(this.font, subC, Math.max(0, this.panelW - 32));
             int subW = this.font.width(subC);
             gfx.drawString(this.font, subC, cx - subW / 2, subtitleY, DiaryChrome.INK_SUBTITLE, false);

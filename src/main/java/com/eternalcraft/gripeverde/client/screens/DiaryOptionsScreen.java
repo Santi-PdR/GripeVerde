@@ -173,7 +173,7 @@ public class DiaryOptionsScreen extends Screen {
         DiarySlider fovSlider = new DiarySlider(fovX, fovY, fovW, fovH, fovNorm,
                 v -> {
                     int fov = (int) Math.round(30.0 + v * 80.0);
-                    return Component.translatable("options.fov").getString() + ": " + fov;
+                    return DiaryChrome.tr("options.fov") + ": " + fov;
                 },
                 v -> mcOptions.fov().set((int) Math.round(30.0 + v * 80.0)));
         fovSlider.setTooltip(Tooltip.create(Component.translatable("options.fov")));

@@ -221,7 +221,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         this.uiVolumeSlider = new DiarySlider(
             sliderX, uiSliderY, uiSliderW, compactH,
             ClientConfig.UI_VOLUME.get(),
-            value -> Component.translatable("gripeverde.options.sound.ui_slider").getString()
+            value -> DiaryChrome.tr("gripeverde.options.sound.ui_slider")
                 + ": " + (int) Math.round(value * 100.0) + "%",
             value -> {
                 ClientConfig.UI_VOLUME.set(value);
@@ -414,7 +414,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
 
         // --- Titulo ---
         String titleStr = DiaryChrome.fitText(this.font,
-            Component.translatable("options.sounds.title").getString(), Math.max(0, this.panelW - 28));
+            DiaryChrome.tr("options.sounds.title"), Math.max(0, this.panelW - 28));
         int titleX = this.width / 2;
         boolean compact = compactLayout();
         int titleY = this.panelY + (compact ? 4 : 10);

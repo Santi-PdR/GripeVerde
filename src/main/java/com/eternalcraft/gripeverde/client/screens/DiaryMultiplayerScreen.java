@@ -426,7 +426,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     }
 
     private void onDirect() {
-        ServerData sd = new ServerData(Component.translatable("selectServer.defaultName").getString(), "", false);
+        ServerData sd = new ServerData(DiaryChrome.tr("selectServer.defaultName"), "", false);
         this.minecraft.setScreen(new DiaryDirectJoinScreen(this, (accept) -> {
             if (accept) {
                 ConnectScreen.startConnecting(this, this.minecraft, ServerAddress.parseString(sd.ip), sd, false);
@@ -437,7 +437,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     }
 
     private void onAdd() {
-        ServerData sd = new ServerData(Component.translatable("selectServer.defaultName").getString(), "", false);
+        ServerData sd = new ServerData(DiaryChrome.tr("selectServer.defaultName"), "", false);
         this.minecraft.setScreen(new DiaryEditServerScreen(this, (accept) -> {
             if (accept && this.vanillaServers != null) {
                 this.vanillaServers.add(sd, false);
@@ -589,7 +589,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         gfx.drawString(this.font, titleStr, centerX - titleW / 2, titleY, DiaryChrome.INK_TITLE, false);
 
         // Subtitulo
-        String subtitle = "- " + Component.translatable("gripeverde.multiplayer.subtitle").getString() + " -";
+        String subtitle = "- " + DiaryChrome.tr("gripeverde.multiplayer.subtitle") + " -";
         subtitle = ellipsizeTo(subtitle, headingMaxWidth);
         int subW = this.font.width(subtitle);
         gfx.drawString(this.font, subtitle, centerX - subW / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);

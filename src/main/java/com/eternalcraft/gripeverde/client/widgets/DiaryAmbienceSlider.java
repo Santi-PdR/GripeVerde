@@ -23,7 +23,7 @@ public class DiaryAmbienceSlider extends AbstractSliderButton {
         int pct = (int) Math.round(v * 100.0);
         // v0.23.0: la etiqueta estaba hardcodeada en castellano; la clave
         // traducida ya existia en los 25 locales pero no se utilizaba.
-        String txt = Component.translatable("gripeverde.options.sound.ambience_slider").getString()
+        String txt = DiaryChrome.tr("gripeverde.options.sound.ambience_slider")
                 + ": " + pct + "%";
         return Component.literal(txt);
     }

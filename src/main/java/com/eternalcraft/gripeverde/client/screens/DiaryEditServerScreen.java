@@ -190,7 +190,7 @@ public class DiaryEditServerScreen extends Screen {
         gfx.drawString(this.font, titleStr, centerX - titleW / 2, titleY, DiaryChrome.INK_TITLE, false);
 
         // Subtitulo
-        String subtitle = "- " + Component.translatable("gripeverde.edit.subtitle").getString() + " -";
+        String subtitle = "- " + DiaryChrome.tr("gripeverde.edit.subtitle") + " -";
         subtitle = ellipsizeTo(this.font, subtitle, Math.max(48, panelW - 28));
         int subW = this.font.width(subtitle);
         gfx.drawString(this.font, subtitle, centerX - subW / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);

@@ -1,3 +1,9 @@
+## Version 0.195.0 - Las pantallas dejan de traducir sesenta veces por segundo
+
+Cada pantalla resolvia sus rotulos fijos con `Component.translatable(...).getString()` dentro del dibujo: armar el componente, buscar la clave en la tabla de la lengua y copiar el texto, sesenta veces por segundo, para el mismo titulo de siempre. Ahora hay una sola memoria de traducciones en el diario -`DiaryChrome.tr`-: la cadena se pide una vez y se guarda, y la memoria entera se tira cuando cambia la lengua elegida, asi que nunca queda una traduccion vieja. Se fueron treinta y cuatro llamadas por cuadro repartidas en veinte pantallas.
+
+Y la ventana de idioma dice cuantas lenguas hay registradas, en el margen izquierdo del titulo -la derecha la ocupa la placa REG. IV-, para saber de un vistazo cuanto hay para elegir. Si el panel es angosto no se dibuja: no vale la pena apretar.
+
 ## Version 0.194.0 - Opciones que no traducen en cada cuadro
 
 La pantalla de opciones resolvia la traduccion de su subtitulo y recortaba el titulo en cada cuadro; ahora la cabecera se arma una vez por lengua y ancho, y solo se vuelve a armar cuando cambia el idioma o el tamano de la ventana. Los toggles traducían su rotulo en cada cuadro y los sliders armaban y medían su texto en cada cuadro: el rotulo del toggle se traduce al construirse, y el valor del toggle y el texto del slider solo se resuelven cuando cambian de verdad.

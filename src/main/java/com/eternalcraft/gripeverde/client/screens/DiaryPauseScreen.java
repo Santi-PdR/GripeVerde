@@ -1,5 +1,7 @@
 package com.eternalcraft.gripeverde.client.screens;
 
+import com.eternalcraft.gripeverde.client.render.DiaryChrome;
+
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import net.minecraft.ChatFormatting;
@@ -613,8 +615,8 @@ public class DiaryPauseScreen extends PauseScreen {
     // ================================================================
 
     private void drawPanelTitle(GuiGraphics g, int px, int py) {
-        String title = Component.translatable("gripeverde.pause.title").getString();
-        String subtitle = Component.translatable("gripeverde.pause.subtitle").getString();
+        String title = DiaryChrome.tr("gripeverde.pause.title");
+        String subtitle = DiaryChrome.tr("gripeverde.pause.subtitle");
 
         int centerX = px + panelW() / 2;
         int compactTitleY = compactPauseLayout() ? 14 : 24;

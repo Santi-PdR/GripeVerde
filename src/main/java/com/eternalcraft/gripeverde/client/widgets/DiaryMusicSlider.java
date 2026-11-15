@@ -25,7 +25,7 @@ public class DiaryMusicSlider extends AbstractSliderButton {
 
     private static Component buildLabel(double v) {
         int pct = (int) Math.round(v * 100.0);
-        String txt = Component.translatable("gripeverde.options.sound.music_slider").getString()
+        String txt = DiaryChrome.tr("gripeverde.options.sound.music_slider")
                 + ": " + pct + "%";
         return Component.literal(txt);
     }

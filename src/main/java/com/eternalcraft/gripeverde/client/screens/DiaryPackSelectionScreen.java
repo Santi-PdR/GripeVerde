@@ -87,7 +87,7 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
 
         // Cabecera de seccion (el titulo vanilla se dibuja en y=16 sobre el pergamino)
         int cx = this.width / 2;
-        String subtitle = "- " + Component.translatable("gripeverde.options.packs.subtitle").getString() + " -";
+        String subtitle = "- " + DiaryChrome.tr("gripeverde.options.packs.subtitle") + " -";
         subtitle = DiaryChrome.fitText(this.font, subtitle, Math.max(0, bw - 48));
         int sw = this.font.width(subtitle);
         g.drawString(this.font, subtitle, cx - sw / 2, by + 26, DiaryChrome.INK_SUBTITLE, false);

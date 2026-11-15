@@ -637,7 +637,7 @@ public class DiaryTitleScreen extends Screen {
                 || cachedGreetingFont != this.font
                 || cachedGreetingLabelLimit != labelLimit) {
             cachedGreetingLines = DiaryTypography.split(this.font, greetingText, cardW - 24);
-            String label = Component.translatable("gripeverde.title.greeting.label").getString();
+            String label = DiaryChrome.tr("gripeverde.title.greeting.label");
             cachedGreetingLabel = DiaryTypography.fitString(this.font, label, labelLimit);
             cachedGreetingSource = greetingText;
             cachedGreetingCardWidth = cardW;

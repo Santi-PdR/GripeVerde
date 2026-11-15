@@ -104,6 +104,44 @@ public final class DiaryChrome {
         gfx.fill(x + 2 + tw + 2, y + 4, x + 2 + tw + 4, y + 5, STEEL_EDGE);
     }
 
+    /**
+     * v0.195.0: traducciones de pantalla memorizadas.
+     *
+     * Las cabeceras de las pantallas resolvian su `Component.translatable(...)
+     * .getString()` en cada cuadro, y eso arma un componente y recorre la tabla
+     * de la lengua sesenta veces por segundo para el mismo texto. Aca se guarda
+     * el resultado y se tira entero cuando cambia la lengua elegida, asi que
+     * nunca queda una traduccion vieja.
+     */
+    private static String cachedLangCode;
+    private static final java.util.HashMap<String, String> TRANSLATION_CACHE = new java.util.HashMap<>();
+
+    public static String tr(String key) {
+        net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
+        String code = "";
+        try {
+            if (mc != null && mc.getLanguageManager() != null) {
+                code = mc.getLanguageManager().getSelected();
+            }
+        } catch (Throwable ignored) {}
+        if (!code.equals(cachedLangCode)) {
+            cachedLangCode = code;
+            TRANSLATION_CACHE.clear();
+        }
+        String value = TRANSLATION_CACHE.get(key);
+        if (value == null) {
+            value = Component.translatable(key).getString();
+            if (TRANSLATION_CACHE.size() > 512) TRANSLATION_CACHE.clear();
+            TRANSLATION_CACHE.put(key, value);
+        }
+        return value;
+    }
+
+    /** Igual que {@link #tr(String)} pero recortado al ancho pedido. */
+    public static String trFit(String key, net.minecraft.client.gui.Font font, int maxWidth) {
+        return fitText(font, tr(key), maxWidth);
+    }
+
     public static void drawInkDivider(GuiGraphics gfx, int x, int y, int w) {
         int fade = Math.max(8, w / 6);
         int cx   = x + w / 2;

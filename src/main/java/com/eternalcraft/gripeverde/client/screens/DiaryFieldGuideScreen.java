@@ -301,12 +301,12 @@ public final class DiaryFieldGuideScreen extends Screen {
         this.headerPanelW = this.panelW;
         this.headerSubtitleKey = subKey;
         this.headerTitle = fitText(
-            Component.translatable("gripeverde.field_guide.title").getString(),
+            DiaryChrome.tr("gripeverde.field_guide.title"),
             Math.max(1, panelW - (compactLayout ? 20 : 36)));
         this.headerSubtitle = fitText(
             Component.translatable(subKey).getString(), Math.max(1, panelW - 36));
         this.headerHint = fitText(
-            Component.translatable("gripeverde.field_guide.scroll_hint").getString(), panelW - 32);
+            DiaryChrome.tr("gripeverde.field_guide.scroll_hint"), panelW - 32);
     }
 
     private int scrollbarThumbHeight(int trackHeight) {

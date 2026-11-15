@@ -519,7 +519,7 @@ public class ChangelogScreen extends Screen {
 
         if (loadError) {
             g.drawString(this.font,
-                Component.translatable("gripeverde.changelog.error").getString(),
+                DiaryChrome.tr("gripeverde.changelog.error"),
                 cx, cy + 4, DiaryTheme.BLOOD_FRESH, false);
         } else {
             // Progress only while the next letter is on the visible sheet. A delayed

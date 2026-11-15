@@ -68,13 +68,13 @@ public class DiaryCreditsScreen extends Screen {
         int tw = this.font.width(titleStr);
         g.drawString(this.font, titleStr, cx - tw / 2, titleY, DiaryChrome.INK_TITLE, false);
 
-        String subtitle = "- " + Component.translatable("gripeverde.options.credits.subtitle").getString() + " -";
+        String subtitle = "- " + DiaryChrome.tr("gripeverde.options.credits.subtitle") + " -";
         subtitle = DiaryChrome.fitText(this.font, subtitle, Math.max(0, panelW - 32));
         int subW = this.font.width(subtitle);
         g.drawString(this.font, subtitle, cx - subW / 2, titleY + 14, DiaryChrome.INK_SUBTITLE, false);
 
         String flavor = DiaryChrome.fitText(this.font,
-            Component.translatable("gripeverde.options.credits.flavor").getString(), Math.max(0, panelW - 32));
+            DiaryChrome.tr("gripeverde.options.credits.flavor"), Math.max(0, panelW - 32));
         int flavW = this.font.width(flavor);
         g.drawString(this.font, flavor, cx - flavW / 2, titleY + 26, DiaryChrome.INK_FLAVOR, false);
 

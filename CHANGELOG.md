@@ -1,3 +1,11 @@
+## v0.195.0 - Las pantallas dejan de traducir sesenta veces por segundo
+
+- **`DiaryChrome.tr(key)`**: memoria de traducciones invalidada por `LanguageManager.getSelected()`; `trFit(key, font, maxW)`
+  para las cabeceras recortadas. Reemplaza 34 `Component.translatable(...).getString()` por cuadro en 20 pantallas y widgets
+  (títulos, subtítulos, sabores, pistas y mensajes de forma fija).
+- `DiaryLanguageScreen.drawLanguageCount`: "25 lenguas"/"25 languages" en el margen izquierdo del título si `panelW >= 300`
+  y no choca con la placa REG. IV.
+
 ## v0.194.0 - Opciones que no traducen en cada cuadro
 
 - `DiaryOptionsScreen`: cabecera (título + subtítulo) memorizada por fuente y ancho (`headerTitleFitted`/`headerSubtitleFitted`),
