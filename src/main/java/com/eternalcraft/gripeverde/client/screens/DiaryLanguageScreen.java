@@ -509,6 +509,12 @@ public class DiaryLanguageScreen extends Screen {
             }
             if (fill != 0) {
                 g.fill(left + 2, top + 1, left + rowWidth - 2, top + rowHeight - 2, fill);
+            } else if (rowHeight > 10) {
+                // v0.189.0: una hebra tenue cierra cada renglon (un solo relleno,
+                // solo cuando no esta ni elegido ni bajo el puntero) y la lista
+                // de veinticinco lenguas se lee de corrido sin perderse.
+                g.fill(left + FLAG_SLOT, top + rowHeight - 2,
+                    left + rowWidth - 6, top + rowHeight - 1, 0x1C422810);
             }
 
             // ── Bandera ──────────────────────────────────────────────────────

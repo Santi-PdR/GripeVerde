@@ -470,16 +470,26 @@ public class DiaryPauseScreen extends PauseScreen {
         super.render(g, mouseX, mouseY, partialTick);
     }
 
+    /**
+     * v0.189.0: la vinneta se dibujaba con cuarenta pasos de un pixel por lado
+     * (ciento sesenta rellenos por cuadro). Con diez bandas de cuatro pixeles se
+     * ve igual y cuesta ocho veces menos.
+     */
     private void drawVignette(GuiGraphics g) {
-        int steps = 40;
+        final int steps = 10;
+        final int band = 4;
         for (int i = 0; i < steps; i++) {
-            float t = (float)(steps - i) / steps;
-            int a = (int)(t * t * 70);
+            float t = (steps - i) / (float) steps;
+            int a = (int) (t * t * 70);
+            if (a < 1) continue;
             int c = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, a);
-            g.fill(i, 0, i + 1, this.height, c);
-            g.fill(this.width - i - 1, 0, this.width - i, this.height, c);
-            g.fill(0, i, this.width, i + 1, c);
-            g.fill(0, this.height - i - 1, this.width, this.height - i, c);
+            int p0 = i * band;
+            int p1 = Math.min(p0 + band, Math.min(this.width, this.height));
+            if (p1 <= p0) break;
+            g.fill(p0, 0, p1, this.height, c);
+            g.fill(this.width - p1, 0, this.width - p0, this.height, c);
+            g.fill(0, p0, this.width, p1, c);
+            g.fill(0, this.height - p1, this.width, this.height - p0, c);
         }
     }
 
@@ -504,14 +514,22 @@ public class DiaryPauseScreen extends PauseScreen {
         // 2. Textura minima (puntitos sepia)
         drawPaperTextureMinimal(g, x, y, w, h);
 
-        // 3. Capa de brillo AGRESIVA (alpha 200, cubre todo el panel)
-        for (int i = 0; i < h; i++) {
-            float t = 1f - Math.abs(i - h * 0.4f) / (h * 0.7f);
-            if (t < 0) t = 0;
-            int alpha = (int)(t * 140);
-            if (alpha > 0) {
-                int c = DiaryTheme.withAlpha(PAPER_HIGHLIGHT, alpha);
-                g.fill(x + 4, y + i, x + w - 4, y + i + 1, c);
+        // 3. Brillo del panel.
+        // v0.189.0: era un relleno por cada fila del panel (trescientas llamadas
+        // por cuadro). El brillo solo varia en vertical, asi que son dos
+        // gradientes: sube hasta el 40% de la altura y vuelve a bajar.
+        int peakY = y + Math.max(6, (int) (h * 0.4f));
+        int glossTop = y + 4;
+        int glossBot = y + h - 4;
+        int glossHi = DiaryTheme.withAlpha(PAPER_HIGHLIGHT, 140);
+        int glossLo = DiaryTheme.withAlpha(PAPER_HIGHLIGHT, 0);
+        if (glossBot - glossTop > 4) {
+            int peak = Math.min(Math.max(peakY, glossTop + 1), glossBot - 1);
+            if (peak - glossTop > 1) {
+                g.fillGradient(x + 4, glossTop, x + w - 4, peak, glossLo, glossHi);
+            }
+            if (glossBot - peak > 1) {
+                g.fillGradient(x + 4, peak, x + w - 4, glossBot, glossHi, glossLo);
             }
         }
 
@@ -532,17 +550,23 @@ public class DiaryPauseScreen extends PauseScreen {
         }
     }
 
+    /**
+     * v0.189.0: la mancha recorria su circulo pixel por pixel (ciento trece
+     * rellenos por mancha, dos manchas por cuadro). Ahora cada fila del circulo
+     * es un solo tramo: el degradado queda en vertical, que es lo que se ve a
+     * este tamano, y son veintidos rellenos entre las dos manchas.
+     */
     private void drawBloodSpotWithSplatter(GuiGraphics g, int cx, int cy, int r) {
         for (int dy = -r; dy <= r; dy++) {
-            for (int dx = -r; dx <= r; dx++) {
-                int d2 = dx * dx + dy * dy;
-                if (d2 <= r * r) {
-                    float t = 1f - (float) Math.sqrt(d2) / r;
-                    int alpha = (int)(t * 140);
-                    int c = DiaryTheme.withAlpha(DiaryTheme.BLOOD_DRIED, alpha);
-                    g.fill(cx + dx, cy + dy, cx + dx + 1, cy + dy + 1, c);
-                }
-            }
+            int rr = r * r - dy * dy;
+            if (rr <= 0) continue;
+            int half = (int) Math.sqrt(rr);
+            if (half <= 0) continue;
+            float t = 1f - Math.abs(dy) / (float) r;
+            int alpha = (int) (t * 140);
+            if (alpha < 1) continue;
+            int c = DiaryTheme.withAlpha(DiaryTheme.BLOOD_DRIED, alpha);
+            g.fill(cx - half, cy + dy, cx + half + 1, cy + dy + 1, c);
         }
         g.fill(cx - 2, cy - 2, cx + 2, cy + 2, DiaryTheme.BLOOD_DRIED);
 

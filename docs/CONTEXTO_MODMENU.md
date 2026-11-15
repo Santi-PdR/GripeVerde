@@ -9,7 +9,7 @@ Actualizado: 2026-11-13
   token, igual que el de Photon/Fisk.
 - Rama de trabajo de la sesión: `arena/48be547c-gripeverde` (base `02e85bc`) — la plataforma
   fija el nombre, no se renombra. Todo el trabajo va ahí; el PR sale de esa rama.
-- Versión de esta rama: `0.188.0` (anteriores entregadas: `0.187.0`, `0.186.0`, `0.185.0`, `0.184.2`, `0.184.1`, `0.184.0`, `0.183.0`)
+- Versión de esta rama: `0.189.0` (anteriores entregadas: `0.188.0`, `0.187.0`, `0.186.0`, `0.185.0`, `0.184.2`, `0.184.1`, `0.183.0`)
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
 - El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
   proyecto local del usuario.
@@ -116,6 +116,17 @@ Actualizado: 2026-11-13
 - El validador local `python3 tools/verify_mirrors.py` reproduce los sellos de Gradle
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
+
+## Cambios de 0.189.0 — menos rellenos en la pausa
+
+- `DiaryPauseScreen.drawPanel`: el brillo era un `g.fill` por fila del panel (~300 por cuadro) → **2 `fillGradient`**
+  (de `PAPER_HIGHLIGHT` α0 a α140 en el 40 % de la altura, y de vuelta).
+- `DiaryPauseScreen.drawVignette`: 40 pasos de 1 px × 4 lados (160 fills) → **10 bandas de 4 px** (40 fills, `t²·70`).
+- `DiaryPauseScreen.drawBloodSpotWithSplatter`: doble bucle píxel por píxel (113 fills por mancha) → **un tramo por
+  fila** (`sqrt(r²-dy²)`, α vertical). La pausa entera queda en ~85 llamadas de relleno por cuadro.
+- `DiaryChrome.drawRegistryTagAt`: 13 fills de una fila → **3** (`STEEL_MID`, `+4` en y+2, `-2` en y+h-4); se llama en
+  las 21 pantallas.
+- `DiaryLanguageScreen.LanguageEntry`: hebra `0x1C422810` al pie de cada renglón, sólo si no está elegido ni hover.
 
 ## Cambios de 0.188.0 — la ciudad sin periódicos y con reflectores
 

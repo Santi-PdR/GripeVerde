@@ -1,3 +1,9 @@
+## Version 0.189.0 - La pausa que ya no reza trescientas veces
+
+La pantalla de pausa era la mas cara de todas, y no por lo que muestra: el brillo del panel se dibujaba con un relleno por cada fila -unas trescientas llamadas por cuadro- cuando ese brillo solo cambia de arriba abajo, asi que ahora son dos gradientes, uno que sube hasta el cuarenta por ciento de la altura y otro que vuelve a bajar. La vinneta gastaba cuarenta pasos de un pixel por cada lado, ciento sesenta rellenos: con diez bandas de cuatro pixeles se ve igual y cuesta ocho veces menos. Y las dos manchas de sangre del papel se dibujaban pixel por pixel, ciento trece rellenos cada una; ahora cada fila del circulo es un solo tramo y el degradado quedo en vertical, que es lo unico que se alcanza a ver a ese tamano. En total, la pausa paso de casi seiscientas cincuenta llamadas de relleno por cuadro a unas ochenta y cinco.
+
+La placa de registro de las veintiuna pantallas del diario gastaba trece rellenos de una fila para simular el acero cepillado; ahora son tres. Y la lista de lenguas gano una hebra tenue al pie de cada renglon -un solo relleno, y solo cuando el renglon no esta elegido ni bajo el puntero- para que las veinticinco lenguas se lean de corrido sin perderse.
+
 ## Version 0.188.0 - La ciudad sin periodicos y con reflectores
 
 Los periodicos de la portada se fueron: no queda el bando de cuarentena, no queda el "se busca" del paciente cero, ni el tren, ni la persona, ni el gesto de sostenerle la mirada al cartel. Con ellos se fueron los dos archivos que los dibujaban, sus metodos, y las dos apariciones que solo se desbloqueaban ahi. En su lugar la avenida quedo a la vista: una tercera capa de tejados apenas insinuada sobre la niebla le da fondo, y dos reflectores de la guardia barren el cielo muy despacio, cruzados, con veinte rellenos por haz.

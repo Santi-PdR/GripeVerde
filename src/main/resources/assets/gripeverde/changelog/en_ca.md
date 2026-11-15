@@ -1,3 +1,9 @@
+## Version 0.189.0 - The pause screen stops praying three hundred times
+
+The pause screen was the most expensive of all, and not because of what it shows: the panel gloss was painted with one fill per row - about three hundred calls per frame - when that gloss only changes from top to bottom, so it is now two gradients, one rising to forty per cent of the height and one falling back. The vignette spent forty one-pixel steps per edge, a hundred and sixty fills: with ten four-pixel bands it looks the same and costs eight times less. And the two blood stains on the paper were drawn pixel by pixel, a hundred and thirteen fills each; now every row of the circle is a single run and the gradient is left vertical, which is all you can see at that size. All told, the pause went from nearly six hundred and fifty fill calls per frame to about eighty-five.
+
+The registry plate on the twenty-one diary screens spent thirteen one-row fills to fake brushed steel; now it takes three. And the language list gained a faint hairline under each row - one fill, and only when the row is neither selected nor under the pointer - so twenty-five languages read straight through without getting lost.
+
 ## Version 0.188.0 - The city without newspapers, and with searchlights
 
 The newspapers are gone from the cover: no quarantine notice, no patient-zero "wanted" sheet, no train, no person, and no more holding your gaze on the poster. The two files that drew them went with them, along with their methods and the two discoveries that could only be unlocked there. The avenue is on show instead: a third layer of rooftops barely hinted through the fog gives it depth, and two watch searchlights sweep the sky very slowly, crossed, twenty fills per beam.

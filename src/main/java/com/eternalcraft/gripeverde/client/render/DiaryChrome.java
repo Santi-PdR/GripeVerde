@@ -79,11 +79,12 @@ public final class DiaryChrome {
         int w = 58;
         int h = 13;
 
-        // base de acero cepillado
-        for (int i = 0; i < h; i++) {
-            int v = STEEL_MID + (i % 3 == 0 ? 4 : (i % 3 == 1 ? -2 : 0));
-            gfx.fill(x + 1, y + i, x + w - 1, y + i + 1, v);
-        }
+        // Base de acero cepillado.
+        // v0.189.0: eran trece rellenos de una fila cada uno para simular el
+        // cepillado; con la base y dos lineas de brillo se ve igual.
+        gfx.fill(x + 1, y + 1, x + w - 1, y + h - 1, STEEL_MID);
+        gfx.fill(x + 1, y + 2, x + w - 1, y + 3, STEEL_MID + 4);
+        gfx.fill(x + 1, y + h - 4, x + w - 1, y + h - 3, STEEL_MID - 2);
         // borde
         gfx.fill(x, y, x + w, y + 1, STEEL_EDGE);
         gfx.fill(x, y + h - 1, x + w, y + h, STEEL_EDGE);

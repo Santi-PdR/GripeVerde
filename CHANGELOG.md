@@ -1,3 +1,12 @@
+## v0.189.0 - La pausa que ya no reza trescientas veces
+
+- `DiaryPauseScreen.drawPanel`: el brillo del panel era un `fill` por fila (~300/cuadro) → **2 `fillGradient`** (sube hasta el 40 % de la altura y baja).
+- `DiaryPauseScreen.drawVignette`: 40 pasos de 1 px por lado (160 fills) → **10 bandas de 4 px** (40 fills).
+- `DiaryPauseScreen.drawBloodSpotWithSplatter`: círculo píxel por píxel (113 fills × 2 manchas) → **un tramo por fila** (≈22 + núcleo + salpicadura).
+  Total de la pausa: ~650 → ~85 llamadas de relleno por cuadro.
+- `DiaryChrome.drawRegistryTagAt`: 13 fills de una fila para el acero cepillado → **3** (base + 2 líneas de brillo).
+- `DiaryLanguageScreen`: hebra tenue al pie de cada renglón (1 fill, sólo si no está elegido ni bajo el puntero).
+
 ## v0.188.0 - La ciudad sin periódicos y con reflectores
 
 - **Fuera los periódicos de la portada**: se borran `PosterRenderer` (943 líneas) y `OrnamentRenderer` (156), junto con `drawPosterLeft`, `drawPosterRight`, `overQuarantinePoster`, `wantedPosterRect`, el estado de pulsación y las dos apariciones que sólo se desbloqueaban ahí (`WANTED_EYES`, `POSTER_PEEL`). Los nombres quedan prohibidos en el verificador.
