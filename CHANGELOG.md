@@ -1,3 +1,10 @@
+## v0.192.0 - Las nubes, de blob a masa
+
+- `AtmosphereRenderer.renderClouds`: dos `drawSoftBlob` por nube (~30 fills cada uno, ~310 por cuadro) → dos **masas de bandas**
+  (`drawCloudMass`, 16 fills por nube, ~80 por cuadro).
+- `drawCloudMass(g, cx, cy, halfW, halfH, alpha, color)`: bandas 3-8 siguiendo la elipse, alpha `0.45 + 0.55·(1-edge)`.
+- **Borde de luna**: las nubes a menos de su ancho de la luna reciben una línea de 1 px (`0x00726042`) con alpha por distancia.
+
 ## v0.191.0 - La ciudad enciende otras luces
 
 - `VictorianSkyline.renderWindowsOnBuildings`: LOD `lodSkip` 2 → **3** a partir de 1600 px; fachadas de primer plano con divisores 14/16 → **16/18**; ventana encendida de primer plano 5 → **4 fills** (sin travesaño horizontal). Las ventanas quedan en ~la mitad.

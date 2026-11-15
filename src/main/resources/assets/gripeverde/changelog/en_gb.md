@@ -1,3 +1,11 @@
+## Version 0.192.0 - Clouds, from blob to mass
+
+The clouds were painted with the soft-blob brush: two per cloud, about thirty fills each, over three hundred per frame across the five. Now each cloud is two masses of horizontal bands that follow the ellipse - sixteen fills - and against such a dark sky the outline stays just as soft as before.
+
+And not everything is subtraction: the moon now silvers the edge of the clouds that drift near it, a one-pixel line that comes and goes with distance, and gives them a top and a bottom. Clouds stop being cut-out stains on the sky and get light of their own.
+
+With that, between the pause batch and this release the background sits at about a third of what it cost: the pause vignette from a hundred and sixty fills to forty, the panel gloss from three hundred to two, the soft blobs from fifteen hundred to five hundred, the windows to half and the clouds to a quarter.
+
 ## Version 0.191.0 - The city lights different lamps
 
 The skyline windows were the biggest bill left in the background: over a thousand fills per frame at 1080p, across the fifteen houses at the back and the nine in front. From 1600 pixels wide it now draws one in three - it used to be one in two - and the foreground facades got some air: the same buildings, with the windows a little further apart. Every lit window had a horizontal transom that does not read at that size; it is gone, leaving the frame, the glass, the jamb and the halo. All told, the windows cost about half of what they did.

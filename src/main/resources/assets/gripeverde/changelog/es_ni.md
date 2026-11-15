@@ -1,3 +1,11 @@
+## Version 0.192.0 - Las nubes, de blob a masa
+
+Las nubes se dibujaban con el pincel de blobs blandos: dos por nube, unos treinta rellenos cada uno, mas de trescientos por cuadro entre las cinco. Ahora cada nube son dos masas de bandas horizontales que siguen la elipse -dieciseis rellenos-, y contra un cielo tan oscuro el contorno queda igual de blando que antes.
+
+Y como no todo es quitar, la luna ahora platea el borde de las nubes que le pasan cerca: una linea de un pixel que aparece y se va segun la distancia, y que les da arriba y abajo. Las nubes dejan de ser manchas recortadas sobre el cielo y pasan a tener luz propia.
+
+Con esto el fondo quedo, entre la tanda de la pausa y esta entrega, en cerca de un tercio de lo que costaba: la vinneta de la pausa de ciento sesenta rellenos a cuarenta, el brillo del panel de trescientos a dos, los blobs blandos de mil quinientos a quinientos, las ventanas a la mitad y las nubes a un cuarto.
+
 ## Version 0.191.0 - La ciudad enciende otras luces
 
 Las ventanas del skyline eran el gasto mas grande que quedaba en el fondo: mas de mil rellenos por cuadro a 1080p, entre las quince casas del fondo y las nueve de adelante. A partir de 1600 pixeles de ancho ahora se dibuja una de cada tres -antes una de cada dos- y las fachadas de primer plano ganaron aire: los mismos edificios, con las ventanas un poco mas separadas. Cada ventana encendida tenia un travesano horizontal que a ese tamano no se lee; se fue, y quedan el marco, el vidrio, la jamba y el halo. En total, las ventanas cuestan cerca de la mitad.

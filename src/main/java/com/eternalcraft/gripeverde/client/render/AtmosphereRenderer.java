@@ -599,17 +599,53 @@ public class AtmosphereRenderer {
             int xBase = (int)(w * CLOUDS[i][2]) + (int)(CLOUD_OFFSETS[i]) - 100;
             int cw    = (int)(w * CLOUDS[i][3]);
             int ch    = (int)(h * CLOUDS[i][1]);
-            int radius = Math.max(8, ch);
             float pulse = (float)(Math.sin(time * 0.3f + i * 1.3f) * 0.1f + CLOUDS[i][4]);
             int alpha = Math.max(0, Math.min(255, (int)(pulse * 180)));
-            int blobCount = 2;
-            int cappedRadius = Math.min(radius, 20);
-            for (int b = 0; b < blobCount; b++) {
-                float bt = (float) b / (float)(blobCount - 1);
-                int bx = xBase + (int)(cw * bt);
-                int br = cappedRadius + (int)(Math.sin(bt * 3.14159f) * cappedRadius * 0.3f);
-                drawSoftBlob(g, bx, cy, br, alpha, cloudColor);
+            // v0.192.0: dos masas de bandas en vez de dos blobs blandos. El blob
+            // pedia unos treinta rellenos por nube (mas de trescientos entre las
+            // cinco); esto son dieciseis por nube, y contra un cielo tan oscuro
+            // el contorno queda igual de blando.
+            int halfW = Math.max(6, cw / 2);
+            int halfH = Math.max(3, ch / 2);
+            drawCloudMass(g, xBase + halfW, cy, (int) (halfW * 0.95f), halfH, alpha, cloudColor);
+            drawCloudMass(g, xBase + (int) (cw * 0.32f), cy - Math.max(1, halfH / 3),
+                (int) (halfW * 0.55f), (int) (halfH * 0.8f), (int) (alpha * 0.8f), cloudColor);
+
+            // v0.192.0: la luna platea el borde de las nubes que le pasan cerca.
+            int dist = Math.abs(xBase + halfW - moonCenterX(w));
+            if (dist < cw) {
+                int rimA = (int) (42f * (1f - dist / (float) cw));
+                if (rimA > 5) {
+                    int rimX = Math.max(0, xBase + halfW - (int) (halfW * 0.95f));
+                    int rimR = Math.min(w, xBase + halfW + (int) (halfW * 0.95f));
+                    if (rimR - rimX > 4) {
+                        g.fill(rimX, cy - halfH, rimR, cy - halfH + 1,
+                            withAlpha(0x00726042, rimA));
+                    }
+                }
             }
+        }
+    }
+
+    /**
+     * Una masa de nube: bandas horizontales que siguen la elipse, con el alpha
+     * subiendo hacia el centro. Sin bucles por pixel ni blobs anidados.
+     */
+    private static void drawCloudMass(GuiGraphics g, int cx, int cy, int halfW, int halfH,
+                                      int alpha, int colorNoAlpha) {
+        if (halfW < 2 || halfH < 1 || alpha < 3) return;
+        int bands = Math.max(3, Math.min(8, halfH));
+        for (int b = 0; b < bands; b++) {
+            float u = (b + 0.5f) / bands;
+            float edge = Math.abs(u * 2f - 1f);
+            float shape = (float) Math.sqrt(Math.max(0f, 1f - edge * edge));
+            int hw = (int) (halfW * shape);
+            if (hw < 2) continue;
+            int y0 = cy - halfH + (int) (2 * halfH * (float) b / bands);
+            int y1 = cy - halfH + (int) (2 * halfH * (float) (b + 1) / bands);
+            int a = (int) (alpha * (0.45f + 0.55f * (1f - edge)));
+            if (a < 3) continue;
+            g.fill(cx - hw, y0, cx + hw, Math.max(y0 + 1, y1), withAlpha(colorNoAlpha, a));
         }
     }
 
