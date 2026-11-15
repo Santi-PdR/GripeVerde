@@ -414,7 +414,147 @@ public class VictorianSkyline {
         }
     }
 
+    // v0.197.0: el trazado de las ventanas (posicion, tamano y suerte de cada
+    // una) solo depende del tamano de la pantalla. Se resuelve una vez por
+    // resolucion y se reutiliza: fuera el RNG, las divisiones y el reparto de
+    // filas y columnas de cada cuadro. El dibujo queda en un fill por ventana.
+    private static final int WIN_OFF = 0;
+    private static final int WIN_LIT = 1;
+    private static final int WIN_OTHER = 2;
+
+    private static int layoutW = -1;
+    private static int layoutH = -1;
+
+    private static int[] winFgX = new int[0];
+    private static int[] winFgY = new int[0];
+    private static int[] winFgW = new int[0];
+    private static int[] winFgH = new int[0];
+    private static int[] winFgKind = new int[0];
+    private static int[] winFgAnim = new int[0];
+    private static float[] winFgFreqAmber = new float[0];
+    private static float[] winFgFreqSick = new float[0];
+    private static int winFgCount = 0;
+
+    private static int[] winBgX = new int[0];
+    private static int[] winBgY = new int[0];
+    private static int[] winBgW = new int[0];
+    private static int[] winBgH = new int[0];
+    private static int[] winBgColor = new int[0];
+    private static int winBgCount = 0;
+
     private static void renderWindowsOnBuildings(GuiGraphics g, int w, int h, float[][] buildings, boolean isBg) {
+        ensureWindowLayout(w, h);
+        if (isBg) {
+            // Las ventanas del fondo no parpadean: su color ya viene resuelto.
+            for (int i = 0; i < winBgCount; i++) {
+                int wx = winBgX[i];
+                int wy = winBgY[i];
+                g.fill(wx, wy, wx + winBgW[i], wy + winBgH[i], winBgColor[i]);
+            }
+            return;
+        }
+        for (int i = 0; i < winFgCount; i++) {
+            int wx = winFgX[i];
+            int wy = winFgY[i];
+            int ww = winFgW[i];
+            int wh = winFgH[i];
+            int anim = winFgAnim[i];
+            if (anim >= 0) {
+                int amber = (int)(animPhase[anim] * 160);
+                if (amber > 2) {
+                    g.fill(wx - 1, wy - 1, wx + ww + 1, wy + wh + 1, 0xFF1A0F05);
+                    g.fill(wx, wy, wx + ww, wy + wh,
+                        AtmosphereRenderer.withAlpha(0x00D4941E, amber));
+                    g.fill(wx + ww / 2, wy, wx + ww / 2 + 1, wy + wh, 0xFF3D2E1A);
+                    g.fill(wx - 2, wy - 2, wx + ww + 2, wy + wh + 2,
+                        AtmosphereRenderer.withAlpha(0x00D4941E, amber / 6));
+                } else {
+                    g.fill(wx, wy, wx + ww, wy + wh, 0xFF050302);
+                    g.fill(wx, wy, wx + ww, wy + 1, 0xFF1A1008);
+                }
+                continue;
+            }
+            int kind = winFgKind[i];
+            if (kind == WIN_OFF) {
+                g.fill(wx, wy, wx + ww, wy + wh, 0xFF050302);
+                g.fill(wx, wy, wx + ww, wy + 1, 0xFF1A1008);
+            } else if (kind == WIN_LIT) {
+                float flicker = (float)(Math.sin(time * winFgFreqAmber[i]) * 0.3f + 0.7f);
+                int amber = Math.max(40, (int)(flicker * 140));
+                g.fill(wx - 1, wy - 1, wx + ww + 1, wy + wh + 1, 0xFF1A0F05);
+                g.fill(wx, wy, wx + ww, wy + wh,
+                    AtmosphereRenderer.withAlpha(0x00D4941E, amber));
+                g.fill(wx + ww / 2, wy, wx + ww / 2 + 1, wy + wh, 0xFF3D2E1A);
+                g.fill(wx, wy + wh / 2, wx + ww, wy + wh / 2 + 1, 0xFF3D2E1A);
+                g.fill(wx - 2, wy - 2, wx + ww + 2, wy + wh + 2,
+                    AtmosphereRenderer.withAlpha(0x00D4941E, amber / 6));
+            } else {
+                float sickFlicker = (float)(Math.sin(time * winFgFreqSick[i]) * 0.4f + 0.6f);
+                int sickAlpha = Math.max(30, (int)(sickFlicker * 100));
+                g.fill(wx - 1, wy - 1, wx + ww + 1, wy + wh + 1, 0xFF1A0F05);
+                g.fill(wx, wy, wx + ww, wy + wh,
+                    AtmosphereRenderer.withAlpha(0x005A7038, sickAlpha));
+                g.fill(wx + ww / 2, wy, wx + ww / 2 + 1, wy + wh, 0xFF1A2810);
+                g.fill(wx, wy + wh / 2, wx + ww, wy + wh / 2 + 1, 0xFF1A2810);
+                g.fill(wx - 2, wy - 2, wx + ww + 2, wy + wh + 2,
+                    AtmosphereRenderer.withAlpha(0x003A5028, sickAlpha / 5));
+            }
+        }
+    }
+
+    private static void ensureWindowLayout(int w, int h) {
+        if (layoutW == w && layoutH == h) return;
+        layoutW = w;
+        layoutH = h;
+        java.util.ArrayList<int[]> bg = new java.util.ArrayList<>();
+        java.util.ArrayList<int[]> fg = new java.util.ArrayList<>();
+        java.util.ArrayList<float[]> fgFreq = new java.util.ArrayList<>();
+        collectWindows(w, h, BG_BUILDINGS, true, bg, null);
+        collectWindows(w, h, FG_BUILDINGS, false, fg, fgFreq);
+        bg.trimToSize();
+        fg.trimToSize();
+        fgFreq.trimToSize();
+
+        winBgCount = bg.size();
+        winBgX = new int[winBgCount];
+        winBgY = new int[winBgCount];
+        winBgW = new int[winBgCount];
+        winBgH = new int[winBgCount];
+        winBgColor = new int[winBgCount];
+        for (int i = 0; i < winBgCount; i++) {
+            int[] e = bg.get(i);
+            winBgX[i] = e[0];
+            winBgY[i] = e[1];
+            winBgW[i] = e[2];
+            winBgH[i] = e[3];
+            winBgColor[i] = e[4];
+        }
+
+        winFgCount = fg.size();
+        winFgX = new int[winFgCount];
+        winFgY = new int[winFgCount];
+        winFgW = new int[winFgCount];
+        winFgH = new int[winFgCount];
+        winFgKind = new int[winFgCount];
+        winFgAnim = new int[winFgCount];
+        winFgFreqAmber = new float[winFgCount];
+        winFgFreqSick = new float[winFgCount];
+        for (int i = 0; i < winFgCount; i++) {
+            int[] e = fg.get(i);
+            winFgX[i] = e[0];
+            winFgY[i] = e[1];
+            winFgW[i] = e[2];
+            winFgH[i] = e[3];
+            winFgKind[i] = e[4];
+            winFgAnim[i] = e[5];
+            float[] f = fgFreq.get(i);
+            winFgFreqAmber[i] = f[0];
+            winFgFreqSick[i] = f[1];
+        }
+    }
+
+    private static void collectWindows(int w, int h, float[][] buildings, boolean isBg,
+            java.util.ArrayList<int[]> out, java.util.ArrayList<float[]> freqs) {
         long seed = isBg ? WINDOW_SEED_BG : WINDOW_SEED_FG;
         java.util.Random rng = WINDOW_RNG;
         rng.setSeed(seed);
@@ -477,33 +617,11 @@ public class VictorianSkyline {
                     int wy = by1 + (row * bHeight / rows) + (bHeight / rows / 2) - winH / 2 + 3;
                     int roll = rng.nextInt(10);
 
-                    if (animIdx >= 0) {
-                        // Draw with animPhase[animIdx] controlling alpha
-                        int amber = (int)(animPhase[animIdx] * 160);
-                        if (amber > 2) {
-                            // v0.191.0: sin el travesano horizontal, que a este
-                            // tamano no se lee; el marco, el vidrio, la jamba y el
-                            // halo siguen haciendo la ventana.
-                            g.fill(wx - 1, wy - 1, wx + winW + 1, wy + winH + 1, 0xFF1A0F05);
-                            g.fill(wx, wy, wx + winW, wy + winH,
-                                AtmosphereRenderer.withAlpha(0x00D4941E, amber));
-                            g.fill(wx + winW/2, wy, wx + winW/2 + 1, wy + winH, 0xFF3D2E1A);
-                            g.fill(wx - 2, wy - 2, wx + winW + 2, wy + winH + 2,
-                                AtmosphereRenderer.withAlpha(0x00D4941E, amber / 6));
-                        } else {
-                            g.fill(wx, wy, wx + winW, wy + winH, 0xFF050302);
-                            g.fill(wx, wy, wx + winW, wy + 1, 0xFF1A1008);
-                        }
-                        continue;
-                    }
-
-                    if (roll < offOnThreshold) {
-                        g.fill(wx, wy, wx + winW, wy + winH, 0xFF050302);
-                        if (!isBg) {
-                            g.fill(wx, wy, wx + winW, wy + 1, 0xFF1A1008);
-                        }
-                    } else if (roll < amberThreshold) {
-                        if (isBg) {
+                    if (isBg) {
+                        int color;
+                        if (roll < offOnThreshold) {
+                            color = 0xFF050302;
+                        } else if (roll < amberThreshold) {
                             // v0.191.0: tres tonos de luz segun el sitio en la
                             // fachada. Cuesta lo mismo y la ciudad deja de tener
                             // todas las ventanas del mismo ambar.
@@ -519,34 +637,27 @@ public class VictorianSkyline {
                             } else {
                                 tint = 0x00A8781E; toneAlpha = 110;
                             }
-                            g.fill(wx, wy, wx + winW, wy + winH,
-                                AtmosphereRenderer.withAlpha(tint, toneAlpha));
+                            color = AtmosphereRenderer.withAlpha(tint, toneAlpha);
                         } else {
-                            float flicker = (float)(Math.sin(time * (0.5f + bi*0.13f + col*0.17f)) * 0.3f + 0.7f);
-                            int amber = Math.max(40, (int)(flicker * 140));
-                            g.fill(wx - 1, wy - 1, wx + winW + 1, wy + winH + 1, 0xFF1A0F05);
-                            g.fill(wx, wy, wx + winW, wy + winH,
-                                AtmosphereRenderer.withAlpha(0x00D4941E, amber));
-                            g.fill(wx + winW/2, wy, wx + winW/2 + 1, wy + winH, 0xFF3D2E1A);
-                            g.fill(wx, wy + winH/2, wx + winW, wy + winH/2 + 1, 0xFF3D2E1A);
-                            g.fill(wx - 2, wy - 2, wx + winW + 2, wy + winH + 2,
-                                AtmosphereRenderer.withAlpha(0x00D4941E, amber / 6));
+                            color = AtmosphereRenderer.withAlpha(0x004A6028, 80);
                         }
+                        out.add(new int[] { wx, wy, winW, winH, color });
+                        continue;
+                    }
+
+                    int kind;
+                    if (animIdx >= 0) {
+                        kind = WIN_LIT;
+                    } else if (roll < offOnThreshold) {
+                        kind = WIN_OFF;
+                    } else if (roll < amberThreshold) {
+                        kind = WIN_LIT;
                     } else {
-                        if (isBg) {
-                            g.fill(wx, wy, wx + winW, wy + winH,
-                                AtmosphereRenderer.withAlpha(0x004A6028, 80));
-                        } else {
-                            float sickFlicker = (float)(Math.sin(time * (0.8f + bi*0.2f)) * 0.4f + 0.6f);
-                            int sickAlpha = Math.max(30, (int)(sickFlicker * 100));
-                            g.fill(wx - 1, wy - 1, wx + winW + 1, wy + winH + 1, 0xFF1A0F05);
-                            g.fill(wx, wy, wx + winW, wy + winH,
-                                AtmosphereRenderer.withAlpha(0x005A7038, sickAlpha));
-                            g.fill(wx + winW/2, wy, wx + winW/2 + 1, wy + winH, 0xFF1A2810);
-                            g.fill(wx, wy + winH/2, wx + winW, wy + winH/2 + 1, 0xFF1A2810);
-                            g.fill(wx - 2, wy - 2, wx + winW + 2, wy + winH + 2,
-                                AtmosphereRenderer.withAlpha(0x003A5028, sickAlpha / 5));
-                        }
+                        kind = WIN_OTHER;
+                    }
+                    out.add(new int[] { wx, wy, winW, winH, kind, animIdx });
+                    if (freqs != null) {
+                        freqs.add(new float[] { 0.5f + bi * 0.13f + col * 0.17f, 0.8f + bi * 0.2f });
                     }
                 }
             }

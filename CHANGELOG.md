@@ -1,3 +1,9 @@
+## v0.197.0 - La ciudad y la guia dejan de medir
+
+- `VictorianSkyline`: el trazado de las ventanas (posicion, tamano, suerte y color) se resuelve una vez por
+  resolucion (`ensureWindowLayout`/`collectWindows`) y se reutiliza; en el fondo el color va precalculado.
+- `DiaryFieldGuideScreen`: la pista del pie se centra al construir la cabecera (`headerHintX`), no por cuadro.
+
 ## v0.196.0 - El parte de CEDA deja de armar sus renglones
 
 - `DiaryDispatchScreen`: `SLOT_NUMBERS` (20 cadenas "01".."20") en lugar de `String.format("%02d", ...)` por fila y cuadro;

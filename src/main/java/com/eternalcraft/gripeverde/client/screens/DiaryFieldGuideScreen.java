@@ -266,9 +266,7 @@ public final class DiaryFieldGuideScreen extends Screen {
 
         if (maxScroll > 0) drawScrollbar(g, top, bottom);
         if (!compactLayout) {
-            String hint = this.headerHint;
-            int hintW = DiaryTypography.width(this.font, hint);
-            DiaryTypography.draw(g, this.font, hint, cx - hintW / 2, panelY + panelH - 42,
+            DiaryTypography.draw(g, this.font, this.headerHint, this.headerHintX, panelY + panelH - 42,
                 DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 180), false);
         }
 
@@ -288,6 +286,7 @@ public final class DiaryFieldGuideScreen extends Screen {
     private String headerTitle = "";
     private String headerSubtitle = "";
     private String headerHint = "";
+    private int headerHintX = 0;
     private String headerSubtitleKey = "";
 
     private void refreshHeaderCache(boolean compact, int maxScrollValue) {
@@ -307,6 +306,9 @@ public final class DiaryFieldGuideScreen extends Screen {
             Component.translatable(subKey).getString(), Math.max(1, panelW - 36));
         this.headerHint = fitText(
             DiaryChrome.tr("gripeverde.field_guide.scroll_hint"), panelW - 32);
+        // v0.197.0: la pista del pie se centra al construir la cabecera, no en
+        // cada cuadro; medirla era el ultimo texto que se media sin caché.
+        this.headerHintX = this.width / 2 - DiaryTypography.width(this.font, this.headerHint) / 2;
     }
 
     private int scrollbarThumbHeight(int trackHeight) {

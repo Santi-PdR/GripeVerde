@@ -1,3 +1,9 @@
+## Version 0.197.0 - La ciudad y la guia dejan de medir
+
+Las ventanas de la ciudad se sorteaban en cada cuadro: el generador aleatorio recorria edificio por edificio, repartia filas y columnas, dividia para colocar cada hueco y decidia si estaba apagada, encendida o enferma. Nada de eso depende del tiempo, solo del tamano de la pantalla. Ahora el trazado se resuelve una vez por resolucion y se guarda: en cada cuadro solo queda el relleno, y en la ciudad del fondo incluso el color ya viene resuelto, porque alli las ventanas no parpadean. Cambia el tamano de la ventana y el trazado se rehace.
+
+En la guia de campo, la pista del pie se centraba midiendo su texto en cada cuadro. Esa medida se hace ahora al construir la cabecera, junto con el resto.
+
 ## Version 0.196.0 - El parte de CEDA deja de armar sus renglones
 
 En la ficha de CEDA, cada renglon visible armaba en cada cuadro el numero de la voz -con `String.format`, que para dos digitos es caro- y el nombre de su tecla, que ademas armaba un componente y copiaba el texto traducido. Ahora los veinte numeros se arman una sola vez al cargar la clase, y el nombre de cada tecla se pide unicamente cuando esa voz cambia de tecla: se guarda junto con la tecla que lo produjo, asi que no puede quedar desactualizado si reasignas mientras la ficha esta abierta.

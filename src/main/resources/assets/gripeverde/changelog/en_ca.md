@@ -1,3 +1,9 @@
+## Version 0.197.0 - The city and the guide stop measuring
+
+The city windows used to be drawn by lottery on every frame: the random generator walked building by building, split rows and columns, divided to place each opening, and decided whether it was dark, lit or sick. None of that depends on time, only on the screen size. Now the layout is resolved once per resolution and kept: each frame only has the fill left, and in the background city even the colour comes already resolved, because those windows do not flicker. Resize the window and the layout is built again.
+
+In the field guide, the footer hint was centred by measuring its text on every frame. That measurement now happens while the header is built, along with the rest.
+
 ## Version 0.196.0 - The CEDA sheet stops building its rows
 
 On the CEDA sheet, every visible row built its voice number on every frame - with `String.format`, which is expensive for two digits - and the name of its key, which also built a component and copied the translated text. Now the twenty numbers are built once when the class loads, and each key name is asked for only when that voice changes key: it is stored together with the key that produced it, so it cannot go stale if you rebind while the sheet is open.
