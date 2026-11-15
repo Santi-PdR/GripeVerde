@@ -1,3 +1,9 @@
+## Version 0.217.0 - Dos luces que ahora se ven
+
+Las dos torres tienen su lampara en lo alto, y hasta ahora eran dos puntos de color: el haz salia de la nada y costaba entender de donde venia la luz. Ahora cada lampara se abre en un halo corto, apenas un soplo, y el haz arranca de algo que se ve.
+
+Lo mismo con el ghoul que mira desde el atico: sus ojos llevan un halo minimo alrededor. No se convierte en un farol -sigue siendo una presencia incomoda en una ventana lejana-, pero la mirada se encuentra antes.
+
 ## Version 0.216.0 - La ciudad lejana se mide una vez
 
 Las tres capas de la ciudad se dibujan en cada cuadro, pero no todas cambian: la mas lejana -los tejados apenas insinuados sobre la niebla, con sus seis puntos de luz- solo depende del tamano de la ventana.

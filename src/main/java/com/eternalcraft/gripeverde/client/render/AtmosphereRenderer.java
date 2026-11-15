@@ -277,6 +277,11 @@ public class AtmosphereRenderer {
         int rightX = (int) (w * 0.84f);
         drawBeam(g, leftX, baseY, -0.74f + sway * 0.30f, (int) (w * 0.44f), 9, 26, color);
         drawBeam(g, rightX, baseY, -2.40f - sway * 0.30f, (int) (w * 0.40f), 8, 20, color);
+        // v0.217.0: la lampara se abre en un halo corto; el haz ya sale de algo
+        // visible incluso antes de separarse del suelo. El pincel blando memoriza
+        // sus franjas, asi que el halo cuesta poquísimo.
+        drawSoftBlob(g, leftX, baseY - 2, 8, 30, color);
+        drawSoftBlob(g, rightX, baseY - 2, 8, 26, color);
         // v0.190.0: la lampara de cada torre, para que el haz salga de algun lado.
         g.fill(leftX - 1, baseY - 3, leftX + 2, baseY, withAlpha(color, 120));
         g.fill(leftX - 2, baseY, leftX + 3, baseY + 1, withAlpha(color, 70));

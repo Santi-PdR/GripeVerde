@@ -1,3 +1,8 @@
+## v0.217.0 - Dos luces que ahora se ven
+
+- `AtmosphereRenderer.renderSearchlights`: halo de radio 8 sobre la lámpara de cada torre (`drawSoftBlob`).
+- `VictorianSkyline.renderGhoulWatcher`: halo de radio 4 tras los ojos del ghoul.
+
 ## v0.216.0 - La ciudad lejana se mide una vez
 
 - `VictorianSkyline`: `ensureFarLayout(w,h)` resuelve `farRects`/`farWindows` por resolución para `renderFarSkyline`;

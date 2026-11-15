@@ -1,3 +1,9 @@
+## Version 0.217.0 - Two lights you can now see
+
+Both towers have their lamp up top, and until now they were two dots of colour: the beam came out of nowhere and it was hard to tell where the light started. Now each lamp opens into a short halo, barely a breath, and the beam begins on something visible.
+
+The same goes for the ghoul watching from the attic: its eyes carry a tiny halo around them. It does not become a lantern - it is still an uneasy presence in a far window - but the gaze is found sooner.
+
 ## Version 0.216.0 - The distant city is measured once
 
 The three layers of the city are drawn on every frame, but not all of them change: the farthest one - the rooftops barely hinted above the fog, with their six points of light - depends only on the size of the window.

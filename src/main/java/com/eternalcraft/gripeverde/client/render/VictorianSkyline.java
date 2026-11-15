@@ -302,6 +302,10 @@ public class VictorianSkyline {
         g.fill(wx - 1, wy - 1, wx + eyeW + 1, wy + eyeH + 1, 0xFF130D08);
         g.fill(wx, wy, wx + eyeW, wy + eyeH, 0xFF030405);
         int eyeY = wy + eyeH / 2;
+        // v0.217.0: un halo cortisimo alrededor de los ojos, para que la mirada
+        // se note antes de distinguir el par de puntos.
+        AtmosphereRenderer.drawSoftBlob(g, wx + eyeW / 2, eyeY, 4, 20,
+            DiaryTheme.GHOUL_EYE & 0xFFFFFF);
         g.fill(wx, eyeY, wx + 1, eyeY + 1, DiaryTheme.GHOUL_EYE);
         g.fill(wx + eyeW - 1, eyeY, wx + eyeW, eyeY + 1, DiaryTheme.GHOUL_EYE_GLOW);
     }
