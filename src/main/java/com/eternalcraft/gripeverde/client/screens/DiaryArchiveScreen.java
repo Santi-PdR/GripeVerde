@@ -170,6 +170,18 @@ public class DiaryArchiveScreen extends Screen {
 
         // Progreso + sello de estado
         g.drawString(this.font, this.headerProg, panelX + 20, panelY + 44, DiaryChrome.INK_FLAVOR, false);
+        // v0.220.0: el avance tambien se ve de un vistazo, sin leer el recuento.
+        int barX = panelX + 20;
+        int barW = panelW - 40;
+        int barY = panelY + 54;
+        g.fill(barX, barY, barX + barW, barY + 1, DiaryTheme.withAlpha(0x008E6A35, 55));
+        int filledW = total <= 0 ? 0 : (int) Math.round(barW * (found / (float) total));
+        if (filledW > 0) {
+            g.fill(barX, barY, barX + Math.min(barW, filledW), barY + 1, 0xFF8A6A2D);
+        }
+        if (found >= total && total > 0) {
+            g.fill(barX + barW - 1, barY - 1, barX + barW, barY + 2, 0xFF3D5A28);
+        }
 
         String stampTxt = this.headerStamp;
         int stampCol = this.headerStampCol;

@@ -1,3 +1,8 @@
+## v0.220.0 - El archivo muestra su avance
+
+- `DiaryArchiveScreen`: barra de avance de 1 px bajo el recuento (ocre `0xFF8A6A2D`, marca verde al completar);
+  la pista de teclado solo se dibuja si queda hueco bajo los papeles sueltos.
+
 ## v0.219.0 - La cronica se apoya como las demas hojas
 
 - `ChangelogScreen`: `drawPanelShadow` + `drawCornerOrnaments` y `drawRegistryTag` ("REG. XV") cuando el título deja hueco.

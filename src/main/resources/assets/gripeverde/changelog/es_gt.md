@@ -1,3 +1,11 @@
+## Version 0.220.0 - El archivo muestra su avance
+
+La sala de consulta decia cuantas fichas se habian hallado con una frase: "fichas halladas: doce de cuarenta y seis". Habia que leerla para saber como iba la busqueda.
+
+Ahora, debajo de esa frase, hay una barra fina de tinta ocre que se llena a medida que aparecen las fichas. El tramo ya recorrido se ve de un vistazo, y cuando el archivo esta completo la barra cierra con una marca verde.
+
+Ademas, la pista de teclado del pie solo aparece si de verdad queda hueco: en ventanas bajas se calla antes que tapar los papeles sueltos.
+
 ## Version 0.219.0 - La cronica se apoya como las demas hojas
 
 El archivo de cambios era la unica hoja del gabinete que flotaba plana sobre el fondo: las demas llevan su sombra por detras, sus esquinas de tinta en los cuatro angulos y la chapa de registro en la esquina alta.

@@ -1,3 +1,11 @@
+## Version 0.220.0 - The archive shows its progress
+
+The reading room said how many cards had been found with a sentence: "cards found: twelve of forty-six". You had to read it to know how the search was going.
+
+Now, under that sentence, there is a thin ochre ink bar that fills as the cards appear. The stretch already covered is seen at a glance, and when the archive is complete the bar closes with a green mark.
+
+The keyboard hint at the foot also appears only when there is truly room: in short windows it keeps quiet rather than covering the loose papers.
+
 ## Version 0.219.0 - The chronicle rests like the other sheets
 
 The changelog was the only sheet in the cabinet that floated flat over the background: the others carry their shadow behind, their ink corners on all four angles and the registry plate in the upper corner.
