@@ -1,3 +1,9 @@
+## v0.202.0 - Los creditos y la sala de consulta miden su cabecera una vez
+
+- `DiaryCreditsScreen`: `refreshTextCache()` memoriza título/subtítulo/sentencia, versión y nota del pie;
+  `drawSection` cachea el ancho de cada etiqueta (`labelWidths`).
+- `DiaryArchiveScreen`: `refreshHeaderCache(en, found, total)` memoriza título, subtítulo, recuento y sello.
+
 ## v0.201.0 - El multijugador y la pausa dibujan su titulo una vez
 
 - `DiaryMultiplayerScreen`: `refreshHeaderCache(maxWidth)` memoriza título/subtítulo recortados y su X;

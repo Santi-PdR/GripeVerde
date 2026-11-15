@@ -1,3 +1,11 @@
+## Version 0.202.0 - Los creditos y la sala de consulta miden su cabecera una vez
+
+Los creditos ajustaban su titulo, su subtitulo y la sentencia de arriba -recortandolos si no cabian- y volvian a medirlos en cada cuadro para centrarlos; lo mismo hacian con la version y con la nota del pie. Ahora todo eso se arma una vez y solo se rehace si cambia el titulo, el idioma o el ancho del panel. Las columnas de etiqueta y valor de la ficha, que median su sangria en cada linea, guardan ese ancho la primera vez.
+
+En la sala de consulta pasaba igual con cuatro textos: el titulo, el subtitulo, el recuento de fichas halladas y el sello de estado. Quedan memorizados y solo se rehacen cuando cambia el idioma, el ancho del panel o el numero de fichas.
+
+Mismas palabras, mismo sitio. Solo deja de medirse lo que no cambia.
+
 ## Version 0.201.0 - El multijugador y la pausa dibujan su titulo una vez
 
 La ventana de multijugador recortaba su titulo y su subtitulo -con puntos suspensivos si no cabian- y los medía en cada cuadro solo para centrarlos. Ahora el recorte y el centro se guardan y solo se rehacen si cambia el titulo, el idioma o el ancho del panel. La cuenta de servidores anotados del margen, que armaba su frase y la medía igual, tambien queda memorizada.

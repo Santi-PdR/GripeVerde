@@ -86,6 +86,54 @@ public class DiaryArchiveScreen extends Screen {
     @Override
     public void renderBackground(GuiGraphics g) { /* bypass dirt */ }
 
+    // v0.202.0: cabecera de la sala de consulta memorizada.
+    private net.minecraft.client.gui.Font headFont;
+    private int headPanelW = -1;
+    private boolean headEnglish = false;
+    private int headFound = -1;
+    private int headTotal = -1;
+    private String headerTitle = "";
+    private int headerTitleW = 0;
+    private String headerSub = "";
+    private int headerSubW = 0;
+    private String headerProg = "";
+    private String headerStamp = "";
+    private int headerStampCol = 0;
+    private int headerStampW = 0;
+
+    private void refreshHeaderCache(boolean en, int found, int total) {
+        if (this.headFont == this.font && this.headPanelW == this.panelW
+                && this.headEnglish == en && this.headFound == found && this.headTotal == total) {
+            return;
+        }
+        this.headFont = this.font;
+        this.headPanelW = this.panelW;
+        this.headEnglish = en;
+        this.headFound = found;
+        this.headTotal = total;
+        int limit = Math.max(0, this.panelW - 32);
+        this.headerTitle = DiaryChrome.fitText(this.font, en ? "Reading Room" : "Sala de consulta", limit);
+        this.headerTitleW = this.font.width(this.headerTitle);
+        this.headerSub = DiaryChrome.fitText(this.font,
+            en ? "- The chronicler's cards -" : "- Las fichas del cronista -", limit);
+        this.headerSubW = this.font.width(this.headerSub);
+        this.headerProg = DiaryChrome.fitText(this.font,
+            en ? ("cards found: " + found + " of " + total)
+               : ("fichas halladas: " + found + " de " + total),
+            Math.max(0, this.panelW - 40));
+        if (found <= 0) {
+            this.headerStamp = en ? "PENDING" : "PENDIENTE";
+            this.headerStampCol = 0xFF6B4226;
+        } else if (found >= total) {
+            this.headerStamp = en ? "COMPLETE" : "COMPLETO";
+            this.headerStampCol = 0xFF3D5A28;
+        } else {
+            this.headerStamp = en ? "IN PROGRESS" : "EN CURSO";
+            this.headerStampCol = 0xFF6E1F16;
+        }
+        this.headerStampW = this.font.width(this.headerStamp);
+    }
+
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         this.lastMouseX = mouseX;
@@ -107,29 +155,22 @@ public class DiaryArchiveScreen extends Screen {
         }
 
         // Cabecera
-        String titleStr = DiaryChrome.fitText(this.font, en ? "Reading Room" : "Sala de consulta",
-            Math.max(0, panelW - 32));
-        int tw = this.font.width(titleStr);
-        g.drawString(this.font, titleStr, cx - tw / 2, panelY + 10, DiaryChrome.INK_TITLE, false);
-        String sub = DiaryChrome.fitText(this.font,
-            en ? "- The chronicler's cards -" : "- Las fichas del cronista -", Math.max(0, panelW - 32));
-        int sw = this.font.width(sub);
-        g.drawString(this.font, sub, cx - sw / 2, panelY + 23, DiaryChrome.INK_SUBTITLE, false);
+        // v0.202.0: los cuatro textos de la cabecera se ajustaban y se medían en
+        // cada cuadro; ahora se arman una vez y sólo se rehacen cuando cambia el
+        // idioma, el ancho del panel o el numero de fichas halladas.
+        int found = ChroniclerMemory.discoveredCount();
+        int total = Discoveries.ALL.length;
+        refreshHeaderCache(en, found, total);
+        g.drawString(this.font, this.headerTitle, cx - this.headerTitleW / 2, panelY + 10, DiaryChrome.INK_TITLE, false);
+        g.drawString(this.font, this.headerSub, cx - this.headerSubW / 2, panelY + 23, DiaryChrome.INK_SUBTITLE, false);
         DiaryChrome.drawInkDivider(g, panelX + 18, panelY + 37, panelW - 36);
 
         // Progreso + sello de estado
-        int found = ChroniclerMemory.discoveredCount();
-        int total = Discoveries.ALL.length;
-        String prog = DiaryChrome.fitText(this.font, en ? ("cards found: " + found + " of " + total)
-                         : ("fichas halladas: " + found + " de " + total), Math.max(0, panelW - 40));
-        g.drawString(this.font, prog, panelX + 20, panelY + 44, DiaryChrome.INK_FLAVOR, false);
+        g.drawString(this.font, this.headerProg, panelX + 20, panelY + 44, DiaryChrome.INK_FLAVOR, false);
 
-        String stampTxt;
-        int stampCol;
-        if (found <= 0) { stampTxt = en ? "PENDING" : "PENDIENTE"; stampCol = 0xFF6B4226; }
-        else if (found >= total) { stampTxt = en ? "COMPLETE" : "COMPLETO"; stampCol = 0xFF3D5A28; }
-        else { stampTxt = en ? "IN PROGRESS" : "EN CURSO"; stampCol = 0xFF6E1F16; }
-        int stw = this.font.width(stampTxt);
+        String stampTxt = this.headerStamp;
+        int stampCol = this.headerStampCol;
+        int stw = this.headerStampW;
         int sx = panelX + panelW - stw - 34;
         int sy = panelY + 42;
         g.fill(sx - 5, sy - 2, sx + stw + 5, sy + 11, DiaryTheme.withAlpha(stampCol, 36));

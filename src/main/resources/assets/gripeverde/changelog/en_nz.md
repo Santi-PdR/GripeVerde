@@ -1,3 +1,11 @@
+## Version 0.202.0 - Credits and the reading room measure their header once
+
+The credits fitted their title, their subtitle and the sentence above - trimming them if they did not fit - and measured them again on every frame to centre them; they did the same with the version and the footer note. Now all of that is built once and only rebuilt when the title, the language or the panel width changes. The label and value columns of the registry, which measured their indent on every line, keep that width from the first time.
+
+In the reading room the same happened with four texts: the title, the subtitle, the count of cards found and the status stamp. They stay memorised and are only rebuilt when the language, the panel width or the number of cards changes.
+
+Same words, same place. It just stops measuring what does not change.
+
 ## Version 0.201.0 - Multiplayer and the pause draw their title once
 
 The multiplayer window ellipsized its title and its subtitle - with dots if they did not fit - and measured them on every frame just to centre them. Now the cut and the centre are kept and only rebuilt when the title, the language or the panel width changes. The count of saved servers in the margin, which built and measured its phrase the same way, is memorised too.

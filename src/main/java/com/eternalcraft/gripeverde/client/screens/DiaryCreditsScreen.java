@@ -54,6 +54,50 @@ public class DiaryCreditsScreen extends Screen {
         QuarantineSceneRenderer.tick(1f / 20f);
     }
 
+    // v0.202.0: textos de la cabecera (y del pie) medidos una vez.
+    private net.minecraft.client.gui.Font textFont;
+    private int textPanelW = -1;
+    private boolean textEnglish = false;
+    private String textTitleSrc = "";
+    private String headerTitle = "";
+    private int headerTitleW = 0;
+    private String headerSubtitle = "";
+    private int headerSubW = 0;
+    private String headerFlavor = "";
+    private int headerFlavorW = 0;
+    private String versionText = "";
+    private int versionW = 0;
+    private String noteText = "";
+    private int noteW = 0;
+    private final java.util.HashMap<String, Integer> labelWidths = new java.util.HashMap<>();
+
+    private void refreshTextCache() {
+        String titleSrc = this.title.getString();
+        boolean en = isEnglish();
+        if (this.textFont == this.font && this.textPanelW == this.panelW
+                && this.textEnglish == en && this.textTitleSrc.equals(titleSrc)) {
+            return;
+        }
+        this.textFont = this.font;
+        this.textPanelW = this.panelW;
+        this.textEnglish = en;
+        this.textTitleSrc = titleSrc;
+        int limit = Math.max(0, this.panelW - 32);
+        this.headerTitle = DiaryChrome.fitText(this.font, titleSrc, limit);
+        this.headerTitleW = this.font.width(this.headerTitle);
+        this.headerSubtitle = DiaryChrome.fitText(this.font,
+            "- " + DiaryChrome.tr("gripeverde.options.credits.subtitle") + " -", limit);
+        this.headerSubW = this.font.width(this.headerSubtitle);
+        this.headerFlavor = DiaryChrome.fitText(this.font,
+            DiaryChrome.tr("gripeverde.options.credits.flavor"), limit);
+        this.headerFlavorW = this.font.width(this.headerFlavor);
+        this.versionText = "v" + com.eternalcraft.gripeverde.GripeVerdeMod.VERSION;
+        this.versionW = this.font.width(this.versionText);
+        this.noteText = en ? "Sealed under quarantine act 1897"
+            : "Sellado bajo acta de cuarentena 1897";
+        this.noteW = this.font.width(this.noteText);
+    }
+
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
@@ -64,19 +108,12 @@ public class DiaryCreditsScreen extends Screen {
 
         int cx = this.width / 2;
         int titleY = panelY + 14;
-        String titleStr = DiaryChrome.fitText(this.font, this.title.getString(), Math.max(0, panelW - 32));
-        int tw = this.font.width(titleStr);
-        g.drawString(this.font, titleStr, cx - tw / 2, titleY, DiaryChrome.INK_TITLE, false);
-
-        String subtitle = "- " + DiaryChrome.tr("gripeverde.options.credits.subtitle") + " -";
-        subtitle = DiaryChrome.fitText(this.font, subtitle, Math.max(0, panelW - 32));
-        int subW = this.font.width(subtitle);
-        g.drawString(this.font, subtitle, cx - subW / 2, titleY + 14, DiaryChrome.INK_SUBTITLE, false);
-
-        String flavor = DiaryChrome.fitText(this.font,
-            DiaryChrome.tr("gripeverde.options.credits.flavor"), Math.max(0, panelW - 32));
-        int flavW = this.font.width(flavor);
-        g.drawString(this.font, flavor, cx - flavW / 2, titleY + 26, DiaryChrome.INK_FLAVOR, false);
+        // v0.202.0: la cabecera se ajustaba y se medía en cada cuadro; ahora se
+        // arma una vez por título, idioma y ancho de panel.
+        refreshTextCache();
+        g.drawString(this.font, this.headerTitle, cx - this.headerTitleW / 2, titleY, DiaryChrome.INK_TITLE, false);
+        g.drawString(this.font, this.headerSubtitle, cx - this.headerSubW / 2, titleY + 14, DiaryChrome.INK_SUBTITLE, false);
+        g.drawString(this.font, this.headerFlavor, cx - this.headerFlavorW / 2, titleY + 26, DiaryChrome.INK_FLAVOR, false);
 
         int divY1 = titleY + 44;
         DiaryChrome.drawInkDividerBetween(g, panelX + 18, panelX + panelW - 18, divY1);
@@ -121,22 +158,23 @@ public class DiaryCreditsScreen extends Screen {
         y += 8;
 
         // v0.21.25: version del gabinete visible en creditos.
-        String version = "v" + com.eternalcraft.gripeverde.GripeVerdeMod.VERSION;
-        int vw = this.font.width(version);
-        g.drawString(this.font, version, panelX + (panelW - vw) / 2, y,
+        g.drawString(this.font, this.versionText, panelX + (panelW - this.versionW) / 2, y,
             DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 100), false);
         y += 10;
 
         // Official note
-        String note = isEnglish() ? "Sealed under quarantine act 1897" : "Sellado bajo acta de cuarentena 1897";
-        int nw = this.font.width(note);
-        g.drawString(this.font, note, panelX + (panelW - nw) / 2, y, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 130), false);
+        g.drawString(this.font, this.noteText, panelX + (panelW - this.noteW) / 2, y,
+            DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 130), false);
     }
 
     private int drawSection(GuiGraphics g, int x, int y, String label, String value) {
-        String line = label + ":  " + value;
         g.drawString(this.font, label + ":", x, y, DiaryTheme.withAlpha(DiaryTheme.INK, 210), false);
-        int labelW = this.font.width(label + ":  ");
+        // v0.202.0: el ancho de cada etiqueta no cambia; se mide la primera vez.
+        Integer labelW = this.labelWidths.get(label);
+        if (labelW == null) {
+            labelW = this.font.width(label + ":  ");
+            this.labelWidths.put(label, labelW);
+        }
         g.drawString(this.font, value, x + labelW, y, DiaryTheme.INK_FADED, false);
         return y + 11;
     }
