@@ -1,3 +1,9 @@
+## v0.201.0 - El multijugador y la pausa dibujan su titulo una vez
+
+- `DiaryMultiplayerScreen`: `refreshHeaderCache(maxWidth)` memoriza título/subtítulo recortados y su X;
+  `drawServerCount` cachea frase y ancho.
+- `DiaryPauseScreen`: `drawPanelTitle` guarda ancho del título, escala y subtítulo recortado por panel/idioma.
+
 ## v0.200.0 - La ventana de idioma memoriza su cabecera
 
 - `DiaryLanguageScreen`: `refreshHeaderCache()` guarda título/subtítulo/sentencia ya ajustados y centrados

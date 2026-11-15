@@ -362,6 +362,34 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         return button;
     }
 
+    // v0.201.0: cabecera memorizada (titulo, subtitulo y sus posiciones).
+    private net.minecraft.client.gui.Font headerFont;
+    private int headerMaxWidth = -1;
+    private String headerTitleSrc = "";
+    private String headerSubSrc = "";
+    private String headerTitle = "";
+    private int headerTitleX = 0;
+    private String headerSubtitle = "";
+    private int headerSubX = 0;
+
+    private void refreshHeaderCache(int maxWidth) {
+        String titleSrc = this.title.getString();
+        String subSrc = "- " + DiaryChrome.tr("gripeverde.multiplayer.subtitle") + " -";
+        if (this.headerFont == this.font && this.headerMaxWidth == maxWidth
+                && this.headerTitleSrc.equals(titleSrc) && this.headerSubSrc.equals(subSrc)) {
+            return;
+        }
+        this.headerFont = this.font;
+        this.headerMaxWidth = maxWidth;
+        this.headerTitleSrc = titleSrc;
+        this.headerSubSrc = subSrc;
+        this.headerTitle = ellipsizeTo(titleSrc, maxWidth);
+        this.headerSubtitle = ellipsizeTo(subSrc, maxWidth);
+        int cx = this.width / 2;
+        this.headerTitleX = cx - this.font.width(this.headerTitle) / 2;
+        this.headerSubX = cx - this.font.width(this.headerSubtitle) / 2;
+    }
+
     private String ellipsizeTo(String text, int maxWidth) {
         if (this.font.width(text) <= maxWidth) return text;
         String ellipsis = "...";
@@ -584,15 +612,11 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         int titleY = panelY + 14;
         int centerX = panelX + panelW / 2;
         int headingMaxWidth = Math.max(64, panelW - 32);
-        String titleStr = ellipsizeTo(this.title.getString(), headingMaxWidth);
-        int titleW = this.font.width(titleStr);
-        gfx.drawString(this.font, titleStr, centerX - titleW / 2, titleY, DiaryChrome.INK_TITLE, false);
-
-        // Subtitulo
-        String subtitle = "- " + DiaryChrome.tr("gripeverde.multiplayer.subtitle") + " -";
-        subtitle = ellipsizeTo(subtitle, headingMaxWidth);
-        int subW = this.font.width(subtitle);
-        gfx.drawString(this.font, subtitle, centerX - subW / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
+        // v0.201.0: el titulo y el subtitulo se recortaban y se medían en cada
+        // cuadro para centrarlos. Ahora el recorte y el centro se guardan.
+        refreshHeaderCache(headingMaxWidth);
+        gfx.drawString(this.font, this.headerTitle, this.headerTitleX, titleY, DiaryChrome.INK_TITLE, false);
+        gfx.drawString(this.font, this.headerSubtitle, this.headerSubX, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
         // v0.188.0: cuantos servidores hay anotados, en el margen del titulo.
         drawServerCount(gfx, panelX, panelW, titleY);
@@ -694,21 +718,35 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
      * v0.188.0: el numero de servidores anotados, arriba a la derecha del titulo.
      * Si la lista esta vacia, en cambio, deja dicho como empezar.
      */
+    private String countText = "";
+    private int countWidth = 0;
+    private int countSrc = -1;
+    private boolean countEnglish = false;
+    private net.minecraft.client.gui.Font countFont;
+
     private void drawServerCount(GuiGraphics gfx, int panelX, int panelW, int titleY) {
         int count = 0;
         try {
             count = this.vanillaServers == null ? 0 : this.vanillaServers.size();
         } catch (Throwable ignored) {}
         boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
-        String text;
-        if (count <= 0) {
-            text = english ? "none yet" : "ninguno anotado";
-        } else if (count == 1) {
-            text = english ? "1 entry" : "1 anotado";
-        } else {
-            text = english ? count + " entries" : count + " anotados";
+        // v0.201.0: la frase y su ancho se armaban por cuadro; ahora sólo cuando
+        // cambia el numero de servidores anotados o el idioma.
+        if (this.countSrc != count || this.countEnglish != english || this.countFont != this.font) {
+            if (count <= 0) {
+                this.countText = english ? "none yet" : "ninguno anotado";
+            } else if (count == 1) {
+                this.countText = english ? "1 entry" : "1 anotado";
+            } else {
+                this.countText = english ? count + " entries" : count + " anotados";
+            }
+            this.countWidth = this.font.width(this.countText);
+            this.countSrc = count;
+            this.countEnglish = english;
+            this.countFont = this.font;
         }
-        int textW = this.font.width(text);
+        String text = this.countText;
+        int textW = this.countWidth;
         int x = panelX + panelW - textW - 20;
         int y = titleY + 4;
         if (x < panelX + 20) return;   // panel angosto: no vale la pena

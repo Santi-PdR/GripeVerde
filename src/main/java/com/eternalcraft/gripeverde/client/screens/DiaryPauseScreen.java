@@ -614,6 +614,16 @@ public class DiaryPauseScreen extends PauseScreen {
     // TITULO / FECHA / SEPARADORES / FIRMA / SELLO
     // ================================================================
 
+    private net.minecraft.client.gui.Font headerFont;
+    private int headerPanelW = -1;
+    private boolean headerCompact = false;
+    private String headerTitleSrc = "";
+    private String headerSubSrc = "";
+    private int headerTitleW = 0;
+    private float headerScale = 1f;
+    private String headerSubtitle = "";
+    private int headerSubW = 0;
+
     private void drawPanelTitle(GuiGraphics g, int px, int py) {
         String title = DiaryChrome.tr("gripeverde.pause.title");
         String subtitle = DiaryChrome.tr("gripeverde.pause.subtitle");
@@ -623,10 +633,27 @@ public class DiaryPauseScreen extends PauseScreen {
         int subtitleY = py + (compactPauseLayout() ? 39 : 58);
         int titleY = py + compactTitleY;
 
-        int tw = this.font.width(title);
-        float titleScale = compactPauseLayout()
-            ? Math.min(1.45f, Math.max(1.0f, (panelW() - 36.0f) / Math.max(1, tw)))
-            : 1.75f;
+        // v0.201.0: el ancho del titulo y el recorte del subtitulo se resolvian
+        // en cada cuadro; se guardan junto al ancho del panel que los produjo.
+        int panelWidth = panelW();
+        boolean compact = compactPauseLayout();
+        if (this.headerFont != this.font || this.headerPanelW != panelWidth
+                || this.headerCompact != compact
+                || !this.headerTitleSrc.equals(title) || !this.headerSubSrc.equals(subtitle)) {
+            this.headerFont = this.font;
+            this.headerPanelW = panelWidth;
+            this.headerCompact = compact;
+            this.headerTitleSrc = title;
+            this.headerSubSrc = subtitle;
+            this.headerTitleW = this.font.width(title);
+            this.headerScale = compact
+                ? Math.min(1.45f, Math.max(1.0f, (panelWidth - 36.0f) / Math.max(1, this.headerTitleW)))
+                : 1.75f;
+            this.headerSubtitle = ellipsizeTo(this.font, subtitle, Math.max(40, panelWidth - 28));
+            this.headerSubW = this.font.width(this.headerSubtitle);
+        }
+        int tw = this.headerTitleW;
+        float titleScale = this.headerScale;
         g.pose().pushPose();
         g.pose().translate(centerX, titleY, 0);
         g.pose().scale(titleScale, titleScale, 1f);
@@ -638,8 +665,8 @@ public class DiaryPauseScreen extends PauseScreen {
         drawFlourish(g, centerX - scaledTw / 2 - 20, ornY, DiaryTheme.BRONZE, false);
         drawFlourish(g, centerX + scaledTw / 2 + 4, ornY, DiaryTheme.BRONZE, true);
 
-        String shownSubtitle = ellipsizeTo(this.font, subtitle, Math.max(40, panelW() - 28));
-        int sw = this.font.width(shownSubtitle);
+        String shownSubtitle = this.headerSubtitle;
+        int sw = this.headerSubW;
         g.drawString(this.font, shownSubtitle,
             centerX - sw / 2, subtitleY,
             DiaryTheme.SEPIA_MID, false);

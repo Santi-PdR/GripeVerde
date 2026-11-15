@@ -1,3 +1,11 @@
+## Version 0.201.0 - El multijugador y la pausa dibujan su titulo una vez
+
+La ventana de multijugador recortaba su titulo y su subtitulo -con puntos suspensivos si no cabian- y los medía en cada cuadro solo para centrarlos. Ahora el recorte y el centro se guardan y solo se rehacen si cambia el titulo, el idioma o el ancho del panel. La cuenta de servidores anotados del margen, que armaba su frase y la medía igual, tambien queda memorizada.
+
+La pausa hace lo mismo con su titulo y su subtitulo: el ancho del titulo escalado y el recorte del subtitulo se resuelven una vez.
+
+Son las mismas letras en el mismo sitio; se calcula una vez lo que se estaba calculando sesenta veces por segundo.
+
 ## Version 0.200.0 - La ventana de idioma memoriza su cabecera
 
 Doscientas tandas. La ventana de idioma ajustaba tres lineas de cabecera -el titulo, el subtitulo y la sentencia- y las media en cada cuadro para centrarlas; ahora se arman una sola vez y solo se rehacen cuando cambia el titulo, el idioma o el ancho del panel. La cuenta de lenguas del margen, que tambien armaba su frase y la medía cada cuadro, se guarda igual.

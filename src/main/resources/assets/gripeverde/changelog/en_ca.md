@@ -1,3 +1,11 @@
+## Version 0.201.0 - Multiplayer and the pause draw their title once
+
+The multiplayer window ellipsized its title and its subtitle - with dots if they did not fit - and measured them on every frame just to centre them. Now the cut and the centre are kept and only rebuilt when the title, the language or the panel width changes. The count of saved servers in the margin, which built and measured its phrase the same way, is memorised too.
+
+The pause screen does the same with its title and subtitle: the scaled title width and the subtitle cut are resolved once.
+
+Same letters in the same place; what was being computed sixty times a second is computed once.
+
 ## Version 0.200.0 - The language window memorises its header
 
 Two hundred batches. The language window fitted three header lines - the title, the subtitle and the sentence below - and measured them on every frame to centre them; now they are built once and only rebuilt when the title, the language or the panel width changes. The count of languages in the margin, which also built its phrase and measured it every frame, is cached the same way.
