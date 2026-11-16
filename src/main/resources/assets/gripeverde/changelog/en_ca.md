@@ -1,3 +1,11 @@
+## Version 0.224.0 - Every sheet in the cabinet arrives torn
+
+There were still straight-edged sheets: accessibility options, chat, confirmation, controls, direct join, server editing, field guide, language, multiplayer, online options, customization, sound and the CEDA dispatch. Now all of them arrive torn at top and bottom, with loose chips and the same ageing as the rest of the notebook.
+
+The chronicler's note on the cover too: it was the only loose sheet on the desk still with a clean edge.
+
+Nothing moved from its place. The tear is fixed for each sheet size.
+
 ## Version 0.223.0 - Dates are written in full
 
 In the diary each entry opens with a date, and the date was being drawn with the big drop cap used for titles: the "14" of October started with a huge one and the rest in miniature, like a poster, not like a notebook.

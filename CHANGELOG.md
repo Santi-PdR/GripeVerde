@@ -1,3 +1,8 @@
+## v0.224.0 - Todas las hojas del gabinete llegan rasgadas
+
+- `drawTornSheet` en accesibilidad, chat, confirmación, controles, unión directa, edición de servidor, guía,
+  idioma, multijugador, opciones en línea, personalización, sonido, despacho y la nota de la portada.
+
 ## v0.223.0 - Las fechas se escriben enteras
 
 - `ChangelogScreen` (modo diario): las entradas H1 se dibujan sin capitular, en `INK_TITLE`, con subrayado a lápiz

@@ -1,3 +1,11 @@
+## Version 0.224.0 - Todas las hojas del gabinete llegan rasgadas
+
+Quedaban hojas de borde recto: los ajustes de accesibilidad, el chat, la confirmacion, los controles, la union directa, la edicion de servidores, la guia de campo, el idioma, el multijugador, las opciones en linea, la personalizacion, el sonido y el despacho de CEDA. Ahora todas llegan rasgadas arriba y abajo, con esquirlas sueltas y el mismo envejecido que el resto del cuaderno.
+
+La nota del cronista en la portada tambien: era la unica hoja suelta de la mesa que aun tenia el borde limpio.
+
+Nada se movio de sitio. El desgarro es fijo para cada tamano de hoja.
+
 ## Version 0.223.0 - Las fechas se escriben enteras
 
 En el diario las entradas se abren con una fecha, y la fecha se estaba dibujando con la letra capital grande de los titulos: el "14" de octubre arrancaba con un uno enorme y el resto enana, como un cartel, no como un cuaderno.
