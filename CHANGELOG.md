@@ -1,3 +1,9 @@
+## v0.229.0 - Indice con marca de lectura y firma sobre papel
+
+- `ChangelogScreen`: `currentDiarySection(probeY)` marca la entrada en curso; realce del renglón bajo el puntero.
+- `DiaryTitleScreen.drawSignature`: la firma va sobre una tira rasgada (`drawTornSheet`, 16 px) con subrayado a lápiz
+  y, sobre papel, en tinta oscura; el nombre viejo pasa a `SEPIA_MID` α170.
+
 ## v0.228.0 - Notas al margen y luz de lampara
 
 - `ChangelogScreen` modo diario: la viñeta se cambia por dos trazos de pluma; el borde superior e inferior del

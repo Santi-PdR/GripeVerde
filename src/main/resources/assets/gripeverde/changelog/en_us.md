@@ -1,3 +1,9 @@
+## Version 0.229.0 - The index says where you are and the signature rests
+
+The diary index is no longer a blind list: the entry you are reading carries its stroke beside it, in sealing-wax ink, and the line under the pointer lightens so you know what you are about to press before pressing it.
+
+Below, on the cover, the chronicler's signature floated over the city like text stuck in the air. Now it is written on a torn strip of paper, resting on the desk, with its pencil underline and its short shadow. The old name - the previous chronicler - is still struck out on the same paper.
+
 ## Version 0.228.0 - Margin notes stop being list dots
 
 In the diary, what sits at the side - the notices, the warnings, that "don't do it" that matters so much - appeared with the round bullet of any list. Now it carries a short pen stroke, made of two marks, like someone annotating beside the main line.

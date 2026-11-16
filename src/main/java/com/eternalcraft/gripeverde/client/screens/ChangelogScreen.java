@@ -787,7 +787,7 @@ public class ChangelogScreen extends Screen {
 
         // v0.29.0: la lupa de la bitacora, al pie a la derecha.
         drawSearchBox(g, px, py, pw, ph);
-        drawIndexOverlay(g, px, py, pw, ph);
+        drawIndexOverlay(g, px, py, pw, ph, mouseX, mouseY);
 
         super.render(g, mouseX, mouseY, partialTick);
 
@@ -986,7 +986,23 @@ public class ChangelogScreen extends Screen {
      * v0.227.0: hoja de indice. Se abre desde el pie del diario y lista las
      * fechas; pulsar una lleva la pluma a esa entrada y cierra el indice.
      */
-    private void drawIndexOverlay(GuiGraphics g, int px, int py, int pw, int ph) {
+    /** v0.229.0: seccion que se esta leyendo (-1 si ninguna). */
+    private int currentDiarySection(int probeY) {
+        if (this.diarySectionRows.length == 0) return -1;
+        int cw = contentW();
+        int cur = -1;
+        int off = 0;
+        for (int s = 0; s < this.diarySectionRows.length; s++) {
+            if (s > 0) {
+                int from = this.diarySectionRows[s - 1];
+                for (int i = from; i < this.diarySectionRows[s]; i++) off += heightAt(i, cw);
+            }
+            if (off <= probeY) cur = s; else break;
+        }
+        return cur;
+    }
+
+    private void drawIndexOverlay(GuiGraphics g, int px, int py, int pw, int ph, int mouseX, int mouseY) {
         if (!this.diaryMode || !this.indexOpen || this.diarySectionLabels.length == 0) return;
         int rowsN = this.diarySectionLabels.length;
         int lineH = 13;
@@ -1003,10 +1019,23 @@ public class ChangelogScreen extends Screen {
             DiaryChrome.INK_TITLE, false);
         DiaryChrome.drawInkDivider(g, x + 12, y + 22, w - 24);
         int visible = Math.max(1, (h - 30) / lineH);
+        int current = currentDiarySection(scrollY + 24);
+        int hovered = indexRowAt(mouseX, mouseY, px, py, pw, ph);
         for (int i = 0; i < Math.min(rowsN, visible); i++) {
+            int lineY = y + 28 + i * lineH;
+            if (i == hovered) {
+                g.fill(x + 8, lineY - 2, x + w - 8, lineY + lineH - 3,
+                    DiaryTheme.withAlpha(0x008E6A35, 40));
+            }
+            if (i == current) {
+                // v0.229.0: la entrada que se esta leyendo lleva su raya al lado.
+                g.fill(x + 6, lineY + 3, x + 10, lineY + 4,
+                    DiaryTheme.withAlpha(0x005C0A08, 170));
+            }
             String label = this.diarySectionLabels[i];
-            label = DiaryTypography.fitString(this.font, label, w - 26);
-            g.drawString(this.font, label, x + 13, y + 28 + i * lineH, DiaryChrome.INK_FLAVOR, false);
+            label = DiaryTypography.fitString(this.font, label, w - 30);
+            g.drawString(this.font, label, x + 14, lineY,
+                i == current ? DiaryChrome.INK_TITLE : DiaryChrome.INK_FLAVOR, false);
         }
     }
 

@@ -1,3 +1,9 @@
+## Version 0.229.0 - El indice dice donde estas y la firma se apoya
+
+El indice del diario ya no es una lista ciega: la entrada que estas leyendo lleva su raya al lado, en tinta de lacre, y el renglon bajo el puntero se aclara para saber que vas a pulsar antes de pulsarlo.
+
+Abajo, en la portada, la firma del cronista flotaba sobre la ciudad como un texto pegado en el aire. Ahora esta escrita sobre una tira de papel rasgada, apoyada en la mesa, con su subrayado a lapiz y su sombra corta. El nombre viejo -el anterior cronista- sigue tachado encima del mismo papel.
+
 ## Version 0.228.0 - Las notas al margen dejan de ser puntos de lista
 
 En el diario, lo que va al costado -los avisos, las advertencias, ese "no lo hagas" que tanto importa- aparecia con la vineta redonda de cualquier lista. Ahora lleva una raya corta de pluma, hecha de dos trazos, como quien anota al margen del renglon principal.

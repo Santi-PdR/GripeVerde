@@ -858,15 +858,34 @@ public class DiaryTitleScreen extends Screen {
         // flotaba encima y podia pisar la mesa de botones.
         int newX = Math.max(48, this.width - sw - oldSw - 16);
         int newY = y;
+        // v0.229.0: la firma se escribe sobre una tira de papel gastada, apoyada
+        // en la mesa, en vez de flotar sobre la ciudad.
+        int slipX = newX - 7;
+        int slipW = this.width - 2 - slipX;
+        int slipY = y - 5;
+        boolean onSlip = slipW > 40;
+        if (onSlip) {
+            g.fill(slipX + 2, slipY + 13, slipX + slipW + 2, slipY + 17,
+                DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 30));
+            PaperTexture.drawTornSheet(g, slipX, slipY, slipW, 16,
+                PaperTexture.PaperKind.CORRESPONDENCE);
+            DiaryChrome.drawPencilRule(g, newX - 2, y + 10, Math.max(18, sw + 4),
+                newX * 31 + sw);
+        }
         // v0.21.25: firma limpia sin sombra.
+        // v0.229.0: sobre el papel la firma va en tinta oscura; sin papel sigue
+        // en sepia claro, que es lo que se lee sobre la ciudad.
         DiaryTypography.draw(g, this.font, signature,
             newX, newY,
-            DiaryTheme.SEPIA_LIGHT, false);
+            onSlip ? DiaryChrome.INK_TITLE : DiaryTheme.SEPIA_LIGHT, false);
 
         // Nombre viejo tachado (derecha, mas tenue)
         int oldX = this.width - oldSw - 6;
-        int oldColor = com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
-            com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_LIGHT, 100);
+        int oldColor = onSlip
+            ? com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
+                com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_MID, 170)
+            : com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
+                com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_LIGHT, 100);
         DiaryTypography.draw(g, this.font, oldSig, oldX, y, oldColor, false);
 
         // Tachadura sobre nombre viejo
