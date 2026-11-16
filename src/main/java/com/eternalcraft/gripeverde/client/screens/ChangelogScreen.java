@@ -622,6 +622,11 @@ public class ChangelogScreen extends Screen {
         g.enableScissor(cx, cy, cx + cw, cy + ch);
         if (this.diaryMode && !loadError) {
             drawDiaryScraps(g, cx, cy, cw, ch);
+            // v0.228.0: la lampara cae en el medio; los bordes de la hoja se
+            // oscurecen un poco para que el renglon del centro mande.
+            int shade = DiaryTheme.withAlpha(0x001A1108, 24);
+            g.fillGradient(cx, cy, cx + cw, cy + 10, shade, 0x00000000);
+            g.fillGradient(cx, cy + ch - 10, cx + cw, cy + ch, 0x00000000, shade);
         }
 
         if (loadError) {
@@ -1129,7 +1134,16 @@ public class ChangelogScreen extends Screen {
         int lh = lineHeightFor(row.type);
 
         if (row.type == LT.BULLET) {
-            g.drawString(this.font, "\u2022 ", x + indent, y, color, false);
+            // v0.228.0: en el diario la vineta es una raya corta de pluma: la
+            // nota al margen no es un punto de lista, es algo anotado al costado.
+            if (this.diaryMode) {
+                g.fill(x + indent, y + 4, x + indent + 5, y + 5,
+                    DiaryTheme.withAlpha(0x006B5533, 170));
+                g.fill(x + indent + 2, y + 5, x + indent + 6, y + 6,
+                    DiaryTheme.withAlpha(0x006B5533, 90));
+            } else {
+                g.drawString(this.font, "\u2022 ", x + indent, y, color, false);
+            }
             int prefixW = DiaryChrome.widthCached(this.font, "\u2022 ");
             int available = Math.max(20, maxW - indent - prefixW);
             List<FormattedCharSequence> wrapped = row.whole.of(this.font, row.text, available);

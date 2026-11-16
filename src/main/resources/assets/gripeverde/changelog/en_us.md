@@ -1,3 +1,9 @@
+## Version 0.228.0 - Margin notes stop being list dots
+
+In the diary, what sits at the side - the notices, the warnings, that "don't do it" that matters so much - appeared with the round bullet of any list. Now it carries a short pen stroke, made of two marks, like someone annotating beside the main line.
+
+And the sheet has lamplight: the top and bottom edges of the reading area darken slightly, so the text in the middle leads and the eyes do not wander to the tears.
+
 ## Version 0.227.0 - The diary has an index
 
 With twelve entries and more than a hundred lines, finding the 4th of December meant scrolling and scrolling. Now there is an index sheet: it opens with the Index button at the foot and lists the dates. Pressing one takes the pen to that entry and closes the index.

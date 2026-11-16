@@ -1,3 +1,9 @@
+## Version 0.228.0 - Las notas al margen dejan de ser puntos de lista
+
+En el diario, lo que va al costado -los avisos, las advertencias, ese "no lo hagas" que tanto importa- aparecia con la vineta redonda de cualquier lista. Ahora lleva una raya corta de pluma, hecha de dos trazos, como quien anota al margen del renglon principal.
+
+Y la hoja tiene luz de lampara: el borde superior e inferior del area de lectura se oscurecen apenas, para que el texto del centro mande y los ojos no se vayan a los desgarros.
+
 ## Version 0.227.0 - El diario tiene indice
 
 Con doce entradas y mas de cien renglones, encontrar el 4 de Diciembre era bajar y bajar. Ahora hay una hoja de indice: se abre con el boton Indice, al pie, y lista las fechas. Pulsar una lleva la pluma a esa entrada y cierra el indice.

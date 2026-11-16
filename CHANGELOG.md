@@ -1,3 +1,8 @@
+## v0.228.0 - Notas al margen y luz de lampara
+
+- `ChangelogScreen` modo diario: la viñeta se cambia por dos trazos de pluma; el borde superior e inferior del
+  área de lectura recibe un degradado tenue (`fillGradient`, α24).
+
 ## v0.227.0 - El diario tiene indice
 
 - `ChangelogScreen` modo diario: `buildDiarySections`, hoja de índice (`drawIndexOverlay`, LEDGER rasgada),
