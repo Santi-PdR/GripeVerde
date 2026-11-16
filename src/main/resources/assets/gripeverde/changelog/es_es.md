@@ -1,3 +1,9 @@
+## Version 0.226.0 - Cada entrada es su propia hoja
+
+El diario se leia de corrido sobre una sola hoja grande. Ahora cada fecha arranca un fragmento propio: un trozo de papel mas oscuro y mas gastado, rasgado arriba y abajo, que se apoya sobre la hoja del cuaderno con su sombra corta.
+
+Cada fragmento entra y sale un poco a distinto lado, siempre el mismo para la misma entrada. Se lee igual de seguido, pero se ve que son papeles distintos, guardados y pegados con el tiempo.
+
 ## Version 0.225.0 - Los filetes llevan repaso a lapiz
 
 Cada hoja del gabinete separa su cabecera con un filete de tinta y un rombo al centro. Ahora debajo de ese filete queda un repaso a lapiz: tramos cortos, desiguales, con huecos, como si el autor hubiera pasado dos veces por el mismo renglon.

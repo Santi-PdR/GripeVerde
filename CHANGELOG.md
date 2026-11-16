@@ -1,3 +1,8 @@
+## v0.226.0 - Cada entrada es su propia hoja
+
+- `ChangelogScreen` modo diario: `drawDiaryScraps` dibuja un fragmento rasgado (LEDGER, sombra corta) por sección,
+  con recorte derivado del índice de la sección.
+
 ## v0.225.0 - Los filetes llevan repaso a lapiz
 
 - `DiaryChrome.drawInkDivider`: hasta cinco tramos de lápiz (α55) bajo el filete, deterministas por posición y ancho.

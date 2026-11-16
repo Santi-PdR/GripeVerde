@@ -1,3 +1,9 @@
+## Version 0.226.0 - Every entry is its own sheet
+
+The diary used to be read straight through on one large sheet. Now each date starts its own fragment: a darker, more worn piece of paper, torn at top and bottom, resting on the notebook's sheet with its short shadow.
+
+Each fragment steps in or out a little differently, always the same for the same entry. It still reads as one flow, but you can see they are different papers, kept and pasted over time.
+
 ## Version 0.225.0 - The rules carry a pencil retrace
 
 Every sheet in the cabinet separates its header with an ink rule and a lozenge in the middle. Now, under that rule, there is a pencil retrace: short, uneven stretches with gaps, as if the author had gone over the same line twice.

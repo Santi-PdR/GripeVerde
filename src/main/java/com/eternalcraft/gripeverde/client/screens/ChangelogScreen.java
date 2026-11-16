@@ -611,6 +611,9 @@ public class ChangelogScreen extends Screen {
         g.fill(tx - 4, py + 18, tx + tw + 4, py + 19, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 150));
 
         g.enableScissor(cx, cy, cx + cw, cy + ch);
+        if (this.diaryMode && !loadError) {
+            drawDiaryScraps(g, cx, cy, cw, ch);
+        }
 
         if (loadError) {
             g.drawString(this.font,
@@ -938,6 +941,52 @@ public class ChangelogScreen extends Screen {
         StringBuilder sb = new StringBuilder();
         fcs.accept((idx, style, cp) -> { sb.appendCodePoint(cp); return true; });
         return sb.toString();
+    }
+
+    /**
+     * v0.226.0: cada entrada del diario es su propia hoja rasgada.
+     *
+     * El cuaderno tiene una hoja grande de fondo, pero lo que el lector queria
+     * ver son fragmentos: cada fecha arranca un trozo de papel distinto, mas
+     * oscuro y gastado, pegado encima. El recorte y la sombra se derivan del
+     * indice de la seccion, asi que cada fragmento cae siempre igual.
+     */
+    private void drawDiaryScraps(GuiGraphics g, int cx, int cy, int cw, int ch) {
+        int n = rows.size();
+        if (n == 0) return;
+        ensureRowHeights(cw);
+        int[] heights = this.rowHeightCache;
+        if (heights.length != n) return;
+
+        int top = cy - scrollY;
+        int start = 0;
+        for (int i = 0; i <= n; i++) {
+            boolean boundary = (i == n) || (i > 0 && rows.get(i).type == LT.H1);
+            if (!boundary) {
+                continue;
+            }
+            if (i > start) {
+                int sectionTop = top;
+                int sectionH = 0;
+                for (int k = start; k < i; k++) sectionH += heights[k];
+                if (sectionTop + sectionH >= cy - 10 && sectionTop <= cy + ch + 10) {
+                    int seed = start * 31 + i;
+                    int inset = 1 + Math.floorMod(seed, 5);
+                    int sx = cx - 4 + inset;
+                    int sw = Math.max(24, cw + 8 - inset * 2);
+                    int sy = sectionTop - 6;
+                    int sh = Math.max(12, sectionH + 12);
+                    // Sombra corta: el fragmento se apoya sobre la hoja grande.
+                    g.fill(sx + 3, sy + sh - 2, sx + sw + 3, sy + sh + 1,
+                        DiaryTheme.withAlpha(0x001A1108, 26));
+                    com.eternalcraft.gripeverde.client.render.PaperTexture.drawTornSheet(
+                        g, sx, sy, sw, sh,
+                        com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.LEDGER);
+                }
+                for (int k = start; k < i; k++) top += heights[k];
+            }
+            start = i;
+        }
     }
 
     private void renderRow(GuiGraphics g, Row row, int x, int y, int maxW) {
