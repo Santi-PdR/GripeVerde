@@ -2,7 +2,11 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
+    // v0.236.0: version exacta en vez de rango. Con '[6.0.16,6.2)' Gradle
+    // tenia que pedir el listado de versiones a la maven de Forge en cada
+    // build; cuando ese listado falla, el build entero cae aunque el artefacto
+    // este cacheado. Fijado a la ultima 6.0.x con la que compilamos.
+    id 'net.minecraftforge.gradle' version '6.0.54'
 }
 
 version = '0.236.0'
