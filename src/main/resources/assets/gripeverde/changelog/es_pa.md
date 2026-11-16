@@ -1,3 +1,9 @@
+## Version 0.235.0 - Los botones dejan de ser cajas
+
+Los botones eran lo ultimo que seguia con marco perfecto: un rectangulo de un pixel, igual arriba que abajo, que delataba la caja detras del papel. Ahora el filete se dibuja a mano: tramos de largo irregular que suben y bajan un pixel, asi que el recuadro sigue cerrando pero ya no parece medido con regla.
+
+Vale para todos los botones de pergamino, para las pestañas oscuras del pie del diario y para los interruptores de las opciones. El foco de teclado sigue marcandose con su anillo dorado: eso no es papel, es un aviso.
+
 ## Version 0.234.0 - El indice por meses, la pelusa y el canto de los cofres
 
 El indice del diario era una lista suelta de fechas. Ahora cada mes aparece una vez, en tinta de titulo y con su raya a lapiz, y los dias cuelgan debajo con sangria: se ve de un vistazo cuanto duro cada tramo del brote, de octubre a diciembre de 1800, y cuando no entra todo sigue desplazandose dentro de la hoja.

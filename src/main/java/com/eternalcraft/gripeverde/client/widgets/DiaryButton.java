@@ -2,6 +2,7 @@ package com.eternalcraft.gripeverde.client.widgets;
 
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.DiaryTypography;
 import com.eternalcraft.gripeverde.client.util.EasedValue;
 import com.eternalcraft.gripeverde.client.util.MotionPolicy;
@@ -154,7 +155,9 @@ public class DiaryButton extends AbstractButton {
         if(!active) borderCol = DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 90);
         else borderCol = inWorld ? (hovered ? accent : DiaryTheme.SEPIA_DARK)
                 : hoverAnim.lerpColor(DiaryTheme.SEPIA_DARK, accent);
-        drawBorder(g,x,yDraw,w,h,borderCol);
+        // v0.235.0: el filete se dibuja a mano; el marco recto se fue.
+        PaperTexture.drawWornBorder(g, x, yDraw, w, h, borderCol,
+            x * 31 + y * 17 + w);
 
         // Double inner border for primary
         if(variant==Variant.PRIMARY && active){
@@ -309,14 +312,9 @@ public class DiaryButton extends AbstractButton {
         if(mc != null && mc.level != null) return hoverT >= 0.5f ? hov : base;
         return hoverAnim.lerpColor(base,hov);
     }
-    private void drawBorder(GuiGraphics g,int x,int y,int w,int h,int col){
-        g.fill(x,y,x+w,y+1,col);
-        g.fill(x,y+h-1,x+w,y+h,col);
-        g.fill(x,y,x+1,y+h,col);
-        g.fill(x+w-1,y,x+w,y+h,col);
-    }
+    // v0.235.0: aqui vivia drawBorder, el marco recto de un pixel. El filete
+    // lo dibuja ahora PaperTexture.drawWornBorder.
 
-    // ── Icons: hand-drawn engraved style ──
     private void drawIcon(GuiGraphics g,int x,int y,int col){
         switch(icon){
             case HAND -> drawHand(g,x,y,col);

@@ -4,6 +4,7 @@ import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.DiaryTypography;
 import com.eternalcraft.gripeverde.client.util.EasedValue;
 import com.eternalcraft.gripeverde.client.util.MotionPolicy;
@@ -77,10 +78,8 @@ public class SlimButton extends AbstractButton {
         int border = hoverAnim.lerpColor(DiaryTheme.BRONZE_DARK, DiaryTheme.REDCOAT);
 
         g.fill(x, y, x + w, y + h, bg);
-        g.fill(x, y,         x + w, y + 1,     border);
-        g.fill(x, y + h - 1, x + w, y + h,     border);
-        g.fill(x, y,         x + 1, y + h,     border);
-        g.fill(x + w - 1, y, x + w, y + h,     border);
+        // v0.235.0: la pestaña oscura tambien lleva el filete a mano.
+        PaperTexture.drawWornBorder(g, x, y, w, h, border, x * 31 + y * 17 + w);
         g.fill(x + 3, y + 3, x + w - 3, y + 4, DiaryTheme.withAlpha(DiaryTheme.BRONZE, 48));
         g.fill(x + 3, y + h - 4, x + w - 3, y + h - 3, DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 80));
         g.fill(x + 4, y + 4, x + 5, y + 5, DiaryTheme.withAlpha(DiaryTheme.GOLD_TARNISHED, 120));

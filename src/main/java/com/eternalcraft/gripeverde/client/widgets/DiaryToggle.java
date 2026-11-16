@@ -4,6 +4,7 @@ import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 
 import com.eternalcraft.gripeverde.client.audio.UiSounds;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.DiaryTypography;
 import com.eternalcraft.gripeverde.client.util.EasedValue;
 import com.eternalcraft.gripeverde.client.util.MotionPolicy;
@@ -143,10 +144,8 @@ public class DiaryToggle extends AbstractButton {
 
         int accent = value ? DiaryTheme.REDCOAT : DiaryTheme.SEPIA_MID;
         int borderColor = hoverAnim.lerpColor(DiaryTheme.SEPIA_DARK, this.active ? accent : DiaryTheme.SEPIA_MID);
-        g.fill(x, y, x + w, y + 1, borderColor);
-        g.fill(x, y + h - 1, x + w, y + h, borderColor);
-        g.fill(x, y, x + 1, y + h, borderColor);
-        g.fill(x + w - 1, y, x + w, y + h, borderColor);
+        // v0.235.0: mismo filete a mano que los botones.
+        PaperTexture.drawWornBorder(g, x, y, w, h, borderColor, x * 31 + y * 17 + w);
 
         Font font = Minecraft.getInstance().font;
         Component valLabel = this.valueFormatter.apply(value);

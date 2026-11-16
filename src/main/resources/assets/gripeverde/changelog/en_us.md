@@ -1,3 +1,9 @@
+## Version 0.235.0 - The buttons stop being boxes
+
+The buttons were the last thing still carrying a perfect frame: a one-pixel rectangle, the same on top and bottom, that gave away the box behind the paper. Now the rule is drawn by hand: stretches of uneven length that rise and fall by a pixel, so the outline still closes but no longer looks measured with a ruler.
+
+It applies to every parchment button, to the dark tabs at the foot of the diary and to the option toggles. Keyboard focus still shows its gold ring: that is not paper, it is a warning.
+
 ## Version 0.234.0 - The index by month, the lint and the chest edges
 
 The diary index was a loose list of dates. Now each month appears once, in title ink and with its pencil rule, and the days hang beneath it with an indent: you can see at a glance how long each stretch of the outbreak lasted, from October to December 1800, and when it all does not fit it still scrolls inside the sheet.

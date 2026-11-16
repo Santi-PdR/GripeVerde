@@ -1,3 +1,10 @@
+## v0.235.0 - Los botones dejan de ser cajas
+
+- `PaperTexture.drawWornBorder(g,x,y,w,h,color,seed)`: filete a mano — tramos de 5 px en adelante con jitter de 1 px arriba,
+  abajo y en los laterales; determinista por geometría.
+- `DiaryButton`: usa `drawWornBorder` y se elimina `drawBorder`. `SlimButton` y `DiaryToggle`: mismo filete a mano.
+- El anillo de foco de teclado queda igual (aviso, no papel).
+
 ## v0.234.0 - Indice por meses, pelusa y cantos de contenedores
 
 - `ChangelogScreen`: `buildIndexRows` agrupa las fechas por mes (`MONTH_NAMES`, `monthOf`); las cabeceras de mes no son

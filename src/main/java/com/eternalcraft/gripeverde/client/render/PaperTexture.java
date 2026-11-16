@@ -220,6 +220,40 @@ public final class PaperTexture {
     }
 
     /**
+     * v0.235.0: filete dibujado a mano para botones y mandos.
+     *
+     * El borde recto de un pixel era lo ultimo que le quedaba de caja a los
+     * botones. Esto lo dibuja en tramos que suben y bajan un pixel, con largos
+     * irregulares: el recuadro sigue cerrando, pero ya no parece medido con
+     * regla. Es geometria pura, sin animacion.
+     */
+    public static void drawWornBorder(GuiGraphics g, int x, int y, int w, int h, int color, int seed) {
+        if (g == null || w < 8 || h < 8) return;
+        int stepX = Math.max(5, w / 20);
+        int offset = 0;
+        for (int i = 0; offset < w; i++) {
+            int r = mix(seed + i * 7919);
+            int len = Math.min(w - offset, stepX + Math.floorMod(r, stepX));
+            int dyTop = Math.floorMod(r >>> 6, 2);
+            g.fill(x + offset, y + dyTop, x + offset + len, y + dyTop + 1, color);
+            int dyBot = Math.floorMod(r >>> 9, 2);
+            g.fill(x + offset, y + h - 1 - dyBot, x + offset + len, y + h - dyBot, color);
+            offset += len;
+        }
+        int stepY = Math.max(4, h / 8);
+        offset = 0;
+        for (int i = 0; offset < h; i++) {
+            int r = mix(seed + 0x2E5B91 + i * 3571);
+            int len = Math.min(h - offset, stepY + Math.floorMod(r, stepY));
+            int dxLeft = Math.floorMod(r >>> 7, 2);
+            g.fill(x + dxLeft, y + offset, x + dxLeft + 1, y + offset + len, color);
+            int dxRight = Math.floorMod(r >>> 10, 2);
+            g.fill(x + w - 1 - dxRight, y + offset, x + w - dxRight, y + offset + len, color);
+            offset += len;
+        }
+    }
+
+    /**
      * v0.234.0: canto gastado para paneles que no son nuestros.
      *
      * El inventario, el cofre, el horno y demas contenedores siguen pintandose
