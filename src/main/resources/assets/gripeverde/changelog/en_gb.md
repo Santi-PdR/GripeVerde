@@ -1,3 +1,9 @@
+## Version 0.231.0 - The loose papers and an index you can scroll
+
+At the foot of the reading room three papers were still plain rectangles: the outbreak telegram, Dr. Holloway's report and the black card. They were the last thing in the room with four straight rules. Now they are real cuttings, lighter than the cabinet sheet, eaten away at top and bottom, with a short shadow underneath and their own wear. Passing the pointer over one lightens the cutting a little and underlines the label in pencil.
+
+The diary index had another problem: with many dates the sheet grew until it left the panel, and there was no way to reach the last ones. Now it shows twelve lines at most and carries its own mark at the side: the wheel walks the dates inside the sheet without moving the diary behind it, and opening the index centres it on the entry you were reading.
+
 ## Version 0.230.0 - The documents are loose cuttings
 
 When the outbreak telegram, Dr. Holloway's report or the black card is opened in the reading room, the text appeared written straight onto the archive card. Now each document rests on its own piece of paper, lighter and torn at top and bottom, with a short shadow along the lower edge.

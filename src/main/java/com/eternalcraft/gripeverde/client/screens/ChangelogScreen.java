@@ -146,6 +146,11 @@ public class ChangelogScreen extends Screen {
     private final boolean diaryMode;
     // v0.227.0: la hoja de indice del diario (fechas, para saltar sin recorrer).
     private boolean indexOpen = false;
+    // v0.231.0: la hoja muestra como mucho doce fechas y tiene su propio
+    // desplazamiento; el diario que hay detras no se mueve.
+    private int indexScroll = 0;
+    private static final int INDEX_LINE_H = 13;
+    private static final int INDEX_MAX_ROWS = 12;
     private int[] diarySectionRows = new int[0];
     private String[] diarySectionLabels = new String[0];
 
@@ -177,6 +182,8 @@ public class ChangelogScreen extends Screen {
         this.rows.clear();
         this.rowHeightCacheW = -1;   // v0.184.0: la cronica cambio, alto nuevo
         this.lastContentW = -1;
+        this.indexOpen = false;
+        this.indexScroll = 0;
 
         loadAndParse();
         recalcMaxScroll();
@@ -201,7 +208,7 @@ public class ChangelogScreen extends Screen {
             int idxW = 68;
             this.addRenderableWidget(new SlimButton(panelX() + 10 + logW + 6, by + 6, idxW, 18,
                 Component.literal(english ? "Index" : "Índice"),
-                () -> { this.indexOpen = !this.indexOpen; }));
+                this::toggleIndex));
         }
     }
 
@@ -1002,14 +1009,80 @@ public class ChangelogScreen extends Screen {
         return cur;
     }
 
+    /**
+     * v0.231.0: geometria del indice en un solo sitio. Dibujo, puntero y rueda
+     * tienen que medir la misma hoja, o el clic cae donde no toca.
+     */
+    private int indexWidth() {
+        return Math.max(80, Math.min(240, panelW() - 40));
+    }
+
+    private int indexX() {
+        return panelX() + (panelW() - indexWidth()) / 2;
+    }
+
+    private int indexY() {
+        return panelY() + 40;
+    }
+
+    private int indexRowsTotal() {
+        return this.diarySectionLabels.length;
+    }
+
+    private int indexShownRows() {
+        return Math.min(indexRowsTotal(), INDEX_MAX_ROWS);
+    }
+
+    /** v0.231.0: doce fechas como tope; si el panel es bajo, manda el panel. */
+    private int indexHeight() {
+        // 26 px de cabecera y filete + 6 de aire al pie: con 32 por fila la
+        // duodécima fecha entra entera antes del desgarro inferior.
+        int natural = indexShownRows() * INDEX_LINE_H + 32;
+        int limit = panelH() - 60;
+        return Math.max(INDEX_LINE_H + 30, Math.min(natural, limit));
+    }
+
+    private int indexVisibleRows() {
+        return Math.max(1, Math.min(indexShownRows(), (indexHeight() - 30) / INDEX_LINE_H));
+    }
+
+    private int indexMaxScroll() {
+        return Math.max(0, indexRowsTotal() - indexVisibleRows());
+    }
+
+    private int indexClampedScroll() {
+        return Math.max(0, Math.min(this.indexScroll, indexMaxScroll()));
+    }
+
+    private boolean overIndex(double mx, double my) {
+        if (!this.diaryMode || !this.indexOpen) return false;
+        int x = indexX(), y = indexY(), w = indexWidth(), h = indexHeight();
+        return mx >= x && mx <= x + w && my >= y && my <= y + h;
+    }
+
+    /** v0.231.0: al abrir el indice queda centrado en la entrada que se lee. */
+    private void toggleIndex() {
+        this.indexOpen = !this.indexOpen;
+        if (!this.indexOpen) return;
+        int current = currentDiarySection(scrollY + 24);
+        if (current < 0) {
+            this.indexScroll = 0;
+        } else {
+            this.indexScroll = Math.max(0,
+                Math.min(indexMaxScroll(), current - indexVisibleRows() / 2));
+        }
+    }
+
     private void drawIndexOverlay(GuiGraphics g, int px, int py, int pw, int ph, int mouseX, int mouseY) {
         if (!this.diaryMode || !this.indexOpen || this.diarySectionLabels.length == 0) return;
-        int rowsN = this.diarySectionLabels.length;
-        int lineH = 13;
-        int w = Math.min(240, pw - 40);
-        int h = Math.min(rowsN * lineH + 26, ph - 60);
-        int x = px + (pw - w) / 2;
-        int y = py + 40;
+        int rowsN = indexRowsTotal();
+        int lineH = INDEX_LINE_H;
+        int w = indexWidth();
+        int h = indexHeight();
+        int x = indexX();
+        int y = indexY();
+        this.indexScroll = indexClampedScroll();
+        int visible = indexVisibleRows();
         com.eternalcraft.gripeverde.client.render.PaperTexture.drawTornSheet(
             g, x, y, w, h,
             com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.LEDGER);
@@ -1018,41 +1091,55 @@ public class ChangelogScreen extends Screen {
         g.drawString(this.font, head, x + (w - DiaryTypography.width(this.font, head)) / 2, y + 8,
             DiaryChrome.INK_TITLE, false);
         DiaryChrome.drawInkDivider(g, x + 12, y + 22, w - 24);
-        int visible = Math.max(1, (h - 30) / lineH);
         int current = currentDiarySection(scrollY + 24);
         int hovered = indexRowAt(mouseX, mouseY, px, py, pw, ph);
-        for (int i = 0; i < Math.min(rowsN, visible); i++) {
+        int textW = w - (indexMaxScroll() > 0 ? 34 : 30);
+        for (int i = 0; i < visible; i++) {
+            int idx = i + this.indexScroll;
+            if (idx >= rowsN) break;
             int lineY = y + 28 + i * lineH;
-            if (i == hovered) {
+            if (idx == hovered) {
                 g.fill(x + 8, lineY - 2, x + w - 8, lineY + lineH - 3,
                     DiaryTheme.withAlpha(0x008E6A35, 40));
             }
-            if (i == current) {
+            if (idx == current) {
                 // v0.229.0: la entrada que se esta leyendo lleva su raya al lado.
                 g.fill(x + 6, lineY + 3, x + 10, lineY + 4,
                     DiaryTheme.withAlpha(0x005C0A08, 170));
             }
-            String label = this.diarySectionLabels[i];
-            label = DiaryTypography.fitString(this.font, label, w - 30);
+            String label = this.diarySectionLabels[idx];
+            label = DiaryTypography.fitString(this.font, label, textW);
             g.drawString(this.font, label, x + 14, lineY,
-                i == current ? DiaryChrome.INK_TITLE : DiaryChrome.INK_FLAVOR, false);
+                idx == current ? DiaryChrome.INK_TITLE : DiaryChrome.INK_FLAVOR, false);
+        }
+        // v0.231.0: las fechas que no caben dejan su marca al costado de la hoja.
+        int maxS = indexMaxScroll();
+        if (maxS > 0) {
+            int trackTop = y + 26;
+            int trackH = visible * lineH + 2;
+            g.fill(x + w - 7, trackTop, x + w - 6, trackTop + trackH,
+                DiaryTheme.withAlpha(0x006B5533, 70));
+            int thumbH = Math.max(8, trackH * visible / rowsN);
+            int thumbY = trackTop + (trackH - thumbH) * this.indexScroll / maxS;
+            g.fill(x + w - 8, thumbY, x + w - 5, thumbY + thumbH,
+                DiaryTheme.withAlpha(0x00704621, 180));
         }
     }
 
     /** v0.227.0: fila del indice bajo el puntero (-1 si ninguna). */
     private int indexRowAt(double mouseX, double mouseY, int px, int py, int pw, int ph) {
         if (!this.diaryMode || !this.indexOpen || this.diarySectionLabels.length == 0) return -1;
-        int rowsN = this.diarySectionLabels.length;
-        int lineH = 13;
-        int w = Math.min(240, pw - 40);
-        int h = Math.min(rowsN * lineH + 26, ph - 60);
-        int x = px + (pw - w) / 2;
-        int y = py + 40;
+        int w = indexWidth();
+        int h = indexHeight();
+        int x = indexX();
+        int y = indexY();
         if (mouseX < x || mouseX > x + w || mouseY < y + 24 || mouseY > y + h) return -1;
-        int visible = Math.max(1, (h - 30) / lineH);
-        int row = (int) ((mouseY - (y + 28)) / lineH);
-        if (row < 0 || row >= Math.min(rowsN, visible)) return -1;
-        return row;
+        int visible = indexVisibleRows();
+        int row = (int) ((mouseY - (y + 28)) / INDEX_LINE_H);
+        if (row < 0 || row >= visible) return -1;
+        int idx = row + indexClampedScroll();
+        if (idx < 0 || idx >= indexRowsTotal()) return -1;
+        return idx;
     }
 
     private void jumpToDiarySection(int section) {
@@ -1234,12 +1321,11 @@ public class ChangelogScreen extends Screen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         // v0.227.0: una fecha del indice lleva a su entrada.
-        if (button == 0) {
+        // v0.231.0: la hoja abierta se queda el clic aunque no toque un renglon.
+        if (button == 0 && this.diaryMode && this.indexOpen && overIndex(mouseX, mouseY)) {
             int idxRow = indexRowAt(mouseX, mouseY, panelX(), panelY(), panelW(), panelH());
-            if (idxRow >= 0) {
-                jumpToDiarySection(idxRow);
-                return true;
-            }
+            if (idxRow >= 0) jumpToDiarySection(idxRow);
+            return true;
         }
         // v0.29.0: tocar la lupa le da la palabra (y no propaga el gesto).
         if (button == 0 && overSearchBox(mouseX, mouseY)) {
@@ -1278,6 +1364,24 @@ public class ChangelogScreen extends Screen {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+        // v0.231.0: con la hoja de indice abierta, la rueda recorre las fechas.
+        // El diario de detras no se mueve y el gesto no se filtra a la pantalla.
+        if (this.diaryMode && this.indexOpen && overIndex(mouseX, mouseY)) {
+            int max = indexMaxScroll();
+            if (max > 0) {
+                int before = this.indexScroll;
+                this.indexScroll = Math.max(0,
+                    Math.min(max, before - (int) Math.signum(delta) * 2));
+                if (this.indexScroll != before) {
+                    long now = System.currentTimeMillis();
+                    if (now - lastScrollSoundMs > 200L) {
+                        com.eternalcraft.gripeverde.client.audio.UiSounds.scroll();
+                        lastScrollSoundMs = now;
+                    }
+                }
+            }
+            return true;
+        }
         // v0.182.0: sin cronica que recorrer, la rueda no hace ruido ni se queda el gesto.
         if (this.maxScroll <= 0) {
             return super.mouseScrolled(mouseX, mouseY, delta);

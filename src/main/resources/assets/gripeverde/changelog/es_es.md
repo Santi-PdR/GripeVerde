@@ -1,3 +1,9 @@
+## Version 0.231.0 - Los papeles sueltos y un indice que se recorre
+
+Al pie de la sala de consulta quedaban tres papeles rectangulares: el telegrama del brote, el informe del doctor Holloway y la ficha negra. Eran lo ultimo de la sala con cuatro filetes rectos. Ahora son recortes de verdad, mas claros que la hoja del gabinete, con los bordes comidos arriba y abajo, una sombra corta debajo y su propio desgaste. Al pasar el puntero el recorte se aclara apenas y el rotulo se subraya a lapiz.
+
+El indice del diario tenia otro problema: con muchas fechas la hoja crecia hasta salirse del panel y no habia forma de llegar a las ultimas. Ahora muestra como mucho doce renglones y lleva su propia marca al costado: la rueda recorre las fechas dentro de la hoja, sin mover el diario que queda detras, y al abrirlo queda centrado en la entrada que estabas leyendo.
+
 ## Version 0.230.0 - Los documentos son recortes sueltos
 
 Cuando en la sala de consulta se abre el telegrama del brote, el informe del doctor Holloway o la ficha negra, el texto aparecia escrito directamente sobre la ficha del archivo. Ahora cada documento se apoya en su propio trozo de papel, mas claro y rasgado arriba y abajo, con una sombra corta en el borde inferior.

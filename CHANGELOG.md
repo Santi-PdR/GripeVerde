@@ -1,3 +1,12 @@
+## v0.231.0 - Recortes al pie e indice con tope
+
+- `DiaryArchiveScreen.drawPaperDoc`: los tres papeles recuperados pasan de recuadro recto a `drawTornSheet` CORRESPONDENCE
+  (124×20, sombra corta); el hover aclara el cuerpo del recorte y subraya el rótulo con `drawPencilRule`; el área de clic
+  sube a 20 px.
+- `ChangelogScreen` modo diario: el índice topa en `INDEX_MAX_ROWS = 12` renglones (`indexHeight`, `indexVisibleRows`),
+  con desplazamiento propio (`indexScroll`, rueda dentro de la hoja, marca al costado) y centrado en la entrada actual al
+  abrirlo (`toggleIndex`); la hoja abierta se queda clics y rueda (`overIndex`).
+
 ## v0.230.0 - Documentos sobre recorte
 
 - `DiaryArchiveScreen.renderDocument`: cada documento se apoya en un `drawTornSheet` LEDGER con sombra corta

@@ -346,32 +346,39 @@ public class DiaryArchiveScreen extends Screen {
         }
     }
 
+    /**
+     * v0.231.0: los papeles recuperados son recortes sueltos, no fichas.
+     *
+     * Eran el ultimo rectangulo recto de la sala: cuatro filetes y una esquina
+     * doblada. Ahora cada uno se pinta con drawTornSheet, mas claro que la hoja
+     * del gabinete y con los bordes comidos arriba y abajo, apoyado en una
+     * sombra corta. El hover ya no cambia el relleno entero -eso romperia el
+     * desgarro-: aclara el cuerpo del recorte y subraya el rotulo a lapiz.
+     */
     private void drawPaperDoc(GuiGraphics g, int x, int y, String label, int mx, int my) {
-        boolean hover = mx >= x && mx < x + 124 && my >= y && my < y + 18;
-        int paper = hover ? 0xFFDCCBA0 : 0xFFCFB98C;
-        g.fill(x + 1, y + 2, x + 124, y + 19, DiaryTheme.withAlpha(0xFF302315, 30));
-        g.fill(x, y, x + 124, y + 18, paper);
-        g.fill(x, y, x + 124, y + 1, 0xFF8E6A35);
-        g.fill(x, y + 17, x + 124, y + 18, 0xFF8E6A35);
-        g.fill(x, y, x + 1, y + 18, 0xFF8E6A35);
-        g.fill(x + 123, y, x + 124, y + 18, 0xFF8E6A35);
+        int w = 124;
+        int h = 20;
+        boolean hover = mx >= x && mx < x + w && my >= y && my < y + h;
 
-        // Desgaste fijo, dibujado solo en las fichas del archivo.
-        g.fill(x + 3, y + 4, x + 4, y + 5, DiaryTheme.withAlpha(0xFF704B24, 105));
-        g.fill(x + 3, y + 10, x + 4, y + 11, DiaryTheme.withAlpha(0xFF704B24, 80));
-        g.fill(x + 6, y + 15, x + 18, y + 16, DiaryTheme.withAlpha(0xFF704B24, 45));
-        g.fill(x + 20, y + 15, x + 25, y + 16, DiaryTheme.withAlpha(0xFF704B24, 28));
+        g.fill(x + 2, y + h - 2, x + w + 2, y + h + 1,
+            DiaryTheme.withAlpha(0x00302315, hover ? 44 : 30));
+        PaperTexture.drawTornSheet(g, x, y, w, h, PaperTexture.PaperKind.CORRESPONDENCE);
+        if (hover) {
+            // Solo el cuerpo: los mordiscos de arriba y abajo quedan intactos.
+            g.fill(x, y + 3, x + w, y + h - 3, DiaryTheme.withAlpha(0x00FFF3CC, 20));
+        }
 
-        // Esquina doblada con una sombra corta; permanece estática y fuera del texto.
-        g.fill(x + 115, y, x + 123, y + 1, 0xFF8E6A35);
-        g.fill(x + 116, y + 1, x + 123, y + 2, 0xFFE0D0A8);
-        g.fill(x + 117, y + 2, x + 123, y + 3, 0xFFD0BC91);
-        g.fill(x + 118, y + 3, x + 123, y + 4, 0xFFB89E70);
-        g.fill(x + 119, y + 4, x + 123, y + 5, 0xFF8E6A35);
-        g.fill(x + 116, y + 2, x + 117, y + 5, DiaryTheme.withAlpha(0xFF704B24, 115));
+        // Desgaste propio del recorte, fijo y lejos del rotulo.
+        g.fill(x + 3, y + 5, x + 4, y + 6, DiaryTheme.withAlpha(0xFF704B24, 105));
+        g.fill(x + 3, y + 11, x + 4, y + 12, DiaryTheme.withAlpha(0xFF704B24, 80));
+        g.fill(x + 96, y + 15, x + 112, y + 16, DiaryTheme.withAlpha(0xFF704B24, 40));
 
-        String fit = truncate(label, 106);
-        g.drawString(this.font, fit, x + 5, y + 5, DiaryTheme.INK, false);
+        String fit = truncate(label, 104);
+        g.drawString(this.font, fit, x + 6, y + 6, DiaryTheme.INK, false);
+        if (hover) {
+            int ruleW = Math.min(w - 16, DiaryChrome.widthCached(this.font, fit) + 3);
+            DiaryChrome.drawPencilRule(g, x + 5, y + 14, ruleW, x * 31 + w);
+        }
     }
 
     /**
@@ -582,13 +589,13 @@ public class DiaryArchiveScreen extends Screen {
             focusCard = clickedCard;
             if (openCard(clickedCard)) return true;
         }
-        // Papeles sueltos
+        // Papeles sueltos (mismo alto que drawPaperDoc: 20 px).
         int infoY = panelY + 60 + ((Discoveries.ALL.length + COLS - 1) / COLS) * (CARD_H + CARD_GAP) + 6;
         int docsY = infoY + 16 + 4;
         int dx = panelX + 26;
         boolean en = Discoveries.isEnglish();
         if (ChroniclerMemory.isDiscovered(Discoveries.CODE_1897)) {
-            if (mouseX >= dx && mouseX < dx + 124 && mouseY >= docsY && mouseY < docsY + 18) {
+            if (mouseX >= dx && mouseX < dx + 124 && mouseY >= docsY && mouseY < docsY + 20) {
                 viewingDoc = DOC_TELEGRAM;
                 UiSounds.tab();
                 return true;
@@ -596,7 +603,7 @@ public class DiaryArchiveScreen extends Screen {
             dx += 130;
         }
         if (ChroniclerMemory.isDiscovered(Discoveries.CODE_HOLLOWAY)) {
-            if (mouseX >= dx && mouseX < dx + 124 && mouseY >= docsY && mouseY < docsY + 18) {
+            if (mouseX >= dx && mouseX < dx + 124 && mouseY >= docsY && mouseY < docsY + 20) {
                 viewingDoc = DOC_HOLLOWAY;
                 UiSounds.tab();
                 return true;
@@ -604,7 +611,7 @@ public class DiaryArchiveScreen extends Screen {
             dx += 130;
         }
         if (ChroniclerMemory.discoveredCount() >= 38) {
-            if (mouseX >= dx && mouseX < dx + 124 && mouseY >= docsY && mouseY < docsY + 18) {
+            if (mouseX >= dx && mouseX < dx + 124 && mouseY >= docsY && mouseY < docsY + 20) {
                 viewingDoc = DOC_FORBIDDEN;
                 try {
                     UiSounds.playCustom(com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_CHAIN.get(), 0.22f, 0.5f);
