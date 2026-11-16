@@ -1,3 +1,11 @@
+## Version 0.234.0 - El indice por meses, la pelusa y el canto de los cofres
+
+El indice del diario era una lista suelta de fechas. Ahora cada mes aparece una vez, en tinta de titulo y con su raya a lapiz, y los dias cuelgan debajo con sangria: se ve de un vistazo cuanto duro cada tramo del brote, de octubre a diciembre de 1800, y cuando no entra todo sigue desplazandose dentro de la hoja.
+
+Los desgarros ganaron pelusa: una hebra suelta dentro del mordisco y, cada tantos tramos, un pelo de fibra que sobresale del canto. Se nota en todas las hojas a la vez, porque el borde rasgado se dibuja en un solo sitio.
+
+Y el inventario, el cofre, el horno y los demas contenedores llevan el canto gastado. Su panel es una textura del propio juego y el mod no la repinta: se le marcan mordiscos de tinta de un pixel hacia adentro y una sombra suelta hacia afuera, sacados del tamano del panel. Es estatico: en partida no se anima nada.
+
 ## Version 0.233.0 - La pausa tambien esta rota
 
 La pausa era la ultima hoja con marco: doble filete sepia y cuatro esquineros de oro trazados con regla sobre un papel que ya tenia brillo, manchas de sangre y humedad. Al abrir el menu sobre el mundo se notaba el contraste: el diario terminaba en mordiscos y la pausa, en una linea recta.

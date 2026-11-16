@@ -1,3 +1,13 @@
+## v0.234.0 - Indice por meses, pelusa y cantos de contenedores
+
+- `ChangelogScreen`: `buildIndexRows` agrupa las fechas por mes (`MONTH_NAMES`, `monthOf`); las cabeceras de mes no son
+  pulsables (`indexRowAt` devuelve la sección), llevan raya a lápiz y `toggleIndex` centra por fila. Con 3 meses + 11 fechas
+  el tope de 12 renglones y el desplazamiento de 0.231.0 entran en juego.
+- `PaperTexture.drawTornEdge`: pelusa (`0x005A4526`, α70-119) dentro del mordisco cada 3 tramos y fibra (`0x00806A44`, α110)
+  que sobresale cada 7; se aplica a todas las hojas rasgadas.
+- `PaperTexture.drawWornRim` + `ScreenEventHandler.onContainerRenderPost`: canto gastado (1 px, tinta α125/80 y sombra α34)
+  en `AbstractContainerScreen` — inventario, cofres, hornos y demás contenedores.
+
 ## v0.233.0 - La pausa termina rasgada
 
 - `PaperTexture.drawTornRim`: canto rasgado para hojas pintadas a mano — dientes de 1–3 px hacia afuera (papel α242) y sombra de 1–2 px

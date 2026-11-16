@@ -180,6 +180,18 @@ public final class PaperTexture {
             } else {
                 g.fill(x + offset, y + 1, x + offset + len, y + 1 + notch, col);
             }
+            // v0.234.0: el canto no se corta limpio. Una pelusa dentro del
+            // desgarro y, cada tantos tramos, un pelo de fibra que sobresale.
+            if (Math.floorMod(r >>> 17, 3) == 0) {
+                int fuzzX = x + offset + Math.floorMod(r >>> 21, Math.max(1, len));
+                g.fill(fuzzX, y + 2, fuzzX + 1, y + 3,
+                    DiaryTheme.withAlpha(0x005A4526, 70 + Math.floorMod(r >>> 9, 50)));
+            }
+            if (Math.floorMod(r >>> 3, 7) == 0) {
+                int hairX = x + offset + len / 3;
+                if (top) g.fill(hairX, y - 2, hairX + 1, y, DiaryTheme.withAlpha(0x00806A44, 110));
+                else     g.fill(hairX, y + 4, hairX + 1, y + 6, DiaryTheme.withAlpha(0x00806A44, 110));
+            }
             // Esquirla que se desprende cada tanto.
             if (Math.floorMod(r >>> 13, 5) == 0) {
                 int chipX = x + offset + len / 2;
@@ -204,6 +216,59 @@ public final class PaperTexture {
             g.fill(x + offset, y + 1, x + offset + len, y + 1 + notch, DiaryTheme.withAlpha(0x00422810, 18));
             offset += len;
             i++;
+        }
+    }
+
+    /**
+     * v0.234.0: canto gastado para paneles que no son nuestros.
+     *
+     * El inventario, el cofre, el horno y demas contenedores siguen pintandose
+     * con su textura vanilla, que no se puede repintar sin mixins. Lo unico
+     * honesto es marcarles el canto: mordiscos de tinta de un pixel hacia
+     * adentro y una sombra suelta hacia afuera, para que el rectangulo no se
+     * lea como un corte perfecto. Determinista, sin animacion.
+     */
+    public static void drawWornRim(GuiGraphics g, int x, int y, int w, int h) {
+        if (g == null || w < 32 || h < 32) return;
+        int seed = (x * 73856093) ^ (y * 19349663) ^ (w * 83492791) ^ (h * 297121507);
+        int ink = DiaryTheme.withAlpha(0x005A4526, 125);
+        int inkSoft = DiaryTheme.withAlpha(0x005A4526, 80);
+        int shade = DiaryTheme.withAlpha(0x001A1108, 34);
+
+        // Arriba y abajo: mordisco adentro, sombra afuera cada tres tramos.
+        for (int e = 0; e < 2; e++) {
+            boolean top = e == 0;
+            int step = Math.max(5, w / 30);
+            int offset = 1;
+            for (int i = 0; offset < w - 1; i++) {
+                int r = mix(seed + i * 7919 + (top ? 0 : 0x1F3D5B));
+                int len = Math.min(w - 1 - offset, step + Math.floorMod(r, step));
+                if (Math.floorMod(r >>> 6, 3) == 0) {
+                    int ty = top ? y : y + h - 1;
+                    g.fill(x + offset, ty, x + offset + len, ty + 1, ink);
+                }
+                if (Math.floorMod(r >>> 11, 4) == 0) {
+                    int sy = top ? y - 1 : y + h;
+                    g.fill(x + offset + 2, sy, x + offset + len - 1, sy + 1, shade);
+                }
+                offset += len;
+            }
+        }
+
+        // Laterales: mas leve, para que el panel no parezca mordido entero.
+        for (int e = 0; e < 2; e++) {
+            boolean left = e == 0;
+            int step = Math.max(6, h / 22);
+            int offset = 1;
+            for (int i = 0; offset < h - 1; i++) {
+                int r = mix(seed + i * 3571 + (left ? 0 : 0x2E5B91));
+                int len = Math.min(h - 1 - offset, step + Math.floorMod(r, step));
+                if (Math.floorMod(r >>> 8, 4) == 0) {
+                    int tx = left ? x : x + w - 1;
+                    g.fill(tx, y + offset, tx + 1, y + offset + len, inkSoft);
+                }
+                offset += len;
+            }
         }
     }
 

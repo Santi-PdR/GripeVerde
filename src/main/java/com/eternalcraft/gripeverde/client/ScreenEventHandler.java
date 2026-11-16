@@ -131,6 +131,26 @@ public class ScreenEventHandler {
         } catch (Throwable ignored) {}
     }
 
+    /**
+     * v0.234.0: el inventario y los contenedores llevan el canto gastado.
+     *
+     * No se pueden repintar (su panel es una textura vanilla y el mod no usa
+     * mixins), asi que se les marca el borde: mordiscos de tinta de un pixel
+     * hacia adentro y sombra suelta hacia afuera, derivados de la geometria
+     * del panel. Es estatico: no hay animacion nueva en partida.
+     */
+    @SubscribeEvent
+    public static void onContainerRenderPost(ScreenEvent.Render.Post event) {
+        if (!(event.getScreen() instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> screen)) {
+            return;
+        }
+        try {
+            com.eternalcraft.gripeverde.client.render.PaperTexture.drawWornRim(
+                event.getGuiGraphics(), screen.getGuiLeft(), screen.getGuiTop(),
+                screen.getXSize(), screen.getYSize());
+        } catch (Throwable ignored) {}
+    }
+
     @SubscribeEvent
     public static void onScreenOpening(ScreenEvent.Opening event) {
         // v0.27.0: la mesa que se va, para decidir el sentido del pliegue.

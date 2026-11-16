@@ -153,6 +153,11 @@ public class ChangelogScreen extends Screen {
     private static final int INDEX_MAX_ROWS = 12;
     private int[] diarySectionRows = new int[0];
     private String[] diarySectionLabels = new String[0];
+    // v0.234.0: el indice cuelga las fechas de su mes; estas son las filas que
+    // se dibujan (-1 en indexRowSection = cabecera de mes, no pulsable).
+    private int[] indexRowSection = new int[0];
+    private String[] indexRowLabel = new String[0];
+    private boolean[] indexRowIsMonth = new boolean[0];
 
     public ChangelogScreen(Screen parent) {
         this(parent, false);
@@ -988,6 +993,55 @@ public class ChangelogScreen extends Screen {
         this.diarySectionRows = new int[rowIdx.size()];
         for (int i = 0; i < rowIdx.size(); i++) this.diarySectionRows[i] = rowIdx.get(i);
         this.diarySectionLabels = labels.toArray(new String[0]);
+        buildIndexRows();
+    }
+
+    /** v0.234.0: meses del calendario, como se escriben en cada idioma. */
+    private static final String[][] MONTH_NAMES = {
+        {"Enero", "January"}, {"Febrero", "February"}, {"Marzo", "March"}, {"Abril", "April"},
+        {"Mayo", "May"}, {"Junio", "June"}, {"Julio", "July"}, {"Agosto", "August"},
+        {"Septiembre", "September"}, {"Octubre", "October"}, {"Noviembre", "November"},
+        {"Diciembre", "December"}
+    };
+
+    /** v0.234.0: mes de una fecha del diario (-1 si no se reconoce). */
+    private static int monthOf(String label) {
+        if (label == null) return -1;
+        for (int i = 0; i < MONTH_NAMES.length; i++) {
+            if (label.contains(MONTH_NAMES[i][0]) || label.contains(MONTH_NAMES[i][1])) return i;
+        }
+        return -1;
+    }
+
+    /**
+     * v0.234.0: el indice deja de ser una lista suelta de fechas. Cada mes
+     * aparece una vez, en mayuscula de diario, y sus dias cuelgan debajo con
+     * sangria; asi se lee de un vistazo cuanto duro cada tramo del brote.
+     */
+    private void buildIndexRows() {
+        boolean english = isEnglishSelected();
+        int n = this.diarySectionLabels.length;
+        java.util.List<Integer> sec = new java.util.ArrayList<>();
+        java.util.List<String> lab = new java.util.ArrayList<>();
+        java.util.List<Boolean> head = new java.util.ArrayList<>();
+        int lastMonth = -2;
+        for (int i = 0; i < n; i++) {
+            int m = monthOf(this.diarySectionLabels[i]);
+            if (m >= 0 && m != lastMonth) {
+                sec.add(-1);
+                lab.add(MONTH_NAMES[m][english ? 1 : 0]);
+                head.add(Boolean.TRUE);
+                lastMonth = m;
+            }
+            sec.add(i);
+            lab.add(this.diarySectionLabels[i]);
+            head.add(Boolean.FALSE);
+        }
+        this.indexRowSection = new int[sec.size()];
+        for (int i = 0; i < sec.size(); i++) this.indexRowSection[i] = sec.get(i);
+        this.indexRowLabel = lab.toArray(new String[0]);
+        this.indexRowIsMonth = new boolean[head.size()];
+        for (int i = 0; i < head.size(); i++) this.indexRowIsMonth[i] = head.get(i);
     }
 
     /**
@@ -1027,7 +1081,7 @@ public class ChangelogScreen extends Screen {
     }
 
     private int indexRowsTotal() {
-        return this.diarySectionLabels.length;
+        return this.indexRowLabel.length;
     }
 
     private int indexShownRows() {
@@ -1066,11 +1120,15 @@ public class ChangelogScreen extends Screen {
         this.indexOpen = !this.indexOpen;
         if (!this.indexOpen) return;
         int current = currentDiarySection(scrollY + 24);
-        if (current < 0) {
+        int rowOf = -1;
+        for (int i = 0; i < this.indexRowSection.length; i++) {
+            if (!this.indexRowIsMonth[i] && this.indexRowSection[i] == current) { rowOf = i; break; }
+        }
+        if (rowOf < 0) {
             this.indexScroll = 0;
         } else {
             this.indexScroll = Math.max(0,
-                Math.min(indexMaxScroll(), current - indexVisibleRows() / 2));
+                Math.min(indexMaxScroll(), rowOf - indexVisibleRows() / 2));
         }
     }
 
@@ -1094,24 +1152,32 @@ public class ChangelogScreen extends Screen {
         DiaryChrome.drawInkDivider(g, x + 12, y + 22, w - 24);
         int current = currentDiarySection(scrollY + 24);
         int hovered = indexRowAt(mouseX, mouseY, px, py, pw, ph);
-        int textW = w - (indexMaxScroll() > 0 ? 34 : 30);
         for (int i = 0; i < visible; i++) {
             int idx = i + this.indexScroll;
             if (idx >= rowsN) break;
             int lineY = y + 28 + i * lineH;
-            if (idx == hovered) {
+            boolean month = this.indexRowIsMonth[idx];
+            int section = this.indexRowSection[idx];
+            if (idx == hovered && !month) {
                 g.fill(x + 8, lineY - 2, x + w - 8, lineY + lineH - 3,
                     DiaryTheme.withAlpha(0x008E6A35, 40));
             }
-            if (idx == current) {
+            String label = labelAt(idx);
+            if (month) {
+                // v0.234.0: cabecera de mes, con su raya a lapiz debajo.
+                g.drawString(this.font, label, x + 12, lineY, DiaryChrome.INK_TITLE, false);
+                DiaryChrome.drawPencilRule(g, x + 12, lineY + 10,
+                    Math.min(w - 26, DiaryTypography.width(this.font, label) + 6),
+                    x * 31 + idx);
+                continue;
+            }
+            if (section == current) {
                 // v0.229.0: la entrada que se esta leyendo lleva su raya al lado.
                 g.fill(x + 6, lineY + 3, x + 10, lineY + 4,
                     DiaryTheme.withAlpha(0x005C0A08, 170));
             }
-            String label = this.diarySectionLabels[idx];
-            label = DiaryTypography.fitString(this.font, label, textW);
-            g.drawString(this.font, label, x + 14, lineY,
-                idx == current ? DiaryChrome.INK_TITLE : DiaryChrome.INK_FLAVOR, false);
+            g.drawString(this.font, label, x + 18, lineY,
+                section == current ? DiaryChrome.INK_TITLE : DiaryChrome.INK_FLAVOR, false);
         }
         // v0.231.0: las fechas que no caben dejan su marca al costado de la hoja.
         int maxS = indexMaxScroll();
@@ -1140,7 +1206,14 @@ public class ChangelogScreen extends Screen {
         if (row < 0 || row >= visible) return -1;
         int idx = row + indexClampedScroll();
         if (idx < 0 || idx >= indexRowsTotal()) return -1;
-        return idx;
+        if (this.indexRowIsMonth[idx]) return -1;
+        return this.indexRowSection[idx];
+    }
+
+    /** v0.234.0: rotulo de una fila del indice, ya recortado al ancho de la hoja. */
+    private String labelAt(int rowIdx) {
+        int textW = indexWidth() - (indexMaxScroll() > 0 ? 34 : 30);
+        return DiaryTypography.fitString(this.font, this.indexRowLabel[rowIdx], textW);
     }
 
     private void jumpToDiarySection(int section) {

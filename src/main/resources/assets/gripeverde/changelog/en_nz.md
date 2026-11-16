@@ -1,3 +1,11 @@
+## Version 0.234.0 - The index by month, the lint and the chest edges
+
+The diary index was a loose list of dates. Now each month appears once, in title ink and with its pencil rule, and the days hang beneath it with an indent: you can see at a glance how long each stretch of the outbreak lasted, from October to December 1800, and when it all does not fit it still scrolls inside the sheet.
+
+The tears gained lint: a loose fibre inside each bite and, every few stretches, a hair of paper sticking out of the edge. It shows on every sheet at once, because the torn edge is drawn in a single place.
+
+And the inventory, the chest, the furnace and the other containers carry a worn edge. Their panel is the game's own texture and the mod does not repaint it: it marks ink bites one pixel deep inside and a loose shadow outside, taken from the panel size. It is static: nothing animates in game.
+
 ## Version 0.233.0 - The pause is torn too
 
 The pause screen was the last sheet with a frame: a double sepia rule and four gold corner marks drawn with a ruler over paper that already had gloss, blood spots and damp. Opening the menu over the world made the contrast obvious: the diary ended in bites and the pause screen ended in a straight line.
