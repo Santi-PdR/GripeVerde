@@ -213,10 +213,23 @@ public final class Marginalia {
 
         // A restrained CEDA seal and paper rule frame the note without motion.
         g.fill(cardX, cardY, cardX + cardWidth, cardY + cardHeight, paper);
-        g.fill(cardX, cardY, cardX + cardWidth, cardY + 1, edge);
-        g.fill(cardX, cardY + cardHeight - 1, cardX + cardWidth, cardY + cardHeight, edge);
-        g.fill(cardX, cardY, cardX + 1, cardY + cardHeight, edge);
-        g.fill(cardX + cardWidth - 1, cardY, cardX + cardWidth, cardY + cardHeight, edge);
+        // v0.227.0: la nota ya no es un rectangulo. Arriba y abajo el papel se
+        // rompe en mordiscos parejos; los lados quedan apenas marcados.
+        int tearSeed = cardX * 31 + cardWidth * 17;
+        int at = 0;
+        int seg = Math.max(5, cardWidth / 9);
+        int n = 1;
+        while (at < cardWidth) {
+            int len = Math.min(cardWidth - at, seg + Math.floorMod(tearSeed + n * 7919, seg));
+            int notch = 1 + Math.floorMod(tearSeed + n * 40503, 2);
+            g.fill(cardX + at, cardY + 1 - notch, cardX + at + len, cardY + 1, edge);
+            g.fill(cardX + at, cardY + cardHeight - 1, cardX + at + len,
+                cardY + cardHeight - 1 + notch, edge);
+            at += len;
+            n++;
+        }
+        g.fill(cardX, cardY + 1, cardX + 1, cardY + cardHeight - 1, edge);
+        g.fill(cardX + cardWidth - 1, cardY + 1, cardX + cardWidth, cardY + cardHeight - 1, edge);
         g.fill(cardX + 5, cardY + 5, cardX + 9, cardY + 9, wax);
         g.fill(cardX + 6, cardY + 6, cardX + 8, cardY + 7, (alpha << 24) | 0x00A74A38);
         for (int i = 0; i < lines.size(); i++) {

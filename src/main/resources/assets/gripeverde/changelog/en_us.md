@@ -1,3 +1,11 @@
+## Version 0.227.0 - The diary has an index
+
+With twelve entries and more than a hundred lines, finding the 4th of December meant scrolling and scrolling. Now there is an index sheet: it opens with the Index button at the foot and lists the dates. Pressing one takes the pen to that entry and closes the index.
+
+The index is another torn sheet, with its rule and its pencil retrace, so it does not look like a menu glued on top of the notebook.
+
+The margin notes changed too: they were rectangles with a straight border, and now they break at top and bottom in even bites, like the rest of the paper.
+
 ## Version 0.226.0 - Every entry is its own sheet
 
 The diary used to be read straight through on one large sheet. Now each date starts its own fragment: a darker, more worn piece of paper, torn at top and bottom, resting on the notebook's sheet with its short shadow.

@@ -144,6 +144,10 @@ public class ChangelogScreen extends Screen {
      * con sus fechas, sus tachaduras y sus notas al margen.
      */
     private final boolean diaryMode;
+    // v0.227.0: la hoja de indice del diario (fechas, para saltar sin recorrer).
+    private boolean indexOpen = false;
+    private int[] diarySectionRows = new int[0];
+    private String[] diarySectionLabels = new String[0];
 
     public ChangelogScreen(Screen parent) {
         this(parent, false);
@@ -177,6 +181,7 @@ public class ChangelogScreen extends Screen {
         loadAndParse();
         recalcMaxScroll();
         jumpToFreshVersion();
+        if (this.diaryMode) buildDiarySections();
 
         int closeW = Math.max(84, Math.min(CLOSE_W, panelW() - 24));
         int bx = panelX() + (panelW() - closeW) / 2;
@@ -193,6 +198,10 @@ public class ChangelogScreen extends Screen {
             this.addRenderableWidget(new SlimButton(panelX() + 10, by + 6, logW, 18,
                 Component.literal(english ? "Versions" : "Versiones"),
                 () -> this.minecraft.setScreen(new ChangelogScreen(this, false))));
+            int idxW = 68;
+            this.addRenderableWidget(new SlimButton(panelX() + 10 + logW + 6, by + 6, idxW, 18,
+                Component.literal(english ? "Index" : "Índice"),
+                () -> { this.indexOpen = !this.indexOpen; }));
         }
     }
 
@@ -773,6 +782,7 @@ public class ChangelogScreen extends Screen {
 
         // v0.29.0: la lupa de la bitacora, al pie a la derecha.
         drawSearchBox(g, px, py, pw, ph);
+        drawIndexOverlay(g, px, py, pw, ph);
 
         super.render(g, mouseX, mouseY, partialTick);
 
@@ -951,6 +961,76 @@ public class ChangelogScreen extends Screen {
      * oscuro y gastado, pegado encima. El recorte y la sombra se derivan del
      * indice de la seccion, asi que cada fragmento cae siempre igual.
      */
+    /** v0.227.0: las fechas del diario, para el indice. */
+    private void buildDiarySections() {
+        java.util.List<Integer> rowIdx = new java.util.ArrayList<>();
+        java.util.List<String> labels = new java.util.ArrayList<>();
+        for (int i = 0; i < rows.size(); i++) {
+            Row r = rows.get(i);
+            if (r.type == LT.H1) {
+                rowIdx.add(i);
+                labels.add(r.text);
+            }
+        }
+        this.diarySectionRows = new int[rowIdx.size()];
+        for (int i = 0; i < rowIdx.size(); i++) this.diarySectionRows[i] = rowIdx.get(i);
+        this.diarySectionLabels = labels.toArray(new String[0]);
+    }
+
+    /**
+     * v0.227.0: hoja de indice. Se abre desde el pie del diario y lista las
+     * fechas; pulsar una lleva la pluma a esa entrada y cierra el indice.
+     */
+    private void drawIndexOverlay(GuiGraphics g, int px, int py, int pw, int ph) {
+        if (!this.diaryMode || !this.indexOpen || this.diarySectionLabels.length == 0) return;
+        int rowsN = this.diarySectionLabels.length;
+        int lineH = 13;
+        int w = Math.min(240, pw - 40);
+        int h = Math.min(rowsN * lineH + 26, ph - 60);
+        int x = px + (pw - w) / 2;
+        int y = py + 40;
+        com.eternalcraft.gripeverde.client.render.PaperTexture.drawTornSheet(
+            g, x, y, w, h,
+            com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.LEDGER);
+        boolean english = isEnglishSelected();
+        String head = english ? "Index of days" : "Indice de dias";
+        g.drawString(this.font, head, x + (w - DiaryTypography.width(this.font, head)) / 2, y + 8,
+            DiaryChrome.INK_TITLE, false);
+        DiaryChrome.drawInkDivider(g, x + 12, y + 22, w - 24);
+        int visible = Math.max(1, (h - 30) / lineH);
+        for (int i = 0; i < Math.min(rowsN, visible); i++) {
+            String label = this.diarySectionLabels[i];
+            label = DiaryTypography.fitString(this.font, label, w - 26);
+            g.drawString(this.font, label, x + 13, y + 28 + i * lineH, DiaryChrome.INK_FLAVOR, false);
+        }
+    }
+
+    /** v0.227.0: fila del indice bajo el puntero (-1 si ninguna). */
+    private int indexRowAt(double mouseX, double mouseY, int px, int py, int pw, int ph) {
+        if (!this.diaryMode || !this.indexOpen || this.diarySectionLabels.length == 0) return -1;
+        int rowsN = this.diarySectionLabels.length;
+        int lineH = 13;
+        int w = Math.min(240, pw - 40);
+        int h = Math.min(rowsN * lineH + 26, ph - 60);
+        int x = px + (pw - w) / 2;
+        int y = py + 40;
+        if (mouseX < x || mouseX > x + w || mouseY < y + 24 || mouseY > y + h) return -1;
+        int visible = Math.max(1, (h - 30) / lineH);
+        int row = (int) ((mouseY - (y + 28)) / lineH);
+        if (row < 0 || row >= Math.min(rowsN, visible)) return -1;
+        return row;
+    }
+
+    private void jumpToDiarySection(int section) {
+        if (section < 0 || section >= this.diarySectionRows.length) return;
+        int rowIdx = this.diarySectionRows[section];
+        int cw = contentW();
+        int off = 0;
+        for (int i = 0; i < rowIdx; i++) off += heightAt(i, cw);
+        setScrollTarget(Math.max(0, off - 6), false);
+        this.indexOpen = false;
+    }
+
     private void drawDiaryScraps(GuiGraphics g, int cx, int cy, int cw, int ch) {
         int n = rows.size();
         if (n == 0) return;
@@ -1110,6 +1190,14 @@ public class ChangelogScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        // v0.227.0: una fecha del indice lleva a su entrada.
+        if (button == 0) {
+            int idxRow = indexRowAt(mouseX, mouseY, panelX(), panelY(), panelW(), panelH());
+            if (idxRow >= 0) {
+                jumpToDiarySection(idxRow);
+                return true;
+            }
+        }
         // v0.29.0: tocar la lupa le da la palabra (y no propaga el gesto).
         if (button == 0 && overSearchBox(mouseX, mouseY)) {
             searchOpen = true;

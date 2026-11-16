@@ -1,3 +1,9 @@
+## v0.227.0 - El diario tiene indice
+
+- `ChangelogScreen` modo diario: `buildDiarySections`, hoja de índice (`drawIndexOverlay`, LEDGER rasgada),
+  `indexRowAt`/`jumpToDiarySection` y botón «Índice» al pie.
+- `Marginalia.drawHorizontal`: borde superior e inferior rasgado en vez de recto.
+
 ## v0.226.0 - Cada entrada es su propia hoja
 
 - `ChangelogScreen` modo diario: `drawDiaryScraps` dibuja un fragmento rasgado (LEDGER, sombra corta) por sección,

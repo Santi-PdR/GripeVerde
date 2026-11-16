@@ -1,3 +1,11 @@
+## Version 0.227.0 - El diario tiene indice
+
+Con doce entradas y mas de cien renglones, encontrar el 4 de Diciembre era bajar y bajar. Ahora hay una hoja de indice: se abre con el boton Indice, al pie, y lista las fechas. Pulsar una lleva la pluma a esa entrada y cierra el indice.
+
+El indice es otra hoja rasgada, con su filete y su repaso a lapiz, para que no parezca un menu pegado encima del cuaderno.
+
+Las notas al margen tambien cambiaron: eran rectangulos con borde recto y ahora se rompen arriba y abajo en mordiscos parejos, como el resto del papel.
+
 ## Version 0.226.0 - Cada entrada es su propia hoja
 
 El diario se leia de corrido sobre una sola hoja grande. Ahora cada fecha arranca un fragmento propio: un trozo de papel mas oscuro y mas gastado, rasgado arriba y abajo, que se apoya sobre la hoja del cuaderno con su sombra corta.
