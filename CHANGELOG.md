@@ -1,3 +1,11 @@
+## v0.232.0 - Se va el ultimo rectangulo
+
+- `ChangelogScreen`: el registro técnico (modo no diario) pasa de `drawSheet` + cuatro filetes `BRONZE` a `drawTornSheet`
+  ARCHIVE; se eliminan los filetes rectos de ambos modos.
+- `DiaryLanguageScreen`: el marco de tinta de 1 px de la lista se sustituye por `drawTornSheet` CORRESPONDENCE con sombra corta.
+- `DiaryPackSelectionScreen`: la hoja grande bajo las dos listas pasa a `drawTornSheet` ARCHIVE.
+- `DiaryChrome`: se eliminan `drawPanelScaffold` y `renderPanelBase` (sin uso).
+
 ## v0.231.0 - Recortes al pie e indice con tope
 
 - `DiaryArchiveScreen.drawPaperDoc`: los tres papeles recuperados pasan de recuadro recto a `drawTornSheet` CORRESPONDENCE

@@ -9,7 +9,7 @@ Actualizado: 2026-11-13
   token, igual que el de Photon/Fisk.
 - Rama de trabajo de la sesión: `arena/48be547c-gripeverde` (base `02e85bc`) — la plataforma
   fija el nombre, no se renombra. Todo el trabajo va ahí; el PR sale de esa rama.
-- Versión de esta rama: `0.231.0` (anteriores entregadas: `0.229.0`, `0.228.0`, `0.209.0`, `0.208.0`, `0.207.0`, `0.206.0`, `0.205.0`, `0.204.0`, `0.203.0`, `0.202.0`, `0.201.0`, `0.200.0`, `0.199.0`, `0.198.0`, `0.197.0`, `0.196.0`, `0.195.0`, `0.194.0`, `0.193.0`, `0.192.0`, `0.191.0`, `0.190.0`, `0.189.0`, `0.188.0`, `0.187.0`, `0.186.0`, `0.185.0`, `0.184.2`, `0.184.1`, `0.183.0`)
+- Versión de esta rama: `0.232.0` (anteriores entregadas: `0.229.0`, `0.228.0`, `0.209.0`, `0.208.0`, `0.207.0`, `0.206.0`, `0.205.0`, `0.204.0`, `0.203.0`, `0.202.0`, `0.201.0`, `0.200.0`, `0.199.0`, `0.198.0`, `0.197.0`, `0.196.0`, `0.195.0`, `0.194.0`, `0.193.0`, `0.192.0`, `0.191.0`, `0.190.0`, `0.189.0`, `0.188.0`, `0.187.0`, `0.186.0`, `0.185.0`, `0.184.2`, `0.184.1`, `0.183.0`)
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
 - El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
   proyecto local del usuario.
@@ -179,6 +179,13 @@ Actualizado: 2026-11-13
 - El validador local `python3 tools/verify_mirrors.py` reproduce los sellos de Gradle
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
+
+## Cambios de 0.232.0 — no quedan rectangulos
+
+- `ChangelogScreen`: modo registro técnico → `drawTornSheet` ARCHIVE; fuera los cuatro filetes `BRONZE` en ambos modos.
+- `DiaryLanguageScreen`: fuera el marco de 1 px; la lista se lee sobre `drawTornSheet` CORRESPONDENCE (sombra `0x1E302315`).
+- `DiaryPackSelectionScreen`: la hoja grande (blotter) → `drawTornSheet` ARCHIVE.
+- `DiaryChrome`: eliminados `drawPanelScaffold` y `renderPanelBase`, sin uso desde hace versiones.
 
 ## Cambios de 0.231.0 — recortes al pie e indice con tope
 

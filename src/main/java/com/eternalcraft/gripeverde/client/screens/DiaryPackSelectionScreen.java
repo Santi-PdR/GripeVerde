@@ -82,7 +82,8 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         int by = 6;
         int bw = this.width - 20;
         int bh = this.height - 20;
-        PaperTexture.drawSheet(g, bx, by, bw, bh, PaperTexture.PaperKind.ARCHIVE);
+        // v0.232.0: la hoja grande bajo las dos listas ya no es un rectangulo.
+        PaperTexture.drawTornSheet(g, bx, by, bw, bh, PaperTexture.PaperKind.ARCHIVE);
         DiaryChrome.drawCornerOrnaments(g, bx, by, bw, bh);
 
         // Cabecera de seccion (el titulo vanilla se dibuja en y=16 sobre el pergamino)

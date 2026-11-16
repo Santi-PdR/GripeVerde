@@ -1,3 +1,11 @@
+## Version 0.232.0 - Not a single rectangle left
+
+The technical version log - the long list of changes, the one opened from the "Versions" button - was still a flat panel with four straight rules: the last one in the mod. Now it is a torn sheet like the diary, eaten away at top and bottom.
+
+The language list was read inside a one-pixel ink frame that closed it up like a piece of card. Now it rests on its own cutting of paper, a little lighter than the sheet holding it, with its short shadow at the foot. And the big sheet under the two pack lists is torn as well.
+
+Along the way two old helpers went out of the code - the flat panel base - that no screen was calling any more.
+
 ## Version 0.231.0 - The loose papers and an index you can scroll
 
 At the foot of the reading room three papers were still plain rectangles: the outbreak telegram, Dr. Holloway's report and the black card. They were the last thing in the room with four straight rules. Now they are real cuttings, lighter than the cabinet sheet, eaten away at top and bottom, with a short shadow underneath and their own wear. Passing the pointer over one lightens the cutting a little and underlines the label in pencil.

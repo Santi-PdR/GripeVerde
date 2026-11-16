@@ -1,3 +1,11 @@
+## Version 0.232.0 - Ya no queda ningun rectangulo
+
+El registro tecnico de versiones -la lista larga de cambios, la que se abre desde el boton "Versiones"- seguia siendo un panel liso con cuatro filetes rectos: el ultimo del mod. Ahora es una hoja rasgada como el diario, con los bordes comidos arriba y abajo.
+
+La lista de idiomas se leia dentro de un marco de tinta de un pixel que la cerraba como una cartulina. Ahora descansa sobre su propio recorte de papel, apenas mas claro que la hoja que lo sostiene, con su sombra corta al pie. Y la hoja grande bajo las dos listas de paquetes tambien esta rasgada.
+
+De paso se fueron dos ayudas viejas del codigo -la base plana de panel- que ya no llamaba ninguna pantalla.
+
 ## Version 0.231.0 - Los papeles sueltos y un indice que se recorre
 
 Al pie de la sala de consulta quedaban tres papeles rectangulares: el telegrama del brote, el informe del doctor Holloway y la ficha negra. Eran lo ultimo de la sala con cuatro filetes rectos. Ahora son recortes de verdad, mas claros que la hoja del gabinete, con los bordes comidos arriba y abajo, una sombra corta debajo y su propio desgaste. Al pasar el puntero el recorte se aclara apenas y el rotulo se subraya a lapiz.

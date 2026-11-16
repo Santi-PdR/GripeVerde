@@ -155,13 +155,12 @@ public class DiaryLanguageScreen extends Screen {
         int frameW = this.listW + 8;
         int frameH = this.listH + 8;
 
-        // Fondo interno con textura de pergamino (evita cartulina lisa)
-        PaperTexture.drawSheet(g, frameX, frameY, frameW, frameH);
-        // Marco tinta 1px
-        g.fill(frameX, frameY, frameX + frameW, frameY + 1, 0x5A3A2416);
-        g.fill(frameX, frameY + frameH - 1, frameX + frameW, frameY + frameH, 0x5A3A2416);
-        g.fill(frameX, frameY, frameX + 1, frameY + frameH, 0x5A3A2416);
-        g.fill(frameX + frameW - 1, frameY, frameX + frameW, frameY + frameH, 0x5A3A2416);
+        // v0.232.0: la lista se lee sobre su propio recorte de papel, con los
+        // bordes comidos y una sombra corta; el marco de tinta de 1 px se fue
+        // con el, porque cerraba la hoja como una cartulina.
+        g.fill(frameX + 2, frameY + frameH - 2, frameX + frameW + 2, frameY + frameH + 1, 0x1E302315);
+        PaperTexture.drawTornSheet(g, frameX, frameY, frameW, frameH,
+            PaperTexture.PaperKind.CORRESPONDENCE);
 
         if (this.languageList != null) {
             this.languageList.render(g, mouseX, mouseY, partialTick);

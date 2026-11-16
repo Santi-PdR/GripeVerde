@@ -608,12 +608,13 @@ public class ChangelogScreen extends Screen {
             com.eternalcraft.gripeverde.client.render.PaperTexture.drawTornSheet(
                 g, px, py, pw, ph, com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.CORRESPONDENCE);
         } else {
-            com.eternalcraft.gripeverde.client.render.PaperTexture.drawSheet(g, px, py, pw, ph, com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.ARCHIVE);
+            // v0.232.0: el registro tecnico de versiones era la ultima hoja
+            // lisa del mod: cuatro filetes rectos sobre un panel opaco. Ahora
+            // se apoya rasgada, como el diario y el resto del gabinete.
+            com.eternalcraft.gripeverde.client.render.PaperTexture.drawTornSheet(
+                g, px, py, pw, ph, com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.ARCHIVE);
         }
-        g.fill(px,          py,          px + pw, py + 1,      DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
-        g.fill(px,          py + ph - 1, px + pw, py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
-        g.fill(px,          py,          px + 1,  py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
-        g.fill(px + pw - 1, py,          px + pw, py + ph,     DiaryTheme.withAlpha(DiaryTheme.BRONZE, 180));
+        // v0.232.0: fuera el filete recto: tapaba los mordiscos del papel.
         DiaryChrome.drawCornerOrnaments(g, px, py, pw, ph);
 
         int tw = com.eternalcraft.gripeverde.client.render.DiaryTypography.width(this.font, this.title);

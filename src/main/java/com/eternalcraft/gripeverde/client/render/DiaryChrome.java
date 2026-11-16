@@ -290,26 +290,9 @@ public final class DiaryChrome {
 
 
 
-    public static void drawPanelScaffold(GuiGraphics gfx, int x, int y, int w, int h, int accent) {        drawPanelShadow(gfx, x, y, w, h);
-        gfx.fill(x + 6, y + 6, x + w - 6, y + h - 6, DiaryTheme.withAlpha(0x00FFFFFF, 4));
-        gfx.fill(x + 10, y + 10, x + w - 10, y + h - 10, DiaryTheme.withAlpha(accent, 7));
-        gfx.fill(x + 14, y + 14, x + w - 14, y + 15, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 24));
-        gfx.fill(x + 14, y + h - 15, x + w - 14, y + h - 14, DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 24));
-        // guias editoriales sutiles, no marco cerrado
-        gfx.fill(x + 18, y + 18, x + 32, y + 19, DiaryTheme.withAlpha(accent, 46));
-        gfx.fill(x + w - 32, y + 18, x + w - 18, y + 19, DiaryTheme.withAlpha(accent, 46));
-        gfx.fill(x + 18, y + h - 19, x + 32, y + h - 18, DiaryTheme.withAlpha(accent, 30));
-        gfx.fill(x + w - 32, y + h - 19, x + w - 18, y + h - 18, DiaryTheme.withAlpha(accent, 30));
-    }
-
-    /** v0.21.7: base comun del panel (scaffold + pergamino + esquineros). */
-    public static void renderPanelBase(GuiGraphics gfx, int x, int y, int w, int h, int accent,
-                                       PaperTexture.PaperKind kind) {
-        drawPanelScaffold(gfx, x, y, w, h, accent);
-        PaperTexture.drawSheet(gfx, x, y, w, h, kind);
-        drawCornerOrnaments(gfx, x, y, w, h);
-    }
-
+    // v0.232.0: aqui vivian drawPanelScaffold y renderPanelBase, la base plana
+    // de panel que ya no llamaba ninguna pantalla. Se fueron con el ultimo
+    // rectangulo del mod; las hojas se pintan con PaperTexture.
     /** v0.21.9: texto centrado con la font del gabinete (consolidacion). */
     public static void drawCenteredString(GuiGraphics gfx, Font font, String s, int cx, int y, int color) {
         if (s == null) return;
