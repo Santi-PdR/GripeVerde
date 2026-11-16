@@ -1,14 +1,8 @@
 pluginManagement {
     repositories {
-        // v0.236.0: espejo publico de la maven de Forge (proxya Central y
-        // minecraftforge). Va primero porque cuando maven.minecraftforge.net
-        // responde lento el build entero cae sin llegar a probar otro repo.
-        maven {
-            name = 'SpongeMirror'
-            url = 'https://repo.spongepowered.org/repository/maven-public/'
-        }
         gradlePluginPortal()
         maven { url = 'https://maven.minecraftforge.net/' }
+        // v0.23.0: repo.spongepowered.org retirado junto con el plugin de Mixins.
     }
 }
 plugins {
