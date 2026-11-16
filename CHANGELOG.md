@@ -1,3 +1,10 @@
+## v0.233.0 - La pausa termina rasgada
+
+- `PaperTexture.drawTornRim`: canto rasgado para hojas pintadas a mano — dientes de 1–3 px hacia afuera (papel α242) y sombra de 1–2 px
+  hacia adentro, más un diente suelto en los laterales; determinista por geometría, sin RNG por cuadro ni animación.
+- `DiaryPauseScreen`: `drawPanel` y `renderWorldSafe` sustituyen el doble filete sepia/bronce y los esquineros de oro por `drawTornRim`;
+  se eliminan `drawDoubleBorder`, `drawRect` y `drawCornerOrnaments`.
+
 ## v0.232.0 - Se va el ultimo rectangulo
 
 - `ChangelogScreen`: el registro técnico (modo no diario) pasa de `drawSheet` + cuatro filetes `BRONZE` a `drawTornSheet`

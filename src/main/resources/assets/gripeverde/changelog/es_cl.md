@@ -1,3 +1,11 @@
+## Version 0.233.0 - La pausa tambien esta rota
+
+La pausa era la ultima hoja con marco: doble filete sepia y cuatro esquineros de oro trazados con regla sobre un papel que ya tenia brillo, manchas de sangre y humedad. Al abrir el menu sobre el mundo se notaba el contraste: el diario terminaba en mordiscos y la pausa, en una linea recta.
+
+Ahora el papel de la pausa se come por el canto, con dientes de uno a tres pixeles hacia afuera y una sombra corta hacia adentro, como una hoja arrancada de un cuaderno. Vale igual para el menu de pausa de la portada y para el que se abre en partida, y no se anima nada: el desgarro sale del tamano del panel, asi que es siempre el mismo.
+
+Con el marco se fueron el doble filete, los esquineros de oro y el codigo que los dibujaba.
+
 ## Version 0.232.0 - Ya no queda ningun rectangulo
 
 El registro tecnico de versiones -la lista larga de cambios, la que se abre desde el boton "Versiones"- seguia siendo un panel liso con cuatro filetes rectos: el ultimo del mod. Ahora es una hoja rasgada como el diario, con los bordes comidos arriba y abajo.

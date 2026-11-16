@@ -1,3 +1,11 @@
+## Version 0.233.0 - The pause is torn too
+
+The pause screen was the last sheet with a frame: a double sepia rule and four gold corner marks drawn with a ruler over paper that already had gloss, blood spots and damp. Opening the menu over the world made the contrast obvious: the diary ended in bites and the pause screen ended in a straight line.
+
+Now the pause paper is eaten at the edge, with one-to-three-pixel teeth pointing out and a short shadow pointing in, like a sheet torn out of a notebook. It works the same for the pause menu on the title screen and for the one opened in game, and nothing animates: the tear comes from the panel size, so it is always the same one.
+
+The double rule, the gold corners and the code that drew them went out with the frame.
+
 ## Version 0.232.0 - Not a single rectangle left
 
 The technical version log - the long list of changes, the one opened from the "Versions" button - was still a flat panel with four straight rules: the last one in the mod. Now it is a torn sheet like the diary, eaten away at top and bottom.

@@ -462,10 +462,11 @@ public class DiaryPauseScreen extends PauseScreen {
         int pw = panelW();
         int ph = panelH();
         g.fill(px + 4, py + 4, px + pw + 4, py + ph + 4, 0xA0000000);
-        g.fill(px, py, px + pw, py + ph, DiaryTheme.SEPIA_DARK);
-        g.fill(px + 2, py + 2, px + pw - 2, py + ph - 2, PAPER_LIGHT);
-        g.fill(px + 5, py + 5, px + pw - 5, py + 6, DiaryTheme.BRONZE_DARK);
-        g.fill(px + 5, py + ph - 6, px + pw - 5, py + ph - 5, DiaryTheme.BRONZE_DARK);
+        // v0.233.0: en partida la hoja tambien termina rasgada; se va el marco
+        // sepia de dos pixeles y sus dos filetes bronce.
+        g.fill(px, py, px + pw, py + ph, PAPER_LIGHT);
+        PaperTexture.drawTornRim(g, px, py, pw, ph, PAPER_LIGHT,
+            DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 30));
 
         drawPanelTitle(g, px, py);
         drawDateStamp(g, px, py);
@@ -538,9 +539,11 @@ public class DiaryPauseScreen extends PauseScreen {
             }
         }
 
-        // 4. Marco perimetral (siempre al final para que no lo cubra el brillo)
-        drawDoubleBorder(g, x, y, w, h);
-        drawCornerOrnaments(g, x, y, w, h);
+        // 4. v0.233.0: el canto se rompe en vez de enmarcarse. El doble filete
+        // sepia y los esquineros de oro cerraban la hoja como un recorte de
+        // tijera sobre la mesa; el papel ahora termina en mordiscos.
+        PaperTexture.drawTornRim(g, x, y, w, h, PAPER_LIGHT,
+            DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 26));
     }
 
     private void drawPaperTextureMinimal(GuiGraphics g, int x, int y, int w, int h) {
@@ -586,46 +589,8 @@ public class DiaryPauseScreen extends PauseScreen {
         }
     }
 
-    private void drawDoubleBorder(GuiGraphics g, int x, int y, int w, int h) {
-        int outer = DiaryTheme.SEPIA_DARK;
-        int inner = DiaryTheme.BRONZE_DARK;
-        drawRect(g, x, y, x + w, y + h, outer);
-        drawRect(g, x + 2, y + 2, x + w - 2, y + h - 2, inner);
-    }
-
-    private void drawRect(GuiGraphics g, int x1, int y1, int x2, int y2, int color) {
-        g.fill(x1, y1, x2, y1 + 1, color);
-        g.fill(x1, y2 - 1, x2, y2, color);
-        g.fill(x1, y1, x1 + 1, y2, color);
-        g.fill(x2 - 1, y1, x2, y2, color);
-    }
-
-    private void drawCornerOrnaments(GuiGraphics g, int x, int y, int w, int h) {
-        int size = 10;
-        int c = DiaryTheme.GOLD_TARNISHED;
-        g.fill(x - 1, y - 1, x + size, y + 1, c);
-        g.fill(x - 1, y - 1, x + 1, y + size, c);
-        g.fill(x + w - size, y - 1, x + w + 1, y + 1, c);
-        g.fill(x + w - 1, y - 1, x + w + 1, y + size, c);
-        g.fill(x - 1, y + h - 1, x + size, y + h + 1, c);
-        g.fill(x - 1, y + h - size, x + 1, y + h + 1, c);
-        g.fill(x + w - size, y + h - 1, x + w + 1, y + h + 1, c);
-        g.fill(x + w - 1, y + h - size, x + w + 1, y + h + 1, c);
-    }
-
-    // ================================================================
-    // TITULO / FECHA / SEPARADORES / FIRMA / SELLO
-    // ================================================================
-
-    private net.minecraft.client.gui.Font headerFont;
-    private int headerPanelW = -1;
-    private boolean headerCompact = false;
-    private String headerTitleSrc = "";
-    private String headerSubSrc = "";
-    private int headerTitleW = 0;
-    private float headerScale = 1f;
-    private String headerSubtitle = "";
-    private int headerSubW = 0;
+    // v0.233.0: aqui vivian drawDoubleBorder, drawRect y drawCornerOrnaments,
+    // el marco recto de la pausa. Su unico uso era ese marco.
 
     private void drawPanelTitle(GuiGraphics g, int px, int py) {
         String title = DiaryChrome.tr("gripeverde.pause.title");

@@ -207,6 +207,63 @@ public final class PaperTexture {
         }
     }
 
+    /**
+     * v0.233.0: canto rasgado para las hojas que se pintan a mano.
+     *
+     * El diario usa drawTornSheet porque PaperTexture le pinta el papel. La
+     * pausa, en cambio, tiene su propio pincel: papel crema opaco, brillo,
+     * manchas de sangre y vela. Esto no le repinta nada, solo le come el canto
+     * —dientes de papel hacia afuera y una sombra corta hacia adentro— para que
+     * el rectangulo deje de leerse como un corte de tijera.
+     *
+     * Todo sale de la geometria del panel: mismo tamano, mismo desgarro, sin
+     * RNG por cuadro y sin animacion (la pausa tiene que quedar quieta).
+     */
+    public static void drawTornRim(GuiGraphics g, int x, int y, int w, int h, int paper, int shadow) {
+        if (g == null || w < 24 || h < 24) return;
+        int seed = (x * 73856093) ^ (y * 19349663) ^ (w * 83492791) ^ (h * 297121507);
+        int tooth = DiaryTheme.withAlpha(paper, 242);
+
+        // Cantos superior e inferior: diente afuera, sombra de desgarro adentro.
+        for (int e = 0; e < 2; e++) {
+            boolean top = e == 0;
+            int step = Math.max(6, w / 24);
+            int offset = 0;
+            for (int i = 0; offset < w; i++) {
+                int r = mix(seed + i * 7919 + (top ? 0 : 0x1F3D5B));
+                int len = Math.min(w - offset, step + Math.floorMod(r, step));
+                int out = 1 + Math.floorMod(r >>> 5, 3);   // 1..3 px de diente
+                int in = 1 + Math.floorMod(r >>> 11, 2);   // 1..2 px de sombra
+                if (top) {
+                    g.fill(x + offset, y - out, x + offset + len, y, tooth);
+                    g.fill(x + offset + 1, y, x + offset + len - 1, y + in, shadow);
+                } else {
+                    g.fill(x + offset, y + h, x + offset + len, y + h + out, tooth);
+                    g.fill(x + offset + 1, y + h - in, x + offset + len - 1, y + h, shadow);
+                }
+                offset += len;
+            }
+        }
+
+        // Laterales: un diente suelto cada tanto; el canto lateral se rompe
+        // menos que el de arriba, como en una hoja arrancada de un cuaderno.
+        for (int e = 0; e < 2; e++) {
+            boolean left = e == 0;
+            int step = Math.max(7, h / 16);
+            int offset = 0;
+            for (int i = 0; offset < h; i++) {
+                int r = mix(seed + i * 3571 + (left ? 0 : 0x2E5B91));
+                int len = Math.min(h - offset, step + Math.floorMod(r, step));
+                if (Math.floorMod(r >>> 7, 3) == 0) {
+                    int out = 1 + Math.floorMod(r >>> 13, 2);
+                    if (left) g.fill(x - out, y + offset, x, y + offset + len, tooth);
+                    else g.fill(x + w, y + offset, x + w + out, y + offset + len, tooth);
+                }
+                offset += len;
+            }
+        }
+    }
+
     /** Mezcla entera barata para derivar posiciones deterministas. */
     private static int mix(int value) {
         int h = value * 0x27D4EB2D;
