@@ -1,3 +1,9 @@
+## Version 0.225.0 - Los filetes llevan repaso a lapiz
+
+Cada hoja del gabinete separa su cabecera con un filete de tinta y un rombo al centro. Ahora debajo de ese filete queda un repaso a lapiz: tramos cortos, desiguales, con huecos, como si el autor hubiera pasado dos veces por el mismo renglon.
+
+Aparece en catorce pantallas a la vez, porque todas comparten el mismo trazo. Es tenue a proposito: se nota al mirar, no molesta al leer.
+
 ## Version 0.224.0 - Todas las hojas del gabinete llegan rasgadas
 
 Quedaban hojas de borde recto: los ajustes de accesibilidad, el chat, la confirmacion, los controles, la union directa, la edicion de servidores, la guia de campo, el idioma, el multijugador, las opciones en linea, la personalizacion, el sonido y el despacho de CEDA. Ahora todas llegan rasgadas arriba y abajo, con esquirlas sueltas y el mismo envejecido que el resto del cuaderno.

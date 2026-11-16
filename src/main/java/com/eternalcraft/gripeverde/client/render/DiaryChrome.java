@@ -199,6 +199,22 @@ public final class DiaryChrome {
         gfx.fill(cx - w / 4, y - 1, cx - w / 4 + 1, y + 2, 0x48422810);
         gfx.fill(cx + w / 4, y - 1, cx + w / 4 + 1, y + 2, 0x48422810);
         drawDivisorLozenge(gfx, cx, y);
+        // v0.225.0: debajo queda el repaso a lapiz, roto y desigual, como quien
+        // trazo el filete dos veces sin levantar la mano.
+        int pencil = DiaryTheme.withAlpha(0x00422810, 55);
+        int seg = Math.max(4, w / 12);
+        int start = x + fade + 2;
+        int stop = x + w - fade - 2;
+        int seed = x * 31 + w * 17;
+        int at = start;
+        int n = 1;
+        while (at + seg < stop && n <= 5) {
+            int len = seg + Math.floorMod(seed + n * 7919, seg);
+            int end = Math.min(stop, at + len);
+            gfx.fill(at, y + 3, end, y + 4, pencil);
+            at = end + 3;
+            n++;
+        }
     }
 
     public static void drawInkDividerBetween(GuiGraphics gfx, int x1, int x2, int y) {

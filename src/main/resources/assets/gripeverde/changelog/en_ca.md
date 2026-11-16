@@ -1,3 +1,9 @@
+## Version 0.225.0 - The rules carry a pencil retrace
+
+Every sheet in the cabinet separates its header with an ink rule and a lozenge in the middle. Now, under that rule, there is a pencil retrace: short, uneven stretches with gaps, as if the author had gone over the same line twice.
+
+It appears in fourteen screens at once, because they all share the same stroke. It is faint on purpose: you notice it when you look, and it does not bother the reading.
+
 ## Version 0.224.0 - Every sheet in the cabinet arrives torn
 
 There were still straight-edged sheets: accessibility options, chat, confirmation, controls, direct join, server editing, field guide, language, multiplayer, online options, customization, sound and the CEDA dispatch. Now all of them arrive torn at top and bottom, with loose chips and the same ageing as the rest of the notebook.

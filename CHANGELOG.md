@@ -1,3 +1,8 @@
+## v0.225.0 - Los filetes llevan repaso a lapiz
+
+- `DiaryChrome.drawInkDivider`: hasta cinco tramos de lápiz (α55) bajo el filete, deterministas por posición y ancho.
+  Afecta a las 14 pantallas que usan el divisor común.
+
 ## v0.224.0 - Todas las hojas del gabinete llegan rasgadas
 
 - `drawTornSheet` en accesibilidad, chat, confirmación, controles, unión directa, edición de servidor, guía,
