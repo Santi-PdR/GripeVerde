@@ -433,6 +433,18 @@ public class DiaryArchiveScreen extends Screen {
     }
 
     private void renderDocument(GuiGraphics g, boolean en) {
+        // v0.230.0: los documentos recuperados son recortes sueltos, no texto
+        // flotando sobre la ficha: cada uno se apoya en su trozo de papel.
+        int slipX = panelX + 24;
+        int slipY = panelY + 16;
+        int slipW = panelW - 48;
+        int slipH = panelH - 78;
+        if (slipW > 60 && slipH > 60) {
+            g.fill(slipX + 3, slipY + slipH - 2, slipX + slipW + 3, slipY + slipH + 2,
+                DiaryTheme.withAlpha(0x001A1108, 30));
+            PaperTexture.drawTornSheet(g, slipX, slipY, slipW, slipH,
+                PaperTexture.PaperKind.LEDGER);
+        }
         int tx = panelX + 34;
         int ty = panelY + 22;
         int maxW = panelW - 68;

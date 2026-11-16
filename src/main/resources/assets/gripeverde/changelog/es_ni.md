@@ -1,3 +1,9 @@
+## Version 0.230.0 - Los documentos son recortes sueltos
+
+Cuando en la sala de consulta se abre el telegrama del brote, el informe del doctor Holloway o la ficha negra, el texto aparecia escrito directamente sobre la ficha del archivo. Ahora cada documento se apoya en su propio trozo de papel, mas claro y rasgado arriba y abajo, con una sombra corta en el borde inferior.
+
+Se lee exactamente igual, y por fin parece lo que es: un recorte guardado entre las fichas.
+
 ## Version 0.229.0 - El indice dice donde estas y la firma se apoya
 
 El indice del diario ya no es una lista ciega: la entrada que estas leyendo lleva su raya al lado, en tinta de lacre, y el renglon bajo el puntero se aclara para saber que vas a pulsar antes de pulsarlo.

@@ -1,3 +1,9 @@
+## Version 0.230.0 - The documents are loose cuttings
+
+When the outbreak telegram, Dr. Holloway's report or the black card is opened in the reading room, the text appeared written straight onto the archive card. Now each document rests on its own piece of paper, lighter and torn at top and bottom, with a short shadow along the lower edge.
+
+It reads exactly the same, and at last it looks like what it is: a cutting kept between the cards.
+
 ## Version 0.229.0 - The index says where you are and the signature rests
 
 The diary index is no longer a blind list: the entry you are reading carries its stroke beside it, in sealing-wax ink, and the line under the pointer lightens so you know what you are about to press before pressing it.

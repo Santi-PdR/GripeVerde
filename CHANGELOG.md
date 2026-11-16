@@ -1,3 +1,8 @@
+## v0.230.0 - Documentos sobre recorte
+
+- `DiaryArchiveScreen.renderDocument`: cada documento se apoya en un `drawTornSheet` LEDGER con sombra corta
+  (márgenes 24 px, alto `panelH-78`).
+
 ## v0.229.0 - Indice con marca de lectura y firma sobre papel
 
 - `ChangelogScreen`: `currentDiarySection(probeY)` marca la entrada en curso; realce del renglón bajo el puntero.
