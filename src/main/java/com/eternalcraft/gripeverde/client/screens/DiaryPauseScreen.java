@@ -592,6 +592,20 @@ public class DiaryPauseScreen extends PauseScreen {
     // v0.233.0: aqui vivian drawDoubleBorder, drawRect y drawCornerOrnaments,
     // el marco recto de la pausa. Su unico uso era ese marco.
 
+    // ================================================================
+    // TITULO / FECHA / SEPARADORES / FIRMA / SELLO
+    // ================================================================
+
+    private net.minecraft.client.gui.Font headerFont;
+    private int headerPanelW = -1;
+    private boolean headerCompact = false;
+    private String headerTitleSrc = "";
+    private String headerSubSrc = "";
+    private int headerTitleW = 0;
+    private float headerScale = 1f;
+    private String headerSubtitle = "";
+    private int headerSubW = 0;
+
     private void drawPanelTitle(GuiGraphics g, int px, int py) {
         String title = DiaryChrome.tr("gripeverde.pause.title");
         String subtitle = DiaryChrome.tr("gripeverde.pause.subtitle");
