@@ -1,3 +1,9 @@
+## Version 0.236.0 - Los mandos tambien pierden el marco
+
+Los deslizadores de volumen -el de la musica y el del ambiente- y el deslizador de opciones seguian con el rectangulo de un pixel, igual de recto que los botones de la version anterior. Ahora usan el mismo filete dibujado a mano: tramos que suben y bajan un pixel, con el largo irregular de la pluma.
+
+La barra de avance -la del archivo, la de los partes- tambien. Los mandos responden exactamente igual, la barra no se anima en partida y el umbral de alerta sigue marcado; lo unico que cambia es el borde.
+
 ## Version 0.235.0 - Los botones dejan de ser cajas
 
 Los botones eran lo ultimo que seguia con marco perfecto: un rectangulo de un pixel, igual arriba que abajo, que delataba la caja detras del papel. Ahora el filete se dibuja a mano: tramos de largo irregular que suben y bajan un pixel, asi que el recuadro sigue cerrando pero ya no parece medido con regla.

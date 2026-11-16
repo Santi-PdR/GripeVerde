@@ -3,6 +3,7 @@ package com.eternalcraft.gripeverde.client.widgets;
 import com.eternalcraft.gripeverde.client.audio.MenuAmbience;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSliderButton;
@@ -52,10 +53,8 @@ public class DiaryAmbienceSlider extends AbstractSliderButton {
         int h = this.getHeight();
 
         g.fill(x, y, x + w, y + h, 0xFFC9B78A);
-        g.fill(x, y, x + w, y + 1, 0x60422810);
-        g.fill(x, y + h - 1, x + w, y + h, 0x60422810);
-        g.fill(x, y, x + 1, y + h, 0x60422810);
-        g.fill(x + w - 1, y, x + w, y + h, 0x60422810);
+        // v0.236.0: filete a mano, como el resto de los mandos.
+        PaperTexture.drawWornBorder(g, x, y, w, h, 0x60422810, x * 31 + y * 17 + w);
 
         int trackY1 = y + h / 2 - 1;
         int trackY2 = y + h / 2 + 1;

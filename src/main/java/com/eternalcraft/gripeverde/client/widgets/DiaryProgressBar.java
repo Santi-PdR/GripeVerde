@@ -2,6 +2,7 @@ package com.eternalcraft.gripeverde.client.widgets;
 
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.util.MotionPolicy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -54,10 +55,8 @@ public final class DiaryProgressBar {
 
         g.fill(x + 1, y + 1, x + w + 1, y + h + 1, 0x18000000);
         g.fill(x, y, x + w, y + h, 0xFFA89468);
-        g.fill(x, y, x + w, y + 1, 0xB0422810);
-        g.fill(x, y + h - 1, x + w, y + h, 0xB0422810);
-        g.fill(x, y, x + 1, y + h, 0xB0422810);
-        g.fill(x + w - 1, y, x + w, y + h, 0xB0422810);
+        // v0.236.0: la barra de avance pierde el marco recto.
+        PaperTexture.drawWornBorder(g, x, y, w, h, 0xB0422810, x * 31 + y * 17 + w);
 
         int innerX = x + 2;
         int innerY = y + 2;

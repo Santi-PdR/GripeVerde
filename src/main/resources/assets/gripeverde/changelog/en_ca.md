@@ -1,3 +1,9 @@
+## Version 0.236.0 - The controls lose the frame too
+
+The volume sliders - music and ambience - and the option slider still had the one-pixel rectangle, as straight as the buttons of the previous version. Now they use the same hand-drawn rule: stretches that rise and fall by a pixel, with the uneven length of a pen.
+
+The progress bar - the archive one, the report one - as well. The controls respond exactly as before, the bar does not animate in game and the alert threshold is still marked; only the border changes.
+
 ## Version 0.235.0 - The buttons stop being boxes
 
 The buttons were the last thing still carrying a perfect frame: a one-pixel rectangle, the same on top and bottom, that gave away the box behind the paper. Now the rule is drawn by hand: stretches of uneven length that rise and fall by a pixel, so the outline still closes but no longer looks measured with a ruler.

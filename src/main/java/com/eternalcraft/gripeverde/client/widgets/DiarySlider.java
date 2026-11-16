@@ -2,6 +2,7 @@ package com.eternalcraft.gripeverde.client.widgets;
 
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.DiaryTypography;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -76,10 +77,8 @@ public class DiarySlider extends AbstractSliderButton {
 
         g.fill(x + 1, y + 1, x + w + 1, y + h + 1, 0x18000000);
         g.fill(x, y, x + w, y + h, 0xFFCDBA90);
-        g.fill(x, y, x + w, y + 1, 0x88422810);
-        g.fill(x, y + h - 1, x + w, y + h, 0x88422810);
-        g.fill(x, y, x + 1, y + h, 0x88422810);
-        g.fill(x + w - 1, y, x + w, y + h, 0x88422810);
+        // v0.236.0: el deslizador tambien lleva el filete a mano.
+        PaperTexture.drawWornBorder(g, x, y, w, h, 0x88422810, x * 31 + y * 17 + w);
 
         int trackX1 = x + 10;
         int trackX2 = x + w - 10;

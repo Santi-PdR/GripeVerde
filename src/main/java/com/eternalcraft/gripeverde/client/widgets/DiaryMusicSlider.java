@@ -3,6 +3,7 @@ package com.eternalcraft.gripeverde.client.widgets;
 import com.eternalcraft.gripeverde.client.audio.MenuMusic;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSliderButton;
@@ -59,10 +60,8 @@ public class DiaryMusicSlider extends AbstractSliderButton {
 
         // Fondo: banda pergamino oscuro (track del slider)
         g.fill(x, y, x + w, y + h, 0xFFC9B78A);            // PAPER_STAINED
-        g.fill(x, y, x + w, y + 1, 0x60422810);             // borde sup
-        g.fill(x, y + h - 1, x + w, y + h, 0x60422810);     // borde inf
-        g.fill(x, y, x + 1, y + h, 0x60422810);             // borde izq
-        g.fill(x + w - 1, y, x + w, y + h, 0x60422810);     // borde der
+        // v0.236.0: filete a mano, como el resto de los mandos.
+        PaperTexture.drawWornBorder(g, x, y, w, h, 0x60422810, x * 31 + y * 17 + w);
 
         // Track interno (banda mas oscura donde corre el thumb)
         int trackY1 = y + h / 2 - 1;

@@ -1,3 +1,9 @@
+## v0.236.0 - Los mandos pierden el marco
+
+- `DiarySlider` (0x88422810), `DiaryMusicSlider` y `DiaryAmbienceSlider` (0x60422810) y `DiaryProgressBar` (0xB0422810) cambian
+  su rectángulo de 1 px por `PaperTexture.drawWornBorder`.
+- Sin cambios de comportamiento: mismos valores, mismos tiempos, misma marca de umbral.
+
 ## v0.235.0 - Los botones dejan de ser cajas
 
 - `PaperTexture.drawWornBorder(g,x,y,w,h,color,seed)`: filete a mano — tramos de 5 px en adelante con jitter de 1 px arriba,
