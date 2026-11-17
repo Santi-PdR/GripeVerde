@@ -1,3 +1,7 @@
+## Version 0.260.0 - The watch says the date
+
+The watch lid, when it is stopped, adds today's date in Roman numerals: the day and the month, measured with the house calendar. It is no longer only the time and the moon: the day is there too, which is what one looks at after a long while in the street.
+
 ## Version 0.259.0 - The sources, in plain sight
 
 The attribution registry gains the notebook's sources, so nobody has to take the chronicler's word: Ragusa 1377 and the forty days, Philadelphia 1793 and the yellow fever, Hamburg 1892 and the cholera, Porto 1899 and the plague, the Arabic "ghul" and One Thousand and One Nights, and the cuirass of 1800's heavy cavalry. Three lines, measured against the panel width, trimmed before ever touching the frame.

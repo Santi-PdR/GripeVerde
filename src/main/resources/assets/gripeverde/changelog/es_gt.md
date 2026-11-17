@@ -1,3 +1,7 @@
+## Version 0.260.0 - El reloj dice la fecha
+
+La tapa del reloj, cuando se detiene, suma la fecha de hoy en numeral romano: el dia y el mes, medidos con el calendario de la casa. Ya no es solo la hora y la luna: tambien el dia, que es lo que uno mira cuando lleva mucho tiempo en la calle.
+
 ## Version 0.259.0 - Las fuentes, a la vista
 
 El registro de atribuciones suma las fuentes del cuaderno, para que nadie tenga que creerle al cronista: Ragusa 1377 y los cuarenta dias, Filadelfia 1793 y la fiebre amarilla, Hamburgo 1892 y el colera, Oporto 1899 y la peste, el "ghul" arabe y Las mil y una noches, y la coraza de la caballeria pesada de 1800. Tres renglones, medidos contra el ancho del panel, que se recortan antes que pisar el marco.

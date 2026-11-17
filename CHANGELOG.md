@@ -1,3 +1,7 @@
+## v0.260.0 - El reloj dice la fecha
+
+- `PocketWatchRenderer`: cuarta linea de la tapa con `hoy: <dia> · <mes romano>` (`ROMAN_MONTHS`), apareciendo con la misma tinta progresiva.
+
 ## v0.259.0 - Las fuentes, a la vista
 
 - `DiaryCreditsScreen.drawSources`: bloque de fuentes reales del diario, con `DiaryChrome.fitText` contra `panelW - 48`.

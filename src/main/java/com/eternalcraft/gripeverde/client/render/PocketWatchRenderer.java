@@ -157,6 +157,16 @@ public class PocketWatchRenderer {
             g.drawString(font, l4, cx - w4 / 2, cy + radius + 56,
                 (Math.min(120, (chars - 34) * 6) << 24) | 0x5C4A2E, false);
         }
+        // v0.260.0: la fecha de hoy, en numeral romano como el cuadrante.
+        if (chars > 38) {
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            String roman = ROMAN_MONTHS[cal.get(java.util.Calendar.MONTH)];
+            String today = (en ? "today: " : "hoy: ")
+                + cal.get(java.util.Calendar.DAY_OF_MONTH) + " · " + roman;
+            int wT = font.width(today);
+            g.drawString(font, today, cx - wT / 2, cy + radius + 68,
+                (Math.min(120, (chars - 38) * 6) << 24) | 0x51402A, false);
+        }
         // La version del gabinete, al pie y en chico.
         if (version != null && !version.isBlank()) {
             String ver = "v" + version;
@@ -275,6 +285,11 @@ public class PocketWatchRenderer {
      * con su papel adentro y el numero del dia; si el dia trae dos cifras, el
      * vidrio crece un pixel a cada lado en vez de recortar el numero.
      */
+    /** v0.260.0: los meses en numeral romano, como el cuadrante del reloj. */
+    private static final String[] ROMAN_MONTHS = {
+        "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"
+    };
+
     private static void drawDateAperture(GuiGraphics g, Font font, int dx, int dy, int day) {
         String text = Integer.toString(day);
         int tw = font.width(text);
