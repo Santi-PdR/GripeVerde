@@ -1,3 +1,9 @@
+## Version 0.256.0 - Las pantallas que quedaban crudas
+
+Quedaban pantallas del juego que se abrian con el fondo de tierra y los botones grises, y no se podian subclasear como las demas: crear mundo, editar mundo, abrir a LAN, la desconexion, los avisos y las confirmaciones del propio juego. Ahora se visten por evento. El fondo de tierra se tapa con la escena de la noche en cuanto el juego termina de pintarlo, y los botones lisos se cambian por los de papel disparando la accion del original, con su mismo estado.
+
+Los botones que dibujan iconos o cambian su rotulo -las pestanas de crear mundo, los selectores de modo- se dejan como estan: copiarles el texto en el momento del alta los dejaria mudos. Todo lo que la pantalla hace sigue siendo del juego; lo que cambia es la tinta.
+
 ## Version 0.255.0 - La lista de mods tambien lleva fichas
 
 La pantalla de mods de Forge tenia el mismo vicio que la de mundos: su lista pintaba el fondo de la pantalla en cada cuadro. Se le apago, y ahora la escena de la noche se ve de verdad.

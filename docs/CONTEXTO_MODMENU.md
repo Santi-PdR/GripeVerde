@@ -180,6 +180,11 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.256.0 — vestir sin subclasear
+
+- **Eventos**: `Init.Post` viste (`dressPlain`) y `BackgroundRendered` tapa el fondo de las pantallas ajenas listadas en `isHouseRawScreen`.
+- **Cuidado**: solo `child.getClass() == Button.class`, para no congelar pestanas ni `CycleButton`.
+
 ## Cambios de 0.255.0 — la lista de mods
 
 - **Fondo**: la lista de Forge se apaga igual que la de mundos.

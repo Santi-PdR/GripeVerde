@@ -1,3 +1,9 @@
+## Version 0.256.0 - The screens that were still raw
+
+There were game screens that opened with the dirt background and grey buttons, and they could not be subclassed like the others: create world, edit world, open to LAN, disconnection, alerts and the game's own confirmations. Now they are dressed by event. The dirt background is covered with the night scene as soon as the game finishes painting it, and plain buttons are swapped for paper ones that fire the original's action, with the same state.
+
+Buttons that draw icons or change their label -create world's tabs, mode selectors- are left as they are: copying their text at creation time would leave them mute. Everything the screen does is still the game's; what changes is the ink.
+
 ## Version 0.255.0 - The mod list carries files too
 
 Forge's mod screen had the same vice as the worlds one: its list painted the screen background every frame. That is off now, and the night scene really shows.

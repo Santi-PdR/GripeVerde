@@ -43,6 +43,46 @@ public final class PaperButtons {
         }
     }
 
+    /**
+     * v0.256.0: vestir solo los botones lisos del juego.
+     *
+     * En pantallas ajenas hay botones que dibujan iconos o que cambian su
+     * rotulo al apretarlos -las pestanas de crear mundo, los selectores de
+     * modo-. Copiarles el texto en el momento del alta los dejaria mudos: se
+     * visten solo los que son exactamente Button y conservan el resto.
+     */
+    public static List<DiaryButton> dressPlain(Screen screen) {
+        List<DiaryButton> dressed = new ArrayList<>();
+        if (screen == null) return dressed;
+        List<Button> originals = new ArrayList<>();
+        try {
+            for (var child : screen.children()) {
+                if (child.getClass() == Button.class && ((Button) child).visible) {
+                    originals.add((Button) child);
+                }
+            }
+        } catch (Throwable ignored) {
+        }
+        for (Button origin : originals) {
+            try {
+                DiaryButton dressedButton = new DiaryButton(
+                    origin.getX(), origin.getY(), origin.getWidth(), origin.getHeight(),
+                    origin.getMessage(), DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
+                    () -> {
+                        if (origin.active) origin.onPress();
+                    });
+                if (register(screen, dressedButton)) {
+                    origin.visible = false;
+                    dressedButton.active = origin.active;
+                    ORIGINALS.put(dressedButton, origin);
+                    dressed.add(dressedButton);
+                }
+            } catch (Throwable ignored) {
+            }
+        }
+        return dressed;
+    }
+
     /** Viste todos los botones visibles de la pantalla. Devuelve los puestos. */
     public static List<DiaryButton> dressAll(Screen screen) {
         List<DiaryButton> dressed = new ArrayList<>();

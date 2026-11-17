@@ -128,6 +128,47 @@ public class ScreenEventHandler {
         try {
             com.eternalcraft.gripeverde.client.render.DeathPaper.onInit(event.getScreen());
         } catch (Throwable ignored) {}
+        // v0.256.0: las pantallas del juego que quedaban crudas tambien se visten.
+        try {
+            if (isHouseRawScreen(event.getScreen())) {
+                com.eternalcraft.gripeverde.client.render.PaperButtons.dressPlain(event.getScreen());
+            }
+        } catch (Throwable ignored) {}
+    }
+
+    /**
+     * v0.256.0: la lista de pantallas del juego que todavia se abrian con el
+     * fondo de tierra y los botones grises.
+     *
+     * No se subclasean -muchas no dejan, o piden constructores que no se pueden
+     * armar desde afuera-, asi que se visten por evento: el fondo se tapa con
+     * la escena de la noche y los botones se cambian por los de la casa, sin
+     * tocar su logica.
+     */
+    private static boolean isHouseRawScreen(net.minecraft.client.gui.screens.Screen screen) {
+        if (screen == null) return false;
+        if (screen instanceof com.eternalcraft.gripeverde.client.screens.DiaryConfirmScreen) return false;
+        if (screen instanceof com.eternalcraft.gripeverde.client.screens.DiarySelectWorldScreen) return false;
+        if (screen instanceof com.eternalcraft.gripeverde.client.screens.DiaryMultiplayerScreen) return false;
+        return screen instanceof net.minecraft.client.gui.screens.worldselection.CreateWorldScreen
+            || screen instanceof net.minecraft.client.gui.screens.worldselection.EditWorldScreen
+            || screen instanceof net.minecraft.client.gui.screens.ShareToLanScreen
+            || screen instanceof net.minecraft.client.gui.screens.DisconnectedScreen
+            || screen instanceof net.minecraft.client.gui.screens.AlertScreen
+            || screen instanceof net.minecraft.client.gui.screens.ConfirmScreen
+            || screen instanceof net.minecraft.client.gui.screens.ConfirmLinkScreen;
+    }
+
+    /** v0.256.0: el fondo de esas pantallas, tapado con la noche. */
+    @SubscribeEvent
+    public static void onBackgroundRendered(ScreenEvent.BackgroundRendered event) {
+        if (!isHouseRawScreen(event.getScreen())) return;
+        try {
+            com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(
+                event.getGuiGraphics(), event.getScreen().width, event.getScreen().height);
+            com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(
+                event.getGuiGraphics(), event.getScreen().width);
+        } catch (Throwable ignored) {}
     }
 
     @SubscribeEvent

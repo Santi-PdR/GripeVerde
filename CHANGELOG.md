@@ -1,3 +1,9 @@
+## v0.256.0 - Las pantallas que quedaban crudas
+
+- `ScreenEventHandler.isHouseRawScreen`: crear/editar mundo, LAN, desconexion, avisos, confirmaciones y enlaces.
+- `PaperButtons.dressPlain`: viste solo `Button` exactos, para no romper pestanas ni selectores ciclicos.
+- `ScreenEvent.BackgroundRendered`: la escena de la noche tapa el fondo de tierra de esas pantallas.
+
 ## v0.255.0 - La lista de mods tambien lleva fichas
 
 - `DiaryModListScreen`: `findList()` sobre `AbstractSelectionList`, `setRenderBackground(false)` + `setRenderTopAndBottom(false)`, `itemHeight` por reflexion.
