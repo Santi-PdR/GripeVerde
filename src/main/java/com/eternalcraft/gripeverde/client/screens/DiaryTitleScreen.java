@@ -521,6 +521,7 @@ public class DiaryTitleScreen extends Screen {
             com.eternalcraft.gripeverde.client.render.LogoRenderer.setWatchedMouse(mouseX, mouseY);
             drawLogo(g);
             drawSignature(g);
+            drawBottomMarks(g);
             super.render(g, mouseX, mouseY, partialTick);
             renderChroniclerNote(g);
         } else {
@@ -807,6 +808,16 @@ public class DiaryTitleScreen extends Screen {
                 g.drawString(this.font, hint, cx - hw / 2, hy,
                     DiaryChrome.INK_SUBTITLE, false);
             }
+            // v0.261.0: y la hora que marcan las agujas, escrita, para que no
+            // haya que leer el cuadrante.
+            String clock = String.format("%02d:%02d",
+                java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY),
+                java.util.Calendar.getInstance().get(java.util.Calendar.MINUTE));
+            int cw = DiaryChrome.widthCached(this.font, clock);
+            if (hy + 20 < this.height) {
+                g.drawString(this.font, clock, cx - cw / 2, hy + 10,
+                    DiaryChrome.INK_TITLE, false);
+            }
         }
     }
 
@@ -848,6 +859,32 @@ public class DiaryTitleScreen extends Screen {
     private String cachedCompactSigSrc = "";
     private int cachedCompactSigWidth = -1;
     private net.minecraft.client.gui.Font cachedCompactSigFont;
+
+    /**
+     * v0.261.0: al pie de la portada, la fecha de hoy y la version del gabinete.
+     *
+     * Van a la derecha, donde no hay firma ni control de musica, y solo si la
+     * ventana tiene ancho de sobra: en ventanas chicas no se dibuja nada, que es
+     * mejor que un texto pisado.
+     */
+    private void drawBottomMarks(GuiGraphics g) {
+        if (isCompactLayout() || this.width < 480) return;
+        boolean en = isEnglishSelected();
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        String[] months = { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII" };
+        String today = (en ? "today " : "hoy ") + cal.get(java.util.Calendar.DAY_OF_MONTH)
+            + " \u00b7 " + months[cal.get(java.util.Calendar.MONTH)];
+        String ver = "v" + com.eternalcraft.gripeverde.GripeVerdeMod.VERSION;
+        int tw = DiaryChrome.widthCached(this.font, today);
+        int vw = DiaryChrome.widthCached(this.font, ver);
+        int right = this.width - 8;
+        g.drawString(this.font, today, right - tw, this.height - 12,
+            com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
+                com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_LIGHT, 130), false);
+        g.drawString(this.font, ver, right - vw, this.height - 23,
+            com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
+                com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_MID, 110), false);
+    }
 
     private void drawSignature(GuiGraphics g) {
         int idx = com.eternalcraft.gripeverde.client.render.LogoRenderer.getYearIndex();

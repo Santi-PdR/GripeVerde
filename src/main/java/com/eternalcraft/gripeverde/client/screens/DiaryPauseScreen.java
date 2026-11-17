@@ -362,6 +362,11 @@ public class DiaryPauseScreen extends PauseScreen {
         int px = panelX();
         int py = panelY();
         drawPanel(g, px, py, panelW(), panelH());
+        // v0.261.0: la hoja de pausa lleva su numero de registro, como el resto
+        // del gabinete; era la unica que no lo tenia.
+        try {
+            DiaryChrome.drawRegistryTag(g, px, py, panelW(), panelH(), "REG. VII");
+        } catch (Throwable ignored) {}
         drawPanelTitle(g, px, py);
         if (!compactPauseLayout()) drawDateStamp(g, px, py);
         drawPanelSeparators(g, px, py);
@@ -375,6 +380,7 @@ public class DiaryPauseScreen extends PauseScreen {
         if (!compactPauseLayout()) {
             drawCandle(g, px + 20, py + panelH() - 32);
             drawSignature(g, px, py);
+            drawVoicesLine(g, px + panelW());
             // v0.185.0: fuera el sello de cera del panel (y sus dos bucles de
             // 615 fills por cuadro); el papel ya no lleva adornos.
         }
@@ -431,6 +437,26 @@ public class DiaryPauseScreen extends PauseScreen {
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
         } catch (Throwable ignored) {}
         }
+    }
+
+    /**
+     * v0.261.0: cuantas voces tiene escritas el parte, al pie de la hoja. Es el
+     * dato que se busca cuando se duda si un mensaje esta listo para salir.
+     */
+    private void drawVoicesLine(GuiGraphics g, int panelRight) {
+        String line;
+        try {
+            int written = com.eternalcraft.gripeverde.client.integration.DispatchLibrary.countWithText();
+            int total = com.eternalcraft.gripeverde.client.integration.DispatchLibrary.SLOT_COUNT;
+            boolean en = isEnglishSelected();
+            line = en ? written + " of " + total + " voices" : written + " de " + total + " voces";
+        } catch (Throwable ignored) {
+            return;
+        }
+        String cut = DiaryChrome.fitText(this.font, line, Math.max(40, panelW() / 2));
+        int w = DiaryChrome.widthCached(this.font, cut);
+        g.drawString(this.font, cut, panelRight - 12 - w, panelY() + panelH() - 20,
+            DiaryChrome.INK_FLAVOR, false);
     }
 
     private boolean hasActiveWorld() {

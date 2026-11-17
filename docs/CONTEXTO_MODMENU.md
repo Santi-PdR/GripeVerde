@@ -180,6 +180,15 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.261.0 — doce mejoras visibles
+
+- **Portada**: fecha/version al pie derecho (`width>=480`, fuera de compacto) y hora en numeros al pasar por el reloj.
+- **Reloj**: `S.P.` en el bisel (`radius>=34`).
+- **Pausa**: `REG. VII`, voces del parte.
+- **Parte**: teclas al pie, glifo de raton.
+- **Mundos**: contador, linea de teclas, `Supr`.
+- **Multijugador**: banda de teclas + direccion elegida.
+
 ## Cambios de 0.260.0 — fecha en la tapa
 
 - **Reloj**: linea `hoy: 13 · XI` bajo la luna, con `ROMAN_MONTHS` y la misma aparicion progresiva (`chars > 38`).

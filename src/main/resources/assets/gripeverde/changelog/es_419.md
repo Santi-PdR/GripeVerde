@@ -1,3 +1,13 @@
+## Version 0.261.0 - Doce cosas que se ven
+
+La portada estrena tres marcas al pie: la fecha de hoy en numeral romano a la derecha, la version del gabinete encima de ella y, cuando la mano pasa por el reloj, la hora que marcan las agujas escrita con numeros. El reloj, ademas, lleva grabada la marca del taller -S.P.- en el bisel, a las once, como los de epoca.
+
+La hoja de pausa gana su chapa de registro -REG. VII, la unica que faltaba- y una linea con cuantas voces tiene escritas el parte.
+
+El parte de CEDA dice al pie que teclas lo manejan -Enter, Tab, Esc- y dibuja un raton chiquito delante de las ranuras atadas a un boton del raton, para no confundirlas con teclas.
+
+La lista de mundos muestra cuantos hay anotados en la cabecera, recuerda las teclas entre la lista y los botones y deja borrar con Supr, con la confirmacion vestida del juego. La lista de servidores llena la banda vacia que tenia entre la lista y el divisor: a la izquierda las teclas, a la derecha la direccion del puesto que se lleva si se aprieta Enter.
+
 ## Version 0.260.0 - El reloj dice la fecha
 
 La tapa del reloj, cuando se detiene, suma la fecha de hoy en numeral romano: el dia y el mes, medidos con el calendario de la casa. Ya no es solo la hora y la luna: tambien el dia, que es lo que uno mira cuando lleva mucho tiempo en la calle.

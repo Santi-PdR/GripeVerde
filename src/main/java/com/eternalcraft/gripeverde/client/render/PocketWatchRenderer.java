@@ -194,6 +194,15 @@ public class PocketWatchRenderer {
         fillCircle(g, cx, cy, radius - 4, COLOR_BRASS);
 
         fillCircle(g, cx, cy, radius - 7, COLOR_FACE);
+        // v0.261.0: la marca del taller, grabada en el bisel como en los relojes
+        // de epoca: dos letras chiquitas a las once, siempre en el mismo sitio.
+        if (radius >= 34) {
+            Font markFont = Minecraft.getInstance().font;
+            String mark = "S.P.";
+            int mw = markFont.width(mark);
+            g.drawString(markFont, mark, cx - radius / 2 - mw / 2, cy - radius / 2 - 3,
+                COLOR_BRASS_DARK, false);
+        }
 
         for (int i = 0; i < 12; i++) {
             double angle = Math.toRadians(i * 30 - 90);

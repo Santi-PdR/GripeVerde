@@ -188,6 +188,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         drawHeader(g);
         drawRegisterPage(g, mouseX, mouseY);
         drawFooterPaper(g);
+        drawKeysHint(g);
 
         // Lista y busqueda del juego, tal cual, encima de la pagina.
         try {
@@ -224,6 +225,39 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         g.drawString(font, sub, cx - DiaryChrome.widthCached(font, sub) / 2, 21,
             DiaryChrome.INK_SUBTITLE, false);
         DiaryChrome.drawRegistryTagLeft(g, 0, -4, "REG. IX");
+
+        // v0.261.0: cuantos mundos hay anotados, a la derecha de la cabecera.
+        if (w >= 380) {
+            int count = 0;
+            try {
+                count = this.vanillaList == null ? 0 : this.vanillaList.children().size();
+            } catch (Throwable ignored) {
+            }
+            String badge;
+            if (count <= 0) badge = en ? "none yet" : "ninguno";
+            else if (count == 1) badge = en ? "1 world" : "1 mundo";
+            else badge = en ? count + " worlds" : count + " mundos";
+            int bw = DiaryChrome.widthCached(font, badge);
+            g.drawString(font, badge, w - 12 - bw, 8, DiaryChrome.INK_SUBTITLE, false);
+        }
+    }
+
+    /**
+     * v0.261.0: al pie, entre la lista y los botones, el recordatorio de teclas.
+     * Se escribe solo si hay banda libre y se recorta al ancho del papel.
+     */
+    private void drawKeysHint(GuiGraphics g) {
+        if (this.dressed.isEmpty() || this.height < 220) return;
+        int bottom = Integer.MAX_VALUE;
+        for (DiaryButton button : this.dressed) bottom = Math.min(bottom, button.getY());
+        int y = bottom - 12;
+        if (y <= this.listBottom + 8) return;
+        boolean en = Discoveries.isEnglish();
+        String hint = en ? "Enter opens  ·  Del deletes  ·  Esc back"
+            : "Enter entra  ·  Supr borra  ·  Esc vuelve";
+        String cut = DiaryChrome.fitText(this.font, hint, Math.max(60, this.width - 60));
+        int hw = DiaryChrome.widthCached(this.font, cut);
+        g.drawString(this.font, cut, (this.width - hw) / 2, y, DiaryChrome.INK_FLAVOR, false);
     }
 
     /**
@@ -310,6 +344,21 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 if (button.visible && button.active && want.equals(button.getMessage().getString())) {
                     try {
                         com.eternalcraft.gripeverde.client.audio.UiSounds.playClick();
+                    } catch (Throwable ignored) {
+                    }
+                    button.onPress();
+                    return true;
+                }
+            }
+        }
+        if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE) {
+            // v0.261.0: Supr borra el mundo elegido; el que pregunta sigue
+            // siendo el juego, con su confirmacion vestida.
+            String want = net.minecraft.network.chat.Component.translatable("selectWorld.delete").getString();
+            for (DiaryButton button : this.dressed) {
+                if (button.visible && button.active && want.equals(button.getMessage().getString())) {
+                    try {
+                        com.eternalcraft.gripeverde.client.audio.UiSounds.clickDestroy();
                     } catch (Throwable ignored) {
                     }
                     button.onPress();

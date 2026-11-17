@@ -1,3 +1,12 @@
+## v0.261.0 - Doce cosas que se ven
+
+- Portada: `drawBottomMarks` (fecha real + version al pie derecho) y hora escrita al pasar el puntero por el reloj.
+- Reloj: marca del taller `S.P.` grabada en el bisel.
+- Pausa: chapa `REG. VII` y `drawVoicesLine` (voces del parte).
+- Parte: recordatorio de teclas al pie y raton dibujado en ranuras con `isMouse`.
+- Mundos: contador en la cabecera, `drawKeysHint`, y `Supr` que dispara el borrado del juego.
+- Multijugador: `drawFooterNotes` con teclas y direccion del puesto elegido.
+
 ## v0.260.0 - El reloj dice la fecha
 
 - `PocketWatchRenderer`: cuarta linea de la tapa con `hoy: <dia> · <mes romano>` (`ROMAN_MONTHS`), apareciendo con la misma tinta progresiva.

@@ -459,10 +459,22 @@ public class DiaryDispatchScreen extends Screen {
 
             String key = listening ? "..." : keyLabel(slot);
             boolean bound = listening || DispatchLibrary.isBound(slot);
-            String shown = ellipsize(key, this.keyW - 8);
+            // v0.261.0: si la ranura esta atada a un boton del raton, adelante va
+            // el dibujito del raton: se ve de un vistazo que no es una tecla.
+            boolean mouseBound = !listening && DispatchLibrary.isMouse(DispatchLibrary.key(slot));
+            int textInset = mouseBound ? 9 : 0;
+            String shown = ellipsize(key, this.keyW - 8 - textInset);
+            if (mouseBound) {
+                int mx = this.keyX + 4;
+                int my = y + 5;
+                gfx.fill(mx, my, mx + 5, my + 7, 0x88226130);
+                gfx.fill(mx + 1, my + 1, mx + 4, my + 3, 0xFFEFE2C6);
+                gfx.fill(mx + 1, my + 4, mx + 4, my + 6, 0xFFEFE2C6);
+                gfx.fill(mx + 2, my, mx + 3, my + 1, 0x88226130);
+            }
             gfx.drawString(this.font, shown,
-                this.keyX + (this.keyW - DiaryChrome.widthCached(this.font, shown)) / 2, y + 4,
-                bound ? DiaryChrome.INK_TITLE : 0x99887766, false);
+                this.keyX + textInset + (this.keyW - textInset - DiaryChrome.widthCached(this.font, shown)) / 2,
+                y + 4, bound ? DiaryChrome.INK_TITLE : 0x99887766, false);
         }
 
         DiaryChrome.drawInkDivider(gfx, this.panelX + 18, this.footerDivY, this.panelW - 36);
@@ -473,7 +485,9 @@ public class DiaryDispatchScreen extends Screen {
             this.panelX + 20, this.hintY, DiaryChrome.INK_SUBTITLE, false);
         String count = Component.translatable("gripeverde.dispatch.slot.count",
             DispatchLibrary.countWithText(), DispatchLibrary.SLOT_COUNT).getString()
-            + "  \u00b7  Ctrl+1..0";
+            + (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+                ? "  ·  Ctrl+1..0  ·  Enter next  ·  Tab changes  ·  Esc back"
+                : "  ·  Ctrl+1..0  ·  Enter siguiente  ·  Tab cambia  ·  Esc vuelve");
         gfx.drawString(this.font, ellipsize(count, Math.max(40, this.panelW - 40)),
             this.panelX + 20, this.countY, DiaryChrome.INK_FLAVOR, false);
 

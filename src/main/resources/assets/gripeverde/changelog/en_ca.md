@@ -1,3 +1,13 @@
+## Version 0.261.0 - Twelve visible things
+
+The title screen gains three marks at the foot: today's date in Roman numerals on the right, the cabinet's version above it, and, when the hand passes over the watch, the time its hands show, written in numbers. The watch also carries the workshop's mark -S.P.- engraved on the bezel at eleven, like period pieces.
+
+The pause sheet gains its registry tag -REG. VII, the only one missing- and a line with how many voices the dispatch has written.
+
+The CEDA dispatch says at its foot which keys drive it -Enter, Tab, Esc- and draws a tiny mouse in front of slots bound to a mouse button, so they are not mistaken for keys.
+
+The worlds list shows how many are recorded in its header, reminds the keys between the list and the buttons, and lets Del delete with the game's dressed confirmation. The server list fills the empty band it had between the list and the divider: keys on the left, the address of the post you carry if you press Enter on the right.
+
 ## Version 0.260.0 - The watch says the date
 
 The watch lid, when it is stopped, adds today's date in Roman numerals: the day and the month, measured with the house calendar. It is no longer only the time and the moon: the day is there too, which is what one looks at after a long while in the street.
