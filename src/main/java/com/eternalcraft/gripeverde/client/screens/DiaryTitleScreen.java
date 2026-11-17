@@ -540,6 +540,27 @@ public class DiaryTitleScreen extends Screen {
         } catch (Throwable ignored) {}
     }
 
+    /**
+     * v0.245.0: si nadie toca la portada durante cuarenta segundos, los faroles
+     * se apagan solos y la avenida queda a oscuras: la ficha de la avenida.
+     */
+    private static boolean avenueNoted;
+
+    private void pollIdleDarkness() {
+        if (avenueNoted) return;
+        if (this.lastInteractionMs <= 0L) return;
+        if (System.currentTimeMillis() - this.lastInteractionMs < 40_000L) return;
+        avenueNoted = true;
+        try {
+            if (com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                    com.eternalcraft.gripeverde.client.lore.Discoveries.AVENUE_DARK)) {
+                com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                    com.eternalcraft.gripeverde.client.lore.Marginalia.N_DUST);
+            }
+        } catch (Throwable ignored) {
+        }
+    }
+
     /** El alba enferma: solo si el lector paso la noche entera. */
     private void drawDawnIfDue(GuiGraphics g) {
         if (!dawnActive) return;
