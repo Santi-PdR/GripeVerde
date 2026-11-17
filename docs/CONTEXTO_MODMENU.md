@@ -180,6 +180,14 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.262.0 — ocho remates
+
+- **Diario**: dias en el titulo del indice, folio clicable hacia arriba, `Esc` cierra el indice.
+- **Difuntos**: fecha + firma + mancha.
+- **Mundos**: pista del buscador.
+- **Audio**: `playHover` con freno de 55 ms.
+- **Portada**: pieza de musica a la vista.
+
 ## Cambios de 0.261.0 — doce mejoras visibles
 
 - **Portada**: fecha/version al pie derecho (`width>=480`, fuera de compacto) y hora en numeros al pasar por el reloj.

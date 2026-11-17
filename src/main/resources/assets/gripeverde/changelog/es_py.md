@@ -1,3 +1,13 @@
+## Version 0.262.0 - Ocho remates de papel
+
+El indice del cuaderno dice cuantos dias lleva anotados, y el folio del pie -ese "folio 3 · 12"- ahora tambien es un boton: al tocarlo se vuelve al principio de la bitacora sin girar la rueda.
+
+La hoja de difuntos gana la fecha del deceso en numeral romano, la firma de la casa -"por la casa, S.P."- y una mancha de tinta junto al sello, como los partes que pasaron por muchas manos. El registro EC-QV/1897 y el sello DECESO siguen donde estaban.
+
+Con el indice abierto, Esc cierra el indice y no el cuaderno entero. En la lista de mundos el buscador ya no dice "Buscar..." sino que habla como el gabinete.
+
+Los avisos de pasar el puntero por encima se limitan a uno cada 55 milisegundos: barrer una rejilla de botones ya no suena a ametralladora. Y en la portada, junto al boton de cambiar la pieza, se lee cual suena y cuantas hay.
+
 ## Version 0.261.0 - Doce cosas que se ven
 
 La portada estrena tres marcas al pie: la fecha de hoy en numeral romano a la derecha, la version del gabinete encima de ella y, cuando la mano pasa por el reloj, la hora que marcan las agujas escrita con numeros. El reloj, ademas, lleva grabada la marca del taller -S.P.- en el bisel, a las once, como los de epoca.

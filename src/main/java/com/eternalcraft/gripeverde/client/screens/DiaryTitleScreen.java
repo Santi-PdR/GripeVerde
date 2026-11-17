@@ -522,6 +522,7 @@ public class DiaryTitleScreen extends Screen {
             drawLogo(g);
             drawSignature(g);
             drawBottomMarks(g);
+            drawMusicBadge(g);
             super.render(g, mouseX, mouseY, partialTick);
             renderChroniclerNote(g);
         } else {
@@ -867,6 +868,27 @@ public class DiaryTitleScreen extends Screen {
      * ventana tiene ancho de sobra: en ventanas chicas no se dibuja nada, que es
      * mejor que un texto pisado.
      */
+    /**
+     * v0.262.0: junto al boton de cambiar la pieza, que pieza suena y cuantas
+     * hay. Antes habia que apretar para saberlo.
+     */
+    private void drawMusicBadge(GuiGraphics g) {
+        if (isCompactLayout() || this.height < 200) return;
+        String badge;
+        try {
+            if (!com.eternalcraft.gripeverde.client.audio.MenuMusic.isMusicEnabled()) {
+                badge = isEnglishSelected() ? "no music" : "sin musica";
+            } else {
+                badge = com.eternalcraft.gripeverde.client.audio.MenuMusic.getCurrentTrackNumber()
+                    + "/" + com.eternalcraft.gripeverde.client.audio.MenuMusic.getTrackCount();
+            }
+        } catch (Throwable ignored) {
+            return;
+        }
+        g.drawString(this.font, badge, 48, this.height - 22,
+            DiaryChrome.INK_FLAVOR, false);
+    }
+
     private void drawBottomMarks(GuiGraphics g) {
         if (isCompactLayout() || this.width < 480) return;
         boolean en = isEnglishSelected();

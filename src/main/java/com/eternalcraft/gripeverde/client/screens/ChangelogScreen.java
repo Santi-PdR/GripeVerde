@@ -931,6 +931,22 @@ public class ChangelogScreen extends Screen {
         }
     }
 
+    /**
+     * v0.262.0: la franja del folio, al pie, es ademas el boton de volver al
+     * principio. Se mide por banda, no por el texto, para que no falle cuando
+     * el folio se corre a la izquierda por culpa de la lupa.
+     */
+    private boolean overFolio(double mouseX, double mouseY) {
+        if (this.diaryMode && !this.loadError && this.maxScroll > 0) {
+            int cy = panelY() + panelH() - 20;
+            if (mouseY >= cy && mouseY <= cy + 18
+                    && mouseX >= panelX() && mouseX <= panelX() + panelW() - 150) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private int searchBoxX() {
         return panelX() + panelW() - 14 - SEARCH_W;
     }
@@ -1174,7 +1190,10 @@ public class ChangelogScreen extends Screen {
             g, x, y, w, h,
             com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.LEDGER);
         boolean english = isEnglishSelected();
-        String head = english ? "Index of days" : "Indice de dias";
+        // v0.262.0: el indice dice cuantos dias lleva el cuaderno.
+        int days = this.diarySectionLabels.length;
+        String head = (english ? "Index of days" : "Indice de dias")
+            + (days > 0 ? "  ·  " + days : "");
         g.drawString(this.font, head, x + (w - DiaryTypography.width(this.font, head)) / 2, y + 8,
             DiaryChrome.INK_TITLE, false);
         DiaryChrome.drawInkDivider(g, x + 12, y + 22, w - 24);
@@ -1422,6 +1441,11 @@ public class ChangelogScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        // v0.262.0: el folio del pie devuelve al principio del cuaderno.
+        if (button == 0 && overFolio(mouseX, mouseY)) {
+            scrollToTopOrBottom(false);
+            return true;
+        }
         // v0.227.0: una fecha del indice lleva a su entrada.
         // v0.231.0: la hoja abierta se queda el clic aunque no toque un renglon.
         if (button == 0 && this.diaryMode && this.indexOpen && overIndex(mouseX, mouseY)) {
@@ -1553,6 +1577,12 @@ public class ChangelogScreen extends Screen {
             case GLFW.GLFW_KEY_HOME      -> { scrollToTopOrBottom(false); return true; }
             case GLFW.GLFW_KEY_END       -> { scrollToTopOrBottom(true);  return true; }
             case GLFW.GLFW_KEY_ESCAPE    -> {
+                // v0.262.0: con el indice abierto, Esc lo cierra a el y no la
+                // hoja entera: antes se salia del cuaderno sin querer.
+                if (this.diaryMode && this.indexOpen) {
+                    this.indexOpen = false;
+                    return true;
+                }
                 this.onClose();
                 return true;
             }

@@ -1,3 +1,13 @@
+## Version 0.262.0 - Eight paper finishes
+
+The notebook's index says how many days it has recorded, and the folio at the foot -that "folio 3 · 12"- is now a button too: touch it and you are back at the start of the log without turning the wheel.
+
+The death sheet gains the date of death in Roman numerals, the house's signature -"for the house, S.P."- and an ink blot beside the stamp, like papers that passed through many hands. Registry EC-QV/1897 and the DECEASED stamp stay where they were.
+
+With the index open, Esc closes the index and not the whole notebook. In the worlds list the search box no longer says "Search..." but speaks like the cabinet.
+
+Hover cues are limited to one every 55 milliseconds: sweeping a grid of buttons no longer sounds like a machine gun. And on the title screen, next to the change-the-piece button, you can read which piece is playing and how many there are.
+
 ## Version 0.261.0 - Twelve visible things
 
 The title screen gains three marks at the foot: today's date in Roman numerals on the right, the cabinet's version above it, and, when the hand passes over the watch, the time its hands show, written in numbers. The watch also carries the workshop's mark -S.P.- engraved on the bezel at eleven, like period pieces.

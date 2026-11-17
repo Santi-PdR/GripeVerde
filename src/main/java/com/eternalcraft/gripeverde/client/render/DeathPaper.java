@@ -1,6 +1,7 @@
 package com.eternalcraft.gripeverde.client.render;
 
 import com.eternalcraft.gripeverde.client.lore.Discoveries;
+import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -80,6 +81,23 @@ public final class DeathPaper {
             DiaryChrome.INK_SUBTITLE, false);
         g.drawString(font, DiaryChrome.fitCached(font, line2, pw - 16), px + 8, l1 + 11,
             DiaryChrome.INK_SUBTITLE, false);
+
+        // v0.262.0: la fecha del deceso, en numeral romano, y la firma de la
+        // casa, que responde por el parte como cualquier otro.
+        String[] romanMonths = { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII" };
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        String date = (english ? "dated " : "fechado ")
+            + cal.get(java.util.Calendar.DAY_OF_MONTH) + " \u00b7 "
+            + romanMonths[cal.get(java.util.Calendar.MONTH)] + " \u00b7 1897";
+        if (l1 + 26 < footY - 18) {
+            g.drawString(font, DiaryChrome.fitCached(font, date, pw - 16), px + 8, l1 + 22,
+                DiaryChrome.INK_FLAVOR, false);
+        }
+        String by = english ? "for the house, S.P." : "por la casa, S.P.";
+        int bw = DiaryChrome.widthCached(font, by);
+        g.drawString(font, by, px + (pw - bw) / 2, footY - 14,
+            DiaryTheme.withAlpha(0x006B5533, 150), false);
+        try { DiaryChrome.drawInkBlot(g, px + pw - 26, footY - 20, 1, false); } catch (Throwable ignored) {}
 
         // Pie del papel: registro a la izquierda y sello a la derecha.
         int footY = py + PAPER_H - 16;

@@ -165,7 +165,14 @@ public class UiSounds {
 
     // ── Hover dispatcher used by buttons ──
     // DiaryButton = main, GreenFlu = main, other subtle = section
+    private static long lastHoverMs = 0L;
+
     public static void playHover() {
+        // v0.262.0: al barrer el puntero por una rejilla de botones el aviso
+        // sonaba como una ametralladora. Se limita a uno cada 55 ms.
+        long now = System.currentTimeMillis();
+        if (now - lastHoverMs < 55L) return;
+        lastHoverMs = now;
         // Default hover is main family (most buttons are DiaryButton)
         hoverMain();
     }

@@ -1,3 +1,12 @@
+## v0.262.0 - Ocho remates de papel
+
+- Diario: el indice dice cuantos dias hay; el folio del pie vuelve al principio al tocarlo.
+- Diario: `Esc` cierra el indice antes que la hoja.
+- Difuntos: fecha del deceso, firma `por la casa, S.P.` y mancha de tinta junto al sello.
+- Mundos: `setHint` propio del buscador.
+- Audio: `playHover` limitado a uno cada 55 ms.
+- Portada: `drawMusicBadge` con la pieza actual y el total.
+
 ## v0.261.0 - Doce cosas que se ven
 
 - Portada: `drawBottomMarks` (fecha real + version al pie derecho) y hora escrita al pasar el puntero por el reloj.
