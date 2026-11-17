@@ -250,11 +250,6 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics g) {
-        // La escena de la casa hace de fondo.
-    }
-
-    @Override
     public boolean isPauseScreen() {
         return false;
     }
