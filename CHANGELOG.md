@@ -1,3 +1,10 @@
+## v0.237.0 - Parte de defunción
+
+- `DeathPaper` (nuevo, `client/render`): franjas `drawTornSheet` OFFICIAL arriba (42 px, entra desde el borde) y al pie
+  (38 px, sólo si `h >= 300`); encabezado con raya a lápiz, registro `EC-QV/1897` y sello de lacre (`REDCOAT` α190/210).
+- `ScreenEventHandler.onScreenRenderPost`: dibuja `DeathPaper` antes del corte por partida, que es donde ocurre la muerte.
+- No se sustituye `DeathScreen`: sus textos, su causa y sus botones de reaparecer/volver al título quedan intactos.
+
 ## v0.236.0 - Los mandos pierden el marco
 
 - `DiarySlider` (0x88422810), `DiaryMusicSlider` y `DiaryAmbienceSlider` (0x60422810) y `DiaryProgressBar` (0xB0422810) cambian

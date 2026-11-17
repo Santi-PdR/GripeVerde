@@ -1,3 +1,9 @@
+## Version 0.237.0 - The death report
+
+The death screen was the last thing in the game still black and vanilla. Now the CEDA form is pasted over it: a torn paper strip on top with the heading - DEATH REPORT, Bureau of Ports - and another at the foot with the EC-QV/1897 register and the DECEASED stamp.
+
+The middle stays dark on purpose: the title, the cause of death and the game score live there, and they have to remain readable. The screen and its buttons were not replaced — respawn and title screen are still the game's own — and nothing animates in game.
+
 ## Version 0.236.0 - The controls lose the frame too
 
 The volume sliders - music and ambience - and the option slider still had the one-pixel rectangle, as straight as the buttons of the previous version. Now they use the same hand-drawn rule: stretches that rise and fall by a pixel, with the uneven length of a pen.

@@ -125,6 +125,12 @@ public class ScreenEventHandler {
     @SubscribeEvent
     public static void onScreenRenderPost(ScreenEvent.Render.Post event) {
         Minecraft mc = Minecraft.getInstance();
+        // v0.237.0: el parte de defuncion se pega tambien en partida, que es
+        // donde aparece la pantalla de muerte.
+        try {
+            com.eternalcraft.gripeverde.client.render.DeathPaper.render(
+                event.getGuiGraphics(), event.getScreen());
+        } catch (Throwable ignored) {}
         if (mc != null && mc.level != null) return;
         try {
             com.eternalcraft.gripeverde.client.render.DiaryTransitions.render(event.getScreen(), event.getGuiGraphics());

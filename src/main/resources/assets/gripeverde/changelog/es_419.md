@@ -1,3 +1,9 @@
+## Version 0.237.0 - El parte de defuncion
+
+La pantalla de muerte era lo unico del juego que seguia siendo negro y vanilla. Ahora se le pega encima el formulario de CEDA: una franja de papel rasgado arriba con el encabezado -PARTE DE DEFUNCION, Sanidad de Puertos- y otra abajo con el registro EC-QV/1897 y el sello DECESO.
+
+El centro queda oscuro a proposito: ahi siguen el titulo, la causa de la muerte y el puntaje del juego, y tienen que leerse. No se reemplazo la pantalla ni sus botones -reaparecer y volver al titulo siguen siendo los del juego- y no se anima nada dentro de la partida.
+
 ## Version 0.236.0 - Los mandos tambien pierden el marco
 
 Los deslizadores de volumen -el de la musica y el del ambiente- y el deslizador de opciones seguian con el rectangulo de un pixel, igual de recto que los botones de la version anterior. Ahora usan el mismo filete dibujado a mano: tramos que suben y bajan un pixel, con el largo irregular de la pluma.
