@@ -158,6 +158,11 @@ public class DiaryCreditsScreen extends Screen {
         y = drawSection(g, left, y, isEnglish() ? "Paper & ink" : "Papel y tinta", isEnglish() ? "Parchment, bindings and wax" : "Pergamino, encuadernaciones y cera");
         y += 8;
 
+        // v0.259.0: de donde sale lo que cuenta el cuaderno. Nada de juegos: lo
+        // que el diario afirma tiene fecha y lugar, y aca se anota la lista.
+        y = drawSources(g, left, y);
+        y += 6;
+
         // v0.21.25: version del gabinete visible en creditos.
         g.drawString(this.font, this.versionText, panelX + (panelW - this.versionW) / 2, y,
             DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 100), false);
@@ -166,6 +171,36 @@ public class DiaryCreditsScreen extends Screen {
         // Official note
         g.drawString(this.font, this.noteText, panelX + (panelW - this.noteW) / 2, y,
             DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 130), false);
+    }
+
+    /**
+     * v0.259.0: las fuentes del cuaderno, en dos renglones que entran en el
+     * panel. Si el panel es angosto, cada linea se recorta con la misma medida
+     * de la cabecera.
+     */
+    private int drawSources(GuiGraphics g, int left, int y) {
+        boolean en = isEnglish();
+        int limit = Math.max(40, panelW - 48);
+        g.drawString(this.font, en ? "Sources of the notebook" : "Fuentes del cuaderno",
+            left, y, DiaryChrome.INK_TITLE, false);
+        y += 12;
+        String[] lines = en
+            ? new String[] {
+                "Ragusa, 1377 - the forty days. Philadelphia, 1793 - the yellow fever.",
+                "Hamburg, 1892 - the cholera. Porto, 1899 - the plague. Arabic ghul,",
+                "One Thousand and One Nights; the cuirass of 1800's heavy cavalry."
+            }
+            : new String[] {
+                "Ragusa, 1377 - los cuarenta dias. Filadelfia, 1793 - la fiebre amarilla.",
+                "Hamburgo, 1892 - el colera. Oporto, 1899 - la peste. El ghul arabe,",
+                "Las mil y una noches; la coraza de la caballeria pesada de 1800."
+            };
+        for (String line : lines) {
+            g.drawString(this.font, DiaryChrome.fitText(this.font, line, limit), left, y,
+                DiaryTheme.INK_FADED, false);
+            y += 10;
+        }
+        return y;
     }
 
     private int drawSection(GuiGraphics g, int x, int y, String label, String value) {

@@ -180,6 +180,10 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.259.0 — fuentes del cuaderno en creditos
+
+- **Creditos**: `drawSources` lista Ragusa 1377, Filadelfia 1793, Hamburgo 1892, Oporto 1899, el ghul arabe y la coraza de 1800.
+
 ## Cambios de 0.258.0 — sonido del indice y atajos anunciados
 
 - **Diario**: `toggleIndex` reproduce `UI_PAPER_FALL`.

@@ -1,3 +1,7 @@
+## Version 0.259.0 - Las fuentes, a la vista
+
+El registro de atribuciones suma las fuentes del cuaderno, para que nadie tenga que creerle al cronista: Ragusa 1377 y los cuarenta dias, Filadelfia 1793 y la fiebre amarilla, Hamburgo 1892 y el colera, Oporto 1899 y la peste, el "ghul" arabe y Las mil y una noches, y la coraza de la caballeria pesada de 1800. Tres renglones, medidos contra el ancho del panel, que se recortan antes que pisar el marco.
+
 ## Version 0.258.0 - Cuaderno que suena y botones que avisan
 
 Abrir y cerrar el indice del diario ya no es mudo: el cuaderno suena a hoja que se cae, el mismo golpe de papel que las lentes de la portada. Y el boton de entrar a un servidor dice tambien con que tecla se entra: el aviso del boton termina en "Enter", asi no hay que acordarse.

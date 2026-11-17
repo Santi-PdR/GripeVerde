@@ -1,3 +1,7 @@
+## Version 0.259.0 - The sources, in plain sight
+
+The attribution registry gains the notebook's sources, so nobody has to take the chronicler's word: Ragusa 1377 and the forty days, Philadelphia 1793 and the yellow fever, Hamburg 1892 and the cholera, Porto 1899 and the plague, the Arabic "ghul" and One Thousand and One Nights, and the cuirass of 1800's heavy cavalry. Three lines, measured against the panel width, trimmed before ever touching the frame.
+
 ## Version 0.258.0 - A notebook that sounds and buttons that tell
 
 Opening and closing the diary index is no longer silent: the notebook sounds like a sheet falling, the same paper stroke as the title lenses. And the join-server button also says which key joins: the button's tooltip ends in "Enter", so there is nothing to remember.

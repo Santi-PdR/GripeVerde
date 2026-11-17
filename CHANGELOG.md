@@ -1,3 +1,7 @@
+## v0.259.0 - Las fuentes, a la vista
+
+- `DiaryCreditsScreen.drawSources`: bloque de fuentes reales del diario, con `DiaryChrome.fitText` contra `panelW - 48`.
+
 ## v0.258.0 - Cuaderno que suena y botones que avisan
 
 - `ChangelogScreen.toggleIndex`: sonido `UI_PAPER_FALL` al abrir/cerrar el indice.
