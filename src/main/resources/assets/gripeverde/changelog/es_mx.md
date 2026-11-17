@@ -1,3 +1,11 @@
+## Version 0.248.0 - Se fue la puerta de servicio
+
+El registro de fichas ya no existe: se borro del mod la sala de consulta, las dos pantallas que la servian y los dos botones -PARTES y REGISTRO- que las abrian desde la hoja de pausa. La pausa queda con cuatro entradas y nada mas. Tampoco quedan rastros: ni el cajon que prometia fichas, ni los avisos que hablaban de golpes, ni la linea del reloj que contaba cuantas llevabas; la tapa ahora cuenta las noches.
+
+La puerta de servicio tambien se fue. Ya no hay cerradura dibujada en la portada, ni Ctrl+S, ni tres golpes que alguien contestaba: un jugador entra a sus mundos por la puerta de siempre, y no hay cartel que delate el camino.
+
+La pantalla de muerte se rehizo. El telegrama de CEDA ahora es chico y vive en la esquina, en vez de cruzar la pantalla y pelearse con el titulo y el puntaje. El membrete, los dos renglones y el sello siguen ahi, con el mismo papel: el aviso llega antes, pero ya no tapa nada.
+
 ## Version 0.247.0 - Las dos ultimas pantallas crudas
 
 El registro de avances y el libro de cuentas eran las dos ultimas pantallas que seguian siendo de Minecraft puro: fondo oscuro, botones grises. Ahora se abren sobre la escena de la noche, con su cabecera de papel -REG. XI y REG. XII, con el subtitulo que les toca- y los botones vestidos de papel. El arbol de avances, sus pestanas, el scroll, las estadisticas y la busqueda siguen siendo los del juego, intactos.

@@ -18,13 +18,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * v0.242.0: la puerta de servicio de la portada.
  *
- * Los mundos guardados se abrian con la pantalla cruda del juego: fondo negro,
- * botones grises y un titulo blanco. Ahora la entrada -que sigue siendo un
- * secreto, Ctrl+S o Shift+S en la vigilia- lleva a la misma lista, pero leida
- * como el resto de la casa: escena de noche detras, cabecera de papel con el
- * membrete y los botones del juego vestidos de papel.
+ * Los mundos guardados se abrian con la pantalla cruda del juego: fondo de
+ * tierra, botones grises y un titulo blanco. Ahora la entrada de un jugador
+ * lleva a la misma lista, pero leida como el resto de la casa: escena de noche
+ * detras, cabecera de papel con el membrete y los botones del juego vestidos
+ * de papel.
  *
  * No se reescribe nada del juego: la lista, la busqueda y cada accion siguen
  * siendo las de Minecraft, con su logica intacta. Lo unico que cambia es la

@@ -180,6 +180,13 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.248.0 — se borra el registro y la puerta de servicio
+
+- **Registro de fichas eliminado del mod**: `DiaryArchiveScreen`, `DiaryAdvancementsScreen` y `DiaryStatsScreen` borrados; la pausa vuelve a cuatro botones.
+- **Puerta de servicio eliminada**: sin cerradura en la portada, sin `Ctrl+S`, sin `serviceKnocks`, sin `KNOCK_BACK`. `DiarySelectWorldScreen` queda como pantalla vestida del acceso normal a un jugador.
+- **Reloj**: la tercera linea de la tapa cuenta noches (`ClientConfig.OPEN_COUNT`) en vez de fichas.
+- **Death screen**: `DeathPaper` pasa a 296x64 anclado en (8,8).
+
 ## Cambios de 0.247.0 — últimas pantallas
 
 - Avances y estadísticas: subclases con fondo de escena, cabecera y pie de papel; la lógica de la lista sigue siendo vanilla.

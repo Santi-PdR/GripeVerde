@@ -11,8 +11,6 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.GenericDirtMessageScreen;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.TitleScreen;
-import net.minecraft.client.gui.screens.achievement.StatsScreen;
-import net.minecraft.client.gui.screens.advancements.AdvancementsScreen;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.chat.Component;
 
@@ -127,7 +125,7 @@ public class DiaryPauseScreen extends PauseScreen {
         int contentTop = py + topSeparator + 6;
         int contentBot = py + ph - bottomSeparator - 6;
         int contentH = Math.max(0, contentBot - contentTop);
-        int rows = compactGrid ? 3 : 6;   // v0.240.0: sin manual de campo
+        int rows = compactGrid ? 2 : 4;   // v0.248.0: sin partes ni registro
         int gap = compactGrid ? 3 : BTN_GAP;
         int bh = (contentH - gap * (rows - 1)) / rows;
         int minButtonH = compactGrid ? 12 : 14;
@@ -137,14 +135,14 @@ public class DiaryPauseScreen extends PauseScreen {
         int totalBtnH = bh * rows + gap * (rows - 1);
         int btnStartY = contentTop + Math.max(0, (contentH - totalBtnH) / 2);
         int buttonW = Math.max(96, Math.min(BTN_W, pw - 24));
-        int[] buttonX = new int[6];
-        int[] buttonY = new int[6];
-        int[] buttonWidths = new int[6];
+        int[] buttonX = new int[4];
+        int[] buttonY = new int[4];
+        int[] buttonWidths = new int[4];
         if (compactGrid) {
             int availableButtonW = Math.max(96, pw - 24);
             int columnGap = Math.min(8, Math.max(2, availableButtonW / 12));
             int columnW = Math.max(48, (availableButtonW - columnGap) / 2);
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < 4; i++) {
                 int row = i / 2;
                 int column = i % 2;
                 buttonWidths[i] = columnW;
@@ -153,7 +151,7 @@ public class DiaryPauseScreen extends PauseScreen {
             }
         } else {
             int buttonXCentered = px + (pw - buttonW) / 2;
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < 4; i++) {
                 buttonX[i] = buttonXCentered;
                 buttonY[i] = btnStartY + i * (bh + gap);
                 buttonWidths[i] = buttonW;
@@ -163,26 +161,16 @@ public class DiaryPauseScreen extends PauseScreen {
         this.addRenderableWidget(createPauseButton(buttonX[0], buttonY[0], buttonWidths[0], bh,
             "gripeverde.pause.btn.resume", DiaryButton.Icon.HAND, DiaryButton.Variant.PRIMARY, this::resumeGame));
 
-        DiaryButton recordsBtn = createPauseButton(buttonX[1], buttonY[1], buttonWidths[1], bh,
-            "gripeverde.pause.btn.records", DiaryButton.Icon.SCROLL, DiaryButton.Variant.SECONDARY, this::openRecords);
-        if (this.minecraft.getConnection() == null) recordsBtn.active = false;
-        this.addRenderableWidget(recordsBtn);
-
-        DiaryButton statsBtn = createPauseButton(buttonX[2], buttonY[2], buttonWidths[2], bh,
-            "gripeverde.pause.btn.statistics", DiaryButton.Icon.CHART, DiaryButton.Variant.SECONDARY, this::openStats);
-        if (this.minecraft.player == null) statsBtn.active = false;
-        this.addRenderableWidget(statsBtn);
-
-        this.addRenderableWidget(createPauseButton(buttonX[3], buttonY[3], buttonWidths[3], bh,
+        this.addRenderableWidget(createPauseButton(buttonX[1], buttonY[1], buttonWidths[1], bh,
             "gripeverde.pause.btn.adjustments", DiaryButton.Icon.GEAR, DiaryButton.Variant.SECONDARY, this::openAdjustments));
 
         // v0.188.0: el parte de CEDA se abre tambien desde la pausa, que es donde
         // se lo necesita: escribir el mensaje rapido sin salir de la partida.
-        this.addRenderableWidget(createPauseButton(buttonX[4], buttonY[4], buttonWidths[4], bh,
+        this.addRenderableWidget(createPauseButton(buttonX[2], buttonY[2], buttonWidths[2], bh,
             "gripeverde.pause.btn.ceda", DiaryButton.Icon.CHAT, DiaryButton.Variant.SECONDARY,
             this::openDispatch));
 
-        this.addRenderableWidget(createPauseButton(buttonX[5], buttonY[5], buttonWidths[5], bh,
+        this.addRenderableWidget(createPauseButton(buttonX[3], buttonY[3], buttonWidths[3], bh,
             "gripeverde.pause.btn.leave", DiaryButton.Icon.DOOR, DiaryButton.Variant.DANGER, this::onLeave));
     }
 
@@ -312,21 +300,6 @@ public class DiaryPauseScreen extends PauseScreen {
 
     private void resumeGame() {
         this.minecraft.setScreen(null);
-    }
-
-    private void openRecords() {
-        ClientPacketListener conn = this.minecraft.getConnection();
-        if (conn != null) {
-            // v0.247.0: el registro se abre en la casa.
-            this.minecraft.setScreen(new DiaryAdvancementsScreen(conn.getAdvancements()));
-        }
-    }
-
-    private void openStats() {
-        if (this.minecraft.player != null) {
-            // v0.247.0: el libro de cuentas, tambien.
-            this.minecraft.setScreen(new DiaryStatsScreen(this, this.minecraft.player.getStats()));
-        }
     }
 
     private void openAdjustments() {

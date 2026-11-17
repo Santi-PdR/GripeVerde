@@ -243,7 +243,7 @@ public final class Marginalia {
         switch (id) {
 case N_READ_YOU:     return en ? "Someone has been going through my papers. I saw the pages move." : "Alguien anda hojeando mis papeles. Vi las hojas moverse.";
 case N_LANGUAGE:     return en ? "You speak to me in another tongue now. I know your voice all the same." : "Ahora me hablas en otra lengua. Aun así, reconozco tu voz.";
-case N_WHISPER3:     return en ? "He asked for you again, the third one. Answer with three knocks." : "El tercero volvió a preguntar por ti. Contéstale con tres golpes.";
+case N_WHISPER3:     return en ? "He asked for you again, the third one." : "El tercero volvió a preguntar por ti.";
 case N_KEY_HINT:     return en ? "That little key is tied to the clock. Look where the hands meet." : "La llavecita está atada al reloj. Mira dónde se cruzan las agujas.";
 case N_DRAWER_HINT:  return en ? "The bottom drawer has been waiting for that little key." : "El cajón de abajo lleva tiempo esperando esa llavecita.";
 case N_SMUGGLER_HINT: return en ? "Duck low and hurry through. Then let the rest of the house go quiet. That is how the contraband slips in." : "Agáchate y cruza de prisa. Luego deja que el resto de la casa vuelva al silencio. Así se cuela el contrabando.";

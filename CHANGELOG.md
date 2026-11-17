@@ -1,3 +1,11 @@
+## v0.248.0 - Se fue la puerta de servicio
+
+- Se borra el registro de fichas: `DiaryArchiveScreen`, `DiaryAdvancementsScreen` y `DiaryStatsScreen` salen del mod.
+- La pausa pierde PARTES y REGISTRO; quedan VOLVER, GABINETE, Parte de CEDA y RETIRARSE.
+- Fuera la puerta de servicio: cerradura de la portada, `Ctrl+S`, tres golpes y `KNOCK_BACK`. Un jugador entra por la puerta de siempre.
+- Fuera las fichas sin disparador que dependian de esas pantallas (`DRAWER_OPEN`, `DRAWER_COMPLETE`); la tapa del reloj cuenta noches en vez de fichas.
+- La pantalla de muerte se rehace: el telegrama pasa a 296x64 en la esquina superior izquierda y deja libre el titulo y el puntaje.
+
 ## v0.247.0 - Avances y estadísticas en la casa
 
 - `DiaryAdvancementsScreen extends AdvancementsScreen` y `DiaryStatsScreen extends StatsScreen`: escena de fondo, cabecera de

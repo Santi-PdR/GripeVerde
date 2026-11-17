@@ -9,7 +9,7 @@ import net.minecraft.client.Minecraft;
 /**
  * Registro de descubrimientos del gabinete.
  *
- * Cada descubrimiento es una ficha en la Sala de consulta. Al producirse uno
+ * Cada descubrimiento es una ficha del cuaderno. Al producirse uno
  * nuevo: sello de tinta (toast), sonido de archivo y registro permanente en
  * la memoria del cronista.
  *
@@ -33,8 +33,6 @@ public final class Discoveries {
     public static final String RAVEN_FEATHER     = "raven_feather";
     public static final String BREATH            = "breath";
     public static final String READER_SHADOW     = "reader_shadow";
-    public static final String DRAWER_OPEN       = "drawer_open";
-    public static final String DRAWER_COMPLETE   = "drawer_complete";
     public static final String SMUGGLER_SIGNAL   = "smuggler_signal";
     public static final String MIRROR            = "mirror";
     public static final String LETTERS           = "letters";
@@ -46,7 +44,6 @@ public final class Discoveries {
     public static final String DESTROYER         = "destroyer";
     public static final String ADDRESS_13        = "address_13";
     public static final String WHISPER_ANSWER    = "whisper_answer";
-    public static final String KNOCK_BACK        = "knock_back";
     public static final String HINGE             = "hinge";
     public static final String NIGHT_WHOLE       = "night_whole";
     public static final String TIME_SICK         = "time_sick";
@@ -196,8 +193,6 @@ public final class Discoveries {
             case RAVEN_FEATHER:     return en ? "The raven's toll" : "El peaje del cuervo";
             case BREATH:            return en ? "Breath on the other side" : "Un aliento del otro lado";
             case READER_SHADOW:     return en ? "A second shadow" : "Una segunda sombra";
-            case DRAWER_OPEN:       return en ? "The cabinet drawer" : "El cajón del gabinete";
-            case DRAWER_COMPLETE:   return en ? "The drawer is complete" : "El cajón está completo";
             case SMUGGLER_SIGNAL:   return en ? "The smuggler's signal" : "La señal del contrabandista";
             case MIRROR:            return en ? "How the fog sees you" : "Cómo te ve la niebla";
             case LETTERS:           return en ? "The unanswered letters" : "Las cartas sin respuesta";
@@ -209,7 +204,6 @@ public final class Discoveries {
             case DESTROYER:         return en ? "The cabinet remembers" : "El gabinete recuerda";
             case ADDRESS_13:        return en ? "The unmapped address" : "La dirección sin mapa";
             case WHISPER_ANSWER:    return en ? "Someone answered" : "Alguien respondió";
-            case KNOCK_BACK:        return en ? "Three knocks, answered" : "Tres golpes, respondidos";
             case HINGE:             return en ? "The complaining hinge" : "La bisagra que se queja";
             case NIGHT_WHOLE:       return en ? "A whole night, reading" : "Una noche entera, leyendo";
             case TIME_SICK:         return en ? "Time grows sick" : "El tiempo enferma";
@@ -233,7 +227,7 @@ public final class Discoveries {
         }
     }
 
-    /** Pista breve para fichas sin descubrir (Sala de consulta). */
+    /** Pista breve de la ficha. */
     public static String hintFor(String id) {
         boolean en = isEnglish();
         switch (id) {
@@ -250,8 +244,6 @@ public final class Discoveries {
             case RAVEN_FEATHER:     return en ? "The raven keeps what it is owed." : "El cuervo cobra lo que se le debe.";
             case BREATH:            return en ? "Stay quiet behind the barricade." : "Quédate quieto tras la barricada.";
             case READER_SHADOW:     return en ? "Find enough, and be found." : "Encuentra suficientes pistas y deja que te encuentren.";
-            case DRAWER_OPEN:       return en ? "The desk keeps a drawer for small things." : "La mesa guarda un cajón para cosas pequeñas.";
-            case DRAWER_COMPLETE:   return en ? "Five small things, one drawer." : "Cinco cosas pequeñas, un cajón.";
             case SMUGGLER_SIGNAL:   return en ? "Hands, keys and field habits hide a sign." : "Manos, llaves y costumbres esconden una señal.";
             case MIRROR:            return en ? "Dress and bearing include a mirror." : "El porte incluye un espejo.";
             case LETTERS:           return en ? "Write to the district that does not answer." : "Escribe al barrio que no responde.";
@@ -263,7 +255,6 @@ public final class Discoveries {
             case DESTROYER:         return en ? "Destroy what the cabinet asks you to destroy." : "Destruye lo que el gabinete te pide destruir.";
             case ADDRESS_13:        return en ? "There is a door with no map." : "Hay una puerta sin mapa.";
             case WHISPER_ANSWER:    return en ? "When the room whispers, do not wait." : "Cuando la sala susurre, no esperes.";
-            case KNOCK_BACK:        return en ? "Knock on the working desk, politely." : "Golpea la mesa de trabajo con educación.";
             case HINGE:             return en ? "Open the cabinet often enough." : "Abre el gabinete suficientes veces.";
             case NIGHT_WHOLE:       return en ? "Stay until the night ends." : "Quédate hasta que la noche termine.";
             case TIME_SICK:         return en ? "The second hand is unwell. Watch it longer." : "El segundero está enfermo. Obsérvalo más.";
@@ -307,15 +298,15 @@ public final class Discoveries {
         return result;
     }
 
-    /** Lista ordenada de todos los ids, para la Sala de consulta. */
+    /** Lista ordenada de todos los ids conocidos. */
     public static final String[] ALL = {
         WATCH_INSCRIPTION, WATCH_KEY,   AVENUE_DARK,
         SIGNAL_WINDOW, RAT_PAUSE, CAT_SCRAP, CODE_1897,
         CODE_HOLLOWAY, GHOST_TRACK, CANDLE_DARK,
-        RAVEN_FEATHER, BREATH, READER_SHADOW, DRAWER_OPEN, DRAWER_COMPLETE,
+        RAVEN_FEATHER, BREATH, READER_SHADOW,
         SMUGGLER_SIGNAL, LETTERS, EYE_FOLLOWS, GUESTBOOK,
         FOG_TONGUE, BROKEN_SEAL, SILENCE_LISTENS, DESTROYER,
-        ADDRESS_13, WHISPER_ANSWER, KNOCK_BACK, HINGE, NIGHT_WHOLE,
+        ADDRESS_13, WHISPER_ANSWER, HINGE, NIGHT_WHOLE,
         TIME_SICK, STREAK3, DUST, ANNIVERSARY, FORBIDDEN_FOLIO,
         COFFIN_CART, WEATHERVANE, SKULL_WATCHES,
         ARCHIVE_THINNING, THEME_NEVER_PLAYED, BG_TOWN_MEMORY,

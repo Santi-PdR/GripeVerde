@@ -1,3 +1,11 @@
+## Version 0.248.0 - The service door is gone
+
+The file register no longer exists: the reading room, the two screens that served it and the two buttons -PARTES and REGISTRO- that opened them from the pause sheet were deleted from the mod. The pause sheet is back to four entries and nothing else. No traces remain either: not the drawer that promised files, not the notices about knocks, not the watch line that counted them; the lid now counts nights.
+
+The service door is gone as well. There is no lock drawn on the title screen, no Ctrl+S, no three knocks that someone answered: a player walks into their worlds through the ordinary door, and nothing advertises the way.
+
+The death screen was rebuilt. The CEDA telegram is now small and sits in the corner, instead of crossing the screen and fighting the title and the score. The letterhead, the two lines and the stamp are still there, on the same paper: the notice arrives early, but it covers nothing.
+
 ## Version 0.247.0 - The last two raw screens
 
 The advancements register and the ledger were the last two screens still plain Minecraft: dark background, grey buttons. They now open over the night scene, with their paper header - REG. XI and REG. XII, each with its own subtitle - and their buttons dressed in paper. The advancement tree, its tabs, the scroll, the statistics and the search are still the game's, untouched.

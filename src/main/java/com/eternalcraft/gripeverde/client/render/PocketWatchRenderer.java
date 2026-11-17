@@ -150,13 +150,17 @@ public class PocketWatchRenderer {
             int w2 = font.width(part);
             g.drawString(font, part, cx - w2 / 2, cy + radius + 28, (Math.min(160, (chars - 14) * 8) << 24) | 0x8E7A55, false);
         }
-        // v0.246.0: la tapa tambien dice cuanto se lleva leido del archivo.
+        // v0.248.0: la tapa cuenta las noches que lleva el lector, no fichas.
         if (chars > 26) {
-            int total = com.eternalcraft.gripeverde.client.lore.Discoveries.ALL.length;
-            int found = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.discoveredCount();
+            int nights;
+            try {
+                nights = com.eternalcraft.gripeverde.config.ClientConfig.OPEN_COUNT.get();
+            } catch (Throwable ignored) {
+                nights = 0;
+            }
             String l3 = en
-                ? (found >= total ? "every file, accounted for" : found + " of " + total + " files")
-                : (found >= total ? "todas las fichas, en su cajon" : found + " de " + total + " fichas");
+                ? (nights <= 1 ? "the first night" : nights + " nights on the avenue")
+                : (nights <= 1 ? "la primera noche" : nights + " noches en la avenida");
             int w3 = font.width(l3);
             g.drawString(font, l3, cx - w3 / 2, cy + radius + 42,
                 (Math.min(130, (chars - 26) * 6) << 24) | 0x6B5533, false);
