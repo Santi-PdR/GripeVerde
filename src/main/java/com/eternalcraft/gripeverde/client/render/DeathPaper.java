@@ -28,7 +28,7 @@ public final class DeathPaper {
     // v0.248.0: el aviso va en la esquina, chico, para no comerse el titulo
     // del juego ni el puntaje. Antes se centraba arriba y tapaba "Estas muerto".
     private static final int PAPER_W_MAX = 296;
-    private static final int PAPER_H = 64;
+    private static final int PAPER_H = 72;
     private static final int PAPER_MARGIN = 8;
 
     private DeathPaper() {
@@ -71,17 +71,20 @@ public final class DeathPaper {
             ? "The port notes it in its ledger."
             : "La aduana lo anota en su libro.";
 
-        int hy = py + 9;
+        int hy = py + 7;
         g.drawString(font, DiaryChrome.fitCached(font, head, pw - 16), px + 8, hy,
             DiaryChrome.INK_TITLE, false);
         DiaryChrome.drawPencilRule(g, px + 8, hy + 10, pw - 16, px * 31 + py * 17 + 5);
 
-        int l1 = py + 24;
+        int l1 = py + 22;
         g.drawString(font, DiaryChrome.fitCached(font, line1, pw - 16), px + 8, l1,
             DiaryChrome.INK_SUBTITLE, false);
         g.drawString(font, DiaryChrome.fitCached(font, line2, pw - 16), px + 8, l1 + 11,
             DiaryChrome.INK_SUBTITLE, false);
 
+        // Pie del papel: registro a la izquierda y sello a la derecha.
+        int footY = py + PAPER_H - 16;
+        DiaryChrome.drawPencilRule(g, px + 8, footY - 4, pw - 16, px * 17 + py * 13 + 3);
         // v0.262.0: la fecha del deceso, en numeral romano, y la firma de la
         // casa, que responde por el parte como cualquier otro.
         String[] romanMonths = { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII" };
@@ -89,19 +92,16 @@ public final class DeathPaper {
         String date = (english ? "dated " : "fechado ")
             + cal.get(java.util.Calendar.DAY_OF_MONTH) + " \u00b7 "
             + romanMonths[cal.get(java.util.Calendar.MONTH)] + " \u00b7 1897";
-        if (l1 + 26 < footY - 18) {
-            g.drawString(font, DiaryChrome.fitCached(font, date, pw - 16), px + 8, l1 + 22,
+        if (l1 + 22 <= footY - 10) {
+            g.drawString(font, DiaryChrome.fitCached(font, date, pw - 16), px + 8, l1 + 20,
                 DiaryChrome.INK_FLAVOR, false);
         }
         String by = english ? "for the house, S.P." : "por la casa, S.P.";
         int bw = DiaryChrome.widthCached(font, by);
-        g.drawString(font, by, px + (pw - bw) / 2, footY - 14,
+        g.drawString(font, by, px + (pw - bw) / 2, footY,
             DiaryTheme.withAlpha(0x006B5533, 150), false);
-        try { DiaryChrome.drawInkBlot(g, px + pw - 26, footY - 20, 1, false); } catch (Throwable ignored) {}
+        try { DiaryChrome.drawInkBlot(g, px + pw - 26, l1 + 12, 1, false); } catch (Throwable ignored) {}
 
-        // Pie del papel: registro a la izquierda y sello a la derecha.
-        int footY = py + PAPER_H - 16;
-        DiaryChrome.drawPencilRule(g, px + 8, footY - 4, pw - 16, px * 17 + py * 13 + 3);
         String reg = "EC-QV/1897";
         g.drawString(font, reg, px + 8, footY, DiaryChrome.INK_FLAVOR, false);
 

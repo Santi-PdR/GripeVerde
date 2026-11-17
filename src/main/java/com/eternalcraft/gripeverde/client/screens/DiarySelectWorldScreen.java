@@ -89,8 +89,8 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             try {
                 box.setY(HEADER_H + 3);
                 // v0.262.0: el buscador habla como el gabinete.
-                box.setHint(Component.literal(Discoveries.isEnglish()
-                    ? "search a world" : "buscar un mundo"));
+                box.setSuggestion(Discoveries.isEnglish()
+                    ? "search a world" : "buscar un mundo");
             } catch (Throwable ignored) {
             }
         }
