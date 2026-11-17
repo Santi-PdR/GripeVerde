@@ -28,8 +28,10 @@ public class DiaryModListScreen extends ModListScreen {
         super(parent);
     }
 
+    // Forge ensancha init() a public en ModListScreen: el override tiene que
+    // mantener ese acceso o el compilador lo rechaza.
     @Override
-    protected void init() {
+    public void init() {
         super.init();
         this.dressed.clear();
         this.dressed.addAll(PaperButtons.dressAll(this));
