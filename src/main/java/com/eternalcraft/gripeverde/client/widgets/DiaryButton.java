@@ -36,6 +36,9 @@ public class DiaryButton extends AbstractButton {
     private final EasedValue hoverAnim = new EasedValue(4.5f);
     private boolean wasHovered = false;
     private int pressAnimTicks = 0;
+    // v0.244.0: sello de lacre que se abre al apretar.
+    private static final int SEAL_TICKS = 9;
+    private int sealTicks = 0;
     private final int wearSeed;
     private final int wearX1, wearY1, wearX2, wearY2;
     private final boolean wearVisible1, wearVisible2;
@@ -74,7 +77,7 @@ public class DiaryButton extends AbstractButton {
         }
     }
     @Override public boolean mouseClicked(double mx,double my,int btn){
-        if(!MotionPolicy.isReduced()&&active&&visible&&clicked(mx,my)) pressAnimTicks=7;
+        if(!MotionPolicy.isReduced()&&active&&visible&&clicked(mx,my)) { pressAnimTicks=7; sealTicks=SEAL_TICKS; }
         return super.mouseClicked(mx,my,btn);
     }
 
@@ -97,6 +100,16 @@ public class DiaryButton extends AbstractButton {
 
         if(hovered && !wasHovered) UiSounds.playHover();
         wasHovered=hovered;
+
+        // v0.244.0: el sello de la pulsacion va por fuera del boton y no toca
+        // ni el fondo ni el rotulo.
+        if(!motionDisabled && sealTicks>0){
+            com.eternalcraft.gripeverde.client.render.PaperTexture.drawSealRing(
+                g, x, y, w, h, 1f - (sealTicks / (float) SEAL_TICKS));
+            sealTicks--;
+        } else if(motionDisabled){
+            sealTicks=0;
+        }
 
         float t = hoverAnim.getEased();
 

@@ -1,3 +1,9 @@
+## Version 0.244.0 - The seal on press
+
+Every button in the house now answers with a seal: when pressed, its outline opens two or three pixels in sealing-wax ink and fades in under half a second, like stamping paper. The large buttons, the small tabs in the header and the two cover buttons all carry it. Still a single pulse: no loops, and with reduced motion - or inside a world - the seal does not appear.
+
+Forge's mods list is no longer the raw screen: it opens over the night scene, with its buttons dressed in paper and a sheet underneath so they do not hang over the street. The search, the config links and everything else is still Forge's, untouched.
+
 ## Version 0.243.0 - The register page
 
 The service key is a single one again: Ctrl+S. The Shift+S tried in the previous batch is gone, and the lock on the cover now only shows while Ctrl is held.

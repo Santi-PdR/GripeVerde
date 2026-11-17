@@ -981,7 +981,8 @@ public class DiaryTitleScreen extends Screen {
         this.minecraft.setScreen(new DiarySelectWorldScreen(this));
     }
     private void onMultiplayer()  { this.minecraft.setScreen(new DiaryMultiplayerScreen(this)); }
-    private void onMods()         { this.minecraft.setScreen(new ModListScreen(this)); }
+    // v0.244.0: la lista de mods se abre en la casa, no en la pantalla cruda.
+    private void onMods()         { this.minecraft.setScreen(new DiaryModListScreen(this)); }
     private void onOptions() { this.minecraft.setScreen(new DiaryOptionsScreen(this)); }
 
     @Override public boolean isPauseScreen()    { return false; }

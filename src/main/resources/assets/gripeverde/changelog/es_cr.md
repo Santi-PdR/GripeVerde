@@ -1,3 +1,9 @@
+## Version 0.244.0 - El sello al apretar
+
+Cada boton de la casa responde ahora con un sello: al apretarlo, su contorno se abre dos o tres pixeles en tinta de lacre y se apaga en menos de medio segundo, como cuando se estampa un papel. Lo llevan los botones grandes, las pestañas chicas de la cabecera y los dos botones de la portada. Sigue habiendo un solo pulso: nada de bucles, y con Movimiento reducido -o dentro de una partida- el sello no aparece.
+
+La lista de mods deja de ser la pantalla cruda de Forge: se abre sobre la escena de la noche, con sus botones vestidos de papel y una hoja debajo para que no queden colgando sobre la calle. La busqueda, la configuracion y los enlaces siguen siendo los de Forge, intactos.
+
 ## Version 0.243.0 - La pagina de registro
 
 La llave de servicio vuelve a ser una sola: Ctrl+S. El Shift+S que se probo en la tanda anterior se retiro, y la cerradura de la portada ahora solo asoma con el Ctrl apretado.

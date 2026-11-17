@@ -1,3 +1,10 @@
+## v0.244.0 - Sello de pulsación y lista de mods
+
+- `PaperTexture.drawSealRing(g,x,y,w,h,k)`: anillo de lacre que se abre 1-5 px y se apaga en 9 ticks (α150→0).
+- `DiaryButton`, `SlimButton`, `GreenFluButton`: `sealTicks` por pulsación; se anula con Movimiento reducido (y en partida, `DiaryButton`).
+- `DiaryModListScreen extends ModListScreen`: escena de fondo, botones vestidos con `PaperButtons` y hoja calculada bajo el grupo;
+  `onMods()` de la portada pasa a usarla.
+
 ## v0.243.0 - Registro de mundos y una sola llave
 
 - Portada: `Ctrl+S` otra vez es la única llave; la cerradura solo aparece con Ctrl sostenido.

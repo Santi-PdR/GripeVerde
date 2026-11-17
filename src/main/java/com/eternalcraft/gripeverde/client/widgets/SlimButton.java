@@ -29,6 +29,9 @@ public class SlimButton extends AbstractButton {
     // el pestillo de laton de siempre; el gramofono toca "pieza nueva").
     private Runnable clickSound = UiSounds::playClick;
     private boolean wasHovered = false;
+    // v0.244.0: sello de lacre al apretar, igual que los botones grandes.
+    private static final int SEAL_TICKS = 9;
+    private int sealTicks = 0;
     private final EasedValue hoverAnim = new EasedValue(6f);
 
     public SlimButton(int x, int y, int w, int h, Component label, Runnable onClick) {
@@ -58,6 +61,15 @@ public class SlimButton extends AbstractButton {
     }
 
     @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        boolean hit = super.mouseClicked(mouseX, mouseY, button);
+        if (hit && this.active && this.visible && !MotionPolicy.isReduced()) {
+            this.sealTicks = SEAL_TICKS;
+        }
+        return hit;
+    }
+
+    @Override
     protected void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         boolean hovered = this.isHovered();
         if (hovered && !wasHovered) UiSounds.playHover();
@@ -73,6 +85,14 @@ public class SlimButton extends AbstractButton {
         int y = this.getY();
         int w = this.width;
         int h = this.height;
+
+        // v0.244.0: el sello se abre y se apaga; en movimiento reducido no existe.
+        if (MotionPolicy.isReduced()) {
+            this.sealTicks = 0;
+        } else if (this.sealTicks > 0) {
+            PaperTexture.drawSealRing(g, x, y, w, h, 1f - (this.sealTicks / (float) SEAL_TICKS));
+            this.sealTicks--;
+        }
 
         int bg = hoverAnim.lerpColor(0xFF120A05, 0xFF2A1810);
         int border = hoverAnim.lerpColor(DiaryTheme.BRONZE_DARK, DiaryTheme.REDCOAT);

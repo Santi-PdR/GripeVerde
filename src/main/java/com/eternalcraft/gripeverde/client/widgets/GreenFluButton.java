@@ -26,6 +26,9 @@ public class GreenFluButton extends AbstractButton {
     private boolean wasHovered = false;
     private final EasedValue hoverAnim = new EasedValue(5.5f);
     private int pressTicks = 0;
+    // v0.244.0: sello de lacre al apretar.
+    private static final int SEAL_TICKS = 9;
+    private int sealTicks = 0;
     private final int wearSeed;
     private final java.util.Random wearRng;
 
@@ -39,7 +42,7 @@ public class GreenFluButton extends AbstractButton {
     @Override public void onPress(){ UiSounds.playClick(); onClick.run(); }
     @Override public void playDownSound(SoundManager sm){}
     @Override public boolean mouseClicked(double mx,double my,int btn){
-        if(!MotionPolicy.isReduced()&&active&&visible&&clicked(mx,my)) pressTicks=7;
+        if(!MotionPolicy.isReduced()&&active&&visible&&clicked(mx,my)) { pressTicks=7; sealTicks=SEAL_TICKS; }
         return super.mouseClicked(mx,my,btn);
     }
 
@@ -61,6 +64,15 @@ public class GreenFluButton extends AbstractButton {
 
         int x=getX(), y=getY(), w=width, h=height;
         int yDraw=y+(pressed?1:0);
+
+        // v0.244.0: el sello de la pulsacion, por fuera del marco.
+        if (motionDisabled) {
+            sealTicks=0;
+        } else if (sealTicks>0) {
+            com.eternalcraft.gripeverde.client.render.PaperTexture.drawSealRing(
+                g, x, y, w, h, 1f - (sealTicks / (float) SEAL_TICKS));
+            sealTicks--;
+        }
 
         // Shadow
         if(active && !pressed){

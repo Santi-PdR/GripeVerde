@@ -266,6 +266,36 @@ public final class PaperTexture {
     }
 
     /**
+     * v0.244.0: el sello de la pulsacion.
+     *
+     * Al apretar un boton de la casa, su contorno se abre un par de pixeles en
+     * tinta de lacre y se va apagando. Es el gesto de estampar: un solo pulso,
+     * sin bucles ni destellos, que se puede apagar con Movimiento reducido.
+     *
+     * k va de 0 (recien apretado) a 1 (terminado).
+     */
+    public static void drawSealRing(GuiGraphics g, int x, int y, int w, int h, float k) {
+        if (g == null || w < 6 || h < 6 || k < 0f || k >= 1f) return;
+        int grow = 1 + (int) (k * 4f);
+        int alpha = (int) (150f * (1f - k));
+        if (alpha <= 4) return;
+        int col = DiaryTheme.withAlpha(0x005C0A08, alpha);
+        int x0 = x - grow;
+        int y0 = y - grow;
+        int x1 = x + w + grow;
+        int y1 = y + h + grow;
+        g.fill(x0, y0, x1, y0 + 1, col);
+        g.fill(x0, y1 - 1, x1, y1, col);
+        g.fill(x0, y0, x0 + 1, y1, col);
+        g.fill(x1 - 1, y0, x1, y1, col);
+        // Las cuatro esquinas con algo mas de tinta, como el borde de un sello.
+        g.fill(x0, y0, x0 + 2, y0 + 2, col);
+        g.fill(x1 - 2, y0, x1, y0 + 2, col);
+        g.fill(x0, y1 - 2, x0 + 2, y1, col);
+        g.fill(x1 - 2, y1 - 2, x1, y1, col);
+    }
+
+    /**
      * v0.235.0: filete dibujado a mano para botones y mandos.
      *
      * El borde recto de un pixel era lo ultimo que le quedaba de caja a los
