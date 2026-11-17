@@ -38,6 +38,14 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     private WorldSelectionList vanillaList;
     private List<EditBox> searchBoxes = new ArrayList<>();
 
+    // v0.243.0: la pagina de registro. Las medidas de la lista se leen una vez
+    // al abrir o al redimensionar; por cuadro solo cambia el desplazamiento.
+    private int rowItemHeight;
+    private int rowLeft = -1;
+    private int rowRight = -1;
+    private int listTop = -1;
+    private int listBottom = -1;
+
     public DiarySelectWorldScreen(Screen parent) {
         super(parent);
     }
@@ -49,6 +57,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         this.searchBoxes = collectEditBoxes();
         this.dressed.clear();
         this.dressed.addAll(PaperButtons.dressAll(this));
+        cacheListMetrics();
     }
 
     private WorldSelectionList resolveList() {
@@ -64,6 +73,44 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             }
         }
         return null;
+    }
+
+    /** v0.243.0: medidas de la lista, una vez por apertura o resize. */
+    private void cacheListMetrics() {
+        this.rowItemHeight = 0;
+        this.rowLeft = -1;
+        this.rowRight = -1;
+        this.listTop = -1;
+        this.listBottom = -1;
+        if (this.vanillaList == null) return;
+        try {
+            this.rowItemHeight = readIntField(this.vanillaList, "itemHeight", "f_93387_");
+            this.rowLeft = this.vanillaList.getRowLeft();
+            this.rowRight = this.rowLeft + this.vanillaList.getRowWidth();
+            this.listTop = this.vanillaList.getTop();
+            this.listBottom = this.vanillaList.getBottom();
+        } catch (Throwable ignored) {
+        }
+    }
+
+    private static int readIntField(Object target, String officialName, String srgName) {
+        try {
+            java.lang.reflect.Field f = null;
+            Class<?> cls = target.getClass();
+            while (cls != null && f == null) {
+                try { f = cls.getDeclaredField(officialName); } catch (NoSuchFieldException ignored) {}
+                if (f == null) {
+                    try { f = cls.getDeclaredField(srgName); } catch (NoSuchFieldException ignored) {}
+                }
+                if (f == null) cls = cls.getSuperclass();
+            }
+            if (f != null) {
+                f.setAccessible(true);
+                return f.getInt(target);
+            }
+        } catch (Throwable ignored) {
+        }
+        return 0;
     }
 
     private List<EditBox> collectEditBoxes() {
@@ -85,9 +132,10 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         }
 
         drawHeader(g);
+        drawRegisterPage(g);
         drawFooterPaper(g);
 
-        // Lista y busqueda del juego, tal cual, encima de la escena.
+        // Lista y busqueda del juego, tal cual, encima de la pagina.
         try {
             if (this.vanillaList != null) {
                 this.vanillaList.render(g, mouseX, mouseY, partial);
@@ -122,6 +170,44 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         g.drawString(font, sub, cx - DiaryChrome.widthCached(font, sub) / 2, 21,
             DiaryChrome.INK_SUBTITLE, false);
         DiaryChrome.drawRegistryTagLeft(g, 0, -4, "REG. IX");
+    }
+
+    /**
+     * v0.243.0: la lista vive sobre una pagina de registro, y cada mundo sobre
+     * su banda oscura, como las fotos pegadas en la ficha. Sin la banda, el
+     * texto blanco del juego se perderia contra el papel.
+     */
+    private void drawRegisterPage(GuiGraphics g) {
+        if (this.vanillaList == null || this.rowLeft < 0 || this.listBottom <= this.listTop) return;
+        int px = Math.max(-2, this.rowLeft - 14);
+        int pw = Math.min(this.width + 2, this.rowRight + 14) - px;
+        int py = Math.max(HEADER_H - 30, this.listTop - 6);
+        int ph = Math.min(this.height, this.listBottom + 6) - py;
+        if (pw < 40 || ph < 24) return;
+        PaperTexture.drawTornSheet(g, px, py, pw, ph, PaperTexture.PaperKind.OFFICIAL);
+
+        int step = this.rowItemHeight > 0 ? this.rowItemHeight : 36;
+        double scroll = 0.0;
+        try {
+            scroll = this.vanillaList.getScrollAmount();
+        } catch (Throwable ignored) {
+        }
+        int count = 0;
+        try {
+            count = this.vanillaList.children().size();
+        } catch (Throwable ignored) {
+        }
+        // Banda oscura por mundo, recortada a la pagina.
+        for (int i = 0; i < count && i < 64; i++) {
+            int top = this.listTop + 4 - (int) scroll + i * step;
+            int bottom = top + step - 4;
+            if (bottom < this.listTop || top > this.listBottom) continue;
+            int drawTop = Math.max(top, this.listTop);
+            int drawBottom = Math.min(bottom, this.listBottom);
+            if (drawBottom <= drawTop) continue;
+            g.fill(this.rowLeft - 6, drawTop, this.rowRight + 6, drawBottom, 0x6E2A1C10);
+            g.fill(this.rowLeft - 6, drawBottom - 1, this.rowRight + 6, drawBottom, 0x55E8DCB4);
+        }
     }
 
     /** Papel detras del grupo de botones, sea cual sea el alto que les dio el juego. */

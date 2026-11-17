@@ -1,3 +1,9 @@
+## v0.243.0 - Registro de mundos y una sola llave
+
+- Portada: `Ctrl+S` otra vez es la única llave; la cerradura solo aparece con Ctrl sostenido.
+- `DiarySelectWorldScreen`: página de registro (`drawTornSheet`) bajo la lista y banda oscura `0x6E2A1C10` por mundo con filete
+  de cierre; medidas (`itemHeight` por reflexión, márgenes, topes) cacheadas en `init`.
+
 ## v0.242.0 - Mundos guardados con tinta de la casa
 
 - `DiarySelectWorldScreen extends SelectWorldScreen`: escena de fondo, cabecera de papel (46 px) y papel calculado bajo el grupo

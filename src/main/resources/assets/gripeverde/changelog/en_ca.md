@@ -1,3 +1,11 @@
+## Version 0.243.0 - The register page
+
+The service key is a single one again: Ctrl+S. The Shift+S tried in the previous batch is gone, and the lock on the cover now only shows while Ctrl is held.
+
+Saved worlds no longer float over the night: the list rests on a register page, and every world sits on its dark band with a closing rule, like photographs pasted onto a card. Without that band the game's white text was lost against the paper; with it the text reads and the whole thing looks like part of the house.
+
+The list measurements - row height, margins and the page edges - are read once when the screen opens or the window resizes, not every frame.
+
 ## Version 0.242.0 - The service door
 
 Saved worlds opened with the game's raw screen: black, grey buttons and a white title. Now the secret entry - Ctrl+S, and from this version Shift+S too - leads to the same list, but read like the rest of the house: the night scene behind, the paper header with its letterhead and REG. IX, and the game's own buttons dressed in paper.

@@ -1,3 +1,11 @@
+## Version 0.243.0 - La pagina de registro
+
+La llave de servicio vuelve a ser una sola: Ctrl+S. El Shift+S que se probo en la tanda anterior se retiro, y la cerradura de la portada ahora solo asoma con el Ctrl apretado.
+
+Los mundos guardados dejaron de flotar sobre la noche: la lista se apoya en una pagina de registro, y cada mundo va sobre su banda oscura con el renglon de cierre, como las fotos pegadas en una ficha. Sin esa banda el texto blanco del juego se perdia contra el papel; con ella se lee y ademas parece parte de la casa.
+
+Las medidas de la lista -el alto de cada renglon, los margenes y los bordes de la pagina- se leen una vez al abrir o al cambiar el tamano de la ventana, no en cada cuadro.
+
 ## Version 0.242.0 - La puerta de servicio
 
 Los mundos guardados se abrian con la pantalla cruda del juego: negro, botones grises y titulo blanco. Ahora la entrada secreta -Ctrl+S, y desde esta version tambien Shift+S- lleva a la misma lista, pero leida como el resto de la casa: la escena de noche detras, la cabecera de papel con su membrete y REG. IX, y los botones del juego vestidos de papel.

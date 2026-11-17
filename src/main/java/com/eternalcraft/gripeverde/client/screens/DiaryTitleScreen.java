@@ -501,9 +501,9 @@ public class DiaryTitleScreen extends Screen {
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         lastInteractionMs = System.currentTimeMillis();
         boolean ctrl = (modifiers & GLFW.GLFW_MOD_CONTROL) != 0;
-        boolean shift = (modifiers & GLFW.GLFW_MOD_SHIFT) != 0;
-        // v0.242.0: la llave de servicio responde a Ctrl+S y tambien a Shift+S.
-        if ((ctrl || shift) && keyCode == GLFW.GLFW_KEY_S) { onSingleplayer(); return true; }
+        // v0.243.0: la llave de servicio vuelve a ser una sola: Ctrl+S. El
+        // Shift+S se probo y se retiro por pedido del lector.
+        if (ctrl && keyCode == GLFW.GLFW_KEY_S) { onSingleplayer(); return true; }
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
@@ -561,8 +561,8 @@ public class DiaryTitleScreen extends Screen {
     }
 
     /**
-     * v0.242.0: con Ctrl o Shift apretados, la cerradura de servicio aparece
-     * abajo a la izquierda con su cartel; sin la llave no se ve nada.
+     * v0.243.0: solo con Ctrl apretado aparece la cerradura de servicio abajo a
+     * la izquierda con su cartel; sin la llave no se ve nada.
      */
     private void drawServiceDoorHint(GuiGraphics g, int mouseX, int mouseY) {
         if (!serviceKeyHeld() || isMinimalMode()) return;
@@ -590,12 +590,8 @@ public class DiaryTitleScreen extends Screen {
     private boolean serviceKeyHeld() {
         try {
             long window = this.minecraft.getWindow().getWindow();
-            return net.minecraft.client.gui.screens.Screen.hasControlDown()
-                || net.minecraft.client.gui.screens.Screen.hasShiftDown()
-                || com.mojang.blaze3d.platform.InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_CONTROL)
-                || com.mojang.blaze3d.platform.InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_CONTROL)
-                || com.mojang.blaze3d.platform.InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_SHIFT)
-                || com.mojang.blaze3d.platform.InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_SHIFT);
+            return com.mojang.blaze3d.platform.InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_CONTROL)
+                || com.mojang.blaze3d.platform.InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_CONTROL);
         } catch (Throwable ignored) {
             return false;
         }
