@@ -165,6 +165,15 @@ public class PocketWatchRenderer {
             g.drawString(font, l3, cx - w3 / 2, cy + radius + 42,
                 (Math.min(130, (chars - 26) * 6) << 24) | 0x6B5533, false);
         }
+        // v0.250.0: la luna de esa noche, dicha con la palabra que le toca.
+        if (chars > 34) {
+            double phase = moonPhase(System.currentTimeMillis());
+            String name = moonName(phase, en);
+            String l4 = (en ? "moon: " : "luna: ") + name;
+            int w4 = font.width(l4);
+            g.drawString(font, l4, cx - w4 / 2, cy + radius + 56,
+                (Math.min(120, (chars - 34) * 6) << 24) | 0x5C4A2E, false);
+        }
         // La version del gabinete, al pie y en chico.
         if (version != null && !version.isBlank()) {
             String ver = "v" + version;
@@ -208,8 +217,18 @@ public class PocketWatchRenderer {
         int textR = radius - 20;
         drawRomanNumeral(g, font, cx, cy - textR, "XII");
         drawRomanNumeral(g, font, cx + textR, cy, "III");
-        drawRomanNumeral(g, font, cx, cy + textR, "VI");
+        // v0.250.0: cuando hay ventanilla de luna, ella ocupa el sitio del VI,
+        // como en los relojes de verdad.
+        if (radius < 30) drawRomanNumeral(g, font, cx, cy + textR, "VI");
         drawRomanNumeral(g, font, cx - textR, cy, "IX");
+
+        // v0.250.0: la ventanilla de la luna. No es adorno: la fase se calcula
+        // con el calendario real -mes sinodico de 29,530588 dias desde la luna
+        // nueva del 6 de enero de 2000-, asi que el reloj dice la luna de esa
+        // noche, la mire quien la mire.
+        if (radius >= 30) {
+            drawMoonAperture(g, cx, cy + (int) (radius * 0.52), Math.max(3, radius / 7), now);
+        }
 
         if (!reducedMotion) drawGlassShine(g, cx, cy, radius - 7, elapsed);
 
@@ -226,6 +245,10 @@ public class PocketWatchRenderer {
 
         double secAngle = Math.toRadians(secondPos * 6 - 90);
         int secLen = radius - 10;
+        // v0.250.0: la punta del segundero lleva su punto, para leerla de lejos.
+        int tipX = (int)(cx + Math.cos(secAngle) * (secLen - 2));
+        int tipY = (int)(cy + Math.sin(secAngle) * (secLen - 2));
+        g.fill(tipX - 1, tipY - 1, tipX + 1, tipY + 1, COLOR_SECOND);
         drawThinLine(g,
             cx, cy,
             (int)(cx + Math.cos(secAngle) * secLen),
@@ -258,6 +281,62 @@ public class PocketWatchRenderer {
         String label = "v" + version;
         int lw = font.width(label);
         g.drawString(font, label, cx - lw / 2, cy + radius + 6, COLOR_TEXT, false);
+    }
+
+    /** v0.250.0: luna nueva de referencia, 2000-01-06 18:14 UTC. */
+    private static final long NEW_MOON_EPOCH_MS = 947182440000L;
+    private static final double SYNODIC_DAYS = 29.530588853;
+
+    /** v0.250.0: el nombre de la fase, en los dos idiomas del gabinete. */
+    private static String moonName(double phase, boolean en) {
+        if (phase < 0.03 || phase > 0.97) return en ? "new" : "nueva";
+        if (phase < 0.47) return en ? "waxing" : "creciente";
+        if (phase < 0.53) return en ? "full" : "llena";
+        return en ? "waning" : "menguante";
+    }
+
+    /** v0.250.0: fase lunar real, 0 = nueva, 0.5 = llena. */
+    public static double moonPhase(long nowMs) {
+        double days = (nowMs - NEW_MOON_EPOCH_MS) / 86_400_000.0;
+        double phase = (days / SYNODIC_DAYS) % 1.0;
+        return phase < 0 ? phase + 1.0 : phase;
+    }
+
+    /**
+     * v0.250.0: la ventanilla de la luna, con el terminador donde le toca.
+     * Se dibuja fila por fila para que el borde quede redondo y barato.
+     */
+    private static void drawMoonAperture(GuiGraphics g, int mcxc, int mcy, int r, long now) {
+        double phase = moonPhase(now);
+        double ang = phase * 2.0 * Math.PI;
+        int term = (int) Math.round(Math.cos(ang) * r);
+        boolean waxing = phase < 0.5;
+        int dark = 0xFF2A1E10;
+        int lit = 0xFFE7D6AC;
+        for (int dy = -r; dy <= r; dy++) {
+            int half = (int) Math.floor(Math.sqrt(Math.max(0, r * r - dy * dy)));
+            int y = mcy + dy;
+            g.fill(mcxc - half, y, mcxc + half, y + 1, dark);
+            int from;
+            int to;
+            if (waxing) {
+                from = Math.max(-half, term);
+                to = half;
+            } else {
+                from = -half;
+                to = Math.min(half, -term);
+            }
+            if (to > from) g.fill(mcxc + from, y, mcxc + to, y + 1, lit);
+        }
+        // Aro de laton de la ventanilla.
+        for (int dy = -r - 1; dy <= r + 1; dy++) {
+            int half = (int) Math.floor(Math.sqrt(Math.max(0, (r + 1) * (r + 1) - dy * dy)));
+            int y = mcy + dy;
+            g.fill(mcxc - half, y, mcxc - half + 1, y + 1, COLOR_BRASS_DARK);
+            g.fill(mcxc + half - 1, y, mcxc + half, y + 1, COLOR_BRASS_DARK);
+        }
+        g.fill(mcxc - r - 1, mcy - r - 1, mcxc + r + 2, mcy - r, COLOR_BRASS_DARK);
+        g.fill(mcxc - r - 1, mcy + r + 1, mcxc + r + 2, mcy + r + 2, COLOR_BRASS_DARK);
     }
 
     private static int computeSecondPosition(long now) {

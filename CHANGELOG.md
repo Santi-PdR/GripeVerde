@@ -1,3 +1,9 @@
+## v0.250.0 - La luna del reloj
+
+- `PocketWatchRenderer`: ventanilla de luna a las seis con fase real (`moonPhase`, epoca 2000-01-06), aro de laton, `VI` reemplazado cuando corresponde y linea de fase en la tapa.
+- `PocketWatchRenderer`: la punta del segundero lleva punto.
+- `DiaryConfirmScreen.render`: sombra, hoja, adornos y widgets en bloques `try` separados; la confirmacion no puede quedar cruda.
+
 ## v0.249.0 - El parte se ata al raton y al numpad
 
 - `DiaryDispatchScreen`: clic 4/5 (y el medio) atan la ranura a ese boton del raton; clic izquierdo escucha una tecla, derecho borra.

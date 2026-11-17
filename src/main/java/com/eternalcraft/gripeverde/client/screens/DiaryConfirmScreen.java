@@ -118,48 +118,48 @@ public class DiaryConfirmScreen extends ConfirmScreen {
 
     @Override
     public void render(GuiGraphics gfx, int mouseX, int mouseY, float partial) {
-        // Fondo: escena viva del Title
+        // v0.250.0: por partes. Si un adorno falla, la hoja y los botones ya
+        // estan puestos: nunca se ve la confirmacion cruda del juego.
         try {
-            com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(gfx, this.width, this.height);
-                } catch (Throwable ignored) {
-            // Si algo del pipeline falla, seguimos con overlay negro
+            com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer
+                .renderDiaryBackground(gfx, this.width, this.height);
+        } catch (Throwable ignored) {
         }
 
-        // Overlay para atenuar la escena
-
-        // Panel pergamino
         int panelW = Math.min(PANEL_MAX_W, this.width - 40);
         int panelH = Math.min(PANEL_MAX_H, this.height - 30);
         int panelX = (this.width - panelW) / 2;
         int panelY = (this.height - panelH) / 2;
-        DiaryChrome.drawPanelShadow(gfx, panelX, panelY, panelW, panelH);
-        PaperTexture.drawTornSheet(gfx, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
 
-        // Cosmetica
-        DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, panelW, panelH);
-        DiaryChrome.drawRegistryTag(gfx, panelX, panelY, panelW, panelH, "REG. XIII");
-
-        // Titulo
-        int titleY = panelY + 18;
-        String titleStr = DiaryChrome.fitCached(this.font, this.title.getString(), Math.max(0, panelW - 48));
-        int titleW = DiaryChrome.widthCached(this.font, titleStr);
-        gfx.drawString(this.font, titleStr, (this.width - titleW) / 2, titleY, DiaryChrome.INK_TITLE, false);
-
-        // Divisor con rombo
-        DiaryChrome.drawInkDivider(gfx, panelX + 24, titleY + 14, panelW - 48);
-        DiaryChrome.drawDivisorLozenge(gfx, this.width / 2, titleY + 14);
-
-        // Mensaje multilinea (propio, no toco el vanilla)
-        if (this.ownMultilineMessage == null && this.ownMessage != null) {
-            this.ownMultilineMessage = MultiLineLabel.create(this.font, this.ownMessage, Math.max(1, panelW - 40));
-        }
-        if (this.ownMultilineMessage != null) {
-            int msgY = titleY + 28;
-            this.ownMultilineMessage.renderCentered(gfx, this.width / 2, msgY, this.font.lineHeight + 2, DiaryChrome.INK_SUBTITLE);
-        }
-
-        // v0.16.0: recordatorio para quien destruye demasiado.
         try {
+            DiaryChrome.drawPanelShadow(gfx, panelX, panelY, panelW, panelH);
+        } catch (Throwable ignored) {
+        }
+        try {
+            PaperTexture.drawTornSheet(gfx, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
+        } catch (Throwable ignored) {
+        }
+
+        try {
+            DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, panelW, panelH);
+            DiaryChrome.drawRegistryTag(gfx, panelX, panelY, panelW, panelH, "REG. XIII");
+
+            int titleY = panelY + 18;
+            String titleStr = DiaryChrome.fitCached(this.font, this.title.getString(), Math.max(0, panelW - 48));
+            int titleW = DiaryChrome.widthCached(this.font, titleStr);
+            gfx.drawString(this.font, titleStr, (this.width - titleW) / 2, titleY, DiaryChrome.INK_TITLE, false);
+            DiaryChrome.drawInkDivider(gfx, panelX + 24, titleY + 14, panelW - 48);
+            DiaryChrome.drawDivisorLozenge(gfx, this.width / 2, titleY + 14);
+
+            if (this.ownMultilineMessage == null && this.ownMessage != null) {
+                this.ownMultilineMessage = MultiLineLabel.create(this.font, this.ownMessage, Math.max(1, panelW - 40));
+            }
+            if (this.ownMultilineMessage != null) {
+                int msgY = titleY + 28;
+                this.ownMultilineMessage.renderCentered(gfx, this.width / 2, msgY,
+                    this.font.lineHeight + 2, DiaryChrome.INK_SUBTITLE);
+            }
+
             if (com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.counter("destroys") >= 3) {
                 String line = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
                     ? "The cabinet remembers what you destroy."
@@ -170,13 +170,16 @@ public class DiaryConfirmScreen extends ConfirmScreen {
                     com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0xFF6E1F16, 150), false);
             }
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(gfx, this.width);
-        } catch (Throwable ignored) {}
+        } catch (Throwable ignored) {
+        }
 
-        // Widgets propios (botones Diary y cualquier otro visible)
-        for (var w : this.renderables) {
-            if (w instanceof AbstractWidget aw && aw.visible) {
-                w.render(gfx, mouseX, mouseY, partial);
+        try {
+            for (var w : this.renderables) {
+                if (w instanceof AbstractWidget aw && aw.visible) {
+                    w.render(gfx, mouseX, mouseY, partial);
+                }
             }
+        } catch (Throwable ignored) {
         }
     }
 

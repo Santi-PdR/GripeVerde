@@ -1,3 +1,11 @@
+## Version 0.250.0 - La luna del reloj
+
+El reloj de bolsillo gana una ventanilla a las seis, donde los relojes de verdad llevan los segundos: adentro va la luna de esa noche, calculada con el calendario astronomico -mes sinodico de 29,530588 dias desde la luna nueva del 6 de enero de 2000- y no con el reloj del juego. El terminador se mueve con la fase, el aro es de laton y, cuando la hay, la ventanilla ocupa el sitio del VI. Detener la tapa suma una linea mas abajo: luna nueva, creciente, llena o menguante. La punta del segundero, ademas, lleva su punto, para leerla de lejos.
+
+La confirmacion de la casa ya no puede salir cruda: la hoja, el sello y los botones se dibujan por partes y cada parte se defiende sola, asi que un adorno que falle no deja la pantalla gris y pelada del juego.
+
+Nota del cronista, sobre de donde sale lo que se cuenta: la fiebre no viene de un sitio inventado. Entra por un puerto de rio, con la carga y el pasaje, como entraron el colera de Hamburgo en 1892 y la peste de Oporto en 1899, y se la pelea con las herramientas de entonces: el cordon, el lazareto, el parte firmado y la cal. Todo lo que dice el gabinete se puede fechar en un libro de sanidad.
+
 ## Version 0.249.0 - El parte se ata al raton y al numpad
 
 En el parte de CEDA una ranura ya no depende solo del teclado: el boton 4 o el 5 del raton -los laterales- la atan a ese clic, y el boton del medio tambien. El clic izquierdo sigue escuchando una tecla y el derecho sigue borrando.

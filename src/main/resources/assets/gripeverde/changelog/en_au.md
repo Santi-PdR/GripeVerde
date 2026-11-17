@@ -1,3 +1,11 @@
+## Version 0.250.0 - The watch's moon
+
+The pocket watch gains an aperture at six o'clock, where real watches keep their seconds: inside sits that night's moon, computed from the astronomical calendar -a 29.530588 day synodic month counted from the new moon of 6 January 2000- and not from the game clock. The terminator moves with the phase, the rim is brass and, when it is there, the aperture takes the place of the VI. Stopping the lid adds one more line below: new, waxing, full or waning. The second hand's tip carries its dot too, so it reads from a distance.
+
+The house confirmation can no longer come out raw: the sheet, the seal and the buttons are drawn in parts and each part defends itself, so a failed ornament no longer leaves the game's grey, bare screen.
+
+A chronicler's note on where the story comes from: the fever does not arrive from an invented place. It comes in through a river port, with cargo and passengers, the way Hamburg's cholera came in 1892 and Porto's plague in 1899, and it is fought with the tools of that time: the cordon, the lazaretto, the signed report and lime. Everything the cabinet says can be dated in a sanitary board's book.
+
 ## Version 0.249.0 - The dispatch binds to the mouse and the numpad
 
 In the CEDA dispatch a slot no longer depends on the keyboard alone: mouse button 4 or 5 -the side ones- binds it to that click, and the middle button does too. Left click still listens for a key, right click still clears.

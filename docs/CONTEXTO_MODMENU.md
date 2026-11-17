@@ -180,6 +180,12 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.250.0 — la luna del reloj y la confirmacion por partes
+
+- **Reloj**: `moonPhase(nowMs)` (mes sinodico 29,530588 desde 2000-01-06 18:14 UTC), `drawMoonAperture` fila por fila, `moonName` para la cuarta linea de la tapa, punto en la punta del segundero.
+- **Confirmacion**: `DiaryConfirmScreen.render` parte el dibujo en bloques independientes.
+- **Lore**: la fiebre entra por puerto de rio, con las fiebres de Hamburgo 1892 y Oporto 1899 como referencia real; sin nombrar juegos.
+
 ## Cambios de 0.249.0 — parte de CEDA, sonidos y lista de mundos
 
 - **Parte de CEDA**: `mouseClicked` ata la ranura con los botones 3/4 (y 2); `DispatchLibrary.keyNameOf` rotula laterales y numpad; `isModifierKey` evita atar modificadores.
