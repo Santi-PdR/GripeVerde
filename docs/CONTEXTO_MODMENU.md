@@ -180,6 +180,12 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.249.0 — parte de CEDA, sonidos y lista de mundos
+
+- **Parte de CEDA**: `mouseClicked` ata la ranura con los botones 3/4 (y 2); `DispatchLibrary.keyNameOf` rotula laterales y numpad; `isModifierKey` evita atar modificadores.
+- **Sonidos**: `UiSounds.hoverMain` suma capa de hoja (`hover_paper`, 200 ms); `DiaryButton.playDownSound` elige por `Variant`.
+- **Lista de mundos**: `renderBackground` con escena y `drawWornRim` sobre la pagina.
+
 ## Cambios de 0.248.0 — se borra el registro y la puerta de servicio
 
 - **Registro de fichas eliminado del mod**: `DiaryArchiveScreen`, `DiaryAdvancementsScreen` y `DiaryStatsScreen` borrados; la pausa vuelve a cuatro botones.

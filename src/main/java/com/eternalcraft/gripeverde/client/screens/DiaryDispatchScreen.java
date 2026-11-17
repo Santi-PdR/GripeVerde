@@ -311,10 +311,37 @@ public class DiaryDispatchScreen extends Screen {
             } else if (button == 0) {
                 this.awaitingSlot = slot;
                 this.setStatus("gripeverde.dispatch.slot.listen");
+            } else {
+                // v0.249.0: el boton 4 o 5 del raton (lateral) ata la ranura a ese
+                // clic, que es lo que pide la mano cuando ya esta en el teclado.
+                int encoded = DispatchLibrary.encodeMouse(button);
+                if (encoded != DispatchLibrary.UNBOUND) {
+                    DispatchLibrary.setKey(slot, encoded);
+                    this.awaitingSlot = -1;
+                    this.saveIfNeeded(true);
+                    this.setStatus("gripeverde.dispatch.slot.bound");
+                    this.playSealSound();
+                }
             }
             return true;
         }
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    /** v0.249.0: modificadores sueltos que no valen como atajo. */
+    private static boolean isModifierKey(int keyCode) {
+        return keyCode == GLFW.GLFW_KEY_LEFT_SHIFT || keyCode == GLFW.GLFW_KEY_RIGHT_SHIFT
+            || keyCode == GLFW.GLFW_KEY_LEFT_CONTROL || keyCode == GLFW.GLFW_KEY_RIGHT_CONTROL
+            || keyCode == GLFW.GLFW_KEY_LEFT_ALT || keyCode == GLFW.GLFW_KEY_RIGHT_ALT
+            || keyCode == GLFW.GLFW_KEY_LEFT_SUPER || keyCode == GLFW.GLFW_KEY_RIGHT_SUPER;
+    }
+
+    /** v0.249.0: el mismo golpe de sello que los botones de la casa. */
+    private void playSealSound() {
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                com.eternalcraft.gripeverde.client.audio.ModSounds.UI_CLICK_HEAVY.get(), 0.24f, 1.0f);
+        } catch (Throwable ignored) {}
     }
 
     @Override
@@ -332,10 +359,15 @@ public class DiaryDispatchScreen extends Screen {
                 this.setStatus("gripeverde.dispatch.slot.cleared");
                 return true;
             }
+            if (isModifierKey(keyCode)) {
+                // Shift, Ctrl y Alt solos no son tecla: se sigue escuchando.
+                return true;
+            }
             DispatchLibrary.setKey(this.awaitingSlot, keyCode);
             this.awaitingSlot = -1;
             this.saveIfNeeded(true);
             this.setStatus("gripeverde.dispatch.slot.bound");
+            this.playSealSound();
             return true;
         }
         // v0.185.0: Ctrl+1..9/0 manda esa voz y Ctrl+Shift+1..9/0 las voces 11..20.

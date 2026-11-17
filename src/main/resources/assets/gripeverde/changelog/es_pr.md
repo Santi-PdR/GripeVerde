@@ -1,3 +1,13 @@
+## Version 0.249.0 - El parte se ata al raton y al numpad
+
+En el parte de CEDA una ranura ya no depende solo del teclado: el boton 4 o el 5 del raton -los laterales- la atan a ese clic, y el boton del medio tambien. El clic izquierdo sigue escuchando una tecla y el derecho sigue borrando.
+
+El 1 del numpad dejo de confundirse con el 1 de la fila: se guarda aparte y el parte lo rotula NUM 1, asi se ve de un vistazo cual es cual. Los modificadores sueltos -Shift, Ctrl, Alt- ya no se pueden atar por error: el parte sigue esperando una tecla de verdad.
+
+De paso, la mano suena distinto. Al pasar sobre un boton, abajo del tic hay ahora una hoja que roza; al apretar, cada clase de boton tiene su golpe: la tapa del principal, la pestana chica del secundario y el lacre roto del peligro.
+
+La lista de mundos guardados gana una red: si alguna vez llega a pintarse el fondo crudo del juego, la escena de la noche lo tapa. La pagina de registro lleva ademas el canto gastado, para asentarla sobre la calle.
+
 ## Version 0.248.0 - Se fue la puerta de servicio
 
 El registro de fichas ya no existe: se borro del mod la sala de consulta, las dos pantallas que la servian y los dos botones -PARTES y REGISTRO- que las abrian desde la hoja de pausa. La pausa queda con cuatro entradas y nada mas. Tampoco quedan rastros: ni el cajon que prometia fichas, ni los avisos que hablaban de golpes, ni la linea del reloj que contaba cuantas llevabas; la tapa ahora cuenta las noches.

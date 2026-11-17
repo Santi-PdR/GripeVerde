@@ -123,6 +123,19 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         return boxes;
     }
 
+    /**
+     * v0.248.0: si algo del juego llega a llamar al fondo, dibuja la escena y no
+     * la tierra. Antes este metodo quedaba vacio y la lista aparecia sobre el
+     * fondo crudo.
+     */
+    @Override
+    public void renderBackground(GuiGraphics g) {
+        try {
+            QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
+        } catch (Throwable ignored) {
+        }
+    }
+
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partial) {
         try {
@@ -184,6 +197,10 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         int ph = Math.min(this.height, this.listBottom + 6) - py;
         if (pw < 40 || ph < 24) return;
         PaperTexture.drawTornSheet(g, px, py, pw, ph, PaperTexture.PaperKind.OFFICIAL);
+        // v0.248.0: el canto gastado asienta la pagina sobre la escena.
+        if (pw >= 32 && ph >= 32) {
+            PaperTexture.drawWornRim(g, px, py, pw, ph);
+        }
 
         int step = this.rowItemHeight > 0 ? this.rowItemHeight : 36;
         double scroll = 0.0;

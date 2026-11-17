@@ -268,8 +268,19 @@ public final class DispatchLibrary {
 
     public static Component keyNameOf(int binding) {
         if (binding == UNBOUND) return Component.translatable("gripeverde.dispatch.slot.nokey");
+        boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
         if (isMouse(binding)) {
-            return InputConstants.Type.MOUSE.getOrCreate(mouseButton(binding)).getDisplayName();
+            int button = mouseButton(binding);
+            // v0.249.0: los botones laterales se nombran como los cuenta la mano,
+            // no como los cuenta GLFW, para que "clic 4" signifique lo mismo.
+            if (button >= GLFW.GLFW_MOUSE_BUTTON_4) {
+                return Component.literal((english ? "Side " : "Lateral ") + (button + 1));
+            }
+            return InputConstants.Type.MOUSE.getOrCreate(button).getDisplayName();
+        }
+        // v0.249.0: el 1 del numpad no es el 1 de la fila: se rotula distinto.
+        if (binding >= GLFW.GLFW_KEY_KP_0 && binding <= GLFW.GLFW_KEY_KP_9) {
+            return Component.literal("NUM " + (binding - GLFW.GLFW_KEY_KP_0));
         }
         return InputConstants.Type.KEYSYM.getOrCreate(binding).getDisplayName();
     }

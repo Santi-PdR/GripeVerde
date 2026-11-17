@@ -73,7 +73,13 @@ public class DiaryButton extends AbstractButton {
             case OPTION_OPEN -> UiSounds.optionOpen();
             case BACK -> UiSounds.back();
             case NONE -> {}
-            default -> UiSounds.playClick();
+            // v0.249.0: cada clase de boton suena a lo suyo. El peligro suena a
+            // lacre que se rompe, el principal a tapa, el resto a pestana chica.
+            default -> {
+                if(variant==Variant.DANGER) UiSounds.clickDestroy();
+                else if(variant==Variant.PRIMARY) UiSounds.playClick();
+                else UiSounds.buttonSection();
+            }
         }
     }
     @Override public boolean mouseClicked(double mx,double my,int btn){

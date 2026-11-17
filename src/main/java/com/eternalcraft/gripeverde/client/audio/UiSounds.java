@@ -34,6 +34,8 @@ public class UiSounds {
 
     static {
         COOLDOWNS.put("hover_main", 180L);
+        COOLDOWNS.put("hover_paper", 200L);
+        COOLDOWNS.put("press_soft", 90L);
         COOLDOWNS.put("hover_section", 220L);
         COOLDOWNS.put("button_main", 90L);
         COOLDOWNS.put("button_section", 120L);
@@ -83,6 +85,14 @@ public class UiSounds {
 
     public static void hoverMain() {
         safePlay("hover_main", ModSounds.UI_HOVER, VOL_HOVER_MAIN, 0.95f + rand(0.10f));
+        // v0.249.0: debajo del tic, una hoja que roza. Da cuerpo al pasar la mano
+        // sin tapar el tic y sin sonar dos veces si el puntero barre la botonera.
+        safePlay("hover_paper", ModSounds.UI_SCROLL, 0.030f, 1.12f + rand(0.08f));
+    }
+
+    /** v0.249.0: el golpe de sello que sigue al clic, un pelo mas grave. */
+    public static void pressSeal() {
+        safePlay("press_soft", ModSounds.UI_CLICK_HEAVY, 0.16f, 0.86f + rand(0.05f));
     }
 
     public static void hoverSection() {

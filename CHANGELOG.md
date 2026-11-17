@@ -1,3 +1,11 @@
+## v0.249.0 - El parte se ata al raton y al numpad
+
+- `DiaryDispatchScreen`: clic 4/5 (y el medio) atan la ranura a ese boton del raton; clic izquierdo escucha una tecla, derecho borra.
+- `DispatchLibrary.keyNameOf`: los laterales se rotulan `Lateral 4/5` y el numpad `NUM 1..0`, distinto del `1` de la fila.
+- `keyPressed`: Shift, Ctrl y Alt sueltos ya no se pueden atar; suena el sello al guardar.
+- `UiSounds.hoverMain`: capa de hoja bajo el tic (cooldown propio) y `playDownSound` por variante (principal/peligro/secundario).
+- `DiarySelectWorldScreen`: `renderBackground` pinta la escena y la pagina de registro lleva `drawWornRim`.
+
 ## v0.248.0 - Se fue la puerta de servicio
 
 - Se borra el registro de fichas: `DiaryArchiveScreen`, `DiaryAdvancementsScreen` y `DiaryStatsScreen` salen del mod.

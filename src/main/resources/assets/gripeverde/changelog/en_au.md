@@ -1,3 +1,13 @@
+## Version 0.249.0 - The dispatch binds to the mouse and the numpad
+
+In the CEDA dispatch a slot no longer depends on the keyboard alone: mouse button 4 or 5 -the side ones- binds it to that click, and the middle button does too. Left click still listens for a key, right click still clears.
+
+The numpad 1 stopped being confused with the row 1: it is stored apart and the dispatch labels it NUM 1, so which is which is visible at a glance. Bare modifiers -Shift, Ctrl, Alt- can no longer be bound by mistake: the dispatch keeps waiting for a real key.
+
+The hand sounds different too. Hovering a button now has a sheet brushing under the tick, and pressing has its own stroke per kind of button: the lid for the main one, the small tab for the secondary, broken wax for danger.
+
+The saved-worlds list gains a net: if the game's raw background ever gets painted, the night scene covers it. The register page also carries a worn edge now, to seat it over the street.
+
 ## Version 0.248.0 - The service door is gone
 
 The file register no longer exists: the reading room, the two screens that served it and the two buttons -PARTES and REGISTRO- that opened them from the pause sheet were deleted from the mod. The pause sheet is back to four entries and nothing else. No traces remain either: not the drawer that promised files, not the notices about knocks, not the watch line that counted them; the lid now counts nights.
