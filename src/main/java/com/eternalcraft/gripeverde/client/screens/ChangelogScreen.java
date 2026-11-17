@@ -884,10 +884,15 @@ public class ChangelogScreen extends Screen {
             DiaryTheme.withAlpha(DiaryTheme.BRONZE, empty ? 90 : 190), false);
         // v0.30.0: etiqueta de PAPEL clara con letra de tinta — antes era
         // tinta sobre tinta y la letra no se veia (errata reconocida).
-        g.fill(sx - 1, sy - 1, sx + SEARCH_W + 1, sy + SEARCH_H + 1,
-            DiaryTheme.withAlpha(DiaryTheme.BRONZE, searchOpen ? 200 : 90));
         g.fill(sx, sy, sx + SEARCH_W, sy + SEARCH_H,
             DiaryTheme.withAlpha(DiaryTheme.PAPER, 240));
+        // v0.238.0: el buscador es un recorte con el canto gastado, no un
+        // recuadro de un pixel. Va despues del papel para que el filete se
+        // apoye encima y no lo tape el relleno.
+        com.eternalcraft.gripeverde.client.render.PaperTexture.drawWornBorder(
+            g, sx - 1, sy - 1, SEARCH_W + 2, SEARCH_H + 2,
+            DiaryTheme.withAlpha(DiaryTheme.BRONZE, searchOpen ? 200 : 90),
+            (sx - 1) * 31 + (sy - 1) * 17 + SEARCH_W);
         boolean en = isEnglishSelected();
         if (empty) {
             if (!searchOpen) {

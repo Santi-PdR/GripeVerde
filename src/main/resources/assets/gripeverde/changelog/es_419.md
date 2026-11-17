@@ -1,3 +1,9 @@
+## Version 0.238.0 - Los campos de texto y el buscador
+
+Los campos donde se escribe -el buscador del diario, los nombres de servidor, la busqueda de idiomas- seguian con el marco de un pixel, el ultimo rectangulo de la interfaz despues de los botones y los mandos. Ahora llevan el mismo filete dibujado a mano: tramos que suben y bajan, con el largo irregular de la pluma.
+
+El buscador, ademas, se apoya encima del papel: el filete va dibujado despues del relleno, asi que el canto se ve entero aunque el tramo caiga adentro. Cuando el campo toma el foco, el filete se pinta en rojo de lacre como antes, pero ya sin regla.
+
 ## Version 0.237.0 - El parte de defuncion
 
 La pantalla de muerte era lo unico del juego que seguia siendo negro y vanilla. Ahora se le pega encima el formulario de CEDA: una franja de papel rasgado arriba con el encabezado -PARTE DE DEFUNCION, Sanidad de Puertos- y otra abajo con el registro EC-QV/1897 y el sello DECESO.

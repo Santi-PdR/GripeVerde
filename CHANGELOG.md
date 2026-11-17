@@ -1,3 +1,10 @@
+## v0.238.0 - Campos de texto sin caja
+
+- `DiaryTextField`: el borde de 1 px (sepia, o lacre con foco) pasa a `PaperTexture.drawWornBorder`; se mantienen el brillo
+  superior y los tres filetes de relieve.
+- `ChangelogScreen.drawSearchBox`: el marco bronce del buscador pasa a `drawWornBorder`, dibujado después del relleno de papel
+  para que el canto no quede tapado.
+
 ## v0.237.0 - Parte de defunción
 
 - `DeathPaper` (nuevo, `client/render`): franjas `drawTornSheet` OFFICIAL arriba (42 px, entra desde el borde) y al pie

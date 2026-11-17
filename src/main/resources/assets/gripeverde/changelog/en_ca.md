@@ -1,3 +1,9 @@
+## Version 0.238.0 - The text fields and the search box
+
+The fields where you type - the diary search box, server names, the language search - still had the one-pixel frame, the last rectangle in the interface after the buttons and controls. Now they carry the same hand-drawn rule: stretches that rise and fall, with the uneven length of a pen.
+
+The search box also rests on its paper: the rule is drawn after the fill, so the edge shows whole even when a stretch falls inside. When the field takes focus the rule turns sealing-wax red as before, just no longer ruled.
+
 ## Version 0.237.0 - The death report
 
 The death screen was the last thing in the game still black and vanilla. Now the CEDA form is pasted over it: a torn paper strip on top with the heading - DEATH REPORT, Bureau of Ports - and another at the foot with the EC-QV/1897 register and the DECEASED stamp.

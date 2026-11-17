@@ -1,6 +1,7 @@
 package com.eternalcraft.gripeverde.client.widgets;
 
 import com.eternalcraft.gripeverde.client.render.DiaryTheme;
+import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
@@ -128,11 +129,10 @@ public class DiaryTextField extends EditBox {
         g.fill(x, y + h - 1, x + w, y + h, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 60));
 
         // ---- BORDE ----
+        // v0.238.0: el campo tambien lleva el filete a mano; el marco recto
+        // delataba la caja igual que en los botones.
         int borderColor = focused ? DiaryTheme.REDCOAT_DARK : DiaryTheme.SEPIA_DARK;
-        g.fill(x, y, x + w, y + 1, borderColor);
-        g.fill(x, y + h - 1, x + w, y + h, borderColor);
-        g.fill(x, y, x + 1, y + h, borderColor);
-        g.fill(x + w - 1, y, x + w, y + h, borderColor);
+        PaperTexture.drawWornBorder(g, x, y, w, h, borderColor, x * 31 + y * 17 + w);
 
         g.fill(x + 4, y + h - 4, x + w - 4, y + h - 3, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 38));
         g.fill(x + 3, y + 4, x + 4, y + h - 4, DiaryTheme.withAlpha(DiaryTheme.SEPIA_DARK, 45));
