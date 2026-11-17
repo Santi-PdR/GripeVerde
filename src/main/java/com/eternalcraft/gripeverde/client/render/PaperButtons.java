@@ -17,7 +17,30 @@ import java.util.List;
  */
 public final class PaperButtons {
 
+    /**
+     * v0.253.0: de quien es cada boton vestido.
+     *
+     * El sustituto dispara la accion del original, asi que necesita saber si el
+     * original esta habilitado: en la lista de mundos, "Jugar" esta apagado
+     * hasta que hay una seleccion, y un vestido siempre encendido mandaba la
+     * accion igual. Con este mapa se copia el estado en cada cuadro.
+     */
+    private static final java.util.Map<DiaryButton, Button> ORIGINALS = new java.util.WeakHashMap<>();
+
     private PaperButtons() {
+    }
+
+    /** v0.253.0: copia enabled/disabled del original a cada boton vestido. */
+    public static void syncStates() {
+        try {
+            ORIGINALS.forEach((dressed, origin) -> {
+                try {
+                    dressed.active = origin.active;
+                } catch (Throwable ignored) {
+                }
+            });
+        } catch (Throwable ignored) {
+        }
     }
 
     /** Viste todos los botones visibles de la pantalla. Devuelve los puestos. */
@@ -39,9 +62,14 @@ public final class PaperButtons {
                 DiaryButton dressedButton = new DiaryButton(
                     origin.getX(), origin.getY(), origin.getWidth(), origin.getHeight(),
                     origin.getMessage(), DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
-                    origin::onPress);
+                    () -> {
+                        // v0.253.0: nada de disparar una accion apagada.
+                        if (origin.active) origin.onPress();
+                    });
                 if (register(screen, dressedButton)) {
                     origin.visible = false;
+                    dressedButton.active = origin.active;
+                    ORIGINALS.put(dressedButton, origin);
                     dressed.add(dressedButton);
                 }
             } catch (Throwable ignored) {

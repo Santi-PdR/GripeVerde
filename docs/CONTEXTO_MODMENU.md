@@ -180,6 +180,12 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.253.0 — botones vestidos con estado y diario con fecha al pie
+
+- **PaperButtons**: `syncStates()` copia `active`; la accion del sustituto no corre si el original esta apagado.
+- **DiarySlider**: clic al soltar.
+- **ChangelogScreen**: `diarySectionLabels[section]` al pie cuando hay sitio.
+
 ## Cambios de 0.252.0 — hora real y la pausa con contexto
 
 - **Reloj**: `getCurrentHour()` usa `Calendar` local; `HOUR_POOL` eliminado; `isNearNoon()` recalculado.

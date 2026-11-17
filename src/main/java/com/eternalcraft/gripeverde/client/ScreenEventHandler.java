@@ -139,6 +139,10 @@ public class ScreenEventHandler {
             com.eternalcraft.gripeverde.client.render.DeathPaper.render(
                 event.getGuiGraphics(), event.getScreen());
         } catch (Throwable ignored) {}
+        // v0.253.0: los botones vestidos copian el estado del original.
+        try {
+            com.eternalcraft.gripeverde.client.render.PaperButtons.syncStates();
+        } catch (Throwable ignored) {}
         if (mc != null && mc.level != null) return;
         try {
             com.eternalcraft.gripeverde.client.render.DiaryTransitions.render(event.getScreen(), event.getGuiGraphics());

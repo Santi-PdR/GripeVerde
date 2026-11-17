@@ -1,3 +1,11 @@
+## Version 0.253.0 - El boton vestido sabe si esta apagado
+
+Los botones vestidos de papel disparaban la accion del boton del juego aunque ese boton estuviera apagado. En la lista de mundos, "Jugar" esta apagado hasta que hay un mundo elegido: el vestido seguia encendido y mandaba la accion igual. Ahora el sustituto copia el estado del original en cada cuadro y, si el original esta apagado, no hace nada. La pantalla de muerte usa el mismo vestido y gana la misma red.
+
+El mando de las opciones, que avisaba al acercarse, ahora tambien suena al soltarlo: no queda mudo en el momento de elegir el valor.
+
+Y el diario dice donde esta el lector sin abrir el indice: al pie del papel, antes del folio, aparece la fecha de la entrada que se esta leyendo. Si no hay sitio, no se escribe, para no pisar el folio ni la lupa.
+
 ## Version 0.252.0 - El reloj da la hora
 
 Las agujas del reloj de bolsillo ya no inventan: marcan la hora local de quien lo mira. Antes sacaban una "hora del brote" de una lista y la cambiaban cada cinco minutos, asi que saltaban mientras uno las miraba y no servian para nada. Ahora la aguja corta y el minutero siguen al reloj de la casa, y el segundero sigue enfermando con la sesion. La inscripcion de la tapa se queda con su 11:52, que es cuando empezo todo, pero ahora es una leyenda y no una mentira.

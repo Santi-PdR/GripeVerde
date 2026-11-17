@@ -58,6 +58,22 @@ public class DiarySlider extends AbstractSliderButton {
         this.setMessage(Component.literal(labelFormatter.apply(this.value)));
     }
 
+    /**
+     * v0.253.0: el mando suena al soltarlo, como los botones. Antes solo
+     * avisaba al acercarse y quedaba mudo al elegir el valor.
+     */
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        boolean released = super.mouseReleased(mouseX, mouseY, button);
+        if (released) {
+            try {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.playClick();
+            } catch (Throwable ignored) {
+            }
+        }
+        return released;
+    }
+
     @Override
     protected void applyValue() {
         if (onValueChanged != null) onValueChanged.accept(this.value);

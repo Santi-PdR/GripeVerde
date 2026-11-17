@@ -1,3 +1,9 @@
+## v0.253.0 - El boton vestido sabe si esta apagado
+
+- `PaperButtons`: mapa `ORIGINALS` (WeakHashMap), accion protegida por `origin.active`, `syncStates()` llamado desde `ScreenEvent.Render.Post`.
+- `DiarySlider.mouseReleased`: sonido de clic al soltar.
+- `ChangelogScreen`: fecha de la entrada leida al pie, antes del folio, con guarda de ancho.
+
 ## v0.252.0 - El reloj da la hora
 
 - `PocketWatchRenderer.getCurrentHour()` devuelve la hora local real; se borra la lista de horas inventadas y `isNearNoon()` pasa a depender de la hora.

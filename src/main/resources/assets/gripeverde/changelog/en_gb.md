@@ -1,3 +1,11 @@
+## Version 0.253.0 - The dressed button knows when it is off
+
+Buttons dressed in paper fired the game button's action even when that button was disabled. In the saved-worlds list, "Play" stays off until a world is selected: the dressed one stayed on and fired the action anyway. Now the substitute copies the original's state every frame and, if the original is off, does nothing. The death screen uses the same dress and gains the same net.
+
+The options slider, which announced itself on hover, now also sounds when released: it no longer falls silent at the moment you choose a value.
+
+And the diary says where the reader is without opening the index: at the foot of the paper, before the folio, the date of the entry being read appears. If there is no room, it is not written, so it never covers the folio or the lens.
+
 ## Version 0.252.0 - The watch tells the time
 
 The pocket watch hands no longer invent: they mark the local time of whoever looks at them. They used to draw an "outbreak hour" from a list and change it every five minutes, so they jumped while you watched and were of no use. Now the short hand and the minute hand follow the house clock, and the second hand keeps sickening with the session. The inscription on the lid keeps its 11:52, which is when it all began, but it is a legend now, not a lie.

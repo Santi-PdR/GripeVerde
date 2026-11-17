@@ -796,6 +796,22 @@ public class ChangelogScreen extends Screen {
             g.fill(fx + fw + 6, fy + 4, fx + fw + 14, fy + 5, orn);
             g.drawString(this.font, folio, fx, fy,
                 DiaryTheme.withAlpha(DiaryTheme.SEPIA_LIGHT, 190), false);
+
+            // v0.253.0: al pie, antes del folio, la fecha que se esta leyendo.
+            // Asi el lector sabe en que dia esta sin abrir el indice.
+            try {
+                int section = currentDiarySection(scrollY + 24);
+                if (section >= 0 && section < this.diarySectionLabels.length) {
+                    String day = this.diarySectionLabels[section];
+                    int dayW = this.font.width(day);
+                    int dayX = fx - 18 - dayW;
+                    if (dayX > px + 14) {
+                        g.drawString(this.font, day, dayX, fy,
+                            DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 190), false);
+                    }
+                }
+            } catch (Throwable ignored) {
+            }
         }
 
         // v0.29.0: la lupa de la bitacora, al pie a la derecha.
