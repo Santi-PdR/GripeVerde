@@ -53,10 +53,52 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     protected void init() {
         super.init();
         this.vanillaList = resolveList();
+        // v0.254.0: el fondo es este bug. La lista del juego, si nadie le dice
+        // lo contrario, pinta SU fondo -el de la pantalla- cada cuadro, y lo
+        // pinta encima de la cabecera y del pie de papel. Por eso se veia la
+        // pantalla pelada con los botones vestidos: el papel estaba debajo.
+        // En multijugador ya estaba apagado; aca faltaba.
+        if (this.vanillaList != null) {
+            try {
+                this.vanillaList.setRenderBackground(false);
+                this.vanillaList.setRenderTopAndBottom(false);
+            } catch (Throwable ignored) {
+            }
+        }
         this.searchBoxes = collectEditBoxes();
         this.dressed.clear();
         this.dressed.addAll(PaperButtons.dressAll(this));
+        layoutAroundPaper();
         cacheListMetrics();
+    }
+
+    /**
+     * v0.254.0: la cabecera tiene que poder leerse.
+     *
+     * El juego pone su caja de busqueda a la altura de la cabecera de papel y
+     * la lista arranca pegada arriba, asi que el subtitulo se cruzaba con la
+     * caja. Ahora la caja baja hasta el borde de la cabecera, la lista empieza
+     * debajo de ella y termina donde empiezan los botones: nada se pisa.
+     */
+    private void layoutAroundPaper() {
+        int footerTop = this.height - 56;
+        for (DiaryButton button : this.dressed) {
+            footerTop = Math.min(footerTop, button.getY() - 10);
+        }
+        for (EditBox box : this.searchBoxes) {
+            try {
+                box.setY(HEADER_H + 3);
+            } catch (Throwable ignored) {
+            }
+        }
+        if (this.vanillaList != null) {
+            try {
+                int top = HEADER_H + 24;
+                int bottom = Math.max(top + 24, footerTop);
+                this.vanillaList.updateSize(this.width, this.height, top, bottom);
+            } catch (Throwable ignored) {
+            }
+        }
     }
 
     private WorldSelectionList resolveList() {

@@ -1,3 +1,9 @@
+## Version 0.254.0 - La lista de mundos dejo de taparse
+
+Esto era el bug de la pantalla pelada. La lista de mundos del juego, si nadie le dice lo contrario, pinta su propio fondo -el fondo de la pantalla- en cada cuadro, y lo pintaba encima de la cabecera y del pie de papel. Por eso se veia el fondo crudo con los botones ya vestidos: el papel estaba puesto, pero abajo. En la lista de servidores ese fondo estaba apagado desde hace versiones; en la de mundos faltaba apagarlo. Ya esta.
+
+De paso, la cabecera se puede leer. El juego pone su caja de busqueda a la altura del subtitulo, asi que las dos cosas se cruzaban. Ahora la caja baja hasta el borde de la cabecera, la lista de mundos empieza debajo de ella y termina donde empiezan los botones: el registro se lee de arriba abajo sin un solo texto pisado.
+
 ## Version 0.253.0 - El boton vestido sabe si esta apagado
 
 Los botones vestidos de papel disparaban la accion del boton del juego aunque ese boton estuviera apagado. En la lista de mundos, "Jugar" esta apagado hasta que hay un mundo elegido: el vestido seguia encendido y mandaba la accion igual. Ahora el sustituto copia el estado del original en cada cuadro y, si el original esta apagado, no hace nada. La pantalla de muerte usa el mismo vestido y gana la misma red.

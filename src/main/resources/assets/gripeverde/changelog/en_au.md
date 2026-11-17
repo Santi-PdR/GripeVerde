@@ -1,3 +1,9 @@
+## Version 0.254.0 - The worlds list stopped covering itself
+
+This was the bare-screen bug. The game's world list, unless told otherwise, paints its own background -the screen's background- every frame, and it was painting it over the paper header and footer. That is why the raw background showed with the buttons already dressed: the paper was there, but underneath. In the server list that background has been off for versions; in the worlds list it was missing. It is done now.
+
+The header can be read too. The game puts its search box at the height of the subtitle, so the two crossed. Now the box comes down to the header's edge, the worlds list starts below it and ends where the buttons begin: the register reads top to bottom without a single overlapping line.
+
 ## Version 0.253.0 - The dressed button knows when it is off
 
 Buttons dressed in paper fired the game button's action even when that button was disabled. In the saved-worlds list, "Play" stays off until a world is selected: the dressed one stayed on and fired the action anyway. Now the substitute copies the original's state every frame and, if the original is off, does nothing. The death screen uses the same dress and gains the same net.

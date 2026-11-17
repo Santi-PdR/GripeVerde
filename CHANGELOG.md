@@ -1,3 +1,8 @@
+## v0.254.0 - La lista de mundos dejo de taparse
+
+- `DiarySelectWorldScreen.init`: `setRenderBackground(false)` + `setRenderTopAndBottom(false)` sobre `WorldSelectionList` (el fondo crudo que tapaba cabecera y pie).
+- `layoutAroundPaper`: caja de busqueda a `HEADER_H + 3`, lista de `HEADER_H + 24` hasta los botones vestidos.
+
 ## v0.253.0 - El boton vestido sabe si esta apagado
 
 - `PaperButtons`: mapa `ORIGINALS` (WeakHashMap), accion protegida por `origin.active`, `syncStates()` llamado desde `ScreenEvent.Render.Post`.

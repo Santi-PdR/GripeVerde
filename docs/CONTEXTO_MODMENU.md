@@ -180,6 +180,11 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.254.0 — el fondo de la lista de mundos
+
+- **Causa del bug**: `AbstractSelectionList` pinta el fondo de la pantalla por cuadro; en mundos faltaba `setRenderBackground(false)` (multijugador ya lo tenia).
+- **Layout**: `layoutAroundPaper()` mueve la caja de busqueda y reencuadra la lista entre cabecera y botones.
+
 ## Cambios de 0.253.0 — botones vestidos con estado y diario con fecha al pie
 
 - **PaperButtons**: `syncStates()` copia `active`; la accion del sustituto no corre si el original esta apagado.
