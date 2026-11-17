@@ -19,6 +19,7 @@ import net.minecraft.client.multiplayer.ServerList;
 import net.minecraft.client.multiplayer.resolver.ServerAddress;
 import net.minecraft.network.chat.Component;
 import com.mojang.logging.LogUtils;
+import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Field;
@@ -647,11 +648,11 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 if (scissorBottom > 0 && scissorBottom < this.vanillaList.getBottom()) {
                     gfx.enableScissor(0, this.vanillaList.getTop(), this.width, scissorBottom);
                     // Banda sepia detras de cada server (contraste para texto blanco vanilla)
-                    drawEntryBackgrounds(gfx);
+                    drawEntryBackgrounds(gfx, mouseX, mouseY);
                     this.vanillaList.render(gfx, mouseX, mouseY, partial);
                     gfx.disableScissor();
                 } else {
-                    drawEntryBackgrounds(gfx);
+                    drawEntryBackgrounds(gfx, mouseX, mouseY);
                     this.vanillaList.render(gfx, mouseX, mouseY, partial);
                 }
                 // Subrayado sutil bajo cada server
@@ -708,6 +709,29 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     }
 
 
+
+    /**
+     * v0.251.0: la mano que no quiere soltar el raton. Enter entra al puesto
+     * elegido y Supr lo borra, igual que los botones de abajo.
+     */
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+            if (this.diarySelect != null && this.diarySelect.active) {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.playClick();
+                onJoin();
+            }
+            return true;
+        }
+        if (keyCode == GLFW.GLFW_KEY_DELETE) {
+            if (this.diaryDelete != null && this.diaryDelete.active) {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.clickDestroy();
+                onDelete();
+            }
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
@@ -787,7 +811,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         } catch (Throwable ignored) {}
     }
 
-    private void drawEntryBackgrounds(GuiGraphics gfx) {
+    private void drawEntryBackgrounds(GuiGraphics gfx, int mouseX, int mouseY) {
         if (this.vanillaList == null) return;
         try {
             var children = this.vanillaList.children();
@@ -825,6 +849,22 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 com.eternalcraft.gripeverde.client.render.PaperTexture.drawTornSlip(
                     gfx, rowLeft - 9, drawTop - 1, rowRight - rowLeft + 18,
                     drawBottom - drawTop + 2, 0xE6D2A6, 0x422810, 210);
+
+                // v0.251.0: la fila que esta bajo la mano se aclara, para saber
+                // cual se lleva si se aprieta Enter o Supr.
+                boolean over = mouseX >= rowLeft - 9 && mouseX <= rowRight + 9
+                    && mouseY >= drawTop - 1 && mouseY < drawBottom + 1;
+                if (over) {
+                    gfx.fill(rowLeft - 9, drawTop - 1, rowRight + 9, drawBottom + 1, 0x18F3E7C8);
+                }
+
+                // v0.251.0: el puesto oficial lleva su lacre en el canto izquierdo.
+                ServerData sd = extractServerDataFromEntry(entry);
+                if (sd != null && isPinnedServer(sd)) {
+                    int sealX = rowLeft - 9;
+                    gfx.fill(sealX, drawTop - 1, sealX + 3, drawBottom + 1, 0xB05C0A08);
+                    gfx.fill(sealX + 1, drawTop + 2, sealX + 2, drawTop + 6, 0x70E8DCB4);
+                }
             }
         } catch (Throwable ignored) {}
     }

@@ -1,3 +1,11 @@
+## Version 0.251.0 - El diario, escrito de nuevo
+
+El cuaderno se reescribio entero, con dos reglas: nada que venga de un juego y todo lo que se cuenta, rastreable en un libro de verdad. Las tres fichas de origen cambiaron de fuente. El Ghoul recupera su etimologia arabe -el "ghul" que acecha en el desfiladero y entro a Europa con las traducciones de Las mil y una noches-; el Jockey toma el nombre del oficio de las carreras, el jinete liviano que se prende al lomo y lleva al animal donde quiere; y el Cuirassier deja de ser una coraza de teatro: es la plancha de hierro de la caballeria pesada francesa de este tiempo, con sable recto y caballo grande, y el hombre murio con ella puesta.
+
+Hay dos paginas nuevas. Una cuenta de donde vino la fiebre: un bergantin de carga llega de Danzig con trigo, sebo y una rata de mas, se descarga de noche sin cuarentena, y tres semanas despues el barrio del muelle tiene fiebre. La otra cuenta lo que se hizo con ella -el cordon, el lazareto, la cal viva y el vinagre- y por que se rompio donde habia hambre. La cuarentena de cuarenta dias, Ragusa 1377, Filadelfia 1793, Hamburgo 1892, Oporto 1899: todo lo que el cuaderno afirma tiene fecha y lugar.
+
+En las listas, la mano ya sabe donde esta. En multijugador, la fila que esta bajo el puntero se aclara, el puesto oficial lleva su lacre en el canto izquierdo y el teclado alcanza: Enter entra al puesto elegido y Supr lo borra. En la lista de mundos guardados, el mundo bajo la mano tambien se aclara y Enter abre el elegido, con el boton del juego haciendo el trabajo de siempre.
+
 ## Version 0.250.0 - La luna del reloj
 
 El reloj de bolsillo gana una ventanilla a las seis, donde los relojes de verdad llevan los segundos: adentro va la luna de esa noche, calculada con el calendario astronomico -mes sinodico de 29,530588 dias desde la luna nueva del 6 de enero de 2000- y no con el reloj del juego. El terminador se mueve con la fase, el aro es de laton y, cuando la hay, la ventanilla ocupa el sitio del VI. Detener la tapa suma una linea mas abajo: luna nueva, creciente, llena o menguante. La punta del segundero, ademas, lleva su punto, para leerla de lejos.

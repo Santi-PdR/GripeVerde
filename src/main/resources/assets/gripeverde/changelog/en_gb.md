@@ -1,3 +1,11 @@
+## Version 0.251.0 - The diary, written again
+
+The notebook was rewritten whole, under two rules: nothing that comes from a game, and everything it says traceable in a real book. The three origin entries changed source. The Ghoul recovers its Arabic etymology -the "ghul" that lurks in the pass and entered Europe with the translations of One Thousand and One Nights-; the Jockey takes its name from the racing trade, the light rider who mounts the back and steers the animal where he wants; and the Cuirassier stops being a theatre breastplate: it is the iron plate of French heavy cavalry of this time, with a straight sabre and a big horse, and the man died with it on.
+
+There are two new pages. One tells where the fever came from: a cargo brig arrives from Danzig with wheat, tallow and one rat too many, is unloaded at night without quarantine, and three weeks later the quay district has a fever. The other tells what was done about it -the cordon, the lazaretto, quicklime and vinegar- and why it broke where there was hunger. The forty-day quarantine, Ragusa 1377, Philadelphia 1793, Hamburg 1892, Porto 1899: everything the notebook states has a date and a place.
+
+In the lists, the hand now knows where it is. In multiplayer, the row under the pointer lightens, the official post carries its wax seal on the left edge and the keyboard reaches: Enter joins the chosen post and Del deletes it. In the saved-worlds list, the world under the hand lightens too and Enter opens the chosen one, with the game's own button doing the usual work.
+
 ## Version 0.250.0 - The watch's moon
 
 The pocket watch gains an aperture at six o'clock, where real watches keep their seconds: inside sits that night's moon, computed from the astronomical calendar -a 29.530588 day synodic month counted from the new moon of 6 January 2000- and not from the game clock. The terminator moves with the phase, the rim is brass and, when it is there, the aperture takes the place of the VI. Stopping the lid adds one more line below: new, waxing, full or waning. The second hand's tip carries its dot too, so it reads from a distance.

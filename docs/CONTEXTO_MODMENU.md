@@ -180,6 +180,12 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.251.0 — el diario y el teclado en las listas
+
+- **Diario**: `bitacora_es.md` / `bitacora_en.md` reescritos (13 secciones); el indice de dias sigue armandose solo desde los `##`, con `Enero` ya en el calendario.
+- **Multijugador**: `drawEntryBackgrounds(gfx,mouseX,mouseY)` con hover y lacre; `keyPressed` con Enter/Supr.
+- **Mundos**: hover en `drawRegisterPage` y `keyPressed` con Enter sobre el boton `selectWorld.select`.
+
 ## Cambios de 0.250.0 — la luna del reloj y la confirmacion por partes
 
 - **Reloj**: `moonPhase(nowMs)` (mes sinodico 29,530588 desde 2000-01-06 18:14 UTC), `drawMoonAperture` fila por fila, `moonName` para la cuarta linea de la tapa, punto en la punta del segundero.

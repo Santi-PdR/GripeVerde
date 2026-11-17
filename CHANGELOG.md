@@ -1,3 +1,9 @@
+## v0.251.0 - El diario, escrito de nuevo
+
+- `diary/bitacora_es.md` y `bitacora_en.md` reescritos: 13 entradas, sin referencias a juegos, con origen real de cada cosa (etimologia ghul/Nights, jockey, cuirassier napoleonico; Danzig, Ragusa 1377, Filadelfia 1793, Hamburgo 1892, Oporto 1899).
+- `DiaryMultiplayerScreen`: hover por fila, lacre del puesto oficial, `Enter` entra y `Supr` borra.
+- `DiarySelectWorldScreen`: hover por fila y `Enter` abre el mundo elegido.
+
 ## v0.250.0 - La luna del reloj
 
 - `PocketWatchRenderer`: ventanilla de luna a las seis con fase real (`moonPhase`, epoca 2000-01-06), aro de laton, `VI` reemplazado cuando corresponde y linea de fase en la tapa.

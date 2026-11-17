@@ -144,7 +144,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         }
 
         drawHeader(g);
-        drawRegisterPage(g);
+        drawRegisterPage(g, mouseX, mouseY);
         drawFooterPaper(g);
 
         // Lista y busqueda del juego, tal cual, encima de la pagina.
@@ -189,7 +189,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
      * su banda oscura, como las fotos pegadas en la ficha. Sin la banda, el
      * texto blanco del juego se perderia contra el papel.
      */
-    private void drawRegisterPage(GuiGraphics g) {
+    private void drawRegisterPage(GuiGraphics g, int mouseX, int mouseY) {
         if (this.vanillaList == null || this.rowLeft < 0 || this.listBottom <= this.listTop) return;
         int px = Math.max(-2, this.rowLeft - 14);
         int pw = Math.min(this.width + 2, this.rowRight + 14) - px;
@@ -223,6 +223,12 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             if (drawBottom <= drawTop) continue;
             g.fill(this.rowLeft - 6, drawTop, this.rowRight + 6, drawBottom, 0x6E2A1C10);
             g.fill(this.rowLeft - 6, drawBottom - 1, this.rowRight + 6, drawBottom, 0x55E8DCB4);
+            // v0.251.0: el mundo bajo la mano se aclara, igual que en la lista
+            // de posadas, para saber cual se lleva.
+            if (mouseX >= this.rowLeft - 6 && mouseX <= this.rowRight + 6
+                    && mouseY >= drawTop && mouseY < drawBottom) {
+                g.fill(this.rowLeft - 6, drawTop, this.rowRight + 6, drawBottom, 0x1AF3E7C8);
+            }
         }
     }
 
@@ -247,6 +253,29 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         int h = Math.min(this.height + 6, bottom + pad + 2) - y;
         if (w < 24 || h < 16) return;
         PaperTexture.drawTornSheet(g, x, y, w, h, PaperTexture.PaperKind.OFFICIAL);
+    }
+
+    /**
+     * v0.251.0: Enter entra al mundo elegido. El boton del juego sigue siendo
+     * el que trabaja; aca solo se lo aprieta por el lector.
+     */
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER
+                || keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_KP_ENTER) {
+            String want = net.minecraft.network.chat.Component.translatable("selectWorld.select").getString();
+            for (DiaryButton button : this.dressed) {
+                if (button.visible && button.active && want.equals(button.getMessage().getString())) {
+                    try {
+                        com.eternalcraft.gripeverde.client.audio.UiSounds.playClick();
+                    } catch (Throwable ignored) {
+                    }
+                    button.onPress();
+                    return true;
+                }
+            }
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override
