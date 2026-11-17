@@ -1,3 +1,11 @@
+## Version 0.242.0 - La puerta de servicio
+
+Los mundos guardados se abrian con la pantalla cruda del juego: negro, botones grises y titulo blanco. Ahora la entrada secreta -Ctrl+S, y desde esta version tambien Shift+S- lleva a la misma lista, pero leida como el resto de la casa: la escena de noche detras, la cabecera de papel con su membrete y REG. IX, y los botones del juego vestidos de papel.
+
+Con el Ctrl o el Shift apretado, abajo a la izquierda asoma la cerradura de servicio con su cartel; sin la llave no se ve, y se puede apretar. La lista, la busqueda y cada accion siguen siendo las de Minecraft: solo cambia la tinta.
+
+Las tres lentes de la cabecera ahora suenan igual, con la hoja que cae: el diario, el parte y el registro. La llave de servicio suena a cadena cuando se abre.
+
 ## Version 0.241.0 - El registro en la portada
 
 La fila de lentes de arriba a la derecha estrena la tercera: el Registro. Ahora las tres cosas del mod se abren desde la portada, con su propio dibujo cada una: el diario de supervivencia, el parte de CEDA y el gabinete de fichas. El cajon del registro lleva su tirador y su etiqueta, como los demas muebles de la casa.

@@ -5,13 +5,8 @@ import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.DeathScreen;
 import net.minecraft.client.gui.screens.Screen;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * v0.240.0: el telegrama de defuncion.
@@ -44,70 +39,7 @@ public final class DeathPaper {
     }
 
     private static void skinButtons(Screen screen) {
-        List<Button> originals = new ArrayList<>();
-        for (var child : screen.children()) {
-            if (child instanceof Button button && button.visible && !(child instanceof DiaryButton)) {
-                originals.add(button);
-            }
-        }
-        for (Button origin : originals) {
-            DiaryButton dressed = new DiaryButton(
-                origin.getX(), origin.getY(), origin.getWidth(), origin.getHeight(),
-                origin.getMessage(), DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
-                origin::onPress);
-            // Solo se oculta el boton del juego si el de papel quedo en su sitio:
-            // si algo falla, el jugador conserva los botones de siempre.
-            if (register(screen, dressed)) {
-                origin.visible = false;
-            }
-        }
-    }
-
-    /** Alta del widget sin pasar por Screen#addRenderableWidget (protegido). */
-    private static boolean register(Screen screen, AbstractWidget widget) {
-        boolean ok = false;
-        try {
-            List<Object> renderables = listField(screen, net.minecraft.client.gui.components.Renderable.class);
-            if (renderables != null) {
-                renderables.add(widget);
-                ok = true;
-            }
-        } catch (Throwable ignored) {
-        }
-        if (!ok) return false;
-        try {
-            // Screen#children() devuelve la lista viva pero con comodin: se
-            // castea para poder sumar el widget tambien al recorrido de clics.
-            @SuppressWarnings("unchecked")
-            List<Object> children = (List<Object>) (List<?>) screen.children();
-            children.add(widget);
-        } catch (Throwable ignored) {
-        }
-        try {
-            List<Object> narratables = listField(screen,
-                net.minecraft.client.gui.narration.NarratableEntry.class);
-            if (narratables != null) narratables.add(widget);
-        } catch (Throwable ignored) {
-        }
-        return true;
-    }
-
-    private static List<Object> listField(Object owner, Class<?> elementType) {
-        for (java.lang.reflect.Field field : Screen.class.getDeclaredFields()) {
-            if (!List.class.isAssignableFrom(field.getType())) continue;
-            if (!(field.getGenericType() instanceof java.lang.reflect.ParameterizedType pt)) continue;
-            if (pt.getActualTypeArguments().length != 1) continue;
-            if (pt.getActualTypeArguments()[0] != elementType) continue;
-            try {
-                field.setAccessible(true);
-                @SuppressWarnings("unchecked")
-                List<Object> list = (List<Object>) field.get(owner);
-                return list;
-            } catch (Throwable ignored) {
-                return null;
-            }
-        }
-        return null;
+        PaperButtons.dressAll(screen);
     }
 
     public static void render(GuiGraphics g, Screen screen) {

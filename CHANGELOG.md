@@ -1,3 +1,12 @@
+## v0.242.0 - Mundos guardados con tinta de la casa
+
+- `DiarySelectWorldScreen extends SelectWorldScreen`: escena de fondo, cabecera de papel (46 px) y papel calculado bajo el grupo
+  de botones; lista y busqueda del juego renderizadas tal cual (sin `super.render` para no duplicar el titulo vanilla).
+- `PaperButtons` (nuevo, `client/render`): alta de widgets por reflexion y vestido de botones vanilla reutilizable; `DeathPaper`
+  pasa a usarlo.
+- Portada: `Ctrl+S` o `Shift+S` abren los mundos; cerradura visible mientras se sostiene la tecla (clicable), sonido de cadena
+  al entrar y hoja que cae en las tres lentes.
+
 ## v0.241.0 - Registro, multijugador y descripción
 
 - `SlimButton.Icon.FILING` con `drawFileDrawer`; la portada gana el botón de registro (`DiaryArchiveScreen`) a

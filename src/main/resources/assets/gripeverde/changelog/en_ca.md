@@ -1,3 +1,11 @@
+## Version 0.242.0 - The service door
+
+Saved worlds opened with the game's raw screen: black, grey buttons and a white title. Now the secret entry - Ctrl+S, and from this version Shift+S too - leads to the same list, but read like the rest of the house: the night scene behind, the paper header with its letterhead and REG. IX, and the game's own buttons dressed in paper.
+
+With Ctrl or Shift held, the service lock shows at the bottom left with its sign; without the key it stays hidden, and it can be pressed. The list, the search and every action are still Minecraft's: only the ink changes.
+
+The three lenses in the header now sound alike, with the falling sheet: the diary, the report and the registry. The service key sounds like a chain when it opens.
+
 ## Version 0.241.0 - The registry on the cover
 
 The row of lenses at the top right gains its third: the Registry. All three things in the mod now open from the cover, each with its own drawing: the survival diary, the CEDA report and the file cabinet. The registry drawer has its handle and its label, like the rest of the furniture in the house.

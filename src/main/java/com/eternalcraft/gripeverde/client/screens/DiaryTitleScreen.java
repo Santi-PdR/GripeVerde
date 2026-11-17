@@ -310,7 +310,11 @@ public class DiaryTitleScreen extends Screen {
             SlimButton dispatchBtn = new SlimButton(
                 this.width - 76, 8, 20, 20,
                 Component.translatable("gripeverde.title.button.copyl"),
-                () -> this.minecraft.setScreen(new DiaryDispatchScreen(this)))
+                () -> {
+                    // v0.242.0: las tres lentes suenan igual: hoja que cae.
+                    playPaperLens(0.30f, 1.0f);
+                    this.minecraft.setScreen(new DiaryDispatchScreen(this));
+                })
                 .withIcon(SlimButton.Icon.DISPATCH_NOTE);
             dispatchBtn.setTooltip(Tooltip.create(
                 Component.translatable("gripeverde.title.button.copyl")));
@@ -324,8 +328,11 @@ public class DiaryTitleScreen extends Screen {
             SlimButton archiveBtn = new SlimButton(
                 this.width - 100, 8, 20, 20,
                 Component.literal(isEnglishSelected() ? "Registry" : "Registro"),
-                () -> this.minecraft.setScreen(
-                    new com.eternalcraft.gripeverde.client.screens.DiaryArchiveScreen(this)))
+                () -> {
+                    playPaperLens(0.32f, 0.86f);
+                    this.minecraft.setScreen(
+                        new com.eternalcraft.gripeverde.client.screens.DiaryArchiveScreen(this));
+                })
                 .withIcon(SlimButton.Icon.FILING);
             archiveBtn.setTooltip(Tooltip.create(Component.literal(
                 isEnglishSelected() ? "Registry of files" : "Registro de fichas")));
@@ -494,7 +501,9 @@ public class DiaryTitleScreen extends Screen {
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         lastInteractionMs = System.currentTimeMillis();
         boolean ctrl = (modifiers & GLFW.GLFW_MOD_CONTROL) != 0;
-        if (ctrl && keyCode == GLFW.GLFW_KEY_S) { onSingleplayer(); return true; }
+        boolean shift = (modifiers & GLFW.GLFW_MOD_SHIFT) != 0;
+        // v0.242.0: la llave de servicio responde a Ctrl+S y tambien a Shift+S.
+        if ((ctrl || shift) && keyCode == GLFW.GLFW_KEY_S) { onSingleplayer(); return true; }
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
@@ -547,7 +556,49 @@ public class DiaryTitleScreen extends Screen {
         try {
             drawDustIfDue(g);
             drawVigilLine(g);
+            drawServiceDoorHint(g, mouseX, mouseY);
         } catch (Throwable ignored) {}
+    }
+
+    /**
+     * v0.242.0: con Ctrl o Shift apretados, la cerradura de servicio aparece
+     * abajo a la izquierda con su cartel; sin la llave no se ve nada.
+     */
+    private void drawServiceDoorHint(GuiGraphics g, int mouseX, int mouseY) {
+        if (!serviceKeyHeld() || isMinimalMode()) return;
+        int x = 8;
+        int y = this.height - 56;
+        int w = 132;
+        int h = 20;
+        if (y < ICON_ROW_BOTTOM + 6) return;
+        boolean hover = mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h;
+        int ink = hover ? DiaryChrome.INK_TITLE : DiaryChrome.INK_SUBTITLE;
+        g.fill(x, y, x + w, y + h, 0x8CF3E7C8);
+        PaperTexture.drawWornBorder(g, x, y, w, h, ink, x * 31 + y * 17 + w);
+        // Ojo de la cerradura: gota redonda con su ranura.
+        int kx = x + 9;
+        int ky = y + 6;
+        g.fill(kx + 1, ky, kx + 5, ky + 1, ink);
+        g.fill(kx, ky + 1, kx + 6, ky + 5, ink);
+        g.fill(kx + 1, ky + 5, kx + 5, ky + 6, ink);
+        g.fill(kx + 2, ky + 6, kx + 4, ky + 9, ink);
+        String label = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+            ? "service door" : "puerta de servicio";
+        g.drawString(this.font, label, x + 20, y + 6, ink, false);
+    }
+
+    private boolean serviceKeyHeld() {
+        try {
+            long window = this.minecraft.getWindow().getWindow();
+            return net.minecraft.client.gui.screens.Screen.hasControlDown()
+                || net.minecraft.client.gui.screens.Screen.hasShiftDown()
+                || com.mojang.blaze3d.platform.InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_CONTROL)
+                || com.mojang.blaze3d.platform.InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_CONTROL)
+                || com.mojang.blaze3d.platform.InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_SHIFT)
+                || com.mojang.blaze3d.platform.InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_SHIFT);
+        } catch (Throwable ignored) {
+            return false;
+        }
     }
 
     /** El alba enferma: solo si el lector paso la noche entera. */
@@ -912,7 +963,27 @@ public class DiaryTitleScreen extends Screen {
 
     }
 
-    private void onSingleplayer() { this.minecraft.setScreen(new SelectWorldScreen(this)); }
+    /**
+     * v0.242.0: la puerta de servicio. Sigue siendo un secreto -Ctrl+S o
+     * Shift+S-, pero ya no abre la pantalla cruda del juego: abre los mundos
+     * guardados leidos como el resto de la casa.
+     */
+    /** v0.242.0: el sonido de hoja de las lentes de la cabecera. */
+    private void playPaperLens(float volume, float pitch) {
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                com.eternalcraft.gripeverde.client.audio.ModSounds.UI_PAPER_FALL.get(), volume, pitch);
+        } catch (Throwable ignored) {}
+    }
+
+    private void onSingleplayer() {
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_CHAIN.get(),
+                0.26f, 0.92f);
+        } catch (Throwable ignored) {}
+        this.minecraft.setScreen(new DiarySelectWorldScreen(this));
+    }
     private void onMultiplayer()  { this.minecraft.setScreen(new DiaryMultiplayerScreen(this)); }
     private void onMods()         { this.minecraft.setScreen(new ModListScreen(this)); }
     private void onOptions() { this.minecraft.setScreen(new DiaryOptionsScreen(this)); }
@@ -1012,6 +1083,16 @@ public class DiaryTitleScreen extends Screen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         lastInteractionMs = System.currentTimeMillis();
+
+        // v0.242.0: la cerradura de servicio responde al clic mientras se ve.
+        if (button == 0 && serviceKeyHeld() && !isMinimalMode()) {
+            int x = 8;
+            int y = this.height - 56;
+            if (mouseX >= x && mouseX <= x + 132 && mouseY >= y && mouseY <= y + 20) {
+                onSingleplayer();
+                return true;
+            }
+        }
 
         if (button == 0) {
             try {
