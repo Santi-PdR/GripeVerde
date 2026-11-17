@@ -625,6 +625,10 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         DiaryChrome.drawInkDivider(gfx, panelX + 24, titleY + 26, Math.max(0, panelW - 48));
         DiaryChrome.drawDivisorLozenge(gfx, centerX, titleY + 26);
 
+        // v0.241.0: el tramo vacio de la lista se dibuja como renglones de
+        // registro, para que la hoja no quede en blanco.
+        drawRegisterRules(gfx);
+
         // Lista vanilla (con sus favicons, ping, MOTD, etc.)
         if (this.vanillaList != null) {
             try {
@@ -747,10 +751,30 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         }
         String text = this.countText;
         int textW = this.countWidth;
-        int x = panelX + panelW - textW - 20;
+        // v0.241.0: el recuento se corre a la izquierda de la chapa REG. X,
+        // que ocupaba ese rincón.
+        int x = panelX + panelW - 74 - textW;
         int y = titleY + 4;
         if (x < panelX + 20) return;   // panel angosto: no vale la pena
         gfx.drawString(this.font, text, x, y, DiaryChrome.INK_SUBTITLE, false);
+    }
+
+    /** v0.241.0: renglones tenues del registro, detras de la lista. */
+    private void drawRegisterRules(GuiGraphics gfx) {
+        if (this.vanillaList == null) return;
+        try {
+            int rowLeft = this.vanillaList.getRowLeft();
+            int rowRight = rowLeft + this.vanillaList.getRowWidth();
+            int top = this.vanillaList.getTop();
+            int bottom = this.vanillaList.getBottom();
+            if (rowRight <= rowLeft || bottom <= top) return;
+            int ink = 0x14422810;
+            int step = Math.max(14, vanillaItemHeight > 0 ? vanillaItemHeight : 26);
+            int guard = 0;
+            for (int y = top + step; y < bottom - 6 && guard < 64; y += step, guard++) {
+                gfx.fill(rowLeft - 4, y, rowRight + 4, y + 1, ink);
+            }
+        } catch (Throwable ignored) {}
     }
 
     private void drawEntryBackgrounds(GuiGraphics gfx) {
@@ -785,19 +809,12 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 int drawBottom = Math.min(entryBottom, listBottom);
                 if (drawBottom <= drawTop) continue;
 
-                // Banda sepia semi-transparente (contraste sin agredir al pergamino)
-                int bandColor = 0x583A2416;
-                int bandEdge  = 0x183A2416;
-                // Extension lateral para envolver bien el favicon
-                int extL = 8;
-                int extR = 4;
-
-                // Fade lateral izquierdo
-                gfx.fillGradient(rowLeft - extL, drawTop, rowLeft, drawBottom, bandEdge, bandColor);
-                // Cuerpo central solido
-                gfx.fill(rowLeft, drawTop, rowRight, drawBottom, bandColor);
-                // Fade lateral derecho
-                gfx.fillGradient(rowRight, drawTop, rowRight + extR, drawBottom, bandColor, bandEdge);
+                // v0.241.0: el puesto se monta sobre un recorte de papel, con
+                // su margen alrededor; la placa oscura del juego queda adentro
+                // como si fuera la foto pegada en la ficha.
+                com.eternalcraft.gripeverde.client.render.PaperTexture.drawTornSlip(
+                    gfx, rowLeft - 9, drawTop - 1, rowRight - rowLeft + 18,
+                    drawBottom - drawTop + 2, 0xE6D2A6, 0x422810, 210);
             }
         } catch (Throwable ignored) {}
     }

@@ -76,7 +76,11 @@ public final class DeathPaper {
         }
         if (!ok) return false;
         try {
-            screen.children().add(widget);
+            // Screen#children() devuelve la lista viva pero con comodin: se
+            // castea para poder sumar el widget tambien al recorrido de clics.
+            @SuppressWarnings("unchecked")
+            List<Object> children = (List<Object>) (List<?>) screen.children();
+            children.add(widget);
         } catch (Throwable ignored) {
         }
         try {
