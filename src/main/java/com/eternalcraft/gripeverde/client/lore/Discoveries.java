@@ -163,23 +163,19 @@ public final class Discoveries {
         int x = screenW - bw - 8;
         int y = 8;
 
-        int paper = (alpha << 24) | 0xE6D2A6;
         int ink = (alpha << 24) | 0x241608;
         int red = (Math.min(215, alpha) << 24) | 0x6E1F16;
-        int bronze = (Math.min(190, alpha) << 24) | 0x8E6A35;
 
-        g.fill(x + 2, y + 2, x + bw + 2, y + 26, (Math.min(60, alpha / 3) << 24) | 0x000000);
-        g.fill(x, y, x + bw, y + 24, paper);
-        g.fill(x, y, x + bw, y + 1, bronze);
-        g.fill(x, y + 23, x + bw, y + 24, bronze);
-        g.fill(x, y, x + 1, y + 24, bronze);
-        g.fill(x + bw - 1, y, x + bw, y + 24, bronze);
+        // v0.239.0: el aviso es un recorte de papel rasgado que se desvanece,
+        // no una tarjeta con marco. El fundido de entrada y salida se conserva.
+        com.eternalcraft.gripeverde.client.render.PaperTexture.drawTornSlip(
+            g, x, y, bw, 24, 0xE6D2A6, 0x422810, alpha);
         // Sello de lacre reducido para una sola ficha.
         g.fill(x + 5, y + 8, x + 13, y + 16, red);
         g.fill(x + 7, y + 10, x + 11, y + 14, (Math.min(255, alpha) << 24) | 0x8B2A1C);
         g.fill(x + 6, y + 9, x + 8, y + 10, (Math.min(160, alpha) << 24) | 0xFFAA88);
 
-        g.drawString(mc.font, visibleHeader, x + 18, y + 3, red, false);
+        g.drawString(mc.font, visibleHeader, x + 18, y + 4, red, false);
         g.drawString(mc.font, visibleName, x + 18, y + 13, ink, false);
     }
 

@@ -1,3 +1,9 @@
+## Version 0.239.0 - The new-file notice is a cutting
+
+When a new file appears, the notice in the corner was a card with a bronze frame: the second-to-last piece of card in the interface. Now it is a torn paper cutting, with eaten edges, the usual lint and the short shadow at its foot.
+
+The notice has to fade in and out, so the cutting carries the alpha inside every pixel: it fades exactly as before, and stays still when the reader has motion reduced. The wax seal and the two lines stay where they were.
+
 ## Version 0.238.0 - The text fields and the search box
 
 The fields where you type - the diary search box, server names, the language search - still had the one-pixel frame, the last rectangle in the interface after the buttons and controls. Now they carry the same hand-drawn rule: stretches that rise and fall, with the uneven length of a pen.

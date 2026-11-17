@@ -1,3 +1,10 @@
+## v0.239.0 - Aviso de ficha sobre recorte
+
+- `PaperTexture.drawTornSlip(g,x,y,w,h,paperRgb,inkRgb,alpha)`: cuerpo, dientes y pelusa con el alfa escalado (cuerpo α, dientes
+  α×236/255, pelusa α×90/255, sombra α/4); mismas medidas de desgarro que `drawTornSheet`.
+- `Discoveries.drawToast`: sustituye el relleno recto y los cuatro filetes bronce por `drawTornSlip`; se conservan el fundido
+  (que respeta Movimiento reducido), el sello y los dos rótulos.
+
 ## v0.238.0 - Campos de texto sin caja
 
 - `DiaryTextField`: el borde de 1 px (sepia, o lacre con foco) pasa a `PaperTexture.drawWornBorder`; se mantienen el brillo

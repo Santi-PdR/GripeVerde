@@ -1,3 +1,9 @@
+## Version 0.239.0 - El aviso de ficha nueva es un recorte
+
+Cuando aparece una ficha nueva, el aviso de la esquina era una tarjeta con marco bronce: la penultima cartulina de la interfaz. Ahora es un recorte de papel rasgado, con los cantos comidos, la pelusa de siempre y la sombra corta al pie.
+
+El aviso tiene que entrar y salir con su fundido, asi que el recorte lleva el alfa metido en cada pixel: se desvanece igual que antes, y sigue quieto cuando el lector tiene el movimiento reducido. El sello de lacre y los dos renglones se quedan donde estaban.
+
 ## Version 0.238.0 - Los campos de texto y el buscador
 
 Los campos donde se escribe -el buscador del diario, los nombres de servidor, la busqueda de idiomas- seguian con el marco de un pixel, el ultimo rectangulo de la interfaz despues de los botones y los mandos. Ahora llevan el mismo filete dibujado a mano: tramos que suben y bajan, con el largo irregular de la pluma.

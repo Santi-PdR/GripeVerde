@@ -220,6 +220,52 @@ public final class PaperTexture {
     }
 
     /**
+     * v0.239.0: recorte de papel que se desvanece.
+     *
+     * Los avisos de ficha nueva entran y salen con un fundido corto, y una
+     * hoja opaca no puede hacerlo. Esta version del recorte lleva el mismo
+     * desgarro y la misma pelusa, pero todos sus colores se escalan por un
+     * alfa dado; el aviso sigue entrando y saliendo como antes.
+     *
+     * paperRgb e inkRgb van sin alfa (0x00RRGGBB).
+     */
+    public static void drawTornSlip(GuiGraphics g, int x, int y, int w, int h,
+                                    int paperRgb, int inkRgb, int alpha) {
+        if (g == null || w < 24 || h < 14) return;
+        int a = Math.max(0, Math.min(255, alpha));
+        if (a == 0) return;
+        int rgb = paperRgb & 0xFFFFFF;
+        int inkRgbMasked = inkRgb & 0xFFFFFF;
+        int body = (a << 24) | rgb;
+        int tooth = ((a * 236) / 255 << 24) | rgb;
+        int fuzz = ((a * 90) / 255 << 24) | (inkRgbMasked);
+        int shadow = ((a / 4) << 24) | 0x000000;
+        int seed = (x * 73856093) ^ (y * 19349663) ^ (w * 83492791) ^ (h * 297121507);
+
+        // Sombra corta y cuerpo, con el desgarro en los dos cantos largos.
+        g.fill(x + 2, y + h - 2, x + w + 2, y + h + 1, shadow);
+        g.fill(x, y + 3, x + w, y + h - 3, body);
+
+        int step = Math.max(6, w / 24);
+        for (int e = 0; e < 2; e++) {
+            boolean top = e == 0;
+            int offset = 0;
+            for (int i = 0; offset < w; i++) {
+                int r = mix(seed + i * 7919 + (top ? 0 : 0x1F3D5B));
+                int len = Math.min(w - offset, step + Math.floorMod(r, step));
+                int notch = 1 + Math.floorMod(r >>> 6, 3);
+                if (top) g.fill(x + offset, y + 3 - notch, x + offset + len, y + 3, tooth);
+                else     g.fill(x + offset, y + h - 4, x + offset + len, y + h - 4 + notch, tooth);
+                if (Math.floorMod(r >>> 17, 4) == 0) {
+                    int fx = x + offset + Math.floorMod(r >>> 21, Math.max(1, len));
+                    g.fill(fx, y + 2, fx + 1, y + 3, fuzz);
+                }
+                offset += len;
+            }
+        }
+    }
+
+    /**
      * v0.235.0: filete dibujado a mano para botones y mandos.
      *
      * El borde recto de un pixel era lo ultimo que le quedaba de caja a los
