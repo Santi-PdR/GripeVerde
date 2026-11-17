@@ -180,6 +180,11 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.255.0 — la lista de mods
+
+- **Fondo**: la lista de Forge se apaga igual que la de mundos.
+- **Fichas**: `drawRowSlips` con `getRowLeft/getRowWidth/getTop/getBottom/getScrollAmount` y `itemHeight` reflectivo.
+
 ## Cambios de 0.254.0 — el fondo de la lista de mundos
 
 - **Causa del bug**: `AbstractSelectionList` pinta el fondo de la pantalla por cuadro; en mundos faltaba `setRenderBackground(false)` (multijugador ya lo tenia).

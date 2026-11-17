@@ -1,3 +1,8 @@
+## v0.255.0 - La lista de mods tambien lleva fichas
+
+- `DiaryModListScreen`: `findList()` sobre `AbstractSelectionList`, `setRenderBackground(false)` + `setRenderTopAndBottom(false)`, `itemHeight` por reflexion.
+- `drawRowSlips`: recorte de papel por mod con hover; guardas de geometria.
+
 ## v0.254.0 - La lista de mundos dejo de taparse
 
 - `DiarySelectWorldScreen.init`: `setRenderBackground(false)` + `setRenderTopAndBottom(false)` sobre `WorldSelectionList` (el fondo crudo que tapaba cabecera y pie).

@@ -1,3 +1,9 @@
+## Version 0.255.0 - The mod list carries files too
+
+Forge's mod screen had the same vice as the worlds one: its list painted the screen background every frame. That is off now, and the night scene really shows.
+
+On top of that, every mod rests on its own paper clipping, like the archive files and the server list posts: the geometry is read from Forge's list -row height, margin and scroll- and if a datum is missing nothing is drawn, instead of drawing too much. The row under the hand lightens, as in the other two lists. Search, configuration and links remain Forge's own, untouched.
+
 ## Version 0.254.0 - The worlds list stopped covering itself
 
 This was the bare-screen bug. The game's world list, unless told otherwise, paints its own background -the screen's background- every frame, and it was painting it over the paper header and footer. That is why the raw background showed with the buttons already dressed: the paper was there, but underneath. In the server list that background has been off for versions; in the worlds list it was missing. It is done now.

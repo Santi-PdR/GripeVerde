@@ -1,3 +1,9 @@
+## Version 0.255.0 - La lista de mods tambien lleva fichas
+
+La pantalla de mods de Forge tenia el mismo vicio que la de mundos: su lista pintaba el fondo de la pantalla en cada cuadro. Se le apago, y ahora la escena de la noche se ve de verdad.
+
+Encima, cada mod se apoya en su recorte de papel, como las fichas del archivo y los puestos de la lista de servidores: la geometria se lee de la lista de Forge -alto de renglon, margen y desplazamiento- y si falta un dato no se dibuja nada, en vez de dibujar de mas. El renglon bajo la mano se aclara, igual que en las otras dos listas. La busqueda, la configuracion y los enlaces siguen siendo los de Forge, intactos.
+
 ## Version 0.254.0 - La lista de mundos dejo de taparse
 
 Esto era el bug de la pantalla pelada. La lista de mundos del juego, si nadie le dice lo contrario, pinta su propio fondo -el fondo de la pantalla- en cada cuadro, y lo pintaba encima de la cabecera y del pie de papel. Por eso se veia el fondo crudo con los botones ya vestidos: el papel estaba puesto, pero abajo. En la lista de servidores ese fondo estaba apagado desde hace versiones; en la de mundos faltaba apagarlo. Ya esta.
