@@ -8,7 +8,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.advancements.AdvancementsScreen;
-import net.minecraft.client.multiplayer.ClientAdvancementManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +27,15 @@ public class DiaryAdvancementsScreen extends AdvancementsScreen {
 
     private final List<DiaryButton> dressed = new ArrayList<>();
 
-    public DiaryAdvancementsScreen(ClientAdvancementManager manager) {
-        super(manager);
+    // El tipo del gestor de avances se resuelve por el constructor padre: se
+    // pasa como Object y el compilador infiere el tipo exacto en super(...).
+    public DiaryAdvancementsScreen(Object manager) {
+        super(asManager(manager));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> T asManager(Object manager) {
+        return (T) manager;
     }
 
     @Override
