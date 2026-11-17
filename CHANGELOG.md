@@ -1,3 +1,10 @@
+## v0.246.0 - Tapa del reloj, mancha de la pausa y mandos
+
+- `PocketWatchRenderer.drawInspection`: tercera linea con `discoveredCount()/ALL.length` y versión al pie; el parámetro `version`
+  deja de estar sin uso.
+- `DiaryPauseScreen`: clic en cualquiera de las dos manchas (`bloodSpotAt`, radio 12 px) dispara `N_DOCTOR` una sola vez.
+- `DiarySlider`: sonido de paso del mouse con memoria de estado.
+
 ## v0.245.0 - Las ocho fichas sin disparador
 
 - Restaurados los disparadores de `AVENUE_DARK` (portada inactiva 40 s), `DRAWER_OPEN` / `DRAWER_COMPLETE` (fichas abiertas

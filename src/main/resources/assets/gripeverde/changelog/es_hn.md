@@ -1,3 +1,9 @@
+## Version 0.246.0 - La tapa cuenta lo leido
+
+Cuando detenes el reloj y la inscripcion termina de escribirse, aparece una tercera linea: cuantas fichas llevas del archivo -o, si ya estan todas, que no falta ninguna-. Al pie del cuadro queda la version del gabinete, en chico, como el sello de un taller.
+
+Las dos manchas de sangre de la hoja de pausa ya no son pintura: si las tocas, la hoja contesta con una nota del cronista y un sonido de ambiente lejano. Y los mandos de las opciones avisan cuando la mano se les acerca, igual que los botones.
+
 ## Version 0.245.0 - El archivo se puede completar
 
 Habia ocho fichas que no se podian conseguir: sus disparadores se habian quedado en el camino en alguna limpieza, y con eso el gabinete nunca llegaba al final. Vuelven todas, cada una con su gesto:

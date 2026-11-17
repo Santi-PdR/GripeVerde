@@ -1,3 +1,9 @@
+## Version 0.246.0 - The lid tells what has been read
+
+When you stop the watch and the inscription finishes writing itself, a third line appears: how many files you carry from the archive - or, if all of them are in, that none are missing. At the foot of the box the cabinet version stays, small, like a workshop stamp.
+
+The two blood spots on the pause sheet are no longer paint: touch them and the sheet answers with a note from the chronicler and a distant ambience. And the option controls now warn when the hand comes close, like the buttons do.
+
 ## Version 0.245.0 - The archive can be completed
 
 Eight files could not be obtained: their triggers had been left behind in some cleanup, and the cabinet could therefore never be completed. All of them are back, each with its own gesture:

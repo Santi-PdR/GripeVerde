@@ -150,6 +150,23 @@ public class PocketWatchRenderer {
             int w2 = font.width(part);
             g.drawString(font, part, cx - w2 / 2, cy + radius + 28, (Math.min(160, (chars - 14) * 8) << 24) | 0x8E7A55, false);
         }
+        // v0.246.0: la tapa tambien dice cuanto se lleva leido del archivo.
+        if (chars > 26) {
+            int total = com.eternalcraft.gripeverde.client.lore.Discoveries.ALL.length;
+            int found = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.discoveredCount();
+            String l3 = en
+                ? (found >= total ? "every file, accounted for" : found + " of " + total + " files")
+                : (found >= total ? "todas las fichas, en su cajon" : found + " de " + total + " fichas");
+            int w3 = font.width(l3);
+            g.drawString(font, l3, cx - w3 / 2, cy + radius + 42,
+                (Math.min(130, (chars - 26) * 6) << 24) | 0x6B5533, false);
+        }
+        // La version del gabinete, al pie y en chico.
+        if (version != null && !version.isBlank()) {
+            String ver = "v" + version;
+            g.drawString(font, ver, 10, h - 16, 0x50B89A6E, false);
+        }
+
         String hint = en ? "~ click anywhere to let it swing again ~" : "~ pulsa en cualquier parte para que vuelva a oscilar ~";
         int wh2 = font.width(hint);
         g.drawString(font, hint, cx - wh2 / 2, h - 26, 0x60B89A6E, false);

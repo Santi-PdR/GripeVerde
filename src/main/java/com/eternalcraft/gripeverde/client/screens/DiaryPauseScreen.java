@@ -243,10 +243,33 @@ public class DiaryPauseScreen extends PauseScreen {
         } catch (Throwable ignored) {}
     }
 
+    // v0.246.0: las dos manchas de la hoja estan donde las dejo alguien.
+    private int bloodSpotAt(double mouseX, double mouseY, int px, int py) {
+        int pw = panelW();
+        int ph = panelH();
+        int[][] spots = new int[][]{{px + pw - 50, py + ph - 90}, {px + pw - 30, py + 30}};
+        for (int i = 0; i < spots.length; i++) {
+            int dx = (int) mouseX - spots[i][0];
+            int dy = (int) mouseY - spots[i][1];
+            if (dx * dx + dy * dy <= 144) return i;
+        }
+        return -1;
+    }
+
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == 0) {
             try {
+                int spotPx = panelX();
+                int spotPy = panelY();
+                if (!overAnyButton(mouseX, mouseY) && bloodSpotAt(mouseX, mouseY, spotPx, spotPy) >= 0) {
+                    com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                        com.eternalcraft.gripeverde.client.lore.Marginalia.N_DOCTOR);
+                    com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                        com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_AMBIENT_OCCASIONAL.get(),
+                        0.18f, 0.62f);
+                    return true;
+                }
                 int px = panelX(), py = panelY();
                 // La vela: apagarla revela lo que lee la oscuridad.
                 int candleX = px + 20, candleY = py + panelH() - 32;

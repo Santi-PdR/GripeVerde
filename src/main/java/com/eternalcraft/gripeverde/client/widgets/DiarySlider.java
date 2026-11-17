@@ -30,6 +30,8 @@ public class DiarySlider extends AbstractSliderButton {
     private final DoubleFunction<String> labelFormatter;
     private final DoubleConsumer onValueChanged;
     private final boolean applyOnDrag;
+    // v0.246.0: el mando tambien avisa cuando la mano se le acerca.
+    private boolean wasHovered = false;
 
     public DiarySlider(int x, int y, int w, int h,
                        double initialValue,
@@ -74,6 +76,10 @@ public class DiarySlider extends AbstractSliderButton {
         int w = this.getWidth();
         int h = this.getHeight();
         boolean hovered = this.isHoveredOrFocused() && this.active;
+        if (hovered && !this.wasHovered) {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.playHover();
+        }
+        this.wasHovered = hovered;
 
         g.fill(x + 1, y + 1, x + w + 1, y + h + 1, 0x18000000);
         g.fill(x, y, x + w, y + h, 0xFFCDBA90);
