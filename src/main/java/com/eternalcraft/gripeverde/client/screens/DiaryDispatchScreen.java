@@ -197,6 +197,14 @@ public class DiaryDispatchScreen extends Screen {
         DispatchLibrary.setMessage(slot, text);
         this.dirty = true;
         this.lastEditMs = Util.getMillis();
+        // v0.245.0: la primera voz escrita es una carta al barrio que no
+        // responde; queda anotada en el archivo.
+        if (text != null && !text.isBlank()) {
+            try {
+                com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                    com.eternalcraft.gripeverde.client.lore.Discoveries.LETTERS);
+            } catch (Throwable ignored) {}
+        }
     }
 
     private void saveIfNeeded(boolean force) {

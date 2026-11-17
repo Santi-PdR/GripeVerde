@@ -428,6 +428,10 @@ public class DiaryArchiveScreen extends Screen {
         return index < Discoveries.ALL.length ? index : -1;
     }
 
+    // v0.245.0: el cajon de la mesa. Se abre la primera vez que se consulta
+    // una ficha, y queda completo cuando en la misma visita se abrieron cinco.
+    private static final java.util.Set<String> drawerThisVisit = new java.util.HashSet<>();
+
     private boolean openCard(int index) {
         if (index < 0 || index >= Discoveries.ALL.length) return false;
         String id = Discoveries.ALL[index];
@@ -436,7 +440,24 @@ public class DiaryArchiveScreen extends Screen {
         if (DOC_NONE.equals(doc)) return false;
         viewingDoc = doc;
         UiSounds.tab();
+        noteDrawer(id, doc);
         return true;
+    }
+
+    private void noteDrawer(String id, String doc) {
+        try {
+            drawerThisVisit.add(id);
+            Discoveries.discover(Discoveries.DRAWER_OPEN);
+            if (drawerThisVisit.size() >= 5) {
+                Discoveries.discover(Discoveries.DRAWER_COMPLETE);
+            }
+            if (DOC_TELEGRAM.equals(doc)) {
+                Discoveries.discover(Discoveries.SEAL_BREAKER);
+            } else if (DOC_FORBIDDEN.equals(doc)) {
+                Discoveries.discover(Discoveries.BROKEN_SEAL);
+            }
+        } catch (Throwable ignored) {
+        }
     }
 
     private void renderDocument(GuiGraphics g, boolean en) {

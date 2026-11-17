@@ -1,3 +1,16 @@
+## Version 0.245.0 - The archive can be completed
+
+Eight files could not be obtained: their triggers had been left behind in some cleanup, and the cabinet could therefore never be completed. All of them are back, each with its own gesture:
+
+  - The avenue goes dark: leave the cover untouched for forty seconds.
+  - The cabinet drawer: consult a file. And complete, if five are opened in the same visit.
+  - The broken seal and the wax that did not hold: open the forbidden folio and the telegram in the reading room.
+  - The unanswered letters: write the first voice in the CEDA report.
+  - Signed in the guest book: enter the atlas of lodgings.
+  - Three knocks, answered: knock on the service door three times.
+
+The cover watch also says what it does: with the hand over it, a line asks to stop it to read the inscription. The second hand still sickens with the session, as always.
+
 ## Version 0.244.0 - The seal on press
 
 Every button in the house now answers with a seal: when pressed, its outline opens two or three pixels in sealing-wax ink and fades in under half a second, like stamping paper. The large buttons, the small tabs in the header and the two cover buttons all carry it. Still a single pulse: no loops, and with reduced motion - or inside a world - the seal does not appear.

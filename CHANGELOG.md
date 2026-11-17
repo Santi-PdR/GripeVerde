@@ -1,3 +1,11 @@
+## v0.245.0 - Las ocho fichas sin disparador
+
+- Restaurados los disparadores de `AVENUE_DARK` (portada inactiva 40 s), `DRAWER_OPEN` / `DRAWER_COMPLETE` (fichas abiertas
+  en la sala de consulta), `LETTERS` (primera voz escrita en el parte), `GUESTBOOK` (entrar al multijugador), `BROKEN_SEAL`
+  (folio prohibido), `SEAL_BREAKER` (telegrama) y `KNOCK_BACK` (tres aperturas de la puerta de servicio).
+- `DiaryTitleScreen.drawPocketWatch` recibe el mouse y dibuja la ayuda del reloj al pasar por encima.
+- Verificación: `Discoveries.ALL` (45) sin fichas inalcanzables.
+
 ## v0.244.0 - Sello de pulsación y lista de mods
 
 - `PaperTexture.drawSealRing(g,x,y,w,h,k)`: anillo de lacre que se abre 1-5 px y se apaga en 9 ticks (α150→0).

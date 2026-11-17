@@ -569,9 +569,19 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         return null;
     }
 
+    // v0.245.0: entrar al atlas de hospedajes firma el libro de visitas.
+    private static boolean guestbookSigned;
+
     @Override
     public void tick() {
         super.tick();
+        if (!guestbookSigned) {
+            guestbookSigned = true;
+            try {
+                com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                    com.eternalcraft.gripeverde.client.lore.Discoveries.GUESTBOOK);
+            } catch (Throwable ignored) {}
+        }
         updateDiaryButtonStates();
         this.smoothScroll.tick(this.vanillaList);
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.tick(1.0f / 20.0f);

@@ -1,3 +1,16 @@
+## Version 0.245.0 - El archivo se puede completar
+
+Habia ocho fichas que no se podian conseguir: sus disparadores se habian quedado en el camino en alguna limpieza, y con eso el gabinete nunca llegaba al final. Vuelven todas, cada una con su gesto:
+
+  - La avenida a oscuras: dejar la portada quieta cuarenta segundos.
+  - El cajon del gabinete: consultar una ficha. Y completo, si en la misma visita se abren cinco.
+  - El sello roto y el lacre que no resistio: abrir el folio prohibido y el telegrama en la sala de consulta.
+  - Las cartas sin respuesta: escribir la primera voz en el parte de CEDA.
+  - Firmado en el libro de visitas: entrar al atlas de hospedajes.
+  - Tres golpes, respondidos: golpear la puerta de servicio tres veces.
+
+El reloj de la portada, ademas, ahora dice lo que hace: con la mano encima, una linea pide detenerlo para leer la inscripcion. El segundero sigue enfermando con la sesion, como siempre.
+
 ## Version 0.244.0 - El sello al apretar
 
 Cada boton de la casa responde ahora con un sello: al apretarlo, su contorno se abre dos o tres pixeles en tinta de lacre y se apaga en menos de medio segundo, como cuando se estampa un papel. Lo llevan los botones grandes, las pestañas chicas de la cabecera y los dos botones de la portada. Sigue habiendo un solo pulso: nada de bucles, y con Movimiento reducido -o dentro de una partida- el sello no aparece.

@@ -535,7 +535,7 @@ public class DiaryTitleScreen extends Screen {
             if (!isMinimalMode()) {
                 // v0.188.0: fuera los periodicos de la portada (bando de
                 // cuarentena y "se busca"); queda la ciudad al fondo.
-                drawPocketWatch(g);
+                drawPocketWatch(g, mouseX, mouseY);
             }
 
             com.eternalcraft.gripeverde.client.render.LogoRenderer.setWatchedMouse(mouseX, mouseY);
@@ -557,6 +557,7 @@ public class DiaryTitleScreen extends Screen {
             drawDustIfDue(g);
             drawVigilLine(g);
             drawServiceDoorHint(g, mouseX, mouseY);
+            pollIdleDarkness();
         } catch (Throwable ignored) {}
     }
 
@@ -585,6 +586,27 @@ public class DiaryTitleScreen extends Screen {
         String label = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
             ? "service door" : "puerta de servicio";
         g.drawString(this.font, label, x + 20, y + 6, ink, false);
+    }
+
+    /**
+     * v0.245.0: si nadie toca la portada durante cuarenta segundos, los faroles
+     * se apagan solos y la avenida queda a oscuras: la ficha de la avenida.
+     */
+    private static boolean avenueNoted;
+
+    private void pollIdleDarkness() {
+        if (avenueNoted) return;
+        if (this.lastInteractionMs <= 0L) return;
+        if (System.currentTimeMillis() - this.lastInteractionMs < 40_000L) return;
+        avenueNoted = true;
+        try {
+            if (com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                    com.eternalcraft.gripeverde.client.lore.Discoveries.AVENUE_DARK)) {
+                com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                    com.eternalcraft.gripeverde.client.lore.Marginalia.N_DUST);
+            }
+        } catch (Throwable ignored) {
+        }
     }
 
     private boolean serviceKeyHeld() {
@@ -816,7 +838,7 @@ public class DiaryTitleScreen extends Screen {
 
 
 
-    private void drawPocketWatch(GuiGraphics g) {
+    private void drawPocketWatch(GuiGraphics g, int mouseX, int mouseY) {
         LayoutRegion rightCol = rightColumn();
         int diameter = WATCH_RADIUS * 2 + 30; // + espacio para cadena y label
         int reserved = BTN_SLIM_H + Spacing.GAP_LARGE * 2;
@@ -831,6 +853,19 @@ public class DiaryTitleScreen extends Screen {
         // propio renderer omite la cadena en vez de dibujar un muñón.
         int chainTop = Math.max(rightCol.y, ICON_ROW_BOTTOM + Spacing.GAP_SMALL);
         PocketWatchRenderer.draw(g, cx, cy, chainTop, WATCH_RADIUS, GripeVerdeMod.VERSION);
+        // v0.245.0: el reloj enseña lo que hace cuando la mano se le acerca.
+        int dx = mouseX - cx;
+        int dy = mouseY - cy;
+        if (dx * dx + dy * dy <= WATCH_RADIUS * WATCH_RADIUS) {
+            String hint = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+                ? "stop it to read" : "detenerlo para leer";
+            int hw = DiaryChrome.widthCached(this.font, hint);
+            int hy = cy + WATCH_RADIUS + 18;
+            if (hy + 10 < this.height) {
+                g.drawString(this.font, hint, cx - hw / 2, hy,
+                    DiaryChrome.INK_SUBTITLE, false);
+            }
+        }
     }
 
     private void drawLogo(GuiGraphics g) {
@@ -972,7 +1007,17 @@ public class DiaryTitleScreen extends Screen {
         } catch (Throwable ignored) {}
     }
 
+    // v0.245.0: tres golpes a la puerta de servicio y alguien contesta.
+    private static int serviceKnocks;
+
     private void onSingleplayer() {
+        serviceKnocks++;
+        if (serviceKnocks >= 3) {
+            try {
+                com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                    com.eternalcraft.gripeverde.client.lore.Discoveries.KNOCK_BACK);
+            } catch (Throwable ignored) {}
+        }
         try {
             com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
                 com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_CHAIN.get(),
