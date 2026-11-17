@@ -21,7 +21,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class SlimButton extends AbstractButton {
 
-    public enum Icon { NONE, OPEN_LEDGER, DISPATCH_NOTE }
+    public enum Icon { NONE, OPEN_LEDGER, DISPATCH_NOTE, FILING }
 
     private final Runnable onClick;
     private Icon icon = Icon.NONE;
@@ -90,6 +90,8 @@ public class SlimButton extends AbstractButton {
             drawOpenLedger(g, x + (w - 12) / 2, y + (h - 10) / 2, textColor);
         } else if (icon == Icon.DISPATCH_NOTE) {
             drawDispatchNote(g, x + (w - 12) / 2, y + (h - 12) / 2, textColor);
+        } else if (icon == Icon.FILING) {
+            drawFileDrawer(g, x + (w - 12) / 2, y + (h - 12) / 2, textColor);
         } else {
             Font font = Minecraft.getInstance().font;
             // v0.186.0: encoje la letra antes que recortarla; asi la etiqueta
@@ -128,6 +130,17 @@ public class SlimButton extends AbstractButton {
         g.fill(x + 2, y + 3, x + 8, y + 4, ink);
         g.fill(x + 2, y + 5, x + 8, y + 6, ink);
         g.fill(x + 2, y + 7, x + 6, y + 8, ink);
+    }
+
+    /** v0.241.0: cajon del gabinete, con su tirador y su etiqueta. */
+    private static void drawFileDrawer(GuiGraphics g, int x, int y, int color) {
+        g.fill(x + 1, y, x + 11, y + 1, color);
+        g.fill(x, y + 1, x + 1, y + 9, color);
+        g.fill(x + 11, y + 1, x + 12, y + 9, color);
+        g.fill(x + 1, y + 8, x + 11, y + 9, color);
+        g.fill(x + 4, y + 5, x + 8, y + 6, color);
+        g.fill(x, y + 10, x + 12, y + 11, color);
+        g.fill(x + 5, y + 2, x + 7, y + 3, DiaryTheme.INK);
     }
 
     private static void drawOpenLedger(GuiGraphics g, int x, int y, int color) {

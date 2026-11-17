@@ -496,8 +496,9 @@ public class DiaryPauseScreen extends PauseScreen {
         int shadowColor = DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 200);
         g.fill(x + 5, y + 5, x + w + 5, y + h + 5, shadowColor);
 
-        // Base opaca — papel crema claro
-        g.fill(x, y, x + w, y + h, PAPER_LIGHT);
+        // Base de papel crema claro. v0.241.0: no del todo opaca —deja pasar
+        // apenas la escena de atras, que es lo que el lector pidio.
+        g.fill(x, y, x + w, y + h, DiaryTheme.withAlpha(PAPER_LIGHT, 238));
 
         // ORDEN NUEVO: manchas primero, brillo despues (brillo debe estar encima)
 

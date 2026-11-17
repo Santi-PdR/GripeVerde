@@ -317,6 +317,21 @@ public class DiaryTitleScreen extends Screen {
             this.addRenderableWidget(dispatchBtn);
         }
 
+        // v0.241.0: tercera lente de la fila alta -el gabinete de fichas-, para
+        // que las tres cosas del mod se abran desde la portada: diario, partes
+        // y registro.
+        if (this.width >= 148) {
+            SlimButton archiveBtn = new SlimButton(
+                this.width - 100, 8, 20, 20,
+                Component.literal(isEnglishSelected() ? "Registry" : "Registro"),
+                () -> this.minecraft.setScreen(
+                    new com.eternalcraft.gripeverde.client.screens.DiaryArchiveScreen(this)))
+                .withIcon(SlimButton.Icon.FILING);
+            archiveBtn.setTooltip(Tooltip.create(Component.literal(
+                isEnglishSelected() ? "Registry of files" : "Registro de fichas")));
+            this.addRenderableWidget(archiveBtn);
+        }
+
         // --- Audio control buttons (bottom-left, discrete) ---
         // Boton >> (skip musica) queda solo (AMB removido, ahora en Sonidos)
         int skipY = compactLayout ? 8 : this.height - 28;

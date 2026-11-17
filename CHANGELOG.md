@@ -1,3 +1,12 @@
+## v0.241.0 - Registro, multijugador y descripción
+
+- `SlimButton.Icon.FILING` con `drawFileDrawer`; la portada gana el botón de registro (`DiaryArchiveScreen`) a
+  `width-100` cuando el ancho lo permite.
+- Pausa: la hoja pasa de `PAPER_LIGHT` opaco a α238.
+- `DiaryMultiplayerScreen`: cada puesto sobre `drawTornSlip` (210), renglones de registro detrás de la lista y recuento
+  movido a `panelW-74`.
+- `mods.toml`: descripción nueva con lo que trae el mod.
+
 ## v0.240.0 - Ficha de aspecto, parte de CEDA y muerte
 
 - `DiarySkinCustomizationScreen`: fuera el espejo (`drawMirror`, silueta de niebla y clic); `Discoveries.MIRROR` sale de `ALL`

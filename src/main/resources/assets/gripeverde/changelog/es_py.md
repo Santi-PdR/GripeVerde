@@ -1,3 +1,9 @@
+## Version 0.241.0 - El registro en la portada
+
+La fila de lentes de arriba a la derecha estrena la tercera: el Registro. Ahora las tres cosas del mod se abren desde la portada, con su propio dibujo cada una: el diario de supervivencia, el parte de CEDA y el gabinete de fichas. El cajon del registro lleva su tirador y su etiqueta, como los demas muebles de la casa.
+
+La hoja de la pausa deja pasar apenas la escena de atras: ya no es una cartulina opaca sobre el mundo, sino papel con cuerpo. En esta misma tanda tambien se renovo la sala de multijugador -cada puesto montado sobre su recorte, con renglones de registro en el tramo vacio y el recuento corrido para no chocar con la chapa- y la descripcion del mod en la lista de mods, que ahora cuenta que es lo que trae.
+
 ## Version 0.240.0 - El telegrama, el parte y la ficha ordenada
 
 El espejo de la esquina de la ficha de aspecto -el "ojo"- se fue: quedan los botones y la hoja, nada mas. El manual de campo tambien se retiro, porque era el viejo y su contenido vive ya en el diario.

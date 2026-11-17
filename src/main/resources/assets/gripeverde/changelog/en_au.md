@@ -1,3 +1,9 @@
+## Version 0.241.0 - The registry on the cover
+
+The row of lenses at the top right gains its third: the Registry. All three things in the mod now open from the cover, each with its own drawing: the survival diary, the CEDA report and the file cabinet. The registry drawer has its handle and its label, like the rest of the furniture in the house.
+
+The pause sheet now lets a hint of the scene through: no longer an opaque card over the world, but paper with body. This same batch also renewed the multiplayer room - every post mounted on its cutting, register lines across the empty stretch and the count moved so it no longer collides with the plate- and the mod description in the mods list, which now says what it brings.
+
 ## Version 0.240.0 - The telegram, the report and the tidy sheet
 
 The mirror in the corner of the appearance sheet - the "eye" - is gone: the buttons and the sheet remain, nothing else. The field manual was removed too, since it was the old one and its content already lives in the diary.
