@@ -1,3 +1,9 @@
+## Version 0.257.0 - The watch's two apertures
+
+The pocket watch gains the date window at three o'clock, the place real watches kept it: the day's number, with its brass frame and paper inside, and if the day has two digits the glass grows a pixel on each side instead of cropping the number. With the moon at six, the dial reads like a period watch: XII at the top, IX on the left, and the two apertures taking the place of the other two numerals.
+
+Screens dressed by event -create world, edit, alerts, confirmations- also gain the page's worn edge: a one-pixel border that seats them over the scene, without touching anything the game draws.
+
 ## Version 0.256.0 - The screens that were still raw
 
 There were game screens that opened with the dirt background and grey buttons, and they could not be subclassed like the others: create world, edit world, open to LAN, disconnection, alerts and the game's own confirmations. Now they are dressed by event. The dirt background is covered with the night scene as soon as the game finishes painting it, and plain buttons are swapped for paper ones that fire the original's action, with the same state.

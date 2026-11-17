@@ -1,3 +1,9 @@
+## Version 0.257.0 - Las dos ventanillas del reloj
+
+El reloj de bolsillo suma la ventanilla de la fecha a las tres, el sitio donde la llevaban los relojes de verdad: el numero del dia, con su marco de laton y su papel adentro, y si el dia trae dos cifras el vidrio crece un pixel a cada lado en vez de recortar el numero. Con la luna a las seis, el cuadrante queda como el de un reloj de epoca: XII arriba, IX a la izquierda y las dos ventanillas ocupando el lugar de las otras dos cifras.
+
+Las pantallas que se visten por evento -crear mundo, editar, avisos, confirmaciones- ganan ademas el canto gastado de la hoja: un borde de un pixel que las asienta sobre la escena, sin tocar nada de lo que el juego dibuja.
+
 ## Version 0.256.0 - Las pantallas que quedaban crudas
 
 Quedaban pantallas del juego que se abrian con el fondo de tierra y los botones grises, y no se podian subclasear como las demas: crear mundo, editar mundo, abrir a LAN, la desconexion, los avisos y las confirmaciones del propio juego. Ahora se visten por evento. El fondo de tierra se tapa con la escena de la noche en cuanto el juego termina de pintarlo, y los botones lisos se cambian por los de papel disparando la accion del original, con su mismo estado.

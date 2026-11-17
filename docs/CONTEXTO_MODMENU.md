@@ -180,6 +180,11 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.257.0 — fecha en el reloj y canto en las pantallas ajenas
+
+- **Reloj**: ventanilla de fecha a las 3 (ancho `max(11, texto+4)`), `III` omitido; convive con la luna a las 6.
+- **Pantallas por evento**: `drawWornBorder` de 1 px en `Render.Post`.
+
 ## Cambios de 0.256.0 — vestir sin subclasear
 
 - **Eventos**: `Init.Post` viste (`dressPlain`) y `BackgroundRendered` tapa el fondo de las pantallas ajenas listadas en `isHouseRawScreen`.

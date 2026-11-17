@@ -1,3 +1,8 @@
+## v0.257.0 - Las dos ventanillas del reloj
+
+- `PocketWatchRenderer.drawDateAperture`: ventanilla de fecha a las tres con `Calendar.DAY_OF_MONTH`; el `III` se omite cuando hay ventanilla.
+- `ScreenEventHandler`: canto gastado (`drawWornBorder`) en las pantallas vestidas por evento.
+
 ## v0.256.0 - Las pantallas que quedaban crudas
 
 - `ScreenEventHandler.isHouseRawScreen`: crear/editar mundo, LAN, desconexion, avisos, confirmaciones y enlaces.

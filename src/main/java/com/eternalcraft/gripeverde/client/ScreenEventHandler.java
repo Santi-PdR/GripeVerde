@@ -180,6 +180,17 @@ public class ScreenEventHandler {
             com.eternalcraft.gripeverde.client.render.DeathPaper.render(
                 event.getGuiGraphics(), event.getScreen());
         } catch (Throwable ignored) {}
+        // v0.257.0: el canto de la hoja en las pantallas que se visten por evento.
+        try {
+            if (isHouseRawScreen(event.getScreen())) {
+                int w = event.getScreen().width;
+                int h = event.getScreen().height;
+                if (w >= 24 && h >= 24) {
+                    com.eternalcraft.gripeverde.client.render.PaperTexture.drawWornBorder(
+                        event.getGuiGraphics(), 0, 0, w, h, 0x66E8DCB4, w * 31 + h * 17);
+                }
+            }
+        } catch (Throwable ignored) {}
         // v0.253.0: los botones vestidos copian el estado del original.
         try {
             com.eternalcraft.gripeverde.client.render.PaperButtons.syncStates();

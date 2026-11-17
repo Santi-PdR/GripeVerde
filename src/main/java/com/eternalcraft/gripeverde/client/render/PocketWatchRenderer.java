@@ -199,7 +199,9 @@ public class PocketWatchRenderer {
         Font font = Minecraft.getInstance().font;
         int textR = radius - 20;
         drawRomanNumeral(g, font, cx, cy - textR, "XII");
-        drawRomanNumeral(g, font, cx + textR, cy, "III");
+        // v0.257.0: a las tres va la ventanilla de la fecha, como en los relojes
+        // de bolsillo que la llevaban: el numero del dia, de verdad.
+        if (radius < 30) drawRomanNumeral(g, font, cx + textR, cy, "III");
         // v0.250.0: cuando hay ventanilla de luna, ella ocupa el sitio del VI,
         // como en los relojes de verdad.
         if (radius < 30) drawRomanNumeral(g, font, cx, cy + textR, "VI");
@@ -211,6 +213,8 @@ public class PocketWatchRenderer {
         // noche, la mire quien la mire.
         if (radius >= 30) {
             drawMoonAperture(g, cx, cy + (int) (radius * 0.52), Math.max(3, radius / 7), now);
+            int day = java.util.Calendar.getInstance().get(java.util.Calendar.DAY_OF_MONTH);
+            drawDateAperture(g, font, cx + (int) (radius * 0.52), cy, day);
         }
 
         if (!reducedMotion) drawGlassShine(g, cx, cy, radius - 7, elapsed);
@@ -264,6 +268,23 @@ public class PocketWatchRenderer {
         String label = "v" + version;
         int lw = font.width(label);
         g.drawString(font, label, cx - lw / 2, cy + radius + 6, COLOR_TEXT, false);
+    }
+
+    /**
+     * v0.257.0: la ventanilla de la fecha, a las tres. Un rectangulo de laton
+     * con su papel adentro y el numero del dia; si el dia trae dos cifras, el
+     * vidrio crece un pixel a cada lado en vez de recortar el numero.
+     */
+    private static void drawDateAperture(GuiGraphics g, Font font, int dx, int dy, int day) {
+        String text = Integer.toString(day);
+        int tw = font.width(text);
+        int w = Math.max(11, tw + 4);
+        int h = 9;
+        int x0 = dx - w / 2;
+        int y0 = dy - h / 2;
+        g.fill(x0 - 1, y0 - 1, x0 + w + 1, y0 + h + 1, COLOR_BRASS_DARK);
+        g.fill(x0, y0, x0 + w, y0 + h, 0xFFEFE2C6);
+        g.drawString(font, text, x0 + (w - tw) / 2, y0 + 1, COLOR_HAND, false);
     }
 
     /** v0.250.0: luna nueva de referencia, 2000-01-06 18:14 UTC. */
