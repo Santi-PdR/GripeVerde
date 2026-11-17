@@ -72,6 +72,12 @@ public class DiaryDispatchScreen extends Screen {
     private int toggleX;
     private int toggleY;
     private int toggleW;
+    // v0.240.0: el pie tiene banda propia; los botones de pagina van en su fila.
+    private int footerDivY;
+    private int hintY;
+    private int countY;
+    private int footerBtnY;
+    private int footerBtnH;
 
     private int awaitingSlot = -1;
     private int hoveredSlot = -1;
@@ -99,7 +105,7 @@ public class DiaryDispatchScreen extends Screen {
 
         int titleY = this.panelY + (compactLayout() ? 10 : 14);
         this.rowsTop = titleY + 40;
-        int rowsBottom = this.panelY + this.panelH - 58;
+        int rowsBottom = this.panelY + this.panelH - 66 - 8;
         int fit = Math.max(1, (rowsBottom - this.rowsTop) / ROW_STEP);
         this.perPage = Math.min(DispatchLibrary.SLOT_COUNT, Math.min(12, fit));
         this.pageCount = (DispatchLibrary.SLOT_COUNT + this.perPage - 1) / this.perPage;
@@ -133,20 +139,40 @@ public class DiaryDispatchScreen extends Screen {
             this.setInitialFocus(this.fields.get(0));
         }
 
-        int footerTop = this.panelY + this.panelH - 46;
-        int btnW = Math.max(110, Math.min(170, this.panelW - 60));
-        int btnH = compactLayout() ? 18 : 20;
+        // v0.240.0: el pie se ordena en tres lineas -ayuda, recuento y botones-;
+        // antes el rotulo de pagina caia debajo del boton de volver y el texto
+        // asomaba por detras.
+        this.footerDivY = this.panelY + this.panelH - 66;
+        this.hintY = this.footerDivY + 4;
+        this.countY = this.footerDivY + 15;
+        this.footerBtnH = compactLayout() ? 18 : 20;
+        this.footerBtnY = this.panelY + this.panelH - 14 - this.footerBtnH;
+
+        int arrowW = 26;
+        int arrowH = this.footerBtnH;
+        int btnW = Math.max(96, Math.min(150, this.panelW - 2 * arrowW - 60));
         DiaryButton back = new DiaryButton(
-            this.panelX + (this.panelW - btnW) / 2, footerTop + 18, btnW, btnH,
+            this.panelX + (this.panelW - btnW) / 2, this.footerBtnY, btnW, arrowH,
             Component.translatable("gripeverde.dispatch.button.back"),
             DiaryButton.Icon.DOOR, DiaryButton.Variant.SECONDARY, this::onClose);
         this.addRenderableWidget(back);
 
-        // El boton de paginas vive en la linea de ayuda, a la derecha.
+        if (this.pageCount > 1) {
+            this.addRenderableWidget(new DiaryButton(
+                this.panelX + 20, this.footerBtnY, arrowW, arrowH,
+                Component.literal("<"), DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
+                () -> this.turnPage(-1)).noEllipsis());
+            this.addRenderableWidget(new DiaryButton(
+                this.panelX + this.panelW - 20 - arrowW, this.footerBtnY, arrowW, arrowH,
+                Component.literal(">"), DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
+                () -> this.turnPage(1)).noEllipsis());
+        }
+
+        // El rotulo de pagina va al final de la linea de ayuda, donde no choca.
         String toggle = this.pageLabel();
         this.toggleW = this.font.width(toggle);
-        this.toggleX = this.panelX + this.panelW - 22 - this.toggleW;
-        this.toggleY = footerTop + 3;
+        this.toggleX = this.panelX + this.panelW - 20 - this.toggleW;
+        this.toggleY = this.hintY;
 
         if (CopyLCompatibility.isAvailable()) {
             SlimButton panel = new SlimButton(
@@ -241,7 +267,7 @@ public class DiaryDispatchScreen extends Screen {
     private boolean overToggle(double mouseX, double mouseY) {
         if (this.pageCount <= 1) return false;
         return mouseX >= this.toggleX - 4 && mouseX <= this.toggleX + this.toggleW + 4
-            && mouseY >= this.toggleY - 2 && mouseY <= this.toggleY + 11;
+            && mouseY >= this.toggleY - 3 && mouseY <= this.toggleY + 11;
     }
 
     /** v0.185.0: pasar de pagina sin apuntar al rotulo. */
@@ -399,19 +425,17 @@ public class DiaryDispatchScreen extends Screen {
                 bound ? DiaryChrome.INK_TITLE : 0x99887766, false);
         }
 
-        int footerTop = this.panelY + this.panelH - 46;
-        DiaryChrome.drawInkDivider(gfx, this.panelX + 18, footerTop - 6, this.panelW - 36);
+        DiaryChrome.drawInkDivider(gfx, this.panelX + 18, this.footerDivY, this.panelW - 36);
 
         String note = this.footerNote();
-        gfx.drawString(this.font, ellipsize(note, Math.max(40, this.panelW - 40 - this.toggleW)),
-            this.panelX + 20, this.toggleY, DiaryChrome.INK_SUBTITLE, false);
-        if (this.pageCount > 1 && this.statusKey.isEmpty()) {
-            String count = Component.translatable("gripeverde.dispatch.slot.count",
-                DispatchLibrary.countWithText(), DispatchLibrary.SLOT_COUNT).getString()
-                + "  \u00b7  Ctrl+1..0";
-            gfx.drawString(this.font, count, this.panelX + 20, this.toggleY + 12,
-                DiaryChrome.INK_FLAVOR, false);
-        }
+        int noteRoom = Math.max(40, this.panelW - 40 - (this.pageCount > 1 ? this.toggleW + 10 : 0));
+        gfx.drawString(this.font, ellipsize(note, noteRoom),
+            this.panelX + 20, this.hintY, DiaryChrome.INK_SUBTITLE, false);
+        String count = Component.translatable("gripeverde.dispatch.slot.count",
+            DispatchLibrary.countWithText(), DispatchLibrary.SLOT_COUNT).getString()
+            + "  \u00b7  Ctrl+1..0";
+        gfx.drawString(this.font, ellipsize(count, Math.max(40, this.panelW - 40)),
+            this.panelX + 20, this.countY, DiaryChrome.INK_FLAVOR, false);
 
         if (this.pageCount > 1) {
             int color = this.overToggle(mouseX, mouseY) ? DiaryChrome.INK_TITLE : DiaryChrome.INK_FLAVOR;

@@ -1,3 +1,13 @@
+## v0.240.0 - Ficha de aspecto, parte de CEDA y muerte
+
+- `DiarySkinCustomizationScreen`: fuera el espejo (`drawMirror`, silueta de niebla y clic); `Discoveries.MIRROR` sale de `ALL`
+  para que el archivo pueda completarse.
+- `DiaryFieldGuideScreen` borrado y su botón retirado de la pausa (la rejilla pasa a 6 botones, 3 filas en compacto).
+- `DiaryDispatchScreen`: pie en tres bandası (ayuda, recuento, botones), botones `<` `>` de 26×20 y rótulo de página al
+  final de la línea de ayuda; el área de voces termina 8 px sobre el divisor del pie.
+- `DeathPaper`: aviso único de 340×78 centrado arriba; `onInit` viste los botones de la pantalla de muerte con `DiaryButton`
+  (el original se oculta sólo si el sustituto quedó registrado) sin duplicar su lógica.
+
 ## v0.239.0 - Aviso de ficha sobre recorte
 
 - `PaperTexture.drawTornSlip(g,x,y,w,h,paperRgb,inkRgb,alpha)`: cuerpo, dientes y pelusa con el alfa escalado (cuerpo α, dientes

@@ -1,3 +1,11 @@
+## Version 0.240.0 - The telegram, the report and the tidy sheet
+
+The mirror in the corner of the appearance sheet - the "eye" - is gone: the buttons and the sheet remain, nothing else. The field manual was removed too, since it was the old one and its content already lives in the diary.
+
+The death screen no longer wraps from edge to edge. It is a single small centred sheet near the top, with the condolence notice as families received it: CEDA letterhead, two lines and the DECEASED stamp. No veil, no darkening, no animation, and hearts and hotbar stay visible.
+
+The foot of the CEDA report now has three lines - hint, count and buttons - and gains its own page arrows, with the sheet number at the end of the hint line. The text no longer peeks out from behind Back.
+
 ## Version 0.239.0 - The new-file notice is a cutting
 
 When a new file appears, the notice in the corner was a card with a bronze frame: the second-to-last piece of card in the interface. Now it is a torn paper cutting, with eaten edges, the usual lint and the short shadow at its foot.

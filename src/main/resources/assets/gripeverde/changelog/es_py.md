@@ -1,3 +1,11 @@
+## Version 0.240.0 - El telegrama, el parte y la ficha ordenada
+
+El espejo de la esquina de la ficha de aspecto -el "ojo"- se fue: quedan los botones y la hoja, nada mas. El manual de campo tambien se retiro, porque era el viejo y su contenido vive ya en el diario.
+
+La pantalla de muerte deja de forrarse de borde a borde. Ahora es un solo papel chico y centrado, arriba, con el aviso de condolencias tal como lo recibian los familiares: membrete de CEDA, dos renglones y el sello de DECESO. Ni velo ni oscurecido ni animacion, y los corazones y la hotbar se ven enteros.
+
+El pie del parte de CEDA se ordeno en tres lineas -ayuda, recuento y botones- y estrena flechas propias para pasar de pagina, con el numero de hoja al final del renglon. El texto ya no asoma por detras de Volver.
+
 ## Version 0.239.0 - El aviso de ficha nueva es un recorte
 
 Cuando aparece una ficha nueva, el aviso de la esquina era una tarjeta con marco bronce: la penultima cartulina de la interfaz. Ahora es un recorte de papel rasgado, con los cantos comidos, la pelusa de siempre y la sombra corta al pie.

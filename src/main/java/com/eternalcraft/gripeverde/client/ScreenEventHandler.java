@@ -123,6 +123,14 @@ public class ScreenEventHandler {
 
     // v0.26.0: el pasar de las hojas entre pantallas del gabinete.
     @SubscribeEvent
+    public static void onScreenInitPost(ScreenEvent.Init.Post event) {
+        // v0.240.0: los botones de la pantalla de muerte se visten de papel.
+        try {
+            com.eternalcraft.gripeverde.client.render.DeathPaper.onInit(event.getScreen());
+        } catch (Throwable ignored) {}
+    }
+
+    @SubscribeEvent
     public static void onScreenRenderPost(ScreenEvent.Render.Post event) {
         Minecraft mc = Minecraft.getInstance();
         // v0.237.0: el parte de defuncion se pega tambien en partida, que es
