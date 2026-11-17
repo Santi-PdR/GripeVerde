@@ -1,3 +1,7 @@
+## Version 0.258.0 - Cuaderno que suena y botones que avisan
+
+Abrir y cerrar el indice del diario ya no es mudo: el cuaderno suena a hoja que se cae, el mismo golpe de papel que las lentes de la portada. Y el boton de entrar a un servidor dice tambien con que tecla se entra: el aviso del boton termina en "Enter", asi no hay que acordarse.
+
 ## Version 0.257.0 - Las dos ventanillas del reloj
 
 El reloj de bolsillo suma la ventanilla de la fecha a las tres, el sitio donde la llevaban los relojes de verdad: el numero del dia, con su marco de laton y su papel adentro, y si el dia trae dos cifras el vidrio crece un pixel a cada lado en vez de recortar el numero. Con la luna a las seis, el cuadrante queda como el de un reloj de epoca: XII arriba, IX a la izquierda y las dos ventanillas ocupando el lugar de las otras dos cifras.

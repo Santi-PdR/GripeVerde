@@ -1139,6 +1139,13 @@ public class ChangelogScreen extends Screen {
     /** v0.231.0: al abrir el indice queda centrado en la entrada que se lee. */
     private void toggleIndex() {
         this.indexOpen = !this.indexOpen;
+        // v0.258.0: el indice suena a hoja que se cae, como las lentes de la
+        // portada; abrir y cerrar el mismo cuaderno no es mudo.
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                com.eternalcraft.gripeverde.client.audio.ModSounds.UI_PAPER_FALL.get(), 0.28f, 1.02f);
+        } catch (Throwable ignored) {
+        }
         if (!this.indexOpen) return;
         int current = currentDiarySection(scrollY + 24);
         int rowOf = -1;

@@ -1,3 +1,7 @@
+## Version 0.258.0 - A notebook that sounds and buttons that tell
+
+Opening and closing the diary index is no longer silent: the notebook sounds like a sheet falling, the same paper stroke as the title lenses. And the join-server button also says which key joins: the button's tooltip ends in "Enter", so there is nothing to remember.
+
 ## Version 0.257.0 - The watch's two apertures
 
 The pocket watch gains the date window at three o'clock, the place real watches kept it: the day's number, with its brass frame and paper inside, and if the day has two digits the glass grows a pixel on each side instead of cropping the number. With the moon at six, the dial reads like a period watch: XII at the top, IX on the left, and the two apertures taking the place of the other two numerals.

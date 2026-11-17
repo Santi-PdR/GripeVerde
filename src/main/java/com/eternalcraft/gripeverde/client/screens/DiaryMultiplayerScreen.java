@@ -300,7 +300,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             int bottomStartX = topStartX;
 
             this.diarySelect = createServerActionButton(topStartX, topRowY, topButtonW, btnH,
-                Component.translatable("gripeverde.multiplayer.compact.join"), labelJoin,
+                Component.translatable("gripeverde.multiplayer.compact.join"), withEnter(labelJoin),
                 DiaryButton.Variant.PRIMARY, DiaryButton.SoundProfile.CLEAN, this::onJoin);
             this.diaryDirect = createServerActionButton(topStartX + topButtonW + compactGap, topRowY, topButtonW, btnH,
                 Component.translatable("gripeverde.multiplayer.compact.direct"), labelDirect,
@@ -325,7 +325,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             int topStartX = (this.width - topTotalW) / 2;
             int bottomStartX = (this.width - bottomTotalW) / 2;
 
-            this.diarySelect = createServerActionButton(topStartX, topRowY, wJoin, btnH, labelJoin, labelJoin,
+            this.diarySelect = createServerActionButton(topStartX, topRowY, wJoin, btnH, labelJoin, withEnter(labelJoin),
                 DiaryButton.Variant.PRIMARY, DiaryButton.SoundProfile.CLEAN, this::onJoin);
             this.diaryDirect = createServerActionButton(topStartX + wJoin + gap, topRowY, wDirect, btnH, labelDirect, labelDirect,
                 DiaryButton.Variant.SECONDARY, DiaryButton.SoundProfile.CLEAN, this::onDirect);
@@ -352,6 +352,11 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
 
         updateDiaryButtonStates();
         hideVanillaButtons();
+    }
+
+    /** v0.258.0: el boton de entrar dice tambien con que tecla se entra. */
+    private static Component withEnter(Component label) {
+        return Component.literal(label.getString() + "  ·  Enter");
     }
 
     private DiaryButton createServerActionButton(int x, int y, int width, int height, Component visibleLabel,

@@ -1,3 +1,8 @@
+## v0.258.0 - Cuaderno que suena y botones que avisan
+
+- `ChangelogScreen.toggleIndex`: sonido `UI_PAPER_FALL` al abrir/cerrar el indice.
+- `DiaryMultiplayerScreen.withEnter`: el aviso de los dos botones de entrar menciona `Enter`.
+
 ## v0.257.0 - Las dos ventanillas del reloj
 
 - `PocketWatchRenderer.drawDateAperture`: ventanilla de fecha a las tres con `Calendar.DAY_OF_MONTH`; el `III` se omite cuando hay ventanilla.

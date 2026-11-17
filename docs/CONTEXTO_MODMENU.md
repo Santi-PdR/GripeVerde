@@ -180,6 +180,11 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.258.0 — sonido del indice y atajos anunciados
+
+- **Diario**: `toggleIndex` reproduce `UI_PAPER_FALL`.
+- **Multijugador**: `withEnter(label)` agrega `· Enter` al tooltip de entrar (normal y compacto).
+
 ## Cambios de 0.257.0 — fecha en el reloj y canto en las pantallas ajenas
 
 - **Reloj**: ventanilla de fecha a las 3 (ancho `max(11, texto+4)`), `III` omitido; convive con la luna a las 6.
