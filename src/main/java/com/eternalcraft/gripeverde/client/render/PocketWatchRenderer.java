@@ -31,38 +31,21 @@ public class PocketWatchRenderer {
     private static final RandomSource RNG = RandomSource.create();
     private static final long START_TIME = System.currentTimeMillis();
 
-    // Rotating "hour of the outbreak" pool - rotates on session start + every 5 min
-    private static final int[][] HOUR_POOL = {
-        {11, 52},  // The original
-        { 3, 17},  // Dead of night
-        { 4, 44},  // Cursed number
-        { 2, 33},  // Predawn
-        {23, 11},  // Just before midnight
-        { 5, 27},  // Grey dawn
-        { 1, 13},  // Bad luck hour
-        {22, 48}   // Late shift
-    };
-    private static int hourIndex = -1;
-    private static long lastHourRotateMs = 0L;
-    private static long HOUR_ROTATE_MS = 300_000L;  // 5 min
-
+    /**
+     * v0.252.0: la hora de las agujas ahora es la hora de verdad.
+     *
+     * Antes el reloj sacaba una "hora del brote" de una lista y la cambiaba
+     * cada cinco minutos: las agujas saltaban mientras uno las miraba y la
+     * hora no servia para nada. Ahora marca la hora local del lector con la
+     * misma aguja corta y el mismo minutero; la inscripcion de la tapa sigue
+     * diciendo 11:52, que es cuando empezo todo, pero el reloj funciona.
+     */
     private static int[] getCurrentHour() {
-        long now = System.currentTimeMillis();
-        if (hourIndex < 0 || (now - lastHourRotateMs) >= HOUR_ROTATE_MS) {
-            int prev = hourIndex;
-            int next;
-            if (HOUR_POOL.length <= 1) {
-                next = 0;
-            } else {
-                do {
-                    next = RNG.nextInt(HOUR_POOL.length);
-                } while (next == prev);
-            }
-            hourIndex = next;
-            lastHourRotateMs = now;
-            HOUR_ROTATE_MS = 180_000L + (long)(RNG.nextDouble() * 300_000L);
-        }
-        return HOUR_POOL[hourIndex];
+        java.util.Calendar now = java.util.Calendar.getInstance();
+        return new int[] {
+            now.get(java.util.Calendar.HOUR_OF_DAY) % 12,
+            now.get(java.util.Calendar.MINUTE)
+        };
     }
 
     // Estado del glitch actual
@@ -485,8 +468,8 @@ public class PocketWatchRenderer {
     /** Devuelve true si la hora actual del reloj esta cerca de las 12 (11:52-12:08).
      *  Usado por LivingAtmosphere/AtmosphereRenderer para efecto vela. */
     public static boolean isNearNoon() {
-        if (hourIndex < 0) return false;
-        int[] hour = HOUR_POOL[hourIndex];
+        // v0.252.0: ahora depende de la hora de verdad, no de una lista.
+        int[] hour = getCurrentHour();
         int hh = hour[0];
         int mm = hour[1];
         // Convertir a minutos totales

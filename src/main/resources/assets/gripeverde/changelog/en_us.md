@@ -1,3 +1,9 @@
+## Version 0.252.0 - The watch tells the time
+
+The pocket watch hands no longer invent: they mark the local time of whoever looks at them. They used to draw an "outbreak hour" from a list and change it every five minutes, so they jumped while you watched and were of no use. Now the short hand and the minute hand follow the house clock, and the second hand keeps sickening with the session. The inscription on the lid keeps its 11:52, which is when it all began, but it is a legend now, not a lie.
+
+The pause sheet also says where the reader is. Under the date stamp a small line appears with the day of the save and the place -the avenue, the lower ward, the far shore-, in the same sepia ink and trimmed to the panel width so it never touches the title.
+
 ## Version 0.251.0 - The diary, written again
 
 The notebook was rewritten whole, under two rules: nothing that comes from a game, and everything it says traceable in a real book. The three origin entries changed source. The Ghoul recovers its Arabic etymology -the "ghul" that lurks in the pass and entered Europe with the translations of One Thousand and One Nights-; the Jockey takes its name from the racing trade, the light rider who mounts the back and steers the animal where he wants; and the Cuirassier stops being a theatre breastplate: it is the iron plate of French heavy cavalry of this time, with a straight sabre and a big horse, and the man died with it on.

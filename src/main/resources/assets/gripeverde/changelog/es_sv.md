@@ -1,3 +1,9 @@
+## Version 0.252.0 - El reloj da la hora
+
+Las agujas del reloj de bolsillo ya no inventan: marcan la hora local de quien lo mira. Antes sacaban una "hora del brote" de una lista y la cambiaban cada cinco minutos, asi que saltaban mientras uno las miraba y no servian para nada. Ahora la aguja corta y el minutero siguen al reloj de la casa, y el segundero sigue enfermando con la sesion. La inscripcion de la tapa se queda con su 11:52, que es cuando empezo todo, pero ahora es una leyenda y no una mentira.
+
+La hoja de pausa, ademas, dice donde esta el lector. Debajo del sello de fecha aparece una linea chiquita con el dia de la partida y el sitio -la avenida, la sala baja, la orilla lejana-, en la misma tinta sepia y recortada al ancho del panel para no tocar el titulo.
+
 ## Version 0.251.0 - El diario, escrito de nuevo
 
 El cuaderno se reescribio entero, con dos reglas: nada que venga de un juego y todo lo que se cuenta, rastreable en un libro de verdad. Las tres fichas de origen cambiaron de fuente. El Ghoul recupera su etimologia arabe -el "ghul" que acecha en el desfiladero y entro a Europa con las traducciones de Las mil y una noches-; el Jockey toma el nombre del oficio de las carreras, el jinete liviano que se prende al lomo y lleva al animal donde quiere; y el Cuirassier deja de ser una coraza de teatro: es la plancha de hierro de la caballeria pesada francesa de este tiempo, con sable recto y caballo grande, y el hombre murio con ella puesta.

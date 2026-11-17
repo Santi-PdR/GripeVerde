@@ -656,6 +656,37 @@ public class DiaryPauseScreen extends PauseScreen {
         int dx = px + panelW() - dw - 12;
         int dy = py + 12;
         g.drawString(this.font, date, dx, dy, DiaryTheme.SEPIA_DARK, false);
+        drawWorldLine(g, px, py, dx, dw);
+    }
+
+    /**
+     * v0.252.0: en partida, la hoja dice donde esta el lector: la dimension y
+     * el dia que lleva la partida. Se escribe debajo del sello de fecha, con la
+     * misma tinta, y se recorta al ancho del panel para no tocar el titulo.
+     */
+    private void drawWorldLine(GuiGraphics g, int px, int py, int stampX, int stampW) {
+        String line = null;
+        try {
+            if (this.minecraft == null || this.minecraft.level == null) return;
+            long day = this.minecraft.level.getDayTime() / 24000L + 1L;
+            String dim = this.minecraft.level.dimension().location().getPath();
+            boolean en = isEnglishSelected();
+            String where;
+            switch (dim) {
+                case "the_nether" -> where = en ? "the lower ward" : "la sala baja";
+                case "the_end" -> where = en ? "the far shore" : "la orilla lejana";
+                default -> where = en ? "the avenue" : "la avenida";
+            }
+            line = (en ? "day " : "dia ") + day + " - " + where;
+            int maxW = Math.max(40, stampX - px - 20 + stampW);
+            line = this.font.plainSubstrByWidth(line, maxW);
+        } catch (Throwable ignored) {
+            return;
+        }
+        if (line == null || line.isBlank()) return;
+        int lw = this.font.width(line);
+        g.drawString(this.font, line, stampX + stampW - lw, py + 24,
+            DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 200), false);
     }
 
     private void drawFlourish(GuiGraphics g, int x, int y, int color, boolean mirror) {

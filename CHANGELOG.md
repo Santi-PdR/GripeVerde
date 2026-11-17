@@ -1,3 +1,8 @@
+## v0.252.0 - El reloj da la hora
+
+- `PocketWatchRenderer.getCurrentHour()` devuelve la hora local real; se borra la lista de horas inventadas y `isNearNoon()` pasa a depender de la hora.
+- `DiaryPauseScreen.drawWorldLine`: dia de la partida y dimension bajo el sello de fecha, recortado al panel.
+
 ## v0.251.0 - El diario, escrito de nuevo
 
 - `diary/bitacora_es.md` y `bitacora_en.md` reescritos: 13 entradas, sin referencias a juegos, con origen real de cada cosa (etimologia ghul/Nights, jockey, cuirassier napoleonico; Danzig, Ragusa 1377, Filadelfia 1793, Hamburgo 1892, Oporto 1899).
