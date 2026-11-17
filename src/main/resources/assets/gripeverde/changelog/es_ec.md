@@ -1,3 +1,9 @@
+## Version 0.247.0 - Las dos ultimas pantallas crudas
+
+El registro de avances y el libro de cuentas eran las dos ultimas pantallas que seguian siendo de Minecraft puro: fondo oscuro, botones grises. Ahora se abren sobre la escena de la noche, con su cabecera de papel -REG. XI y REG. XII, con el subtitulo que les toca- y los botones vestidos de papel. El arbol de avances, sus pestanas, el scroll, las estadisticas y la busqueda siguen siendo los del juego, intactos.
+
+En la sala de consulta, apretar una ficha que todavia no se consiguio ya no es un clic mudo: el cajon suena a madera y deja una pista del cronista, una sola vez.
+
 ## Version 0.246.0 - La tapa cuenta lo leido
 
 Cuando detenes el reloj y la inscripcion termina de escribirse, aparece una tercera linea: cuantas fichas llevas del archivo -o, si ya estan todas, que no falta ninguna-. Al pie del cuadro queda la version del gabinete, en chico, como el sello de un taller.

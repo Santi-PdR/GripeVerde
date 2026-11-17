@@ -1,3 +1,9 @@
+## Version 0.247.0 - The last two raw screens
+
+The advancements register and the ledger were the last two screens still plain Minecraft: dark background, grey buttons. They now open over the night scene, with their paper header - REG. XI and REG. XII, each with its own subtitle - and their buttons dressed in paper. The advancement tree, its tabs, the scroll, the statistics and the search are still the game's, untouched.
+
+In the reading room, pressing a file you have not obtained yet is no longer a mute click: the drawer sounds like wood and leaves a hint from the chronicler, just once.
+
 ## Version 0.246.0 - The lid tells what has been read
 
 When you stop the watch and the inscription finishes writing itself, a third line appears: how many files you carry from the archive - or, if all of them are in, that none are missing. At the foot of the box the cabinet version stays, small, like a workshop stamp.

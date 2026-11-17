@@ -1,3 +1,10 @@
+## v0.247.0 - Avances y estadísticas en la casa
+
+- `DiaryAdvancementsScreen extends AdvancementsScreen` y `DiaryStatsScreen extends StatsScreen`: escena de fondo, cabecera de
+  40 px con chapa REG. XI / REG. XII, pie de papel bajo el grupo de botones (vestidos con `PaperButtons`).
+- Pausa: `openRecords` / `openStats` usan las pantallas nuevas.
+- Sala de consulta: ficha no conseguida → `MENU_WOOD_CREAK` y `N_DRAWER_HINT` una sola vez.
+
 ## v0.246.0 - Tapa del reloj, mancha de la pausa y mandos
 
 - `PocketWatchRenderer.drawInspection`: tercera linea con `discoveredCount()/ALL.length` y versión al pie; el parámetro `version`

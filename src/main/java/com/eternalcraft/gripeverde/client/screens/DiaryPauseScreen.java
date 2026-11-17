@@ -317,13 +317,15 @@ public class DiaryPauseScreen extends PauseScreen {
     private void openRecords() {
         ClientPacketListener conn = this.minecraft.getConnection();
         if (conn != null) {
-            this.minecraft.setScreen(new AdvancementsScreen(conn.getAdvancements()));
+            // v0.247.0: el registro se abre en la casa.
+            this.minecraft.setScreen(new DiaryAdvancementsScreen(conn.getAdvancements()));
         }
     }
 
     private void openStats() {
         if (this.minecraft.player != null) {
-            this.minecraft.setScreen(new StatsScreen(this, this.minecraft.player.getStats()));
+            // v0.247.0: el libro de cuentas, tambien.
+            this.minecraft.setScreen(new DiaryStatsScreen(this, this.minecraft.player.getStats()));
         }
     }
 

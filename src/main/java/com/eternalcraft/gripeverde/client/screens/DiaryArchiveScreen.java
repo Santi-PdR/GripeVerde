@@ -609,6 +609,14 @@ public class DiaryArchiveScreen extends Screen {
         if (clickedCard >= 0) {
             focusCard = clickedCard;
             if (openCard(clickedCard)) return true;
+            // v0.247.0: el cajon vacio suena a madera y deja una pista, una vez.
+            try {
+                UiSounds.playCustom(com.eternalcraft.gripeverde.client.audio.ModSounds.MENU_WOOD_CREAK.get(),
+                    0.20f, 0.78f);
+                com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                    com.eternalcraft.gripeverde.client.lore.Marginalia.N_DRAWER_HINT);
+            } catch (Throwable ignored) {}
+            return true;
         }
         // Papeles sueltos (mismo alto que drawPaperDoc: 20 px).
         int infoY = panelY + 60 + ((Discoveries.ALL.length + COLS - 1) / COLS) * (CARD_H + CARD_GAP) + 6;
