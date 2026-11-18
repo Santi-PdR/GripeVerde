@@ -1,3 +1,9 @@
+## Version 0.275.0 - La pausa dice en que esta la partida
+
+Bajo la fecha de la hoja de pausa hay ahora dos renglones con el estado del mundo: la hora del juego en formato de reloj, el clima -despejado, lluvia o tormenta-, el modo -supervivencia, creativo o espectador-, la dificultad y, si hay mas de una persona conectada, cuantas almas andan por ahi. En una partida de una sola vida se anade "sin retorno", sin adornos.
+
+Si la mano se acerca a esos renglones, aparece la semilla del mundo, para quien la necesite y no quiera salir a buscarla en los ajustes. Nada de esto toca los botones: el bloque se corta solo si el panel es demasiado bajo.
+
 ## Version 0.274.0 - El reloj de bolsillo dice mas
 
 En la vista del reloj -cuando uno lo detiene con el clic- hay ahora un segundero fino que corre de verdad, y una muesca roja en el bisel justo en la posicion de las 11:52, la hora que el cuaderno no se cansa de anotar. A la derecha del bisel aparece una columna con lo que las agujas no dicen: la hora escrita, el dia de la semana y el atraso del reloj, que nunca anda del todo bien y lo admite sin drama.

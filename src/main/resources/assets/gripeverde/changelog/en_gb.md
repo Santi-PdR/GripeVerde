@@ -1,3 +1,9 @@
+## Version 0.275.0 - The pause says where the game stands
+
+Under the date on the pause sheet there are now two lines with the state of the world: the in-game time on a clock, the weather -clear, rain or storm-, the mode -survival, creative or spectator-, the difficulty and, if more than one person is connected, how many souls are around. A single-life game adds "no way back", without ornaments.
+
+If the hand comes close to those lines, the world seed appears, for whoever needs it and does not want to go looking in the settings. None of this touches the buttons: the block cuts itself off if the panel is too short.
+
 ## Version 0.274.0 - The pocket watch says more
 
 In the watch view -when you stop it with a click- there is now a thin second hand that actually runs, and a red notch on the bezel right at 11:52, the hour the notebook never tires of recording. To the right of the bezel a column appears with what the hands do not say: the time written out, the day of the week and the watch's drift, which never quite runs true and admits it without drama.

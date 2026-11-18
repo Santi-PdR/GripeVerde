@@ -503,6 +503,13 @@ public class DiaryPauseScreen extends PauseScreen {
 
         drawPanelTitle(g, px, py);
         drawDateStamp(g, px, py);
+        // v0.275.0: el estado de la partida, bajo la fecha.
+        try {
+            int stampX = px + panelW() - 12;
+            drawWorldStatus(g, px, py, stampX);
+            drawSeedOnHover(g, mouseX, mouseY, px, py, stampX);
+        } catch (Throwable ignored) {
+        }
         drawPanelSeparators(g, px, py);
         super.render(g, mouseX, mouseY, partialTick);
     }
@@ -732,6 +739,104 @@ public class DiaryPauseScreen extends PauseScreen {
         int lw = this.font.width(line);
         g.drawString(this.font, line, stampX + stampW - lw, py + 24,
             DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 200), false);
+    }
+
+    /**
+     * v0.275.0: la hoja de pausa dice en que estado esta la partida. Hora del
+     * mundo, clima, dificultad, modo, almas conectadas y, al pasar la mano,
+     * la semilla. Todo en dos renglones bajo la fecha, sin tocar los botones.
+     */
+    private void drawWorldStatus(GuiGraphics g, int px, int py, int stampX) {
+        if (this.minecraft == null || this.minecraft.level == null) return;
+        boolean en = isEnglishSelected();
+        String line1;
+        String line2;
+        try {
+            long dayTime = this.minecraft.level.getDayTime() % 24000L;
+            int hours = (int) ((dayTime / 1000L + 6L) % 24L);
+            int minutes = (int) ((dayTime % 1000L) * 60L / 1000L);
+            String clock = String.format(java.util.Locale.ROOT, "%02d:%02d", hours, minutes);
+            boolean storm = this.minecraft.level.isThundering();
+            boolean rain = this.minecraft.level.isRaining();
+            String weather = storm
+                ? (en ? "storm" : "tormenta")
+                : (rain ? (en ? "rain" : "lluvia") : (en ? "clear" : "despejado"));
+            line1 = clock + "  ·  " + weather;
+
+            String difficulty;
+            switch (this.minecraft.level.getDifficulty()) {
+                case PEACEFUL -> difficulty = en ? "quiet" : "tranquila";
+                case EASY -> difficulty = en ? "easy" : "facil";
+                case NORMAL -> difficulty = en ? "normal" : "normal";
+                case HARD -> difficulty = en ? "hard" : "dificil";
+                default -> difficulty = en ? "normal" : "normal";
+            }
+            String mode;
+            if (this.minecraft.player != null && this.minecraft.player.isSpectator()) {
+                mode = en ? "spectator" : "espectador";
+            } else if (this.minecraft.player != null && this.minecraft.player.isCreative()) {
+                mode = en ? "creative" : "creativo";
+            } else {
+                mode = en ? "survival" : "supervivencia";
+            }
+            int souls = 0;
+            try {
+                if (this.minecraft.getConnection() != null) {
+                    souls = this.minecraft.getConnection().getOnlinePlayers().size();
+                }
+            } catch (Throwable ignored) {
+            }
+            line2 = mode + "  ·  " + difficulty;
+            if (souls > 1) {
+                line2 += "  ·  " + souls + (en ? " souls" : " almas");
+            }
+            // v0.275.0: si la partida es de una sola vida, se dice aqui.
+            try {
+                if (this.minecraft.level.getLevelData().isHardcore()) {
+                    line2 += "  ·  " + (en ? "no way back" : "sin retorno");
+                }
+            } catch (Throwable ignored) {
+            }
+        } catch (Throwable ignored) {
+            return;
+        }
+        int maxW = Math.max(40, stampX - px - 16);
+        String cut1 = DiaryChrome.fitCached(this.font, line1, maxW);
+        String cut2 = DiaryChrome.fitCached(this.font, line2, maxW);
+        int w1 = DiaryChrome.widthCached(this.font, cut1);
+        int w2 = DiaryChrome.widthCached(this.font, cut2);
+        int baseY = py + 34;
+        if (baseY + 20 > py + separatorTopOffset() - 2) return;
+        g.drawString(this.font, cut1, stampX - w1, baseY,
+            DiaryChrome.INK_SUBTITLE, false);
+        g.drawString(this.font, cut2, stampX - w2, baseY + 10,
+            DiaryChrome.INK_FLAVOR, false);
+    }
+
+    /** v0.275.0: la semilla, solo si la mano se acerca al estado de la partida. */
+    private void drawSeedOnHover(GuiGraphics g, int mouseX, int mouseY, int px, int py, int stampX) {
+        if (this.minecraft == null || this.minecraft.level == null || compactPauseLayout()) return;
+        int maxW = Math.max(40, stampX - px - 16);
+        int hitLeft = Math.max(px + 8, stampX - maxW);
+        int hitRight = stampX + 2;
+        if (mouseX < hitLeft || mouseX > hitRight) return;
+        if (mouseY < py + 32 || mouseY > py + 52) return;
+        if (baseYGuard()) return;
+        boolean en = isEnglishSelected();
+        long seed;
+        try {
+            seed = this.minecraft.level.getSeed();
+        } catch (Throwable ignored) {
+            return;
+        }
+        String line = (en ? "seed " : "semilla ") + seed;
+        String cut = DiaryChrome.fitText(this.font, line, maxW);
+        int w = DiaryChrome.widthCached(this.font, cut);
+        g.drawString(this.font, cut, stampX - w, py + 54, DiaryChrome.INK_FLAVOR, false);
+    }
+
+    private boolean baseYGuard() {
+        return compactPauseLayout();
     }
 
     private void drawFlourish(GuiGraphics g, int x, int y, int color, boolean mirror) {

@@ -180,6 +180,10 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.275.0 — la pausa dice en que esta la partida
+
+- **Pausa**: `drawWorldStatus` (hora, clima, modo, dificultad, almas, hardcore) y `drawSeedOnHover` (semilla al pasar).
+
 ## Cambios de 0.274.0 — el reloj de bolsillo dice mas
 
 - **Reloj**: segundero, muesca de las 11:52 y columna de hora/dia/atraso. Fix de compilacion en `DiaryControlsScreen`.

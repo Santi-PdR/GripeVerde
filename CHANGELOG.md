@@ -1,3 +1,9 @@
+## v0.275.0 - La pausa dice en que esta la partida
+
+- `drawWorldStatus`: hora del mundo, clima, modo, dificultad, almas conectadas y "sin retorno" en hardcore.
+- `drawSeedOnHover`: la semilla aparece al acercar la mano a esos renglones.
+- Guarda de altura para no pisar los botones en paneles bajos.
+
 ## v0.274.0 - El reloj de bolsillo dice mas
 
 - Segundero real en la vista del reloj.
