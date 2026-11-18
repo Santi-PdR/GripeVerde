@@ -96,7 +96,11 @@ public class DiarySlider extends AbstractSliderButton {
                 step = 0.10D;
             }
             if (dir != 0) {
-                this.setValue(net.minecraft.util.Mth.clamp(this.value + dir * step, 0.0D, 1.0D));
+                // v0.264.0: AbstractSliderButton no expone setValue en 1.20.1;
+                // el campo value es protegido y se remienda a mano.
+                this.value = net.minecraft.util.Mth.clamp(this.value + dir * step, 0.0D, 1.0D);
+                this.updateMessage();
+                this.applyValue();
                 try {
                     com.eternalcraft.gripeverde.client.audio.UiSounds.playClick();
                 } catch (Throwable ignored) {
