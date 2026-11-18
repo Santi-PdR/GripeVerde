@@ -33,6 +33,13 @@ public class DiaryTitleScreen extends Screen {
     private long ticks = 0;
     private static boolean openCountIncremented = false;
     private SlimButton skipMusicButton;
+    // v0.283.0: la firma y el distintivo de musica tambien se pueden tocar.
+    private int sigX = -1;
+    private int sigY = -1;
+    private int sigW = 0;
+    private int musicBadgeX = -1;
+    private int musicBadgeY = -1;
+    private int musicBadgeW = 0;
     private static boolean cinematicMode = false;
     private static long cinematicHintUntilMs = 0L;
     private boolean skipTooltipInitialized = false;
@@ -532,6 +539,12 @@ public class DiaryTitleScreen extends Screen {
             drawLogo(g);
             drawSignature(g);
             drawMusicBadge(g);
+            // v0.283.0: la firma se subraya cuando la mano la busca.
+            if (this.sigX >= 0 && mouseX >= this.sigX && mouseX <= this.sigX + this.sigW
+                    && mouseY >= this.sigY && mouseY <= this.sigY + 12) {
+                g.fill(this.sigX, this.sigY + 11, this.sigX + this.sigW, this.sigY + 12,
+                    DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 150));
+            }
             super.render(g, mouseX, mouseY, partialTick);
             renderChroniclerNote(g);
         } else {
@@ -916,6 +929,9 @@ public class DiaryTitleScreen extends Screen {
         }
         g.drawString(this.font, badge, 48, this.height - 22,
             DiaryChrome.INK_FLAVOR, false);
+        this.musicBadgeX = 46;
+        this.musicBadgeY = this.height - 24;
+        this.musicBadgeW = DiaryChrome.widthCached(this.font, badge) + 4;
     }
 
     private void drawSignature(GuiGraphics g) {
@@ -954,6 +970,9 @@ public class DiaryTitleScreen extends Screen {
             String compactSignature = this.cachedCompactSig;
             if (!compactSignature.isEmpty()) {
                 DiaryTypography.draw(g, this.font, compactSignature, 48, y, DiaryTheme.SEPIA_LIGHT, false);
+                this.sigX = 48;
+                this.sigY = y - 3;
+                this.sigW = DiaryChrome.widthCached(this.font, compactSignature);
             }
             return;
         }
@@ -986,6 +1005,9 @@ public class DiaryTitleScreen extends Screen {
         DiaryTypography.draw(g, this.font, signature,
             newX, newY,
             onSlip ? DiaryChrome.INK_TITLE : DiaryTheme.SEPIA_LIGHT, false);
+        this.sigX = newX;
+        this.sigY = newY - 3;
+        this.sigW = sw;
 
         // Nombre viejo tachado (derecha, mas tenue)
         int oldX = this.width - oldSw - 6;
@@ -1138,6 +1160,26 @@ public class DiaryTitleScreen extends Screen {
                 }
                 int w = this.width, h = this.height;
                 boolean overButton = overAnyButton(mouseX, mouseY);
+
+                // v0.283.0: la firma lleva a los creditos y el distintivo de
+                // musica a la hoja de sonido, sin teclas de por medio.
+                if (!overButton && this.sigX >= 0 && mouseX >= this.sigX
+                        && mouseX <= this.sigX + this.sigW
+                        && mouseY >= this.sigY && mouseY <= this.sigY + 13) {
+                    com.eternalcraft.gripeverde.client.audio.UiSounds.click();
+                    this.minecraft.setScreen(
+                        new com.eternalcraft.gripeverde.client.screens.DiaryCreditsScreen(this));
+                    return true;
+                }
+                if (!overButton && this.musicBadgeX >= 0 && mouseX >= this.musicBadgeX
+                        && mouseX <= this.musicBadgeX + this.musicBadgeW
+                        && mouseY >= this.musicBadgeY && mouseY <= this.musicBadgeY + 13) {
+                    com.eternalcraft.gripeverde.client.audio.UiSounds.click();
+                    this.minecraft.setScreen(
+                        new com.eternalcraft.gripeverde.client.screens.DiarySoundOptionsScreen(
+                            this, this.minecraft.options));
+                    return true;
+                }
 
                 // El ojo del emblema no esta pintado: mira.
                 int logoCx = w / 2;

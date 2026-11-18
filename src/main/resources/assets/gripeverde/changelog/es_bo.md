@@ -1,3 +1,9 @@
+## Version 0.283.0 - La portada responde a la mano
+
+La firma del cronista y el distintivo de musica dejan de ser tinta muerta. Al pasar por la firma se subraya sola y un golpe abre los creditos, que es donde se cuenta quien escribe esto; el distintivo -"3/4" o "sin musica"- abre la hoja de sonido con un golpe, sin bajar a opciones y buscar la puerta. Ninguna tecla nueva: el raton hace el trabajo.
+
+Las dos cosas se calculan con la geometria real de lo que se dibuja, asi que en ventanas compactas la firma recortada tambien responde donde esta escrita, y el distintivo no se come ningun clic del control de musica que tiene al lado.
+
 ## Version 0.282.0 - Las hojas de ajustes dicen lo que tienen puesto
 
 La hoja del chat lleva ahora, en su pie, los tres numeros que de verdad se consultan: opacidad, ancho y escala, en porcentaje y sin siglas. La de opciones en linea dice que queda encendido -avisos de realms y listado publico- con un si o un no, y la de accesibilidad apunta en su margen cuantos ajustes tiene y que Esc vuelve.

@@ -207,6 +207,10 @@ Actualizado: 2026-11-13
 builds rojos: `@Override` huérfano, variables locales repetidas en ámbitos
 anidados y sentencias cortadas (línea que empieza por operador tras un `;` o `}`).
 
+## Cambios de 0.283.0 — la portada responde a la mano
+
+- **Portada**: la firma abre creditos y el distintivo de musica abre sonido, con subrayado al pasar.
+
 ## Cambios de 0.282.0 — las hojas de ajustes dicen lo que tienen puesto
 
 - **Segunda vuelta**, tanda 16: resumen en palabras en chat, online y accesibilidad.

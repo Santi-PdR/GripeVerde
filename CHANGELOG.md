@@ -1,3 +1,9 @@
+## v0.283.0 - La portada responde a la mano
+
+- Firma: `sigX/sigY/sigW` + subrayado al pasar + clic que abre `DiaryCreditsScreen`.
+- Distintivo de musica: `musicBadgeX/Y/W` + clic que abre `DiarySoundOptionsScreen`.
+- Geometria tomada de lo dibujado, tambien en la firma compacta.
+
 ## v0.282.0 - Las hojas de ajustes dicen lo que tienen puesto
 
 - Chat: `chatSummaryLine` con opacidad, ancho y escala.

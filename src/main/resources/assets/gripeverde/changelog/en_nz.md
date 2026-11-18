@@ -1,3 +1,9 @@
+## Version 0.283.0 - The title screen answers the hand
+
+The chronicler's signature and the music badge stop being dead ink. Hovering the signature underlines it by itself and a knock opens the credits, which is where it is told who writes this; the badge -"3/4" or "no music"- opens the sound sheet with a knock, without dropping into options and looking for the door. No new keys: the mouse does the work.
+
+Both are measured from the real geometry of what is drawn, so in compact windows the trimmed signature also answers where it is written, and the badge does not eat any click from the music control next to it.
+
 ## Version 0.282.0 - The settings sheets say what they have on
 
 The chat sheet now carries, at its foot, the three numbers actually consulted: opacity, width and scale, in percent and without acronyms. The online options sheet says what stays on -realms news and public listing- with a yes or a no, and the accessibility one notes in its margin how many settings it has and that Esc goes back.
