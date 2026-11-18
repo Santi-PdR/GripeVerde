@@ -1,3 +1,9 @@
+## Version 0.289.0 - Review of the second round
+
+What tandas sixteen to twenty-two touched gets reviewed. The name of the chosen door in the posts is no longer painted in windows under 360 px wide, the chosen record in worlds waits until the window has some body, and the three-layer sound summary does not appear when the sheet is in its compact mode, where the divider sits against the slider.
+
+The context notebook documents the whole second round and debuts the cabinet's folio table: which number belongs to each sheet, from the I of options to the XVIII of saved worlds, so that two equal stamps never happen again.
+
 ## Version 0.288.0 - The pocket watch looks like a real watch
 
 The large dial now has its sixty minute marks, small, between the hours; under the lid's inscription two new lines appear: the watchmaker's signature and the state of the winding. The small watch on the title screen now carries the same red notch at 11:52 as the large dial, so they are recognised as the same object.

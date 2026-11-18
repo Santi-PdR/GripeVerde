@@ -1,3 +1,9 @@
+## Version 0.289.0 - Repaso de la segunda vuelta
+
+Se repasa lo que se toco en las tandas dieciseis a veintidos. El nombre de la puerta elegida en los puestos ya no se pinta en ventanas de menos de 360 px, el de la ficha elegida en los mundos espera a que la ventana tenga cuerpo, y el resumen de las tres capas de sonido no aparece cuando la hoja esta en su modo compacto, donde el divisor queda pegado al deslizador.
+
+El cuaderno de contexto documenta la segunda vuelta completa y estrena la tabla de folios del gabinete: que numero le toca a cada hoja, del I de opciones al XVIII de los mundos guardados, para que no vuelva a haber dos chapas iguales.
+
 ## Version 0.288.0 - El reloj de bolsillo se parece a un reloj de verdad
 
 La esfera grande estrena las sesenta marcas de minuto, menudas, entre las horas; debajo de la inscripcion de la tapa aparecen dos renglones nuevos: la firma del relojero que lo hizo y el estado de la cuerda. El reloj pequeno de la portada lleva ahora la misma muesca roja de las 11:52 que la esfera grande, para que se reconozcan como el mismo objeto.

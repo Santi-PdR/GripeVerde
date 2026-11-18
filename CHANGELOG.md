@@ -1,3 +1,8 @@
+## v0.289.0 - Repaso de la segunda vuelta
+
+- Guardas: elegido de puestos (>=360 px), elegido de mundos (>=220 px de alto), resumen de sonido solo en hoja amplia.
+- Docs: tabla de la segunda vuelta (16-23) y tabla de folios I-XVIII.
+
 ## v0.288.0 - El reloj de bolsillo se parece a un reloj de verdad
 
 - Esfera grande: marcas de minuto, firma del relojero y "cuerda: llena".

@@ -909,7 +909,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 // v0.287.0: el elegido va en la franja del pie, nunca encima de
                 // la lista ni del divisor de la cabecera.
                 int chosenY = this.height - PANEL_MARGIN_V - 12;
-                if (lw < panelW - 160 && chosenY > titleY + 40) {
+                if (this.width >= 360 && lw < panelW - 160 && chosenY > titleY + 40) {
                     gfx.drawString(this.font, cut, lx, chosenY, DiaryChrome.INK_FLAVOR, false);
                 }
             }

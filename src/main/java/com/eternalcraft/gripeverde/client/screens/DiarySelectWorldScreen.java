@@ -319,7 +319,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                     String lineSel = (en ? "chosen: " : "elegido: ") + picked;
                     String cutSel = DiaryChrome.fitText(font, lineSel, Math.max(60, w / 2 - 20));
                     int selW = DiaryChrome.widthCached(font, cutSel);
-                    if (w / 2 - selW / 2 - 10 > 12) {
+                    if (this.height >= 220 && w / 2 - selW / 2 - 10 > 12) {
                         g.drawString(font, cutSel, w / 2 - selW / 2, 44, DiaryChrome.INK_FLAVOR, false);
                     }
                 }

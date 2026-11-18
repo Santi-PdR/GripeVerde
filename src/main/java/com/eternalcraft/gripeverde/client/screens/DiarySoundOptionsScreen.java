@@ -528,7 +528,8 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
                     + (menuAmbienceOffLabel(ambOff, ambPct, en))
                     + (en ? "  ·  ui " : "  ·  interfaz ") + uiPct + "%";
             }
-            if (this.panelW >= 250) {
+            boolean roomy = this.panelW >= 250 && this.panelH >= 210;
+            if (roomy) {
                 String cut = DiaryChrome.fitCached(this.font, line, this.panelW - 32);
                 int cw = DiaryChrome.widthCached(this.font, cut);
                 g.drawString(this.font, cut, this.panelX + (this.panelW - cw) / 2,

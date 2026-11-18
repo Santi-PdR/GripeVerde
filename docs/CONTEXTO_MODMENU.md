@@ -207,6 +207,47 @@ Actualizado: 2026-11-13
 builds rojos: `@Override` huérfano, variables locales repetidas en ámbitos
 anidados y sentencias cortadas (línea que empieza por operador tras un `;` o `}`).
 
+
+## Segunda vuelta (tandas 16–23)
+
+| # | tema | versión |
+|---|---|---|
+| 16 | chat, online y accesibilidad: resumen en palabras | 0.282.0 |
+| 17 | portada: la firma abre créditos, el distintivo abre sonido | 0.283.0 |
+| 18 | entrada directa: tres direcciones recordadas | 0.284.0 |
+| 19 | hojas: estado de las tres capas de sonido, avisos y folios | 0.285.0 |
+| 20 | diario y parte: sin pistas de atajos, memoria visible, ranuras sin tecla | 0.286.0 |
+| 21 | mundos y puestos: la ficha y la puerta elegidas | 0.288.0 |
+| 22 | reloj y portada: marcas de minuto, relojero, cuerda, sin leyenda | 0.288.0 |
+| 23 | repaso: guardas de ancho y alto, tablas y folios | 0.289.0 |
+
+## Folios del gabinete
+
+| chapa | hoja |
+|---|---|
+| I | opciones |
+| II | sonido |
+| III | controles |
+| IV | idioma |
+| V | chat |
+| VI | accesibilidad |
+| VII | pausa |
+| VIII | aspecto |
+| IX | créditos |
+| X | puestos |
+| XI | editar puesto |
+| XII | entrada directa |
+| XIII | parte de CEDA |
+| XIV | confirmación |
+| XV | cuaderno (changelog) |
+| XVI | recursos |
+| XVII | arsenal |
+| XVIII | mundos guardados |
+
+## Cambios de 0.289.0 — repaso de la segunda vuelta
+
+- **Guardas** en mundos, puestos y sonido. **Docs**: tabla de tandas 16-23 y tabla de folios.
+
 ## Cambios de 0.288.0 — el reloj se parece a un reloj de verdad
 
 - **Reloj**: marcas de minuto, firma del relojero y cuerda. **Portada**: misma muesca, sin leyenda de version, distintivo subrayado.
