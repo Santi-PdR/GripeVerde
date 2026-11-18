@@ -507,6 +507,44 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             r.render(g, mouseX, mouseY, partialTick);
         }
 
+        // v0.285.0: las tres capas, medidas y dichas; y el folio al pie.
+        try {
+            boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+            int musicPct = (int) Math.round(
+                com.eternalcraft.gripeverde.config.ClientConfig.MUSIC_VOLUME.get() * 100.0);
+            int ambPct = (int) Math.round(
+                com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_VOLUME.get() * 100.0);
+            int uiPct = (int) Math.round(
+                com.eternalcraft.gripeverde.config.ClientConfig.UI_VOLUME.get() * 100.0);
+            boolean musicOff = !MenuMusic.isMusicEnabled() || musicPct <= 0;
+            boolean ambOff = MenuAmbience.isMuted() || ambPct <= 0;
+            String line;
+            if (musicOff && ambOff && uiPct <= 0) {
+                line = en ? "the cabinet is silent" : "el gabinete esta en silencio";
+            } else {
+                line = (en ? "music " : "musica ")
+                    + (menuMusicOffLabel(musicOff, musicPct, en))
+                    + (en ? "  ·  ambience " : "  ·  ambiente ")
+                    + (menuAmbienceOffLabel(ambOff, ambPct, en))
+                    + (en ? "  ·  ui " : "  ·  interfaz ") + uiPct + "%";
+            }
+            if (this.panelW >= 250) {
+                String cut = DiaryChrome.fitCached(this.font, line, this.panelW - 32);
+                int cw = DiaryChrome.widthCached(this.font, cut);
+                g.drawString(this.font, cut, this.panelX + (this.panelW - cw) / 2,
+                    divY3 - 10, DiaryChrome.INK_FLAVOR, false);
+            }
+            if (this.panelH >= 190) {
+                String folio = en ? "sheet II  ·  Esc back" : "hoja II  ·  Esc vuelve";
+                int fw = DiaryChrome.widthCached(this.font, folio);
+                if (this.panelX + this.panelW - 14 - fw > this.panelX + 14) {
+                    g.drawString(this.font, folio, this.panelX + this.panelW - 14 - fw,
+                        this.panelY + this.panelH - 12, DiaryChrome.INK_FLAVOR, false);
+                }
+            }
+        } catch (Throwable ignored) {
+        }
+
         // v0.24.0: el diapason guarda el tono de la sala
         try {
             drawTuningFork(g, mouseX, mouseY);
@@ -518,6 +556,17 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, this.panelY - 12);
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
         } catch (Throwable ignored) {}
+    }
+
+    /** v0.285.0: "40%" o "en silencio", segun lo que haya. */
+    private String menuMusicOffLabel(boolean off, int pct, boolean en) {
+        if (off) return en ? "silent" : "en silencio";
+        return pct + "%";
+    }
+
+    private String menuAmbienceOffLabel(boolean off, int pct, boolean en) {
+        if (off) return en ? "silent" : "en silencio";
+        return pct + "%";
     }
 
     /** v0.24.0: un diapason al margen; pulsado, afina la sala entera. */

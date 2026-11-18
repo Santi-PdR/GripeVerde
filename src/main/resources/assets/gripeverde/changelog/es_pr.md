@@ -1,3 +1,9 @@
+## Version 0.285.0 - Remate de las hojas: cada una dice lo que tiene y como se sale
+
+La hoja de sonido estrena, sobre el divisor inferior, el estado de las tres capas: musica, ambiente e interfaz, cada una con su porcentaje o con "en silencio" si esta apagada; si las tres callan, lo dice de una vez -"el gabinete esta en silencio"-. La de aspecto avisa en rojo cuando no hay ninguna prenda puesta, sin regañar. La de idioma, la de controles y la de creditos llevan su folio romano al pie, con el recordatorio de que Esc vuelve.
+
+Todas las lineas nuevas se piden al ancho real del panel y no se pintan si no caben, asi que en ventanas estrechas desaparecen en vez de amontonarse.
+
 ## Version 0.284.0 - La entrada directa recuerda las ultimas puertas
 
 Cuando el campo de la entrada directa esta vacio, la hoja ya no repite la pista de siempre: escribe "recientes:" y las tres ultimas direcciones a las que se entro, con su raya debajo. Un golpe en cualquiera de ellas la pone en el campo y enciende el boton, sin escribir una letra.

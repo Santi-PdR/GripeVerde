@@ -1,3 +1,9 @@
+## v0.285.0 - Remate de las hojas: cada una dice lo que tiene y como se sale
+
+- Sonido: resumen de musica, ambiente e interfaz; aviso de silencio total; folio II.
+- Aspecto: aviso cuando no hay prendas puestas; folio VIII.
+- Idioma IV, controles III y creditos IX con folio y salida al pie.
+
 ## v0.284.0 - La entrada directa recuerda las ultimas puertas
 
 - Nueva clase `RecentAddresses` (config/gripeverde-recents.txt, 3 direcciones).

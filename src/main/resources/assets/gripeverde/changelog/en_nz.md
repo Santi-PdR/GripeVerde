@@ -1,3 +1,9 @@
+## Version 0.285.0 - Finishing the sheets: each says what it has and how to leave
+
+The sound sheet gains, above the lower divider, the state of its three layers: music, ambience and interface, each with its percentage or with "silent" if switched off; if all three are quiet, it says so at once -"the cabinet is silent"-. The skin sheet warns in red when no garment is worn, without scolding. The language, controls and credits sheets carry their Roman folio at the foot, with the reminder that Esc goes back.
+
+Every new line asks for the real panel width and is not painted if it does not fit, so in narrow windows they disappear instead of piling up.
+
 ## Version 0.284.0 - Direct join remembers the last doors
 
 When the direct-join field is empty, the sheet no longer repeats the usual hint: it writes "recent:" and the last three addresses joined, with their rule underneath. A knock on any of them puts it in the field and lights the button, without typing a letter.

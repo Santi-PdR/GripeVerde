@@ -282,6 +282,34 @@ public class DiarySkinCustomizationScreen extends Screen {
 
         // v0.266.0: cuantas prendas van puestas, sobre el pie.
         drawWornCount(gfx, panelW, divY2);
+
+        // v0.285.0: si no lleva nada puesto, la hoja lo dice sin regañar.
+        try {
+            boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+            int wornNow = 0;
+            for (PlayerModelPart part : PlayerModelPart.values()) {
+                if (this.options.isModelPartEnabled(part)) wornNow++;
+            }
+            String note = wornNow == 0
+                ? (en ? "nothing worn: the street will see all" : "sin prendas: la calle lo vera todo")
+                : "";
+            if (!note.isEmpty() && panelW >= 240) {
+                String cut = DiaryChrome.fitCached(this.font, note, panelW - 32);
+                int nw = DiaryChrome.widthCached(this.font, cut);
+                gfx.drawString(this.font, cut, this.panelX + (panelW - nw) / 2,
+                    divY2 + 2, 0xFF8E2A20, false);
+            }
+            if (panelH >= 190) {
+                String folio = en ? "sheet VIII  ·  Esc back" : "hoja VIII  ·  Esc vuelve";
+                int fw = DiaryChrome.widthCached(this.font, folio);
+                int fx = this.panelX + panelW - 12 - fw;
+                if (fx > this.panelX + 12) {
+                    gfx.drawString(this.font, folio, fx, this.panelY + panelH - 12,
+                        DiaryChrome.INK_FLAVOR, false);
+                }
+            }
+        } catch (Throwable ignored) {
+        }
         DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, panelW, panelH);
         DiaryChrome.drawRegistryTagLeft(gfx, this.panelX, this.panelY, "REG. VIII");
 
