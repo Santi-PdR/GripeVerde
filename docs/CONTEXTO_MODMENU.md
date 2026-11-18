@@ -180,6 +180,10 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.273.0 — la hoja de controles vigila las teclas
+
+- **Controles**: `auditKeys` (choques + sin tecla), muestra del nombre al pasar, clic que abre `KeyBindsScreen`.
+
 ## Cambios de 0.272.0 — todas las hojas suenan igual
 
 - **Sonido de apertura** en 17 hojas con guarda `paperSoundDone`; **puerta** al cerrar pausa y packs.

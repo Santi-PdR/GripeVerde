@@ -1,3 +1,10 @@
+## v0.273.0 - La hoja de controles vigila las teclas
+
+- `auditKeys()`: choques y teclas sin asignar, recalculados 20 veces por segundo.
+- Aviso en el margen izquierdo, en rojo si hay choques; "sin choques" en tinta suave si no.
+- Al pasar el raton, nombre de una tecla en conflicto.
+- Clic en el aviso abre `KeyBindsScreen`.
+
 ## v0.272.0 - Todas las hojas suenan igual
 
 - `paperSoundDone` + `UiSounds.open()` en 17 hojas (una vez por apertura, no al redimensionar).

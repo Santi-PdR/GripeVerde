@@ -1,3 +1,9 @@
+## Version 0.273.0 - The controls sheet watches the keys
+
+In the left margin of the controls sheet there are now two notices that used to be discovered only by trial and error: how many keys are shared by two actions -"2 clashes", in red- and how many were left with none. They are counted twenty times a second over the game's keys, and mouse buttons do not count as a clash because two actions can live on them.
+
+If there are clashes, hovering the notice shows the name of one of the guilty keys, and a knock on the notice opens the key list directly so it can be fixed. When there are none, the line reads "no clashes" in soft ink, without getting in the way.
+
 ## Version 0.272.0 - Every sheet sounds the same
 
 The seventeen cabinet sheets that used to open in silence now sound: options, sound, controls, language, chat, accessibility, skin, credits, mod credits, pause, dispatch, direct join, edit post, confirmation, changelog and packs open with the same paper sound, once per opening, so resizing the window does not repeat it. The pause screen and the pack list, which closed mute, now close with the door.

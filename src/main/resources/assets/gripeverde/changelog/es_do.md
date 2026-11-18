@@ -1,3 +1,9 @@
+## Version 0.273.0 - La hoja de controles vigila las teclas
+
+En el margen izquierdo de la hoja de controles aparecen ahora dos avisos que antes habia que descubrir a base de probar: cuantas teclas comparten dos acciones -"2 choques", en rojo- y cuantas se quedaron sin ninguna. Se cuentan veinte veces por segundo sobre las teclas del juego, y los botones del raton no cuentan como choque porque pueden convivir dos acciones en ellos.
+
+Si hay choques, al pasar la mano por el aviso aparece el nombre de una de las teclas culpables, y un golpe sobre el aviso abre directamente la lista de teclas para arreglarlo. Cuando no hay ninguno, el renglon dice "sin choques" en tinta suave, sin molestar.
+
 ## Version 0.272.0 - Todas las hojas suenan igual
 
 Las diecisiete hojas del gabinete que se abrian en silencio ya suenan: opciones, sonido, controles, idioma, chat, accesibilidad, aspecto, creditos, credito de mods, pausa, parte, entrada directa, editar puesto, confirmacion, changelog y packs abren con el mismo ruido de papel, una sola vez por apertura, de modo que redimensionar la ventana no repite el sonido. La pausa y la lista de packs, que se cerraban mudas, ahora cierran con la puerta.
