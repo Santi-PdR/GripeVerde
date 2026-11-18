@@ -133,6 +133,12 @@ public class DiaryDirectJoinScreen extends Screen {
 
     private long unmappedWarnUntilMs = 0L;
 
+    // v0.284.0: las direcciones recordadas se pintan como fichas y se tocan.
+    private final java.util.List<Integer> recentXs = new java.util.ArrayList<>();
+    private final java.util.List<Integer> recentWs = new java.util.ArrayList<>();
+    private final java.util.List<String> recentShown = new java.util.ArrayList<>();
+    private int recentY = -1;
+
     private void onSelect() {
         String ip = this.ipEdit.getValue() == null ? "" : this.ipEdit.getValue().trim();
         // v0.16.0: la direccion que no esta en ningun mapa.
@@ -151,6 +157,11 @@ public class DiaryDirectJoinScreen extends Screen {
             return;
         }
         this.serverData.ip = ip;
+        // v0.284.0: la casa recuerda por donde se entro.
+        try {
+            com.eternalcraft.gripeverde.client.integration.RecentAddresses.push(ip);
+        } catch (Throwable ignored) {
+        }
         this.minecraft.options.lastMpIp = ip;
         this.minecraft.options.save();
         this.callback.accept(true);
@@ -158,6 +169,29 @@ public class DiaryDirectJoinScreen extends Screen {
 
     private void onCancel() {
         this.callback.accept(false);
+    }
+
+    /** v0.284.0: tocar una direccion recordada la pone en el campo. */
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == 0 && this.recentY >= 0) {
+            for (int i = 0; i < this.recentXs.size(); i++) {
+                int x = this.recentXs.get(i);
+                int w = this.recentWs.get(i);
+                if (mouseX >= x - 1 && mouseX <= x + w + 1
+                        && mouseY >= this.recentY - 2 && mouseY <= this.recentY + 11) {
+                    try {
+                        this.ipEdit.setValue(this.recentShown.get(i));
+                        this.ipEdit.setFocused(true);
+                        com.eternalcraft.gripeverde.client.audio.UiSounds.type();
+                        updateSelectButton();
+                    } catch (Throwable ignored) {
+                    }
+                    return true;
+                }
+            }
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
@@ -241,7 +275,42 @@ public class DiaryDirectJoinScreen extends Screen {
         int fieldY = panelY + ipFieldOffset();
         int noteY = fieldY + 26;
         int btnTop = panelY + panelH - 20 - 16;
-        if (noteY + 10 < btnTop && panelW >= 200) {
+        this.recentXs.clear();
+        this.recentWs.clear();
+        this.recentShown.clear();
+        this.recentY = -1;
+        // v0.284.0: si no se escribio nada, la hoja ofrece las ultimas puertas.
+        if (typed.isEmpty() && noteY + 10 < btnTop && panelW >= 200) {
+            try {
+                java.util.List<String> recents =
+                    com.eternalcraft.gripeverde.client.integration.RecentAddresses.list();
+                if (!recents.isEmpty()) {
+                    String head = en ? "recent: " : "recientes: ";
+                    int hx = centerX - DiaryChrome.widthCached(this.font, head) / 2;
+                    int total = DiaryChrome.widthCached(this.font, head);
+                    for (String r : recents) {
+                        total += DiaryChrome.widthCached(this.font, r) + 10;
+                    }
+                    total -= 10;
+                    hx = centerX - total / 2;
+                    gfx.drawString(this.font, head, hx, noteY, DiaryChrome.INK_FLAVOR, false);
+                    int cx2 = hx + DiaryChrome.widthCached(this.font, head);
+                    for (String r : recents) {
+                        int rw = DiaryChrome.widthCached(this.font, r);
+                        gfx.drawString(this.font, r, cx2, noteY, DiaryChrome.INK_SUBTITLE, false);
+                        gfx.fill(cx2, noteY + 9, cx2 + rw, noteY + 10,
+                            DiaryChrome.INK_DIVIDER);
+                        this.recentXs.add(cx2);
+                        this.recentWs.add(rw);
+                        this.recentShown.add(r);
+                        cx2 += rw + 10;
+                    }
+                    this.recentY = noteY;
+                }
+            } catch (Throwable ignored) {
+            }
+        }
+        if (noteY + 10 < btnTop && panelW >= 200 && this.recentY < 0) {
             String note;
             int ink;
             if (typed.isEmpty()) {

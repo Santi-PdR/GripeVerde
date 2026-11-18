@@ -1,3 +1,9 @@
+## Version 0.284.0 - Direct join remembers the last doors
+
+When the direct-join field is empty, the sheet no longer repeats the usual hint: it writes "recent:" and the last three addresses joined, with their rule underneath. A knock on any of them puts it in the field and lights the button, without typing a letter.
+
+The memory lives in its own three-line file under the configuration folder, touches neither the game's server list nor servers.dat, and does not grow: the last one used goes to the front, the old ones fall off by themselves. It is only noted when joining with an address shaped like an address.
+
 ## Version 0.283.0 - The title screen answers the hand
 
 The chronicler's signature and the music badge stop being dead ink. Hovering the signature underlines it by itself and a knock opens the credits, which is where it is told who writes this; the badge -"3/4" or "no music"- opens the sound sheet with a knock, without dropping into options and looking for the door. No new keys: the mouse does the work.

@@ -207,6 +207,10 @@ Actualizado: 2026-11-13
 builds rojos: `@Override` huérfano, variables locales repetidas en ámbitos
 anidados y sentencias cortadas (línea que empieza por operador tras un `;` o `}`).
 
+## Cambios de 0.284.0 — la entrada directa recuerda las ultimas puertas
+
+- **Entrada directa**: `RecentAddresses` (3 direcciones en `config/gripeverde-recents.txt`), fichas clicables.
+
 ## Cambios de 0.283.0 — la portada responde a la mano
 
 - **Portada**: la firma abre creditos y el distintivo de musica abre sonido, con subrayado al pasar.

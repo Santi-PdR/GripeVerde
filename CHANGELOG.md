@@ -1,3 +1,9 @@
+## v0.284.0 - La entrada directa recuerda las ultimas puertas
+
+- Nueva clase `RecentAddresses` (config/gripeverde-recents.txt, 3 direcciones).
+- Entrada directa: fichas "recientes:" con su raya, clic que rellena el campo.
+- Se anota al entrar, solo si la direccion tiene forma de direccion.
+
 ## v0.283.0 - La portada responde a la mano
 
 - Firma: `sigX/sigY/sigW` + subrayado al pasar + clic que abre `DiaryCreditsScreen`.

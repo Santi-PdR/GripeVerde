@@ -1,3 +1,9 @@
+## Version 0.284.0 - La entrada directa recuerda las ultimas puertas
+
+Cuando el campo de la entrada directa esta vacio, la hoja ya no repite la pista de siempre: escribe "recientes:" y las tres ultimas direcciones a las que se entro, con su raya debajo. Un golpe en cualquiera de ellas la pone en el campo y enciende el boton, sin escribir una letra.
+
+La memoria vive en su propio fichero de tres lineas bajo la carpeta de configuracion, no toca la lista de puestos del juego ni el servidores.dat, y no crece: la ultima que se usa pasa al frente, las viejas se caen solas. Se anota solo cuando se aprieta entrar con una direccion que tiene forma de direccion.
+
 ## Version 0.283.0 - La portada responde a la mano
 
 La firma del cronista y el distintivo de musica dejan de ser tinta muerta. Al pasar por la firma se subraya sola y un golpe abre los creditos, que es donde se cuenta quien escribe esto; el distintivo -"3/4" o "sin musica"- abre la hoja de sonido con un golpe, sin bajar a opciones y buscar la puerta. Ninguna tecla nueva: el raton hace el trabajo.
