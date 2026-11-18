@@ -1,3 +1,9 @@
+## Version 0.278.0 - The arsenal says what it is mounted on
+
+The arsenal sheet now carries, under the modification count, the Forge version the game was raised with, its registry stamp in the margin -REG. XVII-, its folio in the corner of the foot and the reminder that Esc goes back. None of that was there: it was the only cabinet sheet without a number and without saying what scaffold it worked on.
+
+The dispatch foot was also fixed: it had been left with a stray line of text and did not compile, and the key sentence sticks back onto the count as before.
+
 ## Version 0.277.0 - The dispatch sorts itself and the notebook marks the pace
 
 When the CEDA dispatch opens, the cursor no longer falls on the first slot but on the first empty one: you write where something is missing, not where there is already a message. Changing pages does the same. While writing, the foot carries the exact count for the slot -"214 left"- and the overall count says how many are still to write; if not a single voice is noted, it says so plainly.

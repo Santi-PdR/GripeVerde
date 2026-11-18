@@ -92,6 +92,17 @@ public class DiaryModListScreen extends ModListScreen {
         }
     }
 
+    /** v0.278.0: "Forge 47.4.20", dicho sin adornos. */
+    private String forgeLine() {
+        try {
+            String v = net.minecraftforge.versions.forge.ForgeVersion.getVersion();
+            if (v == null || v.isBlank()) return "";
+            return "Forge " + v;
+        } catch (Throwable ignored) {
+            return "";
+        }
+    }
+
     private AbstractSelectionList<?> findList() {
         try {
             for (var child : this.children()) {
@@ -252,6 +263,25 @@ public class DiaryModListScreen extends ModListScreen {
                 g.drawString(this.font, cut, this.width - 12 - cw, 6,
                     com.eternalcraft.gripeverde.client.render.DiaryChrome.INK_FLAVOR, false);
             }
+            // v0.278.0: debajo, sobre que andamio esta montado el arsenal.
+            if (this.width >= 420) {
+                String forge = forgeLine();
+                if (!forge.isEmpty()) {
+                    String cut2 = ellipsizeTo(this.font, forge, Math.max(80, this.width / 3));
+                    int fw = this.font.width(cut2);
+                    g.drawString(this.font, cut2, this.width - 12 - fw, 17,
+                        com.eternalcraft.gripeverde.client.render.DiaryChrome.INK_FLAVOR, false);
+                }
+            }
+            // v0.278.0: la chapa del registro, en el margen izquierdo.
+            com.eternalcraft.gripeverde.client.render.DiaryChrome.drawRegistryTagLeft(
+                g, 0, -4, "REG. XVII");
+            // v0.278.0: el pie de la hoja recuerda como se sale.
+            if (this.height >= 200) {
+                String hint = en ? "Esc goes back" : "Esc vuelve";
+                g.drawString(this.font, hint, 12, this.height - 12,
+                    com.eternalcraft.gripeverde.client.render.DiaryChrome.INK_FLAVOR, false);
+            }
         } catch (Throwable ignored) {
         }
         // v0.265.0: la tinta va despues de Forge, para tapar su letra blanca.
@@ -278,6 +308,19 @@ public class DiaryModListScreen extends ModListScreen {
         int h = Math.min(this.height + 6, bottom + 10) - y;
         if (w < 24 || h < 16) return;
         PaperTexture.drawTornSheet(g, x, y, w, h, PaperTexture.PaperKind.OFFICIAL);
+        // v0.278.0: folio del arsenal, en la esquina del pie.
+        try {
+            if (h >= 24) {
+                boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+                String folio = en ? "sheet 1" : "hoja 1";
+                int fw = this.font.width(folio);
+                if (x + w - fw - 8 > x + 4) {
+                    g.drawString(this.font, folio, x + w - fw - 8, y + h - 12,
+                        com.eternalcraft.gripeverde.client.render.DiaryChrome.INK_FLAVOR, false);
+                }
+            }
+        } catch (Throwable ignored) {
+        }
     }
 
     @Override

@@ -1,3 +1,9 @@
+## Version 0.278.0 - El arsenal dice sobre que esta montado
+
+La hoja del arsenal lleva ahora, bajo el recuento de modificaciones, la version de Forge con la que se levanto el juego, su chapa de registro en el margen -REG. XVII-, su folio en la esquina del pie y el recordatorio de que Esc vuelve. Nada de eso estaba: era la unica hoja del gabinete sin numero y sin decir con que andamio trabajaba.
+
+Tambien se arreglo el pie del parte, que se habia quedado con una linea de texto suelta y no compilaba; la frase de las teclas vuelve a pegarse al recuento como antes.
+
 ## Version 0.277.0 - El parte se ordena solo y el cuaderno marca el paso
 
 Al abrir el parte de CEDA, el cursor ya no cae en la primera ranura sino en la primera que esta vacia: se escribe donde falta, no donde ya hay mensaje. Al cambiar de hoja pasa lo mismo. Mientras se escribe, el pie lleva la cuenta exacta de la ranura -"quedan 214"- y el recuento general dice cuantas faltan por escribir; si no hay ninguna voz anotada, lo dice sin rodeos.

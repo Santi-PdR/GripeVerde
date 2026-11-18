@@ -1,3 +1,8 @@
+## v0.278.0 - El arsenal dice sobre que esta montado
+
+- Arsenal: `forgeLine()` bajo el recuento, chapa `REG. XVII`, folio y pista de salida.
+- Fix: sentencia suelta en el pie del parte (`count = count + ...`).
+
 ## v0.277.0 - El parte se ordena solo y el cuaderno marca el paso
 
 - Parte: foco en la primera ranura vacia al abrir y al cambiar de hoja.

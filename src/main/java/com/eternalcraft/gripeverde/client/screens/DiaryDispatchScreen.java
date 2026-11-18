@@ -544,9 +544,9 @@ public class DiaryDispatchScreen extends Screen {
             }
         } catch (Throwable ignored) {
         }
-            + (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
-                ? "  ·  Enter next  ·  Tab changes  ·  right click empties  ·  Esc back"
-                : "  ·  Enter siguiente  ·  Tab cambia  ·  clic der. vacia  ·  Esc vuelve");
+        count = count + (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+            ? "  ·  Enter next  ·  Tab changes  ·  right click empties  ·  Esc back"
+            : "  ·  Enter siguiente  ·  Tab cambia  ·  clic der. vacia  ·  Esc vuelve");
         gfx.drawString(this.font, ellipsize(count, Math.max(40, this.panelW - 40)),
             this.panelX + 20, this.countY, DiaryChrome.INK_FLAVOR, false);
 

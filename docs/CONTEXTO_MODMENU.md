@@ -180,6 +180,10 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.278.0 — el arsenal dice sobre que esta montado
+
+- **Arsenal**: version de Forge, `REG. XVII`, folio y "Esc vuelve". Fix del pie del parte.
+
 ## Cambios de 0.277.0 — el parte se ordena solo y el cuaderno marca el paso
 
 - **Parte**: foco en la primera vacia, contador de ranura y "faltan N".
