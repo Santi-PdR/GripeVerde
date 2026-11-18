@@ -180,6 +180,10 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.270.0 — el archivo dice lo que pesa
+
+- **Mundos**: peso del archivo en hilo aparte, fecha en romanos, "se ven N" al filtrar, folio y tres sonidos nuevos (hoja, rueda, pluma, fila).
+
 ## Cambios de 0.269.0 — menos llaves, mas papel
 
 - **Una sola llave**: `Ctrl+S` en la portada. Nada mas, y sin carteles.

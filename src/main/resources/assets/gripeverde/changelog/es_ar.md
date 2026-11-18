@@ -1,3 +1,9 @@
+## Version 0.270.0 - El archivo dice lo que pesa
+
+La cabecera de los mundos guardados ya no solo cuenta fichas: debajo dice cuanto ocupa el archivo entero en el disco, medido en un hilo aparte para que la pagina no se pare, y la fecha de hoy en numeros romanos, como el resto del registro. Si hay algo escrito en el buscador, el recuento cambia a "se ven 2" y aparece una linea con lo que se esta buscando.
+
+La hoja se abre con ruido de papel y se cierra con la puerta. La rueda del raton suena al pasar por la lista, escribir en el buscador suena a pluma, elegir un mundo con el raton tiene su golpe corto, y el pie lleva su folio en la esquina, "hoja 1", como cualquier expediente que se precie.
+
 ## Version 0.269.0 - Menos llaves, mas papel
 
 Se fueron todas las combinaciones de teclas menos una. Ya no hay Ctrl+N ni Ctrl+E en los puestos, ni Ctrl+1..0 en el parte, ni Ctrl+F en el diario: lo que se hace, se hace con los botones, con Enter, con Tab o con el raton. Tampoco queda cartel que anuncie la unica que se queda: Ctrl+S abre los mundos propios desde la portada y no se escribe en ninguna parte. El modo cine pierde su tecla; la portada se queda quieta.

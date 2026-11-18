@@ -1,3 +1,9 @@
+## Version 0.270.0 - The archive says what it weighs
+
+The saved-worlds header no longer just counts records: below it says how much the whole archive takes on disk, measured on a separate thread so the page never stalls, and today's date in Roman numerals, like the rest of the registry. If something is written in the search box, the count switches to "showing 2" and a line appears with what is being searched.
+
+The sheet opens with a paper sound and closes with the door. The mouse wheel sounds as it passes over the list, typing in the search box sounds like a pen, picking a world with the mouse has its short knock, and the foot carries its folio in the corner, "sheet 1", like any self-respecting file.
+
 ## Version 0.269.0 - Fewer keys, more paper
 
 Every key combination but one is gone. There is no Ctrl+N or Ctrl+E in the posts anymore, no Ctrl+1..0 in the dispatch, no Ctrl+F in the diary: what is done is done with buttons, with Enter, with Tab or with the mouse. Nor is there any sign announcing the only one that stays: Ctrl+S opens your own worlds from the title screen and is written nowhere. Cinematic mode loses its key; the title screen stays still.

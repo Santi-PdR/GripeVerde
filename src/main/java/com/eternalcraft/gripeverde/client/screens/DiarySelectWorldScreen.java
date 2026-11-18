@@ -37,6 +37,9 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     private final List<DiaryButton> dressed = new ArrayList<>();
     private WorldSelectionList vanillaList;
     private List<EditBox> searchBoxes = new ArrayList<>();
+    // v0.270.0: lo que pesa el archivo, medido una vez por apertura.
+    private static long archiveBytes = -1L;
+    private static boolean archiveMeasured = false;
 
     // v0.243.0: la pagina de registro. Las medidas de la lista se leen una vez
     // al abrir o al redimensionar; por cuadro solo cambia el desplazamiento.
@@ -71,6 +74,55 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         this.dressed.addAll(PaperButtons.dressAll(this));
         layoutAroundPaper();
         cacheListMetrics();
+        // v0.270.0: la hoja se abre con ruido de papel.
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.open();
+        } catch (Throwable ignored) {
+        }
+        measureArchiveAsync();
+    }
+
+    /** v0.270.0: pesa la carpeta de mundos en un hilo aparte, una sola vez. */
+    private void measureArchiveAsync() {
+        if (archiveMeasured) return;
+        archiveMeasured = true;
+        final java.nio.file.Path saves;
+        try {
+            saves = this.minecraft.gameDirectory.toPath().resolve("saves");
+        } catch (Throwable ignored) {
+            return;
+        }
+        Thread t = new Thread(() -> {
+            long total = 0L;
+            try (java.util.stream.Stream<java.nio.file.Path> walk = java.nio.file.Files.walk(saves, 6)) {
+                java.util.Iterator<java.nio.file.Path> it = walk.iterator();
+                int guard = 0;
+                while (it.hasNext() && guard++ < 20000) {
+                    java.nio.file.Path f = it.next();
+                    try {
+                        if (java.nio.file.Files.isRegularFile(f)) {
+                            total += java.nio.file.Files.size(f);
+                        }
+                    } catch (Throwable ignored) {
+                    }
+                }
+            } catch (Throwable ignored) {
+            }
+            archiveBytes = total;
+        }, "gripeverde-archive-size");
+        t.setDaemon(true);
+        try {
+            t.start();
+        } catch (Throwable ignored) {
+        }
+    }
+
+    /** v0.270.0: 1,4 MB / 812 KB, sin decimales de mas. */
+    private static String formatBytes(long bytes, boolean en) {
+        if (bytes < 1024L) return bytes + (en ? " B" : " B");
+        double kb = bytes / 1024.0;
+        if (kb < 1024.0) return String.format(java.util.Locale.ROOT, "%.0f KB", kb);
+        return String.format(java.util.Locale.ROOT, "%.1f MB", kb / 1024.0);
     }
 
     /**
@@ -242,8 +294,59 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             if (count <= 0) badge = en ? "none yet" : "ninguno";
             else if (count == 1) badge = en ? "1 world" : "1 mundo";
             else badge = en ? count + " worlds" : count + " mundos";
+            // v0.270.0: si hay filtro puesto, el recuento dice cuanto se ve.
+            String filter = currentFilter();
+            if (!filter.isEmpty()) {
+                badge = en ? "showing " + count : "se ven " + count;
+            }
             int bw = DiaryChrome.widthCached(font, badge);
             g.drawString(font, badge, w - 12 - bw, 8, DiaryChrome.INK_SUBTITLE, false);
+            // v0.270.0: debajo, lo que pesa el archivo y la fecha de hoy.
+            String foot = "";
+            if (archiveBytes >= 0L) foot = formatBytes(archiveBytes, en);
+            String date = todayStamp(en);
+            if (!date.isEmpty()) foot = foot.isEmpty() ? date : foot + "  ·  " + date;
+            if (!foot.isEmpty()) {
+                int fw = DiaryChrome.widthCached(font, foot);
+                if (w - 12 - fw > cx + 90) {
+                    g.drawString(font, foot, w - 12 - fw, 20, DiaryChrome.INK_FLAVOR, false);
+                }
+            }
+            if (!filter.isEmpty()) {
+                String what = (en ? "search: " : "busca: ") + filter;
+                String cut = DiaryChrome.fitText(font, what, Math.max(60, w - 40));
+                int tw = DiaryChrome.widthCached(font, cut);
+                g.drawString(font, cut, (w - tw) / 2, 33, DiaryChrome.INK_FLAVOR, false);
+            }
+        }
+    }
+
+    /** v0.270.0: lo que hay escrito en el buscador del juego, recortado. */
+    private String currentFilter() {
+        for (EditBox box : this.searchBoxes) {
+            try {
+                if (box == null || !box.isVisible()) continue;
+                String v = box.getValue();
+                if (v != null && !v.isBlank()) {
+                    v = v.trim();
+                    return v.length() > 24 ? v.substring(0, 24) : v;
+                }
+            } catch (Throwable ignored) {
+            }
+        }
+        return "";
+    }
+
+    /** v0.270.0: la fecha de hoy en numeros romanos, como el registro. */
+    private static String todayStamp(boolean en) {
+        String[] roman = {"I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"};
+        try {
+            java.util.Calendar c = java.util.Calendar.getInstance();
+            int d = c.get(java.util.Calendar.DAY_OF_MONTH);
+            int m = Math.max(0, Math.min(11, c.get(java.util.Calendar.MONTH)));
+            return d + "·" + roman[m] + "·" + c.get(java.util.Calendar.YEAR);
+        } catch (Throwable ignored) {
+            return "";
         }
     }
 
@@ -364,6 +467,16 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         int h = Math.min(this.height + 6, bottom + pad + 2) - y;
         if (w < 24 || h < 16) return;
         PaperTexture.drawTornSheet(g, x, y, w, h, PaperTexture.PaperKind.OFFICIAL);
+        // v0.270.0: folio del archivo, en la esquina del pie.
+        if (h >= 22) {
+            boolean en = Discoveries.isEnglish();
+            String folio = (en ? "sheet 1" : "hoja 1");
+            int fw = DiaryChrome.widthCached(this.font, folio);
+            if (x + w - fw - 8 > x + 4) {
+                g.drawString(this.font, folio, x + w - fw - 8, y + h - 12,
+                    DiaryChrome.INK_FLAVOR, false);
+            }
+        }
     }
 
     /**
@@ -402,6 +515,60 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             }
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    /** v0.270.0: la rueda suena al pasar por la lista. */
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+        boolean handled = super.mouseScrolled(mouseX, mouseY, delta);
+        if (handled && this.listTop >= 0 && this.listBottom > this.listTop
+                && mouseY >= this.listTop && mouseY <= this.listBottom) {
+            try {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.scroll();
+            } catch (Throwable ignored) {
+            }
+        }
+        return handled;
+    }
+
+    /** v0.270.0: escribir en el buscador suena a pluma. */
+    @Override
+    public boolean charTyped(char codePoint, int modifiers) {
+        boolean handled = super.charTyped(codePoint, modifiers);
+        if (handled) {
+            try {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.type();
+            } catch (Throwable ignored) {
+            }
+        }
+        return handled;
+    }
+
+    /** v0.270.0: elegir un mundo con el raton tiene su golpe. */
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        boolean onRow = button == 0 && this.listTop >= 0 && this.listBottom > this.listTop
+            && this.rowLeft >= 0
+            && mouseX >= this.rowLeft - 6 && mouseX <= this.rowRight + 6
+            && mouseY >= this.listTop && mouseY <= this.listBottom;
+        boolean handled = super.mouseClicked(mouseX, mouseY, button);
+        if (onRow) {
+            try {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.tab();
+            } catch (Throwable ignored) {
+            }
+        }
+        return handled;
+    }
+
+    @Override
+    public void onClose() {
+        // v0.270.0: se cierra con el ruido de la puerta, como el resto.
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.back();
+        } catch (Throwable ignored) {
+        }
+        super.onClose();
     }
 
     @Override

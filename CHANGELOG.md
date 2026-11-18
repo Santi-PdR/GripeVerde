@@ -1,3 +1,12 @@
+## v0.270.0 - El archivo dice lo que pesa
+
+- `measureArchiveAsync` + `formatBytes`: peso real de `saves/` en la cabecera.
+- `todayStamp`: fecha en romanos junto al peso.
+- Filtro activo: "se ven N" y linea "busca: ...".
+- `UiSounds.open()` al abrir y `onClose()` con puerta.
+- Rueda (`mouseScrolled`), pluma (`charTyped`) y golpe al elegir fila (`mouseClicked`).
+- Folio "hoja 1" en el pie.
+
 ## v0.269.0 - Menos llaves, mas papel
 
 - Fuera `Ctrl+N`/`Ctrl+E` en puestos, `Ctrl+N`/`Ctrl+S` en mundos, `Ctrl+1..0` en el parte, `Ctrl+F` en el diario y la pista de `Ctrl+V`.
