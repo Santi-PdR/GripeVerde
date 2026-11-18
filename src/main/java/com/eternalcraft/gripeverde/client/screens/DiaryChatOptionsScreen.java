@@ -149,6 +149,19 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
             DiaryChrome.drawStyledScrollThumbInPanel(g, this.list, this.panelX + this.panelW);
         }
 
+        // v0.282.0: el pie dice, en palabras, como esta el chat.
+        try {
+            String res = chatSummaryLine();
+            if (!res.isEmpty()) {
+                String cut = DiaryChrome.fitCached(this.font, res,
+                    Math.max(60, this.panelW - 150));
+                int rw = DiaryChrome.widthCached(this.font, cut);
+                g.drawString(this.font, cut, this.panelX + (this.panelW - rw) / 2,
+                    this.panelY + this.panelH - 30, DiaryChrome.INK_FLAVOR, false);
+            }
+        } catch (Throwable ignored) {
+        }
+
         // Widgets propios
         for (Renderable r : this.renderables) {
             r.render(g, mouseX, mouseY, partialTick);
@@ -169,6 +182,21 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
 
     @Override
     public void renderBackground(GuiGraphics g) {
+    }
+
+    /** v0.282.0: opacidad, ancho y escala del chat, dichos como se leen. */
+    private String chatSummaryLine() {
+        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+        try {
+            int opacity = (int) Math.round(this.options.chatOpacity().get() * 100.0);
+            int width = (int) Math.round(this.options.chatWidth().get() * 100.0);
+            int scale = (int) Math.round(this.options.chatScale().get() * 100.0);
+            return (en ? "opacity " : "opacidad ") + opacity + "%"
+                + (en ? "  ·  width " : "  ·  ancho ") + width + "%"
+                + (en ? "  ·  scale " : "  ·  escala ") + scale + "%";
+        } catch (Throwable ignored) {
+            return "";
+        }
     }
 
     @Override

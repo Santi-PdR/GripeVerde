@@ -1,3 +1,9 @@
+## Version 0.282.0 - Las hojas de ajustes dicen lo que tienen puesto
+
+La hoja del chat lleva ahora, en su pie, los tres numeros que de verdad se consultan: opacidad, ancho y escala, en porcentaje y sin siglas. La de opciones en linea dice que queda encendido -avisos de realms y listado publico- con un si o un no, y la de accesibilidad apunta en su margen cuantos ajustes tiene y que Esc vuelve.
+
+Es la primera de la segunda vuelta de tandas: alli donde la hoja solo tenia una lista, ahora hay una linea que la resume. Nada de botones nuevos ni de teclas: sigue habiendo una sola llave en todo el gabinete.
+
 ## Version 0.281.0 - Repaso de la casa
 
 Ultima tanda del ciclo: se repasa lo que se toco en las anteriores. El renglon de cortesia del telegrama de deceso ya no se escribe si el papel se quedo sin sitio antes del pie; el aviso de la pausa y el peso del archivo en las listas se habian guardado bien. El cuaderno de contexto documenta las quince tandas con su version y deja escrito que hace el revisor de Java que ahora corre antes de Gradle.

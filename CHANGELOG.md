@@ -1,3 +1,9 @@
+## v0.282.0 - Las hojas de ajustes dicen lo que tienen puesto
+
+- Chat: `chatSummaryLine` con opacidad, ancho y escala.
+- Online: `onlineSummaryLine` con avisos de realms y listado publico.
+- Accesibilidad: recuento de ajustes y "Esc vuelve" en el margen.
+
 ## v0.281.0 - Repaso de la casa
 
 - Muerte: el renglon de cortesia solo si cabe antes del pie.

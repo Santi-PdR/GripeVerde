@@ -1,3 +1,9 @@
+## Version 0.282.0 - The settings sheets say what they have on
+
+The chat sheet now carries, at its foot, the three numbers actually consulted: opacity, width and scale, in percent and without acronyms. The online options sheet says what stays on -realms news and public listing- with a yes or a no, and the accessibility one notes in its margin how many settings it has and that Esc goes back.
+
+It is the first of the second round of tandas: where the sheet only had a list, there is now a line summarising it. No new buttons and no new keys: there is still a single key in the whole cabinet.
+
 ## Version 0.281.0 - House review
 
 Last tanda of the cycle: what the previous ones touched gets reviewed. The courtesy line of the death telegram is no longer written if the paper ran out of room before the foot; the pause notice and the archive weight in the lists had been guarded properly. The context notebook documents the fifteen tandas with their version and records what the Java reviewer that now runs before Gradle does.

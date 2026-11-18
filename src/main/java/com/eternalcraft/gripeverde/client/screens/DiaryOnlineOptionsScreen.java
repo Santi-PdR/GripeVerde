@@ -149,9 +149,37 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
             this.list.render(g, mouseX, mouseY, partialTick);
         }
 
+        // v0.282.0: que queda encendido en la hoja, dicho sin siglas.
+        try {
+            String res = onlineSummaryLine();
+            if (!res.isEmpty()) {
+                String cut = DiaryChrome.fitCached(this.font, res,
+                    Math.max(60, this.panelW - 100));
+                int rw = DiaryChrome.widthCached(this.font, cut);
+                g.drawString(this.font, cut, this.panelX + (this.panelW - rw) / 2,
+                    this.panelY + this.panelH - 30, DiaryChrome.INK_FLAVOR, false);
+            }
+        } catch (Throwable ignored) {
+        }
+
         // Widgets propios (boton Volver)
         for (Renderable r : this.renderables) {
             r.render(g, mouseX, mouseY, partialTick);
+        }
+    }
+
+    /** v0.282.0: avisos de realms y listado en servidores, en claro. */
+    private String onlineSummaryLine() {
+        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+        try {
+            boolean realms = this.options.realmsNotifications().get();
+            boolean listing = this.options.allowServerListing().get();
+            return (en ? "realms news: " : "avisos de realms: ")
+                + (realms ? (en ? "on" : "si") : (en ? "off" : "no"))
+                + (en ? "  ·  public listing: " : "  ·  listado publico: ")
+                + (listing ? (en ? "on" : "si") : (en ? "off" : "no"));
+        } catch (Throwable ignored) {
+            return "";
         }
     }
 

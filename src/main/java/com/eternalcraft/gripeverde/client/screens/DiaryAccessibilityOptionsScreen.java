@@ -186,6 +186,19 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
         DiaryChrome.drawRegistryTag(gfx, this.panelX, this.panelY, this.panelW, this.panelH, "REG. VI");
 
+        // v0.282.0: cuantos ajustes tiene la hoja y como se sale, en el margen.
+        try {
+            boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+            int count = this.list == null ? 0 : this.list.children().size();
+            String res = (en ? count + " settings" : count + " ajustes")
+                + (en ? "  ·  Esc goes back" : "  ·  Esc vuelve");
+            String cut = DiaryChrome.fitCached(this.font, res, Math.max(60, this.panelW - 120));
+            int rw = DiaryChrome.widthCached(this.font, cut);
+            gfx.drawString(this.font, cut, this.panelX + this.panelW - 14 - rw,
+                this.panelY + 8, DiaryChrome.INK_FLAVOR, false);
+        } catch (Throwable ignored) {
+        }
+
         // Controles del pie
         if (this.reducedMotionToggle != null) {
             this.reducedMotionToggle.render(gfx, mouseX, mouseY, delta);
