@@ -681,14 +681,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             } catch (Throwable ignored) {}
         }
 
-        // v0.261.0: entre la lista y el divisor, el recordatorio de teclas y el
-        // puesto elegido, que es lo que se lleva si se aprieta Enter.
-        drawFooterNotes(gfx, panelX, panelW);
-
-        // Divisor inferior antes de los botones - con rombo central
-        int dividerY = this.height - LIST_BOTTOM_OFFSET + 2;
-        DiaryChrome.drawInkDivider(gfx, panelX + 24, dividerY, panelW - 48);
-        DiaryChrome.drawDivisorLozenge(gfx, this.width / 2, dividerY);
+        // v0.265.0: el divisor inferior se fue. Caia justo sobre la fila de
+        // botones de abajo -height-74 contra height-72- y se veia como una
+        // raya cruzada entre los botones.
 
         // Vineta sepia perimetral (marco interno del pergamino)
         int vinAlpha = 0x30422810;
@@ -831,34 +826,6 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     private int countSrc = -1;
     private boolean countEnglish = false;
     private net.minecraft.client.gui.Font countFont;
-
-    /**
-     * v0.261.0: la banda entre la lista y el divisor estaba vacia. Ahora lleva
-     * las teclas a la izquierda y, a la derecha, el puesto que se lleva.
-     */
-    private void drawFooterNotes(GuiGraphics gfx, int panelX, int panelW) {
-        int y = this.height - LIST_BOTTOM_OFFSET - 12;
-        int listBottom = this.height - PANEL_MARGIN_V - LIST_BOTTOM_OFFSET;
-        if (y <= listBottom + 2) return;
-        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
-        String keys = en ? "Enter joins  ·  Del deletes  ·  F5 reloads  ·  Esc back"
-            : "Enter entra  ·  Supr borra  ·  F5 relee  ·  Esc vuelve";
-        String left = DiaryChrome.fitText(this.font, keys, Math.max(80, panelW / 2));
-        gfx.drawString(this.font, left, panelX + 22, y, DiaryChrome.INK_FLAVOR, false);
-
-        String target = null;
-        try {
-            Object selected = this.vanillaList == null ? null : this.vanillaList.getSelected();
-            ServerData data = selected == null ? null : extractServerDataFromEntry(selected);
-            if (data != null) target = data.ip;
-        } catch (Throwable ignored) {
-        }
-        if (target == null || target.isBlank()) return;
-        String arrow = "→ " + target;
-        String cut = DiaryChrome.fitText(this.font, arrow, Math.max(60, panelW / 2 - 24));
-        int cw = DiaryChrome.widthCached(this.font, cut);
-        gfx.drawString(this.font, cut, panelX + panelW - 22 - cw, y, DiaryChrome.INK_SUBTITLE, false);
-    }
 
     private void drawServerCount(GuiGraphics gfx, int panelX, int panelW, int titleY) {
         int count = 0;

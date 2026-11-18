@@ -1,3 +1,13 @@
+## Version 0.265.0 - Lo que tapaba y lo que faltaba
+
+En la lista de puestos, la banda de teclas que se dibujaba entre los botones se fue: caia encima de la fila de abajo y la direccion del puesto se cruzaba con el boton de agregar. Tambien se fue el divisor inferior, que pasaba a dos pixeles de los botones y se veia como una raya cruzada. Lo que decian esas lineas ya esta en los avisos de cada boton.
+
+En la portada se quitaron las marcas del pie -la fecha y la version a la derecha-: se cruzaban con la firma del cronista y repetian la version que ya viene debajo del reloj. La portada vuelve a estar limpia, con la firma sola en su renglon y el contador de piezas junto al boton del gramofono.
+
+El arsenal se lee en tinta. Forge escribe los nombres de los mods en blanco fijo; sobre las fichas de papel claras no se veian. Ahora cada renglon se cubre con su recorte de papel y se vuelve a escribir el nombre en negro y la version en sepia, en el mismo sitio, con el renglon elegido marcado por una barra roja al canto. Si el dato de un mod no se puede leer, esa fila queda como estaba.
+
+Y vuelve la llave: Ctrl+S abre el registro de mundos propios desde la portada, sin cartel que lo anuncie.
+
 ## Version 0.264.0 - Teclado y puertas
 
 Salir de una hoja ya suena a puerta en todas partes. Hasta ahora solo unas pocas cerraban con ruido; el resto se apagaba en silencio. El aviso lleva un freno de 140 milisegundos para que, cuando el boton de volver ya sono al pulsarse, la pantalla no lo repita encima. Lo mismo vale para cerrar con Esc.

@@ -77,35 +77,120 @@ public class DiaryModListScreen extends ModListScreen {
     }
 
     /**
-     * v0.255.0: cada mod se apoya en su recorte de papel, igual que las fichas
-     * del archivo y los puestos de la lista de servidores. La geometria se lee
-     * de la lista de Forge; si algun dato falta, no se dibuja nada.
+     * v0.265.0: el arsenal se lee en tinta. Forge escribe esos nombres en
+     * blanco fijo y sobre papel claro no se veian; no se puede cambiar su
+     * color, asi que se cubre el renglon con su recorte de papel y se vuelve a
+     * escribir el nombre y la version en negro y sepia, en el mismo sitio.
+     * Si el dato del mod no se puede leer, la fila se deja como estaba.
      */
-    private void drawRowSlips(GuiGraphics g, int mouseX, int mouseY) {
+    private void paintRowsInk(GuiGraphics g, int mouseX, int mouseY) {
         if (this.list == null || this.itemHeight <= 0) return;
+        int left;
+        int width;
+        int top;
+        int bottom;
+        int count;
         try {
-            int left = this.list.getRowLeft();
-            int right = left + this.list.getRowWidth();
-            int top = this.list.getTop();
-            int bottom = this.list.getBottom();
-            double scroll = this.list.getScrollAmount();
-            int count = this.list.children().size();
-            for (int i = 0; i < count && i < 96; i++) {
-                int rowTop = top + 2 - (int) scroll + i * this.itemHeight;
-                int rowBottom = rowTop + this.itemHeight - 2;
-                if (rowBottom < top || rowTop > bottom) continue;
-                int drawTop = Math.max(rowTop, top);
-                int drawBottom = Math.min(rowBottom, bottom);
-                if (drawBottom - drawTop < 8) continue;
-                PaperTexture.drawTornSlip(g, left - 9, drawTop - 1,
-                    right - left + 18, drawBottom - drawTop + 2, 0xE6D2A6, 0x422810, 205);
-                if (mouseX >= left - 9 && mouseX <= right + 9
-                        && mouseY >= drawTop && mouseY < drawBottom) {
-                    g.fill(left - 9, drawTop, right + 9, drawBottom, 0x18F3E7C8);
-                }
-            }
+            left = this.list.getRowLeft();
+            width = this.list.getRowWidth();
+            top = this.list.getTop();
+            bottom = this.list.getBottom();
+            count = this.list.children().size();
+        } catch (Throwable ignored) {
+            return;
+        }
+        int scroll = 0;
+        try {
+            scroll = (int) this.list.getScrollAmount();
         } catch (Throwable ignored) {
         }
+        Object selected = null;
+        try {
+            selected = this.list.getSelected();
+        } catch (Throwable ignored) {
+        }
+        net.minecraft.client.gui.Font font = net.minecraft.client.Minecraft.getInstance().font;
+        boolean scissored = false;
+        try {
+            g.enableScissor(left - 12, top - 2, left + width + 12, bottom + 2);
+            scissored = true;
+        } catch (Throwable ignored) {
+        }
+        for (int i = 0; i < count && i < 160; i++) {
+            int rowTop = top + 2 - scroll + i * this.itemHeight;
+            int rowBottom = rowTop + this.itemHeight - 2;
+            if (rowBottom < top || rowTop > bottom) continue;
+            Object entry;
+            try {
+                entry = this.list.children().get(i);
+            } catch (Throwable ignored) {
+                continue;
+            }
+            String[] info = modNameAndVersion(entry);
+            if (info == null) continue;
+            boolean chosen = entry == selected;
+            boolean hovered = mouseX >= left - 9 && mouseX <= left + width + 9
+                && mouseY >= Math.max(rowTop, top) && mouseY < Math.min(rowBottom, bottom);
+
+            PaperTexture.drawTornSlip(g, left - 9, rowTop - 3,
+                width + 18, rowBottom - rowTop + 6, 0xE6D2A6, 0x422810, chosen ? 255 : 232);
+            if (chosen) {
+                g.fill(left - 9, rowTop - 2, left - 6, rowBottom + 2, 0xFF8C2A1E);
+            }
+            if (hovered) {
+                g.fill(left - 9, rowTop - 2, left + width + 9, rowBottom + 2, 0x1CF3E7C8);
+            }
+
+            String name = ellipsizeTo(font, info[0], width - 24);
+            String version = ellipsizeTo(font, info[1], width - 24);
+            g.drawString(font, name, left + 3, rowTop + 2, 0xFF1A1108, false);
+            g.drawString(font, version, left + 3, rowTop + 2 + font.lineHeight, 0xFF6B5533, false);
+        }
+        if (scissored) {
+            try {
+                g.disableScissor();
+            } catch (Throwable ignored) {
+            }
+        }
+    }
+
+    private String ellipsizeTo(net.minecraft.client.gui.Font font, String text, int maxWidth) {
+        if (text == null) return "";
+        if (maxWidth <= 0 || font.width(text) <= maxWidth) return text == null ? "" : text;
+        String dots = "...";
+        int room = Math.max(0, maxWidth - font.width(dots));
+        return font.plainSubstrByWidth(text, room) + dots;
+    }
+
+    /** Nombre y version del mod de una fila, leidos de la entrada de Forge. */
+    private static String[] modNameAndVersion(Object entry) {
+        try {
+            Object info = entry.getClass().getMethod("getInfo").invoke(entry);
+            if (info == null) return null;
+            Object nameObj = info.getClass().getMethod("getDisplayName").invoke(info);
+            Object verObj = info.getClass().getMethod("getVersion").invoke(info);
+            String name = stripCodes(nameObj == null ? "" : nameObj.toString());
+            String version = stripCodes(verObj == null ? "" : verObj.toString());
+            if (name.isEmpty()) return null;
+            return new String[] { name, version };
+        } catch (Throwable ignored) {
+            return null;
+        }
+    }
+
+    /** Quita los codigos de formato (el caracter 167 y lo que le sigue). */
+    private static String stripCodes(String s) {
+        if (s == null) return "";
+        StringBuilder sb = new StringBuilder(s.length());
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c == 167) {
+                i++;
+                continue;
+            }
+            sb.append(c);
+        }
+        return sb.toString();
     }
 
     @Override
@@ -114,9 +199,10 @@ public class DiaryModListScreen extends ModListScreen {
             QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
         } catch (Throwable ignored) {
         }
-        drawRowSlips(g, mouseX, mouseY);
         drawFooterPaper(g);
         super.render(g, mouseX, mouseY, partial);
+        // v0.265.0: la tinta va despues de Forge, para tapar su letra blanca.
+        paintRowsInk(g, mouseX, mouseY);
     }
 
     /** Hoja bajo el grupo de botones, calculada del alto real que les dio Forge. */

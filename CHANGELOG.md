@@ -1,3 +1,10 @@
+## v0.265.0 - Lo que tapaba y lo que faltaba
+
+- Multijugador: fuera `drawFooterNotes` y el divisor inferior que pisaban los botones.
+- Portada: fuera `drawBottomMarks` (fecha/version al pie); se cruzaba con la firma.
+- Arsenal: `paintRowsInk` cubre la fila de Forge y reescribe nombre/version en tinta.
+- Portada: `Ctrl+S` vuelve a abrir `DiarySelectWorldScreen` (sin anuncio).
+
 ## v0.264.0 - Teclado y puertas
 
 - `UiSounds.back()` con freno de 140 ms y sonido de puerta en 12 hojas que cerraban mudas.

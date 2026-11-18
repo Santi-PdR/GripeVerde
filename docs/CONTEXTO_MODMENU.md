@@ -180,6 +180,13 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.265.0 — solapes y tinta
+
+- **Multijugador**: se quitan la banda de teclas al pie y el divisor inferior (chocaban con las dos filas de botones).
+- **Portada**: se quitan fecha/version del pie (chocaban con la firma).
+- **Arsenal**: `paintRowsInk` + `modNameAndVersion` + `stripCodes`; nombre en `0xFF1A1108`, version en `0xFF6B5533`, barra roja en el elegido.
+- **Portada**: `Ctrl+S` → `onSingleplayer()`.
+
 ## Cambios de 0.264.0 — teclado y puertas
 
 - **Audio**: `UiSounds.back()` limitado a uno cada 140 ms; `onClose` con puerta en Controls, Options, Language, Credits, Chat, Online, Accessibility, Skin, Confirm, Direct y Edit.

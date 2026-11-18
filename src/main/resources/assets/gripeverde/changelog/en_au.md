@@ -1,3 +1,13 @@
+## Version 0.265.0 - What covered and what was missing
+
+In the list of posts, the key band drawn between the buttons is gone: it fell on the bottom row and the post's address crossed the add button. The lower divider is gone too, it passed two pixels from the buttons and looked like a line struck through them. What those lines said is already in each button's hover note.
+
+On the title screen the foot marks are gone -the date and version on the right-: they crossed the chronicler's signature and repeated the version that already comes under the watch. The title is clean again, with the signature alone on its line and the piece counter next to the gramophone button.
+
+The arsenal reads in ink. Forge writes mod names in fixed white; over the light paper slips they could not be read. Now each line is covered with its paper slip and the name is written again in black and the version in sepia, in the same place, with the chosen line marked by a red bar on its edge. If a mod's data cannot be read, that row stays as it was.
+
+And the key returns: Ctrl+S opens the register of your own worlds from the title screen, with no sign announcing it.
+
 ## Version 0.264.0 - Keyboard and doors
 
 Leaving a sheet now sounds like a door everywhere. Until now only a few closed with a noise; the rest went dark in silence. The cue has a 140 millisecond brake so that, when the back button already sounded on being pressed, the screen does not repeat it on top. The same goes for closing with Esc.

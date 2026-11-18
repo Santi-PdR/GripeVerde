@@ -482,8 +482,16 @@ public class DiaryTitleScreen extends Screen {
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         lastInteractionMs = System.currentTimeMillis();
-        // v0.248.0: se fue el atajo Ctrl+S y con el la puerta de servicio. Ya
-        // no hay llave escondida que delate como se entra a un mundo propio.
+        // v0.265.0: Ctrl+S vuelve a abrir el registro de mundos propios. Sigue
+        // sin anunciarse en ninguna parte: es una llave, no un cartel.
+        if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_S) {
+            boolean ctrl = hasControlDown()
+                || (modifiers & org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL) != 0;
+            if (ctrl) {
+                this.onSingleplayer();
+                return true;
+            }
+        }
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
@@ -521,7 +529,6 @@ public class DiaryTitleScreen extends Screen {
             com.eternalcraft.gripeverde.client.render.LogoRenderer.setWatchedMouse(mouseX, mouseY);
             drawLogo(g);
             drawSignature(g);
-            drawBottomMarks(g);
             drawMusicBadge(g);
             super.render(g, mouseX, mouseY, partialTick);
             renderChroniclerNote(g);
@@ -860,53 +867,6 @@ public class DiaryTitleScreen extends Screen {
     private String cachedCompactSigSrc = "";
     private int cachedCompactSigWidth = -1;
     private net.minecraft.client.gui.Font cachedCompactSigFont;
-
-    /**
-     * v0.261.0: al pie de la portada, la fecha de hoy y la version del gabinete.
-     *
-     * Van a la derecha, donde no hay firma ni control de musica, y solo si la
-     * ventana tiene ancho de sobra: en ventanas chicas no se dibuja nada, que es
-     * mejor que un texto pisado.
-     */
-    /**
-     * v0.262.0: junto al boton de cambiar la pieza, que pieza suena y cuantas
-     * hay. Antes habia que apretar para saberlo.
-     */
-    private void drawMusicBadge(GuiGraphics g) {
-        if (isCompactLayout() || this.height < 200) return;
-        String badge;
-        try {
-            if (!com.eternalcraft.gripeverde.client.audio.MenuMusic.isMusicEnabled()) {
-                badge = isEnglishSelected() ? "no music" : "sin musica";
-            } else {
-                badge = com.eternalcraft.gripeverde.client.audio.MenuMusic.getCurrentTrackNumber()
-                    + "/" + com.eternalcraft.gripeverde.client.audio.MenuMusic.getTrackCount();
-            }
-        } catch (Throwable ignored) {
-            return;
-        }
-        g.drawString(this.font, badge, 48, this.height - 22,
-            DiaryChrome.INK_FLAVOR, false);
-    }
-
-    private void drawBottomMarks(GuiGraphics g) {
-        if (isCompactLayout() || this.width < 480) return;
-        boolean en = isEnglishSelected();
-        java.util.Calendar cal = java.util.Calendar.getInstance();
-        String[] months = { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII" };
-        String today = (en ? "today " : "hoy ") + cal.get(java.util.Calendar.DAY_OF_MONTH)
-            + " \u00b7 " + months[cal.get(java.util.Calendar.MONTH)];
-        String ver = "v" + com.eternalcraft.gripeverde.GripeVerdeMod.VERSION;
-        int tw = DiaryChrome.widthCached(this.font, today);
-        int vw = DiaryChrome.widthCached(this.font, ver);
-        int right = this.width - 8;
-        g.drawString(this.font, today, right - tw, this.height - 12,
-            com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
-                com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_LIGHT, 130), false);
-        g.drawString(this.font, ver, right - vw, this.height - 23,
-            com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
-                com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_MID, 110), false);
-    }
 
     private void drawSignature(GuiGraphics g) {
         int idx = com.eternalcraft.gripeverde.client.render.LogoRenderer.getYearIndex();
