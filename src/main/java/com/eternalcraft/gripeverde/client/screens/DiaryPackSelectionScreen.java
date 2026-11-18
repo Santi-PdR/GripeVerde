@@ -142,6 +142,18 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         } else {
             g.drawString(this.font, footer, cx - fw / 2, by + bh - 30, DiaryChrome.INK_FLAVOR, false);
         }
+
+        // v0.280.0: folio del cajon y recordatorio de salida, en el pie.
+        boolean enP = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+        String folio = enP ? "sheet 1" : "hoja 1";
+        String hint = enP ? "Esc goes back" : "Esc vuelve";
+        boolean room = bw >= 360;
+        if (room) {
+            g.drawString(this.font, folio, bx + 24, by + bh - 19, DiaryChrome.INK_FLAVOR, false);
+            int hw = DiaryChrome.widthCached(this.font, hint);
+            g.drawString(this.font, hint, bx + bw - 24 - hw, by + bh - 19,
+                DiaryChrome.INK_FLAVOR, false);
+        }
     }
 
     // v0.272.0: cerrar la hoja suena a puerta, una vez, despues de dibujar.

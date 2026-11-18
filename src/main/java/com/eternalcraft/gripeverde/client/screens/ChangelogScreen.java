@@ -84,6 +84,9 @@ public class ChangelogScreen extends Screen {
     private static int lastScrollY = 0;  // Remembered across reopens
     // v0.276.0: donde estaba el lector al abrir, para dejarle una marca.
     private int openedAtScrollY = -1;
+    // v0.280.0: donde estaba el lector antes de abrir la lupa.
+    private int scrollBeforeSearch = -1;
+    private boolean searchWasOpen = false;
     // v0.276.0: el golpe de tapa al llegar al final, una sola vez.
     private boolean endKnocked = false;
     private int maxScroll = 0;
@@ -832,6 +835,21 @@ public class ChangelogScreen extends Screen {
             }
         }
 
+        // v0.280.0: con la lupa cerrada, el lector vuelve donde estaba.
+        try {
+            if (!this.searchOpen && this.searchWasOpen) {
+                this.searchWasOpen = false;
+                if (this.scrollBeforeSearch >= 0 && this.maxScroll > 0) {
+                    int back = Math.max(0, Math.min(this.maxScroll, this.scrollBeforeSearch));
+                    this.targetScrollY = back;
+                    this.smoothScrollY = back;
+                    this.scrollY = back;
+                }
+                this.scrollBeforeSearch = -1;
+            }
+        } catch (Throwable ignored) {
+        }
+
         // v0.276.0: cuanto del cuaderno se lleva leido, en un filete al pie.
         try {
             if (!loadError && maxScroll > 0) {
@@ -964,6 +982,11 @@ public class ChangelogScreen extends Screen {
      * seguir donde se dejo sin volver a teclearla.
      */
     private void openSearchWithLastQuery() {
+        // v0.280.0: se apunta el punto de lectura antes de que la lupa lo mueva.
+        if (!this.searchOpen) {
+            this.scrollBeforeSearch = this.scrollY;
+            this.searchWasOpen = true;
+        }
         this.searchOpen = true;
         if (lastQuery.isEmpty()) return;
         try {

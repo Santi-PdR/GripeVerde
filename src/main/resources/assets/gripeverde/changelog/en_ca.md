@@ -1,3 +1,9 @@
+## Version 0.280.0 - The magnifier returns the reader where they were and the drawer says its folio
+
+When the diary's magnifier is opened, the notebook notes which line the reader was on; closing it -or clearing the search- returns exactly to that point, with no manual scrolling. It is the kind of thing only noticed when it is missing.
+
+The resource-pack sheet gains its folio and the reminder that Esc goes back, at the foot and only when the drawer is wide enough to hold them without stepping on the count. Both ask for the real panel width, so in narrow windows they simply do not appear instead of piling up.
+
 ## Version 0.279.0 - The death telegram says more and the clothes sound
 
 The death notice no longer stops at condolences: below them it notes the cause just as the game writes it, the place where the body stayed -the avenue, the lower ward or the far shore- with its three coordinates, the day of the game, the clock and the level carried. The paper grows just enough, stays in the corner and stays without a veil. The Roman date moves to the foot of the block so as not to step on anything.

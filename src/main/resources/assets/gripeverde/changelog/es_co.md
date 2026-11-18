@@ -1,3 +1,9 @@
+## Version 0.280.0 - La lupa devuelve el lector donde estaba y el cajon dice su folio
+
+Cuando se abre la lupa del diario, el cuaderno apunta en que renglon estaba el lector; al cerrarla -o al borrar la busqueda- vuelve exactamente a ese punto, sin tener que subir a mano. Es la clase de cosa que solo se nota cuando falta.
+
+La hoja de recursos gana su folio y el recordatorio de que Esc vuelve, en el pie y solo cuando el cajon tiene ancho para sostenerlos sin pisar el recuento. Ambas cosas se piden al ancho real del panel, de modo que en ventanas angostas simplemente no aparecen, en vez de amontonarse.
+
 ## Version 0.279.0 - El telegrama de deceso dice mas y la ropa suena
 
 El aviso de defuncion ya no se queda en las condolencias: bajo ellas anota la causa tal como la escribe el juego, el lugar donde quedo el cuerpo -la avenida, la sala baja o la orilla lejana- con sus tres coordenadas, el dia de la partida, la hora del reloj y el nivel que llevaba. El papel crece lo justo, sigue en la esquina y sigue sin velo. La fecha en numeros romanos se corre al pie del bloque para no pisar nada.

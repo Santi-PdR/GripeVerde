@@ -180,6 +180,11 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.280.0 — la lupa devuelve el lector y el cajon dice su folio
+
+- **Diario**: al cerrar la busqueda vuelve el punto de lectura.
+- **Packs**: folio y salida en el pie.
+
 ## Cambios de 0.279.0 — el deceso dice mas y la ropa suena
 
 - **Muerte**: causa, lugar y coordenadas, dia/hora/nivel; papel 92 px.

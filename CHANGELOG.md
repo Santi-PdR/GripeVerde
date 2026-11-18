@@ -1,3 +1,8 @@
+## v0.280.0 - La lupa devuelve el lector donde estaba y el cajon dice su folio
+
+- Diario: `scrollBeforeSearch` / `searchWasOpen` devuelven el punto de lectura al cerrar la busqueda.
+- Packs: folio "hoja 1" y "Esc vuelve" en el pie, con guarda de ancho (360 px).
+
 ## v0.279.0 - El telegrama de deceso dice mas y la ropa suena
 
 - Muerte: causa (`deathCause`), lugar + coordenadas (`deathWhere`), dia, hora y nivel (`deathWhen`); papel de 72 a 92 px.
