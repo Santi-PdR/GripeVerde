@@ -180,6 +180,12 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.279.0 — el deceso dice mas y la ropa suena
+
+- **Muerte**: causa, lugar y coordenadas, dia/hora/nivel; papel 92 px.
+- **Aspecto**: sonido al cambiar prenda o mano, tipo de piel.
+- **CI**: `lint_java.py` (nuevo) antes de Gradle.
+
 ## Cambios de 0.278.0 — el arsenal dice sobre que esta montado
 
 - **Arsenal**: version de Forge, `REG. XVII`, folio y "Esc vuelve". Fix del pie del parte.

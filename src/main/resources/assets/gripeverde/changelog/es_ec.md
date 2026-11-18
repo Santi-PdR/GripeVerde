@@ -1,3 +1,9 @@
+## Version 0.279.0 - El telegrama de deceso dice mas y la ropa suena
+
+El aviso de defuncion ya no se queda en las condolencias: bajo ellas anota la causa tal como la escribe el juego, el lugar donde quedo el cuerpo -la avenida, la sala baja o la orilla lejana- con sus tres coordenadas, el dia de la partida, la hora del reloj y el nivel que llevaba. El papel crece lo justo, sigue en la esquina y sigue sin velo. La fecha en numeros romanos se corre al pie del bloque para no pisar nada.
+
+La hoja de aspecto suena al cambiar: cada prenda que se pone o se quita, y el cambio de mano, tienen su golpe corto. Debajo del recuento de prendas aparece ademas el tipo de piel que trae puesta la persona, con brazos finos o anchos. Y el repositorio estrena un revisor propio de Java que corre antes de Gradle: caza anotaciones huerfanas, variables repetidas y sentencias cortadas, las tres cosas que nos costaron builds rojos estos dias.
+
 ## Version 0.278.0 - El arsenal dice sobre que esta montado
 
 La hoja del arsenal lleva ahora, bajo el recuento de modificaciones, la version de Forge con la que se levanto el juego, su chapa de registro en el margen -REG. XVII-, su folio en la esquina del pie y el recordatorio de que Esc vuelve. Nada de eso estaba: era la unica hoja del gabinete sin numero y sin decir con que andamio trabajaba.

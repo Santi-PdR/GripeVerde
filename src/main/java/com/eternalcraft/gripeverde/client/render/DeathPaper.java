@@ -28,7 +28,8 @@ public final class DeathPaper {
     // v0.248.0: el aviso va en la esquina, chico, para no comerse el titulo
     // del juego ni el puntaje. Antes se centraba arriba y tapaba "Estas muerto".
     private static final int PAPER_W_MAX = 296;
-    private static final int PAPER_H = 72;
+    // v0.279.0: el aviso crece un poco para dar cabida al parte del deceso.
+    private static final int PAPER_H = 92;
     private static final int PAPER_MARGIN = 8;
 
     private DeathPaper() {
@@ -45,6 +46,62 @@ public final class DeathPaper {
 
     private static void skinButtons(Screen screen) {
         PaperButtons.dressAll(screen);
+    }
+
+    /** v0.279.0: lo que el libro de la aduana escribe como causa. */
+    private static String deathCause(Screen screen, boolean english) {
+        try {
+            for (Class<?> c = screen.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
+                for (java.lang.reflect.Field f : c.getDeclaredFields()) {
+                    if (f.getType() != net.minecraft.network.chat.Component.class) continue;
+                    f.setAccessible(true);
+                    Object v = f.get(screen);
+                    if (v instanceof net.minecraft.network.chat.Component comp) {
+                        String text = comp.getString();
+                        if (text != null && !text.isBlank()) return text;
+                    }
+                }
+            }
+        } catch (Throwable ignored) {
+        }
+        return english ? "cause not noted" : "causa sin anotar";
+    }
+
+    /** v0.279.0: donde quedo el cuerpo, en la avenida o donde sea. */
+    private static String deathWhere(boolean english) {
+        try {
+            Minecraft mc = Minecraft.getInstance();
+            if (mc == null || mc.player == null || mc.level == null) return "";
+            String dim = mc.level.dimension().location().getPath();
+            String place;
+            switch (dim) {
+                case "the_nether" -> place = english ? "the lower ward" : "la sala baja";
+                case "the_end" -> place = english ? "the far shore" : "la orilla lejana";
+                default -> place = english ? "the avenue" : "la avenida";
+            }
+            String coords = mc.player.getBlockX() + ", " + mc.player.getBlockY()
+                + ", " + mc.player.getBlockZ();
+            return (english ? "at " : "en ") + place + "  ·  " + coords;
+        } catch (Throwable ignored) {
+            return "";
+        }
+    }
+
+    /** v0.279.0: el dia de la partida y la hora del reloj, que no perdonan. */
+    private static String deathWhen(boolean english) {
+        try {
+            Minecraft mc = Minecraft.getInstance();
+            if (mc == null || mc.level == null || mc.player == null) return "";
+            long day = mc.level.getDayTime() / 24000L + 1L;
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            String clock = String.format(java.util.Locale.ROOT, "%02d:%02d",
+                cal.get(java.util.Calendar.HOUR_OF_DAY), cal.get(java.util.Calendar.MINUTE));
+            int level = mc.player.experienceLevel;
+            return (english ? "day " : "dia ") + day + "  ·  " + clock
+                + "  ·  " + (english ? "level " : "nivel ") + level;
+        } catch (Throwable ignored) {
+            return "";
+        }
     }
 
     public static void render(GuiGraphics g, Screen screen) {
@@ -79,8 +136,30 @@ public final class DeathPaper {
         int l1 = py + 22;
         g.drawString(font, DiaryChrome.fitCached(font, line1, pw - 16), px + 8, l1,
             DiaryChrome.INK_SUBTITLE, false);
-        g.drawString(font, DiaryChrome.fitCached(font, line2, pw - 16), px + 8, l1 + 11,
-            DiaryChrome.INK_SUBTITLE, false);
+
+        // v0.279.0: el parte del deceso, en el orden en que se lee.
+        boolean en2 = english;
+        int ledger = l1 + 11;
+        String cause = deathCause(screen, en2);
+        if (!cause.isEmpty()) {
+            g.drawString(font, DiaryChrome.fitCached(font, cause, pw - 16), px + 8, ledger,
+                DiaryChrome.INK_TITLE, false);
+            ledger += 11;
+        }
+        String where = deathWhere(en2);
+        if (!where.isEmpty()) {
+            g.drawString(font, DiaryChrome.fitCached(font, where, pw - 16), px + 8, ledger,
+                DiaryChrome.INK_SUBTITLE, false);
+            ledger += 11;
+        }
+        String when = deathWhen(en2);
+        if (!when.isEmpty()) {
+            g.drawString(font, DiaryChrome.fitCached(font, when, pw - 16), px + 8, ledger,
+                DiaryChrome.INK_FLAVOR, false);
+            ledger += 11;
+        }
+        g.drawString(font, DiaryChrome.fitCached(font, line2, pw - 16), px + 8, ledger,
+            DiaryChrome.INK_FLAVOR, false);
 
         // Pie del papel: registro a la izquierda y sello a la derecha.
         int footY = py + PAPER_H - 16;
@@ -92,8 +171,8 @@ public final class DeathPaper {
         String date = (english ? "dated " : "fechado ")
             + cal.get(java.util.Calendar.DAY_OF_MONTH) + " \u00b7 "
             + romanMonths[cal.get(java.util.Calendar.MONTH)] + " \u00b7 1897";
-        if (l1 + 22 <= footY - 10) {
-            g.drawString(font, DiaryChrome.fitCached(font, date, pw - 16), px + 8, l1 + 20,
+        if (ledger + 12 <= footY - 6) {
+            g.drawString(font, DiaryChrome.fitCached(font, date, pw - 16), px + 8, ledger + 3,
                 DiaryChrome.INK_FLAVOR, false);
         }
         String by = english ? "for the house, S.P." : "por la casa, S.P.";

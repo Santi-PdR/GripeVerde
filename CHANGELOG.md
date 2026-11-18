@@ -1,3 +1,9 @@
+## v0.279.0 - El telegrama de deceso dice mas y la ropa suena
+
+- Muerte: causa (`deathCause`), lugar + coordenadas (`deathWhere`), dia, hora y nivel (`deathWhen`); papel de 72 a 92 px.
+- Aspecto: `UiSounds.toggle()` al cambiar prenda o mano; `skinModelLine` con brazos finos o anchos.
+- CI: `tools/lint_java.py` antes de Gradle (anotaciones huerfanas, variables repetidas, sentencias cortadas).
+
 ## v0.278.0 - El arsenal dice sobre que esta montado
 
 - Arsenal: `forgeLine()` bajo el recuento, chapa `REG. XVII`, folio y pista de salida.

@@ -44,6 +44,10 @@ jobs:
       # faltante no cuesta dos minutos de compilacion.
       - name: Verify mirrored assets, localization and imports
         run: python3 tools/verify_mirrors.py
+      # v0.278.0: el lint barato de Java caza @Override huerfanos, variables
+      # repetidas y sentencias cortadas antes de gastar dos minutos de Gradle.
+      - name: Lint Java structure
+        run: python3 tools/lint_java.py
       - name: Build mod
         run: |
           chmod +x gradlew

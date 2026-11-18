@@ -1,3 +1,9 @@
+## Version 0.279.0 - The death telegram says more and the clothes sound
+
+The death notice no longer stops at condolences: below them it notes the cause just as the game writes it, the place where the body stayed -the avenue, the lower ward or the far shore- with its three coordinates, the day of the game, the clock and the level carried. The paper grows just enough, stays in the corner and stays without a veil. The Roman date moves to the foot of the block so as not to step on anything.
+
+The skin sheet now sounds when changing: every garment put on or taken off, and the change of hand, have their short knock. Under the garment count the type of skin worn also appears, with slim or wide arms. And the repository gains its own Java reviewer that runs before Gradle: it catches orphan annotations, repeated variables and cut statements, the three things that gave us red builds these days.
+
 ## Version 0.278.0 - The arsenal says what it is mounted on
 
 The arsenal sheet now carries, under the modification count, the Forge version the game was raised with, its registry stamp in the margin -REG. XVII-, its folio in the corner of the foot and the reminder that Esc goes back. None of that was there: it was the only cabinet sheet without a number and without saying what scaffold it worked on.

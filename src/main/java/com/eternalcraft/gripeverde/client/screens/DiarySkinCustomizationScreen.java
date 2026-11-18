@@ -157,6 +157,29 @@ public class DiarySkinCustomizationScreen extends Screen {
         int w = DiaryChrome.widthCached(this.font, cut);
         g.drawString(this.font, cut, this.panelX + (panelW - w) / 2, divY - 11,
             DiaryChrome.INK_FLAVOR, false);
+
+        // v0.279.0: el tipo de piel que trae puesta la persona.
+        String model = skinModelLine(en);
+        if (model.isEmpty()) return;
+        String cut2 = DiaryChrome.fitText(this.font, model, Math.max(60, panelW - 40));
+        int w2 = DiaryChrome.widthCached(this.font, cut2);
+        if (divY - 21 > this.panelY + 24) {
+            g.drawString(this.font, cut2, this.panelX + (panelW - w2) / 2, divY - 21,
+                DiaryChrome.INK_FLAVOR, false);
+        }
+    }
+
+    /** v0.279.0: "piel fina" o "piel ancha", segun el modelo del jugador. */
+    private String skinModelLine(boolean en) {
+        try {
+            if (this.minecraft == null || this.minecraft.player == null) return "";
+            String modelName = this.minecraft.player.getModelName();
+            boolean slim = "slim".equals(modelName);
+            return en ? "skin: " + (slim ? "slim" : "wide") + " arms"
+                : "piel: brazos " + (slim ? "finos" : "anchos");
+        } catch (Throwable ignored) {
+            return "";
+        }
     }
 
     private Component buildPartLabel(PlayerModelPart part) {
@@ -178,6 +201,11 @@ public class DiarySkinCustomizationScreen extends Screen {
     private void togglePart(PlayerModelPart part) {
         this.options.toggleModelPart(part, !this.options.isModelPartEnabled(part));
         this.options.save();
+        // v0.279.0: la prenda se pone con ruido de tejido.
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.toggle();
+        } catch (Throwable ignored) {
+        }
         DiaryButton btn = this.partButtons.get(part);
         if (btn != null) {
             btn.setMessage(buildPartLabel(part));
@@ -189,6 +217,11 @@ public class DiarySkinCustomizationScreen extends Screen {
         HumanoidArm next = (current == HumanoidArm.LEFT) ? HumanoidArm.RIGHT : HumanoidArm.LEFT;
         this.options.mainHand().set(next);
         this.options.save();
+        // v0.279.0: cambiar de mano tambien suena.
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.toggle();
+        } catch (Throwable ignored) {
+        }
         this.armButton.setMessage(buildArmLabel());
     }
 
