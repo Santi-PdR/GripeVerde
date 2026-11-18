@@ -270,6 +270,16 @@ public class DiaryModListScreen extends ModListScreen {
     }
 
     @Override
+    public void onClose() {
+        // v0.268.0: el arsenal tambien se cierra con ruido de puerta.
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.back();
+        } catch (Throwable ignored) {
+        }
+        super.onClose();
+    }
+
+    @Override
     public void renderBackground(GuiGraphics g) {
         // La escena de la casa hace de fondo.
     }

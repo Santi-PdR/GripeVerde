@@ -245,6 +245,18 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         }
     }
 
+    /** v0.268.0: pulsa un boton vestido por su clave de traduccion. */
+    private boolean pressVanilla(String translationKey) {
+        String want = Component.translatable(translationKey).getString();
+        for (DiaryButton button : this.dressed) {
+            if (button.visible && button.active && want.equals(button.getMessage().getString())) {
+                button.onPress();
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * v0.261.0: al pie, entre la lista y los botones, el recordatorio de teclas.
      * Se escribe solo si hay banda libre y se recorta al ancho del papel.
@@ -256,8 +268,8 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         int y = bottom - 12;
         if (y <= this.listBottom + 8) return;
         boolean en = Discoveries.isEnglish();
-        String hint = en ? "Enter opens  ·  Del deletes  ·  Esc back"
-            : "Enter entra  ·  Supr borra  ·  Esc vuelve";
+        String hint = en ? "Enter opens  ·  Ctrl+N new  ·  Ctrl+S plays  ·  Del deletes  ·  Esc back"
+            : "Enter entra  ·  Ctrl+N crea  ·  Ctrl+S juega  ·  Supr borra  ·  Esc vuelve";
         String cut = DiaryChrome.fitText(this.font, hint, Math.max(60, this.width - 60));
         int hw = DiaryChrome.widthCached(this.font, cut);
         g.drawString(this.font, cut, (this.width - hw) / 2, y, DiaryChrome.INK_FLAVOR, false);
@@ -352,6 +364,20 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                     button.onPress();
                     return true;
                 }
+            }
+        }
+        // v0.268.0: Ctrl+N crea un mundo nuevo y Ctrl+S juega el elegido, sin
+        // ir a buscar los botones.
+        boolean ctrl = org.lwjgl.glfw.GLFW.glfwGetKey(
+            this.minecraft.getWindow().getWindow(), org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_CONTROL) == 1
+            || org.lwjgl.glfw.GLFW.glfwGetKey(this.minecraft.getWindow().getWindow(),
+            org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_CONTROL) == 1;
+        if (ctrl) {
+            if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_N) {
+                if (this.pressVanilla("selectWorld.create")) return true;
+            }
+            if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_S) {
+                if (this.pressVanilla("selectWorld.select")) return true;
             }
         }
         if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE) {

@@ -108,6 +108,8 @@ public class ChangelogScreen extends Screen {
     private final StringBuilder searchText = new StringBuilder();
     private final java.util.List<Integer> searchHits = new java.util.ArrayList<>();
     private int searchHitPos = -1;
+    // v0.268.0: la lupa recuerda la ultima pregunta entre aperturas.
+    private static String lastQuery = "";
 
     // v0.27.0 (V4): la entrada recien llegada se escribe letra a letra en
     // esta visita, y solo en esta. Un gesto del lector (click) la completa
@@ -872,6 +874,21 @@ public class ChangelogScreen extends Screen {
         drawNibAt(g, nx, ny);
     }
 
+    /**
+     * v0.268.0: al abrir la lupa vuelve la ultima pregunta, ya buscada, para
+     * seguir donde se dejo sin volver a teclearla.
+     */
+    private void openSearchWithLastQuery() {
+        this.searchOpen = true;
+        if (lastQuery.isEmpty()) return;
+        try {
+            this.searchText.setLength(0);
+            this.searchText.append(lastQuery);
+            searchRecalc();
+        } catch (Throwable ignored) {
+        }
+    }
+
     /** v0.29.0: la lupa, abierta o con su pista minima. */
     private void drawSearchBox(GuiGraphics g, int px, int py, int pw, int ph) {
         int sx = searchBoxX();
@@ -1534,6 +1551,7 @@ public class ChangelogScreen extends Screen {
                 || codePoint == '-' || codePoint == '.' )) {
             searchText.append(codePoint);
             searchRecalc();
+            lastQuery = searchText.toString();
             return true;
         }
         return super.charTyped(codePoint, modifiers);
@@ -1559,14 +1577,15 @@ public class ChangelogScreen extends Screen {
                 if (searchText.length() > 0) {
                     searchText.setLength(searchText.length() - 1);
                     searchRecalc();
+                    lastQuery = searchText.toString();
                 }
                 return true;
             }
         } else if (keyCode == GLFW.GLFW_KEY_SLASH && modifiers == 0) {
-            searchOpen = true;
+            openSearchWithLastQuery();
             return true;
         } else if (keyCode == GLFW.GLFW_KEY_F && hasControlDown()) {
-            searchOpen = true;
+            openSearchWithLastQuery();
             return true;
         }
         switch (keyCode) {

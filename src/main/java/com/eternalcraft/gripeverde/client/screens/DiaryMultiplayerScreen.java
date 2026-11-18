@@ -741,6 +741,19 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             }
             return true;
         }
+        // v0.268.0: Ctrl+N anade un puesto y Ctrl+E edita el elegido.
+        if ((modifiers & org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL) != 0) {
+            if (keyCode == GLFW.GLFW_KEY_N) {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.playClick();
+                onAdd();
+                return true;
+            }
+            if (keyCode == GLFW.GLFW_KEY_E) {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.playClick();
+                onEdit();
+                return true;
+            }
+        }
         if (keyCode == GLFW.GLFW_KEY_F5) {
             // v0.263.0: F5 vuelve a leer la lista de puestos guardados.
             com.eternalcraft.gripeverde.client.audio.UiSounds.playClick();
@@ -856,6 +869,15 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         int y = titleY + 4;
         if (x < panelX + 20) return;   // panel angosto: no vale la pena
         gfx.drawString(this.font, text, x, y, DiaryChrome.INK_SUBTITLE, false);
+
+        // v0.268.0: la banda entre la lista y los botones no da para mas, asi
+        // que las teclas nuevas se dicen aqui, bajo el recuento.
+        String hint = english ? "Ctrl+N adds  ·  Ctrl+E edits" : "Ctrl+N añade  ·  Ctrl+E edita";
+        int hintW = this.font.width(hint);
+        int hintX = panelX + panelW - 74 - hintW;
+        if (hintX > panelX + 20) {
+            gfx.drawString(this.font, hint, hintX, y + 12, DiaryChrome.INK_FLAVOR, false);
+        }
     }
 
     /** v0.241.0: renglones tenues del registro, detras de la lista. */
