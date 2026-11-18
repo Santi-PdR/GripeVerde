@@ -179,8 +179,19 @@ public class ChangelogScreen extends Screen {
         return english ? "Survival diary" : "Diario de supervivencia";
     }
 
+    // v0.272.0: la hoja solo suena la primera vez que se abre, no al redimensionar.
+    private boolean paperSoundDone = false;
+
     @Override
     protected void init() {
+        // v0.272.0: la hoja se abre con ruido de papel, una vez por apertura.
+        if (!this.paperSoundDone) {
+            this.paperSoundDone = true;
+            try {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.open();
+            } catch (Throwable ignored) {
+            }
+        }
         this.clearWidgets();
         this.scrollY = lastScrollY;
         this.smoothScrollY = lastScrollY;

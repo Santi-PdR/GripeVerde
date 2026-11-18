@@ -103,8 +103,19 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         return this.panelY + this.panelH - (compactLayout() ? 21 : 30);
     }
 
+    // v0.272.0: la hoja solo suena la primera vez que se abre, no al redimensionar.
+    private boolean paperSoundDone = false;
+
     @Override
     protected void init() {
+        // v0.272.0: la hoja se abre con ruido de papel, una vez por apertura.
+        if (!this.paperSoundDone) {
+            this.paperSoundDone = true;
+            try {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.open();
+            } catch (Throwable ignored) {
+            }
+        }
         super.init();
 
         this.panelW = Math.max(1, Math.min(PANEL_W, this.width - 24));
@@ -484,7 +495,6 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY3);
         DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
         // v0.267.0: la hoja de sonido tambien lleva su chapa.
-        DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. VI");
         DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. II");
 
         // The soundtrack controls stay static in a live world; only enabled state is refreshed.

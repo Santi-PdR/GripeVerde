@@ -1,3 +1,9 @@
+## Version 0.272.0 - Todas las hojas suenan igual
+
+Las diecisiete hojas del gabinete que se abrian en silencio ya suenan: opciones, sonido, controles, idioma, chat, accesibilidad, aspecto, creditos, credito de mods, pausa, parte, entrada directa, editar puesto, confirmacion, changelog y packs abren con el mismo ruido de papel, una sola vez por apertura, de modo que redimensionar la ventana no repite el sonido. La pausa y la lista de packs, que se cerraban mudas, ahora cierran con la puerta.
+
+Y se acaban las chapas repetidas: el registro tenia dos hojas con el mismo numero. Aspecto pasa a la VIII, la confirmacion a la XIV, los packs a la XVI, los mundos a la XVIII, y la hoja de sonido se queda solo con la II, que era la suya.
+
 ## Version 0.271.0 - La hoja de puestos tambien lleva cuenta
 
 Debajo del recuento de puestos aparece ahora lo que pesa el fichero de servidores y la fecha en numeros romanos, igual que en el archivo de mundos. Si la lista esta vacia, la hoja lo dice en el centro en vez de dejar el tramo en blanco, y en la esquina baja lleva su folio.

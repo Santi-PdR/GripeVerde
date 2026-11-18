@@ -45,8 +45,19 @@ public class DiaryConfirmScreen extends ConfirmScreen {
         this.ownMessage = message;
     }
 
+    // v0.272.0: la hoja solo suena la primera vez que se abre, no al redimensionar.
+    private boolean paperSoundDone = false;
+
     @Override
     protected void init() {
+        // v0.272.0: la hoja se abre con ruido de papel, una vez por apertura.
+        if (!this.paperSoundDone) {
+            this.paperSoundDone = true;
+            try {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.open();
+            } catch (Throwable ignored) {
+            }
+        }
         super.init();
         UiSounds.notification();
 
@@ -142,7 +153,7 @@ public class DiaryConfirmScreen extends ConfirmScreen {
 
         try {
             DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, panelW, panelH);
-            DiaryChrome.drawRegistryTag(gfx, panelX, panelY, panelW, panelH, "REG. XIII");
+            DiaryChrome.drawRegistryTag(gfx, panelX, panelY, panelW, panelH, "REG. XIV");
 
             int titleY = panelY + 18;
             String titleStr = DiaryChrome.fitCached(this.font, this.title.getString(), Math.max(0, panelW - 48));

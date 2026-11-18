@@ -33,8 +33,19 @@ public class DiaryModListScreen extends ModListScreen {
 
     // Forge ensancha init() a public en ModListScreen: el override tiene que
     // mantener ese acceso o el compilador lo rechaza.
+    // v0.272.0: la hoja solo suena la primera vez que se abre, no al redimensionar.
+    private boolean paperSoundDone = false;
+
     @Override
     public void init() {
+        // v0.272.0: la hoja se abre con ruido de papel, una vez por apertura.
+        if (!this.paperSoundDone) {
+            this.paperSoundDone = true;
+            try {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.open();
+            } catch (Throwable ignored) {
+            }
+        }
         super.init();
         // v0.255.0: la lista de Forge tambien pinta su fondo por cuadro; se le
         // apaga para que no tape la escena ni las fichas.

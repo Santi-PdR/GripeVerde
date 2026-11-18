@@ -281,7 +281,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         DiaryChrome.drawPencilRule(g, cx - 70, 18, 140, w * 31 + 7);
         g.drawString(font, sub, cx - DiaryChrome.widthCached(font, sub) / 2, 21,
             DiaryChrome.INK_SUBTITLE, false);
-        DiaryChrome.drawRegistryTagLeft(g, 0, -4, "REG. IX");
+        DiaryChrome.drawRegistryTagLeft(g, 0, -4, "REG. XVIII");
 
         // v0.261.0: cuantos mundos hay anotados, a la derecha de la cabecera.
         if (w >= 380) {

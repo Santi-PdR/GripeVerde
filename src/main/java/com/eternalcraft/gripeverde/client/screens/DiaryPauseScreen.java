@@ -111,8 +111,19 @@ public class DiaryPauseScreen extends PauseScreen {
         return MARGIN_TOP;
     }
 
+    // v0.272.0: la hoja solo suena la primera vez que se abre, no al redimensionar.
+    private boolean paperSoundDone = false;
+
     @Override
     protected void init() {
+        // v0.272.0: la hoja se abre con ruido de papel, una vez por apertura.
+        if (!this.paperSoundDone) {
+            this.paperSoundDone = true;
+            try {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.open();
+            } catch (Throwable ignored) {
+            }
+        }
         int px = panelX();
         int py = panelY();
         int pw = panelW();
@@ -930,5 +941,15 @@ public class DiaryPauseScreen extends PauseScreen {
     @Override
     public void renderBackground(GuiGraphics g) {
         // Vacio intencionalmente. Nuestro render() ya maneja el fondo.
+    }
+
+    // v0.272.0: cerrar la hoja suena a puerta, una vez, despues de dibujar.
+    @Override
+    public void onClose() {
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.back();
+        } catch (Throwable ignored) {
+        }
+        super.onClose();
     }
 }

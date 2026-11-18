@@ -44,8 +44,19 @@ public class DiarySkinCustomizationScreen extends Screen {
         this.options = options;
     }
 
+    // v0.272.0: la hoja solo suena la primera vez que se abre, no al redimensionar.
+    private boolean paperSoundDone = false;
+
     @Override
     protected void init() {
+        // v0.272.0: la hoja se abre con ruido de papel, una vez por apertura.
+        if (!this.paperSoundDone) {
+            this.paperSoundDone = true;
+            try {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.open();
+            } catch (Throwable ignored) {
+            }
+        }
         int panelW = Math.min(PANEL_MAX_W, this.width - 40);
         int panelH = Math.min(PANEL_MAX_H, this.height - 30);
         this.panelX = (this.width  - panelW) / 2;
@@ -239,7 +250,7 @@ public class DiarySkinCustomizationScreen extends Screen {
         // v0.266.0: cuantas prendas van puestas, sobre el pie.
         drawWornCount(gfx, panelW, divY2);
         DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, panelW, panelH);
-        DiaryChrome.drawRegistryTagLeft(gfx, this.panelX, this.panelY, "REG. VII");
+        DiaryChrome.drawRegistryTagLeft(gfx, this.panelX, this.panelY, "REG. VIII");
 
         // v0.240.0: fuera el espejo de la esquina (el "ojo"): la ficha de
         // aspecto queda con sus botones y nada mas.

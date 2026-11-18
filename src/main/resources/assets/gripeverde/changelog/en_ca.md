@@ -1,3 +1,9 @@
+## Version 0.272.0 - Every sheet sounds the same
+
+The seventeen cabinet sheets that used to open in silence now sound: options, sound, controls, language, chat, accessibility, skin, credits, mod credits, pause, dispatch, direct join, edit post, confirmation, changelog and packs open with the same paper sound, once per opening, so resizing the window does not repeat it. The pause screen and the pack list, which closed mute, now close with the door.
+
+And the repeated stamps are gone: the registry had two sheets with the same number. Skin moves to VIII, confirmation to XIV, packs to XVI, worlds to XVIII, and the sound sheet keeps only II, which was its own.
+
 ## Version 0.271.0 - The post sheet keeps accounts too
 
 Under the post count now appears what the servers file weighs and the date in Roman numerals, just like in the worlds archive. If the list is empty, the sheet says so in the middle instead of leaving the stretch blank, and the lower corner carries its folio.

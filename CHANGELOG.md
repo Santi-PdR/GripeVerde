@@ -1,3 +1,10 @@
+## v0.272.0 - Todas las hojas suenan igual
+
+- `paperSoundDone` + `UiSounds.open()` en 17 hojas (una vez por apertura, no al redimensionar).
+- `onClose()` con puerta en `DiaryPauseScreen` y `DiaryPackSelectionScreen`.
+- Chapas unicas: aspecto VIII, confirmacion XIV, packs XVI, mundos XVIII, sonido solo II.
+- Fix de compilacion: `@Override` duplicado en `DiaryMultiplayerScreen.charTyped`.
+
 ## v0.271.0 - La hoja de puestos tambien lleva cuenta
 
 - `serversFileLine`: peso de `servers.dat` y fecha en romanos bajo el recuento.

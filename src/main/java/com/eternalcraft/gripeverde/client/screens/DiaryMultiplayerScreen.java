@@ -612,7 +612,6 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.tick(1.0f / 20.0f);
     }
 
-    @Override
     /** v0.271.0: escribir en el buscador suena a pluma. */
     @Override
     public boolean charTyped(char codePoint, int modifiers) {

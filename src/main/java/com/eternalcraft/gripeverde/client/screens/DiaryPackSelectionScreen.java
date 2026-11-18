@@ -57,8 +57,19 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         }
     }
 
+    // v0.272.0: la hoja solo suena la primera vez que se abre, no al redimensionar.
+    private boolean paperSoundDone = false;
+
     @Override
     protected void init() {
+        // v0.272.0: la hoja se abre con ruido de papel, una vez por apertura.
+        if (!this.paperSoundDone) {
+            this.paperSoundDone = true;
+            try {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.open();
+            } catch (Throwable ignored) {
+            }
+        }
         super.init();
         // Localizar las dos listas por nombre o por tipo (AbstractSelectionList)
         try {
@@ -115,7 +126,7 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         DiaryChrome.drawInkDivider(g, bx + 24, by + 40, bw - 48);
 
         // Chapa de registro del archivador
-        DiaryChrome.drawRegistryTag(g, bx, by, bw, bh, "REG. XV");
+        DiaryChrome.drawRegistryTag(g, bx, by, bw, bh, "REG. XVI");
 
         // Pie: sello institucional y, cuando hay ancho, el recuento del cajon.
         String footer = "EC-QV/1897";
@@ -131,5 +142,15 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         } else {
             g.drawString(this.font, footer, cx - fw / 2, by + bh - 30, DiaryChrome.INK_FLAVOR, false);
         }
+    }
+
+    // v0.272.0: cerrar la hoja suena a puerta, una vez, despues de dibujar.
+    @Override
+    public void onClose() {
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.back();
+        } catch (Throwable ignored) {
+        }
+        super.onClose();
     }
 }
