@@ -69,7 +69,14 @@ public class UiSounds {
         safePlay("button_section", ModSounds.UI_BUTTON_SECTION, VOL_CLICK_SECTION, 0.99f + rand(0.03f));
     }
 
+    private static long lastBackMs = 0L;
+
     public static void back() {
+        // v0.264.0: el boton de volver ya suena al pulsarse; si la pantalla
+        // cierra con el suyo, el segundo aviso llegaba pisado. Uno cada 140 ms.
+        long now = System.currentTimeMillis();
+        if (now - lastBackMs < 140L) return;
+        lastBackMs = now;
         safePlay("back", ModSounds.UI_BACK, VOL_BACK, 0.97f + rand(0.05f));
     }
 

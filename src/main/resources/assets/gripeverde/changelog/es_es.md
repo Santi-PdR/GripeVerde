@@ -1,3 +1,13 @@
+## Version 0.264.0 - Teclado y puertas
+
+Salir de una hoja ya suena a puerta en todas partes. Hasta ahora solo unas pocas cerraban con ruido; el resto se apagaba en silencio. El aviso lleva un freno de 140 milisegundos para que, cuando el boton de volver ya sono al pulsarse, la pantalla no lo repita encima. Lo mismo vale para cerrar con Esc.
+
+Los mandos deslizantes se manejan con el teclado: con el foco encima, las flechas mueven el valor y RePag/AvPag lo mueven el doble, con su golpe de tinta. Antes habia que arrastrarlos a mano.
+
+En Controles, la rejilla de botones se mide contra el panel y ya no se sale por los lados en ventanas angostas, y las dos hojas de dentro -raton y atajos- se anuncian en su aviso antes de entrar.
+
+El archivador de paquetes muestra al pie cuantos materiales estan archivados de cuantos hay en el cajon, cuando la hoja tiene ancho para el recuento; si no, queda solo el sello.
+
 ## Version 0.263.0 - Los puestos de la lista
 
 La conexion directa ya no es un campo a ciegas. Debajo de la direccion se lee como se parte: anfitrion por un lado y puerto por el otro, con el 25565 puesto si no se escribe ninguno. Si lo escrito tiene espacios o simbolos que no van, el aviso se pone en rojo y el boton de entrar se apaga antes de que el juego intente conectarse a la nada. Al pie, la hoja recuerda que Enter entra, Ctrl+V pega y Esc vuelve.

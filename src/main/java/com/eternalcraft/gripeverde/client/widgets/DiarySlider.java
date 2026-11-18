@@ -74,6 +74,39 @@ public class DiarySlider extends AbstractSliderButton {
         return released;
     }
 
+    /**
+     * v0.264.0: con el foco encima, las flechas mueven el mando y RePag/AvPag
+     * lo mueven el doble. Antes habia que arrastrarlo con el raton y el
+     * teclado no servia para nada.
+     */
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (this.active && this.isFocused()) {
+            double step = 0.05D;
+            int dir = 0;
+            if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT) {
+                dir = -1;
+            } else if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT) {
+                dir = 1;
+            } else if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_DOWN) {
+                dir = -1;
+                step = 0.10D;
+            } else if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_UP) {
+                dir = 1;
+                step = 0.10D;
+            }
+            if (dir != 0) {
+                this.setValue(net.minecraft.util.Mth.clamp(this.value + dir * step, 0.0D, 1.0D));
+                try {
+                    com.eternalcraft.gripeverde.client.audio.UiSounds.playClick();
+                } catch (Throwable ignored) {
+                }
+                return true;
+            }
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
     @Override
     protected void applyValue() {
         if (onValueChanged != null) onValueChanged.accept(this.value);

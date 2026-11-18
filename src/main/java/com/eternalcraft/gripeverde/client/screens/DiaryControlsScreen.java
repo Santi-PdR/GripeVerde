@@ -67,24 +67,38 @@ public class DiaryControlsScreen extends Screen {
         // Grid 2 columnas x 3 filas dentro del panel
         int gridTop = this.panelY + 50;
         int rowH = 24;
-        int btnW = 150;
+        // v0.264.0: 150 fijos se salian del panel en ventanas angostas; ahora
+        // la rejilla se mide contra el panel y nunca lo desborda.
+        int btnW = Math.max(96, Math.min(150, (this.panelW - 40) / 2));
         int btnH = 20;
         int col1X = this.panelX + (this.panelW / 2) - btnW - 4;
         int col2X = this.panelX + (this.panelW / 2) + 4;
 
         // Fila 0: Mouse... | Atajos...
-        this.addRenderableWidget(new DiaryButton(
+        DiaryButton mouseHub = new DiaryButton(
             col1X, gridTop, btnW, btnH,
             Component.translatable("options.mouse_settings"),
             DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
             () -> this.minecraft.setScreen(new net.minecraft.client.gui.screens.MouseSettingsScreen(this, this.options))
-        ));
-        this.addRenderableWidget(new DiaryButton(
+        );
+        // v0.264.0: las dos hojas de dentro se anuncian antes de entrar.
+        mouseHub.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
+            Component.literal(com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+                ? "sensitivity, invert mouse, raw input"
+                : "sensibilidad, invertir el raton, entrada directa")));
+        this.addRenderableWidget(mouseHub);
+
+        DiaryButton keysHub = new DiaryButton(
             col2X, gridTop, btnW, btnH,
             Component.translatable("controls.keybinds"),
             DiaryButton.Icon.NONE, DiaryButton.Variant.SECONDARY,
             () -> this.minecraft.setScreen(new net.minecraft.client.gui.screens.controls.KeyBindsScreen(this, this.options))
-        ));
+        );
+        keysHub.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
+            Component.literal(com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+                ? "every key of the game, reassignable"
+                : "todas las teclas del juego, reasignables")));
+        this.addRenderableWidget(keysHub);
 
         // Fila 1: toggleCrouch | toggleSprint
         addDiaryToggle(this.options.toggleCrouch(),
@@ -209,6 +223,11 @@ public class DiaryControlsScreen extends Screen {
 
     @Override
     public void onClose() {
+        // v0.264.0: salir de una hoja suena a puerta, como el resto de la casa.
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.back();
+        } catch (Throwable ignored) {
+        }
         this.minecraft.setScreen(this.lastScreen);
     }
 }

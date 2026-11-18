@@ -235,7 +235,14 @@ public class DiaryCreditsScreen extends Screen {
 
     @Override public void renderBackground(GuiGraphics g) {}
 
-    @Override public void onClose() { this.minecraft.setScreen(this.lastScreen); }
+    @Override public void onClose() {
+        // v0.264.0: salir de una hoja suena a puerta, como el resto de la casa.
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.back();
+        } catch (Throwable ignored) {
+        }
+        this.minecraft.setScreen(this.lastScreen);
+    }
 
     // Helper to avoid duplicate init logic
     private static final class PanelHelper {

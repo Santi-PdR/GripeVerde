@@ -381,6 +381,11 @@ public class DiaryOptionsScreen extends Screen {
 
     @Override
     public void onClose() {
+        // v0.264.0: salir de una hoja suena a puerta, como el resto de la casa.
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.back();
+        } catch (Throwable ignored) {
+        }
         Minecraft.getInstance().setScreen(this.parent);
     }
 

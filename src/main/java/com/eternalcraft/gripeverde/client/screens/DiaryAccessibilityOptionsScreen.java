@@ -299,4 +299,14 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         return english ? ACC_FLAVOR_POOL_EN : ACC_FLAVOR_POOL_ES;
     }
 
+
+    @Override
+    public void onClose() {
+        // v0.264.0: salir de una hoja suena a puerta, como el resto de la casa.
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.back();
+        } catch (Throwable ignored) {
+        }
+        super.onClose();
+    }
 }

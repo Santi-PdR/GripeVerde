@@ -1,3 +1,13 @@
+## Version 0.264.0 - Keyboard and doors
+
+Leaving a sheet now sounds like a door everywhere. Until now only a few closed with a noise; the rest went dark in silence. The cue has a 140 millisecond brake so that, when the back button already sounded on being pressed, the screen does not repeat it on top. The same goes for closing with Esc.
+
+Sliders are driven from the keyboard: with focus on them, the arrows move the value and PageUp/PageDown move it twice as far, with their ink hit. Before, you had to drag them by hand.
+
+In Controls, the button grid is measured against the panel and no longer spills out the sides on narrow windows, and the two inner sheets -mouse and keybinds- announce themselves in their hover note before you go in.
+
+The pack archive shows at its foot how many materials are filed out of how many are in the drawer, when the sheet is wide enough for the count; if not, only the stamp remains.
+
 ## Version 0.263.0 - The posts on the list
 
 Direct connection is no longer a blind field. Under the address you can read how it splits: host on one side, port on the other, with 25565 filled in if none is written. If what was typed has spaces or symbols that do not belong, the note turns red and the join button switches off before the game tries to connect to nothing. At the foot, the sheet reminds you that Enter joins, Ctrl+V pastes and Esc goes back.

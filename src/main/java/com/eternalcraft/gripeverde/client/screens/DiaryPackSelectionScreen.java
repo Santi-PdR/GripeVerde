@@ -31,10 +31,30 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
 
     private AbstractSelectionList<?> availableList;
     private AbstractSelectionList<?> selectedList;
+    // v0.264.0: nos quedamos con el archivador para poder contar las fichas.
+    private final PackRepository repository;
 
     public DiaryPackSelectionScreen(PackRepository repository, Consumer<PackRepository> callback,
                                     Path packDir, Component title) {
         super(repository, callback, packDir, title);
+        this.repository = repository;
+    }
+
+    /**
+     * v0.264.0: cuantos materiales estan archivados de cuantos hay en el cajon.
+     * El pie del archivador estaba vacio salvo el sello.
+     */
+    private String archiveCount(boolean english) {
+        try {
+            int total = this.repository == null ? 0 : this.repository.getAvailablePacks().size();
+            int chosen = this.repository == null ? 0 : this.repository.getSelectedIds().size();
+            if (total <= 0) return "";
+            return english
+                ? chosen + " of " + total + " materials filed"
+                : chosen + " de " + total + " materiales archivados";
+        } catch (Throwable ignored) {
+            return "";
+        }
     }
 
     @Override
@@ -97,10 +117,19 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         // Chapa de registro del archivador
         DiaryChrome.drawRegistryTag(g, bx, by, bw, bh, "REG. XV");
 
-        // Pie: sello institucional
+        // Pie: sello institucional y, cuando hay ancho, el recuento del cajon.
         String footer = "EC-QV/1897";
         int fw = DiaryChrome.widthCached(this.font, footer);
-        g.drawString(this.font, footer, cx - fw / 2, by + bh - 30, DiaryChrome.INK_FLAVOR, false);
         DiaryChrome.drawInkDivider(g, bx + 24, by + bh - 36, bw - 48);
+        String count = archiveCount(com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish());
+        boolean wide = bw >= 420 && !count.isEmpty();
+        if (wide) {
+            String cut = DiaryChrome.fitCached(this.font, count, Math.max(0, bw - 200));
+            g.drawString(this.font, cut, bx + 24, by + bh - 30, DiaryChrome.INK_FLAVOR, false);
+            g.drawString(this.font, footer, bx + bw - 24 - fw, by + bh - 30,
+                DiaryChrome.INK_FLAVOR, false);
+        } else {
+            g.drawString(this.font, footer, cx - fw / 2, by + bh - 30, DiaryChrome.INK_FLAVOR, false);
+        }
     }
 }

@@ -180,6 +180,13 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.264.0 — teclado y puertas
+
+- **Audio**: `UiSounds.back()` limitado a uno cada 140 ms; `onClose` con puerta en Controls, Options, Language, Credits, Chat, Online, Accessibility, Skin, Confirm, Direct y Edit.
+- **Widgets**: `DiarySlider.keyPressed` (flechas, RePag/AvPag).
+- **Controles**: `btnW` responsive y tooltips de las dos sub-hojas.
+- **Paquetes**: `archiveCount` al pie.
+
 ## Cambios de 0.263.0 — los puestos de la lista
 
 - **DiaryChrome**: `addressReadout(ip,en)` y `looksLikeAddress(ip)`.

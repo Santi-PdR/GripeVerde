@@ -1,3 +1,10 @@
+## v0.264.0 - Teclado y puertas
+
+- `UiSounds.back()` con freno de 140 ms y sonido de puerta en 12 hojas que cerraban mudas.
+- `DiarySlider.keyPressed`: flechas y RePag/AvPag mueven el valor con el foco encima.
+- Controles: rejilla medida contra el panel (no desborda) y avisos de raton/atajos.
+- Archivador de paquetes: recuento de materiales al pie.
+
 ## v0.263.0 - Los puestos de la lista
 
 - `DiaryChrome.addressReadout` / `looksLikeAddress`: anfitrion y puerto a la vista, forma minima validada.
