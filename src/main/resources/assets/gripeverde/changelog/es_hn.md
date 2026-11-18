@@ -1,3 +1,9 @@
+## Version 0.276.0 - El cuaderno recuerda donde lo dejaste
+
+En la barra del diario aparece ahora una muesca roja en el punto donde se cerro la ultima vez: al pasar la mano por ella dice "aqui lo dejaste" y no hay que buscar a ojo. Al pie del papel corre un filete que mide cuanto se lleva leido, y si uno se acerca al filete aparece el porcentaje escrito.
+
+Cuando se llega al final del cuaderno, el texto lo anota con un "fin del cuaderno" centrado y suena una sola vez el golpe de la tapa; al alejarse, la marca se borra y el golpe vuelve a estar disponible. Tambien se arreglo la pausa, que pedia la semilla al mundo del cliente y no compilaba: ahora la pide al servidor integrado y solo cuando existe.
+
 ## Version 0.275.0 - La pausa dice en que esta la partida
 
 Bajo la fecha de la hoja de pausa hay ahora dos renglones con el estado del mundo: la hora del juego en formato de reloj, el clima -despejado, lluvia o tormenta-, el modo -supervivencia, creativo o espectador-, la dificultad y, si hay mas de una persona conectada, cuantas almas andan por ahi. En una partida de una sola vida se anade "sin retorno", sin adornos.

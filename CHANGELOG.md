@@ -1,3 +1,10 @@
+## v0.276.0 - El cuaderno recuerda donde lo dejaste
+
+- Muesca de "aqui lo dejaste" en la barra (`openedAtScrollY`), con etiqueta al pasar.
+- Filete de progreso al pie + porcentaje al acercarse (`% leido`).
+- "fin del cuaderno" centrado y golpe de tapa una vez por llegada (`endKnocked`).
+- Fix de compilacion: `getSeed()` no existe en `ClientLevel`; se usa `getSingleplayerServer()`.
+
 ## v0.275.0 - La pausa dice en que esta la partida
 
 - `drawWorldStatus`: hora del mundo, clima, modo, dificultad, almas conectadas y "sin retorno" en hardcore.

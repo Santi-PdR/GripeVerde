@@ -180,6 +180,10 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.276.0 — el cuaderno recuerda donde lo dejaste
+
+- **Diario**: muesca de ultima lectura, filete de progreso con porcentaje, "fin del cuaderno" con golpe de tapa. **Pausa**: semilla desde `getSingleplayerServer()`.
+
 ## Cambios de 0.275.0 — la pausa dice en que esta la partida
 
 - **Pausa**: `drawWorldStatus` (hora, clima, modo, dificultad, almas, hardcore) y `drawSeedOnHover` (semilla al pasar).

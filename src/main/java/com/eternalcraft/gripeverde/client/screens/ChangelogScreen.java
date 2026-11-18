@@ -82,6 +82,10 @@ public class ChangelogScreen extends Screen {
     private double smoothScrollY = 0.0D;
     private double targetScrollY = 0.0D;
     private static int lastScrollY = 0;  // Remembered across reopens
+    // v0.276.0: donde estaba el lector al abrir, para dejarle una marca.
+    private int openedAtScrollY = -1;
+    // v0.276.0: el golpe de tapa al llegar al final, una sola vez.
+    private boolean endKnocked = false;
     private int maxScroll = 0;
     private int contentTotalH = 0;
     private int lastContentW = -1;
@@ -196,6 +200,7 @@ public class ChangelogScreen extends Screen {
         this.scrollY = lastScrollY;
         this.smoothScrollY = lastScrollY;
         this.targetScrollY = lastScrollY;
+        this.openedAtScrollY = lastScrollY;
         this.loadError = false;
         this.rows.clear();
         this.rowHeightCacheW = -1;   // v0.184.0: la cronica cambio, alto nuevo
@@ -825,6 +830,75 @@ public class ChangelogScreen extends Screen {
                 }
             } catch (Throwable ignored) {
             }
+        }
+
+        // v0.276.0: cuanto del cuaderno se lleva leido, en un filete al pie.
+        try {
+            if (!loadError && maxScroll > 0) {
+                int pct = Math.max(0, Math.min(100, (int) Math.round(scrollY * 100.0 / maxScroll)));
+                int lineY = py + ph - 4;
+                g.fill(px + PAD_X, lineY, px + pw - PAD_X, lineY + 1,
+                    DiaryTheme.withAlpha(DiaryTheme.PAPER_STAINED, 90));
+                int done = (pw - PAD_X * 2) * pct / 100;
+                if (done > 0) {
+                    g.fill(px + PAD_X, lineY, px + PAD_X + done, lineY + 1,
+                        DiaryTheme.withAlpha(DiaryTheme.BRONZE, 200));
+                }
+                // v0.276.0: el porcentaje, si la mano se acerca al filete.
+                if (Math.abs(mouseY - lineY) <= 4
+                        && mouseX >= px + PAD_X && mouseX <= px + pw - PAD_X) {
+                    String txt = isEnglishSelected() ? pct + "% read" : pct + "% leido";
+                    int tw = DiaryChrome.widthCached(this.font, txt);
+                    g.drawString(this.font, txt, px + pw - PAD_X - tw, lineY - 11,
+                        DiaryTheme.withAlpha(DiaryTheme.BRONZE, 210), false);
+                }
+            }
+        } catch (Throwable ignored) {
+        }
+
+        // v0.276.0: la marca de donde se dejo la lectura, en la barra.
+        try {
+            if (!loadError && maxScroll > 0 && this.openedAtScrollY > 0) {
+                int bh3 = ch;
+                int markY = cy + Math.max(0, Math.min(bh3 - 2,
+                    (int) Math.round(this.openedAtScrollY * (double) bh3 / maxScroll)));
+                int bx3 = px + pw - 6;
+                g.fill(bx3 - 1, markY, bx3 + 6, markY + 2,
+                    DiaryTheme.withAlpha(DiaryTheme.REDCOAT_DARK, 170));
+                if (mouseX >= bx3 - 4 && mouseX <= bx3 + 8
+                        && mouseY >= markY - 4 && mouseY <= markY + 6) {
+                    String back = isEnglishSelected() ? "left off here" : "aqui lo dejaste";
+                    int bw2 = DiaryChrome.widthCached(this.font, back);
+                    int tx = px + pw - 12 - bw2;
+                    if (tx > px + 10) {
+                        g.drawString(this.font, back, tx, markY - 4,
+                            DiaryTheme.withAlpha(DiaryTheme.REDCOAT_DARK, 170), false);
+                    }
+                }
+            }
+        } catch (Throwable ignored) {
+        }
+
+        // v0.276.0: el final del cuaderno se anota, no se adivina.
+        try {
+            boolean atEnd = !loadError && (maxScroll == 0 || scrollY >= maxScroll - 2);
+            if (atEnd && !this.endKnocked && maxScroll > 0) {
+                this.endKnocked = true;
+                com.eternalcraft.gripeverde.client.audio.UiSounds.close();
+            } else if (!atEnd) {
+                this.endKnocked = false;
+            }
+            if (atEnd) {
+                String fin = isEnglishSelected() ? "~ end of the notebook ~" : "~ fin del cuaderno ~";
+                int fw2 = DiaryChrome.widthCached(this.font, fin);
+                int fx2 = px + (pw - fw2) / 2;
+                int fy2 = cy + ch - 12;
+                if (fy2 > cy + 6) {
+                    g.drawString(this.font, fin, fx2, fy2,
+                        DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 170), false);
+                }
+            }
+        } catch (Throwable ignored) {
         }
 
         // v0.29.0: la lupa de la bitacora, al pie a la derecha.

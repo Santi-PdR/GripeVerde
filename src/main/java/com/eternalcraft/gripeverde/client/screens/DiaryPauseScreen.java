@@ -825,7 +825,11 @@ public class DiaryPauseScreen extends PauseScreen {
         boolean en = isEnglishSelected();
         long seed;
         try {
-            seed = this.minecraft.level.getSeed();
+            // En 1.20.1 el mundo del cliente no conoce su semilla: la tiene el
+            // servidor integrado. En un servidor ajeno no hay nada que enseñar.
+            net.minecraft.server.MinecraftServer server = this.minecraft.getSingleplayerServer();
+            if (server == null) return;
+            seed = server.overworld().getSeed();
         } catch (Throwable ignored) {
             return;
         }

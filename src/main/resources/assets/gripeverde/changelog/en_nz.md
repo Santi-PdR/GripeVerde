@@ -1,3 +1,9 @@
+## Version 0.276.0 - The notebook remembers where you left it
+
+A red notch now sits on the diary scrollbar at the point where it was last closed: hovering it says "left off here" and there is no need to search by eye. Along the foot of the paper runs a rule measuring how much has been read, and coming close to the rule shows the percentage written out.
+
+When the end of the notebook is reached, the text notes it with a centred "end of the notebook" and the lid knocks once; moving away clears the mark and the knock becomes available again. The pause screen was also fixed: it asked the client world for the seed and did not compile, and now it asks the integrated server, and only when there is one.
+
 ## Version 0.275.0 - The pause says where the game stands
 
 Under the date on the pause sheet there are now two lines with the state of the world: the in-game time on a clock, the weather -clear, rain or storm-, the mode -survival, creative or spectator-, the difficulty and, if more than one person is connected, how many souls are around. A single-life game adds "no way back", without ornaments.
