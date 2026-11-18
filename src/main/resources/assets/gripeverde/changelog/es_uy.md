@@ -1,3 +1,9 @@
+## Version 0.297.0 - Los volumenes de la casa y el boton de volver todo a su sitio
+
+La hoja de la casa crece: tres ruedas para el volumen de la musica, del ambiente y de los efectos de interfaz, con el mismo tacto que la rueda del campo de vision, y un boton al pie, `Todo a su sitio`, que devuelve los seis pestillos, las tres ruedas y la esquina del reloj a los valores de fabrica del archivo.
+
+Las ruedas se guardan al soltar y la hoja se adapta: si la ventana es baja se queda con los pestillos y la esquina, sin apretujar nada.
+
 ## Version 0.296.0 - La casa tiene su hoja
 
 Los interruptores de la casa estaban solo en el archivo de configuracion. Ahora hay una hoja nueva, `La casa`, que se abre desde Credito con un boton de engranaje: seis pestillos (musica, ambiente, movimiento corto, menos destellos, reloj en partida y coordenadas) y una linea que va girando la esquina del reloj entre arriba a la izquierda, arriba a la derecha y abajo. Cada pestillo se guarda en el acto.

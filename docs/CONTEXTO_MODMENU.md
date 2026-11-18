@@ -9,7 +9,7 @@ Actualizado: 2026-11-13
   token, igual que el de Photon/Fisk.
 - Rama de trabajo de la sesión: `arena/48be547c-gripeverde` (base `02e85bc`) — la plataforma
   fija el nombre, no se renombra. Todo el trabajo va ahí; el PR sale de esa rama.
-- Versión de esta rama: `0.296.0` (anteriores entregadas: `0.229.0`, `0.228.0`, `0.209.0`, `0.208.0`, `0.207.0`, `0.206.0`, `0.205.0`, `0.204.0`, `0.203.0`, `0.202.0`, `0.201.0`, `0.200.0`, `0.199.0`, `0.198.0`, `0.197.0`, `0.196.0`, `0.195.0`, `0.194.0`, `0.193.0`, `0.192.0`, `0.191.0`, `0.190.0`, `0.189.0`, `0.188.0`, `0.187.0`, `0.186.0`, `0.185.0`, `0.184.2`, `0.184.1`, `0.183.0`)
+- Versión de esta rama: `0.297.0` (anteriores entregadas: `0.229.0`, `0.228.0`, `0.209.0`, `0.208.0`, `0.207.0`, `0.206.0`, `0.205.0`, `0.204.0`, `0.203.0`, `0.202.0`, `0.201.0`, `0.200.0`, `0.199.0`, `0.198.0`, `0.197.0`, `0.196.0`, `0.195.0`, `0.194.0`, `0.193.0`, `0.192.0`, `0.191.0`, `0.190.0`, `0.189.0`, `0.188.0`, `0.187.0`, `0.186.0`, `0.185.0`, `0.184.2`, `0.184.1`, `0.183.0`)
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
 - El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
   proyecto local del usuario.
@@ -227,6 +227,7 @@ anidados y sentencias cortadas (línea que empieza por operador tras un `;` o `}
 | 28 | cierre de la segunda vuelta: tablas y registro | 0.294.0 |
 | 29 | HUD: el reloj de bolsillo aparece en partida | 0.295.0 |
 | 30 | la casa: hoja propia con los interruptores | 0.296.0 |
+| 31 | la casa: volumenes y volver todo a su sitio | 0.297.0 |
 
 ## Folios del gabinete
 
@@ -250,6 +251,12 @@ anidados y sentencias cortadas (línea que empieza por operador tras un `;` o `}
 | XVI | recursos |
 | XVII | arsenal |
 | XVIII | mundos guardados |
+
+## Cambios de 0.297.0 — volumenes y boton de fabrica
+
+- **Ruedas**: `MUSIC_VOLUME`, `AMBIENCE_VOLUME`, `UI_VOLUME` en la hoja de la casa.
+- **Boton**: «Todo a su sitio» devuelve pestillos, ruedas y esquina a fabrica.
+- **Adaptacion**: con menos de 290 px de alto la hoja omite las ruedas.
 
 ## Cambios de 0.296.0 — la casa tiene su hoja
 

@@ -1,3 +1,9 @@
+## Version 0.297.0 - The house's volumes and the put-it-all-back button
+
+The house sheet grows: three wheels for the music, ambience and interface volumes, with the same feel as the field-of-view wheel, and a button at the foot, `Put it all back`, that returns the six latches, the three wheels and the watch's corner to the file's default values.
+
+The wheels save when released and the sheet adapts: if the window is short it keeps the latches and the corner, squeezing nothing.
+
 ## Version 0.296.0 - The house has its own sheet
 
 The house's switches only lived in the config file. There is now a new sheet, `The house`, opened from Credits with a gear button: six latches (music, ambience, short motion, fewer flashes, watch in game and coordinates) and one line that cycles the watch's corner between top left, top right and bottom. Every latch saves on the spot.

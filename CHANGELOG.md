@@ -1,3 +1,9 @@
+## v0.297.0 - Los volumenes de la casa y el boton de volver todo a su sitio
+
+- `DiaryHouseScreen`: ruedas de musica, ambiente e interfaz + boton «Todo a su sitio».
+- La hoja se adapta a ventanas bajas (pestillos y esquina sin solaparse).
+- Valores de fabrica: musica 0.4, ambiente 1.0, interfaz 1.0, esquina 0.
+
 ## v0.296.0 - La casa tiene su hoja
 
 - Nueva hoja `DiaryHouseScreen` (REG. XIX) con seis pestillos y la esquina del reloj.
