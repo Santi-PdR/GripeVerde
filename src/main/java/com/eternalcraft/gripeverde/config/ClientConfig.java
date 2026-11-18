@@ -20,6 +20,10 @@ public final class ClientConfig {
     public static final ForgeConfigSpec.BooleanValue REPLACE_TITLE;
     public static final ForgeConfigSpec.BooleanValue REPLACE_PAUSE;
     public static final ForgeConfigSpec.BooleanValue DEBUG_SHORTCUT;
+    // v0.295.0: el reloj de bolsillo en la esquina de la partida.
+    public static final ForgeConfigSpec.BooleanValue HUD_WATCH_ENABLED;
+    public static final ForgeConfigSpec.BooleanValue HUD_WATCH_COORDS;
+    public static final ForgeConfigSpec.IntValue HUD_WATCH_CORNER;
 
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
@@ -58,6 +62,17 @@ public final class ClientConfig {
         REPLACE_PAUSE = b
             .comment("Reemplazar la PauseScreen vanilla por la pantalla Diary.")
             .define("replacePauseScreen", true);
+        b.pop();
+        b.push("hud");
+        HUD_WATCH_ENABLED = b
+            .comment("Mostrar el reloj de bolsillo en la esquina mientras se juega.")
+            .define("watchEnabled", true);
+        HUD_WATCH_COORDS = b
+            .comment("Anotar tambien las coordenadas en el reloj de la partida.")
+            .define("watchCoords", true);
+        HUD_WATCH_CORNER = b
+            .comment("Esquina del reloj en partida: 0 arriba izquierda, 1 arriba derecha, 2 abajo izquierda.")
+            .defineInRange("watchCorner", 0, 0, 2);
         b.pop();
         b.push("debug");
         DEBUG_SHORTCUT = b

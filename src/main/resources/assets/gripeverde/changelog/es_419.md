@@ -1,3 +1,9 @@
+## Version 0.295.0 - El reloj tambien esta en la partida
+
+Hasta ahora el reloj de bolsillo solo existia en la portada. Ahora, mientras se juega, aparece una tira de papel rasgada en la esquina con cuatro cosas: la hora de verdad y el dia de la semana, el dia y la hora del mundo con el clima, las coordenadas del lector y el rato que lleva dentro. Un lacre rojo late una vez por minuto para que se note que corre.
+
+El reloj sabe retirarse: no se dibuja en los menus, ni con F3 abierto, ni antes de que haya mundo, ni en una ventana demasiado pequeña. En las opciones nuevas de `gripeverde-client.toml` se apaga entero, se le quitan las coordenadas o se le manda a la esquina de arriba a la derecha o a la de abajo. El papel entra en medio segundo y aparece de golpe si el movimiento esta reducido.
+
 ## Version 0.294.0 - Cierre de la segunda vuelta
 
 Se cierra la segunda vuelta de tandas con el cuaderno al dia: la tabla de tandas llega hasta la vigesimoctava, con la version en que cada una entro, y la tabla de folios del gabinete sigue cuadrando con las chapas que llevan las hojas.

@@ -1,3 +1,9 @@
+## Version 0.295.0 - The watch is in the game too
+
+Until now the pocket watch only existed on the title screen. Now, while playing, a torn strip of paper appears in the corner with four things: the real time and weekday, the world's day and hour with the weather, the reader's coordinates and how long they have been in. A red seal pulses once a minute so it is clear it runs.
+
+The watch knows how to step aside: it draws nothing in menus, nor with F3 open, nor before there is a world, nor in too small a window. The new options in `gripeverde-client.toml` turn it off entirely, drop the coordinates or send it to the top-right or bottom corner. The paper fades in over half a second and appears at once if motion is reduced.
+
 ## Version 0.294.0 - Closing the second round
 
 The second round of tandas closes with the notebook up to date: the tanda table now reaches the twenty-eighth, with the version each one entered in, and the cabinet's folio table still matches the stamps the sheets carry.

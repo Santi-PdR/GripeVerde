@@ -1,3 +1,11 @@
+## v0.295.0 - El reloj tambien esta en la partida
+
+- Nuevos `client/hud/WatchHud` y `client/hud/WatchHudEvents` (`RegisterGuiOverlaysEvent`, bus de MOD).
+- Tira de papel con hora real + dia, dia/hora del mundo + clima, coordenadas y tiempo dentro.
+- No dibuja en menus, con F3, sin mundo ni en ventanas menores de 200x120.
+- `ClientConfig`: `watchEnabled`, `watchCoords`, `watchCorner` (0-2).
+- Entrada suave de 0,5 s; de golpe con movimiento reducido.
+
 ## v0.294.0 - Cierre de la segunda vuelta
 
 - Tabla de tandas hasta la 28 y tabla de folios revisada.
