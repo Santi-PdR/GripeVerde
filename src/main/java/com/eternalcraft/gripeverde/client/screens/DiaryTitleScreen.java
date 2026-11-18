@@ -515,6 +515,15 @@ public class DiaryTitleScreen extends Screen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        // v0.293.0: cada cuadro se olvidan las zonas de la firma y del distintivo;
+        // si la portada entra en modo inspeccion o cine, no quedan rectangulos
+        // fantasma que abran una hoja desde donde ya no hay nada.
+        this.sigX = -1;
+        this.sigY = -1;
+        this.sigW = 0;
+        this.musicBadgeX = -1;
+        this.musicBadgeY = -1;
+        this.musicBadgeW = 0;
         // v0.26.0: los faroles reconocen la mano del lector.
         com.eternalcraft.gripeverde.client.render.LivingAtmosphere.setMouse(mouseX, mouseY);
         // Professional centralized scene renderer

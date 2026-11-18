@@ -1,3 +1,9 @@
+## Version 0.293.0 - House repairs
+
+Three things that were wrong and could not be seen until touched. First: the title screen kept the signature and music-badge hit zones from one frame to the next, so entering the watch view or cinematic mode left two ghost rectangles that could open the credits or the sound sheet from where there was nothing anymore; they are now forgotten at the start of every frame.
+
+Second: the context notebook still said this branch was 0.247.0, forty-odd versions behind what the repository holds. Third: this branch's changelog had no entries for the previous five versions of the second round, which are now written.
+
 ## Version 0.292.0 - The stamp counts where the archive stands
 
 Every time a new file appears, the stamp in the upper right also says how many there have been: "NEW FILE · 12". That way the reader knows whether they are at four or forty without opening anything, and the archive stops being a bottomless bag.

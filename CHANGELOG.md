@@ -1,3 +1,9 @@
+## v0.293.0 - Reparaciones de la casa
+
+- Portada: `sigX/musicBadgeX` se olvidan en cada cuadro (zonas fantasma en inspeccion y modo cine).
+- `docs/CONTEXTO_MODMENU.md`: la version de la rama decia 0.247.0.
+- Registro de cambios: entradas de la segunda vuelta completadas.
+
 ## v0.292.0 - El sello cuenta por donde va el archivo
 
 - `Discoveries.drawToast`: la cabecera suma `discoveredCount()`.

@@ -1,3 +1,9 @@
+## Version 0.293.0 - Reparaciones de la casa
+
+Tres cosas que estaban mal y no se veian hasta tocarlas. La primera: la portada guardaba las zonas de la firma y del distintivo de musica de un cuadro para otro, asi que al entrar en la vista del reloj o en modo cine quedaban dos rectangulos fantasma que podian abrir los creditos o la hoja de sonido desde donde ya no habia nada; ahora se olvidan al empezar cada cuadro.
+
+La segunda: el cuaderno de contexto seguia diciendo que esta rama era la 0.247.0, cuarenta y tantas versiones por detras de lo que hay en el repositorio. La tercera: el registro de cambios de esta rama no tenia entradas para las cinco versiones anteriores de la segunda vuelta, que ya estan escritas.
+
 ## Version 0.292.0 - El sello cuenta por donde va el archivo
 
 Cada vez que aparece una ficha nueva, el sello de arriba a la derecha dice tambien por cuantas va: "FICHA NUEVA · 12". Asi el lector sabe si lleva cuatro o cuarenta sin abrir nada, y el archivo deja de ser una bolsa sin fondo.
