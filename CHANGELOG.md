@@ -1,3 +1,8 @@
+## v0.287.0 - Las listas dicen cual se lleva
+
+- Mundos: `selectedWorldName` en la cabecera (por reflexion sobre `LevelSummary`), oculto si hay filtro.
+- Puestos: direccion elegida en la franja del pie + "puerta conocida" via `RecentAddresses`.
+
 ## v0.286.0 - El cuaderno y el parte afinan la mano
 
 - Diario: fuera la pista "ctrl+f"; "pulsa /" en su lugar; "recuerda: ..." con la lupa cerrada; contador en rojo sin hallazgos.

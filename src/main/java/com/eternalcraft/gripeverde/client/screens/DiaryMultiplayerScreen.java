@@ -886,6 +886,36 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         if (x < panelX + 20) return;   // panel angosto: no vale la pena
         gfx.drawString(this.font, text, x, y, DiaryChrome.INK_SUBTITLE, false);
 
+        // v0.287.0: el puesto elegido y si ya se entro antes por esa puerta.
+        try {
+            String picked = "";
+            try {
+                var sel = this.vanillaList == null ? null : this.vanillaList.getSelected();
+                if (sel != null) {
+                    var data = sel.getClass().getMethod("getServerData").invoke(sel);
+                    Object ip = data.getClass().getField("ip").get(data);
+                    if (ip != null) picked = ip.toString();
+                }
+            } catch (Throwable ignored) {
+            }
+            if (!picked.isEmpty()) {
+                boolean known = com.eternalcraft.gripeverde.client.integration
+                    .RecentAddresses.list().contains(picked);
+                String line = (english ? "chosen: " : "elegido: ") + picked
+                    + (known ? (english ? "  ·  known door" : "  ·  puerta conocida") : "");
+                String cut = DiaryChrome.fitCached(this.font, line, Math.max(60, panelW / 2));
+                int lw = DiaryChrome.widthCached(this.font, cut);
+                int lx = panelX + (panelW - lw) / 2;
+                // v0.287.0: el elegido va en la franja del pie, nunca encima de
+                // la lista ni del divisor de la cabecera.
+                int chosenY = panelY + panelH - 26;
+                if (lw < panelW - 60 && chosenY > titleY + 40) {
+                    gfx.drawString(this.font, cut, lx, chosenY, DiaryChrome.INK_FLAVOR, false);
+                }
+            }
+        } catch (Throwable ignored) {
+        }
+
         // v0.271.0: debajo, lo que pesa la lista de puestos y la fecha.
         String detail = serversFileLine(english);
         if (detail.isEmpty()) return;

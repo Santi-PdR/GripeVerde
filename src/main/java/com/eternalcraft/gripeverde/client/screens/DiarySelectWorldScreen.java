@@ -312,6 +312,19 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                     g.drawString(font, foot, w - 12 - fw, 20, DiaryChrome.INK_FLAVOR, false);
                 }
             }
+            // v0.287.0: la ficha elegida, dicha en la cabecera.
+            try {
+                String picked = filter.isEmpty() ? selectedWorldName() : "";
+                if (!picked.isEmpty()) {
+                    String lineSel = (en ? "chosen: " : "elegido: ") + picked;
+                    String cutSel = DiaryChrome.fitText(font, lineSel, Math.max(60, w / 2 - 20));
+                    int selW = DiaryChrome.widthCached(font, cutSel);
+                    if (w / 2 - selW / 2 - 10 > 12) {
+                        g.drawString(font, cutSel, w / 2 - selW / 2, 44, DiaryChrome.INK_FLAVOR, false);
+                    }
+                }
+            } catch (Throwable ignored) {
+            }
             if (!filter.isEmpty()) {
                 String what = (en ? "search: " : "busca: ") + filter;
                 String cut = DiaryChrome.fitText(font, what, Math.max(60, w - 40));
@@ -319,6 +332,26 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 g.drawString(font, cut, (w - tw) / 2, 33, DiaryChrome.INK_FLAVOR, false);
             }
         }
+    }
+
+    /** v0.287.0: el nombre de la ficha elegida, o vacio si no hay ninguna. */
+    private String selectedWorldName() {
+        try {
+            if (this.vanillaList == null) return "";
+            var entry = this.vanillaList.getSelected();
+            if (entry == null) return "";
+            // El renglon del juego guarda el nombre del mundo en su LevelSummary.
+            for (java.lang.reflect.Field f : entry.getClass().getDeclaredFields()) {
+                if (!f.getType().getSimpleName().equals("LevelSummary")) continue;
+                f.setAccessible(true);
+                Object summary = f.get(entry);
+                if (summary == null) continue;
+                Object name = summary.getClass().getMethod("getLevelName").invoke(summary);
+                return name == null ? "" : name.toString();
+            }
+        } catch (Throwable ignored) {
+        }
+        return "";
     }
 
     /** v0.270.0: lo que hay escrito en el buscador del juego, recortado. */

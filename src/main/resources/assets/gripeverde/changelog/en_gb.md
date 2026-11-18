@@ -1,3 +1,9 @@
+## Version 0.287.0 - The lists say which one is carried
+
+In saved worlds, the header writes the name of the chosen record -"chosen: The third-floor house"- and stops doing so when a search is on, so as not to compete with the filter. In the posts, the foot band says the chosen address and, if that door was crossed before, notes it: "known door", read from the same memory the direct join uses.
+
+Both lines are trimmed to the real width of the sheet and are not drawn if they do not fit, and neither touches the list or the header divider.
+
 ## Version 0.286.0 - The notebook and the dispatch sharpen the hand
 
 The diary's magnifier stops announcing a combination that no longer exists: in its place it writes "press /". Closed and with a saved question, it writes in faint ink "remembers: ..." so it is known you can come back to it, and when the search finds nothing the counter turns red instead of staying a mute zero. The hint also remembers that Esc closes the magnifier before the sheet.

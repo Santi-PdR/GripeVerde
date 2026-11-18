@@ -1,3 +1,9 @@
+## Version 0.287.0 - Las listas dicen cual se lleva
+
+En los mundos guardados, la cabecera escribe el nombre de la ficha elegida -"elegido: La casa del tercer piso"- y deja de hacerlo cuando hay una busqueda puesta, para no competir con el filtro. En los puestos, la franja del pie dice la direccion elegida y, si esa puerta ya se cruzo antes, lo anota: "puerta conocida", leida de la misma memoria que usa la entrada directa.
+
+Ambas lineas se recortan al ancho real de la hoja y no se dibujan si no caben, y ninguna toca la lista ni el divisor de la cabecera.
+
 ## Version 0.286.0 - El cuaderno y el parte afinan la mano
 
 La lupa del diario deja de anunciar una combinacion que ya no existe: en su sitio pone "pulsa /". Cerrada y con una pregunta guardada, escribe en tinta tenue "recuerda: ..." para que se sepa que se puede volver a ella, y cuando la busqueda no encuentra nada el contador se tiñe de rojo en vez de quedarse en un cero mudo. La pista recuerda ademas que Esc cierra la lupa antes que la hoja.
