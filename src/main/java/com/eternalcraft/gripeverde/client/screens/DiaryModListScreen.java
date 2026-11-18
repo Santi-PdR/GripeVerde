@@ -49,6 +49,36 @@ public class DiaryModListScreen extends ModListScreen {
         }
         this.dressed.clear();
         this.dressed.addAll(PaperButtons.dressAll(this));
+        dressSearchBox();
+    }
+
+    /**
+     * v0.266.0: el buscador de Forge pide las cosas a su manera; aca se le pone
+     * el texto de la casa cuando esta vacio.
+     */
+    private void dressSearchBox() {
+        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+        String hint = en ? "search a mod" : "buscar un mod";
+        try {
+            for (var child : this.children()) {
+                if (child instanceof net.minecraft.client.gui.components.EditBox box) {
+                    box.setSuggestion(hint);
+                    return;
+                }
+            }
+        } catch (Throwable ignored) {
+        }
+    }
+
+    /** v0.266.0: cuantas modificaciones lleva cargadas el juego. */
+    private String modCount(boolean en) {
+        try {
+            int count = net.minecraftforge.fml.ModList.get().getMods().size();
+            if (count <= 0) return "";
+            return en ? count + " modifications loaded" : count + " modificaciones cargadas";
+        } catch (Throwable ignored) {
+            return "";
+        }
     }
 
     private AbstractSelectionList<?> findList() {
@@ -201,6 +231,18 @@ public class DiaryModListScreen extends ModListScreen {
         }
         drawFooterPaper(g);
         super.render(g, mouseX, mouseY, partial);
+        // v0.266.0: el recuento, arriba a la derecha de la hoja.
+        try {
+            boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+            String count = modCount(en);
+            if (!count.isEmpty() && this.width >= 420) {
+                String cut = ellipsizeTo(this.font, count, Math.max(80, this.width / 3));
+                int cw = this.font.width(cut);
+                g.drawString(this.font, cut, this.width - 12 - cw, 6,
+                    com.eternalcraft.gripeverde.client.render.DiaryChrome.INK_FLAVOR, false);
+            }
+        } catch (Throwable ignored) {
+        }
         // v0.265.0: la tinta va despues de Forge, para tapar su letra blanca.
         paintRowsInk(g, mouseX, mouseY);
     }

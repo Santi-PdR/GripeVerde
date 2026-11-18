@@ -34,6 +34,9 @@ public class DiarySkinCustomizationScreen extends Screen {
     private DiaryButton armButton;
 
     private int panelX, panelY;
+    // v0.266.0: alto real de las fichas y linea del pie, para el recuento.
+    private int gridBtnH = BTN_H;
+    private int footerDivY = -1;
 
     public DiarySkinCustomizationScreen(Screen parent, Options options) {
         super(Component.translatable("options.skinCustomisation"));
@@ -48,7 +51,24 @@ public class DiarySkinCustomizationScreen extends Screen {
         this.panelX = (this.width  - panelW) / 2;
         this.panelY = (this.height - panelH) / 2;
 
+        // v0.266.0: la rejilla se mide contra la hoja. En ventanas bajas las
+        // cuatro filas se salian del papel y tapaban el pie y el boton de
+        // volver; ahora el alto de cada ficha y el hueco se ajustan para que
+        // entren siempre.
+        int rows = 4;
         int gridTop = this.panelY + 74;  // titulo + subtitulo + flavor + divisor
+        int footerH = 46;
+        int gapY = BTN_GAP_Y;
+        int btnH = BTN_H;
+        int avail = panelH - 74 - footerH;
+        int need = rows * btnH + (rows - 1) * gapY;
+        if (need > avail) {
+            gapY = 3;
+            btnH = Math.max(14, (avail - (rows - 1) * gapY) / rows);
+            int used = rows * btnH + (rows - 1) * gapY;
+            gridTop = this.panelY + Math.max(54, 74 + Math.max(0, (avail - used) / 2));
+        }
+        this.gridBtnH = btnH;
         int availableGridW = Math.max(BTN_W, panelW - 28);
         int effectiveBtnW = Math.min(BTN_W, Math.max(110, (availableGridW - BTN_GAP_X) / 2));
         int col1X   = this.panelX + (panelW - (effectiveBtnW * 2 + BTN_GAP_X)) / 2;
@@ -61,14 +81,20 @@ public class DiarySkinCustomizationScreen extends Screen {
             int row = idx / 2;
             int col = idx % 2;
             int x = (col == 0) ? col1X : col2X;
-            int y = gridTop + row * (BTN_H + BTN_GAP_Y);
+            int y = gridTop + row * (btnH + gapY);
 
             DiaryButton btn = new DiaryButton(
-                x, y, effectiveBtnW, BTN_H,
+                x, y, effectiveBtnW, btnH,
                 buildPartLabel(part),
                 Icon.NONE, Variant.SECONDARY,
                 () -> togglePart(part)
             );
+            // v0.266.0: cada prenda dice en su aviso que hace.
+            btn.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
+                Component.literal(part.getName().getString() + "  ·  "
+                    + (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+                        ? "shown or hidden in the world"
+                        : "se ve o se oculta en el mundo"))));
             this.partButtons.put(part, btn);
             this.addRenderableWidget(btn);
             idx++;
@@ -78,13 +104,16 @@ public class DiarySkinCustomizationScreen extends Screen {
         int row = idx / 2;
         int col = idx % 2;
         int armX = (col == 0) ? col1X : col2X;
-        int armY = gridTop + row * (BTN_H + BTN_GAP_Y);
+        int armY = gridTop + row * (btnH + gapY);
         this.armButton = new DiaryButton(
-            armX, armY, effectiveBtnW, BTN_H,
+            armX, armY, effectiveBtnW, btnH,
             buildArmLabel(),
             Icon.NONE, Variant.SECONDARY,
             this::toggleArm
         );
+        this.armButton.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
+            Component.literal(com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+                ? "which hand holds the tool" : "que mano lleva la herramienta")));
         this.addRenderableWidget(this.armButton);
 
         // Boton Volver
@@ -97,6 +126,26 @@ public class DiarySkinCustomizationScreen extends Screen {
             Icon.DOOR, Variant.PRIMARY,
             this::onClose
         ));
+        this.footerDivY = this.panelY + panelH - 38;
+    }
+
+    /**
+     * v0.266.0: "5 de 7 prendas puestas". Se cuenta lo que el jugador lleva
+     * encima con la misma lista de partes que usa el juego.
+     */
+    private void drawWornCount(GuiGraphics g, int panelW, int divY) {
+        int worn = 0;
+        PlayerModelPart[] parts = PlayerModelPart.values();
+        for (PlayerModelPart part : parts) {
+            if (this.options.isModelPartEnabled(part)) worn++;
+        }
+        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+        String text = en ? worn + " of " + parts.length + " parts worn"
+            : worn + " de " + parts.length + " prendas puestas";
+        String cut = DiaryChrome.fitText(this.font, text, Math.max(60, panelW - 40));
+        int w = DiaryChrome.widthCached(this.font, cut);
+        g.drawString(this.font, cut, this.panelX + (panelW - w) / 2, divY - 11,
+            DiaryChrome.INK_FLAVOR, false);
     }
 
     private Component buildPartLabel(PlayerModelPart part) {
@@ -184,8 +233,11 @@ public class DiarySkinCustomizationScreen extends Screen {
         super.render(gfx, mouseX, mouseY, delta);
 
         // Divisor inferior + esquineros
-        int divY2 = this.panelY + panelH - 38;
+        int divY2 = this.footerDivY > 0 ? this.footerDivY : this.panelY + panelH - 38;
         DiaryChrome.drawInkDivider(gfx, this.panelX, divY2, panelW);
+
+        // v0.266.0: cuantas prendas van puestas, sobre el pie.
+        drawWornCount(gfx, panelW, divY2);
         DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, panelW, panelH);
         DiaryChrome.drawRegistryTagLeft(gfx, this.panelX, this.panelY, "REG. VII");
 

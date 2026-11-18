@@ -1,3 +1,15 @@
+## Version 0.266.0 - Fichas que caben y teclas que faltaban
+
+La ficha de aspecto se mide ahora contra su hoja: en ventanas bajas las cuatro filas de prendas se salian del papel y tapaban el pie y el boton de volver. Con el alto de ficha y el hueco ajustados, entran siempre, y al pie se lee cuantas prendas van puestas de las siete. Cada prenda dice en su aviso que hace -se ve o se oculta en el mundo-, y la mano principal dice cual lleva la herramienta.
+
+En la pausa, el boton de volver avisa que tambien se sale con Esc, en su etiqueta y en su aviso.
+
+El parte de CEDA estrena su chapa de registro, REG. XIII: era la unica hoja del gabinete que no la tenia.
+
+El arsenal pide las cosas como la casa -"buscar un mod" en vez de "Buscar..."- y arriba a la derecha dice cuantas modificaciones lleva cargadas el juego.
+
+La hoja de confirmacion se maneja con el teclado: Enter firma el si y Esc se va sin tocar nada.
+
 ## Version 0.265.0 - Lo que tapaba y lo que faltaba
 
 En la lista de puestos, la banda de teclas que se dibujaba entre los botones se fue: caia encima de la fila de abajo y la direccion del puesto se cruzaba con el boton de agregar. Tambien se fue el divisor inferior, que pasaba a dos pixeles de los botones y se veia como una raya cruzada. Lo que decian esas lineas ya esta en los avisos de cada boton.

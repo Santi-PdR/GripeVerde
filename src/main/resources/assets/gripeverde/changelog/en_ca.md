@@ -1,3 +1,15 @@
+## Version 0.266.0 - Cards that fit and keys that were missing
+
+The appearance card is now measured against its sheet: on short windows the four rows of parts spilled out of the paper and covered the foot and the back button. With the card height and gap adjusted, they always fit, and at the foot you can read how many of the seven parts are worn. Each part says in its hover note what it does -shown or hidden in the world-, and the main hand says which one carries the tool.
+
+In the pause sheet, the back button notes that Esc also leaves, in its label and in its hover note.
+
+The CEDA dispatch gets its registry tag, REG. XIII: it was the only sheet in the cabinet without one.
+
+The arsenal asks for things like the house does -"search a mod" instead of "Search..."- and says at the top right how many modifications the game has loaded.
+
+The confirmation sheet is driven from the keyboard: Enter signs the yes and Esc leaves without touching anything.
+
 ## Version 0.265.0 - What covered and what was missing
 
 In the list of posts, the key band drawn between the buttons is gone: it fell on the bottom row and the post's address crossed the add button. The lower divider is gone too, it passed two pixels from the buttons and looked like a line struck through them. What those lines said is already in each button's hover note.

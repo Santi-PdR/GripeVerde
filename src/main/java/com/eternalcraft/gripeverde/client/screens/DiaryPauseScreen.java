@@ -158,8 +158,16 @@ public class DiaryPauseScreen extends PauseScreen {
             }
         }
 
-        this.addRenderableWidget(createPauseButton(buttonX[0], buttonY[0], buttonWidths[0], bh,
-            "gripeverde.pause.btn.resume", DiaryButton.Icon.HAND, DiaryButton.Variant.PRIMARY, this::resumeGame));
+        // v0.266.0: el boton de volver dice con que tecla se vuelve.
+        DiaryButton resume = createPauseButton(buttonX[0], buttonY[0], buttonWidths[0], bh,
+            "gripeverde.pause.btn.resume", DiaryButton.Icon.HAND, DiaryButton.Variant.PRIMARY, this::resumeGame);
+        String resumeText = com.eternalcraft.gripeverde.client.render.DiaryChrome.tr("gripeverde.pause.btn.resume");
+        resume.setMessage(Component.literal(resumeText + "  ·  Esc"));
+        resume.setTooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal(
+            com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+                ? resumeText + " · back to the street (Esc)"
+                : resumeText + " · volver a la calle (Esc)")));
+        this.addRenderableWidget(resume);
 
         this.addRenderableWidget(createPauseButton(buttonX[1], buttonY[1], buttonWidths[1], bh,
             "gripeverde.pause.btn.adjustments", DiaryButton.Icon.GEAR, DiaryButton.Variant.SECONDARY, this::openAdjustments));

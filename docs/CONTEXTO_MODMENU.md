@@ -180,6 +180,14 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.266.0 — fichas y teclas
+
+- **Aspecto**: rejilla con alto/hueco calculados (`btnH`, `gapY`), `drawWornCount`, tooltips.
+- **Pausa**: `· Esc` en el boton de volver.
+- **Parte**: `REG. XIII`.
+- **Arsenal**: `dressSearchBox`, `modCount`.
+- **Confirmacion**: `keyPressed` con Enter/Esc.
+
 ## Cambios de 0.265.0 — solapes y tinta
 
 - **Multijugador**: se quitan la banda de teclas al pie y el divisor inferior (chocaban con las dos filas de botones).

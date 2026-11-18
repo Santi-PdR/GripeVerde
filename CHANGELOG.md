@@ -1,3 +1,11 @@
+## v0.266.0 - Fichas que caben y teclas que faltaban
+
+- Aspecto: rejilla medida contra la hoja, recuento `drawWornCount` y avisos por prenda.
+- Pausa: `VOLVER · Esc` en la etiqueta y el aviso.
+- Parte de CEDA: chapa `REG. XIII`.
+- Arsenal: `setSuggestion` en el buscador y recuento de modificaciones arriba a la derecha.
+- Confirmacion: `Enter` firma el si, `Esc` se va.
+
 ## v0.265.0 - Lo que tapaba y lo que faltaba
 
 - Multijugador: fuera `drawFooterNotes` y el divisor inferior que pisaban los botones.

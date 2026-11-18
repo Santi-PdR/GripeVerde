@@ -183,6 +183,29 @@ public class DiaryConfirmScreen extends ConfirmScreen {
         }
     }
 
+    /**
+     * v0.266.0: la hoja de confirmacion se maneja con el teclado: Enter firma
+     * el si y Esc se va sin tocar nada. Antes habia que ir al raton.
+     */
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER || keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_KP_ENTER) {
+            String yes = this.yesButton == null ? "" : this.yesButton.getString();
+            for (var child : this.children()) {
+                if (child instanceof DiaryButton button && button.active && button.visible
+                        && button.getMessage().getString().equals(yes)) {
+                    button.onPress();
+                    return true;
+                }
+            }
+        }
+        if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE) {
+            this.onClose();
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
     @Override
     public void renderBackground(GuiGraphics gfx) {
         // Bypass total del dirt vanilla

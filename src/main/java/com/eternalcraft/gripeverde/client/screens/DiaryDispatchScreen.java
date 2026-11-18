@@ -417,6 +417,8 @@ public class DiaryDispatchScreen extends Screen {
         PaperTexture.drawTornSheet(gfx, this.panelX, this.panelY, this.panelW, this.panelH,
             PaperTexture.PaperKind.OFFICIAL);
         DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
+        // v0.266.0: el parte era la unica hoja del gabinete sin chapa.
+        DiaryChrome.drawRegistryTag(gfx, this.panelX, this.panelY, this.panelW, this.panelH, "REG. XIII");
 
         int titleY = this.panelY + (compactLayout() ? 10 : 14);
         int centerX = this.panelX + this.panelW / 2;
