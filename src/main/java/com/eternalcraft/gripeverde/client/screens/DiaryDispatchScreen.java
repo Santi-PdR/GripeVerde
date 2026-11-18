@@ -246,7 +246,10 @@ public class DiaryDispatchScreen extends Screen {
         int binding = DispatchLibrary.key(slot);
         if (this.keyLabels[slot] == null || this.keyBindings[slot] != binding) {
             this.keyBindings[slot] = binding;
-            this.keyLabels[slot] = DispatchLibrary.keyName(slot).getString();
+            // v0.267.0: una ranura sin atajo dice "sin tecla", no un guion mudo.
+            this.keyLabels[slot] = binding == DispatchLibrary.UNBOUND
+                ? DiaryChrome.tr("gripeverde.dispatch.slot.nokey")
+                : DispatchLibrary.keyName(slot).getString();
         }
         return this.keyLabels[slot];
     }
@@ -264,6 +267,17 @@ public class DiaryDispatchScreen extends Screen {
     /** Fila visible bajo el puntero, como indice de la lista de campos. */
     private int rowAt(double mouseX, double mouseY) {
         if (mouseX < this.keyX || mouseX > this.keyX + this.keyW) return -1;
+        int offset = (int) mouseY - this.rowsTop;
+        if (offset < 0) return -1;
+        int row = offset / ROW_STEP;
+        if (row < 0 || row >= this.fields.size()) return -1;
+        if (offset % ROW_STEP > ROW_H) return -1;
+        return row;
+    }
+
+    /** v0.267.0: fila bajo el puntero cuando apunta al renglon de texto. */
+    private int fieldRowAt(double mouseX, double mouseY) {
+        if (mouseX < this.fieldX || mouseX > this.fieldX + this.fieldW) return -1;
         int offset = (int) mouseY - this.rowsTop;
         if (offset < 0) return -1;
         int row = offset / ROW_STEP;
@@ -300,6 +314,21 @@ public class DiaryDispatchScreen extends Screen {
         if (this.overToggle(mouseX, mouseY)) {
             this.turnPage(button == 1 ? -1 : 1);
             return true;
+        }
+        // v0.267.0: clic derecho sobre el renglon escrito vacia la voz (deja la
+        // tecla como estaba). Antes habia que borrar letra por letra.
+        int overField = this.fieldRowAt(mouseX, mouseY);
+        if (button == 1 && overField >= 0) {
+            int slot = this.rowSlots.get(overField);
+            if (!DispatchLibrary.message(slot).isBlank()) {
+                DispatchLibrary.setMessage(slot, "");
+                DiaryTextField field = this.fields.get(overField);
+                field.setValue("");
+                this.saveIfNeeded(true);
+                this.setStatus("gripeverde.dispatch.slot.emptied");
+                this.playSealSound();
+                return true;
+            }
         }
         int row = this.rowAt(mouseX, mouseY);
         if (row >= 0) {
@@ -488,8 +517,8 @@ public class DiaryDispatchScreen extends Screen {
         String count = Component.translatable("gripeverde.dispatch.slot.count",
             DispatchLibrary.countWithText(), DispatchLibrary.SLOT_COUNT).getString()
             + (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
-                ? "  ·  Ctrl+1..0  ·  Enter next  ·  Tab changes  ·  Esc back"
-                : "  ·  Ctrl+1..0  ·  Enter siguiente  ·  Tab cambia  ·  Esc vuelve");
+                ? "  ·  Ctrl+1..0  ·  Enter next  ·  Tab changes  ·  right click empties  ·  Esc back"
+                : "  ·  Ctrl+1..0  ·  Enter siguiente  ·  Tab cambia  ·  clic der. vacia  ·  Esc vuelve");
         gfx.drawString(this.font, ellipsize(count, Math.max(40, this.panelW - 40)),
             this.panelX + 20, this.countY, DiaryChrome.INK_FLAVOR, false);
 

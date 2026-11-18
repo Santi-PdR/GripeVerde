@@ -1,3 +1,11 @@
+## Version 0.267.0 - Sound and dispatch, by hand
+
+Both sound sliders -the mod's music and the ambience- are now driven from the keyboard: with focus on them, the arrows move two points and PageUp/PageDown ten, with the volume applied on the spot so you can hear it while you adjust. They also cue when the pointer comes near and click when released, like the rest of the house's sliders.
+
+At zero they no longer say "0%": they say nothing is heard, in Spanish and English. And the sound sheet gets its registry tag, REG. VI, and its door sound on closing.
+
+The CEDA dispatch lets you empty a voice with a right click on the written line: the message is cleared and the key stays as it was, without deleting letter by letter. Slots without a shortcut no longer show a mute dash: they say "no key". And the foot remembers the new gesture.
+
 ## Version 0.266.0 - Cards that fit and keys that were missing
 
 The appearance card is now measured against its sheet: on short windows the four rows of parts spilled out of the paper and covered the foot and the back button. With the card height and gap adjusted, they always fit, and at the foot you can read how many of the seven parts are worn. Each part says in its hover note what it does -shown or hidden in the world-, and the main hand says which one carries the tool.

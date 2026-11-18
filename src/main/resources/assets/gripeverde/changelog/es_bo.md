@@ -1,3 +1,11 @@
+## Version 0.267.0 - El sonido y el parte, a mano
+
+Los dos mandos de sonido -la musica del mod y el ambiente- se manejan ahora con el teclado: con el foco encima, las flechas mueven dos puntos y RePag/AvPag diez, con el volumen aplicandose en el acto para poder oirlo mientras se ajusta. Tambien avisan al acercarse el puntero y golpean al soltarse, como el resto de los mandos de la casa.
+
+A cero ya no dicen "0%": dicen que no se oye nada, en castellano y en ingles. Y la hoja de sonido estrena su chapa de registro, REG. VI, y su ruido de puerta al cerrarse.
+
+El parte de CEDA deja vaciar una voz con el clic derecho sobre el renglon escrito: se borra el mensaje y la tecla queda como estaba, sin tener que borrar letra por letra. Las ranuras sin atajo ya no muestran un guion mudo: dicen "sin tecla". Y el pie recuerda el gesto nuevo.
+
 ## Version 0.266.0 - Fichas que caben y teclas que faltaban
 
 La ficha de aspecto se mide ahora contra su hoja: en ventanas bajas las cuatro filas de prendas se salian del papel y tapaban el pie y el boton de volver. Con el alto de ficha y el hueco ajustados, entran siempre, y al pie se lee cuantas prendas van puestas de las siete. Cada prenda dice en su aviso que hace -se ve o se oculta en el mundo-, y la mano principal dice cual lleva la herramienta.

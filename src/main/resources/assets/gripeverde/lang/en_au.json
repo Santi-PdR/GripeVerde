@@ -188,5 +188,6 @@
   "gripeverde.dispatch.slot.empty": "Type the message…",
   "gripeverde.dispatch.slot.count": "%s of %s voices have a message",
   "gripeverde.dispatch.slot.sent": "Sent",
-  "gripeverde.pause.btn.ceda": "CEDA dispatch sheet"
+  "gripeverde.pause.btn.ceda": "CEDA dispatch sheet",
+  "gripeverde.dispatch.slot.emptied": "Voice emptied"
 }

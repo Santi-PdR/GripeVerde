@@ -1,3 +1,9 @@
+## v0.267.0 - El sonido y el parte, a mano
+
+- `DiaryMusicSlider` / `DiaryAmbienceSlider`: flechas y RePag/AvPag, aviso de hover, golpe al soltar, etiqueta "en silencio" a cero.
+- Hoja de sonido: chapa `REG. VI` y `onClose` con puerta.
+- Parte: clic derecho vacia el mensaje (`fieldRowAt`, clave nueva `dispatch.slot.emptied`), "sin tecla" en ranuras libres y pie con el gesto.
+
 ## v0.266.0 - Fichas que caben y teclas que faltaban
 
 - Aspecto: rejilla medida contra la hoja, recuento `drawWornCount` y avisos por prenda.

@@ -469,6 +469,8 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         int divY3 = compact ? returnButtonY() - 2 : this.panelY + this.panelH - 50;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY3);
         DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
+        // v0.267.0: la hoja de sonido tambien lleva su chapa.
+        DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. VI");
         DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. II");
 
         // The soundtrack controls stay static in a live world; only enabled state is refreshed.
@@ -558,5 +560,15 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     @Override
     public void renderBackground(GuiGraphics g) {
         // Bypass del fondo dirt vanilla
+    }
+
+    @Override
+    public void onClose() {
+        // v0.267.0: cerrar la hoja de sonido suena a puerta, como el resto.
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.back();
+        } catch (Throwable ignored) {
+        }
+        super.onClose();
     }
 }

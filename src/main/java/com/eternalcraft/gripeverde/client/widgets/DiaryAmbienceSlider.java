@@ -22,6 +22,13 @@ public class DiaryAmbienceSlider extends AbstractSliderButton {
 
     private static Component buildLabel(double v) {
         int pct = (int) Math.round(v * 100.0);
+        // v0.267.0: a cero no dice "0%", dice que no se oye.
+        if (pct <= 0) {
+            String silent = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+                ? " (silent)" : " (en silencio)";
+            String head = DiaryChrome.tr("gripeverde.options.sound.ambience_slider");
+            return Component.literal(head + ":" + silent);
+        }
         // v0.23.0: la etiqueta estaba hardcodeada en castellano; la clave
         // traducida ya existia en los 25 locales pero no se utilizaba.
         String txt = DiaryChrome.tr("gripeverde.options.sound.ambience_slider")
@@ -39,10 +46,66 @@ public class DiaryAmbienceSlider extends AbstractSliderButton {
         MenuAmbience.setUserVolume((float) this.value);
     }
 
+    /**
+     * v0.267.0: el mando tambien se maneja con el teclado. Con el foco encima,
+     * las flechas mueven dos puntos y RePag/AvPag diez, aplicando el volumen en
+     * el acto para poder oirlo mientras se ajusta.
+     */
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (this.active && this.isFocused()) {
+            double step = 0.02D;
+            int dir = 0;
+            if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT) {
+                dir = -1;
+            } else if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT) {
+                dir = 1;
+            } else if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_DOWN) {
+                dir = -1;
+                step = 0.10D;
+            } else if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_UP) {
+                dir = 1;
+                step = 0.10D;
+            }
+            if (dir != 0) {
+                this.value = net.minecraft.util.Mth.clamp(this.value + dir * step, 0.0D, 1.0D);
+                this.updateMessage();
+                this.applyValue();
+                this.livePreview();
+                try {
+                    com.eternalcraft.gripeverde.client.audio.UiSounds.playClick();
+                } catch (Throwable ignored) {
+                }
+                return true;
+            }
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    /** v0.267.0: el aviso de volumen, sin tocar el guardado. */
+    private void livePreview() {
+        MenuAmbience.setUserVolumeLive((float) this.value);
+    }
+
     @Override
     protected void onDrag(double mouseX, double mouseY, double dragX, double dragY) {
         super.onDrag(mouseX, mouseY, dragX, dragY);
         MenuAmbience.setUserVolumeLive((float) this.value);
+    }
+
+    private boolean wasHovered = false;
+
+    /** v0.267.0: el mando avisa al acercarse y golpea al soltarse. */
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        boolean released = super.mouseReleased(mouseX, mouseY, button);
+        if (released) {
+            try {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.playClick();
+            } catch (Throwable ignored) {
+            }
+        }
+        return released;
     }
 
     @Override
@@ -51,6 +114,11 @@ public class DiaryAmbienceSlider extends AbstractSliderButton {
         int y = this.getY();
         int w = this.getWidth();
         int h = this.getHeight();
+        boolean hovered = this.isHoveredOrFocused() && this.active;
+        if (hovered && !this.wasHovered) {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.playHover();
+        }
+        this.wasHovered = hovered;
 
         g.fill(x, y, x + w, y + h, 0xFFC9B78A);
         // v0.236.0: filete a mano, como el resto de los mandos.

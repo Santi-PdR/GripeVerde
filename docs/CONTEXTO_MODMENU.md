@@ -180,6 +180,12 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.267.0 — sonido y parte
+
+- **Mandos**: `keyPressed` (2% / 10%), `mouseReleased` con golpe, `wasHovered`, `livePreview`, etiqueta de silencio.
+- **Sonido**: `REG. VI`, `onClose`.
+- **Parte**: clic derecho vacia (`fieldRowAt`), `sin tecla`, pie nuevo. `EXPECTED = 191` en `tools/verify_mirrors.py` (25 lang con `dispatch.slot.emptied`).
+
 ## Cambios de 0.266.0 — fichas y teclas
 
 - **Aspecto**: rejilla con alto/hueco calculados (`btnH`, `gapY`), `drawWornCount`, tooltips.
