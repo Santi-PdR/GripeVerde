@@ -426,7 +426,21 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 canDelete = cls.contains("Online");
             }
         }
-        if (this.diarySelect != null) this.diarySelect.active = hasSelection;
+        if (this.diarySelect != null) {
+            this.diarySelect.active = hasSelection;
+            // v0.263.0: el boton dice a donde entra, no solo "Entrar".
+            String target = null;
+            try {
+                var sel = this.vanillaList == null ? null : this.vanillaList.getSelected();
+                ServerData sd = sel == null ? null : extractServerDataFromEntry(sel);
+                if (sd != null && sd.name != null && !sd.name.isBlank()) target = sd.name;
+            } catch (Throwable ignored) {
+            }
+            boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+            this.diarySelect.setTooltip(Tooltip.create(Component.literal(target == null
+                ? DiaryChrome.tr("selectServer.select")
+                : (en ? "Join " : "Entrar a ") + target)));
+        }
         if (this.diaryEdit != null) this.diaryEdit.active = canEdit;
         if (this.diaryDelete != null) this.diaryDelete.active = canDelete;
     }
@@ -732,6 +746,12 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             }
             return true;
         }
+        if (keyCode == GLFW.GLFW_KEY_F5) {
+            // v0.263.0: F5 vuelve a leer la lista de puestos guardados.
+            com.eternalcraft.gripeverde.client.audio.UiSounds.playClick();
+            onRefresh();
+            return true;
+        }
         if (keyCode == GLFW.GLFW_KEY_DELETE) {
             if (this.diaryDelete != null && this.diaryDelete.active) {
                 com.eternalcraft.gripeverde.client.audio.UiSounds.clickDestroy();
@@ -742,9 +762,45 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
+    private long lastListClickMs = 0L;
+
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        return super.mouseClicked(mouseX, mouseY, button);
+        Object before = null;
+        try {
+            before = this.vanillaList == null ? null : this.vanillaList.getSelected();
+        } catch (Throwable ignored) {
+        }
+        boolean handled = super.mouseClicked(mouseX, mouseY, button);
+        // v0.263.0: dos golpes seguidos sobre el mismo puesto y se entra, sin
+        // ir a buscar el boton. El primero solo elige, como siempre.
+        if (button == 0 && overServerList(mouseX, mouseY)) {
+            Object after = null;
+            try {
+                after = this.vanillaList == null ? null : this.vanillaList.getSelected();
+            } catch (Throwable ignored) {
+            }
+            long now = System.currentTimeMillis();
+            if (after != null && after == before && now - this.lastListClickMs < 320L) {
+                this.lastListClickMs = 0L;
+                try {
+                    com.eternalcraft.gripeverde.client.audio.UiSounds.playClick();
+                } catch (Throwable ignored) {
+                }
+                onJoin();
+                return true;
+            }
+            this.lastListClickMs = now;
+        }
+        return handled;
+    }
+
+    /** v0.263.0: la banda que ocupa la lista de puestos. */
+    private boolean overServerList(double mouseX, double mouseY) {
+        int top = PANEL_MARGIN_V + LIST_TOP_OFFSET;
+        int bottom = this.height - PANEL_MARGIN_V - LIST_BOTTOM_OFFSET;
+        return mouseY >= top && mouseY <= bottom
+            && mouseX >= PANEL_MARGIN_H && mouseX <= this.width - PANEL_MARGIN_H;
     }
 
     @Override
@@ -754,6 +810,11 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
 
     @Override
     public void onClose() {
+        // v0.263.0: volver tambien suena a puerta, como en el resto del gabinete.
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.back();
+        } catch (Throwable ignored) {
+        }
         this.minecraft.setScreen(this.parent);
     }
 
@@ -780,8 +841,8 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         int listBottom = this.height - PANEL_MARGIN_V - LIST_BOTTOM_OFFSET;
         if (y <= listBottom + 2) return;
         boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
-        String keys = en ? "Enter joins  ·  Del deletes  ·  Esc back"
-            : "Enter entra  ·  Supr borra  ·  Esc vuelve";
+        String keys = en ? "Enter joins  ·  Del deletes  ·  F5 reloads  ·  Esc back"
+            : "Enter entra  ·  Supr borra  ·  F5 relee  ·  Esc vuelve";
         String left = DiaryChrome.fitText(this.font, keys, Math.max(80, panelW / 2));
         gfx.drawString(this.font, left, panelX + 22, y, DiaryChrome.INK_FLAVOR, false);
 

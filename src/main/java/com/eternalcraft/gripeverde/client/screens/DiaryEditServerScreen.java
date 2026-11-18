@@ -124,8 +124,38 @@ public class DiaryEditServerScreen extends Screen {
 
     private void updateDoneButton() {
         if (this.doneButton != null && this.ipEdit != null && this.nameEdit != null) {
-            this.doneButton.active = !this.ipEdit.getValue().isEmpty() && !this.nameEdit.getValue().isEmpty();
+            // v0.263.0: la ficha solo se firma si los dos campos tienen algo y
+            // la direccion tiene forma de direccion.
+            this.doneButton.active = !this.nameEdit.getValue().isEmpty()
+                && DiaryChrome.looksLikeAddress(this.ipEdit.getValue());
         }
+    }
+
+    /**
+     * v0.263.0: el nombre y la direccion se recorren con Tab y con Enter, sin
+     * soltar el teclado. Enter con todo en orden firma la ficha.
+     */
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        boolean onName = this.nameEdit != null && this.getFocused() == this.nameEdit;
+        boolean onIp = this.ipEdit != null && this.getFocused() == this.ipEdit;
+        if ((onName || onIp) && (keyCode == 258 || keyCode == 257 || keyCode == 335)) {
+            if (keyCode == 258) { // TAB
+                if (onName) { this.setFocused(this.ipEdit); return true; }
+                this.setFocused(this.nameEdit);
+                return true;
+            }
+            if (onName) {
+                this.setFocused(this.ipEdit);
+                return true;
+            }
+            if (this.doneButton != null && this.doneButton.active) {
+                this.onDone();
+                return true;
+            }
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     private void onDone() {
@@ -209,6 +239,50 @@ public class DiaryEditServerScreen extends Screen {
         String ipLbl = ellipsizeTo(this.font, IP_LABEL.getString(), labelWidth);
         int ipLabelOffset = ipFieldOffset() - 14;
         gfx.drawString(this.font, ipLbl, panelX + fieldInset, panelY + ipLabelOffset, DiaryChrome.INK_SUBTITLE, false);
+
+        // v0.263.0: bajo la direccion, como se parte en anfitrion y puerto; y
+        // si falta algo, se dice que falta en vez de dejar el boton apagado
+        // sin explicacion.
+        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+        int fieldH = compactLayout() ? 18 : 20;
+        int btnH = compactLayout() ? 18 : 20;
+        int btnY = panelY + panelH - btnH - (compactLayout() ? 12 : 16);
+        String ipTyped = this.ipEdit == null || this.ipEdit.getValue() == null
+            ? "" : this.ipEdit.getValue().trim();
+        String nameTyped = this.nameEdit == null || this.nameEdit.getValue() == null
+            ? "" : this.nameEdit.getValue().trim();
+        int readoutY = panelY + ipFieldOffset() + fieldH + 3;
+        String missing;
+        if (nameTyped.isEmpty()) {
+            missing = en ? "the name is missing" : "falta el nombre";
+        } else if (ipTyped.isEmpty()) {
+            missing = en ? "the address is missing" : "falta la direccion";
+        } else if (!DiaryChrome.looksLikeAddress(ipTyped)) {
+            missing = en ? "that is not shaped like an address" : "eso no tiene forma de direccion";
+        } else {
+            missing = "";
+        }
+        if (missing.isEmpty() && readoutY + 10 < btnY && panelW >= 200) {
+            String readout = ellipsizeTo(this.font, DiaryChrome.addressReadout(ipTyped, en),
+                Math.max(48, panelW - 32));
+            int rw = DiaryChrome.widthCached(this.font, readout);
+            gfx.drawString(this.font, readout, centerX - rw / 2, readoutY,
+                DiaryChrome.INK_FLAVOR, false);
+        } else if (!missing.isEmpty() && readoutY + 10 < btnY) {
+            String warn = ellipsizeTo(this.font, missing, Math.max(48, panelW - 32));
+            int ww = DiaryChrome.widthCached(this.font, warn);
+            gfx.drawString(this.font, warn, centerX - ww / 2, readoutY, 0xFF8E2A20, false);
+        }
+
+        // Pie de teclas, cuando la hoja tiene cuerpo de sobra.
+        if (!compactLayout()) {
+            String keys = en ? "Tab changes field  ·  Enter signs  ·  Esc back"
+                : "Tab cambia de campo  ·  Enter firma  ·  Esc vuelve";
+            keys = ellipsizeTo(this.font, keys, Math.max(48, panelW - 32));
+            int kw = DiaryChrome.widthCached(this.font, keys);
+            gfx.drawString(this.font, keys, centerX - kw / 2, panelY + panelH - 12,
+                DiaryChrome.INK_FLAVOR, false);
+        }
 
         // Widgets (EditBox + botones Diary)
         super.render(gfx, mouseX, mouseY, partial);

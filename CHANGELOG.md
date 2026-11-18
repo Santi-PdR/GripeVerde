@@ -1,3 +1,10 @@
+## v0.263.0 - Los puestos de la lista
+
+- `DiaryChrome.addressReadout` / `looksLikeAddress`: anfitrion y puerto a la vista, forma minima validada.
+- Conexion directa: lectura bajo el campo, aviso en rojo, `Entrar` apagado si la direccion no vale, pie de teclas.
+- Ficha de servidor: `Tab`/`Enter` entre campos, aviso de lo que falta, pie de teclas.
+- Lista de puestos: doble clic entra, aviso del boton con el nombre, `Esc` con sonido de puerta, `F5` relee.
+
 ## v0.262.0 - Ocho remates de papel
 
 - Diario: el indice dice cuantos dias hay; el folio del pie vuelve al principio al tocarlo.

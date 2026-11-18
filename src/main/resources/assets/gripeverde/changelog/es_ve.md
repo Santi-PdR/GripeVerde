@@ -1,3 +1,11 @@
+## Version 0.263.0 - Los puestos de la lista
+
+La conexion directa ya no es un campo a ciegas. Debajo de la direccion se lee como se parte: anfitrion por un lado y puerto por el otro, con el 25565 puesto si no se escribe ninguno. Si lo escrito tiene espacios o simbolos que no van, el aviso se pone en rojo y el boton de entrar se apaga antes de que el juego intente conectarse a la nada. Al pie, la hoja recuerda que Enter entra, Ctrl+V pega y Esc vuelve.
+
+La ficha de servidor se recorre entera con el teclado: Tab salta del nombre a la direccion y Enter vuelve, y con los dos campos en orden Enter firma la ficha. Si falta el nombre, si falta la direccion o si la direccion no tiene forma de direccion, se dice cual de las tres cosas pasa en vez de dejar el boton apagado sin explicacion. La direccion tambien muestra su anfitrion y su puerto.
+
+En la lista de puestos, dos golpes seguidos sobre el mismo renglon entran directo, sin buscar el boton; el boton de entrar dice a donde entra en su aviso, y Esc vuelve con el ruido de puerta que tiene el resto del gabinete. F5 vuelve a leer la lista, y la banda del pie lo recuerda.
+
 ## Version 0.262.0 - Ocho remates de papel
 
 El indice del cuaderno dice cuantos dias lleva anotados, y el folio del pie -ese "folio 3 · 12"- ahora tambien es un boton: al tocarlo se vuelve al principio de la bitacora sin girar la rueda.

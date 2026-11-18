@@ -180,6 +180,13 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.263.0 — los puestos de la lista
+
+- **DiaryChrome**: `addressReadout(ip,en)` y `looksLikeAddress(ip)`.
+- **Conexion directa**: lectura host/puerto, aviso rojo, `Entrar` gateado, pie de teclas.
+- **Ficha de servidor**: `Tab`/`Enter`, aviso de campo que falta, pie de teclas.
+- **Lista**: doble clic, tooltip con el nombre, `Esc` con `UiSounds.back()`, `F5`.
+
 ## Cambios de 0.262.0 — ocho remates
 
 - **Diario**: dias en el titulo del indice, folio clicable hacia arriba, `Esc` cierra el indice.

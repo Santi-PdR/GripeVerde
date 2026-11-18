@@ -105,6 +105,46 @@ public final class DiaryChrome {
         gfx.fill(x + 1, mid - 1, x + w - 1, mid, DiaryTheme.withAlpha(0x001A1108, 70));
     }
 
+    /**
+     * v0.263.0: lee una direccion escrita a mano y la devuelve en dos partes,
+     * "anfitrion: equis · puerto: 25565". Si no hay puerto escrito, se asume el
+     * de siempre. Sirve para el pie de los campos de direccion.
+     */
+    public static String addressReadout(String raw, boolean english) {
+        if (raw == null) return "";
+        String ip = raw.trim();
+        if (ip.isEmpty()) return "";
+        String host = ip;
+        String port = "25565";
+        int colon = ip.lastIndexOf(':');
+        if (colon > 0 && colon < ip.length() - 1) {
+            String tail = ip.substring(colon + 1);
+            boolean digits = true;
+            for (int i = 0; i < tail.length(); i++) {
+                if (!Character.isDigit(tail.charAt(i))) { digits = false; break; }
+            }
+            if (digits) {
+                host = ip.substring(0, colon);
+                port = tail;
+            }
+        }
+        return (english ? "host: " : "anfitrion: ") + host
+            + "  ·  " + (english ? "port: " : "puerto: ") + port;
+    }
+
+    /** v0.263.0: forma minima de una direccion: letras, digitos, punto, guion, dos puntos. */
+    public static boolean looksLikeAddress(String raw) {
+        if (raw == null) return false;
+        String ip = raw.trim();
+        if (ip.isEmpty()) return false;
+        for (int i = 0; i < ip.length(); i++) {
+            char c = ip.charAt(i);
+            boolean ok = Character.isLetterOrDigit(c) || c == '.' || c == '-' || c == ':' || c == '_';
+            if (!ok) return false;
+        }
+        return true;
+    }
+
     public static void drawRegistryTag(GuiGraphics gfx, int panelX, int panelY, int panelW,
                                        int panelH, String regCode) {
         if (panelW < 330) return; // paneles muy chicos: se omite para no chocar

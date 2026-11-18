@@ -108,9 +108,16 @@ public class DiaryDirectJoinScreen extends Screen {
     }
 
     private void updateSelectButton() {
-        if (this.selectButton != null && this.ipEdit != null) {
-            this.selectButton.active = !this.ipEdit.getValue().isEmpty();
-        }
+        if (this.selectButton == null || this.ipEdit == null) return;
+        String ip = this.ipEdit.getValue() == null ? "" : this.ipEdit.getValue().trim();
+        // v0.263.0: una direccion con espacios o simbolos raros no entra; el
+        // boton se apaga antes de que el juego intente conectarse a la nada.
+        boolean ok = !ip.isEmpty() && DiaryChrome.looksLikeAddress(ip);
+        this.selectButton.active = ok;
+        this.selectButton.setTooltip(Tooltip.create(Component.literal(ok
+            ? (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+                ? "Join " + ip : "Entrar a " + ip)
+            : Component.translatable("selectServer.select").getString())));
     }
 
     private long unmappedWarnUntilMs = 0L;
@@ -215,6 +222,41 @@ public class DiaryDirectJoinScreen extends Screen {
         // Label IP
         String ipLbl = ellipsizeTo(this.font, ENTER_IP_LABEL.getString(), Math.max(48, panelW - 48));
         gfx.drawString(this.font, ipLbl, panelX + 24, panelY + ipFieldOffset() - 14, DiaryChrome.INK_SUBTITLE, false);
+
+        // v0.263.0: debajo del campo, como se parte la direccion: anfitrion y
+        // puerto. Si no tiene forma de direccion, se dice en rojo y no se entra.
+        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+        String typed = this.ipEdit == null || this.ipEdit.getValue() == null ? "" : this.ipEdit.getValue().trim();
+        int fieldY = panelY + ipFieldOffset();
+        int noteY = fieldY + 26;
+        int btnTop = panelY + panelH - 20 - 16;
+        if (noteY + 10 < btnTop && panelW >= 200) {
+            String note;
+            int ink;
+            if (typed.isEmpty()) {
+                note = en ? "host or host:port" : "anfitrion o anfitrion:puerto";
+                ink = DiaryChrome.INK_FLAVOR;
+            } else if (!DiaryChrome.looksLikeAddress(typed)) {
+                note = en ? "that is not shaped like an address" : "eso no tiene forma de direccion";
+                ink = 0xFF8E2A20;
+            } else {
+                note = DiaryChrome.addressReadout(typed, en);
+                ink = DiaryChrome.INK_FLAVOR;
+            }
+            note = ellipsizeTo(this.font, note, Math.max(48, panelW - 32));
+            int nw = DiaryChrome.widthCached(this.font, note);
+            gfx.drawString(this.font, note, centerX - nw / 2, noteY, ink, false);
+        }
+
+        // Pie de teclas, cuando la hoja tiene cuerpo de sobra.
+        if (panelH >= 150) {
+            String keys = en ? "Enter joins  ·  Ctrl+V pastes  ·  Esc back"
+                : "Enter entra  ·  Ctrl+V pega  ·  Esc vuelve";
+            keys = ellipsizeTo(this.font, keys, Math.max(48, panelW - 32));
+            int kw = DiaryChrome.widthCached(this.font, keys);
+            gfx.drawString(this.font, keys, centerX - kw / 2, panelY + panelH - 12,
+                DiaryChrome.INK_FLAVOR, false);
+        }
 
         // Widgets
         super.render(gfx, mouseX, mouseY, partial);

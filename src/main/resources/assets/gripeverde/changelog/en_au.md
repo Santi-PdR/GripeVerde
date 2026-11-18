@@ -1,3 +1,11 @@
+## Version 0.263.0 - The posts on the list
+
+Direct connection is no longer a blind field. Under the address you can read how it splits: host on one side, port on the other, with 25565 filled in if none is written. If what was typed has spaces or symbols that do not belong, the note turns red and the join button switches off before the game tries to connect to nothing. At the foot, the sheet reminds you that Enter joins, Ctrl+V pastes and Esc goes back.
+
+The server card is walked entirely from the keyboard: Tab jumps from name to address and Enter goes back, and with both fields in order Enter signs the card. If the name is missing, if the address is missing, or if the address is not shaped like an address, it says which of the three is happening instead of leaving the button off with no explanation. The address also shows its host and its port.
+
+In the list of posts, two quick hits on the same line join straight away without hunting for the button; the join button says where it joins in its hover note, and Esc goes back with the door sound the rest of the cabinet has. F5 rereads the list, and the band at the foot reminds you of it.
+
 ## Version 0.262.0 - Eight paper finishes
 
 The notebook's index says how many days it has recorded, and the folio at the foot -that "folio 3 · 12"- is now a button too: touch it and you are back at the start of the log without turning the wheel.
