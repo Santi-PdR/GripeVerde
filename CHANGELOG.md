@@ -1,3 +1,9 @@
+## v0.299.0 - El cuadro de la casa
+
+- Nueva hoja `DiaryHouseLedgerScreen` (REG. XX) con seis cifras del archivo.
+- Boton «Copiar el cuadro» (portapapeles) y aviso «copiado».
+- `DiaryHouseScreen`: fila inferior de tres botones que se encoge en ventanas estrechas.
+
 ## v0.298.0 - La ficha nueva avisa tambien dentro de la partida
 
 - `Discoveries.drawGameToast`: recorte de papel abajo a la derecha en partida.

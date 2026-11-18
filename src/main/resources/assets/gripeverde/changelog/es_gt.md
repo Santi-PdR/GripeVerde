@@ -1,3 +1,9 @@
+## Version 0.299.0 - El cuadro de la casa
+
+La casa ya no solo tiene interruptores: tiene memoria, y ahora la enseña. Un boton en su hoja abre `El cuadro`, con lo que el archivo guarda del lector: fichas leidas, objetos del cajon, veces que se abrio el cuaderno, noches seguidas, dias desde la primera vez y la ultima cronica que se leyo.
+
+Al pie hay un boton para copiar el cuadro entero al portapapeles, por si hay que pegarlo en un parte o contarselo a alguien, y la hoja avisa con un `copiado` cuando lo hace.
+
 ## Version 0.298.0 - La ficha nueva avisa tambien dentro de la partida
 
 El sello de `FICHA NUEVA` solo sabia hablar en los menus. Ahora, en mitad de la partida, cuando el cuaderno anota algo que no tenia, aparece el mismo recorte de papel abajo a la derecha, con el sello de lacre y el contador del archivo, y se va solo a los cuatro segundos y medio.

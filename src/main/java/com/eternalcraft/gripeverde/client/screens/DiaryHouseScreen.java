@@ -121,16 +121,29 @@ public class DiaryHouseScreen extends Screen {
             }
         ));
 
-        int backW = 122;
+        int backW = Math.min(100, Math.max(64, (this.panelW - 16) / 3 - 6));
         int backY = this.panelY + this.panelH - 32;
+        int rowW = backW * 3 + 16;
+        int rowX = (this.width - rowW) / 2;
         addRenderableWidget(new DiaryButton(
-            (this.width - backW) / 2 - 130, backY, 122, 22,
-            label("Todo a su sitio", "Put it all back"),
+            rowX, backY, backW, 22,
+            label("A su sitio", "Put back"),
             DiaryButton.Icon.SCROLL, DiaryButton.Variant.SECONDARY, DiaryButton.SoundProfile.BACK,
             this::resetHouse
         ));
+        // v0.299.0: el cuadro de la casa, con lo que ya sabe del lector.
         addRenderableWidget(new DiaryButton(
-            (this.width - backW) / 2 + 8, backY, backW, 22,
+            rowX + backW + 8, backY, backW, 22,
+            label("El cuadro", "Ledger"),
+            DiaryButton.Icon.CHART, DiaryButton.Variant.SECONDARY, DiaryButton.SoundProfile.OPTION_OPEN,
+            () -> {
+                if (this.minecraft != null) {
+                    this.minecraft.setScreen(new DiaryHouseLedgerScreen(this));
+                }
+            }
+        ));
+        addRenderableWidget(new DiaryButton(
+            rowX + (backW + 8) * 2, backY, backW, 22,
             Component.translatable("gripeverde.options.button.done"),
             DiaryButton.Icon.DOOR, DiaryButton.Variant.PRIMARY, DiaryButton.SoundProfile.BACK,
             this::onClose

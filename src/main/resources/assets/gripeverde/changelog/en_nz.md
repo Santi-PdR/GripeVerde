@@ -1,3 +1,9 @@
+## Version 0.299.0 - The house ledger
+
+The house no longer only has switches: it has memory, and now it shows it. A button on its sheet opens `The ledger`, with what the archive keeps about the reader: files read, drawer keepsakes, times the notebook opened, nights in a row, days since the first time and the last chronicle read.
+
+At the foot there is a button to copy the whole ledger to the clipboard, in case it has to be pasted into a report or told to someone, and the sheet says `copied` when it does.
+
 ## Version 0.298.0 - A new file announces itself in game too
 
 The `NEW FILE` seal only knew how to speak in menus. Now, in the middle of a game, when the notebook records something it did not have, the same torn slip of paper appears at the bottom right, with its wax seal and the archive's count, and leaves on its own after four and a half seconds.
