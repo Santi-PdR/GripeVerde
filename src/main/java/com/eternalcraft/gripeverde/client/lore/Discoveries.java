@@ -169,6 +169,16 @@ public final class Discoveries {
         int ink = (alpha << 24) | 0x241608;
         int red = (Math.min(215, alpha) << 24) | 0x6E1F16;
 
+        paintSlip(g, mc.font, x, y, bw, alpha, visibleHeader, visibleName);
+    }
+
+    /** v0.298.0: el mismo recorte de papel, reutilizado por el aviso en partida. */
+    private static void paintSlip(net.minecraft.client.gui.GuiGraphics g,
+                                  net.minecraft.client.gui.Font font,
+                                  int x, int y, int bw, int alpha,
+                                  String header, String name) {
+        int ink = (alpha << 24) | 0x241608;
+        int red = (Math.min(215, alpha) << 24) | 0x6E1F16;
         // v0.239.0: el aviso es un recorte de papel rasgado que se desvanece,
         // no una tarjeta con marco. El fundido de entrada y salida se conserva.
         com.eternalcraft.gripeverde.client.render.PaperTexture.drawTornSlip(
@@ -178,8 +188,48 @@ public final class Discoveries {
         g.fill(x + 7, y + 10, x + 11, y + 14, (Math.min(255, alpha) << 24) | 0x8B2A1C);
         g.fill(x + 6, y + 9, x + 8, y + 10, (Math.min(160, alpha) << 24) | 0xFFAA88);
 
-        g.drawString(mc.font, visibleHeader, x + 18, y + 4, red, false);
-        g.drawString(mc.font, visibleName, x + 18, y + 13, ink, false);
+        g.drawString(font, header, x + 18, y + 4, red, false);
+        g.drawString(font, name, x + 18, y + 13, ink, false);
+    }
+
+    /**
+     * v0.298.0: la ficha nueva, avisada tambien dentro de la partida. Va abajo a
+     * la derecha, sobre el papel, y respeta menus, F3 y ventanas estrechas.
+     */
+    public static void drawGameToast(net.minecraft.client.gui.GuiGraphics g, int screenW, int screenH) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc == null || mc.font == null || mc.level == null) return;
+        if (mc.screen != null) return;
+        if (mc.options != null && mc.options.renderDebug) return;
+        if (!hasActiveToast()) return;
+        if (screenW < 220 || screenH < 160) return;
+
+        long now = System.currentTimeMillis();
+        long remain = toastUntilMs - now;
+        long age = now - toastStartMs;
+        int alpha = 232;
+        if (!MotionPolicy.isReduced()) {
+            if (age < 180L) alpha = (int) (232 * age / 180L);
+            else if (remain < 260L) alpha = (int) (232 * remain / 260L);
+        }
+        alpha = Math.max(0, Math.min(232, alpha));
+        if (alpha <= 4) return;
+
+        boolean english = isEnglish();
+        String header = english ? "NEW FILE" : "FICHA NUEVA";
+        try {
+            int seen = ChroniclerMemory.discoveredCount();
+            if (seen > 0) header += "  ·  " + seen;
+        } catch (Throwable ignored) {
+        }
+        String name = toastName == null ? "" : toastName;
+        int contentWidth = Math.min(200, screenW - 24) - 26;
+        if (contentWidth < 60) return;
+        String visibleHeader = DiaryChrome.fitText(mc.font, header, contentWidth);
+        String visibleName = DiaryChrome.fitText(mc.font, name, contentWidth);
+        int bw = Math.min(Math.min(200, screenW - 24),
+            Math.max(104, Math.max(mc.font.width(visibleHeader), mc.font.width(visibleName)) + 26));
+        paintSlip(g, mc.font, screenW - bw - 8, screenH - 46, bw, alpha, visibleHeader, visibleName);
     }
 
     // ── Nombres (ES/EN) ──

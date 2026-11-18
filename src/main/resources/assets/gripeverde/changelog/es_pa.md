@@ -1,3 +1,9 @@
+## Version 0.298.0 - La ficha nueva avisa tambien dentro de la partida
+
+El sello de `FICHA NUEVA` solo sabia hablar en los menus. Ahora, en mitad de la partida, cuando el cuaderno anota algo que no tenia, aparece el mismo recorte de papel abajo a la derecha, con el sello de lacre y el contador del archivo, y se va solo a los cuatro segundos y medio.
+
+El aviso se retira cuando hay un menu abierto, cuando esta F3 delante y en ventanas demasiado estrechas, para no tapar nada. El recorte de papel que dibujaban los menus y el de la partida ahora salen de la misma funcion, asi que no pueden separarse con el tiempo.
+
 ## Version 0.297.0 - Los volumenes de la casa y el boton de volver todo a su sitio
 
 La hoja de la casa crece: tres ruedas para el volumen de la musica, del ambiente y de los efectos de interfaz, con el mismo tacto que la rueda del campo de vision, y un boton al pie, `Todo a su sitio`, que devuelve los seis pestillos, las tres ruedas y la esquina del reloj a los valores de fabrica del archivo.

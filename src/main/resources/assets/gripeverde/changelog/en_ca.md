@@ -1,3 +1,9 @@
+## Version 0.298.0 - A new file announces itself in game too
+
+The `NEW FILE` seal only knew how to speak in menus. Now, in the middle of a game, when the notebook records something it did not have, the same torn slip of paper appears at the bottom right, with its wax seal and the archive's count, and leaves on its own after four and a half seconds.
+
+The notice steps aside while a menu is open, when F3 is up and in too narrow a window, so it covers nothing. The slip drawn by menus and the one in game now come from the same function, so they cannot drift apart over time.
+
 ## Version 0.297.0 - The house's volumes and the put-it-all-back button
 
 The house sheet grows: three wheels for the music, ambience and interface volumes, with the same feel as the field-of-view wheel, and a button at the foot, `Put it all back`, that returns the six latches, the three wheels and the watch's corner to the file's default values.

@@ -1,3 +1,10 @@
+## v0.298.0 - La ficha nueva avisa tambien dentro de la partida
+
+- `Discoveries.drawGameToast`: recorte de papel abajo a la derecha en partida.
+- `Discoveries.paintSlip`: el dibujo del aviso, compartido con `drawToast`.
+- Registro del segundo overlay (`gripeverde_ficha`) en `WatchHudEvents`.
+- Guardas: menus, F3, ventanas menores de 220x160.
+
 ## v0.297.0 - Los volumenes de la casa y el boton de volver todo a su sitio
 
 - `DiaryHouseScreen`: ruedas de musica, ambiente e interfaz + boton «Todo a su sitio».
