@@ -105,6 +105,11 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
 
         // Resolver referencias vanilla via reflection cascada
         this.vanillaList = resolveField(ServerSelectionList.class, "serverSelectionList", "f_99673_");
+        // v0.271.0: la hoja de puestos se abre con ruido de papel.
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.open();
+        } catch (Throwable ignored) {
+        }
         this.vanillaServers = resolveField(ServerList.class, "servers", "f_99677_");
         this.vanillaSelectBtn = resolveField(Button.class, "selectButton", "f_99678_");
         this.vanillaEditBtn = resolveField(Button.class, "editButton", "f_99679_");
@@ -608,6 +613,19 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     }
 
     @Override
+    /** v0.271.0: escribir en el buscador suena a pluma. */
+    @Override
+    public boolean charTyped(char codePoint, int modifiers) {
+        boolean handled = super.charTyped(codePoint, modifiers);
+        if (handled) {
+            try {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.type();
+            } catch (Throwable ignored) {
+            }
+        }
+        return handled;
+    }
+
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
         if (this.vanillaList != null
                 && mouseY >= this.vanillaList.getTop() && mouseY <= this.vanillaList.getBottom()) {
@@ -637,6 +655,14 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         PaperTexture.drawTornSheet(gfx, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
         DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, panelW, panelH);
         DiaryChrome.drawRegistryTag(gfx, panelX, panelY, panelW, panelH, "REG. X");
+        // v0.271.0: folio del expediente, en la esquina baja izquierda.
+        try {
+            boolean enFolio = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+            String folio = enFolio ? "sheet 1" : "hoja 1";
+            gfx.drawString(this.font, folio, panelX + 14, panelY + panelH - 14,
+                DiaryChrome.INK_FLAVOR, false);
+        } catch (Throwable ignored) {
+        }
 
         // Titulo
         int titleY = panelY + 14;
@@ -658,6 +684,10 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         // v0.241.0: el tramo vacio de la lista se dibuja como renglones de
         // registro, para que la hoja no quede en blanco.
         drawRegisterRules(gfx);
+        try {
+            drawEmptyNote(gfx);
+        } catch (Throwable ignored) {
+        }
 
         // Lista vanilla (con sus favicons, ping, MOTD, etc.)
         if (this.vanillaList != null) {
@@ -856,6 +886,63 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         int y = titleY + 4;
         if (x < panelX + 20) return;   // panel angosto: no vale la pena
         gfx.drawString(this.font, text, x, y, DiaryChrome.INK_SUBTITLE, false);
+
+        // v0.271.0: debajo, lo que pesa la lista de puestos y la fecha.
+        String detail = serversFileLine(english);
+        if (detail.isEmpty()) return;
+        int dw = DiaryChrome.widthCached(this.font, detail);
+        int dx = panelX + panelW - 74 - dw;
+        if (dx > panelX + 20) {
+            gfx.drawString(this.font, detail, dx, y + 12, DiaryChrome.INK_FLAVOR, false);
+        }
+    }
+
+    /** v0.271.0: "servers.dat 412 B · 13·XI·2026". */
+    private String serversFileLine(boolean english) {
+        String weight = "";
+        try {
+            java.nio.file.Path f = this.minecraft.gameDirectory.toPath().resolve("servers.dat");
+            if (java.nio.file.Files.isRegularFile(f)) {
+                long b = java.nio.file.Files.size(f);
+                weight = b < 1024L ? b + " B"
+                    : String.format(java.util.Locale.ROOT, "%.1f KB", b / 1024.0);
+            }
+        } catch (Throwable ignored) {
+        }
+        String[] roman = {"I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"};
+        String date = "";
+        try {
+            java.util.Calendar c = java.util.Calendar.getInstance();
+            date = c.get(java.util.Calendar.DAY_OF_MONTH) + "·"
+                + roman[Math.max(0, Math.min(11, c.get(java.util.Calendar.MONTH)))] + "·"
+                + c.get(java.util.Calendar.YEAR);
+        } catch (Throwable ignored) {
+        }
+        if (weight.isEmpty()) return date;
+        if (date.isEmpty()) return weight;
+        return weight + "  ·  " + date;
+    }
+
+    /** v0.271.0: si no hay ningun puesto, la hoja lo dice en el centro. */
+    private void drawEmptyNote(GuiGraphics gfx) {
+        if (this.vanillaList == null) return;
+        try {
+            if (!this.vanillaList.children().isEmpty()) return;
+        } catch (Throwable ignored) {
+            return;
+        }
+        int top = this.vanillaList.getTop();
+        int bottom = this.vanillaList.getBottom();
+        if (bottom - top < 30) return;
+        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+        String note = en ? "no posts noted yet  ·  add one below"
+            : "aun no hay puestos  ·  anade uno abajo";
+        String cut = DiaryChrome.fitText(this.font, note,
+            Math.max(80, this.vanillaList.getRowWidth()));
+        int nw = DiaryChrome.widthCached(this.font, cut);
+        int cx = this.vanillaList.getRowLeft() + this.vanillaList.getRowWidth() / 2;
+        gfx.drawString(this.font, cut, cx - nw / 2, (top + bottom) / 2 - 4,
+            DiaryChrome.INK_SUBTITLE, false);
     }
 
     /** v0.241.0: renglones tenues del registro, detras de la lista. */

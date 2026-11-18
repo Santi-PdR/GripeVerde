@@ -1,3 +1,10 @@
+## v0.271.0 - La hoja de puestos tambien lleva cuenta
+
+- `serversFileLine`: peso de `servers.dat` y fecha en romanos bajo el recuento.
+- `drawEmptyNote` cuando no hay puestos anotados.
+- Folio "hoja 1" en la esquina del panel.
+- `UiSounds.open()` al abrir y pluma al escribir (`charTyped`).
+
 ## v0.270.0 - El archivo dice lo que pesa
 
 - `measureArchiveAsync` + `formatBytes`: peso real de `saves/` en la cabecera.

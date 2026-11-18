@@ -1,3 +1,9 @@
+## Version 0.271.0 - La hoja de puestos tambien lleva cuenta
+
+Debajo del recuento de puestos aparece ahora lo que pesa el fichero de servidores y la fecha en numeros romanos, igual que en el archivo de mundos. Si la lista esta vacia, la hoja lo dice en el centro en vez de dejar el tramo en blanco, y en la esquina baja lleva su folio.
+
+La hoja se abre con ruido de papel, el buscador suena a pluma cuando se escribe en el, y el recuento ya no es la unica cosa que informa en esa cabecera.
+
 ## Version 0.270.0 - El archivo dice lo que pesa
 
 La cabecera de los mundos guardados ya no solo cuenta fichas: debajo dice cuanto ocupa el archivo entero en el disco, medido en un hilo aparte para que la pagina no se pare, y la fecha de hoy en numeros romanos, como el resto del registro. Si hay algo escrito en el buscador, el recuento cambia a "se ven 2" y aparece una linea con lo que se esta buscando.

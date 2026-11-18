@@ -1,3 +1,9 @@
+## Version 0.271.0 - The post sheet keeps accounts too
+
+Under the post count now appears what the servers file weighs and the date in Roman numerals, just like in the worlds archive. If the list is empty, the sheet says so in the middle instead of leaving the stretch blank, and the lower corner carries its folio.
+
+The sheet opens with a paper sound, the search box sounds like a pen when written in, and the count is no longer the only thing informing in that header.
+
 ## Version 0.270.0 - The archive says what it weighs
 
 The saved-worlds header no longer just counts records: below it says how much the whole archive takes on disk, measured on a separate thread so the page never stalls, and today's date in Roman numerals, like the rest of the registry. If something is written in the search box, the count switches to "showing 2" and a line appears with what is being searched.
