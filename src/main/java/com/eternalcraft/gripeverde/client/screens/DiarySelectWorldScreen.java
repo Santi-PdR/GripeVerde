@@ -12,6 +12,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
 import net.minecraft.client.gui.screens.worldselection.WorldSelectionList;
+import net.minecraft.network.chat.Component;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
