@@ -1,3 +1,10 @@
+## v0.277.0 - El parte se ordena solo y el cuaderno marca el paso
+
+- Parte: foco en la primera ranura vacia al abrir y al cambiar de hoja.
+- Parte: contador "quedan N" de la ranura activa en el pie; "faltan N" y aviso de hoja vacia.
+- Diario: muesca de ultima lectura, filete de progreso con porcentaje, "fin del cuaderno" con golpe de tapa.
+- Fix: `tw`/`tx` duplicados en `ChangelogScreen.render`.
+
 ## v0.276.0 - El cuaderno recuerda donde lo dejaste
 
 - Muesca de "aqui lo dejaste" en la barra (`openedAtScrollY`), con etiqueta al pasar.

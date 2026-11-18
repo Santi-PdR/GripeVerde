@@ -180,6 +180,11 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.277.0 — el parte se ordena solo y el cuaderno marca el paso
+
+- **Parte**: foco en la primera vacia, contador de ranura y "faltan N".
+- **Diario**: muesca de ultima lectura, progreso al pie, fin del cuaderno con tapa.
+
 ## Cambios de 0.276.0 — el cuaderno recuerda donde lo dejaste
 
 - **Diario**: muesca de ultima lectura, filete de progreso con porcentaje, "fin del cuaderno" con golpe de tapa. **Pausa**: semilla desde `getSingleplayerServer()`.

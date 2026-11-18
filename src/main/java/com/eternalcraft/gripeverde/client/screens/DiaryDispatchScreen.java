@@ -147,7 +147,16 @@ public class DiaryDispatchScreen extends Screen {
             this.addRenderableWidget(field);
         }
         if (!this.fields.isEmpty()) {
-            this.setInitialFocus(this.fields.get(0));
+            // v0.277.0: el cursor arranca donde falta escribir, no en la primera
+            // ranura que ya tiene mensaje.
+            DiaryTextField target = this.fields.get(0);
+            for (int i = 0; i < this.fields.size(); i++) {
+                if (DispatchLibrary.message(this.rowSlots.get(i)).isBlank()) {
+                    target = this.fields.get(i);
+                    break;
+                }
+            }
+            this.setInitialFocus(target);
         }
 
         // v0.240.0: el pie se ordena en tres lineas -ayuda, recuento y botones-;
@@ -309,6 +318,13 @@ public class DiaryDispatchScreen extends Screen {
         this.page = Math.floorMod(this.page + delta, this.pageCount);
         this.awaitingSlot = -1;
         this.rebuildWidgets();
+        // v0.277.0: en la hoja nueva, el cursor busca la primera ranura vacia.
+        for (int i = 0; i < this.fields.size(); i++) {
+            if (DispatchLibrary.message(this.rowSlots.get(i)).isBlank()) {
+                this.setFocused(this.fields.get(i));
+                break;
+            }
+        }
     }
 
     @Override
@@ -514,7 +530,20 @@ public class DiaryDispatchScreen extends Screen {
         gfx.drawString(this.font, ellipsize(note, noteRoom),
             this.panelX + 20, this.hintY, DiaryChrome.INK_SUBTITLE, false);
         String count = Component.translatable("gripeverde.dispatch.slot.count",
-            DispatchLibrary.countWithText(), DispatchLibrary.SLOT_COUNT).getString()
+            DispatchLibrary.countWithText(), DispatchLibrary.SLOT_COUNT).getString();
+        // v0.277.0: cuantas quedan por escribir, o el aviso de hoja vacia.
+        try {
+            int written = DispatchLibrary.countWithText();
+            int missing = DispatchLibrary.SLOT_COUNT - written;
+            boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+            if (written == 0) {
+                count = (en ? "no voices written yet" : "sin voces escritas aun")
+                    + "  ·  " + count;
+            } else if (missing > 0) {
+                count = count + "  ·  " + (en ? missing + " to go" : "faltan " + missing);
+            }
+        } catch (Throwable ignored) {
+        }
             + (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
                 ? "  ·  Enter next  ·  Tab changes  ·  right click empties  ·  Esc back"
                 : "  ·  Enter siguiente  ·  Tab cambia  ·  clic der. vacia  ·  Esc vuelve");
@@ -532,6 +561,20 @@ public class DiaryDispatchScreen extends Screen {
     private String footerNote() {
         if (!this.statusKey.isEmpty() && Util.getMillis() < this.statusUntil) {
             return DiaryChrome.tr(this.statusKey);
+        }
+        // v0.277.0: mientras se escribe, el pie lleva la cuenta de la ranura.
+        try {
+            Object focused = this.getFocused();
+            int i = this.fields.indexOf(focused);
+            if (i >= 0) {
+                String text = this.fields.get(i).getValue();
+                int len = text == null ? 0 : text.length();
+                boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+                String left = en ? "left" : "quedan";
+                return DiaryChrome.tr("gripeverde.dispatch.slot.hint")
+                    + "  ·  " + len + "/" + MAX_TEXT + "  " + left + " " + (MAX_TEXT - len);
+            }
+        } catch (Throwable ignored) {
         }
         return DiaryChrome.tr("gripeverde.dispatch.slot.hint");
     }

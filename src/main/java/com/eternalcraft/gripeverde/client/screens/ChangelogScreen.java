@@ -848,8 +848,8 @@ public class ChangelogScreen extends Screen {
                 if (Math.abs(mouseY - lineY) <= 4
                         && mouseX >= px + PAD_X && mouseX <= px + pw - PAD_X) {
                     String txt = isEnglishSelected() ? pct + "% read" : pct + "% leido";
-                    int tw = DiaryChrome.widthCached(this.font, txt);
-                    g.drawString(this.font, txt, px + pw - PAD_X - tw, lineY - 11,
+                    int pctW = DiaryChrome.widthCached(this.font, txt);
+                    g.drawString(this.font, txt, px + pw - PAD_X - pctW, lineY - 11,
                         DiaryTheme.withAlpha(DiaryTheme.BRONZE, 210), false);
                 }
             }
@@ -869,9 +869,9 @@ public class ChangelogScreen extends Screen {
                         && mouseY >= markY - 4 && mouseY <= markY + 6) {
                     String back = isEnglishSelected() ? "left off here" : "aqui lo dejaste";
                     int bw2 = DiaryChrome.widthCached(this.font, back);
-                    int tx = px + pw - 12 - bw2;
-                    if (tx > px + 10) {
-                        g.drawString(this.font, back, tx, markY - 4,
+                    int markX = px + pw - 12 - bw2;
+                    if (markX > px + 10) {
+                        g.drawString(this.font, back, markX, markY - 4,
                             DiaryTheme.withAlpha(DiaryTheme.REDCOAT_DARK, 170), false);
                     }
                 }

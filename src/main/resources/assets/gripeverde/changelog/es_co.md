@@ -1,3 +1,9 @@
+## Version 0.277.0 - El parte se ordena solo y el cuaderno marca el paso
+
+Al abrir el parte de CEDA, el cursor ya no cae en la primera ranura sino en la primera que esta vacia: se escribe donde falta, no donde ya hay mensaje. Al cambiar de hoja pasa lo mismo. Mientras se escribe, el pie lleva la cuenta exacta de la ranura -"quedan 214"- y el recuento general dice cuantas faltan por escribir; si no hay ninguna voz anotada, lo dice sin rodeos.
+
+El diario estrena muesca roja en la barra con el punto donde se cerro la ultima vez -"aqui lo dejaste" al pasar-, un filete al pie que mide cuanto se lleva leido con su porcentaje, y un "fin del cuaderno" centrado que suena una sola vez al llegar al final. Tambien se arreglaron dos nombres de variable repetidos que impedian compilar la hoja.
+
 ## Version 0.276.0 - El cuaderno recuerda donde lo dejaste
 
 En la barra del diario aparece ahora una muesca roja en el punto donde se cerro la ultima vez: al pasar la mano por ella dice "aqui lo dejaste" y no hay que buscar a ojo. Al pie del papel corre un filete que mide cuanto se lleva leido, y si uno se acerca al filete aparece el porcentaje escrito.

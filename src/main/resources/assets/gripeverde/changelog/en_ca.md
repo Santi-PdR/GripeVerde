@@ -1,3 +1,9 @@
+## Version 0.277.0 - The dispatch sorts itself and the notebook marks the pace
+
+When the CEDA dispatch opens, the cursor no longer falls on the first slot but on the first empty one: you write where something is missing, not where there is already a message. Changing pages does the same. While writing, the foot carries the exact count for the slot -"214 left"- and the overall count says how many are still to write; if not a single voice is noted, it says so plainly.
+
+The diary gains a red notch on the scrollbar at the point where it was last closed -"left off here" on hover-, a rule at the foot measuring how much has been read with its percentage, and a centred "end of the notebook" that sounds once when the end is reached. Two repeated variable names that stopped the sheet from compiling were also fixed.
+
 ## Version 0.276.0 - The notebook remembers where you left it
 
 A red notch now sits on the diary scrollbar at the point where it was last closed: hovering it says "left off here" and there is no need to search by eye. Along the foot of the paper runs a rule measuring how much has been read, and coming close to the rule shows the percentage written out.
