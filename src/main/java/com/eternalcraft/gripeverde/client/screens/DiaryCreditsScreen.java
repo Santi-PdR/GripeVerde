@@ -161,11 +161,27 @@ public class DiaryCreditsScreen extends Screen {
         // v0.259.0: de donde sale lo que cuenta el cuaderno. Nada de juegos: lo
         // que el diario afirma tiene fecha y lugar, y aca se anota la lista.
         y = drawSources(g, left, y);
+        // v0.268.0: la hora que el cuaderno no se cansa de repetir.
+        String hour = isEnglish()
+            ? "the outbreak was entered at 11:52"
+            : "el brote se anoto a las 11:52";
+        hour = DiaryChrome.fitText(this.font, hour, Math.max(60, this.panelW - 32));
+        g.drawString(this.font, hour, left, y,
+            DiaryTheme.withAlpha(DiaryTheme.REDCOAT_DARK, 150), false);
+        y += 11;
         y += 6;
 
         // v0.21.25: version del gabinete visible en creditos.
         g.drawString(this.font, this.versionText, panelX + (panelW - this.versionW) / 2, y,
             DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 100), false);
+        y += 10;
+
+        // v0.268.0: sobre que andamio se lee este cuaderno.
+        String platform = "Minecraft 1.20.1  ·  Forge 47.4";
+        platform = DiaryChrome.fitText(this.font, platform, Math.max(60, this.panelW - 32));
+        int pw2 = DiaryChrome.widthCached(this.font, platform);
+        g.drawString(this.font, platform, panelX + (panelW - pw2) / 2, y,
+            DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 90), false);
         y += 10;
 
         // Official note

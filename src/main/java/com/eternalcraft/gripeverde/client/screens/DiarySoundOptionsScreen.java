@@ -423,6 +423,20 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         g.drawString(this.font, titleStr, titleX - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
         }
 
+        // v0.268.0: cual de las piezas esta sonando, sin ir a la portada.
+        try {
+            if (MenuMusic.isMusicEnabled() && MenuMusic.isActive()) {
+                String track = (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+                    ? "playing: " : "suena: ")
+                    + MenuMusic.getCurrentTrackNumber() + "/" + MenuMusic.getTrackCount();
+                String cut = DiaryChrome.fitCached(this.font, track, Math.max(40, this.panelW - 120));
+                int tw = DiaryChrome.widthCached(this.font, cut);
+                g.drawString(this.font, cut, this.width / 2 - tw / 2, titleY + 12,
+                    DiaryChrome.INK_FLAVOR, false);
+            }
+        } catch (Throwable ignored) {
+        }
+
         // v0.184.0: fuera los renglones "Niveles: ..." y "Niveles de Minecraft: ...".
         // El usuario no los quiere; queda el titulo y, si hay aire, el disco sonando.
 

@@ -231,6 +231,22 @@ public class DiaryLanguageScreen extends Screen {
      * titulo (la derecha la ocupa la placa REG. IV). Si el panel es angosto no
      * se dibuja: no vale la pena apretar.
      */
+    /** v0.268.0: nombre de la lengua que tiene puesta el juego, en su lengua. */
+    private String currentLanguageName(boolean english) {
+        try {
+            String code = this.minecraft.getLanguageManager().getSelected();
+            if (code == null || code.isBlank()) return "";
+            var info = this.minecraft.getLanguageManager().getLanguage(code);
+            if (info != null) {
+                String name = info.toComponent().getString();
+                if (name != null && !name.isBlank()) return name;
+            }
+            return code;
+        } catch (Throwable ignored) {
+            return "";
+        }
+    }
+
     private void drawLanguageCount(GuiGraphics g, int titleY) {
         if (this.panelW < 300) return;
         int total = 0;
@@ -252,6 +268,15 @@ public class DiaryLanguageScreen extends Screen {
         int y = titleY + 4;
         if (x + this.countTextW > this.panelX + this.panelW - 78) return;
         g.drawString(this.font, this.countText, x, y, DiaryChrome.INK_SUBTITLE, false);
+
+        // v0.268.0: y debajo, en cual esta escrito el cuaderno ahora mismo.
+        String current = currentLanguageName(english);
+        if (current.isEmpty()) return;
+        String line = (english ? "now: " : "ahora: ") + current;
+        String cut = DiaryChrome.fitCached(this.font, line,
+            Math.max(0, this.panelX + this.panelW - 78 - x));
+        if (this.font.width(cut) <= 0) return;
+        g.drawString(this.font, cut, x, y + 11, DiaryChrome.INK_FLAVOR, false);
     }
 
     private void drawSearchBuffer(GuiGraphics g) {

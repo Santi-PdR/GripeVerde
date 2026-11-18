@@ -1,3 +1,9 @@
+## Version 0.268.0 - List keys and headers that inform
+
+Both large lists are now driven entirely from the keyboard. In the posts, Ctrl+N adds a new one and Ctrl+E edits the chosen one, with the reminder under the count at the top. In your own worlds, Ctrl+N creates one and Ctrl+S plays the chosen one, and the foot says so. The arsenal closes with a door sound, and the diary's magnifier remembers the last question: open it again and it comes back already searched.
+
+The language sheet says, under the language count, which one the notebook is written in right now, with the name in its own tongue. The credits note what scaffold it is read on -Minecraft 1.20.1 and Forge 47.4- and repeat the hour of the outbreak, 11:52, which the notebook never tires of recording. The sound sheet says which of the pieces is playing, and the title screen goes into cinematic mode with F1, only the city and the emblem, until pressed again.
+
 ## Version 0.267.0 - Sound and dispatch, by hand
 
 Both sound sliders -the mod's music and the ambience- are now driven from the keyboard: with focus on them, the arrows move two points and PageUp/PageDown ten, with the volume applied on the spot so you can hear it while you adjust. They also cue when the pointer comes near and click when released, like the rest of the house's sliders.

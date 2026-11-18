@@ -180,6 +180,14 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.268.0 — teclas de lista y cabeceras
+
+- **Puestos**: `Ctrl+N`/`Ctrl+E` + aviso bajo el recuento (lo que 0.267.0 dejo fuera del parte).
+- **Mundos**: `Ctrl+N`/`Ctrl+S`, `pressVanilla`, pie.
+- **Arsenal**: `onClose` con `UiSounds.back()`.
+- **Diario**: `lastQuery` + `openSearchWithLastQuery`.
+- **Idioma**: `currentLanguageName`. **Creditos**: plataforma y 11:52. **Sonido**: pieza actual. **Portada**: `F1`.
+
 ## Cambios de 0.267.0 — sonido y parte
 
 - **Mandos**: `keyPressed` (2% / 10%), `mouseReleased` con golpe, `wasHovered`, `livePreview`, etiqueta de silencio.

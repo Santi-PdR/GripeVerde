@@ -1,3 +1,13 @@
+## v0.268.0 - Teclas de lista y cabeceras que informan
+
+- Puestos: `Ctrl+N` anade, `Ctrl+E` edita, recordatorio bajo el recuento.
+- Mundos: `Ctrl+N` crea y `Ctrl+S` juega (`pressVanilla`), pie nuevo.
+- Arsenal: `onClose` con puerta. Diario: la lupa recuerda la ultima busqueda (`lastQuery`).
+- Idioma: `currentLanguageName` bajo el recuento.
+- Creditos: linea de Minecraft/Forge y la hora del brote.
+- Sonido: "suena: N/M" bajo el titulo.
+- Portada: `F1` alterna el modo cine.
+
 ## v0.267.0 - El sonido y el parte, a mano
 
 - `DiaryMusicSlider` / `DiaryAmbienceSlider`: flechas y RePag/AvPag, aviso de hover, golpe al soltar, etiqueta "en silencio" a cero.

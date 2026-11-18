@@ -1,3 +1,9 @@
+## Version 0.268.0 - Teclas de lista y cabeceras que informan
+
+Las dos listas grandes ya se manejan enteras con el teclado. En los puestos, Ctrl+N anade uno nuevo y Ctrl+E edita el elegido, con el recordatorio bajo el recuento de arriba. En los mundos propios, Ctrl+N crea uno y Ctrl+S juega el elegido, y el pie lo dice. El arsenal se cierra con ruido de puerta, y la lupa del diario recuerda la ultima pregunta: al abrirla otra vez vuelve ya buscada.
+
+La hoja de idioma dice, bajo el recuento de lenguas, en cual esta escrito el cuaderno ahora mismo, con el nombre en su propia lengua. Los creditos anotan sobre que andamio se lee -Minecraft 1.20.1 y Forge 47.4- y vuelven a repetir la hora del brote, las 11:52, que el cuaderno no se cansa de anotar. La hoja de sonido dice cual de las piezas esta sonando, y la portada se queda en modo cine con F1, solo la ciudad y el emblema, hasta que se vuelve a apretar.
+
 ## Version 0.267.0 - El sonido y el parte, a mano
 
 Los dos mandos de sonido -la musica del mod y el ambiente- se manejan ahora con el teclado: con el foco encima, las flechas mueven dos puntos y RePag/AvPag diez, con el volumen aplicandose en el acto para poder oirlo mientras se ajusta. Tambien avisan al acercarse el puntero y golpean al soltarse, como el resto de los mandos de la casa.

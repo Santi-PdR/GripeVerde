@@ -482,6 +482,16 @@ public class DiaryTitleScreen extends Screen {
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         lastInteractionMs = System.currentTimeMillis();
+        // v0.268.0: F1 deja la portada en modo cine (solo la ciudad y el
+        // emblema) y la devuelve con otro golpe.
+        if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_F1) {
+            cinematicMode = !cinematicMode;
+            try {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.playClick();
+            } catch (Throwable ignored) {
+            }
+            return true;
+        }
         // v0.265.0: Ctrl+S vuelve a abrir el registro de mundos propios. Sigue
         // sin anunciarse en ninguna parte: es una llave, no un cartel.
         if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_S) {
