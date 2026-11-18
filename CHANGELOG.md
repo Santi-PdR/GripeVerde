@@ -1,3 +1,9 @@
+## v0.281.0 - Repaso de la casa
+
+- Muerte: el renglon de cortesia solo si cabe antes del pie.
+- `docs/CONTEXTO_MODMENU.md`: tabla de las 15 tandas y nota del revisor `tools/lint_java.py`.
+- Cierre del ciclo de 15 tandas.
+
 ## v0.280.0 - La lupa devuelve el lector donde estaba y el cajon dice su folio
 
 - Diario: `scrollBeforeSearch` / `searchWasOpen` devuelven el punto de lectura al cerrar la busqueda.

@@ -158,8 +158,11 @@ public final class DeathPaper {
                 DiaryChrome.INK_FLAVOR, false);
             ledger += 11;
         }
-        g.drawString(font, DiaryChrome.fitCached(font, line2, pw - 16), px + 8, ledger,
-            DiaryChrome.INK_FLAVOR, false);
+        // v0.281.0: el renglon de cortesia solo si queda sitio antes del pie.
+        if (ledger + 10 <= footY - 6) {
+            g.drawString(font, DiaryChrome.fitCached(font, line2, pw - 16), px + 8, ledger,
+                DiaryChrome.INK_FLAVOR, false);
+        }
 
         // Pie del papel: registro a la izquierda y sello a la derecha.
         int footY = py + PAPER_H - 16;

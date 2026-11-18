@@ -180,6 +180,37 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+
+## Tandas de esta rama (15)
+
+| # | tema | versión |
+|---|---|---|
+| 1 | llaves y portada (solo `Ctrl+S`, sin carteles) | 0.269.0 |
+| 2 | mundos guardados: peso, fecha, filtro, folio, sonidos | 0.270.0 |
+| 3 | puestos: peso de `servers.dat`, aviso vacío, folio | 0.272.0 |
+| 4 | todas las hojas: papel al abrir, puerta al cerrar, chapas únicas | 0.272.0 |
+| 5 | controles: choques y teclas sin asignar | 0.273.0 |
+| 6 | reloj: segundero, muesca de las 11:52, columna de datos | 0.274.0 |
+| 7 | pausa: hora, clima, modo, dificultad, almas, semilla | 0.278.0 |
+| 8 | diario: última lectura, progreso, final del cuaderno | 0.278.0 |
+| 9 | parte: foco en la primera vacía, «faltan N» | 0.278.0 |
+| 10 | arsenal: Forge, `REG. XVII`, folio | 0.278.0 |
+| 11 | aspecto: sonido al cambiar, tipo de piel | 0.279.0 |
+| 12 | muerte: causa, lugar, coordenadas, día, hora, nivel | 0.279.0 |
+| 13 | idioma y packs: folio y salida | 0.280.0 |
+| 14 | diario: la lupa devuelve el punto de lectura | 0.280.0 |
+| 15 | repaso global: guardas y documento | 0.281.0 |
+
+## Revisor propio de Java
+
+`tools/lint_java.py` corre en CI antes de Gradle. Caza tres cosas que costaron
+builds rojos: `@Override` huérfano, variables locales repetidas en ámbitos
+anidados y sentencias cortadas (línea que empieza por operador tras un `;` o `}`).
+
+## Cambios de 0.281.0 — repaso de la casa
+
+- **Muerte**: guarda del renglon de cortesia. **Docs**: tabla de 15 tandas + revisor de Java.
+
 ## Cambios de 0.280.0 — la lupa devuelve el lector y el cajon dice su folio
 
 - **Diario**: al cerrar la busqueda vuelve el punto de lectura.

@@ -1,3 +1,9 @@
+## Version 0.281.0 - Repaso de la casa
+
+Ultima tanda del ciclo: se repasa lo que se toco en las anteriores. El renglon de cortesia del telegrama de deceso ya no se escribe si el papel se quedo sin sitio antes del pie; el aviso de la pausa y el peso del archivo en las listas se habian guardado bien. El cuaderno de contexto documenta las quince tandas con su version y deja escrito que hace el revisor de Java que ahora corre antes de Gradle.
+
+Con esto quedan cerradas las quince tandas: llaves, portada, mundos, puestos, hojas, controles, reloj, pausa, diario, parte, arsenal, aspecto, muerte, idioma y packs, y este repaso. Todo el texto nuevo se recorta con el mismo medidor del gabinete y todo lo que se pinta en los margenes se aparta solo cuando la ventana no da el ancho.
+
 ## Version 0.280.0 - La lupa devuelve el lector donde estaba y el cajon dice su folio
 
 Cuando se abre la lupa del diario, el cuaderno apunta en que renglon estaba el lector; al cerrarla -o al borrar la busqueda- vuelve exactamente a ese punto, sin tener que subir a mano. Es la clase de cosa que solo se nota cuando falta.

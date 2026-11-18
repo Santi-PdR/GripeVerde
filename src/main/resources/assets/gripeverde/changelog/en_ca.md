@@ -1,3 +1,9 @@
+## Version 0.281.0 - House review
+
+Last tanda of the cycle: what the previous ones touched gets reviewed. The courtesy line of the death telegram is no longer written if the paper ran out of room before the foot; the pause notice and the archive weight in the lists had been guarded properly. The context notebook documents the fifteen tandas with their version and records what the Java reviewer that now runs before Gradle does.
+
+With this the fifteen tandas are closed: keys, title screen, worlds, posts, sheets, controls, watch, pause, diary, dispatch, arsenal, skin, death, language and packs, and this review. Every new string is cut with the cabinet's own ruler, and everything painted in the margins steps aside by itself when the window does not give the width.
+
 ## Version 0.280.0 - The magnifier returns the reader where they were and the drawer says its folio
 
 When the diary's magnifier is opened, the notebook notes which line the reader was on; closing it -or clearing the search- returns exactly to that point, with no manual scrolling. It is the kind of thing only noticed when it is missing.
