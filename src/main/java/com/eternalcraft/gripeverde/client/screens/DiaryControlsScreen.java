@@ -159,7 +159,6 @@ public class DiaryControlsScreen extends Screen {
         this.addRenderableWidget(new DiaryToggle(x, y, w, h, opt, baseLabel, fmt, null));
     }
 
-    @Override
     /** v0.273.0: cuenta teclas repetidas y teclas sin asignar, veinte veces por segundo. */
     private void auditKeys() {
         java.util.HashMap<String, Integer> seen = new java.util.HashMap<>();
@@ -190,6 +189,7 @@ public class DiaryControlsScreen extends Screen {
         this.conflictSample = sample;
     }
 
+    @Override
     public void tick() {
         if (--this.keyAuditTicks <= 0) {
             this.keyAuditTicks = 20;

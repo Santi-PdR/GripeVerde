@@ -1,3 +1,10 @@
+## v0.274.0 - El reloj de bolsillo dice mas
+
+- Segundero real en la vista del reloj.
+- Muesca roja a las 11:52 en el bisel.
+- Columna derecha: hora escrita, dia de la semana y "atrasa 3 min".
+- Fix: `@Override` mal puesto en `DiaryControlsScreen.auditKeys` (no compilaba).
+
 ## v0.273.0 - La hoja de controles vigila las teclas
 
 - `auditKeys()`: choques y teclas sin asignar, recalculados 20 veces por segundo.

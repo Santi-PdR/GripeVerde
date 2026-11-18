@@ -1,3 +1,9 @@
+## Version 0.274.0 - El reloj de bolsillo dice mas
+
+En la vista del reloj -cuando uno lo detiene con el clic- hay ahora un segundero fino que corre de verdad, y una muesca roja en el bisel justo en la posicion de las 11:52, la hora que el cuaderno no se cansa de anotar. A la derecha del bisel aparece una columna con lo que las agujas no dicen: la hora escrita, el dia de la semana y el atraso del reloj, que nunca anda del todo bien y lo admite sin drama.
+
+Tambien se arreglo la hoja de controles, que se habia quedado con una anotacion de compilacion mal puesta y no compilaba: ahora el recuento de choques de teclas vuelve a pintarse en su margen.
+
 ## Version 0.273.0 - La hoja de controles vigila las teclas
 
 En el margen izquierdo de la hoja de controles aparecen ahora dos avisos que antes habia que descubrir a base de probar: cuantas teclas comparten dos acciones -"2 choques", en rojo- y cuantas se quedaron sin ninguna. Se cuentan veinte veces por segundo sobre las teclas del juego, y los botones del raton no cuentan como choque porque pueden convivir dos acciones en ellos.

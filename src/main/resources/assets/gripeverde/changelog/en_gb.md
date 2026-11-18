@@ -1,3 +1,9 @@
+## Version 0.274.0 - The pocket watch says more
+
+In the watch view -when you stop it with a click- there is now a thin second hand that actually runs, and a red notch on the bezel right at 11:52, the hour the notebook never tires of recording. To the right of the bezel a column appears with what the hands do not say: the time written out, the day of the week and the watch's drift, which never quite runs true and admits it without drama.
+
+The controls sheet was also fixed: it had been left with a misplaced compilation annotation and did not compile, and now the key-clash count paints in its margin again.
+
 ## Version 0.273.0 - The controls sheet watches the keys
 
 In the left margin of the controls sheet there are now two notices that used to be discovered only by trial and error: how many keys are shared by two actions -"2 clashes", in red- and how many were left with none. They are counted twenty times a second over the game's keys, and mouse buttons do not count as a clash because two actions can live on them.

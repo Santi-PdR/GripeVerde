@@ -167,6 +167,42 @@ public class PocketWatchRenderer {
             g.drawString(font, today, cx - wT / 2, cy + radius + 68,
                 (Math.min(120, (chars - 38) * 6) << 24) | 0x51402A, false);
         }
+        // v0.274.0: el segundero, la hora escrita, el dia y el atraso del reloj.
+        long nowMs = System.currentTimeMillis();
+        java.util.Calendar now = java.util.Calendar.getInstance();
+        double secAngle = Math.toRadians(now.get(java.util.Calendar.SECOND) * 6 - 90);
+        drawThinLine(g, cx, cy,
+            (int)(cx + Math.cos(secAngle) * (radius - 14)),
+            (int)(cy + Math.sin(secAngle) * (radius - 14)), 0xFF7A1010);
+
+        // v0.274.0: la muesca de las 11:52, la hora que nadie del barrio olvida.
+        double outbreakAngle = Math.toRadians((11 * 30 + 52 * 0.5) - 90);
+        int ox1 = (int)(cx + Math.cos(outbreakAngle) * (radius - 6));
+        int oy1 = (int)(cy + Math.sin(outbreakAngle) * (radius - 6));
+        int ox2 = (int)(cx + Math.cos(outbreakAngle) * (radius - 16));
+        int oy2 = (int)(cy + Math.sin(outbreakAngle) * (radius - 16));
+        drawThickLine(g, ox1, oy1, ox2, oy2, 0xFF8E2A20);
+
+        // v0.274.0: a la derecha del bisel, lo que las agujas no dicen.
+        int infoX = cx + radius + 18;
+        int infoMaxW = w - infoX - 12;
+        if (infoMaxW >= 70 && chars > 20) {
+            int alpha = Math.min(190, (chars - 20) * 8);
+            String clock = String.format(java.util.Locale.ROOT, "%02d:%02d",
+                now.get(java.util.Calendar.HOUR_OF_DAY), now.get(java.util.Calendar.MINUTE));
+            String[] daysEs = {"domingo","lunes","martes","miercoles","jueves","viernes","sabado"};
+            String[] daysEn = {"Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"};
+            String day = (en ? daysEn : daysEs)[Math.max(0, Math.min(6,
+                now.get(java.util.Calendar.DAY_OF_WEEK) - 1))];
+            int y0 = cy - 10;
+            g.drawString(font, clock, infoX, y0, (alpha << 24) | 0xE8D9B4, false);
+            g.drawString(font, day, infoX, y0 + 12, (Math.min(150, alpha) << 24) | 0xB89A6E, false);
+            // v0.274.0: este reloj nunca anda del todo bien; lo dice sin drama.
+            String drift = en ? "runs 3 min behind" : "atrasa 3 min";
+            String cut = font.plainSubstrByWidth(drift, infoMaxW);
+            g.drawString(font, cut, infoX, y0 + 24, (Math.min(130, alpha) << 24) | 0x8E7A55, false);
+        }
+
         // La version del gabinete, al pie y en chico.
         if (version != null && !version.isBlank()) {
             String ver = "v" + version;
