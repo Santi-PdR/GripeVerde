@@ -1,3 +1,9 @@
+## Version 0.291.0 - The pause says where you are and lets you copy the seed
+
+The first status line of the pause sheet adds the reader's coordinates, so as not to get lost on the way back; the second adds the frames per second the game is running at, which is the only figure actually consulted when pausing.
+
+And the seed is no longer just looked at: a knock on the status block copies it to the clipboard and the sheet thanks with a "seed copied" in sealing-wax red for two seconds, without opening any menu or touching the keys.
+
 ## Version 0.290.0 - The notebook counts what it holds
 
 Hovering the rule at the foot of the diary now shows, next to the read percentage, the notebook's word count with its thousands separators: it is not the same to be halfway through twelve hundred words as through six thousand. The number is counted once when the sheet opens, not every frame.

@@ -1,3 +1,9 @@
+## Version 0.291.0 - La pausa dice donde estas y deja copiar la semilla
+
+La primera linea de estado de la hoja de pausa suma las coordenadas del lector, para no perderse al volver; la segunda suma los fotogramas por segundo que esta dando el juego, que es la unica cifra que de verdad se consulta al pausar.
+
+Y la semilla ya no solo se mira: un golpe sobre el bloque de estado la copia al portapapeles y la hoja lo agradece con un "semilla copiada" en rojo de lacre durante dos segundos, sin abrir ningun menu ni tocar las teclas.
+
 ## Version 0.290.0 - El cuaderno cuenta lo que lleva escrito
 
 Al pasar la mano por el filete del pie del diario, junto al porcentaje leido aparece el recuento de palabras del cuaderno, con sus puntos de millar: no es lo mismo ir por la mitad de mil doscientas palabras que de seis mil. El numero se cuenta una sola vez al abrir la hoja, no en cada cuadro.

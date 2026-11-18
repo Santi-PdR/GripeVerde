@@ -1,3 +1,8 @@
+## v0.291.0 - La pausa dice donde estas y deja copiar la semilla
+
+- Estado de la partida: coordenadas en la primera linea y fps en la segunda.
+- Clic sobre el bloque de estado: copia la semilla (`setClipboard`) y avisa 2,2 s.
+
 ## v0.290.0 - El cuaderno cuenta lo que lleva escrito
 
 - `wordCount()` con `groupNumber` (1.284 / 1,284) junto al porcentaje del filete.

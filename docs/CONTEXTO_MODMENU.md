@@ -244,6 +244,10 @@ anidados y sentencias cortadas (línea que empieza por operador tras un `;` o `}
 | XVII | arsenal |
 | XVIII | mundos guardados |
 
+## Cambios de 0.291.0 — la pausa dice donde estas y deja copiar la semilla
+
+- **Pausa**: coordenadas, fps y copia de la semilla con aviso.
+
 ## Cambios de 0.290.0 — el cuaderno cuenta lo que lleva escrito
 
 - **Diario**: recuento de palabras al pasar por el filete; punto en los dias leidos del indice.

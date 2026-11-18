@@ -76,6 +76,8 @@ public class DiaryPauseScreen extends PauseScreen {
 
     // ── v0.16.0: la pausa responde ──
     private boolean candleOut = false;
+    // v0.291.0: la semilla se copia con un golpe y la hoja lo agradece.
+    private long seedCopiedUntilMs = 0L;
     private long candleSmokeUntilMs = 0L;
     private static long nextBreathMs = System.currentTimeMillis() + 20_000L;
     private static long breathUntilMs = 0L;
@@ -278,6 +280,22 @@ public class DiaryPauseScreen extends PauseScreen {
                     return true;
                 }
                 int px = panelX(), py = panelY();
+                // v0.291.0: un golpe en el estado de la partida copia la semilla.
+                if (!overAnyButton(mouseX, mouseY) && !compactPauseLayout()
+                        && mouseY >= py + 32 && mouseY <= py + 62
+                        && mouseX >= px + 8 && mouseX <= px + panelW() - 10) {
+                    try {
+                        net.minecraft.server.MinecraftServer server = this.minecraft.getSingleplayerServer();
+                        if (server != null) {
+                            this.minecraft.keyboardHandler.setClipboard(
+                                Long.toString(server.overworld().getSeed()));
+                            this.seedCopiedUntilMs = System.currentTimeMillis() + 2200L;
+                            com.eternalcraft.gripeverde.client.audio.UiSounds.type();
+                            return true;
+                        }
+                    } catch (Throwable ignored) {
+                    }
+                }
                 // La vela: apagarla revela lo que lee la oscuridad.
                 int candleX = px + 20, candleY = py + panelH() - 32;
                 boolean overButton = overAnyButton(mouseX, mouseY);
@@ -761,7 +779,17 @@ public class DiaryPauseScreen extends PauseScreen {
             String weather = storm
                 ? (en ? "storm" : "tormenta")
                 : (rain ? (en ? "rain" : "lluvia") : (en ? "clear" : "despejado"));
-            line1 = clock + "  ·  " + weather;
+            // v0.291.0: donde esta el lector, para no perderse al volver.
+            String coords = "";
+            try {
+                if (this.minecraft.player != null) {
+                    coords = "  ·  " + this.minecraft.player.getBlockX()
+                        + ", " + this.minecraft.player.getBlockY()
+                        + ", " + this.minecraft.player.getBlockZ();
+                }
+            } catch (Throwable ignored) {
+            }
+            line1 = clock + "  ·  " + weather + coords;
 
             String difficulty;
             switch (this.minecraft.level.getDifficulty()) {
@@ -786,7 +814,12 @@ public class DiaryPauseScreen extends PauseScreen {
                 }
             } catch (Throwable ignored) {
             }
-            line2 = mode + "  ·  " + difficulty;
+            int fps = 0;
+            try {
+                fps = this.minecraft.getFps();
+            } catch (Throwable ignored) {
+            }
+            line2 = mode + "  ·  " + difficulty + (fps > 0 ? "  ·  " + fps + " fps" : "");
             if (souls > 1) {
                 line2 += "  ·  " + souls + (en ? " souls" : " almas");
             }
@@ -833,10 +866,14 @@ public class DiaryPauseScreen extends PauseScreen {
         } catch (Throwable ignored) {
             return;
         }
-        String line = (en ? "seed " : "semilla ") + seed;
+        boolean copied = System.currentTimeMillis() < this.seedCopiedUntilMs;
+        String line = copied
+            ? (en ? "seed copied" : "semilla copiada")
+            : (en ? "seed " : "semilla ") + seed;
         String cut = DiaryChrome.fitText(this.font, line, maxW);
         int w = DiaryChrome.widthCached(this.font, cut);
-        g.drawString(this.font, cut, stampX - w, py + 54, DiaryChrome.INK_FLAVOR, false);
+        g.drawString(this.font, cut, stampX - w, py + 54,
+            copied ? 0xFF5C0A08 : DiaryChrome.INK_FLAVOR, false);
     }
 
     private boolean baseYGuard() {
