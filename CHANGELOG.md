@@ -1,3 +1,8 @@
+## v0.286.0 - El cuaderno y el parte afinan la mano
+
+- Diario: fuera la pista "ctrl+f"; "pulsa /" en su lugar; "recuerda: ..." con la lupa cerrada; contador en rojo sin hallazgos.
+- Parte: "N sin tecla" en el pie y nombre de ranura junto al numero (`DispatchLibrary.name`).
+
 ## v0.285.0 - Remate de las hojas: cada una dice lo que tiene y como se sale
 
 - Sonido: resumen de musica, ambiente e interfaz; aviso de silencio total; folio II.

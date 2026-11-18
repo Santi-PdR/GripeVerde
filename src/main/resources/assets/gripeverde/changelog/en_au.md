@@ -1,3 +1,9 @@
+## Version 0.286.0 - The notebook and the dispatch sharpen the hand
+
+The diary's magnifier stops announcing a combination that no longer exists: in its place it writes "press /". Closed and with a saved question, it writes in faint ink "remembers: ..." so it is known you can come back to it, and when the search finds nothing the counter turns red instead of staying a mute zero. The hint also remembers that Esc closes the magnifier before the sheet.
+
+In the dispatch, the foot says how many slots have no key -"3 with no key"- and each row writes its slot name behind the number when it has one, trimmed to the real width of the column.
+
 ## Version 0.285.0 - Finishing the sheets: each says what it has and how to leave
 
 The sound sheet gains, above the lower divider, the state of its three layers: music, ambience and interface, each with its percentage or with "silent" if switched off; if all three are quiet, it says so at once -"the cabinet is silent"-. The skin sheet warns in red when no garment is worn, without scolding. The language, controls and credits sheets carry their Roman folio at the foot, with the reminder that Esc goes back.

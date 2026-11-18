@@ -491,7 +491,16 @@ public class DiaryDispatchScreen extends Screen {
             boolean hasText = !DispatchLibrary.message(slot).isBlank();
             String number = slot >= 0 && slot < SLOT_NUMBERS.length
                 ? SLOT_NUMBERS[slot] : Integer.toString(slot + 1);
-            gfx.drawString(this.font, number, this.fieldX - 6 - DiaryChrome.widthCached(this.font, number), y + 4,
+            // v0.286.0: si la ranura tiene nombre, se escribe detras del numero.
+            try {
+                String slotName = DispatchLibrary.name(slot).trim();
+                if (!slotName.isEmpty()) {
+                    number = number + " " + slotName;
+                }
+            } catch (Throwable ignored) {
+            }
+            String numberCut = ellipsize(number, Math.max(18, this.fieldX - this.panelX - 12));
+            gfx.drawString(this.font, numberCut, this.fieldX - 6 - DiaryChrome.widthCached(this.font, numberCut), y + 4,
                 hasText ? DiaryChrome.INK_TITLE : 0x70887766, false);
 
             boolean listening = this.awaitingSlot == slot;
@@ -541,6 +550,18 @@ public class DiaryDispatchScreen extends Screen {
                     + "  ·  " + count;
             } else if (missing > 0) {
                 count = count + "  ·  " + (en ? missing + " to go" : "faltan " + missing);
+            }
+        } catch (Throwable ignored) {
+        }
+        // v0.286.0: cuantas ranuras estan sin tecla, si las hay.
+        try {
+            int unbound = 0;
+            for (int i = 0; i < DispatchLibrary.SLOT_COUNT; i++) {
+                if (!DispatchLibrary.isBound(i)) unbound++;
+            }
+            if (unbound > 0) {
+                boolean en2 = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+                count = count + "  ·  " + (en2 ? unbound + " with no key" : unbound + " sin tecla");
             }
         } catch (Throwable ignored) {
         }

@@ -1011,7 +1011,8 @@ public class ChangelogScreen extends Screen {
             this.countSearchPos = searchHitPos;
             this.countSearchFont = this.font;
             if (empty) {
-                this.countSearchText = isEnglishSelected() ? "/ or ctrl+f" : "/ o ctrl+f";
+                // v0.286.0: sin atajos que anunciar; la lupa se abre con "/".
+                this.countSearchText = isEnglishSelected() ? "press /" : "pulsa /";
             } else if (searchHits.isEmpty()) {
                 this.countSearchText = "0";
             } else {
@@ -1021,8 +1022,10 @@ public class ChangelogScreen extends Screen {
         }
         String count = this.countSearchText;
         int cw2 = this.countSearchW;
-        g.drawString(this.font, count, sx - 8 - cw2, sy + 3,
-            DiaryTheme.withAlpha(DiaryTheme.BRONZE, empty ? 90 : 190), false);
+        // v0.286.0: si no hay hallazgos, el contador se tiñe de rojo de aviso.
+        int countInk = DiaryTheme.withAlpha(DiaryTheme.BRONZE, empty ? 90 : 190);
+        if (!empty && searchHits.isEmpty()) countInk = 0xFF8E2A20;
+        g.drawString(this.font, count, sx - 8 - cw2, sy + 3, countInk, false);
         // v0.30.0: etiqueta de PAPEL clara con letra de tinta — antes era
         // tinta sobre tinta y la letra no se veia (errata reconocida).
         g.fill(sx, sy, sx + SEARCH_W, sy + SEARCH_H,
@@ -1035,6 +1038,17 @@ public class ChangelogScreen extends Screen {
             DiaryTheme.withAlpha(DiaryTheme.BRONZE, searchOpen ? 200 : 90),
             (sx - 1) * 31 + (sy - 1) * 17 + SEARCH_W);
         boolean en = isEnglishSelected();
+        // v0.286.0: cerrada la lupa, se recuerda que hay una pregunta guardada.
+        if (!searchOpen && empty && !lastQuery.isEmpty()) {
+            String memo = (en ? "remembers: " : "recuerda: ") + lastQuery;
+            String cutMemo = DiaryChrome.fitCached(this.font, memo,
+                Math.min(120, Math.max(40, sx - px - 40)));
+            int mw = DiaryChrome.widthCached(this.font, cutMemo);
+            if (mw > 0 && sx - 10 - mw > px + 10) {
+                g.drawString(this.font, cutMemo, sx - 10 - mw, sy + 3,
+                    DiaryTheme.withAlpha(DiaryTheme.BRONZE, 140), false);
+            }
+        }
         if (empty) {
             if (!searchOpen) {
                 g.drawString(this.font, en ? "search" : "buscar", sx + 4, sy + 3,

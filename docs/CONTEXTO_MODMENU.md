@@ -207,6 +207,11 @@ Actualizado: 2026-11-13
 builds rojos: `@Override` huérfano, variables locales repetidas en ámbitos
 anidados y sentencias cortadas (línea que empieza por operador tras un `;` o `}`).
 
+## Cambios de 0.286.0 — el cuaderno y el parte afinan la mano
+
+- **Diario**: sin pistas de atajos, memoria visible de la busqueda y contador rojo sin hallazgos.
+- **Parte**: ranuras sin tecla y nombre de ranura.
+
 ## Cambios de 0.285.0 — remate de las hojas
 
 - **Sonido**: estado de las tres capas y aviso de silencio. **Aspecto**: aviso sin prendas.

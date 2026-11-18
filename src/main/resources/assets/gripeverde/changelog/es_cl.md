@@ -1,3 +1,9 @@
+## Version 0.286.0 - El cuaderno y el parte afinan la mano
+
+La lupa del diario deja de anunciar una combinacion que ya no existe: en su sitio pone "pulsa /". Cerrada y con una pregunta guardada, escribe en tinta tenue "recuerda: ..." para que se sepa que se puede volver a ella, y cuando la busqueda no encuentra nada el contador se tiñe de rojo en vez de quedarse en un cero mudo. La pista recuerda ademas que Esc cierra la lupa antes que la hoja.
+
+En el parte, el pie dice cuantas ranuras estan sin tecla -"3 sin tecla"- y cada renglon escribe el nombre de su ranura detras del numero, cuando lo tiene, recortado al ancho real de la columna.
+
 ## Version 0.285.0 - Remate de las hojas: cada una dice lo que tiene y como se sale
 
 La hoja de sonido estrena, sobre el divisor inferior, el estado de las tres capas: musica, ambiente e interfaz, cada una con su porcentaje o con "en silencio" si esta apagada; si las tres callan, lo dice de una vez -"el gabinete esta en silencio"-. La de aspecto avisa en rojo cuando no hay ninguna prenda puesta, sin regañar. La de idioma, la de controles y la de creditos llevan su folio romano al pie, con el recordatorio de que Esc vuelve.
