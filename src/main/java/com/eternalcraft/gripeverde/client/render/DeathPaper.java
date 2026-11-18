@@ -159,7 +159,7 @@ public final class DeathPaper {
             ledger += 11;
         }
         // v0.281.0: el renglon de cortesia solo si queda sitio antes del pie.
-        if (ledger + 10 <= footY - 6) {
+        if (ledger + 10 <= py + PAPER_H - 22) {
             g.drawString(font, DiaryChrome.fitCached(font, line2, pw - 16), px + 8, ledger,
                 DiaryChrome.INK_FLAVOR, false);
         }
