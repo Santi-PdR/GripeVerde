@@ -180,6 +180,11 @@ Actualizado: 2026-11-13
   (idiomas, sonidos, código muerto, versión, duraciones, subtítulos, uso de sonidos,
   literales y balance) y pasa en verde con `0.175.0`.
 
+## Cambios de 0.269.0 — menos llaves, mas papel
+
+- **Una sola llave**: `Ctrl+S` en la portada. Nada mas, y sin carteles.
+- Fuera el modo cine con `F1`; el reloj dice dia y luz; los mundos vacios se anuncian.
+
 ## Cambios de 0.268.0 — teclas de lista y cabeceras
 
 - **Puestos**: `Ctrl+N`/`Ctrl+E` + aviso bajo el recuento (lo que 0.267.0 dejo fuera del parte).

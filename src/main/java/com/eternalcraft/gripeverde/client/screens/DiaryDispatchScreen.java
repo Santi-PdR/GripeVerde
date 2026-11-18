@@ -399,18 +399,6 @@ public class DiaryDispatchScreen extends Screen {
             this.playSealSound();
             return true;
         }
-        // v0.185.0: Ctrl+1..9/0 manda esa voz y Ctrl+Shift+1..9/0 las voces 11..20.
-        // No es envio en lote: cada atajo manda una sola, igual que su tecla.
-        if ((modifiers & GLFW.GLFW_MOD_CONTROL) != 0
-                && keyCode >= GLFW.GLFW_KEY_0 && keyCode <= GLFW.GLFW_KEY_9) {
-            int digit = keyCode - GLFW.GLFW_KEY_0;
-            int slot = digit == 0 ? 9 : digit - 1;
-            if ((modifiers & GLFW.GLFW_MOD_SHIFT) != 0) slot += 10;
-            if (DispatchHotkeys.send(this.minecraft, slot)) {
-                this.setStatus("gripeverde.dispatch.slot.sent");
-            }
-            return true;
-        }
         if ((keyCode == 266 || keyCode == 267) && this.pageCount > 1) { // RePag / AvPag
             this.turnPage(keyCode == 266 ? -1 : 1);
             return true;
@@ -517,8 +505,8 @@ public class DiaryDispatchScreen extends Screen {
         String count = Component.translatable("gripeverde.dispatch.slot.count",
             DispatchLibrary.countWithText(), DispatchLibrary.SLOT_COUNT).getString()
             + (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
-                ? "  ·  Ctrl+1..0  ·  Enter next  ·  Tab changes  ·  right click empties  ·  Esc back"
-                : "  ·  Ctrl+1..0  ·  Enter siguiente  ·  Tab cambia  ·  clic der. vacia  ·  Esc vuelve");
+                ? "  ·  Enter next  ·  Tab changes  ·  right click empties  ·  Esc back"
+                : "  ·  Enter siguiente  ·  Tab cambia  ·  clic der. vacia  ·  Esc vuelve");
         gfx.drawString(this.font, ellipsize(count, Math.max(40, this.panelW - 40)),
             this.panelX + 20, this.countY, DiaryChrome.INK_FLAVOR, false);
 

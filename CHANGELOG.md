@@ -1,3 +1,11 @@
+## v0.269.0 - Menos llaves, mas papel
+
+- Fuera `Ctrl+N`/`Ctrl+E` en puestos, `Ctrl+N`/`Ctrl+S` en mundos, `Ctrl+1..0` en el parte, `Ctrl+F` en el diario y la pista de `Ctrl+V`.
+- `Ctrl+S` en la portada sigue abriendo los mundos propios y no se anuncia en ningun sitio.
+- Fuera el modo cine con `F1`.
+- Reloj: bajo la hora, el dia y si es de dia o de noche (`dayLine()`).
+- Mundos propios: `drawEmptyNote` cuando el archivo esta vacio.
+
 ## v0.268.0 - Teclas de lista y cabeceras que informan
 
 - Puestos: `Ctrl+N` anade, `Ctrl+E` edita, recordatorio bajo el recuento.

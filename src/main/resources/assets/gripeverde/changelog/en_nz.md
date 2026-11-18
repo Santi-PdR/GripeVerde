@@ -1,3 +1,9 @@
+## Version 0.269.0 - Fewer keys, more paper
+
+Every key combination but one is gone. There is no Ctrl+N or Ctrl+E in the posts anymore, no Ctrl+1..0 in the dispatch, no Ctrl+F in the diary: what is done is done with buttons, with Enter, with Tab or with the mouse. Nor is there any sign announcing the only one that stays: Ctrl+S opens your own worlds from the title screen and is written nowhere. Cinematic mode loses its key; the title screen stays still.
+
+Hovering the pocket watch now shows, under the time, the day -Wednesday, Saturday- and whether the dial is in daylight or at night. And if the saved-worlds archive is empty, the page no longer stays mute: it says so in the middle and warns that one is created below.
+
 ## Version 0.268.0 - List keys and headers that inform
 
 Both large lists are now driven entirely from the keyboard. In the posts, Ctrl+N adds a new one and Ctrl+E edits the chosen one, with the reminder under the count at the top. In your own worlds, Ctrl+N creates one and Ctrl+S plays the chosen one, and the foot says so. The arsenal closes with a door sound, and the diary's magnifier remembers the last question: open it again and it comes back already searched.

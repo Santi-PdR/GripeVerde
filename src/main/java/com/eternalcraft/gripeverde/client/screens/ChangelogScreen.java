@@ -100,7 +100,7 @@ public class ChangelogScreen extends Screen {
     // v0.29.0: la lupa de la bitacora — un cuadrito al pie, a la derecha,
     // donde el lector escribe una palabra y la cronica lo lleva de una
     // aparicion a la siguiente (Enter/Shift+Enter). Esc la cierra y la
-    // bitacora olvida la pregunta. Se abre con "/" o Ctrl+F.
+    // bitacora olvida la pregunta. Se abre con la lupa o con "/".
     private static final int SEARCH_W = 96;
     private static final int SEARCH_H = 12;
     private static final int SEARCH_MAX = 24;
@@ -1582,9 +1582,6 @@ public class ChangelogScreen extends Screen {
                 return true;
             }
         } else if (keyCode == GLFW.GLFW_KEY_SLASH && modifiers == 0) {
-            openSearchWithLastQuery();
-            return true;
-        } else if (keyCode == GLFW.GLFW_KEY_F && hasControlDown()) {
             openSearchWithLastQuery();
             return true;
         }

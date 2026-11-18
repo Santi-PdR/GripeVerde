@@ -250,8 +250,8 @@ public class DiaryDirectJoinScreen extends Screen {
 
         // Pie de teclas, cuando la hoja tiene cuerpo de sobra.
         if (panelH >= 150) {
-            String keys = en ? "Enter joins  ·  Ctrl+V pastes  ·  Esc back"
-                : "Enter entra  ·  Ctrl+V pega  ·  Esc vuelve";
+            String keys = en ? "Enter joins  ·  Esc back"
+                : "Enter entra  ·  Esc vuelve";
             keys = ellipsizeTo(this.font, keys, Math.max(48, panelW - 32));
             int kw = DiaryChrome.widthCached(this.font, keys);
             gfx.drawString(this.font, keys, centerX - kw / 2, panelY + panelH - 12,

@@ -192,6 +192,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         drawHeader(g);
         drawRegisterPage(g, mouseX, mouseY);
         drawFooterPaper(g);
+        drawEmptyNote(g);
         drawKeysHint(g);
 
         // Lista y busqueda del juego, tal cual, encima de la pagina.
@@ -269,8 +270,8 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         int y = bottom - 12;
         if (y <= this.listBottom + 8) return;
         boolean en = Discoveries.isEnglish();
-        String hint = en ? "Enter opens  ·  Ctrl+N new  ·  Ctrl+S plays  ·  Del deletes  ·  Esc back"
-            : "Enter entra  ·  Ctrl+N crea  ·  Ctrl+S juega  ·  Supr borra  ·  Esc vuelve";
+        String hint = en ? "Enter opens  ·  Del deletes  ·  Esc back"
+            : "Enter entra  ·  Supr borra  ·  Esc vuelve";
         String cut = DiaryChrome.fitText(this.font, hint, Math.max(60, this.width - 60));
         int hw = DiaryChrome.widthCached(this.font, cut);
         g.drawString(this.font, cut, (this.width - hw) / 2, y, DiaryChrome.INK_FLAVOR, false);
@@ -325,6 +326,24 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     }
 
     /** Papel detras del grupo de botones, sea cual sea el alto que les dio el juego. */
+    /** v0.269.0: si el archivo esta vacio, la pagina lo dice en vez de quedarse muda. */
+    private void drawEmptyNote(GuiGraphics g) {
+        if (this.vanillaList == null || this.rowLeft < 0) return;
+        try {
+            if (!this.vanillaList.children().isEmpty()) return;
+        } catch (Throwable ignored) {
+            return;
+        }
+        if (this.listBottom - this.listTop < 28) return;
+        boolean en = Discoveries.isEnglish();
+        String note = en ? "no records yet  ·  create one below"
+            : "aun no hay fichas  ·  crea una abajo";
+        String cut = DiaryChrome.fitText(this.font, note, Math.max(80, this.rowRight - this.rowLeft));
+        int nw = DiaryChrome.widthCached(this.font, cut);
+        g.drawString(this.font, cut, (this.rowLeft + this.rowRight - nw) / 2,
+            (this.listTop + this.listBottom) / 2 - 4, DiaryChrome.INK_SUBTITLE, false);
+    }
+
     private void drawFooterPaper(GuiGraphics g) {
         if (this.dressed.isEmpty()) return;
         int left = Integer.MAX_VALUE;
@@ -365,20 +384,6 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                     button.onPress();
                     return true;
                 }
-            }
-        }
-        // v0.268.0: Ctrl+N crea un mundo nuevo y Ctrl+S juega el elegido, sin
-        // ir a buscar los botones.
-        boolean ctrl = org.lwjgl.glfw.GLFW.glfwGetKey(
-            this.minecraft.getWindow().getWindow(), org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_CONTROL) == 1
-            || org.lwjgl.glfw.GLFW.glfwGetKey(this.minecraft.getWindow().getWindow(),
-            org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_CONTROL) == 1;
-        if (ctrl) {
-            if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_N) {
-                if (this.pressVanilla("selectWorld.create")) return true;
-            }
-            if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_S) {
-                if (this.pressVanilla("selectWorld.select")) return true;
             }
         }
         if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE) {

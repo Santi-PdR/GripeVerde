@@ -482,16 +482,8 @@ public class DiaryTitleScreen extends Screen {
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         lastInteractionMs = System.currentTimeMillis();
-        // v0.268.0: F1 deja la portada en modo cine (solo la ciudad y el
-        // emblema) y la devuelve con otro golpe.
-        if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_F1) {
-            cinematicMode = !cinematicMode;
-            try {
-                com.eternalcraft.gripeverde.client.audio.UiSounds.playClick();
-            } catch (Throwable ignored) {
-            }
-            return true;
-        }
+        // v0.269.0: fuera la tecla del modo cine. La unica llave sigue siendo
+        // Ctrl+S; el resto se pide a los botones.
         // v0.265.0: Ctrl+S vuelve a abrir el registro de mundos propios. Sigue
         // sin anunciarse en ninguna parte: es una llave, no un cartel.
         if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_S) {
@@ -836,7 +828,34 @@ public class DiaryTitleScreen extends Screen {
                 g.drawString(this.font, clock, cx - cw / 2, hy + 10,
                     DiaryChrome.INK_TITLE, false);
             }
+            // v0.269.0: el dia que es y si la esfera esta de dia o de noche.
+            String day = dayLine();
+            int dw = DiaryChrome.widthCached(this.font, day);
+            if (hy + 30 < this.height) {
+                g.drawString(this.font, day, cx - dw / 2, hy + 20,
+                    DiaryChrome.INK_FLAVOR, false);
+            }
         }
+    }
+
+    /** v0.269.0: "miercoles · de noche", en la lengua del cuaderno. */
+    private String dayLine() {
+        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+        String[][] days = en
+            ? new String[][]{{"sunday","Monday"},{"monday","Tuesday"},{"tuesday","Wednesday"},
+                             {"wednesday","Thursday"},{"thursday","Friday"},{"friday","Saturday"},
+                             {"saturday","Sunday"}}
+            : new String[][]{{"domingo","lunes"},{"lunes","martes"},{"martes","miercoles"},
+                             {"miercoles","jueves"},{"jueves","viernes"},{"viernes","sabado"},
+                             {"sabado","domingo"}};
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        int dow = cal.get(java.util.Calendar.DAY_OF_WEEK);           // 1 = domingo
+        int hour = cal.get(java.util.Calendar.HOUR_OF_DAY);
+        String name = days[Math.max(0, Math.min(6, dow - 1))][0];
+        boolean light = hour >= 6 && hour < 20;
+        return name + "  ·  " + (en
+            ? (light ? "by day" : "by night")
+            : (light ? "de dia" : "de noche"));
     }
 
     private void drawLogo(GuiGraphics g) {

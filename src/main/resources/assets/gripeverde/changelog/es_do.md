@@ -1,3 +1,9 @@
+## Version 0.269.0 - Menos llaves, mas papel
+
+Se fueron todas las combinaciones de teclas menos una. Ya no hay Ctrl+N ni Ctrl+E en los puestos, ni Ctrl+1..0 en el parte, ni Ctrl+F en el diario: lo que se hace, se hace con los botones, con Enter, con Tab o con el raton. Tampoco queda cartel que anuncie la unica que se queda: Ctrl+S abre los mundos propios desde la portada y no se escribe en ninguna parte. El modo cine pierde su tecla; la portada se queda quieta.
+
+Al pasar la mano por el reloj de bolsillo, debajo de la hora aparece el dia -miercoles, sabado- y si la esfera esta de dia o de noche. Y si el archivo de mundos propios esta vacio, la pagina ya no se queda muda: lo dice en el centro y avisa de que se crea abajo.
+
 ## Version 0.268.0 - Teclas de lista y cabeceras que informan
 
 Las dos listas grandes ya se manejan enteras con el teclado. En los puestos, Ctrl+N anade uno nuevo y Ctrl+E edita el elegido, con el recordatorio bajo el recuento de arriba. En los mundos propios, Ctrl+N crea uno y Ctrl+S juega el elegido, y el pie lo dice. El arsenal se cierra con ruido de puerta, y la lupa del diario recuerda la ultima pregunta: al abrirla otra vez vuelve ya buscada.
