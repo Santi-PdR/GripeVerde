@@ -1,3 +1,9 @@
+## Version 0.288.0 - El reloj de bolsillo se parece a un reloj de verdad
+
+La esfera grande estrena las sesenta marcas de minuto, menudas, entre las horas; debajo de la inscripcion de la tapa aparecen dos renglones nuevos: la firma del relojero que lo hizo y el estado de la cuerda. El reloj pequeno de la portada lleva ahora la misma muesca roja de las 11:52 que la esfera grande, para que se reconozcan como el mismo objeto.
+
+Y se cumple lo que se pidio hace tandas: fuera la leyenda de version bajo el bisel de la portada. En su lugar, el distintivo de musica se subraya al pasar, igual que la firma, para que se vea que se puede tocar.
+
 ## Version 0.287.0 - Las listas dicen cual se lleva
 
 En los mundos guardados, la cabecera escribe el nombre de la ficha elegida -"elegido: La casa del tercer piso"- y deja de hacerlo cuando hay una busqueda puesta, para no competir con el filtro. En los puestos, la franja del pie dice la direccion elegida y, si esa puerta ya se cruzo antes, lo anota: "puerta conocida", leida de la misma memoria que usa la entrada directa.

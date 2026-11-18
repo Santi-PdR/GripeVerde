@@ -1,3 +1,9 @@
+## v0.288.0 - El reloj de bolsillo se parece a un reloj de verdad
+
+- Esfera grande: marcas de minuto, firma del relojero y "cuerda: llena".
+- Reloj pequeno: muesca de las 11:52 (consistencia con la inspeccion).
+- Fuera la leyenda de version bajo el bisel de la portada; subrayado del distintivo de musica.
+
 ## v0.287.0 - Las listas dicen cual se lleva
 
 - Mundos: `selectedWorldName` en la cabecera (por reflexion sobre `LevelSummary`), oculto si hay filtro.

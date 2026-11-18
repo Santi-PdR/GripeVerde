@@ -539,6 +539,14 @@ public class DiaryTitleScreen extends Screen {
             drawLogo(g);
             drawSignature(g);
             drawMusicBadge(g);
+            // v0.288.0: el distintivo de musica tambien se subraya al pasar.
+            if (this.musicBadgeX >= 0 && mouseX >= this.musicBadgeX
+                    && mouseX <= this.musicBadgeX + this.musicBadgeW
+                    && mouseY >= this.musicBadgeY && mouseY <= this.musicBadgeY + 12) {
+                g.fill(this.musicBadgeX + 2, this.musicBadgeY + 11,
+                    this.musicBadgeX + this.musicBadgeW - 2, this.musicBadgeY + 12,
+                    DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 150));
+            }
             // v0.283.0: la firma se subraya cuando la mano la busca.
             if (this.sigX >= 0 && mouseX >= this.sigX && mouseX <= this.sigX + this.sigW
                     && mouseY >= this.sigY && mouseY <= this.sigY + 12) {

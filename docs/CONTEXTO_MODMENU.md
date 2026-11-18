@@ -207,6 +207,10 @@ Actualizado: 2026-11-13
 builds rojos: `@Override` huérfano, variables locales repetidas en ámbitos
 anidados y sentencias cortadas (línea que empieza por operador tras un `;` o `}`).
 
+## Cambios de 0.288.0 — el reloj se parece a un reloj de verdad
+
+- **Reloj**: marcas de minuto, firma del relojero y cuerda. **Portada**: misma muesca, sin leyenda de version, distintivo subrayado.
+
 ## Cambios de 0.287.0 — las listas dicen cual se lleva
 
 - **Mundos**: nombre del elegido en la cabecera. **Puestos**: direccion elegida y "puerta conocida".

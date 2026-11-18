@@ -102,6 +102,17 @@ public class PocketWatchRenderer {
             int y2 = (int)(cy + Math.sin(angle) * innerR);
             drawThickLine(g, x1, y1, x2, y2, COLOR_MARK);
         }
+        // v0.288.0: las sesenta marcas de minuto, menudas, para que la esfera
+        // no parezca vacia entre las horas.
+        if (radius >= 54) {
+            for (int m = 0; m < 60; m++) {
+                if (m % 5 == 0) continue;
+                double a = Math.toRadians(m * 6 - 90);
+                int mx = (int) (cx + Math.cos(a) * (radius - 14));
+                int my = (int) (cy + Math.sin(a) * (radius - 14));
+                g.fill(mx, my, mx + 1, my + 1, 0xFF6E5A38);
+            }
+        }
         Font font = Minecraft.getInstance().font;
         int textR = radius - 26;
         drawRomanNumeral(g, font, cx, cy - textR, "XII");
@@ -201,6 +212,18 @@ public class PocketWatchRenderer {
             String drift = en ? "runs 3 min behind" : "atrasa 3 min";
             String cut = font.plainSubstrByWidth(drift, infoMaxW);
             g.drawString(font, cut, infoX, y0 + 24, (Math.min(130, alpha) << 24) | 0x8E7A55, false);
+        }
+
+        // v0.288.0: el relojero que lo firmo, bajo la inscripcion de la tapa.
+        if (chars > 30 && radius >= 50) {
+            String maker = en ? "J. Vigne  ·  Montevideo" : "J. Vigne  ·  Montevideo";
+            int mw = font.width(maker);
+            g.drawString(font, maker, cx - mw / 2, cy + radius + 80,
+                (Math.min(110, (chars - 30) * 5) << 24) | 0x4A3C28, false);
+            String wind = en ? "wound: full" : "cuerda: llena";
+            int ww2 = font.width(wind);
+            g.drawString(font, wind, cx - ww2 / 2, cy + radius + 91,
+                (Math.min(100, (chars - 30) * 5) << 24) | 0x4A3C28, false);
         }
 
         // La version del gabinete, al pie y en chico.
@@ -320,9 +343,19 @@ public class PocketWatchRenderer {
 
         g.fill(cx - 2, cy - 2, cx + 2, cy + 2, COLOR_HAND);
 
-        String label = "v" + version;
-        int lw = font.width(label);
-        g.drawString(font, label, cx - lw / 2, cy + radius + 6, COLOR_TEXT, false);
+        // v0.288.0: la misma muesca de las 11:52 que lleva la esfera grande.
+        if (radius >= 36) {
+            double oa = Math.toRadians((11 * 30 + 52 * 0.5) - 90);
+            int x1 = (int) (cx + Math.cos(oa) * (radius - 5));
+            int y1 = (int) (cy + Math.sin(oa) * (radius - 5));
+            int x2 = (int) (cx + Math.cos(oa) * (radius - 11));
+            int y2 = (int) (cy + Math.sin(oa) * (radius - 11));
+            drawThickLine(g, x1, y1, x2, y2, 0xFF8E2A20);
+        }
+
+        // v0.288.0: fuera la leyenda de version bajo el bisel de la portada;
+        // el cronista ya no rotula su reloj como un cartel de feria.
+
     }
 
     /**

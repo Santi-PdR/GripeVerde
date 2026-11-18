@@ -1,3 +1,9 @@
+## Version 0.288.0 - The pocket watch looks like a real watch
+
+The large dial now has its sixty minute marks, small, between the hours; under the lid's inscription two new lines appear: the watchmaker's signature and the state of the winding. The small watch on the title screen now carries the same red notch at 11:52 as the large dial, so they are recognised as the same object.
+
+And what was asked tandas ago is now done: no version label under the title screen bezel. In its place, the music badge underlines on hover, just like the signature, so it is clear it can be touched.
+
 ## Version 0.287.0 - The lists say which one is carried
 
 In saved worlds, the header writes the name of the chosen record -"chosen: The third-floor house"- and stops doing so when a search is on, so as not to compete with the filter. In the posts, the foot band says the chosen address and, if that door was crossed before, notes it: "known door", read from the same memory the direct join uses.
