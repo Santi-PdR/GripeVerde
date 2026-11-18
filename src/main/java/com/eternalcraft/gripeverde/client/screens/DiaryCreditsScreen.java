@@ -48,11 +48,20 @@ public class DiaryCreditsScreen extends Screen {
         this.clearWidgets();
 
         // Ya no hay boton "Créditos" - esta pantalla ES los créditos
-        int backW = 130;
+        // v0.296.0: la casa tiene su propia hoja con los interruptores.
+        int backW = 122;
+        int houseW = 122;
         int backH = 22;
         int backY = this.panelY + this.panelH - 32;
+        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
         addRenderableWidget(new DiaryButton(
-            (this.width - backW) / 2, backY, backW, backH,
+            (this.width - backW) / 2 - houseW - 8, backY, houseW, backH,
+            Component.literal(en ? "The house" : "La casa"),
+            DiaryButton.Icon.GEAR, DiaryButton.Variant.SECONDARY, DiaryButton.SoundProfile.OPTION_OPEN,
+            () -> this.minecraft.setScreen(new DiaryHouseScreen(this))
+        ));
+        addRenderableWidget(new DiaryButton(
+            (this.width - backW) / 2 + 8, backY, backW, backH,
             Component.translatable("gripeverde.options.button.done"),
             DiaryButton.Icon.DOOR, DiaryButton.Variant.PRIMARY, DiaryButton.SoundProfile.BACK,
             this::onClose

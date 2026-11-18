@@ -1,3 +1,9 @@
+## Version 0.296.0 - The house has its own sheet
+
+The house's switches only lived in the config file. There is now a new sheet, `The house`, opened from Credits with a gear button: six latches (music, ambience, short motion, fewer flashes, watch in game and coordinates) and one line that cycles the watch's corner between top left, top right and bottom. Every latch saves on the spot.
+
+The watch learns manners too: with reduced motion the seal stops pulsing and stays still, and the new corner is honoured without restarting the game.
+
 ## Version 0.295.0 - The watch is in the game too
 
 Until now the pocket watch only existed on the title screen. Now, while playing, a torn strip of paper appears in the corner with four things: the real time and weekday, the world's day and hour with the weather, the reader's coordinates and how long they have been in. A red seal pulses once a minute so it is clear it runs.

@@ -69,7 +69,10 @@ public final class WatchHud {
         g.drawString(font, cachedLine3, x + 7, y + 28, soft, false);
 
         // El lacre: un cuadradito rojo que late una vez por minuto, sin destellos.
-        int pulse = (int) (255 * (0.55 + 0.45 * Math.sin(now % 60_000L / 60_000.0 * Math.PI * 2)));
+        // v0.296.0: con movimiento reducido el lacre se queda quieto.
+        int pulse = reducedMotion()
+            ? 200
+            : (int) (255 * (0.55 + 0.45 * Math.sin(now % 60_000L / 60_000.0 * Math.PI * 2)));
         int red = (Math.min(255, Math.max(90, pulse * alpha / 255)) << 24) | 0x6E1F16;
         g.fill(x + SLIP_W - 12, y + 6, x + SLIP_W - 7, y + 11, red);
     }
@@ -79,6 +82,14 @@ public final class WatchHud {
             return ClientConfig.HUD_WATCH_ENABLED.get();
         } catch (Throwable ignored) {
             return true;
+        }
+    }
+
+    private static boolean reducedMotion() {
+        try {
+            return com.eternalcraft.gripeverde.client.util.MotionPolicy.isReduced();
+        } catch (Throwable ignored) {
+            return false;
         }
     }
 

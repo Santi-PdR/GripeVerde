@@ -1,3 +1,10 @@
+## v0.296.0 - La casa tiene su hoja
+
+- Nueva hoja `DiaryHouseScreen` (REG. XIX) con seis pestillos y la esquina del reloj.
+- Se abre desde Créditos con un botón de engranaje; cada pestillo guarda al instante.
+- El lacre del reloj deja de latir con movimiento reducido.
+- Guardas de tamaño y folio en la hoja nueva.
+
 ## v0.295.0 - El reloj tambien esta en la partida
 
 - Nuevos `client/hud/WatchHud` y `client/hud/WatchHudEvents` (`RegisterGuiOverlaysEvent`, bus de MOD).

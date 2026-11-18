@@ -1,3 +1,9 @@
+## Version 0.296.0 - La casa tiene su hoja
+
+Los interruptores de la casa estaban solo en el archivo de configuracion. Ahora hay una hoja nueva, `La casa`, que se abre desde Credito con un boton de engranaje: seis pestillos (musica, ambiente, movimiento corto, menos destellos, reloj en partida y coordenadas) y una linea que va girando la esquina del reloj entre arriba a la izquierda, arriba a la derecha y abajo. Cada pestillo se guarda en el acto.
+
+El reloj tambien aprende modales: con el movimiento reducido el lacre deja de latir y se queda quieto, y la esquina nueva se respeta sin reiniciar la partida.
+
 ## Version 0.295.0 - El reloj tambien esta en la partida
 
 Hasta ahora el reloj de bolsillo solo existia en la portada. Ahora, mientras se juega, aparece una tira de papel rasgada en la esquina con cuatro cosas: la hora de verdad y el dia de la semana, el dia y la hora del mundo con el clima, las coordenadas del lector y el rato que lleva dentro. Un lacre rojo late una vez por minuto para que se note que corre.
