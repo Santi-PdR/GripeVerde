@@ -1,3 +1,9 @@
+## v0.300.0 - Trescientas versiones y una cola en el bolsillo
+
+- `Discoveries`: cola de hasta cuatro avisos en partida (`enqueueGameToast`).
+- Cada aviso dura 2,8 s y el siguiente entra solo, sin pisarse.
+- Cierre de la tercera pasada (reloj en partida, la casa, el cuadro, la ficha).
+
 ## v0.299.0 - El cuadro de la casa
 
 - Nueva hoja `DiaryHouseLedgerScreen` (REG. XX) con seis cifras del archivo.

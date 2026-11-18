@@ -94,6 +94,12 @@ public final class Discoveries {
             // v0.21.5: la musica cede mientras el archivo habla.
             com.eternalcraft.gripeverde.client.audio.MenuMusic.duckFor(2500L);
         } catch (Throwable ignored) {}
+        try {
+            if (net.minecraft.client.Minecraft.getInstance().level != null) {
+                enqueueGameToast(toastName);
+            }
+        } catch (Throwable ignored) {
+        }
         return true;
     }
 
@@ -192,6 +198,21 @@ public final class Discoveries {
         g.drawString(font, name, x + 18, y + 13, ink, false);
     }
 
+    // v0.300.0: la partida lleva su propia cola, para que dos fichas seguidas
+    // no se pisen: la que espera entra cuando la anterior se va.
+    private static final java.util.ArrayDeque<String> gameQueue = new java.util.ArrayDeque<>();
+    private static String gameName = null;
+    private static long gameStartMs = 0L;
+    private static long gameUntilMs = 0L;
+
+    public static void enqueueGameToast(String name) {
+        if (name == null || name.isEmpty()) return;
+        synchronized (gameQueue) {
+            if (gameQueue.size() >= 4) gameQueue.pollFirst();
+            gameQueue.addLast(name);
+        }
+    }
+
     /**
      * v0.298.0: la ficha nueva, avisada tambien dentro de la partida. Va abajo a
      * la derecha, sobre el papel, y respeta menus, F3 y ventanas estrechas.
@@ -201,12 +222,19 @@ public final class Discoveries {
         if (mc == null || mc.font == null || mc.level == null) return;
         if (mc.screen != null) return;
         if (mc.options != null && mc.options.renderDebug) return;
-        if (!hasActiveToast()) return;
         if (screenW < 220 || screenH < 160) return;
 
         long now = System.currentTimeMillis();
-        long remain = toastUntilMs - now;
-        long age = now - toastStartMs;
+        if (gameName == null || now >= gameUntilMs) {
+            synchronized (gameQueue) {
+                gameName = gameQueue.pollFirst();
+            }
+            if (gameName == null) return;
+            gameStartMs = now;
+            gameUntilMs = now + 2800L;
+        }
+        long remain = gameUntilMs - now;
+        long age = now - gameStartMs;
         int alpha = 232;
         if (!MotionPolicy.isReduced()) {
             if (age < 180L) alpha = (int) (232 * age / 180L);
@@ -222,7 +250,7 @@ public final class Discoveries {
             if (seen > 0) header += "  ·  " + seen;
         } catch (Throwable ignored) {
         }
-        String name = toastName == null ? "" : toastName;
+        String name = gameName == null ? "" : gameName;
         int contentWidth = Math.min(200, screenW - 24) - 26;
         if (contentWidth < 60) return;
         String visibleHeader = DiaryChrome.fitText(mc.font, header, contentWidth);

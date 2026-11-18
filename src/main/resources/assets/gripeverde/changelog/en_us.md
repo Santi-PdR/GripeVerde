@@ -1,3 +1,9 @@
+## Version 0.300.0 - Three hundred versions and a queue in the pocket
+
+The new-file notice that speaks in game now has a queue: if two things are recorded in a row, the second waits its turn and comes in when the first leaves, without covering it. The queue holds up to four and drops the oldest when it fills, because the reader does not live to read notices.
+
+This version closes the third pass: the pocket watch in game, the house sheet with its latches and volumes, the ledger with what the archive knows about the reader and the file notice inside the world.
+
 ## Version 0.299.0 - The house ledger
 
 The house no longer only has switches: it has memory, and now it shows it. A button on its sheet opens `The ledger`, with what the archive keeps about the reader: files read, drawer keepsakes, times the notebook opened, nights in a row, days since the first time and the last chronicle read.

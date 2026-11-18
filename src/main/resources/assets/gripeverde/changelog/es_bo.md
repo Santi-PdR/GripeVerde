@@ -1,3 +1,9 @@
+## Version 0.300.0 - Trescientas versiones y una cola en el bolsillo
+
+La ficha nueva que avisa en partida ahora tiene cola: si dos cosas se anotan seguidas, la segunda espera su turno y entra cuando la primera se va, sin taparse. La cola guarda hasta cuatro y descarta la mas vieja si se llena, porque el lector no vive para leer avisos.
+
+Esta version cierra la tercera pasada: el reloj de bolsillo en partida, la hoja de la casa con sus pestillos y volumenes, el cuadro con lo que el archivo sabe del lector y el aviso de ficha dentro del mundo.
+
 ## Version 0.299.0 - El cuadro de la casa
 
 La casa ya no solo tiene interruptores: tiene memoria, y ahora la enseña. Un boton en su hoja abre `El cuadro`, con lo que el archivo guarda del lector: fichas leidas, objetos del cajon, veces que se abrio el cuaderno, noches seguidas, dias desde la primera vez y la ultima cronica que se leyo.
