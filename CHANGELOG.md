@@ -1,3 +1,8 @@
+## v0.292.0 - El sello cuenta por donde va el archivo
+
+- `Discoveries.drawToast`: la cabecera suma `discoveredCount()`.
+- `DiaryCreditsScreen`: "fichas leidas" y "objetos del cajon" antes de la version.
+
 ## v0.291.0 - La pausa dice donde estas y deja copiar la semilla
 
 - Estado de la partida: coordenadas en la primera linea y fps en la segunda.

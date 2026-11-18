@@ -1,3 +1,9 @@
+## Version 0.292.0 - El sello cuenta por donde va el archivo
+
+Cada vez que aparece una ficha nueva, el sello de arriba a la derecha dice tambien por cuantas va: "FICHA NUEVA · 12". Asi el lector sabe si lleva cuatro o cuarenta sin abrir nada, y el archivo deja de ser una bolsa sin fondo.
+
+Los creditos anotan lo mismo, con mas detalle: cuantas fichas se han leido y cuantos objetos guarda el cajon, debajo de la linea del brote y antes del numero de version. Dos numeros que estaban en el archivo pero no se decian en ninguna parte.
+
 ## Version 0.291.0 - La pausa dice donde estas y deja copiar la semilla
 
 La primera linea de estado de la hoja de pausa suma las coordenadas del lector, para no perderse al volver; la segunda suma los fotogramas por segundo que esta dando el juego, que es la unica cifra que de verdad se consulta al pausar.

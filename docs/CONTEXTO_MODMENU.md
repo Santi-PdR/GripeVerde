@@ -244,6 +244,10 @@ anidados y sentencias cortadas (línea que empieza por operador tras un `;` o `}
 | XVII | arsenal |
 | XVIII | mundos guardados |
 
+## Cambios de 0.292.0 — el sello cuenta por donde va el archivo
+
+- **Fichas**: contador en el sello de descubrimiento y en los creditos.
+
 ## Cambios de 0.291.0 — la pausa dice donde estas y deja copiar la semilla
 
 - **Pausa**: coordenadas, fps y copia de la semilla con aviso.

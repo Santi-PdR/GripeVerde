@@ -1,3 +1,9 @@
+## Version 0.292.0 - The stamp counts where the archive stands
+
+Every time a new file appears, the stamp in the upper right also says how many there have been: "NEW FILE · 12". That way the reader knows whether they are at four or forty without opening anything, and the archive stops being a bottomless bag.
+
+The credits note the same, in more detail: how many files have been read and how many keepsakes the drawer holds, under the outbreak line and before the version number. Two numbers that were in the archive but were said nowhere.
+
 ## Version 0.291.0 - The pause says where you are and lets you copy the seed
 
 The first status line of the pause sheet adds the reader's coordinates, so as not to get lost on the way back; the second adds the frames per second the game is running at, which is the only figure actually consulted when pausing.

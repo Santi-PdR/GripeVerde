@@ -131,7 +131,13 @@ public final class Discoveries {
         alpha = Math.max(0, Math.min(232, alpha));
 
         boolean english = isEnglish();
+        // v0.292.0: el sello dice por cuantas fichas va el archivo.
         String header = english ? "NEW FILE" : "FICHA NUEVA";
+        try {
+            int seen = ChroniclerMemory.discoveredCount();
+            if (seen > 0) header += "  ·  " + seen;
+        } catch (Throwable ignored) {
+        }
         String name = toastName == null ? "" : toastName;
         int maxToastWidth = Math.min(224, screenW - 16);
         if (maxToastWidth < 76) return;

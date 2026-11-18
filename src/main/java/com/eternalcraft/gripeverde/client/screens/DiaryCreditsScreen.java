@@ -208,6 +208,23 @@ public class DiaryCreditsScreen extends Screen {
             DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 90), false);
         y += 10;
 
+        // v0.292.0: cuantas fichas y cuantos objetos lleva el lector.
+        try {
+            int fichas = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.discoveredCount();
+            int objetos = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.collectibleCount();
+            String prog = isEnglish()
+                ? "files read: " + fichas + "  ·  drawer keepsakes: " + objetos
+                : "fichas leidas: " + fichas + "  ·  objetos del cajon: " + objetos;
+            prog = DiaryChrome.fitText(this.font, prog, Math.max(60, this.panelW - 32));
+            int progW = DiaryChrome.widthCached(this.font, prog);
+            if (y + 10 < this.panelY + this.panelH - 34) {
+                g.drawString(this.font, prog, panelX + (panelW - progW) / 2, y,
+                    DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 120), false);
+                y += 10;
+            }
+        } catch (Throwable ignored) {
+        }
+
         // Official note
         g.drawString(this.font, this.noteText, panelX + (panelW - this.noteW) / 2, y,
             DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 130), false);
