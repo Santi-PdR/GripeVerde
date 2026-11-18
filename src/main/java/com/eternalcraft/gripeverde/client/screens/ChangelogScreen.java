@@ -86,6 +86,9 @@ public class ChangelogScreen extends Screen {
     private int openedAtScrollY = -1;
     // v0.280.0: donde estaba el lector antes de abrir la lupa.
     private int scrollBeforeSearch = -1;
+    // v0.290.0: palabras del cuaderno y dias que se han leido en esta sesion.
+    private int wordCount = -1;
+    private static final java.util.Set<Integer> seenDays = new java.util.HashSet<>();
     private boolean searchWasOpen = false;
     // v0.276.0: el golpe de tapa al llegar al final, una sola vez.
     private boolean endKnocked = false;
@@ -865,7 +868,11 @@ public class ChangelogScreen extends Screen {
                 // v0.276.0: el porcentaje, si la mano se acerca al filete.
                 if (Math.abs(mouseY - lineY) <= 4
                         && mouseX >= px + PAD_X && mouseX <= px + pw - PAD_X) {
-                    String txt = isEnglishSelected() ? pct + "% read" : pct + "% leido";
+                    int words = wordCount();
+                    boolean enNum = isEnglishSelected();
+                    String txt = enNum
+                        ? pct + "% read  ·  " + groupNumber(words, true) + " words"
+                        : pct + "% leido  ·  " + groupNumber(words, false) + " palabras";
                     int pctW = DiaryChrome.widthCached(this.font, txt);
                     g.drawString(this.font, txt, px + pw - PAD_X - pctW, lineY - 11,
                         DiaryTheme.withAlpha(DiaryTheme.BRONZE, 210), false);
@@ -995,6 +1002,36 @@ public class ChangelogScreen extends Screen {
             searchRecalc();
         } catch (Throwable ignored) {
         }
+    }
+
+    /** v0.290.0: 1284 se lee mejor como 1.284 (o 1,284 en ingles). */
+    private static String groupNumber(int value, boolean english) {
+        try {
+            String raw = String.format(java.util.Locale.ROOT, "%,d", value);
+            return english ? raw : raw.replace(',', '.');
+        } catch (Throwable ignored) {
+            return Integer.toString(value);
+        }
+    }
+
+    /** v0.290.0: las palabras del cuaderno, contadas una vez por apertura. */
+    private int wordCount() {
+        if (this.wordCount >= 0) return this.wordCount;
+        int words = 0;
+        try {
+            for (Row row : this.rows) {
+                if (row.type == LT.GAP || row.type == LT.SEPARATOR) continue;
+                String text = row.text == null ? "" : row.text.trim();
+                if (text.isEmpty()) continue;
+                for (String piece : text.split("\\s+")) {
+                    if (!piece.isEmpty()) words++;
+                }
+            }
+        } catch (Throwable ignored) {
+            words = 0;
+        }
+        this.wordCount = words;
+        return words;
     }
 
     /** v0.29.0: la lupa, abierta o con su pista minima. */
@@ -1333,10 +1370,16 @@ public class ChangelogScreen extends Screen {
         int days = this.diarySectionLabels.length;
         String head = (english ? "Index of days" : "Indice de dias")
             + (days > 0 ? "  ·  " + days : "");
+        // v0.290.0: y cuantos de esos dias ya se leyeron en esta sesion.
+        int seen = 0;
+        for (int d : seenDays) if (d >= 0 && d < days) seen++;
+        if (seen > 0) head += english ? "  ·  " + seen + " read" : "  ·  " + seen + " leidos";
         g.drawString(this.font, head, x + (w - DiaryTypography.width(this.font, head)) / 2, y + 8,
             DiaryChrome.INK_TITLE, false);
         DiaryChrome.drawInkDivider(g, x + 12, y + 22, w - 24);
         int current = currentDiarySection(scrollY + 24);
+        // v0.290.0: se anota el dia que se esta leyendo para marcarlo en el indice.
+        if (current >= 0) seenDays.add(current);
         int hovered = indexRowAt(mouseX, mouseY, px, py, pw, ph);
         for (int i = 0; i < visible; i++) {
             int idx = i + this.indexScroll;
@@ -1361,6 +1404,10 @@ public class ChangelogScreen extends Screen {
                 // v0.229.0: la entrada que se esta leyendo lleva su raya al lado.
                 g.fill(x + 6, lineY + 3, x + 10, lineY + 4,
                     DiaryTheme.withAlpha(0x005C0A08, 170));
+            } else if (seenDays.contains(section)) {
+                // v0.290.0: los dias ya leidos dejan su punto.
+                g.fill(x + 7, lineY + 3, x + 10, lineY + 5,
+                    DiaryTheme.withAlpha(0x006B5533, 130));
             }
             g.drawString(this.font, label, x + 18, lineY,
                 section == current ? DiaryChrome.INK_TITLE : DiaryChrome.INK_FLAVOR, false);

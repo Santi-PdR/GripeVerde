@@ -1,3 +1,9 @@
+## Version 0.290.0 - The notebook counts what it holds
+
+Hovering the rule at the foot of the diary now shows, next to the read percentage, the notebook's word count with its thousands separators: it is not the same to be halfway through twelve hundred words as through six thousand. The number is counted once when the sheet opens, not every frame.
+
+The index of days gains memory: the days read in this session leave a dot on their left, the one being read keeps its dash, and the header says how many have been read alongside the total.
+
 ## Version 0.289.0 - Review of the second round
 
 What tandas sixteen to twenty-two touched gets reviewed. The name of the chosen door in the posts is no longer painted in windows under 360 px wide, the chosen record in worlds waits until the window has some body, and the three-layer sound summary does not appear when the sheet is in its compact mode, where the divider sits against the slider.

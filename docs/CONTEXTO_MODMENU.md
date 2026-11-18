@@ -244,6 +244,10 @@ anidados y sentencias cortadas (línea que empieza por operador tras un `;` o `}
 | XVII | arsenal |
 | XVIII | mundos guardados |
 
+## Cambios de 0.290.0 — el cuaderno cuenta lo que lleva escrito
+
+- **Diario**: recuento de palabras al pasar por el filete; punto en los dias leidos del indice.
+
 ## Cambios de 0.289.0 — repaso de la segunda vuelta
 
 - **Guardas** en mundos, puestos y sonido. **Docs**: tabla de tandas 16-23 y tabla de folios.

@@ -1,3 +1,8 @@
+## v0.290.0 - El cuaderno cuenta lo que lleva escrito
+
+- `wordCount()` con `groupNumber` (1.284 / 1,284) junto al porcentaje del filete.
+- `seenDays`: punto en el indice para los dias leidos y "N leidos" en la cabecera.
+
 ## v0.289.0 - Repaso de la segunda vuelta
 
 - Guardas: elegido de puestos (>=360 px), elegido de mundos (>=220 px de alto), resumen de sonido solo en hoja amplia.

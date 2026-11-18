@@ -1,3 +1,9 @@
+## Version 0.290.0 - El cuaderno cuenta lo que lleva escrito
+
+Al pasar la mano por el filete del pie del diario, junto al porcentaje leido aparece el recuento de palabras del cuaderno, con sus puntos de millar: no es lo mismo ir por la mitad de mil doscientas palabras que de seis mil. El numero se cuenta una sola vez al abrir la hoja, no en cada cuadro.
+
+El indice de dias gana memoria: los dias que se han leido en la sesion dejan un punto a su izquierda, el que se esta leyendo conserva su raya, y la cabecera dice cuantos van leidos junto al total.
+
 ## Version 0.289.0 - Repaso de la segunda vuelta
 
 Se repasa lo que se toco en las tandas dieciseis a veintidos. El nombre de la puerta elegida en los puestos ya no se pinta en ventanas de menos de 360 px, el de la ficha elegida en los mundos espera a que la ventana tenga cuerpo, y el resumen de las tres capas de sonido no aparece cuando la hoja esta en su modo compacto, donde el divisor queda pegado al deslizador.
