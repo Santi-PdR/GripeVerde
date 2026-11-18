@@ -1,3 +1,9 @@
+## Version 0.294.0 - Closing the second round
+
+The second round of tandas closes with the notebook up to date: the tanda table now reaches the twenty-eighth, with the version each one entered in, and the cabinet's folio table still matches the stamps the sheets carry.
+
+There are no new features in this delivery: it is the review that what came before is written down and that nothing is left half done. The Java reviewer and the mirror verifier pass clean over the mod's sixty-eight classes and its twenty-five languages.
+
 ## Version 0.293.0 - House repairs
 
 Three things that were wrong and could not be seen until touched. First: the title screen kept the signature and music-badge hit zones from one frame to the next, so entering the watch view or cinematic mode left two ghost rectangles that could open the credits or the sound sheet from where there was nothing anymore; they are now forgotten at the start of every frame.

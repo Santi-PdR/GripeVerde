@@ -1,3 +1,9 @@
+## Version 0.294.0 - Cierre de la segunda vuelta
+
+Se cierra la segunda vuelta de tandas con el cuaderno al dia: la tabla de tandas llega hasta la vigesimoctava, con la version en que cada una entro, y la tabla de folios del gabinete sigue cuadrando con las chapas que llevan las hojas.
+
+No hay funciones nuevas en esta entrega: es la revision de que lo anterior este escrito y de que nada quede a medias. El revisor de Java y el verificador de espejos pasan limpios sobre las sesenta y ocho clases del mod y las veinticinco lenguas.
+
 ## Version 0.293.0 - Reparaciones de la casa
 
 Tres cosas que estaban mal y no se veian hasta tocarlas. La primera: la portada guardaba las zonas de la firma y del distintivo de musica de un cuadro para otro, asi que al entrar en la vista del reloj o en modo cine quedaban dos rectangulos fantasma que podian abrir los creditos o la hoja de sonido desde donde ya no habia nada; ahora se olvidan al empezar cada cuadro.

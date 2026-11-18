@@ -1,3 +1,8 @@
+## v0.294.0 - Cierre de la segunda vuelta
+
+- Tabla de tandas hasta la 28 y tabla de folios revisada.
+- `verify_mirrors` y `lint_java` limpios sobre 68 clases y 25 lenguas.
+
 ## v0.293.0 - Reparaciones de la casa
 
 - Portada: `sigX/musicBadgeX` se olvidan en cada cuadro (zonas fantasma en inspeccion y modo cine).
