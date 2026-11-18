@@ -868,6 +868,27 @@ public class DiaryTitleScreen extends Screen {
     private int cachedCompactSigWidth = -1;
     private net.minecraft.client.gui.Font cachedCompactSigFont;
 
+    /**
+     * v0.261.0: junto al boton de cambiar la pieza, que pieza suena y cuantas
+     * hay. Antes habia que apretar para saberlo.
+     */
+    private void drawMusicBadge(GuiGraphics g) {
+        if (isCompactLayout() || this.height < 200) return;
+        String badge;
+        try {
+            if (!com.eternalcraft.gripeverde.client.audio.MenuMusic.isMusicEnabled()) {
+                badge = isEnglishSelected() ? "no music" : "sin musica";
+            } else {
+                badge = com.eternalcraft.gripeverde.client.audio.MenuMusic.getCurrentTrackNumber()
+                    + "/" + com.eternalcraft.gripeverde.client.audio.MenuMusic.getTrackCount();
+            }
+        } catch (Throwable ignored) {
+            return;
+        }
+        g.drawString(this.font, badge, 48, this.height - 22,
+            DiaryChrome.INK_FLAVOR, false);
+    }
+
     private void drawSignature(GuiGraphics g) {
         int idx = com.eternalcraft.gripeverde.client.render.LogoRenderer.getYearIndex();
         String signature = signatureFor(idx);
