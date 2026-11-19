@@ -256,6 +256,10 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 this.vanillaList.render(g, mouseX, mouseY, partial);
                 // v0.304.0: nombre y ficha de cada mundo, en tinta y legibles.
                 paintWorldRowsInk(g);
+                // v0.339.0: el juego dibuja su barra gris y su canal negro a la
+                // derecha de la lista, y eso partia la hoja en vertical. Se
+                // repinta el margen en papel y la aguja pasa a ser de tinta.
+                paintScrollMargin(g);
             }
             for (EditBox box : this.searchBoxes) {
                 if (box.visible) box.render(g, mouseX, mouseY, partial);
@@ -287,6 +291,11 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         g.drawString(font, sub, cx - DiaryChrome.widthCached(font, sub) / 2, 21,
             DiaryChrome.INK_SUBTITLE, false);
         DiaryChrome.drawRegistryTagLeft(g, 0, -4, "REG. XVIII");
+        // v0.339.0: el folio del archivo, en el margen izquierdo de la hoja.
+        if (w >= 360) {
+            String folio = en ? "sheet 1" : "hoja 1";
+            g.drawString(font, folio, 12, 26, DiaryChrome.INK_FLAVOR, false);
+        }
 
         // v0.261.0: cuantos mundos hay anotados, a la derecha de la cabecera.
         if (w >= 380) {
@@ -304,21 +313,18 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             if (!filter.isEmpty()) {
                 badge = en ? "showing " + count : "se ven " + count;
             }
-            int bw = DiaryChrome.widthCached(font, badge);
-            g.drawString(font, badge, w - 12 - bw, 8, DiaryChrome.INK_SUBTITLE, false);
-            // v0.270.0: debajo, lo que pesa el archivo y la fecha de hoy.
+            // v0.339.0: el recuento, el peso y la fecha caben en una sola
+            // linea. Antes el peso caia sobre el canto roto de la cabecera y se
+            // leia cortado.
             String foot = "";
             if (archiveBytes >= 0L) foot = formatBytes(archiveBytes, en);
             String date = todayStamp(en);
             if (!date.isEmpty()) foot = foot.isEmpty() ? date : foot + "  ·  " + date;
-            if (!foot.isEmpty()) {
-                int fw = DiaryChrome.widthCached(font, foot);
-                if (w - 12 - fw > cx + 90) {
-                    // v0.301.0: el peso y la fecha bajaban justo sobre el
-                    // subtitulo centrado; ahora van una linea mas abajo.
-                    g.drawString(font, foot, w - 12 - fw, 32, DiaryChrome.INK_FLAVOR, false);
-                }
-            }
+            String badgeLine = foot.isEmpty() ? badge : badge + "  ·  " + foot;
+            String fitted = DiaryChrome.fitText(font, badgeLine,
+                Math.max(60, w / 2 - 30));
+            int bw = DiaryChrome.widthCached(font, fitted);
+            g.drawString(font, fitted, w - 12 - bw, 8, DiaryChrome.INK_SUBTITLE, false);
             // v0.287.0: la ficha elegida, dicha en la cabecera.
             try {
                 String picked = filter.isEmpty() ? selectedWorldName() : "";
@@ -675,6 +681,41 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             (this.listTop + this.listBottom) / 2 - 4, DiaryChrome.INK_SUBTITLE, false);
     }
 
+    /**
+     * v0.339.0: el margen del listado. Tapa el canal y el tirador vanilla con
+     * papel y dibuja una aguja fina, para que la hoja no quede cortada.
+     */
+    private void paintScrollMargin(GuiGraphics g) {
+        if (this.vanillaList == null || this.rowRight < 0) return;
+        if (this.listBottom <= this.listTop) return;
+        int marginL = this.rowRight + 6;
+        int marginR = Math.min(this.width, this.rowRight + 14);
+        if (marginR - marginL < 6) return;
+        g.fill(marginL, this.listTop, marginR, this.listBottom, 0xFFE3D5AB);
+        g.fill(marginL, this.listTop, marginL + 1, this.listBottom, 0x226B5533);
+        // Aguja: alto proporcional a lo que se ve, posicion segun el scroll.
+        int count = 0;
+        try {
+            count = this.vanillaList.children().size();
+        } catch (Throwable ignored) {
+        }
+        int step = this.rowItemHeight > 0 ? this.rowItemHeight : 36;
+        int totalH = Math.max(1, count * step);
+        int viewH = this.listBottom - this.listTop;
+        double scroll = 0.0;
+        try {
+            scroll = this.vanillaList.getScrollAmount();
+        } catch (Throwable ignored) {
+        }
+        int thumbH = Math.max(14, (int) ((long) viewH * viewH / totalH));
+        int maxScroll = Math.max(1, totalH - viewH);
+        int thumbY = this.listTop
+            + (int) ((double) (viewH - thumbH) * Math.min(1.0, scroll / maxScroll));
+        int tx = (marginL + marginR) / 2 - 1;
+        g.fill(tx, this.listTop + 1, tx + 2, this.listBottom - 1, 0x556B5533);
+        g.fill(tx, thumbY, tx + 2, thumbY + thumbH, 0xCC3D2A18);
+    }
+
     private void drawFooterPaper(GuiGraphics g) {
         if (this.dressed.isEmpty()) return;
         int left = Integer.MAX_VALUE;
@@ -695,16 +736,8 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         int h = Math.min(this.height + 6, bottom + pad + 2) - y;
         if (w < 24 || h < 16) return;
         PaperTexture.drawTornSheet(g, x, y, w, h, PaperTexture.PaperKind.OFFICIAL);
-        // v0.270.0: folio del archivo, en la esquina del pie.
-        if (h >= 22) {
-            boolean en = Discoveries.isEnglish();
-            String folio = (en ? "sheet 1" : "hoja 1");
-            int fw = DiaryChrome.widthCached(this.font, folio);
-            if (x + w - fw - 8 > x + 4) {
-                g.drawString(this.font, folio, x + w - fw - 8, y + h - 12,
-                    DiaryChrome.INK_FLAVOR, false);
-            }
-        }
+        // v0.339.0: el folio se fue a la cabecera; en el pie quedaba detras de
+        // las fichas y solo se leia media palabra.
     }
 
     /**

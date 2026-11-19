@@ -654,20 +654,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         PaperTexture.drawTornSheet(gfx, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
         DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, panelW, panelH);
         DiaryChrome.drawRegistryTag(gfx, panelX, panelY, panelW, panelH, "REG. X");
-        // v0.271.0: folio del expediente, en la esquina baja izquierda.
-        try {
-            boolean enFolio = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
-            String folio = enFolio ? "sheet 1" : "hoja 1";
-            gfx.drawString(this.font, folio, panelX + 14, panelY + panelH - 14,
-                DiaryChrome.INK_FLAVOR, false);
-        } catch (Throwable ignored) {
-        }
-
-        try {
-            drawServersFileAtFoot(gfx, panelX, panelY, panelW, panelH,
-                com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish());
-        } catch (Throwable ignored) {
-        }
+        // v0.338.0: el folio y la ficha del archivo se fueron al margen de la
+        // cabecera. En el pie quedaban debajo de las fichas Editar/Borrar y la
+        // fecha se leia a medias sobre el canto del boton.
 
         // Titulo
         int titleY = panelY + 14;
@@ -682,6 +671,13 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
 
         // v0.188.0: cuantos servidores hay anotados, en el margen del titulo.
         drawServerCount(gfx, panelX, panelW, titleY);
+
+        // v0.338.0: folio y ficha del archivo, en el margen izquierdo de la
+        // cabecera, con el ancho que deja el titulo centrado.
+        try {
+            drawArchiveMargin(gfx, panelX, panelW, titleY);
+        } catch (Throwable ignored) {
+        }
 
         // Divisor con rombo
         DiaryChrome.drawInkDivider(gfx, panelX + 24, titleY + 26, Math.max(0, panelW - 48));
@@ -950,8 +946,12 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                     Math.max(60, panelW / 2 - 10));
                 int lw = DiaryChrome.widthCached(this.font, cut);
                 int lx = panelX + panelW - 14 - lw;
-                int chosenY = this.height - PANEL_MARGIN_V - 12;
-                if (this.width >= 360 && chosenY > titleY + 40 && lx > panelX + panelW / 2) {
+                int chosenY = this.height - PANEL_MARGIN_V - 20;
+                // v0.338.0: la linea del elegido no puede entrar bajo la ultima
+                // ficha; se mide contra el filo real de los botones.
+                int lastRight = footButtonsRight();
+                if (this.width >= 360 && chosenY > titleY + 40
+                        && lx > lastRight + 10 && lx > panelX + panelW / 2) {
                     gfx.drawString(this.font, cut, lx, chosenY, DiaryChrome.INK_FLAVOR, false);
                 }
             }
@@ -963,18 +963,21 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         // folio, donde no tapan nada.
     }
 
-    /** v0.301.0: "servers.dat 81,0 KB · 18·XI·2026", en el pie de la hoja. */
-    private void drawServersFileAtFoot(GuiGraphics gfx, int panelX, int panelY, int panelW,
-                                       int panelH, boolean english) {
+    /**
+     * v0.338.0: el folio y el peso de servers.dat, en el margen izquierdo de la
+     * cabecera, donde no hay fichas ni cantos que los corten.
+     */
+    private void drawArchiveMargin(GuiGraphics gfx, int panelX, int panelW, int titleY) {
+        boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+        int limit = this.headerTitleX - 14 - (panelX + 24);
+        if (limit < 70) return;
+        String folio = english ? "sheet 1" : "hoja 1";
+        gfx.drawString(this.font, DiaryChrome.fitCached(this.font, folio, limit),
+            panelX + 24, titleY + 2, DiaryChrome.INK_FLAVOR, false);
         String detail = serversFileLine(english);
         if (detail.isEmpty()) return;
-        // v0.313.0: el peso se queda en la mitad izquierda del pie.
-        int room = Math.max(60, panelW / 2 - 70);
-        String fitted = DiaryChrome.fitCached(this.font, detail, room);
-        int w = DiaryChrome.widthCached(this.font, fitted);
-        int x = panelX + 14 + this.font.width(english ? "sheet 1" : "hoja 1") + 12;
-        if (x + w > panelX + panelW / 2 - 10) return;
-        gfx.drawString(this.font, fitted, x, panelY + panelH - 14, DiaryChrome.INK_FLAVOR, false);
+        gfx.drawString(this.font, DiaryChrome.fitCached(this.font, detail, limit),
+            panelX + 24, titleY + 14, DiaryChrome.INK_FLAVOR, false);
     }
 
     /** v0.271.0: "servers.dat 412 B · 13·XI·2026". */
@@ -1001,6 +1004,17 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         if (weight.isEmpty()) return date;
         if (date.isEmpty()) return weight;
         return weight + "  ·  " + date;
+    }
+
+    /** v0.338.0: hasta donde llegan las fichas del pie, a la derecha. */
+    private int footButtonsRight() {
+        int right = Integer.MIN_VALUE;
+        for (DiaryButton b : new DiaryButton[] { diarySelect, diaryDirect, diaryAdd,
+                diaryEdit, diaryDelete, diaryRefresh, diaryCancel }) {
+            if (b == null || !b.visible) continue;
+            right = Math.max(right, b.getX() + b.getWidth());
+        }
+        return right == Integer.MIN_VALUE ? 0 : right;
     }
 
     /** v0.271.0: si no hay ningun puesto, la hoja lo dice en el centro. */

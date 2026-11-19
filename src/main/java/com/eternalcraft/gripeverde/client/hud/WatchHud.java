@@ -29,6 +29,8 @@ public final class WatchHud {
     private static String cachedLine2 = "";
     private static String cachedLine3 = "";
     private static String cachedCoords = "";
+    // v0.342.0: el bioma que el mapa escribe bajo el minimapa, en nuestro papel.
+    private static String cachedBiome = "";
     private static long cachedAtMs = -1L;
 
     private WatchHud() {
@@ -65,7 +67,7 @@ public final class WatchHud {
             // derecha, sobre el papelito de las coordenadas. Antes se iba abajo
             // a la izquierda, que es la esquina del chat.
             y = coords() && cachedCoords.length() > 0
-                ? screenH - 20 - MARGIN - SLIP_H - 6
+                ? screenH - MARGIN - coordsSlipHeight() - 6 - SLIP_H
                 : screenH - SLIP_H - MARGIN;
         }
 
@@ -83,12 +85,21 @@ public final class WatchHud {
 
         // v0.308.0: las coordenadas tienen su propio papelito, abajo a la derecha,
         // lejos del reloj y de lo que escriba el mapa.
+        // v0.342.0: si el mapa escribe las coordenadas bajo el minimapa, el papel
+        // adopta ese mismo parte (x, z, y) y suma el bioma, con nuestra tinta y
+        // nuestra letra. Nunca se dibuja sobre el minimapa: es una integracion,
+        // no un reemplazo.
         if (cachedCoords.length() > 0) {
-            int cw = Math.min(120, Math.max(56, font.width(cachedCoords) + 16));
+            int ch = coordsSlipHeight();
+            int cw = Math.min(200, Math.max(56, Math.max(
+                font.width(cachedCoords), font.width(cachedBiome)) + 16));
             int cx2 = screenW - cw - MARGIN;
-            int cy2 = screenH - 20 - MARGIN;
-            PaperTexture.drawTornSlip(g, cx2, cy2, cw, 18, 0xE6D2A6, 0x422810, alpha);
+            int cy2 = screenH - MARGIN - ch;
+            PaperTexture.drawTornSlip(g, cx2, cy2, cw, ch, 0xE6D2A6, 0x422810, alpha);
             g.drawString(font, cachedCoords, cx2 + 5, cy2 + 5, ink, false);
+            if (!cachedBiome.isEmpty()) {
+                g.drawString(font, cachedBiome, cx2 + 5, cy2 + 15, soft, false);
+            }
         }
 
         // El lacre: un cuadradito rojo que late una vez por minuto, sin destellos.
@@ -137,6 +148,26 @@ public final class WatchHud {
         // la izquierda vive el chat y el reloj se le sentaba encima.
         if (corner != 2 && minimapPresent()) return 3;
         return corner;
+    }
+
+    /** v0.342.0: alto del papelito de coordenadas, con bioma o sin el. */
+    private static int coordsSlipHeight() {
+        return cachedBiome.isEmpty() ? 18 : 28;
+    }
+
+    /** v0.342.0: el bioma del jugador, dicho como lo diria el mapa. */
+    private static String biomeName(Minecraft mc) {
+        try {
+            net.minecraft.core.Holder<net.minecraft.world.level.biome.Biome> holder =
+                mc.level.getBiome(mc.player.blockPosition());
+            String path = holder.unwrapKey()
+                .map(k -> k.location().getPath()).orElse("");
+            if (path.isEmpty()) return "";
+            String pretty = path.replace('_', ' ');
+            return Character.toUpperCase(pretty.charAt(0)) + pretty.substring(1);
+        } catch (Throwable ignored) {
+            return "";
+        }
     }
 
     /** v0.301.0: hay un mapa ocupando las esquinas de arriba. */
@@ -205,16 +236,28 @@ public final class WatchHud {
         // su propio papelito, como el renglon que el mapa escribe bajo si mismo.
         long mins = Math.max(0L, (now - worldSinceMs) / 60_000L);
         cachedLine3 = mins + (en ? " min in" : " min aqui");
+        cachedBiome = "";
         if (coords() && mc.player != null) {
             try {
-                cachedCoords = mc.player.getBlockX() + " " + mc.player.getBlockY()
-                    + " " + mc.player.getBlockZ();
+                int bx = mc.player.getBlockX();
+                int by = mc.player.getBlockY();
+                int bz = mc.player.getBlockZ();
+                if (minimapPresent()) {
+                    // v0.342.0: el mismo orden que el parte del mapa (x, z, y).
+                    cachedCoords = bx + " \u00b7 " + bz + " \u00b7 " + by;
+                    cachedBiome = biomeName(mc);
+                } else {
+                    cachedCoords = bx + " " + by + " " + bz;
+                }
             } catch (Throwable ignored) {
                 cachedCoords = "";
+                cachedBiome = "";
             }
         } else {
             cachedCoords = "";
         }
+        cachedCoords = DiaryChrome.fitText(mc.font, cachedCoords, 190);
+        cachedBiome = DiaryChrome.fitText(mc.font, cachedBiome, 190);
         cachedLine1 = DiaryChrome.fitText(mc.font, cachedLine1, SLIP_W - 22);
         cachedLine2 = DiaryChrome.fitText(mc.font, cachedLine2, SLIP_W - 14);
         cachedLine3 = DiaryChrome.fitText(mc.font, cachedLine3, SLIP_W - 14);

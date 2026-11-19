@@ -521,12 +521,9 @@ public class DiaryPauseScreen extends PauseScreen {
 
         drawPanelTitle(g, px, py);
         drawDateStamp(g, px, py);
-        // v0.275.0: el estado de la partida, bajo la fecha.
-        try {
-            int stampX = px + panelW() - 12;
-            drawWorldStatus(g, px, py, stampX);
-        } catch (Throwable ignored) {
-        }
+        // v0.340.0: fuera la franja de dia, hora, clima y coordenadas. El
+        // usuario no la quiere en la pausa; la hoja se queda con su titulo, su
+        // fecha y sus fichas.
         drawPanelSeparators(g, px, py);
         super.render(g, mouseX, mouseY, partialTick);
     }
@@ -730,123 +727,9 @@ public class DiaryPauseScreen extends PauseScreen {
     }
 
     /**
-     * v0.275.0: la hoja de pausa dice en que estado esta la partida. Hora del
-     * mundo, clima, dificultad, modo, almas conectadas y, al pasar la mano,
-     * la semilla. Todo en dos renglones bajo la fecha, sin tocar los botones.
+     * v0.340.0: la hoja de pausa ya no dicta dia, hora, clima ni coordenadas.
+     * Se fueron con la franja del pie, que se cortaba en todas las ventanas.
      */
-    private void drawWorldStatus(GuiGraphics g, int px, int py, int stampX) {
-        if (this.minecraft == null || this.minecraft.level == null) return;
-        boolean en = isEnglishSelected();
-        String line1;
-        String line2;
-        try {
-            long dayTime = this.minecraft.level.getDayTime() % 24000L;
-            int hours = (int) ((dayTime / 1000L + 6L) % 24L);
-            int minutes = (int) ((dayTime % 1000L) * 60L / 1000L);
-            String clock = String.format(java.util.Locale.ROOT, "%02d:%02d", hours, minutes);
-            boolean storm = this.minecraft.level.isThundering();
-            boolean rain = this.minecraft.level.isRaining();
-            String weather = storm
-                ? (en ? "storm" : "tormenta")
-                : (rain ? (en ? "rain" : "lluvia") : (en ? "clear" : "despejado"));
-            // v0.291.0: donde esta el lector, para no perderse al volver.
-            String coords = "";
-            try {
-                if (this.minecraft.player != null) {
-                    coords = "  ·  " + this.minecraft.player.getBlockX()
-                        + ", " + this.minecraft.player.getBlockY()
-                        + ", " + this.minecraft.player.getBlockZ();
-                }
-            } catch (Throwable ignored) {
-            }
-            line1 = clock + "  ·  " + weather + coords;
-
-            String difficulty;
-            switch (this.minecraft.level.getDifficulty()) {
-                case PEACEFUL -> difficulty = en ? "quiet" : "tranquila";
-                case EASY -> difficulty = en ? "easy" : "facil";
-                case NORMAL -> difficulty = en ? "normal" : "normal";
-                case HARD -> difficulty = en ? "hard" : "dificil";
-                default -> difficulty = en ? "normal" : "normal";
-            }
-            String mode;
-            if (this.minecraft.player != null && this.minecraft.player.isSpectator()) {
-                mode = en ? "spectator" : "espectador";
-            } else if (this.minecraft.player != null && this.minecraft.player.isCreative()) {
-                mode = en ? "creative" : "creativo";
-            } else {
-                mode = en ? "survival" : "supervivencia";
-            }
-            int souls = 0;
-            try {
-                if (this.minecraft.getConnection() != null) {
-                    souls = this.minecraft.getConnection().getOnlinePlayers().size();
-                }
-            } catch (Throwable ignored) {
-            }
-            int fps = 0;
-            try {
-                fps = this.minecraft.getFps();
-            } catch (Throwable ignored) {
-            }
-            line2 = mode + "  ·  " + difficulty + (fps > 0 ? "  ·  " + fps + " fps" : "");
-            if (souls > 1) {
-                line2 += "  ·  " + souls + (en ? " souls" : " almas");
-            }
-            // v0.275.0: si la partida es de una sola vida, se dice aqui.
-            try {
-                if (this.minecraft.level.getLevelData().isHardcore()) {
-                    line2 += "  ·  " + (en ? "no way back" : "sin retorno");
-                }
-            } catch (Throwable ignored) {
-            }
-        } catch (Throwable ignored) {
-            return;
-        }
-        // v0.301.0: el estado vivia bajo la fecha y el titulo lo tapaba. Ahora
-        // va al pie de la hoja, a la izquierda, con dos renglones cortos.
-        // v0.321.0: la vela vive en ese mismo rincon, asi que el estado
-        // arranca a su derecha. Antes los renglones le pasaban por encima.
-        int leftInset = compactPauseLayout() ? 14 : 46;
-        int maxW = Math.max(60, panelW() - leftInset - 120);
-        String cut1 = DiaryChrome.fitCached(this.font, line1, maxW);
-        String cut2 = DiaryChrome.fitCached(this.font, line2, maxW);
-        int baseY = py + panelH() - 40;
-        if (baseY < py + 80 || baseY + 20 > py + panelH() - 12) return;
-        // v0.305.0: el dia de la partida y el lugar, recuperados como tercera
-        // linea del pie (se habian ido con la linea de la cabecera).
-        String place = dayAndPlace(en);
-        if (!place.isEmpty()) {
-            String cut0 = DiaryChrome.fitCached(this.font, place, maxW);
-            if (baseY - 10 > py + 70) {
-                g.drawString(this.font, cut0, px + leftInset, baseY - 10,
-                    DiaryChrome.INK_TITLE, false);
-            }
-        }
-        g.drawString(this.font, cut1, px + leftInset, baseY,
-            DiaryChrome.INK_SUBTITLE, false);
-        g.drawString(this.font, cut2, px + leftInset, baseY + 10,
-            DiaryChrome.INK_FLAVOR, false);
-    }
-
-    /** v0.305.0: "dia 1 · la avenida", como lo decia la cabecera antes. */
-    private String dayAndPlace(boolean en) {
-        try {
-            if (this.minecraft == null || this.minecraft.level == null) return "";
-            long day = this.minecraft.level.getDayTime() / 24000L + 1L;
-            String dim = this.minecraft.level.dimension().location().getPath();
-            String where;
-            switch (dim) {
-                case "the_nether" -> where = en ? "the lower ward" : "la sala baja";
-                case "the_end" -> where = en ? "the far shore" : "la orilla lejana";
-                default -> where = en ? "the avenue" : "la avenida";
-            }
-            return (en ? "day " : "dia ") + day + "  \u00b7  " + where;
-        } catch (Throwable ignored) {
-            return "";
-        }
-    }
-
     private boolean baseYGuard() {
         return compactPauseLayout();
     }

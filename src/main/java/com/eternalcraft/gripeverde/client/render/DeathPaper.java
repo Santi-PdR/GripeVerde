@@ -115,91 +115,79 @@ public final class DeathPaper {
         if (font == null) return;
         boolean english = Discoveries.isEnglish();
 
-        int pw = Math.min(PAPER_W_MAX, w - PAPER_MARGIN * 2 - 8);
+        // v0.341.0: el parte nacia encima del "estas muerto" y del puntaje.
+        // Ahora se queda en su columna: nunca pasa de la mitad del ancho (donde
+        // el juego centra sus renglones) ni de la cuarta parte del alto.
+        int pw = Math.min(PAPER_W_MAX, Math.max(140, (w - 210) / 2 - 6));
+        int ph = Math.min(PAPER_H, Math.max(60, h / 4 - 12));
         int px = PAPER_MARGIN;
         int py = PAPER_MARGIN;
-        // v0.301.0: el parte crecia hasta tocar el "estas muerto" de la pantalla.
-        // Se recorta al aire que hay sobre ese texto (h/4) y las filas que no
-        // caben se omiten en vez de encimarse.
-        int ph = Math.min(PAPER_H, Math.max(46, h / 4 - 14));
         PaperTexture.drawTornSheet(g, px, py, pw, ph, PaperTexture.PaperKind.OFFICIAL);
 
         String head = english ? "CEDA - BUREAU OF PORTS" : "CEDA - SANIDAD DE PUERTOS";
         String line1 = english
             ? "Deepest regrets: the bearer is deceased."
             : "Lamento informar el deceso del portador.";
-        String line2 = english
-            ? "The port notes it in its ledger."
-            : "La aduana lo anota en su libro.";
 
-        int hy = py + 7;
+        int hy = py + 6;
         g.drawString(font, DiaryChrome.fitCached(font, head, pw - 16), px + 8, hy,
             DiaryChrome.INK_TITLE, false);
         DiaryChrome.drawPencilRule(g, px + 8, hy + 10, pw - 16, px * 31 + py * 17 + 5);
 
-        int l1 = py + 22;
-        g.drawString(font, DiaryChrome.fitCached(font, line1, pw - 16), px + 8, l1,
-            DiaryChrome.INK_SUBTITLE, false);
+        // Pie: filete, registro a la izquierda y sello a la derecha, cada uno
+        // con su sitio. Antes compartian renglon con la fecha y se pisaban.
+        int footY = py + ph - 15;
+        int bodyLimit = footY - 12;
+        DiaryChrome.drawPencilRule(g, px + 8, footY - 5, pw - 16, px * 17 + py * 13 + 3);
 
-        // v0.279.0: el parte del deceso, en el orden en que se lee.
-        boolean en2 = english;
-        int ledger = l1 + 11;
-        String cause = deathCause(screen, en2);
-        if (!cause.isEmpty() && ledger + 11 <= py + ph - 20) {
-            g.drawString(font, DiaryChrome.fitCached(font, cause, pw - 16), px + 8, ledger,
-                DiaryChrome.INK_TITLE, false);
-            ledger += 11;
-        }
-        String where = deathWhere(en2);
-        if (!where.isEmpty() && ledger + 11 <= py + ph - 20) {
-            g.drawString(font, DiaryChrome.fitCached(font, where, pw - 16), px + 8, ledger,
-                DiaryChrome.INK_SUBTITLE, false);
-            ledger += 11;
-        }
-        String when = deathWhen(en2);
-        if (!when.isEmpty() && ledger + 11 <= py + ph - 20) {
-            g.drawString(font, DiaryChrome.fitCached(font, when, pw - 16), px + 8, ledger,
-                DiaryChrome.INK_FLAVOR, false);
-            ledger += 11;
-        }
-        // v0.281.0: el renglon de cortesia solo si queda sitio antes del pie.
-        if (ledger + 10 <= py + ph - 22) {
-            g.drawString(font, DiaryChrome.fitCached(font, line2, pw - 16), px + 8, ledger,
-                DiaryChrome.INK_FLAVOR, false);
-        }
+        int ledger = py + 21;
+        ledger = writeRow(g, font, line1, px, pw, ledger, bodyLimit, DiaryChrome.INK_SUBTITLE);
+        String cause = deathCause(screen, english);
+        ledger = writeRow(g, font, cause, px, pw, ledger, bodyLimit, DiaryChrome.INK_TITLE);
+        String where = deathWhere(english);
+        ledger = writeRow(g, font, where, px, pw, ledger, bodyLimit, DiaryChrome.INK_SUBTITLE);
+        String when = deathWhen(english);
+        ledger = writeRow(g, font, when, px, pw, ledger, bodyLimit, DiaryChrome.INK_FLAVOR);
+        String courtesy = english ? "The port notes it in its ledger."
+            : "La aduana lo anota en su libro.";
+        ledger = writeRow(g, font, courtesy, px, pw, ledger, bodyLimit, DiaryChrome.INK_FLAVOR);
 
-        // Pie del papel: registro a la izquierda y sello a la derecha.
-        int footY = py + ph - 16;
-        DiaryChrome.drawPencilRule(g, px + 8, footY - 4, pw - 16, px * 17 + py * 13 + 3);
-        // v0.262.0: la fecha del deceso, en numeral romano, y la firma de la
-        // casa, que responde por el parte como cualquier otro.
-        String[] romanMonths = { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII" };
         java.util.Calendar cal = java.util.Calendar.getInstance();
-        String date = (english ? "dated " : "fechado ")
+        String[] romanMonths = { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII" };
+        String dated = (english ? "dated " : "fechado ")
             + cal.get(java.util.Calendar.DAY_OF_MONTH) + " \u00b7 "
             + romanMonths[cal.get(java.util.Calendar.MONTH)] + " \u00b7 1897";
-        if (ledger + 12 <= footY - 6) {
-            g.drawString(font, DiaryChrome.fitCached(font, date, pw - 16), px + 8, ledger + 3,
-                DiaryChrome.INK_FLAVOR, false);
-        }
-        String by = english ? "for the house, S.P." : "por la casa, S.P.";
-        int bw = DiaryChrome.widthCached(font, by);
-        g.drawString(font, by, px + (pw - bw) / 2, footY,
-            DiaryTheme.withAlpha(0x006B5533, 150), false);
-        try { DiaryChrome.drawInkBlot(g, px + pw - 26, l1 + 12, 1, false); } catch (Throwable ignored) {}
+        writeRow(g, font, dated, px, pw, ledger, bodyLimit, DiaryChrome.INK_FLAVOR);
 
         String reg = "EC-QV/1897";
-        g.drawString(font, reg, px + 8, footY, DiaryChrome.INK_FLAVOR, false);
-
         String word = english ? "DECEASED" : "DECESO";
         int ww = DiaryChrome.widthCached(font, word);
+        int rw = DiaryChrome.widthCached(font, reg);
         int sx = px + pw - 8 - ww;
-        int stamp = DiaryTheme.withAlpha(0x005C0A08, 190);
-        int stampInk = DiaryTheme.withAlpha(0x005C0A08, 215);
-        g.fill(sx - 3, footY - 2, sx + ww + 3, footY - 1, stamp);
-        g.fill(sx - 3, footY + 9, sx + ww + 3, footY + 10, stamp);
-        g.fill(sx - 3, footY - 2, sx - 2, footY + 10, stamp);
-        g.fill(sx + ww + 2, footY - 2, sx + ww + 3, footY + 10, stamp);
-        g.drawString(font, word, sx, footY, stampInk, false);
+        if (sx > px + 10) {
+            int stamp = DiaryTheme.withAlpha(0x005C0A08, 190);
+            int stampInk = DiaryTheme.withAlpha(0x005C0A08, 215);
+            g.fill(sx - 3, footY - 2, sx + ww + 3, footY - 1, stamp);
+            g.fill(sx - 3, footY + 9, sx + ww + 3, footY + 10, stamp);
+            g.fill(sx - 3, footY - 2, sx - 2, footY + 10, stamp);
+            g.fill(sx + ww + 2, footY - 2, sx + ww + 3, footY + 10, stamp);
+            g.drawString(font, word, sx, footY, stampInk, false);
+            // El registro solo si de verdad queda hueco a la izquierda del sello.
+            if (px + 10 + rw + 8 <= sx - 4) {
+                g.drawString(font, reg, px + 8, footY, DiaryChrome.INK_FLAVOR, false);
+            }
+        } else {
+            g.drawString(font, DiaryChrome.fitCached(font, reg, pw - 16), px + 8, footY,
+                DiaryChrome.INK_FLAVOR, false);
+        }
+    }
+
+    /** v0.341.0: escribe un renglon si cabe; devuelve el siguiente cursor. */
+    private static int writeRow(GuiGraphics g, Font font, String text, int px, int pw,
+                                int y, int limit, int color) {
+        if (text == null || text.isEmpty()) return y;
+        if (y + 9 > limit) return y;
+        g.drawString(font, DiaryChrome.fitCached(font, text, pw - 16), px + 8, y, color, false);
+        return y + 10;
     }
 }
