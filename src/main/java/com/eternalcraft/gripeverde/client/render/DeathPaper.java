@@ -13,11 +13,14 @@ import net.minecraft.client.gui.screens.Screen;
  * v0.240.0: el telegrama de defuncion.
  *
  * Antes la pantalla de muerte se forraba con dos franjas de papel de borde a
- * borde: quedaba aparatoso y tapaba el mundo. Ahora es un solo papel chico,
- * apoyado en la esquina superior izquierda, con el aviso de condolencias tal
- * como lo recibian los familiares: membrete, dos renglones y el sello. El
- * centro de la pantalla queda libre para el titulo y el puntaje del juego.
- * Nada mas se toca: ni velo, ni oscurecido, ni animacion.
+ * borde: quedaba aparatoso y tapaba el mundo. Ahora es un solo papel con el
+ * aviso de condolencias tal como lo recibian los familiares: membrete, los
+ * renglones del parte y el sello.
+ *
+ * v0.357.0: el papel se planta en el centro, sobre el rotulo del juego
+ * ("Estas muerto"), la causa y el puntaje, que dejan de verse: el parte es lo
+ * unico que se lee. Las fichas del pie (reaparecer, menu) quedan debajo, con
+ * su aire. Nada mas se toca: ni velo, ni oscurecido, ni animacion.
  *
  * Los botones del juego se visten de papel sin duplicar su logica: el original
  * se oculta y en su lugar se pone un boton de la casa que dispara su misma
@@ -25,12 +28,13 @@ import net.minecraft.client.gui.screens.Screen;
  */
 public final class DeathPaper {
 
-    // v0.248.0: el aviso va en la esquina, chico, para no comerse el titulo
-    // del juego ni el puntaje. Antes se centraba arriba y tapaba "Estas muerto".
-    private static final int PAPER_W_MAX = 296;
+    // v0.357.0: el aviso pasa al centro, en el sitio del rotulo del juego.
+    // Es el unico parte de la pantalla: el juego ya no escribe nada arriba.
+    private static final int PAPER_W_MAX = 320;
     // v0.279.0: el aviso crece un poco para dar cabida al parte del deceso.
-    private static final int PAPER_H = 92;
-    private static final int PAPER_MARGIN = 8;
+    private static final int PAPER_H = 104;
+    // Aire entre el papel y la primera ficha del pie.
+    private static final int PAPER_GAP = 8;
 
     private DeathPaper() {
     }
@@ -149,13 +153,33 @@ public final class DeathPaper {
         if (font == null) return;
         boolean english = Discoveries.isEnglish();
 
-        // v0.340.0: el parte nacia encima del "estas muerto" y del puntaje.
-        // Ahora se queda en su columna: nunca pasa de la mitad del ancho (donde
-        // el juego centra sus renglones) ni de la cuarta parte del alto.
-        int pw = Math.min(PAPER_W_MAX, Math.max(140, (w - 210) / 2 - 6));
-        int ph = Math.min(PAPER_H, Math.max(60, h / 4 - 12));
-        int px = PAPER_MARGIN;
-        int py = PAPER_MARGIN;
+        // v0.357.0: el papel se planta en el centro, sobre el rotulo grande del
+        // juego ("Estas muerto"), la causa y el puntaje, que quedan tapados. Se
+        // mide contra la primera ficha del pie para no tocar los botones.
+        int buttonsTop = Integer.MAX_VALUE;
+        try {
+            for (var child : screen.children()) {
+                if (child instanceof DiaryButton b && b.visible) {
+                    buttonsTop = Math.min(buttonsTop, b.getY());
+                }
+            }
+        } catch (Throwable ignored) {
+        }
+        // El juego escribe su rotulo (escala doble) a partir de y=30 y la causa
+        // y el puntaje hacia y=100, siempre en el mismo sitio. El papel arranca
+        // un poco mas arriba para taparlos de una vez.
+        int top = 22;
+        int limit = buttonsTop == Integer.MAX_VALUE ? h - 40 : buttonsTop - PAPER_GAP;
+        int room = limit - top;
+        if (room < 56) {
+            // Sin hueco entre cabecera y fichas: el papel se achica, pero no se
+            // baja, que el rotulo del juego quedaria a la vista.
+            room = Math.max(56, h - 16 - top);
+        }
+        int pw = Math.min(PAPER_W_MAX, Math.max(180, w - 48));
+        int ph = Math.max(56, Math.min(PAPER_H, room));
+        int px = (w - pw) / 2;
+        int py = top;
         PaperTexture.drawTornSheet(g, px, py, pw, ph, PaperTexture.PaperKind.OFFICIAL);
 
         String head = english ? "CEDA - BUREAU OF PORTS" : "CEDA - SANIDAD DE PUERTOS";

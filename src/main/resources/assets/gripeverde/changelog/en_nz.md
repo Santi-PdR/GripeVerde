@@ -1,3 +1,7 @@
+## Version 0.357.0 - La pantalla de muerte se queda con el parte en el centro y sin el rótulo del juego
+
+The death screen keeps only the CEDA notice, centred, with the vanilla title gone
+
 ## Version 0.356.0 - El buscador de Mundos guardados deja la caja negra y pasa a papel
 
 The saved-worlds search field drops its black vanilla box and sits on paper

@@ -1,3 +1,7 @@
+## v0.357.0 - La pantalla de muerte se queda con el parte en el centro y sin el rótulo del juego
+
+- Muerte: el papel pasa al centro y tapa el rotulo «Estas muerto», la causa y el puntaje; el parte es lo unico que se lee y las fichas quedan debajo con su aire.
+
 ## v0.356.0 - El buscador de Mundos guardados deja la caja negra y pasa a papel
 
 - Mundos guardados: el campo de busqueda ya no es una caja negra vanilla; papel de la casa, letra en tinta y filete de foco. Chat: la lista garantiza un renglon en ventanas muy bajas.

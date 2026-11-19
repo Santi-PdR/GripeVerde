@@ -1,3 +1,7 @@
+## Version 0.357.0 - La pantalla de muerte se queda con el parte en el centro y sin el rótulo del juego
+
+La pantalla de muerte deja sólo el parte de defunción en el centro; el rótulo del juego desaparece
+
 ## Version 0.356.0 - El buscador de Mundos guardados deja la caja negra y pasa a papel
 
 El buscador de Mundos guardados pierde la caja negra y va sobre papel con tinta
