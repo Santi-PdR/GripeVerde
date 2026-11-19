@@ -1,3 +1,7 @@
+## v0.343.0 - Las cajas grises del juego se acompasan al papel
+
+- Sonido, Chat y Accesibilidad: velo cálido y filetes de tinta sobre las fichas vanilla, sin tocar su letra ni sus mandos.
+
 ## v0.342.0 - La firma de la portada y el grabado del reloj se leen enteros
 
 - Portada: margen derecho y separación entre la firma vigente y la tachada; si no caben, solo la vigente.

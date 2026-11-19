@@ -186,6 +186,8 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         // Lista vanilla sin gradientes blancos ni bandejas extra
         if (this.list != null) {
             this.list.render(gfx, mouseX, mouseY, delta);
+            // v0.343.0: el gris del juego se acompana al sepia de la hoja.
+            DiaryChrome.washVanillaRows(gfx, this.list);
             DiaryChrome.drawStyledScrollThumbInPanel(gfx, this.list, this.panelX + this.panelW);
         }
 

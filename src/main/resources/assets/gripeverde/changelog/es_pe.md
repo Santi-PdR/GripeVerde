@@ -1,3 +1,9 @@
+## Version 0.343.0 - Las cajas grises del juego se acompasan al papel
+
+Las listas que el juego dibuja por su cuenta en Sonido, Chat y Accesibilidad salían como cajas grises frías dentro de la hoja: parecían pegadas de otro cuaderno. Ahora cada ficha recibe un velo tibio y dos filetes de tinta, arriba y abajo, que la llevan al sepia de la casa.
+
+No se toca la letra ni los mandos del juego: el velo es translúcido y deja leer el valor de cada ajuste y mover su deslizador como siempre. La lista se recorta a su propio marco, así que el velo no se sale de la hoja.
+
 ## Version 0.342.0 - La firma de la portada y el grabado del reloj se leen enteros
 
 En la portada, la firma del cronista y el nombre anterior tachado se pegaban al filo derecho: el tachado acababa en el borde de la ventana y se leía cortado. Ahora hay margen a la derecha, aire entre los dos nombres y, si no caben los dos, la tachada se calla en vez de encimarse con la vigente. La raya ya no se pasa del filo.

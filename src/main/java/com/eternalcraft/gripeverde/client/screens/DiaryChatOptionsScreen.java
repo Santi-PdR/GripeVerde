@@ -157,6 +157,8 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         // Lista vanilla sin gradientes blancos ni bandejas extra
         if (this.list != null) {
             this.list.render(g, mouseX, mouseY, partialTick);
+            // v0.343.0: el gris del juego se acompana al sepia de la hoja.
+            DiaryChrome.washVanillaRows(g, this.list);
             DiaryChrome.drawStyledScrollThumbInPanel(g, this.list, this.panelX + this.panelW);
         }
 

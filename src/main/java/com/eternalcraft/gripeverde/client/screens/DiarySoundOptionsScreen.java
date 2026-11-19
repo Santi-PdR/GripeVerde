@@ -492,6 +492,11 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         // --- Lista vanilla sin gradientes blancos ni bandejas extra ---
         if (this.reflectedList != null) {
             this.reflectedList.render(g, mouseX, mouseY, partialTick);
+            // v0.343.0: el gris del juego se acompana al sepia de la hoja.
+            try {
+                DiaryChrome.washVanillaRows(g, (AbstractSelectionList<?>) this.reflectedList);
+            } catch (Throwable ignored) {
+            }
             DiaryChrome.drawStyledScrollThumbInPanel(g,
                 (AbstractSelectionList<?>) this.reflectedList, this.panelX + this.panelW);
         }

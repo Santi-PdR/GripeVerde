@@ -1,3 +1,9 @@
+## Version 0.343.0 - Las cajas grises del juego se acompasan al papel
+
+The lists the game draws on its own in Sound, Chat and Accessibility came out as cold grey boxes inside the sheet: they looked pasted from another notebook. Now each entry gets a warm veil and two ink rules, above and below, that carry it to the house's sepia.
+
+The game's letter and controls are untouched: the veil is translucent and lets you read every setting's value and drag its slider as always. The list is clipped to its own frame, so the veil never leaves the sheet.
+
 ## Version 0.342.0 - La firma de la portada y el grabado del reloj se leen enteros
 
 On the title screen, the chronicler's signature and the struck previous name sat against the right edge: the struck one ended on the window border and was read cut. Now there is a margin on the right, air between the two names and, if both do not fit, the struck one stays quiet instead of stacking on the current one. The rule no longer runs past the edge.

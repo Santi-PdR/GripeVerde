@@ -460,6 +460,72 @@ public final class DiaryChrome {
         gfx.fill(x + 2, y + 2, x + w - 2, y + 3, DiaryTheme.withAlpha(0x00FFFFFF, 10));
     }
 
+    /**
+     * v0.343.0: las listas que el juego pinta en gris quedan como cajas de otro
+     * papel dentro de la hoja. Esta pasada tibia las acompana al sepia de la
+     * casa sin tocar su letra ni sus mandos: solo un velo y dos filetes.
+     */
+    public static void washVanillaRows(GuiGraphics gfx, AbstractSelectionList<?> list) {
+        if (gfx == null || list == null) return;
+        int top = list.getTop();
+        int bottom = list.getBottom();
+        int left = list.getRowLeft();
+        int right = left + list.getRowWidth();
+        if (bottom - top < 8 || right - left < 40) return;
+        int step = readInt(list, "itemHeight", "f_93387_");
+        if (step <= 0) step = 25;
+        double scroll = 0.0;
+        try {
+            scroll = list.getScrollAmount();
+        } catch (Throwable ignored) {
+        }
+        int count = 0;
+        try {
+            count = list.children().size();
+        } catch (Throwable ignored) {
+        }
+        if (count <= 0) return;
+        gfx.enableScissor(left - 2, top, right + 2, bottom);
+        try {
+            for (int i = 0; i < count && i < 64; i++) {
+                int rowTop = top + 4 - (int) scroll + i * step;
+                int rowBottom = rowTop + step - 3;
+                if (rowBottom < top || rowTop > bottom) continue;
+                int drawTop = Math.max(rowTop, top);
+                int drawBottom = Math.min(rowBottom, bottom);
+                if (drawBottom <= drawTop) continue;
+                // Velo calido: el gris del juego se vuelve sepia de registro.
+                gfx.fill(left, drawTop, right, drawBottom, 0x3CE8DCB4);
+                gfx.fill(left, drawTop, right, drawTop + 1, 0x336B5533);
+                gfx.fill(left, drawBottom - 1, right, drawBottom, 0x556B5533);
+            }
+        } finally {
+            gfx.disableScissor();
+        }
+    }
+
+    /** Lectura defensiva de un entero de la lista del juego (dev o SRG). */
+    private static int readInt(Object target, String officialName, String srgName) {
+        try {
+            for (Class<?> c = target.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
+                try {
+                    java.lang.reflect.Field f = c.getDeclaredField(officialName);
+                    f.setAccessible(true);
+                    return f.getInt(target);
+                } catch (NoSuchFieldException ignored) {
+                }
+                try {
+                    java.lang.reflect.Field f = c.getDeclaredField(srgName);
+                    f.setAccessible(true);
+                    return f.getInt(target);
+                } catch (NoSuchFieldException ignored) {
+                }
+            }
+        } catch (Throwable ignored) {
+        }
+        return -1;
+    }
+
     public static void drawStyledScrollThumbInPanel(GuiGraphics gfx,
                                                     AbstractSelectionList<?> list,
                                                     int panelRightEdge) {
