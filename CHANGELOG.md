@@ -1,3 +1,8 @@
+## v0.341.0 - El papel de las coordenadas adopta el parte del mapa
+
+- HUD: con minimapa, el papel de coordenadas muestra x · z · y y el bioma, en nuestro papel y nuestra letra.
+- El minimapa no se modifica.
+
 ## v0.340.0 - La pausa se queda sin parte de campaña y el parte de defunción se aparta del rótulo
 
 - Pausa: fuera la franja de día, hora, clima y coordenadas, y sus solapes con el filete.

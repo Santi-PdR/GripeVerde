@@ -5,11 +5,11 @@ de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
 que una seccion posterior lo mencione expresamente.
 
-## ESTADO: DESARROLLO ACTIVO (2026-11-13, GripeVerde v0.333.0)
+## ESTADO: DESARROLLO ACTIVO (2026-11-13, GripeVerde v0.341.0)
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
-- La ronda visual de hojas va por `0.333.0`. Cerradas en esta tanda, entre otras:
+- La ronda visual de hojas va por `0.341.0`. Cerradas en esta tanda, entre otras:
   Packs vestido, fecha en el reloj del HUD, pie de Multijugador ordenado, hoja de
   Video vestida, README de portada, La casa en ventanas bajas, recientes de
   Conexión directa acotadas, reloj junto a JourneyMap en la columna derecha,

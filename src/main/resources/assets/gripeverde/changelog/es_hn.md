@@ -1,3 +1,11 @@
+## Version 0.341.0 - El papel de las coordenadas adopta el parte del mapa
+
+Con JourneyMap u otro minimapa en la esquina, el juego escribe bajo el mapa el parte de coordenadas y el bioma. Nuestro papelito de coordenadas se quedaba con un trío suelto («-24 63 51») escrito en otro orden y sin el bioma.
+
+Ahora, cuando hay minimapa, el papel adopta ese mismo parte: las coordenadas en el orden del mapa (x, z, y) y el bioma debajo, todo con nuestra tinta y nuestra letra. El minimapa no se toca ni se tapa: es una integración, no un reemplazo.
+
+Sin minimapa, el papel sigue como estaba, con el trío de siempre.
+
 ## Version 0.340.0 - La pausa se queda sin parte de campaña y el parte de defunción se aparta del rótulo
 
 En la pausa, la franja del pie («día 1 · la avenida», «19:14 · despejado · -24, 6…») se cortaba en todas las ventanas y se encimaba con el filete y el rombo. Se fue entera: la hoja se queda con su título, su fecha y sus fichas, sin día, hora ni coordenadas.

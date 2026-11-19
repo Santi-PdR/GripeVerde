@@ -1,3 +1,11 @@
+## Version 0.341.0 - El papel de las coordenadas adopta el parte del mapa
+
+With JourneyMap or another minimap in the corner, the game writes the coordinates and the biome under the map. Our coordinate slip kept a loose trio («-24 63 51») in another order and without the biome.
+
+Now, when there is a minimap, the slip adopts that same part: the coordinates in the map's order (x, z, y) and the biome below, all in our ink and our letter. The minimap is neither touched nor covered: it is an integration, not a replacement.
+
+Without a minimap, the slip stays as it was, with the usual trio.
+
 ## Version 0.340.0 - La pausa se queda sin parte de campaña y el parte de defunción se aparta del rótulo
 
 In the pause screen, the foot strip («day 1 · the avenue», «19:14 · clear · -24, 6…») was cut in every window and overlapped the rule and the lozenge. It is gone: the sheet keeps its title, its date and its buttons, with no day, hour or coordinates.

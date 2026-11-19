@@ -115,7 +115,7 @@ public final class DeathPaper {
         if (font == null) return;
         boolean english = Discoveries.isEnglish();
 
-        // v0.341.0: el parte nacia encima del "estas muerto" y del puntaje.
+        // v0.340.0: el parte nacia encima del "estas muerto" y del puntaje.
         // Ahora se queda en su columna: nunca pasa de la mitad del ancho (donde
         // el juego centra sus renglones) ni de la cuarta parte del alto.
         int pw = Math.min(PAPER_W_MAX, Math.max(140, (w - 210) / 2 - 6));
@@ -182,7 +182,7 @@ public final class DeathPaper {
         }
     }
 
-    /** v0.341.0: escribe un renglon si cabe; devuelve el siguiente cursor. */
+    /** v0.340.0: escribe un renglon si cabe; devuelve el siguiente cursor. */
     private static int writeRow(GuiGraphics g, Font font, String text, int px, int pw,
                                 int y, int limit, int color) {
         if (text == null || text.isEmpty()) return y;

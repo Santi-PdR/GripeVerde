@@ -4,7 +4,7 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
 
 ## Estado vigente de la entrega
 
-- Version publicada: **v0.333.0**.
+- Version publicada: **v0.341.0**.
 - Rama de trabajo vigente: `arena/48be547c-gripeverde`, un solo push por version.
 - Baseline medida por las herramientas: **71 archivos Java**, **25 locales con
   191 claves** cada uno, 25 cronicas, 35 eventos de sonido, 42 referencias OGG y
