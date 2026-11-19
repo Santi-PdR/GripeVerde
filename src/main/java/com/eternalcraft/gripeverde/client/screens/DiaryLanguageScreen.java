@@ -159,18 +159,8 @@ public class DiaryLanguageScreen extends Screen {
             int divY1 = titleY + 42;
             DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY1);
             drawLanguageCount(g, titleY);
-            // v0.285.0: el folio de la hoja, al pie.
-            try {
-                boolean enF = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
-                String folio = enF ? "sheet IV  ·  Esc back" : "hoja IV  ·  Esc vuelve";
-                int fw = DiaryChrome.widthCached(this.font, folio);
-                int fx = this.panelX + this.panelW - 14 - fw;
-                if (fw < this.panelW - 60 && fx > this.panelX + 14) {
-                    g.drawString(this.font, folio, fx, this.panelY + this.panelH - 12,
-                        DiaryChrome.INK_FLAVOR, false);
-                }
-            } catch (Throwable ignored) {
-            }
+            // v0.306.0: fuera el folio del pie; caia sobre el boton Volver.
+
         }
 
         int frameX = this.listX - 4;

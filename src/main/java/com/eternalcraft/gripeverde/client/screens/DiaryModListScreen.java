@@ -202,7 +202,11 @@ public class DiaryModListScreen extends ModListScreen {
                 this.hoveredModDesc = modDescription(entry);
             }
             String name = ellipsizeTo(font, info[0], width - 24);
-            String version = ellipsizeTo(font, info[1], width - 24);
+            // v0.306.0: debajo del nombre, la version y el identificador del
+            // mod, que es lo que se busca cuando algo falla.
+            String id = modId(entry);
+            String versionSrc = id.isEmpty() ? info[1] : info[1] + "  \u00b7  " + id;
+            String version = ellipsizeTo(font, versionSrc, width - 24);
             g.drawString(font, name, left + 3, rowTop + 2, 0xFF1A1108, false);
             g.drawString(font, version, left + 3, rowTop + 2 + font.lineHeight, 0xFF6B5533, false);
         }
@@ -235,6 +239,18 @@ public class DiaryModListScreen extends ModListScreen {
             return new String[] { name, version };
         } catch (Throwable ignored) {
             return null;
+        }
+    }
+
+    /** v0.306.0: el identificador del mod, si la entrada lo trae. */
+    private static String modId(Object entry) {
+        try {
+            Object info = entry.getClass().getMethod("getInfo").invoke(entry);
+            if (info == null) return "";
+            Object id = info.getClass().getMethod("getModId").invoke(info);
+            return id == null ? "" : stripCodes(id.toString());
+        } catch (Throwable ignored) {
+            return "";
         }
     }
 

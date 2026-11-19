@@ -299,15 +299,9 @@ public class DiarySkinCustomizationScreen extends Screen {
                 gfx.drawString(this.font, cut, this.panelX + (panelW - nw) / 2,
                     divY2 + 2, 0xFF8E2A20, false);
             }
-            if (panelH >= 190) {
-                String folio = en ? "sheet VIII  ·  Esc back" : "hoja VIII  ·  Esc vuelve";
-                int fw = DiaryChrome.widthCached(this.font, folio);
-                int fx = this.panelX + panelW - 12 - fw;
-                if (fx > this.panelX + 12) {
-                    gfx.drawString(this.font, folio, fx, this.panelY + panelH - 12,
-                        DiaryChrome.INK_FLAVOR, false);
-                }
-            }
+            // v0.306.0: el folio del pie caia sobre el boton Volver; la hoja
+            // se queda sin esa linea antes que taparlo.
+
         } catch (Throwable ignored) {
         }
         DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, panelW, panelH);

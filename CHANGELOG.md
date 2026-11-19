@@ -1,3 +1,8 @@
+## v0.306.0 - Fuera los folios que estorbaban
+
+- Aspecto, Créditos, Controles e Idioma: se retira el folio del pie que pisaba Volver.
+- Arsenal: identificador del mod bajo la version.
+
 ## v0.305.0 - El pie de la pausa dice donde estas
 
 - Pausa: tercera linea con el dia de la partida y el lugar, en el pie.

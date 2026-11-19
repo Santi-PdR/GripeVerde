@@ -1,3 +1,9 @@
+## Version 0.306.0 - Fuera los folios que estorbaban
+
+Cuatro hojas (Aspecto, Crédito, Controles e Idioma) llevaban al pie un folio de registro -«hoja VIII · Esc vuelve»- que caia justo encima del boton Volver. Se fueron: la hoja no necesita repetir que se sale con Esc cuando el propio boton lo dice.
+
+En el arsenal, cada mod enseña ahora debajo del nombre su **identificador**, que es lo que uno busca cuando algo falla: `gripeverde · eternalcraft.gripeverde`. Y la descripcion al pasar la mano sigue donde estaba, sobre el papel de los botones.
+
 ## Version 0.305.0 - El pie de la pausa dice donde estas
 
 La hoja de pausa recupera, ahora en su pie y sin tocar el titulo, el dia de la partida y el lugar donde esta el lector, encima de la hora, el clima, las coordenadas y el modo. Tres renglones cortos, alineados a la izquierda, que se recortan al ancho disponible.

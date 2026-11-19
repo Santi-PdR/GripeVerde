@@ -144,13 +144,9 @@ public class DiaryCreditsScreen extends Screen {
         // v0.285.0: folio de la hoja, al pie y a la derecha.
         try {
             boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
-            String folio = en ? "sheet IX  ·  Esc back" : "hoja IX  ·  Esc vuelve";
-            int fw = DiaryChrome.widthCached(this.font, folio);
-            int fx = panelX + panelW - 12 - fw;
-            if (fw < panelW - 60 && fx > panelX + 12 && panelH >= 190) {
-                g.drawString(this.font, folio, fx, panelY + panelH - 12,
-                    DiaryChrome.INK_FLAVOR, false);
-            }
+            // v0.306.0: fuera el folio del pie: caia sobre los botones de
+            // abajo y el contenido ya no deja hueco para el.
+
         } catch (Throwable ignored) {
         }
 

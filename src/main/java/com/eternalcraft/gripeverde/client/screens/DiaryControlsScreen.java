@@ -236,18 +236,8 @@ public class DiaryControlsScreen extends Screen {
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
         DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
         DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. III");
-        // v0.285.0: folio de la hoja de teclas.
-        try {
-            boolean enF = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
-            String folio = enF ? "sheet III  ·  Esc back" : "hoja III  ·  Esc vuelve";
-            int fw = DiaryChrome.widthCached(this.font, folio);
-            int fx = this.panelX + this.panelW - 12 - fw;
-            if (fw < this.panelW - 60 && fx > this.panelX + 12) {
-                g.drawString(this.font, folio, fx, this.panelY + this.panelH - 12,
-                    DiaryChrome.INK_FLAVOR, false);
-            }
-        } catch (Throwable ignored) {
-        }
+        // v0.306.0: fuera el folio del pie; caia sobre el boton Volver.
+
 
         // v0.273.0: el estado de las teclas, en el margen izquierdo de la hoja.
         try {

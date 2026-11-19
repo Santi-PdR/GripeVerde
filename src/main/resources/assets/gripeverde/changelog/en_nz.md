@@ -1,3 +1,9 @@
+## Version 0.306.0 - The folios that got in the way are gone
+
+Four sheets (Appearance, Credits, Controls and Language) carried a registry folio at the foot -`sheet VIII · Esc back`- that landed right on top of the Back button. They are gone: the sheet does not need to repeat that Esc leaves when the button itself says so.
+
+In the arsenal, every mod now shows its **identifier** under its name, which is what one looks up when something breaks: `gripeverde · eternalcraft.gripeverde`. And the hover description stays where it was, on the paper of the buttons.
+
 ## Version 0.305.0 - The pause foot says where you are
 
 The pause sheet recovers, now at its foot and without touching the title, the game's day and the place where the reader is, above the hour, weather, coordinates and mode. Three short lines, left aligned, clipped to the room available.
