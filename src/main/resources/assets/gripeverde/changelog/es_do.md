@@ -1,3 +1,9 @@
+## Version 0.313.0 - El pie de los puestos, ordenado
+
+La hoja de Multijugador tenía tres cosas escritas en la misma franja del pie: el folio, el peso del archivo y el puesto elegido, y se leían encimadas. Ahora el folio va a la izquierda, el peso justo detrás y el elegido al filo derecho, cada uno con su ancho medido.
+
+Y el recuento de arriba dice también cuántas de esas puertas ya se visitaron: «3 anotados · 2 conocidas».
+
 ## Version 0.312.0 - El reloj de la partida dice la fecha
 
 La tira del reloj en partida gana la fecha de verdad en numeral romano detrás del día de la semana: `20:56  mié  18·XI`. Y crece de 96 a 116 píxeles para que el día, la fecha, el clima y el rato dentro quepan enteros en vez de recortarse con puntos suspensivos.

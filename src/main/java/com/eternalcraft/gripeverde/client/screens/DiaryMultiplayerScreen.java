@@ -874,6 +874,16 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             } else {
                 this.countText = english ? count + " entries" : count + " anotados";
             }
+            // v0.313.0: cuantas de esas puertas ya se visitaron.
+            try {
+                int known = com.eternalcraft.gripeverde.client.integration
+                    .RecentAddresses.list().size();
+                if (known > 0 && this.countSrc != -2) {
+                    this.countText = this.countText + "  \u00b7  " + known
+                        + (english ? " known" : " conocidas");
+                }
+            } catch (Throwable ignored) {
+            }
             this.countWidth = this.font.width(this.countText);
             this.countSrc = count;
             this.countEnglish = english;
@@ -905,13 +915,14 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                     .RecentAddresses.list().contains(picked);
                 String line = (english ? "chosen: " : "elegido: ") + picked
                     + (known ? (english ? "  ·  known door" : "  ·  puerta conocida") : "");
-                String cut = DiaryChrome.fitCached(this.font, line, Math.max(60, panelW / 2));
+                // v0.313.0: el elegido va al filo derecho del pie, para no
+                // mezclarse con el folio ni con el peso del archivo.
+                String cut = DiaryChrome.fitCached(this.font, line,
+                    Math.max(60, panelW / 2 - 10));
                 int lw = DiaryChrome.widthCached(this.font, cut);
-                int lx = panelX + (panelW - lw) / 2;
-                // v0.287.0: el elegido va en la franja del pie, nunca encima de
-                // la lista ni del divisor de la cabecera.
+                int lx = panelX + panelW - 14 - lw;
                 int chosenY = this.height - PANEL_MARGIN_V - 12;
-                if (this.width >= 360 && lw < panelW - 160 && chosenY > titleY + 40) {
+                if (this.width >= 360 && chosenY > titleY + 40 && lx > panelX + panelW / 2) {
                     gfx.drawString(this.font, cut, lx, chosenY, DiaryChrome.INK_FLAVOR, false);
                 }
             }
@@ -928,10 +939,12 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                                        boolean english) {
         String detail = serversFileLine(english);
         if (detail.isEmpty()) return;
-        String fitted = DiaryChrome.fitCached(this.font, detail, 220);
+        // v0.313.0: el peso se queda en la mitad izquierda del pie.
+        int room = Math.max(60, panelW / 2 - 70);
+        String fitted = DiaryChrome.fitCached(this.font, detail, room);
         int w = DiaryChrome.widthCached(this.font, fitted);
         int x = panelX + 14 + this.font.width(english ? "sheet 1" : "hoja 1") + 12;
-        if (x + w > panelX + 220) return;
+        if (x + w > panelX + panelW / 2 - 10) return;
         gfx.drawString(this.font, fitted, x, panelY + panelH - 14, DiaryChrome.INK_FLAVOR, false);
     }
 

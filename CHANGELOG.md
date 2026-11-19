@@ -1,3 +1,8 @@
+## v0.313.0 - El pie de los puestos, ordenado
+
+- Multijugador: folio, peso y elegido en tres sitios distintos del pie.
+- Multijugador: el recuento suma las puertas conocidas.
+
 ## v0.312.0 - El reloj de la partida dice la fecha
 
 - HUD: fecha en numeral romano tras el dia de la semana.

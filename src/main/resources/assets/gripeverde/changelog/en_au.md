@@ -1,3 +1,9 @@
+## Version 0.313.0 - The posts' foot, in order
+
+The Multiplayer sheet had three things written on the same strip at the foot: the folio, the file weight and the chosen post, and they were read on top of each other. Now the folio goes left, the weight right behind it and the chosen one on the right edge, each with its width measured.
+
+And the count at the top also says how many of those doors have already been visited: `3 entries · 2 known`.
+
 ## Version 0.312.0 - The in-game watch tells the date
 
 The watch strip in game gains the real date in Roman numerals behind the weekday: `20:56  wed  18·XI`. And it grows from 96 to 116 pixels so the day, the date, the weather and the time inside all fit whole instead of being clipped with ellipses.
