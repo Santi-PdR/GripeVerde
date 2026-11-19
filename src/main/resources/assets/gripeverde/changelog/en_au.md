@@ -1,3 +1,9 @@
+## Version 0.331.0 - The mod has its seal now
+
+The game's mod list showed Gripe Verde with the generic icon. Now it carries its own seal: red wax with the green bottle, on worn paper and two crossed quills, drawn for this house.
+
+It is the same emblem that opens the repository's front page, so whoever sees it in the game and then opens the link recognises what it is without reading a line.
+
 ## Version 0.330.0 - The grids are anchored to the foot
 
 On the Appearance sheet, the grid of worn parts was computed from the title and nobody looked where it ended: with a low window, the last row landed on the divider and the Back button. Now it is anchored to the foot, leaving air above, and if the height is very small it starts higher instead of overflowing.

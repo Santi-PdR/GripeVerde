@@ -1,3 +1,7 @@
+## v0.331.0 - El mod ya tiene su sello
+
+- `logoFile="logo.png"` en `mods.toml` y `src/main/resources/logo.png` (256x256).
+
 ## v0.330.0 - Las rejillas se anclan al pie
 
 - Aspecto: `gridTop` acotado por `footerTop - 4 - used`.

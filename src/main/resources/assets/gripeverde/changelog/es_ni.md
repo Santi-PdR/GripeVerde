@@ -1,3 +1,9 @@
+## Version 0.331.0 - El mod ya tiene su sello
+
+La lista de mods del juego mostraba a Gripe Verde con el icono genérico. Ahora lleva su propio sello: lacre rojo con la botella verde, sobre papel gastado y dos plumas cruzadas, dibujado para esta casa.
+
+Es el mismo emblema que abre la portada del repositorio, así que quien lo vea en el juego y después entre al enlace reconoce de qué se trata sin leer una línea.
+
 ## Version 0.330.0 - Las rejillas se anclan al pie
 
 En la hoja de Aspecto, la rejilla de prendas se calculaba desde el título y nadie miraba dónde terminaba: con la ventana baja, la última fila aterrizaba sobre el divisor y el botón Volver. Ahora se ancla al pie, dejando aire arriba, y si el alto es muy poco empieza más arriba en vez de desbordar.

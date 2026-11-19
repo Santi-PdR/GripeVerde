@@ -10,6 +10,8 @@ version="${mod_version}"
 # de version en ningun lado. Guia Forge Sides para mods one-sided.
 displayTest="IGNORE_ALL_VERSION"
 displayName="Eternal Craft: Gripe Verde"
+# v0.331.0: el sello de la casa, para la lista de mods del juego.
+logoFile="logo.png"
 displayURL="https://discord.gg/qrBCgYuwWb"
 credits="Documento oficial bajo sello EC-QV/1897 - Cronista S. Pereira"
 authors="Santipdr"
