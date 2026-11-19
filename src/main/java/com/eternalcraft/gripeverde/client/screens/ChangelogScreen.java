@@ -228,16 +228,23 @@ public class ChangelogScreen extends Screen {
 
         // v0.221.0: el diario es lo de la portada; el registro tecnico de
         // versiones sigue a mano, en un boton chico a la izquierda del pie.
-        if (this.diaryMode && panelW() >= 260) {
+        // v0.324.0: las dos fichas del pie se piden sitio antes de dibujarse.
+        // Con la hoja angosta caian debajo del boton Volver; ahora, si no caben
+        // al costado, suben un renglon en vez de perderse.
+        if (this.diaryMode && panelW() >= 200) {
             boolean english = isEnglishSelected();
             int logW = 76;
-            this.addRenderableWidget(new SlimButton(panelX() + 10, by + 6, logW, 18,
-                Component.literal(english ? "Versions" : "Versiones"),
-                () -> this.minecraft.setScreen(new ChangelogScreen(this, false))));
             int idxW = 68;
-            this.addRenderableWidget(new SlimButton(panelX() + 10 + logW + 6, by + 6, idxW, 18,
-                Component.literal(english ? "Index" : "Índice"),
-                this::toggleIndex));
+            boolean beside = panelX() + 10 + logW + 6 + idxW + 8 < bx;
+            int fY = beside ? by + 6 : by - 24;
+            if (fY > panelY() + 30) {
+                this.addRenderableWidget(new SlimButton(panelX() + 10, fY, logW, 18,
+                    Component.literal(english ? "Versions" : "Versiones"),
+                    () -> this.minecraft.setScreen(new ChangelogScreen(this, false))));
+                this.addRenderableWidget(new SlimButton(panelX() + 10 + logW + 6, fY, idxW, 18,
+                    Component.literal(english ? "Index" : "Índice"),
+                    this::toggleIndex));
+            }
         }
     }
 

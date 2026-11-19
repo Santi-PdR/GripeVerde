@@ -1,3 +1,7 @@
+## Version 0.324.0 - Las fichas del diario no se meten bajo Volver
+
+En la bitácora, las dos fichas del pie —Versiones e Índice— se dibujaban siempre a la izquierda de Volver, sin preguntar si cabían: con la hoja angosta se metían debajo del botón. Ahora se pide el sitio primero y, si no lo hay al costado, suben un renglón en lugar de desaparecer.
+
 ## Version 0.323.0 - La cabecera de la red local, en tinta
 
 Cuando no hay ninguna puerta anotada, la hoja de Multijugador muestra la cabecera de la red local —«Buscando partidas en tu red local…»— escrita por el juego en blanco, y sobre el papel claro no se leía. Ahora se cubre con su recorte y se reescribe en tinta, igual que las filas de los puestos.

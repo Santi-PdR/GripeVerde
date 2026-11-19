@@ -1,3 +1,7 @@
+## v0.324.0 - Las fichas del diario no se meten bajo Volver
+
+- Bitacora: `beside` decide si Versiones/Indice van al costado o un renglon arriba.
+
 ## v0.323.0 - La cabecera de la red local, en tinta
 
 - Multijugador: `paintLanHeaderInk` cubre y reescribe la cabecera LAN cuando la lista esta vacia.

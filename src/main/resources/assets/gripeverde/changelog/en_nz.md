@@ -1,3 +1,7 @@
+## Version 0.324.0 - The diary's cards do not slip under Back
+
+In the log, the two cards at the foot —Versions and Index— were always drawn to the left of Back, without asking whether they fit: with a narrow sheet they slipped under the button. Now the space is asked for first and, if there is none beside it, they go up one line instead of vanishing.
+
 ## Version 0.323.0 - The local network header, in ink
 
 When no door is noted, the Multiplayer sheet shows the local network header —"Scanning for games on your local network..."— written by the game in white, and on the light paper it could not be read. It is now covered with its clipping and rewritten in ink, just like the post rows.
