@@ -1,3 +1,9 @@
+## Version 0.309.0 - La ficha del mod, en papel
+
+El arsenal tenía, a la derecha, el panel negro de Forge con letra blanca: no era de la casa y desentonaba con todo lo demás. Ahora esa zona es una hoja de papel con la ficha del mod elegido escrita en tinta: nombre, versión e identificador, quién lo firma y las primeras líneas de la descripción, dobladas a mano para que quepan.
+
+El parte de CEDA también se ordena: su subtítulo se corta antes de la chapa REG. XIII, que estaba quedando debajo.
+
 ## Version 0.308.0 - Las coordenadas, en su papelito
 
 El reloj de la partida ya no mezcla cosas: sus tres renglones son la hora de verdad con el día, el día y la hora del mundo con el clima, y el rato que lleva dentro. Las coordenadas se van a un **papelito aparte**, abajo a la derecha, como el renglón que el mapa escribe bajo sí mismo: se lee de un vistazo, no se mezcla con el reloj y no depende de que haya minimapa.

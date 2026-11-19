@@ -242,6 +242,109 @@ public class DiaryModListScreen extends ModListScreen {
         }
     }
 
+    /**
+     * v0.309.0: Forge enseña la ficha del mod elegido en un panel negro con
+     * letra blanca, que no es de la casa. Aqui se cubre ese panel con papel y se
+     * escribe lo mismo en tinta: nombre, version e identificador, autores y las
+     * primeras lineas de la descripcion.
+     */
+    private void drawInfoPage(GuiGraphics g) {
+        if (this.list == null || this.footerTop <= 60) return;
+        Object selected;
+        try {
+            selected = this.list.getSelected();
+        } catch (Throwable ignored) {
+            return;
+        }
+        if (selected == null) return;
+        int rowLeft;
+        int rowWidth;
+        try {
+            rowLeft = this.list.getRowLeft();
+            rowWidth = this.list.getRowWidth();
+        } catch (Throwable ignored) {
+            return;
+        }
+        int x = Math.max(rowLeft + rowWidth + 8, this.width / 3);
+        int right = this.width - 8;
+        int w = right - x;
+        if (w < 130) return;
+        int y = 24;
+        int h = Math.min(320, this.footerTop - y - 8);
+        if (h < 70) return;
+
+        com.eternalcraft.gripeverde.client.render.PaperTexture.drawTornSheet(g, x, y, w, h,
+            com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.LEDGER);
+
+        Object info = null;
+        try {
+            info = selected.getClass().getMethod("getInfo").invoke(selected);
+        } catch (Throwable ignored) {
+        }
+        String name = infoText(info, "getDisplayName");
+        if (name.isEmpty()) name = "";
+        String version = infoText(info, "getVersion");
+        String id = infoText(info, "getModId");
+        String authors = infoAuthors(id);
+        String desc = stripCodes(infoText(info, "getDescription")).replace('\n', ' ').trim();
+
+        int limit = w - 20;
+        int ty = y + 10;
+        String shownName = ellipsizeTo(this.font, name.isEmpty() ? id : name, limit);
+        g.drawString(this.font, shownName, x + 10, ty, 0xFF1A1108, false);
+        ty += 12;
+        String line2 = version.isEmpty() ? id : (id.isEmpty() ? version : version + "  \u00b7  " + id);
+        if (!line2.isEmpty()) {
+            g.drawString(this.font, ellipsizeTo(this.font, line2, limit), x + 10, ty, 0xFF6B5533, false);
+            ty += 12;
+        }
+        com.eternalcraft.gripeverde.client.render.DiaryChrome.drawInkDividerBetween(g,
+            x + 10, x + w - 10, ty);
+        ty += 6;
+        if (!authors.isEmpty()) {
+            String a = (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+                ? "by " : "por ") + authors;
+            g.drawString(this.font, ellipsizeTo(this.font, a, limit), x + 10, ty, 0xFF654025, false);
+            ty += 12;
+        }
+        // La descripcion, doblada a mano en renglones que quepan.
+        if (!desc.isEmpty()) {
+            int room = (y + h - 10) - ty;
+            int lines = Math.max(0, Math.min(6, room / 10));
+            String rest = desc;
+            for (int i = 0; i < lines && !rest.isEmpty(); i++) {
+                String piece = ellipsizeTo(this.font, rest, limit);
+                int shown = piece.endsWith("...") ? Math.max(0, piece.length() - 3) : piece.length();
+                g.drawString(this.font, piece, x + 10, ty, 0xFF2A1C10, false);
+                rest = rest.substring(Math.min(rest.length(), shown)).trim();
+                ty += 10;
+            }
+        }
+    }
+
+    private static String infoText(Object info, String method) {
+        if (info == null) return "";
+        try {
+            Object v = info.getClass().getMethod(method).invoke(info);
+            return v == null ? "" : stripCodes(v.toString());
+        } catch (Throwable ignored) {
+            return "";
+        }
+    }
+
+    private String infoAuthors(String modId) {
+        try {
+            if (modId.isEmpty()) return "";
+            var container = net.minecraftforge.fml.ModList.get().getModContainerById(modId);
+            if (container.isEmpty()) return "";
+            var info = container.get().getModInfo();
+            Object authors = info.getClass().getMethod("getAuthors").invoke(info);
+            return authors == null ? "" : authors.toString();
+        } catch (Throwable ignored) {
+            return "";
+        }
+    }
+
     /** v0.306.0: el identificador del mod, si la entrada lo trae. */
     private static String modId(Object entry) {
         try {
@@ -333,6 +436,11 @@ public class DiaryModListScreen extends ModListScreen {
         // v0.265.0: la tinta va despues de Forge, para tapar su letra blanca.
         this.hoveredModDesc = "";
         paintRowsInk(g, mouseX, mouseY);
+        // v0.309.0: la ficha del mod elegido, sobre papel, en vez del panel negro.
+        try {
+            drawInfoPage(g);
+        } catch (Throwable ignored) {
+        }
         // v0.302.0: lo que es ese mod, en una linea sobre el papel de los botones.
         try {
             if (!this.hoveredModDesc.isEmpty() && this.footerTop > 40) {

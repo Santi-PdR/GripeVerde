@@ -1,3 +1,8 @@
+## v0.309.0 - La ficha del mod, en papel
+
+- Arsenal: `drawInfoPage` cubre el panel negro de Forge con papel y la ficha en tinta.
+- Parte de CEDA: subtitulo acotado antes de la chapa.
+
 ## v0.308.0 - Las coordenadas, en su papelito
 
 - Reloj en partida: tercera linea = rato dentro.

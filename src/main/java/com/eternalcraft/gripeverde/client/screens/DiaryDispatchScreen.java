@@ -471,9 +471,10 @@ public class DiaryDispatchScreen extends Screen {
         gfx.drawString(this.font, title, centerX - DiaryChrome.widthCached(this.font, title) / 2, titleY,
             DiaryChrome.INK_TITLE, false);
 
+        // v0.309.0: el subtitulo llegaba hasta la chapa REG. XIII.
         String subtitle = ellipsize(
             "- " + DiaryChrome.tr("gripeverde.dispatch.subtitle") + " -",
-            Math.max(64, this.panelW - 40));
+            Math.max(64, this.panelW - 150));
         gfx.drawString(this.font, subtitle, centerX - DiaryChrome.widthCached(this.font, subtitle) / 2, titleY + 12,
             DiaryChrome.INK_SUBTITLE, false);
 

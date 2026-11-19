@@ -1,3 +1,9 @@
+## Version 0.309.0 - The mod's card, on paper
+
+The arsenal had Forge's black panel with white text on the right: it was not from the house and clashed with everything else. That area is now a sheet of paper with the chosen mod's card written in ink: name, version and identifier, who signs it and the first lines of its description, folded by hand so they fit.
+
+The CEDA dispatch gets tidied too: its subtitle now stops before the REG. XIII tag, which was ending up underneath.
+
 ## Version 0.308.0 - Coordinates, on their own slip
 
 The in-game watch no longer mixes things: its three lines are the real time with the day, the world's day and hour with the weather, and how long you have been in. Coordinates move to their **own slip of paper**, bottom right, like the line the map writes under itself: read at a glance, not mixed with the watch, and not dependent on a minimap existing.
