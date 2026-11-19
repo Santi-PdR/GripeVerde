@@ -664,7 +664,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         }
 
         try {
-            drawServersFileAtFoot(gfx, panelX, panelY, panelH,
+            drawServersFileAtFoot(gfx, panelX, panelY, panelW, panelH,
                 com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish());
         } catch (Throwable ignored) {
         }
@@ -935,8 +935,8 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     }
 
     /** v0.301.0: "servers.dat 81,0 KB · 18·XI·2026", en el pie de la hoja. */
-    private void drawServersFileAtFoot(GuiGraphics gfx, int panelX, int panelY, int panelH,
-                                       boolean english) {
+    private void drawServersFileAtFoot(GuiGraphics gfx, int panelX, int panelY, int panelW,
+                                       int panelH, boolean english) {
         String detail = serversFileLine(english);
         if (detail.isEmpty()) return;
         // v0.313.0: el peso se queda en la mitad izquierda del pie.
