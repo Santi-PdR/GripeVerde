@@ -1,3 +1,9 @@
+## v0.311.0 - El archivador, vestido como la casa
+
+- Paquetes: titulo reescrito en tinta sobre su recorte (el blanco no se leia).
+- Paquetes: botones del pie vestidos con `PaperButtons.dressAll`.
+- Paquetes: folio y aviso de salida se omiten si chocan con los botones.
+
 ## v0.310.0 - El estado sube a la cabecera
 
 - Chat y En línea: el resumen de ajustes pasa de la cabecera al pie del titulo (sin pisar Volver).

@@ -1,3 +1,9 @@
+## Version 0.311.0 - El archivador, vestido como la casa
+
+La hoja de paquetes de recursos era la última que seguía con la ropa del juego: título en blanco que sobre el papel claro no se leía y botones grises de siempre. Ahora el título va cubierto con su recorte de papel y reescrito en tinta, y los botones del pie (hecho, abrir carpeta) se visten como los del resto del cuaderno.
+
+El folio y el aviso de salida del pie se callan cuando los botones vestidos llegan a esa franja, para no repetir el problema de antes.
+
 ## Version 0.310.0 - El estado sube a la cabecera
 
 Las hojas de Chat y de En línea resumían al pie lo que quedaba encendido, y ese renglón caía exactamente donde vive el botón de volver: se leían las dos cosas encimadas. El resumen sube al renglón de la cita, debajo del subtítulo, y el pie queda para el botón y su sombra, como debe ser.

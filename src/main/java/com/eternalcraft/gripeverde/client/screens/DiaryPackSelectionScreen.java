@@ -59,6 +59,8 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
 
     // v0.272.0: la hoja solo suena la primera vez que se abre, no al redimensionar.
     private boolean paperSoundDone = false;
+    private final java.util.List<com.eternalcraft.gripeverde.client.widgets.DiaryButton> dressed
+        = new java.util.ArrayList<>();
 
     @Override
     protected void init() {
@@ -94,6 +96,36 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         if (selectedList != null) {
             selectedList.setRenderBackground(false);
             selectedList.setRenderTopAndBottom(false);
+        }
+        // v0.311.0: los botones del archivador se visten como los de la casa.
+        try {
+            this.dressed.addAll(com.eternalcraft.gripeverde.client.render.PaperButtons.dressAll(this));
+        } catch (Throwable ignored) {
+        }
+    }
+
+    /**
+     * v0.311.0: el juego dibuja el titulo del archivador en blanco, y sobre el
+     * papel claro no se lee. Se cubre esa franja con su recorte y se reescribe
+     * en tinta, como en el resto de las hojas.
+     */
+    @Override
+    public void render(GuiGraphics g, int mouseX, int mouseY, float partial) {
+        super.render(g, mouseX, mouseY, partial);
+        try {
+            String title = this.title.getString();
+            int limit = Math.max(80, this.width - 200);
+            String cut = com.eternalcraft.gripeverde.client.render.DiaryChrome
+                .fitCached(this.font, title, limit);
+            int w = com.eternalcraft.gripeverde.client.render.DiaryChrome
+                .widthCached(this.font, cut);
+            int cx = this.width / 2;
+            int y = 14;
+            PaperTexture.drawTornSlip(g, cx - w / 2 - 8, y - 4, w + 16, 16,
+                0xE6D2A6, 0x422810, 244);
+            g.drawString(this.font, cut, cx - w / 2, y,
+                com.eternalcraft.gripeverde.client.render.DiaryChrome.INK_TITLE, false);
+        } catch (Throwable ignored) {
         }
     }
 
@@ -148,6 +180,14 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         String folio = enP ? "sheet 1" : "hoja 1";
         String hint = enP ? "Esc goes back" : "Esc vuelve";
         boolean room = bw >= 360;
+        // v0.311.0: si los botones vestidos llegan a esa franja, se callan.
+        int topDeBoton = Integer.MAX_VALUE;
+        for (com.eternalcraft.gripeverde.client.widgets.DiaryButton b : this.dressed) {
+            if (b.visible) topDeBoton = Math.min(topDeBoton, b.getY());
+        }
+        if (topDeBoton != Integer.MAX_VALUE && by + bh - 19 + 10 > topDeBoton - 4) {
+            room = false;
+        }
         if (room) {
             g.drawString(this.font, folio, bx + 24, by + bh - 19, DiaryChrome.INK_FLAVOR, false);
             int hw = DiaryChrome.widthCached(this.font, hint);

@@ -1,3 +1,9 @@
+## Version 0.311.0 - The filing cabinet, dressed like the house
+
+The resource pack sheet was the last one still wearing the game's clothes: a white title that could not be read on the light paper and the usual grey buttons. The title is now covered with its own slip of paper and rewritten in ink, and the buttons at the foot (done, open folder) are dressed like the rest of the notebook.
+
+The folio and the exit notice at the foot stay quiet when the dressed buttons reach that strip, so the earlier problem is not repeated.
+
 ## Version 0.310.0 - The state moves to the header
 
 The Chat and Online sheets summarised at the foot what was still on, and that line fell exactly where the back button lives: both were read on top of each other. The summary moves up to the quote line, under the subtitle, and the foot is left for the button and its shadow, as it should be.
