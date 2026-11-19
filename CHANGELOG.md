@@ -1,3 +1,9 @@
+## v0.302.0 - El arsenal dice lo que lleva y los mundos se leen
+
+- Arsenal: descripcion del mod bajo la mano, en una linea sobre el papel de los botones.
+- Arsenal: el folio se sube al filo del papel (ya no pisa el boton de la carpeta).
+- Mundos: tira con nombre, modo y ultima partida del mundo elegido.
+
 ## v0.301.0 - Menos cosas encima de otras
 
 - Reloj: fuera la ventanilla de luna (parecia un espejo) y la frase al pasar la mano.

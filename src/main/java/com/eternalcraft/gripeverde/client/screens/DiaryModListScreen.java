@@ -36,6 +36,11 @@ public class DiaryModListScreen extends ModListScreen {
     // v0.272.0: la hoja solo suena la primera vez que se abre, no al redimensionar.
     private boolean paperSoundDone = false;
 
+    // v0.302.0: lo que el arsenal dice del mod bajo la mano, y donde empieza
+    // el papel de los botones, para no escribir encima de ellos.
+    private String hoveredModDesc = "";
+    private int footerTop = -1;
+
     @Override
     public void init() {
         // v0.272.0: la hoja se abre con ruido de papel, una vez por apertura.
@@ -193,6 +198,9 @@ public class DiaryModListScreen extends ModListScreen {
                 g.fill(left - 9, rowTop - 2, left + width + 9, rowBottom + 2, 0x1CF3E7C8);
             }
 
+            if (hovered) {
+                this.hoveredModDesc = modDescription(entry);
+            }
             String name = ellipsizeTo(font, info[0], width - 24);
             String version = ellipsizeTo(font, info[1], width - 24);
             g.drawString(font, name, left + 3, rowTop + 2, 0xFF1A1108, false);
@@ -227,6 +235,21 @@ public class DiaryModListScreen extends ModListScreen {
             return new String[] { name, version };
         } catch (Throwable ignored) {
             return null;
+        }
+    }
+
+    /** v0.302.0: la primera linea de la descripcion del mod, si la trae. */
+    private static String modDescription(Object entry) {
+        try {
+            Object info = entry.getClass().getMethod("getInfo").invoke(entry);
+            if (info == null) return "";
+            Object desc = info.getClass().getMethod("getDescription").invoke(info);
+            if (desc == null) return "";
+            String text = stripCodes(desc.toString()).replace('\n', ' ').trim();
+            while (text.contains("  ")) text = text.replace("  ", " ");
+            return text;
+        } catch (Throwable ignored) {
+            return "";
         }
     }
 
@@ -292,7 +315,20 @@ public class DiaryModListScreen extends ModListScreen {
         } catch (Throwable ignored) {
         }
         // v0.265.0: la tinta va despues de Forge, para tapar su letra blanca.
+        this.hoveredModDesc = "";
         paintRowsInk(g, mouseX, mouseY);
+        // v0.302.0: lo que es ese mod, en una linea sobre el papel de los botones.
+        try {
+            if (!this.hoveredModDesc.isEmpty() && this.footerTop > 40) {
+                String cut = ellipsizeTo(this.font, this.hoveredModDesc,
+                    Math.max(80, this.width - 80));
+                int cw = this.font.width(cut);
+                int y = this.footerTop - 12;
+                g.drawString(this.font, cut, (this.width - cw) / 2, y,
+                    com.eternalcraft.gripeverde.client.render.DiaryChrome.INK_SUBTITLE, false);
+            }
+        } catch (Throwable ignored) {
+        }
     }
 
     /** Hoja bajo el grupo de botones, calculada del alto real que les dio Forge. */
@@ -314,6 +350,7 @@ public class DiaryModListScreen extends ModListScreen {
         int w = Math.min(this.width + 2, right + 10) - x;
         int h = Math.min(this.height + 6, bottom + 10) - y;
         if (w < 24 || h < 16) return;
+        this.footerTop = y;
         PaperTexture.drawTornSheet(g, x, y, w, h, PaperTexture.PaperKind.OFFICIAL);
         // v0.278.0: folio del arsenal, en la esquina del pie.
         try {
@@ -322,7 +359,9 @@ public class DiaryModListScreen extends ModListScreen {
                 String folio = en ? "sheet 1" : "hoja 1";
                 int fw = this.font.width(folio);
                 if (x + w - fw - 8 > x + 4) {
-                    g.drawString(this.font, folio, x + w - fw - 8, y + h - 12,
+                    // v0.302.0: el folio caia sobre el boton de la carpeta; se
+                    // sube al filo superior del papel.
+                    g.drawString(this.font, folio, x + w - fw - 8, y + 3,
                         com.eternalcraft.gripeverde.client.render.DiaryChrome.INK_FLAVOR, false);
                 }
             }

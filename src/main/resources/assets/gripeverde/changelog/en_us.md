@@ -1,3 +1,9 @@
+## Version 0.302.0 - The arsenal says what it carries and worlds can be read
+
+In the arsenal, every mod now shows its description in one line when the hand passes over it, on the paper of the buttons without covering them; the sheet's folio moves to the top edge of that paper so it no longer falls on the mods folder button.
+
+In the saved worlds, a strip below the list shows the chosen world's card with what the game already knew and stayed unread: its name, game mode and the last time it was played. The dark band on each row, from the previous change, lets the grey lines of version, date and mode be seen.
+
 ## Version 0.301.0 - Fewer things on top of each other
 
 The title screen watch loses the moon window that looked like a mirror glued to the dial: the VI is a number again. The phrase that appeared when the hand passed over it - with the hour and the day - is gone too; the watch no longer needs to explain itself. The shooting star's note moves to the foot of the sheet, on the left, where it cannot touch the emblem.

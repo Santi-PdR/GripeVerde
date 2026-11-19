@@ -1,3 +1,9 @@
+## Version 0.302.0 - El arsenal dice lo que lleva y los mundos se leen
+
+En el arsenal, cada mod enseña ahora su descripcion en una sola linea cuando la mano pasa por encima, sobre el papel de los botones y sin taparlos; el folio de la hoja se sube al filo del papel para no caer sobre el boton de la carpeta.
+
+En los mundos guardados, debajo de la lista aparece la ficha del mundo elegido con lo que el juego ya sabia y no se leia: el nombre, el modo de juego y la ultima vez que se jugo. La banda oscura de cada fila, del cambio anterior, deja ver las lineas grises de version, fecha y modo.
+
 ## Version 0.301.0 - Menos cosas encima de otras
 
 El reloj de la portada pierde la ventanilla de luna que parecia un espejo pegado en la esfera: el VI vuelve a ser un numero. Tampoco queda la frase que salia al pasar la mano por encima con la hora y el dia; el reloj ya no necesita explicarse. El aviso de la estrella fugaz se va al pie de la hoja, a la izquierda, donde no toca el emblema.

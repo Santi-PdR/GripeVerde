@@ -245,6 +245,9 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         drawRegisterPage(g, mouseX, mouseY);
         drawFooterPaper(g);
         drawEmptyNote(g);
+        // v0.302.0: la ficha del mundo elegido, con lo que el juego ya sabia y
+        // no se veia: el modo y cuando se jugo por ultima vez.
+        drawSelectedStrip(g);
         drawKeysHint(g);
 
         // Lista y busqueda del juego, tal cual, encima de la pagina.
@@ -333,6 +336,91 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 int tw = DiaryChrome.widthCached(font, cut);
                 g.drawString(font, cut, (w - tw) / 2, 33, DiaryChrome.INK_FLAVOR, false);
             }
+        }
+    }
+
+    /**
+     * v0.302.0: debajo de la lista, una tira con la ficha elegida. El juego
+     * enseña nombre, version, fecha y modo en el renglon, pero quedaban
+     * ilegibles; aqui se dicen en tinta y en una sola linea.
+     */
+    private void drawSelectedStrip(GuiGraphics g) {
+        if (this.vanillaList == null || this.height < 200) return;
+        String detail = selectedWorldDetail();
+        if (detail.isEmpty()) return;
+        int y = this.listBottom + 6;
+        int limit = Math.max(60, this.width - 40);
+        String cut = DiaryChrome.fitText(this.font, detail, limit);
+        int w = DiaryChrome.widthCached(this.font, cut);
+        int bottomY = Integer.MAX_VALUE;
+        for (DiaryButton button : this.dressed) bottomY = Math.min(bottomY, button.getY());
+        if (y + 10 > bottomY - 14) return;
+        g.drawString(this.font, cut, (this.width - w) / 2, y, DiaryChrome.INK_SUBTITLE, false);
+    }
+
+    /** v0.302.0: "nombre  ·  creativo  ·  ultima vez 18 XI 2026". */
+    private String selectedWorldDetail() {
+        boolean en = Discoveries.isEnglish();
+        try {
+            if (this.vanillaList == null) return "";
+            Object entry = this.vanillaList.getSelected();
+            if (entry == null) return "";
+            Object summary = null;
+            for (Class<?> c = entry.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
+                for (java.lang.reflect.Field f : c.getDeclaredFields()) {
+                    if (!f.getType().getSimpleName().equals("LevelSummary")) continue;
+                    f.setAccessible(true);
+                    summary = f.get(entry);
+                    if (summary != null) break;
+                }
+                if (summary != null) break;
+            }
+            if (summary == null) return "";
+            String name = invokeString(summary, "getLevelName");
+            String mode = "";
+            try {
+                Object gm = summary.getClass().getMethod("getGameMode").invoke(summary);
+                if (gm != null) {
+                    Object dn = gm.getClass().getMethod("getDisplayName").invoke(gm);
+                    mode = dn == null ? "" : dn.toString();
+                }
+            } catch (Throwable ignored) {
+            }
+            String when = "";
+            try {
+                Object lp = summary.getClass().getMethod("getLastPlayed").invoke(summary);
+                if (lp instanceof Number n) when = stamp(n.longValue(), en);
+            } catch (Throwable ignored) {
+            }
+            StringBuilder sb = new StringBuilder(name);
+            if (!mode.isEmpty()) sb.append("  \u00b7  ").append(mode);
+            if (!when.isEmpty()) sb.append("  \u00b7  ").append(en ? "last " : "ultima vez ")
+                .append(when);
+            return sb.toString().trim();
+        } catch (Throwable ignored) {
+            return "";
+        }
+    }
+
+    private static String invokeString(Object target, String method) {
+        try {
+            Object v = target.getClass().getMethod(method).invoke(target);
+            return v == null ? "" : v.toString();
+        } catch (Throwable ignored) {
+            return "";
+        }
+    }
+
+    private static String stamp(long millis, boolean en) {
+        try {
+            java.util.Calendar c = java.util.Calendar.getInstance();
+            c.setTimeInMillis(millis);
+            String[] roman = {"I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"};
+            return c.get(java.util.Calendar.DAY_OF_MONTH) + " "
+                + roman[Math.max(0, Math.min(11, c.get(java.util.Calendar.MONTH)))] + " "
+                + c.get(java.util.Calendar.YEAR);
+        } catch (Throwable ignored) {
+            return "";
         }
     }
 
