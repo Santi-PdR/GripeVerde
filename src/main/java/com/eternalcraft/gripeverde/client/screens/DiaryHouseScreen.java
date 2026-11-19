@@ -9,21 +9,28 @@ import com.eternalcraft.gripeverde.client.widgets.DiarySlider;
 import com.eternalcraft.gripeverde.client.widgets.DiaryToggle;
 import com.eternalcraft.gripeverde.config.ClientConfig;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * v0.296.0 - "La casa": una hoja con los interruptores de la casa (musica,
  * ambiente, movimiento, destellos y el reloj de la partida). Son los mismos
  * valores de {@code gripeverde-client.toml}, sin salir del cuaderno.
+ *
+ * v0.301.0: cada boton explica lo que hace cuando la mano se le acerca, los
+ * nombres caben enteros y el cuadro de cifras ya no esta.
  */
 @OnlyIn(Dist.CLIENT)
 public class DiaryHouseScreen extends Screen {
 
     private static final int PANEL_MAX_W = 360;
-    private static final int PANEL_MAX_H = 316;
+    private static final int PANEL_MAX_H = 320;
     private static final int TOGGLE_H = 22;
     private static final int ROW_H = 26;
     private static final int COL_GAP = 10;
@@ -36,6 +43,9 @@ public class DiaryHouseScreen extends Screen {
     private int titleY;
     private int gridTop;
     private int toggleW;
+
+    private final List<AbstractWidget> widgetsWithHelp = new ArrayList<>();
+    private final List<String> helps = new ArrayList<>();
 
     public DiaryHouseScreen(Screen parent) {
         super(Component.literal("La casa"));
@@ -50,8 +60,14 @@ public class DiaryHouseScreen extends Screen {
         return Component.literal(en() ? english : es);
     }
 
+    private static String help(String es, String english) {
+        return en() ? english : es;
+    }
+
     @Override
     protected void init() {
+        this.widgetsWithHelp.clear();
+        this.helps.clear();
         this.panelW = Math.min(PANEL_MAX_W, this.width - 40);
         this.panelH = Math.min(PANEL_MAX_H, this.height - 24);
         this.panelX = (this.width - this.panelW) / 2;
@@ -64,52 +80,68 @@ public class DiaryHouseScreen extends Screen {
         int col2 = col1 + this.toggleW + COL_GAP;
 
         addToggle(col1, row(0), ClientConfig.MENU_MUSIC_ENABLED,
-            "Musica de la casa", "House music");
+            "Musica", "Music",
+            help("Enciende o apaga el gramofono de la portada.",
+                "Turns the title screen gramophone on or off."));
         addToggle(col2, row(0), ClientConfig.AMBIENCE_ENABLED,
-            "Ambiente", "Ambience");
+            "Ambiente", "Ambience",
+            help("Los ruidos de la casa: maderas, lluvia y pasos lejanos.",
+                "The house's noises: timber, rain and faraway steps."));
         addToggle(col1, row(1), ClientConfig.REDUCED_MOTION,
-            "Movimiento corto", "Short motion");
+            "Mov. corto", "Short motion",
+            help("Menos vaiven en el ambiente y en los avisos.",
+                "Less sway in the ambience and in the notices."));
         addToggle(col2, row(1), ClientConfig.REDUCE_FLASHES,
-            "Menos destellos", "Fewer flashes");
+            "Destellos", "Flashes",
+            help("Apaga los relampagos de la tormenta. Para ojos sensibles.",
+                "Turns off storm lightning. For sensitive eyes."));
         addToggle(col1, row(2), ClientConfig.HUD_WATCH_ENABLED,
-            "Reloj en partida", "Watch in game");
+            "Reloj", "Watch",
+            help("El reloj de bolsillo en la esquina, mientras se juega.",
+                "The pocket watch in the corner, while playing."));
         addToggle(col2, row(2), ClientConfig.HUD_WATCH_COORDS,
-            "Coordenadas", "Coordinates");
+            "Coords", "Coords",
+            help("Anota tambien las coordenadas en ese reloj.",
+                "Also writes the coordinates on that watch."));
 
-        // v0.297.0: los volumenes de la casa, con la misma rueda que el FOV.
         int cursor = row(3);
-        boolean roomy = this.panelH >= 290;
+        boolean roomy = this.panelH >= 300;
         if (roomy) {
-            addRenderableWidget(new DiarySlider(
+            DiarySlider music = new DiarySlider(
                 col1, cursor, this.toggleW, 20, ClientConfig.MUSIC_VOLUME.get(),
                 v -> (en() ? "music " : "musica ") + pct(v),
                 v -> {
                     ClientConfig.MUSIC_VOLUME.set(v);
                     ClientConfig.MUSIC_VOLUME.save();
-                }
-            ));
-            addRenderableWidget(new DiarySlider(
+                });
+            addWithHelp(music, help("Volumen del gramofono de la portada.",
+                "Volume of the title screen gramophone."));
+
+            DiarySlider ambience = new DiarySlider(
                 col2, cursor, this.toggleW, 20, ClientConfig.AMBIENCE_VOLUME.get(),
                 v -> (en() ? "ambience " : "ambiente ") + pct(v),
                 v -> {
                     ClientConfig.AMBIENCE_VOLUME.set(v);
                     ClientConfig.AMBIENCE_VOLUME.save();
-                }
-            ));
+                });
+            addWithHelp(ambience, help("Volumen de los ruidos de la casa.",
+                "Volume of the house's noises."));
+
             cursor += 24;
-            addRenderableWidget(new DiarySlider(
+            DiarySlider ui = new DiarySlider(
                 col1, cursor, this.panelW - 32, 20, ClientConfig.UI_VOLUME.get(),
                 v -> (en() ? "interface " : "interfaz ") + pct(v),
                 v -> {
                     ClientConfig.UI_VOLUME.set(v);
                     ClientConfig.UI_VOLUME.save();
-                }
-            ));
+                });
+            addWithHelp(ui, help("Volumen de los sellos y las hojas al abrirse.",
+                "Volume of the seals and sheets as they open."));
             cursor += 24;
         }
 
         final int cornerY = cursor;
-        addRenderableWidget(new DiaryButton(
+        DiaryButton corner = new DiaryButton(
             this.panelX + 16, cornerY, this.panelW - 32, TOGGLE_H,
             cornerLabel(),
             DiaryButton.Icon.GEAR, DiaryButton.Variant.SECONDARY, DiaryButton.SoundProfile.OPTION_OPEN,
@@ -118,36 +150,33 @@ public class DiaryHouseScreen extends Screen {
                 ClientConfig.HUD_WATCH_CORNER.set(next);
                 ClientConfig.HUD_WATCH_CORNER.save();
                 this.rebuildWidgets();
-            }
-        ));
+            });
+        addWithHelp(corner, help("Donde se cuelga el reloj de la partida. Aprieta para cambiarlo.",
+            "Where the in-game watch hangs. Click to change it."));
 
-        int backW = Math.min(100, Math.max(64, (this.panelW - 16) / 3 - 6));
+        int backW = Math.min(122, Math.max(64, (this.panelW - 24) / 2 - 6));
         int backY = this.panelY + this.panelH - 32;
-        int rowW = backW * 3 + 16;
-        int rowX = (this.width - rowW) / 2;
-        addRenderableWidget(new DiaryButton(
+        int rowX = (this.width - (backW * 2 + 10)) / 2;
+        DiaryButton reset = new DiaryButton(
             rowX, backY, backW, 22,
             label("A su sitio", "Put back"),
             DiaryButton.Icon.SCROLL, DiaryButton.Variant.SECONDARY, DiaryButton.SoundProfile.BACK,
-            this::resetHouse
-        ));
-        // v0.299.0: el cuadro de la casa, con lo que ya sabe del lector.
+            this::resetHouse);
+        addWithHelp(reset, help("Devuelve pestillos, volumenes y esquina a como vienen de fabrica.",
+            "Returns latches, volumes and corner to their factory values."));
+
         addRenderableWidget(new DiaryButton(
-            rowX + backW + 8, backY, backW, 22,
-            label("El cuadro", "Ledger"),
-            DiaryButton.Icon.CHART, DiaryButton.Variant.SECONDARY, DiaryButton.SoundProfile.OPTION_OPEN,
-            () -> {
-                if (this.minecraft != null) {
-                    this.minecraft.setScreen(new DiaryHouseLedgerScreen(this));
-                }
-            }
-        ));
-        addRenderableWidget(new DiaryButton(
-            rowX + (backW + 8) * 2, backY, backW, 22,
+            rowX + backW + 10, backY, backW, 22,
             Component.translatable("gripeverde.options.button.done"),
             DiaryButton.Icon.DOOR, DiaryButton.Variant.PRIMARY, DiaryButton.SoundProfile.BACK,
             this::onClose
         ));
+    }
+
+    private void addWithHelp(AbstractWidget widget, String helpLine) {
+        this.widgetsWithHelp.add(widget);
+        this.helps.add(helpLine);
+        addRenderableWidget(widget);
     }
 
     private static String pct(double value) {
@@ -161,16 +190,16 @@ public class DiaryHouseScreen extends Screen {
     private Component cornerLabel() {
         int corner = ClientConfig.HUD_WATCH_CORNER.get();
         String where = switch (corner) {
-            case 1 -> en() ? "top right" : "arriba a la derecha";
+            case 1 -> en() ? "top right" : "arriba derecha";
             case 2 -> en() ? "bottom" : "abajo";
-            default -> en() ? "top left" : "arriba a la izquierda";
+            default -> en() ? "top left" : "arriba izquierda";
         };
-        return label("Esquina del reloj: " + where, "Watch corner: " + where);
+        return label("Esquina: " + where, "Corner: " + where);
     }
 
     private void addToggle(int x, int y, net.minecraftforge.common.ForgeConfigSpec.BooleanValue value,
-                           String es, String english) {
-        addRenderableWidget(new DiaryToggle(
+                           String es, String english, String helpLine) {
+        DiaryToggle toggle = new DiaryToggle(
             x, y, this.toggleW, TOGGLE_H,
             value::get,
             v -> {
@@ -179,8 +208,8 @@ public class DiaryHouseScreen extends Screen {
             },
             label(es, english),
             (v) -> v ? Component.literal(en() ? "on" : "si") : Component.literal(en() ? "off" : "no"),
-            null
-        ));
+            null);
+        addWithHelp(toggle, helpLine);
     }
 
     @Override
@@ -203,13 +232,27 @@ public class DiaryHouseScreen extends Screen {
 
         super.render(g, mouseX, mouseY, partialTick);
 
+        // v0.301.0: la linea que explica el boton que se esta mirando.
+        String helpLine = null;
+        for (int i = 0; i < this.widgetsWithHelp.size(); i++) {
+            AbstractWidget w = this.widgetsWithHelp.get(i);
+            if (w.visible && w.isMouseOver(mouseX, mouseY)) {
+                helpLine = this.helps.get(i);
+                break;
+            }
+        }
+        if (helpLine != null) {
+            String fitted = DiaryChrome.fitText(this.font, helpLine, Math.max(60, this.panelW - 40));
+            int hw = DiaryChrome.widthCached(this.font, fitted);
+            g.drawString(this.font, fitted, this.width / 2 - hw / 2,
+                this.panelY + this.panelH - 48, DiaryChrome.INK_SUBTITLE, false);
+        }
+
         String folio = en() ? "sheet XIX  ·  Esc back" : "hoja XIX  ·  Esc vuelve";
         int folioW = DiaryChrome.widthCached(this.font, folio);
-        g.drawString(this.font, folio,
-            this.panelX + this.panelW - 12 - folioW,
+        g.drawString(this.font, folio, this.panelX + this.panelW - 12 - folioW,
             this.panelY + this.panelH - 12, DiaryChrome.INK_SUBTITLE, false);
-        String reg = en() ? "REG. XIX" : "REG. XIX";
-        g.drawString(this.font, reg, this.panelX + 12, this.panelY + this.panelH - 12,
+        g.drawString(this.font, "REG. XIX", this.panelX + 12, this.panelY + this.panelH - 12,
             DiaryChrome.INK_SUBTITLE, false);
     }
 
