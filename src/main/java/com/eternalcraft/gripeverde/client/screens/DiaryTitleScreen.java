@@ -226,21 +226,29 @@ public class DiaryTitleScreen extends Screen {
             ? buttonTableTop()
             : buttonColumn.anchorY(Anchor.BOT_LEFT, totalBtnH) - Spacing.GAP_LARGE;
 
-        this.addRenderableWidget(new GreenFluButton(
+        GreenFluButton mpButton = new GreenFluButton(
             btnX, btnY, mainButtonW, BTN_H,
             Component.translatable("gripeverde.title.button.multiplayer"),
             Component.literal(pickRotatingSubtitle(true)),
             TextureAssets.ICON_BTN_MP,
             this::onMultiplayer
-        ));
+        );
+        // v0.334.0: el nombre del boton es de la casa; el aviso dice lo que hay
+        // adentro, que es lo que necesita saber quien abre el mod por primera vez.
+        mpButton.setTooltip(Tooltip.create(Component.literal(isEnglishSelected()
+            ? "Saved servers and the local network" : "Los servidores anotados y la red local")));
+        this.addRenderableWidget(mpButton);
 
-        this.addRenderableWidget(new GreenFluButton(
+        GreenFluButton modsButton = new GreenFluButton(
             btnX, btnY + BTN_H + Spacing.GAP_MEDIUM, mainButtonW, BTN_H,
             Component.translatable("gripeverde.title.button.mods"),
             Component.literal(pickRotatingSubtitle(false)),
             TextureAssets.ICON_BTN_MODS,
             this::onMods
-        ));
+        );
+        modsButton.setTooltip(Tooltip.create(Component.literal(isEnglishSelected()
+            ? "The arsenal: the mods installed here" : "El arsenal: los mods instalados aqui")));
+        this.addRenderableWidget(modsButton);
 
         LayoutRegion rightCol = rightColumn();
         int quitX = rightCol.x + rightCol.w - BTN_SLIM_W;
@@ -289,6 +297,23 @@ public class DiaryTitleScreen extends Screen {
             this.addRenderableWidget(new SlimButton(quitX, rightBtnY, BTN_SLIM_W, BTN_SLIM_H,
                 Component.translatable("gripeverde.title.button.quit"),
                 () -> this.minecraft.stop()));
+
+            // v0.334.0: la puerta de un jugador vuelve a verse. Hasta ahora
+            // solo existia en Ctrl+S, y quien instala el mod por primera vez no
+            // tiene como adivinarlo. Va sobre Ajustes y Salir, a lo ancho de
+            // los dos, y solo si queda debajo de la fila de lentes.
+            int singleW = BTN_SLIM_W * 2 + Spacing.GAP_SMALL;
+            int singleX = optionsX;
+            int singleY = rightBtnY - BTN_SLIM_H - Spacing.GAP_SMALL;
+            if (singleY >= 40 && singleX + singleW <= this.width - 4) {
+                SlimButton single = new SlimButton(singleX, singleY, singleW, BTN_SLIM_H,
+                    Component.literal(isEnglishSelected() ? "Single player" : "Un jugador"),
+                    this::onSingleplayer);
+                single.setTooltip(Tooltip.create(Component.literal(isEnglishSelected()
+                    ? "The worlds kept in this house"
+                    : "Los mundos guardados en esta casa")));
+                this.addRenderableWidget(single);
+            }
         }
 
         // v0.221.0: el manual de campo sale de la portada (el lector lo pidio

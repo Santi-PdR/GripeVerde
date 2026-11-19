@@ -1,3 +1,8 @@
+## v0.334.0 - La puerta de un jugador vuelve a la portada
+
+- Portada: boton angosto «Un jugador» sobre Ajustes/Salir (con guarda de alto).
+- Portada: avisos de los dos botones grandes.
+
 ## v0.333.0 - La documentacion dice la verdad de hoy
 
 - `CONTRIBUTING.md`: estado vigente, baseline medida y flujo de publicacion.

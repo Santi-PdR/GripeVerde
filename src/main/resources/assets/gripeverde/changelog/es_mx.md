@@ -1,3 +1,11 @@
+## Version 0.334.0 - La puerta de un jugador vuelve a la portada
+
+Los dos botones grandes de la portada abren el cordón y el arsenal, pero la puerta a los mundos propios solo existía en Ctrl+S: invisible, sin cartel. Quien instala el mod por primera vez no tenía cómo adivinarlo, y eso pesa más ahora que el mod se pasa de mano.
+
+La portada gana un botón angosto «Un jugador» sobre Ajustes y Salir, a lo ancho de los dos, con su aviso al pasar: los mundos guardados en esta casa. Los dos botones grandes también dicen qué hay adentro al pasar el ratón, sin cambiar su nombre ni su voz.
+
+Donde no hay alto de sobra —ventanas apretadas— el botón no se agrega y la puerta sigue en Ctrl+S, como estaba.
+
 ## Version 0.333.0 - La documentación dice la verdad de hoy
 
 La guía para tocar el mod seguía anunciando la v0.23.1, 60 archivos Java y 93 claves por idioma: trescientas versiones de distancia. Ahora dice la versión publicada, la rama vigente, la base real que miden las herramientas (71 archivos, 191 claves, 8/8 sellos) y cómo se publica: espejos, lint, un push, un run, el sha256.

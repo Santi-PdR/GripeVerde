@@ -9,7 +9,7 @@ Actualizado: 2026-11-13
   token, igual que el de Photon/Fisk.
 - Rama de trabajo de la sesión: `arena/48be547c-gripeverde` (base `02e85bc`) — la plataforma
   fija el nombre, no se renombra. Todo el trabajo va ahí; el PR sale de esa rama.
-- Versión de esta rama: `0.333.0` (anteriores entregadas: `0.229.0`, `0.228.0`, `0.209.0`, `0.208.0`, `0.207.0`, `0.206.0`, `0.205.0`, `0.204.0`, `0.203.0`, `0.202.0`, `0.201.0`, `0.200.0`, `0.199.0`, `0.198.0`, `0.197.0`, `0.196.0`, `0.195.0`, `0.194.0`, `0.193.0`, `0.192.0`, `0.191.0`, `0.190.0`, `0.189.0`, `0.188.0`, `0.187.0`, `0.186.0`, `0.185.0`, `0.184.2`, `0.184.1`, `0.183.0`)
+- Versión de esta rama: `0.334.0` (anteriores entregadas: `0.229.0`, `0.228.0`, `0.209.0`, `0.208.0`, `0.207.0`, `0.206.0`, `0.205.0`, `0.204.0`, `0.203.0`, `0.202.0`, `0.201.0`, `0.200.0`, `0.199.0`, `0.198.0`, `0.197.0`, `0.196.0`, `0.195.0`, `0.194.0`, `0.193.0`, `0.192.0`, `0.191.0`, `0.190.0`, `0.189.0`, `0.188.0`, `0.187.0`, `0.186.0`, `0.185.0`, `0.184.2`, `0.184.1`, `0.183.0`)
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
 - El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
   proyecto local del usuario.
@@ -264,6 +264,7 @@ anidados y sentencias cortadas (línea que empieza por operador tras un `;` o `}
 | 65 | el mod ya tiene su sello | 0.331.0 |
 | 66 | el pie de Sonido se calla en hoja apretada | 0.332.0 |
 | 67 | la documentacion dice la verdad de hoy | 0.333.0 |
+| 68 | la puerta de un jugador vuelve a la portada | 0.334.0 |
 
 ## Folios del gabinete
 
@@ -287,6 +288,11 @@ anidados y sentencias cortadas (línea que empieza por operador tras un `;` o `}
 | XVI | recursos |
 | XVII | arsenal |
 | XVIII | mundos guardados |
+
+## Cambios de 0.334.0 — un jugador en la portada
+
+- **Portada**: `SlimButton` «Un jugador» (`BTN_SLIM_W*2 + GAP_SMALL`) sobre Ajustes/Salir si `singleY >= 40`.
+- **Portada**: `setTooltip` en los dos `GreenFluButton` grandes.
 
 ## Cambios de 0.333.0 — documentacion al dia
 

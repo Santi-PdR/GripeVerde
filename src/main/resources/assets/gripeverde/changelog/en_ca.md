@@ -1,3 +1,11 @@
+## Version 0.334.0 - The single-player door returns to the title screen
+
+The two big buttons on the title screen open the cordon and the arsenal, but the door to your own worlds existed only in Ctrl+S: invisible, with no sign. Whoever installs the mod for the first time had no way to guess it, and that weighs more now that the mod is handed over.
+
+The title screen gains a narrow "Single player" button above Settings and Quit, spanning both, with its notice on hover: the worlds kept in this house. The two big buttons also say what is inside on hover, without changing their name or their voice.
+
+Where there is no spare height —tight windows— the button is not added and the door stays in Ctrl+S, as it was.
+
 ## Version 0.333.0 - The documentation tells today's truth
 
 The guide for touching the mod still announced v0.23.1, 60 Java files and 93 keys per language: three hundred versions away. It now states the published version, the current branch, the real baseline the tools measure (71 files, 191 keys, 8/8 seals) and how a version is published: mirrors, lint, one push, one run, the sha256.
