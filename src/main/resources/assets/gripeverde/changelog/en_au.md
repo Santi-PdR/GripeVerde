@@ -1,3 +1,9 @@
+## Version 0.303.0 - The posts can be read
+
+The game writes each server's name and sign in fixed white and grey, and on the sheet's light paper they could not be read. Now only the text strip is covered -the post's icon is respected- and the name is rewritten in ink, the sign in sepia and, if that address has been visited before, the line says so: known door.
+
+The row keeps its edge seal when the post is official, and the one under the hand lightens so you know which one Enter takes.
+
 ## Version 0.302.0 - The arsenal says what it carries and worlds can be read
 
 In the arsenal, every mod now shows its description in one line when the hand passes over it, on the paper of the buttons without covering them; the sheet's folio moves to the top edge of that paper so it no longer falls on the mods folder button.

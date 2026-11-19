@@ -712,6 +712,8 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 }
                 // Subrayado sutil bajo cada server
                 drawEntryFrames(gfx);
+                // v0.303.0: el nombre y el cartel del puesto, en tinta.
+                paintServerRowsInk(gfx);
                 // Scroll estilizado encima
                 DiaryChrome.drawStyledScrollThumbForOptionsList(gfx, this.vanillaList, this.width);
             } catch (Throwable ignored) {}
@@ -1055,6 +1057,109 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 }
             }
         } catch (Throwable ignored) {}
+    }
+
+    /**
+     * v0.303.0: el juego escribe el nombre y el cartel de cada puesto en blanco
+     * y gris fijos, y sobre el papel claro no se leian. Se cubre solo la franja
+     * de texto -el icono se respeta- y se reescriben en tinta, en el mismo sitio.
+     */
+    private void paintServerRowsInk(GuiGraphics gfx) {
+        if (this.vanillaList == null) return;
+        int itemHeight = vanillaItemHeight;
+        if (itemHeight <= 0) return;
+        try {
+            var children = this.vanillaList.children();
+            if (children == null || children.isEmpty()) return;
+            int rowLeft = this.vanillaList.getRowLeft();
+            int rowWidth = this.vanillaList.getRowWidth();
+            int listTop = this.vanillaList.getTop();
+            int listBottom = this.vanillaList.getBottom();
+            double scrollAmount = 0.0;
+            try { scrollAmount = this.vanillaList.getScrollAmount(); } catch (Throwable ignored) {}
+            boolean scissored = false;
+            try {
+                gfx.enableScissor(rowLeft, listTop, rowLeft + rowWidth, listBottom);
+                scissored = true;
+            } catch (Throwable ignored) {
+            }
+            int textLeft = rowLeft + 34;
+            int textRight = rowLeft + rowWidth - 46;
+            int textW = Math.max(40, textRight - textLeft);
+            for (int i = 0; i < children.size(); i++) {
+                var entry = children.get(i);
+                String cls = entry.getClass().getSimpleName();
+                if (cls.contains("LAN")) continue;
+                ServerData sd = extractServerDataFromEntry(entry);
+                if (sd == null) continue;
+                String name = fieldString(sd, "name");
+                String ip = fieldString(sd, "ip");
+                if (name == null || name.isEmpty()) name = ip;
+                if (name == null || name.isEmpty()) continue;
+                int entryTop = vanillaListY0 + 4 - (int) scrollAmount + i * itemHeight
+                    + vanillaHeaderHeight - 2;
+                int entryBottom = entryTop + itemHeight;
+                if (entryBottom < listTop || entryTop > listBottom) continue;
+                int drawTop = Math.max(entryTop, listTop);
+                int drawBottom = Math.min(entryBottom, listBottom);
+                if (drawBottom - drawTop < 10) continue;
+
+                int slipTop = drawTop + 1;
+                int slipH = Math.max(16, drawBottom - drawTop - 2);
+                com.eternalcraft.gripeverde.client.render.PaperTexture.drawTornSlip(
+                    gfx, textLeft - 4, slipTop - 1, textW + 10, slipH, 0xE6D2A6, 0x422810, 232);
+
+                String shownName = DiaryChrome.fitText(this.font, name, textW);
+                gfx.drawString(this.font, shownName, textLeft, slipTop + 2, 0xFF1A1108, false);
+
+                String motd = motdText(sd);
+                String extra = "";
+                try {
+                    if (ip != null && com.eternalcraft.gripeverde.client.integration
+                            .RecentAddresses.list().contains(ip)) {
+                        extra = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+                            ? "  ·  known door" : "  ·  puerta conocida";
+                    }
+                } catch (Throwable ignored) {
+                }
+                String line2 = motd.isEmpty() ? extra.trim() : motd + extra;
+                if (!line2.isEmpty() && slipH >= 20) {
+                    String shownMotd = DiaryChrome.fitText(this.font, line2, textW);
+                    gfx.drawString(this.font, shownMotd, textLeft, slipTop + 13, 0xFF6B5533, false);
+                }
+            }
+            if (scissored) {
+                try {
+                    gfx.disableScissor();
+                } catch (Throwable ignored) {
+                }
+            }
+        } catch (Throwable ignored) {
+        }
+    }
+
+    private static String fieldString(Object target, String fieldName) {
+        try {
+            java.lang.reflect.Field f = target.getClass().getField(fieldName);
+            Object v = f.get(target);
+            return v == null ? "" : v.toString();
+        } catch (Throwable ignored) {
+            return "";
+        }
+    }
+
+    private static String motdText(Object serverData) {
+        try {
+            java.lang.reflect.Field f = serverData.getClass().getField("motd");
+            Object v = f.get(serverData);
+            if (v instanceof net.minecraft.network.chat.Component c) {
+                String s = c.getString();
+                return s == null ? "" : s.replace('\n', ' ').trim();
+            }
+            return v == null ? "" : v.toString();
+        } catch (Throwable ignored) {
+            return "";
+        }
     }
 
     /**

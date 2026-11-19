@@ -1,3 +1,9 @@
+## Version 0.303.0 - Los puestos se leen
+
+El juego escribe el nombre y el cartel de cada servidor en blanco y gris fijos, y sobre el papel claro de la hoja no se leian. Ahora se cubre solo la franja de texto -el icono del puesto se respeta- y el nombre se reescribe en tinta, el cartel en sepia y, si esa direccion ya se visito, la linea lo dice: puerta conocida.
+
+La fila sigue llevando su lacre de canto si el puesto es oficial, y la que esta bajo la mano se aclara para saber cual se lleva con Enter.
+
 ## Version 0.302.0 - El arsenal dice lo que lleva y los mundos se leen
 
 En el arsenal, cada mod enseña ahora su descripcion en una sola linea cuando la mano pasa por encima, sobre el papel de los botones y sin taparlos; el folio de la hoja se sube al filo del papel para no caer sobre el boton de la carpeta.

@@ -1,3 +1,9 @@
+## v0.303.0 - Los puestos se leen
+
+- Multijugador: nombre y cartel de cada servidor reescritos en tinta sobre su franja.
+- Marca «puerta conocida» cuando la direccion esta en el registro reciente.
+- El icono del puesto y el lacre de canto se conservan.
+
 ## v0.302.0 - El arsenal dice lo que lleva y los mundos se leen
 
 - Arsenal: descripcion del mod bajo la mano, en una linea sobre el papel de los botones.
