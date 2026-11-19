@@ -1,3 +1,9 @@
+## Version 0.348.0 - La ficha del proyecto se pone al dia
+
+Ronda de documentación, sin tocar una sola pantalla. La guía de trabajo ya dice qué versión está publicada (0.347.0) y que esta entrega es la ficha; el estado operativo pasa a 0.348.0 y enumera lo cerrado en la tanda 0.336.0–0.347.0: Sonido, Accesibilidad, Multijugador, Opciones, Mundos guardados, la pausa sin día ni hora ni coordenadas, el parte de muerte, el papel de coordenadas del HUD y del minimapa, la firma y el grabado de la portada, y las listas grises del juego.
+
+El contexto maestro deja escrito qué quedó abierto a propósito: el rótulo «¡Estás muerto!» convive con el papel hasta que el owner lo decida, y las pantallas de opciones en ventanas de menos de 300 px de alto siguen sin medirse contra una captura.
+
 ## Version 0.347.0 - El arsenal de mods deja de repetir tiras y de pisar el pie
 
 En la lista de mods, la tira de papel de cada renglón se salía cuatro píxeles por abajo y se encimaba con la del siguiente: el papel translúcido se doblaba y salían bandas más oscuras cada dos filas. Ahora cada tira ocupa exactamente su renglón, con un píxel de aire.

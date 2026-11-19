@@ -5,19 +5,26 @@ de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
 que una seccion posterior lo mencione expresamente.
 
-## ESTADO: DESARROLLO ACTIVO (2026-11-13, GripeVerde v0.341.0)
+## ESTADO: DESARROLLO ACTIVO (2026-11-13, GripeVerde v0.348.0)
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
-- La ronda visual de hojas va por `0.341.0`. Cerradas en esta tanda, entre otras:
-  Packs vestido, fecha en el reloj del HUD, pie de Multijugador ordenado, hoja de
-  Video vestida, README de portada, La casa en ventanas bajas, recientes de
-  Conexión directa acotadas, reloj junto a JourneyMap en la columna derecha,
-  estado de la pausa junto a la vela, filas LAN legibles, cabecera LAN en tinta,
-  fichas del diario con sitio, La casa desde los ajustes de campo, el aviso de
-  ficha nueva bajo las lentes, rejillas ancladas al pie (Aspecto y
-  Accesibilidad), el sello del mod en `mods.toml` y el pie de Sonido en hoja
-  apretada.
+- La ronda visual de hojas va por `0.348.0`. Cerradas en esta tanda, entre
+  otras: la aguja de los mandos ya no cruza la etiqueta; el pie de Sonido se
+  reparte a los lados de Volver; Accesibilidad deja aire entre la lista y el
+  filete y su linea de margen no pisa el ojo; el pie de Multijugador deja libre
+  la fila de fichas; la frase del cronista de Opciones solo se escribe si cabe;
+  Mundos guardados ya no se parte en vertical y su folio vive en la cabecera;
+  la pausa perdio dia, hora, clima y coordenadas; el parte de muerte se queda
+  en su columna y no repite la causa del juego; el papel de coordenadas adopta
+  el parte del minimapa; la firma de la portada y el grabado del reloj se leen
+  enteros; las filas grises del juego llevan velo y ficha de registro
+  (Sonido, Chat, Accesibilidad, Paquetes) y el arsenal de mods ya no encima
+  tiras de papel.
+- Sigue abierto, por decision del owner: quitar tambien el rotulo
+  «¡Estas muerto!» y dejar solo el papel (hoy conviven a proposito), y revisar
+  las pantallas de opciones en ventanas de menos de ~300 px de alto, que no se
+  han podido medir contra una captura.
 - Cada versión publicada tiene su release con JAR y sha256; el CI (`build.yml`)
   corre `verify_mirrors.py`, `lint_java.py` y `./gradlew clean build` antes de
   publicar, y el job `publish` compara `release-tag.txt` con `build.gradle`.

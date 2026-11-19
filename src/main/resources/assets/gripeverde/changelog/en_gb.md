@@ -1,3 +1,9 @@
+## Version 0.348.0 - La ficha del proyecto se pone al dia
+
+Documentation round, without touching a single screen. The working guide now says which version is published (0.347.0) and that this delivery is the record; the operational state moves to 0.348.0 and lists what the 0.336.0–0.347.0 batch closed: Sound, Accessibility, Multiplayer, Options, Saved worlds, the pause screen with no day, hour or coordinates, the death notice, the HUD and minimap coordinate slip, the cover signature and watch engraving, and the game's grey lists.
+
+The master context records what was deliberately left open: the «You died!» title lives alongside the paper until the owner decides, and the options screens in windows under 300 px tall have not yet been measured against a screenshot.
+
 ## Version 0.347.0 - El arsenal de mods deja de repetir tiras y de pisar el pie
 
 In the mod list, each row's paper strip ran four pixels too low and overlapped the next one: the translucent paper folded over itself and produced darker bands every other row. Now each strip fills exactly its row, with one pixel of air.

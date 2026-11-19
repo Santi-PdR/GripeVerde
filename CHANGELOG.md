@@ -1,3 +1,7 @@
+## v0.348.0 - La ficha del proyecto se pone al dia
+
+- Documentación: CONTRIBUTING con la versión publicada, KNOWN_ISSUES en 0.348.0 con lo cerrado y lo abierto, y CONTEXTO con la tanda 0.336.0–0.347.0.
+
 ## v0.347.0 - El arsenal de mods deja de repetir tiras y de pisar el pie
 
 - Lista de mods: la tira de papel de cada renglón ya no se encima con la siguiente.

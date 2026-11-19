@@ -2,9 +2,12 @@
 
 ## Addendum operativo actual (2026-11-13)
 
-- Versiones en curso: **GripeVerde v0.333.0**. La ronda vigente es la de
+- Versiones en curso: **GripeVerde v0.348.0**. La ronda vigente es la de
   arreglos visuales por hojas: cada version cierra una hoja, una franja o un
-  rotulo, y se publica sola (un push, un run, un release).
+  rotulo, y se publica sola (un push, un run, un release). La tanda 0.336.0 a
+  0.347.0 cerro Sonido, Accesibilidad, Multijugador, Opciones, Mundos guardados,
+  la pausa, el parte de muerte, el papel de coordenadas del HUD y del minimapa,
+  la firma y el grabado de la portada, y las listas grises del juego.
 - Las reglas de siempre siguen en pie: mod **solo de cliente**, sin bloques,
   sin items, sin gameplay, sin resourcepacks; la identidad visual se hace con
   Java y los render/widgets propios.
