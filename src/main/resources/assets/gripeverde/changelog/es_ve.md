@@ -1,3 +1,7 @@
+## Version 0.315.0 - El mod se puede pasar de mano
+
+La casa tenia puertas para todo menos para que alguien de afuera la abriera: el README empezaba con doscientas lineas de historial y no decia ni que version de Minecraft pide. Ahora abre con lo que hace, lo que necesita y los cuatro pasos para instalarlo, con el enlace al ultimo release, y el historial queda abajo, entero, donde estaba.
+
 ## Version 0.314.0 - La hoja de video, vestida
 
 El botón Video de la mesa de trabajo abría la pantalla del juego tal cual: fondo de tierra, botones grises y ni una hoja de la casa. Ahora entra en la lista de pantallas que se visten por evento, así que lleva la escena de la noche detrás, los botones de papel y el canto gastado del borde, como el resto del gabinete, sin tocar su lógica.

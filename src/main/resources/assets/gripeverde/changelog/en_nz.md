@@ -1,3 +1,7 @@
+## Version 0.315.0 - The mod can be handed over
+
+The house had doors for everything except letting someone from outside open it: the README started with two hundred lines of history and did not even say which Minecraft version it asks for. It now opens with what it does, what it needs and the four steps to install it, with the link to the latest release, and the history stays below, whole, where it was.
+
 ## Version 0.314.0 - The video sheet, dressed
 
 The Video button on the work table opened the game's screen as it comes: dirt background, grey buttons and not one sheet from the house. It now joins the list of screens dressed by event, so it carries the night scene behind, the paper buttons and the worn edge of the border, like the rest of the cabinet, without touching its logic.

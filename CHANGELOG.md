@@ -1,3 +1,7 @@
+## v0.315.0 - El mod se puede pasar de mano
+
+- `README.md` abre con que es, requisitos, instalacion y enlaces; el historial queda abajo.
+
 ## v0.314.0 - La hoja de video, vestida
 
 - `VideoSettingsScreen` entra en `isHouseRawScreen`: escena, botones de papel y canto.

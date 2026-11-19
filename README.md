@@ -1,19 +1,64 @@
-**v0.183.0 - Ningún adorno contesta antes que los botones**
+# GripeVerde
 
-El manual de campo y el archivo ya no se comen los clics de los botones, el manual gana aire entre renglones, párrafos y secciones, y en el parte de CEDA Ctrl+1..0 manda la ranura de ese número.
+Un cuaderno de campo para Minecraft: cada pantalla del juego pasa a ser una hoja de papel gastado —tinta, lacre y folios— con la misma mano en todas partes. Forge 1.20.1.
 
-**v0.182.0 - La crónica respira**
+![estado](https://img.shields.io/badge/Minecraft-1.20.1%20%C2%B7%20Forge%2047.4.20-1A1108)
 
-El historial de cambios deja de estar apretado: más aire entre renglones, títulos y versiones, margen que sigue a la ventana y botones que ya no roban clics ni sobresalen en ventanas chicas.
+## Qué es
 
-## Instalar la última versión
+El mod viste el menú, los ajustes y el HUD como un gabinete de papeles: portada con reloj y lentes, hojas rasgadas para cada ajuste, fichas de mundo y de servidor en tinta, una bitácora de la partida y un parte de defunción en papel. Nada de paneles negros de Forge: cuando una pantalla del juego se abre cruda, se viste por evento sin tocar su lógica.
 
-PowerShell, con el juego cerrado. Baja el `.jar` del último release directo a la carpeta de mods,
-reemplaza el anterior y verifica el tamaño:
+Lo que no cambia: el juego sigue siendo el juego. El mod **no** añade bloques, ni menas, ni mobs, ni progresión. Es interfaz y nada más.
+
+## Requisitos
+
+| cosa | versión |
+|---|---|
+| Minecraft | 1.20.1 |
+| Forge | 47.4.20 (o superior de la rama 47) |
+| Java | 17 |
+
+Opcionales que el mod reconoce sin exigirlos: JourneyMap (el reloj del HUD le deja su sitio), Embeddium (la hoja de video prefiere la suya y, si no está, usa la del juego), CopyL (el parte de mensajes rápidos migra sus diez fichas).
+
+## Instalar
+
+1. Instalá Forge 47.4.20 en el perfil de 1.20.1.
+2. Bajá el `.jar` de la **[última versión](https://github.com/Santi-PdR/GripeVerde/releases/latest)**.
+3. Pegalo en `.minecraft/mods` (o en `mods` del perfil de tu lanzador).
+4. Abrí el juego con el perfil de Forge.
+
+Con PowerShell, cerrando el juego antes, esto baja el último release solo:
 
 ```powershell
-$ProgressPreference='SilentlyContinue'; $m='D:\Minecraft\SKLauncher\sklauncher-data-v4\instances\test-1\mods'; if(-not (Test-Path $m)){throw "No existe $m"}; $a=(Invoke-RestMethod 'https://api.github.com/repos/Santi-PdR/GripeVerde/releases/latest' -UseBasicParsing).assets | Where-Object { $_.name -like 'gripeverde-*.jar' } | Select-Object -First 1; if(-not $a){throw 'El ultimo release no tiene JAR'}; Get-ChildItem $m -Filter '*gripeverde*.jar' -ErrorAction SilentlyContinue | ForEach-Object { try{ Remove-Item $_.FullName -Force -ErrorAction Stop }catch{ throw "Cerra Minecraft y repeti: $($_.Name) esta en uso" } }; $out=Join-Path $m $a.name; Invoke-WebRequest -Uri $a.browser_download_url -OutFile $out -UseBasicParsing; $f=Get-Item $out; if($f.Length -ne $a.size){ throw "Descarga incompleta: $($f.Length) de $($a.size) bytes" }; "OK: $($f.Name) ($($f.Length) bytes) en $m"
+$m='D:\Minecraft\SKLauncher\sklauncher-data-v4\instances\test-1\mods'
+if(-not (Test-Path $m)){throw "No existe $m"}
+$a=(Invoke-RestMethod 'https://api.github.com/repos/Santi-PdR/GripeVerde/releases/latest' -UseBasicParsing).assets |
+   Where-Object { $_.name -like 'gripeverde-*.jar' } | Select-Object -First 1
+if(-not $a){throw 'El ultimo release no tiene JAR'}
+Get-ChildItem $m -Filter '*gripeverde*.jar' -ErrorAction SilentlyContinue | ForEach-Object {
+  try{ Remove-Item $_.FullName -Force -ErrorAction Stop }
+  catch{ throw "Cerra Minecraft y repeti: $($_.Name) esta en uso" } }
+$out=Join-Path $m $a.name
+Invoke-WebRequest -Uri $a.browser_download_url -OutFile $out -UseBasicParsing
+$f=Get-Item $out
+if($f.Length -ne $a.size){ throw "Descarga incompleta: $($f.Length) de $($a.size) bytes" }
+"OK: $($f.Name) ($($f.Length) bytes) en $m"
 ```
+
+## Primeros pasos
+
+- **Portada**: arriba a la derecha están las lentes del Diario, el Parte y La casa, además de Mods y Ajustes.
+- **La casa** es la hoja de configuración del mod: idioma, sonido, aspecto, accesibilidad y el archivo de ajustes de campo.
+- **Diario**: la crónica de la partida y el registro de versiones; el Parte sirve para los mensajes rápidos.
+- **HUD**: reloj con día, fecha y clima arriba a la derecha, coordenadas en su propio papelito abajo, y se aparta cuando aparece el minimapa.
+
+## Enlaces
+
+- [Última versión](https://github.com/Santi-PdR/GripeVerde/releases/latest)
+- [Historial de cambios](CHANGELOG.md)
+- [Contexto del menú](docs/CONTEXTO_MODMENU.md) — la tabla de hojas, medidas y sellos de registro.
+
+## Historial
 
 **v0.181.0 - Los mensajes viejos se vienen con nosotros**
 
