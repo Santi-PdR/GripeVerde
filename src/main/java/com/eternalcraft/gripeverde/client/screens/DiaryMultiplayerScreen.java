@@ -663,10 +663,17 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         } catch (Throwable ignored) {
         }
 
+        try {
+            drawServersFileAtFoot(gfx, panelX, panelY, panelH,
+                com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish());
+        } catch (Throwable ignored) {
+        }
+
         // Titulo
         int titleY = panelY + 14;
         int centerX = panelX + panelW / 2;
-        int headingMaxWidth = Math.max(64, panelW - 32);
+        // v0.301.0: el subtitulo se comia el recuento y la linea del archivo.
+        int headingMaxWidth = Math.max(64, panelW - 220);
         // v0.201.0: el titulo y el subtitulo se recortaban y se medían en cada
         // cuadro para centrarlos. Ahora el recorte y el centro se guardan.
         refreshHeaderCache(headingMaxWidth);
@@ -738,16 +745,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             }
         }
 
-        // This screen draws its buttons manually, so restore delayed tooltips for mouse and keyboard users.
-        DiaryButton tooltipTarget = hoveredTooltip != null ? hoveredTooltip : focusedTooltip;
-        int tooltipX = hoveredTooltip != null ? mouseX : tooltipTarget != null ? tooltipTarget.getX() + tooltipTarget.getWidth() / 2 : mouseX;
-        int tooltipY = hoveredTooltip != null ? mouseY : tooltipTarget != null ? tooltipTarget.getY() + tooltipTarget.getHeight() / 2 : mouseY;
-        if (tooltipTarget != this.tooltipCandidate) {
-            this.tooltipCandidate = tooltipTarget;
-            this.tooltipCandidateSince = Util.getMillis();
-        } else if (tooltipTarget != null && Util.getMillis() - this.tooltipCandidateSince >= 500L) {
-            gfx.renderTooltip(this.font, tooltipTarget.getTooltip().toCharSequence(this.minecraft), tooltipX, tooltipY);
-        }
+        // v0.301.0: aqui se dibujaba a mano el aviso flotante de cada boton y
+        // salia dos veces (uno arriba y otro abajo del apretado). Se quito: los
+        // botones ya dicen lo que hacen y la hoja no necesita repetirlo.
 
         // v0.16.0
         try {
@@ -916,14 +916,21 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         } catch (Throwable ignored) {
         }
 
-        // v0.271.0: debajo, lo que pesa la lista de puestos y la fecha.
+        // v0.301.0: el peso del archivo y la fecha se fueron de la cabecera;
+        // caian sobre el subtitulo y no cabian. Ahora viven en el pie, junto al
+        // folio, donde no tapan nada.
+    }
+
+    /** v0.301.0: "servers.dat 81,0 KB · 18·XI·2026", en el pie de la hoja. */
+    private void drawServersFileAtFoot(GuiGraphics gfx, int panelX, int panelY, int panelH,
+                                       boolean english) {
         String detail = serversFileLine(english);
         if (detail.isEmpty()) return;
-        int dw = DiaryChrome.widthCached(this.font, detail);
-        int dx = panelX + panelW - 74 - dw;
-        if (dx > panelX + 20) {
-            gfx.drawString(this.font, detail, dx, y + 12, DiaryChrome.INK_FLAVOR, false);
-        }
+        String fitted = DiaryChrome.fitCached(this.font, detail, 220);
+        int w = DiaryChrome.widthCached(this.font, fitted);
+        int x = panelX + 14 + this.font.width(english ? "sheet 1" : "hoja 1") + 12;
+        if (x + w > panelX + 220) return;
+        gfx.drawString(this.font, fitted, x, panelY + panelH - 14, DiaryChrome.INK_FLAVOR, false);
     }
 
     /** v0.271.0: "servers.dat 412 B · 13·XI·2026". */

@@ -118,7 +118,11 @@ public final class DeathPaper {
         int pw = Math.min(PAPER_W_MAX, w - PAPER_MARGIN * 2 - 8);
         int px = PAPER_MARGIN;
         int py = PAPER_MARGIN;
-        PaperTexture.drawTornSheet(g, px, py, pw, PAPER_H, PaperTexture.PaperKind.OFFICIAL);
+        // v0.301.0: el parte crecia hasta tocar el "estas muerto" de la pantalla.
+        // Se recorta al aire que hay sobre ese texto (h/4) y las filas que no
+        // caben se omiten en vez de encimarse.
+        int ph = Math.min(PAPER_H, Math.max(46, h / 4 - 14));
+        PaperTexture.drawTornSheet(g, px, py, pw, ph, PaperTexture.PaperKind.OFFICIAL);
 
         String head = english ? "CEDA - BUREAU OF PORTS" : "CEDA - SANIDAD DE PUERTOS";
         String line1 = english
@@ -141,31 +145,31 @@ public final class DeathPaper {
         boolean en2 = english;
         int ledger = l1 + 11;
         String cause = deathCause(screen, en2);
-        if (!cause.isEmpty()) {
+        if (!cause.isEmpty() && ledger + 11 <= py + ph - 20) {
             g.drawString(font, DiaryChrome.fitCached(font, cause, pw - 16), px + 8, ledger,
                 DiaryChrome.INK_TITLE, false);
             ledger += 11;
         }
         String where = deathWhere(en2);
-        if (!where.isEmpty()) {
+        if (!where.isEmpty() && ledger + 11 <= py + ph - 20) {
             g.drawString(font, DiaryChrome.fitCached(font, where, pw - 16), px + 8, ledger,
                 DiaryChrome.INK_SUBTITLE, false);
             ledger += 11;
         }
         String when = deathWhen(en2);
-        if (!when.isEmpty()) {
+        if (!when.isEmpty() && ledger + 11 <= py + ph - 20) {
             g.drawString(font, DiaryChrome.fitCached(font, when, pw - 16), px + 8, ledger,
                 DiaryChrome.INK_FLAVOR, false);
             ledger += 11;
         }
         // v0.281.0: el renglon de cortesia solo si queda sitio antes del pie.
-        if (ledger + 10 <= py + PAPER_H - 22) {
+        if (ledger + 10 <= py + ph - 22) {
             g.drawString(font, DiaryChrome.fitCached(font, line2, pw - 16), px + 8, ledger,
                 DiaryChrome.INK_FLAVOR, false);
         }
 
         // Pie del papel: registro a la izquierda y sello a la derecha.
-        int footY = py + PAPER_H - 16;
+        int footY = py + ph - 16;
         DiaryChrome.drawPencilRule(g, px + 8, footY - 4, pw - 16, px * 17 + py * 13 + 3);
         // v0.262.0: la fecha del deceso, en numeral romano, y la firma de la
         // casa, que responde por el parte como cualquier otro.

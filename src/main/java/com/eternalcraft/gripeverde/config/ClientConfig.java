@@ -71,8 +71,8 @@ public final class ClientConfig {
             .comment("Anotar tambien las coordenadas en el reloj de la partida.")
             .define("watchCoords", true);
         HUD_WATCH_CORNER = b
-            .comment("Esquina del reloj en partida: 0 arriba izquierda, 1 arriba derecha, 2 abajo izquierda.")
-            .defineInRange("watchCorner", 0, 0, 2);
+            .comment("Esquina del reloj en partida: 0 arriba izquierda, 1 arriba derecha, 2 abajo izquierda. Con un mapa arriba, el reloj se aparta solo.")
+            .defineInRange("watchCorner", 2, 0, 2);
         b.pop();
         b.push("debug");
         DEBUG_SHORTCUT = b

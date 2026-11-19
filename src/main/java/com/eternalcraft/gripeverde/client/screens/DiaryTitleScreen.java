@@ -836,56 +836,6 @@ public class DiaryTitleScreen extends Screen {
         // propio renderer omite la cadena en vez de dibujar un muñón.
         int chainTop = Math.max(rightCol.y, ICON_ROW_BOTTOM + Spacing.GAP_SMALL);
         PocketWatchRenderer.draw(g, cx, cy, chainTop, WATCH_RADIUS, GripeVerdeMod.VERSION);
-        // v0.245.0: el reloj enseña lo que hace cuando la mano se le acerca.
-        int dx = mouseX - cx;
-        int dy = mouseY - cy;
-        if (dx * dx + dy * dy <= WATCH_RADIUS * WATCH_RADIUS) {
-            String hint = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
-                ? "stop it to read" : "detenerlo para leer";
-            int hw = DiaryChrome.widthCached(this.font, hint);
-            int hy = cy + WATCH_RADIUS + 18;
-            if (hy + 10 < this.height) {
-                g.drawString(this.font, hint, cx - hw / 2, hy,
-                    DiaryChrome.INK_SUBTITLE, false);
-            }
-            // v0.261.0: y la hora que marcan las agujas, escrita, para que no
-            // haya que leer el cuadrante.
-            String clock = String.format("%02d:%02d",
-                java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY),
-                java.util.Calendar.getInstance().get(java.util.Calendar.MINUTE));
-            int cw = DiaryChrome.widthCached(this.font, clock);
-            if (hy + 20 < this.height) {
-                g.drawString(this.font, clock, cx - cw / 2, hy + 10,
-                    DiaryChrome.INK_TITLE, false);
-            }
-            // v0.269.0: el dia que es y si la esfera esta de dia o de noche.
-            String day = dayLine();
-            int dw = DiaryChrome.widthCached(this.font, day);
-            if (hy + 30 < this.height) {
-                g.drawString(this.font, day, cx - dw / 2, hy + 20,
-                    DiaryChrome.INK_FLAVOR, false);
-            }
-        }
-    }
-
-    /** v0.269.0: "miercoles · de noche", en la lengua del cuaderno. */
-    private String dayLine() {
-        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
-        String[][] days = en
-            ? new String[][]{{"sunday","Monday"},{"monday","Tuesday"},{"tuesday","Wednesday"},
-                             {"wednesday","Thursday"},{"thursday","Friday"},{"friday","Saturday"},
-                             {"saturday","Sunday"}}
-            : new String[][]{{"domingo","lunes"},{"lunes","martes"},{"martes","miercoles"},
-                             {"miercoles","jueves"},{"jueves","viernes"},{"viernes","sabado"},
-                             {"sabado","domingo"}};
-        java.util.Calendar cal = java.util.Calendar.getInstance();
-        int dow = cal.get(java.util.Calendar.DAY_OF_WEEK);           // 1 = domingo
-        int hour = cal.get(java.util.Calendar.HOUR_OF_DAY);
-        String name = days[Math.max(0, Math.min(6, dow - 1))][0];
-        boolean light = hour >= 6 && hour < 20;
-        return name + "  ·  " + (en
-            ? (light ? "by day" : "by night")
-            : (light ? "de dia" : "de noche"));
     }
 
     private void drawLogo(GuiGraphics g) {
@@ -1441,10 +1391,13 @@ public class DiaryTitleScreen extends Screen {
         }
         java.util.List<net.minecraft.util.FormattedCharSequence> lines = cachedShootStarLines;
         int totalHeight = lines.size() * this.font.lineHeight;
-        int top = Math.max(8, Math.min(this.height / 3, this.height - totalHeight - 8));
+        // v0.301.0: el aviso caia sobre el emblema; ahora va al pie, sobre la
+        // mesa de botones y pegado a la izquierda, como una nota al margen.
+        int top = Math.max(8, Math.min(buttonTableTop() - totalHeight - 8,
+            this.height - totalHeight - 8));
         for (int i = 0; i < lines.size(); i++) {
             net.minecraft.util.FormattedCharSequence line = lines.get(i);
-            int x = Math.max(8, (this.width - DiaryTypography.width(this.font, line)) / 2);
+            int x = 14;
             DiaryTypography.draw(g, this.font, line, x, top + i * this.font.lineHeight, col, false);
         }
     }

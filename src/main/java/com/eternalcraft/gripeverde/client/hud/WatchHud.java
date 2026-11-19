@@ -54,7 +54,9 @@ public final class WatchHud {
         int y = MARGIN;
         int corner = corner();
         if (corner == 1) x = screenW - SLIP_W - MARGIN;
-        else if (corner == 2) y = screenH - SLIP_H - MARGIN - 40;
+        else if (corner == 2) x = MARGIN;
+
+        y = corner == 2 ? screenH - SLIP_H - MARGIN : y;
 
         int alpha = fadeIn(now);
         if (alpha <= 4) return;
@@ -67,6 +69,16 @@ public final class WatchHud {
         g.drawString(font, cachedLine1, x + 7, y + 6, ink, false);
         g.drawString(font, cachedLine2, x + 7, y + 17, soft, false);
         g.drawString(font, cachedLine3, x + 7, y + 28, soft, false);
+
+        // v0.301.0: con mapa arriba, las coordenadas van en su propio papelito
+        // abajo a la derecha, como el renglon que el mapa escribe bajo si mismo.
+        if (minimapPresent() && coords() && cachedLine3.length() > 0) {
+            int cw = Math.min(SLIP_W, Math.max(52, font.width(cachedLine3) + 16));
+            int cx2 = screenW - cw - MARGIN;
+            int cy2 = screenH - 22 - MARGIN;
+            PaperTexture.drawTornSlip(g, cx2, cy2, cw, 20, 0xE6D2A6, 0x422810, alpha);
+            g.drawString(font, cachedLine3, cx2 + 5, cy2 + 6, ink, false);
+        }
 
         // El lacre: un cuadradito rojo que late una vez por minuto, sin destellos.
         // v0.296.0: con movimiento reducido el lacre se queda quieto.
@@ -102,10 +114,26 @@ public final class WatchHud {
     }
 
     private static int corner() {
+        int corner;
         try {
-            return Math.max(0, Math.min(2, ClientConfig.HUD_WATCH_CORNER.get()));
+            corner = Math.max(0, Math.min(2, ClientConfig.HUD_WATCH_CORNER.get()));
         } catch (Throwable ignored) {
-            return 0;
+            corner = 0;
+        }
+        // v0.301.0: si hay mapa en la esquina (JourneyMap y compania), el reloj
+        // se aparta abajo a la izquierda en vez de taparlo.
+        if (corner != 2 && minimapPresent()) return 2;
+        return corner;
+    }
+
+    /** v0.301.0: hay un mapa ocupando las esquinas de arriba. */
+    private static boolean minimapPresent() {
+        try {
+            return net.minecraftforge.fml.ModList.get().isLoaded("journeymap")
+                || net.minecraftforge.fml.ModList.get().isLoaded("xaerominimap")
+                || net.minecraftforge.fml.ModList.get().isLoaded("xaeroworldmap");
+        } catch (Throwable ignored) {
+            return false;
         }
     }
 

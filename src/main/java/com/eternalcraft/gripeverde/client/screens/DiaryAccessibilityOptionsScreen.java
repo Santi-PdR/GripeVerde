@@ -192,9 +192,10 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
             int count = this.list == null ? 0 : this.list.children().size();
             String res = (en ? count + " settings" : count + " ajustes")
                 + (en ? "  ·  Esc goes back" : "  ·  Esc vuelve");
+            // v0.301.0: la linea se dibujaba justo debajo de la chapa REG. VI y
+            // se leian las dos encimadas. Ahora va al margen izquierdo.
             String cut = DiaryChrome.fitCached(this.font, res, Math.max(60, this.panelW - 120));
-            int rw = DiaryChrome.widthCached(this.font, cut);
-            gfx.drawString(this.font, cut, this.panelX + this.panelW - 14 - rw,
+            gfx.drawString(this.font, cut, this.panelX + 14,
                 this.panelY + 8, DiaryChrome.INK_FLAVOR, false);
         } catch (Throwable ignored) {
         }

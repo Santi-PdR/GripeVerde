@@ -440,9 +440,11 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
                 String track = (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
                     ? "playing: " : "suena: ")
                     + MenuMusic.getCurrentTrackNumber() + "/" + MenuMusic.getTrackCount();
-                String cut = DiaryChrome.fitCached(this.font, track, Math.max(40, this.panelW - 120));
-                int tw = DiaryChrome.widthCached(this.font, cut);
-                g.drawString(this.font, cut, this.width / 2 - tw / 2, titleY + 12,
+                // v0.301.0: el disco sonando se pegaba a la chapa REG. II. Va
+                // a la izquierda, con su ancho medido para no llegar a la chapa.
+                String cut = DiaryChrome.fitCached(this.font, track,
+                    Math.max(40, this.panelW - 150));
+                g.drawString(this.font, cut, this.panelX + 16, titleY + 12,
                     DiaryChrome.INK_FLAVOR, false);
             }
         } catch (Throwable ignored) {
@@ -528,20 +530,28 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
                     + (menuAmbienceOffLabel(ambOff, ambPct, en))
                     + (en ? "  ·  ui " : "  ·  interfaz ") + uiPct + "%";
             }
+            // v0.301.0: la linea de las tres capas caia sobre las ruedas y el
+            // boton de volver. Ahora comparte el pie con el folio, y se recorta
+            // para no llegar a el.
+            String folio = en ? "sheet II  ·  Esc back" : "hoja II  ·  Esc vuelve";
+            int fw = DiaryChrome.widthCached(this.font, folio);
+            int footY = this.panelY + this.panelH - 12;
+            int footRight = this.panelX + this.panelW - 14;
             boolean roomy = this.panelW >= 250 && this.panelH >= 210;
             if (roomy) {
-                String cut = DiaryChrome.fitCached(this.font, line, this.panelW - 32);
-                int cw = DiaryChrome.widthCached(this.font, cut);
-                g.drawString(this.font, cut, this.panelX + (this.panelW - cw) / 2,
-                    divY3 - 10, DiaryChrome.INK_FLAVOR, false);
-            }
-            if (this.panelH >= 190) {
-                String folio = en ? "sheet II  ·  Esc back" : "hoja II  ·  Esc vuelve";
-                int fw = DiaryChrome.widthCached(this.font, folio);
-                if (this.panelX + this.panelW - 14 - fw > this.panelX + 14) {
-                    g.drawString(this.font, folio, this.panelX + this.panelW - 14 - fw,
-                        this.panelY + this.panelH - 12, DiaryChrome.INK_FLAVOR, false);
+                boolean showFolio = footRight - fw > this.panelX + 14;
+                int limit = showFolio ? (footRight - fw - 12) - (this.panelX + 14)
+                    : this.panelW - 28;
+                String cut = DiaryChrome.fitCached(this.font, line, Math.max(40, limit));
+                g.drawString(this.font, cut, this.panelX + 14, footY,
+                    DiaryChrome.INK_FLAVOR, false);
+                if (showFolio) {
+                    g.drawString(this.font, folio, footRight - fw, footY,
+                        DiaryChrome.INK_FLAVOR, false);
                 }
+            } else if (this.panelH >= 190 && footRight - fw > this.panelX + 14) {
+                g.drawString(this.font, folio, footRight - fw, footY,
+                    DiaryChrome.INK_FLAVOR, false);
             }
         } catch (Throwable ignored) {
         }

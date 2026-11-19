@@ -309,7 +309,9 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             if (!foot.isEmpty()) {
                 int fw = DiaryChrome.widthCached(font, foot);
                 if (w - 12 - fw > cx + 90) {
-                    g.drawString(font, foot, w - 12 - fw, 20, DiaryChrome.INK_FLAVOR, false);
+                    // v0.301.0: el peso y la fecha bajaban justo sobre el
+                    // subtitulo centrado; ahora van una linea mas abajo.
+                    g.drawString(font, foot, w - 12 - fw, 32, DiaryChrome.INK_FLAVOR, false);
                 }
             }
             // v0.287.0: la ficha elegida, dicha en la cabecera.
@@ -450,13 +452,15 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             int drawTop = Math.max(top, this.listTop);
             int drawBottom = Math.min(bottom, this.listBottom);
             if (drawBottom <= drawTop) continue;
-            g.fill(this.rowLeft - 6, drawTop, this.rowRight + 6, drawBottom, 0x6E2A1C10);
+            // v0.301.0: la banda era casi del color del papel y las lineas
+            // grises de cada mundo (version, fecha, modo) desaparecian.
+            g.fill(this.rowLeft - 6, drawTop, this.rowRight + 6, drawBottom, 0xC82A1C12);
             g.fill(this.rowLeft - 6, drawBottom - 1, this.rowRight + 6, drawBottom, 0x55E8DCB4);
             // v0.251.0: el mundo bajo la mano se aclara, igual que en la lista
             // de posadas, para saber cual se lleva.
             if (mouseX >= this.rowLeft - 6 && mouseX <= this.rowRight + 6
                     && mouseY >= drawTop && mouseY < drawBottom) {
-                g.fill(this.rowLeft - 6, drawTop, this.rowRight + 6, drawBottom, 0x1AF3E7C8);
+                g.fill(this.rowLeft - 6, drawTop, this.rowRight + 6, drawBottom, 0x2EF3E7C8);
             }
         }
     }

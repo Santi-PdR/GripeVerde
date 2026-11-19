@@ -135,9 +135,12 @@ public class DiaryOptionsScreen extends Screen {
         backW = Math.min(BASE_BACK_W, Math.max(96, panelW - 32));
 
         int gridH = GRID_ROWS * btnH + (GRID_ROWS - 1) * gapY;
+        // v0.301.0: la cita del cronista se dibujaba fuera de la cuenta de la
+        // cabecera y caia sobre la primera fila de botones. Ahora tiene su
+        // renglon, como el subtitulo.
         int headerH = compactLayout
             ? TITLE_H + 2 + this.font.lineHeight + titleGap
-            : TITLE_H + subtitleGap + titleGap;
+            : TITLE_H + subtitleGap + this.font.lineHeight + titleGap;
         panelH = padTop + headerH + gridH + gapBeforeBack + backH + padBottom;
 
         // v0.16.0: la bisagra cuenta las veces que el gabinete se abre.

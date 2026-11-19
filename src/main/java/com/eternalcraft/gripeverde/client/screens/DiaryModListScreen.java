@@ -274,13 +274,20 @@ public class DiaryModListScreen extends ModListScreen {
                 }
             }
             // v0.278.0: la chapa del registro, en el margen izquierdo.
+            // v0.301.0: la chapa caia sobre los botones A-Z del arsenal; se
+            // corre al filo y se queda sola arriba.
             com.eternalcraft.gripeverde.client.render.DiaryChrome.drawRegistryTagLeft(
-                g, 0, -4, "REG. XVII");
+                g, -2, -6, "REG. XVII");
             // v0.278.0: el pie de la hoja recuerda como se sale.
             if (this.height >= 200) {
+                // v0.301.0: el aviso de salida pisaba el boton de la carpeta de
+                // mods; se va al margen derecho del pie.
                 String hint = en ? "Esc goes back" : "Esc vuelve";
-                g.drawString(this.font, hint, 12, this.height - 12,
-                    com.eternalcraft.gripeverde.client.render.DiaryChrome.INK_FLAVOR, false);
+                int hw = this.font.width(hint);
+                if (this.width - 12 - hw > 12) {
+                    g.drawString(this.font, hint, this.width - 12 - hw, this.height - 12,
+                        com.eternalcraft.gripeverde.client.render.DiaryChrome.INK_FLAVOR, false);
+                }
             }
         } catch (Throwable ignored) {
         }

@@ -525,7 +525,6 @@ public class DiaryPauseScreen extends PauseScreen {
         try {
             int stampX = px + panelW() - 12;
             drawWorldStatus(g, px, py, stampX);
-            drawSeedOnHover(g, mouseX, mouseY, px, py, stampX);
         } catch (Throwable ignored) {
         }
         drawPanelSeparators(g, px, py);
@@ -726,37 +725,8 @@ public class DiaryPauseScreen extends PauseScreen {
         int dx = px + panelW() - dw - 12;
         int dy = py + 12;
         g.drawString(this.font, date, dx, dy, DiaryTheme.SEPIA_DARK, false);
-        drawWorldLine(g, px, py, dx, dw);
-    }
-
-    /**
-     * v0.252.0: en partida, la hoja dice donde esta el lector: la dimension y
-     * el dia que lleva la partida. Se escribe debajo del sello de fecha, con la
-     * misma tinta, y se recorta al ancho del panel para no tocar el titulo.
-     */
-    private void drawWorldLine(GuiGraphics g, int px, int py, int stampX, int stampW) {
-        String line = null;
-        try {
-            if (this.minecraft == null || this.minecraft.level == null) return;
-            long day = this.minecraft.level.getDayTime() / 24000L + 1L;
-            String dim = this.minecraft.level.dimension().location().getPath();
-            boolean en = isEnglishSelected();
-            String where;
-            switch (dim) {
-                case "the_nether" -> where = en ? "the lower ward" : "la sala baja";
-                case "the_end" -> where = en ? "the far shore" : "la orilla lejana";
-                default -> where = en ? "the avenue" : "la avenida";
-            }
-            line = (en ? "day " : "dia ") + day + " - " + where;
-            int maxW = Math.max(40, stampX - px - 20 + stampW);
-            line = this.font.plainSubstrByWidth(line, maxW);
-        } catch (Throwable ignored) {
-            return;
-        }
-        if (line == null || line.isBlank()) return;
-        int lw = this.font.width(line);
-        g.drawString(this.font, line, stampX + stampW - lw, py + 24,
-            DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 200), false);
+        // v0.301.0: la linea del dia se fue al pie con el estado de la partida;
+        // aqui caia justo debajo del titulo y lo cruzaba.
     }
 
     /**
@@ -833,47 +803,17 @@ public class DiaryPauseScreen extends PauseScreen {
         } catch (Throwable ignored) {
             return;
         }
-        int maxW = Math.max(40, stampX - px - 16);
+        // v0.301.0: el estado vivia bajo la fecha y el titulo lo tapaba. Ahora
+        // va al pie de la hoja, a la izquierda, con dos renglones cortos.
+        int maxW = Math.max(60, panelW() - 150);
         String cut1 = DiaryChrome.fitCached(this.font, line1, maxW);
         String cut2 = DiaryChrome.fitCached(this.font, line2, maxW);
-        int w1 = DiaryChrome.widthCached(this.font, cut1);
-        int w2 = DiaryChrome.widthCached(this.font, cut2);
-        int baseY = py + 34;
-        if (baseY + 20 > py + separatorTopOffset() - 2) return;
-        g.drawString(this.font, cut1, stampX - w1, baseY,
+        int baseY = py + panelH() - 40;
+        if (baseY < py + 80 || baseY + 20 > py + panelH() - 12) return;
+        g.drawString(this.font, cut1, px + 14, baseY,
             DiaryChrome.INK_SUBTITLE, false);
-        g.drawString(this.font, cut2, stampX - w2, baseY + 10,
+        g.drawString(this.font, cut2, px + 14, baseY + 10,
             DiaryChrome.INK_FLAVOR, false);
-    }
-
-    /** v0.275.0: la semilla, solo si la mano se acerca al estado de la partida. */
-    private void drawSeedOnHover(GuiGraphics g, int mouseX, int mouseY, int px, int py, int stampX) {
-        if (this.minecraft == null || this.minecraft.level == null || compactPauseLayout()) return;
-        int maxW = Math.max(40, stampX - px - 16);
-        int hitLeft = Math.max(px + 8, stampX - maxW);
-        int hitRight = stampX + 2;
-        if (mouseX < hitLeft || mouseX > hitRight) return;
-        if (mouseY < py + 32 || mouseY > py + 52) return;
-        if (baseYGuard()) return;
-        boolean en = isEnglishSelected();
-        long seed;
-        try {
-            // En 1.20.1 el mundo del cliente no conoce su semilla: la tiene el
-            // servidor integrado. En un servidor ajeno no hay nada que enseñar.
-            net.minecraft.server.MinecraftServer server = this.minecraft.getSingleplayerServer();
-            if (server == null) return;
-            seed = server.overworld().getSeed();
-        } catch (Throwable ignored) {
-            return;
-        }
-        boolean copied = System.currentTimeMillis() < this.seedCopiedUntilMs;
-        String line = copied
-            ? (en ? "seed copied" : "semilla copiada")
-            : (en ? "seed " : "semilla ") + seed;
-        String cut = DiaryChrome.fitText(this.font, line, maxW);
-        int w = DiaryChrome.widthCached(this.font, cut);
-        g.drawString(this.font, cut, stampX - w, py + 54,
-            copied ? 0xFF5C0A08 : DiaryChrome.INK_FLAVOR, false);
     }
 
     private boolean baseYGuard() {

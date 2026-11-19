@@ -280,9 +280,9 @@ public class PocketWatchRenderer {
         // v0.257.0: a las tres va la ventanilla de la fecha, como en los relojes
         // de bolsillo que la llevaban: el numero del dia, de verdad.
         if (radius < 30) drawRomanNumeral(g, font, cx + textR, cy, "III");
-        // v0.250.0: cuando hay ventanilla de luna, ella ocupa el sitio del VI,
-        // como en los relojes de verdad.
-        if (radius < 30) drawRomanNumeral(g, font, cx, cy + textR, "VI");
+        // v0.301.0: el VI vuelve a ser un numero. La ventanilla de luna parecia
+        // un espejo pegado en la esfera y el lector la mando quitar.
+        drawRomanNumeral(g, font, cx, cy + textR, "VI");
         drawRomanNumeral(g, font, cx - textR, cy, "IX");
 
         // v0.250.0: la ventanilla de la luna. No es adorno: la fase se calcula
@@ -290,7 +290,6 @@ public class PocketWatchRenderer {
         // nueva del 6 de enero de 2000-, asi que el reloj dice la luna de esa
         // noche, la mire quien la mire.
         if (radius >= 30) {
-            drawMoonAperture(g, cx, cy + (int) (radius * 0.52), Math.max(3, radius / 7), now);
             int day = java.util.Calendar.getInstance().get(java.util.Calendar.DAY_OF_MONTH);
             drawDateAperture(g, font, cx + (int) (radius * 0.52), cy, day);
         }
