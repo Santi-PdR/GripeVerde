@@ -1,3 +1,9 @@
+## Version 0.323.0 - La cabecera de la red local, en tinta
+
+Cuando no hay ninguna puerta anotada, la hoja de Multijugador muestra la cabecera de la red local —«Buscando partidas en tu red local…»— escrita por el juego en blanco, y sobre el papel claro no se leía. Ahora se cubre con su recorte y se reescribe en tinta, igual que las filas de los puestos.
+
+La cabecera solo se toca cuando la lista está vacía, que es cuando aparece; con puestos anotados queda como estaba.
+
 ## Version 0.322.0 - Los puestos de la red local se leen
 
 En la hoja de Multijugador, los mundos abiertos en la red local se dibujaban con el texto blanco del juego y sin fondo: sobre el papel claro no se leían. Ahora llevan debajo un recorte oscuro, como la placa de una foto pegada en la ficha, y el texto del juego se lee sin tocarlo.

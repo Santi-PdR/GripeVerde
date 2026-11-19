@@ -1,3 +1,7 @@
+## v0.323.0 - La cabecera de la red local, en tinta
+
+- Multijugador: `paintLanHeaderInk` cubre y reescribe la cabecera LAN cuando la lista esta vacia.
+
 ## v0.322.0 - Los puestos de la red local se leen
 
 - Multijugador: las filas LAN llevan recorte oscuro detrás.

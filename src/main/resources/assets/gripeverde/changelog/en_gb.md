@@ -1,3 +1,9 @@
+## Version 0.323.0 - The local network header, in ink
+
+When no door is noted, the Multiplayer sheet shows the local network header —"Scanning for games on your local network..."— written by the game in white, and on the light paper it could not be read. It is now covered with its clipping and rewritten in ink, just like the post rows.
+
+The header is only touched when the list is empty, which is when it appears; with posts noted it stays as it was.
+
 ## Version 0.322.0 - Local network posts can be read
 
 On the Multiplayer sheet, worlds opened on the local network were drawn with the game's white text and no background: on the light paper they could not be read. Now they carry a dark clipping underneath, like the plate of a photo glued to the card, and the game's text reads without touching it.

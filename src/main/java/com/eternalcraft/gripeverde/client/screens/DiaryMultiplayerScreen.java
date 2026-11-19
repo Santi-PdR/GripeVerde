@@ -714,6 +714,13 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 drawEntryFrames(gfx);
                 // v0.303.0: el nombre y el cartel del puesto, en tinta.
                 paintServerRowsInk(gfx);
+                // v0.323.0: la cabecera de la red local tambien la escribe el
+                // juego en blanco. Sobre el papel no se lee: se cubre y se
+                // reescribe en tinta, como las filas.
+                try {
+                    paintLanHeaderInk(gfx);
+                } catch (Throwable ignored) {
+                }
                 // Scroll estilizado encima
                 DiaryChrome.drawStyledScrollThumbForOptionsList(gfx, this.vanillaList, this.width);
             } catch (Throwable ignored) {}
@@ -1168,6 +1175,41 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             }
         } catch (Throwable ignored) {
         }
+    }
+
+    /**
+     * v0.323.0: "Buscando partidas en tu red local...", que el juego escribe en
+     * blanco sobre el papel claro. Se tapa con un recorte y se reescribe en
+     * tinta, solo cuando la lista esta vacia, que es cuando esa cabecera se ve.
+     */
+    private void paintLanHeaderInk(GuiGraphics gfx) {
+        if (this.vanillaList == null || this.vanillaServers == null) return;
+        if (!this.vanillaServers.isEmpty()) return;
+        int headerH = vanillaHeaderHeight;
+        if (headerH <= 2) return;
+        int listTop = this.vanillaList.getTop();
+        int listBottom = this.vanillaList.getBottom();
+        int rowLeft = this.vanillaList.getRowLeft();
+        int rowWidth = this.vanillaList.getRowWidth();
+        double scroll = 0.0;
+        try {
+            scroll = this.vanillaList.getScrollAmount();
+        } catch (Throwable ignored) {
+        }
+        int top = (int) Math.round(vanillaListY0 + 4 - scroll);
+        int bottom = top + headerH - 2;
+        int drawTop = Math.max(top, listTop);
+        int drawBottom = Math.min(bottom, listBottom);
+        if (drawBottom - drawTop < 12) return;
+        com.eternalcraft.gripeverde.client.render.PaperTexture.drawTornSlip(
+            gfx, rowLeft - 9, drawTop - 1, rowWidth + 18,
+            drawBottom - drawTop + 2, 0xE6D2A6, 0x422810, 232);
+        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+        String line = en ? "searching for games on your local network"
+            : "buscando partidas en tu red local";
+        String cut = DiaryChrome.fitCached(this.font, line, Math.max(40, rowWidth - 8));
+        gfx.drawString(this.font, cut, rowLeft + 4, drawTop + 3,
+            DiaryChrome.INK_SUBTITLE, false);
     }
 
     private static String fieldString(Object target, String fieldName) {
