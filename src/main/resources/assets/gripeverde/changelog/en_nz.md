@@ -1,3 +1,9 @@
+## Version 0.322.0 - Local network posts can be read
+
+On the Multiplayer sheet, worlds opened on the local network were drawn with the game's white text and no background: on the light paper they could not be read. Now they carry a dark clipping underneath, like the plate of a photo glued to the card, and the game's text reads without touching it.
+
+The repo's front page also states, in writing, what may and may not be done with the mod, without changing the terms already declared in `mods.toml`.
+
 ## Version 0.321.0 - The world status moves beside the candle
 
 On the pause sheet, the world status (time, weather, mode, difficulty, souls) was written right in the corner where the lit candle is, and the lines ran over it. Now the block starts to the right of the candle, with its width measured so it never reaches the voices line.

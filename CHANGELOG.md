@@ -1,3 +1,8 @@
+## v0.322.0 - Los puestos de la red local se leen
+
+- Multijugador: las filas LAN llevan recorte oscuro detrás.
+- README: seccion de licencia y permisos, sin cambiar `mods.toml`.
+
 ## v0.321.0 - El estado de la partida pasa al lado de la vela
 
 - Pausa: el bloque de estado arranca en `px+46` cuando hay vela.

@@ -1,3 +1,9 @@
+## Version 0.322.0 - Los puestos de la red local se leen
+
+En la hoja de Multijugador, los mundos abiertos en la red local se dibujaban con el texto blanco del juego y sin fondo: sobre el papel claro no se leían. Ahora llevan debajo un recorte oscuro, como la placa de una foto pegada en la ficha, y el texto del juego se lee sin tocarlo.
+
+La portada del repo también dice, por escrito, qué se puede hacer con el mod y qué no, sin cambiar los términos que ya declara el `mods.toml`.
+
 ## Version 0.321.0 - El estado de la partida pasa al lado de la vela
 
 En la hoja de pausa, el estado de la partida (hora, clima, modo, dificultad, almas) se escribía justo en el rincón donde está la vela encendida, y los renglones le pasaban por encima. Ahora el bloque arranca a la derecha de la vela, con su ancho medido para no llegar nunca a la línea de las voces.

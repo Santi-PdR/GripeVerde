@@ -1050,7 +1050,10 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             for (int i = 0; i < children.size(); i++) {
                 var entry = children.get(i);
                 String cls = entry.getClass().getSimpleName();
-                if (cls.contains("LAN")) continue; // no dibujar bg detras de LAN
+                // v0.322.0: los puestos de la red local se dibujan con el texto
+                // blanco del juego y sin fondo. Sobre el papel claro no se leian,
+                // asi que se les pone un recorte oscuro debajo, no un slip claro.
+                boolean lan = cls.contains("LAN");
 
                 int entryTop = y0 + 4 - (int) scrollAmount + i * itemHeight + headerHeight - 2;
                 int entryBottom = entryTop + itemHeight;
@@ -1065,7 +1068,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 // como si fuera la foto pegada en la ficha.
                 com.eternalcraft.gripeverde.client.render.PaperTexture.drawTornSlip(
                     gfx, rowLeft - 9, drawTop - 1, rowRight - rowLeft + 18,
-                    drawBottom - drawTop + 2, 0xE6D2A6, 0x422810, 210);
+                    drawBottom - drawTop + 2,
+                    lan ? 0x33180C : 0xE6D2A6, lan ? 0xF0E2C0 : 0x422810, lan ? 236 : 210);
+                if (lan) continue;
 
                 // v0.251.0: la fila que esta bajo la mano se aclara, para saber
                 // cual se lleva si se aprieta Enter o Supr.

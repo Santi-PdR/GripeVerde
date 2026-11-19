@@ -56,6 +56,16 @@ if($f.Length -ne $a.size){ throw "Descarga incompleta: $($f.Length) de $($a.size
 - **Diario**: la crónica de la partida y el registro de versiones; el Parte sirve para los mensajes rápidos.
 - **HUD**: reloj con día, fecha y clima arriba a la derecha, coordenadas en su propio papelito abajo, y se aparta cuando aparece el minimapa.
 
+## Licencia y permisos
+
+El código está con **todos los derechos reservados**, tal como declara `mods.toml`. En la práctica, para quien lo juega:
+
+- **Sí**: descargar el `.jar` del release oficial, instalarlo y jugar, en un servidor propio o ajeno, con amigos.
+- **Sí**: enlazar este repositorio y el release en cualquier sitio.
+- **No**: volver a subir el `.jar` a otro sitio de descargas, venderlo, o publicar versiones modificadas sin permiso.
+
+Si querés empaquetarlo en un modpack, escribime por un issue del repositorio y lo hablamos.
+
 ## Enlaces
 
 - [Última versión](https://github.com/Santi-PdR/GripeVerde/releases/latest)
