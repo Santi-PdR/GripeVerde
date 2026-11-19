@@ -1,3 +1,8 @@
+## v0.304.0 - Los mundos guardados, en tinta
+
+- Mundos: nombre, modo y ultima partida reescritos en tinta sobre su franja.
+- Chat y En línea: subtitulos acotados antes de la chapa del registro.
+
 ## v0.303.0 - Los puestos se leen
 
 - Multijugador: nombre y cartel de cada servidor reescritos en tinta sobre su franja.

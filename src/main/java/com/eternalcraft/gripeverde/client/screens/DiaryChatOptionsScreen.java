@@ -124,7 +124,8 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
 
         // Subtitulo
         String subtitle = "- " + DiaryChrome.tr("gripeverde.options.chat.subtitle") + " -";
-        subtitle = DiaryChrome.fitCached(this.font, subtitle, Math.max(0, this.panelW - 28));
+        // v0.304.0: el subtitulo se cortaba antes de la chapa REG. V.
+        subtitle = DiaryChrome.fitCached(this.font, subtitle, Math.max(0, this.panelW - 150));
         int subWC = DiaryChrome.widthCached(this.font, subtitle);
         g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 

@@ -1,3 +1,9 @@
+## Version 0.304.0 - Saved worlds, in ink
+
+Every world in the list is now read in ink: the name in black and, below it, the game mode and the last time it was played in sepia, on its own slip of paper and respecting the world's picture. Before they were two grey lines on light paper that nobody could read.
+
+As a side note, the subtitles of the chat and online sheets now stop before the registry tag, which was ending up underneath.
+
 ## Version 0.303.0 - The posts can be read
 
 The game writes each server's name and sign in fixed white and grey, and on the sheet's light paper they could not be read. Now only the text strip is covered -the post's icon is respected- and the name is rewritten in ink, the sign in sepia and, if that address has been visited before, the line says so: known door.

@@ -1,3 +1,9 @@
+## Version 0.304.0 - Los mundos guardados, en tinta
+
+Cada mundo de la lista se lee ahora en tinta: el nombre en negro y, debajo, el modo de juego y la ultima vez que se jugo en sepia, sobre su propio recorte de papel y respetando la foto del mundo. Antes eran dos lineas grises sobre papel claro que no habia quien las leyera.
+
+De paso, los subtitulos de las hojas de chat y de en linea se cortan antes de la chapa del registro, que estaba quedando debajo.
+
 ## Version 0.303.0 - Los puestos se leen
 
 El juego escribe el nombre y el cartel de cada servidor en blanco y gris fijos, y sobre el papel claro de la hoja no se leian. Ahora se cubre solo la franja de texto -el icono del puesto se respeta- y el nombre se reescribe en tinta, el cartel en sepia y, si esa direccion ya se visito, la linea lo dice: puerta conocida.

@@ -254,6 +254,8 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         try {
             if (this.vanillaList != null) {
                 this.vanillaList.render(g, mouseX, mouseY, partial);
+                // v0.304.0: nombre y ficha de cada mundo, en tinta y legibles.
+                paintWorldRowsInk(g);
             }
             for (EditBox box : this.searchBoxes) {
                 if (box.visible) box.render(g, mouseX, mouseY, partial);
@@ -336,6 +338,107 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 int tw = DiaryChrome.widthCached(font, cut);
                 g.drawString(font, cut, (w - tw) / 2, 33, DiaryChrome.INK_FLAVOR, false);
             }
+        }
+    }
+
+    /**
+     * v0.304.0: el juego escribe el nombre y la ficha de cada mundo en blanco y
+     * gris fijos; sobre el papel claro no se leian. Se cubre solo la franja de
+     * texto -la foto del mundo se respeta- y se reescribe en tinta y sepia.
+     */
+    private void paintWorldRowsInk(GuiGraphics g) {
+        if (this.vanillaList == null || this.rowItemHeight <= 0) return;
+        try {
+            var children = this.vanillaList.children();
+            if (children == null || children.isEmpty()) return;
+            int rowLeft = this.vanillaList.getRowLeft();
+            int rowWidth = this.vanillaList.getRowWidth();
+            int listTop = this.vanillaList.getTop();
+            int listBottom = this.vanillaList.getBottom();
+            double scroll = 0.0;
+            try { scroll = this.vanillaList.getScrollAmount(); } catch (Throwable ignored) {}
+            boolean scissored = false;
+            try {
+                g.enableScissor(rowLeft, listTop, rowLeft + rowWidth, listBottom);
+                scissored = true;
+            } catch (Throwable ignored) {
+            }
+            int textLeft = rowLeft + 35;
+            int textW = Math.max(40, rowLeft + rowWidth - 8 - textLeft);
+            for (int i = 0; i < children.size(); i++) {
+                Object entry = children.get(i);
+                Object summary = summaryOf(entry);
+                if (summary == null) continue;
+                int entryTop = listTop + 4 - (int) scroll + i * this.rowItemHeight;
+                int entryBottom = entryTop + this.rowItemHeight;
+                if (entryBottom < listTop || entryTop > listBottom) continue;
+                int drawTop = Math.max(entryTop, listTop);
+                int drawBottom = Math.min(entryBottom, listBottom);
+                if (drawBottom - drawTop < 12) continue;
+
+                String name = invokeString(summary, "getLevelName");
+                if (name.isEmpty()) continue;
+                String mode = gameModeName(summary);
+                String when = lastPlayedStamp(summary);
+                String line2 = mode;
+                if (!when.isEmpty()) line2 = line2.isEmpty() ? when : line2 + "  \u00b7  " + when;
+
+                PaperTexture.drawTornSlip(g, textLeft - 4, drawTop + 1,
+                    textW + 8, Math.max(20, drawBottom - drawTop - 6), 0xE6D2A6, 0x422810, 236);
+                String shownName = DiaryChrome.fitText(this.font, name, textW);
+                g.drawString(this.font, shownName, textLeft, drawTop + 3, 0xFF1A1108, false);
+                if (!line2.isEmpty()) {
+                    String shown2 = DiaryChrome.fitText(this.font, line2, textW);
+                    g.drawString(this.font, shown2, textLeft, drawTop + 14, 0xFF6B5533, false);
+                }
+            }
+            if (scissored) {
+                try {
+                    g.disableScissor();
+                } catch (Throwable ignored) {
+                }
+            }
+        } catch (Throwable ignored) {
+        }
+    }
+
+    /** La LevelSummary de una fila de la lista, buscada por tipo. */
+    private static Object summaryOf(Object entry) {
+        try {
+            if (entry == null) return null;
+            for (Class<?> c = entry.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
+                for (java.lang.reflect.Field f : c.getDeclaredFields()) {
+                    if (!f.getType().getSimpleName().equals("LevelSummary")) continue;
+                    f.setAccessible(true);
+                    Object v = f.get(entry);
+                    if (v != null) return v;
+                }
+            }
+        } catch (Throwable ignored) {
+        }
+        return null;
+    }
+
+    private static String gameModeName(Object summary) {
+        try {
+            Object gm = summary.getClass().getMethod("getGameMode").invoke(summary);
+            if (gm == null) return "";
+            Object dn = gm.getClass().getMethod("getDisplayName").invoke(gm);
+            return dn == null ? "" : dn.toString();
+        } catch (Throwable ignored) {
+            return "";
+        }
+    }
+
+    private static String lastPlayedStamp(Object summary) {
+        try {
+            Object lp = summary.getClass().getMethod("getLastPlayed").invoke(summary);
+            if (!(lp instanceof Number n)) return "";
+            long millis = n.longValue();
+            if (millis <= 0L) return "";
+            return stamp(millis, false);
+        } catch (Throwable ignored) {
+            return "";
         }
     }
 

@@ -126,7 +126,8 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
 
         // Subtitulo diegetico
         String subtitle = "- " + DiaryChrome.tr("gripeverde.options.online.subtitle") + " -";
-        subtitle = DiaryChrome.fitCached(this.font, subtitle, Math.max(0, this.panelW - 28));
+        // v0.304.0: el subtitulo se cortaba antes de la chapa REG. VIII.
+        subtitle = DiaryChrome.fitCached(this.font, subtitle, Math.max(0, this.panelW - 150));
         int subW = DiaryChrome.widthCached(this.font, subtitle);
         g.drawString(this.font, subtitle, titleX - subW / 2, titleY + 14, DiaryChrome.INK_SUBTITLE, false);
         String flavor = DiaryChrome.fitCached(this.font,
