@@ -1,3 +1,7 @@
+## v0.345.0 - El parte de defunción deja de repetir la causa del juego
+
+- Muerte: la causa se lee una vez y se calla la del juego; el rótulo grande y el puntaje no se tocan.
+
 ## v0.344.0 - Las fichas del juego se vuelven fichas de registro
 
 - Sonido, Chat y Accesibilidad: fichas de registro (banda, filete y etiqueta en tinta clara) sobre las filas del juego.

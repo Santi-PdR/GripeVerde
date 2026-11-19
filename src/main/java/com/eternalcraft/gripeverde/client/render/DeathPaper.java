@@ -42,6 +42,37 @@ public final class DeathPaper {
             skinButtons(screen);
         } catch (Throwable ignored) {
         }
+        // v0.345.0: el juego escribe la causa debajo del rotulo y nuestro parte
+        // la repite. Se guarda una vez y se calla la del juego, sin tocar el
+        // rotulo grande ni el puntaje.
+        captureCause(screen);
+    }
+
+    /** v0.345.0: la causa que traia el juego, guardada antes de callarla. */
+    private static String capturedCause = "";
+
+    private static void captureCause(Screen screen) {
+        capturedCause = "";
+        try {
+            for (Class<?> c = screen.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
+                for (java.lang.reflect.Field f : c.getDeclaredFields()) {
+                    if (f.getType() != net.minecraft.network.chat.Component.class) continue;
+                    String n = f.getName();
+                    if (!"causeOfDeath".equals(n) && !"f_95858_".equals(n)) continue;
+                    f.setAccessible(true);
+                    Object v = f.get(screen);
+                    if (v instanceof net.minecraft.network.chat.Component comp) {
+                        String text = comp.getString();
+                        if (text != null && !text.isBlank()) {
+                            capturedCause = text;
+                            f.set(screen, net.minecraft.network.chat.Component.empty());
+                        }
+                    }
+                    return;
+                }
+            }
+        } catch (Throwable ignored) {
+        }
     }
 
     private static void skinButtons(Screen screen) {
@@ -50,6 +81,9 @@ public final class DeathPaper {
 
     /** v0.279.0: lo que el libro de la aduana escribe como causa. */
     private static String deathCause(Screen screen, boolean english) {
+        // v0.345.0: la causa ya se leyo al abrir la pantalla; el juego ya no la
+        // escribe, asi que se devuelve la guardada.
+        if (capturedCause != null && !capturedCause.isBlank()) return capturedCause;
         try {
             for (Class<?> c = screen.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
                 for (java.lang.reflect.Field f : c.getDeclaredFields()) {

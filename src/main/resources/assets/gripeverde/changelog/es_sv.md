@@ -1,3 +1,9 @@
+## Version 0.345.0 - El parte de defunción deja de repetir la causa del juego
+
+En la pantalla de muerte, el juego escribía la causa debajo del rótulo grande («Santipdr fue asesinado/a») y nuestro parte la repetía dos centímetros más arriba, encima de la chapa. Ahora, al abrirse la pantalla, la casa lee esa causa una vez y la guarda en su propio parte; el juego deja de escribirla.
+
+El rótulo grande y el puntaje siguen donde estaban: no se toca nada más. Si el texto del juego no se puede leer —otra versión, otro idioma de mapeo—, se deja tal cual estaba.
+
 ## Version 0.344.0 - Las fichas del juego se vuelven fichas de registro
 
 Sonido, Chat y Accesibilidad seguían con las cajas grises del juego dentro de la hoja. Ahora cada renglón se repinta como las fichas de Mundos guardados: banda oscura, filete de tinta abajo y la etiqueta en nuestra letra clara.

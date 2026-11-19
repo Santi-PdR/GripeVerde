@@ -9,7 +9,7 @@ Actualizado: 2026-11-13
   token, igual que el de Photon/Fisk.
 - Rama de trabajo de la sesión: `arena/48be547c-gripeverde` (base `02e85bc`) — la plataforma
   fija el nombre, no se renombra. Todo el trabajo va ahí; el PR sale de esa rama.
-- Versión de esta rama: `0.344.0` (anteriores entregadas: `0.229.0`, `0.228.0`, `0.209.0`, `0.208.0`, `0.207.0`, `0.206.0`, `0.205.0`, `0.204.0`, `0.203.0`, `0.202.0`, `0.201.0`, `0.200.0`, `0.199.0`, `0.198.0`, `0.197.0`, `0.196.0`, `0.195.0`, `0.194.0`, `0.193.0`, `0.192.0`, `0.191.0`, `0.190.0`, `0.189.0`, `0.188.0`, `0.187.0`, `0.186.0`, `0.185.0`, `0.184.2`, `0.184.1`, `0.183.0`)
+- Versión de esta rama: `0.345.0` (anteriores entregadas: `0.229.0`, `0.228.0`, `0.209.0`, `0.208.0`, `0.207.0`, `0.206.0`, `0.205.0`, `0.204.0`, `0.203.0`, `0.202.0`, `0.201.0`, `0.200.0`, `0.199.0`, `0.198.0`, `0.197.0`, `0.196.0`, `0.195.0`, `0.194.0`, `0.193.0`, `0.192.0`, `0.191.0`, `0.190.0`, `0.189.0`, `0.188.0`, `0.187.0`, `0.186.0`, `0.185.0`, `0.184.2`, `0.184.1`, `0.183.0`)
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
 - El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
   proyecto local del usuario.
@@ -275,6 +275,7 @@ anidados y sentencias cortadas (línea que empieza por operador tras un `;` o `}
 | 76 | la firma de la portada y el grabado del reloj se leen enteros | 0.342.0 |
 | 77 | las cajas grises del juego se acompasan al papel | 0.343.0 |
 | 78 | las filas del juego se vuelven fichas de registro | 0.344.0 |
+| 79 | el parte de muerte ya no repite la causa del juego | 0.345.0 |
 
 ## Folios del gabinete
 
@@ -298,6 +299,10 @@ anidados y sentencias cortadas (línea que empieza por operador tras un `;` o `}
 | XVI | recursos |
 | XVII | arsenal |
 | XVIII | mundos guardados |
+
+## Cambios de 0.345.0 — El parte de defunción deja de repetir la causa del juego
+
+- Muerte: la causa se lee una vez y se calla la del juego; el rótulo grande y el puntaje no se tocan.
 
 ## Cambios de 0.344.0 — Las fichas del juego se vuelven fichas de registro
 

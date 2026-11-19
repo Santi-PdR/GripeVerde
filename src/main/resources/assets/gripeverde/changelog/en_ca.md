@@ -1,3 +1,9 @@
+## Version 0.345.0 - El parte de defunción deja de repetir la causa del juego
+
+On the death screen, the game wrote the cause under the big title («Santipdr was slain») and our notice repeated it two centimetres above, over the plate. Now, when the screen opens, the house reads that cause once and keeps it in its own notice; the game stops writing it.
+
+The big title and the score stay where they were: nothing else is touched. If the game's text cannot be read —another version, another mapping language— it is left exactly as it was.
+
 ## Version 0.344.0 - Las fichas del juego se vuelven fichas de registro
 
 Sound, Chat and Accessibility still had the game's grey boxes inside the sheet. Now every row is repainted like the entries in Saved worlds: dark band, ink rule below and the label in our light letter.
