@@ -1,3 +1,7 @@
+## v0.318.0 - El recuento no se sube al titulo
+
+- Multijugador: el recuento se mide contra el hueco real y cede el añadido antes que pisar el titulo.
+
 ## v0.317.0 - La portada tiene imagen
 
 - `docs/banner.jpg`: lamina de la mesa de trabajo, declarada como ilustracion.

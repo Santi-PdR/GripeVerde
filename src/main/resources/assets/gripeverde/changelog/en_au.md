@@ -1,3 +1,7 @@
+## Version 0.318.0 - The count does not climb into the title
+
+When the Multiplayer sheet had several doors noted and as many known, the count grew leftwards until it slipped under the title. Now the real gap left between the title and the registry tag is measured: if the known-doors addition does not fit, it stays out and only the count shows; and if the count does not fit either, nothing is written rather than writing on top.
+
 ## Version 0.317.0 - The front page has an image
 
 A link without an image opens and says nothing until one reads. The README debuts a hand-painted plate of the work table -paper, wax seal, pocket watch and the green bottle-, with the notice that it is an illustration and not a screenshot, and the space kept for the game's captures.

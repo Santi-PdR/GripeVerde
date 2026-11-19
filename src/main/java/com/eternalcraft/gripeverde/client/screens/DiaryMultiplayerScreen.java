@@ -875,14 +875,28 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 this.countText = english ? count + " entries" : count + " anotados";
             }
             // v0.313.0: cuantas de esas puertas ya se visitaron.
+            // v0.318.0: si el añadido no cabe entre el titulo y la chapa, se
+            // queda fuera. Antes se metia encima del titulo y se leia mezclado.
+            String base = this.countText;
+            String full = base;
             try {
                 int known = com.eternalcraft.gripeverde.client.integration
                     .RecentAddresses.list().size();
-                if (known > 0 && this.countSrc != -2) {
-                    this.countText = this.countText + "  \u00b7  " + known
+                if (known > 0) {
+                    full = base + "  \u00b7  " + known
                         + (english ? " known" : " conocidas");
                 }
             } catch (Throwable ignored) {
+            }
+            int limit = (panelX + panelW - 74)
+                - Math.max(panelX + 20,
+                    this.headerTitleX + this.font.width(this.headerTitle) + 10);
+            if (this.font.width(full) <= limit) {
+                this.countText = full;
+            } else if (this.font.width(base) <= limit) {
+                this.countText = base;
+            } else {
+                this.countText = "";
             }
             this.countWidth = this.font.width(this.countText);
             this.countSrc = count;

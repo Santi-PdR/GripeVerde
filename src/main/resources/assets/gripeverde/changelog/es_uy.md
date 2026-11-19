@@ -1,3 +1,7 @@
+## Version 0.318.0 - El recuento no se sube al titulo
+
+Cuando la hoja de Multijugador tenia varias puertas anotadas y otras tantas conocidas, el recuento crecia hacia la izquierda hasta meterse debajo del titulo. Ahora se mide el hueco real que queda entre el titulo y la chapa de registro: si el añadido de las conocidas no entra, se queda en el recuento solo; y si tampoco entra el recuento, no se escribe nada antes que escribir encima.
+
 ## Version 0.317.0 - La portada tiene imagen
 
 Un enlace sin imagen se abre y no dice nada hasta que uno lee. El README estrena una lamina de la mesa de trabajo pintada a mano -papel, lacre, reloj de bolsillo y la botella verde-, con el aviso de que es ilustracion y no captura, y el hueco reservado para las capturas del juego.
