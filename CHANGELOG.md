@@ -1,3 +1,7 @@
+## v0.337.0 - La hoja de Accesibilidad deja de cortar la lista
+
+- Accesibilidad: la línea del margen ya no pisa el ojo; la lista termina en renglones enteros.
+
 ## v0.336.0 - La aguja de los mandos deja de comerse la etiqueta
 
 - `DiarySlider`: etiqueta partida en dos cuando la aguja la cruza.

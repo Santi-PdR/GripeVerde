@@ -1,4 +1,6 @@
-## Version 0.336.0 - The sliders' needle stops eating the label
+In Accessibility, the line "11 settings · Esc goes back" fell on top of the perception eye and only half a word could be read. Now it starts to its right, in the sheet's margin.
+
+The settings list was cut mid-entry over the foot rule. Now the height fits whole rows and there is air between the last entry and the rule, with the mod's two cosmetics below, each in its place.## Version 0.336.0 - The sliders' needle stops eating the label
 
 On the Sonido and The house bars, the slider needle fell right on the label and ate a letter: "Gramophone of the chronicler: 4 %". Now, when the needle falls on the text, the label is written in two halves and a clean gap is left; if it does not fall on it, everything stays the same.
 

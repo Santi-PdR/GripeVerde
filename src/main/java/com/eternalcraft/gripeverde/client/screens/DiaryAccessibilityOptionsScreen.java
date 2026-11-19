@@ -72,7 +72,13 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
             // v0.330.0: en hojas muy bajas el pie se comia la lista y quedaba
             // un alto negativo. Se le deja al menos un renglon.
             int listBottom = Math.max(listTop + 20,
-                this.panelY + this.panelH - FOOTER_H);
+                this.panelY + this.panelH - FOOTER_H - 6);
+            // v0.337.0: la lista se cortaba a media ficha sobre el filete del
+            // pie. Ahora el alto se ajusta a renglones enteros de 25 px.
+            int rows = (listBottom - listTop) / 25;
+            if (rows > 0 && listTop + rows * 25 >= listTop + 20) {
+                listBottom = listTop + rows * 25;
+            }
             this.list.updateSize(this.width, this.height, listTop, listBottom);
             this.smoothScroll.snapToCurrent(this.list);
         }
@@ -197,9 +203,11 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
                 + (en ? "  ·  Esc goes back" : "  ·  Esc vuelve");
             // v0.301.0: la linea se dibujaba justo debajo de la chapa REG. VI y
             // se leian las dos encimadas. Ahora va al margen izquierdo.
-            String cut = DiaryChrome.fitCached(this.font, res, Math.max(60, this.panelW - 120));
-            gfx.drawString(this.font, cut, this.panelX + 14,
-                this.panelY + 8, DiaryChrome.INK_FLAVOR, false);
+            // v0.337.0: la linea caia encima del ojo de la percepcion, que vive
+            // en panelX+22. Ahora arranca a su derecha y no hay dos tintas.
+            String cut = DiaryChrome.fitCached(this.font, res, Math.max(60, this.panelW - 140));
+            gfx.drawString(this.font, cut, this.panelX + 44,
+                this.panelY + 10, DiaryChrome.INK_FLAVOR, false);
         } catch (Throwable ignored) {
         }
 

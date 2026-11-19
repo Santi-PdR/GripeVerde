@@ -1,4 +1,6 @@
-## Version 0.336.0 - La aguja de los mandos deja de comerse la etiqueta
+En Accesibilidad, la línea «11 ajustes · Esc vuelve» caía encima del ojo de la percepción y se leía media palabra. Ahora arranca a su derecha, en el margen de la hoja.
+
+La lista de ajustes se cortaba a media ficha sobre el filete del pie. Ahora el alto se ajusta a renglones enteros y queda aire entre la última ficha y el filete, con los dos cosméticos del mod debajo, cada uno en su sitio.## Version 0.336.0 - La aguja de los mandos deja de comerse la etiqueta
 
 En las barras de Sonido y de La casa, la aguja del mando caía justo encima de la etiqueta y se comía una letra: «Granófono del cronista: 4 %». Ahora, cuando la aguja cae sobre el texto, la etiqueta se escribe en dos mitades y queda un hueco limpio; si no cae encima, todo sigue igual.
 
