@@ -1,3 +1,8 @@
+## v0.316.0 - La casa entra en ventanas bajas
+
+- La casa: paso entre renglones adaptativo y pestillo sujeto al pie.
+- La casa: una sola franja sobre los botones (ayuda o folio+registro, no las dos).
+
 ## v0.315.0 - El mod se puede pasar de mano
 
 - `README.md` abre con que es, requisitos, instalacion y enlaces; el historial queda abajo.

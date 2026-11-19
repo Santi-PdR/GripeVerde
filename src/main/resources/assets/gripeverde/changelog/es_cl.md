@@ -1,3 +1,9 @@
+## Version 0.316.0 - La casa entra en ventanas bajas
+
+Con la ventana baja, el pestillo de la esquina de La casa aterrizaba sobre los botones del pie. Ahora los renglones se aprietan solos para dejarles sitio y, si aun asi no cabe, el pestillo se pega al borde de los botones en vez de pisarlos.
+
+Y el folio de la hoja caia justo encima de Volver: la franja sobre los botones es una sola, con el raton en un pestillo la ocupa su explicacion y, si no, el folio y el registro.
+
 ## Version 0.315.0 - El mod se puede pasar de mano
 
 La casa tenia puertas para todo menos para que alguien de afuera la abriera: el README empezaba con doscientas lineas de historial y no decia ni que version de Minecraft pide. Ahora abre con lo que hace, lo que necesita y los cuatro pasos para instalarlo, con el enlace al ultimo release, y el historial queda abajo, entero, donde estaba.

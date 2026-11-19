@@ -1,3 +1,9 @@
+## Version 0.316.0 - The house fits in low windows
+
+With a low window, the corner latch of the house landed on the buttons at the foot. Now the lines tighten on their own to leave room and, if it still does not fit, the latch sticks to the edge of the buttons instead of stepping on them.
+
+And the sheet's folio fell right on top of Back: the strip above the buttons is a single one, with the mouse on a latch its explanation takes it and, otherwise, the folio and the registry.
+
 ## Version 0.315.0 - The mod can be handed over
 
 The house had doors for everything except letting someone from outside open it: the README started with two hundred lines of history and did not even say which Minecraft version it asks for. It now opens with what it does, what it needs and the four steps to install it, with the link to the latest release, and the history stays below, whole, where it was.

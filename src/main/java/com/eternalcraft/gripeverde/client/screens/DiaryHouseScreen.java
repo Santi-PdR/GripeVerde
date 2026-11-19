@@ -40,6 +40,8 @@ public class DiaryHouseScreen extends Screen {
     private int panelY;
     private int panelW;
     private int panelH;
+    /** v0.316.0: paso entre renglones cuando la ventana viene baja. */
+    private int rowStep = ROW_H;
     private int titleY;
     private int gridTop;
     private int toggleW;
@@ -74,6 +76,11 @@ public class DiaryHouseScreen extends Screen {
         this.panelY = (this.height - this.panelH) / 2;
         this.titleY = this.panelY + 14;
         this.gridTop = this.titleY + 46;
+        // v0.316.0: con la ventana baja los renglones se aprietan para que el
+        // pestillo de la esquina no aterrice sobre los botones del pie.
+        int backTop = this.panelY + this.panelH - 34;
+        this.rowStep = Math.max(18, Math.min(ROW_H,
+            (backTop - 4 - this.gridTop) / 5));
         this.toggleW = (this.panelW - 32 - COL_GAP) / 2;
 
         int col1 = this.panelX + 16;
@@ -140,7 +147,8 @@ public class DiaryHouseScreen extends Screen {
             cursor += 24;
         }
 
-        final int cornerY = cursor;
+        // v0.316.0: y si aun asi no cabe, el pestillo se pega al pie.
+        final int cornerY = Math.min(cursor, this.panelY + this.panelH - 34 - 28);
         DiaryButton corner = new DiaryButton(
             this.panelX + 16, cornerY, this.panelW - 32, TOGGLE_H,
             cornerLabel(),
@@ -184,7 +192,7 @@ public class DiaryHouseScreen extends Screen {
     }
 
     private int row(int index) {
-        return this.gridTop + index * ROW_H;
+        return this.gridTop + index * this.rowStep;
     }
 
     private Component cornerLabel() {
@@ -251,19 +259,23 @@ public class DiaryHouseScreen extends Screen {
                 break;
             }
         }
+        // v0.316.0: la franja sobre los botones es una sola. Con el raton en
+        // un pestillo la ocupa la explicacion; si no, el folio y el registro.
+        // Antes el folio caia justo encima del boton Volver.
+        int stripY = this.panelY + this.panelH - 46;
         if (helpLine != null) {
             String fitted = DiaryChrome.fitText(this.font, helpLine, Math.max(60, this.panelW - 40));
             int hw = DiaryChrome.widthCached(this.font, fitted);
-            g.drawString(this.font, fitted, this.width / 2 - hw / 2,
-                this.panelY + this.panelH - 48, DiaryChrome.INK_SUBTITLE, false);
+            g.drawString(this.font, fitted, this.width / 2 - hw / 2, stripY,
+                DiaryChrome.INK_SUBTITLE, false);
+        } else {
+            String folio = en() ? "sheet XIX  ·  Esc back" : "hoja XIX  ·  Esc vuelve";
+            int folioW = DiaryChrome.widthCached(this.font, folio);
+            g.drawString(this.font, folio, this.panelX + this.panelW - 12 - folioW, stripY,
+                DiaryChrome.INK_SUBTITLE, false);
+            g.drawString(this.font, "REG. XIX", this.panelX + 12, stripY,
+                DiaryChrome.INK_SUBTITLE, false);
         }
-
-        String folio = en() ? "sheet XIX  ·  Esc back" : "hoja XIX  ·  Esc vuelve";
-        int folioW = DiaryChrome.widthCached(this.font, folio);
-        g.drawString(this.font, folio, this.panelX + this.panelW - 12 - folioW,
-            this.panelY + this.panelH - 12, DiaryChrome.INK_SUBTITLE, false);
-        g.drawString(this.font, "REG. XIX", this.panelX + 12, this.panelY + this.panelH - 12,
-            DiaryChrome.INK_SUBTITLE, false);
     }
 
     /** v0.297.0: vuelve a los valores de fabrica de la casa (los del archivo). */
