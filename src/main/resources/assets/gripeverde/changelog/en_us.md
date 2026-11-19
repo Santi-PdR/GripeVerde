@@ -1,3 +1,7 @@
+## Version 0.329.0 - The notice steps away from the emblem on short title screens
+
+With a short title screen, the new-file notice hanging below the lenses fell on the emblem. Now, when the window has no spare height, the notice drops to the bottom right corner, where there is nothing else but the paper's edge.
+
 ## Version 0.328.0 - Measured texts are measured again when the window changes
 
 Two labels in the house were measured once and kept the old measure: the Multiplayer count, which could stay empty after narrowing the window even with posts noted, and the diary's folio, which stayed measured for the previous width. Now the available gap is part of both accounts, so they are measured again on resize.

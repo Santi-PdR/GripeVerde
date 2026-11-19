@@ -1,3 +1,7 @@
+## Version 0.329.0 - El aviso se aparta del emblema en portadas bajas
+
+Con la portada baja, el aviso de ficha nueva colgado debajo de las lentes caía sobre el emblema. Ahora, cuando la ventana no tiene alto de sobra, el aviso baja al rincón de abajo a la derecha, donde no hay nada más que el borde del papel.
+
 ## Version 0.328.0 - Los textos medidos se vuelven a medir al cambiar la ventana
 
 Dos rótulos de la casa se medían una sola vez y se quedaban con la medida vieja: el recuento de Multijugador, que al angostarse la ventana podía quedar vacío aunque hubiera puestos, y el folio del diario, que quedaba medido para el ancho anterior. Ahora el hueco disponible entra en la cuenta de los dos, así que al redimensionar se vuelven a medir.

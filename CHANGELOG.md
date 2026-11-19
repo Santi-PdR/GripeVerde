@@ -1,3 +1,7 @@
+## v0.329.0 - El aviso se aparta del emblema en portadas bajas
+
+- Portada: el aviso va a `height-34` cuando la ventana tiene 260 de alto o mas.
+
 ## v0.328.0 - Los textos medidos se vuelven a medir al cambiar la ventana
 
 - Multijugador: `countLimit` en la clave de cache del recuento.

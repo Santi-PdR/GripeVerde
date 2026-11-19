@@ -175,7 +175,10 @@ public final class Discoveries {
         // cuelga debajo de ellas en vez de taparlas.
         try {
             if (mc.screen instanceof com.eternalcraft.gripeverde.client.screens.DiaryTitleScreen) {
-                y = 40;
+                // v0.329.0: debajo de las lentes (y=8..28). Y si la portada es
+                // baja, abajo a la derecha, donde el emblema no llega.
+                int sh = mc.screen.height;
+                y = sh >= 260 ? sh - 34 : 40;
             }
         } catch (Throwable ignored) {
         }
