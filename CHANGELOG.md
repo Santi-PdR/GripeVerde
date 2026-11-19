@@ -1,3 +1,8 @@
+## v0.308.0 - Las coordenadas, en su papelito
+
+- Reloj en partida: tercera linea = rato dentro.
+- Papelito de coordenadas aparte, abajo a la derecha, siempre visible.
+
 ## v0.307.0 - La casa se abre desde la portada
 
 - Portada: tercera lente (casa) junto al diario y al parte, con su descripcion.

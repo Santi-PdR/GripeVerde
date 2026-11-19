@@ -1,3 +1,9 @@
+## Version 0.308.0 - Las coordenadas, en su papelito
+
+El reloj de la partida ya no mezcla cosas: sus tres renglones son la hora de verdad con el día, el día y la hora del mundo con el clima, y el rato que lleva dentro. Las coordenadas se van a un **papelito aparte**, abajo a la derecha, como el renglón que el mapa escribe bajo sí mismo: se lee de un vistazo, no se mezcla con el reloj y no depende de que haya minimapa.
+
+Los dos papeles entran con el mismo fundido y el lacre del reloj sigue latiendo una vez por minuto. Con movimiento reducido, ni fundido ni latido.
+
 ## Version 0.307.0 - La casa se abre desde la portada
 
 La hoja de la casa ya no vive escondida detrás de Créditos: en la portada, al lado del parte y del diario, hay una tercera lente que la abre directamente. Su descripción aparece al pasar la mano: «La casa: interruptores y volúmenes».

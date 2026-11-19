@@ -27,6 +27,7 @@ public final class WatchHud {
     private static String cachedLine1 = "";
     private static String cachedLine2 = "";
     private static String cachedLine3 = "";
+    private static String cachedCoords = "";
     private static long cachedAtMs = -1L;
 
     private WatchHud() {
@@ -70,14 +71,14 @@ public final class WatchHud {
         g.drawString(font, cachedLine2, x + 7, y + 17, soft, false);
         g.drawString(font, cachedLine3, x + 7, y + 28, soft, false);
 
-        // v0.301.0: con mapa arriba, las coordenadas van en su propio papelito
-        // abajo a la derecha, como el renglon que el mapa escribe bajo si mismo.
-        if (minimapPresent() && coords() && cachedLine3.length() > 0) {
-            int cw = Math.min(SLIP_W, Math.max(52, font.width(cachedLine3) + 16));
+        // v0.308.0: las coordenadas tienen su propio papelito, abajo a la derecha,
+        // lejos del reloj y de lo que escriba el mapa.
+        if (cachedCoords.length() > 0) {
+            int cw = Math.min(120, Math.max(56, font.width(cachedCoords) + 16));
             int cx2 = screenW - cw - MARGIN;
-            int cy2 = screenH - 22 - MARGIN;
-            PaperTexture.drawTornSlip(g, cx2, cy2, cw, 20, 0xE6D2A6, 0x422810, alpha);
-            g.drawString(font, cachedLine3, cx2 + 5, cy2 + 6, ink, false);
+            int cy2 = screenH - 20 - MARGIN;
+            PaperTexture.drawTornSlip(g, cx2, cy2, cw, 18, 0xE6D2A6, 0x422810, alpha);
+            g.drawString(font, cachedCoords, cx2 + 5, cy2 + 5, ink, false);
         }
 
         // El lacre: un cuadradito rojo que late una vez por minuto, sin destellos.
@@ -184,16 +185,19 @@ public final class WatchHud {
             + String.format(java.util.Locale.ROOT, "%02d:%02d", hours, minutes)
             + "  " + weather;
 
+        // v0.308.0: el rato dentro se queda en el reloj y las coordenadas pasan a
+        // su propio papelito, como el renglon que el mapa escribe bajo si mismo.
+        long mins = Math.max(0L, (now - worldSinceMs) / 60_000L);
+        cachedLine3 = mins + (en ? " min in" : " min aqui");
         if (coords() && mc.player != null) {
             try {
-                cachedLine3 = mc.player.getBlockX() + " " + mc.player.getBlockY()
+                cachedCoords = mc.player.getBlockX() + " " + mc.player.getBlockY()
                     + " " + mc.player.getBlockZ();
             } catch (Throwable ignored) {
-                cachedLine3 = "";
+                cachedCoords = "";
             }
         } else {
-            long mins = Math.max(0L, (now - worldSinceMs) / 60_000L);
-            cachedLine3 = (en ? "" : "") + mins + (en ? " min in" : " min aqui");
+            cachedCoords = "";
         }
         cachedLine1 = DiaryChrome.fitText(mc.font, cachedLine1, SLIP_W - 22);
         cachedLine2 = DiaryChrome.fitText(mc.font, cachedLine2, SLIP_W - 14);

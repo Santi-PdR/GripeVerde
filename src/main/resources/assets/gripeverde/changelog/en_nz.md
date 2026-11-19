@@ -1,3 +1,9 @@
+## Version 0.308.0 - Coordinates, on their own slip
+
+The in-game watch no longer mixes things: its three lines are the real time with the day, the world's day and hour with the weather, and how long you have been in. Coordinates move to their **own slip of paper**, bottom right, like the line the map writes under itself: read at a glance, not mixed with the watch, and not dependent on a minimap existing.
+
+Both papers come in with the same fade and the watch's seal keeps pulsing once a minute. With reduced motion, neither fade nor pulse.
+
 ## Version 0.307.0 - The house opens from the title screen
 
 The house sheet no longer lives hidden behind Credits: on the title screen, next to the dispatch note and the diary, a third lens opens it directly. Its description appears when the hand passes over it: `The house: switches and volumes`.
