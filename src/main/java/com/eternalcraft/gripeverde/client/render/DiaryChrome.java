@@ -567,7 +567,8 @@ public final class DiaryChrome {
                 int ty = slider ? drawTop + 2 : drawTop + (drawBottom - drawTop - font.lineHeight) / 2;
                 gfx.drawString(font, shown, tx, ty, ink, false);
                 if (slider) {
-                    double value = sliderValue(w);
+                    double value = sliderValue(
+                        (net.minecraft.client.gui.components.AbstractSliderButton) w);
                     int trackX1 = left + 8;
                     int trackX2 = right - 8;
                     int trackY = drawBottom - 4;
