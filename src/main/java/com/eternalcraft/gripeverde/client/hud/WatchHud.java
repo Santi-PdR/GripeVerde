@@ -18,7 +18,8 @@ import net.minecraft.client.gui.GuiGraphics;
  */
 public final class WatchHud {
 
-    private static final int SLIP_W = 96;
+    // v0.312.0: la tira crece para que quepan la fecha y el clima enteros.
+    private static final int SLIP_W = 116;
     private static final int SLIP_H = 42;
     private static final int MARGIN = 6;
 
@@ -164,7 +165,11 @@ public final class WatchHud {
         int dow = Math.max(0, Math.min(6, cal.get(java.util.Calendar.DAY_OF_WEEK) - 1));
         String clock = String.format(java.util.Locale.ROOT, "%02d:%02d",
             cal.get(java.util.Calendar.HOUR_OF_DAY), cal.get(java.util.Calendar.MINUTE));
-        cachedLine1 = clock + "  " + (en ? daysEn : daysEs)[dow];
+        // v0.312.0: la fecha de verdad, en numeral romano, detras del dia.
+        String[] roman = {"I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"};
+        String date = cal.get(java.util.Calendar.DAY_OF_MONTH) + "\u00b7"
+            + roman[Math.max(0, Math.min(11, cal.get(java.util.Calendar.MONTH)))];
+        cachedLine1 = clock + "  " + (en ? daysEn : daysEs)[dow] + "  " + date;
 
         long day = 1L;
         long worldClock = 0L;

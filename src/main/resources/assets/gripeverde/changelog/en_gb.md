@@ -1,3 +1,9 @@
+## Version 0.312.0 - The in-game watch tells the date
+
+The watch strip in game gains the real date in Roman numerals behind the weekday: `20:56  wed  18·XI`. And it grows from 96 to 116 pixels so the day, the date, the weather and the time inside all fit whole instead of being clipped with ellipses.
+
+The coordinates slip stays bottom right, with its own width, and the seal pulses once a minute.
+
 ## Version 0.311.0 - The filing cabinet, dressed like the house
 
 The resource pack sheet was the last one still wearing the game's clothes: a white title that could not be read on the light paper and the usual grey buttons. The title is now covered with its own slip of paper and rewritten in ink, and the buttons at the foot (done, open folder) are dressed like the rest of the notebook.

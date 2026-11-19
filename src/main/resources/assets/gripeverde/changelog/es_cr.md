@@ -1,3 +1,9 @@
+## Version 0.312.0 - El reloj de la partida dice la fecha
+
+La tira del reloj en partida gana la fecha de verdad en numeral romano detrás del día de la semana: `20:56  mié  18·XI`. Y crece de 96 a 116 píxeles para que el día, la fecha, el clima y el rato dentro quepan enteros en vez de recortarse con puntos suspensivos.
+
+El papelito de las coordenadas sigue abajo a la derecha, con su propio ancho, y el lacre late una vez por minuto.
+
 ## Version 0.311.0 - El archivador, vestido como la casa
 
 La hoja de paquetes de recursos era la última que seguía con la ropa del juego: título en blanco que sobre el papel claro no se leía y botones grises de siempre. Ahora el título va cubierto con su recorte de papel y reescrito en tinta, y los botones del pie (hecho, abrir carpeta) se visten como los del resto del cuaderno.

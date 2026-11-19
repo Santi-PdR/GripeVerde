@@ -1,3 +1,8 @@
+## v0.312.0 - El reloj de la partida dice la fecha
+
+- HUD: fecha en numeral romano tras el dia de la semana.
+- HUD: la tira pasa de 96 a 116 px para que quepa todo sin recortes.
+
 ## v0.311.0 - El archivador, vestido como la casa
 
 - Paquetes: titulo reescrito en tinta sobre su recorte (el blanco no se leia).
