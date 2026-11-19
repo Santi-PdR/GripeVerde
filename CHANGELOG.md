@@ -1,3 +1,7 @@
+## v0.350.0 - El pie de Sonido sube del canto
+
+- Sonido: el resumen y el folio del pie suben seis píxeles y dejan el canto roto libre.
+
 ## v0.349.0 - Los pies de teclas dejan el canto roto
 
 - Conexión rápida y Editar servidor: el pie de teclas sube sobre las fichas y se calla si no hay hueco.

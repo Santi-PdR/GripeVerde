@@ -1,3 +1,9 @@
+## Version 0.350.0 - El pie de Sonido sube del canto
+
+En Sonido, el resumen de las tres capas y el folio se escribían a doce píxeles del borde de la hoja, sobre el canto roto: las últimas letras se leían a medias. Suben seis píxeles y siguen a los lados del botón Volver, con el ancho que les deja a cada uno.
+
+Es el último pie que quedaba pegado al canto; los de Conexión rápida y Editar servidor ya se habían movido sobre las fichas.
+
 ## Version 0.349.0 - Los pies de teclas dejan el canto roto
 
 En Conexión rápida y en Editar servidor, el pie de teclas («Enter entra · Esc vuelve», «Tab cambia de campo · Enter firma · Esc vuelve») se escribía a doce píxeles del borde de la hoja, justo donde el papel termina desgarrado: las últimas letras quedaban enganchadas al canto.

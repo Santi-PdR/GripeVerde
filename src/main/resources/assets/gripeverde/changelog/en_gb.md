@@ -1,3 +1,9 @@
+## Version 0.350.0 - El pie de Sonido sube del canto
+
+In Sound, the three-layer summary and the folio were written twelve pixels from the sheet's edge, over the torn edge: the last letters were half-read. They move up six pixels and stay at the sides of the Back button, each with the width it is given.
+
+It was the last foot still stuck to the edge; Direct join and Edit server had already moved above the buttons.
+
 ## Version 0.349.0 - Los pies de teclas dejan el canto roto
 
 In Direct join and Edit server, the keys hint («Enter joins · Esc back», «Tab changes field · Enter signs · Esc back») was written twelve pixels from the sheet's edge, right where the paper ends torn: the last letters hung on the edge.

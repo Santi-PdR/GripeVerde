@@ -551,7 +551,10 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             // para no llegar a el.
             String folio = en ? "sheet II  ·  Esc back" : "hoja II  ·  Esc vuelve";
             int fw = DiaryChrome.widthCached(this.font, folio);
-            int footY = this.panelY + this.panelH - 12;
+            // v0.350.0: el pie compartia linea con Volver, pero a doce pixeles
+            // del borde, sobre el canto roto. Sube seis y sigue a los lados del
+            // boton, que vive entre panelH-30 y panelH-10.
+            int footY = this.panelY + this.panelH - 18;
             int footRight = this.panelX + this.panelW - 14;
             // v0.336.0: el pie comparte la linea con el boton Volver, que vive
             // centrado. El resumen se escribe a su izquierda y el folio a su
