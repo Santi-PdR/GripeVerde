@@ -1,3 +1,9 @@
+## Version 0.327.0 - El estado del proyecto, al día
+
+El archivo de asuntos conocidos seguía abriendo con el estado de la 0.173.0, doscientas versiones atrás. Ahora su primera sección dice qué está cerrado en esta ronda, cómo se publica cada versión, que no hay prueba visual dentro del juego, y qué queda fuera de este repositorio.
+
+Las secciones viejas quedan abajo como lo que son: instantáneas de su momento.
+
 ## Version 0.326.0 - El aviso de ficha nueva no tapa las lentes
 
 En la portada, la fila de lentes (Diario, Parte, La casa, Mods, Ajustes) vive en el borde de arriba, y el aviso de «ficha nueva» caía justo encima: se tapaban los dos. Ahora el aviso se cuelga debajo de la fila, en el mismo borde derecho, y las lentes quedan libres.

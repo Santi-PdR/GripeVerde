@@ -1,3 +1,7 @@
+## v0.327.0 - El estado del proyecto, al dia
+
+- `KNOWN_ISSUES.md`: seccion ESTADO reescrita para la ronda actual.
+
 ## v0.326.0 - El aviso de ficha nueva no tapa las lentes
 
 - Portada: el aviso baja a `y=40`, debajo de la fila de lentes.

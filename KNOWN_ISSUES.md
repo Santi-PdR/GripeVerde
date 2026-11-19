@@ -5,32 +5,34 @@ de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
 que una seccion posterior lo mencione expresamente.
 
-## ESTADO: DESARROLLO ACTIVO (2026-11-13, GripeVerde v0.173.0 / CEDA Dispatch 3.9.4)
+## ESTADO: DESARROLLO ACTIVO (2026-11-13, GripeVerde v0.327.0)
 
-Estado comprobado en la rama `codex/v0.104-ghoul-warning-poster` y en el PR #90:
+Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
-- `0.173.0` rediseña el aviso CEDA de la portada y el bando de cuarentena: placa de
-  imprenta con retrato del infectado, rótulo de campo y pie sin solapes. Todo estático.
-- El CI de `0.172.0` (run 40763347401) terminó en verde; el JAR de `0.173.0` se genera con
-  el mismo workflow. `0.172.0` nunca llegó a la instancia local del usuario.
-- **KI-79 (CEDA Dispatch / CopyL):** los síntomas reportados por el usuario —texto
-  superpuesto y glifos cuadrados en el editor de mensajes— tienen causa identificada en
-  CopyL 3.9.x, no en la integración: una fuente TTF propia (`copyl:dispatch`) introducida en
-  3.9.0 y retirada de los textos en 3.9.1 (que aún sigue empaquetada), y un doble dibujo del
-  texto de cada `EditBox` tras `graphics.flush()`. La integración de GripeVerde solo abre la
-  pantalla por reflexión. La corrección 3.9.5 está preparada y verificada como parche en
-  `tools/copyl/0001-copyl-3.9.5-one-text-pass.patch`; falta publicarla en
-  `Santi-PdR/Lclient`, donde esta sesión no tiene permiso de escritura. Detalle en
-  `docs/CONTEXTO_MODMENU.md`.
-- La carpeta de mods debe contener únicamente archivos JAR. Al actualizar, se reemplazan las
-  versiones anteriores de GripeVerde y CEDA Dispatch; se conservan los demás mods.
-- El ID `copyl`, los formatos y rutas de configuración de CEDA Dispatch se mantienen; el
-  botón opcional no carga si el otro mod está ausente.
-- No se ha hecho una prueba visual del cliente en esta revisión; el CI acredita compilación,
-  recursos y localización, no una validación dentro de Minecraft.
-- El KI-66 y la pausa descritos en los registros históricos de abajo corresponden a agosto
-  de 2026 y ya no representan el estado operativo actual.
+- La ronda visual de hojas va por `0.327.0`. Cerradas en esta tanda: Packs vestido,
+  fecha en el reloj del HUD, pie de Multijugador ordenado, hoja de Video vestida,
+  README de portada, La casa en ventanas bajas, recientes de Conexión directa
+  acotadas, reloj junto a JourneyMap en la columna derecha, estado de la pausa
+  junto a la vela, filas LAN legibles, cabecera LAN en tinta, fichas del diario
+  con sitio, La casa desde los ajustes de campo y el aviso de ficha nueva bajo
+  las lentes.
+- Cada versión publicada tiene su release con JAR y sha256; el CI (`build.yml`)
+  corre `verify_mirrors.py`, `lint_java.py` y `./gradlew clean build` antes de
+  publicar, y el job `publish` compara `release-tag.txt` con `build.gradle`.
+- **No se ha hecho una prueba visual dentro de Minecraft en esta revisión.** El CI
+  acredita compilación, recursos, localización y espejos; no valida cómo se ve la
+  pantalla. Lo que se corrige por medida (anchos, franjas, márgenes) está medido
+  contra las constantes del propio código, no contra una captura.
+- La carpeta de mods debe contener únicamente archivos JAR; al actualizar se
+  reemplazan las versiones anteriores de GripeVerde.
+- **KI-79 (CEDA Dispatch / CopyL)** sigue fuera de este repositorio: la corrección
+  está preparada en `tools/copyl/0001-copyl-3.9.5-one-text-pass.patch` y falta
+  publicarla en `Santi-PdR/Lclient`, donde esta sesión no tiene permiso de escritura.
+- Licencia: `mods.toml` declara todos los derechos reservados. El README explica
+  qué se permite en la práctica (descargar y jugar sí; redistribuir no).
 
+Las secciones de versiones anteriores que vienen abajo son instantáneas
+históricas: no reabren un KI salvo que una sección posterior lo mencione.
 
 
 ## v0.30.0 - La hoja entera (2026-08-24)

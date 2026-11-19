@@ -1,3 +1,9 @@
+## Version 0.327.0 - The project state, up to date
+
+The known-issues file still opened with the state of 0.173.0, two hundred versions back. Now its first section says what is closed in this round, how each version is published, that there is no visual test inside the game, and what stays outside this repository.
+
+The old sections remain below as what they are: snapshots of their moment.
+
 ## Version 0.326.0 - The new-file notice does not cover the lenses
 
 On the title screen, the row of lenses (Diary, Dispatch, The house, Mods, Settings) lives at the top edge, and the "new file" notice fell right on it: the two covered each other. Now the notice hangs below the row, at the same right edge, and the lenses stay clear.
