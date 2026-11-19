@@ -1,3 +1,9 @@
+## Version 0.333.0 - The documentation tells today's truth
+
+The guide for touching the mod still announced v0.23.1, 60 Java files and 93 keys per language: three hundred versions away. It now states the published version, the current branch, the real baseline the tools measure (71 files, 191 keys, 8/8 seals) and how a version is published: mirrors, lint, one push, one run, the sha256.
+
+The master context opens with today's addendum, and the v0.22.0 technical review is marked for what it is: a historical document.
+
 ## Version 0.332.0 - The Sound foot does not sit on Back
 
 On the tight Sound sheet —the one that shrinks below 280 of height— the three-layer summary and the folio were written twelve pixels from the edge, which is exactly where the Back button lives: the text ran over it. Now, on that sheet, the foot stays quiet; the information is still on the full sheet.

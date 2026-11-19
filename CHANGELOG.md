@@ -1,3 +1,10 @@
+## v0.333.0 - La documentacion dice la verdad de hoy
+
+- `CONTRIBUTING.md`: estado vigente, baseline medida y flujo de publicacion.
+- `CONTEXTO.md`: addendum de hoy; el anterior queda marcado historico.
+- `REVISION_MOD.md`: marcado como documento historico de la v0.22.0.
+- `KNOWN_ISSUES.md`: ESTADO a 0.333.0 con lo cerrado en la ronda.
+
 ## v0.332.0 - El pie de Sonido no se sienta sobre Volver
 
 - Sonido: resumen y folio solo con `!compactLayout()`.

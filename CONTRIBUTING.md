@@ -4,18 +4,23 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
 
 ## Estado vigente de la entrega
 
-- Version preparada: **v0.23.1**.
-- PR 14 (v0.22.0) ya mergeada en main (`4ca038d`).
-- Rama de trabajo vigente: `arena/01a02f45-gripeverde`.
-- Baseline: 60 Java, 25 locales con 93 claves cada uno, 25 cronicas, 35
-  eventos de sonido, 42 referencias OGG y 42 archivos OGG.
-- El tag/release v0.23.0 no debe crearse hasta cerrar KI-53 con Java 17 y
-  una prueba completa en Minecraft (queda tambien el pendiente v0.22.0).
-- Ruta local vigente del owner: `C:\Users\santi\Desktop\GripeVerde`.
-- Deploy vigente: `tools\deploy.ps1` hacia
-  `C:\Users\santi\AppData\Roaming\.sklauncher\instances\test-1\mods`.
-- Las rutas antiguas y `.deploy` que sobreviven en documentacion historica
-  no son instrucciones de trabajo.
+- Version publicada: **v0.333.0**.
+- Rama de trabajo vigente: `arena/48be547c-gripeverde`, un solo push por version.
+- Baseline medida por las herramientas: **71 archivos Java**, **25 locales con
+  191 claves** cada uno, 25 cronicas, 35 eventos de sonido, 42 referencias OGG y
+  42 archivos OGG, 4 piezas de musica y **8/8 sellos espejo**.
+- Cada publicacion es: `python3 tools/verify_mirrors.py` -> `python3 tools/lint_java.py`
+  -> commit + push -> esperar el run (~3-5 min) -> comprobar el release y el sha256.
+  El job `publish` del CI compara `release-tag.txt` con `build.gradle`.
+- **Nunca dos pushes seguidos**: el CI cancela el run anterior por concurrencia.
+- Sin JDK local: la compilacion la hace el CI. No hace falta instalar Java 17 en
+  la maquina para publicar.
+- Deploy del owner: la carpeta
+  `D:\Minecraft\SKLauncher\sklauncher-data-v4\instances\test-1\mods`, con JAR
+  solamente y una sola version del mod (el comando de instalacion esta en el
+  README y en cada release).
+- Las rutas antiguas que sobreviven en documentacion historica no son
+  instrucciones de trabajo.
 
 ## Reglas base
 

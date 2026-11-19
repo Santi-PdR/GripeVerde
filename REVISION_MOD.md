@@ -1,3 +1,8 @@
+> **DOCUMENTO HISTORICO.** Esta es la revision tecnica de la v0.22.0
+> (2026-08-23). Sus hallazgos se cerraron entonces; el estado vigente
+> del proyecto esta en `KNOWN_ISSUES.md` (seccion ESTADO) y la guia de
+> trabajo en `CONTRIBUTING.md`. Se conserva entera como registro.
+
 # REVISIÓN TÉCNICA - Eternal Craft: Gripe Verde v0.22.0
 
 > **ADDENDUM 2026-08-23 (crash en campo):** llegó un crash-log real de un

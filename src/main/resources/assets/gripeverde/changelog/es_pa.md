@@ -1,3 +1,9 @@
+## Version 0.333.0 - La documentación dice la verdad de hoy
+
+La guía para tocar el mod seguía anunciando la v0.23.1, 60 archivos Java y 93 claves por idioma: trescientas versiones de distancia. Ahora dice la versión publicada, la rama vigente, la base real que miden las herramientas (71 archivos, 191 claves, 8/8 sellos) y cómo se publica: espejos, lint, un push, un run, el sha256.
+
+El contexto maestro abre con un addendum de hoy, y la revisión técnica de la v0.22.0 quedó marcada como lo que es: un documento histórico.
+
 ## Version 0.332.0 - El pie de Sonido no se sienta sobre Volver
 
 En la hoja de Sonido apretada —la que se achica por debajo de 280 de alto— el resumen de las tres capas y el folio se escribían a doce píxeles del borde, que es justo donde vive el botón Volver: el texto le pasaba por encima. Ahora, en esa hoja, el pie se calla; la información sigue en la hoja entera.

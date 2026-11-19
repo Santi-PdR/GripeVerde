@@ -5,17 +5,19 @@ de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
 que una seccion posterior lo mencione expresamente.
 
-## ESTADO: DESARROLLO ACTIVO (2026-11-13, GripeVerde v0.327.0)
+## ESTADO: DESARROLLO ACTIVO (2026-11-13, GripeVerde v0.333.0)
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
-- La ronda visual de hojas va por `0.327.0`. Cerradas en esta tanda: Packs vestido,
-  fecha en el reloj del HUD, pie de Multijugador ordenado, hoja de Video vestida,
-  README de portada, La casa en ventanas bajas, recientes de Conexión directa
-  acotadas, reloj junto a JourneyMap en la columna derecha, estado de la pausa
-  junto a la vela, filas LAN legibles, cabecera LAN en tinta, fichas del diario
-  con sitio, La casa desde los ajustes de campo y el aviso de ficha nueva bajo
-  las lentes.
+- La ronda visual de hojas va por `0.333.0`. Cerradas en esta tanda, entre otras:
+  Packs vestido, fecha en el reloj del HUD, pie de Multijugador ordenado, hoja de
+  Video vestida, README de portada, La casa en ventanas bajas, recientes de
+  Conexión directa acotadas, reloj junto a JourneyMap en la columna derecha,
+  estado de la pausa junto a la vela, filas LAN legibles, cabecera LAN en tinta,
+  fichas del diario con sitio, La casa desde los ajustes de campo, el aviso de
+  ficha nueva bajo las lentes, rejillas ancladas al pie (Aspecto y
+  Accesibilidad), el sello del mod en `mods.toml` y el pie de Sonido en hoja
+  apretada.
 - Cada versión publicada tiene su release con JAR y sha256; el CI (`build.yml`)
   corre `verify_mirrors.py`, `lint_java.py` y `./gradlew clean build` antes de
   publicar, y el job `publish` compara `release-tag.txt` con `build.gradle`.
@@ -30,6 +32,9 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
   publicarla en `Santi-PdR/Lclient`, donde esta sesión no tiene permiso de escritura.
 - Licencia: `mods.toml` declara todos los derechos reservados. El README explica
   qué se permite en la práctica (descargar y jugar sí; redistribuir no).
+- Documentación: `README.md` es la portada para compartir, `CONTRIBUTING.md` la
+  guía de trabajo, `docs/CONTEXTO_MODMENU.md` la tabla de hojas y medidas,
+  `REVISION_MOD.md` quedó marcado como documento histórico de la v0.22.0.
 
 Las secciones de versiones anteriores que vienen abajo son instantáneas
 históricas: no reabren un KI salvo que una sección posterior lo mencione.
