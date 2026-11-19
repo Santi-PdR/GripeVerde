@@ -1,3 +1,7 @@
+## v0.335.0 - La puerta de un jugador tambien en ventanas bajas y apretadas
+
+- Portada: ficha «Un jugador» en el modo baja (sobre Ajustes) y en el carril compacto.
+
 ## v0.334.0 - La puerta de un jugador vuelve a la portada
 
 - Portada: boton angosto «Un jugador» sobre Ajustes/Salir (con guarda de alto).

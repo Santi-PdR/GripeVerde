@@ -271,6 +271,19 @@ public class DiaryTitleScreen extends Screen {
                 railW, BTN_SLIM_H,
                 Component.translatable("gripeverde.title.button.quit"),
                 () -> this.minecraft.stop()));
+
+            // v0.335.0: en la portada apretada, la tercera ficha del carril es
+            // la puerta de un jugador, si el alto alcanza para colgarla.
+            int singleRailY = railY + railStackH + Spacing.GAP_SMALL;
+            if (singleRailY + BTN_SLIM_H <= this.height - compactEdge) {
+                SlimButton single = new SlimButton(railX, singleRailY, railW, BTN_SLIM_H,
+                    Component.literal(isEnglishSelected() ? "Single" : "Un jugador"),
+                    this::onSingleplayer);
+                single.setTooltip(Tooltip.create(Component.literal(isEnglishSelected()
+                    ? "The worlds kept in this house"
+                    : "Los mundos guardados en esta casa")));
+                this.addRenderableWidget(single);
+            }
         } else if (isMinimalMode()) {
             // Modo minimal: Adjustments arriba de Quit (apilados verticalmente)
             int quitY = rightCol.anchorY(Anchor.BOT_LEFT, BTN_SLIM_H)
@@ -284,6 +297,19 @@ public class DiaryTitleScreen extends Screen {
             this.addRenderableWidget(new SlimButton(quitX, quitY, BTN_SLIM_W, BTN_SLIM_H,
                 Component.translatable("gripeverde.title.button.quit"),
                 () -> this.minecraft.stop()));
+
+            // v0.335.0: en la ventana baja la puerta de un jugador tambien se
+            // ve, apilada sobre Ajustes, mientras quede alto.
+            int singleYMin = optionsY - BTN_SLIM_H - Spacing.GAP_SMALL;
+            if (singleYMin >= 40) {
+                SlimButton single = new SlimButton(quitX, singleYMin, BTN_SLIM_W, BTN_SLIM_H,
+                    Component.literal(isEnglishSelected() ? "Single player" : "Un jugador"),
+                    this::onSingleplayer);
+                single.setTooltip(Tooltip.create(Component.literal(isEnglishSelected()
+                    ? "The worlds kept in this house"
+                    : "Los mundos guardados en esta casa")));
+                this.addRenderableWidget(single);
+            }
         } else {
             // Modo normal: Adjustments al lado de Quit (horizontales)
             int rightBtnY = rightCol.anchorY(Anchor.BOT_LEFT, BTN_SLIM_H)

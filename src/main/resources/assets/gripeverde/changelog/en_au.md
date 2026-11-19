@@ -1,3 +1,9 @@
+## Version 0.335.0 - The single-player door also in low and tight windows
+
+The "Single player" card that returned to the title screen only appeared when there was spare height. Now it also hangs in the low window —stacked above Settings— and, on the tight title screen, as the rail's third card, in each case only if the height is enough to hang it without stepping on anything.
+
+Where it does not fit, it is not added: the door stays in Ctrl+S, as it was.
+
 ## Version 0.334.0 - The single-player door returns to the title screen
 
 The two big buttons on the title screen open the cordon and the arsenal, but the door to your own worlds existed only in Ctrl+S: invisible, with no sign. Whoever installs the mod for the first time had no way to guess it, and that weighs more now that the mod is handed over.

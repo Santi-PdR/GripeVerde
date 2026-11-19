@@ -1,3 +1,9 @@
+## Version 0.335.0 - La puerta de un jugador tambien en ventanas bajas y apretadas
+
+La ficha «Un jugador» que volvio a la portada solo aparecía cuando había alto de sobra. Ahora también se cuelga en la ventana baja —apilada sobre Ajustes— y, en la portada apretada, como tercera ficha del carril, en cada caso sólo si el alto alcanza para colgarla y no pisar nada.
+
+Donde no cabe, no se agrega: la puerta sigue en Ctrl+S, como estaba.
+
 ## Version 0.334.0 - La puerta de un jugador vuelve a la portada
 
 Los dos botones grandes de la portada abren el cordón y el arsenal, pero la puerta a los mundos propios solo existía en Ctrl+S: invisible, sin cartel. Quien instala el mod por primera vez no tenía cómo adivinarlo, y eso pesa más ahora que el mod se pasa de mano.
