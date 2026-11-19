@@ -1,3 +1,9 @@
+## Version 0.307.0 - La casa se abre desde la portada
+
+La hoja de la casa ya no vive escondida detrás de Créditos: en la portada, al lado del parte y del diario, hay una tercera lente que la abre directamente. Su descripción aparece al pasar la mano: «La casa: interruptores y volúmenes».
+
+Dentro sigue lo de siempre: música, ambiente, movimiento corto, destellos, reloj en partida, coordenadas, las tres ruedas de volumen y la esquina del reloj, cada botón con su línea de ayuda al pie.
+
 ## Version 0.306.0 - Fuera los folios que estorbaban
 
 Cuatro hojas (Aspecto, Crédito, Controles e Idioma) llevaban al pie un folio de registro -«hoja VIII · Esc vuelve»- que caia justo encima del boton Volver. Se fueron: la hoja no necesita repetir que se sale con Esc cuando el propio boton lo dice.

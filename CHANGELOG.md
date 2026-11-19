@@ -1,3 +1,8 @@
+## v0.307.0 - La casa se abre desde la portada
+
+- Portada: tercera lente (casa) junto al diario y al parte, con su descripcion.
+- La casa sigue accesible desde Creditos.
+
 ## v0.306.0 - Fuera los folios que estorbaban
 
 - Aspecto, Créditos, Controles e Idioma: se retira el folio del pie que pisaba Volver.

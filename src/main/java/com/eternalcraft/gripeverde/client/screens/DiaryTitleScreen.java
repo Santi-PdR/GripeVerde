@@ -328,6 +328,22 @@ public class DiaryTitleScreen extends Screen {
             this.addRenderableWidget(dispatchBtn);
         }
 
+        // v0.307.0: la casa tiene su lente en la portada, al lado del parte.
+        if (this.width >= 148) {
+            SlimButton houseBtn = new SlimButton(
+                this.width - 100, 8, 20, 20,
+                Component.literal(isEnglishSelected() ? "House" : "La casa"),
+                () -> {
+                    playPaperLens(0.30f, 1.0f);
+                    this.minecraft.setScreen(new DiaryHouseScreen(this));
+                })
+                .withIcon(SlimButton.Icon.FILING);
+            houseBtn.setTooltip(Tooltip.create(Component.literal(
+                isEnglishSelected() ? "The house: switches and volumes"
+                    : "La casa: interruptores y volumenes")));
+            this.addRenderableWidget(houseBtn);
+        }
+
         // --- Audio control buttons (bottom-left, discrete) ---
         // Boton >> (skip musica) queda solo (AMB removido, ahora en Sonidos)
         int skipY = compactLayout ? 8 : this.height - 28;

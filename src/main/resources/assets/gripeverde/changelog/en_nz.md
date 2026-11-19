@@ -1,3 +1,9 @@
+## Version 0.307.0 - The house opens from the title screen
+
+The house sheet no longer lives hidden behind Credits: on the title screen, next to the dispatch note and the diary, a third lens opens it directly. Its description appears when the hand passes over it: `The house: switches and volumes`.
+
+Inside it is the same as always: music, ambience, short motion, flashes, in-game watch, coordinates, the three volume wheels and the watch corner, every button with its help line at the foot.
+
 ## Version 0.306.0 - The folios that got in the way are gone
 
 Four sheets (Appearance, Credits, Controls and Language) carried a registry folio at the foot -`sheet VIII · Esc back`- that landed right on top of the Back button. They are gone: the sheet does not need to repeat that Esc leaves when the button itself says so.
