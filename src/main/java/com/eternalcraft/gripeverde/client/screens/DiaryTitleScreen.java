@@ -272,18 +272,6 @@ public class DiaryTitleScreen extends Screen {
                 Component.translatable("gripeverde.title.button.quit"),
                 () -> this.minecraft.stop()));
 
-            // v0.335.0: en la portada apretada, la tercera ficha del carril es
-            // la puerta de un jugador, si el alto alcanza para colgarla.
-            int singleRailY = railY + railStackH + Spacing.GAP_SMALL;
-            if (singleRailY + BTN_SLIM_H <= this.height - compactEdge) {
-                SlimButton single = new SlimButton(railX, singleRailY, railW, BTN_SLIM_H,
-                    Component.literal(isEnglishSelected() ? "Single" : "Un jugador"),
-                    this::onSingleplayer);
-                single.setTooltip(Tooltip.create(Component.literal(isEnglishSelected()
-                    ? "The worlds kept in this house"
-                    : "Los mundos guardados en esta casa")));
-                this.addRenderableWidget(single);
-            }
         } else if (isMinimalMode()) {
             // Modo minimal: Adjustments arriba de Quit (apilados verticalmente)
             int quitY = rightCol.anchorY(Anchor.BOT_LEFT, BTN_SLIM_H)
@@ -298,18 +286,6 @@ public class DiaryTitleScreen extends Screen {
                 Component.translatable("gripeverde.title.button.quit"),
                 () -> this.minecraft.stop()));
 
-            // v0.335.0: en la ventana baja la puerta de un jugador tambien se
-            // ve, apilada sobre Ajustes, mientras quede alto.
-            int singleYMin = optionsY - BTN_SLIM_H - Spacing.GAP_SMALL;
-            if (singleYMin >= 40) {
-                SlimButton single = new SlimButton(quitX, singleYMin, BTN_SLIM_W, BTN_SLIM_H,
-                    Component.literal(isEnglishSelected() ? "Single player" : "Un jugador"),
-                    this::onSingleplayer);
-                single.setTooltip(Tooltip.create(Component.literal(isEnglishSelected()
-                    ? "The worlds kept in this house"
-                    : "Los mundos guardados en esta casa")));
-                this.addRenderableWidget(single);
-            }
         } else {
             // Modo normal: Adjustments al lado de Quit (horizontales)
             int rightBtnY = rightCol.anchorY(Anchor.BOT_LEFT, BTN_SLIM_H)
@@ -324,22 +300,8 @@ public class DiaryTitleScreen extends Screen {
                 Component.translatable("gripeverde.title.button.quit"),
                 () -> this.minecraft.stop()));
 
-            // v0.334.0: la puerta de un jugador vuelve a verse. Hasta ahora
-            // solo existia en Ctrl+S, y quien instala el mod por primera vez no
-            // tiene como adivinarlo. Va sobre Ajustes y Salir, a lo ancho de
-            // los dos, y solo si queda debajo de la fila de lentes.
-            int singleW = BTN_SLIM_W * 2 + Spacing.GAP_SMALL;
-            int singleX = optionsX;
-            int singleY = rightBtnY - BTN_SLIM_H - Spacing.GAP_SMALL;
-            if (singleY >= 40 && singleX + singleW <= this.width - 4) {
-                SlimButton single = new SlimButton(singleX, singleY, singleW, BTN_SLIM_H,
-                    Component.literal(isEnglishSelected() ? "Single player" : "Un jugador"),
-                    this::onSingleplayer);
-                single.setTooltip(Tooltip.create(Component.literal(isEnglishSelected()
-                    ? "The worlds kept in this house"
-                    : "Los mundos guardados en esta casa")));
-                this.addRenderableWidget(single);
-            }
+            // v0.352.0: fuera la ficha "Un jugador". El owner la quiere solo en
+            // Ctrl+S, como estaba antes de la 0.334.0.
         }
 
         // v0.221.0: el manual de campo sale de la portada (el lector lo pidio

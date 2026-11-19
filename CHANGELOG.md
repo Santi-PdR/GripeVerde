@@ -1,3 +1,7 @@
+## v0.352.0 - Portada sin ficha de jugador, hoja de mundos a lo ancho y listas que no se salen del papel
+
+- Portada: fuera las tres fichas «Un jugador»; el cuaderno se abre con Ctrl+S.\n- Mundos guardados: la hoja ocupa el ancho y reintenta sus medidas, para que las filas caigan dentro del papel.\n- Sonido, Accesibilidad y Chat: la lista se recorta al papel.\n- Deslizadores de Sonido: rótulo medido y partido si el mando lo cruza.\n- Idioma: la cuenta de lenguas y el «ahora:» ya no se enciman con el subtítulo.
+
 ## v0.351.0 - El reloj del HUD deja de recortar el clima
 
 - HUD: la tira del reloj se mide con su texto (hasta 200 px) y el clima ya no sale recortado; el lacre sigue en su esquina.

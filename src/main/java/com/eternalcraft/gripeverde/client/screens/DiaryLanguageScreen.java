@@ -279,6 +279,13 @@ public class DiaryLanguageScreen extends Screen {
         }
         int x = this.panelX + 20;
         int y = titleY + 4;
+        // v0.352.0: la cuenta y el "ahora:" llegaban al subtitulo centrado y se
+        // leian encimados ("ArgentinAuxilios..."). Se limitan al hueco que deja
+        // el bloque centrado de la cabecera.
+        int limitRight = Math.min(this.headerTitleX,
+            Math.min(this.headerSubX, this.headerFlavorX)) - 8;
+        int room = Math.max(0, limitRight - x);
+        if (room < 48 || this.countTextW > room) return;
         if (x + this.countTextW > this.panelX + this.panelW - 78) return;
         g.drawString(this.font, this.countText, x, y, DiaryChrome.INK_SUBTITLE, false);
 
@@ -287,8 +294,10 @@ public class DiaryLanguageScreen extends Screen {
         if (current.isEmpty()) return;
         String line = (english ? "now: " : "ahora: ") + current;
         String cut = DiaryChrome.fitCached(this.font, line,
-            Math.max(0, this.panelX + this.panelW - 78 - x));
+            Math.min(room, Math.max(0, this.panelX + this.panelW - 78 - x)));
         if (this.font.width(cut) <= 0) return;
+        // Si ni el nombre corto entra, no se escribe a medias.
+        if (this.font.width(cut) < 24) return;
         g.drawString(this.font, cut, x, y + 11, DiaryChrome.INK_FLAVOR, false);
     }
 

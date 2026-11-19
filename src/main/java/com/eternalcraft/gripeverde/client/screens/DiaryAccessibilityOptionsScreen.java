@@ -184,13 +184,28 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         DiaryChrome.drawInkDivider(gfx, this.panelX, divY1, this.panelW);
 
         // Lista vanilla sin gradientes blancos ni bandejas extra
+        boolean listClipped = false;
         if (this.list != null) {
+            // v0.352.0: la lista del juego se recorta a la hoja; sus filas se
+            // dimensionan a lo ancho de la pantalla y asomaban fuera del papel.
+            try {
+                gfx.enableScissor(this.panelX + 2, this.panelY + 2,
+                    this.panelX + this.panelW - 2, this.panelY + this.panelH - 2);
+                listClipped = true;
+            } catch (Throwable ignored) {
+            }
             this.list.render(gfx, mouseX, mouseY, delta);
             // v0.343.0: el gris del juego se acompana al sepia de la hoja.
             DiaryChrome.washVanillaRows(gfx, this.list);
             // v0.344.0: y encima, la ficha de registro con nuestra letra.
             DiaryChrome.paintOptionRowsInk(gfx, this.font, this.list);
             DiaryChrome.drawStyledScrollThumbInPanel(gfx, this.list, this.panelX + this.panelW);
+            if (listClipped) {
+                try {
+                    gfx.disableScissor();
+                } catch (Throwable ignored) {
+                }
+            }
         }
 
         // Cosmeticos

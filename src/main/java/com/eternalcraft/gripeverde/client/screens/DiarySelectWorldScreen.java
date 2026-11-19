@@ -241,6 +241,15 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         } catch (Throwable ignored) {
         }
 
+        // v0.352.0: si la lista se resolvio tarde (o el campo del juego cambio
+        // de nombre), las medidas quedaban en -1 y la hoja no se dibujaba: se
+        // veian las filas del juego sueltas sobre la noche. Se reintenta aqui.
+        if (this.vanillaList == null) {
+            this.vanillaList = resolveList();
+        }
+        if (this.rowLeft < 0 || this.listBottom <= 0) {
+            cacheListMetrics();
+        }
         drawHeader(g);
         drawRegisterPage(g, mouseX, mouseY);
         drawFooterPaper(g);
@@ -619,11 +628,14 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
      */
     private void drawRegisterPage(GuiGraphics g, int mouseX, int mouseY) {
         if (this.vanillaList == null || this.rowLeft < 0 || this.listBottom <= this.listTop) return;
-        int px = Math.max(-2, this.rowLeft - 14);
-        int pw = Math.min(this.width + 2, this.rowRight + 14) - px;
-        int py = Math.max(HEADER_H - 30, this.listTop - 6);
-        int ph = Math.min(this.height, this.listBottom + 6) - py;
-        if (pw < 40 || ph < 24) return;
+        // v0.352.0: la hoja va a lo ancho de la pantalla, como el panel de
+        // Multijugador, y no ceñida a las filas del juego: antes parecia un
+        // papel recortado y las filas asomaban por fuera.
+        int px = 12;
+        int pw = this.width - 24;
+        int py = HEADER_H - 22;
+        int ph = Math.min(this.height - 6, this.listBottom + 12) - py;
+        if (pw < 60 || ph < 40) return;
         PaperTexture.drawTornSheet(g, px, py, pw, ph, PaperTexture.PaperKind.OFFICIAL);
         // v0.248.0: el canto gastado asienta la pagina sobre la escena.
         if (pw >= 32 && ph >= 32) {

@@ -145,12 +145,10 @@ public class DiaryAmbienceSlider extends AbstractSliderButton {
         DiaryChrome.drawDivisorLozenge(g, cx, cy);
 
         int textColor = this.isHovered() ? DiaryTheme.INK_BLACK : DiaryTheme.INK;
-        String msg = this.getMessage().getString();
-        // v0.204.0: el rotulo se media en cada cuadro; el ancho se guarda.
+        // v0.352.0: el rotulo se mide y, si el mando lo cruza, va en dos mitades.
         net.minecraft.client.gui.Font font = Minecraft.getInstance().font;
-        int textX = x + w / 2 - DiaryChrome.widthCached(font, msg) / 2;
-        int textY = y + (h - 8) / 2;
-        g.drawString(font, msg, textX, textY, textColor, false);
+        DiaryChrome.drawSliderLabel(g, font, this.getMessage().getString(),
+            x, y, w, h, textColor, thumbX, thumbX + thumbW);
     }
 
     @Override

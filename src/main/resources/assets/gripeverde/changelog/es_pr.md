@@ -1,3 +1,7 @@
+## Version 0.352.0 - Portada sin ficha de jugador, hoja de mundos a lo ancho y listas que no se salen del papel
+
+Portada sin ficha de jugador, hoja de mundos a lo ancho y listas recortadas al papel
+
 ## Version 0.351.0 - El reloj del HUD deja de recortar el clima
 
 En el reloj de bolsillo del HUD, la tira de papel tenía ancho fijo (116 px) y el renglón del día y el clima salía recortado: «día 1 19:12 despe…». Ahora el ancho se mide con lo que de verdad lleva escrito —hora, fecha, día, clima y el rato dentro— y crece hasta 200 px para que nada se corte. Si la ventana es muy angosta, sigue entrando con su margen y el recorte vuelve a ser el último recurso.

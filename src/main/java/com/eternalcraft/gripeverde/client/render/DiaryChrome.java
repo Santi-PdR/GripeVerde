@@ -583,6 +583,38 @@ public final class DiaryChrome {
         }
     }
 
+    /**
+     * v0.352.0: rotulo de un deslizador, medido contra su propio ancho y, si el
+     * mando cae encima, escrito en dos mitades. Antes los mandos de la casa
+     * escribian la etiqueta centrada sin medirla y "Ambiente del cronista: (en
+     * silencio)" se salia por los dos lados de la barra.
+     */
+    public static void drawSliderLabel(GuiGraphics g, Font font, String raw, int x, int y,
+                                       int w, int h, int color, int thumbLeft, int thumbRight) {
+        if (g == null || font == null || raw == null || w < 12) return;
+        String msg = DiaryTypography.fitString(font, raw, Math.max(8, w - 16));
+        int textW = DiaryTypography.width(font, msg);
+        int textX = Math.max(x + 3, x + (w - textW) / 2);
+        int textY = y + (h - 8) / 2;
+        boolean crosses = thumbRight > textX - 2 && thumbLeft < textX + textW + 2;
+        if (!crosses) {
+            g.drawString(font, msg, textX, textY, color, false);
+            return;
+        }
+        int pad = 4;
+        String left = font.plainSubstrByWidth(msg, Math.max(0, thumbLeft - pad - textX));
+        if (!left.isEmpty()) {
+            g.drawString(font, left, textX, textY, color, false);
+        }
+        String right = msg.substring(left.length());
+        if (!right.isEmpty()) {
+            int rx = Math.max(thumbRight + pad, textX + font.width(left) + 2);
+            if (rx + font.width(right) <= x + w - 3) {
+                g.drawString(font, right, rx, textY, color, false);
+            }
+        }
+    }
+
     /** Primer widget que viva dentro de una ficha de la lista, si lo hay. */
     private static Object findWidget(Object entry) {
         if (entry == null) return null;

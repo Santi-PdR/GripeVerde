@@ -1,3 +1,7 @@
+## Version 0.352.0 - Portada sin ficha de jugador, hoja de mundos a lo ancho y listas que no se salen del papel
+
+Title screen drops the single-player card, world list sheet goes full width, lists clipped to paper
+
 ## Version 0.351.0 - El reloj del HUD deja de recortar el clima
 
 In the HUD pocket watch, the paper slip had a fixed width (116 px) and the day-and-weather line came out clipped: «day 1 19:12 clea…». Now the width is measured with what is actually written —clock, date, day, weather and time inside— and grows up to 200 px so nothing is cut. On very narrow windows it still fits with its margin, and clipping becomes the last resort again.

@@ -490,7 +490,17 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY1);
 
         // --- Lista vanilla sin gradientes blancos ni bandejas extra ---
+        // v0.352.0: la lista se recorta a la hoja. El juego la dimensiona a lo
+        // ancho de la pantalla y sus filas asomaban fuera del papel, como
+        // manchas grises sobre la ciudad.
+        boolean listClipped = false;
         if (this.reflectedList != null) {
+            try {
+                g.enableScissor(this.panelX + 2, this.panelY + 2,
+                    this.panelX + this.panelW - 2, this.panelY + this.panelH - 2);
+                listClipped = true;
+            } catch (Throwable ignored) {
+            }
             this.reflectedList.render(g, mouseX, mouseY, partialTick);
             // v0.343.0: el gris del juego se acompana al sepia de la hoja.
             try {
@@ -502,6 +512,12 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             }
             DiaryChrome.drawStyledScrollThumbInPanel(g,
                 (AbstractSelectionList<?>) this.reflectedList, this.panelX + this.panelW);
+            if (listClipped) {
+                try {
+                    g.disableScissor();
+                } catch (Throwable ignored) {
+                }
+            }
         }
 
         // --- Divisor entre lista y slider ---
