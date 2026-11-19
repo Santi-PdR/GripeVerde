@@ -4,6 +4,10 @@ Un cuaderno de campo para Minecraft: cada pantalla del juego pasa a ser una hoja
 
 ![estado](https://img.shields.io/badge/Minecraft-1.20.1%20%C2%B7%20Forge%2047.4.20-1A1108)
 
+![La mesa de trabajo](docs/banner.jpg)
+
+*La dirección de arte del mod: papel gastado, lacre y tinta. Es una ilustración, no una captura del juego; las capturas van abajo a medida que se suman.*
+
 ## Qué es
 
 El mod viste el menú, los ajustes y el HUD como un gabinete de papeles: portada con reloj y lentes, hojas rasgadas para cada ajuste, fichas de mundo y de servidor en tinta, una bitácora de la partida y un parte de defunción en papel. Nada de paneles negros de Forge: cuando una pantalla del juego se abre cruda, se viste por evento sin tocar su lógica.

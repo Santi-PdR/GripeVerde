@@ -1,3 +1,7 @@
+## Version 0.317.0 - The front page has an image
+
+A link without an image opens and says nothing until one reads. The README debuts a hand-painted plate of the work table -paper, wax seal, pocket watch and the green bottle-, with the notice that it is an illustration and not a screenshot, and the space kept for the game's captures.
+
 ## Version 0.316.0 - The house fits in low windows
 
 With a low window, the corner latch of the house landed on the buttons at the foot. Now the lines tighten on their own to leave room and, if it still does not fit, the latch sticks to the edge of the buttons instead of stepping on them.

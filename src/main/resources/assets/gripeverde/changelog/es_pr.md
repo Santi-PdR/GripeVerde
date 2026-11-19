@@ -1,3 +1,7 @@
+## Version 0.317.0 - La portada tiene imagen
+
+Un enlace sin imagen se abre y no dice nada hasta que uno lee. El README estrena una lamina de la mesa de trabajo pintada a mano -papel, lacre, reloj de bolsillo y la botella verde-, con el aviso de que es ilustracion y no captura, y el hueco reservado para las capturas del juego.
+
 ## Version 0.316.0 - La casa entra en ventanas bajas
 
 Con la ventana baja, el pestillo de la esquina de La casa aterrizaba sobre los botones del pie. Ahora los renglones se aprietan solos para dejarles sitio y, si aun asi no cabe, el pestillo se pega al borde de los botones en vez de pisarlos.

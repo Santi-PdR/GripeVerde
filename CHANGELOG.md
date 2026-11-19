@@ -1,3 +1,8 @@
+## v0.317.0 - La portada tiene imagen
+
+- `docs/banner.jpg`: lamina de la mesa de trabajo, declarada como ilustracion.
+- README: la imagen abre la portada y deja hueco a las capturas.
+
 ## v0.316.0 - La casa entra en ventanas bajas
 
 - La casa: paso entre renglones adaptativo y pestillo sujeto al pie.
