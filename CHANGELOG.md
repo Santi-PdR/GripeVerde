@@ -1,3 +1,8 @@
+## v0.338.0 - El expediente de Multijugador deja libre el pie
+
+- Multijugador: folio y peso del archivo al margen de la cabecera, medidos contra las fichas del pie.
+- Opciones: la frase del cronista y su corrección solo se escriben si caben sobre la grilla.
+
 ## v0.337.0 - La hoja de Accesibilidad deja de cortar la lista
 
 - Accesibilidad: la línea del margen ya no pisa el ojo; la lista termina en renglones enteros.

@@ -1,3 +1,11 @@
+## Version 0.338.0 - El expediente de Multijugador deja libre el pie
+
+In Multiplayer, the archive line («2.1 KB · 19·XI·2026») was written in the foot and the Edit/Delete button row ran over it: the date was half-read over a button's edge. Now the folio and the weight live in the left margin of the header, with the width the centered title leaves.
+
+The chosen entry stays at the bottom right, but it is measured against the buttons' real edge: if there is no room, it is not written.
+
+In Options, the chronicler's phrase («Tonight the gas burns low») fell over the first button row when the sheet was short. Now it is only written if it fits whole, and the ink correction steps on nothing either.
+
 ## Version 0.337.0 - La hoja de Accesibilidad deja de cortar la lista
 
 In Accessibility, the line "11 settings · Esc goes back" fell on top of the perception eye and only half a word could be read. Now it starts to its right, in the sheet's margin.

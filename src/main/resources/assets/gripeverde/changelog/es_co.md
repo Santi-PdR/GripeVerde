@@ -1,3 +1,11 @@
+## Version 0.338.0 - El expediente de Multijugador deja libre el pie
+
+En Multijugador, la ficha del archivo («2.1 KB · 19·XI·2026») se escribía en el pie y la fila de fichas Editar/Borrar le pasaba por encima: la fecha se leía a medias sobre el canto de un botón. Ahora el folio y el peso viven en el margen izquierdo de la cabecera, con el ancho que deja el título centrado.
+
+El puesto elegido se queda abajo a la derecha, pero se mide contra el filo real de las fichas: si no hay hueco, no se escribe.
+
+En Opciones, la frase del cronista («Esta noche el gas arde bajo») caía sobre el primer renglón de botones cuando la hoja era baja. Ahora solo se escribe si cabe entera, y la corrección de la tinta tampoco pisa nada.
+
 ## Version 0.337.0 - La hoja de Accesibilidad deja de cortar la lista
 
 En Accesibilidad, la línea «11 ajustes · Esc vuelve» caía encima del ojo de la percepción y se leía media palabra. Ahora arranca a su derecha, en el margen de la hoja.

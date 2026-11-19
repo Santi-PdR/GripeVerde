@@ -320,7 +320,12 @@ public class DiaryOptionsScreen extends Screen {
             // v0.30.0: nunca fuera del papel (elipsis al ancho) y la linea
             // "fix" del huevo Holloway jamas pisa la primera fila de botones.
             int flavorBottom = subY + this.font.lineHeight + 1;
-            if (currentFlavor != null && !compactLayout) {
+            // v0.339.0: la frase del cronista ("Esta noche el gas arde bajo") se
+            // escribia aunque no hubiera aire y caia sobre el primer renglon de
+            // botones. Ahora solo se escribe si cabe entera sobre la grilla.
+            int flavorTop = subY + this.font.lineHeight + 1;
+            boolean flavorFits = flavorTop + this.font.lineHeight <= this.gridTop - 6;
+            if (currentFlavor != null && !compactLayout && flavorFits) {
                 int maxTextW = panelW - 48;
                 String flavorShown = DiaryTypography.fitString(this.font, currentFlavor, maxTextW);
                 int flavorW = DiaryTypography.width(this.font, flavorShown);
@@ -342,9 +347,14 @@ public class DiaryOptionsScreen extends Screen {
                     String fixShown = DiaryTypography.fitString(this.font, fix, maxTextW);
                     int fixW = DiaryTypography.width(this.font, fixShown);
                     // Tope duro: siempre sobre la grilla, nunca debajo.
-                    int fixY = Math.min(flavorY + 9, this.gridTop - 11);
-                    DiaryTypography.draw(g, this.font, fixShown, this.width / 2 - fixW / 2, fixY, DiaryChrome.INK_FLAVOR, false);
-                    flavorBottom = fixY + this.font.lineHeight;
+                    int fixY = flavorY + this.font.lineHeight + 3;
+                    // v0.339.0: si la correccion no cabe bajo la frase, se calla.
+                    if (fixY + this.font.lineHeight <= this.gridTop - 6) {
+                        DiaryTypography.draw(g, this.font, fixShown, this.width / 2 - fixW / 2, fixY, DiaryChrome.INK_FLAVOR, false);
+                        flavorBottom = fixY + this.font.lineHeight;
+                    } else {
+                        flavorBottom = flavorY + this.font.lineHeight;
+                    }
                 } else {
                     DiaryTypography.draw(g, this.font, flavorShown, flavorX, flavorY, DiaryChrome.INK_FLAVOR, false);
                     flavorBottom = flavorY + this.font.lineHeight;
