@@ -1,3 +1,9 @@
+## Version 0.330.0 - Las rejillas se anclan al pie
+
+En la hoja de Aspecto, la rejilla de prendas se calculaba desde el título y nadie miraba dónde terminaba: con la ventana baja, la última fila aterrizaba sobre el divisor y el botón Volver. Ahora se ancla al pie, dejando aire arriba, y si el alto es muy poco empieza más arriba en vez de desbordar.
+
+La lista de accesibilidad tenía el problema hermano: en hojas muy bajas, el pie se comía la lista y quedaba un alto negativo. Ahora se le reserva al menos un renglón.
+
 ## Version 0.329.0 - El aviso se aparta del emblema en portadas bajas
 
 Con la portada baja, el aviso de ficha nueva colgado debajo de las lentes caía sobre el emblema. Ahora, cuando la ventana no tiene alto de sobra, el aviso baja al rincón de abajo a la derecha, donde no hay nada más que el borde del papel.

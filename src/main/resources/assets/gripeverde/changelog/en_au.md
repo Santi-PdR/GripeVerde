@@ -1,3 +1,9 @@
+## Version 0.330.0 - The grids are anchored to the foot
+
+On the Appearance sheet, the grid of worn parts was computed from the title and nobody looked where it ended: with a low window, the last row landed on the divider and the Back button. Now it is anchored to the foot, leaving air above, and if the height is very small it starts higher instead of overflowing.
+
+The accessibility list had the sibling problem: on very low sheets, the foot ate the list and the height went negative. It now keeps at least one row.
+
 ## Version 0.329.0 - The notice steps away from the emblem on short title screens
 
 With a short title screen, the new-file notice hanging below the lenses fell on the emblem. Now, when the window has no spare height, the notice drops to the bottom right corner, where there is nothing else but the paper's edge.

@@ -1,3 +1,8 @@
+## v0.330.0 - Las rejillas se anclan al pie
+
+- Aspecto: `gridTop` acotado por `footerTop - 4 - used`.
+- Accesibilidad: `listBottom` con minimo `listTop + 20`.
+
 ## v0.329.0 - El aviso se aparta del emblema en portadas bajas
 
 - Portada: el aviso va a `height-34` cuando la ventana tiene 260 de alto o mas.

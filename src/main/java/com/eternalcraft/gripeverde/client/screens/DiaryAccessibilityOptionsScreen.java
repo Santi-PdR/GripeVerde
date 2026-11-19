@@ -69,7 +69,10 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
             this.list.setRenderSelection(false);
             // NO cambiar width - R-VANILLA-LIST-COORDS
             int listTop    = this.panelY + HEADER_H;
-            int listBottom = this.panelY + this.panelH - FOOTER_H;
+            // v0.330.0: en hojas muy bajas el pie se comia la lista y quedaba
+            // un alto negativo. Se le deja al menos un renglon.
+            int listBottom = Math.max(listTop + 20,
+                this.panelY + this.panelH - FOOTER_H);
             this.list.updateSize(this.width, this.height, listTop, listBottom);
             this.smoothScroll.snapToCurrent(this.list);
         }

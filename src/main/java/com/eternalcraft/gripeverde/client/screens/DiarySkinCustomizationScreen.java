@@ -77,7 +77,12 @@ public class DiarySkinCustomizationScreen extends Screen {
             gapY = 3;
             btnH = Math.max(14, (avail - (rows - 1) * gapY) / rows);
             int used = rows * btnH + (rows - 1) * gapY;
-            gridTop = this.panelY + Math.max(54, 74 + Math.max(0, (avail - used) / 2));
+            // v0.330.0: la rejilla se ancla al pie, no al titulo. Antes, con la
+            // hoja muy baja, la ultima fila aterrizaba sobre el divisor y el
+            // boton Volver: se partia de 74 y no se miraba donde terminaba.
+            int footerTop = this.panelY + panelH - footerH;
+            int maxTop = footerTop - 4 - used - this.panelY;
+            gridTop = this.panelY + Math.max(48, Math.min(74, maxTop));
         }
         this.gridBtnH = btnH;
         int availableGridW = Math.max(BTN_W, panelW - 28);
