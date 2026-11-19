@@ -1,3 +1,7 @@
+## Version 0.353.0 - Sombras que ya no se transparentan bajo la hoja y cabecera limpia en Packs
+
+Panel shadows stay outside the sheet and the resource-pack header loses its floating box
+
 ## Version 0.352.0 - Portada sin ficha de jugador, hoja de mundos a lo ancho y listas que no se salen del papel
 
 Title screen drops the single-player card, world list sheet goes full width, lists clipped to paper

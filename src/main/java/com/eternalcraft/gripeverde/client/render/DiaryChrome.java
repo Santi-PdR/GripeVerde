@@ -451,13 +451,24 @@ public final class DiaryChrome {
     }
 
     // ── Sombra proyectada profesional ───────────────────────────────────────
+    /**
+     * v0.353.0: la sombra se dibuja SOLO por fuera del rectangulo del panel, en
+     * dos bandas con caida suave. Antes era una copia del panel desplazada siete
+     * pixeles: como el papel de la casa deja pasar la luz, esa copia se veia a
+     * traves de la hoja como un manchon oscuro mal puesto.
+     */
     public static void drawPanelShadow(GuiGraphics gfx, int x, int y, int w, int h) {
-        int offset = 7;
-        gfx.fill(x + offset - 4, y + offset - 4, x + w + offset + 4, y + h + offset + 4, 0x18100600);
-        gfx.fill(x + offset - 2, y + offset - 2, x + w + offset + 2, y + h + offset + 2, 0x3A100600);
-        gfx.fill(x + offset, y + offset, x + w + offset, y + h + offset, 0x6E100600);
-        gfx.fill(x + offset + 1, y + offset + 1, x + w + offset - 1, y + h + offset - 1, 0x8C080300);
-        gfx.fill(x + 2, y + 2, x + w - 2, y + 3, DiaryTheme.withAlpha(0x00FFFFFF, 10));
+        if (gfx == null || w < 8 || h < 8) return;
+        int offset = 5;
+        for (int i = 0; i < offset; i++) {
+            int alpha = 0x30 - i * 0x08;
+            if (alpha <= 0) continue;
+            int col = DiaryTheme.withAlpha(0x000A0500, alpha);
+            // Banda inferior, de esquina redondeada a la derecha.
+            gfx.fill(x + 6 + i, y + h + i, x + w + offset, y + h + i + 1, col);
+            // Banda lateral derecha.
+            gfx.fill(x + w + i, y + 6 + i, x + w + i + 1, y + h + offset, col);
+        }
     }
 
     /**

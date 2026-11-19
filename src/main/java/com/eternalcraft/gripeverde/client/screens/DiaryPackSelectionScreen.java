@@ -132,9 +132,19 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
             int w = com.eternalcraft.gripeverde.client.render.DiaryChrome
                 .widthCached(this.font, cut);
             int cx = this.width / 2;
-            int y = 14;
-            PaperTexture.drawTornSlip(g, cx - w / 2 - 8, y - 4, w + 16, 16,
-                0xE6D2A6, 0x422810, 244);
+            // v0.353.0: la ficha suelta bajo el titulo se veia como una caja
+            // pegada encima de la hoja. Ahora se limpia toda la franja de
+            // cabecera (de borde a borde del papel) y el titulo se escribe en
+            // tinta dentro de ella, como en Multijugador.
+            int bandTop = 8;
+            int bandBottom = 26;
+            int bandLeft = 14;
+            int bandRight = this.width - 14;
+            if (bandRight - bandLeft > 80 && bandBottom > bandTop + 10) {
+                g.fill(bandLeft, bandTop, bandRight, bandBottom, 0xE6E4D7AE);
+                g.fill(bandLeft, bandBottom - 1, bandRight, bandBottom, 0x552A1C12);
+            }
+            int y = bandTop + (bandBottom - bandTop - 8) / 2;
             g.drawString(this.font, cut, cx - w / 2, y,
                 com.eternalcraft.gripeverde.client.render.DiaryChrome.INK_TITLE, false);
         } catch (Throwable ignored) {

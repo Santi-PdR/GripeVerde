@@ -1,3 +1,7 @@
+## Version 0.353.0 - Sombras que ya no se transparentan bajo la hoja y cabecera limpia en Packs
+
+La sombra de los paneles se dibuja solo por fuera y la cabecera de packs deja de llevar caja encima
+
 ## Version 0.352.0 - Portada sin ficha de jugador, hoja de mundos a lo ancho y listas que no se salen del papel
 
 Portada sin ficha de jugador, hoja de mundos a lo ancho y listas recortadas al papel

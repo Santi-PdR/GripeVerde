@@ -1,3 +1,7 @@
+## v0.353.0 - Sombras que ya no se transparentan bajo la hoja y cabecera limpia en Packs
+
+- Sombras: se dibujan solo por fuera del panel, en dos bandas con caída suave; dejan de verse como un manchón bajo el papel.\n- Packs: la franja de cabecera se limpia de borde a borde y el título va en tinta, como en Multijugador.
+
 ## v0.352.0 - Portada sin ficha de jugador, hoja de mundos a lo ancho y listas que no se salen del papel
 
 - Portada: fuera las tres fichas «Un jugador»; el cuaderno se abre con Ctrl+S.\n- Mundos guardados: la hoja ocupa el ancho y reintenta sus medidas, para que las filas caigan dentro del papel.\n- Sonido, Accesibilidad y Chat: la lista se recorta al papel.\n- Deslizadores de Sonido: rótulo medido y partido si el mando lo cruza.\n- Idioma: la cuenta de lenguas y el «ahora:» ya no se enciman con el subtítulo.
