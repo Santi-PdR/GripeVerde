@@ -992,18 +992,31 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             }
         } catch (Throwable ignored) {
         }
-        String[] roman = {"I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"};
-        String date = "";
-        try {
-            java.util.Calendar c = java.util.Calendar.getInstance();
-            date = c.get(java.util.Calendar.DAY_OF_MONTH) + "·"
-                + roman[Math.max(0, Math.min(11, c.get(java.util.Calendar.MONTH)))] + "·"
-                + c.get(java.util.Calendar.YEAR);
-        } catch (Throwable ignored) {
-        }
+        String date = stampedToday();
+        
         if (weight.isEmpty()) return date;
         if (date.isEmpty()) return weight;
         return weight + "  ·  " + date;
+    }
+
+    // v0.360.0: la fecha del pie se arma una vez por minuto, no por cuadro.
+    private static String stampedDate;
+    private static long stampedDateMinute = Long.MIN_VALUE;
+
+    private static String stampedToday() {
+        long minute = System.currentTimeMillis() / 60_000L;
+        if (minute == stampedDateMinute && stampedDate != null) return stampedDate;
+        String[] roman = {"I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"};
+        try {
+            java.util.Calendar c = java.util.Calendar.getInstance();
+            stampedDate = c.get(java.util.Calendar.DAY_OF_MONTH) + "\u00b7"
+                + roman[Math.max(0, Math.min(11, c.get(java.util.Calendar.MONTH)))] + "\u00b7"
+                + c.get(java.util.Calendar.YEAR);
+            stampedDateMinute = minute;
+        } catch (Throwable ignored) {
+            return "";
+        }
+        return stampedDate;
     }
 
     /** v0.338.0: hasta donde llegan las fichas del pie, a la derecha. */

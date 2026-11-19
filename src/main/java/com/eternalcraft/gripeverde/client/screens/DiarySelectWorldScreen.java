@@ -607,13 +607,21 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     }
 
     /** v0.270.0: la fecha de hoy en numeros romanos, como el registro. */
+    // v0.360.0: la fecha del registro se arma una vez por minuto, no por cuadro.
+    private static String stampedDay;
+    private static long stampedMinute = Long.MIN_VALUE;
+
     private static String todayStamp(boolean en) {
+        long minute = System.currentTimeMillis() / 60_000L;
+        if (minute == stampedMinute && stampedDay != null) return stampedDay;
         String[] roman = {"I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"};
         try {
             java.util.Calendar c = java.util.Calendar.getInstance();
             int d = c.get(java.util.Calendar.DAY_OF_MONTH);
             int m = Math.max(0, Math.min(11, c.get(java.util.Calendar.MONTH)));
-            return d + "·" + roman[m] + "·" + c.get(java.util.Calendar.YEAR);
+            stampedDay = d + "\u00b7" + roman[m] + "\u00b7" + c.get(java.util.Calendar.YEAR);
+            stampedMinute = minute;
+            return stampedDay;
         } catch (Throwable ignored) {
             return "";
         }
@@ -661,7 +669,12 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         // papel recortado y las filas asomaban por fuera.
         int px = 12;
         int pw = this.width - 24;
-        int py = HEADER_H - 22;
+        // v0.360.0: la hoja arrancaba 22 px por encima de la cabecera y su canto
+        // desgarrado cruzaba por debajo del titulo: dos papeles montados. Ahora
+        // empieza justo donde termina la cabecera (y nunca mas abajo que el
+        // primer renglon de la lista).
+        int py = Math.max(HEADER_H - 12, this.listTop - 8);
+        py = Math.min(py, Math.max(HEADER_H - 26, this.listTop - 4));
         // v0.354.0: la hoja baja hasta el grupo de botones del juego, para que
         // las fichas del pie queden sobre el mismo papel y no sobre una hoja
         // aparte pegada debajo (que se veia como dos papeles encontrados).

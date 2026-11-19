@@ -1,3 +1,7 @@
+## Version 0.360.0 - Reloj y fechas con un solo calendario, y la hoja de mundos ya no se monta sobre la cabecera
+
+One shared calendar for the watch and dates, and the world sheet stops stacking under the header
+
 ## Version 0.359.0 - Mandos legibles en ventanas bajas y teclas Inicio/Fin
 
 Sound sliders stay legible in short windows and gain Home/End keys

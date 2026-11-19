@@ -40,12 +40,39 @@ public class PocketWatchRenderer {
      * misma aguja corta y el mismo minutero; la inscripcion de la tapa sigue
      * diciendo 11:52, que es cuando empezo todo, pero el reloj funciona.
      */
+    /**
+     * v0.360.0: el calendario se pide prestado, no se fabrica.
+     *
+     * Este reloj se dibuja en cada cuadro de la portada y armaba hasta cuatro
+     * objetos Calendar (y tres arrays nuevos para la hora) por cuadro. Ahora se
+     * lee uno solo, compartido, y se refresca cada 200 ms: la aguja de los
+     * segundos no necesita mas resolucion que esa.
+     */
+    private static java.util.Calendar borrowed;
+
+    private static java.util.Calendar clock() {
+        long now = System.currentTimeMillis();
+        if (borrowed == null || now - borrowedAt > 200L) {
+            borrowed = java.util.Calendar.getInstance();
+            borrowedAt = now;
+        }
+        return borrowed;
+    }
+
+    private static long borrowedAt = 0L;
+
+    private static final int[] HOUR_MIN = new int[2];
+    private static long hourMinuteStamp = Long.MIN_VALUE;
+
     private static int[] getCurrentHour() {
-        java.util.Calendar now = java.util.Calendar.getInstance();
-        return new int[] {
-            now.get(java.util.Calendar.HOUR_OF_DAY) % 12,
-            now.get(java.util.Calendar.MINUTE)
-        };
+        long minute = System.currentTimeMillis() / 60_000L;
+        if (minute != hourMinuteStamp) {
+            hourMinuteStamp = minute;
+            java.util.Calendar now = clock();
+            HOUR_MIN[0] = now.get(java.util.Calendar.HOUR_OF_DAY) % 12;
+            HOUR_MIN[1] = now.get(java.util.Calendar.MINUTE);
+        }
+        return HOUR_MIN;
     }
 
     // Estado del glitch actual
@@ -173,7 +200,7 @@ public class PocketWatchRenderer {
         }
         // v0.260.0: la fecha de hoy, en numeral romano como el cuadrante.
         if (chars > 38 && cy + radius + 68 + 9 <= stackBottom) {
-            java.util.Calendar cal = java.util.Calendar.getInstance();
+            java.util.Calendar cal = clock();
             String roman = ROMAN_MONTHS[cal.get(java.util.Calendar.MONTH)];
             String today = (en ? "today: " : "hoy: ")
                 + cal.get(java.util.Calendar.DAY_OF_MONTH) + " · " + roman;
@@ -183,7 +210,7 @@ public class PocketWatchRenderer {
         }
         // v0.274.0: el segundero, la hora escrita, el dia y el atraso del reloj.
         long nowMs = System.currentTimeMillis();
-        java.util.Calendar now = java.util.Calendar.getInstance();
+        java.util.Calendar now = clock();
         double secAngle = Math.toRadians(now.get(java.util.Calendar.SECOND) * 6 - 90);
         drawThinLine(g, cx, cy,
             (int)(cx + Math.cos(secAngle) * (radius - 14)),
@@ -295,7 +322,7 @@ public class PocketWatchRenderer {
         // nueva del 6 de enero de 2000-, asi que el reloj dice la luna de esa
         // noche, la mire quien la mire.
         if (radius >= 30) {
-            int day = java.util.Calendar.getInstance().get(java.util.Calendar.DAY_OF_MONTH);
+            int day = clock().get(java.util.Calendar.DAY_OF_MONTH);
             drawDateAperture(g, font, cx + (int) (radius * 0.52), cy, day);
         }
 

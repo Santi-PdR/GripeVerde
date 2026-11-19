@@ -1,3 +1,7 @@
+## Version 0.360.0 - Reloj y fechas con un solo calendario, y la hoja de mundos ya no se monta sobre la cabecera
+
+El reloj comparte un calendario y la hoja de mundos deja de montarse sobre la cabecera
+
 ## Version 0.359.0 - Mandos legibles en ventanas bajas y teclas Inicio/Fin
 
 Los mandos de Sonido se leen en ventanas bajas y suman Inicio/Fin

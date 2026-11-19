@@ -196,7 +196,7 @@ public class DiarySlider extends AbstractSliderButton {
         boolean squat = h < 18;
         int trackX1 = x + 10;
         int trackX2 = x + w - 10;
-        int trackY = squat ? y + h - 3 : y + h - 6;
+        int trackY = squat ? y + h - 2 : y + h - 6;
         if (trackX2 - trackX1 < 12) {
             trackX1 = x + 4;
             trackX2 = Math.max(trackX1 + 1, x + w - 4);
@@ -205,11 +205,14 @@ public class DiarySlider extends AbstractSliderButton {
         g.fill(trackX1 - 1, trackY - 1, trackX1 + 1, trackY + 3, 0xA06B4A2E);
         g.fill(trackX2 - 1, trackY - 1, trackX2 + 1, trackY + 3, 0xA06B4A2E);
 
-        int graduations = Math.max(4, Math.min(10, w / 34));
-        for (int i = 0; i <= graduations; i++) {
-            int tx = trackX1 + (trackX2 - trackX1) * i / graduations;
-            int hTick = squat ? 2 : ((i % 2 == 0) ? 5 : 3);
-            g.fill(tx, trackY - hTick, tx + 1, trackY, 0x70422810);
+        // Con poco alto no quedan muescas: se comian la etiqueta.
+        if (!squat) {
+            int graduations = Math.max(4, Math.min(10, w / 34));
+            for (int i = 0; i <= graduations; i++) {
+                int tx = trackX1 + (trackX2 - trackX1) * i / graduations;
+                int hTick = (i % 2 == 0) ? 5 : 3;
+                g.fill(tx, trackY - hTick, tx + 1, trackY, 0x70422810);
+            }
         }
 
         int progressX = trackX1 + (int) (this.value * Math.max(1, trackX2 - trackX1));
@@ -226,7 +229,7 @@ public class DiarySlider extends AbstractSliderButton {
         Font font = Minecraft.getInstance().font;
         String msg = ellipsize(font, cachedMessage(), Math.max(8, w - 14));
         int textX = x + w / 2 - DiaryChrome.widthCached(font, msg) / 2;
-        int labelY = squat ? y + 2 : y + 4;
+        int labelY = squat ? y + 1 : y + 4;
         // v0.336.0: la aguja del mando cruzaba la etiqueta y se comia una letra
         // ("Granofono del cronista: 4 %"). Ahora, si la aguja cae sobre el
         // texto, la etiqueta se escribe en dos mitades y queda un hueco limpio.

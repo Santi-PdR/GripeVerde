@@ -57,14 +57,17 @@ public final class DeathPaper {
             boolean english = Discoveries.isEnglish();
             cachedWhere = deathWhere(english);
             cachedWhen = deathWhen(english);
+            cachedDated = buildDated(english);
         } catch (Throwable ignored) {
             cachedWhere = "";
             cachedWhen = "";
+            cachedDated = "";
         }
     }
 
     private static String cachedWhere = "";
     private static String cachedWhen = "";
+    private static String cachedDated = "";
 
     /** v0.345.0: la causa que traia el juego, guardada antes de callarla. */
     private static String capturedCause = "";
@@ -226,11 +229,9 @@ public final class DeathPaper {
             : "La aduana lo anota en su libro.";
         ledger = writeRow(g, font, courtesy, px, pw, ledger, bodyLimit, DiaryChrome.INK_FLAVOR);
 
-        java.util.Calendar cal = java.util.Calendar.getInstance();
-        String[] romanMonths = { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII" };
-        String dated = (english ? "dated " : "fechado ")
-            + cal.get(java.util.Calendar.DAY_OF_MONTH) + " \u00b7 "
-            + romanMonths[cal.get(java.util.Calendar.MONTH)] + " \u00b7 1897";
+        // v0.360.0: la fecha se arma una vez, al abrirse la hoja.
+        String dated = cachedDated != null && !cachedDated.isEmpty()
+            ? cachedDated : buildDated(english);
         writeRow(g, font, dated, px, pw, ledger, bodyLimit, DiaryChrome.INK_FLAVOR);
 
         String reg = "EC-QV/1897";
@@ -253,6 +254,19 @@ public final class DeathPaper {
         } else {
             g.drawString(font, DiaryChrome.fitCached(font, reg, pw - 16), px + 8, footY,
                 DiaryChrome.INK_FLAVOR, false);
+        }
+    }
+
+    /** v0.360.0: la fecha del parte, en numeros romanos como el sello. */
+    private static String buildDated(boolean english) {
+        try {
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            String[] romanMonths = { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII" };
+            return (english ? "dated " : "fechado ")
+                + cal.get(java.util.Calendar.DAY_OF_MONTH) + " \u00b7 "
+                + romanMonths[cal.get(java.util.Calendar.MONTH)] + " \u00b7 1897";
+        } catch (Throwable ignored) {
+            return "";
         }
     }
 

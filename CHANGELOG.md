@@ -1,3 +1,7 @@
+## v0.360.0 - Reloj y fechas con un solo calendario, y la hoja de mundos ya no se monta sobre la cabecera
+
+- Optimizacion: el reloj de la portada ya no arma cuatro Calendar y tres arrays por cuadro; fecha del parte, del registro de mundos y del pie de Multijugador cacheadas por minuto. Mundos: la hoja empieza donde termina la cabecera, sin canto desgarrado cruzado. Mandos bajos: sin muescas cuando no cabe la etiqueta.
+
 ## v0.359.0 - Mandos legibles en ventanas bajas y teclas Inicio/Fin
 
 - Mandos: con menos de 18 px de alto el carril se pega al borde, las muescas bajan y la etiqueta sube (antes la letra caia sobre el carril). Inicio y Fin llevan el mando a 0 % y 100 % de un golpe en los tres deslizadores.
