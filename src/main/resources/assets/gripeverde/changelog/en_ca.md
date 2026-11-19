@@ -1,3 +1,9 @@
+## Version 0.301.0 - Fewer things on top of each other
+
+The title screen watch loses the moon window that looked like a mirror glued to the dial: the VI is a number again. The phrase that appeared when the hand passed over it - with the hour and the day - is gone too; the watch no longer needs to explain itself. The shooting star's note moves to the foot of the sheet, on the left, where it cannot touch the emblem.
+
+And a long pass over overlaps: the server count and the archive weight in multiplayer no longer sit on the subtitle, and the floating button notice is no longer drawn twice; the sound sheet moves the three-layer line to the foot and the playing disc to the margin; the work table reserves a row for the chronicler's quote; the game state in the pause screen drops to the foot; the death certificate is clipped to the room above the game's own notice; saved worlds get a dark band so their lines can be read; and the house gains full names and a line explaining each button on hover. The ledger is gone.
+
 ## Version 0.300.0 - Three hundred versions and a queue in the pocket
 
 The new-file notice that speaks in game now has a queue: if two things are recorded in a row, the second waits its turn and comes in when the first leaves, without covering it. The queue holds up to four and drops the oldest when it fills, because the reader does not live to read notices.

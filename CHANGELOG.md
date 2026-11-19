@@ -1,3 +1,17 @@
+## v0.301.0 - Menos cosas encima de otras
+
+- Reloj: fuera la ventanilla de luna (parecia un espejo) y la frase al pasar la mano.
+- Estrella fugaz: su nota va al pie izquierdo, lejos del emblema.
+- Multijugador: subtitulo acotado, peso del archivo al pie, sin aviso flotante duplicado.
+- Sonido: disco sonando al margen, linea de tres capas al pie.
+- Opciones: la cita del cronista tiene su renglon y no pisa la grilla.
+- Pausa: el estado de la partida baja al pie; fuera la semilla al pasar la mano.
+- Muerte: el parte se recorta al aire sobre el aviso y omite filas sin sitio.
+- Mundos: banda oscura por fila y peso/fecha debajo del subtitulo.
+- Casa: nombres enteros, linea de ayuda al pasar la mano, sin «El cuadro».
+- Arsenal: chapa y aviso de salida fuera de los botones.
+- Accesibilidad: el recuento de ajustes al margen izquierdo.
+
 ## v0.300.0 - Trescientas versiones y una cola en el bolsillo
 
 - `Discoveries`: cola de hasta cuatro avisos en partida (`enqueueGameToast`).

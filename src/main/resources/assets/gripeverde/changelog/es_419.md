@@ -1,3 +1,9 @@
+## Version 0.301.0 - Menos cosas encima de otras
+
+El reloj de la portada pierde la ventanilla de luna que parecia un espejo pegado en la esfera: el VI vuelve a ser un numero. Tampoco queda la frase que salia al pasar la mano por encima con la hora y el dia; el reloj ya no necesita explicarse. El aviso de la estrella fugaz se va al pie de la hoja, a la izquierda, donde no toca el emblema.
+
+Y una pasada larga de solapamientos: el recuento de puestos y el peso del archivo en multijugador ya no pisan el subtitulo ni el aviso flotante de los botones se dibuja dos veces; la hoja de sonido lleva la linea de las tres capas al pie y el disco sonando al margen; la mesa de trabajo le reserva su renglon a la cita del cronista; el estado de la partida en la pausa baja al pie; el parte de defuncion se recorta al aire que hay sobre el aviso del juego; los mundos guardados llevan banda oscura para que se lean sus lineas; y la casa estrena nombres enteros y una linea que explica cada boton al pasar la mano. El cuadro sale.
+
 ## Version 0.300.0 - Trescientas versiones y una cola en el bolsillo
 
 La ficha nueva que avisa en partida ahora tiene cola: si dos cosas se anotan seguidas, la segunda espera su turno y entra cuando la primera se va, sin taparse. La cola guarda hasta cuatro y descarta la mas vieja si se llena, porque el lector no vive para leer avisos.
