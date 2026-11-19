@@ -1184,7 +1184,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
      */
     private void paintLanHeaderInk(GuiGraphics gfx) {
         if (this.vanillaList == null || this.vanillaServers == null) return;
-        if (!this.vanillaServers.isEmpty()) return;
+        if (this.vanillaServers.size() > 0) return;
         int headerH = vanillaHeaderHeight;
         if (headerH <= 2) return;
         int listTop = this.vanillaList.getTop();
