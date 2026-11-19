@@ -1,3 +1,7 @@
+## Version 0.358.0 - Mandos sin tirones, niebla con paralaje y mundo guardado con fecha en columna
+
+Los mandos dejan de guardar la config en cada cuadro, la portada gana niebla con paralaje y las fichas de mundo alinean su fecha
+
 ## Version 0.357.0 - La pantalla de muerte se queda con el parte en el centro y sin el rótulo del juego
 
 La pantalla de muerte deja sólo el parte de defunción en el centro; el rótulo del juego desaparece

@@ -241,11 +241,10 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             ClientConfig.UI_VOLUME.get(),
             value -> DiaryChrome.tr("gripeverde.options.sound.ui_slider")
                 + ": " + (int) Math.round(value * 100.0) + "%",
-            value -> {
-                ClientConfig.UI_VOLUME.set(value);
-                ClientConfig.UI_VOLUME.save();
-            },
-            false
+            value -> ClientConfig.UI_VOLUME.set(value),
+            false,
+            // v0.358.0: se guarda al soltar el mando, una sola vez.
+            () -> ClientConfig.UI_VOLUME.save()
         );
         this.uiVolumeSlider.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
             Component.translatable("gripeverde.options.sound.ui_slider.tooltip")));

@@ -117,20 +117,17 @@ public class DiaryHouseScreen extends Screen {
             DiarySlider music = new DiarySlider(
                 col1, cursor, this.toggleW, 20, ClientConfig.MUSIC_VOLUME.get(),
                 v -> (en() ? "music " : "musica ") + pct(v),
-                v -> {
-                    ClientConfig.MUSIC_VOLUME.set(v);
-                    ClientConfig.MUSIC_VOLUME.save();
-                });
+                v -> ClientConfig.MUSIC_VOLUME.set(v),
+                // v0.358.0: el JSON se guarda al soltar, no en cada cuadro.
+                true, () -> ClientConfig.MUSIC_VOLUME.save());
             addWithHelp(music, help("Volumen del gramofono de la portada.",
                 "Volume of the title screen gramophone."));
 
             DiarySlider ambience = new DiarySlider(
                 col2, cursor, this.toggleW, 20, ClientConfig.AMBIENCE_VOLUME.get(),
                 v -> (en() ? "ambience " : "ambiente ") + pct(v),
-                v -> {
-                    ClientConfig.AMBIENCE_VOLUME.set(v);
-                    ClientConfig.AMBIENCE_VOLUME.save();
-                });
+                v -> ClientConfig.AMBIENCE_VOLUME.set(v),
+                true, () -> ClientConfig.AMBIENCE_VOLUME.save());
             addWithHelp(ambience, help("Volumen de los ruidos de la casa.",
                 "Volume of the house's noises."));
 
@@ -138,10 +135,8 @@ public class DiaryHouseScreen extends Screen {
             DiarySlider ui = new DiarySlider(
                 col1, cursor, this.panelW - 32, 20, ClientConfig.UI_VOLUME.get(),
                 v -> (en() ? "interface " : "interfaz ") + pct(v),
-                v -> {
-                    ClientConfig.UI_VOLUME.set(v);
-                    ClientConfig.UI_VOLUME.save();
-                });
+                v -> ClientConfig.UI_VOLUME.set(v),
+                true, () -> ClientConfig.UI_VOLUME.save());
             addWithHelp(ui, help("Volumen de los sellos y las hojas al abrirse.",
                 "Volume of the seals and sheets as they open."));
             cursor += 24;

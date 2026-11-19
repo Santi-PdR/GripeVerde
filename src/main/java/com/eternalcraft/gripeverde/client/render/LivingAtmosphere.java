@@ -469,6 +469,60 @@ public class LivingAtmosphere {
         }
     }
 
+    /**
+     * v0.358.0: niebla alta que corre al reves que la de abajo.
+     *
+     * Tres franjas finas entre el tercio y la mitad de la pantalla, con deriva
+     * lenta y alpha bajo. Da paralaje —la ciudad parece tener fondo— y cuesta
+     * tres rellenos por cuadro, sin particulas ni azar.
+     */
+    private static final float[][] FOG_DRIFT_BANDS = {
+        { 0.34f, 0.045f, 0.34f },
+        { 0.44f, 0.038f, 0.24f },
+        { 0.55f, 0.030f, 0.16f }
+    };
+
+    public static void renderFogDrift(GuiGraphics g, int w, int h) {
+        if (g == null || w <= 0 || h <= 0) return;
+        for (int i = 0; i < FOG_DRIFT_BANDS.length; i++) {
+            float[] band = FOG_DRIFT_BANDS[i];
+            int y1 = (int) (h * band[0]);
+            int y2 = (int) (h * (band[0] + band[1]));
+            if (y2 <= y1) continue;
+            int span = Math.max(1, w * 2);
+            int drift = (int) ((time * (7 + i * 4)) % span);
+            int alpha = (int) (band[2] * 40f
+                * (0.85f + 0.15f * (float) Math.sin(time * 0.23f + i * 1.7f)));
+            if (alpha < 2) continue;
+            int col = AtmosphereRenderer.withAlpha(0x002A2A20, alpha);
+            int startX = -drift;
+            g.fill(startX, y1, startX + w * 3, y2, col);
+        }
+    }
+
+    /**
+     * v0.358.0: el charco de luz de la lampara del gabinete.
+     *
+     * Las hojas del diario se apoyaban en un velo plano y se perdian contra el
+     * fondo. Esto abre un centro tibio y deja los bordes oscuros: la hoja gana
+     * contraste sin subir el brillo general. Son cinco rellenos fijos.
+     */
+    public static void renderDeskGlow(GuiGraphics g, int w, int h) {
+        if (g == null || w <= 0 || h <= 0) return;
+        int bands = 5;
+        for (int i = 0; i < bands; i++) {
+            int insetX = w * i / (bands * 3);
+            int insetY = h * i / (bands * 4);
+            int alpha = 10 - i;
+            if (alpha <= 0) continue;
+            g.fill(insetX, insetY, w - insetX, h - insetY,
+                AtmosphereRenderer.withAlpha(0x00322210, alpha));
+        }
+        // Filo frio arriba, para que el charco no parezca un rectangulo.
+        int topH = Math.max(6, h / 12);
+        g.fill(0, 0, w, topH, AtmosphereRenderer.withAlpha(0x00101A24, 14));
+    }
+
     public static void renderStreetLevel(GuiGraphics g, int w, int h) {
         if (lanternPositions == null || w != lastLanternW || h != lastLanternH) {
             lanternPositions = VictorianSkyline.getLanternPositions(w, h);

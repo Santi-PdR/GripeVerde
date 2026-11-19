@@ -1,3 +1,7 @@
+## v0.358.0 - Mandos sin tirones, niebla con paralaje y mundo guardado con fecha en columna
+
+- Mandos: applyValue ya no se llama dos veces por cuadro y el JSON de config se guarda al soltar (Sonido, La casa). Portada: segunda niebla mas alta que corre al reves, con paralaje. Hojas: charco de luz de la lampara para que el papel tenga contraste. Mundos: el modo a la izquierda y la fecha pegada al margen derecho; el parte de defuncion cachea lugar y momento.
+
 ## v0.357.0 - La pantalla de muerte se queda con el parte en el centro y sin el rótulo del juego
 
 - Muerte: el papel pasa al centro y tapa el rotulo «Estas muerto», la causa y el puntaje; el parte es lo unico que se lee y las fichas quedan debajo con su aire.

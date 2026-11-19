@@ -1,3 +1,7 @@
+## Version 0.358.0 - Mandos sin tirones, niebla con paralaje y mundo guardado con fecha en columna
+
+Sliders stop writing config every frame, the title scene gets drifting fog and world rows align their date
+
 ## Version 0.357.0 - La pantalla de muerte se queda con el parte en el centro y sin el rótulo del juego
 
 The death screen keeps only the CEDA notice, centred, with the vanilla title gone

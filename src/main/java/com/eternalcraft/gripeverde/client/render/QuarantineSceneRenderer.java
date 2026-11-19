@@ -53,6 +53,8 @@ public final class QuarantineSceneRenderer {
         AtmosphereRenderer.renderSearchlights(g, w, h);
         VictorianSkyline.renderGhoulWatcher(g, w, h);
         LivingAtmosphere.renderFogLow(g, w, h);
+        // v0.358.0: segunda niebla, mas alta y en sentido contrario: paralaje.
+        LivingAtmosphere.renderFogDrift(g, w, h);
         VictorianSkyline.renderForeground(g, w, h);
         LivingAtmosphere.renderStreetLevel(g, w, h);
         LivingAtmosphere.renderAir(g, w, h);
@@ -82,6 +84,9 @@ public final class QuarantineSceneRenderer {
         LivingAtmosphere.renderVignette(g, w, h);
         // Overlay oscuro del gabinete
         g.fill(0, 0, w, h, DiaryChrome.OVERLAY_COL);
+        // v0.358.0: y encima el charco de luz de la lampara, para que la hoja
+        // no se lea contra un velo plano.
+        LivingAtmosphere.renderDeskGlow(g, w, h);
     }
 
     // ── Film grain subtle to add depth without texture ──

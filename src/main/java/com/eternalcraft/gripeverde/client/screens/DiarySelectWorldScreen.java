@@ -404,16 +404,35 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 if (name.isEmpty()) continue;
                 String mode = gameModeName(summary);
                 String when = lastPlayedStamp(summary);
-                String line2 = mode;
-                if (!when.isEmpty()) line2 = line2.isEmpty() ? when : line2 + "  \u00b7  " + when;
 
-                PaperTexture.drawTornSlip(g, textLeft - 4, drawTop + 1,
-                    textW + 8, Math.max(20, drawBottom - drawTop - 6), 0xE6D2A6, 0x422810, 236);
+                int slipLeft = textLeft - 4;
+                int slipRight = slipLeft + textW + 8;
+                int slipH = Math.max(20, drawBottom - drawTop - 6);
+                PaperTexture.drawTornSlip(g, slipLeft, drawTop + 1,
+                    textW + 8, slipH, 0xE6D2A6, 0x422810, 236);
                 String shownName = DiaryChrome.fitText(this.font, name, textW);
                 g.drawString(this.font, shownName, textLeft, drawTop + 3, 0xFF1A1108, false);
-                if (!line2.isEmpty()) {
-                    String shown2 = DiaryChrome.fitText(this.font, line2, textW);
-                    g.drawString(this.font, shown2, textLeft, drawTop + 14, 0xFF6B5533, false);
+                // v0.358.0: el modo a la izquierda y la fecha pegada al margen
+                // derecho, en columna. Antes iban en una sola linea con un punto
+                // en medio y cada ficha quedaba de un largo distinto.
+                int modeW = mode.isEmpty() ? 0 : DiaryChrome.widthCached(this.font, mode);
+                int whenW = when.isEmpty() ? 0 : DiaryChrome.widthCached(this.font, when);
+                boolean stacked = textLeft + modeW + 12 > slipRight - 6 - whenW;
+                if (!mode.isEmpty()) {
+                    g.drawString(this.font, DiaryChrome.fitText(this.font, mode,
+                        Math.max(30, textW - whenW - 12)), textLeft, drawTop + 14, 0xFF6B5533, false);
+                }
+                if (!when.isEmpty()) {
+                    if (stacked) {
+                        // Sin hueco para las dos: la fecha sola, en su renglon.
+                        if (slipH >= 30) {
+                            g.drawString(this.font, DiaryChrome.fitText(this.font, when, textW),
+                                textLeft, drawTop + 22, 0xFF8A6B45, false);
+                        }
+                    } else {
+                        g.drawString(this.font, when, slipRight - 6 - whenW, drawTop + 14,
+                            0xFF8A6B45, false);
+                    }
                 }
             }
             if (scissored) {

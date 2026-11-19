@@ -43,7 +43,8 @@ public class DiaryAmbienceSlider extends AbstractSliderButton {
 
     @Override
     protected void applyValue() {
-        MenuAmbience.setUserVolume((float) this.value);
+        // v0.358.0: durante el arrastre solo se escucha; el guardado va al soltar.
+        MenuAmbience.setUserVolumeLive((float) this.value);
     }
 
     /**
@@ -71,7 +72,8 @@ public class DiaryAmbienceSlider extends AbstractSliderButton {
                 this.value = net.minecraft.util.Mth.clamp(this.value + dir * step, 0.0D, 1.0D);
                 this.updateMessage();
                 this.applyValue();
-                this.livePreview();
+                // v0.358.0: con el teclado el valor es discreto, se guarda al acto.
+                MenuAmbience.setUserVolume((float) this.value);
                 try {
                     com.eternalcraft.gripeverde.client.audio.UiSounds.playClick();
                 } catch (Throwable ignored) {
@@ -100,6 +102,8 @@ public class DiaryAmbienceSlider extends AbstractSliderButton {
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         boolean released = super.mouseReleased(mouseX, mouseY, button);
         if (released) {
+            // v0.358.0: el valor final se persiste una sola vez, al soltar.
+            MenuAmbience.setUserVolume((float) this.value);
             try {
                 com.eternalcraft.gripeverde.client.audio.UiSounds.playClick();
             } catch (Throwable ignored) {

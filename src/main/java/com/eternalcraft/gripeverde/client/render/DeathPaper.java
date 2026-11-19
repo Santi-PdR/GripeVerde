@@ -50,7 +50,21 @@ public final class DeathPaper {
         // la repite. Se guarda una vez y se calla la del juego, sin tocar el
         // rotulo grande ni el puntaje.
         captureCause(screen);
+        // v0.358.0: el lugar y el momento se leen una vez, al abrirse la hoja.
+        // Antes se armaban en cada cuadro, con un Calendar y un monton de
+        // cadenas nuevas por segundo.
+        try {
+            boolean english = Discoveries.isEnglish();
+            cachedWhere = deathWhere(english);
+            cachedWhen = deathWhen(english);
+        } catch (Throwable ignored) {
+            cachedWhere = "";
+            cachedWhen = "";
+        }
     }
+
+    private static String cachedWhere = "";
+    private static String cachedWhen = "";
 
     /** v0.345.0: la causa que traia el juego, guardada antes de callarla. */
     private static String capturedCause = "";
@@ -202,9 +216,11 @@ public final class DeathPaper {
         ledger = writeRow(g, font, line1, px, pw, ledger, bodyLimit, DiaryChrome.INK_SUBTITLE);
         String cause = deathCause(screen, english);
         ledger = writeRow(g, font, cause, px, pw, ledger, bodyLimit, DiaryChrome.INK_TITLE);
-        String where = deathWhere(english);
+        String where = cachedWhere != null && !cachedWhere.isEmpty()
+            ? cachedWhere : deathWhere(english);
         ledger = writeRow(g, font, where, px, pw, ledger, bodyLimit, DiaryChrome.INK_SUBTITLE);
-        String when = deathWhen(english);
+        String when = cachedWhen != null && !cachedWhen.isEmpty()
+            ? cachedWhen : deathWhen(english);
         ledger = writeRow(g, font, when, px, pw, ledger, bodyLimit, DiaryChrome.INK_FLAVOR);
         String courtesy = english ? "The port notes it in its ledger."
             : "La aduana lo anota en su libro.";

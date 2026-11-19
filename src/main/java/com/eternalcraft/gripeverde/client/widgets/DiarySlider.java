@@ -30,6 +30,12 @@ public class DiarySlider extends AbstractSliderButton {
     private final DoubleFunction<String> labelFormatter;
     private final DoubleConsumer onValueChanged;
     private final boolean applyOnDrag;
+    // v0.358.0: el aviso final (guardar config) va al soltar, no en cada cuadro.
+    private final Runnable onRelease;
+    // v0.358.0: mientras se arrastra, vanilla ya llama applyValue() por cada
+    // cambio; volver a llamarlo desde onDrag guardaba la config dos veces por
+    // cuadro y hacia tirones.
+    private boolean dragging;
     // v0.246.0: el mando tambien avisa cuando la mano se le acerca.
     private boolean wasHovered = false;
 
@@ -45,12 +51,22 @@ public class DiarySlider extends AbstractSliderButton {
                        DoubleFunction<String> labelFormatter,
                        DoubleConsumer onValueChanged,
                        boolean applyOnDrag) {
+        this(x, y, w, h, initialValue, labelFormatter, onValueChanged, applyOnDrag, null);
+    }
+
+    public DiarySlider(int x, int y, int w, int h,
+                       double initialValue,
+                       DoubleFunction<String> labelFormatter,
+                       DoubleConsumer onValueChanged,
+                       boolean applyOnDrag,
+                       Runnable onRelease) {
         super(x, y, w, h,
               Component.literal(labelFormatter.apply(initialValue)),
               initialValue);
         this.labelFormatter = labelFormatter;
         this.onValueChanged = onValueChanged;
         this.applyOnDrag = applyOnDrag;
+        this.onRelease = onRelease;
     }
 
     @Override
@@ -66,12 +82,29 @@ public class DiarySlider extends AbstractSliderButton {
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         boolean released = super.mouseReleased(mouseX, mouseY, button);
         if (released) {
+            this.dragging = false;
+            // v0.358.0: al soltar se avisa una sola vez, con el valor final.
+            this.fireValueChanged();
+            this.fireRelease();
             try {
                 com.eternalcraft.gripeverde.client.audio.UiSounds.playClick();
             } catch (Throwable ignored) {
             }
         }
         return released;
+    }
+
+    private void fireValueChanged() {
+        if (this.onValueChanged != null) this.onValueChanged.accept(this.value);
+    }
+
+    private void fireRelease() {
+        if (this.onRelease != null) {
+            try {
+                this.onRelease.run();
+            } catch (Throwable ignored) {
+            }
+        }
     }
 
     /**
@@ -100,7 +133,9 @@ public class DiarySlider extends AbstractSliderButton {
                 // el campo value es protegido y se remienda a mano.
                 this.value = net.minecraft.util.Mth.clamp(this.value + dir * step, 0.0D, 1.0D);
                 this.updateMessage();
+                this.dragging = false;
                 this.applyValue();
+                this.fireRelease();
                 try {
                     com.eternalcraft.gripeverde.client.audio.UiSounds.playClick();
                 } catch (Throwable ignored) {
@@ -113,13 +148,16 @@ public class DiarySlider extends AbstractSliderButton {
 
     @Override
     protected void applyValue() {
-        if (onValueChanged != null) onValueChanged.accept(this.value);
+        // Con applyOnDrag en falso el valor solo se avisa al soltar.
+        if (this.dragging && !this.applyOnDrag) return;
+        this.fireValueChanged();
     }
 
     @Override
     protected void onDrag(double mouseX, double mouseY, double dragX, double dragY) {
+        this.dragging = true;
+        // vanilla ya guarda el valor y llama a applyValue() dentro de onDrag.
         super.onDrag(mouseX, mouseY, dragX, dragY);
-        if (applyOnDrag) this.applyValue();
     }
 
     @Override
