@@ -1,3 +1,9 @@
+## Version 0.346.0 - El archivador de paquetes se acompasa al papel
+
+The two resource-pack lists still had the game's grey rows over the archive sheet. Now each row gets the same warm veil as the entries in Sound, Chat and Accessibility, with its two ink rules, so the archive reads as a single piece.
+
+The game's letter and buttons are untouched: the veil is translucent and lets you read each pack's name and description just as before.
+
 ## Version 0.345.0 - El parte de defunción deja de repetir la causa del juego
 
 On the death screen, the game wrote the cause under the big title («Santipdr was slain») and our notice repeated it two centimetres above, over the plate. Now, when the screen opens, the house reads that cause once and keeps it in its own notice; the game stops writing it.

@@ -1,3 +1,7 @@
+## v0.346.0 - El archivador de paquetes se acompasa al papel
+
+- Paquetes de recursos: velo cálido y filetes de tinta sobre las dos listas, sin tocar su letra.
+
 ## v0.345.0 - El parte de defunción deja de repetir la causa del juego
 
 - Muerte: la causa se lee una vez y se calla la del juego; el rótulo grande y el puntaje no se tocan.

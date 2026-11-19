@@ -1,3 +1,9 @@
+## Version 0.346.0 - El archivador de paquetes se acompasa al papel
+
+Las dos listas de paquetes de recursos seguían con las filas grises del juego sobre la hoja de archivo. Ahora cada fila recibe el mismo velo tibio que las fichas de Sonido, Chat y Accesibilidad, con sus dos filetes de tinta, para que el archivador se lea como una sola pieza.
+
+No se toca la letra del juego ni sus botones: el velo es translúcido y deja leer el nombre y la descripción de cada paquete igual que antes.
+
 ## Version 0.345.0 - El parte de defunción deja de repetir la causa del juego
 
 En la pantalla de muerte, el juego escribía la causa debajo del rótulo grande («Santipdr fue asesinado/a») y nuestro parte la repetía dos centímetros más arriba, encima de la chapa. Ahora, al abrirse la pantalla, la casa lee esa causa una vez y la guarda en su propio parte; el juego deja de escribirla.

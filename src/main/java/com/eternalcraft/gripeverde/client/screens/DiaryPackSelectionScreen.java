@@ -112,6 +112,18 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partial) {
         super.render(g, mouseX, mouseY, partial);
+        // v0.346.0: las dos listas del archivador se acompasan al papel, como
+        // las fichas de Sonido y Accesibilidad. Solo se tine la fila: la letra
+        // del juego y sus mandos quedan como estan.
+        try {
+            if (this.availableList != null) {
+                DiaryChrome.washVanillaRows(g, this.availableList);
+            }
+            if (this.selectedList != null) {
+                DiaryChrome.washVanillaRows(g, this.selectedList);
+            }
+        } catch (Throwable ignored) {
+        }
         try {
             String title = this.title.getString();
             int limit = Math.max(80, this.width - 200);
