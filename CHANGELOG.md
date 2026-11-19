@@ -1,3 +1,8 @@
+## v0.340.0 - La pausa se queda sin parte de campaña y el parte de defunción se aparta del rótulo
+
+- Pausa: fuera la franja de día, hora, clima y coordenadas, y sus solapes con el filete.
+- Muerte: el papel se queda en su columna y el pie reparte registro, fecha y sello.
+
 ## v0.339.0 - La hoja de Mundos guardados deja de estar partida en vertical
 
 - Mundos guardados: el canal y el tirador del juego se repintan en papel y aguja de tinta; la hoja ya no queda partida.

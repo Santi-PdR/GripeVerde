@@ -1,3 +1,11 @@
+## Version 0.340.0 - La pausa se queda sin parte de campaña y el parte de defunción se aparta del rótulo
+
+In the pause screen, the foot strip («day 1 · the avenue», «19:14 · clear · -24, 6…») was cut in every window and overlapped the rule and the lozenge. It is gone: the sheet keeps its title, its date and its buttons, with no day, hour or coordinates.
+
+On the death notice, the paper was written over the game's «You died!» and «Score». Now the notice lives in its own column: it never passes half the width or a quarter of the height, and rows that do not fit are skipped instead of stacking.
+
+The registry and the stamp in the foot («EC-QV/1897» and «DECEASED») shared a line with the date and stepped on each other. Now the registry goes left, the stamp right and the date on its own row, each only if there is room.
+
 ## Version 0.339.0 - La hoja de Mundos guardados deja de estar partida en vertical
 
 In Saved worlds, the game drew its black channel and grey thumb to the right of the list, and that split the sheet in two: it looked like a vertical paper stuck on top. Now that margin is repainted in paper and the thumb is a thin ink line, with the real travel of the list.

@@ -1,3 +1,11 @@
+## Version 0.340.0 - La pausa se queda sin parte de campaña y el parte de defunción se aparta del rótulo
+
+En la pausa, la franja del pie («día 1 · la avenida», «19:14 · despejado · -24, 6…») se cortaba en todas las ventanas y se encimaba con el filete y el rombo. Se fue entera: la hoja se queda con su título, su fecha y sus fichas, sin día, hora ni coordenadas.
+
+En el parte de defunción, el papel se escribía encima del «¡Estás muerto!» y del «Puntaje» del juego. Ahora el aviso vive en su columna: nunca pasa de la mitad del ancho ni de la cuarta parte del alto, y las filas que no caben se omiten en vez de encimarse.
+
+El registro y el sello del pie («EC-QV/1897» y «DECESO») compartían renglón con la fecha y se pisaban. Ahora el registro va a la izquierda, el sello a la derecha y la fecha en su propio renglón, cada uno solo si hay hueco.
+
 ## Version 0.339.0 - La hoja de Mundos guardados deja de estar partida en vertical
 
 En Mundos guardados, el juego dibujaba su canal negro y su tirador gris a la derecha de la lista, y eso partía la hoja en dos: parecía un papel vertical pegado encima. Ahora ese margen se repinta en papel y la aguja es una línea de tinta fina, con el recorrido que de verdad lleva la lista.
