@@ -159,6 +159,8 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
             this.list.render(g, mouseX, mouseY, partialTick);
             // v0.343.0: el gris del juego se acompana al sepia de la hoja.
             DiaryChrome.washVanillaRows(g, this.list);
+            // v0.344.0: y encima, la ficha de registro con nuestra letra.
+            DiaryChrome.paintOptionRowsInk(g, this.font, this.list);
             DiaryChrome.drawStyledScrollThumbInPanel(g, this.list, this.panelX + this.panelW);
         }
 

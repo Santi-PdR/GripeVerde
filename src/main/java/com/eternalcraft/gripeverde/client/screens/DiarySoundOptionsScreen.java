@@ -495,6 +495,9 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             // v0.343.0: el gris del juego se acompana al sepia de la hoja.
             try {
                 DiaryChrome.washVanillaRows(g, (AbstractSelectionList<?>) this.reflectedList);
+                // v0.344.0: y encima, la ficha de registro con nuestra letra.
+                DiaryChrome.paintOptionRowsInk(g, this.font,
+                    (AbstractSelectionList<?>) this.reflectedList);
             } catch (Throwable ignored) {
             }
             DiaryChrome.drawStyledScrollThumbInPanel(g,

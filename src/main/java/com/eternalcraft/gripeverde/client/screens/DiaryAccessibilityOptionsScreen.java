@@ -188,6 +188,8 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
             this.list.render(gfx, mouseX, mouseY, delta);
             // v0.343.0: el gris del juego se acompana al sepia de la hoja.
             DiaryChrome.washVanillaRows(gfx, this.list);
+            // v0.344.0: y encima, la ficha de registro con nuestra letra.
+            DiaryChrome.paintOptionRowsInk(gfx, this.font, this.list);
             DiaryChrome.drawStyledScrollThumbInPanel(gfx, this.list, this.panelX + this.panelW);
         }
 

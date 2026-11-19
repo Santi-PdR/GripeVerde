@@ -504,6 +504,120 @@ public final class DiaryChrome {
         }
     }
 
+    /**
+     * v0.344.0: la ficha de registro, tambien para las listas del juego.
+     *
+     * Cada renglon de Sonido, Chat y Accesibilidad se repinta como las fichas
+     * de Mundos guardados: banda oscura, filete de tinta abajo y la etiqueta en
+     * nuestra letra clara. Si el renglon es un deslizador, se le devuelve su
+     * carril con la aguja en el valor real, para no perder el mando.
+     *
+     * Si de un renglon no se puede leer la etiqueta, se deja tal cual lo pinto
+     * el juego: nunca se borra un texto sin reponerlo.
+     */
+    public static void paintOptionRowsInk(GuiGraphics gfx, Font font, AbstractSelectionList<?> list) {
+        if (gfx == null || font == null || list == null) return;
+        int top = list.getTop();
+        int bottom = list.getBottom();
+        int left = list.getRowLeft();
+        int right = left + list.getRowWidth();
+        if (bottom - top < 8 || right - left < 40) return;
+        int step = readInt(list, "itemHeight", "f_93387_");
+        if (step <= 0) step = 25;
+        double scroll = 0.0;
+        try {
+            scroll = list.getScrollAmount();
+        } catch (Throwable ignored) {
+        }
+        java.util.List<?> entries;
+        try {
+            entries = list.children();
+        } catch (Throwable ignored) {
+            return;
+        }
+        if (entries == null || entries.isEmpty()) return;
+        int bandH = Math.min(step - 5, 20);
+        gfx.enableScissor(left - 2, top, right + 2, bottom);
+        try {
+            for (int i = 0; i < entries.size() && i < 64; i++) {
+                Object widget = findWidget(entries.get(i));
+                if (!(widget instanceof net.minecraft.client.gui.components.AbstractWidget w)) continue;
+                String label;
+                try {
+                    Component msg = w.getMessage();
+                    label = msg == null ? "" : msg.getString();
+                } catch (Throwable ignored) {
+                    label = "";
+                }
+                if (label == null || label.isBlank()) continue;
+                int rowTop = top + 4 - (int) scroll + i * step;
+                if (rowTop + bandH < top || rowTop > bottom) continue;
+                int drawTop = Math.max(rowTop, top);
+                int drawBottom = Math.min(rowTop + bandH, bottom);
+                if (drawBottom - drawTop < 6) continue;
+                boolean slider = w instanceof net.minecraft.client.gui.components.AbstractSliderButton;
+                // Banda y filete, como en el registro de la casa.
+                gfx.fill(left, drawTop, right, drawBottom, 0xC82A1C12);
+                gfx.fill(left, drawBottom - 1, right, drawBottom, 0x55E8DCB4);
+                int ink = 0xFFE8DCB4;
+                int fitted = Math.max(8, right - left - 16);
+                String shown = DiaryTypography.fitString(font, label, fitted);
+                int tw = DiaryTypography.width(font, shown);
+                int tx = left + (right - left - tw) / 2;
+                int ty = slider ? drawTop + 2 : drawTop + (drawBottom - drawTop - font.lineHeight) / 2;
+                gfx.drawString(font, shown, tx, ty, ink, false);
+                if (slider) {
+                    double value = sliderValue(w);
+                    int trackX1 = left + 8;
+                    int trackX2 = right - 8;
+                    int trackY = drawBottom - 4;
+                    gfx.fill(trackX1, trackY, trackX2, trackY + 1, 0x886B5533);
+                    int knob = trackX1 + (int) (Math.max(0.0, Math.min(1.0, value))
+                        * Math.max(1, trackX2 - trackX1));
+                    gfx.fill(knob - 1, trackY - 3, knob + 2, trackY + 4, 0xFFE8DCB4);
+                }
+            }
+        } finally {
+            gfx.disableScissor();
+        }
+    }
+
+    /** Primer widget que viva dentro de una ficha de la lista, si lo hay. */
+    private static Object findWidget(Object entry) {
+        if (entry == null) return null;
+        if (entry instanceof net.minecraft.client.gui.components.AbstractWidget) return entry;
+        try {
+            for (Class<?> c = entry.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
+                for (java.lang.reflect.Field f : c.getDeclaredFields()) {
+                    if (!net.minecraft.client.gui.components.AbstractWidget.class
+                            .isAssignableFrom(f.getType())) continue;
+                    f.setAccessible(true);
+                    Object v = f.get(entry);
+                    if (v != null) return v;
+                }
+            }
+        } catch (Throwable ignored) {
+        }
+        return null;
+    }
+
+    /** El valor de un deslizador del juego, entre 0 y 1. */
+    private static double sliderValue(net.minecraft.client.gui.components.AbstractSliderButton slider) {
+        try {
+            for (Class<?> c = slider.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
+                for (java.lang.reflect.Field f : c.getDeclaredFields()) {
+                    if (f.getType() != double.class) continue;
+                    String n = f.getName();
+                    if (!"value".equals(n) && !"f_93576_".equals(n)) continue;
+                    f.setAccessible(true);
+                    return f.getDouble(slider);
+                }
+            }
+        } catch (Throwable ignored) {
+        }
+        return 0.0;
+    }
+
     /** Lectura defensiva de un entero de la lista del juego (dev o SRG). */
     private static int readInt(Object target, String officialName, String srgName) {
         try {

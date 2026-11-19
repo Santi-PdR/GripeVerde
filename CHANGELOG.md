@@ -1,3 +1,8 @@
+## v0.344.0 - Las fichas del juego se vuelven fichas de registro
+
+- Sonido, Chat y Accesibilidad: fichas de registro (banda, filete y etiqueta en tinta clara) sobre las filas del juego.
+- Los deslizadores recuperan carril y aguja con su valor real.
+
 ## v0.343.0 - Las cajas grises del juego se acompasan al papel
 
 - Sonido, Chat y Accesibilidad: velo cálido y filetes de tinta sobre las fichas vanilla, sin tocar su letra ni sus mandos.

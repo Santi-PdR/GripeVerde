@@ -1,3 +1,11 @@
+## Version 0.344.0 - Las fichas del juego se vuelven fichas de registro
+
+Sound, Chat and Accessibility still had the game's grey boxes inside the sheet. Now every row is repainted like the entries in Saved worlds: dark band, ink rule below and the label in our light letter.
+
+Sliders keep their control: under the label a thin track is drawn with the needle at the real value, so you still see and drag exactly the same as before.
+
+If a row's label cannot be read, it is left exactly as the game painted it: a text is never erased without putting it back.
+
 ## Version 0.343.0 - Las cajas grises del juego se acompasan al papel
 
 The lists the game draws on its own in Sound, Chat and Accessibility came out as cold grey boxes inside the sheet: they looked pasted from another notebook. Now each entry gets a warm veil and two ink rules, above and below, that carry it to the house's sepia.

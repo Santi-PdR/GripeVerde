@@ -1,3 +1,11 @@
+## Version 0.344.0 - Las fichas del juego se vuelven fichas de registro
+
+Sonido, Chat y Accesibilidad seguían con las cajas grises del juego dentro de la hoja. Ahora cada renglón se repinta como las fichas de Mundos guardados: banda oscura, filete de tinta abajo y la etiqueta en nuestra letra clara.
+
+Los deslizadores conservan su mando: debajo de la etiqueta se dibuja un carril fino con la aguja en el valor real, así que se sigue viendo y moviendo lo mismo que antes.
+
+Si de un renglón no se puede leer la etiqueta, se deja tal cual lo pintó el juego: nunca se borra un texto sin reponerlo.
+
 ## Version 0.343.0 - Las cajas grises del juego se acompasan al papel
 
 Las listas que el juego dibuja por su cuenta en Sonido, Chat y Accesibilidad salían como cajas grises frías dentro de la hoja: parecían pegadas de otro cuaderno. Ahora cada ficha recibe un velo tibio y dos filetes de tinta, arriba y abajo, que la llevan al sepia de la casa.
