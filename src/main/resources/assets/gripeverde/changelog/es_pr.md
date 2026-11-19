@@ -1,3 +1,9 @@
+## Version 0.321.0 - El estado de la partida pasa al lado de la vela
+
+En la hoja de pausa, el estado de la partida (hora, clima, modo, dificultad, almas) se escribía justo en el rincón donde está la vela encendida, y los renglones le pasaban por encima. Ahora el bloque arranca a la derecha de la vela, con su ancho medido para no llegar nunca a la línea de las voces.
+
+En ventanas apretadas, donde la vela no se dibuja, el estado vuelve al margen.
+
 ## Version 0.320.0 - El reloj no se sienta sobre el chat
 
 Con JourneyMap instalado, el reloj se apartaba del minimapa yéndose abajo a la izquierda, que es justo la esquina donde el juego escribe el chat: las líneas se le montaban encima. Ahora se aparta a la columna derecha, colgado sobre el papelito de las coordenadas, donde no hay nada más.

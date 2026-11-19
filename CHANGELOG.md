@@ -1,3 +1,7 @@
+## v0.321.0 - El estado de la partida pasa al lado de la vela
+
+- Pausa: el bloque de estado arranca en `px+46` cuando hay vela.
+
 ## v0.320.0 - El reloj no se sienta sobre el chat
 
 - HUD: con minimapa, el reloj pasa a la columna derecha, sobre las coordenadas.

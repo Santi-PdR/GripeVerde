@@ -1,3 +1,9 @@
+## Version 0.321.0 - The world status moves beside the candle
+
+On the pause sheet, the world status (time, weather, mode, difficulty, souls) was written right in the corner where the lit candle is, and the lines ran over it. Now the block starts to the right of the candle, with its width measured so it never reaches the voices line.
+
+In tight windows, where the candle is not drawn, the status returns to the margin.
+
 ## Version 0.320.0 - The watch does not sit on the chat
 
 With JourneyMap installed, the watch stepped away from the minimap by going to the bottom left, which is exactly the corner where the game writes the chat: the lines climbed over it. Now it steps to the right column, hanging above the coordinates slip, where there is nothing else.

@@ -805,7 +805,10 @@ public class DiaryPauseScreen extends PauseScreen {
         }
         // v0.301.0: el estado vivia bajo la fecha y el titulo lo tapaba. Ahora
         // va al pie de la hoja, a la izquierda, con dos renglones cortos.
-        int maxW = Math.max(60, panelW() - 150);
+        // v0.321.0: la vela vive en ese mismo rincon, asi que el estado
+        // arranca a su derecha. Antes los renglones le pasaban por encima.
+        int leftInset = compactPauseLayout() ? 14 : 46;
+        int maxW = Math.max(60, panelW() - leftInset - 120);
         String cut1 = DiaryChrome.fitCached(this.font, line1, maxW);
         String cut2 = DiaryChrome.fitCached(this.font, line2, maxW);
         int baseY = py + panelH() - 40;
@@ -816,13 +819,13 @@ public class DiaryPauseScreen extends PauseScreen {
         if (!place.isEmpty()) {
             String cut0 = DiaryChrome.fitCached(this.font, place, maxW);
             if (baseY - 10 > py + 70) {
-                g.drawString(this.font, cut0, px + 14, baseY - 10,
+                g.drawString(this.font, cut0, px + leftInset, baseY - 10,
                     DiaryChrome.INK_TITLE, false);
             }
         }
-        g.drawString(this.font, cut1, px + 14, baseY,
+        g.drawString(this.font, cut1, px + leftInset, baseY,
             DiaryChrome.INK_SUBTITLE, false);
-        g.drawString(this.font, cut2, px + 14, baseY + 10,
+        g.drawString(this.font, cut2, px + leftInset, baseY + 10,
             DiaryChrome.INK_FLAVOR, false);
     }
 
