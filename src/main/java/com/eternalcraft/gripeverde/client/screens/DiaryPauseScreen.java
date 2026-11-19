@@ -810,10 +810,38 @@ public class DiaryPauseScreen extends PauseScreen {
         String cut2 = DiaryChrome.fitCached(this.font, line2, maxW);
         int baseY = py + panelH() - 40;
         if (baseY < py + 80 || baseY + 20 > py + panelH() - 12) return;
+        // v0.305.0: el dia de la partida y el lugar, recuperados como tercera
+        // linea del pie (se habian ido con la linea de la cabecera).
+        String place = dayAndPlace(en);
+        if (!place.isEmpty()) {
+            String cut0 = DiaryChrome.fitCached(this.font, place, maxW);
+            if (baseY - 10 > py + 70) {
+                g.drawString(this.font, cut0, px + 14, baseY - 10,
+                    DiaryChrome.INK_TITLE, false);
+            }
+        }
         g.drawString(this.font, cut1, px + 14, baseY,
             DiaryChrome.INK_SUBTITLE, false);
         g.drawString(this.font, cut2, px + 14, baseY + 10,
             DiaryChrome.INK_FLAVOR, false);
+    }
+
+    /** v0.305.0: "dia 1 · la avenida", como lo decia la cabecera antes. */
+    private String dayAndPlace(boolean en) {
+        try {
+            if (this.minecraft == null || this.minecraft.level == null) return "";
+            long day = this.minecraft.level.getDayTime() / 24000L + 1L;
+            String dim = this.minecraft.level.dimension().location().getPath();
+            String where;
+            switch (dim) {
+                case "the_nether" -> where = en ? "the lower ward" : "la sala baja";
+                case "the_end" -> where = en ? "the far shore" : "la orilla lejana";
+                default -> where = en ? "the avenue" : "la avenida";
+            }
+            return (en ? "day " : "dia ") + day + "  \u00b7  " + where;
+        } catch (Throwable ignored) {
+            return "";
+        }
     }
 
     private boolean baseYGuard() {

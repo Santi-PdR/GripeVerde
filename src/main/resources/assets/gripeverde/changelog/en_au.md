@@ -1,3 +1,9 @@
+## Version 0.305.0 - The pause foot says where you are
+
+The pause sheet recovers, now at its foot and without touching the title, the game's day and the place where the reader is, above the hour, weather, coordinates and mode. Three short lines, left aligned, clipped to the room available.
+
+And the house sheet warns when a map is occupying the corner: the watch corner button says `(map up)`, because in that case the watch steps aside on its own and there is no need to move it by hand.
+
 ## Version 0.304.0 - Saved worlds, in ink
 
 Every world in the list is now read in ink: the name in black and, below it, the game mode and the last time it was played in sepia, on its own slip of paper and respecting the world's picture. Before they were two grey lines on light paper that nobody could read.

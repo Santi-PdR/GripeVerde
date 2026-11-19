@@ -1,3 +1,8 @@
+## v0.305.0 - El pie de la pausa dice donde estas
+
+- Pausa: tercera linea con el dia de la partida y el lugar, en el pie.
+- Casa: la esquina del reloj avisa «con mapa» si hay un minimapa cargado.
+
 ## v0.304.0 - Los mundos guardados, en tinta
 
 - Mundos: nombre, modo y ultima partida reescritos en tinta sobre su franja.

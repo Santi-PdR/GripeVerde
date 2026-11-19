@@ -194,7 +194,17 @@ public class DiaryHouseScreen extends Screen {
             case 2 -> en() ? "bottom" : "abajo";
             default -> en() ? "top left" : "arriba izquierda";
         };
-        return label("Esquina: " + where, "Corner: " + where);
+        // v0.305.0: si hay mapa arriba, se dice, porque el reloj se aparta solo.
+        String extra = "";
+        try {
+            if (net.minecraftforge.fml.ModList.get().isLoaded("journeymap")
+                    || net.minecraftforge.fml.ModList.get().isLoaded("xaerominimap")
+                    || net.minecraftforge.fml.ModList.get().isLoaded("xaeroworldmap")) {
+                extra = en() ? "  (map up)" : "  (con mapa)";
+            }
+        } catch (Throwable ignored) {
+        }
+        return label("Esquina: " + where + extra, "Corner: " + where + extra);
     }
 
     private void addToggle(int x, int y, net.minecraftforge.common.ForgeConfigSpec.BooleanValue value,

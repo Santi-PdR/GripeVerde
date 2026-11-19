@@ -1,3 +1,9 @@
+## Version 0.305.0 - El pie de la pausa dice donde estas
+
+La hoja de pausa recupera, ahora en su pie y sin tocar el titulo, el dia de la partida y el lugar donde esta el lector, encima de la hora, el clima, las coordenadas y el modo. Tres renglones cortos, alineados a la izquierda, que se recortan al ancho disponible.
+
+Y la hoja de la casa avisa cuando hay un mapa ocupando la esquina: el boton de la esquina del reloj dice «con mapa», porque en ese caso el reloj se aparta solo y no hace falta moverlo a mano.
+
 ## Version 0.304.0 - Los mundos guardados, en tinta
 
 Cada mundo de la lista se lee ahora en tinta: el nombre en negro y, debajo, el modo de juego y la ultima vez que se jugo en sepia, sobre su propio recorte de papel y respetando la foto del mundo. Antes eran dos lineas grises sobre papel claro que no habia quien las leyera.
