@@ -1,3 +1,7 @@
+## v0.351.0 - El reloj del HUD deja de recortar el clima
+
+- HUD: la tira del reloj se mide con su texto (hasta 200 px) y el clima ya no sale recortado; el lacre sigue en su esquina.
+
 ## v0.350.0 - El pie de Sonido sube del canto
 
 - Sonido: el resumen y el folio del pie suben seis píxeles y dejan el canto roto libre.

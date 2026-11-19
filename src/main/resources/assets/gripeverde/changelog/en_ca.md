@@ -1,3 +1,9 @@
+## Version 0.351.0 - El reloj del HUD deja de recortar el clima
+
+In the HUD pocket watch, the paper slip had a fixed width (116 px) and the day-and-weather line came out clipped: «day 1 19:12 clea…». Now the width is measured with what is actually written —clock, date, day, weather and time inside— and grows up to 200 px so nothing is cut. On very narrow windows it still fits with its margin, and clipping becomes the last resort again.
+
+The wax seal sticks to the measured slip's right edge, so it stays in its corner at any width.
+
 ## Version 0.350.0 - El pie de Sonido sube del canto
 
 In Sound, the three-layer summary and the folio were written twelve pixels from the sheet's edge, over the torn edge: the last letters were half-read. They move up six pixels and stay at the sides of the Back button, each with the width it is given.

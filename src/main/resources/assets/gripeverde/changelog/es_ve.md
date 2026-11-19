@@ -1,3 +1,9 @@
+## Version 0.351.0 - El reloj del HUD deja de recortar el clima
+
+En el reloj de bolsillo del HUD, la tira de papel tenía ancho fijo (116 px) y el renglón del día y el clima salía recortado: «día 1 19:12 despe…». Ahora el ancho se mide con lo que de verdad lleva escrito —hora, fecha, día, clima y el rato dentro— y crece hasta 200 px para que nada se corte. Si la ventana es muy angosta, sigue entrando con su margen y el recorte vuelve a ser el último recurso.
+
+El lacre se pega al filo derecho de la tira medida, así que sigue en su esquina con cualquier ancho.
+
 ## Version 0.350.0 - El pie de Sonido sube del canto
 
 En Sonido, el resumen de las tres capas y el folio se escribían a doce píxeles del borde de la hoja, sobre el canto roto: las últimas letras se leían a medias. Suben seis píxeles y siguen a los lados del botón Volver, con el ancho que les deja a cada uno.

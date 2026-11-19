@@ -20,6 +20,8 @@ public final class WatchHud {
 
     // v0.312.0: la tira crece para que quepan la fecha y el clima enteros.
     private static final int SLIP_W = 116;
+    // v0.351.0: ancho maximo real de la tira (se mide linea por linea).
+    private static final int SLIP_W_MAX = 200;
     private static final int SLIP_H = 42;
     private static final int MARGIN = 6;
 
@@ -54,10 +56,13 @@ public final class WatchHud {
         }
         refresh(now, mc);
 
+        // v0.351.0: la tira se mide con lo que de verdad lleva escrito. Antes
+        // tenia ancho fijo y el clima salia recortado ("despe...").
+        int slipW = slipWidth(mc.font, screenW);
         int x = MARGIN;
         int y = MARGIN;
         int corner = corner();
-        if (corner == 1 || corner == 3) x = screenW - SLIP_W - MARGIN;
+        if (corner == 1 || corner == 3) x = screenW - slipW - MARGIN;
         else if (corner == 2) x = MARGIN;
 
         if (corner == 2) {
@@ -74,7 +79,7 @@ public final class WatchHud {
         int alpha = fadeIn(now);
         if (alpha <= 4) return;
 
-        PaperTexture.drawTornSlip(g, x, y, SLIP_W, SLIP_H, 0xE6D2A6, 0x422810, alpha);
+        PaperTexture.drawTornSlip(g, x, y, slipW, SLIP_H, 0xE6D2A6, 0x422810, alpha);
         Font font = mc.font;
         int ink = (Math.min(255, alpha + 20) << 24) | 0x241608;
         int soft = (Math.min(200, alpha) << 24) | 0x654025;
@@ -108,7 +113,7 @@ public final class WatchHud {
             ? 200
             : (int) (255 * (0.55 + 0.45 * Math.sin(now % 60_000L / 60_000.0 * Math.PI * 2)));
         int red = (Math.min(255, Math.max(90, pulse * alpha / 255)) << 24) | 0x6E1F16;
-        g.fill(x + SLIP_W - 12, y + 6, x + SLIP_W - 7, y + 11, red);
+        g.fill(x + slipW - 12, y + 6, x + slipW - 7, y + 11, red);
     }
 
     private static boolean enabled() {
@@ -148,6 +153,16 @@ public final class WatchHud {
         // la izquierda vive el chat y el reloj se le sentaba encima.
         if (corner != 2 && minimapPresent()) return 3;
         return corner;
+    }
+
+    /** v0.351.0: ancho de la tira, medido con lo que lleva escrito. */
+    private static int slipWidth(Font font, int screenW) {
+        int widest = 0;
+        widest = Math.max(widest, font.width(cachedLine1));
+        widest = Math.max(widest, font.width(cachedLine2));
+        widest = Math.max(widest, font.width(cachedLine3));
+        int want = Math.min(SLIP_W_MAX, Math.max(SLIP_W, widest + 24));
+        return Math.min(want, Math.max(60, screenW - MARGIN * 2));
     }
 
     /** v0.342.0: alto del papelito de coordenadas, con bioma o sin el. */
@@ -258,8 +273,10 @@ public final class WatchHud {
         }
         cachedCoords = DiaryChrome.fitText(mc.font, cachedCoords, 190);
         cachedBiome = DiaryChrome.fitText(mc.font, cachedBiome, 190);
-        cachedLine1 = DiaryChrome.fitText(mc.font, cachedLine1, SLIP_W - 22);
-        cachedLine2 = DiaryChrome.fitText(mc.font, cachedLine2, SLIP_W - 14);
-        cachedLine3 = DiaryChrome.fitText(mc.font, cachedLine3, SLIP_W - 14);
+        // v0.351.0: el recorte se mide contra el ancho maximo de la tira, no
+        // contra un ancho fijo que dejaba el clima a medias.
+        cachedLine1 = DiaryChrome.fitText(mc.font, cachedLine1, SLIP_W_MAX - 22);
+        cachedLine2 = DiaryChrome.fitText(mc.font, cachedLine2, SLIP_W_MAX - 14);
+        cachedLine3 = DiaryChrome.fitText(mc.font, cachedLine3, SLIP_W_MAX - 14);
     }
 }
