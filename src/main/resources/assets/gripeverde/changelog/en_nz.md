@@ -1,3 +1,9 @@
+## Version 0.349.0 - Los pies de teclas dejan el canto roto
+
+In Direct join and Edit server, the keys hint («Enter joins · Esc back», «Tab changes field · Enter signs · Esc back») was written twelve pixels from the sheet's edge, right where the paper ends torn: the last letters hung on the edge.
+
+Now the hint goes above the buttons, with air, and is only written if there is real room between the last readout and the button. If the sheet is short, it stays quiet instead of falling on the edge or on the buttons.
+
 ## Version 0.348.0 - La ficha del proyecto se pone al dia
 
 Documentation round, without touching a single screen. The working guide now says which version is published (0.347.0) and that this delivery is the record; the operational state moves to 0.348.0 and lists what the 0.336.0–0.347.0 batch closed: Sound, Accessibility, Multiplayer, Options, Saved worlds, the pause screen with no day, hour or coordinates, the death notice, the HUD and minimap coordinate slip, the cover signature and watch engraving, and the game's grey lists.

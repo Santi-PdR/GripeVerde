@@ -1,3 +1,7 @@
+## v0.349.0 - Los pies de teclas dejan el canto roto
+
+- Conexión rápida y Editar servidor: el pie de teclas sube sobre las fichas y se calla si no hay hueco.
+
 ## v0.348.0 - La ficha del proyecto se pone al dia
 
 - Documentación: CONTRIBUTING con la versión publicada, KNOWN_ISSUES en 0.348.0 con lo cerrado y lo abierto, y CONTEXTO con la tanda 0.336.0–0.347.0.

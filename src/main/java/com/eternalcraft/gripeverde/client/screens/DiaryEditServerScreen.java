@@ -285,14 +285,18 @@ public class DiaryEditServerScreen extends Screen {
             gfx.drawString(this.font, warn, centerX - ww / 2, readoutY, 0xFF8E2A20, false);
         }
 
-        // Pie de teclas, cuando la hoja tiene cuerpo de sobra.
+        // v0.349.0: el pie de teclas caia sobre el canto roto de la hoja. Ahora
+        // va encima de las fichas y, si el cuerpo no da, se calla.
         if (!compactLayout()) {
-            String keys = en ? "Tab changes field  ·  Enter signs  ·  Esc back"
-                : "Tab cambia de campo  ·  Enter firma  ·  Esc vuelve";
-            keys = ellipsizeTo(this.font, keys, Math.max(48, panelW - 32));
-            int kw = DiaryChrome.widthCached(this.font, keys);
-            gfx.drawString(this.font, keys, centerX - kw / 2, panelY + panelH - 12,
-                DiaryChrome.INK_FLAVOR, false);
+            int hintY = panelY + panelH - btnH - 16 - 12;
+            if (hintY > readoutY + 11) {
+                String keys = en ? "Tab changes field  ·  Enter signs  ·  Esc back"
+                    : "Tab cambia de campo  ·  Enter firma  ·  Esc vuelve";
+                keys = ellipsizeTo(this.font, keys, Math.max(48, panelW - 32));
+                int kw = DiaryChrome.widthCached(this.font, keys);
+                gfx.drawString(this.font, keys, centerX - kw / 2, hintY,
+                    DiaryChrome.INK_FLAVOR, false);
+            }
         }
 
         // Widgets (EditBox + botones Diary)

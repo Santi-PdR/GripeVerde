@@ -335,14 +335,18 @@ public class DiaryDirectJoinScreen extends Screen {
             gfx.drawString(this.font, note, centerX - nw / 2, noteY, ink, false);
         }
 
-        // Pie de teclas, cuando la hoja tiene cuerpo de sobra.
+        // v0.349.0: el pie de teclas caia sobre el canto roto de la hoja. Ahora
+        // va encima de las fichas y, si el cuerpo no da, se calla.
         if (panelH >= 150) {
-            String keys = en ? "Enter joins  ·  Esc back"
-                : "Enter entra  ·  Esc vuelve";
-            keys = ellipsizeTo(this.font, keys, Math.max(48, panelW - 32));
-            int kw = DiaryChrome.widthCached(this.font, keys);
-            gfx.drawString(this.font, keys, centerX - kw / 2, panelY + panelH - 12,
-                DiaryChrome.INK_FLAVOR, false);
+            int hintY = panelY + panelH - 20 - 16 - 12;
+            if (hintY > noteY + 11) {
+                String keys = en ? "Enter joins  ·  Esc back"
+                    : "Enter entra  ·  Esc vuelve";
+                keys = ellipsizeTo(this.font, keys, Math.max(48, panelW - 32));
+                int kw = DiaryChrome.widthCached(this.font, keys);
+                gfx.drawString(this.font, keys, centerX - kw / 2, hintY,
+                    DiaryChrome.INK_FLAVOR, false);
+            }
         }
 
         // Widgets

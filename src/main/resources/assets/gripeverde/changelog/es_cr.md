@@ -1,3 +1,9 @@
+## Version 0.349.0 - Los pies de teclas dejan el canto roto
+
+En Conexión rápida y en Editar servidor, el pie de teclas («Enter entra · Esc vuelve», «Tab cambia de campo · Enter firma · Esc vuelve») se escribía a doce píxeles del borde de la hoja, justo donde el papel termina desgarrado: las últimas letras quedaban enganchadas al canto.
+
+Ahora el aviso va encima de las fichas, con aire, y solo se escribe si de verdad hay hueco entre el último dato y el botón. Si la hoja es baja, se calla en vez de caer sobre el canto o sobre las fichas.
+
 ## Version 0.348.0 - La ficha del proyecto se pone al dia
 
 Ronda de documentación, sin tocar una sola pantalla. La guía de trabajo ya dice qué versión está publicada (0.347.0) y que esta entrega es la ficha; el estado operativo pasa a 0.348.0 y enumera lo cerrado en la tanda 0.336.0–0.347.0: Sonido, Accesibilidad, Multijugador, Opciones, Mundos guardados, la pausa sin día ni hora ni coordenadas, el parte de muerte, el papel de coordenadas del HUD y del minimapa, la firma y el grabado de la portada, y las listas grises del juego.
