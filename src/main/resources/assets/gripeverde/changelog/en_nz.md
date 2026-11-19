@@ -1,3 +1,11 @@
+## Version 0.339.0 - La hoja de Mundos guardados deja de estar partida en vertical
+
+In Saved worlds, the game drew its black channel and grey thumb to the right of the list, and that split the sheet in two: it looked like a vertical paper stuck on top. Now that margin is repainted in paper and the thumb is a thin ink line, with the real travel of the list.
+
+The count, the archive weight and the date were written on two lines and the second fell over the header's torn edge, where it was read cut. Now they go on a single line, inside the sheet.
+
+The folio («sheet 1») left the foot corner, where it stayed behind the buttons, for the left margin of the header.
+
 ## Version 0.338.0 - El expediente de Multijugador deja libre el pie
 
 In Multiplayer, the archive line («2.1 KB · 19·XI·2026») was written in the foot and the Edit/Delete button row ran over it: the date was half-read over a button's edge. Now the folio and the weight live in the left margin of the header, with the width the centered title leaves.

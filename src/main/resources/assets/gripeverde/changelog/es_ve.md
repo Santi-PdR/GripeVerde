@@ -1,3 +1,11 @@
+## Version 0.339.0 - La hoja de Mundos guardados deja de estar partida en vertical
+
+En Mundos guardados, el juego dibujaba su canal negro y su tirador gris a la derecha de la lista, y eso partía la hoja en dos: parecía un papel vertical pegado encima. Ahora ese margen se repinta en papel y la aguja es una línea de tinta fina, con el recorrido que de verdad lleva la lista.
+
+El recuento, el peso del archivo y la fecha se escribían en dos líneas y la segunda caía sobre el canto roto de la cabecera, donde se leía cortada. Ahora van en una sola línea, dentro de la hoja.
+
+El folio («hoja 1») se fue de la esquina del pie, donde quedaba detrás de las fichas, al margen izquierdo de la cabecera.
+
 ## Version 0.338.0 - El expediente de Multijugador deja libre el pie
 
 En Multijugador, la ficha del archivo («2.1 KB · 19·XI·2026») se escribía en el pie y la fila de fichas Editar/Borrar le pasaba por encima: la fecha se leía a medias sobre el canto de un botón. Ahora el folio y el peso viven en el margen izquierdo de la cabecera, con el ancho que deja el título centrado.

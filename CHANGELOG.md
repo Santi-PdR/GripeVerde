@@ -1,3 +1,9 @@
+## v0.339.0 - La hoja de Mundos guardados deja de estar partida en vertical
+
+- Mundos guardados: el canal y el tirador del juego se repintan en papel y aguja de tinta; la hoja ya no queda partida.
+- Cabecera: recuento, peso y fecha en una sola línea, dentro del papel.
+- El folio pasa al margen izquierdo de la cabecera.
+
 ## v0.338.0 - El expediente de Multijugador deja libre el pie
 
 - Multijugador: folio y peso del archivo al margen de la cabecera, medidos contra las fichas del pie.
