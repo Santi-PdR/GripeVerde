@@ -1,3 +1,9 @@
+## Version 0.320.0 - El reloj no se sienta sobre el chat
+
+Con JourneyMap instalado, el reloj se apartaba del minimapa yéndose abajo a la izquierda, que es justo la esquina donde el juego escribe el chat: las líneas se le montaban encima. Ahora se aparta a la columna derecha, colgado sobre el papelito de las coordenadas, donde no hay nada más.
+
+El resto de las esquinas sigue igual: arriba a la izquierda o arriba a la derecha como siempre, y el papelito de las coordenadas abajo a la derecha.
+
 ## Version 0.319.0 - Las puertas recientes caben en la hoja
 
 La hoja de conexion directa ofrece las ultimas puertas por las que se entro, y con seis o siete anotadas la fila se salia del papel por los dos lados. Ahora se mide contra el ancho de la hoja, se corta en la primera que no entra y la fila se pega al margen izquierdo antes que salirse.

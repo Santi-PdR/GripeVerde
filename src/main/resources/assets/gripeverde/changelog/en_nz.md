@@ -1,3 +1,9 @@
+## Version 0.320.0 - The watch does not sit on the chat
+
+With JourneyMap installed, the watch stepped away from the minimap by going to the bottom left, which is exactly the corner where the game writes the chat: the lines climbed over it. Now it steps to the right column, hanging above the coordinates slip, where there is nothing else.
+
+The other corners stay the same: top left or top right as always, and the coordinates slip at the bottom right.
+
 ## Version 0.319.0 - The recent doors fit on the sheet
 
 The direct connection sheet offers the last doors that were entered, and with six or seven noted the row slipped off the paper on both sides. Now it is measured against the sheet's width, it cuts at the first one that does not fit, and the row sticks to the left margin rather than spilling out.

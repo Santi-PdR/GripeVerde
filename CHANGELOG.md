@@ -1,3 +1,7 @@
+## v0.320.0 - El reloj no se sienta sobre el chat
+
+- HUD: con minimapa, el reloj pasa a la columna derecha, sobre las coordenadas.
+
 ## v0.319.0 - Las puertas recientes caben en la hoja
 
 - Conexion directa: la fila de recientes se corta al ancho del papel y no se sale.

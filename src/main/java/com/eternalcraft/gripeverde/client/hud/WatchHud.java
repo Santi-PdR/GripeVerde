@@ -55,10 +55,19 @@ public final class WatchHud {
         int x = MARGIN;
         int y = MARGIN;
         int corner = corner();
-        if (corner == 1) x = screenW - SLIP_W - MARGIN;
+        if (corner == 1 || corner == 3) x = screenW - SLIP_W - MARGIN;
         else if (corner == 2) x = MARGIN;
 
-        y = corner == 2 ? screenH - SLIP_H - MARGIN : y;
+        if (corner == 2) {
+            y = screenH - SLIP_H - MARGIN;
+        } else if (corner == 3) {
+            // v0.320.0: con mapa en la esquina, el reloj se cuelga en la columna
+            // derecha, sobre el papelito de las coordenadas. Antes se iba abajo
+            // a la izquierda, que es la esquina del chat.
+            y = coords() && cachedCoords.length() > 0
+                ? screenH - 20 - MARGIN - SLIP_H - 6
+                : screenH - SLIP_H - MARGIN;
+        }
 
         int alpha = fadeIn(now);
         if (alpha <= 4) return;
@@ -123,8 +132,10 @@ public final class WatchHud {
             corner = 0;
         }
         // v0.301.0: si hay mapa en la esquina (JourneyMap y compania), el reloj
-        // se aparta abajo a la izquierda en vez de taparlo.
-        if (corner != 2 && minimapPresent()) return 2;
+        // se aparta en vez de taparlo.
+        // v0.320.0: se aparta a la columna derecha, no a la izquierda: abajo a
+        // la izquierda vive el chat y el reloj se le sentaba encima.
+        if (corner != 2 && minimapPresent()) return 3;
         return corner;
     }
 
