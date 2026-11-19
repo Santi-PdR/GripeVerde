@@ -118,9 +118,11 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         try {
             if (this.availableList != null) {
                 DiaryChrome.washVanillaRows(g, this.availableList);
+                DiaryChrome.washVanillaListBox(g, this.availableList);
             }
             if (this.selectedList != null) {
                 DiaryChrome.washVanillaRows(g, this.selectedList);
+                DiaryChrome.washVanillaListBox(g, this.selectedList);
             }
         } catch (Throwable ignored) {
         }

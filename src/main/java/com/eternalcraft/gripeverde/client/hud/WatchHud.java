@@ -76,6 +76,15 @@ public final class WatchHud {
                 : screenH - SLIP_H - MARGIN;
         }
 
+        // v0.354.0: si hay mapa en la esquina, las coordenadas son suyas. El
+        // JourneyMap ya escribe su propio renglon bajo el minimapa (x, z, y y
+        // bioma, en el idioma del juego); repetirlo en un papelito aparte daba
+        // dos partes distintos en pantalla. El reloj se queda solo con su tira.
+        boolean coordsPaper = coords() && cachedCoords.length() > 0 && !minimapPresent();
+        if (corner == 3 && !coordsPaper) {
+            y = screenH - SLIP_H - MARGIN;
+        }
+
         int alpha = fadeIn(now);
         if (alpha <= 4) return;
 
@@ -94,7 +103,7 @@ public final class WatchHud {
         // adopta ese mismo parte (x, z, y) y suma el bioma, con nuestra tinta y
         // nuestra letra. Nunca se dibuja sobre el minimapa: es una integracion,
         // no un reemplazo.
-        if (cachedCoords.length() > 0) {
+        if (coordsPaper) {
             int ch = coordsSlipHeight();
             int cw = Math.min(200, Math.max(56, Math.max(
                 font.width(cachedCoords), font.width(cachedBiome)) + 16));

@@ -1,3 +1,7 @@
+## v0.354.0 - El reloj deja las coordenadas al mapa, la hoja de mundos llega a los botones y las columnas de packs se visten de papel
+
+- Reloj/HUD: con JourneyMap (o Xaero) el reloj ya no repite las coordenadas en un papelito aparte; el parte del mapa es el único.\n- Mundos guardados: la hoja baja hasta el grupo de botones y se va el papel pegado del pie.\n- Packs: las dos columnas llevan velo tibio y marco de papel, sin tocar su letra ni sus mandos.
+
 ## v0.353.0 - Sombras que ya no se transparentan bajo la hoja y cabecera limpia en Packs
 
 - Sombras: se dibujan solo por fuera del panel, en dos bandas con caída suave; dejan de verse como un manchón bajo el papel.\n- Packs: la franja de cabecera se limpia de borde a borde y el título va en tinta, como en Multijugador.

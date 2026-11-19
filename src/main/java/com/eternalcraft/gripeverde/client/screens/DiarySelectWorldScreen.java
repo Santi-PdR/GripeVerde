@@ -48,6 +48,8 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     private int rowRight = -1;
     private int listTop = -1;
     private int listBottom = -1;
+    // v0.354.0: la hoja grande alcanza a cubrir el pie de botones.
+    private boolean sheetCoversFooter = false;
 
     public DiarySelectWorldScreen(Screen parent) {
         super(parent);
@@ -634,7 +636,17 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         int px = 12;
         int pw = this.width - 24;
         int py = HEADER_H - 22;
-        int ph = Math.min(this.height - 6, this.listBottom + 12) - py;
+        // v0.354.0: la hoja baja hasta el grupo de botones del juego, para que
+        // las fichas del pie queden sobre el mismo papel y no sobre una hoja
+        // aparte pegada debajo (que se veia como dos papeles encontrados).
+        int footerBottom = -1;
+        for (DiaryButton b : this.dressed) {
+            if (b.visible) footerBottom = Math.max(footerBottom, b.getY() + b.getHeight());
+        }
+        int sheetBottom = this.listBottom + 12;
+        if (footerBottom > 0) sheetBottom = Math.max(sheetBottom, footerBottom + 10);
+        int ph = Math.min(this.height - 6, sheetBottom) - py;
+        this.sheetCoversFooter = footerBottom > 0 && ph > 0 && py + ph >= footerBottom + 6;
         if (pw < 60 || ph < 40) return;
         PaperTexture.drawTornSheet(g, px, py, pw, ph, PaperTexture.PaperKind.OFFICIAL);
         // v0.248.0: el canto gastado asienta la pagina sobre la escena.
@@ -730,6 +742,9 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
 
     private void drawFooterPaper(GuiGraphics g) {
         if (this.dressed.isEmpty()) return;
+        // v0.354.0: si la hoja grande ya llega hasta los botones, no se pega
+        // otro papel encima.
+        if (this.sheetCoversFooter) return;
         int left = Integer.MAX_VALUE;
         int right = Integer.MIN_VALUE;
         int top = Integer.MAX_VALUE;

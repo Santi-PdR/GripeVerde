@@ -1,3 +1,7 @@
+## Version 0.354.0 - El reloj deja las coordenadas al mapa, la hoja de mundos llega a los botones y las columnas de packs se visten de papel
+
+HUD hands coordinates over to the minimap, world sheet reaches the buttons and Packs columns get paper
+
 ## Version 0.353.0 - Sombras que ya no se transparentan bajo la hoja y cabecera limpia en Packs
 
 Panel shadows stay outside the sheet and the resource-pack header loses its floating box

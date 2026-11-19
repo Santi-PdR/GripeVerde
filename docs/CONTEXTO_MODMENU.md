@@ -9,7 +9,7 @@ Actualizado: 2026-11-13
   token, igual que el de Photon/Fisk.
 - Rama de trabajo de la sesión: `arena/48be547c-gripeverde` (base `02e85bc`) — la plataforma
   fija el nombre, no se renombra. Todo el trabajo va ahí; el PR sale de esa rama.
-- Versión de esta rama: `0.353.0` (anteriores entregadas: `0.229.0`, `0.228.0`, `0.209.0`, `0.208.0`, `0.207.0`, `0.206.0`, `0.205.0`, `0.204.0`, `0.203.0`, `0.202.0`, `0.201.0`, `0.200.0`, `0.199.0`, `0.198.0`, `0.197.0`, `0.196.0`, `0.195.0`, `0.194.0`, `0.193.0`, `0.192.0`, `0.191.0`, `0.190.0`, `0.189.0`, `0.188.0`, `0.187.0`, `0.186.0`, `0.185.0`, `0.184.2`, `0.184.1`, `0.183.0`)
+- Versión de esta rama: `0.354.0` (anteriores entregadas: `0.229.0`, `0.228.0`, `0.209.0`, `0.208.0`, `0.207.0`, `0.206.0`, `0.205.0`, `0.204.0`, `0.203.0`, `0.202.0`, `0.201.0`, `0.200.0`, `0.199.0`, `0.198.0`, `0.197.0`, `0.196.0`, `0.195.0`, `0.194.0`, `0.193.0`, `0.192.0`, `0.191.0`, `0.190.0`, `0.189.0`, `0.188.0`, `0.187.0`, `0.186.0`, `0.185.0`, `0.184.2`, `0.184.1`, `0.183.0`)
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
 - El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
   proyecto local del usuario.
@@ -284,6 +284,7 @@ anidados y sentencias cortadas (línea que empieza por operador tras un `;` o `}
 | 85 | el reloj del HUD deja de recortar el clima | 0.351.0 |
 | 86 | Ronda de arreglos visuales por hojas | 0.352.0 |
 | 87 | Ronda de arreglos visuales por hojas | 0.353.0 |
+| 88 | Ronda de arreglos visuales por hojas | 0.354.0 |
 
 ## Folios del gabinete
 
@@ -307,6 +308,10 @@ anidados y sentencias cortadas (línea que empieza por operador tras un `;` o `}
 | XVI | recursos |
 | XVII | arsenal |
 | XVIII | mundos guardados |
+
+## Cambios de 0.354.0 — El reloj deja las coordenadas al mapa, la hoja de mundos llega a los botones y las columnas de packs se visten de papel
+
+- Reloj/HUD: con JourneyMap (o Xaero) el reloj ya no repite las coordenadas en un papelito aparte; el parte del mapa es el único.\n- Mundos guardados: la hoja baja hasta el grupo de botones y se va el papel pegado del pie.\n- Packs: las dos columnas llevan velo tibio y marco de papel, sin tocar su letra ni sus mandos.
 
 ## Cambios de 0.353.0 — Sombras que ya no se transparentan bajo la hoja y cabecera limpia en Packs
 

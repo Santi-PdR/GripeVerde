@@ -516,6 +516,35 @@ public final class DiaryChrome {
     }
 
     /**
+     * v0.354.0: el cajon de una lista del juego, vestido de papel.
+     *
+     * Se llama despues de que el juego pinte la lista: un velo tibio sobre todo
+     * el cajon y un marco de papel de dos pixeles por dentro del borde, con un
+     * filete de tinta por fuera. La letra y los mandos del juego quedan encima
+     * y no se tocan; solo cambia el fondo, que deja de leerse como una caja
+     * gris suelta sobre la hoja (el caso de la columna «Elegidos» de Packs).
+     */
+    public static void washVanillaListBox(GuiGraphics gfx, AbstractSelectionList<?> list) {
+        if (gfx == null || list == null) return;
+        int left = list.getLeft();
+        int top = list.getTop();
+        int w = list.getWidth();
+        int h = list.getHeight();
+        if (w < 60 || h < 40) return;
+        int right = left + w;
+        int bottom = top + h;
+        gfx.fill(left, top, right, bottom, 0x22E8DCB4);
+        gfx.fill(left, top, right, top + 2, 0xCCE4D7AE);
+        gfx.fill(left, bottom - 2, right, bottom, 0xCCE4D7AE);
+        gfx.fill(left, top, left + 2, bottom, 0xCCE4D7AE);
+        gfx.fill(right - 2, top, right, bottom, 0xCCE4D7AE);
+        gfx.fill(left, top, right, top + 1, 0x552A1C12);
+        gfx.fill(left, bottom - 1, right, bottom, 0x552A1C12);
+        gfx.fill(left, top, left + 1, bottom, 0x552A1C12);
+        gfx.fill(right - 1, top, right, bottom, 0x552A1C12);
+    }
+
+    /**
      * v0.344.0: la ficha de registro, tambien para las listas del juego.
      *
      * Cada renglon de Sonido, Chat y Accesibilidad se repinta como las fichas
