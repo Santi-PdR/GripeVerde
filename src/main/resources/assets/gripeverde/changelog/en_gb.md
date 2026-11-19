@@ -1,3 +1,9 @@
+## Version 0.310.0 - The state moves to the header
+
+The Chat and Online sheets summarised at the foot what was still on, and that line fell exactly where the back button lives: both were read on top of each other. The summary moves up to the quote line, under the subtitle, and the foot is left for the button and its shadow, as it should be.
+
+That removes two more of the overlaps you see when opening those sheets in a normal window.
+
 ## Version 0.309.0 - The mod's card, on paper
 
 The arsenal had Forge's black panel with white text on the right: it was not from the house and clashed with everything else. That area is now a sheet of paper with the chosen mod's card written in ink: name, version and identifier, who signs it and the first lines of its description, folded by hand so they fit.

@@ -1,3 +1,7 @@
+## v0.310.0 - El estado sube a la cabecera
+
+- Chat y En línea: el resumen de ajustes pasa de la cabecera al pie del titulo (sin pisar Volver).
+
 ## v0.309.0 - La ficha del mod, en papel
 
 - Arsenal: `drawInfoPage` cubre el panel negro de Forge con papel y la ficha en tinta.

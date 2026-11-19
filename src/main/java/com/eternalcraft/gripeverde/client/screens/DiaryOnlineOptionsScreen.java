@@ -130,10 +130,19 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
         subtitle = DiaryChrome.fitCached(this.font, subtitle, Math.max(0, this.panelW - 150));
         int subW = DiaryChrome.widthCached(this.font, subtitle);
         g.drawString(this.font, subtitle, titleX - subW / 2, titleY + 14, DiaryChrome.INK_SUBTITLE, false);
-        String flavor = DiaryChrome.fitCached(this.font,
-            DiaryChrome.tr("gripeverde.options.online.flavor"), Math.max(0, this.panelW - 28));
-        int flavorW = DiaryChrome.widthCached(this.font, flavor);
-        g.drawString(this.font, flavor, titleX - flavorW / 2, titleY + 26, DiaryChrome.INK_FLAVOR, false);
+        // v0.310.0: el resumen de lo que queda encendido sube al renglon de la
+        // cita; al pie caia sobre el boton de volver.
+        String headerLine = "";
+        try {
+            headerLine = onlineSummaryLine();
+        } catch (Throwable ignored) {
+        }
+        if (headerLine.isEmpty()) {
+            headerLine = DiaryChrome.tr("gripeverde.options.online.flavor");
+        }
+        String shown = DiaryChrome.fitCached(this.font, headerLine, Math.max(0, this.panelW - 150));
+        int flavorW = DiaryChrome.widthCached(this.font, shown);
+        g.drawString(this.font, shown, titleX - flavorW / 2, titleY + 26, DiaryChrome.INK_FLAVOR, false);
 
         // Divisor
         int divY = titleY + 40;
@@ -150,18 +159,7 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
             this.list.render(g, mouseX, mouseY, partialTick);
         }
 
-        // v0.282.0: que queda encendido en la hoja, dicho sin siglas.
-        try {
-            String res = onlineSummaryLine();
-            if (!res.isEmpty()) {
-                String cut = DiaryChrome.fitCached(this.font, res,
-                    Math.max(60, this.panelW - 100));
-                int rw = DiaryChrome.widthCached(this.font, cut);
-                g.drawString(this.font, cut, this.panelX + (this.panelW - rw) / 2,
-                    this.panelY + this.panelH - 30, DiaryChrome.INK_FLAVOR, false);
-            }
-        } catch (Throwable ignored) {
-        }
+        // v0.310.0: el resumen vive en la cabecera; aqui queda el boton solo.
 
         // Widgets propios (boton Volver)
         for (Renderable r : this.renderables) {

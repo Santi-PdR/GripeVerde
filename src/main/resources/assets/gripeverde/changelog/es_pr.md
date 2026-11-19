@@ -1,3 +1,9 @@
+## Version 0.310.0 - El estado sube a la cabecera
+
+Las hojas de Chat y de En línea resumían al pie lo que quedaba encendido, y ese renglón caía exactamente donde vive el botón de volver: se leían las dos cosas encimadas. El resumen sube al renglón de la cita, debajo del subtítulo, y el pie queda para el botón y su sombra, como debe ser.
+
+Con esto se van dos solapamientos más de los que se ven al abrir esas hojas en una ventana normal.
+
 ## Version 0.309.0 - La ficha del mod, en papel
 
 El arsenal tenía, a la derecha, el panel negro de Forge con letra blanca: no era de la casa y desentonaba con todo lo demás. Ahora esa zona es una hoja de papel con la ficha del mod elegido escrita en tinta: nombre, versión e identificador, quién lo firma y las primeras líneas de la descripción, dobladas a mano para que quepan.

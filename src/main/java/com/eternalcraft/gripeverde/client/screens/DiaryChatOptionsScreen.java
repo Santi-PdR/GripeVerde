@@ -129,10 +129,20 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         int subWC = DiaryChrome.widthCached(this.font, subtitle);
         g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
-        // Flavor rotativo
-        String flavor = DiaryChrome.fitCached(this.font, getRotatingChatFlavor(), Math.max(0, this.panelW - 28));
-        int flvWC = DiaryChrome.widthCached(this.font, flavor);
-        g.drawString(this.font, flavor, (this.width - flvWC) / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
+        // v0.310.0: en el renglon de la cita va el estado del chat en palabras.
+        // Antes iba al pie, justo debajo del boton de volver, y se encimaban.
+        String headerLine = "";
+        try {
+            headerLine = chatSummaryLine();
+        } catch (Throwable ignored) {
+        }
+        if (headerLine.isEmpty()) {
+            headerLine = getRotatingChatFlavor();
+        }
+        String shownLine = DiaryChrome.fitCached(this.font, headerLine, Math.max(0, this.panelW - 150));
+        int flvWC = DiaryChrome.widthCached(this.font, shownLine);
+        g.drawString(this.font, shownLine, (this.width - flvWC) / 2, titleY + 24,
+            DiaryChrome.INK_FLAVOR, false);
 
         // Divisor superior
         int divY1 = titleY + 42;
@@ -150,18 +160,8 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
             DiaryChrome.drawStyledScrollThumbInPanel(g, this.list, this.panelX + this.panelW);
         }
 
-        // v0.282.0: el pie dice, en palabras, como esta el chat.
-        try {
-            String res = chatSummaryLine();
-            if (!res.isEmpty()) {
-                String cut = DiaryChrome.fitCached(this.font, res,
-                    Math.max(60, this.panelW - 150));
-                int rw = DiaryChrome.widthCached(this.font, cut);
-                g.drawString(this.font, cut, this.panelX + (this.panelW - rw) / 2,
-                    this.panelY + this.panelH - 30, DiaryChrome.INK_FLAVOR, false);
-            }
-        } catch (Throwable ignored) {
-        }
+        // v0.310.0: el resumen subio a la cabecera; aqui solo quedaban el boton
+        // de volver y su sombra.
 
         // Widgets propios
         for (Renderable r : this.renderables) {
