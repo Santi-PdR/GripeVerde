@@ -99,6 +99,13 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         return ambienceSliderY() + ambienceSliderHeight() + (compactLayout() ? 1 : 2);
     }
 
+    /** v0.336.0: hay aire para la frase del disco sobre los mandos. */
+    private boolean flavorFits() {
+        int titleY = this.panelY + (compactLayout() ? 4 : 10);
+        int flavorY = titleY + (compactLayout() ? 11 : 13);
+        return flavorY + this.font.lineHeight <= musicSliderY() - 4;
+    }
+
     private int returnButtonY() {
         return this.panelY + this.panelH - (compactLayout() ? 21 : 30);
     }
@@ -434,9 +441,10 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         g.drawString(this.font, titleStr, titleX - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
         }
 
-        // v0.268.0: cual de las piezas esta sonando, sin ir a la portada.
+        // v0.336.0: el disco suelto solo se escribe si el flavor no cabe; si
+        // cabe, la frase ya lo dice y las dos lineas se pisaban.
         try {
-            if (MenuMusic.isMusicEnabled() && MenuMusic.isActive()) {
+            if (!flavorFits() && MenuMusic.isMusicEnabled() && MenuMusic.isActive()) {
                 String track = (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
                     ? "playing: " : "suena: ")
                     + MenuMusic.getCurrentTrackNumber() + "/" + MenuMusic.getTrackCount();
@@ -471,7 +479,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         }
         int sliderTop = musicSliderY();
         int flavorY = titleY + (compact ? 11 : 13);
-        if (flavorY + this.font.lineHeight <= sliderTop - 4) {
+        if (flavorFits()) {
             String flavorShown = DiaryChrome.fitCached(this.font, flavor, Math.max(0, this.panelW - 32));
             int flvWC = DiaryChrome.widthCached(this.font, flavorShown);
             g.drawString(this.font, flavorShown, (this.width - flvWC) / 2, flavorY, DiaryChrome.INK_FLAVOR, false);
@@ -537,22 +545,27 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             int fw = DiaryChrome.widthCached(this.font, folio);
             int footY = this.panelY + this.panelH - 12;
             int footRight = this.panelX + this.panelW - 14;
-            // v0.332.0: en la hoja apretada el pie cae sobre el boton Volver
-            // (que vive en panelH-21), asi que el resumen no se escribe.
+            // v0.336.0: el pie comparte la linea con el boton Volver, que vive
+            // centrado. El resumen se escribe a su izquierda y el folio a su
+            // derecha, cada uno con el ancho que de verdad le queda.
             boolean roomy = !compactLayout() && this.panelW >= 250;
             boolean folioSolo = !compactLayout() && this.panelH >= 190;
+            int btW = Math.max(1, Math.min(120, this.panelW - 24));
+            int btL = this.panelX + (this.panelW - btW) / 2;
+            int btR = btL + btW;
             if (roomy) {
-                boolean showFolio = footRight - fw > this.panelX + 14;
-                int limit = showFolio ? (footRight - fw - 12) - (this.panelX + 14)
-                    : this.panelW - 28;
-                String cut = DiaryChrome.fitCached(this.font, line, Math.max(40, limit));
-                g.drawString(this.font, cut, this.panelX + 14, footY,
-                    DiaryChrome.INK_FLAVOR, false);
-                if (showFolio) {
+                int leftLimit = (btL - 8) - (this.panelX + 14);
+                if (leftLimit >= 60) {
+                    String cut = DiaryChrome.fitCached(this.font, line, leftLimit);
+                    g.drawString(this.font, cut, this.panelX + 14, footY,
+                        DiaryChrome.INK_FLAVOR, false);
+                }
+                int rightLimit = footRight - (btR + 8);
+                if (rightLimit >= fw) {
                     g.drawString(this.font, folio, footRight - fw, footY,
                         DiaryChrome.INK_FLAVOR, false);
                 }
-            } else if (folioSolo && footRight - fw > this.panelX + 14) {
+            } else if (folioSolo && footRight - fw > btR + 8) {
                 g.drawString(this.font, folio, footRight - fw, footY,
                     DiaryChrome.INK_FLAVOR, false);
             }

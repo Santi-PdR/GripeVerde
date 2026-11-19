@@ -1,3 +1,11 @@
+## Version 0.336.0 - La aguja de los mandos deja de comerse la etiqueta
+
+En las barras de Sonido y de La casa, la aguja del mando caía justo encima de la etiqueta y se comía una letra: «Granófono del cronista: 4 %». Ahora, cuando la aguja cae sobre el texto, la etiqueta se escribe en dos mitades y queda un hueco limpio; si no cae encima, todo sigue igual.
+
+El disco sonando («suena: 3/4») se escribía en la misma línea que la frase del cronista y se pisaban. Ahora esa ficha solo aparece cuando la frase no cabe.
+
+Y el pie de la hoja comparte la línea con Volver: el resumen de las tres capas va a la izquierda del botón y el folio a la derecha, cada uno con el ancho que de verdad le queda.
+
 ## Version 0.335.0 - La puerta de un jugador tambien en ventanas bajas y apretadas
 
 La ficha «Un jugador» que volvio a la portada solo aparecía cuando había alto de sobra. Ahora también se cuelga en la ventana baja —apilada sobre Ajustes— y, en la portada apretada, como tercera ficha del carril, en cada caso sólo si el alto alcanza para colgarla y no pisar nada.

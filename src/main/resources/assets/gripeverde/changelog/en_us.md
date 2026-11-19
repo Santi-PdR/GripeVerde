@@ -1,3 +1,11 @@
+## Version 0.336.0 - The sliders' needle stops eating the label
+
+On the Sonido and The house bars, the slider needle fell right on the label and ate a letter: "Gramophone of the chronicler: 4 %". Now, when the needle falls on the text, the label is written in two halves and a clean gap is left; if it does not fall on it, everything stays the same.
+
+The playing disc ("playing: 3/4") was written on the same line as the chronicler's phrase and they stepped on each other. Now that card only appears when the phrase does not fit.
+
+And the sheet's foot shares the line with Back: the three-layer summary goes to the left of the button and the folio to the right, each with the width it really has.
+
 ## Version 0.335.0 - The single-player door also in low and tight windows
 
 The "Single player" card that returned to the title screen only appeared when there was spare height. Now it also hangs in the low window —stacked above Settings— and, on the tight title screen, as the rail's third card, in each case only if the height is enough to hang it without stepping on anything.

@@ -1,3 +1,8 @@
+## v0.336.0 - La aguja de los mandos deja de comerse la etiqueta
+
+- `DiarySlider`: etiqueta partida en dos cuando la aguja la cruza.
+- Sonido: el disco suelto solo si el flavor no cabe; pie a los lados de Volver.
+
 ## v0.335.0 - La puerta de un jugador tambien en ventanas bajas y apretadas
 
 - Portada: ficha «Un jugador» en el modo baja (sobre Ajustes) y en el carril compacto.

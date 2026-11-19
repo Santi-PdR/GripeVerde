@@ -167,7 +167,36 @@ public class DiarySlider extends AbstractSliderButton {
         Font font = Minecraft.getInstance().font;
         String msg = ellipsize(font, cachedMessage(), Math.max(8, w - 14));
         int textX = x + w / 2 - DiaryChrome.widthCached(font, msg) / 2;
-        DiaryTypography.draw(g, font, msg, textX, y + 4, textColor);
+        // v0.336.0: la aguja del mando cruzaba la etiqueta y se comia una letra
+        // ("Granofono del cronista: 4 %"). Ahora, si la aguja cae sobre el
+        // texto, la etiqueta se escribe en dos mitades y queda un hueco limpio.
+        int needleLeft = thumbX + 1;
+        int needleRight = thumbX + 8;
+        int textW = DiaryChrome.widthCached(font, msg);
+        boolean crosses = needleRight > textX - 2 && needleLeft < textX + textW + 2;
+        if (crosses) {
+            int pad = 5;
+            String left = font.plainSubstrByWidth(msg, Math.max(0, needleLeft - pad - textX));
+            if (left.length() > 0) {
+                int lw = font.width(left);
+                DiaryTypography.draw(g, font, left, textX, y + 4, textColor);
+                String right = msg.substring(left.length());
+                if (!right.isEmpty()) {
+                    int rx = Math.max(needleRight + pad, textX + lw + 2);
+                    if (rx + font.width(right) <= x + w - 3) {
+                        DiaryTypography.draw(g, font, right, rx, y + 4, textColor);
+                    }
+                }
+            } else {
+                String right = msg;
+                int rx = needleRight + pad;
+                if (rx + font.width(right) <= x + w - 3) {
+                    DiaryTypography.draw(g, font, right, rx, y + 4, textColor);
+                }
+            }
+        } else {
+            DiaryTypography.draw(g, font, msg, textX, y + 4, textColor);
+        }
     }
 
     // v0.194.0: el texto del slider se resuelve solo cuando cambia.
