@@ -1,3 +1,7 @@
+## v0.359.0 - Mandos legibles en ventanas bajas y teclas Inicio/Fin
+
+- Mandos: con menos de 18 px de alto el carril se pega al borde, las muescas bajan y la etiqueta sube (antes la letra caia sobre el carril). Inicio y Fin llevan el mando a 0 % y 100 % de un golpe en los tres deslizadores.
+
 ## v0.358.0 - Mandos sin tirones, niebla con paralaje y mundo guardado con fecha en columna
 
 - Mandos: applyValue ya no se llama dos veces por cuadro y el JSON de config se guarda al soltar (Sonido, La casa). Portada: segunda niebla mas alta que corre al reves, con paralaje. Hojas: charco de luz de la lampara para que el papel tenga contraste. Mundos: el modo a la izquierda y la fecha pegada al margen derecho; el parte de defuncion cachea lugar y momento.

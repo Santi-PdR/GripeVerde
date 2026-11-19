@@ -127,6 +127,19 @@ public class DiarySlider extends AbstractSliderButton {
             } else if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_UP) {
                 dir = 1;
                 step = 0.10D;
+            } else if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_HOME
+                    || keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_END) {
+                // v0.359.0: Inicio y Fin llevan el mando a tope de un golpe.
+                this.value = keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_HOME ? 0.0D : 1.0D;
+                this.updateMessage();
+                this.dragging = false;
+                this.applyValue();
+                this.fireRelease();
+                try {
+                    com.eternalcraft.gripeverde.client.audio.UiSounds.playClick();
+                } catch (Throwable ignored) {
+                }
+                return true;
             }
             if (dir != 0) {
                 // v0.264.0: AbstractSliderButton no expone setValue en 1.20.1;
@@ -177,9 +190,17 @@ public class DiarySlider extends AbstractSliderButton {
         // v0.236.0: el deslizador tambien lleva el filete a mano.
         PaperTexture.drawWornBorder(g, x, y, w, h, 0x88422810, x * 31 + y * 17 + w);
 
+        // v0.359.0: en ventanas bajas el mando de Sonido mide 12 o 14 px y la
+        // etiqueta caia encima del carril y de sus muescas. Con poco alto el
+        // carril se pega al borde, las muescas bajan y la letra sube.
+        boolean squat = h < 18;
         int trackX1 = x + 10;
         int trackX2 = x + w - 10;
-        int trackY = y + h - 6;
+        int trackY = squat ? y + h - 3 : y + h - 6;
+        if (trackX2 - trackX1 < 12) {
+            trackX1 = x + 4;
+            trackX2 = Math.max(trackX1 + 1, x + w - 4);
+        }
         g.fill(trackX1, trackY, trackX2, trackY + 2, 0x88422810);
         g.fill(trackX1 - 1, trackY - 1, trackX1 + 1, trackY + 3, 0xA06B4A2E);
         g.fill(trackX2 - 1, trackY - 1, trackX2 + 1, trackY + 3, 0xA06B4A2E);
@@ -187,7 +208,7 @@ public class DiarySlider extends AbstractSliderButton {
         int graduations = Math.max(4, Math.min(10, w / 34));
         for (int i = 0; i <= graduations; i++) {
             int tx = trackX1 + (trackX2 - trackX1) * i / graduations;
-            int hTick = (i % 2 == 0) ? 5 : 3;
+            int hTick = squat ? 2 : ((i % 2 == 0) ? 5 : 3);
             g.fill(tx, trackY - hTick, tx + 1, trackY, 0x70422810);
         }
 
@@ -195,8 +216,8 @@ public class DiarySlider extends AbstractSliderButton {
         g.fill(trackX1, trackY, progressX, trackY + 2, hovered ? 0xC08A6A2D : 0xA06B4A2E);
 
         int thumbX = progressX - 4;
-        int needleTop = y + 4;
-        int needleBot = trackY + 4;
+        int needleTop = squat ? y + 1 : y + 4;
+        int needleBot = Math.min(y + h - 1, trackY + (squat ? 2 : 4));
         g.fill(thumbX + 3, needleTop, thumbX + 5, needleBot, hovered ? 0xFF8A6A2D : 0xFF6B4A2E);
         g.fill(thumbX + 2, needleTop + 1, thumbX + 6, needleTop + 4, hovered ? 0xFFD4B070 : 0xFFC9B78A);
         DiaryChrome.drawDivisorLozenge(g, thumbX + 4, needleTop + 2);
@@ -205,6 +226,7 @@ public class DiarySlider extends AbstractSliderButton {
         Font font = Minecraft.getInstance().font;
         String msg = ellipsize(font, cachedMessage(), Math.max(8, w - 14));
         int textX = x + w / 2 - DiaryChrome.widthCached(font, msg) / 2;
+        int labelY = squat ? y + 2 : y + 4;
         // v0.336.0: la aguja del mando cruzaba la etiqueta y se comia una letra
         // ("Granofono del cronista: 4 %"). Ahora, si la aguja cae sobre el
         // texto, la etiqueta se escribe en dos mitades y queda un hueco limpio.
@@ -217,23 +239,23 @@ public class DiarySlider extends AbstractSliderButton {
             String left = font.plainSubstrByWidth(msg, Math.max(0, needleLeft - pad - textX));
             if (left.length() > 0) {
                 int lw = font.width(left);
-                DiaryTypography.draw(g, font, left, textX, y + 4, textColor);
+                DiaryTypography.draw(g, font, left, textX, labelY, textColor);
                 String right = msg.substring(left.length());
                 if (!right.isEmpty()) {
                     int rx = Math.max(needleRight + pad, textX + lw + 2);
                     if (rx + font.width(right) <= x + w - 3) {
-                        DiaryTypography.draw(g, font, right, rx, y + 4, textColor);
+                        DiaryTypography.draw(g, font, right, rx, labelY, textColor);
                     }
                 }
             } else {
                 String right = msg;
                 int rx = needleRight + pad;
                 if (rx + font.width(right) <= x + w - 3) {
-                    DiaryTypography.draw(g, font, right, rx, y + 4, textColor);
+                    DiaryTypography.draw(g, font, right, rx, labelY, textColor);
                 }
             }
         } else {
-            DiaryTypography.draw(g, font, msg, textX, y + 4, textColor);
+            DiaryTypography.draw(g, font, msg, textX, labelY, textColor);
         }
     }
 

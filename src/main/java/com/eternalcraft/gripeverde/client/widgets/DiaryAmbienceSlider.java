@@ -67,6 +67,15 @@ public class DiaryAmbienceSlider extends AbstractSliderButton {
             } else if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_UP) {
                 dir = 1;
                 step = 0.10D;
+            } else if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_HOME
+                    || keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_END) {
+                // v0.359.0: Inicio y Fin llevan el mando a tope de un golpe.
+                this.value = keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_HOME ? 0.0D : 1.0D;
+                this.updateMessage();
+                this.applyValue();
+                // Salto discreto: se persiste al acto, como las flechas.
+                MenuAmbience.setUserVolume((float) this.value);
+                return true;
             }
             if (dir != 0) {
                 this.value = net.minecraft.util.Mth.clamp(this.value + dir * step, 0.0D, 1.0D);

@@ -1,3 +1,7 @@
+## Version 0.359.0 - Mandos legibles en ventanas bajas y teclas Inicio/Fin
+
+Los mandos de Sonido se leen en ventanas bajas y suman Inicio/Fin
+
 ## Version 0.358.0 - Mandos sin tirones, niebla con paralaje y mundo guardado con fecha en columna
 
 Los mandos dejan de guardar la config en cada cuadro, la portada gana niebla con paralaje y las fichas de mundo alinean su fecha
