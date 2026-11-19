@@ -1,3 +1,9 @@
+## Version 0.325.0 - The house opens mid-game
+
+Until now, to touch the watch, the house volumes or the latches you had to go out to the title: from the pause you could reach the field settings, but there was no door to the house there. Now the settings sheet carries a "The house" card next to Back, and closing it returns to the settings, not to the title.
+
+The card only appears if the foot is wide enough for both; in narrow windows only Back stays, as before, and the house is still on the title screen.
+
 ## Version 0.324.0 - The diary's cards do not slip under Back
 
 In the log, the two cards at the foot —Versions and Index— were always drawn to the left of Back, without asking whether they fit: with a narrow sheet they slipped under the button. Now the space is asked for first and, if there is none beside it, they go up one line instead of vanishing.

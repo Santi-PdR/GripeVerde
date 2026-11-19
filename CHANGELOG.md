@@ -1,3 +1,7 @@
+## v0.325.0 - La casa se abre en plena partida
+
+- Ajustes de campo: ficha `La casa` al lado de Volver, si hay ancho.
+
 ## v0.324.0 - Las fichas del diario no se meten bajo Volver
 
 - Bitacora: `beside` decide si Versiones/Indice van al costado o un renglon arriba.

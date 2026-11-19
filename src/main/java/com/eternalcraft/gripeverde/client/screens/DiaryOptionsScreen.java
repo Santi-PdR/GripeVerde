@@ -200,6 +200,26 @@ public class DiaryOptionsScreen extends Screen {
                 DiaryButton.Icon.DOOR, DiaryButton.Variant.PRIMARY,
                 DiaryButton.SoundProfile.BACK,
                 this::onBack));
+
+        // v0.325.0: La casa se abre desde aqui, en plena partida. Antes habia
+        // que salir al titulo para tocar el reloj o los volumenes de la casa.
+        // Comparte el pie con Volver solo si sobra ancho; si no, no se agrega.
+        try {
+            boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+            int houseW = 84;
+            int houseX = backX - 8 - houseW;
+            if (houseX > panelX + 6) {
+                DiaryButton house = new DiaryButton(houseX, backY, houseW, backH,
+                    Component.literal(en ? "The house" : "La casa"),
+                    DiaryButton.Icon.SCROLL, DiaryButton.Variant.SECONDARY,
+                    DiaryButton.SoundProfile.OPTION_OPEN,
+                    () -> this.minecraft.setScreen(new DiaryHouseScreen(this)));
+                house.setTooltip(Tooltip.create(Component.literal(
+                    en ? "what the house keeps on" : "lo que la casa tiene puesto")));
+                this.addRenderableWidget(house);
+            }
+        } catch (Throwable ignored) {
+        }
     }
 
     private int row(int i) {

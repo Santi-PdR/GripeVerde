@@ -1,3 +1,9 @@
+## Version 0.325.0 - La casa se abre en plena partida
+
+Hasta ahora, para tocar el reloj, los volumenes de la casa o los pestillos habia que salir al titulo: desde la pausa se llegaba a los ajustes de campo, pero ahi no habia puerta a La casa. Ahora la hoja de ajustes lleva una ficha «La casa» al lado de Volver, y al cerrarla se vuelve a los ajustes, no al titulo.
+
+La ficha solo aparece si el pie tiene ancho para las dos; en ventanas angostas queda solo Volver, como antes, y La casa sigue estando en la portada.
+
 ## Version 0.324.0 - Las fichas del diario no se meten bajo Volver
 
 En la bitácora, las dos fichas del pie —Versiones e Índice— se dibujaban siempre a la izquierda de Volver, sin preguntar si cabían: con la hoja angosta se metían debajo del botón. Ahora se pide el sitio primero y, si no lo hay al costado, suben un renglón en lugar de desaparecer.
