@@ -1,3 +1,9 @@
+## Version 0.342.0 - La firma de la portada y el grabado del reloj se leen enteros
+
+On the title screen, the chronicler's signature and the struck previous name sat against the right edge: the struck one ended on the window border and was read cut. Now there is a margin on the right, air between the two names and, if both do not fit, the struck one stays quiet instead of stacking on the current one. The rule no longer runs past the edge.
+
+In the watch inspection, the case engraving («J. Vigne · Montevideo», «wound: full») was almost black over the city and could not be read. Now the ink is lighter, and if the window is short those two rows are not written: that way they never reach the foot hint or the version.
+
 ## Version 0.341.0 - El papel de las coordenadas adopta el parte del mapa
 
 With JourneyMap or another minimap in the corner, the game writes the coordinates and the biome under the map. Our coordinate slip kept a loose trio («-24 63 51») in another order and without the biome.

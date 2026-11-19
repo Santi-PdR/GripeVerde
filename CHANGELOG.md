@@ -1,3 +1,8 @@
+## v0.342.0 - La firma de la portada y el grabado del reloj se leen enteros
+
+- Portada: margen derecho y separación entre la firma vigente y la tachada; si no caben, solo la vigente.
+- Inspección del reloj: el grabado de la tapa sube de contraste y se calla cuando no hay alto.
+
 ## v0.341.0 - El papel de las coordenadas adopta el parte del mapa
 
 - HUD: con minimapa, el papel de coordenadas muestra x · z · y y el bioma, en nuestro papel y nuestra letra.

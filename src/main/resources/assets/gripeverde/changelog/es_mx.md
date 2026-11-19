@@ -1,3 +1,9 @@
+## Version 0.342.0 - La firma de la portada y el grabado del reloj se leen enteros
+
+En la portada, la firma del cronista y el nombre anterior tachado se pegaban al filo derecho: el tachado acababa en el borde de la ventana y se leía cortado. Ahora hay margen a la derecha, aire entre los dos nombres y, si no caben los dos, la tachada se calla en vez de encimarse con la vigente. La raya ya no se pasa del filo.
+
+En la inspección del reloj, el grabado de la tapa («J. Vigne · Montevideo», «cuerda: llena») iba casi negro sobre la ciudad y no se leía. Ahora la tinta es más clara, y si la ventana es baja esos dos renglones no se escriben: así nunca llegan al aviso del pie ni a la versión.
+
 ## Version 0.341.0 - El papel de las coordenadas adopta el parte del mapa
 
 Con JourneyMap u otro minimapa en la esquina, el juego escribe bajo el mapa el parte de coordenadas y el bioma. Nuestro papelito de coordenadas se quedaba con un trío suelto («-24 63 51») escrito en otro orden y sin el bioma.
