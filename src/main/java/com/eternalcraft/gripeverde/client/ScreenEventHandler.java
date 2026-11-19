@@ -152,6 +152,8 @@ public class ScreenEventHandler {
         if (screen instanceof com.eternalcraft.gripeverde.client.screens.DiaryMultiplayerScreen) return false;
         return screen instanceof net.minecraft.client.gui.screens.worldselection.CreateWorldScreen
             || screen instanceof net.minecraft.client.gui.screens.worldselection.EditWorldScreen
+            // v0.314.0: la hoja de video del juego se abria gris y pelada.
+            || screen instanceof net.minecraft.client.gui.screens.VideoSettingsScreen
             || screen instanceof net.minecraft.client.gui.screens.ShareToLanScreen
             || screen instanceof net.minecraft.client.gui.screens.DisconnectedScreen
             || screen instanceof net.minecraft.client.gui.screens.AlertScreen

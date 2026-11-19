@@ -1,3 +1,7 @@
+## v0.314.0 - La hoja de video, vestida
+
+- `VideoSettingsScreen` entra en `isHouseRawScreen`: escena, botones de papel y canto.
+
 ## v0.313.0 - El pie de los puestos, ordenado
 
 - Multijugador: folio, peso y elegido en tres sitios distintos del pie.

@@ -1,3 +1,7 @@
+## Version 0.314.0 - The video sheet, dressed
+
+The Video button on the work table opened the game's screen as it comes: dirt background, grey buttons and not one sheet from the house. It now joins the list of screens dressed by event, so it carries the night scene behind, the paper buttons and the worn edge of the border, like the rest of the cabinet, without touching its logic.
+
 ## Version 0.313.0 - The posts' foot, in order
 
 The Multiplayer sheet had three things written on the same strip at the foot: the folio, the file weight and the chosen post, and they were read on top of each other. Now the folio goes left, the weight right behind it and the chosen one on the right edge, each with its width measured.

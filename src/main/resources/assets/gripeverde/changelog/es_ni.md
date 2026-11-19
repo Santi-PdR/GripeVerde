@@ -1,3 +1,7 @@
+## Version 0.314.0 - La hoja de video, vestida
+
+El botón Video de la mesa de trabajo abría la pantalla del juego tal cual: fondo de tierra, botones grises y ni una hoja de la casa. Ahora entra en la lista de pantallas que se visten por evento, así que lleva la escena de la noche detrás, los botones de papel y el canto gastado del borde, como el resto del gabinete, sin tocar su lógica.
+
 ## Version 0.313.0 - El pie de los puestos, ordenado
 
 La hoja de Multijugador tenía tres cosas escritas en la misma franja del pie: el folio, el peso del archivo y el puesto elegido, y se leían encimadas. Ahora el folio va a la izquierda, el peso justo detrás y el elegido al filo derecho, cada uno con su ancho medido.
