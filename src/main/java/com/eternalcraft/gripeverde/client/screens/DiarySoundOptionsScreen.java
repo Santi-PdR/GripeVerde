@@ -537,7 +537,10 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             int fw = DiaryChrome.widthCached(this.font, folio);
             int footY = this.panelY + this.panelH - 12;
             int footRight = this.panelX + this.panelW - 14;
-            boolean roomy = this.panelW >= 250 && this.panelH >= 210;
+            // v0.332.0: en la hoja apretada el pie cae sobre el boton Volver
+            // (que vive en panelH-21), asi que el resumen no se escribe.
+            boolean roomy = !compactLayout() && this.panelW >= 250;
+            boolean folioSolo = !compactLayout() && this.panelH >= 190;
             if (roomy) {
                 boolean showFolio = footRight - fw > this.panelX + 14;
                 int limit = showFolio ? (footRight - fw - 12) - (this.panelX + 14)
@@ -549,7 +552,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
                     g.drawString(this.font, folio, footRight - fw, footY,
                         DiaryChrome.INK_FLAVOR, false);
                 }
-            } else if (this.panelH >= 190 && footRight - fw > this.panelX + 14) {
+            } else if (folioSolo && footRight - fw > this.panelX + 14) {
                 g.drawString(this.font, folio, footRight - fw, footY,
                     DiaryChrome.INK_FLAVOR, false);
             }

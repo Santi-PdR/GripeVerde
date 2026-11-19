@@ -1,3 +1,7 @@
+## Version 0.332.0 - El pie de Sonido no se sienta sobre Volver
+
+En la hoja de Sonido apretada —la que se achica por debajo de 280 de alto— el resumen de las tres capas y el folio se escribían a doce píxeles del borde, que es justo donde vive el botón Volver: el texto le pasaba por encima. Ahora, en esa hoja, el pie se calla; la información sigue en la hoja entera.
+
 ## Version 0.331.0 - El mod ya tiene su sello
 
 La lista de mods del juego mostraba a Gripe Verde con el icono genérico. Ahora lleva su propio sello: lacre rojo con la botella verde, sobre papel gastado y dos plumas cruzadas, dibujado para esta casa.

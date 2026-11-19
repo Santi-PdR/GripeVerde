@@ -1,3 +1,7 @@
+## Version 0.332.0 - The Sound foot does not sit on Back
+
+On the tight Sound sheet —the one that shrinks below 280 of height— the three-layer summary and the folio were written twelve pixels from the edge, which is exactly where the Back button lives: the text ran over it. Now, on that sheet, the foot stays quiet; the information is still on the full sheet.
+
 ## Version 0.331.0 - The mod has its seal now
 
 The game's mod list showed Gripe Verde with the generic icon. Now it carries its own seal: red wax with the green bottle, on worn paper and two crossed quills, drawn for this house.

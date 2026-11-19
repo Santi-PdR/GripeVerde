@@ -1,3 +1,7 @@
+## v0.332.0 - El pie de Sonido no se sienta sobre Volver
+
+- Sonido: resumen y folio solo con `!compactLayout()`.
+
 ## v0.331.0 - El mod ya tiene su sello
 
 - `logoFile="logo.png"` en `mods.toml` y `src/main/resources/logo.png` (256x256).
