@@ -286,13 +286,20 @@ public class DiaryDirectJoinScreen extends Screen {
                     com.eternalcraft.gripeverde.client.integration.RecentAddresses.list();
                 if (!recents.isEmpty()) {
                     String head = en ? "recent: " : "recientes: ";
-                    int hx = centerX - DiaryChrome.widthCached(this.font, head) / 2;
+                    // v0.319.0: la fila de recientes se corta en el ancho de la
+                    // hoja. Antes, con seis o siete puertas, se salia del papel.
+                    int maxW = Math.max(60, panelW - 48);
+                    java.util.List<String> fit = new java.util.ArrayList<>();
                     int total = DiaryChrome.widthCached(this.font, head);
                     for (String r : recents) {
-                        total += DiaryChrome.widthCached(this.font, r) + 10;
+                        int add = DiaryChrome.widthCached(this.font, r) + 10;
+                        if (total + add - 10 > maxW && !fit.isEmpty()) break;
+                        fit.add(r);
+                        total += add;
                     }
-                    total -= 10;
-                    hx = centerX - total / 2;
+                    total = Math.max(0, total - 10);
+                    recents = fit;
+                    int hx = Math.max(panelX + 24, centerX - total / 2);
                     gfx.drawString(this.font, head, hx, noteY, DiaryChrome.INK_FLAVOR, false);
                     int cx2 = hx + DiaryChrome.widthCached(this.font, head);
                     for (String r : recents) {

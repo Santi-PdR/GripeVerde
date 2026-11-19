@@ -1,3 +1,7 @@
+## v0.319.0 - Las puertas recientes caben en la hoja
+
+- Conexion directa: la fila de recientes se corta al ancho del papel y no se sale.
+
 ## v0.318.0 - El recuento no se sube al titulo
 
 - Multijugador: el recuento se mide contra el hueco real y cede el añadido antes que pisar el titulo.

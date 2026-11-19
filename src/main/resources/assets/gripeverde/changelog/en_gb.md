@@ -1,3 +1,7 @@
+## Version 0.319.0 - The recent doors fit on the sheet
+
+The direct connection sheet offers the last doors that were entered, and with six or seven noted the row slipped off the paper on both sides. Now it is measured against the sheet's width, it cuts at the first one that does not fit, and the row sticks to the left margin rather than spilling out.
+
 ## Version 0.318.0 - The count does not climb into the title
 
 When the Multiplayer sheet had several doors noted and as many known, the count grew leftwards until it slipped under the title. Now the real gap left between the title and the registry tag is measured: if the known-doors addition does not fit, it stays out and only the count shows; and if the count does not fit either, nothing is written rather than writing on top.

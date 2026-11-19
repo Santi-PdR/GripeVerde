@@ -1,3 +1,7 @@
+## Version 0.319.0 - Las puertas recientes caben en la hoja
+
+La hoja de conexion directa ofrece las ultimas puertas por las que se entro, y con seis o siete anotadas la fila se salia del papel por los dos lados. Ahora se mide contra el ancho de la hoja, se corta en la primera que no entra y la fila se pega al margen izquierdo antes que salirse.
+
 ## Version 0.318.0 - El recuento no se sube al titulo
 
 Cuando la hoja de Multijugador tenia varias puertas anotadas y otras tantas conocidas, el recuento crecia hacia la izquierda hasta meterse debajo del titulo. Ahora se mide el hueco real que queda entre el titulo y la chapa de registro: si el añadido de las conocidas no entra, se queda en el recuento solo; y si tampoco entra el recuento, no se escribe nada antes que escribir encima.
