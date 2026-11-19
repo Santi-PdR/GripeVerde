@@ -189,13 +189,16 @@ public class DiaryModListScreen extends ModListScreen {
             boolean hovered = mouseX >= left - 9 && mouseX <= left + width + 9
                 && mouseY >= Math.max(rowTop, top) && mouseY < Math.min(rowBottom, bottom);
 
-            PaperTexture.drawTornSlip(g, left - 9, rowTop - 3,
-                width + 18, rowBottom - rowTop + 6, 0xE6D2A6, 0x422810, chosen ? 255 : 232);
+            // v0.347.0: la tira de cada mod se salia cuatro pixeles por abajo y
+            // se encimaba con la del renglon siguiente, dejando bandas mas
+            // oscuras. Ahora ocupa exactamente su renglon, con un pixel de aire.
+            PaperTexture.drawTornSlip(g, left - 9, rowTop - 1,
+                width + 18, this.itemHeight - 1, 0xE6D2A6, 0x422810, chosen ? 255 : 232);
             if (chosen) {
-                g.fill(left - 9, rowTop - 2, left - 6, rowBottom + 2, 0xFF8C2A1E);
+                g.fill(left - 9, rowTop, left - 6, rowBottom, 0xFF8C2A1E);
             }
             if (hovered) {
-                g.fill(left - 9, rowTop - 2, left + width + 9, rowBottom + 2, 0x1CF3E7C8);
+                g.fill(left - 9, rowTop, left + width + 9, rowBottom, 0x1CF3E7C8);
             }
 
             if (hovered) {
@@ -424,10 +427,12 @@ public class DiaryModListScreen extends ModListScreen {
             if (this.height >= 200) {
                 // v0.301.0: el aviso de salida pisaba el boton de la carpeta de
                 // mods; se va al margen derecho del pie.
+                // v0.347.0: el aviso se pegaba al canto roto del pie; sube un
+                // poco y exige ancho para no meterse en las fichas.
                 String hint = en ? "Esc goes back" : "Esc vuelve";
                 int hw = this.font.width(hint);
-                if (this.width - 12 - hw > 12) {
-                    g.drawString(this.font, hint, this.width - 12 - hw, this.height - 12,
+                if (this.width >= 320 && this.width - 12 - hw > 12) {
+                    g.drawString(this.font, hint, this.width - 12 - hw, this.height - 16,
                         com.eternalcraft.gripeverde.client.render.DiaryChrome.INK_FLAVOR, false);
                 }
             }

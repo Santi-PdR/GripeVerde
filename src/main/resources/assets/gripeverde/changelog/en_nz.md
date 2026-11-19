@@ -1,3 +1,11 @@
+## Version 0.347.0 - El arsenal de mods deja de repetir tiras y de pisar el pie
+
+In the mod list, each row's paper strip ran four pixels too low and overlapped the next one: the translucent paper folded over itself and produced darker bands every other row. Now each strip fills exactly its row, with one pixel of air.
+
+The «Esc goes back» hint was stuck to the foot's torn edge; it moves up a little and asks for a 320-pixel window or wider so it never gets into the buttons.
+
+A cleanup of a helper file that slipped into the previous commit travels along.
+
 ## Version 0.346.0 - El archivador de paquetes se acompasa al papel
 
 The two resource-pack lists still had the game's grey rows over the archive sheet. Now each row gets the same warm veil as the entries in Sound, Chat and Accessibility, with its two ink rules, so the archive reads as a single piece.

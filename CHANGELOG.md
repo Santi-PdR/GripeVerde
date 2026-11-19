@@ -1,3 +1,9 @@
+## v0.347.0 - El arsenal de mods deja de repetir tiras y de pisar el pie
+
+- Lista de mods: la tira de papel de cada renglón ya no se encima con la siguiente.
+- Aviso «Esc vuelve»: sube del canto del pie y exige ancho mínimo.
+- Limpieza: fuera el fichero auxiliar que se coló en 0.346.0.
+
 ## v0.346.0 - El archivador de paquetes se acompasa al papel
 
 - Paquetes de recursos: velo cálido y filetes de tinta sobre las dos listas, sin tocar su letra.

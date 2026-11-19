@@ -1,3 +1,11 @@
+## Version 0.347.0 - El arsenal de mods deja de repetir tiras y de pisar el pie
+
+En la lista de mods, la tira de papel de cada renglón se salía cuatro píxeles por abajo y se encimaba con la del siguiente: el papel translúcido se doblaba y salían bandas más oscuras cada dos filas. Ahora cada tira ocupa exactamente su renglón, con un píxel de aire.
+
+El aviso «Esc vuelve» se pegaba al canto roto del pie; sube un poco y pide ventana de 320 píxeles o más para no meterse en las fichas.
+
+Viaja también la limpieza de un fichero auxiliar que se había colado en el commit anterior.
+
 ## Version 0.346.0 - El archivador de paquetes se acompasa al papel
 
 Las dos listas de paquetes de recursos seguían con las filas grises del juego sobre la hoja de archivo. Ahora cada fila recibe el mismo velo tibio que las fichas de Sonido, Chat y Accesibilidad, con sus dos filetes de tinta, para que el archivador se lea como una sola pieza.
