@@ -131,6 +131,9 @@ public class PocketWatchRenderer {
         boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
         long age = System.currentTimeMillis() - inspectionStartMs;
         int chars = MotionPolicy.isReduced() ? 40 : (int)Math.min(40, age / 60L);
+        // v0.342.0: la inscripcion no puede llegar al aviso del pie ni a la
+        // version. Se mide el alto util y cada renglon se calla si no cabe.
+        int stackBottom = h - 34;
         String l1 = en ? "S.P. - 11:52" : "S.P. - 11:52";
         String l2 = en ? "may time be gentle with you" : "que el tiempo te sea leve";
         int a1 = Math.min(200, chars * 8);
@@ -160,7 +163,7 @@ public class PocketWatchRenderer {
                 (Math.min(130, (chars - 26) * 6) << 24) | 0x6B5533, false);
         }
         // v0.250.0: la luna de esa noche, dicha con la palabra que le toca.
-        if (chars > 34) {
+        if (chars > 34 && cy + radius + 56 + 9 <= stackBottom) {
             double phase = moonPhase(System.currentTimeMillis());
             String name = moonName(phase, en);
             String l4 = (en ? "moon: " : "luna: ") + name;
@@ -169,7 +172,7 @@ public class PocketWatchRenderer {
                 (Math.min(120, (chars - 34) * 6) << 24) | 0x5C4A2E, false);
         }
         // v0.260.0: la fecha de hoy, en numeral romano como el cuadrante.
-        if (chars > 38) {
+        if (chars > 38 && cy + radius + 68 + 9 <= stackBottom) {
             java.util.Calendar cal = java.util.Calendar.getInstance();
             String roman = ROMAN_MONTHS[cal.get(java.util.Calendar.MONTH)];
             String today = (en ? "today: " : "hoy: ")
@@ -215,15 +218,17 @@ public class PocketWatchRenderer {
         }
 
         // v0.288.0: el relojero que lo firmo, bajo la inscripcion de la tapa.
-        if (chars > 30 && radius >= 50) {
+        // v0.342.0: antes se leia casi negro sobre la ciudad. Ahora la tinta es
+        // mas clara y, si el alto no da, el renglon no se escribe.
+        if (chars > 30 && radius >= 50 && cy + radius + 91 + 9 <= stackBottom) {
             String maker = en ? "J. Vigne  ·  Montevideo" : "J. Vigne  ·  Montevideo";
             int mw = font.width(maker);
             g.drawString(font, maker, cx - mw / 2, cy + radius + 80,
-                (Math.min(110, (chars - 30) * 5) << 24) | 0x4A3C28, false);
+                (Math.min(150, (chars - 30) * 6) << 24) | 0xB89A6E, false);
             String wind = en ? "wound: full" : "cuerda: llena";
             int ww2 = font.width(wind);
             g.drawString(font, wind, cx - ww2 / 2, cy + radius + 91,
-                (Math.min(100, (chars - 30) * 5) << 24) | 0x4A3C28, false);
+                (Math.min(130, (chars - 30) * 6) << 24) | 0x8E7A55, false);
         }
 
         // La version del gabinete, al pie y en chico.

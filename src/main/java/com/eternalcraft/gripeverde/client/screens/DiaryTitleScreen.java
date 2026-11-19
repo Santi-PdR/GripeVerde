@@ -1017,7 +1017,17 @@ public class DiaryTitleScreen extends Screen {
         // v0.30.0: la firma jamas entra en la franja del gramofo (>>), y el
         // mensaje del dia se lee a su IZQUIERDA, en la misma linea — antes
         // flotaba encima y podia pisar la mesa de botones.
-        int newX = Math.max(48, this.width - sw - oldSw - 16);
+        // v0.342.0: la firma vieja se pegaba tanto al filo derecho que se leia
+        // cortada ("Dr. S. Pereira" acababa en el borde de la ventana). Ahora
+        // hay margen a la derecha, aire entre los dos nombres y, si no caben,
+        // la tachada se calla: antes se encimaba con la vigente.
+        final int sigRight = 10;
+        final int sigGap = 14;
+        boolean showOld = this.width - sigRight - oldSw - sigGap - sw >= 48;
+        int oldX = showOld ? this.width - sigRight - oldSw : Integer.MIN_VALUE;
+        int newX = showOld
+            ? oldX - sigGap - sw
+            : Math.max(48, this.width - sigRight - sw);
         int newY = y;
         // v0.229.0: la firma se escribe sobre una tira de papel gastada, apoyada
         // en la mesa, en vez de flotar sobre la ciudad.
@@ -1043,21 +1053,23 @@ public class DiaryTitleScreen extends Screen {
         this.sigY = newY - 3;
         this.sigW = sw;
 
-        // Nombre viejo tachado (derecha, mas tenue)
-        int oldX = this.width - oldSw - 6;
-        int oldColor = onSlip
-            ? com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
-                com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_MID, 170)
-            : com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
-                com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_LIGHT, 100);
-        DiaryTypography.draw(g, this.font, oldSig, oldX, y, oldColor, false);
+        // Nombre viejo tachado (derecha, mas tenue), solo si de verdad cabe.
+        if (showOld) {
+            int oldColor = onSlip
+                ? com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
+                    com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_MID, 170)
+                : com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(
+                    com.eternalcraft.gripeverde.client.render.DiaryTheme.SEPIA_LIGHT, 100);
+            DiaryTypography.draw(g, this.font, oldSig, oldX, y, oldColor, false);
 
-        // Tachadura sobre nombre viejo
-        int strikeY = y + 4;
-        g.fill(oldX - 1, strikeY, oldX + oldSw + 1, strikeY + 1,
-            com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0x00000000, 180));
-        g.fill(oldX + 2, strikeY - 1, oldX + oldSw - 1, strikeY,
-            com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0x00000000, 90));
+            // Tachadura sobre nombre viejo, sin pasarse del filo.
+            int strikeY = y + 4;
+            int strikeR = Math.min(oldX + oldSw + 1, this.width - 2);
+            g.fill(oldX - 1, strikeY, strikeR, strikeY + 1,
+                com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0x00000000, 180));
+            g.fill(oldX + 2, strikeY - 1, Math.max(oldX + 2, strikeR - 2), strikeY,
+                com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(0x00000000, 90));
+        }
 
     }
 
