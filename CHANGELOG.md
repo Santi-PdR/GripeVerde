@@ -1,3 +1,8 @@
+## v0.328.0 - Los textos medidos se vuelven a medir al cambiar la ventana
+
+- Multijugador: `countLimit` en la clave de cache del recuento.
+- Diario: `cachedFolioPanelW` en la clave de cache del folio.
+
 ## v0.327.0 - El estado del proyecto, al dia
 
 - `KNOWN_ISSUES.md`: seccion ESTADO reescrita para la ronda actual.

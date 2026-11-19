@@ -338,6 +338,8 @@ public class ChangelogScreen extends Screen {
     private int cachedFolioPages = -1;
     private Font cachedFolioFont;
     private boolean foliosReady = false;
+    /** v0.328.0: ancho con el que se midio el folio la ultima vez. */
+    private int cachedFolioPanelW = -1;
 
     private void ensureRowHeights(int contentW) {
         if (this.rowHeightCacheW == contentW && this.rowHeightCache.length == rows.size()) return;
@@ -807,13 +809,16 @@ public class ChangelogScreen extends Screen {
             int pages = Math.max(1, (int) Math.ceil((maxScroll + ch) / (double) ch));
             int cur = Math.max(1, Math.min(pages,
                 (int) Math.floor(scrollY / (double) Math.max(1, ch)) + 1));
+            // v0.328.0: el ancho de la hoja tambien manda; al angostar la
+            // ventana el folio quedaba medido para el ancho viejo.
             if (!foliosReady || cachedFolioCur != cur || cachedFolioPages != pages
-                    || cachedFolioFont != this.font) {
+                    || cachedFolioFont != this.font || cachedFolioPanelW != pw) {
                 cachedFolio = "folio " + cur + " \u00b7 " + pages;
                 cachedFolioWidth = this.font.width(cachedFolio);
                 cachedFolioCur = cur;
                 cachedFolioPages = pages;
                 cachedFolioFont = this.font;
+                cachedFolioPanelW = pw;
                 foliosReady = true;
             }
             String folio = cachedFolio;

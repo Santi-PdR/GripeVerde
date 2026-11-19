@@ -1,3 +1,9 @@
+## Version 0.328.0 - Measured texts are measured again when the window changes
+
+Two labels in the house were measured once and kept the old measure: the Multiplayer count, which could stay empty after narrowing the window even with posts noted, and the diary's folio, which stayed measured for the previous width. Now the available gap is part of both accounts, so they are measured again on resize.
+
+It is the same rule as always: what is cached for speed is invalidated when what decides it changes.
+
 ## Version 0.327.0 - The project state, up to date
 
 The known-issues file still opened with the state of 0.173.0, two hundred versions back. Now its first section says what is closed in this round, how each version is published, that there is no visual test inside the game, and what stays outside this repository.

@@ -862,6 +862,8 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     private String countText = "";
     private int countWidth = 0;
     private int countSrc = -1;
+    /** v0.328.0: hueco medido del ultimo recuento, para invalidar la cache. */
+    private int countLimit = Integer.MIN_VALUE;
     private boolean countEnglish = false;
     private net.minecraft.client.gui.Font countFont;
 
@@ -873,7 +875,14 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
         // v0.201.0: la frase y su ancho se armaban por cuadro; ahora sólo cuando
         // cambia el numero de servidores anotados o el idioma.
-        if (this.countSrc != count || this.countEnglish != english || this.countFont != this.font) {
+        // v0.328.0: el hueco disponible tambien entra en la cuenta. Si no, al
+        // cambiar el ancho de la ventana el recuento se quedaba con el texto
+        // viejo (a veces vacio) hasta que cambiara el numero de puestos.
+        int hueco = (panelX + panelW - 74)
+            - Math.max(panelX + 20,
+                this.headerTitleX + this.font.width(this.headerTitle) + 10);
+        if (this.countSrc != count || this.countEnglish != english || this.countFont != this.font
+                || this.countLimit != hueco) {
             if (count <= 0) {
                 this.countText = english ? "none yet" : "ninguno anotado";
             } else if (count == 1) {
@@ -895,9 +904,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 }
             } catch (Throwable ignored) {
             }
-            int limit = (panelX + panelW - 74)
-                - Math.max(panelX + 20,
-                    this.headerTitleX + this.font.width(this.headerTitle) + 10);
+            int limit = hueco;
             if (this.font.width(full) <= limit) {
                 this.countText = full;
             } else if (this.font.width(base) <= limit) {
@@ -909,6 +916,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             this.countSrc = count;
             this.countEnglish = english;
             this.countFont = this.font;
+            this.countLimit = hueco;
         }
         String text = this.countText;
         int textW = this.countWidth;

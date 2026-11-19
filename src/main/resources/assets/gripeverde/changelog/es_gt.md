@@ -1,3 +1,9 @@
+## Version 0.328.0 - Los textos medidos se vuelven a medir al cambiar la ventana
+
+Dos rótulos de la casa se medían una sola vez y se quedaban con la medida vieja: el recuento de Multijugador, que al angostarse la ventana podía quedar vacío aunque hubiera puestos, y el folio del diario, que quedaba medido para el ancho anterior. Ahora el hueco disponible entra en la cuenta de los dos, así que al redimensionar se vuelven a medir.
+
+Es la misma regla de siempre: lo que se cachea por velocidad se invalida cuando cambia lo que lo decide.
+
 ## Version 0.327.0 - El estado del proyecto, al día
 
 El archivo de asuntos conocidos seguía abriendo con el estado de la 0.173.0, doscientas versiones atrás. Ahora su primera sección dice qué está cerrado en esta ronda, cómo se publica cada versión, que no hay prueba visual dentro del juego, y qué queda fuera de este repositorio.
