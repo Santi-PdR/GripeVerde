@@ -1,3 +1,7 @@
+## Version 0.355.0 - Ventanas bajas: la hoja de Accesibilidad se comprime y su pie deja de pisar la lista
+
+La hoja de Accesibilidad se comprime en ventanas bajas y su pie deja de comerse la lista
+
 ## Version 0.354.0 - El reloj deja las coordenadas al mapa, la hoja de mundos llega a los botones y las columnas de packs se visten de papel
 
 El HUD deja las coordenadas al minimapa, la hoja de mundos alcanza los botones y Packs viste sus columnas

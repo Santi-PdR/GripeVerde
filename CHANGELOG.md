@@ -1,3 +1,7 @@
+## v0.355.0 - Ventanas bajas: la hoja de Accesibilidad se comprime y su pie deja de pisar la lista
+
+- Accesibilidad: por debajo de ~210 px de panel la cabecera baja a 34 y el pie a 80; se calla la frase rotativa y el recuento del margen deja de pisar el título. Chat: la lista garantiza siempre un renglón aunque la ventana sea muy baja.
+
 ## v0.354.0 - El reloj deja las coordenadas al mapa, la hoja de mundos llega a los botones y las columnas de packs se visten de papel
 
 - Reloj/HUD: con JourneyMap (o Xaero) el reloj ya no repite las coordenadas en un papelito aparte; el parte del mapa es el único.\n- Mundos guardados: la hoja baja hasta el grupo de botones y se va el papel pegado del pie.\n- Packs: las dos columnas llevan velo tibio y marco de papel, sin tocar su letra ni sus mandos.

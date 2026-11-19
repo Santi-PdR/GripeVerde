@@ -35,6 +35,21 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
     private final SmoothScroll smoothScroll = new SmoothScroll();
     private int panelW, panelH, panelX, panelY;
 
+    // v0.355.0: en ventanas bajas la cabecera (60) y el pie (112) se comian la
+    // hoja: el pie empezaba por encima del titular y los mandos caian sobre la
+    // lista. En modo apretado se comprimen los dos y se calla la frase del pie.
+    private boolean tight() {
+        return this.panelH < 210;
+    }
+
+    private int headerH() {
+        return tight() ? 34 : HEADER_H;
+    }
+
+    private int footerH() {
+        return tight() ? 80 : FOOTER_H;
+    }
+
     public DiaryAccessibilityOptionsScreen(Screen parent, Options options) {
         super(parent, options);
     }
@@ -68,11 +83,11 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
             this.list.setRenderTopAndBottom(false);
             this.list.setRenderSelection(false);
             // NO cambiar width - R-VANILLA-LIST-COORDS
-            int listTop    = this.panelY + HEADER_H;
+            int listTop    = this.panelY + headerH();
             // v0.330.0: en hojas muy bajas el pie se comia la lista y quedaba
             // un alto negativo. Se le deja al menos un renglon.
             int listBottom = Math.max(listTop + 20,
-                this.panelY + this.panelH - FOOTER_H - 6);
+                this.panelY + this.panelH - footerH() - 6);
             // v0.337.0: la lista se cortaba a media ficha sobre el filete del
             // pie. Ahora el alto se ajusta a renglones enteros de 25 px.
             int rows = (listBottom - listTop) / 25;
@@ -95,7 +110,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         // Opciones propias del mod: visibles junto a las opciones de accesibilidad vanilla.
         int toggleW = Math.min(300, this.panelW - 32);
         int toggleX = (this.width - toggleW) / 2;
-        int toggleY = this.panelY + this.panelH - 100;
+        int toggleY = this.panelY + this.panelH - (tight() ? 76 : 100);
         this.reducedMotionToggle = new DiaryToggle(
             toggleX, toggleY, toggleW, 24,
             () -> ClientConfig.REDUCED_MOTION.get(),
@@ -113,7 +128,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
 
         // v0.23.0: ayuda de fotosensibilidad separada (solo destellos/relampagos,
         // sin congelar movimiento). WCAG 2.3.1 recomienda control especifico.
-        int flashesY = this.panelY + this.panelH - 66;
+        int flashesY = this.panelY + this.panelH - (tight() ? 50 : 66);
         this.reduceFlashesToggle = new DiaryToggle(
             toggleX, flashesY, toggleW, 24,
             () -> ClientConfig.REDUCE_FLASHES.get(),
@@ -133,7 +148,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         int btnW = 160;
         int btnH = 20;
         int btnX = (this.width - btnW) / 2;
-        int btnY = this.panelY + this.panelH - 28;
+        int btnY = this.panelY + this.panelH - (tight() ? 24 : 28);
         this.btnVolver = new DiaryButton(
             btnX, btnY, btnW, btnH,
             Component.translatable("gripeverde.options.button.done"),
@@ -154,7 +169,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
 
         // Titulo
         int cx = this.width / 2;
-        int titleY = this.panelY + 12;
+        int titleY = this.panelY + (tight() ? 6 : 12);
         {
         String _title = DiaryChrome.fitCached(this.font,
             DiaryChrome.tr("options.accessibility.title"), Math.max(0, this.panelW - 32));
@@ -171,16 +186,16 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
             gfx.drawString(this.font, subC, cx - subW / 2, subtitleY, DiaryChrome.INK_SUBTITLE, false);
         }
 
-        // Flavor
+        // Flavor (en ventanas bajas se calla: no hay renglon para ella)
         int flavorY = subtitleY + 13;
-        {
+        if (!tight()) {
             String flvC = DiaryChrome.fitCached(this.font, getRotatingAccFlavor(), Math.max(0, this.panelW - 32));
             int flvW = DiaryChrome.widthCached(this.font, flvC);
             gfx.drawString(this.font, flvC, cx - flvW / 2, flavorY, DiaryChrome.INK_FLAVOR, false);
         }
 
         // Divisor superior
-        int divY1 = flavorY + 12;
+        int divY1 = tight() ? subtitleY + 12 : flavorY + 12;
         DiaryChrome.drawInkDivider(gfx, this.panelX, divY1, this.panelW);
 
         // Lista vanilla sin gradientes blancos ni bandejas extra
@@ -209,7 +224,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         }
 
         // Cosmeticos
-        int divY2 = this.panelY + this.panelH - FOOTER_H + 4;
+        int divY2 = this.panelY + this.panelH - footerH() + 4;
         DiaryChrome.drawInkDivider(gfx, this.panelX, divY2, this.panelW);
         DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
         DiaryChrome.drawRegistryTag(gfx, this.panelX, this.panelY, this.panelW, this.panelH, "REG. VI");
@@ -225,8 +240,11 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
             // v0.337.0: la linea caia encima del ojo de la percepcion, que vive
             // en panelX+22. Ahora arranca a su derecha y no hay dos tintas.
             String cut = DiaryChrome.fitCached(this.font, res, Math.max(60, this.panelW - 140));
-            gfx.drawString(this.font, cut, this.panelX + 44,
-                this.panelY + 10, DiaryChrome.INK_FLAVOR, false);
+            // v0.355.0: apretada la cabecera, esta linea pisaba el titular.
+            if (!tight()) {
+                gfx.drawString(this.font, cut, this.panelX + 44,
+                    this.panelY + 10, DiaryChrome.INK_FLAVOR, false);
+            }
         } catch (Throwable ignored) {
         }
 

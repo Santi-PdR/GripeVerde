@@ -1,3 +1,7 @@
+## Version 0.355.0 - Ventanas bajas: la hoja de Accesibilidad se comprime y su pie deja de pisar la lista
+
+The accessibility sheet compresses in short windows so its footer stops eating the list
+
 ## Version 0.354.0 - El reloj deja las coordenadas al mapa, la hoja de mundos llega a los botones y las columnas de packs se visten de papel
 
 HUD hands coordinates over to the minimap, world sheet reaches the buttons and Packs columns get paper

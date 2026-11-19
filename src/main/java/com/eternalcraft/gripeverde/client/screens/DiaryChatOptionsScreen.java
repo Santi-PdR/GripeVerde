@@ -52,7 +52,9 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
             this.list.setRenderBackground(false);
             this.list.setRenderTopAndBottom(false);
             int listTop = this.panelY + 45;
-            int listBottom = this.panelY + this.panelH - 45;
+            // v0.355.0: en ventanas muy bajas el alto salia invertido y la lista
+            // se quedaba sin renglon. Se le deja siempre uno.
+            int listBottom = Math.max(listTop + 20, this.panelY + this.panelH - 45);
             this.list.updateSize(this.width, this.height, listTop, listBottom);
             this.smoothScroll.snapToCurrent(this.list);
         }
