@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSelectionList;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
 import com.eternalcraft.gripeverde.client.render.DiaryTypography;
 
@@ -512,6 +513,40 @@ public final class DiaryChrome {
             }
         } finally {
             gfx.disableScissor();
+        }
+    }
+
+    /**
+     * v0.356.0: el buscador del juego, vestido de papel.
+     *
+     * Mundos guardados era la unica hoja con una caja negra vanilla encima:
+     * el campo de busqueda. Se le quita el borde y el fondo del juego y se le
+     * pone debajo un papelito de la casa; la letra pasa a tinta. La insercion
+     * y el cursor siguen siendo los del juego.
+     */
+    public static void dressEditBox(EditBox box) {
+        if (box == null) return;
+        try {
+            box.setBordered(false);
+        } catch (Throwable ignored) {
+        }
+        try {
+            box.setTextColor(0xFF241608);
+        } catch (Throwable ignored) {
+        }
+    }
+
+    /** Papel detrás de un campo del juego ya vestido con {@link #dressEditBox}. */
+    public static void paperBehindEditBox(GuiGraphics g, EditBox box) {
+        if (g == null || box == null || !box.isVisible()) return;
+        int x = box.getX();
+        int y = box.getY();
+        int w = box.getWidth();
+        int h = box.getHeight();
+        if (w < 24 || h < 8) return;
+        PaperTexture.drawTornSlip(g, x - 3, y - 1, w + 6, h + 2, 0xE6D2A6, 0x422810, 242);
+        if (box.isFocused()) {
+            g.fill(x - 3, y + h + 1, x + w + 3, y + h + 2, 0x662A1C12);
         }
     }
 

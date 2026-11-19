@@ -1,3 +1,7 @@
+## Version 0.356.0 - El buscador de Mundos guardados deja la caja negra y pasa a papel
+
+The saved-worlds search field drops its black vanilla box and sits on paper
+
 ## Version 0.355.0 - Ventanas bajas: la hoja de Accesibilidad se comprime y su pie deja de pisar la lista
 
 The accessibility sheet compresses in short windows so its footer stops eating the list

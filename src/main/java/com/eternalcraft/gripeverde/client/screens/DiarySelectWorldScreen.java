@@ -216,7 +216,11 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         List<EditBox> boxes = new ArrayList<>();
         try {
             for (var child : this.children()) {
-                if (child instanceof EditBox box && box.visible) boxes.add(box);
+                if (child instanceof EditBox box && box.visible) {
+                    // v0.356.0: el buscador pierde su caja negra y pasa a papel.
+                    DiaryChrome.dressEditBox(box);
+                    boxes.add(box);
+                }
             }
         } catch (Throwable ignored) {
         }
@@ -273,7 +277,10 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 paintScrollMargin(g);
             }
             for (EditBox box : this.searchBoxes) {
-                if (box.visible) box.render(g, mouseX, mouseY, partial);
+                if (box.visible) {
+                    DiaryChrome.paperBehindEditBox(g, box);
+                    box.render(g, mouseX, mouseY, partial);
+                }
             }
         } catch (Throwable ignored) {
         }

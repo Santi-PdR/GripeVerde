@@ -1,3 +1,7 @@
+## v0.356.0 - El buscador de Mundos guardados deja la caja negra y pasa a papel
+
+- Mundos guardados: el campo de busqueda ya no es una caja negra vanilla; papel de la casa, letra en tinta y filete de foco. Chat: la lista garantiza un renglon en ventanas muy bajas.
+
 ## v0.355.0 - Ventanas bajas: la hoja de Accesibilidad se comprime y su pie deja de pisar la lista
 
 - Accesibilidad: por debajo de ~210 px de panel la cabecera baja a 34 y el pie a 80; se calla la frase rotativa y el recuento del margen deja de pisar el título. Chat: la lista garantiza siempre un renglón aunque la ventana sea muy baja.

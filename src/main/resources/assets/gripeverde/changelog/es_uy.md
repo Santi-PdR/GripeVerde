@@ -1,3 +1,7 @@
+## Version 0.356.0 - El buscador de Mundos guardados deja la caja negra y pasa a papel
+
+El buscador de Mundos guardados pierde la caja negra y va sobre papel con tinta
+
 ## Version 0.355.0 - Ventanas bajas: la hoja de Accesibilidad se comprime y su pie deja de pisar la lista
 
 La hoja de Accesibilidad se comprime en ventanas bajas y su pie deja de comerse la lista
