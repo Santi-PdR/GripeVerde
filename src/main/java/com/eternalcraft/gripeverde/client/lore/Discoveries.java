@@ -171,6 +171,14 @@ public final class Discoveries {
         bw = Math.min(maxToastWidth, memToastBoxWidth);
         int x = screenW - bw - 8;
         int y = 8;
+        // v0.326.0: en la portada, la fila de lentes vive en y=8. El aviso se
+        // cuelga debajo de ellas en vez de taparlas.
+        try {
+            if (mc.screen instanceof com.eternalcraft.gripeverde.client.screens.DiaryTitleScreen) {
+                y = 40;
+            }
+        } catch (Throwable ignored) {
+        }
 
         int ink = (alpha << 24) | 0x241608;
         int red = (Math.min(215, alpha) << 24) | 0x6E1F16;

@@ -1,3 +1,7 @@
+## v0.326.0 - El aviso de ficha nueva no tapa las lentes
+
+- Portada: el aviso baja a `y=40`, debajo de la fila de lentes.
+
 ## v0.325.0 - La casa se abre en plena partida
 
 - Ajustes de campo: ficha `La casa` al lado de Volver, si hay ancho.

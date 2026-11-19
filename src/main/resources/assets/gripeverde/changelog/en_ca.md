@@ -1,3 +1,9 @@
+## Version 0.326.0 - The new-file notice does not cover the lenses
+
+On the title screen, the row of lenses (Diary, Dispatch, The house, Mods, Settings) lives at the top edge, and the "new file" notice fell right on it: the two covered each other. Now the notice hangs below the row, at the same right edge, and the lenses stay clear.
+
+In the other sheets the notice stays where it was.
+
 ## Version 0.325.0 - The house opens mid-game
 
 Until now, to touch the watch, the house volumes or the latches you had to go out to the title: from the pause you could reach the field settings, but there was no door to the house there. Now the settings sheet carries a "The house" card next to Back, and closing it returns to the settings, not to the title.

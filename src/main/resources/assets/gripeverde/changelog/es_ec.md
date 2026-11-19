@@ -1,3 +1,9 @@
+## Version 0.326.0 - El aviso de ficha nueva no tapa las lentes
+
+En la portada, la fila de lentes (Diario, Parte, La casa, Mods, Ajustes) vive en el borde de arriba, y el aviso de «ficha nueva» caía justo encima: se tapaban los dos. Ahora el aviso se cuelga debajo de la fila, en el mismo borde derecho, y las lentes quedan libres.
+
+En el resto de las hojas el aviso sigue donde estaba.
+
 ## Version 0.325.0 - La casa se abre en plena partida
 
 Hasta ahora, para tocar el reloj, los volumenes de la casa o los pestillos habia que salir al titulo: desde la pausa se llegaba a los ajustes de campo, pero ahi no habia puerta a La casa. Ahora la hoja de ajustes lleva una ficha «La casa» al lado de Volver, y al cerrarla se vuelve a los ajustes, no al titulo.
