@@ -158,7 +158,6 @@ public class DiaryLanguageScreen extends Screen {
 
             int divY1 = titleY + 42;
             DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY1);
-            drawLanguageCount(g, titleY);
             // v0.306.0: fuera el folio del pie; caia sobre el boton Volver.
 
         }
@@ -232,74 +231,11 @@ public class DiaryLanguageScreen extends Screen {
         this.headerFlavorX = this.width / 2 - this.font.width(this.headerFlavor) / 2;
     }
 
-    // La cuenta de lenguas también armaba su frase y la medía por cuadro.
-    private String countText = "";
-    private int countTextW = 0;
-    private int countTotal = -1;
-    private boolean countEnglish = false;
-    private Font countFont;
-
     /**
-     * v0.195.0: cuantas lenguas hay registradas, en el margen izquierdo del
-     * titulo (la derecha la ocupa la placa REG. IV). Si el panel es angosto no
-     * se dibuja: no vale la pena apretar.
+     * v0.364.0: fuera la cuenta de lenguas del margen («143 lenguas» / «ahora:
+     * Esp…»). Se cortaba a media palabra contra el bloque centrado de la
+     * cabecera y ensuciaba la hoja; el idioma en uso ya se lee en la lista.
      */
-    /** v0.268.0: nombre de la lengua que tiene puesta el juego, en su lengua. */
-    private String currentLanguageName(boolean english) {
-        try {
-            String code = this.minecraft.getLanguageManager().getSelected();
-            if (code == null || code.isBlank()) return "";
-            var info = this.minecraft.getLanguageManager().getLanguage(code);
-            if (info != null) {
-                String name = info.toComponent().getString();
-                if (name != null && !name.isBlank()) return name;
-            }
-            return code;
-        } catch (Throwable ignored) {
-            return "";
-        }
-    }
-
-    private void drawLanguageCount(GuiGraphics g, int titleY) {
-        if (this.panelW < 300) return;
-        int total = 0;
-        try {
-            total = this.languageManager.getLanguages().size();
-        } catch (Throwable ignored) {}
-        if (total <= 0) return;
-        boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
-        if (this.countTotal != total || this.countEnglish != english || this.countFont != this.font) {
-            this.countText = english
-                ? (total == 1 ? "1 language" : total + " languages")
-                : (total == 1 ? "1 lengua" : total + " lenguas");
-            this.countTextW = this.font.width(this.countText);
-            this.countTotal = total;
-            this.countEnglish = english;
-            this.countFont = this.font;
-        }
-        int x = this.panelX + 20;
-        int y = titleY + 4;
-        // v0.352.0: la cuenta y el "ahora:" llegaban al subtitulo centrado y se
-        // leian encimados ("ArgentinAuxilios..."). Se limitan al hueco que deja
-        // el bloque centrado de la cabecera.
-        int limitRight = Math.min(this.headerTitleX,
-            Math.min(this.headerSubX, this.headerFlavorX)) - 8;
-        int room = Math.max(0, limitRight - x);
-        if (room < 48 || this.countTextW > room) return;
-        if (x + this.countTextW > this.panelX + this.panelW - 78) return;
-        g.drawString(this.font, this.countText, x, y, DiaryChrome.INK_SUBTITLE, false);
-
-        // v0.268.0: y debajo, en cual esta escrito el cuaderno ahora mismo.
-        String current = currentLanguageName(english);
-        if (current.isEmpty()) return;
-        String line = (english ? "now: " : "ahora: ") + current;
-        String cut = DiaryChrome.fitCached(this.font, line,
-            Math.min(room, Math.max(0, this.panelX + this.panelW - 78 - x)));
-        if (this.font.width(cut) <= 0) return;
-        // Si ni el nombre corto entra, no se escribe a medias.
-        if (this.font.width(cut) < 24) return;
-        g.drawString(this.font, cut, x, y + 11, DiaryChrome.INK_FLAVOR, false);
-    }
 
     private void drawSearchBuffer(GuiGraphics g) {
         if (this.searchBuffer.isEmpty() || System.currentTimeMillis() > this.searchBufferUntilMs) return;

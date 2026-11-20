@@ -1,3 +1,7 @@
+## Version 0.365.0 - Mundos como Multijugador, parte de defunción centrado y packs sin solape
+
+Saved worlds becomes one wide sheet like Multiplayer, with the house cards over the game background; the death notice is centred and the game text no longer shows through; Packs stops overlapping its vanilla title and Languages drops the language count
+
 ## Version 0.364.0 - Hojas más juntas y mandos que se leen
 
 Credits, Saved worlds and Arsenal sheets get their layout fixed, Music and Sound sliders become readable, the death notice hides the game label at last, and the menu backdrop gains haze while drawing less each frame

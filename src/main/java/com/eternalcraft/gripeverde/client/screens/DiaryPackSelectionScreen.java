@@ -138,17 +138,31 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
             // pegada encima de la hoja. Ahora se limpia toda la franja de
             // cabecera (de borde a borde del papel) y el titulo se escribe en
             // tinta dentro de ella, como en Multijugador.
-            int bandTop = 8;
-            int bandBottom = 26;
+            // v0.364.0: la franja era translucida y baja, y el titulo y el
+            // subtitulo del juego se dibujaban encima y por debajo de ella: se
+            // veian las dos letras superpuestas. Ahora la franja es opaca, tapa
+            // los dos renglones del juego y los reescribe en tinta.
+            int bandTop = 6;
+            int bandBottom = 42;
             int bandLeft = 14;
             int bandRight = this.width - 14;
             if (bandRight - bandLeft > 80 && bandBottom > bandTop + 10) {
-                g.fill(bandLeft, bandTop, bandRight, bandBottom, 0xE6E4D7AE);
+                g.fill(bandLeft, bandTop, bandRight, bandBottom, 0xFFE3D5AB);
                 g.fill(bandLeft, bandBottom - 1, bandRight, bandBottom, 0x552A1C12);
             }
-            int y = bandTop + (bandBottom - bandTop - 8) / 2;
+            int y = bandTop + 4;
             g.drawString(this.font, cut, cx - w / 2, y,
                 com.eternalcraft.gripeverde.client.render.DiaryChrome.INK_TITLE, false);
+            boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+            String sub = en
+                ? "Drop packs here  -  what the house wears"
+                : "Suelta aqui tus recursos  -  lo que la casa se pone";
+            String subCut = com.eternalcraft.gripeverde.client.render.DiaryChrome
+                .fitCached(this.font, sub, Math.max(60, bandRight - bandLeft - 8));
+            int subW = com.eternalcraft.gripeverde.client.render.DiaryChrome
+                .widthCached(this.font, subCut);
+            g.drawString(this.font, subCut, cx - subW / 2, y + 13,
+                com.eternalcraft.gripeverde.client.render.DiaryChrome.INK_SUBTITLE, false);
         } catch (Throwable ignored) {
         }
     }

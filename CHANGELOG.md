@@ -1,3 +1,7 @@
+## v0.365.0 - Mundos como Multijugador, parte de defunción centrado y packs sin solape
+
+- Mundos: hoja a lo ancho con 32 px de margen, hoja de registro pegada sobre el fondo de tierra de la lista y fichas de la casa encima (número de orden, nombre, modo y fecha); buscador dentro de la hoja; el pie de botones queda sobre el mismo papel; alto de renglón con respaldo si el juego no lo deja leer. Muerte: el lienzo se vuelca antes de pegar el parte, que ahora se centra en el hueco y siempre tapa rótulo, causa y puntaje. Packs: franja de cabecera opaca que cubre el título y el subtítulo del juego y los escribe en tinta. Lenguas: fuera la cuenta de lenguas y el «ahora: …» del margen.
+
 ## v0.364.0 - Hojas más juntas y mandos que se leen
 
 - Hojas: Créditos sube sus dos fichas y las centra sobre el papel, con el filete del pie por encima; Mundos guardados ciñe la hoja a la lista y a sus botones, con numero de orden en el margen; el Arsenal clava la descripcion al canto derecho en 210 px y la dobla por palabras hasta llenar la hoja. Mandos: Musica y Sonido pasan a etiqueta arriba y carril abajo con mando chico, y el volumen de interfaz se mueve al arrastrar. Muerte: el parte se asienta sobre fondo opaco y ya no se transparenta el rotulo del juego. Fondo y optimizacion: calima de horizonte en la portada y cielo abreviado en las hojas del diario, sin estrellas ni pajaros por cuadro.

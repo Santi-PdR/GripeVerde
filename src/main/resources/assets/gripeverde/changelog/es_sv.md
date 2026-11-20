@@ -1,3 +1,7 @@
+## Version 0.365.0 - Mundos como Multijugador, parte de defunción centrado y packs sin solape
+
+Mundos guardados pasa a ser una sola hoja ancha como Multijugador, con las fichas de la casa encima del fondo del juego; el parte de defunción se centra y la letra del juego ya no se le ve encima; Packs deja de solapar su título vanilla y Lenguas pierde la cuenta de lenguas
+
 ## Version 0.364.0 - Hojas más juntas y mandos que se leen
 
 Las hojas de Créditos, Mundos y Arsenal se ordenan, los mandos de Música y Sonido se leen, el parte de defunción ya no deja ver el rótulo del juego y el fondo del menú gana calima y pierde trabajo por cuadro

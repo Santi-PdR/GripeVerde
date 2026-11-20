@@ -182,25 +182,36 @@ public final class DeathPaper {
             }
         } catch (Throwable ignored) {
         }
-        // El juego escribe su rotulo (escala doble) a partir de y=30 y la causa
-        // y el puntaje hacia y=100, siempre en el mismo sitio. El papel arranca
-        // un poco mas arriba para taparlos de una vez.
-        int top = 22;
+        // v0.364.0: la franja que ocupa el juego con su rotulo (escala doble,
+        // desde y=60), la causa (y=85) y el puntaje (y=100). El papel se
+        // centra en el hueco libre, pero nunca deja esa franja al aire.
+        int zoneTop = 56;
+        int zoneBottom = 112;
+        int top = 12;
         int limit = buttonsTop == Integer.MAX_VALUE ? h - 40 : buttonsTop - PAPER_GAP;
         int room = limit - top;
         if (room < 56) {
-            // Sin hueco entre cabecera y fichas: el papel se achica, pero no se
-            // baja, que el rotulo del juego quedaria a la vista.
             room = Math.max(56, h - 16 - top);
         }
         int pw = Math.min(PAPER_W_MAX, Math.max(180, w - 48));
         int ph = Math.max(56, Math.min(PAPER_H, room));
         int px = (w - pw) / 2;
-        int py = top;
+        // Centrado en el hueco, y luego acotado para que el rotulo del juego
+        // quede siempre debajo del papel.
+        int py = top + Math.max(0, (room - ph) / 2);
+        if (py + ph < zoneBottom) py = zoneBottom - ph;
+        if (py > zoneTop) py = zoneTop;
+        py = Math.max(top, Math.min(py, Math.max(top, h - 16 - ph)));
         // v0.364.0: el papel es translucido (243 de alfa) y el rotulo blanco del
-        // juego se transparentaba debajo como un fantasma. Se asienta sobre un
-        // fondo opaco del mismo color y el fantasma desaparece.
-        g.fill(px, py + 3, px + pw, py + ph - 3, 0xFFE4D6AC);
+        // juego se transparentaba debajo como un fantasma. Ademas la letra del
+        // juego se dibuja en el mismo cuadro y el lienzo la tenia en cola: sin
+        // vaciar esa cola, el papel salia por debajo del texto. Se vuelca lo
+        // pendiente, se asienta un fondo opaco y encima va la hoja.
+        try {
+            g.flush();
+        } catch (Throwable ignored) {
+        }
+        g.fill(px, py + 1, px + pw, py + ph - 1, 0xFFE4D6AC);
         PaperTexture.drawTornSheet(g, px, py, pw, ph, PaperTexture.PaperKind.OFFICIAL);
 
         String head = english ? "CEDA - BUREAU OF PORTS" : "CEDA - SANIDAD DE PUERTOS";

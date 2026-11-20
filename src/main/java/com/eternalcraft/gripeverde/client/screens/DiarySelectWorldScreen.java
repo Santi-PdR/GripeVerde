@@ -142,7 +142,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         }
         for (EditBox box : this.searchBoxes) {
             try {
-                box.setY(HEADER_H + 3);
+                box.setY(sheetTop() + 8);
                 // v0.262.0: el buscador habla como el gabinete.
                 box.setSuggestion(Discoveries.isEnglish()
                     ? "search a world" : "buscar un mundo");
@@ -151,7 +151,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         }
         if (this.vanillaList != null) {
             try {
-                int top = HEADER_H + 24;
+                int top = sheetTop() + 34;
                 int bottom = Math.max(top + 24, footerTop);
                 this.vanillaList.updateSize(this.width, this.height, top, bottom);
             } catch (Throwable ignored) {
@@ -184,6 +184,9 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         if (this.vanillaList == null) return;
         try {
             this.rowItemHeight = readIntField(this.vanillaList, "itemHeight", "f_93387_");
+            // v0.364.0: si el campo del juego no se deja leer, las fichas se
+            // quedaban sin dibujar. El renglon de mundos mide 36 en 1.20.1.
+            if (this.rowItemHeight < 16 || this.rowItemHeight > 64) this.rowItemHeight = 36;
             this.rowLeft = this.vanillaList.getRowLeft();
             this.rowRight = this.rowLeft + this.vanillaList.getRowWidth();
             this.listTop = this.vanillaList.getTop();
@@ -269,12 +272,18 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         try {
             if (this.vanillaList != null) {
                 this.vanillaList.render(g, mouseX, mouseY, partial);
+                // v0.364.0: hoja opaca encima del fondo del juego y, sobre ella,
+                // las fichas de la casa.
+                paintListPaper(g, mouseX, mouseY);
                 // v0.304.0: nombre y ficha de cada mundo, en tinta y legibles.
                 paintWorldRowsInk(g);
                 // v0.339.0: el juego dibuja su barra gris y su canal negro a la
                 // derecha de la lista, y eso partia la hoja en vertical. Se
                 // repinta el margen en papel y la aguja pasa a ser de tinta.
                 paintScrollMargin(g);
+                // v0.364.0: la nota de archivo vacio va despues del papel, si no
+                // la tapaba la hoja pegada encima de la lista.
+                drawEmptyNote(g);
             }
             for (EditBox box : this.searchBoxes) {
                 if (box.visible) {
@@ -662,29 +671,29 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
      * su banda oscura, como las fotos pegadas en la ficha. Sin la banda, el
      * texto blanco del juego se perderia contra el papel.
      */
+    /** v0.364.0: alto de renglon con respaldo; el del juego no siempre se deja leer. */
+    private int rowStep() {
+        int step = this.rowItemHeight;
+        if (step < 16 || step > 64) step = 36;
+        return step;
+    }
+
+    /** v0.364.0: la hoja arranca justo bajo la cabecera y va a lo ancho, como Multijugador. */
+    private int sheetTop() {
+        return HEADER_H - 2;
+    }
+
     private void drawRegisterPage(GuiGraphics g, int mouseX, int mouseY) {
         if (this.vanillaList == null || this.rowLeft < 0 || this.listBottom <= this.listTop) return;
-        // v0.364.0: la hoja va ceñida a lo que de verdad ocupa la pantalla -la
-        // lista y el pie de botones- con 16 px de margen. A lo ancho de toda la
-        // ventana quedaba un papel enorme con las filas flotando en el centro,
-        // que es justo lo que se veia mal en ventanas anchas.
-        int contentLeft = this.rowLeft;
-        int contentRight = this.rowRight;
-        for (DiaryButton b : this.dressed) {
-            if (!b.visible) continue;
-            contentLeft = Math.min(contentLeft, b.getX());
-            contentRight = Math.max(contentRight, b.getX() + b.getWidth());
-        }
-        int pad = 16;
-        int px = Math.max(8, contentLeft - pad);
-        int pw = Math.min(this.width - 8, contentRight + pad) - px;
-        // v0.360.0: la hoja arrancaba por encima de la cabecera y su canto
-        // desgarrado cruzaba por debajo del titulo. Ahora empieza justo donde
-        // termina la cabecera.
-        int py = Math.max(HEADER_H - 2, this.listTop - 8);
-        // v0.354.0: la hoja baja hasta el grupo de botones del juego, para que
-        // las fichas del pie queden sobre el mismo papel y no sobre una hoja
-        // aparte pegada debajo (que se veia como dos papeles encontrados).
+        // v0.364.0: la hoja va a lo ancho del gabinete, con 32 px de margen a
+        // cada lado, igual que la de Multijugador. Antes se ceñia a las filas y
+        // quedaba un papel estrecho flotando en el centro.
+        int margin = this.width >= 360 ? 32 : 10;
+        int px = margin;
+        int pw = this.width - margin * 2;
+        int py = sheetTop();
+        // Baja hasta el pie de botones del juego, para que las dos filas de
+        // fichas queden sobre el mismo papel.
         int footerBottom = -1;
         for (DiaryButton b : this.dressed) {
             if (b.visible) footerBottom = Math.max(footerBottom, b.getY() + b.getHeight());
@@ -695,12 +704,13 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         this.sheetCoversFooter = footerBottom > 0 && ph > 0 && py + ph >= footerBottom + 6;
         if (pw < 60 || ph < 40) return;
         PaperTexture.drawTornSheet(g, px, py, pw, ph, PaperTexture.PaperKind.OFFICIAL);
-        // v0.248.0: el canto gastado asienta la pagina sobre la escena.
         if (pw >= 32 && ph >= 32) {
             PaperTexture.drawWornRim(g, px, py, pw, ph);
         }
+        DiaryChrome.drawCornerOrnaments(g, px, py, pw, ph);
 
-        int step = this.rowItemHeight > 0 ? this.rowItemHeight : 36;
+        // Numero de orden de cada ficha, en el margen izquierdo de la hoja.
+        int step = rowStep();
         double scroll = 0.0;
         try {
             scroll = this.vanillaList.getScrollAmount();
@@ -711,46 +721,63 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             count = this.vanillaList.children().size();
         } catch (Throwable ignored) {
         }
-        // Banda oscura por mundo, recortada a la pagina.
         for (int i = 0; i < count && i < 64; i++) {
             int top = this.listTop + 4 - (int) scroll + i * step;
             int bottom = top + step - 4;
             if (bottom < this.listTop || top > this.listBottom) continue;
             int drawTop = Math.max(top, this.listTop);
             int drawBottom = Math.min(bottom, this.listBottom);
-            if (drawBottom <= drawTop) continue;
-            // v0.364.0: la ficha se ordena como un registro: numero de orden en
-            // el margen, filete fino entre fichas y velo tibio bajo la mano.
-            g.fill(this.rowLeft - 6, drawBottom - 1, this.rowRight + 6, drawBottom, 0x2E6B5533);
-            if (mouseX >= this.rowLeft - 6 && mouseX <= this.rowRight + 6
-                    && mouseY >= drawTop && mouseY < drawBottom) {
-                g.fill(this.rowLeft - 6, drawTop, this.rowRight + 6, drawBottom, 0x22F3E7C8);
-                g.fill(this.rowLeft - 12, drawTop, this.rowLeft - 10, drawBottom, 0xCC4A2810);
+            if (drawBottom - drawTop < 12) continue;
+            String idx = (i + 1 < 10 ? "0" : "") + (i + 1);
+            if (this.listBottom - drawTop >= 14) {
+                g.drawString(this.font, idx, this.rowLeft - 15, drawTop + 3, 0x8A6B45, false);
             }
-            if (this.rowLeft - pad >= 10 && drawBottom - drawTop >= 18) {
-                String idx = (i + 1 < 10 ? "0" : "") + (i + 1);
-                g.drawString(this.font, idx, this.rowLeft - 15, drawTop + 4, 0x8A6B45, false);
+            if (mouseX >= this.rowLeft - 14 && mouseX <= this.rowRight + 14
+                    && mouseY >= drawTop && mouseY < drawBottom) {
+                g.fill(this.rowLeft - 10, drawTop, this.rowLeft - 8, drawBottom, 0xCC4A2810);
             }
         }
     }
 
-    /** Papel detras del grupo de botones, sea cual sea el alto que les dio el juego. */
-    /** v0.269.0: si el archivo esta vacio, la pagina lo dice en vez de quedarse muda. */
-    private void drawEmptyNote(GuiGraphics g) {
-        if (this.vanillaList == null || this.rowLeft < 0) return;
+    /**
+     * v0.364.0: la lista del juego pinta su propio fondo de tierra y escribe en
+     * blanco: sobre el papel eso se veia como un rectangulo negro pegado. Se
+     * pega encima una hoja opaca y sobre ella van las fichas de la casa, de
+     * modo que la pantalla queda como la de Multijugador: un solo papel.
+     */
+    private void paintListPaper(GuiGraphics g, int mouseX, int mouseY) {
+        if (this.rowLeft < 0 || this.listBottom <= this.listTop) return;
+        int x1 = Math.max(0, this.rowLeft - 12);
+        int x2 = Math.min(this.width, this.rowRight + 12);
+        if (x2 - x1 < 40) return;
+        int h = this.listBottom - this.listTop;
+        if (h < 16) return;
+        PaperTexture.drawTornSheet(g, x1, this.listTop - 2, x2 - x1, h + 4,
+            PaperTexture.PaperKind.LEDGER);
+        // Filetes entre fichas, a lo ancho de la hoja de la lista.
+        int step = rowStep();
+        double scroll = 0.0;
         try {
-            if (!this.vanillaList.children().isEmpty()) return;
+            scroll = this.vanillaList == null ? 0.0 : this.vanillaList.getScrollAmount();
         } catch (Throwable ignored) {
-            return;
         }
-        if (this.listBottom - this.listTop < 28) return;
-        boolean en = Discoveries.isEnglish();
-        String note = en ? "no records yet  ·  create one below"
-            : "aun no hay fichas  ·  crea una abajo";
-        String cut = DiaryChrome.fitText(this.font, note, Math.max(80, this.rowRight - this.rowLeft));
-        int nw = DiaryChrome.widthCached(this.font, cut);
-        g.drawString(this.font, cut, (this.rowLeft + this.rowRight - nw) / 2,
-            (this.listTop + this.listBottom) / 2 - 4, DiaryChrome.INK_SUBTITLE, false);
+        int count = 0;
+        try {
+            count = this.vanillaList == null ? 0 : this.vanillaList.children().size();
+        } catch (Throwable ignored) {
+        }
+        for (int i = 0; i < count && i < 64; i++) {
+            int top = this.listTop + 4 - (int) scroll + i * step;
+            int bottom = top + step - 4;
+            if (bottom < this.listTop || top > this.listBottom) continue;
+            int drawTop = Math.max(top, this.listTop);
+            int drawBottom = Math.min(bottom, this.listBottom);
+            if (drawBottom - drawTop < 12) continue;
+            g.fill(x1 + 3, drawBottom - 1, x2 - 3, drawBottom, 0x2E6B5533);
+            if (mouseX >= x1 && mouseX <= x2 && mouseY >= drawTop && mouseY < drawBottom) {
+                g.fill(x1 + 3, drawTop, x2 - 3, drawBottom, 0x22F3E7C8);
+            }
+        }
     }
 
     /**
