@@ -1,3 +1,7 @@
+## v0.362.0 - El buscador del arsenal también va sobre papel
+
+- Arsenal (XVII): el buscador de Forge pierde el borde y el fondo, con papelito de la casa por detras, letra en tinta y filete de foco, igual que el de Mundos guardados.
+
 ## v0.361.0 - Mundos guardados con fichas sobre el papel, como Multijugador
 
 - Mundos: fuera la banda oscura de cada mundo; ahora filete fino entre fichas y velo tibio bajo la mano, igual que Multijugador. HUD: el ancho de la tira se mide con cache y, con minimapa, ni se calculan las coordenadas ni el bioma.

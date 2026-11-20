@@ -72,6 +72,9 @@ public class DiaryModListScreen extends ModListScreen {
      * v0.266.0: el buscador de Forge pide las cosas a su manera; aca se le pone
      * el texto de la casa cuando esta vacio.
      */
+    // v0.362.0: el campo de busqueda de Forge, para darle papel por detras.
+    private net.minecraft.client.gui.components.EditBox searchBox;
+
     private void dressSearchBox() {
         boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
         String hint = en ? "search a mod" : "buscar un mod";
@@ -79,6 +82,10 @@ public class DiaryModListScreen extends ModListScreen {
             for (var child : this.children()) {
                 if (child instanceof net.minecraft.client.gui.components.EditBox box) {
                     box.setSuggestion(hint);
+                    // v0.362.0: el buscador de Forge deja su caja negra y pasa a
+                    // papel con tinta, como el de Mundos guardados.
+                    com.eternalcraft.gripeverde.client.render.DiaryChrome.dressEditBox(box);
+                    this.searchBox = box;
                     return;
                 }
             }
@@ -397,6 +404,14 @@ public class DiaryModListScreen extends ModListScreen {
         } catch (Throwable ignored) {
         }
         drawFooterPaper(g);
+        // v0.362.0: el papelito del buscador va antes de que Forge lo dibuje.
+        if (this.searchBox != null) {
+            try {
+                com.eternalcraft.gripeverde.client.render.DiaryChrome
+                    .paperBehindEditBox(g, this.searchBox);
+            } catch (Throwable ignored) {
+            }
+        }
         super.render(g, mouseX, mouseY, partial);
         // v0.266.0: el recuento, arriba a la derecha de la hoja.
         try {

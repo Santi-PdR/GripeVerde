@@ -1,3 +1,7 @@
+## Version 0.362.0 - El buscador del arsenal también va sobre papel
+
+El buscador del arsenal deja la caja negra de Forge y pasa a papel con tinta
+
 ## Version 0.361.0 - Mundos guardados con fichas sobre el papel, como Multijugador
 
 Las filas de Mundos guardados dejan la barra negra y van sobre el papel, como Multijugador

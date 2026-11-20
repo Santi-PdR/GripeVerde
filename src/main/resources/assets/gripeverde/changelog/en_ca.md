@@ -1,3 +1,7 @@
+## Version 0.362.0 - El buscador del arsenal también va sobre papel
+
+The mod-list search field drops Forge's black box and sits on paper
+
 ## Version 0.361.0 - Mundos guardados con fichas sobre el papel, como Multijugador
 
 Saved-worlds rows drop the dark bar and sit on the paper like the multiplayer sheet
