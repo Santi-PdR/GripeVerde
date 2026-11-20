@@ -72,28 +72,58 @@ public final class DeathPaper {
     /** v0.345.0: la causa que traia el juego, guardada antes de callarla. */
     private static String capturedCause = "";
 
+    /**
+     * v0.366.0: se guarda la causa del juego y se apagan TODOS sus rotulos.
+     *
+     * Antes se buscaba el campo por nombre ("causeOfDeath" / "f_95858_") y en el
+     * juego real ese nombre no coincide, asi que no se apagaba nada: el rotulo
+     * grande, la causa y el puntaje seguian ahi y se dibujaban por encima del
+     * papel. Ahora los campos se reconocen por su tipo -Component-, que el
+     * compilador reescribe solo y no depende de la ofuscacion.
+     */
     private static void captureCause(Screen screen) {
         capturedCause = "";
+        java.util.List<java.lang.reflect.Field> fields = componentFields(screen);
+        String titleText = "";
         try {
-            for (Class<?> c = screen.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
-                for (java.lang.reflect.Field f : c.getDeclaredFields()) {
-                    if (f.getType() != net.minecraft.network.chat.Component.class) continue;
-                    String n = f.getName();
-                    if (!"causeOfDeath".equals(n) && !"f_95858_".equals(n)) continue;
-                    f.setAccessible(true);
-                    Object v = f.get(screen);
-                    if (v instanceof net.minecraft.network.chat.Component comp) {
-                        String text = comp.getString();
-                        if (text != null && !text.isBlank()) {
-                            capturedCause = text;
-                            f.set(screen, net.minecraft.network.chat.Component.empty());
-                        }
-                    }
-                    return;
-                }
-            }
+            titleText = screen.getTitle().getString();
         } catch (Throwable ignored) {
         }
+        String best = "";
+        for (java.lang.reflect.Field f : fields) {
+            try {
+                f.setAccessible(true);
+                Object v = f.get(screen);
+                if (!(v instanceof net.minecraft.network.chat.Component comp)) continue;
+                String t = comp.getString();
+                if (t == null || t.isBlank()) continue;
+                if (t.equals(titleText)) continue;
+                if (t.startsWith("Puntuaci\u00f3n") || t.startsWith("Score")) continue;
+                if (t.length() > best.length()) best = t;
+            } catch (Throwable ignored) {
+            }
+        }
+        capturedCause = best;
+        for (java.lang.reflect.Field f : fields) {
+            try {
+                f.setAccessible(true);
+                f.set(screen, net.minecraft.network.chat.Component.empty());
+            } catch (Throwable ignored) {
+            }
+        }
+    }
+
+    /** v0.366.0: los campos de texto de la pantalla, sin mirar sus nombres. */
+    private static java.util.List<java.lang.reflect.Field> componentFields(Screen screen) {
+        java.util.List<java.lang.reflect.Field> out = new java.util.ArrayList<>(4);
+        for (Class<?> c = screen.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
+            for (java.lang.reflect.Field f : c.getDeclaredFields()) {
+                if (java.lang.reflect.Modifier.isStatic(f.getModifiers())) continue;
+                if (f.getType() != net.minecraft.network.chat.Component.class) continue;
+                out.add(f);
+            }
+        }
+        return out;
     }
 
     private static void skinButtons(Screen screen) {
@@ -185,9 +215,8 @@ public final class DeathPaper {
         // v0.364.0: la franja que ocupa el juego con su rotulo (escala doble,
         // desde y=60), la causa (y=85) y el puntaje (y=100). El papel se
         // centra en el hueco libre, pero nunca deja esa franja al aire.
-        int zoneTop = 56;
         int zoneBottom = 112;
-        int top = 12;
+        int top = 8;
         int limit = buttonsTop == Integer.MAX_VALUE ? h - 40 : buttonsTop - PAPER_GAP;
         int room = limit - top;
         if (room < 56) {
@@ -196,11 +225,12 @@ public final class DeathPaper {
         int pw = Math.min(PAPER_W_MAX, Math.max(180, w - 48));
         int ph = Math.max(56, Math.min(PAPER_H, room));
         int px = (w - pw) / 2;
-        // Centrado en el hueco, y luego acotado para que el rotulo del juego
-        // quede siempre debajo del papel.
+        // v0.366.0: centrado en el hueco. Los rotulos del juego ya estan
+        // apagados, asi que no hay que empujar el papel hacia arriba; solo se
+        // deja el resguardo de que su pie no caiga por encima de la franja que
+        // ocupaban, por si algun dia no se pudieran apagar.
         int py = top + Math.max(0, (room - ph) / 2);
         if (py + ph < zoneBottom) py = zoneBottom - ph;
-        if (py > zoneTop) py = zoneTop;
         py = Math.max(top, Math.min(py, Math.max(top, h - 16 - ph)));
         // v0.364.0: el papel es translucido (243 de alfa) y el rotulo blanco del
         // juego se transparentaba debajo como un fantasma. Ademas la letra del

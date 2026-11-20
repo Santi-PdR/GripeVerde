@@ -1,3 +1,7 @@
+## v0.366.0 - Mundos con fichas de verdad y el parte de defunción sin letra del juego
+
+- Mundos: la ficha de cada mundo se busca por TIPO (LevelSummary) y no por nombre de clase, que en produccion va ofuscado y nunca coincidia: de ahi las filas en blanco con la letra del juego encima. La hoja de la lista es opaca (sin fantasma), los numeros de orden van sobre el papel y la hoja baja hasta la segunda fila de botones. Muerte: los rotulos del juego (titulo, causa y puntaje) se apagan por tipo de campo, sin depender de nombres; la causa se guarda antes de apagarla y el parte queda centrado.
+
 ## v0.365.0 - Mundos como Multijugador, parte de defunción centrado y packs sin solape
 
 - Mundos: hoja a lo ancho con 32 px de margen, hoja de registro pegada sobre el fondo de tierra de la lista y fichas de la casa encima (número de orden, nombre, modo y fecha); buscador dentro de la hoja; el pie de botones queda sobre el mismo papel; alto de renglón con respaldo si el juego no lo deja leer. Muerte: el lienzo se vuelca antes de pegar el parte, que ahora se centra en el hueco y siempre tapa rótulo, causa y puntaje. Packs: franja de cabecera opaca que cubre el título y el subtítulo del juego y los escribe en tinta. Lenguas: fuera la cuenta de lenguas y el «ahora: …» del margen.

@@ -399,7 +399,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             int textW = Math.max(40, rowLeft + rowWidth - 8 - textLeft);
             for (int i = 0; i < children.size(); i++) {
                 Object entry = children.get(i);
-                Object summary = summaryOf(entry);
+                net.minecraft.world.level.storage.LevelSummary summary = summaryOf(entry);
                 if (summary == null) continue;
                 int entryTop = listTop + 4 - (int) scroll + i * this.rowItemHeight;
                 int entryBottom = entryTop + this.rowItemHeight;
@@ -408,10 +408,11 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 int drawBottom = Math.min(entryBottom, listBottom);
                 if (drawBottom - drawTop < 12) continue;
 
-                String name = invokeString(summary, "getLevelName");
+                String name = levelTitle(summary);
                 if (name.isEmpty()) continue;
-                String mode = gameModeName(summary);
-                String when = lastPlayedStamp(summary);
+                boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+                String mode = levelGameMode(summary, english);
+                String when = levelStamp(summary);
 
                 int slipLeft = textLeft - 4;
                 int slipRight = slipLeft + textW + 8;
@@ -454,20 +455,71 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     }
 
     /** La LevelSummary de una fila de la lista, buscada por tipo. */
-    private static Object summaryOf(Object entry) {
-        try {
-            if (entry == null) return null;
-            for (Class<?> c = entry.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
-                for (java.lang.reflect.Field f : c.getDeclaredFields()) {
-                    if (!f.getType().getSimpleName().equals("LevelSummary")) continue;
+    /**
+     * v0.366.0: la ficha de un mundo, buscada por TIPO y no por nombre.
+     *
+     * Antes se comparaba `getSimpleName()` con "LevelSummary", y en el juego
+     * real las clases van ofuscadas: la comparacion fallaba siempre, la ficha
+     * no se dibujaba y quedaba a la vista la letra blanca del juego sobre el
+     * papel. Ahora se pregunta por la clase de verdad, que el compilador
+     * reescribe sola.
+     */
+    private static net.minecraft.world.level.storage.LevelSummary summaryOf(Object entry) {
+        if (entry == null) return null;
+        for (Class<?> c = entry.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
+            for (java.lang.reflect.Field f : c.getDeclaredFields()) {
+                if (!net.minecraft.world.level.storage.LevelSummary.class.isAssignableFrom(f.getType())) continue;
+                try {
                     f.setAccessible(true);
                     Object v = f.get(entry);
-                    if (v != null) return v;
+                    if (v instanceof net.minecraft.world.level.storage.LevelSummary s) return s;
+                } catch (Throwable ignored) {
                 }
             }
-        } catch (Throwable ignored) {
         }
         return null;
+    }
+
+    /** v0.366.0: nombre visible del mundo (o su carpeta si el juego no lo da). */
+    private static String levelTitle(net.minecraft.world.level.storage.LevelSummary s) {
+        try {
+            String n = s.getLevelName();
+            if (n != null && !n.isBlank()) return n;
+        } catch (Throwable ignored) {
+        }
+        try {
+            String n = s.getLevelId();
+            if (n != null && !n.isBlank()) return n;
+        } catch (Throwable ignored) {
+        }
+        return "";
+    }
+
+    /** v0.366.0: el modo de juego, dicho en la lengua de la casa. */
+    private static String levelGameMode(net.minecraft.world.level.storage.LevelSummary s, boolean en) {
+        String raw = "";
+        try {
+            Object gm = s.getGameMode();
+            if (gm != null) raw = String.valueOf(gm.getClass().getMethod("getName").invoke(gm));
+        } catch (Throwable ignored) {
+        }
+        if (raw == null) raw = "";
+        raw = raw.toLowerCase(java.util.Locale.ROOT);
+        if (raw.contains("creative")) return en ? "creative" : "creativo";
+        if (raw.contains("survival")) return en ? "survival" : "supervivencia";
+        if (raw.contains("adventure")) return en ? "adventure" : "aventura";
+        if (raw.contains("spectator")) return en ? "spectator" : "espectador";
+        return raw;
+    }
+
+    /** v0.366.0: cuando se jugo por ultima vez. */
+    private static String levelStamp(net.minecraft.world.level.storage.LevelSummary s) {
+        try {
+            long ms = s.getLastPlayed();
+            return ms <= 0L ? "" : stamp(ms, false);
+        } catch (Throwable ignored) {
+            return "";
+        }
     }
 
     private static String gameModeName(Object summary) {
@@ -517,39 +569,18 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         boolean en = Discoveries.isEnglish();
         try {
             if (this.vanillaList == null) return "";
-            Object entry = this.vanillaList.getSelected();
-            if (entry == null) return "";
-            Object summary = null;
-            for (Class<?> c = entry.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
-                for (java.lang.reflect.Field f : c.getDeclaredFields()) {
-                    if (!f.getType().getSimpleName().equals("LevelSummary")) continue;
-                    f.setAccessible(true);
-                    summary = f.get(entry);
-                    if (summary != null) break;
-                }
-                if (summary != null) break;
-            }
+            // v0.366.0: la ficha se busca por tipo, no por nombre de clase.
+            net.minecraft.world.level.storage.LevelSummary summary =
+                summaryOf(this.vanillaList.getSelected());
             if (summary == null) return "";
-            String name = invokeString(summary, "getLevelName");
-            String mode = "";
-            try {
-                Object gm = summary.getClass().getMethod("getGameMode").invoke(summary);
-                if (gm != null) {
-                    Object dn = gm.getClass().getMethod("getDisplayName").invoke(gm);
-                    mode = dn == null ? "" : dn.toString();
-                }
-            } catch (Throwable ignored) {
-            }
-            String when = "";
-            try {
-                Object lp = summary.getClass().getMethod("getLastPlayed").invoke(summary);
-                if (lp instanceof Number n) when = stamp(n.longValue(), en);
-            } catch (Throwable ignored) {
-            }
+            String name = levelTitle(summary);
+            String mode = levelGameMode(summary, en);
+            String when = levelStamp(summary);
             StringBuilder sb = new StringBuilder(name);
             if (!mode.isEmpty()) sb.append("  \u00b7  ").append(mode);
-            if (!when.isEmpty()) sb.append("  \u00b7  ").append(en ? "last " : "ultima vez ")
-                .append(when);
+            if (!when.isEmpty()) {
+                sb.append("  \u00b7  ").append(en ? "last " : "ultima vez ").append(when);
+            }
             return sb.toString().trim();
         } catch (Throwable ignored) {
             return "";
@@ -582,20 +613,11 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     private String selectedWorldName() {
         try {
             if (this.vanillaList == null) return "";
-            var entry = this.vanillaList.getSelected();
-            if (entry == null) return "";
-            // El renglon del juego guarda el nombre del mundo en su LevelSummary.
-            for (java.lang.reflect.Field f : entry.getClass().getDeclaredFields()) {
-                if (!f.getType().getSimpleName().equals("LevelSummary")) continue;
-                f.setAccessible(true);
-                Object summary = f.get(entry);
-                if (summary == null) continue;
-                Object name = summary.getClass().getMethod("getLevelName").invoke(summary);
-                return name == null ? "" : name.toString();
-            }
+            // v0.366.0: mismo cambio que en las fichas: por tipo, no por nombre.
+            return levelTitle(summaryOf(this.vanillaList.getSelected()));
         } catch (Throwable ignored) {
+            return "";
         }
-        return "";
     }
 
     /** v0.270.0: lo que hay escrito en el buscador del juego, recortado. */
@@ -697,6 +719,16 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         for (DiaryButton b : this.dressed) {
             if (b.visible) footerBottom = Math.max(footerBottom, b.getY() + b.getHeight());
         }
+        // v0.366.0: tambien cuentan las fichas del juego que no se vistieron; si
+        // no, la hoja terminaba encima de la segunda fila de botones.
+        try {
+            for (var child : this.children()) {
+                if (!(child instanceof net.minecraft.client.gui.components.AbstractWidget w)) continue;
+                if (!w.visible || w.getY() <= this.listTop) continue;
+                footerBottom = Math.max(footerBottom, w.getY() + w.getHeight());
+            }
+        } catch (Throwable ignored) {
+        }
         int sheetBottom = this.listBottom + 12;
         if (footerBottom > 0) sheetBottom = Math.max(sheetBottom, footerBottom + 10);
         int ph = Math.min(this.height - 6, sheetBottom) - py;
@@ -727,10 +759,6 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             int drawTop = Math.max(top, this.listTop);
             int drawBottom = Math.min(bottom, this.listBottom);
             if (drawBottom - drawTop < 12) continue;
-            String idx = (i + 1 < 10 ? "0" : "") + (i + 1);
-            if (this.listBottom - drawTop >= 14) {
-                g.drawString(this.font, idx, this.rowLeft - 15, drawTop + 3, 0x8A6B45, false);
-            }
             if (mouseX >= this.rowLeft - 14 && mouseX <= this.rowRight + 14
                     && mouseY >= drawTop && mouseY < drawBottom) {
                 g.fill(this.rowLeft - 10, drawTop, this.rowLeft - 8, drawBottom, 0xCC4A2810);
@@ -751,6 +779,10 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         if (x2 - x1 < 40) return;
         int h = this.listBottom - this.listTop;
         if (h < 16) return;
+        // v0.366.0: el papel se dibuja con algo de alfa, y la letra blanca del
+        // juego se transparentaba debajo como un fantasma. Se asienta primero un
+        // fondo opaco del color del papel y encima va la hoja.
+        g.fill(x1, this.listTop - 2, x2, this.listTop + h + 2, 0xFFE3D5AB);
         PaperTexture.drawTornSheet(g, x1, this.listTop - 2, x2 - x1, h + 4,
             PaperTexture.PaperKind.LEDGER);
         // Filetes entre fichas, a lo ancho de la hoja de la lista.
@@ -775,6 +807,11 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             g.fill(x1 + 3, drawBottom - 1, x2 - 3, drawBottom, 0x2E6B5533);
             if (mouseX >= x1 && mouseX <= x2 && mouseY >= drawTop && mouseY < drawBottom) {
                 g.fill(x1 + 3, drawTop, x2 - 3, drawBottom, 0x22F3E7C8);
+            }
+            // Numero de orden, ya sobre la hoja pegada.
+            if (drawBottom - drawTop >= 14) {
+                String idx = (i + 1 < 10 ? "0" : "") + (i + 1);
+                g.drawString(this.font, idx, x1 - 12, drawTop + 3, 0x8A6B45, false);
             }
         }
     }
