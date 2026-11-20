@@ -1,3 +1,7 @@
+## Version 0.371.0 - The ledger gets its ribbon and card, and pause uses the house paper
+
+The Worlds ledger gains what it was missing to read like a book: a faint veil on every other row, a red ribbon in the margin of the marked world, and the loose line for the chosen world becomes a card pasted under the register, with its caption, the name in ink and the mode and date underneath. Pause drops its near-white cream for the same warm paper as every other sheet, so the diary reads as one
+
 ## Version 0.370.0 - Worlds reads like a ledger, edge to edge
 
 The game's world list sits in a narrow centred column, so the Worlds register floated in the middle of a huge sheet. Now the whole sheet is covered and the entries run edge to edge: number in the margin, name on the left, date on the far edge, mode in sepia underneath, column captions and vertical rules. Wheel and click work across the whole register, double click still joins the world, and the scroll needle moves to the right edge of the sheet. On JourneyMap the minimap's ink hairline now sits outside the paper band, where it shows

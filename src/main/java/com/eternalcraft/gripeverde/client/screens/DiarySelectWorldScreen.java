@@ -520,16 +520,51 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
      */
     private void drawSelectedStrip(GuiGraphics g) {
         if (this.vanillaList == null || this.height < 200) return;
-        String detail = selectedWorldDetail();
-        if (detail.isEmpty()) return;
-        int y = this.listBottom + 6;
-        int limit = Math.max(60, this.width - 40);
-        String cut = DiaryChrome.fitText(this.font, detail, limit);
-        int w = DiaryChrome.widthCached(this.font, cut);
+        net.minecraft.world.level.storage.LevelSummary summary;
+        try {
+            summary = summaryOf(this.vanillaList.getSelected());
+        } catch (Throwable ignored) {
+            return;
+        }
+        if (summary == null) return;
+        boolean en = Discoveries.isEnglish();
+        String name = levelTitle(summary);
+        String mode = levelGameMode(summary, en);
+        String when = levelStamp(summary);
+        if (name.isEmpty()) return;
+
         int bottomY = Integer.MAX_VALUE;
         for (DiaryButton button : this.dressed) bottomY = Math.min(bottomY, button.getY());
-        if (y + 10 > bottomY - 14) return;
-        g.drawString(this.font, cut, (this.width - w) / 2, y, DiaryChrome.INK_SUBTITLE, false);
+        // v0.371.0: la ficha va en una tarjeta pegada bajo el registro, no en
+        // una linea suelta: titulo de la ficha, nombre en tinta y, debajo, el
+        // modo y la fecha.
+        int h = 34;
+        int y = this.listBottom + 8;
+        if (bottomY != Integer.MAX_VALUE && y + h > bottomY - 6) {
+            y = bottomY - 6 - h;
+        }
+        if (y < this.listBottom + 2) return;
+        int w = Math.min(330, Math.max(180, this.width - 120));
+        int x = (this.width - w) / 2;
+        com.eternalcraft.gripeverde.client.render.PaperTexture.drawTornSlip(g, x, y, w, h,
+            0xE6D2A6, 0x422810, 242);
+        String cap = en ? "CHOSEN WORLD" : "MUNDO ELEGIDO";
+        int cw = DiaryChrome.widthCached(this.font, cap);
+        g.drawString(this.font, cap, x + (w - cw) / 2, y + 3, 0x8A6B45, false);
+        String shown = DiaryChrome.fitText(this.font, name, w - 16);
+        int nw = DiaryChrome.widthCached(this.font, shown);
+        g.drawString(this.font, shown, x + (w - nw) / 2, y + 13, 0xFF1A1108, false);
+        StringBuilder sb = new StringBuilder();
+        if (!mode.isEmpty()) sb.append(mode);
+        if (!when.isEmpty()) {
+            if (sb.length() > 0) sb.append("  \u00b7  ");
+            sb.append(en ? "last " : "ultima vez ").append(when);
+        }
+        if (sb.length() > 0) {
+            String sub = DiaryChrome.fitText(this.font, sb.toString(), w - 16);
+            int sw = DiaryChrome.widthCached(this.font, sub);
+            g.drawString(this.font, sub, x + (w - sw) / 2, y + 23, 0x6B5533, false);
+        }
     }
 
     /** v0.302.0: "nombre  ·  creativo  ·  ultima vez 18 XI 2026". */
@@ -792,6 +827,13 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             count = this.vanillaList == null ? 0 : this.vanillaList.children().size();
         } catch (Throwable ignored) {
         }
+        // v0.371.0: el mundo marcado lleva su cinta roja en el margen, como la
+        // ficha elegida del Arsenal.
+        Object chosen = null;
+        try {
+            chosen = this.vanillaList == null ? null : this.vanillaList.getSelected();
+        } catch (Throwable ignored) {
+        }
         for (int i = 0; i < count && i < 64; i++) {
             int rowTop = this.listTop + 4 - (int) scroll + i * step;
             int rowBottom = rowTop + step - 4;
@@ -799,6 +841,19 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             int drawTop = Math.max(rowTop, this.listTop);
             int drawBottom = Math.min(rowBottom, this.listBottom);
             if (drawBottom - drawTop < 12) continue;
+            boolean marked = false;
+            try {
+                marked = chosen != null && chosen == this.vanillaList.children().get(i);
+            } catch (Throwable ignored) {
+            }
+            if (marked) {
+                g.fill(x1 + 3, drawTop, x1 + 6, drawBottom, 0xFF8C2A1E);
+            }
+            // v0.371.0: renglon si, renglon no, un velo tenue: el registro se
+            // sigue de un vistazo sin rayarlo.
+            if ((i & 1) == 1) {
+                g.fill(x1 + 6, drawTop, x2 - 6, drawBottom, 0x0E6B5533);
+            }
             g.fill(x1 + 6, drawBottom - 1, x2 - 6, drawBottom, 0x2E6B5533);
             if (mouseX >= x1 && mouseX <= x2 && mouseY >= drawTop && mouseY < drawBottom) {
                 g.fill(x1 + 6, drawTop, x2 - 6, drawBottom, 0x22F3E7C8);

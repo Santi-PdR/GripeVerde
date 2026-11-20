@@ -22,8 +22,10 @@ import java.util.Random;
  */
 public class DiaryPauseScreen extends PauseScreen {
 
-    private static final int PAPER_LIGHT     = 0xFFFAF0DA;
-    private static final int PAPER_HIGHLIGHT = 0xFFFDF6E3;
+    // v0.371.0: la pausa usaba un crema casi blanco, mas frio que el papel de
+    // las demas hojas. Ahora es el mismo papel de la casa.
+    private static final int PAPER_LIGHT     = 0xFFE8DCB4;
+    private static final int PAPER_HIGHLIGHT = 0xFFF1E6C6;
 
     private static final int PANEL_MAX_W = 320;
     private static final int PANEL_MAX_H = 360;

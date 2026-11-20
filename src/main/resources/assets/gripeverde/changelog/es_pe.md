@@ -1,3 +1,7 @@
+## Version 0.371.0 - El registro con cinta y ficha, y la pausa con el papel de la casa
+
+El registro de Mundos gana lo que le faltaba para leerse como un libro: renglon si y renglon no con un velo tenue, cinta roja en el margen del mundo marcado, y la linea suelta del mundo elegido pasa a ser una ficha pegada bajo el registro, con su titulo, el nombre en tinta y debajo el modo y la fecha. La pausa deja su crema casi blanco y toma el mismo papel calido de las demas hojas, para que el diario sea uno solo
+
 ## Version 0.370.0 - Mundos como un libro de registro, de canto a canto
 
 La lista del juego vive en una columna estrecha y centrada, asi que el registro de Mundos flotaba en mitad de un pliego enorme. Ahora el pliego se cubre entero y los asientos van de canto a canto: numero en el margen, nombre a la izquierda, fecha al otro canto, modo en sepia debajo, rotulos de columna y filetes verticales. La rueda y el clic funcionan en todo el ancho del registro, el doble clic sigue entrando al mundo, y la aguja de desplazamiento pasa al canto derecho de la hoja. En JourneyMap la raya de tinta del minimapa sale por fuera de la banda de papel, donde se ve
