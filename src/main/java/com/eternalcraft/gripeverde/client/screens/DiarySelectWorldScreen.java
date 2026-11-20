@@ -1024,7 +1024,6 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         // De a pocas por cuadro: veintidos iconos de golpe son un tiron.
         if (this.iconsThisFrame >= 3) return null;
         this.iconsThisFrame++;
-        WORLD_ICONS_TRIED.add(levelId);
         try {
             java.nio.file.Path path = this.minecraft.gameDirectory.toPath()
                 .resolve("saves").resolve(levelId).resolve("icon.png");
@@ -1032,9 +1031,9 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 WORLD_ICONS_ABSENT.add(levelId);
                 return null;
             }
-            net.minecraft.client.renderer.texture.NativeImage image;
+            com.mojang.blaze3d.platform.NativeImage image;
             try (java.io.InputStream in = java.nio.file.Files.newInputStream(path)) {
-                image = net.minecraft.client.renderer.texture.NativeImage.read(in);
+                image = com.mojang.blaze3d.platform.NativeImage.read(in);
             }
             net.minecraft.resources.ResourceLocation rl = new net.minecraft.resources.ResourceLocation(
                 "gripeverde", "world_icon/" + Integer.toHexString(levelId.hashCode())
