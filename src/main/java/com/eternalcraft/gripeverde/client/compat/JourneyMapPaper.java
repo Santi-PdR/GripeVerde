@@ -240,8 +240,10 @@ public final class JourneyMapPaper {
         int inn = 0;
         for (int i = 0; i < RING_STEPS; i += 2) {
             double a = (Math.PI * 2.0) * i / RING_STEPS;
-            int x = (int) Math.round(cx + Math.cos(a) * (r + 1));
-            int y = (int) Math.round(cy + Math.sin(a) * (r + 1));
+            // v0.370.0: la raya iba por dentro de la banda de papel y no se
+            // veia; ahora va por fuera, como el canto de una hoja pegada.
+            int x = (int) Math.round(cx + Math.cos(a) * (r + 6));
+            int y = (int) Math.round(cy + Math.sin(a) * (r + 6));
             ink[inn * 4] = x;
             ink[inn * 4 + 1] = y;
             ink[inn * 4 + 2] = x + 1;

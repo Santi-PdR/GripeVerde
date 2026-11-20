@@ -1,3 +1,7 @@
+## Version 0.370.0 - Mundos como un libro de registro, de canto a canto
+
+La lista del juego vive en una columna estrecha y centrada, asi que el registro de Mundos flotaba en mitad de un pliego enorme. Ahora el pliego se cubre entero y los asientos van de canto a canto: numero en el margen, nombre a la izquierda, fecha al otro canto, modo en sepia debajo, rotulos de columna y filetes verticales. La rueda y el clic funcionan en todo el ancho del registro, el doble clic sigue entrando al mundo, y la aguja de desplazamiento pasa al canto derecho de la hoja. En JourneyMap la raya de tinta del minimapa sale por fuera de la banda de papel, donde se ve
+
 ## Version 0.369.0 - Un solo pliego en Mundos, la ficha del Arsenal sin panel negro y el mapa con tema de la casa
 
 Mundos guardados deja de ser un parche sobre la lista: el pliego se continua bajo las fichas, se quitan los papelitos de cada renglon y los asientos van en tinta, como Multijugador. En el Arsenal la hoja de la ficha cubre el panel negro del juego, y los buscadores escriben en tinta. JourneyMap recibe el tema entero: marco del mapa en tinta, etiquetas y brujula sobre papel, pantalla completa en sepia oscuro y la etiqueta de estado en tinta; ademas se vuelve a aplicar el tema si el mod lo recarga al entrar al mundo

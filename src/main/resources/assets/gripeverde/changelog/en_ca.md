@@ -1,3 +1,7 @@
+## Version 0.370.0 - Worlds reads like a ledger, edge to edge
+
+The game's world list sits in a narrow centred column, so the Worlds register floated in the middle of a huge sheet. Now the whole sheet is covered and the entries run edge to edge: number in the margin, name on the left, date on the far edge, mode in sepia underneath, column captions and vertical rules. Wheel and click work across the whole register, double click still joins the world, and the scroll needle moves to the right edge of the sheet. On JourneyMap the minimap's ink hairline now sits outside the paper band, where it shows
+
 ## Version 0.369.0 - One continuous sheet in Worlds, no black panel in the Arsenal, and a house-themed map
 
 Saved worlds is no longer a patch over the game list: the sheet carries on under the cards, per-row slips are gone and the entries read in ink, like Multiplayer. In the Arsenal the detail sheet now covers the game's black panel, and every search box types in ink. JourneyMap gets the whole theme: map frame in ink, labels and compass on paper, dark sepia fullscreen and status label in ink; the theme is re-applied if the mod reloads it on world join

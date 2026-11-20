@@ -383,20 +383,24 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         try {
             var children = this.vanillaList.children();
             if (children == null || children.isEmpty()) return;
-            int rowLeft = this.vanillaList.getRowLeft();
-            int rowWidth = this.vanillaList.getRowWidth();
             int listTop = this.vanillaList.getTop();
             int listBottom = this.vanillaList.getBottom();
+            int x1 = this.ledgerLeft();
+            int x2 = this.ledgerRight();
             double scroll = 0.0;
             try { scroll = this.vanillaList.getScrollAmount(); } catch (Throwable ignored) {}
             boolean scissored = false;
             try {
-                g.enableScissor(rowLeft, listTop, rowLeft + rowWidth, listBottom);
+                g.enableScissor(Math.max(0, x1), listTop, Math.min(this.width, x2), listBottom);
                 scissored = true;
             } catch (Throwable ignored) {
             }
-            int textLeft = rowLeft + 35;
-            int textW = Math.max(40, rowLeft + rowWidth - 8 - textLeft);
+            int textLeft = x1 + 44;
+            int dateLeft = x2 - 96;
+            int nameRight = (dateLeft > textLeft + 60 ? dateLeft : x2) - 10;
+            int textW = Math.max(40, nameRight - textLeft);
+            int dateW = Math.max(30, x2 - 10 - dateLeft);
+            boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
             for (int i = 0; i < children.size(); i++) {
                 Object entry = children.get(i);
                 net.minecraft.world.level.storage.LevelSummary summary = summaryOf(entry);
@@ -410,34 +414,22 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
 
                 String name = levelTitle(summary);
                 if (name.isEmpty()) continue;
-                boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
                 String mode = levelGameMode(summary, english);
                 String when = levelStamp(summary);
 
-                // v0.369.0: se quito la ficha pegada de cada renglon. Iba con
-                // su propio canto y su sombra, y 22 mundos se veian como 22
-                // papelitos sueltos en vez de un registro. Ahora el nombre va
-                // en tinta sobre el pliego y debajo, en sepia, el modo y la
-                // fecha, igual que los asientos de Multijugador.
-                String shownName = DiaryChrome.fitText(this.font, name, textW);
-                g.drawString(this.font, shownName, textLeft, drawTop + 4, 0xFF1A1108, false);
-                int modeW = mode.isEmpty() ? 0 : DiaryChrome.widthCached(this.font, mode);
-                int whenW = when.isEmpty() ? 0 : DiaryChrome.widthCached(this.font, when);
-                boolean stacked = textLeft + modeW + 12 > textLeft + textW - whenW;
-                if (!mode.isEmpty()) {
-                    g.drawString(this.font, DiaryChrome.fitText(this.font, mode,
-                        Math.max(30, textW - whenW - 12)), textLeft, drawTop + 15, 0xFF6B5533, false);
+                // v0.370.0: el nombre a la izquierda y la fecha al otro canto
+                // del registro, separados por la raya vertical; el modo va en
+                // el segundo renglon, en sepia. Nada de fichas pegadas.
+                g.drawString(this.font, DiaryChrome.fitText(this.font, name, textW),
+                    textLeft, drawTop + 4, 0xFF1A1108, false);
+                if (!when.isEmpty() && drawBottom - drawTop >= 14) {
+                    String cutWhen = DiaryChrome.fitText(this.font, when, dateW);
+                    int ww = DiaryChrome.widthCached(this.font, cutWhen);
+                    g.drawString(this.font, cutWhen, x2 - 10 - ww, drawTop + 4, 0xFF8A6B45, false);
                 }
-                if (!when.isEmpty()) {
-                    if (stacked) {
-                        if (drawBottom - drawTop >= 30) {
-                            g.drawString(this.font, DiaryChrome.fitText(this.font, when, textW),
-                                textLeft, drawTop + 24, 0xFF8A6B45, false);
-                        }
-                    } else {
-                        g.drawString(this.font, when, textLeft + textW - whenW, drawTop + 15,
-                            0xFF8A6B45, false);
-                    }
+                if (!mode.isEmpty() && drawBottom - drawTop >= 24) {
+                    g.drawString(this.font, DiaryChrome.fitText(this.font, mode, textW),
+                        textLeft, drawTop + 15, 0xFF6B5533, false);
                 }
             }
             if (scissored) {
@@ -698,6 +690,8 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         int ph = Math.min(this.height - 2, sheetBottom) - py;
         this.sheetCoversFooter = footerBottom > 0 && ph > 0 && py + ph >= footerBottom + 6;
         if (pw < 60 || ph < 40) return;
+        this.sheetLeft = px;
+        this.sheetWidth = pw;
         PaperTexture.drawTornSheet(g, px, py, pw, ph, PaperTexture.PaperKind.OFFICIAL);
         if (pw >= 32 && ph >= 32) {
             PaperTexture.drawWornRim(g, px, py, pw, ph);
@@ -723,9 +717,11 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             int drawTop = Math.max(top, this.listTop);
             int drawBottom = Math.min(bottom, this.listBottom);
             if (drawBottom - drawTop < 12) continue;
-            if (mouseX >= this.rowLeft - 14 && mouseX <= this.rowRight + 14
+            // v0.370.0: el realce de la fila lo pinta el registro ancho; el tic
+            // de la columna estrecha caia en mitad del pliego.
+            if (mouseX >= this.ledgerLeft() && mouseX <= this.ledgerRight()
                     && mouseY >= drawTop && mouseY < drawBottom) {
-                g.fill(this.rowLeft - 10, drawTop, this.rowLeft - 8, drawBottom, 0xCC4A2810);
+                g.fill(this.ledgerLeft() + 2, drawTop, this.ledgerLeft() + 4, drawBottom, 0xCC4A2810);
             }
         }
     }
@@ -738,23 +734,50 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
      */
     private void paintListPaper(GuiGraphics g, int mouseX, int mouseY) {
         if (this.rowLeft < 0 || this.listBottom <= this.listTop) return;
-        int x1 = Math.max(0, this.rowLeft - 12);
-        int x2 = Math.min(this.width, this.rowRight + 12);
-        if (x2 - x1 < 40) return;
-        int top = this.listTop - 2;
-        int bottom = this.listTop + (this.listBottom - this.listTop) + 2;
-        if (bottom - top < 16) return;
-        // v0.369.0: antes se pegaba aqui una hoja de librador -mas clara y de
-        // otro tono-, y se veia como un parche flotando sobre la pagina. Ahora
-        // se cubre el fondo del juego con EL MISMO papel de la hoja, sin canto
-        // ni esquinas, de modo que la pantalla queda en un solo pliego, como
-        // Multijugador. El alfa va casi opaco para que no se trasluzca la letra
-        // blanca del juego.
+        int x1 = this.ledgerLeft();
+        int x2 = this.ledgerRight();
+        if (x2 - x1 < 60) return;
+        // v0.370.0: el juego deja su lista en una columna estrecha y centrada
+        // (270 px), asi que el registro quedaba flotando en medio de un pliego
+        // enorme. Ahora se cubre TODO el pliego con su propio papel y el
+        // registro se escribe de canto a canto, como la hoja de Multijugador.
+        int top = this.sheetTop() + 4;
+        int bottom = Math.min(this.listBottom + 4, this.height - 2);
+        if (bottom - top < 24) return;
         int paper = com.eternalcraft.gripeverde.client.render.PaperTexture.paperColor(
             com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.OFFICIAL);
         g.fill(x1, top, x2, bottom, com.eternalcraft.gripeverde.client.render.DiaryTheme
             .withAlpha(paper, 252));
-        // Filetes entre fichas, a lo ancho de la hoja de la lista.
+        int numRight = x1 + 34;
+        // v0.370.0: los rotulos de las columnas, en el hueco entre el buscador
+        // y la primera ficha: el pliego pasa a leerse como un libro de
+        // registro y no como una lista suelta.
+        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+        int capY = this.sheetTop() + 14;
+        String capNum = "N\u00b0";
+        String capName = en ? "WORLD" : "MUNDO";
+        String capDate = en ? "LAST PLAYED" : "ULTIMA VEZ";
+        int nw = DiaryChrome.widthCached(this.font, capNum);
+        g.drawString(this.font, capNum, numRight - 6 - nw, capY, 0x8A6B45, false);
+        int textCapLeft = x1 + 44;
+        g.drawString(this.font, DiaryChrome.fitText(this.font, capName,
+            Math.max(40, x2 - 120 - textCapLeft)), textCapLeft, capY, 0x8A6B45, false);
+        int dateLeftCap = x2 - 10;
+        int dw = DiaryChrome.widthCached(this.font, capDate);
+        if (dateLeftCap - dw > textCapLeft + 40) {
+            g.drawString(this.font, capDate, dateLeftCap - dw, capY, 0x8A6B45, false);
+        }
+        // Filetes verticales: el margen de los numeros y la columna de fechas,
+        // como las rayas de un libro de registro.
+        int dateLeft = x2 - 96;
+        int bandTop = this.listTop - 2;
+        int bandBottom = Math.min(this.listBottom + 2, this.height - 2);
+        if (bandBottom > bandTop + 8) {
+            g.fill(numRight, bandTop, numRight + 1, bandBottom, 0x226B5533);
+            if (dateLeft > numRight + 40) {
+                g.fill(dateLeft, bandTop, dateLeft + 1, bandBottom, 0x226B5533);
+            }
+        }
         int step = rowStep();
         double scroll = 0.0;
         try {
@@ -773,16 +796,30 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             int drawTop = Math.max(rowTop, this.listTop);
             int drawBottom = Math.min(rowBottom, this.listBottom);
             if (drawBottom - drawTop < 12) continue;
-            g.fill(x1 + 3, drawBottom - 1, x2 - 3, drawBottom, 0x2E6B5533);
+            g.fill(x1 + 6, drawBottom - 1, x2 - 6, drawBottom, 0x2E6B5533);
             if (mouseX >= x1 && mouseX <= x2 && mouseY >= drawTop && mouseY < drawBottom) {
-                g.fill(x1 + 3, drawTop, x2 - 3, drawBottom, 0x22F3E7C8);
+                g.fill(x1 + 6, drawTop, x2 - 6, drawBottom, 0x22F3E7C8);
             }
-            // Numero de orden, en el margen izquierdo del pliego.
             if (drawBottom - drawTop >= 14) {
                 String idx = (i + 1 < 10 ? "0" : "") + (i + 1);
-                g.drawString(this.font, idx, x1 - 12, drawTop + 3, 0x8A6B45, false);
+                int iw = DiaryChrome.widthCached(this.font, idx);
+                g.drawString(this.font, idx, numRight - 6 - iw, drawTop + 4, 0x8A6B45, false);
             }
         }
+    }
+
+    /** v0.370.0: canto izquierdo del registro: el pliego menos su margen. */
+    private int ledgerLeft() {
+        int x = this.sheetLeft >= 0 ? this.sheetLeft + 3 : Math.max(0, this.rowLeft - 12);
+        return Math.max(0, x);
+    }
+
+    /** v0.370.0: canto derecho del registro: el pliego menos su margen. */
+    private int ledgerRight() {
+        int x = this.sheetLeft >= 0 && this.sheetWidth > 0
+            ? this.sheetLeft + this.sheetWidth - 3
+            : Math.min(this.width, this.rowRight + 12);
+        return Math.min(this.width, x);
     }
 
     /** v0.269.0: si el archivo esta vacio, la pagina lo dice en vez de quedarse muda. */
@@ -797,7 +834,8 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         boolean en = Discoveries.isEnglish();
         String note = en ? "no records yet  ·  create one below"
             : "aun no hay fichas  ·  crea una abajo";
-        String cut = DiaryChrome.fitText(this.font, note, Math.max(80, this.rowRight - this.rowLeft));
+        String cut = DiaryChrome.fitText(this.font, note,
+            Math.max(80, this.ledgerRight() - this.ledgerLeft() - 40));
         int nw = DiaryChrome.widthCached(this.font, cut);
         g.drawString(this.font, cut, (this.rowLeft + this.rowRight - nw) / 2,
             (this.listTop + this.listBottom) / 2 - 4, DiaryChrome.INK_SUBTITLE, false);
@@ -810,12 +848,19 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     private void paintScrollMargin(GuiGraphics g) {
         if (this.vanillaList == null || this.rowRight < 0) return;
         if (this.listBottom <= this.listTop) return;
-        int marginL = this.rowRight + 6;
-        int marginR = Math.min(this.width, this.rowRight + 14);
-        if (marginR - marginL < 6) return;
-        g.fill(marginL, this.listTop, marginR, this.listBottom, 0xFFE3D5AB);
-        g.fill(marginL, this.listTop, marginL + 1, this.listBottom, 0x226B5533);
-        // Aguja: alto proporcional a lo que se ve, posicion segun el scroll.
+        // v0.370.0: la barra del juego caia en medio del registro ancho, como
+        // una raya gris partiendo la hoja. Se tapa con el papel del pliego y la
+        // aguja pasa al canto derecho del registro.
+        int paper = com.eternalcraft.gripeverde.client.render.PaperTexture.paperColor(
+            com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.OFFICIAL);
+        int coverL = this.rowRight + 2;
+        int coverR = Math.min(this.width, this.rowRight + 18);
+        if (coverR > coverL) {
+            g.fill(coverL, this.listTop, coverR, this.listBottom,
+                com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(paper, 252));
+        }
+        int tx = this.ledgerRight() - 9;
+        if (tx <= coverL + 4) return;
         int count = 0;
         try {
             count = this.vanillaList.children().size();
@@ -824,6 +869,11 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         int step = this.rowItemHeight > 0 ? this.rowItemHeight : 36;
         int totalH = Math.max(1, count * step);
         int viewH = this.listBottom - this.listTop;
+        if (totalH <= viewH) {
+            // Todo cabe: el carril va sin aguja.
+            g.fill(tx, this.listTop + 1, tx + 2, this.listBottom - 1, 0x336B5533);
+            return;
+        }
         double scroll = 0.0;
         try {
             scroll = this.vanillaList.getScrollAmount();
@@ -833,9 +883,22 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         int maxScroll = Math.max(1, totalH - viewH);
         int thumbY = this.listTop
             + (int) ((double) (viewH - thumbH) * Math.min(1.0, scroll / maxScroll));
-        int tx = (marginL + marginR) / 2 - 1;
         g.fill(tx, this.listTop + 1, tx + 2, this.listBottom - 1, 0x556B5533);
         g.fill(tx, thumbY, tx + 2, thumbY + thumbH, 0xCC3D2A18);
+    }
+
+    /** v0.370.0: el registro es ancho, pero la lista del juego es estrecha. */
+    private boolean inLedger(double mouseX, double mouseY) {
+        if (this.listTop < 0 || this.listBottom <= this.listTop) return false;
+        return mouseY >= this.listTop && mouseY <= this.listBottom
+            && mouseX >= this.ledgerLeft() && mouseX <= this.ledgerRight();
+    }
+
+    /** v0.370.0: lleva el puntero a la columna de la lista, sin moverlo de fila. */
+    private double ledgerX(double mouseX) {
+        double lo = this.rowLeft + 2;
+        double hi = Math.max(lo, this.rowRight - 2);
+        return Math.min(hi, Math.max(lo, mouseX));
     }
 
     private void drawFooterPaper(GuiGraphics g) {
@@ -907,6 +970,10 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
         boolean handled = super.mouseScrolled(mouseX, mouseY, delta);
+        // v0.370.0: la rueda funciona en todo el ancho del registro.
+        if (!handled && inLedger(mouseX, mouseY)) {
+            handled = super.mouseScrolled(ledgerX(mouseX), mouseY, delta);
+        }
         if (handled && this.listTop >= 0 && this.listBottom > this.listTop
                 && mouseY >= this.listTop && mouseY <= this.listBottom) {
             try {
@@ -938,6 +1005,13 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             && mouseX >= this.rowLeft - 6 && mouseX <= this.rowRight + 6
             && mouseY >= this.listTop && mouseY <= this.listBottom;
         boolean handled = super.mouseClicked(mouseX, mouseY, button);
+        // v0.370.0: el registro va de canto a canto, asi que el clic tambien:
+        // se lleva el puntero a la columna del juego para no perder el doble
+        // clic que entra al mundo.
+        if (!handled && inLedger(mouseX, mouseY)) {
+            handled = super.mouseClicked(ledgerX(mouseX), mouseY, button);
+            onRow = onRow || handled;
+        }
         if (onRow) {
             try {
                 com.eternalcraft.gripeverde.client.audio.UiSounds.tab();
