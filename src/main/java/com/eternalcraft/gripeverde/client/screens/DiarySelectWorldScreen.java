@@ -50,6 +50,9 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     private int listBottom = -1;
     // v0.354.0: la hoja grande alcanza a cubrir el pie de botones.
     private boolean sheetCoversFooter = false;
+    // v0.370.0: canto izquierdo y ancho del pliego, para el registro ancho.
+    private int sheetLeft = -1;
+    private int sheetWidth = -1;
 
     public DiarySelectWorldScreen(Screen parent) {
         super(parent);
