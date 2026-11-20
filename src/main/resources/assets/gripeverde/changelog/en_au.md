@@ -1,3 +1,7 @@
+## Version 0.373.0 - Every world gets its photo, a clean search field and clicks that no longer jump into the world
+
+Each ledger card now carries the world's PHOTO, taken from its icon.png and framed like a pasted leaf, and under the name comes the description: the game mode and, when the world's visible name differs from its folder, the folder name. The search field is no longer the game's black box: borderless, with ink text on its little sheet, the grey bar underneath is gone. And a click on the ledger no longer joins the world: it only marks it; joining is the 'Jugar en el mundo elegido' button and Enter. Before, because clicks were handed to the game list, a second click in a row -the normal way to pick- dropped you into the world unannounced
+
 ## Version 0.372.0 - The archive's materials, in ink
 
 On the resource-pack screen the names and descriptions are written by the game in white over its dark background, and on the parchment they were unreadable: it was the last screen with white text on paper. Now the text band of both lists is covered and rewritten in ink, with the version in sepia underneath, a red ribbon on the applied material and a rule between cards. Pack icons and the move arrows stay visible and working

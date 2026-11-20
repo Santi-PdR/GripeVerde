@@ -1,3 +1,7 @@
+## Version 0.373.0 - La foto de cada mundo, el buscador limpio y el clic que ya no entra solo
+
+Cada ficha del registro lleva ahora la FOTO del mundo, sacada de su icon.png y enmarcada como una hoja pegada, y debajo del nombre va la descripcion con el modo y, si el mundo se llama distinto que su carpeta, el nombre de la carpeta. El buscador deja de ser la caja negra del juego: sin borde y con la letra en tinta sobre su hojita, se acaba la barra gris que salia debajo. Y un clic en el registro ya NO entra al mundo: solo marca el mundo; para entrar estan el boton 'Jugar en el mundo elegido' y Enter. Antes, al pasarle el clic a la lista del juego, un segundo clic seguido -el gesto normal de elegir- entraba sin avisar
+
 ## Version 0.372.0 - Los materiales del archivador, en tinta
 
 En Pack de recursos los nombres y las descripciones los escribe el juego en blanco sobre su fondo oscuro, y sobre el pergamino no se leian: era la ultima pantalla con letra blanca encima del papel. Ahora se cubre la franja de texto de las dos listas y se reescriben en tinta, con la version en sepia debajo, cinta roja en el material puesto y filete entre fichas. El icono del pack y las flechas de mover siguen a la vista y funcionando

@@ -53,6 +53,11 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     // v0.370.0: canto izquierdo y ancho del pliego, para el registro ancho.
     private int sheetLeft = -1;
     private int sheetWidth = -1;
+    // v0.372.0: la foto de cada mundo, cargada una vez y guardada.
+    private static final java.util.Map<String, net.minecraft.resources.ResourceLocation> WORLD_ICONS
+        = new java.util.HashMap<>();
+    private static final java.util.Set<String> WORLD_ICONS_ABSENT = new java.util.HashSet<>();
+    private int iconsThisFrame;
 
     public DiarySelectWorldScreen(Screen parent) {
         super(parent);
@@ -145,6 +150,10 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         }
         for (EditBox box : this.searchBoxes) {
             try {
+                int bw = Math.min(260, Math.max(160, this.width - 260));
+                box.setWidth(bw);
+                box.setHeight(16);
+                box.setX((this.width - bw) / 2);
                 box.setY(sheetTop() + 8);
                 // v0.262.0: el buscador habla como el gabinete.
                 box.setSuggestion(Discoveries.isEnglish()
@@ -398,11 +407,19 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 scissored = true;
             } catch (Throwable ignored) {
             }
-            int textLeft = x1 + 44;
+            // v0.372.0: cada ficha lleva la foto del mundo a la izquierda, como
+            // las hojas pegadas del archivador.
+            int numRight = this.numColumnRight();
+            int photoX = numRight + 6;
+            int photoSize = 28;
             int dateLeft = x2 - 96;
+            int textLeft = photoX + photoSize + 8;
+            boolean withPhoto = dateLeft - textLeft >= 90;
+            if (!withPhoto) textLeft = numRight + 10;
             int nameRight = (dateLeft > textLeft + 60 ? dateLeft : x2) - 10;
             int textW = Math.max(40, nameRight - textLeft);
             int dateW = Math.max(30, x2 - 10 - dateLeft);
+            this.iconsThisFrame = 0;
             boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
             for (int i = 0; i < children.size(); i++) {
                 Object entry = children.get(i);
@@ -420,6 +437,27 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 String mode = levelGameMode(summary, english);
                 String when = levelStamp(summary);
 
+                if (withPhoto && drawBottom - drawTop >= 26) {
+                    int photoTop = drawTop + (drawBottom - drawTop - photoSize) / 2;
+                    net.minecraft.resources.ResourceLocation icon = worldIcon(levelFolder(summary));
+                    if (icon != null) {
+                        try {
+                            g.blit(icon, photoX, photoTop, 0, 0, photoSize, photoSize,
+                                64, 64);
+                        } catch (Throwable ignored) {
+                        }
+                    } else {
+                        g.fill(photoX, photoTop, photoX + photoSize, photoTop + photoSize,
+                            0x2A6B5533);
+                    }
+                    // Marco de la foto pegada.
+                    g.fill(photoX - 1, photoTop - 1, photoX + photoSize + 1, photoTop, 0x556B5533);
+                    g.fill(photoX - 1, photoTop + photoSize, photoX + photoSize + 1,
+                        photoTop + photoSize + 1, 0x556B5533);
+                    g.fill(photoX - 1, photoTop, photoX, photoTop + photoSize, 0x556B5533);
+                    g.fill(photoX + photoSize, photoTop, photoX + photoSize + 1,
+                        photoTop + photoSize, 0x556B5533);
+                }
                 // v0.370.0: el nombre a la izquierda y la fecha al otro canto
                 // del registro, separados por la raya vertical; el modo va en
                 // el segundo renglon, en sepia. Nada de fichas pegadas.
@@ -430,8 +468,15 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                     int ww = DiaryChrome.widthCached(this.font, cutWhen);
                     g.drawString(this.font, cutWhen, x2 - 10 - ww, drawTop + 4, 0xFF8A6B45, false);
                 }
-                if (!mode.isEmpty() && drawBottom - drawTop >= 24) {
-                    g.drawString(this.font, DiaryChrome.fitText(this.font, mode, textW),
+                // v0.373.0: la descripcion del renglon: el modo y, si el
+                // nombre visible no es el de la carpeta, la carpeta del mundo.
+                String folder = levelFolder(summary);
+                String sub = mode;
+                if (!folder.isEmpty() && !folder.equals(name)) {
+                    sub = sub.isEmpty() ? folder : sub + "  \u00b7  " + folder;
+                }
+                if (!sub.isEmpty() && drawBottom - drawTop >= 24) {
+                    g.drawString(this.font, DiaryChrome.fitText(this.font, sub, textW),
                         textLeft, drawTop + 15, 0xFF6B5533, false);
                 }
             }
@@ -484,6 +529,16 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         } catch (Throwable ignored) {
         }
         return "";
+    }
+
+    /** v0.372.0: la carpeta del mundo, que es donde vive su icon.png. */
+    private static String levelFolder(net.minecraft.world.level.storage.LevelSummary s) {
+        try {
+            String id = s.getLevelId();
+            return id == null ? "" : id;
+        } catch (Throwable ignored) {
+            return "";
+        }
     }
 
     /** v0.366.0: el modo de juego, dicho en la lengua de la casa. */
@@ -674,8 +729,8 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         int y = bottom - 12;
         if (y <= this.listBottom + 8) return;
         boolean en = Discoveries.isEnglish();
-        String hint = en ? "Enter opens  ·  Del deletes  ·  Esc back"
-            : "Enter entra  ·  Supr borra  ·  Esc vuelve";
+        String hint = en ? "Enter or the button opens  ·  Del deletes  ·  Esc back"
+            : "Enter o el boton entran  ·  Supr borra  ·  Esc vuelve";
         String cut = DiaryChrome.fitText(this.font, hint, Math.max(60, this.width - 60));
         int hw = DiaryChrome.widthCached(this.font, cut);
         g.drawString(this.font, cut, (this.width - hw) / 2, y, DiaryChrome.INK_FLAVOR, false);
@@ -797,7 +852,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         String capDate = en ? "LAST PLAYED" : "ULTIMA VEZ";
         int nw = DiaryChrome.widthCached(this.font, capNum);
         g.drawString(this.font, capNum, numRight - 6 - nw, capY, 0x8A6B45, false);
-        int textCapLeft = x1 + 44;
+        int textCapLeft = this.numColumnRight() + 42;
         g.drawString(this.font, DiaryChrome.fitText(this.font, capName,
             Math.max(40, x2 - 120 - textCapLeft)), textCapLeft, capY, 0x8A6B45, false);
         int dateLeftCap = x2 - 10;
@@ -952,6 +1007,74 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             && mouseX >= this.ledgerLeft() && mouseX <= this.ledgerRight();
     }
 
+    /**
+     * v0.372.0: la foto del mundo, sacada del icon.png de su carpeta.
+     *
+     * El juego la dibuja en su columna estrecha, que aqui queda tapada por el
+     * pliego; sin ella las fichas eran solo texto. Se carga una vez por mundo y
+     * se guarda como textura dinamica. Con "movimiento reducido" o si el
+     * archivo falta, la ficha se queda con su marco vacio.
+     */
+    private net.minecraft.resources.ResourceLocation worldIcon(String levelId) {
+        if (levelId == null || levelId.isEmpty()) return null;
+        if (WORLD_ICONS_ABSENT.contains(levelId)) return null;
+        net.minecraft.resources.ResourceLocation cached = WORLD_ICONS.get(levelId);
+        if (cached != null) return cached;
+        if (this.minecraft == null) return null;
+        // De a pocas por cuadro: veintidos iconos de golpe son un tiron.
+        if (this.iconsThisFrame >= 3) return null;
+        this.iconsThisFrame++;
+        WORLD_ICONS_TRIED.add(levelId);
+        try {
+            java.nio.file.Path path = this.minecraft.gameDirectory.toPath()
+                .resolve("saves").resolve(levelId).resolve("icon.png");
+            if (!java.nio.file.Files.isRegularFile(path)) {
+                WORLD_ICONS_ABSENT.add(levelId);
+                return null;
+            }
+            net.minecraft.client.renderer.texture.NativeImage image;
+            try (java.io.InputStream in = java.nio.file.Files.newInputStream(path)) {
+                image = net.minecraft.client.renderer.texture.NativeImage.read(in);
+            }
+            net.minecraft.resources.ResourceLocation rl = new net.minecraft.resources.ResourceLocation(
+                "gripeverde", "world_icon/" + Integer.toHexString(levelId.hashCode())
+                    + "_" + WORLD_ICONS.size());
+            this.minecraft.getTextureManager()
+                .register(rl, new net.minecraft.client.renderer.texture.DynamicTexture(image));
+            WORLD_ICONS.put(levelId, rl);
+            return rl;
+        } catch (Throwable ignored) {
+            WORLD_ICONS_ABSENT.add(levelId);
+            return null;
+        }
+    }
+
+    /** v0.372.0: canto derecho del margen donde van los numeros. */
+    private int numColumnRight() {
+        return this.ledgerLeft() + 34;
+    }
+
+    /** v0.372.0: la entrada del registro que cae bajo una altura dada. */
+    private Object entryAt(double mouseY) {
+        if (this.vanillaList == null || this.listTop < 0 || this.listBottom <= this.listTop) {
+            return null;
+        }
+        int step = rowStep();
+        double scroll = 0.0;
+        try {
+            scroll = this.vanillaList.getScrollAmount();
+        } catch (Throwable ignored) {
+        }
+        int idx = (int) Math.floor((mouseY - (this.listTop + 4) + scroll) / Math.max(1, step));
+        if (idx < 0) return null;
+        try {
+            var kids = this.vanillaList.children();
+            return idx < kids.size() ? kids.get(idx) : null;
+        } catch (Throwable ignored) {
+            return null;
+        }
+    }
+
     /** v0.370.0: lleva el puntero a la columna de la lista, sin moverlo de fila. */
     private double ledgerX(double mouseX) {
         double lo = this.rowLeft + 2;
@@ -1027,11 +1150,10 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     /** v0.270.0: la rueda suena al pasar por la lista. */
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-        boolean handled = super.mouseScrolled(mouseX, mouseY, delta);
-        // v0.370.0: la rueda funciona en todo el ancho del registro.
-        if (!handled && inLedger(mouseX, mouseY)) {
-            handled = super.mouseScrolled(ledgerX(mouseX), mouseY, delta);
-        }
+        // v0.370.0/0.372.0: la rueda funciona en todo el ancho del registro,
+        // en una sola llamada para no contar el gesto dos veces.
+        boolean handled = super.mouseScrolled(
+            inLedger(mouseX, mouseY) ? ledgerX(mouseX) : mouseX, mouseY, delta);
         if (handled && this.listTop >= 0 && this.listBottom > this.listTop
                 && mouseY >= this.listTop && mouseY <= this.listBottom) {
             try {
@@ -1058,18 +1180,32 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     /** v0.270.0: elegir un mundo con el raton tiene su golpe. */
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        boolean inLedger = inLedger(mouseX, mouseY);
         boolean onRow = button == 0 && this.listTop >= 0 && this.listBottom > this.listTop
             && this.rowLeft >= 0
             && mouseX >= this.rowLeft - 6 && mouseX <= this.rowRight + 6
             && mouseY >= this.listTop && mouseY <= this.listBottom;
-        boolean handled = super.mouseClicked(mouseX, mouseY, button);
-        // v0.370.0: el registro va de canto a canto, asi que el clic tambien:
-        // se lleva el puntero a la columna del juego para no perder el doble
-        // clic que entra al mundo.
-        if (!handled && inLedger(mouseX, mouseY)) {
-            handled = super.mouseClicked(ledgerX(mouseX), mouseY, button);
-            onRow = onRow || handled;
+        // v0.372.0: un clic en el registro SOLO marca el mundo. Antes se le
+        // pasaba el clic a la lista del juego y un segundo clic seguido -el
+        // gesto normal de "elegir"- entraba al mundo sin avisar. Para entrar
+        // esta el boton (o Enter).
+        if (inLedger && button == 0) {
+            Object clicked = entryAt(mouseY);
+            Object chosen = null;
+            try {
+                chosen = this.vanillaList == null ? null : this.vanillaList.getSelected();
+            } catch (Throwable ignored) {
+            }
+            if (clicked != null && clicked == chosen) {
+                try {
+                    com.eternalcraft.gripeverde.client.audio.UiSounds.tab();
+                } catch (Throwable ignored) {
+                }
+                return true;
+            }
         }
+        boolean handled = super.mouseClicked(inLedger ? ledgerX(mouseX) : mouseX, mouseY, button);
+        onRow = onRow || (inLedger && handled);
         if (onRow) {
             try {
                 com.eternalcraft.gripeverde.client.audio.UiSounds.tab();

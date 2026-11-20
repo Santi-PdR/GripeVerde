@@ -552,6 +552,13 @@ public final class DiaryChrome {
             box.setTextColor(0xFF1A1108);
         } catch (Throwable ignored) {
         }
+        // v0.372.0: la caja del juego pinta su propio marco negro y su fondo
+        // negro encima del papel, y debajo del texto quedaba una barra gris.
+        // Sin borde, la caja es solo texto sobre la hojita.
+        try {
+            box.setBordered(false);
+        } catch (Throwable ignored) {
+        }
         if (box.isFocused()) {
             g.fill(x - 3, y + h + 1, x + w + 3, y + h + 2, 0x662A1C12);
         }
