@@ -1,3 +1,7 @@
+## Version 0.372.0 - Los materiales del archivador, en tinta
+
+En Pack de recursos los nombres y las descripciones los escribe el juego en blanco sobre su fondo oscuro, y sobre el pergamino no se leian: era la ultima pantalla con letra blanca encima del papel. Ahora se cubre la franja de texto de las dos listas y se reescriben en tinta, con la version en sepia debajo, cinta roja en el material puesto y filete entre fichas. El icono del pack y las flechas de mover siguen a la vista y funcionando
+
 ## Version 0.371.0 - El registro con cinta y ficha, y la pausa con el papel de la casa
 
 El registro de Mundos gana lo que le faltaba para leerse como un libro: renglon si y renglon no con un velo tenue, cinta roja en el margen del mundo marcado, y la linea suelta del mundo elegido pasa a ser una ficha pegada bajo el registro, con su titulo, el nombre en tinta y debajo el modo y la fecha. La pausa deja su crema casi blanco y toma el mismo papel calido de las demas hojas, para que el diario sea uno solo

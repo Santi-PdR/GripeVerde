@@ -1,3 +1,7 @@
+## Version 0.372.0 - The archive's materials, in ink
+
+On the resource-pack screen the names and descriptions are written by the game in white over its dark background, and on the parchment they were unreadable: it was the last screen with white text on paper. Now the text band of both lists is covered and rewritten in ink, with the version in sepia underneath, a red ribbon on the applied material and a rule between cards. Pack icons and the move arrows stay visible and working
+
 ## Version 0.371.0 - The ledger gets its ribbon and card, and pause uses the house paper
 
 The Worlds ledger gains what it was missing to read like a book: a faint veil on every other row, a red ribbon in the margin of the marked world, and the loose line for the chosen world becomes a card pasted under the register, with its caption, the name in ink and the mode and date underneath. Pause drops its near-white cream for the same warm paper as every other sheet, so the diary reads as one

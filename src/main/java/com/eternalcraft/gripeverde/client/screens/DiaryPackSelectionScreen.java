@@ -105,6 +105,120 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
     }
 
     /**
+     * v0.372.0: los nombres y descripciones de los packs en tinta.
+     *
+     * El juego los pinta en blanco sobre su fondo oscuro; puestos sobre el
+     * pergamino quedaban invisibles. Se cubre la franja de texto de la lista
+     * -dejando a la vista el icono del pack a la izquierda y las flechas de
+     * mover a la derecha- y se reescribe el titulo en tinta con la version en
+     * sepia debajo.
+     */
+    private void inkPackRows(GuiGraphics g, AbstractSelectionList<?> list) {
+        if (g == null || list == null) return;
+        int top = list.getTop();
+        int bottom = list.getBottom();
+        int left = list.getRowLeft();
+        int right = left + list.getRowWidth();
+        if (bottom - top < 24 || right - left < 90) return;
+        int x1 = left + 30;             // el icono del pack se queda a la vista
+        int x2 = right - 26;            // y las flechas de mover, tambien
+        if (x2 - x1 < 80) {
+            x1 = left + 30;
+            x2 = right - 6;
+        }
+        if (x2 - x1 < 60) return;
+        int paper = PaperTexture.paperColor(PaperTexture.PaperKind.ARCHIVE);
+        g.fill(x1, top, x2, bottom,
+            com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(paper, 250));
+        boolean scissored = false;
+        try {
+            g.enableScissor(x1, top, x2, bottom);
+            scissored = true;
+        } catch (Throwable ignored) {
+        }
+        int step = packRowStep(list);
+        double scroll = 0.0;
+        try {
+            scroll = list.getScrollAmount();
+        } catch (Throwable ignored) {
+        }
+        int count = 0;
+        java.util.List<Object> children = java.util.List.of();
+        try {
+            @SuppressWarnings("unchecked")
+            java.util.List<Object> kids = (java.util.List<Object>) (java.util.List<?>) list.children();
+            children = kids;
+            count = children.size();
+        } catch (Throwable ignored) {
+        }
+        int textW = x2 - x1 - 10;
+        try {
+            for (int i = 0; i < count && i < 64; i++) {
+                Object child = children.get(i);
+                String title = "";
+                String sub = "";
+                boolean chosen = false;
+                if (child instanceof net.minecraft.client.gui.screens.packs.PackSelectionModel.Entry e) {
+                    try {
+                        Component t = e.getTitle();
+                        title = t == null ? "" : t.getString();
+                    } catch (Throwable ignored) {
+                    }
+                    try {
+                        Component d = e.getDescription();
+                        sub = d == null ? "" : d.getString();
+                    } catch (Throwable ignored) {
+                    }
+                    try {
+                        chosen = e.isSelected();
+                    } catch (Throwable ignored) {
+                    }
+                }
+                if (title.isEmpty()) continue;
+                int rowTop = top + 4 - (int) scroll + i * step;
+                int rowBottom = rowTop + step - 4;
+                if (rowBottom < top || rowTop > bottom) continue;
+                int drawTop = Math.max(rowTop, top);
+                int drawBottom = Math.min(rowBottom, bottom);
+                if (drawBottom - drawTop < 12) continue;
+                if (chosen) {
+                    g.fill(x1, drawTop, x1 + 3, drawBottom, 0xFF8C2A1E);
+                }
+                g.drawString(this.font, DiaryChrome.fitCached(this.font, title, textW),
+                    x1 + 6, drawTop + 4, 0xFF1A1108, false);
+                if (!sub.isEmpty() && drawBottom - drawTop >= 24) {
+                    g.drawString(this.font, DiaryChrome.fitCached(this.font, sub, textW),
+                        x1 + 6, drawTop + 15, 0xFF6B5533, false);
+                }
+                g.fill(x1 + 3, drawBottom - 1, x2 - 3, drawBottom, 0x2E6B5533);
+            }
+        } finally {
+            if (scissored) {
+                try {
+                    g.disableScissor();
+                } catch (Throwable ignored) {
+                }
+            }
+        }
+    }
+
+    /** v0.372.0: alto de renglon de una lista del juego, con respaldo. */
+    private static int packRowStep(Object list) {
+        for (Class<?> c = list.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
+            for (String name : new String[] {"itemHeight", "f_93387_"}) {
+                try {
+                    java.lang.reflect.Field f = c.getDeclaredField(name);
+                    f.setAccessible(true);
+                    int v = f.getInt(list);
+                    if (v >= 16 && v <= 64) return v;
+                } catch (Throwable ignored) {
+                }
+            }
+        }
+        return 36;
+    }
+
+    /**
      * v0.311.0: el juego dibuja el titulo del archivador en blanco, y sobre el
      * papel claro no se lee. Se cubre esa franja con su recorte y se reescribe
      * en tinta, como en el resto de las hojas.
@@ -124,6 +238,11 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
                 DiaryChrome.washVanillaRows(g, this.selectedList);
                 DiaryChrome.washVanillaListBox(g, this.selectedList);
             }
+            // v0.372.0: los nombres de los packs los escribe el juego en blanco
+            // fijo y sobre el papel no se leian. Se cubre la franja de texto de
+            // cada lista y se reescribe en tinta y sepia, como en Mundos.
+            inkPackRows(g, this.availableList);
+            inkPackRows(g, this.selectedList);
         } catch (Throwable ignored) {
         }
         try {
