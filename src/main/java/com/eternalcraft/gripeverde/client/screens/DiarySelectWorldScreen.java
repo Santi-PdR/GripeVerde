@@ -262,7 +262,6 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         drawHeader(g);
         drawRegisterPage(g, mouseX, mouseY);
         drawFooterPaper(g);
-        drawEmptyNote(g);
         // v0.302.0: la ficha del mundo elegido, con lo que el juego ya sabia y
         // no se veia: el modo y cuando se jugo por ultima vez.
         drawSelectedStrip(g);
@@ -778,6 +777,24 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 g.fill(x1 + 3, drawTop, x2 - 3, drawBottom, 0x22F3E7C8);
             }
         }
+    }
+
+    /** v0.269.0: si el archivo esta vacio, la pagina lo dice en vez de quedarse muda. */
+    private void drawEmptyNote(GuiGraphics g) {
+        if (this.vanillaList == null || this.rowLeft < 0) return;
+        try {
+            if (!this.vanillaList.children().isEmpty()) return;
+        } catch (Throwable ignored) {
+            return;
+        }
+        if (this.listBottom - this.listTop < 28) return;
+        boolean en = Discoveries.isEnglish();
+        String note = en ? "no records yet  ·  create one below"
+            : "aun no hay fichas  ·  crea una abajo";
+        String cut = DiaryChrome.fitText(this.font, note, Math.max(80, this.rowRight - this.rowLeft));
+        int nw = DiaryChrome.widthCached(this.font, cut);
+        g.drawString(this.font, cut, (this.rowLeft + this.rowRight - nw) / 2,
+            (this.listTop + this.listBottom) / 2 - 4, DiaryChrome.INK_SUBTITLE, false);
     }
 
     /**
