@@ -166,10 +166,12 @@ public final class WatchHud {
 
     /** v0.351.0: ancho de la tira, medido con lo que lleva escrito. */
     private static int slipWidth(Font font, int screenW) {
+        // v0.361.0: medir con la cache de anchos; Font.width recorre glifos y
+        // esto se pedia en cada cuadro del HUD.
         int widest = 0;
-        widest = Math.max(widest, font.width(cachedLine1));
-        widest = Math.max(widest, font.width(cachedLine2));
-        widest = Math.max(widest, font.width(cachedLine3));
+        widest = Math.max(widest, DiaryChrome.widthCached(font, cachedLine1));
+        widest = Math.max(widest, DiaryChrome.widthCached(font, cachedLine2));
+        widest = Math.max(widest, DiaryChrome.widthCached(font, cachedLine3));
         int want = Math.min(SLIP_W_MAX, Math.max(SLIP_W, widest + 24));
         return Math.min(want, Math.max(60, screenW - MARGIN * 2));
     }
@@ -261,7 +263,9 @@ public final class WatchHud {
         long mins = Math.max(0L, (now - worldSinceMs) / 60_000L);
         cachedLine3 = mins + (en ? " min in" : " min aqui");
         cachedBiome = "";
-        if (coords() && mc.player != null) {
+        // v0.361.0: con minimapa en pantalla el parte de coordenadas no se
+        // dibuja, asi que tampoco se calcula (ni el bioma, que cuesta).
+        if (coords() && mc.player != null && !minimapPresent()) {
             try {
                 int bx = mc.player.getBlockX();
                 int by = mc.player.getBlockY();

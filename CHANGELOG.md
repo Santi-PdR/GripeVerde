@@ -1,3 +1,7 @@
+## v0.361.0 - Mundos guardados con fichas sobre el papel, como Multijugador
+
+- Mundos: fuera la banda oscura de cada mundo; ahora filete fino entre fichas y velo tibio bajo la mano, igual que Multijugador. HUD: el ancho de la tira se mide con cache y, con minimapa, ni se calculan las coordenadas ni el bioma.
+
 ## v0.360.0 - Reloj y fechas con un solo calendario, y la hoja de mundos ya no se monta sobre la cabecera
 
 - Optimizacion: el reloj de la portada ya no arma cuatro Calendar y tres arrays por cuadro; fecha del parte, del registro de mundos y del pie de Multijugador cacheadas por minuto. Mundos: la hoja empieza donde termina la cabecera, sin canto desgarrado cruzado. Mandos bajos: sin muescas cuando no cabe la etiqueta.

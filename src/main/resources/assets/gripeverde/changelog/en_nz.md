@@ -1,3 +1,7 @@
+## Version 0.361.0 - Mundos guardados con fichas sobre el papel, como Multijugador
+
+Saved-worlds rows drop the dark bar and sit on the paper like the multiplayer sheet
+
 ## Version 0.360.0 - Reloj y fechas con un solo calendario, y la hoja de mundos ya no se monta sobre la cabecera
 
 One shared calendar for the watch and dates, and the world sheet stops stacking under the header

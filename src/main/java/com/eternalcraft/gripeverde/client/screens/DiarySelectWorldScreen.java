@@ -712,15 +712,14 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             int drawTop = Math.max(top, this.listTop);
             int drawBottom = Math.min(bottom, this.listBottom);
             if (drawBottom <= drawTop) continue;
-            // v0.301.0: la banda era casi del color del papel y las lineas
-            // grises de cada mundo (version, fecha, modo) desaparecian.
-            g.fill(this.rowLeft - 6, drawTop, this.rowRight + 6, drawBottom, 0xC82A1C12);
-            g.fill(this.rowLeft - 6, drawBottom - 1, this.rowRight + 6, drawBottom, 0x55E8DCB4);
-            // v0.251.0: el mundo bajo la mano se aclara, igual que en la lista
-            // de posadas, para saber cual se lleva.
+            // v0.361.0: fuera la banda oscura. Cada mundo era una barra negra
+            // sobre el papel y no se parecia a Multijugador, donde las fichas
+            // van directo sobre la hoja. Ahora: filete fino entre fichas y un
+            // velo tibio bajo la mano.
+            g.fill(this.rowLeft - 6, drawBottom - 1, this.rowRight + 6, drawBottom, 0x2E6B5533);
             if (mouseX >= this.rowLeft - 6 && mouseX <= this.rowRight + 6
                     && mouseY >= drawTop && mouseY < drawBottom) {
-                g.fill(this.rowLeft - 6, drawTop, this.rowRight + 6, drawBottom, 0x2EF3E7C8);
+                g.fill(this.rowLeft - 6, drawTop, this.rowRight + 6, drawBottom, 0x22F3E7C8);
             }
         }
     }
