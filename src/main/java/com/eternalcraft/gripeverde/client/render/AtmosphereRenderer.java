@@ -357,6 +357,20 @@ public class AtmosphereRenderer {
         }
     }
 
+    /**
+     * v0.364.0: cielo abreviado para las hojas del diario. Detras del velo del
+     * gabinete las estrellas, el lucero y los pajaros no se leen, pero costaban
+     * 60 rellenos y 60 senos por cuadro en cada una de las veintitantas
+     * pantallas de la casa. Aqui solo queda la rampa del cielo, la luna y las
+     * nubes: el fondo se ve igual y se dibuja mucho menos.
+     */
+    public static void renderSkyLight(GuiGraphics g, int w, int h) {
+        if (w <= 0 || h <= 0) return;
+        renderSkyGradient(g, w, h);
+        renderMoon(g, w, h);
+        renderClouds(g, w, h);
+    }
+
     public static void renderSky(GuiGraphics g, int w, int h) {
         // Guard: cuando la ventana pierde foco o se minimiza (Alt+Tab, F11),
         // w o h pueden ser 0. Random.nextInt(0) lanza IllegalArgumentException

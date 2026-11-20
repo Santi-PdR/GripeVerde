@@ -52,16 +52,21 @@ public class DiaryCreditsScreen extends Screen {
         int backW = 122;
         int houseW = 122;
         int backH = 22;
-        int backY = this.panelY + this.panelH - 32;
+        // v0.364.0: las dos fichas se apoyaban en el canto roto del pie y la
+        // pareja quedaba corrida a la izquierda. Ahora suben y se centran sobre
+        // la hoja, con su filete encima.
+        int backY = this.panelY + this.panelH - 46;
+        int pairW = houseW + 8 + backW;
+        int pairX = this.panelX + (this.panelW - pairW) / 2;
         boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
         addRenderableWidget(new DiaryButton(
-            (this.width - backW) / 2 - houseW - 8, backY, houseW, backH,
+            pairX, backY, houseW, backH,
             Component.literal(en ? "The house" : "La casa"),
             DiaryButton.Icon.GEAR, DiaryButton.Variant.SECONDARY, DiaryButton.SoundProfile.OPTION_OPEN,
             () -> this.minecraft.setScreen(new DiaryHouseScreen(this))
         ));
         addRenderableWidget(new DiaryButton(
-            (this.width - backW) / 2 + 8, backY, backW, backH,
+            pairX + houseW + 8, backY, backW, backH,
             Component.translatable("gripeverde.options.button.done"),
             DiaryButton.Icon.DOOR, DiaryButton.Variant.PRIMARY, DiaryButton.SoundProfile.BACK,
             this::onClose
@@ -150,7 +155,9 @@ public class DiaryCreditsScreen extends Screen {
         } catch (Throwable ignored) {
         }
 
-        int divY2 = panelY + panelH - 40;
+        // v0.364.0: el filete del pie baja de las fichas: ahora ellas ocupan
+        // 46..24 px sobre la base y el filete queda por encima, sin cruzarlas.
+        int divY2 = panelY + panelH - 54;
         DiaryChrome.drawInkDividerBetween(g, panelX + 18, panelX + panelW - 18, divY2);
         DiaryChrome.drawCornerOrnaments(g, panelX, panelY, panelW, panelH);
         DiaryChrome.drawRegistryTag(g, panelX, panelY, panelW, panelH, "REG. IX");

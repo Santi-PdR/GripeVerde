@@ -1,3 +1,7 @@
+## Version 0.364.0 - Hojas más juntas y mandos que se leen
+
+Las hojas de Créditos, Mundos y Arsenal se ordenan, los mandos de Música y Sonido se leen, el parte de defunción ya no deja ver el rótulo del juego y el fondo del menú gana calima y pierde trabajo por cuadro
+
 ## Version 0.363.0 - Fuera la opción de coordenadas del reloj; las escribe el mapa
 
 El reloj deja de llevar coordenadas: esa opción se retira del mod y las escribe el mapa

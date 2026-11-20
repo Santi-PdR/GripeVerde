@@ -133,35 +133,37 @@ public class DiaryAmbienceSlider extends AbstractSliderButton {
         }
         this.wasHovered = hovered;
 
+        // v0.364.0: igual que el mando de la musica: etiqueta arriba, carril
+        // abajo y mando chico. Era la unica forma de que la letra no se parta.
         g.fill(x, y, x + w, y + h, 0xFFC9B78A);
-        // v0.236.0: filete a mano, como el resto de los mandos.
         PaperTexture.drawWornBorder(g, x, y, w, h, 0x60422810, x * 31 + y * 17 + w);
 
-        int trackY1 = y + h / 2 - 1;
-        int trackY2 = y + h / 2 + 1;
-        g.fill(x + 3, trackY1, x + w - 3, trackY2, 0x60422810);
-        for (int i = 1; i < 4; i++) {
-            int tx = x + 3 + (w - 6) * i / 4;
-            g.fill(tx, trackY1 - 2, tx + 1, trackY2 + 2, 0x70422810);
+        int labelY = y + 2;
+        int trackY = y + h - 6;
+        int trackX1 = x + 6;
+        int trackX2 = x + w - 6;
+        g.fill(trackX1, trackY, trackX2, trackY + 3, 0x70422810);
+        g.fill(trackX1, trackY, trackX2, trackY + 1, 0x39422810);
+        for (int i = 0; i <= 4; i++) {
+            int tx = trackX1 + (trackX2 - trackX1) * i / 4;
+            int tick = (i % 2 == 0) ? 3 : 2;
+            g.fill(tx, trackY - tick, tx + 1, trackY, 0x50422810);
         }
 
-        int thumbW = 8;
-        int thumbX = x + (int) (this.value * (w - thumbW));
-        int thumbY = y + 2;
-        int thumbH = h - 4;
+        int thumbW = 6;
+        int thumbX = x + (int) (this.value * Math.max(1, w - thumbW));
+        int thumbTop = trackY - 3;
+        int thumbBot = trackY + 6;
+        g.fill(thumbX, thumbTop, thumbX + thumbW, thumbBot, hovered ? 0xFF6B3A18 : 0xFF4A2810);
+        g.fill(thumbX, thumbTop, thumbX + 1, thumbBot, 0xA0804A22);
+        g.fill(thumbX + thumbW - 1, thumbTop, thumbX + thumbW, thumbBot, 0x80200E05);
 
-        g.fill(thumbX, thumbY, thumbX + thumbW, thumbY + thumbH, 0xC0422810);
-        g.fill(thumbX, thumbY, thumbX + 2, thumbY + thumbH, 0xA0703020);
-        g.fill(thumbX + thumbW - 2, thumbY, thumbX + thumbW, thumbY + thumbH, 0x80200E05);
-        int cx = thumbX + thumbW / 2;
-        int cy = thumbY + thumbH / 2;
-        DiaryChrome.drawDivisorLozenge(g, cx, cy);
-
-        int textColor = this.isHovered() ? DiaryTheme.INK_BLACK : DiaryTheme.INK;
-        // v0.352.0: el rotulo se mide y, si el mando lo cruza, va en dos mitades.
+        int textColor = hovered ? DiaryTheme.INK_BLACK : DiaryTheme.INK;
         net.minecraft.client.gui.Font font = Minecraft.getInstance().font;
-        DiaryChrome.drawSliderLabel(g, font, this.getMessage().getString(),
-            x, y, w, h, textColor, thumbX, thumbX + thumbW);
+        String msg = DiaryChrome.fitCached(font, this.getMessage().getString(), Math.max(8, w - 16));
+        int textW = DiaryChrome.widthCached(font, msg);
+        int textX = x + (w - textW) / 2;
+        g.drawString(font, msg, Math.max(x + 4, textX), labelY, textColor, false);
     }
 
     @Override

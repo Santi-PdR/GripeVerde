@@ -197,6 +197,10 @@ public final class DeathPaper {
         int ph = Math.max(56, Math.min(PAPER_H, room));
         int px = (w - pw) / 2;
         int py = top;
+        // v0.364.0: el papel es translucido (243 de alfa) y el rotulo blanco del
+        // juego se transparentaba debajo como un fantasma. Se asienta sobre un
+        // fondo opaco del mismo color y el fantasma desaparece.
+        g.fill(px, py + 3, px + pw, py + ph - 3, 0xFFE4D6AC);
         PaperTexture.drawTornSheet(g, px, py, pw, ph, PaperTexture.PaperKind.OFFICIAL);
 
         String head = english ? "CEDA - BUREAU OF PORTS" : "CEDA - SANIDAD DE PUERTOS";

@@ -664,17 +664,24 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
      */
     private void drawRegisterPage(GuiGraphics g, int mouseX, int mouseY) {
         if (this.vanillaList == null || this.rowLeft < 0 || this.listBottom <= this.listTop) return;
-        // v0.352.0: la hoja va a lo ancho de la pantalla, como el panel de
-        // Multijugador, y no ceñida a las filas del juego: antes parecia un
-        // papel recortado y las filas asomaban por fuera.
-        int px = 12;
-        int pw = this.width - 24;
-        // v0.360.0: la hoja arrancaba 22 px por encima de la cabecera y su canto
-        // desgarrado cruzaba por debajo del titulo: dos papeles montados. Ahora
-        // empieza justo donde termina la cabecera (y nunca mas abajo que el
-        // primer renglon de la lista).
-        int py = Math.max(HEADER_H - 12, this.listTop - 8);
-        py = Math.min(py, Math.max(HEADER_H - 26, this.listTop - 4));
+        // v0.364.0: la hoja va ceñida a lo que de verdad ocupa la pantalla -la
+        // lista y el pie de botones- con 16 px de margen. A lo ancho de toda la
+        // ventana quedaba un papel enorme con las filas flotando en el centro,
+        // que es justo lo que se veia mal en ventanas anchas.
+        int contentLeft = this.rowLeft;
+        int contentRight = this.rowRight;
+        for (DiaryButton b : this.dressed) {
+            if (!b.visible) continue;
+            contentLeft = Math.min(contentLeft, b.getX());
+            contentRight = Math.max(contentRight, b.getX() + b.getWidth());
+        }
+        int pad = 16;
+        int px = Math.max(8, contentLeft - pad);
+        int pw = Math.min(this.width - 8, contentRight + pad) - px;
+        // v0.360.0: la hoja arrancaba por encima de la cabecera y su canto
+        // desgarrado cruzaba por debajo del titulo. Ahora empieza justo donde
+        // termina la cabecera.
+        int py = Math.max(HEADER_H - 2, this.listTop - 8);
         // v0.354.0: la hoja baja hasta el grupo de botones del juego, para que
         // las fichas del pie queden sobre el mismo papel y no sobre una hoja
         // aparte pegada debajo (que se veia como dos papeles encontrados).
@@ -712,14 +719,17 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             int drawTop = Math.max(top, this.listTop);
             int drawBottom = Math.min(bottom, this.listBottom);
             if (drawBottom <= drawTop) continue;
-            // v0.361.0: fuera la banda oscura. Cada mundo era una barra negra
-            // sobre el papel y no se parecia a Multijugador, donde las fichas
-            // van directo sobre la hoja. Ahora: filete fino entre fichas y un
-            // velo tibio bajo la mano.
+            // v0.364.0: la ficha se ordena como un registro: numero de orden en
+            // el margen, filete fino entre fichas y velo tibio bajo la mano.
             g.fill(this.rowLeft - 6, drawBottom - 1, this.rowRight + 6, drawBottom, 0x2E6B5533);
             if (mouseX >= this.rowLeft - 6 && mouseX <= this.rowRight + 6
                     && mouseY >= drawTop && mouseY < drawBottom) {
                 g.fill(this.rowLeft - 6, drawTop, this.rowRight + 6, drawBottom, 0x22F3E7C8);
+                g.fill(this.rowLeft - 12, drawTop, this.rowLeft - 10, drawBottom, 0xCC4A2810);
+            }
+            if (this.rowLeft - pad >= 10 && drawBottom - drawTop >= 18) {
+                String idx = (i + 1 < 10 ? "0" : "") + (i + 1);
+                g.drawString(this.font, idx, this.rowLeft - 15, drawTop + 4, 0x8A6B45, false);
             }
         }
     }

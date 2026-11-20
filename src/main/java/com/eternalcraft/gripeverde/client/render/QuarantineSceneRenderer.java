@@ -52,6 +52,9 @@ public final class QuarantineSceneRenderer {
         VictorianSkyline.renderBackground(g, w, h);
         AtmosphereRenderer.renderSearchlights(g, w, h);
         VictorianSkyline.renderGhoulWatcher(g, w, h);
+        // v0.364.0: calima entre la ciudad y la niebla, para que la silueta no
+        // corte el cielo de golpe.
+        LivingAtmosphere.renderHorizonHaze(g, w, h);
         LivingAtmosphere.renderFogLow(g, w, h);
         // v0.358.0: segunda niebla, mas alta y en sentido contrario: paralaje.
         LivingAtmosphere.renderFogDrift(g, w, h);
@@ -76,7 +79,8 @@ public final class QuarantineSceneRenderer {
             return;
         }
         g.fill(0, 0, w, h, 0xFF060401);
-        AtmosphereRenderer.renderSky(g, w, h);
+        // v0.364.0: cielo abreviado (sin estrellas ni pajaros) detras del velo.
+        AtmosphereRenderer.renderSkyLight(g, w, h);
         VictorianSkyline.renderBackground(g, w, h);
         VictorianSkyline.renderForeground(g, w, h);
         LivingAtmosphere.renderStreet(g, w, h);

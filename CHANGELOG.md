@@ -1,3 +1,7 @@
+## v0.364.0 - Hojas más juntas y mandos que se leen
+
+- Hojas: Créditos sube sus dos fichas y las centra sobre el papel, con el filete del pie por encima; Mundos guardados ciñe la hoja a la lista y a sus botones, con numero de orden en el margen; el Arsenal clava la descripcion al canto derecho en 210 px y la dobla por palabras hasta llenar la hoja. Mandos: Musica y Sonido pasan a etiqueta arriba y carril abajo con mando chico, y el volumen de interfaz se mueve al arrastrar. Muerte: el parte se asienta sobre fondo opaco y ya no se transparenta el rotulo del juego. Fondo y optimizacion: calima de horizonte en la portada y cielo abreviado en las hojas del diario, sin estrellas ni pajaros por cuadro.
+
 ## v0.363.0 - Fuera la opción de coordenadas del reloj; las escribe el mapa
 
 - HUD: se retira la opcion watchCoords y el papelito de coordenadas; el reloj queda con hora, dia, clima y rato dentro. La casa gana el pestillo de la pausa propia en el sitio que dejo libre. Sonido: el volumen de interfaz se mueve mientras arrastras.

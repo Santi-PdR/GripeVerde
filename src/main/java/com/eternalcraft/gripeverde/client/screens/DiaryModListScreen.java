@@ -275,9 +275,14 @@ public class DiaryModListScreen extends ModListScreen {
         } catch (Throwable ignored) {
             return;
         }
-        int x = Math.max(rowLeft + rowWidth + 8, this.width / 3);
+        // v0.364.0: la hoja de la descripcion se pegaba al ancho sobrante y
+        // robaba media pantalla a la lista de mods. Ahora va clavada al canto
+        // derecho con un ancho fijo y corto (210 px), y solo se abre si de
+        // verdad queda aire al lado de la lista.
         int right = this.width - 8;
-        int w = right - x;
+        int w = Math.min(210, Math.max(150, this.width / 4));
+        int x = right - w;
+        if (x < rowLeft + rowWidth + 8) return;
         if (w < 130) return;
         int y = 24;
         int h = Math.min(320, this.footerTop - y - 8);
@@ -317,19 +322,52 @@ public class DiaryModListScreen extends ModListScreen {
             g.drawString(this.font, ellipsizeTo(this.font, a, limit), x + 10, ty, 0xFF654025, false);
             ty += 12;
         }
-        // La descripcion, doblada a mano en renglones que quepan.
+        // v0.364.0: la descripcion se dobla por palabras y usa todo el alto de
+        // la hoja. Antes cortaba a seis renglones y dejaba media ficha en
+        // blanco mientras el resto del texto se perdia.
         if (!desc.isEmpty()) {
             int room = (y + h - 10) - ty;
-            int lines = Math.max(0, Math.min(6, room / 10));
-            String rest = desc;
-            for (int i = 0; i < lines && !rest.isEmpty(); i++) {
-                String piece = ellipsizeTo(this.font, rest, limit);
-                int shown = piece.endsWith("...") ? Math.max(0, piece.length() - 3) : piece.length();
+            int lines = Math.max(0, Math.min(20, room / 10));
+            java.util.List<String> wrapped = wrapText(this.font, desc, limit, lines);
+            for (String piece : wrapped) {
                 g.drawString(this.font, piece, x + 10, ty, 0xFF2A1C10, false);
-                rest = rest.substring(Math.min(rest.length(), shown)).trim();
                 ty += 10;
             }
         }
+    }
+
+    /**
+     * v0.364.0: dobla el texto por palabras al ancho dado, hasta `maxLines`
+     * renglones. El ultimo renglon se recorta con puntos suspensivos si aun
+     * queda texto por mostrar.
+     */
+    private java.util.List<String> wrapText(net.minecraft.client.gui.Font font, String text,
+                                           int maxWidth, int maxLines) {
+        java.util.List<String> out = new java.util.ArrayList<>();
+        if (text == null || text.isEmpty() || maxLines <= 0 || maxWidth <= 0) return out;
+        String rest = text;
+        while (!rest.isEmpty() && out.size() < maxLines) {
+            if (font.width(rest) <= maxWidth) {
+                out.add(rest);
+                return out;
+            }
+            boolean last = out.size() == maxLines - 1;
+            int cut = rest.length();
+            while (cut > 0 && font.width(rest.substring(0, cut)) > maxWidth) {
+                cut--;
+            }
+            if (cut <= 0) return out;
+            int space = rest.lastIndexOf(' ', cut);
+            if (space > 0) cut = space;
+            String piece = rest.substring(0, cut).trim();
+            rest = rest.substring(Math.min(rest.length(), cut)).trim();
+            if (last && !rest.isEmpty()) {
+                piece = ellipsizeTo(font, piece + "\u2026", maxWidth);
+                rest = "";
+            }
+            if (!piece.isEmpty()) out.add(piece);
+        }
+        return out;
     }
 
     private static String infoText(Object info, String method) {

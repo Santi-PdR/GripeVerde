@@ -75,16 +75,19 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     }
 
     private int listBottomY() {
-        int desiredBottom = this.panelY + this.panelH - (compactLayout() ? 68 : 118);
+        int desiredBottom = this.panelY + this.panelH - (compactLayout() ? 86 : 118);
         return Math.max(listTopY() + 1, desiredBottom);
     }
 
     private int musicSliderY() {
-        return this.panelY + this.panelH - (compactLayout() ? 64 : 108);
+        // v0.364.0: los mandos de la casa llevan etiqueta arriba y carril abajo,
+        // asi que piden 16-20 px de alto. La fila arranca mas arriba para que
+        // las tres quepan sin tocar el boton de volver.
+        return this.panelY + this.panelH - (compactLayout() ? 78 : 108);
     }
 
     private int musicSliderHeight() {
-        return compactLayout() ? 14 : SLIDER_H;
+        return compactLayout() ? 16 : 20;
     }
 
     private int ambienceSliderY() {
@@ -92,7 +95,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     }
 
     private int ambienceSliderHeight() {
-        return compactLayout() ? 12 : 14;
+        return compactLayout() ? 16 : 20;
     }
 
     private int uiSliderY() {
@@ -526,7 +529,9 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
 
         // --- Divisor inferior + esquineros ---
-        int divY3 = compact ? returnButtonY() - 2 : this.panelY + this.panelH - 50;
+        // v0.364.0: con los mandos de 20 px el filete del pie caia sobre el
+        // ultimo carril; baja a la franja libre entre el mando y la ficha.
+        int divY3 = compact ? returnButtonY() - 2 : this.panelY + this.panelH - 42;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY3);
         DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
         // v0.267.0: la hoja de sonido tambien lleva su chapa.

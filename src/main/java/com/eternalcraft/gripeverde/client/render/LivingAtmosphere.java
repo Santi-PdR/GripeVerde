@@ -446,6 +446,33 @@ public class LivingAtmosphere {
         {0.76f, 0.04f, 0.35f},
     };
 
+    /**
+     * v0.364.0: calima de horizonte en la portada. Entre la ciudad del fondo y
+     * la niebla baja quedaba un corte seco de silueta sobre cielo; estas tres
+     * bandas frias y calidas, que respiran muy despacio, separan los planos y
+     * dan hondura sin costar mas que tres rellenos por cuadro.
+     */
+    public static void renderHorizonHaze(GuiGraphics g, int w, int h) {
+        if (g == null || w <= 0 || h < 240) return;
+        int baseY = (int) (h * 0.615f);
+        int bandH = Math.max(6, h / 44);
+        int cool = 9 + (int) (Math.sin(time * 0.11f + 2.1f) * 3f);
+        int warm = 11 + (int) (Math.sin(time * 0.15f) * 4f);
+        int deep = 7 + (int) (Math.sin(time * 0.07f + 0.6f) * 2f);
+        if (cool > 1) {
+            g.fill(0, baseY - bandH * 2, w, baseY - bandH,
+                AtmosphereRenderer.withAlpha(0x001E2A2E, cool));
+        }
+        if (warm > 1) {
+            g.fill(0, baseY - bandH, w, baseY + bandH,
+                AtmosphereRenderer.withAlpha(0x004A3820, warm));
+        }
+        if (deep > 1) {
+            g.fill(0, baseY + bandH, w, baseY + bandH * 2,
+                AtmosphereRenderer.withAlpha(0x0024140B, deep));
+        }
+    }
+
     public static void renderFogLow(GuiGraphics g, int w, int h) {
         // Niebla OCRE (no verde) que RESPIRA a 0.3Hz
         float[][] bands = FOG_LOW_BANDS;

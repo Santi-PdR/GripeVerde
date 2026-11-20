@@ -1,3 +1,7 @@
+## Version 0.364.0 - Hojas más juntas y mandos que se leen
+
+Credits, Saved worlds and Arsenal sheets get their layout fixed, Music and Sound sliders become readable, the death notice hides the game label at last, and the menu backdrop gains haze while drawing less each frame
+
 ## Version 0.363.0 - Fuera la opción de coordenadas del reloj; las escribe el mapa
 
 The watch drops its coordinates option for good: the map writes them
