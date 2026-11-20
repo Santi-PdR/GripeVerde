@@ -39,7 +39,9 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     private List<EditBox> searchBoxes = new ArrayList<>();
     // v0.270.0: lo que pesa el archivo, medido una vez por apertura.
     private static long archiveBytes = -1L;
-    private static boolean archiveMeasured = false;
+    // v0.374.0: se vuelve a medir en cada apertura, en segundo plano, para
+    // que un mundo recien creado aparezca con su peso.
+    private boolean archiveMeasured = false;
 
     // v0.243.0: la pagina de registro. Las medidas de la lista se leen una vez
     // al abrir o al redimensionar; por cuadro solo cambia el desplazamiento.
@@ -58,6 +60,8 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         = new java.util.HashMap<>();
     private static final java.util.Set<String> WORLD_ICONS_ABSENT = new java.util.HashSet<>();
     private int iconsThisFrame;
+    // v0.374.0: lo que pesa cada mundo, medido con el archivo entero.
+    private static final java.util.Map<String, Long> WORLD_SIZES = new java.util.HashMap<>();
 
     public DiarySelectWorldScreen(Screen parent) {
         super(parent);
@@ -104,6 +108,9 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         }
         Thread t = new Thread(() -> {
             long total = 0L;
+            // v0.374.0: en el mismo paseo se apunta lo que pesa cada mundo, que
+            // es lo que le faltaba a la ficha para ser una ficha entera.
+            java.util.Map<String, Long> perWorld = new java.util.HashMap<>();
             try (java.util.stream.Stream<java.nio.file.Path> walk = java.nio.file.Files.walk(saves, 6)) {
                 java.util.Iterator<java.nio.file.Path> it = walk.iterator();
                 int guard = 0;
@@ -111,7 +118,13 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                     java.nio.file.Path f = it.next();
                     try {
                         if (java.nio.file.Files.isRegularFile(f)) {
-                            total += java.nio.file.Files.size(f);
+                            long size = java.nio.file.Files.size(f);
+                            total += size;
+                            java.nio.file.Path rel = saves.relativize(f);
+                            if (rel.getNameCount() > 1) {
+                                String world = rel.getName(0).toString();
+                                perWorld.merge(world, size, Long::sum);
+                            }
                         }
                     } catch (Throwable ignored) {
                     }
@@ -119,6 +132,10 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             } catch (Throwable ignored) {
             }
             archiveBytes = total;
+            synchronized (WORLD_SIZES) {
+                WORLD_SIZES.clear();
+                WORLD_SIZES.putAll(perWorld);
+            }
         }, "gripeverde-archive-size");
         t.setDaemon(true);
         try {
@@ -472,7 +489,20 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 // nombre visible no es el de la carpeta, la carpeta del mundo.
                 String folder = levelFolder(summary);
                 String sub = mode;
-                if (!folder.isEmpty() && !folder.equals(name)) {
+                long weight = 0L;
+                if (!folder.isEmpty()) {
+                    try {
+                        synchronized (WORLD_SIZES) {
+                            Long w = WORLD_SIZES.get(folder);
+                            weight = w == null ? 0L : w;
+                        }
+                    } catch (Throwable ignored) {
+                    }
+                }
+                if (weight > 0L) {
+                    String size = formatBytes(weight, english);
+                    sub = sub.isEmpty() ? size : sub + "  \u00b7  " + size;
+                } else if (!folder.isEmpty() && !folder.equals(name)) {
                     sub = sub.isEmpty() ? folder : sub + "  \u00b7  " + folder;
                 }
                 if (!sub.isEmpty() && drawBottom - drawTop >= 24) {
@@ -611,6 +641,19 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         g.drawString(this.font, shown, x + (w - nw) / 2, y + 13, 0xFF1A1108, false);
         StringBuilder sb = new StringBuilder();
         if (!mode.isEmpty()) sb.append(mode);
+        long weight = 0L;
+        try {
+            String folder = levelFolder(summary);
+            synchronized (WORLD_SIZES) {
+                Long bytes = WORLD_SIZES.get(folder);
+                weight = bytes == null ? 0L : bytes;
+            }
+        } catch (Throwable ignored) {
+        }
+        if (weight > 0L) {
+            if (sb.length() > 0) sb.append("  \u00b7  ");
+            sb.append(formatBytes(weight, en));
+        }
         if (!when.isEmpty()) {
             if (sb.length() > 0) sb.append("  \u00b7  ");
             sb.append(en ? "last " : "ultima vez ").append(when);
@@ -1143,7 +1186,59 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 }
             }
         }
+        // v0.374.0: las flechas recorren el registro aunque el foco este en la
+        // hoja y no en la lista del juego. Marcan, no entran.
+        boolean typing = false;
+        for (EditBox box : this.searchBoxes) {
+            try {
+                if (box.isFocused()) typing = true;
+            } catch (Throwable ignored) {
+            }
+        }
+        if (!typing && (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN
+                || keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_UP)) {
+            if (moveMark(keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN ? 1 : -1)) {
+                return true;
+            }
+        }
         return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    /** v0.374.0: mueve la cinta al mundo de arriba o de abajo. */
+    private boolean moveMark(int delta) {
+        if (this.vanillaList == null) return false;
+        try {
+            var kids = this.vanillaList.children();
+            if (kids == null || kids.isEmpty()) return false;
+            Object chosen = this.vanillaList.getSelected();
+            int idx = 0;
+            for (int i = 0; i < kids.size(); i++) {
+                if (kids.get(i) == chosen) {
+                    idx = i;
+                    break;
+                }
+            }
+            int next = Math.max(0, Math.min(kids.size() - 1, idx + delta));
+            if (next == idx && chosen != null) return true;
+            Object target = kids.get(next);
+            // El juego sabe marcar sin entrar: se le pasa el clic ya colocado.
+            int step = rowStep();
+            double scroll = 0.0;
+            try {
+                scroll = this.vanillaList.getScrollAmount();
+            } catch (Throwable ignored) {
+            }
+            int rowY = this.listTop + 4 - (int) scroll + next * step + step / 2;
+            this.vanillaList.mouseClicked(ledgerX(this.ledgerLeft() + 60), rowY, 0);
+            this.vanillaList.setFocused(true);
+            try {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.tab();
+            } catch (Throwable ignored) {
+            }
+            return true;
+        } catch (Throwable ignored) {
+            return false;
+        }
     }
 
     /** v0.270.0: la rueda suena al pasar por la lista. */

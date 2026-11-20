@@ -1,3 +1,7 @@
+## Version 0.374.0 - Cada mundo dice lo que pesa, y el registro se recorre con las flechas
+
+La ficha de cada mundo gana su peso: se mide en el mismo paseo que ya contaba el archivo entero y se anade a la descripcion, junto al modo. Si el mundo no tiene icono, la linea dice igualmente lo que ocupa. La ficha del mundo elegido tambien lo lleva. Y el registro se recorre con las flechas de arriba y abajo, que solo mueven la cinta (para entrar sigue estando el boton o Enter)
+
 ## Version 0.373.0 - La foto de cada mundo, el buscador limpio y el clic que ya no entra solo
 
 Cada ficha del registro lleva ahora la FOTO del mundo, sacada de su icon.png y enmarcada como una hoja pegada, y debajo del nombre va la descripcion con el modo y, si el mundo se llama distinto que su carpeta, el nombre de la carpeta. El buscador deja de ser la caja negra del juego: sin borde y con la letra en tinta sobre su hojita, se acaba la barra gris que salia debajo. Y un clic en el registro ya NO entra al mundo: solo marca el mundo; para entrar estan el boton 'Jugar en el mundo elegido' y Enter. Antes, al pasarle el clic a la lista del juego, un segundo clic seguido -el gesto normal de elegir- entraba sin avisar

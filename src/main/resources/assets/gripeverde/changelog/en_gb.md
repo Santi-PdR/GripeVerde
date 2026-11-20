@@ -1,3 +1,7 @@
+## Version 0.374.0 - Every world says how much it weighs, and the ledger walks with the arrow keys
+
+Each world's card gains its weight: measured in the same pass that already counted the whole archive and added to the description next to the game mode. If a world has no icon, the line still says how much space it takes. The chosen-world card carries it too. And the ledger walks with the up and down arrows, which only move the ribbon (joining is still the button or Enter)
+
 ## Version 0.373.0 - Every world gets its photo, a clean search field and clicks that no longer jump into the world
 
 Each ledger card now carries the world's PHOTO, taken from its icon.png and framed like a pasted leaf, and under the name comes the description: the game mode and, when the world's visible name differs from its folder, the folder name. The search field is no longer the game's black box: borderless, with ink text on its little sheet, the grey bar underneath is gone. And a click on the ledger no longer joins the world: it only marks it; joining is the 'Jugar en el mundo elegido' button and Enter. Before, because clicks were handed to the game list, a second click in a row -the normal way to pick- dropped you into the world unannounced
