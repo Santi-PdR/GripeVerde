@@ -545,6 +545,13 @@ public final class DiaryChrome {
         int h = box.getHeight();
         if (w < 24 || h < 8) return;
         PaperTexture.drawTornSlip(g, x - 3, y - 1, w + 6, h + 2, 0xE6D2A6, 0x422810, 242);
+        // v0.369.0: la caja seguia escribiendo en blanco, que sobre el papel no
+        // se lee. Aqui se le cambia la tinta de una vez para todas las
+        // pantallas que la visten (Mundos, Multijugador, Packs, Arsenal).
+        try {
+            box.setTextColor(0xFF1A1108);
+        } catch (Throwable ignored) {
+        }
         if (box.isFocused()) {
             g.fill(x - 3, y + h + 1, x + w + 3, y + h + 2, 0x662A1C12);
         }

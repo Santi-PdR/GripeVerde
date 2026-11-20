@@ -36,25 +36,55 @@ public final class JourneyMapPaper {
     private static java.lang.reflect.Method getDisplayVars;
 
     private static boolean themeTried;
+    private static Object patchedTheme;
+    private static int frameCounter;
     private static long themeRetryAtMs;
 
     private JourneyMapPaper() {
     }
 
-    /** Una sola vez: se busca el mod y se guardan los metodos. */
+    /**
+     * v0.369.0: sonda tolerante. Antes, si UNA sola busqueda fallaba -por
+     * ejemplo un metodo que no es publico-, se daba el mod por ausente y no se
+     * dibujaba nada: el minimapa seguia con su marco azul y su letra blanca.
+     * Ahora cada miembro se busca por separado y, si no es publico, se abre con
+     * setAccessible.
+     */
     private static void probe() {
         if (probed) return;
         probed = true;
         try {
             Class<?> miniMapClass = Class.forName("journeymap.client.ui.minimap.MiniMap");
             Class<?> uiManagerClass = Class.forName("journeymap.client.ui.UIManager");
-            getDisplayVars = miniMapClass.getMethod("getDisplayVars");
-            getMiniMap = uiManagerClass.getMethod("getMiniMap");
-            isMiniMapEnabled = uiManagerClass.getMethod("isMiniMapEnabled");
-            uiManager = uiManagerClass.getField("INSTANCE").get(null);
-            present = uiManager != null;
+            getDisplayVars = methodOf(miniMapClass, "getDisplayVars");
+            getMiniMap = methodOf(uiManagerClass, "getMiniMap");
+            isMiniMapEnabled = methodOf(uiManagerClass, "isMiniMapEnabled");
+            try {
+                java.lang.reflect.Field inst = uiManagerClass.getDeclaredField("INSTANCE");
+                inst.setAccessible(true);
+                uiManager = inst.get(null);
+            } catch (Throwable ignored) {
+                uiManager = null;
+            }
+            present = uiManager != null && getMiniMap != null && getDisplayVars != null;
         } catch (Throwable ignored) {
             present = false;
+        }
+    }
+
+    private static java.lang.reflect.Method methodOf(Class<?> type, String name) {
+        try {
+            java.lang.reflect.Method m = type.getMethod(name);
+            m.setAccessible(true);
+            return m;
+        } catch (Throwable ignored) {
+        }
+        try {
+            java.lang.reflect.Method m = type.getDeclaredMethod(name);
+            m.setAccessible(true);
+            return m;
+        } catch (Throwable ignored) {
+            return null;
         }
     }
 
@@ -66,8 +96,21 @@ public final class JourneyMapPaper {
             Minecraft mc = Minecraft.getInstance();
             if (mc == null || mc.level == null || mc.screen != null) return;
             if (mc.options != null && mc.options.hideGui) return;
-            if (!Boolean.TRUE.equals(isMiniMapEnabled.invoke(uiManager))) return;
+            if (isMiniMapEnabled != null) {
+                Object on = isMiniMapEnabled.invoke(uiManager);
+                if (Boolean.FALSE.equals(on)) return;
+            }
 
+            // Cada segundo se comprueba que JourneyMap siga con el tema de la
+            // casa: al entrar y salir de mundos lo recarga y se perdia.
+            if (themeTried && patchedTheme != null && (frameCounter++ & 0x3F) == 0) {
+                try {
+                    Object now = Class.forName("journeymap.client.io.ThemeLoader")
+                        .getMethod("getCurrentTheme").invoke(null);
+                    if (now != patchedTheme) themeTried = false;
+                } catch (Throwable ignored) {
+                }
+            }
             patchTheme();
 
             Object miniMap = getMiniMap.invoke(uiManager);
@@ -101,7 +144,7 @@ public final class JourneyMapPaper {
                 cx = intOf(dv, "translateX") + width / 2.0;
                 cy = intOf(dv, "translateY") + height / 2.0;
             }
-            int r = Math.max(12, Math.min(width, height) / 2);
+            int r = Math.max(12, Math.max(width, height) / 2);
             drawRing(g, (int) Math.round(cx), (int) Math.round(cy), r);
             return;
         }
@@ -179,21 +222,18 @@ public final class JourneyMapPaper {
         for (int i = 0; i < RING_STEPS; i++) {
             double a = (Math.PI * 2.0) * i / RING_STEPS;
             int bite = (i * 1103515245 + 12345) >> 28 & 1;
-            double rr = r + 2 + bite;
-            int x = (int) Math.round(cx + Math.cos(a) * rr);
-            int y = (int) Math.round(cy + Math.sin(a) * rr);
-            paper[pn * 4] = x - 1;
-            paper[pn * 4 + 1] = y - 1;
-            paper[pn * 4 + 2] = x + 2;
-            paper[pn * 4 + 3] = y + 2;
-            pn++;
-            double rf = rr + 2;
-            int xf = (int) Math.round(cx + Math.cos(a) * rf);
-            int yf = (int) Math.round(cy + Math.sin(a) * rf);
-            paper[pn * 4] = xf;
-            paper[pn * 4 + 1] = yf;
-            paper[pn * 4 + 2] = xf + 1;
-            paper[pn * 4 + 3] = yf + 1;
+            // Banda de papel que pisa el marco del mapa y sobresale un poco,
+            // con mordiscos para que el canto se lea desgarrado.
+            double rin = r - 1;
+            double rout = r + 4 + bite;
+            int xi = (int) Math.round(cx + Math.cos(a) * rin);
+            int yi = (int) Math.round(cy + Math.sin(a) * rin);
+            int xo = (int) Math.round(cx + Math.cos(a) * rout);
+            int yo = (int) Math.round(cy + Math.sin(a) * rout);
+            paper[pn * 4] = Math.min(xi, xo) - 1;
+            paper[pn * 4 + 1] = Math.min(yi, yo) - 1;
+            paper[pn * 4 + 2] = Math.max(xi, xo) + 1;
+            paper[pn * 4 + 3] = Math.max(yi, yo) + 1;
             pn++;
         }
         float[] ink = new float[(RING_STEPS / 2 + 1) * 4];
@@ -272,23 +312,36 @@ public final class JourneyMapPaper {
             Object inkHi = ctor.newInstance("#5C3A16", 1.0f);
             Object minimap = read(theme, "minimap");
             if (minimap == null) return;
+            // Pantalla completa: fondo calido y su etiqueta de estado en tinta.
+            Object full = read(theme, "fullscreen");
+            if (full != null) {
+                safeWrite(full, "background", ctor.newInstance("#241608", 0.92f));
+                Object status = read(full, "statusLabel");
+                if (status != null) {
+                    safeWrite(status, "background", paperBg);
+                    safeWrite(status, "foreground", inkFg);
+                    safeWrite(status, "shadow", Boolean.FALSE);
+                }
+            }
             for (String shape : new String[] {"circle", "square"}) {
                 Object spec = read(minimap, shape);
                 if (spec == null) continue;
                 for (String label : new String[] {"labelTop", "labelBottom", "compassLabel"}) {
                     Object labelSpec = read(spec, label);
                     if (labelSpec == null) continue;
-                    write(labelSpec, "background", paperBg);
-                    write(labelSpec, "foreground", inkFg);
-                    write(labelSpec, "highlight", inkHi);
-                    write(labelSpec, "shadow", Boolean.FALSE);
+                    safeWrite(labelSpec, "margin", Integer.valueOf(2));
+                    safeWrite(labelSpec, "background", paperBg);
+                    safeWrite(labelSpec, "foreground", inkFg);
+                    safeWrite(labelSpec, "highlight", inkHi);
+                    safeWrite(labelSpec, "shadow", Boolean.FALSE);
                 }
-                Object frame = read(spec, "frame");
-                if (frame != null) write(frame, "color", "#2A1C12");
+                // El marco del mapa es un ColorSpec completo, no una cadena.
+                safeWrite(spec, "frame", ctor.newInstance("#2A1C12", 1.0f));
             }
             Class<?> themeClass = Class.forName("journeymap.client.ui.theme.Theme");
             loader.getMethod("setCurrentTheme", themeClass).invoke(null, theme);
             themeTried = true;
+            patchedTheme = theme;
         } catch (Throwable ignored) {
         }
     }
@@ -322,6 +375,14 @@ public final class JourneyMapPaper {
             } catch (Throwable ignored) {
                 return;
             }
+        }
+    }
+
+    /** Como write, pero un miembro que no cuadre no tumba el resto del tema. */
+    private static void safeWrite(Object target, String name, Object value) {
+        try {
+            write(target, name, value);
+        } catch (Throwable ignored) {
         }
     }
 

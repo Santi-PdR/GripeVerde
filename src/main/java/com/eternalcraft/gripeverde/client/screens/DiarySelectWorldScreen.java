@@ -414,32 +414,28 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 String mode = levelGameMode(summary, english);
                 String when = levelStamp(summary);
 
-                int slipLeft = textLeft - 4;
-                int slipRight = slipLeft + textW + 8;
-                int slipH = Math.max(20, drawBottom - drawTop - 6);
-                PaperTexture.drawTornSlip(g, slipLeft, drawTop + 1,
-                    textW + 8, slipH, 0xE6D2A6, 0x422810, 236);
+                // v0.369.0: se quito la ficha pegada de cada renglon. Iba con
+                // su propio canto y su sombra, y 22 mundos se veian como 22
+                // papelitos sueltos en vez de un registro. Ahora el nombre va
+                // en tinta sobre el pliego y debajo, en sepia, el modo y la
+                // fecha, igual que los asientos de Multijugador.
                 String shownName = DiaryChrome.fitText(this.font, name, textW);
-                g.drawString(this.font, shownName, textLeft, drawTop + 3, 0xFF1A1108, false);
-                // v0.358.0: el modo a la izquierda y la fecha pegada al margen
-                // derecho, en columna. Antes iban en una sola linea con un punto
-                // en medio y cada ficha quedaba de un largo distinto.
+                g.drawString(this.font, shownName, textLeft, drawTop + 4, 0xFF1A1108, false);
                 int modeW = mode.isEmpty() ? 0 : DiaryChrome.widthCached(this.font, mode);
                 int whenW = when.isEmpty() ? 0 : DiaryChrome.widthCached(this.font, when);
-                boolean stacked = textLeft + modeW + 12 > slipRight - 6 - whenW;
+                boolean stacked = textLeft + modeW + 12 > textLeft + textW - whenW;
                 if (!mode.isEmpty()) {
                     g.drawString(this.font, DiaryChrome.fitText(this.font, mode,
-                        Math.max(30, textW - whenW - 12)), textLeft, drawTop + 14, 0xFF6B5533, false);
+                        Math.max(30, textW - whenW - 12)), textLeft, drawTop + 15, 0xFF6B5533, false);
                 }
                 if (!when.isEmpty()) {
                     if (stacked) {
-                        // Sin hueco para las dos: la fecha sola, en su renglon.
-                        if (slipH >= 30) {
+                        if (drawBottom - drawTop >= 30) {
                             g.drawString(this.font, DiaryChrome.fitText(this.font, when, textW),
-                                textLeft, drawTop + 22, 0xFF8A6B45, false);
+                                textLeft, drawTop + 24, 0xFF8A6B45, false);
                         }
                     } else {
-                        g.drawString(this.font, when, slipRight - 6 - whenW, drawTop + 14,
+                        g.drawString(this.font, when, textLeft + textW - whenW, drawTop + 15,
                             0xFF8A6B45, false);
                     }
                 }
@@ -699,7 +695,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         }
         int sheetBottom = this.listBottom + 12;
         if (footerBottom > 0) sheetBottom = Math.max(sheetBottom, footerBottom + 10);
-        int ph = Math.min(this.height - 6, sheetBottom) - py;
+        int ph = Math.min(this.height - 2, sheetBottom) - py;
         this.sheetCoversFooter = footerBottom > 0 && ph > 0 && py + ph >= footerBottom + 6;
         if (pw < 60 || ph < 40) return;
         PaperTexture.drawTornSheet(g, px, py, pw, ph, PaperTexture.PaperKind.OFFICIAL);
@@ -745,14 +741,19 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         int x1 = Math.max(0, this.rowLeft - 12);
         int x2 = Math.min(this.width, this.rowRight + 12);
         if (x2 - x1 < 40) return;
-        int h = this.listBottom - this.listTop;
-        if (h < 16) return;
-        // v0.366.0: el papel se dibuja con algo de alfa, y la letra blanca del
-        // juego se transparentaba debajo como un fantasma. Se asienta primero un
-        // fondo opaco del color del papel y encima va la hoja.
-        g.fill(x1, this.listTop - 2, x2, this.listTop + h + 2, 0xFFE3D5AB);
-        PaperTexture.drawTornSheet(g, x1, this.listTop - 2, x2 - x1, h + 4,
-            PaperTexture.PaperKind.LEDGER);
+        int top = this.listTop - 2;
+        int bottom = this.listTop + (this.listBottom - this.listTop) + 2;
+        if (bottom - top < 16) return;
+        // v0.369.0: antes se pegaba aqui una hoja de librador -mas clara y de
+        // otro tono-, y se veia como un parche flotando sobre la pagina. Ahora
+        // se cubre el fondo del juego con EL MISMO papel de la hoja, sin canto
+        // ni esquinas, de modo que la pantalla queda en un solo pliego, como
+        // Multijugador. El alfa va casi opaco para que no se trasluzca la letra
+        // blanca del juego.
+        int paper = com.eternalcraft.gripeverde.client.render.PaperTexture.paperColor(
+            com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.OFFICIAL);
+        g.fill(x1, top, x2, bottom, com.eternalcraft.gripeverde.client.render.DiaryTheme
+            .withAlpha(paper, 252));
         // Filetes entre fichas, a lo ancho de la hoja de la lista.
         int step = rowStep();
         double scroll = 0.0;
@@ -766,17 +767,17 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         } catch (Throwable ignored) {
         }
         for (int i = 0; i < count && i < 64; i++) {
-            int top = this.listTop + 4 - (int) scroll + i * step;
-            int bottom = top + step - 4;
-            if (bottom < this.listTop || top > this.listBottom) continue;
-            int drawTop = Math.max(top, this.listTop);
-            int drawBottom = Math.min(bottom, this.listBottom);
+            int rowTop = this.listTop + 4 - (int) scroll + i * step;
+            int rowBottom = rowTop + step - 4;
+            if (rowBottom < this.listTop || rowTop > this.listBottom) continue;
+            int drawTop = Math.max(rowTop, this.listTop);
+            int drawBottom = Math.min(rowBottom, this.listBottom);
             if (drawBottom - drawTop < 12) continue;
             g.fill(x1 + 3, drawBottom - 1, x2 - 3, drawBottom, 0x2E6B5533);
             if (mouseX >= x1 && mouseX <= x2 && mouseY >= drawTop && mouseY < drawBottom) {
                 g.fill(x1 + 3, drawTop, x2 - 3, drawBottom, 0x22F3E7C8);
             }
-            // Numero de orden, ya sobre la hoja pegada.
+            // Numero de orden, en el margen izquierdo del pliego.
             if (drawBottom - drawTop >= 14) {
                 String idx = (i + 1 < 10 ? "0" : "") + (i + 1);
                 g.drawString(this.font, idx, x1 - 12, drawTop + 3, 0x8A6B45, false);

@@ -35,6 +35,11 @@ public final class PaperTexture {
     }
 
     /** Color base de cada stock de papel (sin alfa: el velo le pone el suyo). */
+    /** v0.369.0: el color base de un papel, para igualar un parche a su hoja. */
+    public static int paperColor(PaperKind kind) {
+        return baseColorFor(kind);
+    }
+
     private static int baseColorFor(PaperKind kind) {
         if (kind == null) return DiaryTheme.PAPER;
         return switch (kind) {

@@ -1,3 +1,7 @@
+## Version 0.369.0 - One continuous sheet in Worlds, no black panel in the Arsenal, and a house-themed map
+
+Saved worlds is no longer a patch over the game list: the sheet carries on under the cards, per-row slips are gone and the entries read in ink, like Multiplayer. In the Arsenal the detail sheet now covers the game's black panel, and every search box types in ink. JourneyMap gets the whole theme: map frame in ink, labels and compass on paper, dark sepia fullscreen and status label in ink; the theme is re-applied if the mod reloads it on world join
+
 ## Version 0.368.0 - Portada con paralaje, anillo del mapa en dos envíos y arsenal de dos renglones
 
 The title fog now follows the pointer, the JourneyMap ring is drawn in two batches with cached geometry, and the hovered mod description wraps to two lines. Second pass over obfuscation-fragile lookups: no name-based reflection left in the screens

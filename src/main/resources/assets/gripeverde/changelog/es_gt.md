@@ -1,3 +1,7 @@
+## Version 0.369.0 - Un solo pliego en Mundos, la ficha del Arsenal sin panel negro y el mapa con tema de la casa
+
+Mundos guardados deja de ser un parche sobre la lista: el pliego se continua bajo las fichas, se quitan los papelitos de cada renglon y los asientos van en tinta, como Multijugador. En el Arsenal la hoja de la ficha cubre el panel negro del juego, y los buscadores escriben en tinta. JourneyMap recibe el tema entero: marco del mapa en tinta, etiquetas y brujula sobre papel, pantalla completa en sepia oscuro y la etiqueta de estado en tinta; ademas se vuelve a aplicar el tema si el mod lo recarga al entrar al mundo
+
 ## Version 0.368.0 - Portada con paralaje, anillo del mapa en dos envíos y arsenal de dos renglones
 
 La niebla de la portada sigue al puntero, el anillo del JourneyMap se dibuja en dos envios con la geometria cacheada, y la descripcion del mod bajo la mano va en dos renglones. Segunda pasada de bugs de nombres ofuscados: no quedan busquedas por nombre en las pantallas

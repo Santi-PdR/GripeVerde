@@ -39,6 +39,7 @@ public class DiaryModListScreen extends ModListScreen {
     // v0.302.0: lo que el arsenal dice del mod bajo la mano, y donde empieza
     // el papel de los botones, para no escribir encima de ellos.
     private String hoveredModDesc = "";
+    private Object hoveredEntry;
     private int footerTop = -1;
 
     @Override
@@ -210,6 +211,7 @@ public class DiaryModListScreen extends ModListScreen {
 
             if (hovered) {
                 this.hoveredModDesc = modDescription(entry);
+                this.hoveredEntry = entry;
             }
             String name = ellipsizeTo(font, info[0], width - 24);
             // v0.306.0: debajo del nombre, la version y el identificador del
@@ -264,7 +266,18 @@ public class DiaryModListScreen extends ModListScreen {
         try {
             selected = this.list.getSelected();
         } catch (Throwable ignored) {
-            return;
+            selected = null;
+        }
+        // v0.369.0: Forge ensena la ficha del primer mod al abrir la pantalla,
+        // pero no siempre deja marcada una entrada. Antes, sin seleccion, la
+        // hoja no se dibujaba y quedaba el panel negro a la vista.
+        if (selected == null) selected = this.hoveredEntry;
+        if (selected == null) {
+            try {
+                var kids = this.list.children();
+                if (kids != null && !kids.isEmpty()) selected = kids.get(0);
+            } catch (Throwable ignored) {
+            }
         }
         if (selected == null) return;
         int rowLeft;
@@ -275,15 +288,15 @@ public class DiaryModListScreen extends ModListScreen {
         } catch (Throwable ignored) {
             return;
         }
-        // v0.364.0: la hoja de la descripcion se pegaba al ancho sobrante y
-        // robaba media pantalla a la lista de mods. Ahora va clavada al canto
-        // derecho con un ancho fijo y corto (210 px), y solo se abre si de
-        // verdad queda aire al lado de la lista.
+        // v0.369.0: el panel de Forge con la ficha del mod (fondo negro, letra
+        // blanca) seguia viendose a la izquierda de la hoja, porque la hoja se
+        // habia estrechado a 210 px. La lista de mods ocupa su columna fija, de
+        // modo que la hoja puede ir del canto de la lista al borde de la
+        // ventana sin quitarle nada: asi cubre el panel entero.
         int right = this.width - 8;
-        int w = Math.min(210, Math.max(150, this.width / 4));
-        int x = right - w;
-        if (x < rowLeft + rowWidth + 8) return;
-        if (w < 130) return;
+        int x = rowLeft + rowWidth + 10;
+        int w = right - x;
+        if (w < 120) return;
         int y = 24;
         int h = Math.min(320, this.footerTop - y - 8);
         if (h < 70) return;
