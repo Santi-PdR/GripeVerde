@@ -1,3 +1,7 @@
+## Version 0.367.0 - JourneyMap con canto de hoja y los botones de Multijugador encendidos
+
+El minimapa de JourneyMap 5.10.3 pasa a llevar canto de papel desgarrado y su letra de información va sobre papel con tinta, sin tocar su configuración. Además se arreglan Editar/Borrar y los nombres de los puestos en Multijugador, que salían apagados o en blanco
+
 ## Version 0.366.0 - Mundos con fichas de verdad y el parte de defunción sin letra del juego
 
 En Mundos guardados las fichas no se dibujaban porque el mod comparaba el nombre de la clase del juego, que en el juego real va ofuscado; ahora se reconoce por tipo. Y en la pantalla de muerte los rótulos del juego se apagan por tipo de campo, y el parte se centra

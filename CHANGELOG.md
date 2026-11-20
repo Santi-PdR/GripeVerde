@@ -1,3 +1,7 @@
+## v0.367.0 - JourneyMap con canto de hoja y los botones de Multijugador encendidos
+
+- JourneyMap 5.10.3: capa propia encima del HUD que dibuja el canto de hoja alrededor del minimapa circular (y marco de papel si es cuadrado), y tema del mapa copiado en memoria con fondo de papel y tinta para las coordenadas, el bioma y la hora. Multijugador: Editar y Borrar se deciden por la ficha del servidor y no por el nombre de la clase (que va ofuscado), la cabecera de red local se reconoce igual, y el nombre, la dirección y el MOTD se leen de frente. Mundos: el modo de juego ya no se busca por nombre de metodo.
+
 ## v0.366.0 - Mundos con fichas de verdad y el parte de defunción sin letra del juego
 
 - Mundos: la ficha de cada mundo se busca por TIPO (LevelSummary) y no por nombre de clase, que en produccion va ofuscado y nunca coincidia: de ahi las filas en blanco con la letra del juego encima. La hoja de la lista es opaca (sin fantasma), los numeros de orden van sobre el papel y la hoja baja hasta la segunda fila de botones. Muerte: los rotulos del juego (titulo, causa y puntaje) se apagan por tipo de campo, sin depender de nombres; la causa se guarda antes de apagarla y el parte queda centrado.

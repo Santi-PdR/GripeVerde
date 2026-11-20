@@ -426,9 +426,14 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             hasSelection = sel != null;
             // Solo permite Edit/Delete si hay una entry seleccionada Y es un server (no LAN header ni network)
             if (sel != null) {
-                String cls = sel.getClass().getSimpleName();
-                canEdit = cls.contains("Online");
-                canDelete = cls.contains("Online");
+                // v0.367.0: se preguntaba por el NOMBRE de la clase ("Online"),
+                // que en el juego real va ofuscado: los botones Editar y Borrar
+                // salian siempre apagados. Ahora se mira si la fila trae una
+                // ficha de servidor, que es lo que de verdad distingue un
+                // puesto de una cabecera de red local.
+                boolean real = extractServerDataFromEntry(sel) != null;
+                canEdit = real;
+                canDelete = real;
             }
         }
         if (this.diarySelect != null) {
@@ -929,9 +934,10 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             try {
                 var sel = this.vanillaList == null ? null : this.vanillaList.getSelected();
                 if (sel != null) {
-                    var data = sel.getClass().getMethod("getServerData").invoke(sel);
-                    Object ip = data.getClass().getField("ip").get(data);
-                    if (ip != null) picked = ip.toString();
+                    // v0.367.0: por tipo y de frente, sin getMethod ni getField
+                    // por nombre (ofuscados en el juego real).
+                    ServerData data = extractServerDataFromEntry(sel);
+                    if (data != null && data.ip != null) picked = data.ip;
                 }
             } catch (Throwable ignored) {
             }
@@ -1091,11 +1097,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
 
             for (int i = 0; i < children.size(); i++) {
                 var entry = children.get(i);
-                String cls = entry.getClass().getSimpleName();
-                // v0.322.0: los puestos de la red local se dibujan con el texto
-                // blanco del juego y sin fondo. Sobre el papel claro no se leian,
-                // asi que se les pone un recorte oscuro debajo, no un slip claro.
-                boolean lan = cls.contains("LAN");
+                // v0.367.0: la cabecera de red local se reconoce por no traer
+                // ficha de servidor, no por el nombre de su clase.
+                boolean lan = extractServerDataFromEntry(entry) == null;
 
                 int entryTop = y0 + 4 - (int) scrollAmount + i * itemHeight + headerHeight - 2;
                 int entryBottom = entryTop + itemHeight;
@@ -1162,12 +1166,14 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             int textW = Math.max(40, textRight - textLeft);
             for (int i = 0; i < children.size(); i++) {
                 var entry = children.get(i);
-                String cls = entry.getClass().getSimpleName();
-                if (cls.contains("LAN")) continue;
                 ServerData sd = extractServerDataFromEntry(entry);
                 if (sd == null) continue;
-                String name = fieldString(sd, "name");
-                String ip = fieldString(sd, "ip");
+                // v0.367.0: los campos de ServerData se leen de frente. Con
+                // getField("name") y getField("ip") no se encontraba nada en el
+                // juego real (los nombres van ofuscados) y la fila salia sin
+                // nombre ni direccion.
+                String name = sd.name == null ? "" : sd.name;
+                String ip = sd.ip == null ? "" : sd.ip;
                 if (name == null || name.isEmpty()) name = ip;
                 if (name == null || name.isEmpty()) continue;
                 int entryTop = vanillaListY0 + 4 - (int) scrollAmount + i * itemHeight
@@ -1247,25 +1253,12 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             DiaryChrome.INK_SUBTITLE, false);
     }
 
-    private static String fieldString(Object target, String fieldName) {
+    /** v0.367.0: el MOTD del puesto, leido de frente sobre la ficha del juego. */
+    private static String motdText(ServerData serverData) {
         try {
-            java.lang.reflect.Field f = target.getClass().getField(fieldName);
-            Object v = f.get(target);
-            return v == null ? "" : v.toString();
-        } catch (Throwable ignored) {
-            return "";
-        }
-    }
-
-    private static String motdText(Object serverData) {
-        try {
-            java.lang.reflect.Field f = serverData.getClass().getField("motd");
-            Object v = f.get(serverData);
-            if (v instanceof net.minecraft.network.chat.Component c) {
-                String s = c.getString();
-                return s == null ? "" : s.replace('\n', ' ').trim();
-            }
-            return v == null ? "" : v.toString();
+            if (serverData == null || serverData.motd == null) return "";
+            String s = serverData.motd.getString();
+            return s == null ? "" : s.replace('\n', ' ').trim();
         } catch (Throwable ignored) {
             return "";
         }
@@ -1299,9 +1292,8 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
 
             for (int i = 0; i < children.size(); i++) {
                 var entry = children.get(i);
-                String cls = entry.getClass().getSimpleName();
-                // Solo subrayar servers reales (no LAN header ni network servers de scan)
-                if (cls.contains("LAN")) continue;
+                // Solo subrayar puestos reales, no la cabecera de red local.
+                if (extractServerDataFromEntry(entry) == null) continue;
 
                 int entryTop = y0 + 4 - (int) scrollAmount + i * itemHeight + headerHeight;
                 int entryBottom = entryTop + itemHeight - 4;
@@ -1344,8 +1336,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             // Buscar el indice de la primera entry LAN
             int lanIdx = -1;
             for (int i = 0; i < children.size(); i++) {
-                String cls = children.get(i).getClass().getSimpleName();
-                if (cls.contains("LAN")) {
+                if (extractServerDataFromEntry(children.get(i)) == null) {
                     lanIdx = i;
                     break;
                 }

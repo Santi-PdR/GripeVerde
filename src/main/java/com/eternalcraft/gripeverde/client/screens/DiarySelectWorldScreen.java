@@ -499,8 +499,8 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     private static String levelGameMode(net.minecraft.world.level.storage.LevelSummary s, boolean en) {
         String raw = "";
         try {
-            Object gm = s.getGameMode();
-            if (gm != null) raw = String.valueOf(gm.getClass().getMethod("getName").invoke(gm));
+            var gm = s.getGameMode();
+            if (gm != null) raw = String.valueOf(gm.getName());
         } catch (Throwable ignored) {
         }
         if (raw == null) raw = "";
@@ -517,29 +517,6 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         try {
             long ms = s.getLastPlayed();
             return ms <= 0L ? "" : stamp(ms, false);
-        } catch (Throwable ignored) {
-            return "";
-        }
-    }
-
-    private static String gameModeName(Object summary) {
-        try {
-            Object gm = summary.getClass().getMethod("getGameMode").invoke(summary);
-            if (gm == null) return "";
-            Object dn = gm.getClass().getMethod("getDisplayName").invoke(gm);
-            return dn == null ? "" : dn.toString();
-        } catch (Throwable ignored) {
-            return "";
-        }
-    }
-
-    private static String lastPlayedStamp(Object summary) {
-        try {
-            Object lp = summary.getClass().getMethod("getLastPlayed").invoke(summary);
-            if (!(lp instanceof Number n)) return "";
-            long millis = n.longValue();
-            if (millis <= 0L) return "";
-            return stamp(millis, false);
         } catch (Throwable ignored) {
             return "";
         }
@@ -582,15 +559,6 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 sb.append("  \u00b7  ").append(en ? "last " : "ultima vez ").append(when);
             }
             return sb.toString().trim();
-        } catch (Throwable ignored) {
-            return "";
-        }
-    }
-
-    private static String invokeString(Object target, String method) {
-        try {
-            Object v = target.getClass().getMethod(method).invoke(target);
-            return v == null ? "" : v.toString();
         } catch (Throwable ignored) {
             return "";
         }

@@ -1,3 +1,7 @@
+## Version 0.367.0 - JourneyMap con canto de hoja y los botones de Multijugador encendidos
+
+JourneyMap 5.10.3's minimap gets a torn-paper rim and its info labels switch to paper with house ink, without touching its config. Editar/Borrar and server names in Multiplayer were disabled or blank and now work
+
 ## Version 0.366.0 - Mundos con fichas de verdad y el parte de defunción sin letra del juego
 
 Saved worlds cards were never drawn because the mod compared the game class name, which is obfuscated at runtime; now the summary is found by type. On the death screen the game labels are blanked by field type and the notice is centred

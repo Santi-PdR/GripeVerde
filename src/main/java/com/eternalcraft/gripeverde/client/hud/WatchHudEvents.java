@@ -32,6 +32,11 @@ public final class WatchHudEvents {
                 (gui, graphics, partialTick, screenWidth, screenHeight) ->
                     com.eternalcraft.gripeverde.client.lore.Discoveries
                         .drawGameToast(graphics, screenWidth, screenHeight));
+            // v0.367.0: el minimapa de JourneyMap, con canto de hoja y letra de
+            // la casa. Si el mod no esta, la capa no dibuja nada.
+            event.registerAboveAll("gripeverde_journeymap",
+                (gui, graphics, partialTick, screenWidth, screenHeight) ->
+                    com.eternalcraft.gripeverde.client.compat.JourneyMapPaper.render(graphics));
         } catch (Throwable ignored) {
         }
     }
