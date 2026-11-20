@@ -452,6 +452,21 @@ public class LivingAtmosphere {
      * bandas frias y calidas, que respiran muy despacio, separan los planos y
      * dan hondura sin costar mas que tres rellenos por cuadro.
      */
+    /**
+     * v0.368.0: paralaje por el raton para la portada. La niebla se corre unos
+     * pixeles hacia donde mira el puntero, que da hondura entre los planos sin
+     * animar nada dentro de la partida. Con movimiento reducido queda en cero.
+     */
+    private static float parallax = 0f;
+
+    public static void setParallax(float value) {
+        if (com.eternalcraft.gripeverde.client.util.MotionPolicy.isReduced()) {
+            parallax = 0f;
+            return;
+        }
+        parallax = Math.max(-1f, Math.min(1f, value));
+    }
+
     public static void renderHorizonHaze(GuiGraphics g, int w, int h) {
         if (g == null || w <= 0 || h < 240) return;
         int baseY = (int) (h * 0.615f);
@@ -489,7 +504,7 @@ public class LivingAtmosphere {
             int alpha = Math.max(0, Math.min(255, (int)(finalPulse * 160)));
             // Niebla marron-ocre (miasma victoriano)
             int fogColor = AtmosphereRenderer.withAlpha(0x004A3820, alpha);
-            int startX = -100 + (offset % w) - w;
+            int startX = -100 + (offset % w) - w + (int) (parallax * 16f);
             int bandW = (int)(w * 1.5f);
             // v0.214.0: las dos mitades del mismo color se pintan de una vez.
             g.fill(startX, y1, startX + bandW * 2, y2, fogColor);
@@ -522,7 +537,9 @@ public class LivingAtmosphere {
                 * (0.85f + 0.15f * (float) Math.sin(time * 0.23f + i * 1.7f)));
             if (alpha < 2) continue;
             int col = AtmosphereRenderer.withAlpha(0x002A2A20, alpha);
-            int startX = -drift;
+            // v0.368.0: la nieblad alta tambien cede al paralaje, en sentido
+            // contrario al de abajo, para que los planos se separen.
+            int startX = -drift - (int) (parallax * 26f);
             g.fill(startX, y1, startX + w * 3, y2, col);
         }
     }

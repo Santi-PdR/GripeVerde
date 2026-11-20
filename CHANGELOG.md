@@ -1,3 +1,7 @@
+## v0.368.0 - Portada con paralaje, anillo del mapa en dos envíos y arsenal de dos renglones
+
+- Portada: la niebla baja y la alta se corren con el puntero, en sentidos contrarios, para separar los planos (con movimiento reducido queda quieta). JourneyMap: la geometria del anillo se calcula solo al cambiar tamano o posicion y se dibuja en dos tandas, en vez de cuatrocientas llamadas de relleno y sus senos por cuadro. Arsenal: la descripcion del mod bajo la mano se dobla en dos renglones. Revision: se repasaron todas las busquedas por nombre de clase, campo o metodo del juego y no queda ninguna en las pantallas.
+
 ## v0.367.0 - JourneyMap con canto de hoja y los botones de Multijugador encendidos
 
 - JourneyMap 5.10.3: capa propia encima del HUD que dibuja el canto de hoja alrededor del minimapa circular (y marco de papel si es cuadrado), y tema del mapa copiado en memoria con fondo de papel y tinta para las coordenadas, el bioma y la hora. Multijugador: Editar y Borrar se deciden por la ficha del servidor y no por el nombre de la clase (que va ofuscado), la cabecera de red local se reconoce igual, y el nombre, la dirección y el MOTD se leen de frente. Mundos: el modo de juego ya no se busca por nombre de metodo.

@@ -1,3 +1,7 @@
+## Version 0.368.0 - Portada con paralaje, anillo del mapa en dos envíos y arsenal de dos renglones
+
+The title fog now follows the pointer, the JourneyMap ring is drawn in two batches with cached geometry, and the hovered mod description wraps to two lines. Second pass over obfuscation-fragile lookups: no name-based reflection left in the screens
+
 ## Version 0.367.0 - JourneyMap con canto de hoja y los botones de Multijugador encendidos
 
 JourneyMap 5.10.3's minimap gets a torn-paper rim and its info labels switch to paper with house ink, without touching its config. Editar/Borrar and server names in Multiplayer were disabled or blank and now work

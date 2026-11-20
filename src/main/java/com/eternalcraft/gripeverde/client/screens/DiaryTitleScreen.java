@@ -556,6 +556,13 @@ public class DiaryTitleScreen extends Screen {
         // v0.26.0: los faroles reconocen la mano del lector.
         com.eternalcraft.gripeverde.client.render.LivingAtmosphere.setMouse(mouseX, mouseY);
         // Professional centralized scene renderer
+        // v0.368.0: la niebla sigue al puntero. La portada gana hondura y el
+        // resto de las pantallas no cambia, porque el paralaje solo lo pone ella.
+        try {
+            float px = this.width <= 0 ? 0f : (mouseX - this.width / 2f) / (this.width / 2f);
+            com.eternalcraft.gripeverde.client.render.LivingAtmosphere.setParallax(px);
+        } catch (Throwable ignored) {
+        }
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderTitleScene(g, this.width, this.height);
         drawDawnIfDue(g);
 

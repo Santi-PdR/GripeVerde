@@ -1,3 +1,7 @@
+## Version 0.368.0 - Portada con paralaje, anillo del mapa en dos envíos y arsenal de dos renglones
+
+La niebla de la portada sigue al puntero, el anillo del JourneyMap se dibuja en dos envios con la geometria cacheada, y la descripcion del mod bajo la mano va en dos renglones. Segunda pasada de bugs de nombres ofuscados: no quedan busquedas por nombre en las pantallas
+
 ## Version 0.367.0 - JourneyMap con canto de hoja y los botones de Multijugador encendidos
 
 El minimapa de JourneyMap 5.10.3 pasa a llevar canto de papel desgarrado y su letra de información va sobre papel con tinta, sin tocar su configuración. Además se arreglan Editar/Borrar y los nombres de los puestos en Multijugador, que salían apagados o en blanco

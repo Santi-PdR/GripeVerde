@@ -118,29 +118,134 @@ public final class JourneyMapPaper {
         g.fill(x + w, y, x + w + 1, y + h, INK_HAIR);
     }
 
-    /** Anillo de papel desgarrado alrededor del minimapa circular. */
+    /**
+     * v0.367.0: anillo de papel desgarrado alrededor del minimapa circular.
+     * v0.368.0: la geometria se calcula una sola vez por tamano y posicion, y
+     * se dibuja en dos tandas (papel y filete) con un solo envio a la tarjeta.
+     * Antes eran mas de cuatrocientas llamadas de relleno y otros tantos senos
+     * y cosenos por cuadro; ahora, cero cuentas y dos envios.
+     */
     private static void drawRing(GuiGraphics g, int cx, int cy, int r) {
-        int steps = 180;
+        buildRing(cx, cy, r);
+        if (ringPaper == null || ringInk == null) {
+            fillRingFallback(g, cx, cy, r);
+            return;
+        }
+        if (!drawQuads(g, ringPaper, ringPaperQuads, PAPER)
+                || !drawQuads(g, ringInk, ringInkQuads, INK_HAIR)) {
+            fillRingFallback(g, cx, cy, r);
+        }
+    }
+
+    private static void fillRingFallback(GuiGraphics g, int cx, int cy, int r) {
+        int steps = 160;
         for (int i = 0; i < steps; i++) {
             double a = (Math.PI * 2.0) * i / steps;
-            double cos = Math.cos(a);
-            double sin = Math.sin(a);
-            // Canto irregular, siempre igual para el mismo angulo.
             int bite = (i * 1103515245 + 12345) >> 28 & 1;
             int rr = r + 2 + bite;
-            int x = (int) Math.round(cx + cos * rr);
-            int y = (int) Math.round(cy + sin * rr);
+            int x = (int) Math.round(cx + Math.cos(a) * rr);
+            int y = (int) Math.round(cy + Math.sin(a) * rr);
             g.fill(x - 1, y - 1, x + 2, y + 2, PAPER);
-            int xf = (int) Math.round(cx + cos * (rr + 2));
-            int yf = (int) Math.round(cy + sin * (rr + 2));
+            int xf = (int) Math.round(cx + Math.cos(a) * (rr + 2));
+            int yf = (int) Math.round(cy + Math.sin(a) * (rr + 2));
             g.fill(xf, yf, xf + 1, yf + 1, PAPER_EDGE);
         }
-        // Filete de tinta pegado al mapa, para asentar la hoja sobre la imagen.
         for (int i = 0; i < steps; i += 2) {
             double a = (Math.PI * 2.0) * i / steps;
             int x = (int) Math.round(cx + Math.cos(a) * (r + 1));
             int y = (int) Math.round(cy + Math.sin(a) * (r + 1));
             g.fill(x, y, x + 1, y + 1, INK_HAIR);
+        }
+    }
+
+    private static final int RING_STEPS = 160;
+    private static float[] ringPaper;
+    private static float[] ringInk;
+    private static int ringPaperQuads;
+    private static int ringInkQuads;
+    private static int geomCx = Integer.MIN_VALUE;
+    private static int geomCy;
+    private static int geomR = -1;
+
+    private static void buildRing(int cx, int cy, int r) {
+        if (ringPaper != null && ringInk != null && cx == geomCx && cy == geomCy && r == geomR) {
+            return;
+        }
+        geomCx = cx;
+        geomCy = cy;
+        geomR = r;
+        float[] paper = new float[RING_STEPS * 4];
+        int pn = 0;
+        for (int i = 0; i < RING_STEPS; i++) {
+            double a = (Math.PI * 2.0) * i / RING_STEPS;
+            int bite = (i * 1103515245 + 12345) >> 28 & 1;
+            double rr = r + 2 + bite;
+            int x = (int) Math.round(cx + Math.cos(a) * rr);
+            int y = (int) Math.round(cy + Math.sin(a) * rr);
+            paper[pn * 4] = x - 1;
+            paper[pn * 4 + 1] = y - 1;
+            paper[pn * 4 + 2] = x + 2;
+            paper[pn * 4 + 3] = y + 2;
+            pn++;
+            double rf = rr + 2;
+            int xf = (int) Math.round(cx + Math.cos(a) * rf);
+            int yf = (int) Math.round(cy + Math.sin(a) * rf);
+            paper[pn * 4] = xf;
+            paper[pn * 4 + 1] = yf;
+            paper[pn * 4 + 2] = xf + 1;
+            paper[pn * 4 + 3] = yf + 1;
+            pn++;
+        }
+        float[] ink = new float[(RING_STEPS / 2 + 1) * 4];
+        int inn = 0;
+        for (int i = 0; i < RING_STEPS; i += 2) {
+            double a = (Math.PI * 2.0) * i / RING_STEPS;
+            int x = (int) Math.round(cx + Math.cos(a) * (r + 1));
+            int y = (int) Math.round(cy + Math.sin(a) * (r + 1));
+            ink[inn * 4] = x;
+            ink[inn * 4 + 1] = y;
+            ink[inn * 4 + 2] = x + 1;
+            ink[inn * 4 + 3] = y + 1;
+            inn++;
+        }
+        ringPaper = paper;
+        ringPaperQuads = pn;
+        ringInk = ink;
+        ringInkQuads = inn;
+    }
+
+    /** Una sola tanda de quads con color plano. */
+    private static boolean drawQuads(GuiGraphics g, float[] data, int quads, int color) {
+        if (quads <= 0) return true;
+        try {
+            org.joml.Matrix4f matrix = g.pose().last().pose();
+            com.mojang.blaze3d.systems.RenderSystem.enableBlend();
+            com.mojang.blaze3d.systems.RenderSystem.defaultBlendFunc();
+            com.mojang.blaze3d.systems.RenderSystem.setShader(
+                net.minecraft.client.renderer.GameRenderer::getPositionColorShader);
+            com.mojang.blaze3d.vertex.BufferBuilder buf =
+                com.mojang.blaze3d.vertex.Tesselator.getInstance().getBuilder();
+            buf.begin(com.mojang.blaze3d.vertex.VertexFormat.Mode.QUADS,
+                com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR);
+            float a = ((color >> 24) & 0xFF) / 255f;
+            float r = ((color >> 16) & 0xFF) / 255f;
+            float gc = ((color >> 8) & 0xFF) / 255f;
+            float b = (color & 0xFF) / 255f;
+            for (int i = 0; i < quads; i++) {
+                float x1 = data[i * 4];
+                float y1 = data[i * 4 + 1];
+                float x2 = data[i * 4 + 2];
+                float y2 = data[i * 4 + 3];
+                buf.vertex(matrix, x1, y2, 0).color(r, gc, b, a).endVertex();
+                buf.vertex(matrix, x2, y2, 0).color(r, gc, b, a).endVertex();
+                buf.vertex(matrix, x2, y1, 0).color(r, gc, b, a).endVertex();
+                buf.vertex(matrix, x1, y1, 0).color(r, gc, b, a).endVertex();
+            }
+            com.mojang.blaze3d.vertex.Tesselator.getInstance().end();
+            com.mojang.blaze3d.systems.RenderSystem.disableBlend();
+            return true;
+        } catch (Throwable ignored) {
+            return false;
         }
     }
 

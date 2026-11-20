@@ -502,12 +502,20 @@ public class DiaryModListScreen extends ModListScreen {
         // v0.302.0: lo que es ese mod, en una linea sobre el papel de los botones.
         try {
             if (!this.hoveredModDesc.isEmpty() && this.footerTop > 40) {
-                String cut = ellipsizeTo(this.font, this.hoveredModDesc,
-                    Math.max(80, this.width - 80));
-                int cw = this.font.width(cut);
-                int y = this.footerTop - 12;
-                g.drawString(this.font, cut, (this.width - cw) / 2, y,
-                    com.eternalcraft.gripeverde.client.render.DiaryChrome.INK_SUBTITLE, false);
+                // v0.368.0: la descripcion del mod bajo la mano va en dos
+                // renglones doblados por palabra. Antes se cortaba en uno solo y
+                // se perdia la mitad de lo que el mod cuenta de si mismo.
+                int limit = Math.max(80, this.width - 80);
+                java.util.List<String> lines = wrapText(this.font, this.hoveredModDesc, limit, 2);
+                int y = this.footerTop - 12 - (lines.size() - 1) * 10;
+                if (y > 16) {
+                    for (String line : lines) {
+                        int cw = this.font.width(line);
+                        g.drawString(this.font, line, (this.width - cw) / 2, y,
+                            com.eternalcraft.gripeverde.client.render.DiaryChrome.INK_SUBTITLE, false);
+                        y += 10;
+                    }
+                }
             }
         } catch (Throwable ignored) {
         }
