@@ -9,7 +9,7 @@ Actualizado: 2026-11-13
   token, igual que el de Photon/Fisk.
 - Rama de trabajo de la sesión: `arena/48be547c-gripeverde` (base `02e85bc`) — la plataforma
   fija el nombre, no se renombra. Todo el trabajo va ahí; el PR sale de esa rama.
-- Versión de esta rama: `0.362.0` (anteriores entregadas: `0.229.0`, `0.228.0`, `0.209.0`, `0.208.0`, `0.207.0`, `0.206.0`, `0.205.0`, `0.204.0`, `0.203.0`, `0.202.0`, `0.201.0`, `0.200.0`, `0.199.0`, `0.198.0`, `0.197.0`, `0.196.0`, `0.195.0`, `0.194.0`, `0.193.0`, `0.192.0`, `0.191.0`, `0.190.0`, `0.189.0`, `0.188.0`, `0.187.0`, `0.186.0`, `0.185.0`, `0.184.2`, `0.184.1`, `0.183.0`)
+- Versión de esta rama: `0.363.0` (anteriores entregadas: `0.229.0`, `0.228.0`, `0.209.0`, `0.208.0`, `0.207.0`, `0.206.0`, `0.205.0`, `0.204.0`, `0.203.0`, `0.202.0`, `0.201.0`, `0.200.0`, `0.199.0`, `0.198.0`, `0.197.0`, `0.196.0`, `0.195.0`, `0.194.0`, `0.193.0`, `0.192.0`, `0.191.0`, `0.190.0`, `0.189.0`, `0.188.0`, `0.187.0`, `0.186.0`, `0.185.0`, `0.184.2`, `0.184.1`, `0.183.0`)
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
 - El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
   proyecto local del usuario.
@@ -293,6 +293,7 @@ anidados y sentencias cortadas (línea que empieza por operador tras un `;` o `}
 | 94 | Ronda de mejoras de menu: rendimiento y hojas | 0.360.0 |
 | 95 | Ronda de mejoras de menu: hojas y HUD | 0.361.0 |
 | 96 | Ronda de mejoras de menu: buscadores | 0.362.0 |
+| 97 | Ronda de mejoras de menu: coordenadas fuera | 0.363.0 |
 
 ## Folios del gabinete
 
@@ -316,6 +317,10 @@ anidados y sentencias cortadas (línea que empieza por operador tras un `;` o `}
 | XVI | recursos |
 | XVII | arsenal |
 | XVIII | mundos guardados |
+
+## Cambios de 0.363.0 — Fuera la opción de coordenadas del reloj; las escribe el mapa
+
+- HUD: se retira la opcion watchCoords y el papelito de coordenadas; el reloj queda con hora, dia, clima y rato dentro. La casa gana el pestillo de la pausa propia en el sitio que dejo libre. Sonido: el volumen de interfaz se mueve mientras arrastras.
 
 ## Cambios de 0.362.0 — El buscador del arsenal también va sobre papel
 
@@ -550,7 +555,7 @@ anidados y sentencias cortadas (línea que empieza por operador tras un `;` o `}
 
 ## Cambios de 0.308.0 — coordenadas aparte
 
-- **HUD**: `cachedCoords` y papelito propio; el reloj vuelve a tres renglones limpios.
+- **HUD**: sin parte de coordenadas (las escribe el mapa); el reloj son tres renglones limpios y la opcion `watchCoords` se retiro del mod en 0.363.0.
 
 ## Cambios de 0.307.0 — la casa en la portada
 

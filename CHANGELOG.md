@@ -1,3 +1,7 @@
+## v0.363.0 - Fuera la opción de coordenadas del reloj; las escribe el mapa
+
+- HUD: se retira la opcion watchCoords y el papelito de coordenadas; el reloj queda con hora, dia, clima y rato dentro. La casa gana el pestillo de la pausa propia en el sitio que dejo libre. Sonido: el volumen de interfaz se mueve mientras arrastras.
+
 ## v0.362.0 - El buscador del arsenal también va sobre papel
 
 - Arsenal (XVII): el buscador de Forge pierde el borde y el fondo, con papelito de la casa por detras, letra en tinta y filete de foco, igual que el de Mundos guardados.

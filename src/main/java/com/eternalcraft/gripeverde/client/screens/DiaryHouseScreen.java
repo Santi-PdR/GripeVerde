@@ -106,10 +106,13 @@ public class DiaryHouseScreen extends Screen {
             "Reloj", "Watch",
             help("El reloj de bolsillo en la esquina, mientras se juega.",
                 "The pocket watch in the corner, while playing."));
-        addToggle(col2, row(2), ClientConfig.HUD_WATCH_COORDS,
-            "Coords", "Coords",
-            help("Anota tambien las coordenadas en ese reloj.",
-                "Also writes the coordinates on that watch."));
+        // v0.363.0: fuera el pestillo de coordenadas (las escribe el mapa). En
+        // su sitio, el pestillo de la pausa propia, que estaba solo en el
+        // archivo de configuracion.
+        addToggle(col2, row(2), ClientConfig.REPLACE_PAUSE,
+            "Pausa propia", "Own pause",
+            help("Usa la hoja de pausa de la casa en vez de la del juego.",
+                "Uses the house's pause sheet instead of the game's."));
 
         int cursor = row(3);
         boolean roomy = this.panelH >= 300;
@@ -280,7 +283,8 @@ public class DiaryHouseScreen extends Screen {
         setBool(ClientConfig.REDUCED_MOTION, false);
         setBool(ClientConfig.REDUCE_FLASHES, false);
         setBool(ClientConfig.HUD_WATCH_ENABLED, true);
-        setBool(ClientConfig.HUD_WATCH_COORDS, true);
+        setBool(ClientConfig.REPLACE_PAUSE, true);
+        setBool(ClientConfig.REPLACE_TITLE, true);
         ClientConfig.HUD_WATCH_CORNER.set(0);
         ClientConfig.HUD_WATCH_CORNER.save();
         ClientConfig.MUSIC_VOLUME.set(0.4);

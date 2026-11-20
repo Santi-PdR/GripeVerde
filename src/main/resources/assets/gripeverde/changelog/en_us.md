@@ -1,3 +1,7 @@
+## Version 0.363.0 - Fuera la opción de coordenadas del reloj; las escribe el mapa
+
+The watch drops its coordinates option for good: the map writes them
+
 ## Version 0.362.0 - El buscador del arsenal también va sobre papel
 
 The mod-list search field drops Forge's black box and sits on paper

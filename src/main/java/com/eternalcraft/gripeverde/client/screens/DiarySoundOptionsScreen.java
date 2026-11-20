@@ -241,8 +241,10 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             ClientConfig.UI_VOLUME.get(),
             value -> DiaryChrome.tr("gripeverde.options.sound.ui_slider")
                 + ": " + (int) Math.round(value * 100.0) + "%",
+            // v0.363.0: a tiempo real: el volumen de interfaz se mueve mientras
+            // arrastras, para poder oirlo con el boton de prueba.
             value -> ClientConfig.UI_VOLUME.set(value),
-            false,
+            true,
             // v0.358.0: se guarda al soltar el mando, una sola vez.
             () -> ClientConfig.UI_VOLUME.save()
         );

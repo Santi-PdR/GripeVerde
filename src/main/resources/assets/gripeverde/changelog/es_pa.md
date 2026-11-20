@@ -1,3 +1,7 @@
+## Version 0.363.0 - Fuera la opción de coordenadas del reloj; las escribe el mapa
+
+El reloj deja de llevar coordenadas: esa opción se retira del mod y las escribe el mapa
+
 ## Version 0.362.0 - El buscador del arsenal también va sobre papel
 
 El buscador del arsenal deja la caja negra de Forge y pasa a papel con tinta

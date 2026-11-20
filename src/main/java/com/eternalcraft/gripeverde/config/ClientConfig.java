@@ -22,7 +22,6 @@ public final class ClientConfig {
     public static final ForgeConfigSpec.BooleanValue DEBUG_SHORTCUT;
     // v0.295.0: el reloj de bolsillo en la esquina de la partida.
     public static final ForgeConfigSpec.BooleanValue HUD_WATCH_ENABLED;
-    public static final ForgeConfigSpec.BooleanValue HUD_WATCH_COORDS;
     public static final ForgeConfigSpec.IntValue HUD_WATCH_CORNER;
 
     static {
@@ -67,9 +66,6 @@ public final class ClientConfig {
         HUD_WATCH_ENABLED = b
             .comment("Mostrar el reloj de bolsillo en la esquina mientras se juega.")
             .define("watchEnabled", true);
-        HUD_WATCH_COORDS = b
-            .comment("Anotar tambien las coordenadas en el reloj de la partida.")
-            .define("watchCoords", true);
         HUD_WATCH_CORNER = b
             .comment("Esquina del reloj en partida: 0 arriba izquierda, 1 arriba derecha, 2 abajo izquierda. Con un mapa arriba, el reloj se aparta solo.")
             .defineInRange("watchCorner", 2, 0, 2);

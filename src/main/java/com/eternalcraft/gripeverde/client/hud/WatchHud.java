@@ -30,9 +30,6 @@ public final class WatchHud {
     private static String cachedLine1 = "";
     private static String cachedLine2 = "";
     private static String cachedLine3 = "";
-    private static String cachedCoords = "";
-    // v0.342.0: el bioma que el mapa escribe bajo el minimapa, en nuestro papel.
-    private static String cachedBiome = "";
     private static long cachedAtMs = -1L;
 
     private WatchHud() {
@@ -69,19 +66,10 @@ public final class WatchHud {
             y = screenH - SLIP_H - MARGIN;
         } else if (corner == 3) {
             // v0.320.0: con mapa en la esquina, el reloj se cuelga en la columna
-            // derecha, sobre el papelito de las coordenadas. Antes se iba abajo
-            // a la izquierda, que es la esquina del chat.
-            y = coords() && cachedCoords.length() > 0
-                ? screenH - MARGIN - coordsSlipHeight() - 6 - SLIP_H
-                : screenH - SLIP_H - MARGIN;
-        }
-
-        // v0.354.0: si hay mapa en la esquina, las coordenadas son suyas. El
-        // JourneyMap ya escribe su propio renglon bajo el minimapa (x, z, y y
-        // bioma, en el idioma del juego); repetirlo en un papelito aparte daba
-        // dos partes distintos en pantalla. El reloj se queda solo con su tira.
-        boolean coordsPaper = coords() && cachedCoords.length() > 0 && !minimapPresent();
-        if (corner == 3 && !coordsPaper) {
+            // derecha. Antes se iba abajo a la izquierda, que es la esquina del
+            // chat.
+            // v0.363.0: ya no se reserva hueco para un parte de coordenadas:
+            // esas las escribe el mapa, y la casa no las repite.
             y = screenH - SLIP_H - MARGIN;
         }
 
@@ -96,25 +84,6 @@ public final class WatchHud {
         g.drawString(font, cachedLine1, x + 7, y + 6, ink, false);
         g.drawString(font, cachedLine2, x + 7, y + 17, soft, false);
         g.drawString(font, cachedLine3, x + 7, y + 28, soft, false);
-
-        // v0.308.0: las coordenadas tienen su propio papelito, abajo a la derecha,
-        // lejos del reloj y de lo que escriba el mapa.
-        // v0.342.0: si el mapa escribe las coordenadas bajo el minimapa, el papel
-        // adopta ese mismo parte (x, z, y) y suma el bioma, con nuestra tinta y
-        // nuestra letra. Nunca se dibuja sobre el minimapa: es una integracion,
-        // no un reemplazo.
-        if (coordsPaper) {
-            int ch = coordsSlipHeight();
-            int cw = Math.min(200, Math.max(56, Math.max(
-                font.width(cachedCoords), font.width(cachedBiome)) + 16));
-            int cx2 = screenW - cw - MARGIN;
-            int cy2 = screenH - MARGIN - ch;
-            PaperTexture.drawTornSlip(g, cx2, cy2, cw, ch, 0xE6D2A6, 0x422810, alpha);
-            g.drawString(font, cachedCoords, cx2 + 5, cy2 + 5, ink, false);
-            if (!cachedBiome.isEmpty()) {
-                g.drawString(font, cachedBiome, cx2 + 5, cy2 + 15, soft, false);
-            }
-        }
 
         // El lacre: un cuadradito rojo que late una vez por minuto, sin destellos.
         // v0.296.0: con movimiento reducido el lacre se queda quieto.
@@ -138,14 +107,6 @@ public final class WatchHud {
             return com.eternalcraft.gripeverde.client.util.MotionPolicy.isReduced();
         } catch (Throwable ignored) {
             return false;
-        }
-    }
-
-    private static boolean coords() {
-        try {
-            return ClientConfig.HUD_WATCH_COORDS.get();
-        } catch (Throwable ignored) {
-            return true;
         }
     }
 
@@ -174,26 +135,6 @@ public final class WatchHud {
         widest = Math.max(widest, DiaryChrome.widthCached(font, cachedLine3));
         int want = Math.min(SLIP_W_MAX, Math.max(SLIP_W, widest + 24));
         return Math.min(want, Math.max(60, screenW - MARGIN * 2));
-    }
-
-    /** v0.342.0: alto del papelito de coordenadas, con bioma o sin el. */
-    private static int coordsSlipHeight() {
-        return cachedBiome.isEmpty() ? 18 : 28;
-    }
-
-    /** v0.342.0: el bioma del jugador, dicho como lo diria el mapa. */
-    private static String biomeName(Minecraft mc) {
-        try {
-            net.minecraft.core.Holder<net.minecraft.world.level.biome.Biome> holder =
-                mc.level.getBiome(mc.player.blockPosition());
-            String path = holder.unwrapKey()
-                .map(k -> k.location().getPath()).orElse("");
-            if (path.isEmpty()) return "";
-            String pretty = path.replace('_', ' ');
-            return Character.toUpperCase(pretty.charAt(0)) + pretty.substring(1);
-        } catch (Throwable ignored) {
-            return "";
-        }
     }
 
     /** v0.301.0: hay un mapa ocupando las esquinas de arriba. */
@@ -258,34 +199,11 @@ public final class WatchHud {
             + String.format(java.util.Locale.ROOT, "%02d:%02d", hours, minutes)
             + "  " + weather;
 
-        // v0.308.0: el rato dentro se queda en el reloj y las coordenadas pasan a
-        // su propio papelito, como el renglon que el mapa escribe bajo si mismo.
+        // v0.363.0: el reloj ya no lleva coordenadas. Las escribe el mapa —el
+        // JourneyMap bajo su minimapa, con su letra y su formato— y la casa no
+        // repite ese parte. Se quito la opcion entera: ni ajuste, ni papelito.
         long mins = Math.max(0L, (now - worldSinceMs) / 60_000L);
         cachedLine3 = mins + (en ? " min in" : " min aqui");
-        cachedBiome = "";
-        // v0.361.0: con minimapa en pantalla el parte de coordenadas no se
-        // dibuja, asi que tampoco se calcula (ni el bioma, que cuesta).
-        if (coords() && mc.player != null && !minimapPresent()) {
-            try {
-                int bx = mc.player.getBlockX();
-                int by = mc.player.getBlockY();
-                int bz = mc.player.getBlockZ();
-                if (minimapPresent()) {
-                    // v0.342.0: el mismo orden que el parte del mapa (x, z, y).
-                    cachedCoords = bx + " \u00b7 " + bz + " \u00b7 " + by;
-                    cachedBiome = biomeName(mc);
-                } else {
-                    cachedCoords = bx + " " + by + " " + bz;
-                }
-            } catch (Throwable ignored) {
-                cachedCoords = "";
-                cachedBiome = "";
-            }
-        } else {
-            cachedCoords = "";
-        }
-        cachedCoords = DiaryChrome.fitText(mc.font, cachedCoords, 190);
-        cachedBiome = DiaryChrome.fitText(mc.font, cachedBiome, 190);
         // v0.351.0: el recorte se mide contra el ancho maximo de la tira, no
         // contra un ancho fijo que dejaba el clima a medias.
         cachedLine1 = DiaryChrome.fitText(mc.font, cachedLine1, SLIP_W_MAX - 22);
