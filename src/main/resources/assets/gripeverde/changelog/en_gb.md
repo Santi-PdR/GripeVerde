@@ -1,3 +1,7 @@
+## Version 0.375.0 - Tooltips in ink: white text on paper is gone across the game
+
+Tooltip backgrounds were already parchment, but the text was still the game's white and grey, unreadable on light paper: it happened in the inventory, on buttons with descriptions and in the mod list. Now every tooltip is rewritten in house ink: the first line (the title) a shade darker and the rest in sepia, line by line and including children, so no composed text is left white
+
 ## Version 0.374.0 - Every world says how much it weighs, and the ledger walks with the arrow keys
 
 Each world's card gains its weight: measured in the same pass that already counted the whole archive and added to the description next to the game mode. If a world has no icon, the line still says how much space it takes. The chosen-world card carries it too. And the ledger walks with the up and down arrows, which only move the ribbon (joining is still the button or Enter)

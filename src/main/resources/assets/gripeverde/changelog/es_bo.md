@@ -1,3 +1,7 @@
+## Version 0.375.0 - Los tooltips, en tinta: se acaba la letra blanca sobre papel en todo el juego
+
+El fondo de los tooltips ya era pergamino, pero el texto seguia siendo el blanco y el gris del juego, y sobre papel claro no se leia: pasaba en el inventario, en los botones con descripcion y en la lista de mods. Ahora cada tooltip se reescribe en tinta de la casa: el primer renglon (el titulo) un punto mas oscuro y el resto en sepia, renglon por renglon y con sus hijos, para que ningun texto compuesto se quede en blanco
+
 ## Version 0.374.0 - Cada mundo dice lo que pesa, y el registro se recorre con las flechas
 
 La ficha de cada mundo gana su peso: se mide en el mismo paseo que ya contaba el archivo entero y se anade a la descripcion, junto al modo. Si el mundo no tiene icono, la linea dice igualmente lo que ocupa. La ficha del mundo elegido tambien lo lleva. Y el registro se recorre con las flechas de arriba y abajo, que solo mueven la cinta (para entrar sigue estando el boton o Enter)
