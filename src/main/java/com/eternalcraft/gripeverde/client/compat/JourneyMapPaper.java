@@ -178,6 +178,15 @@ public final class JourneyMapPaper {
                 || !drawQuads(g, ringInk, ringInkQuads, INK_HAIR)) {
             fillRingFallback(g, cx, cy, r);
         }
+        // v0.376.0: cuatro marcas de brujula en los diagonales del canto, como
+        // las de un marco de lente; son cuatro rellenos y no cuestan nada.
+        int tab = Math.max(3, r / 12);
+        for (int k = 0; k < 4; k++) {
+            double a = Math.PI / 4.0 + k * (Math.PI / 2.0);
+            int x = (int) Math.round(cx + Math.cos(a) * (r + 2));
+            int y = (int) Math.round(cy + Math.sin(a) * (r + 2));
+            g.fill(x - tab / 2, y - tab / 2, x + tab / 2 + 1, y + tab / 2 + 1, INK_HAIR);
+        }
     }
 
     private static void fillRingFallback(GuiGraphics g, int cx, int cy, int r) {

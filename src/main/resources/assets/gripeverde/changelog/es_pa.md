@@ -1,3 +1,7 @@
+## Version 0.376.0 - El registro se recorre entero, la nota distingue 'sin fichas' de 'sin resultados' y el minimapa con marcas de brujula
+
+El registro de Mundos se recorre con Inicio/Fin y RePag/AvPag ademas de con las flechas, y el papel se corre solo para que la ficha marcada quede a la vista. Cuando el buscador no encuentra nada, la nota decia 'aun no hay fichas' y despistaba; ahora dice 'ninguna ficha responde a ...' con lo que has escrito. Y el canto del minimapa de JourneyMap gana cuatro marcas de brujula en los diagonales, como un marco de lente
+
 ## Version 0.375.0 - Los tooltips, en tinta: se acaba la letra blanca sobre papel en todo el juego
 
 El fondo de los tooltips ya era pergamino, pero el texto seguia siendo el blanco y el gris del juego, y sobre papel claro no se leia: pasaba en el inventario, en los botones con descripcion y en la lista de mods. Ahora cada tooltip se reescribe en tinta de la casa: el primer renglon (el titulo) un punto mas oscuro y el resto en sepia, renglon por renglon y con sus hijos, para que ningun texto compuesto se quede en blanco

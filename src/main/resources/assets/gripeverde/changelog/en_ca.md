@@ -1,3 +1,7 @@
+## Version 0.376.0 - The ledger walks end to end, the note tells 'no records' from 'no matches', and the minimap gets compass marks
+
+The Worlds ledger walks with Home/End and PageUp/PageDown besides the arrows, and the paper scrolls by itself so the marked card stays in view. When the search finds nothing, the note used to say 'no records yet' and misled; now it says 'no record answers to ...' with what you typed. And JourneyMap's minimap rim gains four compass marks on the diagonals, like a lens frame
+
 ## Version 0.375.0 - Tooltips in ink: white text on paper is gone across the game
 
 Tooltip backgrounds were already parchment, but the text was still the game's white and grey, unreadable on light paper: it happened in the inventory, on buttons with descriptions and in the mod list. Now every tooltip is rewritten in house ink: the first line (the title) a shade darker and the rest in sepia, line by line and including children, so no composed text is left white

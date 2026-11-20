@@ -988,12 +988,28 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         }
         if (this.listBottom - this.listTop < 28) return;
         boolean en = Discoveries.isEnglish();
-        String note = en ? "no records yet  ·  create one below"
-            : "aun no hay fichas  ·  crea una abajo";
+        // v0.376.0: la nota decia "aun no hay fichas" tambien cuando lo que
+        // pasaba era que el buscador no encontraba nada, y eso despistaba.
+        String query = "";
+        for (EditBox box : this.searchBoxes) {
+            try {
+                if (box.isVisible()) query = box.getValue().trim();
+            } catch (Throwable ignored) {
+            }
+        }
+        String note;
+        if (!query.isEmpty()) {
+            note = en ? "no record answers to \"" + query + "\""
+                : "ninguna ficha responde a \"" + query + "\"";
+        } else {
+            note = en ? "no records yet  ·  create one below"
+                : "aun no hay fichas  ·  crea una abajo";
+        }
         String cut = DiaryChrome.fitText(this.font, note,
             Math.max(80, this.ledgerRight() - this.ledgerLeft() - 40));
         int nw = DiaryChrome.widthCached(this.font, cut);
-        g.drawString(this.font, cut, (this.rowLeft + this.rowRight - nw) / 2,
+        g.drawString(this.font, cut,
+            (this.ledgerLeft() + this.ledgerRight() - nw) / 2,
             (this.listTop + this.listBottom) / 2 - 4, DiaryChrome.INK_SUBTITLE, false);
     }
 
@@ -1195,9 +1211,23 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             } catch (Throwable ignored) {
             }
         }
-        if (!typing && (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN
-                || keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_UP)) {
-            if (moveMark(keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN ? 1 : -1)) {
+        if (!typing) {
+            // v0.376.0: ademas de arriba y abajo, Inicio/Fin y RePag/AvPag,
+            // como en cualquier libro de registro largo.
+            int jump = 0;
+            boolean toEnd = false;
+            if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN) jump = 1;
+            else if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_UP) jump = -1;
+            else if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_DOWN) jump = 5;
+            else if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_UP) jump = -5;
+            else if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_HOME) {
+                jump = -1000;
+                toEnd = false;
+            } else if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_END) {
+                jump = 1000;
+                toEnd = true;
+            }
+            if (jump != 0 && moveMark(jump, toEnd)) {
                 return true;
             }
         }
@@ -1205,7 +1235,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     }
 
     /** v0.374.0: mueve la cinta al mundo de arriba o de abajo. */
-    private boolean moveMark(int delta) {
+    private boolean moveMark(int delta, boolean toEnd) {
         if (this.vanillaList == null) return false;
         try {
             var kids = this.vanillaList.children();
@@ -1218,7 +1248,9 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                     break;
                 }
             }
-            int next = Math.max(0, Math.min(kids.size() - 1, idx + delta));
+            int next = toEnd && delta > 0
+                ? kids.size() - 1
+                : Math.max(0, Math.min(kids.size() - 1, idx + delta));
             if (next == idx && chosen != null) return true;
             Object target = kids.get(next);
             // El juego sabe marcar sin entrar: se le pasa el clic ya colocado.
@@ -1226,6 +1258,24 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             double scroll = 0.0;
             try {
                 scroll = this.vanillaList.getScrollAmount();
+            } catch (Throwable ignored) {
+            }
+            // v0.376.0: si la fila queda fuera de la ventana del registro, se
+            // corre el papel lo justo para que se vea.
+            try {
+                int viewH = this.listBottom - this.listTop;
+                int rowTopInList = 4 - (int) scroll + next * step;
+                double want = scroll;
+                if (rowTopInList < 0) {
+                    want = next * step - 2;
+                } else if (rowTopInList + step > viewH) {
+                    want = next * step + step - viewH + 2;
+                }
+                double maxScroll = Math.max(0, kids.size() * step - viewH);
+                if (want != scroll) {
+                    this.vanillaList.setScrollAmount(Math.min(Math.max(0, want), maxScroll));
+                    scroll = this.vanillaList.getScrollAmount();
+                }
             } catch (Throwable ignored) {
             }
             int rowY = this.listTop + 4 - (int) scroll + next * step + step / 2;
