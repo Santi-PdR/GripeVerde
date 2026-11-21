@@ -92,11 +92,11 @@ jobs:
           path: build/libs/gripeverde-*.jar
           if-no-files-found: error
 
-  # v0.179.0: el JAR como asset de release, para tener una descarga directa
-  # (.jar, no el zip del artefacto). Solo publica cuando release-tag.txt coincide
-  # con la version de build.gradle, asi que un push normal no crea nada y un
-  # release nunca se sobrescribe con el build de otra version. --target GITHUB_SHA
-  # hace que el codigo fuente del tag corresponda al JAR publicado.
+  # El JAR se publica como asset directo, no como zip de artifact. En push,
+  # release-tag.txt debe coincidir con build.gradle; en workflow_dispatch se
+  # exige el checkbox y el tag vacio usa la version actual. Los PR nunca publican
+  # y un release existente no se sobrescribe. --target GITHUB_SHA hace coincidir
+  # el codigo fuente del tag con el JAR publicado.
   publish:
     # Los PR compilan, pero nunca deben publicar releases ni tags.
     if: github.event_name != 'pull_request'

@@ -24,11 +24,13 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
   comprobación visual; no se registran como fallos reproducidos.
 - Las correcciones mantienen la lógica vanilla. El CI acredita compilación,
   recursos, localización y espejos, pero no cómo se ve o responde la interfaz.
-- El CI (`build.yml`) corre `verify_mirrors.py`, `lint_java.py` y
-  `./gradlew clean build` antes de publicar; `publish` compara el marcador con
-  `build.gradle`, crea tags sobre el SHA que produjo el JAR y no sobrescribe
-  un release existente. Maven Central está declarado como fuente canónica de
-  dependencias auxiliares no reflejadas en Forge Maven.
+- El CI (`.github/workflows/build.yml`) corre `verify_mirrors.py`,
+  `lint_java.py`, `tools/ci/test_release_gate.py` y `./gradlew clean build`.
+  Los PR no publican; `workflow_dispatch` requiere `publish_release=true`, y
+  los pushes requieren que el marcador coincida con `build.gradle`. El job
+  crea tags sobre el SHA que produjo el JAR y no sobrescribe un release
+  existente. Maven Central está declarado como fuente canónica de dependencias
+  auxiliares no reflejadas en Forge Maven.
 - La carpeta de mods debe contener únicamente archivos JAR; al actualizar se
   reemplazan las versiones anteriores de GripeVerde. El instalador verificado
   está en `tools/install-latest.ps1`.

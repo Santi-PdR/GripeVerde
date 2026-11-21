@@ -1,28 +1,21 @@
-# Continuous Integration - Eternal Craft: Gripe Verde
-#
-# v0.23.0 (KI-52): el sandbox de trabajo no dispone de Java 17, por lo que el
-# build Forge solo podia ejecutarse en el PC del owner. Este workflow compila
-# semánticamente contra Forge/Minecraft con JDK 17 en cada push y PR, ejecuta
-# las cinco verificaciones (localizacion 25x93, changelogs, sonido, codigo
-# muerto, version y duraciones Vorbis) y publica el jar como artifact.
-#
-# INSTALACION (10 segundos): mover este archivo a
-#   .github/workflows/build.yml
-# La sesion del 2026-08-23 no pudo subirlo directamente porque el token de la
-# app de GitHub no tiene permiso "workflows"; desde la web de GitHub el owner
-# puede pegarlo sin ese permiso, o reconectar GitHub en Arena y pedir el push.
+# Plantilla de CI artifact-only para recuperación manual.
+# El workflow activo y completo está en .github/workflows/build.yml: incluye
+# publicación de releases con una compuerta probada aparte. No reemplazarlo por
+# esta plantilla si se necesita conservar esa publicación controlada.
+# Mantener aquí los mismos checks baratos y los mismos SHA de acciones.
 
-name: build
+name: Build GripeVerde (artifact template)
 
 on:
   push:
+    branches: [main, 'arena/**']
   pull_request:
 
 permissions:
   contents: read
 
 concurrency:
-  group: build-${{ github.ref }}
+  group: gripeverde-template-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -44,14 +37,23 @@ jobs:
       - name: Set up Gradle (cache incluida)
         uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
 
+      - name: Verify mirrored assets and localization
+        run: python3 tools/verify_mirrors.py
+
+      - name: Lint Java structure
+        run: python3 tools/lint_java.py
+
+      - name: Test release publishing gate
+        run: python3 tools/ci/test_release_gate.py
+
       - name: Build with ForgeGradle
         run: |
           chmod +x gradlew
           ./gradlew --no-daemon clean build
 
-      - name: Upload mod jar
+      - name: Upload mod JAR
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: gripeverde-jar
-          path: build/libs/*.jar
+          path: build/libs/gripeverde-*.jar
           if-no-files-found: error

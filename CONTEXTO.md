@@ -21,10 +21,12 @@
 - Las reglas de siempre siguen en pie: mod **solo de cliente**, sin bloques,
   sin ítems, sin gameplay ni resourcepacks; la identidad visual se hace con
   Java y los render/widgets propios.
-- Publicar es: `verify_mirrors.py` -> `lint_java.py` -> commit + push ->
-  esperar el run -> comprobar el release. **Nunca dos pushes seguidos** (el CI
-  cancela por concurrencia) y **no compilar en local** (este entorno no tiene
-  JDK; compila el CI).
+- Validar y publicar: `verify_mirrors.py` -> `lint_java.py` ->
+  `tools/ci/test_release_gate.py` -> commit + push -> esperar el CI.
+  Los PR nunca publican; `workflow_dispatch` requiere `publish_release=true`, y
+  en un push el marcador debe coincidir con `build.gradle`. **Nunca dos pushes
+  seguidos** (el CI cancela por concurrencia) y **no compilar en local** (este
+  entorno no tiene JDK; compila el CI).
 - Baseline validada: 72 archivos Java, 25 locales x 191 claves, 35 eventos de
   sonido, 42 refs/42 OGG, 4 piezas de música y 8/8 sellos espejo.
 - Destino de instalación del owner:

@@ -69,7 +69,7 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
 ## Verificaciones de build activas (processResources)
 
 - `verifyGripeVerdeLocalization` — conjunto exacto de 25 locales, JSON
-  valido, exactamente 93 claves no vacias con paridad frente a `en_us` y
+  valido, exactamente 191 claves no vacias con paridad frente a `en_us` y
   presencia de la version actual en las 25 cronicas in-game.
 - `verifyGripeVerdeSoundAssets` — estructura e identificadores de eventos,
   listas no vacias, referencias existentes y cobertura OGG exacta, sin
@@ -83,13 +83,14 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   musica debe estar dentro de 1.5 s de `TRACK_DURATIONS_MS`.
 - `verifyGripeVerdeSubtitles` — toda clave de subtitulo no vacia (8 eventos
   ambientales) debe existir en los 25 idiomas.
-- `verifyGripeVerdeSoundUsage` — ningun SoundEvent registrado sin uso fuera
-  del allowlist legacy (10 eventos devengados, ver javadoc de ModSounds).
+- `verifyGripeVerdeSoundUsage` — ningún SoundEvent registrado sin uso; el
+  allowlist legacy está vacío desde v0.26.0.
 
-Ademas, hay un workflow de CI listo en `tools/ci/build.yml` (compila todo
-con JDK 17 en cada push/PR); se activa en un paso con
-`tools/ci/activar-ci.ps1` (la sesion no pudo subirlo directamente por
-permisos; el script usa las credenciales locales del owner).
+La CI activa está en `.github/workflows/build.yml`: verifica espejos,
+lint Java, la compuerta de publicación, y compila con JDK 17. Los PR nunca
+publican; `workflow_dispatch` exige activar explícitamente `publish_release`.
+`tools/ci/build.yml` es solo una plantilla de build + artifact, alineada con
+los checks del workflow activo, sin la etapa de publicación.
 
 ## Codigo
 
