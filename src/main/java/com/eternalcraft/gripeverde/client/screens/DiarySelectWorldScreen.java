@@ -282,11 +282,23 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
 
     /** Donde empieza la fila `i`, segun la propia lista. */
     private int rowTopOf(int i) {
+        if (this.rowTopMethod == null || this.vanillaList == null) return Integer.MIN_VALUE;
         try {
             return (Integer) this.rowTopMethod.invoke(this.vanillaList, i);
         } catch (Throwable ignored) {
-            return 0;
+            return Integer.MIN_VALUE;
         }
+    }
+
+    /**
+     * v0.392.0: una sola cuenta para todos los renglones del registro.
+     * La lista devuelve el tope absoluto (incluidos scroll y cabecera); si no
+     * se puede invocar el metodo descubierto, se conserva el respaldo antiguo.
+     */
+    private int rowTopAt(int index, double scroll) {
+        int measured = rowTopOf(index);
+        if (measured != Integer.MIN_VALUE) return measured;
+        return this.listTop + 4 - (int) scroll + index * rowStep();
     }
 
     private static int readIntField(Object target, String officialName, String srgName) {
@@ -522,8 +534,8 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 Object entry = children.get(i);
                 net.minecraft.world.level.storage.LevelSummary summary = summaryOf(entry);
                 if (summary == null) continue;
-                int entryTop = listTop + 4 - (int) scroll + i * this.rowItemHeight;
-                int entryBottom = entryTop + this.rowItemHeight;
+                int entryTop = rowTopAt(i, scroll);
+                int entryBottom = entryTop + rowStep();
                 if (entryBottom < listTop || entryTop > listBottom) continue;
                 int drawTop = Math.max(entryTop, listTop);
                 int drawBottom = Math.min(entryBottom, listBottom);
@@ -936,7 +948,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         } catch (Throwable ignored) {
         }
         for (int i = 0; i < count && i < 64; i++) {
-            int top = this.listTop + 4 - (int) scroll + i * step;
+            int top = rowTopAt(i, scroll);
             int bottom = top + step - 4;
             if (bottom < this.listTop || top > this.listBottom) continue;
             int drawTop = Math.max(top, this.listTop);
@@ -1022,7 +1034,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         } catch (Throwable ignored) {
         }
         for (int i = 0; i < count && i < 64; i++) {
-            int rowTop = this.listTop + 4 - (int) scroll + i * step;
+            int rowTop = rowTopAt(i, scroll);
             int rowBottom = rowTop + step - 4;
             if (rowBottom < this.listTop || rowTop > this.listBottom) continue;
             int drawTop = Math.max(rowTop, this.listTop);
@@ -1122,15 +1134,13 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         }
         int tx = this.ledgerRight() - 9;
         if (tx <= coverL + 4) return;
-        int count = 0;
+        int viewH = this.listBottom - this.listTop;
+        int maxScroll = 0;
         try {
-            count = this.vanillaList.children().size();
+            maxScroll = Math.max(0, this.vanillaList.getMaxScroll());
         } catch (Throwable ignored) {
         }
-        int step = this.rowItemHeight > 0 ? this.rowItemHeight : 36;
-        int totalH = Math.max(1, count * step);
-        int viewH = this.listBottom - this.listTop;
-        if (totalH <= viewH) {
+        if (maxScroll <= 0) {
             // Todo cabe: el carril va sin aguja.
             g.fill(tx, this.listTop + 1, tx + 2, this.listBottom - 1, 0x336B5533);
             return;
@@ -1140,10 +1150,11 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             scroll = this.vanillaList.getScrollAmount();
         } catch (Throwable ignored) {
         }
-        int thumbH = Math.max(14, (int) ((long) viewH * viewH / totalH));
-        int maxScroll = Math.max(1, totalH - viewH);
+        int contentH = Math.max(1, viewH + maxScroll);
+        int thumbH = Math.min(viewH, Math.max(14, (int) ((long) viewH * viewH / contentH)));
+        double scrollFraction = Math.max(0.0, Math.min(1.0, scroll / maxScroll));
         int thumbY = this.listTop
-            + (int) ((double) (viewH - thumbH) * Math.min(1.0, scroll / maxScroll));
+            + (int) ((double) (viewH - thumbH) * scrollFraction);
         g.fill(tx, this.listTop + 1, tx + 2, this.listBottom - 1, 0x556B5533);
         g.fill(tx, thumbY, tx + 2, thumbY + thumbH, 0xCC3D2A18);
     }
@@ -1221,7 +1232,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 int total = this.vanillaList.children().size();
                 int h = this.rowStepExact > 0 ? this.rowStepExact : step;
                 for (int i = 0; i < total && i < 128; i++) {
-                    int top = rowTopOf(i);
+                    int top = rowTopAt(i, scroll);
                     if (mouseY >= top && mouseY < top + h) {
                         exact = i;
                         break;
@@ -1367,18 +1378,20 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 scroll = this.vanillaList.getScrollAmount();
             } catch (Throwable ignored) {
             }
-            // v0.376.0: si la fila queda fuera de la ventana del registro, se
-            // corre el papel lo justo para que se vea.
+            // v0.392.0: si la fila queda fuera de la ventana del registro, se
+            // corre el scroll por el desplazamiento medido, con cabecera incluida.
             try {
-                int viewH = this.listBottom - this.listTop;
-                int rowTopInList = 4 - (int) scroll + next * step;
+                int viewTop = this.listTop;
+                int viewBottom = this.listBottom;
+                int rowTop = rowTopAt(next, scroll);
+                int rowBottom = rowTop + step;
                 double want = scroll;
-                if (rowTopInList < 0) {
-                    want = next * step - 2;
-                } else if (rowTopInList + step > viewH) {
-                    want = next * step + step - viewH + 2;
+                if (rowTop < viewTop + 2) {
+                    want += viewTop + 2 - rowTop;
+                } else if (rowBottom > viewBottom - 2) {
+                    want += rowBottom - (viewBottom - 2);
                 }
-                double maxScroll = Math.max(0, kids.size() * step - viewH);
+                double maxScroll = Math.max(0, this.vanillaList.getMaxScroll());
                 if (want != scroll) {
                     this.vanillaList.setScrollAmount(Math.min(Math.max(0, want), maxScroll));
                     scroll = this.vanillaList.getScrollAmount();
@@ -1403,7 +1416,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                         if (target instanceof net.minecraft.client.gui.components.events
                                 .GuiEventListener clickable) {
                             double cx = this.rowLeft + 4;
-                            double cy = this.listTop + 4 - scroll + next * step + step / 2.0;
+                            double cy = rowTopAt(next, scroll) + step / 2.0;
                             clickable.mouseClicked(cx, cy, 0);
                         }
                     } catch (Throwable ignored) {

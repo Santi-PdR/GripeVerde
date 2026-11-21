@@ -1,3 +1,7 @@
+## Version 0.392.0 - The world ledger measures each row where it begins
+
+The world ledger still drew several things from its own estimate: cards, folio numbers, row marks and keyboard scrolling could drift from the actual row when the list added a header or spacing. Those details now use the row start reported by the list itself. The margin needle also follows the game’s real maximum scroll instead of a height estimated from the number of worlds, keeping the paper, selection and scrolling in step.
+
 ## Version 0.391.0 - The cards stop guessing where each row begins
 
 Plain-text tooltips —buttons and entries— now use the same paper-and-ink card as item tooltips, without the shadow that blurred the lettering. Cards drawn after a screen and cards drawn immediately also share Minecraft’s tooltip positioner, so they no longer drift apart near the edges by calculating placement two different ways. In Sound, Chat, Accessibility, Online, the mod list and the resource-pack cabinet, ink bands and labels ask each list for its row top and height instead of guessing from the obfuscatable `itemHeight` field; scrolling no longer pulls them away from their controls. Slider needles also have a structural fallback for finding the value when its field name changes.

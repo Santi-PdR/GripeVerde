@@ -1805,6 +1805,17 @@ Cuatro trampas que ya costaron una captura cada una. Van aquí para no repetirla
 - `tools/lint_java.py`: nueva regla `notas_de_widgets` -pantalla sin `super.render`
   y sin recorrer widgets-. Se silencia con `// widgets-ok`.
 
+## 0.392.0 - mundos con geometria exacta en toda la hoja
+
+- **Una sola coordenada para la fila.** `rowTopAt(i, scroll)` usa el inicio
+  absoluto que devuelve la lista; el respaldo mantiene la cuenta anterior si
+  la reflexión no se puede invocar. Fichas de mundos, folios, hover y hit-test
+  pasan por ese helper.
+- **Teclado y scroll.** Al moverse con flechas o Inicio/Fin, la pantalla mide
+  cuánto sobresale la fila seleccionada y mueve el scroll justo lo necesario;
+  el tope usa `getMaxScroll()` de la lista. La aguja lateral usa ese mismo
+  máximo real y limita su tamaño al alto visible.
+
 ## 0.391.0 - tooltips en tinta y filas medidas por la lista
 
 - **Tooltips de texto:** los carteles sin objeto se leen desde los componentes

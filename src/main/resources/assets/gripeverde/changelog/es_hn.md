@@ -1,3 +1,7 @@
+## Version 0.392.0 - El registro de mundos mide cada fila donde empieza
+
+El registro de mundos todavía dibujaba varias cosas con una cuenta propia: fichas, números, marcas y el ajuste del scroll al moverse con el teclado podían quedar separados de la fila real cuando la lista sumaba cabecera o espaciado. Ahora todos esos trazos usan el inicio de fila que devuelve la lista. La aguja del margen también toma el recorrido máximo real del juego, no una altura estimada por cantidad de mundos; así la hoja, la selección y el desplazamiento siguen el mismo compás.
+
 ## Version 0.391.0 - Las fichas dejan de adivinar dónde empieza cada fila
 
 Los tooltips de texto —botones y fichas— pasan a la misma tarjeta de papel y tinta que los objetos, sin la sombra que emborronaba las letras. Además, tanto la tarjeta que se dibuja al final de una pantalla como la que se pinta en el momento usan el colocador de Minecraft: cerca de los bordes ya no se separan por calcular la posición de dos maneras. En Sonido, Chat, Accesibilidad, Online, el Arsenal y el archivador de Packs, las bandas y los rótulos preguntan a la lista dónde empieza cada fila y cuánto mide, en vez de adivinarlo leyendo `itemHeight` por nombre; el scroll ya no los corre respecto de los mandos. El indicador de los deslizadores también tiene una búsqueda de respaldo para encontrar su valor si cambia el nombre del campo.
