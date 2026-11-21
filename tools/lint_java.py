@@ -10,7 +10,7 @@ interactiva de la hoja de mundos:
   4. La hoja de mundos detecta el campo visible y enfocado y delega Enter/Supr
      antes de ejecutar atajos sobre el mundo seleccionado.
   5. El total del archivo, escrito en un worker y leído por la GUI, se publica
-     con volatile para que el hilo de render vea el resultado.
+     con volatile; al reabrir, un escaneo nuevo cancela y reemplaza el anterior.
 
 Uso: python3 tools/lint_java.py [rutas...]
 Sale con codigo 1 si encuentra algo.
@@ -203,6 +203,16 @@ def check_world_archive_visibility(path, clean):
         line = clean[:match.start()].count(chr(10)) + 1
         return [(path, line,
                  'Mundos: archiveBytes debe ser volatile para publicar el resultado del worker')]
+    generation_guards = (
+        'AtomicLong ARCHIVE_SCAN_GENERATION',
+        'scanGeneration = ARCHIVE_SCAN_GENERATION.incrementAndGet()',
+        'scanGeneration == ARCHIVE_SCAN_GENERATION.get()',
+        'scanGeneration != ARCHIVE_SCAN_GENERATION.get()',
+    )
+    if any(token not in clean for token in generation_guards):
+        line = clean[:match.start()].count(chr(10)) + 1
+        return [(path, line,
+                 'Mundos: cancelar y descartar escaneos de archivo reemplazados')]
     return []
 
 

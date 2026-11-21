@@ -39,6 +39,10 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     private List<EditBox> searchBoxes = new ArrayList<>();
     // v0.270.0: lo que pesa el archivo, medido una vez por apertura.
     private static volatile long archiveBytes = -1L;
+    // Si se reabre la hoja antes de terminar el paseo anterior, se descarta el
+    // resultado viejo y se evita que siga recorriendo todos los archivos.
+    private static final java.util.concurrent.atomic.AtomicLong ARCHIVE_SCAN_GENERATION
+        = new java.util.concurrent.atomic.AtomicLong();
     // v0.374.0: se vuelve a medir en cada apertura, en segundo plano, para
     // que un mundo recien creado aparezca con su peso.
     private boolean archiveMeasured = false;
@@ -116,6 +120,10 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         } catch (Throwable ignored) {
             return;
         }
+        final long scanGeneration;
+        synchronized (WORLD_SIZES) {
+            scanGeneration = ARCHIVE_SCAN_GENERATION.incrementAndGet();
+        }
         Thread t = new Thread(() -> {
             long total = 0L;
             // v0.374.0: en el mismo paseo se apunta lo que pesa cada mundo, que
@@ -124,7 +132,8 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             try (java.util.stream.Stream<java.nio.file.Path> walk = java.nio.file.Files.walk(saves, 6)) {
                 java.util.Iterator<java.nio.file.Path> it = walk.iterator();
                 int guard = 0;
-                while (it.hasNext() && guard++ < 20000) {
+                while (guard++ < 20000 && scanGeneration == ARCHIVE_SCAN_GENERATION.get()
+                        && it.hasNext()) {
                     java.nio.file.Path f = it.next();
                     try {
                         if (java.nio.file.Files.isRegularFile(f)) {
@@ -141,8 +150,9 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 }
             } catch (Throwable ignored) {
             }
-            archiveBytes = total;
             synchronized (WORLD_SIZES) {
+                if (scanGeneration != ARCHIVE_SCAN_GENERATION.get()) return;
+                archiveBytes = total;
                 WORLD_SIZES.clear();
                 WORLD_SIZES.putAll(perWorld);
             }
