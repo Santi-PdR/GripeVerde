@@ -1,3 +1,7 @@
+## Version 0.377.0 - Item cards without shadow, full descriptions and the archive drawers
+
+Tooltip text looked bolder and blurrier because the game ALWAYS draws with a shadow: with dark ink on paper the shadow is another dark blob next to it. The item card is now drawn by hand, on paper, in ink and without shadow. In Worlds a second quick click on the same card can never reach the game list: the ledger swallows it. In Multiplayer the server description wraps to two lines instead of being cut with an ellipsis, and the Sound footer tries a long, medium and short form until one fits whole. In Resource packs each column becomes a paper drawer with its caption (AVAILABLE / APPLIED) and the pack icons sit on paper. In the Arsenal the white search label is cleaned and rewritten in ink
+
 ## Version 0.376.0 - The ledger walks end to end, the note tells 'no records' from 'no matches', and the minimap gets compass marks
 
 The Worlds ledger walks with Home/End and PageUp/PageDown besides the arrows, and the paper scrolls by itself so the marked card stays in view. When the search finds nothing, the note used to say 'no records yet' and misled; now it says 'no record answers to ...' with what you typed. And JourneyMap's minimap rim gains four compass marks on the diagonals, like a lens frame

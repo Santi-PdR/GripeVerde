@@ -559,14 +559,31 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             boolean musicOff = !MenuMusic.isMusicEnabled() || musicPct <= 0;
             boolean ambOff = MenuAmbience.isMuted() || ambPct <= 0;
             String line;
+            // v0.377.0: el pie se cortaba con puntos suspensivos. Ahora se
+            // prueban tres formas -larga, media y corta- y se usa la primera
+            // que entra entera: siempre se lee completo.
+            String lineMid;
+            String lineShort;
             if (musicOff && ambOff && uiPct <= 0) {
                 line = en ? "the cabinet is silent" : "el gabinete esta en silencio";
+                lineMid = line;
+                lineShort = line;
             } else {
                 line = (en ? "music " : "musica ")
                     + (menuMusicOffLabel(musicOff, musicPct, en))
                     + (en ? "  ·  ambience " : "  ·  ambiente ")
                     + (menuAmbienceOffLabel(ambOff, ambPct, en))
                     + (en ? "  ·  ui " : "  ·  interfaz ") + uiPct + "%";
+                lineMid = (en ? "mus " : "mus ")
+                    + (menuMusicOffLabel(musicOff, musicPct, en))
+                    + (en ? " · amb " : " · amb ")
+                    + (menuAmbienceOffLabel(ambOff, ambPct, en))
+                    + (en ? " · ui " : " · ui ") + uiPct + "%";
+                lineShort = (en ? "mus " : "mus ")
+                    + (musicOff ? "-" : musicPct + "%")
+                    + (en ? " · amb " : " · amb ")
+                    + (ambOff ? "-" : ambPct + "%")
+                    + " · ui " + uiPct + "%";
             }
             // v0.301.0: la linea de las tres capas caia sobre las ruedas y el
             // boton de volver. Ahora comparte el pie con el folio, y se recorta
@@ -589,7 +606,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             if (roomy) {
                 int leftLimit = (btL - 8) - (this.panelX + 14);
                 if (leftLimit >= 60) {
-                    String cut = DiaryChrome.fitCached(this.font, line, leftLimit);
+                    String cut = fitWhole(line, lineMid, lineShort, leftLimit);
                     g.drawString(this.font, cut, this.panelX + 14, footY,
                         DiaryChrome.INK_FLAVOR, false);
                 }
@@ -616,6 +633,18 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, this.panelY - 12);
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
         } catch (Throwable ignored) {}
+    }
+
+    /**
+     * v0.377.0: la primera de las formas que entra entera en el ancho dado. Si
+     * ni la corta cabe, se recorta esa (nunca se deja a medias una larga).
+     */
+    private String fitWhole(String longest, String middle, String shortest, int limit) {
+        if (limit <= 0) return "";
+        if (DiaryChrome.widthCached(this.font, longest) <= limit) return longest;
+        if (middle != null && DiaryChrome.widthCached(this.font, middle) <= limit) return middle;
+        if (shortest != null && DiaryChrome.widthCached(this.font, shortest) <= limit) return shortest;
+        return DiaryChrome.fitCached(this.font, shortest == null ? longest : shortest, limit);
     }
 
     /** v0.285.0: "40%" o "en silencio", segun lo que haya. */

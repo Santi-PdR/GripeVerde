@@ -8,7 +8,12 @@ import com.mojang.datafixers.util.Either;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -72,6 +77,74 @@ public class TooltipEventHandler {
         } catch (Throwable ignored) {
         }
         return out;
+    }
+
+    /**
+     * v0.377.0: la ficha del objeto (su tooltip) se dibuja a mano.
+     *
+     * El juego escribe siempre CON SOMBRA. Con letra blanca la sombra sirve de
+     * contorno, pero con tinta oscura sobre papel la sombra es otra mancha
+     * oscura al lado y la letra parece mas gruesa y borrosa: era lo que se veia
+     * en los nombres de los items. Aqui se cancela el del juego y se pega una
+     * ficha de papel con la misma informacion en tinta y SIN sombra.
+     */
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public static void onTooltipPre(RenderTooltipEvent.Pre event) {
+        try {
+            ItemStack stack = event.getItemStack();
+            Minecraft mc = Minecraft.getInstance();
+            if (stack == null || stack.isEmpty() || mc == null || mc.player == null) return;
+            TooltipFlag flag = mc.options != null && mc.options.advancedItemTooltips
+                ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL;
+            List<Component> lines = stack.getTooltipLines(mc.player, flag);
+            if (lines == null || lines.isEmpty()) return;
+            event.setCanceled(true);
+            drawPaperTooltip(event, lines);
+        } catch (Throwable ignored) {
+        }
+    }
+
+    private static void drawPaperTooltip(RenderTooltipEvent.Pre event,
+                                         List<Component> lines) {
+        Font font = event.getFont();
+        GuiGraphics g = event.getGraphics();
+        if (font == null || g == null) return;
+        int maxW = 210;
+        java.util.List<String> rows = new java.util.ArrayList<>();
+        for (Component line : lines) {
+            java.util.List<FormattedText> pieces;
+            try {
+                pieces = font.split(line, maxW);
+            } catch (Throwable ignored) {
+                pieces = null;
+            }
+            if (pieces == null || pieces.isEmpty()) {
+                String plain = line == null ? "" : line.getString();
+                rows.add(plain);
+                continue;
+            }
+            for (FormattedText piece : pieces) {
+                rows.add(piece == null ? "" : piece.getString());
+            }
+            if (rows.size() > 40) break;
+        }
+        if (rows.isEmpty()) return;
+        int w = 0;
+        for (String row : rows) w = Math.max(w, font.width(row));
+        w += 12;
+        int h = rows.size() * 10 + 8;
+        int sw = Math.max(0, event.getScreenWidth());
+        int sh = Math.max(0, event.getScreenHeight());
+        int x = event.getX();
+        int y = event.getY();
+        if (sw > 0) x = Math.max(4, Math.min(x, sw - w - 4));
+        if (sh > 0) y = Math.max(4, Math.min(y, sh - h - 4));
+        com.eternalcraft.gripeverde.client.render.PaperTexture.drawTornSlip(
+            g, x, y, w, h, 0xE6D2A6, 0x422810, 246);
+        for (int i = 0; i < rows.size(); i++) {
+            int color = i == 0 ? INK_TITLE : INK_BODY;
+            g.drawString(font, rows.get(i), x + 6, y + 5 + i * 10, color, false);
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)

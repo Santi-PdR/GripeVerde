@@ -60,6 +60,10 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         = new java.util.HashMap<>();
     private static final java.util.Set<String> WORLD_ICONS_ABSENT = new java.util.HashSet<>();
     private int iconsThisFrame;
+    // v0.377.0: la ultima ficha a la que se le paso un clic, para tragarse el
+    // segundo golpe del doble clic.
+    private Object lastForwardedEntry;
+    private long lastForwardedMs;
     // v0.374.0: lo que pesa cada mundo, medido con el archivo entero.
     private static final java.util.Map<String, Long> WORLD_SIZES = new java.util.HashMap<>();
 
@@ -1333,14 +1337,20 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         // pasaba el clic a la lista del juego y un segundo clic seguido -el
         // gesto normal de "elegir"- entraba al mundo sin avisar. Para entrar
         // esta el boton (o Enter).
-        if (inLedger && button == 0) {
-            Object clicked = entryAt(mouseY);
+        // v0.377.0: ademas se traga cualquier segundo clic rapido sobre la
+        // misma ficha, venga de donde venga la marca: asi el gesto de doble
+        // clic no puede llegar nunca a la lista del juego.
+        Object clicked = inLedger && button == 0 ? entryAt(mouseY) : null;
+        if (clicked != null) {
             Object chosen = null;
             try {
                 chosen = this.vanillaList == null ? null : this.vanillaList.getSelected();
             } catch (Throwable ignored) {
             }
-            if (clicked != null && clicked == chosen) {
+            long now = System.currentTimeMillis();
+            boolean twice = clicked == this.lastForwardedEntry
+                && now - this.lastForwardedMs < 700L;
+            if (clicked == chosen || twice) {
                 try {
                     com.eternalcraft.gripeverde.client.audio.UiSounds.tab();
                 } catch (Throwable ignored) {
@@ -1349,6 +1359,10 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             }
         }
         boolean handled = super.mouseClicked(inLedger ? ledgerX(mouseX) : mouseX, mouseY, button);
+        if (clicked != null) {
+            this.lastForwardedEntry = clicked;
+            this.lastForwardedMs = System.currentTimeMillis();
+        }
         onRow = onRow || (inLedger && handled);
         if (onRow) {
             try {

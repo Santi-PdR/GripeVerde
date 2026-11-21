@@ -1,3 +1,7 @@
+## Version 0.377.0 - La ficha de los objetos sin sombra, descripciones completas y los cajones del archivador
+
+La letra de los tooltips parecia mas gruesa y borrosa porque el juego escribe SIEMPRE con sombra: con tinta oscura sobre papel, la sombra es otra mancha al lado. Ahora la ficha del objeto se dibuja a mano, en papel, con la letra en tinta y sin sombra. En Mundos un segundo clic rapido sobre la misma ficha ya no puede llegar nunca al juego: se lo traga el registro. En Multijugador la descripcion del puesto se dobla a dos renglones en vez de cortarse con puntos suspensivos, y el pie de Sonido prueba formas larga, media y corta hasta que una entra entera. En Pack de recursos cada columna pasa a ser un cajon de papel con su rotulo (DISPONIBLES / ARCHIVADOS) y los iconos de los packs quedan sobre papel. En el Arsenal se limpia el rotulo blanco del buscador y se reescribe en tinta
+
 ## Version 0.376.0 - El registro se recorre entero, la nota distingue 'sin fichas' de 'sin resultados' y el minimapa con marcas de brujula
 
 El registro de Mundos se recorre con Inicio/Fin y RePag/AvPag ademas de con las flechas, y el papel se corre solo para que la ficha marcada quede a la vista. Cuando el buscador no encuentra nada, la nota decia 'aun no hay fichas' y despistaba; ahora dice 'ninguna ficha responde a ...' con lo que has escrito. Y el canto del minimapa de JourneyMap gana cuatro marcas de brujula en los diagonales, como un marco de lente

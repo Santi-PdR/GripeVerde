@@ -218,6 +218,38 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         return 36;
     }
 
+    /** v0.377.0: el cajon de cada columna de materiales, con su rotulo. */
+    private void drawPackColumns(GuiGraphics g) {
+        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+        drawPackColumn(g, this.availableList, en ? "AVAILABLE" : "DISPONIBLES");
+        drawPackColumn(g, this.selectedList, en ? "APPLIED" : "ARCHIVADOS");
+    }
+
+    private void drawPackColumn(GuiGraphics g, AbstractSelectionList<?> list, String heading) {
+        if (g == null || list == null) return;
+        int left = list.getLeft();
+        int top = list.getTop();
+        int w = list.getWidth();
+        int h = list.getHeight();
+        if (w < 80 || h < 60) return;
+        int x1 = Math.max(2, left - 6);
+        int x2 = Math.min(this.width - 2, left + w + 6);
+        int y1 = Math.max(2, top - 16);
+        int y2 = Math.min(this.height - 2, top + h + 6);
+        int paper = PaperTexture.paperColor(PaperTexture.PaperKind.ARCHIVE);
+        g.fill(x1, y1, x2, y2, com.eternalcraft.gripeverde.client.render.DiaryTheme
+            .withAlpha(paper, 246));
+        // Canto de tinta, fino, como el de una ficha grande.
+        g.fill(x1, y1, x2, y1 + 1, 0x552A1C12);
+        g.fill(x1, y2 - 1, x2, y2, 0x552A1C12);
+        g.fill(x1, y1, x1 + 1, y2, 0x552A1C12);
+        g.fill(x2 - 1, y1, x2, y2, 0x552A1C12);
+        // Rotulo del cajon, en tinta sepia.
+        g.drawString(this.font, DiaryChrome.fitCached(this.font, heading,
+            Math.max(40, x2 - x1 - 16)), x1 + 8, y1 + 4, DiaryChrome.INK_SUBTITLE, false);
+        g.fill(x1 + 8, y1 + 14, x2 - 8, y1 + 15, 0x2E6B5533);
+    }
+
     /**
      * v0.311.0: el juego dibuja el titulo del archivador en blanco, y sobre el
      * papel claro no se lee. Se cubre esa franja con su recorte y se reescribe
@@ -294,6 +326,10 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
 
     @Override
     public void renderBackground(GuiGraphics g) {
+        // v0.377.0: los dos cajones (columnas) se dibujan aqui, antes de que el
+        // juego pinte sus filas: asi los iconos de los packs caen sobre el
+        // papel del archivador y no sobre la tierra del fondo.
+        drawPackColumns(g);
         // Escena viva detras (barata, sin foco)
         QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
 

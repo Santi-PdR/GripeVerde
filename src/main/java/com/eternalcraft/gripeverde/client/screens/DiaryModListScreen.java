@@ -464,6 +464,35 @@ public class DiaryModListScreen extends ModListScreen {
             }
         }
         super.render(g, mouseX, mouseY, partial);
+        // v0.377.0: Forge rotula el buscador con un "Buscar" en blanco que sobre
+        // el papel no se lee. Se limpia la franja alrededor de la caja -despues
+        // de que Forge escriba- y se reescribe el rotulo y la caja en tinta.
+        if (this.searchBox != null) {
+            try {
+                int bx = this.searchBox.getX();
+                int by = this.searchBox.getY();
+                int bw2 = this.searchBox.getWidth();
+                int bh2 = this.searchBox.getHeight();
+                int x1 = Math.max(0, bx - 74);
+                int x2 = Math.min(this.width, bx + bw2 + 4);
+                int y1 = Math.max(0, by - 12);
+                int y2 = Math.min(this.height, by + bh2 + 3);
+                if (x2 - x1 > 40 && y2 - y1 > 10) {
+                    g.fill(x1, y1, x2, y2,
+                        com.eternalcraft.gripeverde.client.render.DiaryTheme
+                            .withAlpha(com.eternalcraft.gripeverde.client.render.PaperTexture
+                                .paperColor(com.eternalcraft.gripeverde.client.render.PaperTexture
+                                    .PaperKind.OFFICIAL), 250));
+                    boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+                    g.drawString(this.font, en ? "SEARCH" : "BUSCAR",
+                        x1 + 4, by + 2, 0x8A6B45, false);
+                    com.eternalcraft.gripeverde.client.render.DiaryChrome
+                        .paperBehindEditBox(g, this.searchBox);
+                    this.searchBox.render(g, mouseX, mouseY, partial);
+                }
+            } catch (Throwable ignored) {
+            }
+        }
         // v0.266.0: el recuento, arriba a la derecha de la hoja.
         try {
             boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();

@@ -6,6 +6,7 @@ import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 
 import net.minecraft.Util;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
@@ -1204,8 +1205,14 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 }
                 String line2 = motd.isEmpty() ? extra.trim() : motd + extra;
                 if (!line2.isEmpty() && slipH >= 20) {
-                    String shownMotd = DiaryChrome.fitText(this.font, line2, textW);
-                    gfx.drawString(this.font, shownMotd, textLeft, slipTop + 13, 0xFF6B5533, false);
+                    // v0.377.0: la descripcion del puesto se cortaba con puntos
+                    // suspensivos a la primera linea. Ahora se dobla por
+                    // palabras y usa dos renglones, que caben en la ficha.
+                    java.util.List<String> wrapped = wrapToWidth(this.font, line2, textW, 2);
+                    for (int r = 0; r < wrapped.size(); r++) {
+                        gfx.drawString(this.font, wrapped.get(r), textLeft,
+                            slipTop + 13 + r * 9, 0xFF6B5533, false);
+                    }
                 }
             }
             if (scissored) {
@@ -1216,6 +1223,41 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             }
         } catch (Throwable ignored) {
         }
+    }
+
+    /**
+     * v0.377.0: dobla un texto por palabras al ancho dado, hasta `maxLines`.
+     * Si no cabe en su ancho, sigue en el renglon siguiente en vez de cortarse
+     * con puntos suspensivos y perder el final.
+     */
+    private static java.util.List<String> wrapToWidth(Font font, String text, int maxWidth,
+                                                      int maxLines) {
+        java.util.List<String> out = new java.util.ArrayList<>();
+        if (font == null || text == null || text.isEmpty() || maxWidth <= 0 || maxLines <= 0) {
+            return out;
+        }
+        String rest = text.trim();
+        while (!rest.isEmpty() && out.size() < maxLines) {
+            if (font.width(rest) <= maxWidth) {
+                out.add(rest);
+                return out;
+            }
+            int cut = rest.length();
+            while (cut > 0 && font.width(rest.substring(0, cut)) > maxWidth) cut--;
+            if (cut <= 0) return out;
+            int space = rest.lastIndexOf(' ', cut);
+            if (space > 0) cut = space;
+            String piece = rest.substring(0, cut).trim();
+            rest = rest.substring(Math.min(rest.length(), cut)).trim();
+            if (!piece.isEmpty()) out.add(piece);
+        }
+        // Lo que sobre en el ultimo renglon se recorta con puntos: ya no hay
+        // donde seguir, pero casi nunca hara falta.
+        if (!rest.isEmpty() && !out.isEmpty()) {
+            int last = out.size() - 1;
+            out.set(last, DiaryChrome.fitText(font, out.get(last) + "\u2026", maxWidth));
+        }
+        return out;
     }
 
     /**
