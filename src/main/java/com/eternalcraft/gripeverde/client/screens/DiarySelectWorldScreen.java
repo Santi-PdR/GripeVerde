@@ -50,6 +50,11 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     private int rowRight = -1;
     private int listTop = -1;
     private int listBottom = -1;
+    // v0.390.0: la fila que hay bajo el puntero, preguntada a la propia lista.
+    // Con el alto de renglon supuesto, un solo pixel de diferencia movia el clic
+    // a la fila de al lado.
+    private java.lang.reflect.Method rowTopMethod;
+    private int rowStepExact;
     // v0.354.0: la hoja grande alcanza a cubrir el pie de botones.
     private boolean sheetCoversFooter = false;
     // v0.370.0: canto izquierdo y ancho del pliego, para el registro ancho.
@@ -229,6 +234,58 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             this.listTop = this.vanillaList.getTop();
             this.listBottom = this.vanillaList.getBottom();
         } catch (Throwable ignored) {
+        }
+        resolveRowTopMethod();
+        if (this.rowStepExact >= 16 && this.rowStepExact <= 64) {
+            this.rowItemHeight = this.rowStepExact;
+        }
+    }
+
+    /**
+     * v0.390.0: el metodo de la lista que dice donde empieza cada fila.
+     *
+     * Recibe un indice y devuelve una coordenada; se prueba con 0 y con 1 y la
+     * diferencia tiene que dar el alto de renglon. Asi el clic y el dibujo usan
+     * la misma geometria que el juego, sin suponer alturas.
+     */
+    private void resolveRowTopMethod() {
+        this.rowTopMethod = null;
+        this.rowStepExact = 0;
+        if (this.vanillaList == null) return;
+        java.lang.reflect.Method best = null;
+        int bestValue = Integer.MAX_VALUE;
+        int bestStep = 0;
+        for (Class<?> c = this.vanillaList.getClass(); c != null && c != Object.class;
+             c = c.getSuperclass()) {
+            for (java.lang.reflect.Method m : c.getDeclaredMethods()) {
+                if (m.getParameterCount() != 1) continue;
+                if (m.getParameterTypes()[0] != int.class || m.getReturnType() != int.class) continue;
+                if (java.lang.reflect.Modifier.isStatic(m.getModifiers())) continue;
+                try {
+                    m.setAccessible(true);
+                    int a = (Integer) m.invoke(this.vanillaList, 0);
+                    int b = (Integer) m.invoke(this.vanillaList, 1);
+                    int step = b - a;
+                    if (step < 10 || step > 80) continue;
+                    if (a < bestValue) {
+                        bestValue = a;
+                        best = m;
+                        bestStep = step;
+                    }
+                } catch (Throwable ignored) {
+                }
+            }
+        }
+        this.rowTopMethod = best;
+        if (bestStep > 0) this.rowStepExact = bestStep;
+    }
+
+    /** Donde empieza la fila `i`, segun la propia lista. */
+    private int rowTopOf(int i) {
+        try {
+            return (Integer) this.rowTopMethod.invoke(this.vanillaList, i);
+        } catch (Throwable ignored) {
+            return 0;
         }
     }
 
@@ -1156,6 +1213,24 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         } catch (Throwable ignored) {
         }
         int idx = (int) Math.floor((mouseY - (this.listTop + 4) + scroll) / Math.max(1, step));
+        if (this.rowTopMethod != null) {
+            // v0.390.0: con la geometria de la propia lista, el clic cae en la
+            // fila que se ve aunque el juego cambie el alto o meta cabecera.
+            int exact = -1;
+            try {
+                int total = this.vanillaList.children().size();
+                int h = this.rowStepExact > 0 ? this.rowStepExact : step;
+                for (int i = 0; i < total && i < 128; i++) {
+                    int top = rowTopOf(i);
+                    if (mouseY >= top && mouseY < top + h) {
+                        exact = i;
+                        break;
+                    }
+                }
+            } catch (Throwable ignored) {
+            }
+            if (exact >= 0) idx = exact;
+        }
         if (idx < 0) return null;
         try {
             var kids = this.vanillaList.children();

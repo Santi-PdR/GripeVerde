@@ -1804,3 +1804,19 @@ Cuatro trampas que ya costaron una captura cada una. Van aquí para no repetirla
   `paintServerRowsInk`, con el mismo texto que la cabecera de lista vacía.
 - `tools/lint_java.py`: nueva regla `notas_de_widgets` -pantalla sin `super.render`
   y sin recorrer widgets-. Se silencia con `// widgets-ok`.
+
+## 0.390.0 - geometria y JourneyMap
+
+- **La lista dice dónde empieza cada fila.** `resolveRowTopMethod()` busca un
+  método `int -> int` de la lista en el que `f(1) - f(0)` dé el alto de renglón
+  (10..80) y se queda el que devuelve el número menor (arriba, no abajo). Con
+  eso `rowTopOf(i)` da la geometría exacta del juego, sin depender de
+  `itemHeight`/`y0`/`headerHeight`. Está en Multijugador y en Mundos; en Mundos
+  además manda en `entryAt`, o sea en qué fila cae el clic.
+- **JourneyMap:** `safeWrite` ignora valores nulos. `spec()` devuelve null cuando
+  el `ColorSpec` no tiene el constructor esperado y escribir ese nulo dejaba el
+  marco sin color.
+- **Diario de JourneyMap:** `note()` anota cada mensaje distinto una vez (tope 12),
+  no solo el primero. El primero siempre es "el minimapa aun no tiene medidas".
+- **`tools/install-latest.ps1`:** sin token obligatorio; primero descarga directa
+  del asset y, si el repo fuera privado, reintenta por la API con token.
