@@ -1766,3 +1766,16 @@ Cuatro trampas que ya costaron una captura cada una. Van aquí para no repetirla
 - Las hojas que se cierran tienen que sonar: `UiSounds.back()` en `onClose`.
   Faltaban en `ChangelogScreen` y `DiaryHouseScreen`. El guardia de 140 ms evita
   el doble aviso cuando el botón ya sonó.
+
+## 0.387.0 - clics y reflexion
+
+- **Nunca tragarse un clic sin reenviarlo.** En Mundos el candado de 0.382 se
+  comia todos los clics del cuerpo y marcaba por reflexión con el nombre
+  `setSelected`, que en el juego real no existe: la pantalla quedaba muda.
+  La regla ahora es: fichas de la casa primero (`clickOurWidget`), después el
+  clic al juego con la x puesta sobre la columna, y un **freno de 350 ms** para
+  que el juego no pueda leer dos clics seguidos como doble clic.
+- Las flechas usan `selectRow` (reflexión) y, si devuelve false, el
+  `mouseClicked` de la fila (`GuiEventListener`, nombre que **no** se ofusca),
+  con el mismo freno y pegando a la izquierda, lejos de los iconos de la fila.
+- La barra de scroll se arregla sola al reenviar la x sin recortarla.
