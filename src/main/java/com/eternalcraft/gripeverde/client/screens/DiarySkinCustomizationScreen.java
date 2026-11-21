@@ -324,7 +324,7 @@ public class DiarySkinCustomizationScreen extends Screen {
         } catch (Throwable ignored) {}
         // v0.383.0: las fichas y los campos, encima de la hoja.
         com.eternalcraft.gripeverde.client.render.DiaryChrome.renderWidgets(
-            this, gfx, mouseX, mouseY, partial);
+            this, gfx, mouseX, mouseY, delta);
     }
 
     @Override
