@@ -725,7 +725,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 // Subrayado sutil bajo cada server
                 drawEntryFrames(gfx);
                 // v0.303.0: el nombre y el cartel del puesto, en tinta.
-                paintServerRowsInk(gfx);
+                paintServerRowsInk(gfx, mouseX, mouseY);
                 // v0.323.0: la cabecera de la red local tambien la escribe el
                 // juego en blanco. Sobre el papel no se lee: se cubre y se
                 // reescribe en tinta, como las filas.
@@ -1145,7 +1145,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
      * y gris fijos, y sobre el papel claro no se leian. Se cubre solo la franja
      * de texto -el icono se respeta- y se reescriben en tinta, en el mismo sitio.
      */
-    private void paintServerRowsInk(GuiGraphics gfx) {
+    private void paintServerRowsInk(GuiGraphics gfx, int mouseX, int mouseY) {
         if (this.vanillaList == null) return;
         int itemHeight = vanillaItemHeight;
         if (itemHeight <= 0) return;
@@ -1205,6 +1205,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 // v0.384.0: la fila bajo la mano se aclara y la elegida queda
                 // marcada; ambas cosas van despues de la banda, que es la que
                 // tapaba el resaltado del juego.
+                int rowRight = rowLeft + rowWidth;
                 boolean over = mouseX >= rowLeft - 9 && mouseX <= rowRight + 9
                     && mouseY >= drawTop - 1 && mouseY < drawBottom + 1;
                 Object chosen = null;
