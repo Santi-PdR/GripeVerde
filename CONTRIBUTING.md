@@ -87,8 +87,10 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   allowlist legacy está vacío desde v0.26.0.
 
 La CI activa está en `.github/workflows/build.yml`: verifica espejos,
-lint Java, la compuerta de publicación, y compila con JDK 17. Los PR nunca
-publican; `workflow_dispatch` exige activar explícitamente `publish_release`.
+lint Java, la compuerta de publicación y compila con JDK 17. El job que ejecuta
+Gradle solo tiene `contents: read`; los comentarios de fallo se publican desde
+un job separado con permisos de escritura. Los PR nunca publican;
+`workflow_dispatch` exige activar explícitamente `publish_release`.
 `tools/ci/build.yml` es solo una plantilla de build + artifact, alineada con
 los checks del workflow activo, sin la etapa de publicación.
 
