@@ -228,6 +228,10 @@ public class DiaryDirectJoinScreen extends Screen {
 
     @Override
     public void render(GuiGraphics gfx, int mouseX, int mouseY, float partial) {
+        super.render(gfx, mouseX, mouseY, partial);
+        // v0.383.0: el juego primero (fondo, rotulos y campos del vanilla);
+        // despues el papel de la casa lo tapa todo y, al final, se repiten
+        // las fichas sobre la hoja: asi no queda texto blanco de nadie.
         // Fondo: escena viva del Title
         try {
             com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(gfx, this.width, this.height);
@@ -350,8 +354,7 @@ public class DiaryDirectJoinScreen extends Screen {
         }
 
         // Widgets
-        super.render(gfx, mouseX, mouseY, partial);
-
+        
         // v0.16.0: aviso de la direccion sin mapa
         try {
             if (System.currentTimeMillis() < this.unmappedWarnUntilMs) {
@@ -368,6 +371,9 @@ public class DiaryDirectJoinScreen extends Screen {
             }
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(gfx, this.width);
         } catch (Throwable ignored) {}
+        // v0.383.0: las fichas y los campos, encima de la hoja.
+        com.eternalcraft.gripeverde.client.render.DiaryChrome.renderWidgets(
+            this, gfx, mouseX, mouseY, partial);
     }
 
     @Override

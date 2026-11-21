@@ -86,6 +86,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         = new java.util.HashMap<>();
     private static final java.util.Set<String> SERVER_ICONS_ABSENT
         = new java.util.HashSet<>();
+    /** v0.383.0: lado real de la textura de cada imagen (32, 64 o 128). */
+    private static final java.util.Map<String, Integer> SERVER_ICON_SIDE
+        = new java.util.HashMap<>();
     private int vanillaListY0;
     private int vanillaHeaderHeight;
 
@@ -1217,7 +1220,11 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 int boxY = drawTop + Math.max(1, (drawBottom - drawTop - box) / 2);
                 net.minecraft.resources.ResourceLocation favicon = serverIcon(sd);
                 if (favicon != null) {
-                    gfx.blit(favicon, boxX, boxY, 0, 0, box, box, 32, 32);
+                    // v0.383.0: la textura mide lo que mida el PNG del puesto.
+                    // Antes se daba por hecho 32 y de una imagen de 64 solo se
+                    // veia el cuarto de arriba a la izquierda.
+                    int side = serverIconSide(sd);
+                    gfx.blit(favicon, boxX, boxY, 0, 0, box, box, side, side);
                     gfx.fill(boxX, boxY, boxX + box, boxY + 1, 0x552A1C12);
                     gfx.fill(boxX, boxY + box - 1, boxX + box, boxY + box, 0x552A1C12);
                     gfx.fill(boxX, boxY, boxX + 1, boxY + box, 0x552A1C12);
@@ -1392,11 +1399,22 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             this.minecraft.getTextureManager()
                 .register(rl, new net.minecraft.client.renderer.texture.DynamicTexture(image));
             SERVER_ICONS.put(key, rl);
+            SERVER_ICON_SIDE.put(key, Math.max(1, image.getWidth()));
             return rl;
         } catch (Throwable ignored) {
             SERVER_ICONS_ABSENT.add(key);
             return null;
         }
+    }
+
+    /** v0.383.0: lado de la textura de la imagen de ese puesto. */
+    private static int serverIconSide(ServerData data) {
+        try {
+            Integer side = data == null || data.ip == null ? null : SERVER_ICON_SIDE.get(data.ip);
+            if (side != null) return side;
+        } catch (Throwable ignored) {
+        }
+        return 32;
     }
 
     /**

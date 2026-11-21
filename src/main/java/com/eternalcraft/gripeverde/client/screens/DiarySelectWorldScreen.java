@@ -462,7 +462,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                     // v0.382.0: la foto iba centrada y su marco caia sobre la
                     // raya del renglon. Sube un pixel y se ata al alto real de
                     // la fila: nunca toca la linea de abajo.
-                    int photoTop = drawTop + Math.max(1, (drawBottom - drawTop - photoSize) / 2 - 1);
+                    int photoTop = drawTop + Math.max(1, (drawBottom - drawTop - photoSize) / 2 - 2);
                     if (photoTop + photoSize > drawBottom - 2) {
                         photoTop = Math.max(drawTop + 1, drawBottom - 2 - photoSize);
                     }
@@ -1291,8 +1291,11 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 }
             } catch (Throwable ignored) {
             }
-            int rowY = this.listTop + 4 - (int) scroll + next * step + step / 2;
-            this.vanillaList.mouseClicked(ledgerX(this.ledgerLeft() + 60), rowY, 0);
+            // v0.383.0: antes se marcaba pasandole un CLIC a la lista. Dos
+            // pulsaciones rapidas de flecha se parecian a un doble clic y el
+            // juego podia entrar al mundo. Ahora se marca la fila directamente,
+            // sin clic de por medio.
+            selectRow(target);
             this.vanillaList.setFocused(true);
             try {
                 com.eternalcraft.gripeverde.client.audio.UiSounds.tab();

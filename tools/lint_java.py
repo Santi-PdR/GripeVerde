@@ -138,6 +138,36 @@ def check_dangling(path, lines):
     return bad
 
 
+def notas_de_orden(f):
+    """
+    Aviso blando (no falla el build): pantallas que llaman a `super.render(` y no
+    vuelven a escribir nada despues. Esa es la forma en la que se cuelan los
+    textos blancos del juego encima del papel: la pantalla pinta su rotulo, la
+    super lo pisa y nadie lo reescribe. Solo se avisa de las pantallas de la
+    casa que llevan lista o campos del juego.
+    """
+    notas = []
+    if '/client/screens/' not in f.replace('\\', '/'):
+        return notas
+    try:
+        lines = open(f, encoding='utf-8').read().split('\n')
+    except OSError:
+        return notas
+    last_super = -1
+    last_write = -1
+    for i, line in enumerate(lines):
+        if 'super.render(' in line and not line.strip().startswith('*'):
+            last_super = i
+        if ('drawString(' in line or 'paint' in line or 'inkPackRows(' in line
+                or 'washVanilla' in line or 'renderWidgets(' in line):
+            if not line.strip().startswith('*'):
+                last_write = i
+    if last_super >= 0 and last_super > last_write:
+        notas.append((f, last_super + 1,
+                      'aviso: super.render() es lo ultimo; el juego puede dejar texto encima'))
+    return notas
+
+
 def main(argv):
     files = []
     for arg in argv or ['src/main/java']:
@@ -146,6 +176,7 @@ def main(argv):
         else:
             files.extend(glob.glob(arg.rstrip('/') + '/**/*.java', recursive=True))
     problems = []
+    notas = []
     for f in sorted(files):
         src = open(f, encoding='utf-8').read()
         lines = src.split('\n')
@@ -153,8 +184,12 @@ def main(argv):
         problems += check_override(f, lines)
         problems += check_dangling(f, lines)
         problems += check_shadow(f, clean)
+        notas += notas_de_orden(f)
+    for path, line, msg in notas:
+        print('%s:%d: %s' % (path, line, msg))
     if not problems:
-        print('lint_java: %d ficheros, sin problemas' % len(files))
+        print('lint_java: %d ficheros, sin problemas (%d avisos de orden)'
+              % (len(files), len(notas)))
         return 0
     for path, line, msg in problems:
         print('%s:%d: %s' % (path, line, msg))

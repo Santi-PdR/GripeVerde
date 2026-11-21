@@ -1706,6 +1706,12 @@ Cuatro trampas que ya costaron una captura cada una. Van aquí para no repetirla
    desde `render()` —encima de todo— y después se **repiten** las filas y los
    botones que la hoja tapó (`redrawOnPage`), en el mismo orden que el juego.
    Antes de mover nada de z, comprobar quién pinta el fondo y en qué orden.
+   Desde 0.383.0 el patrón es uno solo y está en `DiaryChrome.renderWidgets`:
+   `super.render()` **primero**, después la hoja y la cosmética de la casa, y al
+   final `renderWidgets(...)` para repetir fichas y campos sobre el papel. Con
+   ese orden no hay fondo del juego que tape la hoja ni rotulo blanco que quede
+   encima. `tools/lint_java.py` avisa de las pantallas que dejan `super.render()`
+   como última llamada.
 
 2. **Ningún clic izquierdo del cuerpo de una lista se le pasa al juego.**
    Recolocar la `x` y llamar a `super.mouseClicked` acaba abriendo un mundo

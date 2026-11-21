@@ -780,4 +780,25 @@ public final class DiaryChrome {
         drawScrollThumb(gfx, scrollLeft, trackY1, trackY2, list.getScrollAmount(), maxScroll);
     }
 
+
+    /**
+     * v0.383.0: vuelve a pintar las fichas de una pantalla despues de haber
+     * pintado el papel encima.
+     *
+     * El orden seguro en una pantalla que hereda del juego es: primero dejar que
+     * el juego dibuje lo suyo -fondo, rotulos, campos-, despues pintar nuestra
+     * hoja, que tapa todo eso, y por ultimo repetir las fichas y los campos de
+     * la casa sobre el papel. Asi no queda ni un texto blanco debajo ni encima.
+     */
+    public static void renderWidgets(net.minecraft.client.gui.screens.Screen screen,
+                                     GuiGraphics gfx, int mouseX, int mouseY, float partial) {
+        if (screen == null || gfx == null) return;
+        for (var renderable : screen.renderables) {
+            try {
+                renderable.render(gfx, mouseX, mouseY, partial);
+            } catch (Throwable ignored) {
+            }
+        }
+    }
+
 }

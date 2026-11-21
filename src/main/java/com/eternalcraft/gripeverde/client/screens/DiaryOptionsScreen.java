@@ -294,6 +294,10 @@ public class DiaryOptionsScreen extends Screen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        super.render(g, mouseX, mouseY, partialTick);
+        // v0.383.0: el juego primero (fondo, rotulos y campos del vanilla);
+        // despues el papel de la casa lo tapa todo y, al final, se repiten
+        // las fichas sobre la hoja: asi no queda texto blanco de nadie.
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
 
         // Panel pergamino
@@ -377,8 +381,7 @@ public class DiaryOptionsScreen extends Screen {
         }
 
         // Widgets
-        super.render(g, mouseX, mouseY, partialTick);
-
+        
         // v0.16.0: el cajon de la mesa de trabajo
         try {
 
@@ -386,6 +389,9 @@ public class DiaryOptionsScreen extends Screen {
             com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(g, this.width / 2, panelY - 14);
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(g, this.width);
         } catch (Throwable ignored) {}
+        // v0.383.0: las fichas y los campos, encima de la hoja.
+        com.eternalcraft.gripeverde.client.render.DiaryChrome.renderWidgets(
+            this, g, mouseX, mouseY, partial);
     }
 
 

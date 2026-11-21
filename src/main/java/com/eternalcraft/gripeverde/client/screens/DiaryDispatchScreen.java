@@ -451,6 +451,9 @@ public class DiaryDispatchScreen extends Screen {
 
     @Override
     public void render(GuiGraphics gfx, int mouseX, int mouseY, float partial) {
+        // v0.383.0: primero el juego (fondo, rotulos y campos del vanilla);
+        // despues el papel de la casa tapa todo y las fichas se repiten encima.
+        super.render(gfx, mouseX, mouseY, partial);
         try {
             com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer
                 .renderDiaryBackground(gfx, this.width, this.height);
@@ -577,7 +580,10 @@ public class DiaryDispatchScreen extends Screen {
             gfx.drawString(this.font, this.pageLabel(), this.toggleX, this.toggleY, color, false);
         }
 
-        super.render(gfx, mouseX, mouseY, partial);
+        // v0.383.0: las fichas y los campos, encima de la hoja: super.render()
+        // va al principio del metodo, asi el juego no deja nada encima del papel.
+        com.eternalcraft.gripeverde.client.render.DiaryChrome.renderWidgets(
+            this, gfx, mouseX, mouseY, partial);
     }
 
     private String footerNote() {

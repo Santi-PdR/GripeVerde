@@ -238,6 +238,10 @@ public class DiarySkinCustomizationScreen extends Screen {
 
     @Override
     public void render(GuiGraphics gfx, int mouseX, int mouseY, float delta) {
+        super.render(gfx, mouseX, mouseY, delta);
+        // v0.383.0: el juego primero (fondo, rotulos y campos del vanilla);
+        // despues el papel de la casa lo tapa todo y, al final, se repiten
+        // las fichas sobre la hoja: asi no queda texto blanco de nadie.
         // Escena viva
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(gfx, this.width, this.height);
 
@@ -279,8 +283,7 @@ public class DiarySkinCustomizationScreen extends Screen {
         DiaryChrome.drawInkDivider(gfx, this.panelX, divY1, panelW);
 
         // Widgets (DiaryButtons propios)
-        super.render(gfx, mouseX, mouseY, delta);
-
+        
         // Divisor inferior + esquineros
         int divY2 = this.footerDivY > 0 ? this.footerDivY : this.panelY + panelH - 38;
         DiaryChrome.drawInkDivider(gfx, this.panelX, divY2, panelW);
@@ -319,6 +322,9 @@ public class DiarySkinCustomizationScreen extends Screen {
             com.eternalcraft.gripeverde.client.lore.Marginalia.drawHorizontal(gfx, this.width / 2, this.panelY - 12);
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(gfx, this.width);
         } catch (Throwable ignored) {}
+        // v0.383.0: las fichas y los campos, encima de la hoja.
+        com.eternalcraft.gripeverde.client.render.DiaryChrome.renderWidgets(
+            this, gfx, mouseX, mouseY, partial);
     }
 
     @Override
