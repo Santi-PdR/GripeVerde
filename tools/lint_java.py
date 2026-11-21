@@ -13,6 +13,7 @@ interactiva de la hoja de mundos:
      con volatile; al reabrir, un escaneo nuevo cancela y reemplaza el anterior.
   6. Las texturas dinámicas de mundos borrados se liberan al reabrir la hoja;
      los iconos ausentes se vuelven a comprobar.
+  7. Las miniaturas de Mundos dibujan la imagen completa, ajustada sin recorte.
 
 Uso: python3 tools/lint_java.py [rutas...]
 Sale con codigo 1 si encuentra algo.
@@ -239,6 +240,7 @@ def check_world_icon_cache_lifecycle(path, clean):
     required = (
         'liveWorlds.contains(folder)',
         'WORLD_ICONS.remove(folder)',
+        'WORLD_ICON_SIZES.remove(folder)',
         'getTextureManager().release(icon)',
         'WORLD_ICONS_ABSENT.clear()',
     )
@@ -246,6 +248,34 @@ def check_world_icon_cache_lifecycle(path, clean):
         line = clean[:prune_start].count(chr(10)) + 1
         return [(path, line,
                  'Mundos: liberar texturas borradas y reintentar iconos ausentes')]
+    return []
+
+
+def check_world_icon_fits_box(path, clean):
+    """Mundos escala el icono entero al recuadro, sin dibujar solo una esquina."""
+    if not path.replace(chr(92), '/').endswith('/client/screens/DiarySelectWorldScreen.java'):
+        return []
+    draw_start = clean.find('private static boolean drawWorldIcon(')
+    icon_start = clean.find('private net.minecraft.resources.ResourceLocation worldIcon(', draw_start)
+    if draw_start < 0 or icon_start < 0:
+        return [(path, 1, 'Mundos: falta el dibujo completo de miniaturas')]
+    draw = clean[draw_start:icon_start]
+    required = (
+        'WORLD_ICON_SIZES.get(levelId)',
+        'g.pose().scale(drawWidth / (float) size.width(),',
+        'drawHeight / (float) size.height(), 1.0F',
+        'g.blit(icon, 0, 0, 0, 0, size.width(), size.height(),',
+    )
+    if any(token not in draw for token in required):
+        line = clean[:draw_start].count(chr(10)) + 1
+        return [(path, line,
+                 'Mundos: escalar el icono completo en vez de recortar la esquina superior')]
+    if 'drawWorldIcon(g, folder, icon,' not in clean:
+        line = clean[:draw_start].count(chr(10)) + 1
+        return [(path, line, 'Mundos: usar el escalado de icono al dibujar cada ficha')]
+    if 'WORLD_ICON_SIZES.put(levelId, new WorldIconSize(imageWidth, imageHeight))' not in clean:
+        line = clean[:draw_start].count(chr(10)) + 1
+        return [(path, line, 'Mundos: conservar las dimensiones reales de cada icono')]
     return []
 
 
@@ -404,6 +434,7 @@ def main(argv):
         problems += check_world_search_keys(f, clean)
         problems += check_world_archive_visibility(f, clean)
         problems += check_world_icon_cache_lifecycle(f, clean)
+        problems += check_world_icon_fits_box(f, clean)
         notas += notas_de_orden(f)
         notas += notas_de_puntos(f)
         notas += notas_de_reflexion(f)

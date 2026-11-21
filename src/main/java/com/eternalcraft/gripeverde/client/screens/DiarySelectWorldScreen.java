@@ -67,7 +67,10 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     // v0.372.0: la foto de cada mundo, cargada una vez y guardada.
     private static final java.util.Map<String, net.minecraft.resources.ResourceLocation> WORLD_ICONS
         = new java.util.HashMap<>();
+    private static final java.util.Map<String, WorldIconSize> WORLD_ICON_SIZES
+        = new java.util.HashMap<>();
     private static final java.util.Set<String> WORLD_ICONS_ABSENT = new java.util.HashSet<>();
+    private record WorldIconSize(int width, int height) { }
     private int iconsThisFrame;
     private boolean worldIconCachePruned;
     // Recuerda el ultimo clic real sobre una fila para detener solamente el
@@ -557,6 +560,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 if (name.isEmpty()) continue;
                 String mode = levelGameMode(summary, english);
                 String when = levelStamp(summary);
+                String folder = levelFolder(summary);
 
                 if (withPhoto && drawBottom - drawTop >= 26) {
                     // v0.382.0: la foto iba centrada y su marco caia sobre la
@@ -566,14 +570,9 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                     if (photoTop + photoSize > drawBottom - 2) {
                         photoTop = Math.max(drawTop + 1, drawBottom - 2 - photoSize);
                     }
-                    net.minecraft.resources.ResourceLocation icon = worldIcon(levelFolder(summary));
-                    if (icon != null) {
-                        try {
-                            g.blit(icon, photoX, photoTop, 0, 0, photoSize, photoSize,
-                                64, 64);
-                        } catch (Throwable ignored) {
-                        }
-                    } else {
+                    net.minecraft.resources.ResourceLocation icon = worldIcon(folder);
+                    if (icon == null || !drawWorldIcon(g, folder, icon,
+                            photoX, photoTop, photoSize)) {
                         g.fill(photoX, photoTop, photoX + photoSize, photoTop + photoSize,
                             0x2A6B5533);
                     }
@@ -597,7 +596,6 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 }
                 // v0.373.0: la descripcion del renglon: el modo y, si el
                 // nombre visible no es el de la carpeta, la carpeta del mundo.
-                String folder = levelFolder(summary);
                 String sub = mode;
                 long weight = 0L;
                 if (!folder.isEmpty()) {
@@ -1197,6 +1195,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         for (String folder : new ArrayList<>(WORLD_ICONS.keySet())) {
             if (liveWorlds.contains(folder)) continue;
             net.minecraft.resources.ResourceLocation icon = WORLD_ICONS.remove(folder);
+            WORLD_ICON_SIZES.remove(folder);
             if (icon != null) {
                 try {
                     this.minecraft.getTextureManager().release(icon);
@@ -1206,6 +1205,33 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         }
         WORLD_ICONS_ABSENT.clear();
         return true;
+    }
+
+    /** Dibuja el icono entero, ajustado al recuadro sin recortar sus bordes. */
+    private static boolean drawWorldIcon(GuiGraphics g, String levelId,
+                                         net.minecraft.resources.ResourceLocation icon,
+                                         int x, int y, int box) {
+        if (g == null || levelId == null || icon == null || box <= 0) return false;
+        WorldIconSize size = WORLD_ICON_SIZES.get(levelId);
+        if (size == null || size.width() <= 0 || size.height() <= 0) return false;
+        float fit = box / (float) Math.max(size.width(), size.height());
+        int drawWidth = Math.max(1, Math.round(size.width() * fit));
+        int drawHeight = Math.max(1, Math.round(size.height() * fit));
+        int drawX = x + (box - drawWidth) / 2;
+        int drawY = y + (box - drawHeight) / 2;
+        g.pose().pushPose();
+        try {
+            g.pose().translate(drawX, drawY, 0.0F);
+            g.pose().scale(drawWidth / (float) size.width(),
+                drawHeight / (float) size.height(), 1.0F);
+            g.blit(icon, 0, 0, 0, 0, size.width(), size.height(),
+                size.width(), size.height());
+            return true;
+        } catch (Throwable ignored) {
+            return false;
+        } finally {
+            g.pose().popPose();
+        }
     }
 
     /**
@@ -1236,14 +1262,23 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             try (java.io.InputStream in = java.nio.file.Files.newInputStream(path)) {
                 image = com.mojang.blaze3d.platform.NativeImage.read(in);
             }
+            int imageWidth = image.getWidth();
+            int imageHeight = image.getHeight();
+            if (imageWidth <= 0 || imageHeight <= 0) {
+                image.close();
+                WORLD_ICONS_ABSENT.add(levelId);
+                return null;
+            }
             net.minecraft.resources.ResourceLocation rl = new net.minecraft.resources.ResourceLocation(
                 "gripeverde", "world_icon/" + Integer.toHexString(levelId.hashCode())
                     + "_" + WORLD_ICONS.size());
             this.minecraft.getTextureManager()
                 .register(rl, new net.minecraft.client.renderer.texture.DynamicTexture(image));
             WORLD_ICONS.put(levelId, rl);
+            WORLD_ICON_SIZES.put(levelId, new WorldIconSize(imageWidth, imageHeight));
             return rl;
         } catch (Throwable ignored) {
+            WORLD_ICON_SIZES.remove(levelId);
             WORLD_ICONS_ABSENT.add(levelId);
             return null;
         }
