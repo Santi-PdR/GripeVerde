@@ -32,14 +32,14 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Set up Java 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
         with:
           distribution: temurin
           java-version: '17'
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
       # v0.183.0: primero el lint (instantaneo) y despues Gradle; asi un import
       # faltante no cuesta dos minutos de compilacion.
       - name: Verify mirrored assets, localization and imports
@@ -81,7 +81,7 @@ jobs:
               -F body="$(cat /tmp/body.md)" >/dev/null
           fi
       - name: Upload mod JAR
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: GripeVerde-jar
           path: build/libs/gripeverde-*.jar
@@ -99,7 +99,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Read release marker
         id: marker
         run: |
@@ -117,7 +117,7 @@ jobs:
           fi
       - name: Download JAR
         if: steps.marker.outputs.publish == 'true'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: GripeVerde-jar
           path: dist
