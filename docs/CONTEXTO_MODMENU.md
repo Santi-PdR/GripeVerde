@@ -1728,3 +1728,17 @@ Cuatro trampas que ya costaron una captura cada una. Van aquí para no repetirla
    La fila del archivador de packs no implementa `PackSelectionModel.Entry`: la
    lleva dentro. Se saca por tipo de campo (`asPackEntry`), nunca por `instanceof`
    directo ni por nombre de campo (van ofuscados).
+
+## 0.384.0 - textos y filas
+
+- **Nada de puntos suspensivos.** El corte de textos vive en un solo sitio:
+  `DiaryChrome.shorten(font, texto, ancho)`. Corta en la última palabra completa
+  que quepa; si no cabe ni una, devuelve vacío. Las copias viejas
+  (`ellipsizeTo` en cinco pantallas, `ellipsize` del Despacho, `fitText` y
+  `DiaryTypography.fitString`) ahora delegan ahí, así que cambiar la política es
+  tocar un método. `tools/lint_java.py` avisa si vuelve a aparecer un `"..."`
+  dentro de un `drawString(`.
+- **Brillo, lacre y fila elegida van DESPUÉS de la banda.** En Multijugador la
+  banda de papel tapaba los tres. Regla: primero se tapa lo del juego, después
+  se marca la fila. Y la banda debe usar el mismo papel que la ficha
+  (`0xE6D2A6`) y cubrirla entera, o queda un reborde que parece una raya.

@@ -138,6 +138,28 @@ def check_dangling(path, lines):
     return bad
 
 
+def notas_de_puntos(f):
+    """
+    Aviso blando (no falla el build): la casa no remata lo que escribe con puntos
+    suspensivos. Se avisa cuando un `drawString(` lleva el literal "..." en la
+    misma linea, que es como vuelven a entrar los recortes con puntos.
+    """
+    notas = []
+    if '/client/' not in f.replace('\\', '/'):
+        return notas
+    try:
+        lines = open(f, encoding='utf-8').read().split('\n')
+    except OSError:
+        return notas
+    for i, line in enumerate(lines):
+        st = line.strip()
+        if st.startswith('*') or st.startswith('//'):
+            continue
+        if 'drawString(' in line and ('"..."' in line or '"\u2026"' in line):
+            notas.append((f, i + 1, 'aviso: puntos suspensivos en un texto dibujado'))
+    return notas
+
+
 def notas_de_orden(f):
     """
     Aviso blando (no falla el build): pantallas que llaman a `super.render(` y no
@@ -185,6 +207,7 @@ def main(argv):
         problems += check_dangling(f, lines)
         problems += check_shadow(f, clean)
         notas += notas_de_orden(f)
+        notas += notas_de_puntos(f)
     for path, line, msg in notas:
         print('%s:%d: %s' % (path, line, msg))
     if not problems:
