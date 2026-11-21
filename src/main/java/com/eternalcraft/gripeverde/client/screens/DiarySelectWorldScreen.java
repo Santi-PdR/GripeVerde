@@ -64,6 +64,10 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     // segundo golpe del doble clic.
     private Object lastForwardedEntry;
     private long lastForwardedMs;
+    // v0.387.0: ultimo clic que se le paso al registro del juego. Un segundo
+    // clic dentro de los 350 ms se queda en casa, para que el juego no lo lea
+    // como doble clic y entre al mundo sin querer.
+    private long lastBodyMs;
     // v0.374.0: lo que pesa cada mundo, medido con el archivo entero.
     private static final java.util.Map<String, Long> WORLD_SIZES = new java.util.HashMap<>();
 
@@ -1295,7 +1299,27 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             // pulsaciones rapidas de flecha se parecian a un doble clic y el
             // juego podia entrar al mundo. Ahora se marca la fila directamente,
             // sin clic de por medio.
-            selectRow(target);
+            boolean marked = selectRow(target);
+            if (!marked) {
+                // v0.387.0: si el juego no deja marcar por el metodo de siempre
+                // -viene renombrado-, se le pasa el clic a la propia fila, que es
+                // un metodo de interfaz y no se ofusca. Con el mismo freno de
+                // 350 ms, y pegando a la izquierda de la fila, lejos de los
+                // botones de editar y borrar que viven en el canto derecho.
+                long now = System.currentTimeMillis();
+                if (now - this.lastBodyMs >= 350L) {
+                    this.lastBodyMs = now;
+                    try {
+                        if (target instanceof net.minecraft.client.gui.components.events
+                                .GuiEventListener clickable) {
+                            double cx = this.rowLeft + 4;
+                            double cy = this.listTop + 4 - scroll + next * step + step / 2.0;
+                            clickable.mouseClicked(cx, cy, 0);
+                        }
+                    } catch (Throwable ignored) {
+                    }
+                }
+            }
             this.vanillaList.setFocused(true);
             try {
                 com.eternalcraft.gripeverde.client.audio.UiSounds.tab();
@@ -1338,8 +1362,13 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     }
 
     /** v0.382.0: marca una fila del registro sin tocar tipos protegidos. */
-    private void selectRow(Object row) {
-        if (row == null || this.vanillaList == null) return;
+    private boolean selectRow(Object row) {
+        if (row == null || this.vanillaList == null) return false;
+        if (isSelectedRow(row)) return true;
+        // v0.387.0: devuelve si la fila quedo marcada DE VERDAD. En el juego real
+        // `setSelected` viene renombrado y esto no encuentra nada: quien llama
+        // tiene que poder enterarse y buscar otro camino, en vez de dar por
+        // hecho que marco.
         for (Class<?> c = this.vanillaList.getClass(); c != null && c != Object.class;
              c = c.getSuperclass()) {
             for (java.lang.reflect.Method m : c.getDeclaredMethods()) {
@@ -1347,11 +1376,42 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 try {
                     m.setAccessible(true);
                     m.invoke(this.vanillaList, row);
-                    return;
                 } catch (Throwable ignored) {
                 }
             }
         }
+        return isSelectedRow(row);
+    }
+
+    private boolean isSelectedRow(Object row) {
+        try {
+            return this.vanillaList != null && row != null && this.vanillaList.getSelected() == row;
+        } catch (Throwable ignored) {
+            return false;
+        }
+    }
+
+    /**
+     * v0.387.0: le da el clic a la primera ficha de la casa que lo tenga debajo
+     * -buscador, botones del pie, lo que sea-, sin pasar por la lista del juego.
+     * Devuelve true si alguna se lo quedo, aunque estuviera apagada: en ese caso
+     * el clic se traga igual y no cae en la fila de atras.
+     */
+    private boolean clickOurWidget(double mouseX, double mouseY) {
+        try {
+            for (var child : this.children()) {
+                if (child == this.vanillaList) continue;
+                if (!(child instanceof net.minecraft.client.gui.components.AbstractWidget w)) continue;
+                if (!w.visible || !w.isMouseOver(mouseX, mouseY)) continue;
+                if (w.active && w.mouseClicked(mouseX, mouseY, 0)) {
+                    this.setFocused(w);
+                    this.setDragging(true);
+                }
+                return true;
+            }
+        } catch (Throwable ignored) {
+        }
+        return false;
     }
 
     /** v0.270.0: elegir un mundo con el raton tiene su golpe. */
@@ -1379,17 +1439,32 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             && mouseX <= (this.sheetLeft >= 0 && this.sheetWidth > 0
                 ? this.sheetLeft + this.sheetWidth : this.width) + 6;
         if (inBody) {
+            // v0.387.0: el clic vuelve a pasar al juego, con freno.
+            //
+            // En 0.382.0 se tragaba entero y marcaba la fila por reflexion,
+            // buscando un metodo llamado `setSelected`. En el juego real las
+            // listas vienen con los nombres cambiados y ese metodo no aparece:
+            // el clic no marcaba NADA, y ademas se comia los clics del buscador
+            // y de las fichas que caen dentro del cuerpo. Ahora:
+            //   1) si hay una ficha de la casa bajo el puntero, el clic es suyo;
+            //   2) si no, se le pasa al juego con la x puesta en la columna;
+            //   3) y un segundo clic dentro de los 350 ms no llega al juego, que
+            //      es lo unico que impide el doble clic y la entrada al mundo.
+            long now = System.currentTimeMillis();
             Object row = entryAt(mouseY);
-            if (row != null && this.vanillaList != null) {
-                try {
-                    // v0.382.0: Entry es protegida, asi que la marca se pone
-                    // por reflexion, buscando `setSelected` por forma y no por
-                    // tipo. Si no se encuentra, el clic se traga igual: lo que
-                    // no puede pasar nunca es que llegue al juego.
-                    selectRow(row);
-                    this.vanillaList.setFocused(true);
-                } catch (Throwable ignored) {
-                }
+            if (clickOurWidget(mouseX, mouseY)) {
+                return true;
+            }
+            if (now - this.lastBodyMs >= 350L) {
+                this.lastBodyMs = now;
+                // La x se respeta tal cual salvo que caiga en el margen de los
+                // numeros: ahi se corre al borde de la fila. Asi la barra de
+                // scroll del juego, que vive a la derecha, sigue funcionando.
+                super.mouseClicked(Math.max(mouseX, this.rowLeft + 2), mouseY, button);
+            }
+            if (row != null) {
+                this.lastForwardedEntry = row;
+                this.lastForwardedMs = now;
             }
             try {
                 com.eternalcraft.gripeverde.client.audio.UiSounds.tab();
