@@ -1742,3 +1742,17 @@ Cuatro trampas que ya costaron una captura cada una. Van aquí para no repetirla
   banda de papel tapaba los tres. Regla: primero se tapa lo del juego, después
   se marca la fila. Y la banda debe usar el mismo papel que la ficha
   (`0xE6D2A6`) y cubrirla entera, o queda un reborde que parece una raya.
+
+## 0.385.0 - listas del juego y chapas
+
+- **La lista del juego siempre se viste.** Si una pantalla hereda de una del
+  juego con lista, hay que hacer las cuatro cosas: recortar a la hoja
+  (`enableScissor` en el panel), `washVanillaRows`, `paintOptionRowsInk` y
+  `drawStyledScrollThumbInPanel`. `DiaryOnlineOptionsScreen` era la única que no
+  lo hacía.
+- **Regla del brillo:** cualquier banda o tira opaca que tape la fila del juego
+  tiene que repintar el hover después (`over` con coordenadas del puntero). Ya
+  pasó en Multijugador, en el archivador y en las cuatro hojas de ajustes.
+  `paintOptionRowsInk` acepta `mouseX/mouseY` para eso.
+- **Chapas de registro:** una por hoja, de I a XIX más XX (Aspecto).
+  `tools/lint_java.py` avisa si se repite un número.
