@@ -627,11 +627,8 @@ public class DiaryDispatchScreen extends Screen {
         }
     }
 
-    private String ellipsize(String text, int maxWidth) {
-        if (text == null) return "";
-        if (this.font.width(text) <= maxWidth) return text;
-        String ellipsis = "...";
-        int room = Math.max(0, maxWidth - this.font.width(ellipsis));
-        return this.font.plainSubstrByWidth(text, room) + ellipsis;
+    private String ellipsize(String text, int maxWidth){
+        // v0.384.0: sin puntos suspensivos.
+        return com.eternalcraft.gripeverde.client.render.DiaryChrome.shorten(this.font, text, maxWidth);
     }
 }

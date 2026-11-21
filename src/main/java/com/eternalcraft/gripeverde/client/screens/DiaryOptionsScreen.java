@@ -227,8 +227,9 @@ public class DiaryOptionsScreen extends Screen {
     }
 
     // v0.30.0: elipsis fiel para que ninguna cita se salga del papel.
-    private static String ellipsizeTo(net.minecraft.client.gui.Font font, String txt, int maxW) {
-        return DiaryTypography.fitString(font, txt, maxW);
+    private static String ellipsizeTo(net.minecraft.client.gui.Font font, String txt, int maxW){
+        // v0.384.0: sin puntos suspensivos; la politica vive en un solo sitio.
+        return com.eternalcraft.gripeverde.client.render.DiaryChrome.shorten(font, txt, maxW);
     }
 
     private static String currentLanguageCode() {

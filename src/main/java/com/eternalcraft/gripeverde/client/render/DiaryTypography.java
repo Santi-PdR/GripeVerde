@@ -76,23 +76,10 @@ public final class DiaryTypography {
     }
 
     private static String fitStringUncached(Font font, String text, int maxWidth, boolean ellipsis) {
-        int available = Math.max(0, maxWidth);
-        if (width(font, text) <= available) return text;
-
-        String suffix = ellipsis ? "…" : "";
-        if (width(font, suffix) > available) return "";
-        // v0.185.0: busqueda binaria sobre los puntos de codigo. Antes se armaba
-        // la cadena caracter por caracter y se medía cada intento: cuadratico por
-        // rotulo, y esto se llama varias veces por cuadro en las cabeceras.
-        int[] points = text.codePoints().toArray();
-        int lo = 0;
-        int hi = points.length;
-        while (lo < hi) {
-            int mid = (lo + hi + 1) >>> 1;
-            String candidate = new String(points, 0, mid) + suffix;
-            if (width(font, candidate) <= available) lo = mid; else hi = mid - 1;
-        }
-        return new String(points, 0, lo) + suffix;
+        // v0.384.0: la casa no remata lo que escribe con puntos suspensivos. Da
+        // igual el modo con el que se pida: se corta en la ultima palabra
+        // completa que entra, y punto.
+        return com.eternalcraft.gripeverde.client.render.DiaryChrome.shorten(font, text, maxWidth);
     }
 
     /**

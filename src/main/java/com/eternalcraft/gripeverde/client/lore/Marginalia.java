@@ -147,11 +147,20 @@ public final class Marginalia {
         }
         if (line.length() > 0) lines.add(line.toString());
         if (lines.size() > maxLines) {
+            // v0.384.0: sin puntos suspensivos: el ultimo renglon se queda en la
+            // ultima palabra completa que entra y, si no entra ninguna, se quita.
             lines = new java.util.ArrayList<>(lines.subList(0, maxLines));
-            String ellipsis = "...";
             String last = lines.get(maxLines - 1);
-            int lastWidth = Math.max(0, maxWidth - font.width(ellipsis));
-            lines.set(maxLines - 1, font.plainSubstrByWidth(last, lastWidth) + ellipsis);
+            String shortLast = com.eternalcraft.gripeverde.client.render.DiaryChrome
+                .shorten(font, last, maxWidth);
+            if (shortLast.isEmpty()) {
+                lines.remove(maxLines - 1);
+                if (lines.isEmpty() && !cachedLayoutLines.isEmpty()) {
+                    lines = new java.util.ArrayList<>(cachedLayoutLines);
+                }
+            } else {
+                lines.set(maxLines - 1, shortLast);
+            }
         }
         int widest = 0;
         for (String line2 : lines) widest = Math.max(widest, font.width(line2));

@@ -240,12 +240,9 @@ public class DiaryModListScreen extends ModListScreen {
         }
     }
 
-    private String ellipsizeTo(net.minecraft.client.gui.Font font, String text, int maxWidth) {
-        if (text == null) return "";
-        if (maxWidth <= 0 || font.width(text) <= maxWidth) return text == null ? "" : text;
-        String dots = "...";
-        int room = Math.max(0, maxWidth - font.width(dots));
-        return font.plainSubstrByWidth(text, room) + dots;
+    private String ellipsizeTo(net.minecraft.client.gui.Font font, String text, int maxWidth){
+        // v0.384.0: sin puntos suspensivos; la politica vive en un solo sitio.
+        return com.eternalcraft.gripeverde.client.render.DiaryChrome.shorten(font, text, maxWidth);
     }
 
     /** Nombre y version del mod de una fila, leidos de la entrada de Forge. */

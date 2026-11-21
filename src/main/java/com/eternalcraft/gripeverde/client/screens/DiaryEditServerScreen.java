@@ -54,11 +54,9 @@ public class DiaryEditServerScreen extends Screen {
         return compactLayout() ? 88 : 108;
     }
 
-    private static String ellipsizeTo(net.minecraft.client.gui.Font font, String text, int maxWidth) {
-        if (font.width(text) <= maxWidth) return text;
-        String ellipsis = "...";
-        int room = Math.max(0, maxWidth - font.width(ellipsis));
-        return font.plainSubstrByWidth(text, room) + ellipsis;
+    private static String ellipsizeTo(net.minecraft.client.gui.Font font, String text, int maxWidth){
+        // v0.384.0: sin puntos suspensivos; la politica vive en un solo sitio.
+        return com.eternalcraft.gripeverde.client.render.DiaryChrome.shorten(font, text, maxWidth);
     }
 
     public DiaryEditServerScreen(Screen parent, BooleanConsumer callback, ServerData serverData) {

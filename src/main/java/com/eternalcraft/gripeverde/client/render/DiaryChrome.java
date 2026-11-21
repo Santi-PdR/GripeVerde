@@ -346,14 +346,31 @@ public final class DiaryChrome {
      * Keeps localized single-line labels inside their panel while preserving
      * the start of the text and marking any clipped tail.
      */
-    public static String fitText(Font font, String text, int maxWidth) {
-        if (font == null || text == null || text.isEmpty()) return "";
-        int limit = Math.max(0, maxWidth);
-        if (font.width(text) <= limit) return text;
-        String ellipsis = "...";
-        int ellipsisWidth = font.width(ellipsis);
-        if (ellipsisWidth > limit) return font.plainSubstrByWidth(text, limit);
-        return font.plainSubstrByWidth(text, limit - ellipsisWidth) + ellipsis;
+    /**
+     * v0.384.0: corta un texto al ancho dado, sin puntos suspensivos.
+     *
+     * La casa no remata con tres puntos lo que escribe. Si la frase no entra,
+     * se queda en la ultima palabra completa que quepa; si el primer vocablo
+     * ya es mas largo que el hueco -un nombre de puesto, una direccion-, se
+     * corta ese vocablo sin adorno. Antes cada pantalla traia su copia de
+     * `ellipsizeTo` y todas metian "...".
+     */
+    public static String shorten(Font font, String text, int maxWidth) {
+        if (font == null || text == null) return "";
+        String t = text.trim();
+        if (t.isEmpty() || maxWidth <= 0) return "";
+        if (font.width(t) <= maxWidth) return t;
+        int cut = t.length();
+        while (cut > 0 && font.width(t.substring(0, cut)) > maxWidth) cut--;
+        if (cut <= 0) return "";
+        int space = t.lastIndexOf(' ', cut);
+        if (space > 0) return t.substring(0, space).trim();
+        return t.substring(0, cut).trim();
+    }
+
+    public static String fitText(Font font, String text, int maxWidth){
+        // v0.384.0: sin puntos suspensivos: se corta en la ultima palabra completa.
+        return shorten(font, text, maxWidth);
     }
 
     // v0.203.0: casi todas las pantallas ajustan las mismas tres lineas de

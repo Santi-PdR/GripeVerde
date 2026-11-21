@@ -411,11 +411,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         this.headerSubX = cx - this.font.width(this.headerSubtitle) / 2;
     }
 
-    private String ellipsizeTo(String text, int maxWidth) {
-        if (this.font.width(text) <= maxWidth) return text;
-        String ellipsis = "...";
-        int room = Math.max(0, maxWidth - this.font.width(ellipsis));
-        return this.font.plainSubstrByWidth(text, room) + ellipsis;
+    private String ellipsizeTo(String text, int maxWidth){
+        // v0.384.0: sin puntos suspensivos; la politica vive en un solo sitio.
+        return com.eternalcraft.gripeverde.client.render.DiaryChrome.shorten(this.font, text, maxWidth);
     }
 
     private Component cleanLabel(String translationKey) {
@@ -1134,21 +1132,10 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                     lan ? 0x33180C : 0xE6D2A6, lan ? 0xF0E2C0 : 0x422810, lan ? 236 : 210);
                 if (lan) continue;
 
-                // v0.251.0: la fila que esta bajo la mano se aclara, para saber
-                // cual se lleva si se aprieta Enter o Supr.
-                boolean over = mouseX >= rowLeft - 9 && mouseX <= rowRight + 9
-                    && mouseY >= drawTop - 1 && mouseY < drawBottom + 1;
-                if (over) {
-                    gfx.fill(rowLeft - 9, drawTop - 1, rowRight + 9, drawBottom + 1, 0x18F3E7C8);
-                }
-
-                // v0.251.0: el puesto oficial lleva su lacre en el canto izquierdo.
-                ServerData sd = extractServerDataFromEntry(entry);
-                if (sd != null && isPinnedServer(sd)) {
-                    int sealX = rowLeft - 9;
-                    gfx.fill(sealX, drawTop - 1, sealX + 3, drawBottom + 1, 0xB05C0A08);
-                    gfx.fill(sealX + 1, drawTop + 2, sealX + 2, drawTop + 6, 0x70E8DCB4);
-                }
+                // v0.384.0: el brillo de la fila bajo la mano y el lacre del
+                // puesto oficial se pintaban AQUI, y despues la ficha se cubria
+                // entera con la banda de papel: o sea que el brillo y el lacre no
+                // se veian nunca. Ahora los pinta la banda, despues de taparla.
             }
         } catch (Throwable ignored) {}
     }
@@ -1208,9 +1195,35 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 // ficha se escribe encima, sin dejar nada del vanilla a la vista.
                 int slipTop = drawTop + 1;
                 int slipH = Math.max(16, drawBottom - drawTop - 2);
-                int bandLeft = Math.max(0, rowLeft - 2);
-                int bandRight = Math.min(this.width, rowLeft + rowWidth + 2);
-                gfx.fill(bandLeft, drawTop, bandRight, drawBottom, 0xFFE8D7B0);
+                // v0.384.0: la banda cubre la ficha ENTERA -de canto a canto- y
+                // con el mismo papel que la ficha, asi no queda un reborde mas
+                // claro a los lados que parezca una raya junto al puesto.
+                int bandLeft = Math.max(0, rowLeft - 9);
+                int bandRight = Math.min(this.width, rowLeft + rowWidth + 9);
+                gfx.fill(bandLeft, drawTop, bandRight, drawBottom, 0xFFE6D2A6);
+
+                // v0.384.0: la fila bajo la mano se aclara y la elegida queda
+                // marcada; ambas cosas van despues de la banda, que es la que
+                // tapaba el resaltado del juego.
+                boolean over = mouseX >= rowLeft - 9 && mouseX <= rowRight + 9
+                    && mouseY >= drawTop - 1 && mouseY < drawBottom + 1;
+                Object chosen = null;
+                try {
+                    chosen = this.vanillaList.getSelected();
+                } catch (Throwable ignored) {
+                }
+                if (chosen == entry) {
+                    gfx.fill(bandLeft, drawTop, bandRight, drawBottom, 0x1E6B5533);
+                } else if (over) {
+                    gfx.fill(bandLeft, drawTop, bandRight, drawBottom, 0x22F3E7C8);
+                }
+
+                // v0.251.0: el puesto oficial lleva su lacre en el canto izquierdo.
+                if (isPinnedServer(sd)) {
+                    int sealX = rowLeft - 9;
+                    gfx.fill(sealX, drawTop, sealX + 3, drawBottom, 0xB05C0A08);
+                    gfx.fill(sealX + 1, drawTop + 3, sealX + 2, drawTop + 7, 0x70E8DCB4);
+                }
 
                 // v0.382.0: se acabo el sello con la inicial. El puesto va con
                 // su propia imagen (la del servidor) y, si el puesto no tiene
