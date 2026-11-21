@@ -65,14 +65,11 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         = new java.util.HashMap<>();
     private static final java.util.Set<String> WORLD_ICONS_ABSENT = new java.util.HashSet<>();
     private int iconsThisFrame;
-    // v0.377.0: la ultima ficha a la que se le paso un clic, para tragarse el
-    // segundo golpe del doble clic.
+    // Recuerda el ultimo clic real sobre una fila para detener solamente el
+    // doble clic sobre el mismo punto; los mandos de la fila siguen recibiendo
+    // sus propios clics aunque se pulsen enseguida.
     private Object lastForwardedEntry;
     private long lastForwardedMs;
-    // v0.387.0: ultimo clic que se le paso al registro del juego. Un segundo
-    // clic dentro de los 350 ms se queda en casa, para que el juego no lo lea
-    // como doble clic y entre al mundo sin querer.
-    private long lastBodyMs;
     // v0.374.0: lo que pesa cada mundo, medido con el archivo entero.
     private static final java.util.Map<String, Long> WORLD_SIZES = new java.util.HashMap<>();
 
@@ -399,6 +396,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         } catch (Throwable ignored) {
         }
 
+        PaperButtons.syncStates();
         for (DiaryButton button : this.dressed) {
             if (button.visible) button.render(g, mouseX, mouseY, partial);
         }
@@ -1291,6 +1289,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
      */
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        PaperButtons.syncStates();
         if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER
                 || keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_KP_ENTER) {
             String want = net.minecraft.network.chat.Component.translatable("selectWorld.select").getString();
@@ -1329,108 +1328,59 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             } catch (Throwable ignored) {
             }
         }
-        if (!typing) {
-            // v0.376.0: ademas de arriba y abajo, Inicio/Fin y RePag/AvPag,
-            // como en cualquier libro de registro largo.
-            int jump = 0;
-            boolean toEnd = false;
-            if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN) jump = 1;
-            else if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_UP) jump = -1;
-            else if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_DOWN) jump = 5;
-            else if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_UP) jump = -5;
-            else if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_HOME) {
-                jump = -1000;
-                toEnd = false;
-            } else if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_END) {
-                jump = 1000;
-                toEnd = true;
+        if (!typing && this.vanillaList != null
+                && (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN
+                    || keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_UP
+                    || keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_DOWN
+                    || keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_UP
+                    || keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_HOME
+                    || keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_END)) {
+            this.setFocused(this.vanillaList);
+            this.vanillaList.setFocused(true);
+            Object before = this.vanillaList.getSelected();
+            boolean handled = super.keyPressed(keyCode, scanCode, modifiers);
+            if (handled) {
+                if (this.vanillaList.getSelected() != before) keepSelectedRowVisible();
+                this.lastForwardedEntry = null;
+                try {
+                    com.eternalcraft.gripeverde.client.audio.UiSounds.tab();
+                } catch (Throwable ignored) {
+                }
             }
-            if (jump != 0 && moveMark(jump, toEnd)) {
-                return true;
-            }
+            return handled;
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
-    /** v0.374.0: mueve la cinta al mundo de arriba o de abajo. */
-    private boolean moveMark(int delta, boolean toEnd) {
-        if (this.vanillaList == null) return false;
+    /** Mantiene a la vista la fila que eligio la navegacion vanilla. */
+    private void keepSelectedRowVisible() {
+        if (this.vanillaList == null || this.listTop < 0 || this.listBottom <= this.listTop) return;
         try {
             var kids = this.vanillaList.children();
-            if (kids == null || kids.isEmpty()) return false;
-            Object chosen = this.vanillaList.getSelected();
-            int idx = 0;
+            if (kids == null || kids.isEmpty()) return;
+            Object selected = this.vanillaList.getSelected();
+            int index = -1;
             for (int i = 0; i < kids.size(); i++) {
-                if (kids.get(i) == chosen) {
-                    idx = i;
+                if (kids.get(i) == selected) {
+                    index = i;
                     break;
                 }
             }
-            int next = toEnd && delta > 0
-                ? kids.size() - 1
-                : Math.max(0, Math.min(kids.size() - 1, idx + delta));
-            if (next == idx && chosen != null) return true;
-            Object target = kids.get(next);
-            // El juego sabe marcar sin entrar: se le pasa el clic ya colocado.
-            int step = rowStep();
-            double scroll = 0.0;
-            try {
-                scroll = this.vanillaList.getScrollAmount();
-            } catch (Throwable ignored) {
+            if (index < 0) return;
+            double scroll = this.vanillaList.getScrollAmount();
+            int rowTop = rowTopAt(index, scroll);
+            int rowBottom = rowTop + rowStep();
+            double wanted = scroll;
+            if (rowTop < this.listTop + 2) {
+                wanted += this.listTop + 2 - rowTop;
+            } else if (rowBottom > this.listBottom - 2) {
+                wanted += rowBottom - (this.listBottom - 2);
             }
-            // v0.392.0: si la fila queda fuera de la ventana del registro, se
-            // corre el scroll por el desplazamiento medido, con cabecera incluida.
-            try {
-                int viewTop = this.listTop;
-                int viewBottom = this.listBottom;
-                int rowTop = rowTopAt(next, scroll);
-                int rowBottom = rowTop + step;
-                double want = scroll;
-                if (rowTop < viewTop + 2) {
-                    want += viewTop + 2 - rowTop;
-                } else if (rowBottom > viewBottom - 2) {
-                    want += rowBottom - (viewBottom - 2);
-                }
-                double maxScroll = Math.max(0, this.vanillaList.getMaxScroll());
-                if (want != scroll) {
-                    this.vanillaList.setScrollAmount(Math.min(Math.max(0, want), maxScroll));
-                    scroll = this.vanillaList.getScrollAmount();
-                }
-            } catch (Throwable ignored) {
+            double maxScroll = Math.max(0.0, this.vanillaList.getMaxScroll());
+            if (wanted != scroll) {
+                this.vanillaList.setScrollAmount(Math.max(0.0, Math.min(wanted, maxScroll)));
             }
-            // v0.383.0: antes se marcaba pasandole un CLIC a la lista. Dos
-            // pulsaciones rapidas de flecha se parecian a un doble clic y el
-            // juego podia entrar al mundo. Ahora se marca la fila directamente,
-            // sin clic de por medio.
-            boolean marked = selectRow(target);
-            if (!marked) {
-                // v0.387.0: si el juego no deja marcar por el metodo de siempre
-                // -viene renombrado-, se le pasa el clic a la propia fila, que es
-                // un metodo de interfaz y no se ofusca. Con el mismo freno de
-                // 350 ms, y pegando a la izquierda de la fila, lejos de los
-                // botones de editar y borrar que viven en el canto derecho.
-                long now = System.currentTimeMillis();
-                if (now - this.lastBodyMs >= 350L) {
-                    this.lastBodyMs = now;
-                    try {
-                        if (target instanceof net.minecraft.client.gui.components.events
-                                .GuiEventListener clickable) {
-                            double cx = this.rowLeft + 4;
-                            double cy = rowTopAt(next, scroll) + step / 2.0;
-                            clickable.mouseClicked(cx, cy, 0);
-                        }
-                    } catch (Throwable ignored) {
-                    }
-                }
-            }
-            this.vanillaList.setFocused(true);
-            try {
-                com.eternalcraft.gripeverde.client.audio.UiSounds.tab();
-            } catch (Throwable ignored) {
-            }
-            return true;
         } catch (Throwable ignored) {
-            return false;
         }
     }
 
@@ -1464,111 +1414,111 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         return handled;
     }
 
-    /** v0.382.0: marca una fila del registro sin tocar tipos protegidos. */
-    private boolean selectRow(Object row) {
-        if (row == null || this.vanillaList == null) return false;
-        if (isSelectedRow(row)) return true;
-        // v0.387.0: devuelve si la fila quedo marcada DE VERDAD. En el juego real
-        // `setSelected` viene renombrado y esto no encuentra nada: quien llama
-        // tiene que poder enterarse y buscar otro camino, en vez de dar por
-        // hecho que marco.
-        for (Class<?> c = this.vanillaList.getClass(); c != null && c != Object.class;
-             c = c.getSuperclass()) {
-            for (java.lang.reflect.Method m : c.getDeclaredMethods()) {
-                if (!"setSelected".equals(m.getName()) || m.getParameterCount() != 1) continue;
-                try {
-                    m.setAccessible(true);
-                    m.invoke(this.vanillaList, row);
-                } catch (Throwable ignored) {
-                }
-            }
-        }
-        return isSelectedRow(row);
-    }
-
-    private boolean isSelectedRow(Object row) {
-        try {
-            return this.vanillaList != null && row != null && this.vanillaList.getSelected() == row;
-        } catch (Throwable ignored) {
-            return false;
-        }
-    }
-
-    /**
-     * v0.387.0: le da el clic a la primera ficha de la casa que lo tenga debajo
-     * -buscador, botones del pie, lo que sea-, sin pasar por la lista del juego.
-     * Devuelve true si alguna se lo quedo, aunque estuviera apagada: en ese caso
-     * el clic se traga igual y no cae en la fila de atras.
-     */
-    private boolean clickOurWidget(double mouseX, double mouseY) {
+    /** Evita que un widget superpuesto caiga por error en la fila de atras. */
+    private boolean widgetAt(double mouseX, double mouseY) {
         try {
             for (var child : this.children()) {
                 if (child == this.vanillaList) continue;
-                if (!(child instanceof net.minecraft.client.gui.components.AbstractWidget w)) continue;
-                if (!w.visible || !w.isMouseOver(mouseX, mouseY)) continue;
-                if (w.active && w.mouseClicked(mouseX, mouseY, 0)) {
-                    this.setFocused(w);
-                    this.setDragging(true);
-                }
-                return true;
+                if (!(child instanceof net.minecraft.client.gui.components.AbstractWidget widget)) continue;
+                if (widget.visible && widget.isMouseOver(mouseX, mouseY)) return true;
             }
         } catch (Throwable ignored) {
         }
         return false;
     }
 
-    /** v0.270.0: elegir un mundo con el raton tiene su golpe. */
+    /** Detecta los botones Editar/Borrar que viven dentro de cada fila vanilla. */
+    private boolean rowControlAt(Object row, double mouseX, double mouseY) {
+        if (row == null) return false;
+        for (Class<?> type = row.getClass(); type != null && type != Object.class;
+             type = type.getSuperclass()) {
+            for (Field field : type.getDeclaredFields()) {
+                if (!net.minecraft.client.gui.components.AbstractWidget.class
+                        .isAssignableFrom(field.getType())) continue;
+                try {
+                    field.setAccessible(true);
+                    Object value = field.get(row);
+                    if (value instanceof net.minecraft.client.gui.components.AbstractWidget widget
+                            && widget.visible && widget.isMouseOver(mouseX, mouseY)) {
+                        return true;
+                    }
+                } catch (Throwable ignored) {
+                }
+            }
+        }
+        // Respaldo por geometria para las dos acciones pegadas al canto derecho
+        // si el juego ofusca tambien el campo del boton de la fila.
+        int actionWidth = Math.min(64, Math.max(0, this.rowRight - this.rowLeft));
+        return actionWidth > 0 && mouseX >= this.rowRight - actionWidth
+            && mouseX <= this.rowRight && mouseY >= this.listTop && mouseY <= this.listBottom;
+    }
+
+    /**
+     * Los botones y Enter son las unicas formas de abrir un mundo. Un doble
+     * clic sobre una fila se consume; un clic rapido en otra parte de la misma
+     * fila (por ejemplo Editar o Borrar) sigue llegando a su control.
+     */
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        PaperButtons.syncStates();
         boolean inLedger = inLedger(mouseX, mouseY);
-        boolean onRow = button == 0 && this.listTop >= 0 && this.listBottom > this.listTop
-            && this.rowLeft >= 0
-            && mouseX >= this.rowLeft - 6 && mouseX <= this.rowRight + 6
-            && mouseY >= this.listTop && mouseY <= this.listBottom;
-        // v0.372.0: un clic en el registro SOLO marca el mundo. Antes se le
-        // pasaba el clic a la lista del juego y un segundo clic seguido -el
-        // gesto normal de "elegir"- entraba al mundo sin avisar. Para entrar
-        // esta el boton (o Enter).
-        // v0.377.0: ademas se traga cualquier segundo clic rapido sobre la
-        // misma ficha, venga de donde venga la marca: asi el gesto de doble
-        // clic no puede llegar nunca a la lista del juego.
-        // v0.382.0: cualquier clic izquierdo dentro del CUERPO del registro se
-        // queda en casa. Antes se le pasaba al juego con la x recolocada y, al
-        // tocar a la derecha de una ficha, el juego entraba al mundo. Ahora se
-        // marca el mundo aqui mismo y el clic no sigue de largo.
         boolean inBody = button == 0 && this.listTop >= 0 && this.listBottom > this.listTop
             && mouseY >= this.listTop && mouseY <= this.listBottom
             && mouseX >= this.ledgerLeft() - 6
             && mouseX <= (this.sheetLeft >= 0 && this.sheetWidth > 0
                 ? this.sheetLeft + this.sheetWidth : this.width) + 6;
-        if (inBody) {
-            // v0.387.0: el clic vuelve a pasar al juego, con freno.
-            //
-            // En 0.382.0 se tragaba entero y marcaba la fila por reflexion,
-            // buscando un metodo llamado `setSelected`. En el juego real las
-            // listas vienen con los nombres cambiados y ese metodo no aparece:
-            // el clic no marcaba NADA, y ademas se comia los clics del buscador
-            // y de las fichas que caen dentro del cuerpo. Ahora:
-            //   1) si hay una ficha de la casa bajo el puntero, el clic es suyo;
-            //   2) si no, se le pasa al juego con la x puesta en la columna;
-            //   3) y un segundo clic dentro de los 350 ms no llega al juego, que
-            //      es lo unico que impide el doble clic y la entrada al mundo.
-            long now = System.currentTimeMillis();
-            Object row = entryAt(mouseY);
-            if (clickOurWidget(mouseX, mouseY)) {
-                return true;
+        if (!inBody) {
+            return super.mouseClicked(inLedger ? ledgerX(mouseX) : mouseX, mouseY, button);
+        }
+
+        if (widgetAt(mouseX, mouseY)) {
+            super.mouseClicked(mouseX, mouseY, button);
+            return true;
+        }
+
+        Object row = entryAt(mouseY);
+        if (row == null) {
+            return true;
+        }
+
+        // La canaleta del scroll es un mando propio: no participa en el freno
+        // de doble clic de las filas y conserva su posicion real.
+        double clickX = mouseX;
+        if (this.vanillaList != null) {
+            try {
+                double listLeft = this.vanillaList.getLeft();
+                double listRight = listLeft + this.vanillaList.getWidth();
+                if (this.rowRight >= this.rowLeft
+                        && mouseX > this.rowRight && mouseX <= listRight) {
+                    super.mouseClicked(mouseX, mouseY, button);
+                    return true;
+                }
+                if (mouseX < listLeft || mouseX > listRight) {
+                    clickX = this.rowLeft + 2;
+                } else {
+                    clickX = Math.max(mouseX, this.rowLeft + 2);
+                }
+            } catch (Throwable ignored) {
+                clickX = Math.max(mouseX, this.rowLeft + 2);
             }
-            if (now - this.lastBodyMs >= 350L) {
-                this.lastBodyMs = now;
-                // La x se respeta tal cual salvo que caiga en el margen de los
-                // numeros: ahi se corre al borde de la fila. Asi la barra de
-                // scroll del juego, que vive a la derecha, sigue funcionando.
-                super.mouseClicked(Math.max(mouseX, this.rowLeft + 2), mouseY, button);
-            }
-            if (row != null) {
-                this.lastForwardedEntry = row;
-                this.lastForwardedMs = now;
-            }
+        }
+
+        long now = System.currentTimeMillis();
+        boolean rowControl = rowControlAt(row, mouseX, mouseY);
+        if (rowControl) {
+            // Editar/Borrar siguen teniendo su evento vanilla aunque se pulsen
+            // justo despues de seleccionar la fila.
+            super.mouseClicked(clickX, mouseY, button);
+            this.lastForwardedEntry = null;
+            return true;
+        }
+        Object selected = null;
+        try {
+            selected = this.vanillaList == null ? null : this.vanillaList.getSelected();
+        } catch (Throwable ignored) {
+        }
+        if (row == selected || (row == this.lastForwardedEntry
+                && now - this.lastForwardedMs < 650L)) {
             try {
                 com.eternalcraft.gripeverde.client.audio.UiSounds.tab();
             } catch (Throwable ignored) {
@@ -1576,37 +1526,16 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             return true;
         }
 
-        Object clicked = inLedger && button == 0 ? entryAt(mouseY) : null;
-        if (clicked != null) {
-            Object chosen = null;
-            try {
-                chosen = this.vanillaList == null ? null : this.vanillaList.getSelected();
-            } catch (Throwable ignored) {
-            }
-            long now = System.currentTimeMillis();
-            boolean twice = clicked == this.lastForwardedEntry
-                && now - this.lastForwardedMs < 700L;
-            if (clicked == chosen || twice) {
-                try {
-                    com.eternalcraft.gripeverde.client.audio.UiSounds.tab();
-                } catch (Throwable ignored) {
-                }
-                return true;
-            }
+        // Solo se entrega una vez a la lista. El segundo clic sobre esa misma
+        // fila se consume arriba para que nunca se entre al mundo por sorpresa.
+        super.mouseClicked(clickX, mouseY, button);
+        this.lastForwardedEntry = row;
+        this.lastForwardedMs = now;
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.tab();
+        } catch (Throwable ignored) {
         }
-        boolean handled = super.mouseClicked(inLedger ? ledgerX(mouseX) : mouseX, mouseY, button);
-        if (clicked != null) {
-            this.lastForwardedEntry = clicked;
-            this.lastForwardedMs = System.currentTimeMillis();
-        }
-        onRow = onRow || (inLedger && handled);
-        if (onRow) {
-            try {
-                com.eternalcraft.gripeverde.client.audio.UiSounds.tab();
-            } catch (Throwable ignored) {
-            }
-        }
-        return handled;
+        return true;
     }
 
     @Override

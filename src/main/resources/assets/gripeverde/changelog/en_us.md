@@ -1,3 +1,15 @@
+## Version 0.393.0 - UI layers and item tooltips keep their original styles
+
+Multiplayer: server icons now use their full source dimensions and are fitted into the card instead of being cropped. The vanilla list is flushed before its rows are covered, so its orange MOTD, counters and colors no longer leak through the paper.
+
+Single Player: keyboard navigation no longer fabricates mouse clicks, and the broad click throttle that swallowed quick control presses is gone. The native list receives keyboard focus; repeated clicks on a world row are consumed without blocking its Edit/Delete controls or scrollbar, and dressed button states are synced before input.
+
+JourneyMap: the full theme, fullscreen map, toolbar, buttons and other labels are no longer modified. Only the paper rim around the minimap and the background/ink of the coordinate label below it are styled; fonts and the rest of JourneyMap stay untouched.
+
+Inventory tooltips use Minecraft’s original components and render layer again. Their text, colors, formatting, custom fonts and graphic components are not flattened or recolored, and the native tooltip remains above inventory items; the parchment background is retained.
+
+Resource packs: deferred vanilla drawing is flushed before the paper and replacement labels are applied, preventing doubled or overlapping titles and descriptions.
+
 ## Version 0.392.0 - The world ledger measures each row where it begins
 
 The world ledger still drew several things from its own estimate: cards, folio numbers, row marks and keyboard scrolling could drift from the actual row when the list added a header or spacing. Those details now use the row start reported by the list itself. The margin needle also follows the game’s real maximum scroll instead of a height estimated from the number of worlds, keeping the paper, selection and scrolling in step.

@@ -86,8 +86,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         = new java.util.HashMap<>();
     private static final java.util.Set<String> SERVER_ICONS_ABSENT
         = new java.util.HashSet<>();
-    /** v0.383.0: lado real de la textura de cada imagen (32, 64 o 128). */
-    private static final java.util.Map<String, Integer> SERVER_ICON_SIDE
+    /** Dimensiones completas de cada imagen recibida en el ping del servidor. */
+    private record ServerIconSize(int width, int height) { }
+    private static final java.util.Map<String, ServerIconSize> SERVER_ICON_SIZES
         = new java.util.HashMap<>();
     private int vanillaListY0;
     private int vanillaHeaderHeight;
@@ -742,16 +743,22 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                     // Banda sepia detras de cada server (contraste para texto blanco vanilla)
                     drawEntryBackgrounds(gfx, mouseX, mouseY);
                     this.vanillaList.render(gfx, mouseX, mouseY, partial);
+                    // La lista usa texto y texturas en buffers diferidos. Se
+                    // asienta antes de cubrirla para que sus MOTD, contadores e
+                    // iconos no aparezcan otra vez por encima de la banda.
+                    gfx.flush();
                     gfx.disableScissor();
                 } else {
                     drawEntryBackgrounds(gfx, mouseX, mouseY);
                     this.vanillaList.render(gfx, mouseX, mouseY, partial);
+                    gfx.flush();
                 }
                 // v0.386.0: el subrayado de cada puesto se pinta dentro de
                 // paintServerRowsInk, despues de la banda: antes se dibujaba
                 // aqui y la banda de papel lo tapaba entero.
                 // v0.303.0: el nombre y el cartel del puesto, en tinta.
                 paintServerRowsInk(gfx, mouseX, mouseY);
+                gfx.flush();
                 // v0.323.0: la cabecera de la red local tambien la escribe el
                 // juego en blanco. Sobre el papel no se lee: se cubre y se
                 // reescribe en tinta, como las filas.
@@ -1298,6 +1305,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                     gfx.fill(sealX, drawTop, sealX + 3, drawBottom, 0xB05C0A08);
                     gfx.fill(sealX + 1, drawTop + 3, sealX + 2, drawTop + 7, 0x70E8DCB4);
                 }
+                // Asienta los fondos, resaltados y filetes antes de escribir la
+                // imagen y la tinta; cada RenderType tiene su propio buffer.
+                gfx.flush();
 
                 // v0.382.0: se acabo el sello con la inicial. El puesto va con
                 // su propia imagen (la del servidor) y, si el puesto no tiene
@@ -1307,11 +1317,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 int boxY = drawTop + Math.max(1, (drawBottom - drawTop - box) / 2);
                 net.minecraft.resources.ResourceLocation favicon = serverIcon(sd);
                 if (favicon != null) {
-                    // v0.383.0: la textura mide lo que mida el PNG del puesto.
-                    // Antes se daba por hecho 32 y de una imagen de 64 solo se
-                    // veia el cuarto de arriba a la izquierda.
-                    int side = serverIconSide(sd);
-                    gfx.blit(favicon, boxX, boxY, 0, 0, box, box, side, side);
+                    // Se escala el PNG completo; pasar `box` como tamaño de
+                    // textura recortaba una imagen 64x64 a su cuarto superior.
+                    drawServerIcon(gfx, sd, favicon, boxX, boxY, box);
                     gfx.fill(boxX, boxY, boxX + box, boxY + 1, 0x552A1C12);
                     gfx.fill(boxX, boxY + box - 1, boxX + box, boxY + box, 0x552A1C12);
                     gfx.fill(boxX, boxY, boxX + 1, boxY + box, 0x552A1C12);
@@ -1363,6 +1371,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                     }
                 }
             }
+            gfx.flush();
             if (scissored) {
                 try {
                     gfx.disableScissor();
@@ -1443,12 +1452,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
 
     /** v0.367.0: el MOTD del puesto, leido de frente sobre la ficha del juego. */
     /**
-     * v0.382.0: la imagen del puesto, la que el servidor manda en su ping.
-     *
-     * El juego la dibuja en su fila, pero la ficha de la casa la tapa, asi que
-     * se saca de los bytes que el propio juego ya tiene y se sube como textura
-     * dinamica, una sola vez por direccion. Sin nombre de campo: se busca el
-     * unico `byte[]` de la clase, que es justo el PNG del icono.
+     * La imagen que el servidor manda en su ping. Se registra con sus
+     * dimensiones reales; al dibujarla se escala la imagen completa dentro del
+     * recuadro, sin confundir el tamaño de destino con el recorte de textura.
      */
     private net.minecraft.resources.ResourceLocation serverIcon(ServerData data) {
         String key = null;
@@ -1480,13 +1486,20 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             try (java.io.InputStream in = new java.io.ByteArrayInputStream(bytes)) {
                 image = com.mojang.blaze3d.platform.NativeImage.read(in);
             }
+            int imageWidth = image.getWidth();
+            int imageHeight = image.getHeight();
+            if (imageWidth <= 0 || imageHeight <= 0) {
+                image.close();
+                SERVER_ICONS_ABSENT.add(key);
+                return null;
+            }
             net.minecraft.resources.ResourceLocation rl = new net.minecraft.resources.ResourceLocation(
                 "gripeverde", "server_icon/" + Integer.toHexString(key.hashCode())
                     + "_" + SERVER_ICONS.size());
             this.minecraft.getTextureManager()
                 .register(rl, new net.minecraft.client.renderer.texture.DynamicTexture(image));
             SERVER_ICONS.put(key, rl);
-            SERVER_ICON_SIDE.put(key, Math.max(1, image.getWidth()));
+            SERVER_ICON_SIZES.put(key, new ServerIconSize(imageWidth, imageHeight));
             return rl;
         } catch (Throwable ignored) {
             SERVER_ICONS_ABSENT.add(key);
@@ -1494,14 +1507,28 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         }
     }
 
-    /** v0.383.0: lado de la textura de la imagen de ese puesto. */
-    private static int serverIconSide(ServerData data) {
+    /** Dibuja toda la textura, centrada y ajustada al recuadro de la ficha. */
+    private static void drawServerIcon(GuiGraphics gfx, ServerData data,
+                                       net.minecraft.resources.ResourceLocation icon,
+                                       int x, int y, int box) {
+        if (gfx == null || data == null || data.ip == null || icon == null || box <= 0) return;
+        ServerIconSize size = SERVER_ICON_SIZES.get(data.ip);
+        if (size == null || size.width() <= 0 || size.height() <= 0) return;
+        float fit = box / (float) Math.max(size.width(), size.height());
+        int drawWidth = Math.max(1, Math.round(size.width() * fit));
+        int drawHeight = Math.max(1, Math.round(size.height() * fit));
+        int drawX = x + (box - drawWidth) / 2;
+        int drawY = y + (box - drawHeight) / 2;
+        gfx.pose().pushPose();
         try {
-            Integer side = data == null || data.ip == null ? null : SERVER_ICON_SIDE.get(data.ip);
-            if (side != null) return side;
-        } catch (Throwable ignored) {
+            gfx.pose().translate(drawX, drawY, 0.0F);
+            gfx.pose().scale(drawWidth / (float) size.width(),
+                drawHeight / (float) size.height(), 1.0F);
+            gfx.blit(icon, 0, 0, 0, 0, size.width(), size.height(),
+                size.width(), size.height());
+        } finally {
+            gfx.pose().popPose();
         }
-        return 32;
     }
 
     /**

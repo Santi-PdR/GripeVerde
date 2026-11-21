@@ -1,3 +1,15 @@
+## Version 0.393.0 - Capas visuales y tooltips respetan sus estilos originales
+
+Multijugador: los iconos de servidor usan ahora todas las dimensiones de su textura y se ajustan a la ficha, sin recortarse. La lista vanilla se vuelca antes de cubrir sus filas, para que el MOTD naranja, el recuento y sus colores no se filtren sobre el papel.
+
+Un jugador: la navegación por teclado ya no fabrica clics de ratón, y se quita el freno general que se tragaba pulsaciones rápidas de los controles. La lista original recibe el foco de teclado; los clics repetidos sobre una fila se consumen sin bloquear Editar/Borrar ni la barra de desplazamiento, y el estado de los botones vestidos se sincroniza antes de recibir entrada.
+
+JourneyMap: ya no se modifica el tema completo, el mapa de pantalla completa, las barras, los botones ni las demás etiquetas. Solo se visten el borde de papel del minimapa y el fondo/tinta de las coordenadas debajo; las fuentes y el resto de JourneyMap quedan intactos.
+
+Inventario: los tooltips vuelven a usar los componentes y la capa de dibujo originales de Minecraft. No se aplanan ni recolorean el texto, sus colores, formato, fuentes personalizadas ni componentes gráficos, y la ficha nativa queda por encima de los ítems; se conserva el fondo de pergamino.
+
+Paquetes de recursos: se vuelca el dibujo vanilla diferido antes de aplicar el papel y las etiquetas sustitutas, evitando títulos y descripciones duplicados o superpuestos.
+
 ## Version 0.392.0 - El registro de mundos mide cada fila donde empieza
 
 El registro de mundos todavía dibujaba varias cosas con una cuenta propia: fichas, números, marcas y el ajuste del scroll al moverse con el teclado podían quedar separados de la fila real cuando la lista sumaba cabecera o espaciado. Ahora todos esos trazos usan el inicio de fila que devuelve la lista. La aguja del margen también toma el recorrido máximo real del juego, no una altura estimada por cantidad de mundos; así la hoja, la selección y el desplazamiento siguen el mismo compás.

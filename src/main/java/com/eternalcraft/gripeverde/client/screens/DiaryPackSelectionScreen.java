@@ -128,8 +128,9 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         }
         if (x2 - x1 < 60) return;
         int paper = PaperTexture.paperColor(PaperTexture.PaperKind.ARCHIVE);
-        // v0.382.0: papel opaco. A 250 se transparentaba el nombre blanco del
-        // juego y se leian las dos letras encimadas.
+        // La lista y sus textos ya se asentaron antes. Ahora el recorte opaco
+        // los tapa de verdad y luego se dibuja una sola copia en tinta.
+        g.flush();
         g.fill(x1, top, x2, bottom,
             com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(paper, 255));
         boolean scissored = false;
@@ -340,6 +341,9 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partial) {
         super.render(g, mouseX, mouseY, partial);
+        // Los textos vanilla quedan en buffers diferidos. Se asientan primero
+        // para que la hoja opaca pueda cubrirlos en vez de dejar un doble trazo.
+        g.flush();
         // v0.382.0: primero la hoja, encima de la tierra del juego; despues las
         // filas y los botones que la hoja tapo, en el mismo orden que el juego.
         try {
@@ -347,6 +351,9 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
             redrawOnPage(g, mouseX, mouseY, partial);
         } catch (Throwable ignored) {
         }
+        // Se vuelcan las filas y botones repetidos antes de aplicar sus velos
+        // y la tinta, para respetar el orden entre sus capas de texto y fondo.
+        g.flush();
         // v0.346.0: las dos listas del archivador se acompasan al papel, como
         // las fichas de Sonido y Accesibilidad. Solo se tine la fila: la letra
         // del juego y sus mandos quedan como estan.
@@ -382,6 +389,9 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
             // subtitulo del juego se dibujaban encima y por debajo de ella: se
             // veian las dos letras superpuestas. Ahora la franja es opaca, tapa
             // los dos renglones del juego y los reescribe en tinta.
+            // Asienta el subtitulo de la hoja antes de cubrir la cabecera
+            // vanilla y escribir una sola pareja de titulo y subtitulo.
+            g.flush();
             int bandTop = 6;
             int bandBottom = 42;
             int bandLeft = 14;

@@ -7,19 +7,12 @@ import net.minecraft.client.gui.GuiGraphics;
 /**
  * v0.367.0: compatibilidad con JourneyMap 5.10.3.
  *
- * El mapa lo dibuja el mod de JourneyMap y su API publica no expone el minimapa
- * ni su parte de coordenadas, asi que aqui se trabaja por dentro con su propia
- * libreria, sin tocar su JAR:
- *
- *  - El canto del minimapa circular pasa a ser una hoja de la casa: se dibuja
- *    un anillo de papel desgarrado por fuera del radio del mapa, de modo que
- *    nunca tapa el terreno ni la aguja.
- *  - La letra de la informacion (coordenadas, bioma, hora) se viste con el
- *    sistema de temas que el propio JourneyMap trae: se copia el tema en curso
- *    y se le pone fondo de papel y tinta en vez del negro con letra blanca.
- *    Se hace en memoria, sin escribir nada en la configuracion del jugador.
- *
- * Todo va envuelto en try/catch y, si JourneyMap no esta, no hace nada.
+ * El mapa lo dibuja JourneyMap y su API publica no expone el minimapa ni la
+ * etiqueta que lleva las coordenadas. La casa solo dibuja el canto de papel
+ * alrededor del minimapa y da fondo de papel a la etiqueta de coordenadas de
+ * debajo; no cambia fuentes, controles, barras ni el tema del mapa completo.
+ * El ajuste de esa etiqueta es temporal y en memoria: no escribe la
+ * configuracion del jugador. Si JourneyMap no esta, no hace nada.
  */
 public final class JourneyMapPaper {
 
@@ -28,16 +21,12 @@ public final class JourneyMapPaper {
     private static final int INK_HAIR = 0x552A1C12;
 
     /**
-     * v0.378.0: una sola linea de diario la primera vez que se sabe algo. Si el
-     * tema no se aplica en la partida del jugador, con esto se ve el motivo sin
-     * tener que adivinar.
+     * Escribe cada diagnostico de JourneyMap una sola vez, con un tope para no
+     * llenar el archivo si el mod externo cambia su API.
      */
     private static void note(String why) {
-        // v0.390.0: antes solo se anotaba la PRIMERA linea, y esa solia ser
-        // "el minimapa aun no tiene medidas" -que pasa en el primer cuadro-.
-        // Las lineas utiles -tema aplicado, forma, anillo- quedaban sin escribir
-        // y desde el diario no habia como saber que fallaba. Ahora se anota cada
-        // mensaje distinto una vez, con un tope para no llenar el archivo.
+        // Las medidas utiles -forma, anillo y etiqueta de coordenadas- quedan
+        // registradas una sola vez, sin repetirlas por cuadro ni llenar el archivo.
         if (why == null || noted.contains(why) || noted.size() >= 12) return;
         noted.add(why);
         try {
@@ -127,8 +116,9 @@ public final class JourneyMapPaper {
                 if (Boolean.FALSE.equals(on)) return;
             }
 
-            // Cada segundo se comprueba que JourneyMap siga con el tema de la
-            // casa: al entrar y salir de mundos lo recarga y se perdia.
+            // JourneyMap puede cargar otro tema al cambiar de mundo. Se vuelve
+            // a comprobar su identidad, pero solo se retoca el fondo y la tinta
+            // de la etiqueta inferior de coordenadas.
             if (themeTried && patchedTheme != null && (frameCounter++ & 0x3F) == 0) {
                 try {
                     Object now = Class.forName("journeymap.client.io.ThemeLoader")
@@ -137,7 +127,6 @@ public final class JourneyMapPaper {
                 } catch (Throwable ignored) {
                 }
             }
-            patchTheme();
 
             Object miniMap = getMiniMap.invoke(uiManager);
             if (miniMap == null) return;
@@ -147,6 +136,7 @@ public final class JourneyMapPaper {
                 return;
             }
 
+            patchCoordinateLabel(dv);
             drawPaperEdge(g, dv);
         } catch (Throwable ignored) {
         }
@@ -346,75 +336,50 @@ public final class JourneyMapPaper {
         }
     }
 
-    // ── el tema entero ──────────────────────────────────────────────────────
+    // ── la etiqueta de coordenadas bajo el minimapa ──────────────────────────
 
     /**
-     * v0.379.0: el tema entero de JourneyMap pasa a papel y tinta, no solo el
-     * minimapa.
-     *
-     * Antes se pintaba la etiqueta de estado y las del minimapa, y el fondo de
-     * pantalla completa se ponia marron oscuro -que es justo lo que se veia: la
-     * rejilla oscura-. Los botones seguian azules porque JourneyMap los dibuja
-     * con sus PROPIAS texturas del tema, y esas no se pueden recolorear desde
-     * fuera. Ahora, a cada boton se le apaga `useThemeImages`, de modo que el mod
-     * los pinta con sus colores planos, y esos colores pasan a ser papel con la
-     * tinta de la casa. Se tocan tambien la mira y el canto cuadrado.
-     *
-     * Solo en memoria: la configuracion del jugador no se toca.
+     * Cambia solo el fondo y la tinta de las coordenadas que JourneyMap pone
+     * debajo del minimapa. El resto de sus etiquetas, fuentes, botones, barras,
+     * reticula y tema de pantalla completa se conserva sin tocar.
      */
-    private static void patchTheme() {
+    private static void patchCoordinateLabel(Object displayVars) {
         if (themeTried) return;
         long now = System.currentTimeMillis();
         if (now < themeRetryAtMs) return;
-        themeRetryAtMs = now + 5000L;   // si aun no hay tema, se reintenta luego
+        themeRetryAtMs = now + 5000L;
         try {
             Class<?> loader = Class.forName("journeymap.client.io.ThemeLoader");
             Object theme = loader.getMethod("getCurrentTheme").invoke(null);
             if (theme == null) return;
 
-            // Pantalla completa: papel claro en vez del marron oscuro.
-            Object full = read(theme, "fullscreen");
-            if (full != null) {
-                safeWrite(full, "background", spec("#E8DCB4", 0.96f));
-                paintLabel(read(full, "statusLabel"));
-            }
-
-            // Botones y conmutadores: sin texturas del tema y en papel.
-            Object control = read(theme, "control");
-            if (control != null) {
-                paintButton(read(control, "button"));
-                paintButton(read(control, "toggle"));
-            }
-
-            // Barras de herramientas: sin textura, que el mod no pinte su cinta.
-            Object container = read(theme, "container");
-            if (container != null) {
-                Object toolbar = read(container, "toolbar");
-                if (toolbar != null) {
-                    paintToolbar(read(toolbar, "horizontal"));
-                    paintToolbar(read(toolbar, "vertical"));
-                }
+            String shape = String.valueOf(read(displayVars, "shape"))
+                .toLowerCase(java.util.Locale.ROOT);
+            String shapeKey;
+            if (shape.contains("circle")) {
+                shapeKey = "circle";
+            } else if (shape.contains("square")) {
+                shapeKey = "square";
+            } else {
+                return;
             }
 
             Object minimap = read(theme, "minimap");
-            if (minimap == null) return;
-            for (String shape : new String[] {"circle", "square"}) {
-                Object shapeSpec = read(minimap, shape);
-                if (shapeSpec == null) continue;
-                paintLabel(read(shapeSpec, "labelTop"));
-                paintLabel(read(shapeSpec, "labelBottom"));
-                paintLabel(read(shapeSpec, "compassLabel"));
-                // El marco del mapa es un ColorSpec completo, no una cadena.
-                safeWrite(shapeSpec, "frame", spec("#2A1C12", 1.0f));
-                safeWrite(shapeSpec, "reticle", spec("#2A1C12", 0.70f));
-                safeWrite(shapeSpec, "reticleHeading", spec("#8C2A1E", 0.85f));
-            }
+            Object shapeSpec = read(minimap, shapeKey);
+            Object coordinates = read(shapeSpec, "labelBottom");
+            if (coordinates == null) return;
+
+            Object background = spec("#E6D2A6", 0.92f);
+            Object foreground = spec("#2A1C12", 1.0f);
+            if (background == null || foreground == null) return;
+            safeWrite(coordinates, "background", background);
+            safeWrite(coordinates, "foreground", foreground);
 
             Class<?> themeClass = Class.forName("journeymap.client.ui.theme.Theme");
             loader.getMethod("setCurrentTheme", themeClass).invoke(null, theme);
             themeTried = true;
             patchedTheme = theme;
-            note("tema en papel aplicado");
+            note("papel aplicado solo a las coordenadas bajo el minimapa");
         } catch (Throwable ignored) {
         }
     }
@@ -427,41 +392,6 @@ public final class JourneyMapPaper {
         } catch (Throwable ignored) {
             return null;
         }
-    }
-
-    /** v0.379.0: etiqueta de papel con letra de tinta y sin sombra. */
-    private static void paintLabel(Object labelSpec) {
-        if (labelSpec == null) return;
-        safeWrite(labelSpec, "margin", Integer.valueOf(2));
-        safeWrite(labelSpec, "background", spec("#E6D2A6", 0.92f));
-        safeWrite(labelSpec, "foreground", spec("#2A1C12", 1.0f));
-        safeWrite(labelSpec, "highlight", spec("#8C2A1E", 1.0f));
-        safeWrite(labelSpec, "shadow", Boolean.FALSE);
-    }
-
-    /**
-     * v0.379.0: boton de papel. Apagar `useThemeImages` es lo que quita el azul:
-     * con texturas, JourneyMap dibuja su PNG y los colores no se usan.
-     */
-    private static void paintButton(Object buttonSpec) {
-        if (buttonSpec == null) return;
-        safeWrite(buttonSpec, "useThemeImages", Boolean.FALSE);
-        safeWrite(buttonSpec, "buttonOn", spec("#DCCB9F", 0.95f));
-        safeWrite(buttonSpec, "buttonOff", spec("#D3C193", 0.88f));
-        safeWrite(buttonSpec, "buttonHoverOn", spec("#F3E7C8", 0.97f));
-        safeWrite(buttonSpec, "buttonHoverOff", spec("#E8DAB4", 0.95f));
-        safeWrite(buttonSpec, "buttonDisabled", spec("#BFB08A", 0.70f));
-        safeWrite(buttonSpec, "iconOn", spec("#2A1C12", 1.0f));
-        safeWrite(buttonSpec, "iconOff", spec("#4A3A22", 0.95f));
-        safeWrite(buttonSpec, "iconHoverOn", spec("#8C2A1E", 1.0f));
-        safeWrite(buttonSpec, "iconHoverOff", spec("#5C3A16", 1.0f));
-        safeWrite(buttonSpec, "iconDisabled", spec("#8A7A5A", 0.80f));
-    }
-
-    /** v0.379.0: la cinta de botones del mapa, sin textura. */
-    private static void paintToolbar(Object toolbarSpec) {
-        if (toolbarSpec == null) return;
-        safeWrite(toolbarSpec, "useThemeImages", Boolean.FALSE);
     }
 
     // ── plomeria de reflexion, sin nombres ofuscados ────────────────────────
@@ -496,14 +426,7 @@ public final class JourneyMapPaper {
         }
     }
 
-    /**
-     * Como write, pero un miembro que no cuadre no tumba el resto del tema.
-     *
-     * v0.390.0: si el valor viene nulo NO se escribe. `spec(...)` devuelve null
-     * cuando el ColorSpec de JourneyMap no tiene el constructor que esperamos, y
-     * escribir ese nulo dejaba el marco del minimapa sin color: peor que no
-     * tocar nada.
-     */
+    /** No escribe un color nulo si JourneyMap cambia su constructor. */
     private static void safeWrite(Object target, String name, Object value) {
         if (value == null) return;
         try {

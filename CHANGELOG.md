@@ -1,3 +1,11 @@
+## v0.393.0 - Capas visuales, clics seguros y JourneyMap limitado al minimapa
+
+- Multijugador: el favicon se ajusta desde la textura completa y las filas se asientan antes de cubrirlas, evitando recortes y colores del MOTD vanilla por encima del papel.
+- Un jugador: se eliminan los clics sintéticos de la navegación por teclado y el freno global de clics. La lista recibe el foco nativo; el segundo clic sobre una fila no entra al mundo, mientras Editar/Borrar, la barra y los botones vestidos conservan sus eventos.
+- JourneyMap: se deja intacto el tema completo, la pantalla de mapa, las barras, los botones, las fuentes y las etiquetas ajenas. Solo se visten el canto del minimapa y el fondo/tinta de las coordenadas inferiores.
+- Inventario: los tooltips vuelven a renderizarse con los componentes nativos en la capa superior, conservando texto, color, formato, fuentes especiales y elementos gráficos originales. Se mantiene únicamente el fondo de pergamino.
+- Paquetes de recursos: se vacían los buffers diferidos antes de tapar y reescribir las listas, para que sus nombres y descripciones no aparezcan duplicados.
+
 ## v0.368.0 - Portada con paralaje, anillo del mapa en dos envíos y arsenal de dos renglones
 
 - Portada: la niebla baja y la alta se corren con el puntero, en sentidos contrarios, para separar los planos (con movimiento reducido queda quieta). JourneyMap: la geometria del anillo se calcula solo al cambiar tamano o posicion y se dibuja en dos tandas, en vez de cuatrocientas llamadas de relleno y sus senos por cuadro. Arsenal: la descripcion del mod bajo la mano se dobla en dos renglones. Revision: se repasaron todas las busquedas por nombre de clase, campo o metodo del juego y no queda ninguna en las pantallas.
