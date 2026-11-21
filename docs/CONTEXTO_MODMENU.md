@@ -1756,3 +1756,13 @@ Cuatro trampas que ya costaron una captura cada una. Van aquí para no repetirla
   `paintOptionRowsInk` acepta `mouseX/mouseY` para eso.
 - **Chapas de registro:** una por hoja, de I a XIX más XX (Aspecto).
   `tools/lint_java.py` avisa si se repite un número.
+
+## 0.386.0 - lo que se pinta antes se borra
+
+- El filete entre servidores vivía en `drawEntryFrames`, que corría ANTES de
+  `paintServerRowsInk`: la banda de papel lo tapaba entero. Ya no existe ese
+  método; el filete va dentro del paso de tinta, después del tinte.
+  Regla general: **si algo se pinta antes de la banda, no existe**.
+- Las hojas que se cierran tienen que sonar: `UiSounds.back()` en `onClose`.
+  Faltaban en `ChangelogScreen` y `DiaryHouseScreen`. El guardia de 140 ms evita
+  el doble aviso cuando el botón ya sonó.
