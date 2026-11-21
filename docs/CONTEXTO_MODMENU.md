@@ -4,50 +4,42 @@ Actualizado: 2026-11-13
 
 ## Proyecto y reglas de trabajo
 
-- Repositorio: [Santi-PdR/GripeVerde](https://github.com/Santi-PdR/GripeVerde) — **público**
-  (`visibility: public`, confirmado con la API). El script corto de instalación funciona sin
-  token, igual que el de Photon/Fisk.
-- Rama de trabajo de la sesión: `arena/48be547c-gripeverde` (base `02e85bc`) — la plataforma
-  fija el nombre, no se renombra. Todo el trabajo va ahí; el PR sale de esa rama.
-- Versión de esta rama: `0.368.0` (anteriores entregadas: `0.229.0`, `0.228.0`, `0.209.0`, `0.208.0`, `0.207.0`, `0.206.0`, `0.205.0`, `0.204.0`, `0.203.0`, `0.202.0`, `0.201.0`, `0.200.0`, `0.199.0`, `0.198.0`, `0.197.0`, `0.196.0`, `0.195.0`, `0.194.0`, `0.193.0`, `0.192.0`, `0.191.0`, `0.190.0`, `0.189.0`, `0.188.0`, `0.187.0`, `0.186.0`, `0.185.0`, `0.184.2`, `0.184.1`, `0.183.0`)
+- Repositorio: [Santi-PdR/GripeVerde](https://github.com/Santi-PdR/GripeVerde), público.
+- Rama activa de la sesión: `arena/48be547c-gripeverde`, basada en `02e85bc`.
+  La plataforma fija el nombre: trabajar y publicar solamente en esta rama.
+- **Versión actual: 0.392.0**, commit `9f609e1`; CI `44920658320` terminó en verde.
+  Release: <https://github.com/Santi-PdR/GripeVerde/releases/tag/v0.392.0>.
+  JAR de 10.805.464 bytes; SHA-256
+  `d5dc33b5d4dad9f9de3dd8d0d74a60e6de9b82ab1d570dcbbfc2e5d00cdb2c87`.
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
-- El trabajo se hace sobre el código fuente alojado en GitHub; no se clona ni se edita el
-  proyecto local del usuario.
+  El trabajo se hace sobre el repositorio; no se clona ni se edita el proyecto local
+  del usuario.
 - No se controla Minecraft ni la PC del usuario para pruebas visuales. El CI acredita
   compilación, recursos y localización; no sustituye una revisión dentro del juego.
+  **Pendiente de confirmación del usuario:** geometría/clics de Mundos (ahora las
+  fichas, hover, hit-test, navegación por teclado y barra comparten las medidas de la
+  lista), tooltips cerca de bordes, fila de red local, hojas Ratón/Teclas y la línea
+  `[GripeVerde] JourneyMap: …` de `latest.log`.
 - Las interfaces del juego se mantienen instantáneas: no se agregan animaciones al
-  inventario, la pausa ni el mundo. Las únicas piezas animadas siguen siendo las del menú
-  y respetan Movimiento reducido y Destellos reducidos.
-- **Entrega de cada versión:** el usuario no descarga archivos del workspace. Al terminar cada
-  tanda hay que darle **un script de PowerShell para pegar**, que baja el `.jar` del último
-  release directo a su carpeta de mods, borra el anterior (sin copias de respaldo) y verifica
-  tamaño y SHA-256 contra lo que publica la API. No se guarda ninguna copia del JAR en el repositorio ni en el workspace.
-  Tampoco se dispara la descarga desde el sandbox: la red de este entorno solo alcanza
-  `github.com`, `api.github.com` y pocos hosts más, y el binario del release viene de
-  `release-assets.githubusercontent.com` (da `EOF` acá).
-- El script vive en `tools/install-latest.ps1` y usa, en este orden: `$env:GITHUB_TOKEN`,
-  `gh auth token`, `git credential fill` (host github.com). Si no hay ninguna, corta con un
-  mensaje que dice qué hacer. Verifica `size` y `digest` (sha256) que publica la API del
-  asset, comprueba que el ZIP tenga `META-INF/MANIFEST.MF` y `mods.toml`, **borra** los
-  `*gripeverde*.jar` viejos (el usuario no quiere respaldos) y, si encontraba la carpeta
-  heredada `<instancia>\gripeverde-jar-backups`, la borra también.
-- El usuario **autorizó** pasar el repo a público (2026-11-13), pero **la integración de esta
-  sesión no puede**: `gh repo edit` de esta versión no tiene el flag de consecuencias y
-  `PATCH /repos` con `private=false` devuelve `403 Resource not accessible by integration`
-  (falta permiso de administración). Queda en manos del usuario:
-  `Settings > General > Danger Zone > Change repository visibility > Make public`.
-  Repos hermanos de referencia, todos **públicos**: `Fisk-Superheroes`, `Photon-2`, `Lclient`.
-  Los comandos cortos que el usuario probó con éxito salen de ahí, sin token.
-- Mientras siga privado, `tools/install-latest.ps1` usa token si lo encuentra y, cuando el repo
-  pase a público, funciona igual sin token (el fallback sin credenciales ya está escrito y, si
-  recibe un 404 sin token, avisa exactamente eso).
-- **Cambio de rama de la sesión (2026-11-13):** el checkout pasó a
-  `arena/48be547c-gripeverde`, que arranca en `02e85bc` (0.103.0). Todo el trabajo de
-  0.104→0.181 vive en `codex/v0.104-ghoul-warning-poster` @ `027f5f7`, que es la cabeza del
-  PR #90. La rama de la sesión estaba en 0.173.0; se integró con `-s ours` para conservar su
-  historial y dejar el árbol moderno.
+  inventario, la pausa ni el mundo. Las únicas piezas animadas siguen siendo las del
+  menú y respetan Movimiento reducido y Destellos reducidos.
+- **Entrega de cada versión:** cerrar con un script PowerShell para pegar que descarga
+  el JAR más reciente, verifica tamaño y SHA-256, sustituye el anterior sin guardar
+  copias de respaldo y elimina la carpeta heredada de respaldos si existe. No se guarda
+  JAR generado en el repositorio ni en el workspace.
+- `tools/install-latest.ps1` obtiene metadatos del API, descarga directamente del asset
+  público y verifica tamaño, digest, `META-INF/MANIFEST.MF` y `mods.toml`. El token es
+  opcional para el repo público; si se define, se reutiliza para el fallback al API
+  (por ejemplo, si el repo volviera a ser privado). Borra los `*gripeverde*.jar` viejos
+  y la carpeta heredada `<instancia>\gripeverde-jar-backups`; no hace backups.
+- Los binarios de release no se descargan desde este sandbox: el host del asset no está
+  en su allowlist. Los metadatos y digest sí se consultan por `api.github.com`.
+- `.github/workflows/build.yml` compila `main` y `arena/**` y publica automáticamente
+  cuando `release-tag.txt` coincide con la versión de `build.gradle`. Las operaciones
+  GitHub se hacen con `git`/`gh`; si falla la autenticación, pedir que el usuario
+  reconecte GitHub en Arena. Nunca pedir tokens ni credenciales por chat.
 
-## Estado confirmado al retomar (2026-11-13)
+## Estado histórico al retomar (0.209.0; 2026-11-13)
 
 - `0.209.0` **publicada y en verde**: commit `83733da`, run `43681287004` (`build` y `publish` en verde).
   `https://github.com/Santi-PdR/GripeVerde/releases/download/v0.209.0/gripeverde-0.209.0.jar`
@@ -1689,7 +1681,7 @@ pueda producir tofu, jerarquía visual, sin sombras de texto excesivas, sin sola
 con animación limitada a la portada. El juego en curso y las pantallas de
 inventario/pausa deben seguir libres de animaciones añadidas.
 
-## Próximo paso técnico recomendado
+## Próximo paso técnico recomendado (histórico; versión 0.181.0)
 
 Que el usuario pruebe `0.181.0` sacando CopyL de `mods`: la ficha importa los diez mensajes al primer
 arranque y los atajos pasan a responder. Revisar a ojo la columna de ranuras. Queda pendiente llevar el
