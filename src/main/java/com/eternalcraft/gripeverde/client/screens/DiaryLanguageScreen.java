@@ -646,7 +646,12 @@ public class DiaryLanguageScreen extends Screen {
 
         @Override
         public Component getNarration() {
-            if (this.fogTongue) return Component.literal("...");
+            // v0.386.0: el lector de pantalla leia "punto punto punto"; ahora
+            // dice el mismo nombre que lleva la fila.
+            if (this.fogTongue) {
+                return Component.literal(com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+                    ? "Tongue of the Fog" : "Lengua de la Niebla");
+            }
             return this.info.toComponent();
         }
     }

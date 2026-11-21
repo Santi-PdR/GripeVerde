@@ -516,7 +516,11 @@ public class DiaryDispatchScreen extends Screen {
             gfx.fill(this.keyX, y + ROW_H - 1, this.keyX + this.keyW, y + ROW_H,
                 DiaryChrome.INK_DIVIDER);
 
-            String key = listening ? "..." : keyLabel(slot);
+            // v0.386.0: mientras espera la tecla no se ponen tres puntos: el
+            // recuadro ya esta marcado y dice la palabra, o nada si no entra.
+            String key = listening
+                ? (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish() ? "key" : "tecla")
+                : keyLabel(slot);
             boolean bound = listening || DispatchLibrary.isBound(slot);
             // v0.261.0: si la ranura esta atada a un boton del raton, adelante va
             // el dibujito del raton: se ve de un vistazo que no es una tecla.

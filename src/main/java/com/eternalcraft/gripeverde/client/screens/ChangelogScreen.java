@@ -1792,6 +1792,12 @@ public class ChangelogScreen extends Screen {
 
     @Override
     public void onClose() {
+        // v0.386.0: era la unica hoja que se cerraba en silencio; la casa suena
+        // a puerta siempre.
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.back();
+        } catch (Throwable ignored) {
+        }
         lastScrollY = (int)Math.round(this.targetScrollY);
         super.onClose();
     }

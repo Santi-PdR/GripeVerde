@@ -303,6 +303,11 @@ public class DiaryHouseScreen extends Screen {
 
     @Override
     public void onClose() {
+        // v0.386.0: como el resto de las hojas, cerrar suena a puerta.
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.back();
+        } catch (Throwable ignored) {
+        }
         if (this.minecraft != null) {
             this.minecraft.setScreen(this.parent);
         }

@@ -722,8 +722,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                     drawEntryBackgrounds(gfx, mouseX, mouseY);
                     this.vanillaList.render(gfx, mouseX, mouseY, partial);
                 }
-                // Subrayado sutil bajo cada server
-                drawEntryFrames(gfx);
+                // v0.386.0: el subrayado de cada puesto se pinta dentro de
+                // paintServerRowsInk, despues de la banda: antes se dibujaba
+                // aqui y la banda de papel lo tapaba entero.
                 // v0.303.0: el nombre y el cartel del puesto, en tinta.
                 paintServerRowsInk(gfx, mouseX, mouseY);
                 // v0.323.0: la cabecera de la red local tambien la escribe el
@@ -1219,6 +1220,17 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                     gfx.fill(bandLeft, drawTop, bandRight, drawBottom, 0x22F3E7C8);
                 }
 
+                // v0.386.0: el filete que separa un puesto del siguiente. Se
+                // pinta despues de la banda -que era la que lo tapaba- y con el
+                // desvanecido a los dos lados, como antes.
+                int sepY = drawBottom - 1;
+                if (sepY > drawTop + 6) {
+                    int fadeExt = 12;
+                    gfx.fill(bandLeft, sepY, bandLeft + fadeExt, sepY + 1, 0x20422810);
+                    gfx.fill(bandLeft + fadeExt, sepY, bandRight - fadeExt, sepY + 1, 0x60422810);
+                    gfx.fill(bandRight - fadeExt, sepY, bandRight, sepY + 1, 0x20422810);
+                }
+
                 // v0.251.0: el puesto oficial lleva su lacre en el canto izquierdo.
                 if (isPinnedServer(sd)) {
                     int sealX = rowLeft - 9;
@@ -1466,53 +1478,6 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
      * Dibuja un subrayado sutil bajo cada server (estilo tarjeta de biblioteca).
      * No dibuja marco completo - solo una linea horizontal fina de tinta.
      */
-    private void drawEntryFrames(GuiGraphics gfx) {
-        if (this.vanillaList == null) return;
-        try {
-            var children = this.vanillaList.children();
-            if (children == null || children.isEmpty()) return;
-
-            int itemHeight = vanillaItemHeight;
-            int y0 = vanillaListY0;
-            int headerHeight = vanillaHeaderHeight;
-
-            if (itemHeight <= 0) return;
-
-            int rowLeft = this.vanillaList.getRowLeft();
-            int rowWidth = this.vanillaList.getRowWidth();
-            int rowRight = rowLeft + rowWidth;
-            int listTop = this.vanillaList.getTop();
-            int listBottom = this.vanillaList.getBottom();
-            double scrollAmount = 0.0;
-            try {
-                scrollAmount = this.vanillaList.getScrollAmount();
-            } catch (Throwable ignored) {}
-
-            for (int i = 0; i < children.size(); i++) {
-                var entry = children.get(i);
-                // Solo subrayar puestos reales, no la cabecera de red local.
-                if (extractServerDataFromEntry(entry) == null) continue;
-
-                int entryTop = y0 + 4 - (int) scrollAmount + i * itemHeight + headerHeight;
-                int entryBottom = entryTop + itemHeight - 4;
-
-                if (entryBottom < listTop || entryTop > listBottom) continue;
-                int drawBottom = Math.min(entryBottom, listBottom);
-                if (drawBottom <= listTop) continue;
-
-                // Subrayado tinta sutil - una linea de 1px con fade a los costados
-                int ink = 0x60422810;
-                int fadeIn = 0x20422810;
-                int fadeExt = 12;
-                // Fade lateral izquierdo
-                gfx.fill(rowLeft - fadeExt, drawBottom + 1, rowLeft, drawBottom + 2, fadeIn);
-                // Linea central solida
-                gfx.fill(rowLeft, drawBottom + 1, rowRight, drawBottom + 2, ink);
-                // Fade lateral derecho
-                gfx.fill(rowRight, drawBottom + 1, rowRight + fadeExt, drawBottom + 2, fadeIn);
-            }
-        } catch (Throwable ignored) {}
-    }
 
     /**
      * Calcula la coord Y hasta la cual se debe mostrar la lista (recorta LAN header
