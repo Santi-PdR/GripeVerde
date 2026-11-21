@@ -1,3 +1,7 @@
+## Version 0.380.0 - Worlds goes full width like Multiplayer, the server description keeps its last line and the Sound footer never trails off
+
+The Worlds ledger now runs edge to edge, exactly like the Multiplayer sheet: the game places its cards from border to border, so with a 32 px margin the paper ended before the cards did. In Multiplayer the server description uses every line that fits in the card -three at normal size- instead of two, and the trailing ellipsis is gone: the house does not trim what a server says about itself. The Sound footer gains a fourth, numbers-only form, so if the long, medium and short ones do not fit it still writes something whole, and if even that fails it writes nothing rather than an ellipsis.
+
 ## Version 0.379.0 - JourneyMap's whole theme goes to paper, and its map finally speaks Spanish
 
 Until now only the minimap's labels were painted, and the fullscreen background was set to dark brown - which is exactly the grid you kept seeing. The whole theme is now patched: paper background, ink reticle, paper labels and, above all, every button loses its theme texture and is drawn flat in paper with house ink, which is what takes the blue away. On top of that, the mod now brings Spanish wording for JourneyMap in all its variants (the modemap only ships Spain and Mexico Spanish, so with any other Spanish the map fell back to English): the fullscreen map, its map types, the hot keys and the labels - biome, position, hour, day, night - are written in the house's language.

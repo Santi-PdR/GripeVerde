@@ -1234,10 +1234,14 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 }
                 String line2 = motd.isEmpty() ? extra.trim() : motd + extra;
                 if (!line2.isEmpty() && slipH >= 20) {
-                    // v0.377.0: la descripcion del puesto se cortaba con puntos
-                    // suspensivos a la primera linea. Ahora se dobla por
-                    // palabras y usa dos renglones, que caben en la ficha.
-                    java.util.List<String> wrapped = wrapToWidth(this.font, line2, textW, 2);
+                    // v0.380.0: la descripcion del puesto se sigue doblando por
+                    // palabras, pero ahora usa todos los renglones que caben en
+                    // la ficha -tres en el alto normal- y no se remata con
+                    // puntos suspensivos: la casa no recorta lo que el puesto
+                    // cuenta de si mismo.
+                    int room = Math.max(1, (slipH - 13) / 9);
+                    int maxLines = Math.min(3, room);
+                    java.util.List<String> wrapped = wrapToWidth(this.font, line2, textW, maxLines);
                     for (int r = 0; r < wrapped.size(); r++) {
                         gfx.drawString(this.font, wrapped.get(r), textLeft,
                             slipTop + 13 + r * 9, 0xFF6B5533, false);
@@ -1280,12 +1284,10 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             rest = rest.substring(Math.min(rest.length(), cut)).trim();
             if (!piece.isEmpty()) out.add(piece);
         }
-        // Lo que sobre en el ultimo renglon se recorta con puntos: ya no hay
-        // donde seguir, pero casi nunca hara falta.
-        if (!rest.isEmpty() && !out.isEmpty()) {
-            int last = out.size() - 1;
-            out.set(last, DiaryChrome.fitText(font, out.get(last) + "\u2026", maxWidth));
-        }
+        // v0.380.0: aqui se remataba el ultimo renglon con puntos suspensivos.
+        // El puesto sigue contando su historia en la ficha completa (la que se
+        // abre al elegirlo), asi que en el renglon no se pone nada: mejor una
+        // frase cortada por el canto que un "..." de la casa.
         return out;
     }
 

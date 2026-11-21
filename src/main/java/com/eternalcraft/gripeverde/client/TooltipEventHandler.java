@@ -168,7 +168,7 @@ public class TooltipEventHandler {
         if (sw > 0) x = Math.max(4, Math.min(x, sw - w - 4));
         if (sh > 0) y = Math.max(4, Math.min(y, sh - h - 4));
         com.eternalcraft.gripeverde.client.render.PaperTexture.drawTornSlip(
-            g, x, y, w, h, 0xE6D2A6, 0x422810, 246);
+            g, x, y, w, h, 0xE6D2A6, 0x422810, 252);
         for (int i = 0; i < rows.size(); i++) {
             int color = i == 0 ? INK_TITLE : INK_BODY;
             g.drawString(font, rows.get(i), x + 6, y + 5 + i * 10, color, false);

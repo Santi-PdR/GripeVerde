@@ -805,7 +805,10 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         // v0.364.0: la hoja va a lo ancho del gabinete, con 32 px de margen a
         // cada lado, igual que la de Multijugador. Antes se ceñia a las filas y
         // quedaba un papel estrecho flotando en el centro.
-        int margin = this.width >= 360 ? 32 : 10;
+        // v0.380.0: la hoja va a sangre, igual que la de Multijugador, para que
+        // las dos pantallas se lean como el mismo libro. Con 32 px de margen las
+        // fichas del juego -que el coloca de borde a borde- se salian del papel.
+        int margin = 0;
         int px = margin;
         int pw = this.width - margin * 2;
         int py = sheetTop();

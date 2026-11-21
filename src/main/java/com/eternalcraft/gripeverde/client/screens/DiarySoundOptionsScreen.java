@@ -564,10 +564,12 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             // que entra entera: siempre se lee completo.
             String lineMid;
             String lineShort;
+            String lineTiny;
             if (musicOff && ambOff && uiPct <= 0) {
                 line = en ? "the cabinet is silent" : "el gabinete esta en silencio";
                 lineMid = line;
                 lineShort = line;
+                lineTiny = en ? "silent" : "silencio";
             } else {
                 line = (en ? "music " : "musica ")
                     + (menuMusicOffLabel(musicOff, musicPct, en))
@@ -584,6 +586,11 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
                     + (en ? " · amb " : " · amb ")
                     + (ambOff ? "-" : ambPct + "%")
                     + " · ui " + uiPct + "%";
+                // v0.380.0: cuarta forma, solo cifras. Cuando el pie se queda
+                // sin sitio se usa esta antes que recortar con puntos.
+                lineTiny = (musicOff ? "-" : musicPct + "%")
+                    + " · " + (ambOff ? "-" : ambPct + "%")
+                    + " · " + uiPct + "%";
             }
             // v0.301.0: la linea de las tres capas caia sobre las ruedas y el
             // boton de volver. Ahora comparte el pie con el folio, y se recorta
@@ -606,7 +613,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             if (roomy) {
                 int leftLimit = (btL - 8) - (this.panelX + 14);
                 if (leftLimit >= 60) {
-                    String cut = fitWhole(line, lineMid, lineShort, leftLimit);
+                    String cut = fitWhole(line, lineMid, lineShort, lineTiny, leftLimit);
                     g.drawString(this.font, cut, this.panelX + 14, footY,
                         DiaryChrome.INK_FLAVOR, false);
                 }
@@ -636,15 +643,18 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     }
 
     /**
-     * v0.377.0: la primera de las formas que entra entera en el ancho dado. Si
-     * ni la corta cabe, se recorta esa (nunca se deja a medias una larga).
+     * v0.377.0: la primera de las formas que entra entera en el ancho dado.
+     * v0.380.0: hay una cuarta forma, de solo cifras, y si tampoco cabe no se
+     * escribe nada: el pie del Sonido no se recorta nunca con puntos
+     * suspensivos, que era lo que se veia como "musica 40% · amb 100% · ui 6...".
      */
-    private String fitWhole(String longest, String middle, String shortest, int limit) {
+    private String fitWhole(String longest, String middle, String shortest, String tiny, int limit) {
         if (limit <= 0) return "";
         if (DiaryChrome.widthCached(this.font, longest) <= limit) return longest;
         if (middle != null && DiaryChrome.widthCached(this.font, middle) <= limit) return middle;
         if (shortest != null && DiaryChrome.widthCached(this.font, shortest) <= limit) return shortest;
-        return DiaryChrome.fitCached(this.font, shortest == null ? longest : shortest, limit);
+        if (tiny != null && DiaryChrome.widthCached(this.font, tiny) <= limit) return tiny;
+        return "";
     }
 
     /** v0.285.0: "40%" o "en silencio", segun lo que haya. */

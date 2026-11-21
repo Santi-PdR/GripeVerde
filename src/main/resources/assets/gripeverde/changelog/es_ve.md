@@ -1,3 +1,7 @@
+## Version 0.380.0 - Mundos va a lo ancho como Multijugador, la descripción del puesto conserva su último renglón y el pie del Sonido ya no se queda a medias
+
+La hoja de Mundos guardados corre de canto a canto, igual que la de Multijugador: el juego coloca sus fichas de borde a borde, así que con 32 px de margen el papel se acababa antes que las fichas. En Multijugador la descripción del puesto usa todos los renglones que caben en la ficha -tres en el tamaño normal- en vez de dos, y se acabaron los puntos suspensivos: la casa no recorta lo que un puesto cuenta de sí mismo. El pie del Sonido gana una cuarta forma, de solo cifras, para que si no entran la larga, la media y la corta, escriba algo entero; y si tampoco entra, no escribe nada antes que dejar un «…».
+
 ## Version 0.379.0 - El tema entero de JourneyMap pasa a papel, y su carta por fin habla español
 
 Hasta ahora solo se pintaban las etiquetas del minimapa, y el fondo de la pantalla completa se ponía marrón oscuro, que es justo la rejilla que seguías viendo. Ahora se pinta el tema entero: fondo de papel, mira en tinta, etiquetas de papel y, sobre todo, cada botón pierde su textura del tema y se dibuja plano en papel con la tinta de la casa, que es lo que quita el azul. Además, el mod trae ahora la carta de JourneyMap en español para todas sus variantes (el mod solo trae español de España y de México, así que con cualquier otro español la carta caía al inglés): la pantalla completa, sus tipos de carta, las teclas y las etiquetas -bioma, posición, hora, día, noche- van en la lengua de la casa.
