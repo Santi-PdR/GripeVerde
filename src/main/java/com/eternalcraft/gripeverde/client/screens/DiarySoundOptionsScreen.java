@@ -511,7 +511,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
                 DiaryChrome.washVanillaRows(g, (AbstractSelectionList<?>) this.reflectedList);
                 // v0.344.0: y encima, la ficha de registro con nuestra letra.
                 DiaryChrome.paintOptionRowsInk(g, this.font,
-                    (AbstractSelectionList<?>) this.reflectedList);
+                    (AbstractSelectionList<?>) this.reflectedList, mouseX, mouseY);
             } catch (Throwable ignored) {
             }
             DiaryChrome.drawStyledScrollThumbInPanel(g,

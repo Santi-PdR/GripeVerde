@@ -113,7 +113,7 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
      * mover a la derecha- y se reescribe el titulo en tinta con la version en
      * sepia debajo.
      */
-    private void inkPackRows(GuiGraphics g, AbstractSelectionList<?> list) {
+    private void inkPackRows(GuiGraphics g, AbstractSelectionList<?> list, int mouseX, int mouseY) {
         if (g == null || list == null) return;
         int top = list.getTop();
         int bottom = list.getBottom();
@@ -190,6 +190,15 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
                 if (drawBottom - drawTop < 12) continue;
                 if (chosen) {
                     g.fill(x1, drawTop, x1 + 3, drawBottom, 0xFF8C2A1E);
+                }
+                // v0.385.0: el brillo de la fila bajo la mano se perdia: la tira
+                // de papel opaca que tapa el texto del juego lo dejaba debajo.
+                // Se vuelve a pintar aqui, despues del papel y antes de la letra.
+                boolean over = mouseX >= left - 9 && mouseX <= right + 9
+                    && mouseY >= drawTop && mouseY < drawBottom;
+                if (over) {
+                    g.fill(Math.max(x1, left - 9), drawTop, Math.min(x2, right + 9),
+                        drawBottom, 0x22F3E7C8);
                 }
                 g.drawString(this.font, DiaryChrome.fitCached(this.font, title, textW),
                     x1 + 6, drawTop + 4, 0xFF1A1108, false);
@@ -346,8 +355,8 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
             // v0.372.0: los nombres de los packs los escribe el juego en blanco
             // fijo y sobre el papel no se leian. Se cubre la franja de texto de
             // cada lista y se reescribe en tinta y sepia, como en Mundos.
-            inkPackRows(g, this.availableList);
-            inkPackRows(g, this.selectedList);
+            inkPackRows(g, this.availableList, mouseX, mouseY);
+            inkPackRows(g, this.selectedList, mouseX, mouseY);
         } catch (Throwable ignored) {
         }
         try {

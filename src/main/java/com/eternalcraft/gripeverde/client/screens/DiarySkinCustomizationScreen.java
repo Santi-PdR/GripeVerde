@@ -313,7 +313,9 @@ public class DiarySkinCustomizationScreen extends Screen {
         } catch (Throwable ignored) {
         }
         DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, panelW, panelH);
-        DiaryChrome.drawRegistryTagLeft(gfx, this.panelX, this.panelY, "REG. VIII");
+        // v0.385.0: esta hoja llevaba la chapa REG. VIII, que es la de Opciones
+        // de red: dos hojas distintas con el mismo numero. La de Aspecto es XX.
+        DiaryChrome.drawRegistryTagLeft(gfx, this.panelX, this.panelY, "REG. XX");
 
         // v0.240.0: fuera el espejo de la esquina (el "ojo"): la ficha de
         // aspecto queda con sus botones y nada mas.

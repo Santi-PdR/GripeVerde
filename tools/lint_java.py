@@ -138,6 +138,33 @@ def check_dangling(path, lines):
     return bad
 
 
+def notas_de_chapa(files):
+    """
+    Aviso blando: dos pantallas de la casa con la misma chapa de registro
+    ("REG. VIII"). Las chapas van de I a XIX y cada hoja tiene la suya; cuando
+    dos coinciden es que una se copio sin cambiar el numero.
+    """
+    import re
+    notas = []
+    seen = {}
+    for f in files:
+        if '/client/screens/' not in f.replace('\\', '/'):
+            continue
+        try:
+            src = open(f, encoding='utf-8').read()
+        except OSError:
+            continue
+        for m in re.finditer(r'"(REG\.\s+[IVXLC]+)"', src):
+            tag = m.group(1)
+            line = src[:m.start()].count('\n') + 1
+            seen.setdefault(tag, []).append((f, line))
+    for tag, hits in sorted(seen.items()):
+        if len(hits) > 1:
+            for f, line in hits:
+                notas.append((f, line, 'aviso: la chapa %s esta en %d pantallas' % (tag, len(hits))))
+    return notas
+
+
 def notas_de_puntos(f):
     """
     Aviso blando (no falla el build): la casa no remata lo que escribe con puntos
@@ -208,6 +235,7 @@ def main(argv):
         problems += check_shadow(f, clean)
         notas += notas_de_orden(f)
         notas += notas_de_puntos(f)
+    notas += notas_de_chapa(files)
     for path, line, msg in notas:
         print('%s:%d: %s' % (path, line, msg))
     if not problems:

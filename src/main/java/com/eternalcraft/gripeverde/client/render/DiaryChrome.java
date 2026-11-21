@@ -622,6 +622,18 @@ public final class DiaryChrome {
      * el juego: nunca se borra un texto sin reponerlo.
      */
     public static void paintOptionRowsInk(GuiGraphics gfx, Font font, AbstractSelectionList<?> list) {
+        // v0.385.0: sin puntero no hay brillo; las pantallas que lo saben pasan
+        // las coordenadas por la otra sobrecarga.
+        paintOptionRowsInk(gfx, font, list, Integer.MIN_VALUE, Integer.MIN_VALUE);
+    }
+
+    /**
+     * v0.385.0: la banda oscura del registro tapaba el resaltado del juego, asi
+     * que no se sabia que ajuste estaba bajo la mano. Ahora la fila bajo el
+     * puntero se pinta en un sepia mas claro, despues de la banda.
+     */
+    public static void paintOptionRowsInk(GuiGraphics gfx, Font font, AbstractSelectionList<?> list,
+                                         int mouseX, int mouseY) {
         if (gfx == null || font == null || list == null) return;
         int top = list.getTop();
         int bottom = list.getBottom();
@@ -662,8 +674,11 @@ public final class DiaryChrome {
                 int drawBottom = Math.min(rowTop + bandH, bottom);
                 if (drawBottom - drawTop < 6) continue;
                 boolean slider = w instanceof net.minecraft.client.gui.components.AbstractSliderButton;
-                // Banda y filete, como en el registro de la casa.
-                gfx.fill(left, drawTop, right, drawBottom, 0xC82A1C12);
+                // Banda y filete, como en el registro de la casa. Si el puntero
+                // esta encima, la banda se aclara: es el unico aviso que queda.
+                boolean over = mouseX >= left - 2 && mouseX <= right + 2
+                    && mouseY >= Math.max(rowTop, top) && mouseY < Math.min(rowTop + step, bottom);
+                gfx.fill(left, drawTop, right, drawBottom, over ? 0xE2554632 : 0xC82A1C12);
                 gfx.fill(left, drawBottom - 1, right, drawBottom, 0x55E8DCB4);
                 int ink = 0xFFE8DCB4;
                 int fitted = Math.max(8, right - left - 16);

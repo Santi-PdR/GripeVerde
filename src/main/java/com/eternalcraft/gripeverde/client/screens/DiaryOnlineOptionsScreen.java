@@ -155,8 +155,28 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
         DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. VIII");
 
         // Lista vanilla
+        // v0.385.0: la lista se pintaba tal cual la trae el juego: rotulos en
+        // blanco fijo sobre el papel claro y sin barra de scroll de la casa.
+        // Ahora va recortada a la hoja, se acompana al sepia y se reescribe en
+        // tinta, igual que las hojas de Accesibilidad y Chat.
         if (this.list != null) {
+            boolean listClipped = false;
+            try {
+                g.enableScissor(this.panelX + 2, this.panelY + 2,
+                    this.panelX + this.panelW - 2, this.panelY + this.panelH - 2);
+                listClipped = true;
+            } catch (Throwable ignored) {
+            }
             this.list.render(g, mouseX, mouseY, partialTick);
+            DiaryChrome.washVanillaRows(g, this.list);
+            DiaryChrome.paintOptionRowsInk(g, this.font, this.list, mouseX, mouseY);
+            DiaryChrome.drawStyledScrollThumbInPanel(g, this.list, this.panelX + this.panelW);
+            if (listClipped) {
+                try {
+                    g.disableScissor();
+                } catch (Throwable ignored) {
+                }
+            }
         }
 
         // v0.310.0: el resumen vive en la cabecera; aqui queda el boton solo.
