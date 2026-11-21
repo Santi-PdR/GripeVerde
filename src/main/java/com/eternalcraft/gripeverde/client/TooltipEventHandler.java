@@ -105,6 +105,7 @@ public class TooltipEventHandler {
         }
     }
 
+    /** v0.378.0: la ficha va pegada al cursor, como la del juego. */
     /** v0.377.0: el texto de un renglon ya recortado, sin formato. */
     private static String toPlain(FormattedCharSequence seq) {
         StringBuilder sb = new StringBuilder();
@@ -149,8 +150,21 @@ public class TooltipEventHandler {
         int h = rows.size() * 10 + 8;
         int sw = Math.max(0, event.getScreenWidth());
         int sh = Math.max(0, event.getScreenHeight());
+        // v0.378.0: getX/getY son el raton, no la esquina de la ficha. Hay que
+        // pasar por el colocador del juego -el mismo que usa el vanilla- o la
+        // ficha se queda abajo y a la izquierda del cursor, medio tapando el
+        // objeto, que es lo que se veia en el inventario y en JEI.
         int x = event.getX();
         int y = event.getY();
+        try {
+            var positioner = event.getTooltipPositioner();
+            if (positioner != null && sw > 0 && sh > 0) {
+                org.joml.Vector2ic pos = positioner.positionTooltip(sw, sh, x, y, w, h);
+                x = pos.x();
+                y = pos.y();
+            }
+        } catch (Throwable ignored) {
+        }
         if (sw > 0) x = Math.max(4, Math.min(x, sw - w - 4));
         if (sh > 0) y = Math.max(4, Math.min(y, sh - h - 4));
         com.eternalcraft.gripeverde.client.render.PaperTexture.drawTornSlip(

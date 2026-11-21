@@ -200,13 +200,23 @@ public class DiaryModListScreen extends ModListScreen {
             // v0.347.0: la tira de cada mod se salia cuatro pixeles por abajo y
             // se encimaba con la del renglon siguiente, dejando bandas mas
             // oscuras. Ahora ocupa exactamente su renglon, con un pixel de aire.
-            PaperTexture.drawTornSlip(g, left - 9, rowTop - 1,
-                width + 18, this.itemHeight - 1, 0xE6D2A6, 0x422810, chosen ? 255 : 232);
+            // v0.378.0: el rectangulo de la lista se metia encima de la ficha
+            // del mod. La tira se corta contra el canto de la hoja de la
+            // descripcion, nunca mas alla.
+            int slipLeft = left - 9;
+            int slipW = width + 18;
+            int hardRight = infoPanelLeft() - 6;
+            if (slipW < 40) slipW = 40;
+            if (slipLeft + slipW > hardRight) {
+                slipW = Math.max(40, hardRight - slipLeft);
+            }
+            PaperTexture.drawTornSlip(g, slipLeft, rowTop - 1,
+                slipW, this.itemHeight - 1, 0xE6D2A6, 0x422810, chosen ? 255 : 232);
             if (chosen) {
-                g.fill(left - 9, rowTop, left - 6, rowBottom, 0xFF8C2A1E);
+                g.fill(slipLeft, rowTop, slipLeft + 3, rowBottom, 0xFF8C2A1E);
             }
             if (hovered) {
-                g.fill(left - 9, rowTop, left + width + 9, rowBottom, 0x1CF3E7C8);
+                g.fill(slipLeft, rowTop, slipLeft + slipW, rowBottom, 0x1CF3E7C8);
             }
 
             if (hovered) {
@@ -260,8 +270,21 @@ public class DiaryModListScreen extends ModListScreen {
      * escribe lo mismo en tinta: nombre, version e identificador, autores y las
      * primeras lineas de la descripcion.
      */
+    /** v0.378.0: canto izquierdo de la hoja de la descripcion. */
+    private int infoPanelLeft() {
+        int fallback = this.width / 2 + 10;
+        try {
+            if (this.list == null) return fallback;
+            int x = this.list.getRowLeft() + this.list.getRowWidth() + 10;
+            if (x > this.width - 140) return fallback;
+            return Math.max(60, x);
+        } catch (Throwable ignored) {
+            return fallback;
+        }
+    }
+
     private void drawInfoPage(GuiGraphics g) {
-        if (this.list == null || this.footerTop <= 60) return;
+        if (this.list == null || this.footerTop <= 40) return;
         Object selected;
         try {
             selected = this.list.getSelected();
@@ -279,14 +302,14 @@ public class DiaryModListScreen extends ModListScreen {
             } catch (Throwable ignored) {
             }
         }
-        if (selected == null) return;
         int rowLeft;
         int rowWidth;
         try {
             rowLeft = this.list.getRowLeft();
             rowWidth = this.list.getRowWidth();
         } catch (Throwable ignored) {
-            return;
+            rowLeft = 0;
+            rowWidth = this.width / 2;
         }
         // v0.369.0: el panel de Forge con la ficha del mod (fondo negro, letra
         // blanca) seguia viendose a la izquierda de la hoja, porque la hoja se
@@ -294,15 +317,36 @@ public class DiaryModListScreen extends ModListScreen {
         // modo que la hoja puede ir del canto de la lista al borde de la
         // ventana sin quitarle nada: asi cubre el panel entero.
         int right = this.width - 8;
-        int x = rowLeft + rowWidth + 10;
+        int x = infoPanelLeft();
         int w = right - x;
-        if (w < 120) return;
+        if (w < 80) return;
         int y = 24;
-        int h = Math.min(320, this.footerTop - y - 8);
+        // v0.378.0: el alto ya no depende solo del pie; si el pie esta alto, la
+        // hoja baja hasta dejar aire sobre el, y si no, se queda en 320.
+        int h = Math.min(320, Math.max(70, this.footerTop - y - 8));
         if (h < 70) return;
 
-        com.eternalcraft.gripeverde.client.render.PaperTexture.drawTornSheet(g, x, y, w, h,
-            com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.LEDGER);
+        // v0.378.0: la hoja de LEDGER no puede ser lo unico que falle: si su
+        // dibujo lanza, la ficha se quedaba con el panel negro de Forge detras
+        // y sin una sola linea de tinta. Ahora hay relleno de respaldo.
+        try {
+            com.eternalcraft.gripeverde.client.render.PaperTexture.drawTornSheet(g, x, y, w, h,
+                com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.LEDGER);
+        } catch (Throwable ignored) {
+            g.fill(x, y, x + w, y + h, 0xFFE9DDC2);
+            g.fill(x, y, x + w, y + 1, 0x2E6B5533);
+            g.fill(x, y + h - 1, x + w, y + h, 0x2E6B5533);
+        }
+
+        if (selected == null) {
+            // v0.378.0: sin mod bajo la mano la hoja sigue ahi, con una linea
+            // que invita a elegir, en vez de dejar el panel negro a la vista.
+            boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+            g.drawString(this.font, en ? "pick a mod" : "elige un mod",
+                x + 10, y + 10,
+                com.eternalcraft.gripeverde.client.render.DiaryChrome.INK_FLAVOR, false);
+            return;
+        }
 
         Object info = null;
         try {
@@ -516,8 +560,10 @@ public class DiaryModListScreen extends ModListScreen {
             // v0.278.0: la chapa del registro, en el margen izquierdo.
             // v0.301.0: la chapa caia sobre los botones A-Z del arsenal; se
             // corre al filo y se queda sola arriba.
+            // v0.378.0: la chapa caia sobre el buscador y se iba fuera de la
+            // ventana por arriba y por la izquierda. Baja al canto de la hoja.
             com.eternalcraft.gripeverde.client.render.DiaryChrome.drawRegistryTagLeft(
-                g, -2, -6, "REG. XVII");
+                g, 4, this.height - 40, "REG. XVII");
             // v0.278.0: el pie de la hoja recuerda como se sale.
             if (this.height >= 200) {
                 // v0.301.0: el aviso de salida pisaba el boton de la carpeta de

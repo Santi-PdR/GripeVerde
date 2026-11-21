@@ -652,9 +652,12 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         // Overlay atenuador
 
         // Panel pergamino que ocupa casi toda la pantalla
-        int panelX = PANEL_MARGIN_H;
+        // v0.378.0: la hoja va a sangre por los lados. El juego coloca su
+        // lista de puestos de borde a borde y, con el margen de 40, el icono del
+        // servidor y el canto de la fila se salian del papel.
+        int panelX = 0;
         int panelY = PANEL_MARGIN_V;
-        int panelW = this.width - PANEL_MARGIN_H * 2;
+        int panelW = this.width;
         int panelH = this.height - PANEL_MARGIN_V * 2;
         DiaryChrome.drawPanelShadow(gfx, panelX, panelY, panelW, panelH);
         PaperTexture.drawTornSheet(gfx, panelX, panelY, panelW, panelH, PaperTexture.PaperKind.OFFICIAL);
@@ -926,7 +929,10 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         // que ocupaba ese rincón.
         int x = panelX + panelW - 74 - textW;
         int y = titleY + 4;
-        if (x < panelX + 20) return;   // panel angosto: no vale la pena
+        // v0.378.0: el recuento no puede caer sobre el titulo ni sobre la chapa.
+        int titleRight = this.headerTitleX + this.font.width(this.headerTitle) + 12;
+        if (x < titleRight) x = titleRight;
+        if (x + textW > panelX + panelW - 66) return;
         gfx.drawString(this.font, text, x, y, DiaryChrome.INK_SUBTITLE, false);
 
         // v0.287.0: el puesto elegido y si ya se entro antes por esa puerta.
@@ -1162,7 +1168,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 scissored = true;
             } catch (Throwable ignored) {
             }
-            int textLeft = rowLeft + 34;
+            int textLeft = rowLeft + 42;
             int textRight = rowLeft + rowWidth - 46;
             int textW = Math.max(40, textRight - textLeft);
             for (int i = 0; i < children.size(); i++) {
@@ -1185,10 +1191,33 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 int drawBottom = Math.min(entryBottom, listBottom);
                 if (drawBottom - drawTop < 10) continue;
 
+                // v0.378.0: la ficha se dibujaba como un trozo de papel encima
+                // de la fila que pintaba el juego, y el juego escribia DESPUES
+                // su nombre blanco y su MOTD naranja: la fila salia a medias,
+                // con el recuento pisando la chapa y el texto fuera del papel.
+                // Ahora se cubre la fila entera con el papel de la hoja y la
+                // ficha se escribe encima, sin dejar nada del vanilla a la vista.
                 int slipTop = drawTop + 1;
                 int slipH = Math.max(16, drawBottom - drawTop - 2);
-                com.eternalcraft.gripeverde.client.render.PaperTexture.drawTornSlip(
-                    gfx, textLeft - 4, slipTop - 1, textW + 10, slipH, 0xE6D2A6, 0x422810, 232);
+                int bandLeft = Math.max(0, rowLeft - 2);
+                int bandRight = Math.min(this.width, rowLeft + rowWidth + 2);
+                gfx.fill(bandLeft, drawTop, bandRight, drawBottom, 0xFFE8D7B0);
+                // filete fino arriba y abajo, para que la fila se lea como un
+                // renglon del registro y no como una mancha.
+                gfx.fill(bandLeft, drawTop, bandRight, drawTop + 1, 0x2E6B5533);
+                gfx.fill(bandLeft, drawBottom - 1, bandRight, drawBottom, 0x2E6B5533);
+
+                // Sello del puesto, en vez del icono del juego (que queda tapado
+                // por el papel): inicial del nombre en un cuadrado de tinta.
+                String initial = name.isEmpty() ? "?" : name.substring(0, 1).toUpperCase();
+                int sealSize = Math.min(24, Math.max(14, drawBottom - drawTop - 8));
+                int sealX = bandLeft + 6;
+                int sealY = drawTop + Math.max(2, (drawBottom - drawTop - sealSize) / 2);
+                gfx.fill(sealX, sealY, sealX + sealSize, sealY + sealSize, 0xFF8C2A1E);
+                gfx.fill(sealX + 1, sealY + 1, sealX + sealSize - 1, sealY + 1 + 1, 0xE8E8DCB4);
+                int iw = this.font.width(initial);
+                gfx.drawString(this.font, initial, sealX + (sealSize - iw) / 2,
+                    sealY + (sealSize - 7) / 2, 0xFFF3E7C8, false);
 
                 String shownName = DiaryChrome.fitText(this.font, name, textW);
                 gfx.drawString(this.font, shownName, textLeft, slipTop + 2, 0xFF1A1108, false);

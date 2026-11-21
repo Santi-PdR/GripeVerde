@@ -23,9 +23,26 @@ import net.minecraft.client.gui.GuiGraphics;
  */
 public final class JourneyMapPaper {
 
-    private static final int PAPER = 0xE6E8DCB4;
+    private static final int PAPER = 0xF2E8DCB4;
     private static final int PAPER_EDGE = 0xB8D7C79B;
     private static final int INK_HAIR = 0x552A1C12;
+
+    /**
+     * v0.378.0: una sola linea de diario la primera vez que se sabe algo. Si el
+     * tema no se aplica en la partida del jugador, con esto se ve el motivo sin
+     * tener que adivinar.
+     */
+    private static void note(String why) {
+        if (noted) return;
+        noted = true;
+        try {
+            org.apache.logging.log4j.LogManager.getLogger("gripeverde/journeymap")
+                .info("[GripeVerde] JourneyMap: {}", why);
+        } catch (Throwable ignored) {
+        }
+    }
+
+    private static boolean noted;
 
     private static boolean probed;
     private static boolean present;
@@ -67,8 +84,10 @@ public final class JourneyMapPaper {
                 uiManager = null;
             }
             present = uiManager != null && getMiniMap != null && getDisplayVars != null;
+            if (!present) note("no se pudo enganchar al minimapa");
         } catch (Throwable ignored) {
             present = false;
+            note("JourneyMap no esta");
         }
     }
 
@@ -116,7 +135,10 @@ public final class JourneyMapPaper {
             Object miniMap = getMiniMap.invoke(uiManager);
             if (miniMap == null) return;
             Object dv = getDisplayVars.invoke(miniMap);
-            if (dv == null) return;
+            if (dv == null) {
+                note("el minimapa aun no tiene medidas");
+                return;
+            }
 
             drawPaperEdge(g, dv);
         } catch (Throwable ignored) {
@@ -131,19 +153,36 @@ public final class JourneyMapPaper {
         shape = shape.toLowerCase(java.util.Locale.ROOT);
         int width = intOf(dv, "minimapWidth");
         int height = intOf(dv, "minimapHeight");
-        if (width < 24 || height < 24) return;
+        if (width < 24 || height < 24) {
+            note("sin tamano de minimapa: " + width + "x" + height);
+            return;
+        }
+        note("forma=" + shape);
 
         if (shape.contains("circle") && dv != null) {
+            // v0.378.0: centerPoint NO esta en pixeles de pantalla -es el centro
+            // del mapa en su propio espacio-, asi que el anillo se dibujaba
+            // fuera de sitio y no se veia nunca. La posicion buena es la que da
+            // el propio JourneyMap para trasladar el mapa: translateX/translateY.
             double cx;
             double cy;
-            Object center = read(dv, "centerPoint");
-            if (center instanceof java.awt.geom.Point2D p) {
-                cx = p.getX();
-                cy = p.getY();
+            int tx = intOf(dv, "translateX");
+            int ty = intOf(dv, "translateY");
+            if (tx > 0 || ty > 0) {
+                cx = tx + width / 2.0;
+                cy = ty + height / 2.0;
             } else {
-                cx = intOf(dv, "translateX") + width / 2.0;
-                cy = intOf(dv, "translateY") + height / 2.0;
+                Object center = read(dv, "centerPoint");
+                if (center instanceof java.awt.geom.Point2D p) {
+                    cx = p.getX();
+                    cy = p.getY();
+                } else {
+                    cx = width / 2.0;
+                    cy = height / 2.0;
+                }
             }
+            note("anillo r=" + Math.max(12, Math.max(width, height) / 2)
+                + " en " + (int) cx + "," + (int) cy + " (" + width + "x" + height + ")");
             int r = Math.max(12, Math.max(width, height) / 2);
             drawRing(g, (int) Math.round(cx), (int) Math.round(cy), r);
             return;
