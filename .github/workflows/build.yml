@@ -51,6 +51,8 @@ jobs:
       # repetidas y sentencias cortadas antes de gastar dos minutos de Gradle.
       - name: Lint Java structure
         run: python3 tools/lint_java.py
+      - name: Test release publishing gate
+        run: python3 tools/ci/test_release_gate.py
       - name: Build mod
         run: |
           chmod +x gradlew
@@ -96,6 +98,8 @@ jobs:
   # release nunca se sobrescribe con el build de otra version. --target GITHUB_SHA
   # hace que el codigo fuente del tag corresponda al JAR publicado.
   publish:
+    # Los PR compilan, pero nunca deben publicar releases ni tags.
+    if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
     permissions:
@@ -108,20 +112,10 @@ jobs:
       - name: Read release marker
         id: marker
         env:
+          EVENT_NAME: ${{ github.event_name }}
+          PUBLISH_RELEASE_INPUT: ${{ inputs.publish_release }}
           RELEASE_TAG_INPUT: ${{ inputs.release_tag }}
-        run: |
-          set -euo pipefail
-          MARKER="$(head -n1 release-tag.txt 2>/dev/null | tr -d '[:space:]' || true)"
-          VERSION="$(grep -m1 '^version = ' build.gradle | cut -d"'" -f2)"
-          TAG_INPUT="${RELEASE_TAG_INPUT:-}"
-          if [ -n "$TAG_INPUT" ]; then MARKER="$TAG_INPUT"; fi
-          echo "marker=$MARKER version=$VERSION"
-          if [ -n "$MARKER" ] && [ "$MARKER" = "v$VERSION" ]; then
-            echo "publish=true" >> "$GITHUB_OUTPUT"
-            echo "tag=$MARKER" >> "$GITHUB_OUTPUT"
-          else
-            echo "publish=false" >> "$GITHUB_OUTPUT"
-          fi
+        run: python3 tools/ci/release_gate.py
       - name: Download JAR
         if: steps.marker.outputs.publish == 'true'
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
