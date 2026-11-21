@@ -154,6 +154,10 @@ public class ScreenEventHandler {
             || screen instanceof net.minecraft.client.gui.screens.worldselection.EditWorldScreen
             // v0.314.0: la hoja de video del juego se abria gris y pelada.
             || screen instanceof net.minecraft.client.gui.screens.VideoSettingsScreen
+            // v0.389.0: las dos hojas que se abren desde Controles -raton y
+            // teclas- seguian abriendose con la tierra y los botones grises.
+            || screen instanceof net.minecraft.client.gui.screens.MouseSettingsScreen
+            || screen instanceof net.minecraft.client.gui.screens.controls.KeyBindsScreen
             || screen instanceof net.minecraft.client.gui.screens.ShareToLanScreen
             || screen instanceof net.minecraft.client.gui.screens.DisconnectedScreen
             || screen instanceof net.minecraft.client.gui.screens.AlertScreen

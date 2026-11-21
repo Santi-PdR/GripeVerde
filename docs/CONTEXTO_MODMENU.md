@@ -1793,3 +1793,14 @@ Cuatro trampas que ya costaron una captura cada una. Van aquí para no repetirla
   widgets.** En Mundos se dibujaban a mano las fichas vestidas y el buscador; un
   boton del juego que no se vistio quedaba invisible pero clickeable. Ahora hay
   una red de seguridad que recorre `children()` y pinta lo que falte.
+
+## 0.389.0 - pantallas alcanzables
+
+- `isHouseRawScreen` (ScreenEventHandler) es la lista de pantallas del juego que se
+  visten por evento: fondo de noche + `dressPlain`. Ahora incluye
+  `MouseSettingsScreen` y `controls.KeyBindsScreen`, que se abren desde Controles.
+  Si aparece otra pantalla vanilla alcanzable desde la casa, va ahí.
+- Multijugador: la fila de red local se pinta en papel y tinta dentro de
+  `paintServerRowsInk`, con el mismo texto que la cabecera de lista vacía.
+- `tools/lint_java.py`: nueva regla `notas_de_widgets` -pantalla sin `super.render`
+  y sin recorrer widgets-. Se silencia con `// widgets-ok`.

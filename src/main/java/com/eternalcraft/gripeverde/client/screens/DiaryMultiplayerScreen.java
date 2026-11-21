@@ -1190,7 +1190,37 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             for (int i = 0; i < children.size(); i++) {
                 var entry = children.get(i);
                 ServerData sd = extractServerDataFromEntry(entry);
-                if (sd == null) continue;
+                if (sd == null) {
+                    // v0.389.0: la fila de la red local es la unica que quedaba
+                    // como placa oscura del juego, en medio de filas de papel y
+                    // con la letra blanca. Se le pone el mismo papel y la misma
+                    // tinta que a la cabecera cuando la lista esta vacia.
+                    try {
+                        int entryTop = vanillaListY0 + 4 - (int) scrollAmount + i * itemHeight
+                            + vanillaHeaderHeight - 2;
+                        int entryBottom = entryTop + itemHeight;
+                        if (entryBottom >= listTop && entryTop <= listBottom) {
+                            int drawTop = Math.max(entryTop, listTop);
+                            int drawBottom = Math.min(entryBottom, listBottom);
+                            if (drawBottom - drawTop >= 12) {
+                                int bandLeft = Math.max(0, rowLeft - 9);
+                                int bandRight = Math.min(this.width, rowLeft + rowWidth + 9);
+                                gfx.fill(bandLeft, drawTop, bandRight, drawBottom, 0xFFE6D2A6);
+                                String line = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+                                    ? "searching for games on your local network"
+                                    : "buscando partidas en tu red local";
+                                String cut = DiaryChrome.fitText(this.font, line,
+                                    Math.max(40, bandRight - bandLeft - 16));
+                                gfx.drawString(this.font, cut, bandLeft + 42, drawTop + 4,
+                                    DiaryChrome.INK_SUBTITLE, false);
+                                int sepY = drawBottom - 1;
+                                gfx.fill(bandLeft, sepY, bandRight, sepY + 1, 0x20422810);
+                            }
+                        }
+                    } catch (Throwable ignored) {
+                    }
+                    continue;
+                }
                 // v0.367.0: los campos de ServerData se leen de frente. Con
                 // getField("name") y getField("ip") no se encontraba nada en el
                 // juego real (los nombres van ofuscados) y la fila salia sin

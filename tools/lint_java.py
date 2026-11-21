@@ -165,6 +165,33 @@ def notas_de_chapa(files):
     return notas
 
 
+def notas_de_widgets(f):
+    """
+    Aviso blando: pantallas que NO llaman a super.render y ademas no recorren
+    sus widgets (ni `renderables`, ni `children()`, ni `dressed`, ni botones
+    propios). En esas hojas un control del juego puede quedar visible para el
+    raton y sin dibujar nunca: un boton invisible que igual responde. Se marca
+    con `// widgets-ok` cuando se dibujan a mano uno por uno.
+    """
+    notas = []
+    if '/client/screens/' not in f.replace('\\', '/'):
+        return notas
+    try:
+        src = open(f, encoding='utf-8').read()
+    except OSError:
+        return notas
+    if 'widgets-ok' in src:
+        return notas
+    if 'super.render(' in src:
+        return notas
+    for marca in ('this.renderables', 'this.children()', 'this.dressed',
+                  'this.widgetsWithHelp', 'renderWidgets('):
+        if marca in src:
+            return notas
+    notas.append((f, 1, 'aviso: pantalla sin super.render y sin recorrer sus widgets'))
+    return notas
+
+
 def notas_de_reflexion(f):
     """
     Aviso blando: reflexion sobre clases del juego buscando un nombre fijo
@@ -266,6 +293,7 @@ def main(argv):
         notas += notas_de_orden(f)
         notas += notas_de_puntos(f)
         notas += notas_de_reflexion(f)
+        notas += notas_de_widgets(f)
     notas += notas_de_chapa(files)
     for path, line, msg in notas:
         print('%s:%d: %s' % (path, line, msg))
