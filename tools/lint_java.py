@@ -7,8 +7,8 @@ interactiva de la hoja de mundos:
   2. Variables locales con el mismo nombre en ambitos anidados (javac: "already defined").
   3. Lineas que empiezan por un operador suelto (`+ (`, `&& ...`) fuera de una expresion,
      sintoma de una sentencia cortada por una edicion a mano.
-  4. La hoja de mundos delega Enter/Supr al buscador enfocado antes de ejecutar
-     atajos sobre el mundo seleccionado.
+  4. La hoja de mundos detecta el campo visible y enfocado y delega Enter/Supr
+     antes de ejecutar atajos sobre el mundo seleccionado.
   5. El total del archivo, escrito en un worker y leído por la GUI, se publica
      con volatile para que el hilo de render vea el resultado.
 
@@ -151,6 +151,22 @@ def check_world_search_keys(path, clean):
     start = clean.find(signature)
     if start < 0:
         return [(path, 1, 'Mundos: falta el manejador de teclado esperado')]
+
+    focus_signature = 'private boolean isSearchBoxFocused()'
+    focus_start = clean.find(focus_signature)
+    if focus_start < 0 or focus_start >= start:
+        return [(path, 1, 'Mundos: falta el control del foco del buscador')]
+    focus_helper = clean[focus_start:start]
+    iterates_search_boxes = re.search(
+        r'for\s*\(\s*EditBox\s+box\s*:\s*this\.searchBoxes\s*\)', focus_helper)
+    checks_visible_focus = re.search(
+        r'if\s*\(\s*box\s*!=\s*null\s*&&\s*box\.visible\s*&&\s*box\.isFocused\(\)\s*\)\s*return\s+true\s*;',
+        focus_helper)
+    if not iterates_search_boxes or not checks_visible_focus:
+        line = clean[:focus_start].count(chr(10)) + 1
+        return [(path, line,
+                 'Mundos: el guard debe detectar un buscador visible y enfocado')]
+
     opening = clean.find('{', start + len(signature))
     if opening < 0:
         return [(path, clean[:start].count(chr(10)) + 1,
