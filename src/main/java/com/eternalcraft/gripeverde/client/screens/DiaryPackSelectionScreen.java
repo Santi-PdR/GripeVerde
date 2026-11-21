@@ -182,7 +182,11 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
                     }
                 }
                 if (title.isEmpty()) continue;
-                int rowTop = top + 4 - (int) scroll + i * step;
+                int measuredTop = com.eternalcraft.gripeverde.client.render.DiaryChrome
+                    .rowTopOf(list, i);
+                int rowTop = measuredTop != Integer.MIN_VALUE
+                    ? measuredTop
+                    : top + 4 - (int) scroll + i * step;
                 int rowBottom = rowTop + step - 4;
                 if (rowBottom < top || rowTop > bottom) continue;
                 int drawTop = Math.max(rowTop, top);
@@ -274,6 +278,9 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
 
     /** v0.372.0: alto de renglon de una lista del juego, con respaldo. */
     private static int packRowStep(Object list) {
+        // v0.391.0: primero se le pregunta a la lista; el nombre del campo cambia.
+        int measured = com.eternalcraft.gripeverde.client.render.DiaryChrome.rowStepOf(list);
+        if (measured >= 16 && measured <= 64) return measured;
         for (Class<?> c = list.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
             for (String name : new String[] {"itemHeight", "f_93387_"}) {
                 try {

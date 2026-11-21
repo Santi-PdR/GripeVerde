@@ -501,7 +501,11 @@ public final class DiaryChrome {
         int left = list.getRowLeft();
         int right = left + list.getRowWidth();
         if (bottom - top < 8 || right - left < 40) return;
-        int step = readInt(list, "itemHeight", "f_93387_");
+        // v0.391.0: el alto del renglon se mide en la propia lista. El campo
+        // `itemHeight` viene renombrado y, si falla, todas las bandas quedan
+        // corridas respecto de sus mandos.
+        int step = rowStepOf(list);
+        if (step <= 0) step = readInt(list, "itemHeight", "f_93387_");
         if (step <= 0) step = 25;
         double scroll = 0.0;
         try {
@@ -517,7 +521,10 @@ public final class DiaryChrome {
         gfx.enableScissor(left - 2, top, right + 2, bottom);
         try {
             for (int i = 0; i < count && i < 64; i++) {
-                int rowTop = top + 4 - (int) scroll + i * step;
+                int measured = rowTopOf(list, i);
+                int rowTop = measured != Integer.MIN_VALUE
+                    ? measured
+                    : top + 4 - (int) scroll + i * step;
                 int rowBottom = rowTop + step - 3;
                 if (rowBottom < top || rowTop > bottom) continue;
                 int drawTop = Math.max(rowTop, top);
@@ -640,7 +647,11 @@ public final class DiaryChrome {
         int left = list.getRowLeft();
         int right = left + list.getRowWidth();
         if (bottom - top < 8 || right - left < 40) return;
-        int step = readInt(list, "itemHeight", "f_93387_");
+        // v0.391.0: el alto del renglon se mide en la propia lista. El campo
+        // `itemHeight` viene renombrado y, si falla, todas las bandas quedan
+        // corridas respecto de sus mandos.
+        int step = rowStepOf(list);
+        if (step <= 0) step = readInt(list, "itemHeight", "f_93387_");
         if (step <= 0) step = 25;
         double scroll = 0.0;
         try {
@@ -668,7 +679,10 @@ public final class DiaryChrome {
                     label = "";
                 }
                 if (label == null || label.isBlank()) continue;
-                int rowTop = top + 4 - (int) scroll + i * step;
+                int measured = rowTopOf(list, i);
+                int rowTop = measured != Integer.MIN_VALUE
+                    ? measured
+                    : top + 4 - (int) scroll + i * step;
                 if (rowTop + bandH < top || rowTop > bottom) continue;
                 int drawTop = Math.max(rowTop, top);
                 int drawBottom = Math.min(rowTop + bandH, bottom);
@@ -769,7 +783,91 @@ public final class DiaryChrome {
             }
         } catch (Throwable ignored) {
         }
-        return 0.0;
+        // v0.391.0: si el campo no se llama como esperamos, se busca por forma:
+        // debe haber un unico valor double distinto entre 0 y 1.
+        double candidate = Double.NaN;
+        boolean ambiguous = false;
+        for (Class<?> c = slider.getClass(); c != null && c != Object.class;
+             c = c.getSuperclass()) {
+            for (java.lang.reflect.Field f : c.getDeclaredFields()) {
+                if (f.getType() != double.class) continue;
+                try {
+                    f.setAccessible(true);
+                    double v = f.getDouble(slider);
+                    if (v < 0.0 || v > 1.0) continue;
+                    if (Double.isNaN(candidate)) candidate = v;
+                    else if (Double.compare(candidate, v) != 0) ambiguous = true;
+                } catch (Throwable ignored) {
+                }
+            }
+        }
+        return !ambiguous && !Double.isNaN(candidate) ? candidate : 0.0;
+    }
+
+    // ── Geometria de las listas, preguntada a la lista ───────────────────────
+    //
+    // v0.391.0: `itemHeight`, `y0` y `headerHeight` vienen renombrados y, si uno
+    // solo no se deja leer, todas las bandas se corren una fila entera. La lista
+    // sabe donde empieza cada renglon: hay un metodo que recibe el indice y
+    // devuelve la coordenada. Se busca por forma -int -> int, con f(1) - f(0)
+    // igual al alto de renglon- y se guarda por clase, que no cambia.
+
+    private static final java.util.HashMap<Class<?>, java.lang.reflect.Method> ROW_TOP_CACHE =
+        new java.util.HashMap<>();
+
+    /** El metodo de la lista que dice donde empieza cada fila, o null. */
+    public static java.lang.reflect.Method rowTopMethodOf(Object list) {
+        if (list == null) return null;
+        Class<?> key = list.getClass();
+        if (ROW_TOP_CACHE.containsKey(key)) return ROW_TOP_CACHE.get(key);
+        java.lang.reflect.Method best = null;
+        int bestValue = Integer.MAX_VALUE;
+        for (Class<?> c = key; c != null && c != Object.class; c = c.getSuperclass()) {
+            for (java.lang.reflect.Method m : c.getDeclaredMethods()) {
+                if (m.getParameterCount() != 1) continue;
+                if (m.getParameterTypes()[0] != int.class || m.getReturnType() != int.class) continue;
+                if (java.lang.reflect.Modifier.isStatic(m.getModifiers())) continue;
+                try {
+                    m.setAccessible(true);
+                    int a = (Integer) m.invoke(list, 0);
+                    int b = (Integer) m.invoke(list, 1);
+                    int step = b - a;
+                    if (step < 8 || step > 80) continue;
+                    if (a < bestValue) {
+                        bestValue = a;
+                        best = m;
+                    }
+                } catch (Throwable ignored) {
+                }
+            }
+        }
+        ROW_TOP_CACHE.put(key, best);
+        return best;
+    }
+
+    /** Donde empieza la fila `i`; Integer.MIN_VALUE si la lista no lo dice. */
+    public static int rowTopOf(Object list, int i) {
+        java.lang.reflect.Method m = rowTopMethodOf(list);
+        if (m == null) return Integer.MIN_VALUE;
+        try {
+            return (Integer) m.invoke(list, i);
+        } catch (Throwable ignored) {
+            return Integer.MIN_VALUE;
+        }
+    }
+
+    /** Alto de renglon medido en la lista; -1 si no se deja medir. */
+    public static int rowStepOf(Object list) {
+        java.lang.reflect.Method m = rowTopMethodOf(list);
+        if (m == null) return -1;
+        try {
+            int a = (Integer) m.invoke(list, 0);
+            int b = (Integer) m.invoke(list, 1);
+            int step = b - a;
+            return step >= 8 && step <= 80 ? step : -1;
+        } catch (Throwable ignored) {
+            return -1;
+        }
     }
 
     /** Lectura defensiva de un entero de la lista del juego (dev o SRG). */

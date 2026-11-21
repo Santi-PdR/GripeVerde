@@ -1805,6 +1805,23 @@ Cuatro trampas que ya costaron una captura cada una. Van aquí para no repetirla
 - `tools/lint_java.py`: nueva regla `notas_de_widgets` -pantalla sin `super.render`
   y sin recorrer widgets-. Se silencia con `// widgets-ok`.
 
+## 0.391.0 - tooltips en tinta y filas medidas por la lista
+
+- **Tooltips de texto:** los carteles sin objeto se leen desde los componentes
+  de texto del juego y se pasan a papel y tinta sin sombra; si aparece un
+  componente gráfico que no se puede leer como texto, se deja el tooltip vanilla
+  entero. Para los tooltips dentro de pantallas se conserva la esquina ya
+  calculada con `ClientTooltipPositioner` y se pinta después del resto; no se
+  recalcula desde la posición del ratón. El camino sin pantalla usa el mismo
+  colocador.
+- **Listas del juego:** `DiaryChrome.rowTopOf()`/`rowStepOf()` comparten la
+  búsqueda por forma del método `int -> int` que devuelve el inicio de fila.
+  `washVanillaRows` y `paintOptionRowsInk` ya no dependen solamente del nombre
+  ofuscable del alto de fila; el Arsenal y el archivador de Packs usan esa
+  geometría también para sus fichas y rótulos.
+- **Deslizadores vanilla:** la aguja intenta primero el campo conocido y, si
+  cambió de nombre, busca un valor `double` dentro del rango normalizado.
+
 ## 0.390.0 - geometria y JourneyMap
 
 - **La lista dice dónde empieza cada fila.** `resolveRowTopMethod()` busca un

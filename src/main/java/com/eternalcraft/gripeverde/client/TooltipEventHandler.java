@@ -46,8 +46,9 @@ public class TooltipEventHandler {
      * ScreenEvent.Render.Post queda siempre arriba de todo.
      */
     private static java.util.List<String> pendingRows;
-    private static int pendingMouseX;
-    private static int pendingMouseY;
+    private static int pendingTooltipX;
+    private static int pendingTooltipY;
+    private static Font pendingFont;
 
     /** Tinta de la casa para el texto de los tooltips. */
     private static final int INK_TITLE = 0xFF1A1108;
@@ -105,26 +106,88 @@ public class TooltipEventHandler {
         try {
             ItemStack stack = event.getItemStack();
             Minecraft mc = Minecraft.getInstance();
-            if (stack == null || stack.isEmpty() || mc == null || mc.player == null) return;
-            TooltipFlag flag = mc.options != null && mc.options.advancedItemTooltips
-                ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL;
-            List<Component> lines = stack.getTooltipLines(mc.player, flag);
-            if (lines == null || lines.isEmpty()) return;
-            event.setCanceled(true);
-            Minecraft mc2 = Minecraft.getInstance();
-            if (mc2 != null && mc2.screen != null) {
-                // Dentro de una pantalla: se guarda y se pinta al cerrar el cuadro.
-                pendingRows = buildRows(event.getFont(), lines);
-                pendingMouseX = event.getX();
-                pendingMouseY = event.getY();
+            if (mc == null) return;
+            List<Component> lines;
+            if (stack != null && !stack.isEmpty()) {
+                if (mc.player == null) return;
+                TooltipFlag flag = mc.options != null && mc.options.advancedItemTooltips
+                    ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL;
+                lines = stack.getTooltipLines(mc.player, flag);
             } else {
-                drawPaperTooltip(event, lines);
+                // v0.391.0: los carteles que no son de objetos -botones, fichas,
+                // botones de la casa- se quedaban con el fondo de papel pero con
+                // la letra del juego, que se escribe CON SOMBRA: sobre papel la
+                // sombra es una segunda mancha al lado de cada letra. Se pasan a
+                // la misma ficha que los objetos, en tinta y sin sombra.
+                lines = plainLinesFromComponents(event.getComponents());
+            }
+            if (lines == null || lines.isEmpty()) return;
+            Font font = event.getFont();
+            if (font == null) return;
+            List<String> rows = buildRows(font, lines);
+            if (rows.isEmpty()) return;
+            if (mc.screen != null) {
+                // Dentro de una pantalla, se guarda la misma colocacion que
+                // usaria el juego y se pinta al final del cuadro, por encima de
+                // los iconos. No se vuelve a calcular desde el raton: el ancla
+                // del evento y la esquina final del cartel no son lo mismo.
+                int[] pos = tooltipPosition(event, font, rows);
+                if (event.getGraphics() == null) return;
+                event.setCanceled(true);
+                pendingRows = rows;
+                pendingTooltipX = pos[0];
+                pendingTooltipY = pos[1];
+                pendingFont = font;
+            } else if (drawPaperTooltip(event, font, rows)) {
+                event.setCanceled(true);
             }
         } catch (Throwable ignored) {
         }
     }
 
-    /** v0.378.0: la ficha va pegada al cursor, como la del juego. */
+    /**
+     * v0.391.0: el texto plano de un cartel ya armado por el juego.
+     *
+     * Devuelve null si alguno de los pedazos no se deja leer (por ejemplo un
+     * dibujo), y en ese caso no se toca el cartel: se prefiere el del juego
+     * antes que uno a medias.
+     */
+    private static List<Component> plainLinesFromComponents(
+            List<net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent> components) {
+        if (components == null || components.isEmpty()) return null;
+        List<Component> out = new java.util.ArrayList<>();
+        boolean hasText = false;
+        for (var c : components) {
+            if (c == null) return null;
+            String plain = plainOfComponent(c);
+            if (plain == null) return null;
+            if (!plain.isBlank()) hasText = true;
+            // Se conservan los renglones vacios interiores: en un tooltip son
+            // separadores deliberados, no componentes graficos.
+            out.add(Component.literal(plain));
+        }
+        return hasText ? out : null;
+    }
+
+    /** v0.391.0: el texto de un pedazo de cartel, buscado por forma. */
+    private static String plainOfComponent(Object c) {
+        if (c == null) return null;
+        for (Class<?> type = c.getClass(); type != null && type != Object.class;
+             type = type.getSuperclass()) {
+            for (java.lang.reflect.Field f : type.getDeclaredFields()) {
+                if (f.getType() != FormattedCharSequence.class
+                        || java.lang.reflect.Modifier.isStatic(f.getModifiers())) continue;
+                try {
+                    f.setAccessible(true);
+                    Object value = f.get(c);
+                    if (value instanceof FormattedCharSequence seq) return toPlain(seq);
+                } catch (Throwable ignored) {
+                }
+            }
+        }
+        return null;
+    }
+
     /** v0.377.0: el texto de un renglon ya recortado, sin formato. */
     private static String toPlain(FormattedCharSequence seq) {
         StringBuilder sb = new StringBuilder();
@@ -141,7 +204,9 @@ public class TooltipEventHandler {
     /** v0.382.0: los renglones de la ficha, ya recortados al ancho de la casa. */
     private static java.util.List<String> buildRows(Font font, List<Component> lines) {
         java.util.List<String> rows = new java.util.ArrayList<>();
+        if (font == null || lines == null || lines.isEmpty()) return rows;
         int maxW = 210;
+        linesLoop:
         for (Component line : lines) {
             java.util.List<FormattedCharSequence> pieces;
             try {
@@ -152,48 +217,73 @@ public class TooltipEventHandler {
             if (pieces == null || pieces.isEmpty()) {
                 String plain = line == null ? "" : line.getString();
                 rows.add(plain);
+                if (rows.size() >= 40) break;
                 continue;
             }
             for (FormattedCharSequence piece : pieces) {
                 rows.add(piece == null ? "" : toPlain(piece));
+                if (rows.size() >= 40) break linesLoop;
             }
-            if (rows.size() > 40) break;
         }
         return rows;
     }
 
-    private static void drawPaperTooltip(RenderTooltipEvent.Pre event,
-                                         List<Component> lines) {
-        Font font = event.getFont();
+    private static boolean drawPaperTooltip(RenderTooltipEvent.Pre event, Font font,
+                                            java.util.List<String> rows) {
         GuiGraphics g = event.getGraphics();
-        if (font == null || g == null) return;
-        java.util.List<String> rows = buildRows(font, lines);
-        if (rows.isEmpty()) return;
-        int w = 0;
-        for (String row : rows) w = Math.max(w, font.width(row));
-        w += 12;
-        int h = rows.size() * 10 + 8;
+        if (font == null || g == null || rows == null || rows.isEmpty()) return false;
+        int[] pos = tooltipPosition(event, font, rows);
+        drawRows(g, font, rows, pos[0], pos[1]);
+        return true;
+    }
+
+    /**
+     * Coloca la ficha con el mismo posicionador que Minecraft. Forge documenta
+     * getX/getY como la posicion del cartel (por defecto, el raton), pero esa
+     * posicion es solo el ancla: el posicionador la convierte en la esquina
+     * final y la voltea si hace falta.
+     */
+    private static int[] tooltipPosition(RenderTooltipEvent.Pre event, Font font,
+                                         java.util.List<String> rows) {
+        int w = tooltipWidth(font, rows);
+        int h = tooltipHeight(rows);
         int sw = Math.max(0, event.getScreenWidth());
         int sh = Math.max(0, event.getScreenHeight());
-        // v0.378.0: getX/getY son el raton, no la esquina de la ficha. Hay que
-        // pasar por el colocador del juego -el mismo que usa el vanilla- o la
-        // ficha se queda abajo y a la izquierda del cursor, medio tapando el
-        // objeto, que es lo que se veia en el inventario y en JEI.
         int x = event.getX();
         int y = event.getY();
         try {
             var positioner = event.getTooltipPositioner();
             if (positioner != null && sw > 0 && sh > 0) {
                 org.joml.Vector2ic pos = positioner.positionTooltip(sw, sh, x, y, w, h);
-                x = pos.x();
-                y = pos.y();
+                if (pos != null) {
+                    x = pos.x();
+                    y = pos.y();
+                }
             }
         } catch (Throwable ignored) {
         }
         if (sw > 0) x = Math.max(4, Math.min(x, sw - w - 4));
         if (sh > 0) y = Math.max(4, Math.min(y, sh - h - 4));
+        return new int[] {x, y};
+    }
+
+    private static int tooltipWidth(Font font, java.util.List<String> rows) {
+        int w = 0;
+        for (String row : rows) w = Math.max(w, font.width(row));
+        return w + 12;
+    }
+
+    private static int tooltipHeight(java.util.List<String> rows) {
+        return rows.size() * 10 + 8;
+    }
+
+    private static void drawRows(GuiGraphics g, Font font, java.util.List<String> rows,
+                                 int x, int y) {
+        if (g == null || font == null || rows == null || rows.isEmpty()) return;
+        int w = tooltipWidth(font, rows);
+        int h = tooltipHeight(rows);
         com.eternalcraft.gripeverde.client.render.PaperTexture.drawTornSlip(
-            g, x, y, w, h, 0xE6D2A6, 0x422810, 252);
+            g, x, y, w, h, 0xE6D2A6, 0x422810, 255);
         for (int i = 0; i < rows.size(); i++) {
             int color = i == 0 ? INK_TITLE : INK_BODY;
             g.drawString(font, rows.get(i), x + 6, y + 5 + i * 10, color, false);
@@ -204,6 +294,9 @@ public class TooltipEventHandler {
     @SubscribeEvent
     public static void onScreenChange(net.minecraftforge.client.event.ScreenEvent.Init.Post event) {
         pendingRows = null;
+        pendingFont = null;
+        pendingTooltipX = 0;
+        pendingTooltipY = 0;
     }
 
     /**
@@ -215,41 +308,19 @@ public class TooltipEventHandler {
     public static void onScreenRenderPost(
             net.minecraftforge.client.event.ScreenEvent.Render.Post event) {
         java.util.List<String> rows = pendingRows;
-        if (rows == null || rows.isEmpty()) return;
+        Font font = pendingFont;
+        int x = pendingTooltipX;
+        int y = pendingTooltipY;
         pendingRows = null;
+        pendingFont = null;
+        pendingTooltipX = 0;
+        pendingTooltipY = 0;
+        if (rows == null || rows.isEmpty()) return;
         try {
             GuiGraphics g = event.getGuiGraphics();
-            Minecraft mc = Minecraft.getInstance();
-            if (g == null || mc == null || mc.font == null) return;
-            drawRows(g, mc.font, rows, event.getMouseX(), event.getMouseY(),
-                event.getScreen().width, event.getScreen().height);
+            if (g == null || font == null) return;
+            drawRows(g, font, rows, x, y);
         } catch (Throwable ignored) {
-        }
-    }
-
-    /**
-     * v0.382.0: la ficha de papel, pegada al cursor y por encima del objeto,
-     * con voltaeo a la izquierda y arriba si no cabe. Opaca: lo que hay detras
-     * no se transparenta.
-     */
-    private static void drawRows(GuiGraphics g, Font font, java.util.List<String> rows,
-                                 int mouseX, int mouseY, int screenW, int screenH) {
-        if (g == null || font == null || rows == null || rows.isEmpty()) return;
-        int w = 0;
-        for (String row : rows) w = Math.max(w, font.width(row));
-        w += 12;
-        int h = rows.size() * 10 + 8;
-        int x = mouseX + 12;
-        int y = mouseY - h - 8;
-        if (x + w > screenW - 4) x = mouseX - w - 12;
-        if (y < 4) y = mouseY + 14;
-        if (y + h > screenH - 4) y = Math.max(4, screenH - h - 4);
-        if (x < 4) x = 4;
-        com.eternalcraft.gripeverde.client.render.PaperTexture.drawTornSlip(
-            g, x, y, w, h, 0xE6D2A6, 0x422810, 255);
-        for (int i = 0; i < rows.size(); i++) {
-            int color = i == 0 ? INK_TITLE : INK_BODY;
-            g.drawString(font, rows.get(i), x + 6, y + 5 + i * 10, color, false);
         }
     }
 

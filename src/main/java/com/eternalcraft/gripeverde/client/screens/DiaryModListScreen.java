@@ -127,6 +127,11 @@ public class DiaryModListScreen extends ModListScreen {
     }
 
     private static int readItemHeight(Object list) {
+        // v0.391.0: el alto se mide en la propia lista. Si el campo viene con
+        // otro nombre, antes quedaba en 0 y el arsenal se dejaba sin vestir: los
+        // nombres de Forge se quedaban en blanco sobre el papel.
+        int measured = com.eternalcraft.gripeverde.client.render.DiaryChrome.rowStepOf(list);
+        if (measured > 0) return measured;
         try {
             for (Class<?> c = list.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
                 for (java.lang.reflect.Field f : c.getDeclaredFields()) {
@@ -182,7 +187,15 @@ public class DiaryModListScreen extends ModListScreen {
         } catch (Throwable ignored) {
         }
         for (int i = 0; i < count && i < 160; i++) {
-            int rowTop = top + 2 - scroll + i * this.itemHeight;
+            // v0.391.0: la tira tapa el nombre blanco de Forge; si cae dos
+            // pixeles corrida, el blanco asoma por el borde. Se pregunta a la
+            // lista donde empieza la fila y, si no contesta, se sigue con la
+            // cuenta de siempre.
+            int measuredTop = com.eternalcraft.gripeverde.client.render.DiaryChrome
+                .rowTopOf(this.list, i);
+            int rowTop = measuredTop != Integer.MIN_VALUE
+                ? measuredTop
+                : top + 2 - scroll + i * this.itemHeight;
             int rowBottom = rowTop + this.itemHeight - 2;
             if (rowBottom < top || rowTop > bottom) continue;
             Object entry;
