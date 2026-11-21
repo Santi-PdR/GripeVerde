@@ -340,8 +340,9 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         // boton invisible que igual responde. Aqui se dibuja lo que falte.
         try {
             for (var child : this.children()) {
+                if (child == this.vanillaList) continue;
                 if (!(child instanceof net.minecraft.client.gui.components.AbstractWidget w)) continue;
-                if (!w.visible || w == this.vanillaList) continue;
+                if (!w.visible) continue;
                 if (this.dressed.contains(w) || this.searchBoxes.contains(w)) continue;
                 w.render(g, mouseX, mouseY, partial);
             }
