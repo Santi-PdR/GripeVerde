@@ -1334,6 +1334,23 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         return handled;
     }
 
+    /** v0.382.0: marca una fila del registro sin tocar tipos protegidos. */
+    private void selectRow(Object row) {
+        if (row == null || this.vanillaList == null) return;
+        for (Class<?> c = this.vanillaList.getClass(); c != null && c != Object.class;
+             c = c.getSuperclass()) {
+            for (java.lang.reflect.Method m : c.getDeclaredMethods()) {
+                if (!"setSelected".equals(m.getName()) || m.getParameterCount() != 1) continue;
+                try {
+                    m.setAccessible(true);
+                    m.invoke(this.vanillaList, row);
+                    return;
+                } catch (Throwable ignored) {
+                }
+            }
+        }
+    }
+
     /** v0.270.0: elegir un mundo con el raton tiene su golpe. */
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
@@ -1362,11 +1379,11 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             Object row = entryAt(mouseY);
             if (row != null && this.vanillaList != null) {
                 try {
-                    @SuppressWarnings({"unchecked", "rawtypes"})
-                    net.minecraft.client.gui.components.AbstractSelectionList raw =
-                        this.vanillaList;
-                    raw.setSelected(
-                        (net.minecraft.client.gui.components.AbstractSelectionList.Entry) row);
+                    // v0.382.0: Entry es protegida, asi que la marca se pone
+                    // por reflexion, buscando `setSelected` por forma y no por
+                    // tipo. Si no se encuentra, el clic se traga igual: lo que
+                    // no puede pasar nunca es que llegue al juego.
+                    selectRow(row);
                     this.vanillaList.setFocused(true);
                 } catch (Throwable ignored) {
                 }
