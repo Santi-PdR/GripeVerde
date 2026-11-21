@@ -80,12 +80,18 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     private Button vanillaDeleteBtn;
     // Cached after list layout changes; render-time row decoration must not scan fields reflectively.
     private int vanillaItemHeight;
+    private boolean serverIconCachePruned;
 
     // v0.382.0: la imagen y el recuento de cada puesto, una vez por direccion.
     private static final java.util.Map<String, net.minecraft.resources.ResourceLocation> SERVER_ICONS
         = new java.util.HashMap<>();
-    private static final java.util.Set<String> SERVER_ICONS_ABSENT
-        = new java.util.HashSet<>();
+    private static final java.util.Map<String, Long> SERVER_ICON_RETRY_AT
+        = new java.util.HashMap<>();
+    private static final long SERVER_ICON_RETRY_DELAY_MS = 1000L;
+    private static final int MAX_SERVER_ICON_BYTES = 1024 * 1024;
+    private static final int MAX_SERVER_ICON_DIMENSION = 512;
+    private static final java.util.concurrent.atomic.AtomicLong SERVER_ICON_TEXTURE_IDS
+        = new java.util.concurrent.atomic.AtomicLong();
     /** Dimensiones completas de cada imagen recibida en el ping del servidor. */
     private record ServerIconSize(int width, int height) { }
     private static final java.util.Map<String, ServerIconSize> SERVER_ICON_SIZES
@@ -154,8 +160,39 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
 
         // Asegurar que el server oficial este siempre presente.
         ensurePinnedServer();
+        if (!this.serverIconCachePruned) {
+            this.serverIconCachePruned = pruneServerIconCache();
+        }
         selectPinnedServerIfNothingIsSelected();
         updateDiaryButtonStates();
+    }
+
+    /** Libera iconos de puestos que ya no están guardados en servers.dat. */
+    private boolean pruneServerIconCache() {
+        if (this.vanillaServers == null || this.minecraft == null) return false;
+        java.util.Set<String> liveServers = new java.util.HashSet<>();
+        try {
+            for (int i = 0; i < this.vanillaServers.size(); i++) {
+                ServerData server = this.vanillaServers.get(i);
+                String address = server == null ? null : server.ip;
+                if (address != null && !address.isEmpty()) liveServers.add(address);
+            }
+        } catch (Throwable ignored) {
+            return false;
+        }
+        for (String address : new java.util.ArrayList<>(SERVER_ICONS.keySet())) {
+            if (liveServers.contains(address)) continue;
+            net.minecraft.resources.ResourceLocation icon = SERVER_ICONS.remove(address);
+            SERVER_ICON_SIZES.remove(address);
+            if (icon != null) {
+                try {
+                    this.minecraft.getTextureManager().release(icon);
+                } catch (Throwable ignored) {
+                }
+            }
+        }
+        SERVER_ICON_RETRY_AT.clear();
+        return true;
     }
 
     /**
@@ -1450,11 +1487,31 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             DiaryChrome.INK_SUBTITLE, false);
     }
 
-    /** v0.367.0: el MOTD del puesto, leido de frente sobre la ficha del juego. */
+    /** Valida el encabezado PNG antes de decodificar un favicon remoto. */
+    private static boolean hasSafeServerIconHeader(byte[] bytes) {
+        if (bytes == null || bytes.length < 24 || bytes.length > MAX_SERVER_ICON_BYTES) return false;
+        if ((bytes[0] & 0xFF) != 0x89 || bytes[1] != 'P' || bytes[2] != 'N'
+                || bytes[3] != 'G' || (bytes[4] & 0xFF) != 0x0D
+                || (bytes[5] & 0xFF) != 0x0A || (bytes[6] & 0xFF) != 0x1A
+                || (bytes[7] & 0xFF) != 0x0A || readPngInt(bytes, 8) != 13
+                || bytes[12] != 'I' || bytes[13] != 'H'
+                || bytes[14] != 'D' || bytes[15] != 'R') {
+            return false;
+        }
+        int width = readPngInt(bytes, 16);
+        int height = readPngInt(bytes, 20);
+        return width > 0 && height > 0
+            && width <= MAX_SERVER_ICON_DIMENSION && height <= MAX_SERVER_ICON_DIMENSION;
+    }
+
+    private static int readPngInt(byte[] bytes, int offset) {
+        return ((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16)
+            | ((bytes[offset + 2] & 0xFF) << 8) | (bytes[offset + 3] & 0xFF);
+    }
+
     /**
-     * La imagen que el servidor manda en su ping. Se registra con sus
-     * dimensiones reales; al dibujarla se escala la imagen completa dentro del
-     * recuadro, sin confundir el tamaño de destino con el recorte de textura.
+     * La imagen que el servidor manda en su ping. Se limita su tamaño antes de
+     * decodificarla y, al dibujarla, se escala la imagen completa al recuadro.
      */
     private net.minecraft.resources.ResourceLocation serverIcon(ServerData data) {
         String key = null;
@@ -1463,9 +1520,13 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         } catch (Throwable ignored) {
         }
         if (key == null || key.isEmpty()) return null;
-        if (SERVER_ICONS_ABSENT.contains(key)) return null;
         net.minecraft.resources.ResourceLocation cached = SERVER_ICONS.get(key);
         if (cached != null) return cached;
+        Long retryAt = SERVER_ICON_RETRY_AT.get(key);
+        if (retryAt != null) {
+            if (System.currentTimeMillis() < retryAt) return null;
+            SERVER_ICON_RETRY_AT.remove(key);
+        }
         if (this.minecraft == null) return null;
         try {
             byte[] bytes = null;
@@ -1478,8 +1539,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                     break;
                 }
             }
-            if (bytes == null) {
-                SERVER_ICONS_ABSENT.add(key);
+            if (!hasSafeServerIconHeader(bytes)) {
+                SERVER_ICON_RETRY_AT.put(key,
+                    System.currentTimeMillis() + SERVER_ICON_RETRY_DELAY_MS);
                 return null;
             }
             com.mojang.blaze3d.platform.NativeImage image;
@@ -1488,21 +1550,28 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             }
             int imageWidth = image.getWidth();
             int imageHeight = image.getHeight();
-            if (imageWidth <= 0 || imageHeight <= 0) {
+            if (imageWidth <= 0 || imageHeight <= 0
+                    || imageWidth > MAX_SERVER_ICON_DIMENSION
+                    || imageHeight > MAX_SERVER_ICON_DIMENSION
+                    || imageWidth != readPngInt(bytes, 16)
+                    || imageHeight != readPngInt(bytes, 20)) {
                 image.close();
-                SERVER_ICONS_ABSENT.add(key);
+                SERVER_ICON_RETRY_AT.put(key,
+                    System.currentTimeMillis() + SERVER_ICON_RETRY_DELAY_MS);
                 return null;
             }
             net.minecraft.resources.ResourceLocation rl = new net.minecraft.resources.ResourceLocation(
-                "gripeverde", "server_icon/" + Integer.toHexString(key.hashCode())
-                    + "_" + SERVER_ICONS.size());
+                "gripeverde", "server_icon/"
+                    + Long.toHexString(SERVER_ICON_TEXTURE_IDS.incrementAndGet()));
             this.minecraft.getTextureManager()
                 .register(rl, new net.minecraft.client.renderer.texture.DynamicTexture(image));
             SERVER_ICONS.put(key, rl);
             SERVER_ICON_SIZES.put(key, new ServerIconSize(imageWidth, imageHeight));
+            SERVER_ICON_RETRY_AT.remove(key);
             return rl;
         } catch (Throwable ignored) {
-            SERVER_ICONS_ABSENT.add(key);
+            SERVER_ICON_RETRY_AT.put(key,
+                System.currentTimeMillis() + SERVER_ICON_RETRY_DELAY_MS);
             return null;
         }
     }

@@ -69,6 +69,8 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         = new java.util.HashMap<>();
     private static final java.util.Map<String, WorldIconSize> WORLD_ICON_SIZES
         = new java.util.HashMap<>();
+    private static final java.util.concurrent.atomic.AtomicLong WORLD_ICON_TEXTURE_IDS
+        = new java.util.concurrent.atomic.AtomicLong();
     private static final java.util.Set<String> WORLD_ICONS_ABSENT = new java.util.HashSet<>();
     private record WorldIconSize(int width, int height) { }
     private int iconsThisFrame;
@@ -1270,8 +1272,8 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 return null;
             }
             net.minecraft.resources.ResourceLocation rl = new net.minecraft.resources.ResourceLocation(
-                "gripeverde", "world_icon/" + Integer.toHexString(levelId.hashCode())
-                    + "_" + WORLD_ICONS.size());
+                "gripeverde", "world_icon/"
+                    + Long.toHexString(WORLD_ICON_TEXTURE_IDS.incrementAndGet()));
             this.minecraft.getTextureManager()
                 .register(rl, new net.minecraft.client.renderer.texture.DynamicTexture(image));
             WORLD_ICONS.put(levelId, rl);

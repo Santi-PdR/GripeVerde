@@ -14,6 +14,8 @@ interactiva de la hoja de mundos:
   6. Las texturas dinámicas de mundos borrados se liberan al reabrir la hoja;
      los iconos ausentes se vuelven a comprobar.
   7. Las miniaturas de Mundos dibujan la imagen completa, ajustada sin recorte.
+  8. Multiplayer libera favicons obsoletos, reintenta los pings pendientes y limita
+     los PNG remotos antes de decodificar.
 
 Uso: python3 tools/lint_java.py [rutas...]
 Sale con codigo 1 si encuentra algo.
@@ -276,6 +278,77 @@ def check_world_icon_fits_box(path, clean):
     if 'WORLD_ICON_SIZES.put(levelId, new WorldIconSize(imageWidth, imageHeight))' not in clean:
         line = clean[:draw_start].count(chr(10)) + 1
         return [(path, line, 'Mundos: conservar las dimensiones reales de cada icono')]
+    if 'WORLD_ICON_TEXTURE_IDS.incrementAndGet()' not in clean:
+        line = clean[:draw_start].count(chr(10)) + 1
+        return [(path, line, 'Mundos: asignar un ID de textura único después de liberar caché')]
+    return []
+
+
+def check_server_icon_safety_and_lifecycle(path, clean):
+    """Multiplayer poda texturas obsoletas y limita PNG de favicons remotos."""
+    if not path.replace(chr(92), '/').endswith('/client/screens/DiaryMultiplayerScreen.java'):
+        return []
+    init_start = clean.find('protected void init()')
+    prune_start = clean.find('private boolean pruneServerIconCache()', init_start)
+    if init_start < 0 or prune_start < 0:
+        return [(path, 1, 'Multiplayer: falta la limpieza del cache de favicons')]
+    init = clean[init_start:prune_start]
+    if 'this.serverIconCachePruned = pruneServerIconCache();' not in init:
+        line = clean[:init_start].count(chr(10)) + 1
+        return [(path, line, 'Multiplayer: limpiar favicons al abrir la hoja')]
+
+    ensure_start = clean.find('private void ensurePinnedServer()', prune_start)
+    if ensure_start < 0:
+        return [(path, 1, 'Multiplayer: no se puede comprobar la poda de favicons')]
+    prune = clean[prune_start:ensure_start]
+    prune_tokens = (
+        'this.vanillaServers.size()',
+        'this.vanillaServers.get(i)',
+        'liveServers.contains(address)',
+        'SERVER_ICONS.remove(address)',
+        'SERVER_ICON_SIZES.remove(address)',
+        'getTextureManager().release(icon)',
+        'SERVER_ICON_RETRY_AT.clear()',
+    )
+    if any(token not in prune for token in prune_tokens):
+        line = clean[:prune_start].count(chr(10)) + 1
+        return [(path, line, 'Multiplayer: liberar caches de servidores borrados')]
+
+    header_start = clean.find('private static boolean hasSafeServerIconHeader(byte[] bytes)')
+    header_end = clean.find('private static int readPngInt(', header_start)
+    icon_start = clean.find('private net.minecraft.resources.ResourceLocation serverIcon(', header_end)
+    if min(header_start, header_end, icon_start) < 0:
+        return [(path, 1, 'Multiplayer: falta el validador de cabecera PNG')]
+    header = clean[header_start:header_end]
+    header_tokens = (
+        'MAX_SERVER_ICON_BYTES',
+        'MAX_SERVER_ICON_DIMENSION',
+        '(bytes[0] & 0xFF) != 0x89',
+        'readPngInt(bytes, 8) != 13',
+        'readPngInt(bytes, 16)',
+        'readPngInt(bytes, 20)',
+    )
+    if any(token not in header for token in header_tokens):
+        line = clean[:header_start].count(chr(10)) + 1
+        return [(path, line, 'Multiplayer: limitar tamaño y dimensiones del PNG remoto')]
+
+    icon = clean[icon_start:]
+    validate_at = icon.find('hasSafeServerIconHeader(bytes)')
+    decode_at = icon.find('NativeImage.read(in)')
+    if validate_at < 0 or decode_at < 0 or validate_at >= decode_at:
+        line = clean[:icon_start].count(chr(10)) + 1
+        return [(path, line, 'Multiplayer: validar el favicon antes de decodificarlo')]
+    retry_guard = icon.find('System.currentTimeMillis() < retryAt')
+    field_scan = icon.find('ServerData.class.getDeclaredFields()')
+    if (retry_guard < 0 or field_scan < 0 or retry_guard >= field_scan
+            or 'SERVER_ICON_RETRY_AT.get(key)' not in icon
+            or 'SERVER_ICON_RETRY_AT.put(key,' not in icon
+            or 'SERVER_ICON_RETRY_AT.remove(key)' not in icon):
+        line = clean[:icon_start].count(chr(10)) + 1
+        return [(path, line, 'Multiplayer: volver a comprobar los iconos tras completar el ping')]
+    if 'SERVER_ICON_TEXTURE_IDS.incrementAndGet()' not in icon:
+        line = clean[:icon_start].count(chr(10)) + 1
+        return [(path, line, 'Multiplayer: asignar un ID de textura único al favicon')]
     return []
 
 
@@ -435,6 +508,7 @@ def main(argv):
         problems += check_world_archive_visibility(f, clean)
         problems += check_world_icon_cache_lifecycle(f, clean)
         problems += check_world_icon_fits_box(f, clean)
+        problems += check_server_icon_safety_and_lifecycle(f, clean)
         notas += notas_de_orden(f)
         notas += notas_de_puntos(f)
         notas += notas_de_reflexion(f)
