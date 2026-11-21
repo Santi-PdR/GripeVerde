@@ -2,29 +2,35 @@
 
 ## Addendum operativo actual (2026-11-13)
 
-- Versiones en curso: **GripeVerde v0.348.0**. La ronda vigente es la de
-  arreglos visuales por hojas: cada version cierra una hoja, una franja o un
-  rotulo, y se publica sola (un push, un run, un release). La tanda 0.336.0 a
-  0.347.0 cerro Sonido, Accesibilidad, Multijugador, Opciones, Mundos guardados,
-  la pausa, el parte de muerte, el papel de coordenadas del HUD y del minimapa,
-  la firma y el grabado de la portada, y las listas grises del juego.
+- Última versión publicada: **GripeVerde v0.393.0**. Release y JAR verificados:
+  10.812.961 bytes, SHA-256
+  `71f4f1b35399163b84287f5bb12bb13e5696fc0355e5e3c73d7c8409f0ebcd0e`.
+  El CI `44924191863` pasó en `build` y `publish`.
+- La ronda 0.393.0 corrigió capas/clics de Multijugador y Mundos, conservó los
+  estilos nativos de tooltip, limitó la compatibilidad de JourneyMap al canto del
+  minimapa y su rótulo de coordenadas, y vació los buffers antes de repintar las
+  listas de Paquetes de recursos.
+- **Pendiente de revisión en Minecraft:** ninguna de esas correcciones se ha
+  probado visual o interactivamente en el cliente. El CI no sustituye esa
+  comprobación; el checklist concreto vive en `docs/CONTEXTO_MODMENU.md`.
 - Las reglas de siempre siguen en pie: mod **solo de cliente**, sin bloques,
-  sin items, sin gameplay, sin resourcepacks; la identidad visual se hace con
+  sin ítems, sin gameplay ni resourcepacks; la identidad visual se hace con
   Java y los render/widgets propios.
 - Publicar es: `verify_mirrors.py` -> `lint_java.py` -> commit + push ->
-  esperar el run -> comprobar tamano y sha256 del release. **Nunca dos pushes
-  seguidos** (el CI cancela por concurrencia) y **nunca compilar en local**
-  (no hay JDK; compila el CI).
-- Baseline actual: 71 archivos Java, 25 locales x 191 claves, 25 cronicas,
-  35 eventos de sonido, 42 refs/42 OGG, 4 piezas de musica, 8/8 sellos espejo.
-- Destino de instalacion del owner:
+  esperar el run -> comprobar el release. **Nunca dos pushes seguidos** (el CI
+  cancela por concurrencia) y **no compilar en local** (este entorno no tiene
+  JDK; compila el CI).
+- Baseline validada: 72 archivos Java, 25 locales x 191 claves, 35 eventos de
+  sonido, 42 refs/42 OGG, 4 piezas de música y 8/8 sellos espejo.
+- Destino de instalación del owner:
   `D:\Minecraft\SKLauncher\sklauncher-data-v4\instances\test-1\mods`, con JAR
-  solamente y una sola version del mod.
+  solamente y una sola versión del mod. El instalador verificado es
+  `tools/install-latest.ps1`.
 - La tabla de hojas, medidas, chapas `REG.` y paleta vive en
   `docs/CONTEXTO_MODMENU.md`; el estado operativo, en `KNOWN_ISSUES.md`; la
-  guia para tocar el mod, en `CONTRIBUTING.md`.
-- **Lo que el CI no acredita**: como se ve la pantalla. Compilacion, recursos,
-  localizacion y espejos si; una revision visual en Minecraft, no.
+  guía para tocar el mod, en `CONTRIBUTING.md`.
+- **Lo que el CI no acredita**: cómo se ve la pantalla. Compilación, recursos,
+  localización y espejos sí; una revisión visual en Minecraft, no.
 
 ## Addendum operativo anterior (2026-10-27) - historico
 

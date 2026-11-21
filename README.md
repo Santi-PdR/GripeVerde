@@ -22,7 +22,7 @@ Lo que no cambia: el juego sigue siendo el juego. El mod **no** añade bloques, 
 | Forge | 47.4.20 (o superior de la rama 47) |
 | Java | 17 |
 
-Opcionales que el mod reconoce sin exigirlos: JourneyMap (el reloj del HUD le deja su sitio), Embeddium (la hoja de video prefiere la suya y, si no está, usa la del juego), CopyL (el parte de mensajes rápidos migra sus diez fichas).
+Opcionales que el mod reconoce sin exigirlos: JourneyMap (GripeVerde viste solo el canto del minimapa y el rótulo de coordenadas; el reloj se aparta de la esquina), Embeddium (la hoja de video prefiere la suya y, si no está, usa la del juego), CopyL (el parte de mensajes rápidos migra sus diez fichas).
 
 ## Instalar
 
@@ -31,30 +31,20 @@ Opcionales que el mod reconoce sin exigirlos: JourneyMap (el reloj del HUD le de
 3. Pegalo en `.minecraft/mods` (o en `mods` del perfil de tu lanzador).
 4. Abrí el juego con el perfil de Forge.
 
-Con PowerShell, cerrando el juego antes, esto baja el último release solo:
+Para instalar con PowerShell, cerrá Minecraft y ejecutá el [instalador verificado](tools/install-latest.ps1) desde una copia del repositorio:
 
 ```powershell
-$m='D:\Minecraft\SKLauncher\sklauncher-data-v4\instances\test-1\mods'
-if(-not (Test-Path $m)){throw "No existe $m"}
-$a=(Invoke-RestMethod 'https://api.github.com/repos/Santi-PdR/GripeVerde/releases/latest' -UseBasicParsing).assets |
-   Where-Object { $_.name -like 'gripeverde-*.jar' } | Select-Object -First 1
-if(-not $a){throw 'El ultimo release no tiene JAR'}
-Get-ChildItem $m -Filter '*gripeverde*.jar' -ErrorAction SilentlyContinue | ForEach-Object {
-  try{ Remove-Item $_.FullName -Force -ErrorAction Stop }
-  catch{ throw "Cerra Minecraft y repeti: $($_.Name) esta en uso" } }
-$out=Join-Path $m $a.name
-Invoke-WebRequest -Uri $a.browser_download_url -OutFile $out -UseBasicParsing
-$f=Get-Item $out
-if($f.Length -ne $a.size){ throw "Descarga incompleta: $($f.Length) de $($a.size) bytes" }
-"OK: $($f.Name) ($($f.Length) bytes) en $m"
+powershell -ExecutionPolicy Bypass -File .\tools\install-latest.ps1
 ```
+
+El instalador consulta el último release y verifica el tamaño, el SHA-256 publicado por GitHub y la estructura del JAR antes de reemplazar los JAR de GripeVerde. No crea copias de respaldo. La ruta predeterminada es `D:\Minecraft\SKLauncher\sklauncher-data-v4\instances\test-1\mods`; si usás otra, ajustá `$mods` al principio del script.
 
 ## Primeros pasos
 
 - **Portada**: arriba a la derecha están las lentes del Diario, el Parte y La casa, además de Mods y Ajustes.
 - **La casa** es la hoja de configuración del mod: idioma, sonido, aspecto, accesibilidad y el archivo de ajustes de campo.
 - **Diario**: la crónica de la partida y el registro de versiones; el Parte sirve para los mensajes rápidos.
-- **HUD**: reloj con día, fecha y clima arriba a la derecha, coordenadas en su propio papelito abajo, y se aparta cuando aparece el minimapa.
+- **HUD**: reloj con día, fecha y clima en la esquina; se aparta cuando detecta un minimapa. Con JourneyMap, las coordenadas aparecen debajo del minimapa con el papel y la tinta de la casa, sin alterar el mapa grande.
 
 ## Licencia y permisos
 

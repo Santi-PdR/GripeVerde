@@ -5,35 +5,31 @@ de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
 que una seccion posterior lo mencione expresamente.
 
-## ESTADO: DESARROLLO ACTIVO (2026-11-13, GripeVerde v0.348.0)
+## ESTADO: DESARROLLO ACTIVO (2026-11-13, GripeVerde v0.393.0)
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
-- La ronda visual de hojas va por `0.348.0`. Cerradas en esta tanda, entre
-  otras: la aguja de los mandos ya no cruza la etiqueta; el pie de Sonido se
-  reparte a los lados de Volver; Accesibilidad deja aire entre la lista y el
-  filete y su linea de margen no pisa el ojo; el pie de Multijugador deja libre
-  la fila de fichas; la frase del cronista de Opciones solo se escribe si cabe;
-  Mundos guardados ya no se parte en vertical y su folio vive en la cabecera;
-  la pausa perdio dia, hora, clima y coordenadas; el parte de muerte se queda
-  en su columna y no repite la causa del juego; el papel de coordenadas adopta
-  el parte del minimapa; la firma de la portada y el grabado del reloj se leen
-  enteros; las filas grises del juego llevan velo y ficha de registro
-  (Sonido, Chat, Accesibilidad, Paquetes) y el arsenal de mods ya no encima
-  tiras de papel.
-- Sigue abierto, por decision del owner: quitar tambien el rotulo
-  «¡Estas muerto!» y dejar solo el papel (hoy conviven a proposito), y revisar
-  las pantallas de opciones en ventanas de menos de ~300 px de alto, que no se
-  han podido medir contra una captura.
-- Cada versión publicada tiene su release con JAR y sha256; el CI (`build.yml`)
-  corre `verify_mirrors.py`, `lint_java.py` y `./gradlew clean build` antes de
-  publicar, y el job `publish` compara `release-tag.txt` con `build.gradle`.
-- **No se ha hecho una prueba visual dentro de Minecraft en esta revisión.** El CI
-  acredita compilación, recursos, localización y espejos; no valida cómo se ve la
-  pantalla. Lo que se corrige por medida (anchos, franjas, márgenes) está medido
-  contra las constantes del propio código, no contra una captura.
+- **Último release:** `v0.393.0`, commit de código `1a69331`; JAR de
+  10.812.961 bytes, SHA-256
+  `71f4f1b35399163b84287f5bb12bb13e5696fc0355e5e3c73d7c8409f0ebcd0e`.
+  El CI de publicación `44924191863` pasó en `build` y `publish`.
+- **Pendiente de confirmación visual en cliente:** icono y capas de
+  Multijugador; clics, controles y navegación por teclado de Mundos; el respaldo
+  geométrico de 64 px para controles de fila; canto/coordenadas de JourneyMap;
+  tooltips con formato nativo; títulos y textos de Paquetes de recursos. No se
+  ha hecho una prueba dentro de Minecraft en esta revisión. Las ventanas bajas
+  y las escalas GUI también requieren comprobación visual; no se registran como
+  fallos reproducidos.
+- Las correcciones 0.393.0 mantienen la lógica vanilla: se visten sus pantallas
+  sin cambiar el flujo del juego. El CI acredita compilación, recursos,
+  localización y espejos, pero no cómo se ve o responde la interfaz.
+- Cada versión publicada tiene su release con JAR y SHA-256. El CI
+  (`build.yml`) corre `verify_mirrors.py`, `lint_java.py` y
+  `./gradlew clean build` antes de publicar; `publish` compara
+  `release-tag.txt` con `build.gradle` y no sobrescribe un tag existente.
 - La carpeta de mods debe contener únicamente archivos JAR; al actualizar se
-  reemplazan las versiones anteriores de GripeVerde.
+  reemplazan las versiones anteriores de GripeVerde. El instalador verificado
+  está en `tools/install-latest.ps1`.
 - **KI-79 (CEDA Dispatch / CopyL)** sigue fuera de este repositorio: la corrección
   está preparada en `tools/copyl/0001-copyl-3.9.5-one-text-pass.patch` y falta
   publicarla en `Santi-PdR/Lclient`, donde esta sesión no tiene permiso de escritura.
