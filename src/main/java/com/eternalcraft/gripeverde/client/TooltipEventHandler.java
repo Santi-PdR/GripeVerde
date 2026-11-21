@@ -7,6 +7,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -104,6 +105,19 @@ public class TooltipEventHandler {
         }
     }
 
+    /** v0.377.0: el texto de un renglon ya recortado, sin formato. */
+    private static String toPlain(FormattedCharSequence seq) {
+        StringBuilder sb = new StringBuilder();
+        try {
+            seq.accept((index, style, codepoint) -> {
+                sb.appendCodePoint(codepoint);
+                return true;
+            });
+        } catch (Throwable ignored) {
+        }
+        return sb.toString();
+    }
+
     private static void drawPaperTooltip(RenderTooltipEvent.Pre event,
                                          List<Component> lines) {
         Font font = event.getFont();
@@ -112,7 +126,7 @@ public class TooltipEventHandler {
         int maxW = 210;
         java.util.List<String> rows = new java.util.ArrayList<>();
         for (Component line : lines) {
-            java.util.List<FormattedText> pieces;
+            java.util.List<FormattedCharSequence> pieces;
             try {
                 pieces = font.split(line, maxW);
             } catch (Throwable ignored) {
@@ -123,8 +137,8 @@ public class TooltipEventHandler {
                 rows.add(plain);
                 continue;
             }
-            for (FormattedText piece : pieces) {
-                rows.add(piece == null ? "" : piece.getString());
+            for (FormattedCharSequence piece : pieces) {
+                rows.add(piece == null ? "" : toPlain(piece));
             }
             if (rows.size() > 40) break;
         }
