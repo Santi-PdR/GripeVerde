@@ -1,3 +1,7 @@
+## Version 0.394.0 - El buscador de Mundos se queda con Enter y Supr
+
+Mundos guardados: si el campo de búsqueda tiene el foco, Enter y Supr se entregan al buscador antes que a los atajos del mundo seleccionado. Se puede editar o borrar la consulta sin abrir un mundo ni sacar por accidente la confirmación de borrado. Al salir del campo, las flechas siguen recorriendo la lista y Enter/Supr conservan sus acciones sobre el mundo elegido.
+
 ## Version 0.393.0 - Capas visuales y tooltips respetan sus estilos originales
 
 Multijugador: los iconos de servidor usan ahora todas las dimensiones de su textura y se ajustan a la ficha, sin recortarse. La lista vanilla se vuelca antes de cubrir sus filas, para que el MOTD naranja, el recuento y sus colores no se filtren sobre el papel.

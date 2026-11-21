@@ -1,3 +1,12 @@
+## v0.394.0 - El buscador de Mundos se queda con Enter y Supr
+
+- Mundos guardados: si el campo de búsqueda tiene el foco, Enter y Supr se entregan al buscador antes que a los atajos del mundo seleccionado. Se puede editar o borrar la consulta sin abrir el mundo ni sacar por accidente la confirmación de borrado.
+- Al salir del campo, las flechas siguen recorriendo la lista y Enter/Supr conservan sus acciones sobre el mundo elegido.
+
+**English**
+- Saved Worlds: while the search field is focused, Enter and Delete go to the field before the selected-world shortcuts. Editing or clearing a query can no longer open a world or unexpectedly show its delete confirmation.
+- Once focus leaves the field, arrow navigation and the Enter/Delete world actions remain available.
+
 ## v0.393.0 - Capas visuales, clics seguros y JourneyMap limitado al minimapa
 
 - Multijugador: el favicon se ajusta desde la textura completa y las filas se asientan antes de cubrirlas, evitando recortes y colores del MOTD vanilla por encima del papel.

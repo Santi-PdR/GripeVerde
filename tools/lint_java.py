@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """Lint barato para este repo, sin JDK.
 
-Comprueba tres cosas que ya nos costaron tres builds rojos:
+Comprueba errores estructurales que ya nos costaron builds rojos y una regresion
+interactiva de la hoja de mundos:
   1. `@Override` seguido de algo que no es un metodo.
   2. Variables locales con el mismo nombre en ambitos anidados (javac: "already defined").
   3. Lineas que empiezan por un operador suelto (`+ (`, `&& ...`) fuera de una expresion,
      sintoma de una sentencia cortada por una edicion a mano.
+  4. La hoja de mundos delega Enter/Supr al buscador enfocado antes de ejecutar
+     atajos sobre el mundo seleccionado.
 
 Uso: python3 tools/lint_java.py [rutas...]
 Sale con codigo 1 si encuentra algo.
@@ -136,6 +139,39 @@ def check_dangling(path, lines):
         if prev.endswith(';') or prev.endswith('}') or prev.endswith('{'):
             bad.append((path, i + 1, 'sentencia suelta: ' + s[:60]))
     return bad
+
+
+def check_world_search_keys(path, clean):
+    """El buscador de Mundos debe recibir Enter/Supr antes que los atajos de fila."""
+    if not path.replace(chr(92), '/').endswith('/client/screens/DiarySelectWorldScreen.java'):
+        return []
+    signature = 'public boolean keyPressed(int keyCode, int scanCode, int modifiers)'
+    start = clean.find(signature)
+    if start < 0:
+        return [(path, 1, 'Mundos: falta el manejador de teclado esperado')]
+    opening = clean.find('{', start + len(signature))
+    if opening < 0:
+        return [(path, clean[:start].count(chr(10)) + 1,
+                 'Mundos: bloque keyPressed incompleto')]
+    depth = 0
+    closing = -1
+    for index in range(opening, len(clean)):
+        if clean[index] == '{':
+            depth += 1
+        elif clean[index] == '}':
+            depth -= 1
+            if depth == 0:
+                closing = index + 1
+                break
+    method = clean[start:closing if closing >= 0 else len(clean)]
+    guard = method.find('if (isSearchBoxFocused()) return super.keyPressed(')
+    enter = method.find('GLFW_KEY_ENTER')
+    delete = method.find('GLFW_KEY_DELETE')
+    if guard < 0 or enter < 0 or delete < 0 or guard >= min(enter, delete):
+        line = clean[:start].count(chr(10)) + 1
+        return [(path, line,
+                 'Mundos: delegar al buscador enfocado antes de atajos Enter/Supr')]
+    return []
 
 
 def notas_de_chapa(files):
@@ -290,6 +326,7 @@ def main(argv):
         problems += check_override(f, lines)
         problems += check_dangling(f, lines)
         problems += check_shadow(f, clean)
+        problems += check_world_search_keys(f, clean)
         notas += notas_de_orden(f)
         notas += notas_de_puntos(f)
         notas += notas_de_reflexion(f)

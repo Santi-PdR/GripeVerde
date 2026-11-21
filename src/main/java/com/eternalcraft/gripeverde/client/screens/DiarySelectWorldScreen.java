@@ -1283,6 +1283,17 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         // las fichas y solo se leia media palabra.
     }
 
+    /** v0.394.0: las teclas del buscador no deben actuar sobre el mundo elegido. */
+    private boolean isSearchBoxFocused() {
+        for (EditBox box : this.searchBoxes) {
+            try {
+                if (box != null && box.visible && box.isFocused()) return true;
+            } catch (Throwable ignored) {
+            }
+        }
+        return false;
+    }
+
     /**
      * v0.251.0: Enter entra al mundo elegido. El boton del juego sigue siendo
      * el que trabaja; aca solo se lo aprieta por el lector.
@@ -1290,6 +1301,9 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         PaperButtons.syncStates();
+        // El campo enfocado recibe Enter/Supr para editar o aceptar su consulta;
+        // los atajos de abrir y borrar un mundo no deben adelantarse al widget.
+        if (isSearchBoxFocused()) return super.keyPressed(keyCode, scanCode, modifiers);
         if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER
                 || keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_KP_ENTER) {
             String want = net.minecraft.network.chat.Component.translatable("selectWorld.select").getString();
@@ -1320,15 +1334,9 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             }
         }
         // v0.374.0: las flechas recorren el registro aunque el foco este en la
-        // hoja y no en la lista del juego. Marcan, no entran.
-        boolean typing = false;
-        for (EditBox box : this.searchBoxes) {
-            try {
-                if (box.isFocused()) typing = true;
-            } catch (Throwable ignored) {
-            }
-        }
-        if (!typing && this.vanillaList != null
+        // hoja y no en la lista del juego. El buscador ya recibio sus teclas
+        // arriba; aqui solo navega la lista cuando ningun campo tiene el foco.
+        if (this.vanillaList != null
                 && (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN
                     || keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_UP
                     || keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_DOWN

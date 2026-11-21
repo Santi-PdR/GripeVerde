@@ -5,7 +5,7 @@ plugins {
     id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
 }
 
-version = '0.393.0'
+version = '0.394.0'
 group = 'com.eternalcraft.gripeverde'
 base { archivesName = 'gripeverde' }
 

@@ -1,3 +1,7 @@
+## Version 0.394.0 - The Worlds search box keeps Enter and Delete
+
+Saved Worlds: while the search field has focus, Enter and Delete are routed to the field before the selected-world shortcuts. You can edit or clear a query without opening a world or unexpectedly showing its delete confirmation. Once focus leaves the field, arrow navigation and the Enter/Delete world actions remain available.
+
 ## Version 0.393.0 - UI layers and item tooltips keep their original styles
 
 Multiplayer: server icons now use their full source dimensions and are fitted into the card instead of being cropped. The vanilla list is flushed before its rows are covered, so its orange MOTD, counters and colors no longer leak through the paper.
