@@ -9,6 +9,8 @@ interactiva de la hoja de mundos:
      sintoma de una sentencia cortada por una edicion a mano.
   4. La hoja de mundos delega Enter/Supr al buscador enfocado antes de ejecutar
      atajos sobre el mundo seleccionado.
+  5. El total del archivo, escrito en un worker y leído por la GUI, se publica
+     con volatile para que el hilo de render vea el resultado.
 
 Uso: python3 tools/lint_java.py [rutas...]
 Sale con codigo 1 si encuentra algo.
@@ -174,6 +176,20 @@ def check_world_search_keys(path, clean):
     return []
 
 
+def check_world_archive_visibility(path, clean):
+    """El total del archivo se escribe en un worker y se lee desde el hilo GUI."""
+    if not path.replace(chr(92), '/').endswith('/client/screens/DiarySelectWorldScreen.java'):
+        return []
+    match = re.search(r'\bprivate\s+static\s+([^;=]+?)\s+archiveBytes\s*=', clean)
+    if not match:
+        return [(path, 1, 'Mundos: falta la declaracion del total del archivo')]
+    if not re.search(r'\bvolatile\b', match.group(1)):
+        line = clean[:match.start()].count(chr(10)) + 1
+        return [(path, line,
+                 'Mundos: archiveBytes debe ser volatile para publicar el resultado del worker')]
+    return []
+
+
 def notas_de_chapa(files):
     """
     Aviso blando: dos pantallas de la casa con la misma chapa de registro
@@ -327,6 +343,7 @@ def main(argv):
         problems += check_dangling(f, lines)
         problems += check_shadow(f, clean)
         problems += check_world_search_keys(f, clean)
+        problems += check_world_archive_visibility(f, clean)
         notas += notas_de_orden(f)
         notas += notas_de_puntos(f)
         notas += notas_de_reflexion(f)

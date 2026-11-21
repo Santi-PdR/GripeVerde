@@ -38,7 +38,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     private WorldSelectionList vanillaList;
     private List<EditBox> searchBoxes = new ArrayList<>();
     // v0.270.0: lo que pesa el archivo, medido una vez por apertura.
-    private static long archiveBytes = -1L;
+    private static volatile long archiveBytes = -1L;
     // v0.374.0: se vuelve a medir en cada apertura, en segundo plano, para
     // que un mundo recien creado aparezca con su peso.
     private boolean archiveMeasured = false;
