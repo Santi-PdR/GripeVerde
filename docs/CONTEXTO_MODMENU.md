@@ -7,19 +7,19 @@ Actualizado: 2026-11-13
 - Repositorio: [Santi-PdR/GripeVerde](https://github.com/Santi-PdR/GripeVerde), público.
 - Rama activa de la sesión: `arena/48be547c-gripeverde`, basada en `02e85bc`.
   La plataforma fija el nombre: trabajar y publicar solamente en esta rama.
-- **Versión actual: 0.392.0**, commit `9f609e1`; CI `44920658320` terminó en verde.
-  Release: <https://github.com/Santi-PdR/GripeVerde/releases/tag/v0.392.0>.
-  JAR de 10.805.464 bytes; SHA-256
-  `d5dc33b5d4dad9f9de3dd8d0d74a60e6de9b82ab1d570dcbbfc2e5d00cdb2c87`.
+- **Versión actual: 0.393.0**, commit `1a69331`; CI `44924191863` terminó en verde.
+  Release: <https://github.com/Santi-PdR/GripeVerde/releases/tag/v0.393.0>.
+  JAR de 10.812.961 bytes; SHA-256
+  `71f4f1b35399163b84287f5bb12bb13e5696fc0355e5e3c73d7c8409f0ebcd0e`.
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
   El trabajo se hace sobre el repositorio; no se clona ni se edita el proyecto local
   del usuario.
 - No se controla Minecraft ni la PC del usuario para pruebas visuales. El CI acredita
   compilación, recursos y localización; no sustituye una revisión dentro del juego.
-  **Pendiente de confirmación del usuario:** geometría/clics de Mundos (ahora las
-  fichas, hover, hit-test, navegación por teclado y barra comparten las medidas de la
-  lista), tooltips cerca de bordes, fila de red local, hojas Ratón/Teclas y la línea
-  `[GripeVerde] JourneyMap: …` de `latest.log`.
+  **Pendiente de confirmación del usuario:** las correcciones visuales e interactivas
+  de 0.393.0 (favicon/colores de Multijugador, clics y botones de Mundos, borde y
+  coordenadas de JourneyMap, tooltips con estilos originales y textos de Paquetes de
+  recursos). No se han probado visualmente dentro del juego.
 - Las interfaces del juego se mantienen instantáneas: no se agregan animaciones al
   inventario, la pausa ni el mundo. Las únicas piezas animadas siguen siendo las del
   menú y respetan Movimiento reducido y Destellos reducidos.
@@ -1796,6 +1796,15 @@ Cuatro trampas que ya costaron una captura cada una. Van aquí para no repetirla
   `paintServerRowsInk`, con el mismo texto que la cabecera de lista vacía.
 - `tools/lint_java.py`: nueva regla `notas_de_widgets` -pantalla sin `super.render`
   y sin recorrer widgets-. Se silencia con `// widgets-ok`.
+
+## 0.393.0 - capas, clics y estilos originales
+
+- **Multijugador:** se conserva el tamaño real de ambos ejes del favicon y se escala la imagen completa dentro de la ficha. La lista vanilla se vacía antes de cubrir cada fila, evitando que texto/colores naranjas y elementos de sus buffers aparezcan por encima del papel.
+- **Un jugador:** flechas, Re Pág/Av Pág e Inicio/Fin se envían a la lista vanilla enfocada; se elimina el clic sintético de navegación. El segundo clic en una fila ya seleccionada se consume; los controles Editar/Borrar y la canaleta de scroll evitan el freno. `PaperButtons.syncStates()` se ejecuta antes del dibujo y de la entrada.
+- **JourneyMap:** se retiró la modificación del tema completo. Solo se cambia el canto del minimapa y el fondo/tinta de `labelBottom` para las coordenadas; no se modifican fuentes, botones, barras, retícula ni pantalla completa.
+- **Tooltips:** `TooltipEventHandler` ya no cancela `RenderTooltipEvent.Pre`, no reemplaza componentes ni aplana/recolorea texto. Minecraft dibuja sus componentes originales en su capa z=400; el evento Color conserva solo el fondo/borde pergamino.
+- **Paquetes:** `GuiGraphics.flush()` se llama antes de tapar las listas y reescribir títulos; el buffer del título se vuelca antes de la banda opaca.
+- CI `44924191863` compiló y publicó correctamente. Release `v0.393.0`: 10.812.961 bytes, SHA-256 `71f4f1b35399163b84287f5bb12bb13e5696fc0355e5e3c73d7c8409f0ebcd0e`. La confirmación visual sigue pendiente.
 
 ## 0.392.0 - mundos con geometria exacta en toda la hoja
 
