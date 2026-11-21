@@ -7,19 +7,20 @@ Actualizado: 2026-11-13
 - Repositorio: [Santi-PdR/GripeVerde](https://github.com/Santi-PdR/GripeVerde), público.
 - Rama activa de la sesión: `arena/48be547c-gripeverde`, basada en `02e85bc`.
   La plataforma fija el nombre: trabajar y publicar solamente en esta rama.
-- **Versión actual: 0.393.0**, commit `1a69331`; CI `44924191863` terminó en verde.
-  Release: <https://github.com/Santi-PdR/GripeVerde/releases/tag/v0.393.0>.
-  JAR de 10.812.961 bytes; SHA-256
-  `71f4f1b35399163b84287f5bb12bb13e5696fc0355e5e3c73d7c8409f0ebcd0e`.
+- **Versión actual: 0.394.0**, tag dirigido a `94e0908`; CI `44932587727` terminó
+  en verde en `build` y `publish`. Release:
+  <https://github.com/Santi-PdR/GripeVerde/releases/tag/v0.394.0>.
+  JAR de 10.816.790 bytes; SHA-256
+  `351352ca283cecd3941666f554bd915f8ac1e1aa61aadec5679757f93bc5072d`.
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
   El trabajo se hace sobre el repositorio; no se clona ni se edita el proyecto local
   del usuario.
 - No se controla Minecraft ni la PC del usuario para pruebas visuales. El CI acredita
   compilación, recursos y localización; no sustituye una revisión dentro del juego.
   **Pendiente de confirmación del usuario:** las correcciones visuales e interactivas
-  de 0.393.0 (favicon/colores de Multijugador, clics y botones de Mundos, borde y
-  coordenadas de JourneyMap, tooltips con estilos originales y textos de Paquetes de
-  recursos). No se han probado visualmente dentro del juego.
+  de 0.393.0 y el foco de teclado del buscador de Mundos de 0.394.0 (Enter/Supr editan
+  la consulta sin actuar sobre la ficha elegida; tras salir del campo, la lista vuelve
+  a navegarse con flechas). No se han probado visualmente dentro del juego.
 - Las interfaces del juego se mantienen instantáneas: no se agregan animaciones al
   inventario, la pausa ni el mundo. Las únicas piezas animadas siguen siendo las del
   menú y respetan Movimiento reducido y Destellos reducidos.
@@ -1796,6 +1797,14 @@ Cuatro trampas que ya costaron una captura cada una. Van aquí para no repetirla
   `paintServerRowsInk`, con el mismo texto que la cabecera de lista vacía.
 - `tools/lint_java.py`: nueva regla `notas_de_widgets` -pantalla sin `super.render`
   y sin recorrer widgets-. Se silencia con `// widgets-ok`.
+
+## 0.394.0 - el buscador de Mundos conserva Enter y Supr
+
+- **Foco de búsqueda:** `isSearchBoxFocused()` reconoce el `EditBox` visible con foco; `keyPressed` delega primero a `super`, antes de sus atajos para entrar o borrar el mundo elegido. Enter no abre el mundo y Supr edita la consulta. Al salir del buscador, las flechas siguen recorriendo la lista.
+- **Regresión cubierta:** `tools/lint_java.py` falla si el guard de foco desaparece o queda detrás de `GLFW_KEY_ENTER`/`GLFW_KEY_DELETE`. La prueba del guard pasó tanto con el código actual como al retirar el guard temporalmente.
+- **Build resiliente:** se añadió Maven Central como repositorio canónico de artefactos auxiliares que no estén reflejados en Forge Maven. El primer CI de 0.394.0 falló al no hallar `maven-artifact-3.8.5.jar` en Forge Maven; el siguiente build y publicación pasó.
+- **Tags de release:** `build.yml` ahora crea tags con `--target "$GITHUB_SHA"`. Se corrigió el tag recién publicado `v0.394.0` para que apunte al commit construido `94e0908`, no al `main` antiguo.
+- CI `44932587727` compiló y publicó correctamente. Release `v0.394.0`: 10.816.790 bytes, SHA-256 `351352ca283cecd3941666f554bd915f8ac1e1aa61aadec5679757f93bc5072d`. La prueba interactiva en Minecraft sigue pendiente.
 
 ## 0.393.0 - capas, clics y estilos originales
 

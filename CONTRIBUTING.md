@@ -4,17 +4,18 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
 
 ## Estado vigente de la entrega
 
-- Version publicada: **v0.393.0**, release verificado; JAR de 10.812.961 bytes,
-  SHA-256 `71f4f1b35399163b84287f5bb12bb13e5696fc0355e5e3c73d7c8409f0ebcd0e`.
-  El CI de publicación `44924191863` pasó en `build` y `publish`.
+- Version publicada: **v0.394.0**, tag dirigido al commit construido `94e0908`;
+  JAR de 10.816.790 bytes, SHA-256
+  `351352ca283cecd3941666f554bd915f8ac1e1aa61aadec5679757f93bc5072d`.
+  El CI de publicación `44932587727` pasó en `build` y `publish`.
 - Rama de trabajo vigente: `arena/48be547c-gripeverde`, un solo push por entrega.
 - Baseline medida por las herramientas: **72 archivos Java**, **25 locales con
   191 claves** cada uno, 35 eventos de sonido, 42 referencias OGG y 42 archivos
   OGG, 4 piezas de música y **8/8 sellos espejo**.
 - Cada publicación es: `python3 tools/verify_mirrors.py` -> `python3 tools/lint_java.py`
   -> commit + push -> esperar el CI -> comprobar el release y el SHA-256. El job
-  `publish` compara `release-tag.txt` con `build.gradle` y no sobrescribe un tag
-  que ya existe.
+  `publish` compara `release-tag.txt` con `build.gradle`, crea el tag sobre
+  `$GITHUB_SHA` (el commit que produjo el JAR) y no sobrescribe un release existente.
 - **Nunca dos pushes seguidos**: el CI cancela el run anterior por concurrencia.
 - Sin JDK local: la compilación la hace el CI. No hace falta instalar Java 17 en
   la máquina para publicar.

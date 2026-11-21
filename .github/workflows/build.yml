@@ -90,7 +90,8 @@ jobs:
   # v0.179.0: el JAR como asset de release, para tener una descarga directa
   # (.jar, no el zip del artefacto). Solo publica cuando release-tag.txt coincide
   # con la version de build.gradle, asi que un push normal no crea nada y un
-  # release nunca se sobrescribe con el build de otra version.
+  # release nunca se sobrescribe con el build de otra version. --target GITHUB_SHA
+  # hace que el codigo fuente del tag corresponda al JAR publicado.
   publish:
     needs: build
     runs-on: ubuntu-latest
@@ -132,6 +133,6 @@ jobs:
             echo "el release $TAG ya existe; no lo sobrescribo"
           else
             awk '/^## v/{n++} n<2' CHANGELOG.md > /tmp/release-notes.md || true
-            gh release create "$TAG" dist/*.jar --repo "$GITHUB_REPOSITORY" --title "GripeVerde $TAG" --notes-file /tmp/release-notes.md
+            gh release create "$TAG" dist/*.jar --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "GripeVerde $TAG" --notes-file /tmp/release-notes.md
           fi
           gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json tagName,assets --jq '"release \(.tagName)", (.assets[] | "\(.name) \(.size) \(.url)")'

@@ -5,28 +5,30 @@ de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
 que una seccion posterior lo mencione expresamente.
 
-## ESTADO: DESARROLLO ACTIVO (2026-11-13, GripeVerde v0.393.0)
+## ESTADO: DESARROLLO ACTIVO (2026-11-13, GripeVerde v0.394.0)
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
-- **Último release:** `v0.393.0`, commit de código `1a69331`; JAR de
-  10.812.961 bytes, SHA-256
-  `71f4f1b35399163b84287f5bb12bb13e5696fc0355e5e3c73d7c8409f0ebcd0e`.
-  El CI de publicación `44924191863` pasó en `build` y `publish`.
-- **Pendiente de confirmación visual en cliente:** icono y capas de
-  Multijugador; clics, controles y navegación por teclado de Mundos; el respaldo
-  geométrico de 64 px para controles de fila; canto/coordenadas de JourneyMap;
-  tooltips con formato nativo; títulos y textos de Paquetes de recursos. No se
-  ha hecho una prueba dentro de Minecraft en esta revisión. Las ventanas bajas
-  y las escalas GUI también requieren comprobación visual; no se registran como
-  fallos reproducidos.
-- Las correcciones 0.393.0 mantienen la lógica vanilla: se visten sus pantallas
-  sin cambiar el flujo del juego. El CI acredita compilación, recursos,
-  localización y espejos, pero no cómo se ve o responde la interfaz.
-- Cada versión publicada tiene su release con JAR y SHA-256. El CI
-  (`build.yml`) corre `verify_mirrors.py`, `lint_java.py` y
-  `./gradlew clean build` antes de publicar; `publish` compara
-  `release-tag.txt` con `build.gradle` y no sobrescribe un tag existente.
+- **Último release:** `v0.394.0`, tag dirigido al commit construido `94e0908`;
+  JAR de 10.816.790 bytes, SHA-256
+  `351352ca283cecd3941666f554bd915f8ac1e1aa61aadec5679757f93bc5072d`.
+  El CI de publicación `44932587727` pasó en `build` y `publish`.
+- **Cambio 0.394.0:** si el buscador de Mundos tiene foco, Enter y Supr se
+  delegan al campo antes que a los atajos de abrir/borrar el mundo elegido. La
+  regresión queda protegida por `tools/lint_java.py`.
+- **Pendiente de confirmación visual en cliente:** icono/capas de Multijugador;
+  clics, controles y navegación por teclado de Mundos (incluido el buscador);
+  respaldo geométrico de 64 px para controles de fila; canto/coordenadas de
+  JourneyMap; tooltips nativos; títulos/textos de Paquetes de recursos. No se ha
+  probado dentro de Minecraft. Ventanas bajas y escalas GUI también requieren
+  comprobación visual; no se registran como fallos reproducidos.
+- Las correcciones mantienen la lógica vanilla. El CI acredita compilación,
+  recursos, localización y espejos, pero no cómo se ve o responde la interfaz.
+- El CI (`build.yml`) corre `verify_mirrors.py`, `lint_java.py` y
+  `./gradlew clean build` antes de publicar; `publish` compara el marcador con
+  `build.gradle`, crea tags sobre el SHA que produjo el JAR y no sobrescribe
+  un release existente. Maven Central está declarado como fuente canónica de
+  dependencias auxiliares no reflejadas en Forge Maven.
 - La carpeta de mods debe contener únicamente archivos JAR; al actualizar se
   reemplazan las versiones anteriores de GripeVerde. El instalador verificado
   está en `tools/install-latest.ps1`.

@@ -2,17 +2,22 @@
 
 ## Addendum operativo actual (2026-11-13)
 
-- Última versión publicada: **GripeVerde v0.393.0**. Release y JAR verificados:
-  10.812.961 bytes, SHA-256
-  `71f4f1b35399163b84287f5bb12bb13e5696fc0355e5e3c73d7c8409f0ebcd0e`.
-  El CI `44924191863` pasó en `build` y `publish`.
-- La ronda 0.393.0 corrigió capas/clics de Multijugador y Mundos, conservó los
-  estilos nativos de tooltip, limitó la compatibilidad de JourneyMap al canto del
-  minimapa y su rótulo de coordenadas, y vació los buffers antes de repintar las
-  listas de Paquetes de recursos.
-- **Pendiente de revisión en Minecraft:** ninguna de esas correcciones se ha
-  probado visual o interactivamente en el cliente. El CI no sustituye esa
-  comprobación; el checklist concreto vive en `docs/CONTEXTO_MODMENU.md`.
+- Última versión publicada: **GripeVerde v0.394.0**. Release y JAR verificados:
+  10.816.790 bytes, SHA-256
+  `351352ca283cecd3941666f554bd915f8ac1e1aa61aadec5679757f93bc5072d`.
+  El CI `44932587727` pasó en `build` y `publish`.
+- La v0.394.0 corrige el foco del buscador de Mundos: Enter y Supr se entregan
+  al campo en vez de actuar sobre el mundo seleccionado; las flechas vuelven a
+  navegar la lista al salir del campo. También se añadió Maven Central como
+  fuente canónica de dependencias auxiliares y `build.yml` fija el tag al SHA
+  construido (`--target "$GITHUB_SHA"`).
+- La v0.393.0 corrigió capas/clics de Multijugador y Mundos, conservó los estilos
+  nativos de tooltip, limitó JourneyMap al canto del minimapa y su rótulo de
+  coordenadas, y vació los buffers antes de repintar las listas de Paquetes.
+- **Pendiente de revisión en Minecraft:** las correcciones 0.393.0 y el nuevo
+  comportamiento de búsqueda de Mundos aún no se han probado visual o
+  interactivamente en el cliente. El CI no sustituye esa comprobación; el
+  checklist concreto vive en `docs/CONTEXTO_MODMENU.md`.
 - Las reglas de siempre siguen en pie: mod **solo de cliente**, sin bloques,
   sin ítems, sin gameplay ni resourcepacks; la identidad visual se hace con
   Java y los render/widgets propios.
