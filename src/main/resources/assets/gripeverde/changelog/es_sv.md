@@ -1,3 +1,7 @@
+## Version 0.381.0 - Vuelven los cajones del archivador, y la chapa del Arsenal se aparta
+
+En Pack de recursos los dos cajones del archivador se dibujaban antes que la hoja grande, así que la hoja los tapaba y las columnas salían sin cajón. Ahora se pintan al final, encima del papel y debajo de las filas del juego, que es donde van. Y la chapa del Arsenal (`REG. XVII`) ya no puede caer sobre un botón: si el rincón está ocupado, la hoja se queda sin chapa antes que estamparla encima de una ficha.
+
 ## Version 0.380.0 - Mundos va a lo ancho como Multijugador, la descripción del puesto conserva su último renglón y el pie del Sonido ya no se queda a medias
 
 La hoja de Mundos guardados corre de canto a canto, igual que la de Multijugador: el juego coloca sus fichas de borde a borde, así que con 32 px de margen el papel se acababa antes que las fichas. En Multijugador la descripción del puesto usa todos los renglones que caben en la ficha -tres en el tamaño normal- en vez de dos, y se acabaron los puntos suspensivos: la casa no recorta lo que un puesto cuenta de sí mismo. El pie del Sonido gana una cuarta forma, de solo cifras, para que si no entran la larga, la media y la corta, escriba algo entero; y si tampoco entra, no escribe nada antes que dejar un «…».

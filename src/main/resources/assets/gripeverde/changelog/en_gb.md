@@ -1,3 +1,7 @@
+## Version 0.381.0 - The archive drawers come back, and the Arsenal tag gets out of the way
+
+In Resource packs the two drawers of the archive were being drawn before the big sheet, so the sheet covered them and the columns came out without their drawer. Now they are painted at the end, over the paper and under the game's rows, which is where they belong. And the Arsenal tag (REG. XVII) no longer falls on top of a button: if the corner is busy, the page simply goes without its tag instead of stamping over a card.
+
 ## Version 0.380.0 - Worlds goes full width like Multiplayer, the server description keeps its last line and the Sound footer never trails off
 
 The Worlds ledger now runs edge to edge, exactly like the Multiplayer sheet: the game places its cards from border to border, so with a 32 px margin the paper ended before the cards did. In Multiplayer the server description uses every line that fits in the card -three at normal size- instead of two, and the trailing ellipsis is gone: the house does not trim what a server says about itself. The Sound footer gains a fourth, numbers-only form, so if the long, medium and short ones do not fit it still writes something whole, and if even that fails it writes nothing rather than an ellipsis.

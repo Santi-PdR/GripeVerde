@@ -326,10 +326,10 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
 
     @Override
     public void renderBackground(GuiGraphics g) {
-        // v0.377.0: los dos cajones (columnas) se dibujan aqui, antes de que el
-        // juego pinte sus filas: asi los iconos de los packs caen sobre el
-        // papel del archivador y no sobre la tierra del fondo.
-        drawPackColumns(g);
+        // v0.380.0: aqui se dibujaban los cajones ANTES de la escena y de la
+        // hoja grande, asi que la hoja los tapaba y el archivador salia sin
+        // cajones. Ahora van al final de este metodo, encima del papel y debajo
+        // de las filas que pinta el juego, que es el orden que se buscaba.
         // Escena viva detras (barata, sin foco)
         QuarantineSceneRenderer.renderDiaryBackground(g, this.width, this.height);
 
@@ -386,6 +386,13 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
             int hw = DiaryChrome.widthCached(this.font, hint);
             g.drawString(this.font, hint, bx + bw - 24 - hw, by + bh - 19,
                 DiaryChrome.INK_FLAVOR, false);
+        }
+
+        // v0.380.0: los dos cajones del archivador, sobre la hoja y bajo las
+        // filas del juego. Se dibujan aqui, al final, para que se vean.
+        try {
+            drawPackColumns(g);
+        } catch (Throwable ignored) {
         }
     }
 

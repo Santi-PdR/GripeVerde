@@ -561,9 +561,24 @@ public class DiaryModListScreen extends ModListScreen {
             // v0.301.0: la chapa caia sobre los botones A-Z del arsenal; se
             // corre al filo y se queda sola arriba.
             // v0.378.0: la chapa caia sobre el buscador y se iba fuera de la
-            // ventana por arriba y por la izquierda. Baja al canto de la hoja.
-            com.eternalcraft.gripeverde.client.render.DiaryChrome.drawRegistryTagLeft(
-                g, 4, this.height - 40, "REG. XVII");
+            // ventana por arriba y por la izquierda. Baja al canto izquierdo.
+            // v0.380.0: y, si ahi abajo hay una ficha de la casa, se calla: mas
+            // vale una hoja sin chapa que una chapa pisando un boton.
+            int tagY = this.height - 40;
+            int tagX = 4;
+            boolean tagFits = true;
+            for (com.eternalcraft.gripeverde.client.widgets.DiaryButton b : this.dressed) {
+                if (!b.visible) continue;
+                if (b.getX() < tagX + 64 && b.getX() + b.getWidth() > tagX
+                        && b.getY() < tagY + 16 && b.getY() + b.getHeight() > tagY) {
+                    tagFits = false;
+                    break;
+                }
+            }
+            if (tagFits) {
+                com.eternalcraft.gripeverde.client.render.DiaryChrome.drawRegistryTagLeft(
+                    g, tagX, tagY, "REG. XVII");
+            }
             // v0.278.0: el pie de la hoja recuerda como se sale.
             if (this.height >= 200) {
                 // v0.301.0: el aviso de salida pisaba el boton de la carpeta de
