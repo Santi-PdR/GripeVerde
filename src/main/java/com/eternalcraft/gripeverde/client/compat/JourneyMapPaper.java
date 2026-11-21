@@ -33,8 +33,13 @@ public final class JourneyMapPaper {
      * tener que adivinar.
      */
     private static void note(String why) {
-        if (noted) return;
-        noted = true;
+        // v0.390.0: antes solo se anotaba la PRIMERA linea, y esa solia ser
+        // "el minimapa aun no tiene medidas" -que pasa en el primer cuadro-.
+        // Las lineas utiles -tema aplicado, forma, anillo- quedaban sin escribir
+        // y desde el diario no habia como saber que fallaba. Ahora se anota cada
+        // mensaje distinto una vez, con un tope para no llenar el archivo.
+        if (why == null || noted.contains(why) || noted.size() >= 12) return;
+        noted.add(why);
         try {
             org.apache.logging.log4j.LogManager.getLogger("gripeverde/journeymap")
                 .info("[GripeVerde] JourneyMap: {}", why);
@@ -42,7 +47,7 @@ public final class JourneyMapPaper {
         }
     }
 
-    private static boolean noted;
+    private static final java.util.Set<String> noted = new java.util.HashSet<>();
 
     private static boolean probed;
     private static boolean present;
@@ -491,8 +496,16 @@ public final class JourneyMapPaper {
         }
     }
 
-    /** Como write, pero un miembro que no cuadre no tumba el resto del tema. */
+    /**
+     * Como write, pero un miembro que no cuadre no tumba el resto del tema.
+     *
+     * v0.390.0: si el valor viene nulo NO se escribe. `spec(...)` devuelve null
+     * cuando el ColorSpec de JourneyMap no tiene el constructor que esperamos, y
+     * escribir ese nulo dejaba el marco del minimapa sin color: peor que no
+     * tocar nada.
+     */
     private static void safeWrite(Object target, String name, Object value) {
+        if (value == null) return;
         try {
             write(target, name, value);
         } catch (Throwable ignored) {

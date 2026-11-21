@@ -91,6 +91,12 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         = new java.util.HashMap<>();
     private int vanillaListY0;
     private int vanillaHeaderHeight;
+    // v0.390.0: la fila, preguntada a la propia lista. `itemHeight`, `y0` y
+    // `headerHeight` vienen renombrados y, si UNO solo falla, todas las bandas
+    // quedan corridas. La lista sabe donde empieza cada fila: se le pregunta por
+    // un metodo que recibe un indice y devuelve una coordenada.
+    private java.lang.reflect.Method rowTopMethod;
+    private int vanillaRowStep;
 
     // Nuestros botones Diary
     private DiaryButton diarySelect;
@@ -1135,8 +1141,10 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 // ficha de servidor, no por el nombre de su clase.
                 boolean lan = extractServerDataFromEntry(entry) == null;
 
-                int entryTop = y0 + 4 - (int) scrollAmount + i * itemHeight + headerHeight - 2;
-                int entryBottom = entryTop + itemHeight;
+                int entryTop = this.rowTopMethod != null
+                    ? rowTopOf(i)
+                    : y0 + 4 - (int) scrollAmount + i * itemHeight + headerHeight - 2;
+                int entryBottom = entryTop + rowStepNow();
 
                 if (entryBottom < listTop || entryTop > listBottom) continue;
                 int drawTop = Math.max(entryTop, listTop);
@@ -1196,9 +1204,11 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                     // con la letra blanca. Se le pone el mismo papel y la misma
                     // tinta que a la cabecera cuando la lista esta vacia.
                     try {
-                        int entryTop = vanillaListY0 + 4 - (int) scrollAmount + i * itemHeight
-                            + vanillaHeaderHeight - 2;
-                        int entryBottom = entryTop + itemHeight;
+                        int entryTop = this.rowTopMethod != null
+                            ? rowTopOf(i)
+                            : vanillaListY0 + 4 - (int) scrollAmount + i * itemHeight
+                                + vanillaHeaderHeight - 2;
+                        int entryBottom = entryTop + rowStepNow();
                         if (entryBottom >= listTop && entryTop <= listBottom) {
                             int drawTop = Math.max(entryTop, listTop);
                             int drawBottom = Math.min(entryBottom, listBottom);
@@ -1229,9 +1239,11 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 String ip = sd.ip == null ? "" : sd.ip;
                 if (name == null || name.isEmpty()) name = ip;
                 if (name == null || name.isEmpty()) continue;
-                int entryTop = vanillaListY0 + 4 - (int) scrollAmount + i * itemHeight
-                    + vanillaHeaderHeight - 2;
-                int entryBottom = entryTop + itemHeight;
+                int entryTop = this.rowTopMethod != null
+                    ? rowTopOf(i)
+                    : vanillaListY0 + 4 - (int) scrollAmount + i * itemHeight
+                        + vanillaHeaderHeight - 2;
+                int entryBottom = entryTop + rowStepNow();
                 if (entryBottom < listTop || entryTop > listBottom) continue;
                 int drawTop = Math.max(entryTop, listTop);
                 int drawBottom = Math.min(entryBottom, listBottom);
@@ -1556,7 +1568,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             if (lanIdx == -1) return 0; // no hay LAN header, no hay que recortar
 
             // Y donde empieza la entry LAN (todo abajo se oculta)
-            int lanTop = y0 + 4 - (int) scrollAmount + lanIdx * itemHeight + headerHeight;
+            int lanTop = this.rowTopMethod != null
+                ? rowTopOf(lanIdx)
+                : y0 + 4 - (int) scrollAmount + lanIdx * itemHeight + headerHeight;
             return Math.max(lanTop - 2, this.vanillaList.getTop());
         } catch (Throwable ignored) {}
         return 0;
@@ -1576,6 +1590,70 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         vanillaItemHeight = readIntField(this.vanillaList, "itemHeight", "f_93387_");
         vanillaListY0 = readIntField(this.vanillaList, "y0", "f_93390_");
         vanillaHeaderHeight = readIntField(this.vanillaList, "headerHeight", "f_93395_");
+        // Respaldo por metodo publico: getTop() es y0, siempre.
+        if (vanillaListY0 <= 0) {
+            try {
+                vanillaListY0 = this.vanillaList.getTop();
+            } catch (Throwable ignored) {
+            }
+        }
+        resolveRowTopMethod();
+        if (vanillaItemHeight <= 0 && vanillaRowStep > 0) vanillaItemHeight = vanillaRowStep;
+    }
+
+    /**
+     * v0.390.0: busca el metodo de la lista que dice donde empieza una fila.
+     *
+     * Recibe un indice y devuelve una coordenada: se prueba con 0 y con 1 y la
+     * diferencia tiene que dar el alto de renglon. Entre los dos candidatos
+     * (arriba y abajo de la fila) se queda el que devuelve el numero menor. Si
+     * no aparece ninguno, se sigue con las medidas de siempre.
+     */
+    private void resolveRowTopMethod() {
+        this.rowTopMethod = null;
+        this.vanillaRowStep = 0;
+        if (this.vanillaList == null) return;
+        java.lang.reflect.Method best = null;
+        int bestValue = Integer.MAX_VALUE;
+        int bestStep = 0;
+        for (Class<?> c = this.vanillaList.getClass(); c != null && c != Object.class;
+             c = c.getSuperclass()) {
+            for (java.lang.reflect.Method m : c.getDeclaredMethods()) {
+                if (m.getParameterCount() != 1) continue;
+                if (m.getParameterTypes()[0] != int.class || m.getReturnType() != int.class) continue;
+                if (java.lang.reflect.Modifier.isStatic(m.getModifiers())) continue;
+                try {
+                    m.setAccessible(true);
+                    int a = (Integer) m.invoke(this.vanillaList, 0);
+                    int b = (Integer) m.invoke(this.vanillaList, 1);
+                    int step = b - a;
+                    if (step < 10 || step > 80) continue;
+                    if (a < bestValue) {
+                        bestValue = a;
+                        best = m;
+                        bestStep = step;
+                    }
+                } catch (Throwable ignored) {
+                }
+            }
+        }
+        this.rowTopMethod = best;
+        if (bestStep > 0) this.vanillaRowStep = bestStep;
+    }
+
+    /** Donde empieza la fila `i`, segun la propia lista. */
+    private int rowTopOf(int i) {
+        try {
+            return (Integer) this.rowTopMethod.invoke(this.vanillaList, i);
+        } catch (Throwable ignored) {
+            return 0;
+        }
+    }
+
+    /** Alto de renglon, con lo que diga la lista y, si no, lo cacheado. */
+    private int rowStepNow() {
+        if (this.vanillaRowStep > 0) return this.vanillaRowStep;
+        return vanillaItemHeight > 0 ? vanillaItemHeight : 36;
     }
 
     private static int readIntField(Object target, String officialName, String srgName) {

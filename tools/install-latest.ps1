@@ -30,12 +30,22 @@ try {
         }
     }
     if ($token) { $token = ([string]$token).Trim() }
-    if (-not $token) {
-        throw "Hace falta un token de GitHub. Opciones: definir `$env:GITHUB_TOKEN, loguear 'gh auth login', o pedir que el repo pase a publico."
-    }
 
-    $headers = @{ Authorization = "Bearer $token"; Accept = 'application/vnd.github+json' }
-    $release = Invoke-RestMethod -Uri $api -Headers $headers -UseBasicParsing
+    # 2026-11-13: el token deja de ser obligatorio. Los releases son publicos y
+    # la API contesta sin credenciales; antes, sin token, el script se plantaba
+    # aunque la descarga fuera a funcionar. Con token se sigue usando, que es lo
+    # que hace falta si el repo vuelve a privado.
+    $headers = @{ Accept = 'application/vnd.github+json' }
+    if ($token) { $headers.Authorization = "Bearer $token" }
+    try {
+        $release = Invoke-RestMethod -Uri $api -Headers $headers -UseBasicParsing
+    }
+    catch {
+        if (-not $token) {
+            throw "No pude leer el release ($($_.Exception.Message)). Si el repo es privado, defini `$env:GITHUB_TOKEN o logueate con 'gh auth login'."
+        }
+        throw
+    }
     $asset = @($release.assets) | Where-Object { $_.name -like 'gripeverde-*.jar' } | Select-Object -First 1
     if (-not $asset) { throw "El release $($release.tag_name) no tiene un JAR de GripeVerde." }
 
@@ -47,9 +57,25 @@ try {
     # JAR de GripeVerde que ya estuvieran puestos: se borran, no se respaldan.
     $old = @(Get-ChildItem -LiteralPath $mods -File -Filter '*gripeverde*.jar' -ErrorAction SilentlyContinue)
 
-    $assetUrl = "https://api.github.com/repos/$repo/releases/assets/$($asset.id)"
-    $dlHeaders = @{ Authorization = "Bearer $token"; Accept = 'application/octet-stream' }
-    Invoke-WebRequest -Uri $assetUrl -Headers $dlHeaders -OutFile $temp -UseBasicParsing
+    # 2026-11-13: primero la descarga directa del asset, que no pide credenciales;
+    # si el repo fuera privado, se reintenta por la API con el token.
+    $direct = [string]$asset.browser_download_url
+    $downloaded = $false
+    if ($direct) {
+        try {
+            Invoke-WebRequest -Uri $direct -OutFile $temp -UseBasicParsing
+            $downloaded = $true
+        }
+        catch {
+            if (-not $token) { throw }
+        }
+    }
+    if (-not $downloaded) {
+        $assetUrl = "https://api.github.com/repos/$repo/releases/assets/$($asset.id)"
+        $dlHeaders = @{ Accept = 'application/octet-stream' }
+        if ($token) { $dlHeaders.Authorization = "Bearer $token" }
+        Invoke-WebRequest -Uri $assetUrl -Headers $dlHeaders -OutFile $temp -UseBasicParsing
+    }
 
     $file = Get-Item -LiteralPath $temp
     if ($file.Length -ne $expectedSize) {
