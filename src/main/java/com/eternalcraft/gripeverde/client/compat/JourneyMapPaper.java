@@ -339,12 +339,21 @@ public final class JourneyMapPaper {
         }
     }
 
-    // ── la letra de la informacion ──────────────────────────────────────────
+    // ── el tema entero ──────────────────────────────────────────────────────
 
     /**
-     * Copia el tema en curso del mapa y le cambia los colores de la letra y su
-     * fondo por papel y tinta. Solo en memoria: la configuracion del jugador no
-     * se toca, y al cerrar el juego vuelve a como estaba.
+     * v0.379.0: el tema entero de JourneyMap pasa a papel y tinta, no solo el
+     * minimapa.
+     *
+     * Antes se pintaba la etiqueta de estado y las del minimapa, y el fondo de
+     * pantalla completa se ponia marron oscuro -que es justo lo que se veia: la
+     * rejilla oscura-. Los botones seguian azules porque JourneyMap los dibuja
+     * con sus PROPIAS texturas del tema, y esas no se pueden recolorear desde
+     * fuera. Ahora, a cada boton se le apaga `useThemeImages`, de modo que el mod
+     * los pinta con sus colores planos, y esos colores pasan a ser papel con la
+     * tinta de la casa. Se tocan tambien la mira y el canto cuadrado.
+     *
+     * Solo en memoria: la configuracion del jugador no se toca.
      */
     private static void patchTheme() {
         if (themeTried) return;
@@ -355,45 +364,97 @@ public final class JourneyMapPaper {
             Class<?> loader = Class.forName("journeymap.client.io.ThemeLoader");
             Object theme = loader.getMethod("getCurrentTheme").invoke(null);
             if (theme == null) return;
-            Class<?> colorSpec = Class.forName("journeymap.client.ui.theme.Theme$ColorSpec");
-            var ctor = colorSpec.getConstructor(String.class, float.class);
-            Object paperBg = ctor.newInstance("#E3D5AB", 0.88f);
-            Object inkFg = ctor.newInstance("#2A1C12", 1.0f);
-            Object inkHi = ctor.newInstance("#5C3A16", 1.0f);
-            Object minimap = read(theme, "minimap");
-            if (minimap == null) return;
-            // Pantalla completa: fondo calido y su etiqueta de estado en tinta.
+
+            // Pantalla completa: papel claro en vez del marron oscuro.
             Object full = read(theme, "fullscreen");
             if (full != null) {
-                safeWrite(full, "background", ctor.newInstance("#241608", 0.92f));
-                Object status = read(full, "statusLabel");
-                if (status != null) {
-                    safeWrite(status, "background", paperBg);
-                    safeWrite(status, "foreground", inkFg);
-                    safeWrite(status, "shadow", Boolean.FALSE);
+                safeWrite(full, "background", spec("#E8DCB4", 0.96f));
+                paintLabel(read(full, "statusLabel"));
+            }
+
+            // Botones y conmutadores: sin texturas del tema y en papel.
+            Object control = read(theme, "control");
+            if (control != null) {
+                paintButton(read(control, "button"));
+                paintButton(read(control, "toggle"));
+            }
+
+            // Barras de herramientas: sin textura, que el mod no pinte su cinta.
+            Object container = read(theme, "container");
+            if (container != null) {
+                Object toolbar = read(container, "toolbar");
+                if (toolbar != null) {
+                    paintToolbar(read(toolbar, "horizontal"));
+                    paintToolbar(read(toolbar, "vertical"));
                 }
             }
+
+            Object minimap = read(theme, "minimap");
+            if (minimap == null) return;
             for (String shape : new String[] {"circle", "square"}) {
-                Object spec = read(minimap, shape);
-                if (spec == null) continue;
-                for (String label : new String[] {"labelTop", "labelBottom", "compassLabel"}) {
-                    Object labelSpec = read(spec, label);
-                    if (labelSpec == null) continue;
-                    safeWrite(labelSpec, "margin", Integer.valueOf(2));
-                    safeWrite(labelSpec, "background", paperBg);
-                    safeWrite(labelSpec, "foreground", inkFg);
-                    safeWrite(labelSpec, "highlight", inkHi);
-                    safeWrite(labelSpec, "shadow", Boolean.FALSE);
-                }
+                Object shapeSpec = read(minimap, shape);
+                if (shapeSpec == null) continue;
+                paintLabel(read(shapeSpec, "labelTop"));
+                paintLabel(read(shapeSpec, "labelBottom"));
+                paintLabel(read(shapeSpec, "compassLabel"));
                 // El marco del mapa es un ColorSpec completo, no una cadena.
-                safeWrite(spec, "frame", ctor.newInstance("#2A1C12", 1.0f));
+                safeWrite(shapeSpec, "frame", spec("#2A1C12", 1.0f));
+                safeWrite(shapeSpec, "reticle", spec("#2A1C12", 0.70f));
+                safeWrite(shapeSpec, "reticleHeading", spec("#8C2A1E", 0.85f));
             }
+
             Class<?> themeClass = Class.forName("journeymap.client.ui.theme.Theme");
             loader.getMethod("setCurrentTheme", themeClass).invoke(null, theme);
             themeTried = true;
             patchedTheme = theme;
+            note("tema en papel aplicado");
         } catch (Throwable ignored) {
         }
+    }
+
+    /** v0.379.0: un ColorSpec nuevo con el color de la casa. */
+    private static Object spec(String hex, float alpha) {
+        try {
+            Class<?> colorSpec = Class.forName("journeymap.client.ui.theme.Theme$ColorSpec");
+            return colorSpec.getConstructor(String.class, float.class).newInstance(hex, alpha);
+        } catch (Throwable ignored) {
+            return null;
+        }
+    }
+
+    /** v0.379.0: etiqueta de papel con letra de tinta y sin sombra. */
+    private static void paintLabel(Object labelSpec) {
+        if (labelSpec == null) return;
+        safeWrite(labelSpec, "margin", Integer.valueOf(2));
+        safeWrite(labelSpec, "background", spec("#E6D2A6", 0.92f));
+        safeWrite(labelSpec, "foreground", spec("#2A1C12", 1.0f));
+        safeWrite(labelSpec, "highlight", spec("#8C2A1E", 1.0f));
+        safeWrite(labelSpec, "shadow", Boolean.FALSE);
+    }
+
+    /**
+     * v0.379.0: boton de papel. Apagar `useThemeImages` es lo que quita el azul:
+     * con texturas, JourneyMap dibuja su PNG y los colores no se usan.
+     */
+    private static void paintButton(Object buttonSpec) {
+        if (buttonSpec == null) return;
+        safeWrite(buttonSpec, "useThemeImages", Boolean.FALSE);
+        safeWrite(buttonSpec, "buttonOn", spec("#DCCB9F", 0.95f));
+        safeWrite(buttonSpec, "buttonOff", spec("#D3C193", 0.88f));
+        safeWrite(buttonSpec, "buttonHoverOn", spec("#F3E7C8", 0.97f));
+        safeWrite(buttonSpec, "buttonHoverOff", spec("#E8DAB4", 0.95f));
+        safeWrite(buttonSpec, "buttonDisabled", spec("#BFB08A", 0.70f));
+        safeWrite(buttonSpec, "iconOn", spec("#2A1C12", 1.0f));
+        safeWrite(buttonSpec, "iconOff", spec("#4A3A22", 0.95f));
+        safeWrite(buttonSpec, "iconHoverOn", spec("#8C2A1E", 1.0f));
+        safeWrite(buttonSpec, "iconHoverOff", spec("#5C3A16", 1.0f));
+        safeWrite(buttonSpec, "iconDisabled", spec("#8A7A5A", 0.80f));
+    }
+
+    /** v0.379.0: la cinta de botones del mapa, sin textura. */
+    private static void paintToolbar(Object toolbarSpec) {
+        if (toolbarSpec == null) return;
+        safeWrite(toolbarSpec, "useThemeImages", Boolean.FALSE);
     }
 
     // ── plomeria de reflexion, sin nombres ofuscados ────────────────────────
