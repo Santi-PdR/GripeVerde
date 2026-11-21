@@ -4,7 +4,9 @@ $repo = 'Santi-PdR/GripeVerde'
 $api = "https://api.github.com/repos/$repo/releases/latest"
 $dest = $null
 $temp = Join-Path $mods ('.gripeverde-download-' + [guid]::NewGuid().ToString('N') + '.tmp')
-$moved = @()
+# 2026-11-13: el script ya no guarda copias del JAR anterior. La carpeta de
+# respaldos que dejaban las versiones viejas se borra aqui, en la proxima pasada.
+$legacyBackupDir = Join-Path (Split-Path -Parent $mods) 'gripeverde-jar-backups'
 
 try {
     if (-not (Test-Path -LiteralPath $mods -PathType Container)) {
@@ -42,7 +44,7 @@ try {
     $expectedHash = ([string]$asset.digest) -replace '^sha256:', ''
     if (-not $expectedHash) { throw 'GitHub no publico el digest del asset; no puedo verificar la descarga.' }
 
-    # Si no hay JAR anterior (primera instalacion) se instala igual, sin respaldo.
+    # JAR de GripeVerde que ya estuvieran puestos: se borran, no se respaldan.
     $old = @(Get-ChildItem -LiteralPath $mods -File -Filter '*gripeverde*.jar' -ErrorAction SilentlyContinue)
 
     $assetUrl = "https://api.github.com/repos/$repo/releases/assets/$($asset.id)"
@@ -73,33 +75,31 @@ try {
         $zip.Dispose()
     }
 
-    $backupDir = Join-Path (Split-Path -Parent $mods) 'gripeverde-jar-backups'
-    New-Item -ItemType Directory -Path $backupDir -Force | Out-Null
-    $stamp = Get-Date -Format 'yyyyMMdd-HHmmss-fff'
-
+    # Se borra el JAR viejo ANTES de poner el nuevo: nunca puede quedar la carpeta
+    # con dos gripeverde a la vez, que impediria abrir el juego.
+    $removed = @()
     foreach ($jar in $old) {
-        $backup = Join-Path $backupDir ($jar.Name + '.' + $stamp + '.bak')
-        Move-Item -LiteralPath $jar.FullName -Destination $backup
-        $moved += [pscustomobject]@{ Name = $jar.Name; Backup = $backup }
+        if ($jar.FullName -eq $dest) { continue }
+        Remove-Item -LiteralPath $jar.FullName -Force
+        $removed += $jar.Name
     }
 
-    Move-Item -LiteralPath $temp -Destination $dest
+    Move-Item -LiteralPath $temp -Destination $dest -Force
     Write-Host "GripeVerde $($release.tag_name) instalado en: $dest" -ForegroundColor Green
-    if ($moved.Count -gt 0) { Write-Host "JAR anterior respaldado en: $backupDir" }
-    else { Write-Host "Primera instalacion: no habia JAR anterior que respaldar." }
+    if ($removed.Count -gt 0) { Write-Host ("JAR anterior borrado: " + ($removed -join ', ')) }
+    else { Write-Host "No habia JAR anterior en la carpeta de mods." }
     Write-Host "SHA-256 verificado: $hash"
+
+    # Limpieza de la carpeta de respaldos que dejaban las versiones anteriores.
+    if (Test-Path -LiteralPath $legacyBackupDir -PathType Container) {
+        Remove-Item -LiteralPath $legacyBackupDir -Recurse -Force
+        Write-Host "Carpeta de respaldos vieja borrada: $legacyBackupDir"
+    }
 }
 catch {
-    if ($moved.Count -gt 0 -and $dest -and (Test-Path -LiteralPath $dest -PathType Leaf)) {
-        Remove-Item -LiteralPath $dest -Force
-    }
-    foreach ($item in $moved) {
-        $from = $item.Backup
-        if (Test-Path -LiteralPath $from -PathType Leaf) {
-            Move-Item -LiteralPath $from -Destination (Join-Path $mods $item.Name) -Force
-        }
-    }
-    Write-Host "No se completo la instalacion; se intento restaurar la version anterior." -ForegroundColor Red
+    # Sin respaldos no hay nada que restaurar: si el fallo ocurre antes de tocar la
+    # carpeta de mods, la version que habia sigue tal cual.
+    Write-Host "No se completo la instalacion; revisa la carpeta de mods." -ForegroundColor Red
     throw
 }
 finally {

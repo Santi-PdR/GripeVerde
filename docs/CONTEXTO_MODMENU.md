@@ -20,16 +20,17 @@ Actualizado: 2026-11-13
   y respetan Movimiento reducido y Destellos reducidos.
 - **Entrega de cada versión:** el usuario no descarga archivos del workspace. Al terminar cada
   tanda hay que darle **un script de PowerShell para pegar**, que baja el `.jar` del último
-  release directo a su carpeta de mods, respalda el anterior y verifica tamaño y SHA-256 contra
-  lo que publica la API. No se guarda ninguna copia del JAR en el repositorio ni en el workspace.
+  release directo a su carpeta de mods, borra el anterior (sin copias de respaldo) y verifica
+  tamaño y SHA-256 contra lo que publica la API. No se guarda ninguna copia del JAR en el repositorio ni en el workspace.
   Tampoco se dispara la descarga desde el sandbox: la red de este entorno solo alcanza
   `github.com`, `api.github.com` y pocos hosts más, y el binario del release viene de
   `release-assets.githubusercontent.com` (da `EOF` acá).
 - El script vive en `tools/install-latest.ps1` y usa, en este orden: `$env:GITHUB_TOKEN`,
   `gh auth token`, `git credential fill` (host github.com). Si no hay ninguna, corta con un
   mensaje que dice qué hacer. Verifica `size` y `digest` (sha256) que publica la API del
-  asset, comprueba que el ZIP tenga `META-INF/MANIFEST.MF` y `mods.toml`, respalda los
-  `*gripeverde*.jar` viejos en `<instancia>\gripeverde-jar-backups` y revierte si algo falla.
+  asset, comprueba que el ZIP tenga `META-INF/MANIFEST.MF` y `mods.toml`, **borra** los
+  `*gripeverde*.jar` viejos (el usuario no quiere respaldos) y, si encontraba la carpeta
+  heredada `<instancia>\gripeverde-jar-backups`, la borra también.
 - El usuario **autorizó** pasar el repo a público (2026-11-13), pero **la integración de esta
   sesión no puede**: `gh repo edit` de esta versión no tiene el flag de consecuencias y
   `PATCH /repos` con `private=false` devuelve `403 Resource not accessible by integration`
