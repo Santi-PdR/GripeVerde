@@ -38,6 +38,17 @@ public class TooltipEventHandler {
     private static final int BORDER_TOP    = 0xFF7A5A32; // bronze medio
     private static final int BORDER_BOTTOM = 0xFF3D2310; // tinta quemada
 
+    /**
+     * v0.382.0: la ficha se dibuja al final del cuadro, no en el momento del
+     * evento. En el inventario y en JEI los iconos de las casillas se pintan
+     * DESPUES del cartel, y salian encima de la ficha: se leia la descripcion
+     * mezclada con los objetos. Guardando los renglones y pintandolos en
+     * ScreenEvent.Render.Post queda siempre arriba de todo.
+     */
+    private static java.util.List<String> pendingRows;
+    private static int pendingMouseX;
+    private static int pendingMouseY;
+
     /** Tinta de la casa para el texto de los tooltips. */
     private static final int INK_TITLE = 0xFF1A1108;
     private static final int INK_BODY = 0xFF2A1C10;
@@ -100,7 +111,15 @@ public class TooltipEventHandler {
             List<Component> lines = stack.getTooltipLines(mc.player, flag);
             if (lines == null || lines.isEmpty()) return;
             event.setCanceled(true);
-            drawPaperTooltip(event, lines);
+            Minecraft mc2 = Minecraft.getInstance();
+            if (mc2 != null && mc2.screen != null) {
+                // Dentro de una pantalla: se guarda y se pinta al cerrar el cuadro.
+                pendingRows = buildRows(event.getFont(), lines);
+                pendingMouseX = event.getX();
+                pendingMouseY = event.getY();
+            } else {
+                drawPaperTooltip(event, lines);
+            }
         } catch (Throwable ignored) {
         }
     }
@@ -119,13 +138,10 @@ public class TooltipEventHandler {
         return sb.toString();
     }
 
-    private static void drawPaperTooltip(RenderTooltipEvent.Pre event,
-                                         List<Component> lines) {
-        Font font = event.getFont();
-        GuiGraphics g = event.getGraphics();
-        if (font == null || g == null) return;
-        int maxW = 210;
+    /** v0.382.0: los renglones de la ficha, ya recortados al ancho de la casa. */
+    private static java.util.List<String> buildRows(Font font, List<Component> lines) {
         java.util.List<String> rows = new java.util.ArrayList<>();
+        int maxW = 210;
         for (Component line : lines) {
             java.util.List<FormattedCharSequence> pieces;
             try {
@@ -143,6 +159,15 @@ public class TooltipEventHandler {
             }
             if (rows.size() > 40) break;
         }
+        return rows;
+    }
+
+    private static void drawPaperTooltip(RenderTooltipEvent.Pre event,
+                                         List<Component> lines) {
+        Font font = event.getFont();
+        GuiGraphics g = event.getGraphics();
+        if (font == null || g == null) return;
+        java.util.List<String> rows = buildRows(font, lines);
         if (rows.isEmpty()) return;
         int w = 0;
         for (String row : rows) w = Math.max(w, font.width(row));
@@ -169,6 +194,59 @@ public class TooltipEventHandler {
         if (sh > 0) y = Math.max(4, Math.min(y, sh - h - 4));
         com.eternalcraft.gripeverde.client.render.PaperTexture.drawTornSlip(
             g, x, y, w, h, 0xE6D2A6, 0x422810, 252);
+        for (int i = 0; i < rows.size(); i++) {
+            int color = i == 0 ? INK_TITLE : INK_BODY;
+            g.drawString(font, rows.get(i), x + 6, y + 5 + i * 10, color, false);
+        }
+    }
+
+    /** v0.382.0: al abrir o cerrar una pantalla no queda ficha pendiente. */
+    @SubscribeEvent
+    public static void onScreenChange(net.minecraftforge.client.event.ScreenEvent.Init.Post event) {
+        pendingRows = null;
+    }
+
+    /**
+     * v0.382.0: pinta la ficha guardada cuando la pantalla ya termino de
+     * dibujarse. Se hace con prioridad LOWEST para quedar por encima de los
+     * iconos, de JEI y de cualquier capa que se sume despues de la nuestra.
+     */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onScreenRenderPost(
+            net.minecraftforge.client.event.ScreenEvent.Render.Post event) {
+        java.util.List<String> rows = pendingRows;
+        if (rows == null || rows.isEmpty()) return;
+        pendingRows = null;
+        try {
+            GuiGraphics g = event.getGuiGraphics();
+            Minecraft mc = Minecraft.getInstance();
+            if (g == null || mc == null || mc.font == null) return;
+            drawRows(g, mc.font, rows, event.getMouseX(), event.getMouseY(),
+                event.getScreen().width, event.getScreen().height);
+        } catch (Throwable ignored) {
+        }
+    }
+
+    /**
+     * v0.382.0: la ficha de papel, pegada al cursor y por encima del objeto,
+     * con voltaeo a la izquierda y arriba si no cabe. Opaca: lo que hay detras
+     * no se transparenta.
+     */
+    private static void drawRows(GuiGraphics g, Font font, java.util.List<String> rows,
+                                 int mouseX, int mouseY, int screenW, int screenH) {
+        if (g == null || font == null || rows == null || rows.isEmpty()) return;
+        int w = 0;
+        for (String row : rows) w = Math.max(w, font.width(row));
+        w += 12;
+        int h = rows.size() * 10 + 8;
+        int x = mouseX + 12;
+        int y = mouseY - h - 8;
+        if (x + w > screenW - 4) x = mouseX - w - 12;
+        if (y < 4) y = mouseY + 14;
+        if (y + h > screenH - 4) y = Math.max(4, screenH - h - 4);
+        if (x < 4) x = 4;
+        com.eternalcraft.gripeverde.client.render.PaperTexture.drawTornSlip(
+            g, x, y, w, h, 0xE6D2A6, 0x422810, 255);
         for (int i = 0; i < rows.size(); i++) {
             int color = i == 0 ? INK_TITLE : INK_BODY;
             g.drawString(font, rows.get(i), x + 6, y + 5 + i * 10, color, false);

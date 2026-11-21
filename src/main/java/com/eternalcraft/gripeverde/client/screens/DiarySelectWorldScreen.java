@@ -459,7 +459,13 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 String when = levelStamp(summary);
 
                 if (withPhoto && drawBottom - drawTop >= 26) {
-                    int photoTop = drawTop + (drawBottom - drawTop - photoSize) / 2;
+                    // v0.382.0: la foto iba centrada y su marco caia sobre la
+                    // raya del renglon. Sube un pixel y se ata al alto real de
+                    // la fila: nunca toca la linea de abajo.
+                    int photoTop = drawTop + Math.max(1, (drawBottom - drawTop - photoSize) / 2 - 1);
+                    if (photoTop + photoSize > drawBottom - 2) {
+                        photoTop = Math.max(drawTop + 1, drawBottom - 2 - photoSize);
+                    }
                     net.minecraft.resources.ResourceLocation icon = worldIcon(levelFolder(summary));
                     if (icon != null) {
                         try {
@@ -1343,6 +1349,31 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         // v0.377.0: ademas se traga cualquier segundo clic rapido sobre la
         // misma ficha, venga de donde venga la marca: asi el gesto de doble
         // clic no puede llegar nunca a la lista del juego.
+        // v0.382.0: cualquier clic izquierdo dentro del CUERPO del registro se
+        // queda en casa. Antes se le pasaba al juego con la x recolocada y, al
+        // tocar a la derecha de una ficha, el juego entraba al mundo. Ahora se
+        // marca el mundo aqui mismo y el clic no sigue de largo.
+        boolean inBody = button == 0 && this.listTop >= 0 && this.listBottom > this.listTop
+            && mouseY >= this.listTop && mouseY <= this.listBottom
+            && mouseX >= this.ledgerLeft() - 6
+            && mouseX <= (this.sheetLeft >= 0 && this.sheetWidth > 0
+                ? this.sheetLeft + this.sheetWidth : this.width) + 6;
+        if (inBody) {
+            Object row = entryAt(mouseY);
+            if (row != null && this.vanillaList != null) {
+                try {
+                    this.vanillaList.setSelected(row);
+                    this.vanillaList.setFocused(true);
+                } catch (Throwable ignored) {
+                }
+            }
+            try {
+                com.eternalcraft.gripeverde.client.audio.UiSounds.tab();
+            } catch (Throwable ignored) {
+            }
+            return true;
+        }
+
         Object clicked = inLedger && button == 0 ? entryAt(mouseY) : null;
         if (clicked != null) {
             Object chosen = null;

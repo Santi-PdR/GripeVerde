@@ -1695,3 +1695,30 @@ Que el usuario pruebe `0.181.0` sacando CopyL de `mods`: la ficha importa los di
 arranque y los atajos pasan a responder. Revisar a ojo la columna de ranuras. Queda pendiente llevar el
 mismo aire a las pantallas de CopyL: el push a `Santi-PdR/Lclient` sigue en 403, así que ese cambio
 viaja como parche en `tools/copyl/`.
+
+## Reglas aprendidas (2026-11-13, versiones 0.378–0.382)
+
+Cuatro trampas que ya costaron una captura cada una. Van aquí para no repetirlas:
+
+1. **El juego puede pintar su fondo DESPUÉS de `renderBackground`.**
+   `PackSelectionScreen` pinta su tierra por su cuenta, así que una hoja dibujada
+   en `renderBackground` se pierde. Cuando la pantalla es así, el papel se pinta
+   desde `render()` —encima de todo— y después se **repiten** las filas y los
+   botones que la hoja tapó (`redrawOnPage`), en el mismo orden que el juego.
+   Antes de mover nada de z, comprobar quién pinta el fondo y en qué orden.
+
+2. **Ningún clic izquierdo del cuerpo de una lista se le pasa al juego.**
+   Recolocar la `x` y llamar a `super.mouseClicked` acaba abriendo un mundo
+   cuando el jugador toca a la derecha de una ficha. En el cuerpo del registro se
+   marca la fila nosotros (`setSelected`) y se devuelve `true`: para entrar está
+   el botón de la casa o Enter.
+
+3. **Tooltips y avisos flotantes se pintan al final del cuadro.**
+   En el inventario y con JEI, los iconos se dibujan después del cartel y salían
+   encima. Se guardan los renglones en `RenderTooltipEvent.Pre` y se pintan en
+   `ScreenEvent.Render.Post` con prioridad `LOWEST`. La ficha va opaca (255).
+
+4. **Las filas de las listas del juego no son lo que parecen.**
+   La fila del archivador de packs no implementa `PackSelectionModel.Entry`: la
+   lleva dentro. Se saca por tipo de campo (`asPackEntry`), nunca por `instanceof`
+   directo ni por nombre de campo (van ofuscados).

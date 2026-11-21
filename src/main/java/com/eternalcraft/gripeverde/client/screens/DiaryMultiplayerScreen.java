@@ -1202,25 +1202,39 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                 int bandLeft = Math.max(0, rowLeft - 2);
                 int bandRight = Math.min(this.width, rowLeft + rowWidth + 2);
                 gfx.fill(bandLeft, drawTop, bandRight, drawBottom, 0xFFE8D7B0);
-                // filete fino arriba y abajo, para que la fila se lea como un
-                // renglon del registro y no como una mancha.
-                gfx.fill(bandLeft, drawTop, bandRight, drawTop + 1, 0x2E6B5533);
-                gfx.fill(bandLeft, drawBottom - 1, bandRight, drawBottom, 0x2E6B5533);
 
-                // Sello del puesto, en vez del icono del juego (que queda tapado
-                // por el papel): inicial del nombre en un cuadrado de tinta.
-                String initial = name.isEmpty() ? "?" : name.substring(0, 1).toUpperCase();
-                int sealSize = Math.min(24, Math.max(14, drawBottom - drawTop - 8));
-                int sealX = bandLeft + 6;
-                int sealY = drawTop + Math.max(2, (drawBottom - drawTop - sealSize) / 2);
-                gfx.fill(sealX, sealY, sealX + sealSize, sealY + sealSize, 0xFF8C2A1E);
-                gfx.fill(sealX + 1, sealY + 1, sealX + sealSize - 1, sealY + 1 + 1, 0xE8E8DCB4);
-                int iw = this.font.width(initial);
-                gfx.drawString(this.font, initial, sealX + (sealSize - iw) / 2,
-                    sealY + (sealSize - 7) / 2, 0xFFF3E7C8, false);
+                // v0.382.0: se acabo el sello con la inicial. El puesto va con
+                // su propia imagen (la del servidor) y, si el puesto no tiene
+                // ninguna, con el lacre de la casa.
+                int box = Math.min(32, Math.max(16, drawBottom - drawTop - 4));
+                int boxX = bandLeft + 4;
+                int boxY = drawTop + Math.max(1, (drawBottom - drawTop - box) / 2);
+                net.minecraft.resources.ResourceLocation favicon = serverIcon(sd);
+                if (favicon != null) {
+                    gfx.blit(favicon, boxX, boxY, 0, 0, box, box, 32, 32);
+                    gfx.fill(boxX, boxY, boxX + box, boxY + 1, 0x552A1C12);
+                    gfx.fill(boxX, boxY + box - 1, boxX + box, boxY + box, 0x552A1C12);
+                    gfx.fill(boxX, boxY, boxX + 1, boxY + box, 0x552A1C12);
+                    gfx.fill(boxX + box - 1, boxY, boxX + box, boxY + box, 0x552A1C12);
+                } else {
+                    String initial = name.isEmpty() ? "?" : name.substring(0, 1).toUpperCase();
+                    gfx.fill(boxX, boxY, boxX + box, boxY + box, 0xFF8C2A1E);
+                    int iw = this.font.width(initial);
+                    gfx.drawString(this.font, initial, boxX + (box - iw) / 2,
+                        boxY + (box - 7) / 2, 0xFFF3E7C8, false);
+                }
 
-                String shownName = DiaryChrome.fitText(this.font, name, textW);
+                // v0.382.0: los jugadores activos, en el canto derecho de la
+                // ficha, como el recuento de un libro de visitas.
+                String players = serverPlayers(sd);
+                int playersW = players.isEmpty() ? 0 : this.font.width(players);
+                int nameLimit = Math.max(40, textW - (playersW > 0 ? playersW + 10 : 0));
+                String shownName = DiaryChrome.fitText(this.font, name, nameLimit);
                 gfx.drawString(this.font, shownName, textLeft, slipTop + 2, 0xFF1A1108, false);
+                if (playersW > 0) {
+                    gfx.drawString(this.font, players, textLeft + textW - playersW, slipTop + 2,
+                        0xFF6B5533, false);
+                }
 
                 String motd = motdText(sd);
                 String extra = "";
@@ -1241,7 +1255,8 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                     // cuenta de si mismo.
                     int room = Math.max(1, (slipH - 13) / 9);
                     int maxLines = Math.min(3, room);
-                    java.util.List<String> wrapped = wrapToWidth(this.font, line2, textW, maxLines);
+                    java.util.List<String> wrapped = wrapToWidth(this.font, line2,
+                        Math.max(60, textW), maxLines);
                     for (int r = 0; r < wrapped.size(); r++) {
                         gfx.drawString(this.font, wrapped.get(r), textLeft,
                             slipTop + 13 + r * 9, 0xFF6B5533, false);
@@ -1327,6 +1342,78 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     }
 
     /** v0.367.0: el MOTD del puesto, leido de frente sobre la ficha del juego. */
+    /**
+     * v0.382.0: la imagen del puesto, la que el servidor manda en su ping.
+     *
+     * El juego la dibuja en su fila, pero la ficha de la casa la tapa, asi que
+     * se saca de los bytes que el propio juego ya tiene y se sube como textura
+     * dinamica, una sola vez por direccion. Sin nombre de campo: se busca el
+     * unico `byte[]` de la clase, que es justo el PNG del icono.
+     */
+    private net.minecraft.resources.ResourceLocation serverIcon(ServerData data) {
+        String key = null;
+        try {
+            key = data == null ? null : data.ip;
+        } catch (Throwable ignored) {
+        }
+        if (key == null || key.isEmpty()) return null;
+        if (SERVER_ICONS_ABSENT.contains(key)) return null;
+        net.minecraft.resources.ResourceLocation cached = SERVER_ICONS.get(key);
+        if (cached != null) return cached;
+        if (this.minecraft == null) return null;
+        try {
+            byte[] bytes = null;
+            for (java.lang.reflect.Field f : ServerData.class.getDeclaredFields()) {
+                if (f.getType() != byte[].class) continue;
+                f.setAccessible(true);
+                Object v = f.get(data);
+                if (v instanceof byte[] b && b.length > 8) {
+                    bytes = b;
+                    break;
+                }
+            }
+            if (bytes == null) {
+                SERVER_ICONS_ABSENT.add(key);
+                return null;
+            }
+            com.mojang.blaze3d.platform.NativeImage image;
+            try (java.io.InputStream in = new java.io.ByteArrayInputStream(bytes)) {
+                image = com.mojang.blaze3d.platform.NativeImage.read(in);
+            }
+            net.minecraft.resources.ResourceLocation rl = new net.minecraft.resources.ResourceLocation(
+                "gripeverde", "server_icon/" + Integer.toHexString(key.hashCode())
+                    + "_" + SERVER_ICONS.size());
+            this.minecraft.getTextureManager()
+                .register(rl, new net.minecraft.client.renderer.texture.DynamicTexture(image));
+            SERVER_ICONS.put(key, rl);
+            return rl;
+        } catch (Throwable ignored) {
+            SERVER_ICONS_ABSENT.add(key);
+            return null;
+        }
+    }
+
+    /**
+     * v0.382.0: cuantos jugadores hay en el puesto ("3/20"), leido del propio
+     * juego: se busca el texto con forma de recuento entre sus campos, sin
+     * depender del nombre del campo.
+     */
+    private static String serverPlayers(ServerData data) {
+        if (data == null) return "";
+        try {
+            for (java.lang.reflect.Field f : ServerData.class.getDeclaredFields()) {
+                if (f.getType() != net.minecraft.network.chat.Component.class) continue;
+                f.setAccessible(true);
+                Object v = f.get(data);
+                if (!(v instanceof net.minecraft.network.chat.Component c)) continue;
+                String text = c.getString();
+                if (text != null && text.matches("\\d+\\s*/\\s*\\d+")) return text.trim();
+            }
+        } catch (Throwable ignored) {
+        }
+        return "";
+    }
+
     private static String motdText(ServerData serverData) {
         try {
             if (serverData == null || serverData.motd == null) return "";

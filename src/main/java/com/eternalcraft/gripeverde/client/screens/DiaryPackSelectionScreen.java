@@ -128,8 +128,10 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         }
         if (x2 - x1 < 60) return;
         int paper = PaperTexture.paperColor(PaperTexture.PaperKind.ARCHIVE);
+        // v0.382.0: papel opaco. A 250 se transparentaba el nombre blanco del
+        // juego y se leian las dos letras encimadas.
         g.fill(x1, top, x2, bottom,
-            com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(paper, 250));
+            com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(paper, 255));
         boolean scissored = false;
         try {
             g.enableScissor(x1, top, x2, bottom);
@@ -158,19 +160,24 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
                 String title = "";
                 String sub = "";
                 boolean chosen = false;
-                if (child instanceof net.minecraft.client.gui.screens.packs.PackSelectionModel.Entry e) {
+                // v0.382.0: la fila del juego no ES una entrada del modelo, la
+                // lleva dentro. Con el instanceof directo no se reconocia ninguna
+                // fila y los nombres seguian en blanco bajo el papel.
+                net.minecraft.client.gui.screens.packs.PackSelectionModel.Entry entry =
+                    asPackEntry(child);
+                if (entry != null) {
                     try {
-                        Component t = e.getTitle();
+                        Component t = entry.getTitle();
                         title = t == null ? "" : t.getString();
                     } catch (Throwable ignored) {
                     }
                     try {
-                        Component d = e.getDescription();
+                        Component d = entry.getDescription();
                         sub = d == null ? "" : d.getString();
                     } catch (Throwable ignored) {
                     }
                     try {
-                        chosen = e.isSelected();
+                        chosen = entry.isSelected();
                     } catch (Throwable ignored) {
                     }
                 }
@@ -200,6 +207,60 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
                 }
             }
         }
+    }
+
+    /**
+     * v0.382.0: la hoja se pinta encima de todo, asi que hay que repetir lo que
+     * dejo debajo: los botones -los de la casa y los del juego- y las dos listas
+     * de materiales. Las listas van sin fondo propio (se lo quitamos en init),
+     * de modo que quedan sobre el papel.
+     */
+    private void redrawOnPage(GuiGraphics g, int mouseX, int mouseY, float partial) {
+        for (var renderable : this.renderables) {
+            if (renderable == this.availableList || renderable == this.selectedList) continue;
+            try {
+                renderable.render(g, mouseX, mouseY, partial);
+            } catch (Throwable ignored) {
+            }
+        }
+        for (AbstractSelectionList<?> list : java.util.Arrays.asList(
+                this.availableList, this.selectedList)) {
+            if (list == null) continue;
+            try {
+                list.render(g, mouseX, mouseY, partial);
+            } catch (Throwable ignored) {
+            }
+        }
+    }
+
+    /**
+     * v0.382.0: saca la entrada del modelo de una fila del archivador. Primero
+     * se prueba el tipo directo y, si no, se busca dentro la entrada -la fila
+     * del juego la guarda en un campo-, sin depender de nombres ofuscados.
+     */
+    private static net.minecraft.client.gui.screens.packs.PackSelectionModel.Entry
+            asPackEntry(Object row) {
+        if (row == null) return null;
+        if (row instanceof net.minecraft.client.gui.screens.packs.PackSelectionModel.Entry e) {
+            return e;
+        }
+        for (Class<?> c = row.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
+            for (java.lang.reflect.Field f : c.getDeclaredFields()) {
+                if (!net.minecraft.client.gui.screens.packs.PackSelectionModel.Entry.class
+                        .isAssignableFrom(f.getType())) {
+                    continue;
+                }
+                try {
+                    f.setAccessible(true);
+                    Object v = f.get(row);
+                    if (v instanceof net.minecraft.client.gui.screens.packs.PackSelectionModel.Entry e) {
+                        return e;
+                    }
+                } catch (Throwable ignored) {
+                }
+            }
+        }
+        return null;
     }
 
     /** v0.372.0: alto de renglon de una lista del juego, con respaldo. */
@@ -255,9 +316,21 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
      * papel claro no se lee. Se cubre esa franja con su recorte y se reescribe
      * en tinta, como en el resto de las hojas.
      */
+    /** v0.382.0: el juego no debe pintar su tierra: la hoja la pone drawPage. */
+    @Override
+    public void renderBackground(GuiGraphics g) {
+    }
+
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partial) {
         super.render(g, mouseX, mouseY, partial);
+        // v0.382.0: primero la hoja, encima de la tierra del juego; despues las
+        // filas y los botones que la hoja tapo, en el mismo orden que el juego.
+        try {
+            drawPage(g);
+            redrawOnPage(g, mouseX, mouseY, partial);
+        } catch (Throwable ignored) {
+        }
         // v0.346.0: las dos listas del archivador se acompasan al papel, como
         // las fichas de Sonido y Accesibilidad. Solo se tine la fila: la letra
         // del juego y sus mandos quedan como estan.
@@ -324,8 +397,14 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         QuarantineSceneRenderer.tick(1.0f / 20.0f);
     }
 
-    @Override
-    public void renderBackground(GuiGraphics g) {
+    /**
+     * v0.382.0: la hoja del archivador. Antes vivia en renderBackground, pero
+     * PackSelectionScreen pinta su propio fondo de tierra DESPUES de esa
+     * llamada: la hoja se dibujaba y la tapaba la tierra, y por eso el
+     * archivador salia sobre piedra. Ahora se pinta desde render(), encima de
+     * todo, y despues se repiten las filas y los botones que tapa.
+     */
+    private void drawPage(GuiGraphics g) {
         // v0.380.0: aqui se dibujaban los cajones ANTES de la escena y de la
         // hoja grande, asi que la hoja los tapaba y el archivador salia sin
         // cajones. Ahora van al final de este metodo, encima del papel y debajo
