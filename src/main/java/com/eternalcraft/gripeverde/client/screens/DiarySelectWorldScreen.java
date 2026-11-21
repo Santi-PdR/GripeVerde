@@ -1362,7 +1362,11 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             Object row = entryAt(mouseY);
             if (row != null && this.vanillaList != null) {
                 try {
-                    this.vanillaList.setSelected(row);
+                    @SuppressWarnings({"unchecked", "rawtypes"})
+                    net.minecraft.client.gui.components.AbstractSelectionList raw =
+                        this.vanillaList;
+                    raw.setSelected(
+                        (net.minecraft.client.gui.components.AbstractSelectionList.Entry) row);
                     this.vanillaList.setFocused(true);
                 } catch (Throwable ignored) {
                 }

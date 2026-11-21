@@ -80,6 +80,12 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     private Button vanillaDeleteBtn;
     // Cached after list layout changes; render-time row decoration must not scan fields reflectively.
     private int vanillaItemHeight;
+
+    // v0.382.0: la imagen y el recuento de cada puesto, una vez por direccion.
+    private static final java.util.Map<String, net.minecraft.resources.ResourceLocation> SERVER_ICONS
+        = new java.util.HashMap<>();
+    private static final java.util.Set<String> SERVER_ICONS_ABSENT
+        = new java.util.HashSet<>();
     private int vanillaListY0;
     private int vanillaHeaderHeight;
 
