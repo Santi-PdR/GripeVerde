@@ -22,3 +22,7 @@ _backups/
 .deploy
 build_*.txt
 /*.jar
+
+# v0.388.0: los .pyc de las herramientas no van al repo.
+__pycache__/
+*.pyc

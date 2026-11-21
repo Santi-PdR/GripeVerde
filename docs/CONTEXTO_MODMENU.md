@@ -1779,3 +1779,17 @@ Cuatro trampas que ya costaron una captura cada una. Van aquí para no repetirla
   `mouseClicked` de la fila (`GuiEventListener`, nombre que **no** se ofusca),
   con el mismo freno y pegando a la izquierda, lejos de los iconos de la fila.
 - La barra de scroll se arregla sola al reenviar la x sin recortarla.
+
+## 0.388.0 - reflexion y controles invisibles
+
+- **Reflexion: siempre con barrido por forma.** Buscar por nombre
+  (`getDeclaredMethod("setSelected")`) no sirve en el juego real: los nombres
+  vienen cambiados y el `find` devuelve null. Hay que dejar una cascada por
+  forma (`getDeclaredMethods()` y mirar parametros/tipo de retorno) o una
+  comprobacion de que el resultado quedo como se esperaba. `tools/lint_java.py`
+  avisa de cada busqueda por nombre sin barrido cerca; si el nombre es de un mod
+  externo (JourneyMap, Embeddium, Forge), se marca con `// reflexion-ok`.
+- **Una pantalla que no llama a `super.render` tiene que dibujar todos sus
+  widgets.** En Mundos se dibujaban a mano las fichas vestidas y el buscador; un
+  boton del juego que no se vistio quedaba invisible pero clickeable. Ahora hay
+  una red de seguridad que recorre `children()` y pinta lo que falte.

@@ -247,6 +247,25 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
                         "m_99797_", ServerList.class);
                 } catch (NoSuchMethodException ignored) {}
             }
+            if (method == null) {
+                // v0.388.0: si el juego viene con otro nombre, se busca por
+                // FORMA: el unico metodo que recibe una ServerList y devuelve
+                // nada es el que refresca los puestos. Antes, sin esto, la
+                // lista se quedaba sin refrescar y los jugadores y el MOTD
+                // salian viejos o vacios.
+                for (Class<?> c = ServerSelectionList.class; c != null && c != Object.class;
+                     c = c.getSuperclass()) {
+                    for (java.lang.reflect.Method m : c.getDeclaredMethods()) {
+                        if (m.getParameterCount() != 1) continue;
+                        if (!m.getParameterTypes()[0].isAssignableFrom(ServerList.class)) continue;
+                        if (m.getReturnType() != void.class) continue;
+                        if (java.lang.reflect.Modifier.isStatic(m.getModifiers())) continue;
+                        method = m;
+                        break;
+                    }
+                    if (method != null) break;
+                }
+            }
             if (method != null) {
                 method.setAccessible(true);
                 method.invoke(this.vanillaList, this.vanillaServers);

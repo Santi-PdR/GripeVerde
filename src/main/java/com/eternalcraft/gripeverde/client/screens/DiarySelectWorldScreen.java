@@ -334,6 +334,20 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             if (button.visible) button.render(g, mouseX, mouseY, partial);
         }
 
+        // v0.388.0: red de seguridad. Esta hoja no llama a super.render: dibuja a
+        // mano las fichas vestidas y el buscador. Si algun control del juego no
+        // se pudo vestir, quedaba visible para el raton pero NUNCA dibujado: un
+        // boton invisible que igual responde. Aqui se dibuja lo que falte.
+        try {
+            for (var child : this.children()) {
+                if (!(child instanceof net.minecraft.client.gui.components.AbstractWidget w)) continue;
+                if (!w.visible || w == this.vanillaList) continue;
+                if (this.dressed.contains(w) || this.searchBoxes.contains(w)) continue;
+                w.render(g, mouseX, mouseY, partial);
+            }
+        } catch (Throwable ignored) {
+        }
+
         try {
             Discoveries.drawToast(g, this.width);
         } catch (Throwable ignored) {

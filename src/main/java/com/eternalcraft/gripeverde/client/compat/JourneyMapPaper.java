@@ -77,6 +77,8 @@ public final class JourneyMapPaper {
             getMiniMap = methodOf(uiManagerClass, "getMiniMap");
             isMiniMapEnabled = methodOf(uiManagerClass, "isMiniMapEnabled");
             try {
+                // reflexion-ok: `INSTANCE` es campo de JourneyMap, no del juego;
+                // sus nombres no cambian entre versiones.
                 java.lang.reflect.Field inst = uiManagerClass.getDeclaredField("INSTANCE");
                 inst.setAccessible(true);
                 uiManager = inst.get(null);

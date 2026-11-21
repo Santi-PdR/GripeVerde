@@ -165,6 +165,36 @@ def notas_de_chapa(files):
     return notas
 
 
+def notas_de_reflexion(f):
+    """
+    Aviso blando: reflexion sobre clases del juego buscando un nombre fijo
+    (`getDeclaredMethod("setSelected")`, `getDeclaredField("ip")`) sin ningun
+    barrido por forma cerca. En el juego real esos nombres vienen cambiados, el
+    find devuelve null y la pantalla se queda muda sin avisar: es lo que dejo a
+    Mundos sin clics. Si el bloque no hace un barrido (`getDeclaredMethods()` /
+    `getDeclaredFields()`), se avisa.
+    """
+    notas = []
+    try:
+        lines = open(f, encoding='utf-8').read().split('\n')
+    except OSError:
+        return notas
+    for i, line in enumerate(lines):
+        st = line.strip()
+        if st.startswith('*') or st.startswith('//'):
+            continue
+        if any('reflexion-ok' in lines[k] for k in range(max(0, i - 3), i + 1)):
+            continue
+        if 'getDeclaredMethod("' in line or 'getDeclaredField("' in line:
+            vecino = '\n'.join(lines[max(0, i - 40):i + 40])
+            if ('getDeclaredMethods()' in vecino or 'getDeclaredFields()' in vecino
+                    or 'getDeclaredConstructors()' in vecino):
+                continue
+            notas.append((f, i + 1,
+                          'aviso: reflexion por nombre sin barrido por forma cerca'))
+    return notas
+
+
 def notas_de_puntos(f):
     """
     Aviso blando (no falla el build): la casa no remata lo que escribe con puntos
@@ -235,6 +265,7 @@ def main(argv):
         problems += check_shadow(f, clean)
         notas += notas_de_orden(f)
         notas += notas_de_puntos(f)
+        notas += notas_de_reflexion(f)
     notas += notas_de_chapa(files)
     for path, line, msg in notas:
         print('%s:%d: %s' % (path, line, msg))
