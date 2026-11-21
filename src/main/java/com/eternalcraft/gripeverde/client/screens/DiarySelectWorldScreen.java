@@ -69,6 +69,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         = new java.util.HashMap<>();
     private static final java.util.Set<String> WORLD_ICONS_ABSENT = new java.util.HashSet<>();
     private int iconsThisFrame;
+    private boolean worldIconCachePruned;
     // Recuerda el ultimo clic real sobre una fila para detener solamente el
     // doble clic sobre el mismo punto; los mandos de la fila siguen recibiendo
     // sus propios clics aunque se pulsen enseguida.
@@ -85,6 +86,9 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     protected void init() {
         super.init();
         this.vanillaList = resolveList();
+        if (!this.worldIconCachePruned) {
+            this.worldIconCachePruned = pruneWorldIconCache();
+        }
         // v0.254.0: el fondo es este bug. La lista del juego, si nadie le dice
         // lo contrario, pinta SU fondo -el de la pantalla- cada cuadro, y lo
         // pinta encima de la cabecera y del pie de papel. Por eso se veia la
@@ -1172,6 +1176,36 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         if (this.listTop < 0 || this.listBottom <= this.listTop) return false;
         return mouseY >= this.listTop && mouseY <= this.listBottom
             && mouseX >= this.ledgerLeft() && mouseX <= this.ledgerRight();
+    }
+
+    /**
+     * Evita retener texturas dinámicas de mundos que ya se borraron. Al abrir
+     * otra vez la hoja, los iconos ausentes se vuelven a comprobar una vez.
+     */
+    private boolean pruneWorldIconCache() {
+        if (this.vanillaList == null || this.minecraft == null) return false;
+        java.util.Set<String> liveWorlds = new java.util.HashSet<>();
+        try {
+            for (Object entry : this.vanillaList.children()) {
+                net.minecraft.world.level.storage.LevelSummary summary = summaryOf(entry);
+                String folder = levelFolder(summary);
+                if (!folder.isEmpty()) liveWorlds.add(folder);
+            }
+        } catch (Throwable ignored) {
+            return false;
+        }
+        for (String folder : new ArrayList<>(WORLD_ICONS.keySet())) {
+            if (liveWorlds.contains(folder)) continue;
+            net.minecraft.resources.ResourceLocation icon = WORLD_ICONS.remove(folder);
+            if (icon != null) {
+                try {
+                    this.minecraft.getTextureManager().release(icon);
+                } catch (Throwable ignored) {
+                }
+            }
+        }
+        WORLD_ICONS_ABSENT.clear();
+        return true;
     }
 
     /**

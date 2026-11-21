@@ -11,6 +11,8 @@ interactiva de la hoja de mundos:
      antes de ejecutar atajos sobre el mundo seleccionado.
   5. El total del archivo, escrito en un worker y leído por la GUI, se publica
      con volatile; al reabrir, un escaneo nuevo cancela y reemplaza el anterior.
+  6. Las texturas dinámicas de mundos borrados se liberan al reabrir la hoja;
+     los iconos ausentes se vuelven a comprobar.
 
 Uso: python3 tools/lint_java.py [rutas...]
 Sale con codigo 1 si encuentra algo.
@@ -216,6 +218,37 @@ def check_world_archive_visibility(path, clean):
     return []
 
 
+def check_world_icon_cache_lifecycle(path, clean):
+    """Mundos libera texturas de fichas borradas y reintenta iconos ausentes."""
+    if not path.replace(chr(92), '/').endswith('/client/screens/DiarySelectWorldScreen.java'):
+        return []
+    init_start = clean.find('protected void init()')
+    init_end = clean.find('private void measureArchiveAsync()', init_start)
+    if init_start < 0 or init_end < 0:
+        return [(path, 1, 'Mundos: no se puede comprobar la limpieza de iconos')]
+    init_block = clean[init_start:init_end]
+    if 'this.worldIconCachePruned = pruneWorldIconCache();' not in init_block:
+        line = clean[:init_start].count(chr(10)) + 1
+        return [(path, line, 'Mundos: limpiar el cache de iconos al abrir la hoja')]
+
+    prune_start = clean.find('private boolean pruneWorldIconCache()')
+    icon_start = clean.find('private net.minecraft.resources.ResourceLocation worldIcon(', prune_start)
+    if prune_start < 0 or icon_start < 0:
+        return [(path, 1, 'Mundos: falta el liberador del cache de iconos')]
+    prune = clean[prune_start:icon_start]
+    required = (
+        'liveWorlds.contains(folder)',
+        'WORLD_ICONS.remove(folder)',
+        'getTextureManager().release(icon)',
+        'WORLD_ICONS_ABSENT.clear()',
+    )
+    if any(token not in prune for token in required):
+        line = clean[:prune_start].count(chr(10)) + 1
+        return [(path, line,
+                 'Mundos: liberar texturas borradas y reintentar iconos ausentes')]
+    return []
+
+
 def notas_de_chapa(files):
     """
     Aviso blando: dos pantallas de la casa con la misma chapa de registro
@@ -370,6 +403,7 @@ def main(argv):
         problems += check_shadow(f, clean)
         problems += check_world_search_keys(f, clean)
         problems += check_world_archive_visibility(f, clean)
+        problems += check_world_icon_cache_lifecycle(f, clean)
         notas += notas_de_orden(f)
         notas += notas_de_puntos(f)
         notas += notas_de_reflexion(f)
