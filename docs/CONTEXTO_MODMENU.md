@@ -11,8 +11,12 @@ Actualizado: 2026-11-13
   Se conservan IDs desconocidos no blancos sin trim; no se añade whitelist.
   Ampliada `verifyMemoryDataRegression` con las APIs reales y CONFIGDIR
   temporal: inválidos sin E/S, deduplicación, marcador once, cola llena,
-  reintento y persistencia/recarga del orden y marcadores. Comprobaciones
-  locales estructurales aprobadas; compilación y ejecución pendientes de CI.
+  reintento y persistencia/recarga del orden y marcadores. El candidato
+  `52acca0` compiló y pasó la suite ampliada y todas las previas en
+  [CI 45063868391](https://github.com/Santi-PdR/GripeVerde/actions/runs/45063868391).
+  Artefacto `GripeVerde-jar` ID `14769954904`. Localmente se ejecutaron solo
+  comprobaciones estructurales, sin JDK. El reintento requiere otra llamada;
+  no se añadió una cola secundaria ni recuperación automática de rechazos.
   Sin cambio de versión/esquema ni release, ni prueba de Minecraft gráfico.
 
 - **Marginalia: distribución y caché, posterior a `c51733d`:** la caché
