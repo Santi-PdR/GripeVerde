@@ -571,7 +571,19 @@ tasks.register('verifyMemorySchemaRegression', JavaExec) {
     }
 }
 
+tasks.register('verifyMemoryDataRegression', JavaExec) {
+    group = 'verification'
+    description = 'Checks chronicler memory null entries, IDs, migration bounds and counter saturation without a client.'
+    dependsOn tasks.named('testClasses')
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.eternalcraft.gripeverde.client.MemoryDataRegression'
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
 tasks.named('check').configure {
+    dependsOn tasks.named('verifyMemoryDataRegression')
     dependsOn tasks.named('verifyMemorySchemaRegression')
     dependsOn tasks.named('verifyMemoryShutdownRegression')
     dependsOn tasks.named('verifyRecentAddressesRegression')

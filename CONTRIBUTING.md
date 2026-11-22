@@ -54,6 +54,9 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   de esquemas futuros en principal/temporal/respaldo. Al detectarlos la memoria
   es de solo lectura para toda la sesión; no eliminar ni reescribir esas copias
   desde una versión vieja del mod. Los cambios de esa sesión no se persisten.
+- `verifyMemoryDataRegression` se exige en check/build: nulls/IDs inválidos,
+  limpieza antes de límites, contadores sin desbordamiento y versiones antiguas
+  inválidas, con la biblioteca y archivos reales en CONFIGDIR temporal.
 - **Nunca dos pushes seguidos**: el CI cancela el run anterior por concurrencia.
 - Sin JDK local: la compilación semántica la hace el CI. No instalar Java 17
   en la máquina para publicar.

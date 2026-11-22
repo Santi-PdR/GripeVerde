@@ -117,7 +117,13 @@ public final class ChroniclerMemory {
         if (parsed.firstVisitDay < 0L && parsed.lastVisitDay >= 0L) {
             parsed.firstVisitDay = parsed.lastVisitDay;
         }
-        parsed.counters.values().removeIf(java.util.Objects::isNull);
+        parsed.discovered.removeIf(id -> !validId(id));
+        parsed.collectibles.removeIf(id -> !validId(id));
+        // Limpiar antes de aplicar los limites: los huecos no deben desplazar
+        // notas/firmas validas que aparezcan despues en un archivo antiguo.
+        parsed.pendingNotes.removeIf(id -> !validId(id));
+        parsed.guestbook.removeIf(java.util.Objects::isNull);
+        parsed.counters.entrySet().removeIf(entry -> !validId(entry.getKey()) || entry.getValue() == null);
         if (parsed.pendingNotes.size() > 256) {
             parsed.pendingNotes = new ArrayList<>(parsed.pendingNotes.subList(0, 256));
         }
@@ -146,6 +152,9 @@ public final class ChroniclerMemory {
                 parsed.version, SCHEMA_VERSION);
             return;
         }
+        // No recorrer miles de millones de pasos desde un version negativo.
+        // El primer esquema soportado es 1, tambien para metadatos invalidos.
+        parsed.version = Math.max(1, parsed.version);
         while (parsed.version < SCHEMA_VERSION) {
             // v0.40.0 agrega un ancla de capitulo; los datos viejos conservan el fallback por pixeles.
             parsed.version++;
@@ -473,13 +482,18 @@ public final class ChroniclerMemory {
         return false;
     }
 
+    private static boolean validId(String id) {
+        return id != null && !id.isBlank();
+    }
+
     // ── Descubrimientos ─────────────────────────────────────────────────────
 
     public static synchronized boolean isDiscovered(String id) {
-        return get().discovered.contains(id);
+        return validId(id) && get().discovered.contains(id);
     }
 
     public static synchronized void markDiscovered(String id) {
+        if (!validId(id)) return;
         Data d = get();
         if (d.discovered.add(id)) save();
     }
@@ -496,10 +510,11 @@ public final class ChroniclerMemory {
     // ── Objetos del cajon ───────────────────────────────────────────────────
 
     public static synchronized boolean hasCollectible(String id) {
-        return get().collectibles.contains(id);
+        return validId(id) && get().collectibles.contains(id);
     }
 
     public static synchronized void addCollectible(String id) {
+        if (!validId(id)) return;
         Data d = get();
         if (d.collectibles.add(id)) save();
     }
@@ -511,14 +526,17 @@ public final class ChroniclerMemory {
     // ── Contadores ──────────────────────────────────────────────────────────
 
     public static synchronized int counter(String key) {
+        if (!validId(key)) return 0;
         Integer v = get().counters.get(key);
         return v == null ? 0 : v;
     }
 
     /** Incrementa un contador persistente y devuelve su nuevo valor. */
     public static synchronized int bump(String key) {
+        if (!validId(key)) return 0;
         Data d = get();
         Integer v = d.counters.get(key);
+        if (v != null && v == Integer.MAX_VALUE) return Integer.MAX_VALUE;
         int nv = (v == null ? 0 : v) + 1;
         d.counters.put(key, nv);
         save();
@@ -526,6 +544,7 @@ public final class ChroniclerMemory {
     }
 
     public static synchronized void setCounter(String key, int value) {
+        if (!validId(key)) return;
         Data d = get();
         d.counters.put(key, value);
         save();

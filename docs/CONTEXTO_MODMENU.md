@@ -2,6 +2,22 @@
 
 Actualizado: 2026-11-13
 
+- **Datos nulos y límites de memoria, posterior a `b48903e`:** se retiran
+  IDs nulos/vacíos de descubrimientos, objetos y notas; entradas nulas del
+  libro de firmas, y claves vacías/valores nulos de contadores. La limpieza
+  precede los límites de 256 notas/4096 firmas, para que los huecos no expulsen
+  entradas válidas posteriores. Se conservan IDs desconocidos no vacíos y el
+  texto de firmas sin trim. Las APIs de memoria ignoran IDs/claves inválidos
+  sin crear memoria ni encolar guardados; no se aplica una whitelist nueva.
+  `bump` satura en Integer.MAX_VALUE en vez de volver negativo, manteniendo
+  valores genéricos con signo; en el máximo no encola un guardado inútil.
+  Esquemas <=0 parten de 1 antes del pipeline, evitando recorridos arbitrarios
+  desde un entero negativo extremo. No cambia el esquema ni se mide tiempo.
+  Nueva tarea obligatoria `verifyMemoryDataRegression`, con biblioteca/Gson/
+  archivos reales: limpieza antes de límites, APIs, saturación y migración.
+  Java pendiente de CI; sin Minecraft/red ni bump/release. La protección de
+  esquemas futuros sigue aplicándose antes de interpretar estos campos.
+
 - **Memoria de esquema futuro, posterior a `0705ed6`:** migrate solo
   evitaba bajar el número de esquema, pero los guardados posteriores podían
   reescribir el JSON con Data y borrar campos desconocidos. Ahora se inspecciona
