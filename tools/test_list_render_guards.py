@@ -119,6 +119,8 @@ class ListRenderGuardTests(unittest.TestCase):
              'entry.isFixedPosition() || entry.isRequired()) return false;'),
             ('list.isMouseOver(mouseX, mouseY)', 'true'),
             ('row.isMouseOver(mouseX, mouseY)', 'false'),
+            ('child instanceof GuiEventListener row',
+             'child instanceof AbstractSelectionList.Entry<?> row'),
             ('this.minecraft.options.touchscreen().get() || hovered', 'hovered'),
             ('list.getSelected() == child && list.isFocused()', 'list.getSelected() == child'),
         ):

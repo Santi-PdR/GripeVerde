@@ -504,7 +504,7 @@ def check_pack_selection_single_render(path, clean):
         'entry.getCompatibility().isCompatible()) return false;',
         'entry.isFixedPosition() && entry.isRequired()) return false;',
         'list.isMouseOver(mouseX, mouseY)',
-        'row.isMouseOver(mouseX, mouseY)',
+        'child instanceof GuiEventListener row && row.isMouseOver(mouseX, mouseY)',
         'this.minecraft.options.touchscreen().get() || hovered',
         'list.getSelected() == child && list.isFocused()',
     )

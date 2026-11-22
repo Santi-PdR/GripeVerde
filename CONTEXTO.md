@@ -8,9 +8,12 @@
   más hover real de fila, selección con foco o modo táctil. Título traducido y
   descripción de compatibilidad en hasta dos líneas, ancladas a la fila.
   No toca activación, reordenación ni confirmación vanilla. Guardas de listas
-  14/14 (diez mutaciones nuevas), lint 72 Java, espejos 8/8, gate 7/7 e
-  instalador 7/7 pasan. Compilación de este delta pendiente; prueba en cliente
-  pendiente. Sin bump ni release; no acredita resueltos los clics fantasma.
+  14/14 (once mutaciones nuevas), lint 72 Java, espejos 8/8, gate 7/7 e
+  instalador 7/7 pasan. CI `45039654130` detectó acceso a la clase protegida
+  `AbstractSelectionList.Entry`; se sustituyó por su interfaz pública
+  `GuiEventListener` y se añadió una guarda de regresión. Recompilación y
+  prueba en cliente pendientes. Sin bump ni release; no acredita resueltos
+  los clics fantasma.
 
 - **Candidato `4d37582`, posterior a `0aa6a25`:** el repintado de Paquetes
   ancla texto y separador a `rowTop/rowBottom`, no al borde recortado del

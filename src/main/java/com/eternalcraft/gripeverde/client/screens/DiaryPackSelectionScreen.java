@@ -6,6 +6,7 @@ import com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.components.MultiLineLabel;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.packs.PackSelectionScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.repository.PackRepository;
@@ -251,7 +252,7 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         if (entry.getCompatibility().isCompatible()) return false;
         if (entry.isFixedPosition() && entry.isRequired()) return false;
         boolean hovered = list.isMouseOver(mouseX, mouseY)
-            && child instanceof AbstractSelectionList.Entry<?> row && row.isMouseOver(mouseX, mouseY);
+            && child instanceof GuiEventListener row && row.isMouseOver(mouseX, mouseY);
         return this.minecraft.options.touchscreen().get() || hovered
             || (list.getSelected() == child && list.isFocused());
     }
