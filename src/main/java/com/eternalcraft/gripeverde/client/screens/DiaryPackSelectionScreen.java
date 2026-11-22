@@ -224,24 +224,23 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
     }
 
     /**
-     * v0.382.0: la hoja se pinta encima de todo, asi que hay que repetir lo que
-     * dejo debajo: los botones -los de la casa y los del juego- y las dos listas
-     * de materiales. Las listas van sin fondo propio (se lo quitamos en init),
-     * de modo que quedan sobre el papel.
+     * Pinta listas y controles una sola vez, ya encima de la hoja.
+     * Las listas no son parte de Screen.renderables en esta pantalla vanilla;
+     * se recorren explicitamente y se omiten si alguna version las agrega ahi.
      */
-    private void redrawOnPage(GuiGraphics g, int mouseX, int mouseY, float partial) {
-        for (var renderable : this.renderables) {
-            if (renderable == this.availableList || renderable == this.selectedList) continue;
-            try {
-                renderable.render(g, mouseX, mouseY, partial);
-            } catch (Throwable ignored) {
-            }
-        }
+    private void renderContentsOnPage(GuiGraphics g, int mouseX, int mouseY, float partial) {
         for (AbstractSelectionList<?> list : java.util.Arrays.asList(
                 this.availableList, this.selectedList)) {
             if (list == null) continue;
             try {
                 list.render(g, mouseX, mouseY, partial);
+            } catch (Throwable ignored) {
+            }
+        }
+        for (var renderable : this.renderables) {
+            if (renderable == this.availableList || renderable == this.selectedList) continue;
+            try {
+                renderable.render(g, mouseX, mouseY, partial);
             } catch (Throwable ignored) {
             }
         }
@@ -340,31 +339,29 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partial) {
-        super.render(g, mouseX, mouseY, partial);
-        // Los textos vanilla quedan en buffers diferidos. Se asientan primero
-        // para que la hoja opaca pueda cubrirlos en vez de dejar un doble trazo.
-        g.flush();
-        // v0.382.0: primero la hoja, encima de la tierra del juego; despues las
-        // filas y los botones que la hoja tapo, en el mismo orden que el juego.
+        // No llamar super.render(): PackSelectionScreen ya dibuja listas, titulo
+        // y botonera antes de que el pergamino los tape. Dejar esa primera pasada
+        // producia texto doble visible a traves del papel. La escena y el papel
+        // se pintan primero; despues se dibuja cada lista y control una sola vez.
         try {
             drawPage(g);
-            redrawOnPage(g, mouseX, mouseY, partial);
         } catch (Throwable ignored) {
         }
-        // Se vuelcan las filas y botones repetidos antes de aplicar sus velos
-        // y la tinta, para respetar el orden entre sus capas de texto y fondo.
         g.flush();
-        // v0.346.0: las dos listas del archivador se acompasan al papel, como
-        // las fichas de Sonido y Accesibilidad. Solo se tine la fila: la letra
-        // del juego y sus mandos quedan como estan.
+        com.eternalcraft.gripeverde.client.render.PaperButtons.syncStates();
+        try {
+            renderContentsOnPage(g, mouseX, mouseY, partial);
+        } catch (Throwable ignored) {
+        }
+        g.flush();
+        // Las columnas dibujadas por drawPackColumns ya tienen marco propio;
+        // no se superpone un segundo marco de lista, que duplicaba los cantos.
         try {
             if (this.availableList != null) {
                 DiaryChrome.washVanillaRows(g, this.availableList);
-                DiaryChrome.washVanillaListBox(g, this.availableList);
             }
             if (this.selectedList != null) {
                 DiaryChrome.washVanillaRows(g, this.selectedList);
-                DiaryChrome.washVanillaListBox(g, this.selectedList);
             }
             // v0.372.0: los nombres de los packs los escribe el juego en blanco
             // fijo y sobre el papel no se leian. Se cubre la franja de texto de
@@ -447,12 +444,8 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         PaperTexture.drawTornSheet(g, bx, by, bw, bh, PaperTexture.PaperKind.ARCHIVE);
         DiaryChrome.drawCornerOrnaments(g, bx, by, bw, bh);
 
-        // Cabecera de seccion (el titulo vanilla se dibuja en y=16 sobre el pergamino)
-        int cx = this.width / 2;
-        String subtitle = "- " + DiaryChrome.tr("gripeverde.options.packs.subtitle") + " -";
-        subtitle = DiaryChrome.fitCached(this.font, subtitle, Math.max(0, bw - 48));
-        int sw = DiaryChrome.widthCached(this.font, subtitle);
-        g.drawString(this.font, subtitle, cx - sw / 2, by + 26, DiaryChrome.INK_SUBTITLE, false);
+        // La cabecera (titulo y una sola indicacion de arrastre) se pinta al
+        // final de render(), despues de las listas, para sustituir la de vanilla.
         DiaryChrome.drawInkDivider(g, bx + 24, by + 40, bw - 48);
 
         // Chapa de registro del archivador

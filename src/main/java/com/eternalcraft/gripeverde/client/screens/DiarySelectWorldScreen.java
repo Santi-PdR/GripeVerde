@@ -35,6 +35,8 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     private static final int HEADER_H = 46;
     // Vanilla WorldListEntry entra al mundo de inmediato dentro del icono de 32 px.
     private static final int WORLD_ROW_JOIN_HIT_WIDTH = 32;
+    // Forge draws its experimental-warning icon in the final 36 px of a row.
+    private static final int WORLD_ROW_EXPERIMENTAL_WARNING_WIDTH = 36;
 
     private final List<DiaryButton> dressed = new ArrayList<>();
     private WorldSelectionList vanillaList;
@@ -1005,8 +1007,22 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         if (bottom - top < 24) return;
         int paper = com.eternalcraft.gripeverde.client.render.PaperTexture.paperColor(
             com.eternalcraft.gripeverde.client.render.PaperTexture.PaperKind.OFFICIAL);
-        g.fill(x1, top, x2, bottom, com.eternalcraft.gripeverde.client.render.DiaryTheme
-            .withAlpha(paper, 252));
+        // Vuelca primero el texto del juego y lo cubre por completo: con un
+        // velo translucido quedaban letras fantasma debajo de la tinta nueva.
+        g.flush();
+        boolean preserveForgeWarning = this.rowRight > this.rowLeft
+            && this.rowRight - WORLD_ROW_EXPERIMENTAL_WARNING_WIDTH > x1
+            && this.rowRight < x2;
+        int warningLeft = this.rowRight - WORLD_ROW_EXPERIMENTAL_WARNING_WIDTH;
+        int opaquePaper = com.eternalcraft.gripeverde.client.render.DiaryTheme
+            .withAlpha(paper, 255);
+        if (preserveForgeWarning) {
+            // No pintar encima del icono/tooltip experimental de Forge.
+            g.fill(x1, top, warningLeft, bottom, opaquePaper);
+            g.fill(this.rowRight, top, x2, bottom, opaquePaper);
+        } else {
+            g.fill(x1, top, x2, bottom, opaquePaper);
+        }
         int numRight = x1 + 34;
         // v0.370.0: los rotulos de las columnas, en el hueco entre el buscador
         // y la primera ficha: el pliego pasa a leerse como un libro de
@@ -1070,14 +1086,33 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             if (marked) {
                 g.fill(x1 + 3, drawTop, x1 + 6, drawBottom, 0xFF8C2A1E);
             }
-            // v0.371.0: renglon si, renglon no, un velo tenue: el registro se
-            // sigue de un vistazo sin rayarlo.
+            // Los filetes y velos se dibujan a ambos lados del distintivo
+            // experimental para no tapar el icono que Forge añade a la fila.
+            int bandLeft = x1 + 6;
+            int bandRight = x2 - 6;
+            int beforeWarning = preserveForgeWarning ? warningLeft : bandRight;
+            int afterWarning = preserveForgeWarning ? this.rowRight : bandRight;
             if ((i & 1) == 1) {
-                g.fill(x1 + 6, drawTop, x2 - 6, drawBottom, 0x0E6B5533);
+                if (beforeWarning > bandLeft) {
+                    g.fill(bandLeft, drawTop, beforeWarning, drawBottom, 0x0E6B5533);
+                }
+                if (bandRight > afterWarning) {
+                    g.fill(afterWarning, drawTop, bandRight, drawBottom, 0x0E6B5533);
+                }
             }
-            g.fill(x1 + 6, drawBottom - 1, x2 - 6, drawBottom, 0x2E6B5533);
+            if (beforeWarning > bandLeft) {
+                g.fill(bandLeft, drawBottom - 1, beforeWarning, drawBottom, 0x2E6B5533);
+            }
+            if (bandRight > afterWarning) {
+                g.fill(afterWarning, drawBottom - 1, bandRight, drawBottom, 0x2E6B5533);
+            }
             if (mouseX >= x1 && mouseX <= x2 && mouseY >= drawTop && mouseY < drawBottom) {
-                g.fill(x1 + 6, drawTop, x2 - 6, drawBottom, 0x22F3E7C8);
+                if (beforeWarning > bandLeft) {
+                    g.fill(bandLeft, drawTop, beforeWarning, drawBottom, 0x22F3E7C8);
+                }
+                if (bandRight > afterWarning) {
+                    g.fill(afterWarning, drawTop, bandRight, drawBottom, 0x22F3E7C8);
+                }
             }
             if (drawBottom - drawTop >= 14) {
                 String idx = (i + 1 < 10 ? "0" : "") + (i + 1);
@@ -1152,7 +1187,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         int coverR = Math.min(this.width, this.rowRight + 18);
         if (coverR > coverL) {
             g.fill(coverL, this.listTop, coverR, this.listBottom,
-                com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(paper, 252));
+                com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(paper, 255));
         }
         int tx = this.ledgerRight() - 9;
         if (tx <= coverL + 4) return;
@@ -1668,18 +1703,26 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             return super.mouseClicked(mouseX, mouseY, button);
         }
 
-        boolean inBody = this.listTop >= 0 && this.listBottom > this.listTop
-            && mouseY >= this.listTop && mouseY <= this.listBottom
-            && mouseX >= this.ledgerLeft() - 6
-            && mouseX <= (this.sheetLeft >= 0 && this.sheetWidth > 0
-                ? this.sheetLeft + this.sheetWidth : this.width) + 6;
+        if (widgetAt(mouseX, mouseY)) {
+            super.mouseClicked(mouseX, mouseY, button);
+            return true;
+        }
+
+        // Solo un clic dentro del viewport real de la lista puede seleccionar
+        // una fila. El papel y sus margenes no deben sintetizar un clic de fila.
+        boolean inBody = this.vanillaList != null && this.listTop >= 0
+            && this.listBottom > this.listTop
+            && mouseY >= this.listTop && mouseY < this.listBottom
+            && mouseX >= this.vanillaList.getLeft()
+            && mouseX < this.vanillaList.getLeft() + this.vanillaList.getWidth();
         if (!inBody) {
             return super.mouseClicked(mouseX, mouseY, button);
         }
 
-        if (widgetAt(mouseX, mouseY)) {
-            super.mouseClicked(mouseX, mouseY, button);
-            return true;
+        // Los margenes vacios del viewport y la canaleta quedan en manos de
+        // vanilla; no se proyectan sobre una fila visible.
+        if (mouseX < this.rowLeft || mouseX > this.rowRight) {
+            return super.mouseClicked(mouseX, mouseY, button);
         }
 
         Object row = entryAt(mouseY);
@@ -1714,9 +1757,9 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         long now = System.currentTimeMillis();
         boolean rowControl = rowControlAt(row, mouseX, mouseY);
         if (rowControl) {
-            // Editar/Borrar siguen teniendo su evento vanilla aunque se pulsen
-            // justo despues de seleccionar la fila.
-            super.mouseClicked(clickX, mouseY, button);
+            // Los controles conservan sus coordenadas reales: nunca se les
+            // desplaza el puntero para evitar el icono de entrada del mundo.
+            super.mouseClicked(mouseX, mouseY, button);
             this.lastForwardedEntry = null;
             return true;
         }

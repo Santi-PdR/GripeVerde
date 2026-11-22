@@ -1,3 +1,7 @@
+## Version 0.397.0 - Resource packs without double-drawn text
+
+Resource packs no longer render the vanilla screen underneath the paper: lists and controls are drawn once, without duplicate frames or ghost text. Worlds covers vanilla text before repainting, preserves Forge's experimental warning, and no longer turns clicks on paper margins into row selections.
+
 ## Version 0.396.0 - Selecting a world no longer opens it by accident
 
 Worlds: selection clicks are routed outside vanilla’s 32 px hit area, where clicking the world icon opens it immediately. Right- and middle-clicks on the list are no longer remapped to a row either. The 64 px heuristic that could bypass double-click protection is removed, including around Forge’s experimental warning badge.

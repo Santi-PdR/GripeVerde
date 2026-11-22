@@ -1,3 +1,7 @@
+## Version 0.397.0 - Packs sin doble trazo y clics de Mundos acotados
+
+Recursos: se elimina el primer render vanilla que dejaba texto fantasma bajo el papel; listas y controles se pintan una sola vez y sin marcos duplicados. Mundos: se cubre la tinta nativa antes de repintar, se conserva visible el aviso experimental de Forge y los clics en márgenes del papel ya no seleccionan filas.
+
 ## Version 0.396.0 - Seleccionar un mundo ya no lo abre por accidente
 
 Mundos: el clic de selección se dirige fuera de la zona de 32 px donde vanilla abre un mundo de inmediato al tocar su icono. Los clics derecho y central sobre la lista tampoco se transforman en clics sobre una fila. Se elimina la franja heurística de 64 px que podía saltarse la protección del doble clic, incluso sobre el aviso experimental de Forge.

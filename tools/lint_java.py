@@ -29,6 +29,10 @@ interactiva de la hoja de mundos:
      al seleccionarlas.
  15. Mundos no traduce clics de fila al icono de acceso rápido ni reserva una
      franja geométrica sin controles que eluda la guarda del doble clic.
+ 16. Packs dibuja una sola pasada de listas sobre el papel, sin conservar texto
+     fantasma de la pantalla vanilla ni duplicar los marcos de columna.
+ 17. Mundos solo selecciona dentro de la fila real, cubre el texto vanilla antes
+     de volver a pintarlo y conserva visible el aviso experimental de Forge.
 
 Uso: python3 tools/lint_java.py [rutas...]
 Sale con codigo 1 si encuentra algo.
@@ -309,6 +313,17 @@ def check_world_row_click_safety(path, clean):
         line = clean[:handler_start].count(chr(10)) + 1
         return [(path, line,
                  'Mundos: los botones distintos del izquierdo no deben mapearse al icono de la fila')]
+    viewport = handler.find('boolean inBody =', body)
+    viewport_end = handler.find('if (!inBody)', viewport)
+    viewport_check = handler[viewport:viewport_end] if viewport >= 0 and viewport_end >= 0 else ''
+    row_bounds = handler.find('if (mouseX < this.rowLeft || mouseX > this.rowRight)', viewport_end)
+    row_lookup = handler.find('Object row = entryAt(mouseY)', viewport_end)
+    if (not viewport_check or 'this.vanillaList.getLeft()' not in viewport_check
+            or 'this.vanillaList.getWidth()' not in viewport_check
+            or row_bounds < viewport_end or row_lookup < row_bounds):
+        line = clean[:handler_start].count(chr(10)) + 1
+        return [(path, line,
+                 'Mundos: no proyectar clics de los margenes del papel sobre una fila')]
     if (handler.count('this.rowSelectionClickX(') < 3
             or handler.count('this.rowLeft + WORLD_ROW_JOIN_HIT_WIDTH + 1.0') < 2
             or 'clickX = this.rowSelectionClickX(mouseX);' not in handler):
@@ -316,12 +331,112 @@ def check_world_row_click_safety(path, clean):
         return [(path, line,
                  'Mundos: la selección debe evitar el hitbox de entrada inmediata de vanilla')]
 
+    row_control_click = handler.find('if (rowControl)')
+    if (row_control_click < 0 or 'super.mouseClicked(mouseX, mouseY, button);'
+            not in handler[row_control_click:row_control_click + 320]):
+        line = clean[:handler_start].count(chr(10)) + 1
+        return [(path, line, 'Mundos: los controles de fila deben recibir sus coordenadas reales')]
+
     row_control, row_control_start = method_body(
         'private boolean rowControlAt(Object row, double mouseX, double mouseY)')
     if not row_control or 'actionWidth' in row_control or 'Math.min(64' in row_control:
         line = clean[:row_control_start].count(chr(10)) + 1 if row_control_start >= 0 else 1
         return [(path, line,
                  'Mundos: no reservar una franja de 64 px como control de fila sin hitbox real')]
+    return []
+
+
+def check_pack_selection_single_render(path, clean):
+    """Packs paints the paper first; the vanilla pass must not leak through it."""
+    if not path.replace(chr(92), '/').endswith('/client/screens/DiaryPackSelectionScreen.java'):
+        return []
+
+    def method_body(signature):
+        start = clean.find(signature)
+        if start < 0:
+            return '', -1
+        opening = clean.find('{', start + len(signature))
+        if opening < 0:
+            return '', start
+        depth = 0
+        for index in range(opening, len(clean)):
+            if clean[index] == '{':
+                depth += 1
+            elif clean[index] == '}':
+                depth -= 1
+                if depth == 0:
+                    return clean[start:index + 1], start
+        return '', start
+
+    render, render_start = method_body(
+        'public void render(GuiGraphics g, int mouseX, int mouseY, float partial)')
+    if not render:
+        return [(path, 1, 'Packs: falta el render de la hoja')]
+    draw_page = render.find('drawPage(g);')
+    first_flush = render.find('g.flush();')
+    contents = render.find('renderContentsOnPage(g, mouseX, mouseY, partial);')
+    second_flush = render.find('g.flush();', first_flush + 1)
+    rows = render.find('DiaryChrome.washVanillaRows(')
+    if ('super.render(' in render or draw_page < 0 or first_flush < draw_page
+            or contents < first_flush or second_flush < contents or rows < second_flush
+            or render.count('renderContentsOnPage(g, mouseX, mouseY, partial);') != 1
+            or 'washVanillaListBox(' in render):
+        line = clean[:render_start].count(chr(10)) + 1
+        return [(path, line,
+                 'Packs: dibujar fondo, una sola pasada de filas y sin marco/texto vanilla duplicado')]
+
+    page, page_start = method_body('private void drawPage(GuiGraphics g)')
+    if 'gripeverde.options.packs.subtitle' in page:
+        line = clean[:page_start].count(chr(10)) + 1
+        return [(path, line, 'Packs: dejar una sola linea secundaria en la cabecera')]
+    return []
+
+
+def check_world_list_overlay_and_hitbox(path, clean):
+    """Mundos cubre tinta vieja de forma opaca y deja visible el aviso de Forge."""
+    if not path.replace(chr(92), '/').endswith('/client/screens/DiarySelectWorldScreen.java'):
+        return []
+
+    def method_body(signature):
+        start = clean.find(signature)
+        if start < 0:
+            return '', -1
+        opening = clean.find('{', start + len(signature))
+        if opening < 0:
+            return '', start
+        depth = 0
+        for index in range(opening, len(clean)):
+            if clean[index] == '{':
+                depth += 1
+            elif clean[index] == '}':
+                depth -= 1
+                if depth == 0:
+                    return clean[start:index + 1], start
+        return '', start
+
+    paper, paper_start = method_body(
+        'private void paintListPaper(GuiGraphics g, int mouseX, int mouseY)')
+    first_fill = paper.find('g.fill(')
+    if (not paper or paper.find('g.flush();') < 0 or first_fill < 0
+            or paper.find('g.flush();') > first_fill
+            or 'withAlpha(paper, 255)' not in paper
+            or 'preserveForgeWarning' not in paper
+            or 'WORLD_ROW_EXPERIMENTAL_WARNING_WIDTH' not in paper
+            or 'this.rowRight, top, x2, bottom' not in paper):
+        line = clean[:paper_start].count(chr(10)) + 1 if paper_start >= 0 else 1
+        return [(path, line,
+                 'Mundos: limpiar el texto vanilla antes de redibujar y preservar el icono experimental')]
+
+    handler, handler_start = method_body(
+        'public boolean mouseClicked(double mouseX, double mouseY, int button)')
+    viewport = handler.find('boolean inBody =')
+    bounds = handler.find('if (mouseX < this.rowLeft || mouseX > this.rowRight)', viewport)
+    row_lookup = handler.find('Object row = entryAt(mouseY)', viewport)
+    if (viewport < 0 or 'this.vanillaList.getLeft()' not in handler[viewport:]
+            or bounds < viewport or row_lookup < bounds):
+        line = clean[:handler_start].count(chr(10)) + 1 if handler_start >= 0 else 1
+        return [(path, line,
+                 'Mundos: un clic en el margen de papel no debe proyectarse sobre una fila')]
     return []
 
 
@@ -858,6 +973,8 @@ def main(argv):
         problems += check_world_search_keys(f, clean)
         problems += check_world_click_suppression_focus(f, clean)
         problems += check_world_row_click_safety(f, clean)
+        problems += check_pack_selection_single_render(f, clean)
+        problems += check_world_list_overlay_and_hitbox(f, clean)
         problems += check_title_watch_inspection_modal(f, clean)
         problems += check_direct_join_recent_address_focus(f, clean)
         problems += check_direct_join_recent_address_fit(f, clean)
