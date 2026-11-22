@@ -2,7 +2,7 @@
 
 Actualizado: 2026-11-13
 
-### Continuación local posterior a `0aa6a25`
+### Candidato `4d37582`, posterior a `0aa6a25`
 
 - Paquetes mantiene texto y separador en las coordenadas reales de la fila
   al recortar por scroll. No recalcula el origen del texto con `drawTop` ni
@@ -11,8 +11,29 @@ Actualizado: 2026-11-13
   cinco condiciones de recorte y el modelo de 4.536 casos antes ejecutado
   de forma auxiliar. Conectado al workflow activo y a la plantilla de CI.
 - Pasan espejos 8/8, lint (72 Java), gate 7/7, instalador 7/7 y py_compile.
-  Este delta aún no compiló en CI ni se probó en Minecraft; la ejecución
-  verde de `0aa6a25` no lo cubre. No cambia la versión ni el release.
+  El candidato `4d37582` compiló en
+  [CI 45034644163](https://github.com/Santi-PdR/GripeVerde/actions/runs/45034644163),
+  incluida la suite de listas. No se probó en Minecraft. No cambia la versión
+  ni el release: asset de v0.401.0 reconsultado, mismo ID, tamaño y hash.
+- Candidato para prueba manual: artefacto `GripeVerde-jar` de esa ejecución
+  (ID `14758874321`). No confundirlo con el JAR del release v0.401.0:
+  comparten número de versión, no el código. `install-latest.ps1` instala el
+  release, no este candidato. No se ejecutó ningún instalador en la PC del usuario.
+
+#### Comprobación pendiente en cliente (no realizada)
+
+1. Descargar el artefacto de la ejecución exacta y probar en una instancia
+   de prueba, con un solo JAR de GripeVerde. No mezclar candidato y release.
+2. En ambas columnas de Paquetes, desplazar lentamente hasta que primera y
+   última fila estén recortadas: texto e icono deben avanzar juntos, sin texto
+   pegado al borde ni separadores que aparezcan antes de su fila.
+3. Con más de 64 packs, pasar el índice 64 y llegar al final: comprobar nombres,
+   descripciones y retorno al principio, sin filas borradas por el repintado.
+4. Repetir con escalas de GUI distintas y tras redimensionar/reabrir la pantalla.
+5. Comprobar activar, quitar y reordenar desde el icono; scroll y arrastre de
+   barra; navegación por teclado, Enter y Shift+flechas. No cambiaron sus handlers.
+6. Revisar también packs incompatibles y sus avisos/confirmaciones: su apariencia
+   no queda acreditada por esta corrección de scroll ni por las pruebas estáticas.
 
 ## Proyecto y reglas de trabajo
 

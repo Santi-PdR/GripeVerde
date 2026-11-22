@@ -2,15 +2,17 @@
 
 ## Addendum operativo actual (2026-11-13)
 
-- **Continuación local, posterior a `0aa6a25`:** el repintado de Paquetes
+- **Candidato `4d37582`, posterior a `0aa6a25`:** el repintado de Paquetes
   ancla texto y separador a `rowTop/rowBottom`, no al borde recortado del
   viewport. Evita desplazar el texto y ocultar la descripción antes de tiempo
   en filas parcialmente visibles; no cambia entrada ni geometría de clics.
   Guardas de listas ampliadas: 12/12, con cinco mutaciones de recorte y el
   modelo aritmético reproducible de 4.536 casos. Suite conectada al workflow
   y su plantilla. Pasan también espejos 8/8, lint completo de 72 Java,
-  gate 7/7, instalador 7/7 y py_compile. No hay compilación ni prueba en
-  Minecraft de este cambio; la CI anterior no lo cubre. Sin bump ni release.
+  gate 7/7, instalador 7/7 y py_compile. Compilación y suite de listas verdes
+  en [CI 45034644163](https://github.com/Santi-PdR/GripeVerde/actions/runs/45034644163).
+  Falta prueba en Minecraft. Sin bump ni release: tras el job publish se
+  reconsultaron tag y asset de v0.401.0, que conservan commit, ID, tamaño y hash.
   Se reconcilió HEAD local con `0aa6a25` en la misma rama: antes se verificó
   que solo diferían los ocho archivos de esta continuación, sin cambios en
   staging ni archivos faltantes/adicionales. Un reset mixed actualizó solo

@@ -9,14 +9,15 @@ que una seccion posterior lo mencione expresamente.
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
-- **Candidato local posterior a `0aa6a25`:** al hacer scroll, las filas
+- **Candidato `4d37582`, posterior a `0aa6a25`:** al hacer scroll, las filas
   parcialmente visibles anclaban el texto a `drawTop`, desplazándolo respecto
   del icono; el umbral de altura visible también ocultaba texto antes de tiempo.
   Ahora texto y separador usan las coordenadas reales de la fila y el scissor
   hace el recorte. Pruebas estáticas de listas: 12/12 (incluido modelo de 4.536
-  casos), conectadas al CI. Sin compilación ni prueba en Minecraft de este
-  último cambio; no publicado. No cambia el despacho de ratón ni confirma
-  resueltos los clics fantasma.
+  casos), conectadas al CI. El candidato `4d37582` compiló en CI `45034644163`,
+  incluida la suite de listas. Falta prueba en Minecraft; no publicado como
+  release. No cambia el despacho de ratón ni confirma resueltos los clics
+  fantasma. El asset de v0.401.0 conserva ID, tamaño y hash tras esta CI.
 
 - **Última publicación verificada:** `v0.401.0`, tag dirigido al commit
   `e0f845007681e92e747e04127169f483e159456b`; JAR de 10.855.632 bytes, SHA-256
