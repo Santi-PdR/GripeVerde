@@ -530,6 +530,12 @@ def check_title_watch_inspection_modal(path, clean):
             line = clean[:start].count(chr(10)) + 1 if start >= 0 else 1
             return [(path, line,
                      'Portada: la inspeccion debe cerrar y consumir la entrada de ' + label)]
+    click_method, click_start = method_body(
+        'public boolean mouseClicked(double mouseX, double mouseY, int button)')
+    if 'if (!overButton && mouseX >= logoCx + 1' not in click_method:
+        line = clean[:click_start].count(chr(10)) + 1 if click_start >= 0 else 1
+        return [(path, line,
+                 'Portada: el punto del emblema no debe activarse encima de un boton real')]
     return []
 
 

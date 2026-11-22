@@ -8,6 +8,8 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   `e486ec055d966763c9f270ec74edca30a08f2d79`; JAR de 10.848.114 bytes, SHA-256
   `4b551cd8287f84785bb470b993dabd3111917d713d7682d97f3777d7da2178e3`.
   El CI de publicación `44993011358` pasó en `build` y `publish`.
+- Versión candidata de esta ronda: **v0.400.0**, con un guard de interacción
+  de la portada; aún no está publicada.
 - La próxima versión requiere sincronizar versión, marcador, CHANGELOG y las 25
   notas dentro del juego; el workflow publica automáticamente solo tras pasar
   todas las comprobaciones.

@@ -5,7 +5,7 @@ de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
 que una seccion posterior lo mencione expresamente.
 
-## ESTADO: DESARROLLO ACTIVO (2026-11-13, rama v0.399.0)
+## ESTADO: DESARROLLO ACTIVO (2026-11-13, rama v0.400.0)
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
@@ -17,6 +17,10 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
   a la izquierda de la fila dibujada), limita el clic seguro al hitbox y mide
   con reloj monotónico la ventana de 650 ms. Es un ajuste puntual, no una
   confirmación de que el reporte general de clics fantasma esté resuelto.
+- **Candidato v0.400.0:** la zona invisible del ojo del emblema cede a los
+  botones visibles de la portada, para que un solape en ventanas muy bajas no
+  dispare también un hallazgo. No se presenta como solución al reporte general
+  de clics fantasma.
 - **Pendiente de confirmación en Minecraft:** Paquetes de recursos, clics
   fantasma e interfaz visual de Un Jugador, además de revisar los clics de
   Mundos. No se afirma que estén corregidos sin prueba en cliente.

@@ -1,3 +1,7 @@
+## Version 0.400.0 - The title emblem hotspot no longer overlaps buttons
+
+Title screen: the invisible emblem hotspot no longer fires its discovery when it overlaps a real button, which can happen in very short windows. The button still follows its normal input path. This is a narrow guard only: general ghost clicks, Resource Packs, and Single Player still need Minecraft validation; this release does not change the screen’s appearance.
+
 ## Version 0.399.0 - World clicks stay within the native row hitbox
 
 Worlds: the guard now covers the 2 px that vanilla's hit-test adds to the left of the drawn row; previously that narrow edge could reach the immediate-join icon unguarded. The selection click is also clamped to the native horizontal hitbox, and the 650 ms guard uses a monotonic timer. These are narrow input hardenings: general ghost clicks and the Single Player appearance still need Minecraft validation; this release does not change the visual design.

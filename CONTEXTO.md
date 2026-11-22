@@ -9,6 +9,10 @@
 - v0.399.0 alinea el guard de Mundos con el hitbox nativo (incluidos los 2 px
   a la izquierda de la fila dibujada), limita el clic seguro al hitbox y mide
   sus 650 ms con `System.nanoTime()`. No cambia la apariencia de la pantalla.
+- **Candidato de esta ronda: v0.400.0.** En la portada, el punto invisible del
+  emblema no activa su hallazgo cuando coincide con un botón real en ventanas
+  muy bajas. Es un guard de entrada, no una corrección de clics fantasma
+  generales; no cambia la apariencia.
 - **Pendiente de revisión en Minecraft:** Paquetes de recursos, los clics
   fantasma generales y la interfaz de Un Jugador siguen abiertos. El ajuste del
   hitbox y el reloj monotónico son cambios acotados; no equivalen a confirmar

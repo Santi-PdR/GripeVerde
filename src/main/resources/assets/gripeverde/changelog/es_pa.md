@@ -1,3 +1,7 @@
+## Version 0.400.0 - La portada no activa el emblema sobre un botón
+
+Portada: el punto invisible del emblema deja de disparar su hallazgo si coincide con un botón real, algo posible en ventanas muy bajas. El clic del botón sigue su ruta normal. Es una protección puntual: los clics fantasma generales, Paquetes y Un Jugador siguen pendientes de validar en Minecraft; esta entrega no cambia la apariencia de la pantalla.
+
 ## Version 0.399.0 - Mundos protege el hitbox nativo de las filas
 
 Mundos: el guard ahora cubre los 2 px que el hit-test vanilla añade a la izquierda de la fila dibujada; antes ese borde estrecho podía llegar sin protección al icono de entrada inmediata. El clic de selección se limita además al hitbox horizontal nativo, y el freno de 650 ms usa reloj monotónico. Son protecciones acotadas: los clics fantasma generales y la apariencia de Un Jugador siguen pendientes de validar en Minecraft; esta entrega no cambia el diseño visual.

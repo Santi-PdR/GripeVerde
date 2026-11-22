@@ -14,6 +14,9 @@ Actualizado: 2026-11-13
 - v0.399.0 alinea el guard de Mundos con el hitbox nativo (incluidos los 2 px
   a la izquierda de la fila dibujada), limita el clic seguro al hitbox y mide
   la ventana de 650 ms con `System.nanoTime()`.
+- Candidato v0.400.0: el punto invisible del emblema de la portada cede a los
+  botones visibles en ventanas muy bajas; no se atribuye a esto una solución de
+  clics fantasma generales y no se cambia la apariencia.
   No modifica el diseño visual, no confirma que se hayan resuelto los clics
   fantasma generales y deja pendiente la prueba dentro del juego. Un Jugador
   no se modifica en esta ronda.

@@ -1217,7 +1217,9 @@ public class DiaryTitleScreen extends Screen {
                 float eyeScale = logoScale();
                 int eyeCy = LOGO_TOP + Math.round(56 * eyeScale);
                 int eyeHalf = Math.max(3, Math.round(4 * eyeScale));
-                if (mouseX >= logoCx + 1 && mouseX <= logoCx + 9
+                // El punto ciego del emblema no debe dispararse encima de un
+                // boton real en ventanas muy bajas.
+                if (!overButton && mouseX >= logoCx + 1 && mouseX <= logoCx + 9
                         && mouseY >= eyeCy - eyeHalf && mouseY <= eyeCy + eyeHalf) {
                     com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
                         com.eternalcraft.gripeverde.client.lore.Discoveries.SKULL_WATCHES);
