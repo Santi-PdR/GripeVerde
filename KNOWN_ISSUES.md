@@ -9,6 +9,15 @@ que una seccion posterior lo mencione expresamente.
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
+- **Ruta defensiva del scissor de Paquetes (posterior a `9dbd0ef`):** antes
+  se tragaba un fallo de activación y se seguían dibujando filas sin recorte;
+  además había operaciones entre adquirirlo y entrar al try/finally.
+  Ahora se prepara la geometría antes y todo el repintado queda protegido
+  inmediatamente por finally, sin continuar si activar el recorte falla.
+  Guardas estáticas 18/18. Compilación y prueba en Minecraft pendientes.
+  No se atribuye a esta ruta la causa de los clics fantasma ni un fallo de
+  cliente confirmado. Sin cambios de entrada, versión o release.
+
 - **Descripción de packs (candidato posterior a `64261bb`):** el repintado
   reducía la descripción normal a una línea, perdiendo el segundo renglón
   vanilla. Ahora usa Component y MultiLineLabel de hasta dos líneas, con el

@@ -2,6 +2,15 @@
 
 ## Addendum operativo actual (2026-11-13)
 
+- **Recorte de Paquetes, posterior a `9dbd0ef`:** se resuelven geometría y
+  entradas antes de adquirir el scissor. La banda opaca y las filas se dibujan
+  solo después de activarlo, dentro de un try/finally que siempre solicita
+  liberarlo; no se continúa pintando si la activación lanza una excepción.
+  Corrige una ruta defensiva, no demuestra un fallo observado en Minecraft.
+  Guardas estáticas 18/18, lint 72 Java, espejos 8/8, gate 7/7, instalador
+  7/7, py_compile y diff pasan. Compilación del delta y prueba en cliente
+  pendientes. No modifica entrada ni versión y no publica release.
+
 - **Continuación posterior a `64261bb`:** las descripciones normales de packs
   recuperan las dos líneas de vanilla, igual que los avisos de incompatibilidad.
   Se conserva el Component (incluidos saltos y estilos), sin convertirlo en

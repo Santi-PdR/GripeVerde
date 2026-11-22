@@ -490,6 +490,18 @@ def check_pack_selection_single_render(path, clean):
         line = clean[:line_start].count(chr(10)) + 1
         return [(path, line,
                  'Packs: respetar la zona de texto vanilla de 157 px y su descripción extendida')]
+    clip_scope = re.search(
+        r'g\.enableScissor\(x1, top, x2, bottom\);\s*try\s*\{', rows_paint)
+    clip_release = re.search(r'\}\s*finally\s*\{\s*g\.disableScissor\(\);\s*\}', rows_paint)
+    if (not clip_scope or not clip_release
+            or rows_paint.count('g.enableScissor(') != 1
+            or rows_paint.count('g.disableScissor();') != 1
+            or rows_paint.find('g.fill(') < clip_scope.end()
+            or rows_paint.find('int first =') > clip_scope.start()
+            or 'scissored' in rows_paint):
+        line = clean[:rows_start].count(chr(10)) + 1
+        return [(path, line,
+                 'Packs: adquirir recorte antes de pintar y liberarlo siempre en finally')]
     if ('textX, rowTop + 1,' not in rows_paint
             or '.renderLeftAligned(g, textX, rowTop + 12, 10,' not in rows_paint
             or 'if (drawBottom <= drawTop) continue;' not in rows_paint

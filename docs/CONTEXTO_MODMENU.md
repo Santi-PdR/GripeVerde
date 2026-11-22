@@ -2,6 +2,21 @@
 
 Actualizado: 2026-11-13
 
+### Alcance del scissor, posterior a `9dbd0ef`
+
+- Geometría, children e índice inicial se resuelven antes de adquirir el
+  recorte. `enableScissor` va inmediatamente antes del try y `disableScissor`
+  en finally. Tanto banda opaca como texto/separadores quedan dentro del
+  alcance protegido; se elimina el catch que permitía dibujar sin recorte.
+- Guardas estáticas 18/18: seis mutaciones adicionales comprueban rechazo
+  de pintura previa al recorte, activación fallida ignorada, operaciones
+  desprotegidas y liberación condicional, ausente o duplicada. No inyectan
+  fallos en OpenGL ni ejecutan Minecraft. También pasan lint de 72 Java,
+  espejos 8/8, gate 7/7, instalador 7/7, py_compile y diff.
+- Compilación y prueba en cliente del delta pendientes. No modifica versión,
+  release ni despacho de entrada. La prueba manual de scroll debe verificar
+  también que encabezados y botones siguen visibles tras cada columna.
+
 ### Descripciones de dos líneas, posterior a `64261bb`
 
 - Las descripciones normales y las de compatibilidad comparten MultiLineLabel

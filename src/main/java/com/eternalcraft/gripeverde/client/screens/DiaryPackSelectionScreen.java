@@ -143,17 +143,7 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         int textW = x2 - textX - 1;     // 157 px con la fila vanilla de 200 px
         if (textW < 60) return;
         int paper = PaperTexture.paperColor(PaperTexture.PaperKind.ARCHIVE);
-        // La lista y sus textos ya se asentaron antes. Ahora el recorte opaco
-        // los tapa de verdad y luego se dibuja una sola copia en tinta.
-        g.flush();
-        g.fill(x1, top, x2, bottom,
-            com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(paper, 255));
-        boolean scissored = false;
-        try {
-            g.enableScissor(x1, top, x2, bottom);
-            scissored = true;
-        } catch (Throwable ignored) {
-        }
+        // Resolver geometría y entradas antes de adquirir el recorte gráfico.
         int step = packRowStep(list);
         double scroll = 0.0;
         try {
@@ -170,7 +160,13 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         } catch (Throwable ignored) {
         }
         int first = DiaryChrome.firstVisibleRow(list, count, top, step, scroll);
+        // No tapar la letra vanilla ni dibujar filas si no se pudo activar el
+        // recorte. El llamador maneja el fallo; no continuar sin protección.
+        g.flush();
+        g.enableScissor(x1, top, x2, bottom);
         try {
+            g.fill(x1, top, x2, bottom,
+                com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(paper, 255));
             for (int i = first; i < count; i++) {
                 int measuredTop = com.eternalcraft.gripeverde.client.render.DiaryChrome
                     .rowTopOf(list, i);
@@ -241,12 +237,7 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
                 g.fill(x1 + 3, rowBottom - 1, x2 - 3, rowBottom, 0x2E6B5533);
             }
         } finally {
-            if (scissored) {
-                try {
-                    g.disableScissor();
-                } catch (Throwable ignored) {
-                }
-            }
+            g.disableScissor();
         }
     }
 

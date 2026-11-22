@@ -166,6 +166,32 @@ class ListRenderGuardTests(unittest.TestCase):
             with self.subTest(old=old):
                 self.assert_rejected(PACK, old, new)
 
+    def test_pack_clip_is_acquired_before_paint(self):
+        for old, new in (
+            ('g.enableScissor(x1, top, x2, bottom);\n        try {',
+             'try { g.enableScissor(x1, top, x2, bottom); } catch (Throwable ignored) {}\n        try {'),
+            ('g.enableScissor(x1, top, x2, bottom);\n        try {',
+             'g.fill(x1, top, x2, bottom, 0);\n'
+             '        g.enableScissor(x1, top, x2, bottom);\n        try {'),
+            ('g.enableScissor(x1, top, x2, bottom);\n        try {',
+             'g.enableScissor(x1, top, x2, bottom);\n'
+             '        int unsafe = packRowStep(list);\n        try {'),
+        ):
+            with self.subTest(old=old, new=new):
+                self.assert_rejected(PACK, old, new)
+
+    def test_pack_clip_is_always_released(self):
+        for old, new in (
+            ('} finally {\n            g.disableScissor();',
+             '} finally {\n            if (false) g.disableScissor();'),
+            ('} finally {\n            g.disableScissor();',
+             '} finally {\n            g.flush();'),
+            ('} finally {\n            g.disableScissor();',
+             '} finally {\n            g.disableScissor(); g.disableScissor();'),
+        ):
+            with self.subTest(old=old, new=new):
+                self.assert_rejected(PACK, old, new)
+
     def test_pack_mouse_override_is_rejected(self):
         self.assert_rejected(PACK, 'public class DiaryPackSelectionScreen extends PackSelectionScreen {',
                              'public class DiaryPackSelectionScreen extends PackSelectionScreen {\n'
