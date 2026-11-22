@@ -17,9 +17,16 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
   al resolver filas con scroll fraccionario. Es un ajuste puntual, no una
   confirmación de que el reporte general de clics fantasma esté resuelto.
 - Revisión estática de Paquetes encontró que el repintado opaco borraba los
-  rótulos de ambas columnas. La rama lleva un candidato que los restaura al
-  final del render y acota el papel al viewport visible; no cambia los eventos
-  ni la lógica vanilla. No se bumpó ni publicó: falta probarlo en Minecraft.
+  rótulos de ambas columnas y dejaba corta la zona cubierta: el vanilla aloja
+  las flechas sobre el icono izquierdo y dibuja 157 px de texto a la derecha.
+  El candidato repone las etiquetas, cubre esa franja completa, usa la
+  descripción extendida y recorre solo las filas visibles sin cortar la lista
+  en 64 elementos. Acota el papel al viewport y conserva la entrada vanilla.
+  No se bumpó ni publicó: falta probarlo en Minecraft. Geometría contrastada
+  con las clases vanilla 1.20.1: encabezado 13 px, texto en `rowLeft + 34`,
+  controles dentro del icono. Las guardas estáticas pasan 9/9 pruebas de regresión.
+  La consulta del asset `778229607` confirma el tamaño y digest anteriores;
+  no se descargó ni inspeccionó de nuevo el JAR publicado.
 - **Pendiente de confirmación en Minecraft:** Paquetes de recursos, clics
   fantasma e interfaz visual de Un Jugador, además de revisar los clics de
   Mundos. No se afirma que estén corregidos sin prueba en cliente.

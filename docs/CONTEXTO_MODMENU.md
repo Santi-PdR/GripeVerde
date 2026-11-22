@@ -16,9 +16,27 @@ Actualizado: 2026-11-13
   de clics fantasma y no cambia el diseño visual. Paquetes, Un Jugador y la
   revisión de interacción siguen pendientes de prueba dentro de Minecraft.
 - Candidato sin bump/publicación en Paquetes: los rótulos propios quedaban
-  debajo del repintado opaco. La rama los dibuja al final y limita el papel al
-  viewport de las listas; no altera su despacho de entrada vanilla. Confirmar
-  el aspecto y las acciones en Minecraft antes de publicar.
+  debajo del repintado opaco y la franja borrada no cubría los 157 px de texto
+  que usa vanilla. Se restauran los encabezados al final, se amplía la cobertura
+  hasta después del icono (donde viven sus flechas), se usa la descripción
+  extendida y se limita el papel al viewport. El repintado ahora sigue el scroll
+  sin cortar las listas en 64 packs. Despacho vanilla intacto; confirmar aspecto
+  y acciones en Minecraft antes de publicar.
+- Contraste de fuentes para este candidato:
+  [TransferableSelectionList 1.20.1](https://github.com/Blackjack200/minecraft_client_1_20_1/blob/c129e3e3e6ca89a731d4cfc35bb606c6bd2cae2c/net/minecraft/client/gui/screens/packs/TransferableSelectionList.java)
+  fija filas de 36 px, encabezado de 13 px, icono de 32 px, texto desde
+  `rowLeft + 34`, ancho máximo de 157 px y flechas/clics sobre el icono.
+  [AbstractSelectionList](https://github.com/Blackjack200/minecraft_client_1_20_1/blob/c129e3e3e6ca89a731d4cfc35bb606c6bd2cae2c/net/minecraft/client/gui/components/AbstractSelectionList.java)
+  calcula `rowTop = y0 + 4 - (int) scroll + index * itemHeight + headerHeight`.
+  [El parche Forge 1.20.1](https://github.com/MinecraftForge/MinecraftForge/blob/1.20.1/patches/minecraft/net/minecraft/client/gui/components/AbstractSelectionList.java.patch)
+  añade `getTop/getBottom/getLeft/getWidth`, usados por el mod.
+  `python3 tools/test_list_render_guards.py` pasa 9/9: muta fuentes en memoria
+  para comprobar que el lint rechaza regresiones; no compila ni ejecuta Java.
+  También pasan espejos 8/8, lint completo (72 Java), gate 7/7, instalador 7/7,
+  py_compile y diff. La compilación del candidato queda por confirmar en CI.
+- El API de GitHub vuelve a informar el mismo tamaño y digest para el asset
+  `778229607` de v0.401.0; el tag sigue en `e0f8450`. No se ha inspeccionado
+  de nuevo su contenido binario. El candidato sigue separado del release.
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
   El trabajo se hace sobre el repositorio; no se edita el proyecto local del usuario.
 - No se controla Minecraft ni la PC del usuario para pruebas visuales. El CI acredita

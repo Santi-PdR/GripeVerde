@@ -29,9 +29,11 @@ interactiva de la hoja de mundos:
      al seleccionarlas.
  15. Mundos no traduce clics de fila al icono de acceso rápido ni reserva una
      franja geométrica sin controles que eluda la guarda del doble clic.
- 16. Packs dibuja una sola pasada de listas sobre el papel, sin conservar texto
-     fantasma de la pantalla vanilla ni duplicar los marcos de columna.
- 17. Mundos solo selecciona dentro de la fila real, cubre el texto vanilla antes
+ 16. Packs dibuja una sola pasada sobre el papel, repone los rótulos después
+     de la banda opaca y cubre la columna de texto vanilla sin tocar su entrada.
+ 17. El velo compartido viste las filas visibles aunque la lista tenga más de
+     64 elementos y sin recorrer cada elemento fuera del viewport.
+ 18. Mundos solo selecciona dentro de la fila real, cubre el texto vanilla antes
      de volver a pintarlo y conserva visible el aviso experimental de Forge.
 
 Uso: python3 tools/lint_java.py [rutas...]
@@ -364,6 +366,47 @@ def check_world_row_click_safety(path, clean):
     return []
 
 
+def check_visible_list_row_iteration(path, clean):
+    """Cosmetic list passes visit the viewport, not just the first 64 entries."""
+    if not path.replace(chr(92), '/').endswith('/client/render/DiaryChrome.java'):
+        return []
+
+    def method_body(signature):
+        start = clean.find(signature)
+        if start < 0:
+            return '', -1
+        opening = clean.find('{', start + len(signature))
+        if opening < 0:
+            return '', start
+        depth = 0
+        for index in range(opening, len(clean)):
+            if clean[index] == '{':
+                depth += 1
+            elif clean[index] == '}':
+                depth -= 1
+                if depth == 0:
+                    return clean[start:index + 1], start
+        return '', start
+
+    first, first_start = method_body(
+        'public static int firstVisibleRow(AbstractSelectionList<?> list, int count,')
+    wash, wash_start = method_body(
+        'public static void washVanillaRows(GuiGraphics gfx, AbstractSelectionList<?> list)')
+    if (not first or 'rowTopOf(list, 0)' not in first
+            or 'readInt(list, "", "")' not in first
+            or 'Math.floorDiv(top - firstTop, rowStep) - 1' not in first
+            or '(int) Math.floor(scrollAmount / rowStep) - 2' not in first
+            or 'Math.max(0, Math.min(count, first))' not in first
+            or not wash or 'firstVisibleRow(list, count, top, step, scroll)' not in wash
+            or 'top + 4 - (int) scroll + i * step + headerHeight' not in wash
+            or 'i < 64' in wash or 'if (rowTop > bottom) break;' not in wash):
+        line_start = first_start if first_start >= 0 else wash_start
+        line = clean[:line_start].count(chr(10)) + 1 if line_start >= 0 else 1
+        return [(path, line,
+                 'Listas: vestir filas visibles también después de las primeras 64 entradas')]
+    return []
+
+
 def check_pack_selection_single_render(path, clean):
     """Packs paints the paper first; the vanilla pass must not leak through it."""
     if not path.replace(chr(92), '/').endswith('/client/screens/DiaryPackSelectionScreen.java'):
@@ -422,6 +465,8 @@ def check_pack_selection_single_render(path, clean):
             or not headings or 'this.availableList' not in headings
             or 'this.selectedList' not in headings
             or not heading or 'list.getTop()' not in heading
+            or 'PACK_LIST_HEADER_HEIGHT' not in heading
+            or 'PACK_LIST_HEADER_HEIGHT = 13' not in clean
             or 'g.fill(x1 + 1, top, x2 - 1, bottom' not in heading
             or 'g.drawString(this.font, shown' not in heading
             or header_fill < 0 or subtitle_draw < header_fill
@@ -431,6 +476,26 @@ def check_pack_selection_single_render(path, clean):
         line = clean[:line_start].count(chr(10)) + 1
         return [(path, line,
                  'Packs: limitar cajones al viewport y pintar sus rótulos después de la cabecera opaca')]
+
+    rows_paint, rows_start = method_body('private void inkPackRows(')
+    if (not rows_paint or 'int x1 = left + 33;' not in rows_paint
+            or 'int textX = left + 34;' not in rows_paint
+            or 'int x2 = right - 8;' not in rows_paint
+            or 'int textW = x2 - textX - 1;' not in rows_paint
+            or 'entry.getExtendedDescription()' not in rows_paint
+            or 'DiaryChrome.firstVisibleRow(list, count, top, step, scroll)' not in rows_paint
+            or 'PACK_LIST_HEADER_HEIGHT' not in rows_paint
+            or 'i < 64' in rows_paint or 'right - 26' in rows_paint):
+        line_start = rows_start if rows_start >= 0 else render_start
+        line = clean[:line_start].count(chr(10)) + 1
+        return [(path, line,
+                 'Packs: respetar la zona de texto vanilla de 157 px y su descripción extendida')]
+    mouse_handler = re.search(
+        r'\b(?:public|protected)\s+boolean\s+mouse(?:Clicked|Released|Dragged|Scrolled)\s*\(', clean)
+    if mouse_handler:
+        line = clean.count('\n', 0, mouse_handler.start()) + 1
+        return [(path, line,
+                 'Packs: mantener el despacho de ratón en las listas vanilla')]
 
     init, init_start = method_body('protected void init()')
     resolver, resolver_start = method_body('private void resolvePackLists()')
@@ -1062,6 +1127,7 @@ def main(argv):
         problems += check_world_click_suppression_focus(f, clean)
         problems += check_world_row_click_safety(f, clean)
         problems += check_pack_selection_single_render(f, clean)
+        problems += check_visible_list_row_iteration(f, clean)
         problems += check_world_list_overlay_and_hitbox(f, clean)
         problems += check_title_watch_inspection_modal(f, clean)
         problems += check_direct_join_recent_address_focus(f, clean)

@@ -6,16 +6,25 @@
   `e0f845007681e92e747e04127169f483e159456b`; JAR de 10.855.632 bytes, SHA-256
   `dd37d443b7307c1b3d0d09fc5befdaee6d1dd887bfca002d6e7bc3670ef0ee88`. El CI
   `44997077455` pasó en `build` y `publish`; [release v0.401.0](https://github.com/Santi-PdR/GripeVerde/releases/tag/v0.401.0).
+  Reconsultados el tag y el asset `778229607`: el tamaño y el digest SHA-256
+  informado por GitHub coinciden con lo anterior. No es una nueva descarga ni
+  inspección binaria: el host de descarga queda fuera de la red permitida.
 - v0.401.0 hace que el fallback de Mundos calcule el índice de fila con el
   mismo orden de redondeo/truncado que vanilla cuando el scroll es fraccionario.
   Es una corrección de respaldo acotada, no confirma resueltos los clics
   fantasma generales ni cambia el aspecto de la pantalla.
 - **Pendiente de revisión en Minecraft:** Paquetes de recursos, los clics
   fantasma generales y la interfaz de Un Jugador siguen abiertos. La revisión
-  estática de Paquetes encontró que la repintada opaca escondía los rótulos de
-  columna; la rama contiene un candidato que los restaura sin tocar la entrada
-  vanilla. Aún requiere prueba en cliente y no está publicado. Los guardas de
-  entrada son cambios acotados; esta ronda no modifica Un Jugador.
+  estática de Paquetes encontró que la repintada opaca escondía los rótulos y
+  dejaba corta la zona de texto. La rama contiene un candidato que los restaura,
+  cubre la franja vanilla completa, conserva icono/flechas fuera de ella y
+  repinta filas visibles aunque haya más de 64 packs. No toca la entrada. Aún
+  requiere prueba en cliente y no está publicado. Esta ronda no modifica Un Jugador.
+  Se contrastaron las coordenadas con `TransferableSelectionList` y
+  `AbstractSelectionList` 1.20.1; los accesores de límites los agrega Forge.
+  Validación local: espejos 8/8, lint de 72 Java sin avisos, gate 7/7,
+  instalador 7/7, guardas de listas 9/9, py_compile y diff sin errores.
+  Las guardas son pruebas estáticas; no acreditan ejecución en cliente.
 - Las reglas de siempre siguen en pie: mod **solo de cliente**, sin bloques,
   sin ítems, sin gameplay ni resourcepacks; la identidad visual se hace con
   Java y los render/widgets propios.

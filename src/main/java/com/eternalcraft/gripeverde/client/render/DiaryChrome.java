@@ -512,21 +512,25 @@ public final class DiaryChrome {
             scroll = list.getScrollAmount();
         } catch (Throwable ignored) {
         }
+        int headerHeight = readInt(list, "headerHeight", "f_93395_");
+        if (headerHeight < 0) headerHeight = 0;
         int count = 0;
         try {
             count = list.children().size();
         } catch (Throwable ignored) {
         }
         if (count <= 0) return;
+        int first = firstVisibleRow(list, count, top, step, scroll);
         gfx.enableScissor(left - 2, top, right + 2, bottom);
         try {
-            for (int i = 0; i < count && i < 64; i++) {
+            for (int i = first; i < count; i++) {
                 int measured = rowTopOf(list, i);
                 int rowTop = measured != Integer.MIN_VALUE
                     ? measured
-                    : top + 4 - (int) scroll + i * step;
+                    : top + 4 - (int) scroll + i * step + headerHeight;
+                if (rowTop > bottom) break;
                 int rowBottom = rowTop + step - 3;
-                if (rowBottom < top || rowTop > bottom) continue;
+                if (rowBottom < top) continue;
                 int drawTop = Math.max(rowTop, top);
                 int drawBottom = Math.min(rowBottom, bottom);
                 if (drawBottom <= drawTop) continue;
@@ -854,6 +858,27 @@ public final class DiaryChrome {
         } catch (Throwable ignored) {
             return Integer.MIN_VALUE;
         }
+    }
+
+    /**
+     * Primer indice que podria tocar el viewport, con una fila de margen.
+     * Evita recorrer y repintar cientos de entradas que están muy lejos del
+     * scroll actual, sin perder filas posteriores a una lista larga.
+     */
+    public static int firstVisibleRow(AbstractSelectionList<?> list, int count,
+                                      int top, int rowStep, double scrollAmount) {
+        if (list == null || count <= 0 || rowStep <= 0) return 0;
+        int firstTop = rowTopOf(list, 0);
+        if (firstTop == Integer.MIN_VALUE) {
+            int headerHeight = readInt(list, "headerHeight", "f_93395_");
+            if (headerHeight >= 0) {
+                firstTop = top + 4 - (int) scrollAmount + headerHeight;
+            }
+        }
+        int first = firstTop != Integer.MIN_VALUE
+            ? Math.floorDiv(top - firstTop, rowStep) - 1
+            : (int) Math.floor(scrollAmount / rowStep) - 2;
+        return Math.max(0, Math.min(count, first));
     }
 
     /** Alto de renglon medido en la lista; -1 si no se deja medir. */

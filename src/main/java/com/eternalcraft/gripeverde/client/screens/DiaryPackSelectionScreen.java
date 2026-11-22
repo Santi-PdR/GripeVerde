@@ -27,6 +27,9 @@ import java.util.function.Consumer;
  */
 public class DiaryPackSelectionScreen extends PackSelectionScreen {
 
+    // PackSelectionScreen 1.20.1 sets a 13 px header on each list.
+    private static final int PACK_LIST_HEADER_HEIGHT = 13;
+
     private AbstractSelectionList<?> availableList;
     private AbstractSelectionList<?> selectedList;
     // v0.264.0: nos quedamos con el archivador para poder contar las fichas.
@@ -112,10 +115,9 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
      * v0.372.0: los nombres y descripciones de los packs en tinta.
      *
      * El juego los pinta en blanco sobre su fondo oscuro; puestos sobre el
-     * pergamino quedaban invisibles. Se cubre la franja de texto de la lista
-     * -dejando a la vista el icono del pack a la izquierda y las flechas de
-     * mover a la derecha- y se reescribe el titulo en tinta con la version en
-     * sepia debajo.
+     * pergamino quedaban invisibles. Se cubre la franja de texto de la lista,
+     * a partir del icono de 32 px (que también aloja las flechas vanilla), y se
+     * reescribe el titulo y la descripcion extendida en tinta.
      */
     private void inkPackRows(GuiGraphics g, AbstractSelectionList<?> list, int mouseX, int mouseY) {
         if (g == null || list == null) return;
@@ -124,13 +126,13 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         int left = list.getRowLeft();
         int right = left + list.getRowWidth();
         if (bottom - top < 24 || right - left < 90) return;
-        int x1 = left + 30;             // el icono del pack se queda a la vista
-        int x2 = right - 26;            // y las flechas de mover, tambien
-        if (x2 - x1 < 80) {
-            x1 = left + 30;
-            x2 = right - 6;
-        }
-        if (x2 - x1 < 60) return;
+        // Las flechas vanilla viven sobre el icono de 32 px, no a la derecha.
+        // Se tapa desde el fin de ese icono hasta el fin del texto nativo.
+        int x1 = left + 33;            // fuera del hitbox incluyente del icono
+        int textX = left + 34;
+        int x2 = right - 8;
+        int textW = x2 - textX - 1;     // 157 px con la fila vanilla de 200 px
+        if (textW < 60) return;
         int paper = PaperTexture.paperColor(PaperTexture.PaperKind.ARCHIVE);
         // La lista y sus textos ya se asentaron antes. Ahora el recorte opaco
         // los tapa de verdad y luego se dibuja una sola copia en tinta.
@@ -158,9 +160,21 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
             count = children.size();
         } catch (Throwable ignored) {
         }
-        int textW = x2 - x1 - 10;
+        int first = DiaryChrome.firstVisibleRow(list, count, top, step, scroll);
         try {
-            for (int i = 0; i < count && i < 64; i++) {
+            for (int i = first; i < count; i++) {
+                int measuredTop = com.eternalcraft.gripeverde.client.render.DiaryChrome
+                    .rowTopOf(list, i);
+                int rowTop = measuredTop != Integer.MIN_VALUE
+                    ? measuredTop
+                    : top + 4 - (int) scroll + i * step + PACK_LIST_HEADER_HEIGHT;
+                if (rowTop > bottom) break;
+                int rowBottom = rowTop + step - 4;
+                if (rowBottom < top) continue;
+                int drawTop = Math.max(rowTop, top);
+                int drawBottom = Math.min(rowBottom, bottom);
+                if (drawBottom - drawTop < 12) continue;
+
                 Object child = children.get(i);
                 String title = "";
                 String sub = "";
@@ -177,7 +191,7 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
                     } catch (Throwable ignored) {
                     }
                     try {
-                        Component d = entry.getDescription();
+                        Component d = entry.getExtendedDescription();
                         sub = d == null ? "" : d.getString();
                     } catch (Throwable ignored) {
                     }
@@ -187,16 +201,6 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
                     }
                 }
                 if (title.isEmpty()) continue;
-                int measuredTop = com.eternalcraft.gripeverde.client.render.DiaryChrome
-                    .rowTopOf(list, i);
-                int rowTop = measuredTop != Integer.MIN_VALUE
-                    ? measuredTop
-                    : top + 4 - (int) scroll + i * step;
-                int rowBottom = rowTop + step - 4;
-                if (rowBottom < top || rowTop > bottom) continue;
-                int drawTop = Math.max(rowTop, top);
-                int drawBottom = Math.min(rowBottom, bottom);
-                if (drawBottom - drawTop < 12) continue;
                 if (chosen) {
                     g.fill(x1, drawTop, x1 + 3, drawBottom, 0xFF8C2A1E);
                 }
@@ -210,10 +214,10 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
                         drawBottom, 0x22F3E7C8);
                 }
                 g.drawString(this.font, DiaryChrome.fitCached(this.font, title, textW),
-                    x1 + 6, drawTop + 4, 0xFF1A1108, false);
+                    textX, drawTop + 4, 0xFF1A1108, false);
                 if (!sub.isEmpty() && drawBottom - drawTop >= 24) {
                     g.drawString(this.font, DiaryChrome.fitCached(this.font, sub, textW),
-                        x1 + 6, drawTop + 15, 0xFF6B5533, false);
+                        textX, drawTop + 15, 0xFF6B5533, false);
                 }
                 g.fill(x1 + 3, drawBottom - 1, x2 - 3, drawBottom, 0x2E6B5533);
             }
@@ -345,7 +349,7 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         int x1 = Math.max(2, list.getLeft() - 6);
         int x2 = Math.min(this.width - 2, list.getLeft() + list.getWidth() + 6);
         int top = Math.max(2, list.getTop());
-        int bottom = Math.min(this.height - 2, top + 13);
+        int bottom = Math.min(this.height - 2, top + PACK_LIST_HEADER_HEIGHT);
         if (x2 - x1 < 80 || bottom - top < 10) return;
 
         // Borra el encabezado blanco del juego sin invadir la primera fila;
