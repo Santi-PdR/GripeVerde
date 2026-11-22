@@ -9,6 +9,22 @@ que una seccion posterior lo mencione expresamente.
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
+- **Historial de servidores recientes, posterior a `f4c89b4`:** devuelve
+  instantáneas inmutables (sin exponer la caché mutable), y lee en streaming
+  hasta tres entradas únicas, en vez de cargar todo el archivo. `push` rechaza
+  controles internos y UTF-16 mal formado para no romper el formato de una
+  dirección por línea; conserva Unicode válido e IPv6 sin hacer DNS ni validar
+  conexiones. Usa CONFIGDIR de Forge y el mismo nombre/formato de archivo.
+  Escribe en temporal vecino y reemplaza atómicamente si el sistema lo admite,
+  con fallback no atómico; no trunca el destino antes de escribir. Si falla,
+  conserva la visita en memoria y otro push (incluso de la misma dirección)
+  vuelve a intentar guardar. Los fallos se registran en vez de silenciarse.
+  Nueva tarea `verifyRecentAddressesRegression` obligatoria en check/build:
+  biblioteca y archivos reales, orden/límite/duplicados, inmutabilidad,
+  Unicode, cola sin leer y fallo/reintento. Java pendiente de CI; no hay
+  garantía de durabilidad ante corte eléctrico, reintento automático ni
+  persistencia de cambios pendientes al cerrar el proceso. Sin bump/release.
+
 - **Protección del original ilegible CEDA, posterior a `7884ead`:** si
   falla la lectura del JSON propio, antes de cualquier reemplazo (importación
   CopyL o guardado posterior) se copian sus bytes a un archivo vecino único

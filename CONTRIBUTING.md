@@ -42,6 +42,9 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   `gripeverde-dispatch.json.corrupt-*.bak` antes de reemplazarlo. Si el backup
   falla no se guarda encima. No borrar esas copias automáticamente ni incluir
   datos de usuario en Git; no es un sistema de restauración automática.
+- `verifyRecentAddressesRegression` también se exige en check/build: prueba
+  la biblioteca real de historial reciente en un CONFIGDIR temporal de Forge,
+  sin cliente/red, con inmutabilidad, orden y recuperación tras fallo de disco.
 - **Nunca dos pushes seguidos**: el CI cancela el run anterior por concurrencia.
 - Sin JDK local: la compilación semántica la hace el CI. No instalar Java 17
   en la máquina para publicar.

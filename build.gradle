@@ -538,7 +538,19 @@ tasks.register('verifyDispatchLoadingRegression', JavaExec) {
     }
 }
 
+tasks.register('verifyRecentAddressesRegression', JavaExec) {
+    group = 'verification'
+    description = 'Checks recent-server history snapshots, ordering, UTF-8 persistence and failed-write recovery without a client.'
+    dependsOn tasks.named('testClasses')
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.eternalcraft.gripeverde.client.RecentAddressesRegression'
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
 tasks.named('check').configure {
+    dependsOn tasks.named('verifyRecentAddressesRegression')
     dependsOn tasks.named('verifyDispatchLoadingRegression')
     dependsOn tasks.named('verifyDispatchPersistenceRegression')
     dependsOn tasks.named('verifyServerAddressRegression')
