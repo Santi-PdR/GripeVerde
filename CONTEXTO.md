@@ -2,6 +2,22 @@
 
 ## Addendum operativo actual (2026-11-13)
 
+- **Espera del writer de memoria al cerrar, posterior a `53ba411`:**
+  `flushForShutdown` era synchronized y esperaba al executor mientras retenía
+  el monitor que `writeNow` necesita. Si había trabajo esperando el monitor,
+  el worker no podía terminar hasta agotar los 3 s de espera, y podía quedar
+  una escritura redundante. La espera sale del monitor; la comprobación de
+  savePending y el intento final siguen sincronizados con el writer. Se
+  conserva el presupuesto de espera y el tratamiento de interrupciones.
+  Nuevas pruebas: 8 escenarios de métodos reales extraídos, executor real
+  vigilado y E/S simulada (incluye ownership del monitor, fallo, timeout,
+  interrupción y rechazo), más 3 guardas; ambos workflows exigen JDK 17.
+  `verifyMemoryShutdownRegression` añade 12 comprobaciones de la biblioteca,
+  executor y JSON reales en CONFIGDIR temporal, requerida por check/build.
+  Compilación/Java pendientes de CI. No mide tiempos de cierre ni ejecuta
+  Minecraft; no es una garantía de persistencia ante corte eléctrico.
+  Sin bump/release ni cambios de esquema de memoria.
+
 - **Centro de cabecera Multijugador, posterior a `1874d7f`:** en ventanas
   de hasta 284 px lógicos el recorte mantiene su mínimo de 64 px, pero el
   centro sigue cambiando. La caché de título/subtítulo no tenía ese centro en

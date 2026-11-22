@@ -549,7 +549,19 @@ tasks.register('verifyRecentAddressesRegression', JavaExec) {
     }
 }
 
+tasks.register('verifyMemoryShutdownRegression', JavaExec) {
+    group = 'verification'
+    description = 'Checks real chronicler memory persistence and executor shutdown without a client.'
+    dependsOn tasks.named('testClasses')
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.eternalcraft.gripeverde.client.MemoryShutdownRegression'
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
 tasks.named('check').configure {
+    dependsOn tasks.named('verifyMemoryShutdownRegression')
     dependsOn tasks.named('verifyRecentAddressesRegression')
     dependsOn tasks.named('verifyDispatchLoadingRegression')
     dependsOn tasks.named('verifyDispatchPersistenceRegression')

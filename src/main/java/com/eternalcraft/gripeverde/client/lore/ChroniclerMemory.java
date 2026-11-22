@@ -315,16 +315,20 @@ public final class ChroniclerMemory {
     private static long lastSaveMs = 0L;
 
     /** Al cerrar el juego se escribe todo cambio pendiente. */
-    public static synchronized void flushForShutdown() {
-        // Espera a que termine cualquier escritura en vuelo del executor y
-        // solo entonces escribe en linea lo que haya quedado pendiente.
+    public static void flushForShutdown() {
+        // No mantener el monitor durante awaitTermination: writeNow tambien
+        // lo necesita y el worker no podria terminar mientras esperamos aqui.
         WRITER.shutdown();
         try {
             WRITER.awaitTermination(3L, java.util.concurrent.TimeUnit.SECONDS);
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
         }
-        if (savePending) writeNow();
+        // El worker pudo completar la escritura mientras esperabamos. Leer el
+        // pendiente y hacer el ultimo intento bajo el mismo monitor que el.
+        synchronized (ChroniclerMemory.class) {
+            if (savePending) writeNow();
+        }
     }
 
     // ── Sesiones ────────────────────────────────────────────────────────────

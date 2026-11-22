@@ -43,6 +43,8 @@ jobs:
       - name: Lint Java structure
         run: python3 tools/lint_java.py
 
+      - name: Test memory shutdown lock and writer
+        run: python3 tools/test_memory_shutdown.py --require-java
       - name: Test multiplayer count cache
         run: python3 tools/test_server_count.py --require-java
       - name: Test dispatch hotkey focus and edges

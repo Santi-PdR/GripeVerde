@@ -22,6 +22,7 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   `python3 tools/test_dispatch_save.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_dispatch_hotkeys.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_server_count.py --require-java` (en CI, con JDK 17) ->
+  `python3 tools/test_memory_shutdown.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/ci/test_release_gate.py` ->
   `python3 tools/ci/test_installer.py` -> commit + push -> esperar el CI ->
   comprobar el release y el SHA-256. El job `publish` compara `release-tag.txt`
@@ -46,6 +47,9 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
 - `verifyRecentAddressesRegression` también se exige en check/build: prueba
   la biblioteca real de historial reciente en un CONFIGDIR temporal de Forge,
   sin cliente/red, con inmutabilidad, orden y recuperación tras fallo de disco.
+- `verifyMemoryShutdownRegression` comprueba memoria/JSON/executor reales en
+  un CONFIGDIR temporal; check/build la requieren. La suite Python de cierre
+  vigila el monitor durante la espera con executor real y E/S simulada.
 - **Nunca dos pushes seguidos**: el CI cancela el run anterior por concurrencia.
 - Sin JDK local: la compilación semántica la hace el CI. No instalar Java 17
   en la máquina para publicar.
