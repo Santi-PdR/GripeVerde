@@ -299,24 +299,25 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         return 36;
     }
 
-    /** v0.377.0: el cajon de cada columna de materiales, con su rotulo. */
+    /** v0.377.0: los dos cajones de materiales, acotados al area visible. */
     private void drawPackColumns(GuiGraphics g) {
-        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
-        drawPackColumn(g, this.availableList, en ? "AVAILABLE" : "DISPONIBLES");
-        drawPackColumn(g, this.selectedList, en ? "APPLIED" : "ARCHIVADOS");
+        drawPackColumn(g, this.availableList);
+        drawPackColumn(g, this.selectedList);
     }
 
-    private void drawPackColumn(GuiGraphics g, AbstractSelectionList<?> list, String heading) {
+    private void drawPackColumn(GuiGraphics g, AbstractSelectionList<?> list) {
         if (g == null || list == null) return;
         int left = list.getLeft();
         int top = list.getTop();
+        int bottom = list.getBottom();
         int w = list.getWidth();
-        int h = list.getHeight();
+        int h = bottom - top;
         if (w < 80 || h < 60) return;
         int x1 = Math.max(2, left - 6);
         int x2 = Math.min(this.width - 2, left + w + 6);
         int y1 = Math.max(2, top - 16);
-        int y2 = Math.min(this.height - 2, top + h + 6);
+        int y2 = Math.min(this.height - 2, bottom + 6);
+        if (x2 <= x1 || y2 <= y1) return;
         int paper = PaperTexture.paperColor(PaperTexture.PaperKind.ARCHIVE);
         g.fill(x1, y1, x2, y2, com.eternalcraft.gripeverde.client.render.DiaryTheme
             .withAlpha(paper, 246));
@@ -325,10 +326,36 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         g.fill(x1, y2 - 1, x2, y2, 0x552A1C12);
         g.fill(x1, y1, x1 + 1, y2, 0x552A1C12);
         g.fill(x2 - 1, y1, x2, y2, 0x552A1C12);
-        // Rotulo del cajon, en tinta sepia.
-        g.drawString(this.font, DiaryChrome.fitCached(this.font, heading,
-            Math.max(40, x2 - x1 - 16)), x1 + 8, y1 + 4, DiaryChrome.INK_SUBTITLE, false);
-        g.fill(x1 + 8, y1 + 14, x2 - 8, y1 + 15, 0x2E6B5533);
+    }
+
+    /**
+     * La pasada opaca de la cabecera y la tinta de filas tapan los encabezados
+     * vanilla. Los rótulos propios se pintan al final, sobre la franja reservada
+     * encima de la primera fila, para que las dos columnas sigan identificadas.
+     */
+    private void drawPackColumnHeadings(GuiGraphics g) {
+        boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+        drawPackColumnHeading(g, this.availableList, en ? "AVAILABLE" : "DISPONIBLES");
+        drawPackColumnHeading(g, this.selectedList, en ? "APPLIED" : "ARCHIVADOS");
+    }
+
+    private void drawPackColumnHeading(GuiGraphics g, AbstractSelectionList<?> list,
+                                       String heading) {
+        if (g == null || list == null) return;
+        int x1 = Math.max(2, list.getLeft() - 6);
+        int x2 = Math.min(this.width - 2, list.getLeft() + list.getWidth() + 6);
+        int top = Math.max(2, list.getTop());
+        int bottom = Math.min(this.height - 2, top + 13);
+        if (x2 - x1 < 80 || bottom - top < 10) return;
+
+        // Borra el encabezado blanco del juego sin invadir la primera fila;
+        // el pixel de cada borde lateral queda intacto.
+        g.fill(x1 + 1, top, x2 - 1, bottom, 0xFFE3D5AB);
+        String shown = DiaryChrome.fitCached(this.font, heading, x2 - x1 - 16);
+        int textWidth = DiaryChrome.widthCached(this.font, shown);
+        g.drawString(this.font, shown, x1 + (x2 - x1 - textWidth) / 2,
+            top + 2, DiaryChrome.INK_SUBTITLE, false);
+        g.fill(x1 + 8, bottom - 1, x2 - 8, bottom, 0x2E6B5533);
     }
 
     /**
@@ -414,6 +441,10 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
                 .widthCached(this.font, subCut);
             g.drawString(this.font, subCut, cx - subW / 2, y + 13,
                 com.eternalcraft.gripeverde.client.render.DiaryChrome.INK_SUBTITLE, false);
+            // Los rótulos de las columnas se restauran después de todas las
+            // capas opacas que tapan el encabezado vanilla.
+            g.flush();
+            drawPackColumnHeadings(g);
         } catch (Throwable ignored) {
         }
     }

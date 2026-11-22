@@ -11,9 +11,11 @@
   Es una corrección de respaldo acotada, no confirma resueltos los clics
   fantasma generales ni cambia el aspecto de la pantalla.
 - **Pendiente de revisión en Minecraft:** Paquetes de recursos, los clics
-  fantasma generales y la interfaz de Un Jugador siguen abiertos. Los guardas
-  de entrada son cambios acotados; no equivalen a confirmar esos reportes.
-  Esta ronda no modifica el diseño visual de Un Jugador.
+  fantasma generales y la interfaz de Un Jugador siguen abiertos. La revisión
+  estática de Paquetes encontró que la repintada opaca escondía los rótulos de
+  columna; la rama contiene un candidato que los restaura sin tocar la entrada
+  vanilla. Aún requiere prueba en cliente y no está publicado. Los guardas de
+  entrada son cambios acotados; esta ronda no modifica Un Jugador.
 - Las reglas de siempre siguen en pie: mod **solo de cliente**, sin bloques,
   sin ítems, sin gameplay ni resourcepacks; la identidad visual se hace con
   Java y los render/widgets propios.

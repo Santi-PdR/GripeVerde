@@ -16,6 +16,10 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
 - La v0.401.0 alinea el fallback de Mundos con el orden de redondeo de vanilla
   al resolver filas con scroll fraccionario. Es un ajuste puntual, no una
   confirmación de que el reporte general de clics fantasma esté resuelto.
+- Revisión estática de Paquetes encontró que el repintado opaco borraba los
+  rótulos de ambas columnas. La rama lleva un candidato que los restaura al
+  final del render y acota el papel al viewport visible; no cambia los eventos
+  ni la lógica vanilla. No se bumpó ni publicó: falta probarlo en Minecraft.
 - **Pendiente de confirmación en Minecraft:** Paquetes de recursos, clics
   fantasma e interfaz visual de Un Jugador, además de revisar los clics de
   Mundos. No se afirma que estén corregidos sin prueba en cliente.

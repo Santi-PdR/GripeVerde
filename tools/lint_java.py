@@ -408,6 +408,30 @@ def check_pack_selection_single_render(path, clean):
         line = clean[:page_start].count(chr(10)) + 1
         return [(path, line, 'Packs: dejar una sola linea secundaria en la cabecera')]
 
+    column, column_start = method_body(
+        'private void drawPackColumn(GuiGraphics g, AbstractSelectionList<?> list)')
+    headings, headings_start = method_body('private void drawPackColumnHeadings(GuiGraphics g)')
+    heading, heading_start = method_body(
+        'private void drawPackColumnHeading(GuiGraphics g, AbstractSelectionList<?> list,')
+    header_fill = render.find('g.fill(bandLeft, bandTop, bandRight, bandBottom')
+    subtitle_draw = render.find('g.drawString(this.font, subCut')
+    headings_draw = render.find('drawPackColumnHeadings(g);')
+    if (not column or 'list.getBottom()' not in column
+            or 'int h = bottom - top;' not in column or 'bottom + 6' not in column
+            or 'list.getHeight()' in column
+            or not headings or 'this.availableList' not in headings
+            or 'this.selectedList' not in headings
+            or not heading or 'list.getTop()' not in heading
+            or 'g.fill(x1 + 1, top, x2 - 1, bottom' not in heading
+            or 'g.drawString(this.font, shown' not in heading
+            or header_fill < 0 or subtitle_draw < header_fill
+            or headings_draw < subtitle_draw):
+        line_start = next((start for start in (column_start, headings_start, heading_start, render_start)
+                           if start >= 0), 0)
+        line = clean[:line_start].count(chr(10)) + 1
+        return [(path, line,
+                 'Packs: limitar cajones al viewport y pintar sus rótulos después de la cabecera opaca')]
+
     init, init_start = method_body('protected void init()')
     resolver, resolver_start = method_body('private void resolvePackLists()')
     reset = init.find('this.availableList = null;')

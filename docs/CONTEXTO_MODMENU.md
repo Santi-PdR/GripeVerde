@@ -15,6 +15,10 @@ Actualizado: 2026-11-13
   para el scroll fraccionario. Es acotado, no resuelve por sí solo el reporte
   de clics fantasma y no cambia el diseño visual. Paquetes, Un Jugador y la
   revisión de interacción siguen pendientes de prueba dentro de Minecraft.
+- Candidato sin bump/publicación en Paquetes: los rótulos propios quedaban
+  debajo del repintado opaco. La rama los dibuja al final y limita el papel al
+  viewport de las listas; no altera su despacho de entrada vanilla. Confirmar
+  el aspecto y las acciones en Minecraft antes de publicar.
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
   El trabajo se hace sobre el repositorio; no se edita el proyecto local del usuario.
 - No se controla Minecraft ni la PC del usuario para pruebas visuales. El CI acredita
