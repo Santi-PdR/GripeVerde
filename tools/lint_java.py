@@ -19,6 +19,8 @@ interactiva de la hoja de mundos:
   9. Mundos valida y limita icon.png antes de decodificarlo.
  10. Multiplayer solo entra con doble clic real sobre la misma fila, no en el
      margen, la cabecera LAN ni los controles de editar/borrar.
+ 11. Mundos devuelve el foco a la lista al consumir un doble clic de fila, para
+     que Enter no siga escribiendo en el buscador.
 
 Uso: python3 tools/lint_java.py [rutas...]
 Sale con codigo 1 si encuentra algo.
@@ -197,6 +199,62 @@ def check_world_search_keys(path, clean):
         line = clean[:start].count(chr(10)) + 1
         return [(path, line,
                  'Mundos: delegar al buscador enfocado antes de atajos Enter/Supr')]
+    return []
+
+
+def check_world_click_suppression_focus(path, clean):
+    """Un doble clic consumido sigue transfiriendo el foco del buscador a la lista."""
+    if not path.replace(chr(92), '/').endswith('/client/screens/DiarySelectWorldScreen.java'):
+        return []
+    signature = 'public boolean mouseClicked(double mouseX, double mouseY, int button)'
+    start = clean.find(signature)
+    focus_start = clean.find('private void focusWorldList()')
+    if start < 0 or focus_start < 0:
+        return [(path, 1, 'Mundos: falta restaurar el foco de la lista al consumir un clic')]
+
+    def method_body(method_start):
+        opening = clean.find('{', method_start)
+        if opening < 0:
+            return ''
+        depth = 0
+        for index in range(opening, len(clean)):
+            if clean[index] == '{':
+                depth += 1
+            elif clean[index] == '}':
+                depth -= 1
+                if depth == 0:
+                    return clean[method_start:index + 1]
+        return ''
+
+    handler = method_body(start)
+    focus_helper = method_body(focus_start)
+    guard_start = handler.find('if (row == selected || (row == this.lastForwardedEntry')
+    if guard_start < 0:
+        line = clean[:start].count(chr(10)) + 1
+        return [(path, line, 'Mundos: falta la guarda que consume el doble clic de una fila')]
+    guard_open = handler.find('{', guard_start)
+    depth = 0
+    guard_end = -1
+    for index in range(guard_open, len(handler)):
+        if handler[index] == '{':
+            depth += 1
+        elif handler[index] == '}':
+            depth -= 1
+            if depth == 0:
+                guard_end = index + 1
+                break
+    guard = handler[guard_start:guard_end] if guard_end >= 0 else ''
+    if 'focusWorldList();' not in guard or guard.find('focusWorldList();') > guard.find('return true;'):
+        line = clean[:start].count(chr(10)) + 1
+        return [(path, line,
+                 'Mundos: devolver el foco a la lista antes de consumir el doble clic')]
+    if any(token not in focus_helper for token in (
+            'for (EditBox box : this.searchBoxes)',
+            'box.setFocused(false)',
+            'this.setFocused(this.vanillaList)',
+            'this.vanillaList.setFocused(true)')):
+        line = clean[:focus_start].count(chr(10)) + 1
+        return [(path, line, 'Mundos: desenfocar el buscador y enfocar la lista')]
     return []
 
 
@@ -642,6 +700,7 @@ def main(argv):
         problems += check_dangling(f, lines)
         problems += check_shadow(f, clean)
         problems += check_world_search_keys(f, clean)
+        problems += check_world_click_suppression_focus(f, clean)
         problems += check_world_archive_visibility(f, clean)
         problems += check_world_icon_cache_lifecycle(f, clean)
         problems += check_world_icon_fits_box(f, clean)

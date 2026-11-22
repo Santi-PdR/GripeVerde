@@ -1455,6 +1455,17 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         return false;
     }
 
+    /** Mueve el foco de los buscadores a la lista sin reenviar el clic a la fila. */
+    private void focusWorldList() {
+        for (EditBox box : this.searchBoxes) {
+            if (box != null) box.setFocused(false);
+        }
+        if (this.vanillaList != null) {
+            this.setFocused(this.vanillaList);
+            this.vanillaList.setFocused(true);
+        }
+    }
+
     /**
      * v0.251.0: Enter entra al mundo elegido. El boton del juego sigue siendo
      * el que trabaja; aca solo se lo aprieta por el lector.
@@ -1504,8 +1515,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                     || keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_UP
                     || keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_HOME
                     || keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_END)) {
-            this.setFocused(this.vanillaList);
-            this.vanillaList.setFocused(true);
+            focusWorldList();
             Object before = this.vanillaList.getSelected();
             boolean handled = super.keyPressed(keyCode, scanCode, modifiers);
             if (handled) {
@@ -1688,6 +1698,9 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         }
         if (row == selected || (row == this.lastForwardedEntry
                 && now - this.lastForwardedMs < 650L)) {
+            // Se consume el doble clic para no abrir por sorpresa, pero el
+            // buscador deja de tener el foco como en un clic normal de fila.
+            focusWorldList();
             try {
                 com.eternalcraft.gripeverde.client.audio.UiSounds.tab();
             } catch (Throwable ignored) {
