@@ -9,6 +9,15 @@ que una seccion posterior lo mencione expresamente.
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
+- **Recorte Unicode de CEDA, posterior a `b8004f2`:** los límites de
+  256 unidades UTF-16 del mensaje y 24 del nombre podían separar un par
+  sustituto después de limpiarlo, dejando una mitad inválida. El recorte
+  respeta el límite existente pero retrocede una unidad si cortaría el par.
+  Se amplía `verifyDispatchPersistenceRegression` con límites exactos,
+  caracteres suplementarios, sustitutos aislados, valores nulos y round trip
+  JSON. No cambia los límites ni el EditBox vanilla; no garantiza soporte
+  visual de emojis por la fuente. Validación Java pendiente de CI.
+
 - **Guardado del Parte/CEDA, posterior a `551329f`:** la edición usa
   `updateMessage` sin E/S y agrupa las pulsaciones durante 700 ms. Se conserva
   la API inmediata `setMessage` y el guardado de atajos. Un fallo mantiene
@@ -21,8 +30,11 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
   Pruebas añadidas: métodos reales de pantalla con reloj/almacén dobles
   (11 escenarios, más 3 guardas estructurales) y persistencia JSON/archivos
   reales en un directorio aislado de Forge mediante tarea Gradle requerida
-  por check/build. Validación local pasa; Java pendiente de CI (sin JDK local).
+  por check/build. El candidato `b8004f2` compiló y pasó las suites en
+  [CI 45045285372](https://github.com/Santi-PdR/GripeVerde/actions/runs/45045285372),
+  artefacto `GripeVerde-jar` ID `14763590784`. Sin JDK local.
   Son 192 claves en los 25 locales. Sin bump/release ni prueba en Minecraft.
+  Asset v0.401.0 reconsultado: ID/tamaño/digest sin cambios.
 
 - **Desfase de edición en DiaryTextField (posterior a `f173ab8`):** el margen
   dibujado de 4 px no coincidía con EditBox sin borde lógico. Se alinea el

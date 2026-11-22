@@ -28,6 +28,49 @@ public final class DispatchPersistenceRegression {
         }
     }
 
+    private static void checkMessage(String input, String expected) {
+        DispatchLibrary.updateMessage(4, input);
+        String actual = DispatchLibrary.message(4);
+        check(actual.equals(expected), "message normalization at UTF-16 boundary");
+        check(java.nio.charset.StandardCharsets.UTF_8.newEncoder().canEncode(actual), "message is well-formed Unicode");
+        check(actual.length() <= 256, "message respects chat UTF-16 limit");
+    }
+
+    private static void checkName(String input, String expected) throws Exception {
+        // Names have no editor API: exercise the same private normalizer used by
+        // own-file loading and CopyL import, without changing the production API.
+        var normalize = DispatchLibrary.class.getDeclaredMethod("normalizeName", String.class, int.class);
+        normalize.setAccessible(true);
+        String actual = (String) normalize.invoke(null, input, 0);
+        check(actual.equals(expected), "name normalization at UTF-16 boundary");
+        check(java.nio.charset.StandardCharsets.UTF_8.newEncoder().canEncode(actual), "name is well-formed Unicode");
+        check(actual.length() <= 24, "name respects UTF-16 limit");
+    }
+
+    private static void unicodeBoundaries(Path own) throws Exception {
+        String emoji = "\uD83D\uDE42";
+        checkMessage(null, "");
+        checkMessage("a".repeat(256), "a".repeat(256));
+        checkMessage("a".repeat(257), "a".repeat(256));
+        checkMessage("a".repeat(254) + emoji, "a".repeat(254) + emoji);
+        checkMessage("a".repeat(255) + emoji, "a".repeat(255));
+        checkMessage("a".repeat(256) + emoji, "a".repeat(256));
+        checkMessage(emoji.repeat(129), emoji.repeat(128));
+        checkMessage("a\uD83Db\uDE42c\n\t", "a?b?c  ");
+        checkName(null, "Mensaje 1");
+        checkName("   ", "Mensaje 1");
+        checkName("  Nombre  ", "Nombre");
+        checkName("n".repeat(25), "n".repeat(24));
+        checkName("n".repeat(22) + emoji, "n".repeat(22) + emoji);
+        checkName("n".repeat(23) + emoji, "n".repeat(23));
+        checkName(emoji.repeat(13), emoji.repeat(12));
+        checkName("a\uD83Db\uDE42c", "a?b?c");
+        checkMessage("a".repeat(254) + emoji + "discard", "a".repeat(254) + emoji);
+        check(DispatchLibrary.save(), "Unicode JSON saved");
+        String persisted = read(own).getAsJsonArray("slots").get(4).getAsJsonObject().get("message").getAsString();
+        check(persisted.equals("a".repeat(254) + emoji), "Unicode JSON round trip");
+    }
+
     public static void main(String[] args) throws Exception {
         Path game = Files.createTempDirectory("gripeverde-dispatch-regression-");
         try {
@@ -91,6 +134,7 @@ public final class DispatchPersistenceRegression {
             check(DispatchLibrary.updateMessage(0, ""), "clear marks pending");
             check(DispatchLibrary.save(), "clear saved");
             check(read(own).getAsJsonArray("slots").get(0).getAsJsonObject().get("message").getAsString().isEmpty(), "clear persisted");
+            unicodeBoundaries(own);
             System.out.println("Dispatch persistence: " + checks + " checks passed");
         } finally {
             try (var files = Files.walk(game)) {

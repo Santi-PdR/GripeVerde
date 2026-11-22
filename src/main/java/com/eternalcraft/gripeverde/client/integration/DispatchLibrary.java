@@ -359,12 +359,19 @@ public final class DispatchLibrary {
     private static String normalizeName(String value, int index) {
         String cleaned = clean(value).trim();
         if (cleaned.isEmpty()) return defaultName(index);
-        return cleaned.length() <= MAX_NAME_LENGTH ? cleaned : cleaned.substring(0, MAX_NAME_LENGTH);
+        return truncateClean(cleaned, MAX_NAME_LENGTH);
     }
 
     private static String normalizeMessage(String value) {
-        String cleaned = clean(value);
-        return cleaned.length() <= MAX_MESSAGE_LENGTH ? cleaned : cleaned.substring(0, MAX_MESSAGE_LENGTH);
+        return truncateClean(clean(value), MAX_MESSAGE_LENGTH);
+    }
+
+    /** Respeta el limite UTF-16 del chat sin partir un par sustituto ya limpio. */
+    private static String truncateClean(String cleaned, int limit) {
+        if (cleaned.length() <= limit) return cleaned;
+        int end = limit;
+        if (end > 0 && Character.isHighSurrogate(cleaned.charAt(end - 1))) end--;
+        return cleaned.substring(0, end);
     }
 
     /** Una sola linea, sin controles: lo mismo que exige el chat. */
