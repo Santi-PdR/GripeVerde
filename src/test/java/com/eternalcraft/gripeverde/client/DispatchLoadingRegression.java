@@ -9,6 +9,9 @@ import org.lwjgl.glfw.GLFW;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Comparator;
 
 /** Real library/Gson/filesystem tests; isolated config directories, no client. */
@@ -32,6 +35,7 @@ public final class DispatchLoadingRegression {
         // exposed in production. ensureLoaded initializes all slot arrays.
         resetField("loaded", false);
         resetField("pendingSave", false);
+        resetField("needsOriginalBackup", false);
         resetField("openKey", GLFW.GLFW_KEY_RIGHT_ALT);
         resetField("importedFrom", "");
         return FMLPaths.CONFIGDIR.get();
@@ -79,6 +83,7 @@ public final class DispatchLoadingRegression {
         JsonArray slots = JsonParser.parseString(Files.readString(own)).getAsJsonObject().getAsJsonArray("slots");
         check(slots.get(7).getAsJsonObject().get("message").getAsString().equals("Keep last"), "later row survives next save");
         check(Files.readString(copy).equals(obsolete), "save never modifies CopyL");
+        check(backups(config).isEmpty(), "readable own file needs no corruption backup");
     }
 
     private static void copyFields(Path root) throws Exception {
@@ -108,6 +113,7 @@ public final class DispatchLoadingRegression {
         check(!DispatchLibrary.hasPendingSave(), "successful import clean");
         check(Files.readString(copy).equals(source), "CopyL source unchanged");
         check(Files.readString(copyConfig).equals(settings), "CopyL config unchanged");
+        check(backups(config).isEmpty(), "fresh import needs no corruption backup");
     }
 
     private static void bindingValues(Path root) throws Exception {
@@ -197,6 +203,105 @@ public final class DispatchLoadingRegression {
         }
     }
 
+    private static List<Path> backups(Path config) throws Exception {
+        try (var files = Files.list(config)) {
+            return files.filter(path -> path.getFileName().toString().startsWith("gripeverde-dispatch.json.corrupt-"))
+                .filter(path -> path.getFileName().toString().endsWith(".bak")).toList();
+        }
+    }
+
+    private static void noSaveTemporaryFiles(Path config) throws Exception {
+        try (var files = Files.list(config)) {
+            check(files.noneMatch(path -> path.getFileName().toString().endsWith(".tmp")), "save temporaries cleaned");
+        }
+    }
+
+    private static void corruptOriginals(Path root) throws Exception {
+        byte[][] originals = {
+            "{\"slots\":[".getBytes(StandardCharsets.UTF_8),
+            "null".getBytes(StandardCharsets.UTF_8),
+            "[1,2]".getBytes(StandardCharsets.UTF_8),
+            "\"not an object\"".getBytes(StandardCharsets.UTF_8),
+            new byte[] {'{', '"', 'x', '"', ':', (byte) 0xFF}
+        };
+        for (boolean copy : new boolean[] {false, true}) {
+            for (int i = 0; i < originals.length; i++) {
+                Path game = root.resolve((copy ? "corrupt-with-copy-" : "corrupt-without-copy-") + i);
+                Path config = newConfig(game);
+                Path own = config.resolve("gripeverde-dispatch.json");
+                Path existingBackup = config.resolve("gripeverde-dispatch.json.corrupt-previous.bak");
+                Files.writeString(existingBackup, "Previous backup");
+                Files.write(own, originals[i]);
+                Path copyFile = config.resolve("copyl-messages.json");
+                String copyText = "{\"messages\":[\"Recovered from CopyL\"]}";
+                if (copy) Files.writeString(copyFile, copyText);
+                check(DispatchLibrary.message(0).equals(copy ? "Recovered from CopyL" : ""), "corrupt own file uses recovery/defaults");
+                check(!DispatchLibrary.hasPendingSave(), "load or successful import is clean");
+                check(backups(config).size() == (copy ? 2 : 1), "backup created only before replacement");
+                if (!copy) check(Arrays.equals(Files.readAllBytes(own), originals[i]), "load without CopyL leaves original bytes intact");
+                DispatchLibrary.updateMessage(0, "Edited after recovery");
+                check(DispatchLibrary.save(), "save after corrupt load succeeds with backup");
+                List<Path> preserved = backups(config);
+                check(preserved.size() == 2, "one new backup per damaged original");
+                Path backup = preserved.stream().filter(path -> !path.equals(existingBackup)).findFirst().orElseThrow();
+                check(Arrays.equals(Files.readAllBytes(backup), originals[i]), "backup preserves exact bytes including invalid UTF-8");
+                check(Files.readString(existingBackup).equals("Previous backup"), "older backup not overwritten");
+                check(JsonParser.parseString(Files.readString(own)).getAsJsonObject().getAsJsonArray("slots")
+                    .get(0).getAsJsonObject().get("message").getAsString().equals("Edited after recovery"), "recovered data saved as valid JSON");
+                DispatchLibrary.updateMessage(1, "Another edit");
+                check(DispatchLibrary.save(), "subsequent save succeeds");
+                check(backups(config).size() == 2, "normal saves do not accumulate backups");
+                check(Arrays.equals(Files.readAllBytes(backup), originals[i]), "subsequent save leaves backup unchanged");
+                noSaveTemporaryFiles(config);
+                newConfig(game);
+                check(DispatchLibrary.message(0).equals("Edited after recovery"), "recovered file loads on next process");
+                check(backups(config).size() == 2, "loading recovered file creates no extra backup");
+                if (copy) check(Files.readString(copyFile).equals(copyText), "recovery never writes CopyL source");
+            }
+        }
+    }
+
+    private static void backupFailure(Path root) throws Exception {
+        Path config = newConfig(root.resolve("backup-failure"));
+        Path own = config.resolve("gripeverde-dispatch.json");
+        Files.createDirectory(own);
+        Path marker = own.resolve("keep.txt");
+        Files.writeString(marker, "Keep destination");
+        Path copy = config.resolve("copyl-messages.json");
+        String copyText = "{\"messages\":[\"Recovered in memory\"]}";
+        Files.writeString(copy, copyText);
+        check(DispatchLibrary.message(0).equals("Recovered in memory"), "failed backup retains imported memory");
+        check(DispatchLibrary.hasPendingSave(), "failed backup leaves pending save");
+        check(Files.readString(marker).equals("Keep destination"), "failed backup does not replace original path");
+        check(backups(config).isEmpty(), "failed backup creates no misleading copy");
+        noSaveTemporaryFiles(config);
+        check(!DispatchLibrary.save(), "retry still refuses unpreserved original");
+        check(DispatchLibrary.hasPendingSave(), "retry failure still pending");
+        noSaveTemporaryFiles(config);
+        Files.delete(marker);
+        Files.delete(own);
+        byte[] original = "{\"truncated\":".getBytes(StandardCharsets.UTF_8);
+        Files.write(own, original);
+        check(DispatchLibrary.save(), "retry succeeds once original can be preserved");
+        check(!DispatchLibrary.hasPendingSave(), "successful retry clears pending");
+        check(backups(config).size() == 1, "retry preserves original exactly once");
+        check(Arrays.equals(Files.readAllBytes(backups(config).get(0)), original), "retry backup has original bytes");
+        check(Files.readString(copy).equals(copyText), "failed recovery leaves CopyL untouched");
+        noSaveTemporaryFiles(config);
+    }
+
+    private static void manuallyRemovedOriginal(Path root) throws Exception {
+        Path config = newConfig(root.resolve("removed-original"));
+        Path own = config.resolve("gripeverde-dispatch.json");
+        Files.writeString(own, "{\"truncated\":");
+        DispatchLibrary.ensureLoaded();
+        Files.delete(own);
+        DispatchLibrary.updateMessage(0, "User removed damaged original");
+        check(DispatchLibrary.save(), "explicitly removed original does not block future save");
+        check(backups(config).isEmpty(), "no backup possible or needed after explicit removal");
+        check(Files.isRegularFile(own), "new file can be created after manual removal");
+    }
+
     public static void main(String[] args) throws Exception {
         Path root = Files.createTempDirectory("gripeverde-loading-regression-");
         try {
@@ -205,6 +310,9 @@ public final class DispatchLoadingRegression {
             bindingValues(root);
             legacyKeys(root);
             duplicateBindings(root);
+            corruptOriginals(root);
+            backupFailure(root);
+            manuallyRemovedOriginal(root);
             System.out.println("Dispatch loading: " + checks + " checks passed");
         } finally {
             try (var files = Files.walk(root)) {

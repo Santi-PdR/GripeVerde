@@ -2,6 +2,21 @@
 
 ## Addendum operativo actual (2026-11-13)
 
+- **Protección del original ilegible CEDA, posterior a `7884ead`:** si
+  falla la lectura del JSON propio, antes de cualquier reemplazo (importación
+  CopyL o guardado posterior) se copian sus bytes a un archivo vecino único
+  `gripeverde-dispatch.json.corrupt-*.bak`. No se pisan ni borran backups
+  anteriores. Si no se puede conservar el original, save devuelve false,
+  mantiene cambios en memoria pendientes y no reemplaza el destino. Sin CopyL
+  no se escribe nada solo por abrir; el backup se difiere al primer guardado.
+  Guardados normales posteriores no crean nuevas copias del mismo original.
+  La suite real `verifyDispatchLoadingRegression` añade JSON truncado,
+  raíces inválidas y UTF-8 inválido, con/sin CopyL, backups previos, bloqueo
+  de recuperación y reintento. Compilación/Java pendientes de CI. No recupera
+  automáticamente el texto del archivo roto; permite rescate manual. No hay
+  garantía frente a corte eléctrico ni ediciones externas concurrentes.
+  Sin bump/release ni prueba Minecraft.
+
 - **Foco y overlays en atajos CEDA, posterior a `01bea15`:** el sondeo de
   atajos se suspende si la ventana no está activa o hay un overlay de carga.
   Se reinicia el estado de flancos, también sin cliente/ventana, para no

@@ -38,6 +38,10 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
 - `verifyDispatchLoadingRegression` verifica archivos propios/CopyL con campos
   nulos o mal tipados, preservación de otras ranuras y teclas sin truncamiento
   ni desbordamiento; también se exige en check/build, sin cliente gráfico.
+- La recuperación de JSON CEDA ilegible conserva el original en config como
+  `gripeverde-dispatch.json.corrupt-*.bak` antes de reemplazarlo. Si el backup
+  falla no se guarda encima. No borrar esas copias automáticamente ni incluir
+  datos de usuario en Git; no es un sistema de restauración automática.
 - **Nunca dos pushes seguidos**: el CI cancela el run anterior por concurrencia.
 - Sin JDK local: la compilación semántica la hace el CI. No instalar Java 17
   en la máquina para publicar.

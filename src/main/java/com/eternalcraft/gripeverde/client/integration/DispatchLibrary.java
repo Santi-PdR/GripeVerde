@@ -13,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
 
+import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.math.BigDecimal;
@@ -60,6 +61,7 @@ public final class DispatchLibrary {
     private static String importedFrom = "";
     private static boolean loaded;
     private static boolean pendingSave;
+    private static boolean needsOriginalBackup;
 
     private DispatchLibrary() {
     }
@@ -79,7 +81,8 @@ public final class DispatchLibrary {
                 normalizeBindings();
                 return;
             }
-            LOGGER.warn("No pude leer {}; intento importar de CopyL.", own);
+            needsOriginalBackup = true;
+            LOGGER.warn("No pude leer {}; intento importar de CopyL sin perder el original.", own);
         }
         importFromCopyL();
     }
@@ -198,6 +201,30 @@ public final class DispatchLibrary {
 
     // ---------------------------------------------------------------- escritura
 
+    /** No reemplazar un archivo ilegible sin conservar primero sus bytes. */
+    private static void preserveUnreadableOriginal(Path own) throws IOException {
+        if (!needsOriginalBackup) return;
+        if (Files.notExists(own)) {
+            // El usuario ya lo retiro; no hay un original que vayamos a pisar.
+            needsOriginalBackup = false;
+            return;
+        }
+        if (!Files.isRegularFile(own)) {
+            throw new IOException("El archivo original no es un fichero regular: " + own);
+        }
+        Path backup = Files.createTempFile(own.getParent(), OWN_FILE + ".corrupt-", ".bak");
+        boolean copied = false;
+        try {
+            Files.copy(own, backup, StandardCopyOption.REPLACE_EXISTING);
+            copied = true;
+            needsOriginalBackup = false;
+            LOGGER.warn("Original ilegible de CEDA conservado en {}", backup);
+        } finally {
+            if (!copied) Files.deleteIfExists(backup);
+        }
+    }
+
+
     public static synchronized boolean save() {
         ensureLoaded();
         pendingSave = true;
@@ -221,6 +248,7 @@ public final class DispatchLibrary {
             try (Writer writer = Files.newBufferedWriter(temporary, StandardCharsets.UTF_8)) {
                 GSON.toJson(root, writer);
             }
+            preserveUnreadableOriginal(own);
             // No truncar el archivo anterior antes de terminar de serializar.
             try {
                 Files.move(temporary, own, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
