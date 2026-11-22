@@ -290,6 +290,39 @@ public final class DispatchLoadingRegression {
         noSaveTemporaryFiles(config);
     }
 
+    private static void unreadableOriginal(Path root) throws Exception {
+        Path config = newConfig(root.resolve("unreadable-original"));
+        if (!Files.getFileStore(config).supportsFileAttributeView("posix")) {
+            System.out.println("Unreadable-original permission scenario skipped: no POSIX permissions");
+            return;
+        }
+        Path own = config.resolve("gripeverde-dispatch.json");
+        byte[] original = "{\"truncated\":".getBytes(StandardCharsets.UTF_8);
+        Files.write(own, original);
+        var permissions = Files.getPosixFilePermissions(own);
+        try {
+            Files.setPosixFilePermissions(own, java.util.Set.of());
+            if (Files.isReadable(own)) {
+                System.out.println("Unreadable-original permission scenario skipped: process bypasses file permissions");
+                return;
+            }
+            Files.writeString(config.resolve("copyl-messages.json"), "{\"messages\":[\"Recovered in memory\"]}");
+            check(DispatchLibrary.message(0).equals("Recovered in memory"), "unreadable original retains recovery in memory");
+            check(DispatchLibrary.hasPendingSave(), "copy failure leaves save pending");
+            check(Files.exists(own), "copy failure leaves unreadable original present");
+            check(backups(config).isEmpty(), "partially created backup cleaned after copy failure");
+            noSaveTemporaryFiles(config);
+        } finally {
+            Files.setPosixFilePermissions(own, permissions);
+        }
+        check(Arrays.equals(Files.readAllBytes(own), original), "copy failure did not modify original bytes");
+        check(DispatchLibrary.save(), "backup retries after read permission restored");
+        check(!DispatchLibrary.hasPendingSave(), "permission recovery clears pending");
+        check(backups(config).size() == 1, "permission recovery makes one complete backup");
+        check(Arrays.equals(Files.readAllBytes(backups(config).get(0)), original), "permission recovery preserves exact bytes");
+        noSaveTemporaryFiles(config);
+    }
+
     private static void manuallyRemovedOriginal(Path root) throws Exception {
         Path config = newConfig(root.resolve("removed-original"));
         Path own = config.resolve("gripeverde-dispatch.json");
@@ -312,6 +345,7 @@ public final class DispatchLoadingRegression {
             duplicateBindings(root);
             corruptOriginals(root);
             backupFailure(root);
+            unreadableOriginal(root);
             manuallyRemovedOriginal(root);
             System.out.println("Dispatch loading: " + checks + " checks passed");
         } finally {
