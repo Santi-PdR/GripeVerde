@@ -894,44 +894,113 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     }
 
     private long lastListClickMs = 0L;
+    private Object lastListClickEntry;
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        Object clickedEntry = button == 0 ? serverEntryAt(mouseX, mouseY) : null;
+        boolean rowControl = clickedEntry != null
+            && serverEntryControlAt(clickedEntry, mouseX, mouseY);
         Object before = null;
         try {
             before = this.vanillaList == null ? null : this.vanillaList.getSelected();
         } catch (Throwable ignored) {
         }
         boolean handled = super.mouseClicked(mouseX, mouseY, button);
-        // v0.263.0: dos golpes seguidos sobre el mismo puesto y se entra, sin
-        // ir a buscar el boton. El primero solo elige, como siempre.
-        if (button == 0 && overServerList(mouseX, mouseY)) {
-            Object after = null;
+        if (button != 0 || clickedEntry == null || rowControl) {
+            this.lastListClickEntry = null;
+            this.lastListClickMs = 0L;
+            return handled;
+        }
+
+        Object after = null;
+        try {
+            after = this.vanillaList == null ? null : this.vanillaList.getSelected();
+        } catch (Throwable ignored) {
+        }
+        long now = System.currentTimeMillis();
+        // Solo un doble clic en la misma fila seleccionada entra al puesto.
+        // Pulsar el margen, la cabecera LAN o una fila distinta no puede abrirlo.
+        if (after == clickedEntry && before == clickedEntry
+                && clickedEntry == this.lastListClickEntry
+                && now - this.lastListClickMs < 320L) {
+            this.lastListClickEntry = null;
+            this.lastListClickMs = 0L;
             try {
-                after = this.vanillaList == null ? null : this.vanillaList.getSelected();
+                com.eternalcraft.gripeverde.client.audio.UiSounds.playClick();
             } catch (Throwable ignored) {
             }
-            long now = System.currentTimeMillis();
-            if (after != null && after == before && now - this.lastListClickMs < 320L) {
-                this.lastListClickMs = 0L;
-                try {
-                    com.eternalcraft.gripeverde.client.audio.UiSounds.playClick();
-                } catch (Throwable ignored) {
-                }
-                onJoin();
-                return true;
-            }
+            onJoin();
+            return true;
+        }
+        if (after == clickedEntry) {
+            this.lastListClickEntry = clickedEntry;
             this.lastListClickMs = now;
+        } else {
+            this.lastListClickEntry = null;
+            this.lastListClickMs = 0L;
         }
         return handled;
     }
 
-    /** v0.263.0: la banda que ocupa la lista de puestos. */
-    private boolean overServerList(double mouseX, double mouseY) {
-        int top = PANEL_MARGIN_V + LIST_TOP_OFFSET;
-        int bottom = this.height - PANEL_MARGIN_V - LIST_BOTTOM_OFFSET;
-        return mouseY >= top && mouseY <= bottom
-            && mouseX >= PANEL_MARGIN_H && mouseX <= this.width - PANEL_MARGIN_H;
+    /** Fila de puesto directamente bajo el puntero, sin tomar márgenes ni LAN. */
+    private Object serverEntryAt(double mouseX, double mouseY) {
+        if (this.vanillaList == null) return null;
+        try {
+            int listTop = this.vanillaList.getTop();
+            int listBottom = this.vanillaList.getBottom();
+            int rowLeft = this.vanillaList.getRowLeft();
+            int rowRight = rowLeft + this.vanillaList.getRowWidth();
+            if (mouseY < listTop || mouseY >= listBottom
+                    || mouseX < rowLeft || mouseX >= rowRight) return null;
+            var children = this.vanillaList.children();
+            if (children == null || children.isEmpty()) return null;
+            double scroll = this.vanillaList.getScrollAmount();
+            int step = rowStepNow();
+            for (int i = 0; i < children.size(); i++) {
+                Object entry = children.get(i);
+                if (extractServerDataFromEntry(entry) == null) continue;
+                int entryTop = this.rowTopMethod != null ? rowTopOf(i)
+                    : this.vanillaListY0 + 4 - (int) scroll + i * step
+                        + this.vanillaHeaderHeight - 2;
+                if (entryTop <= 0) {
+                    entryTop = this.vanillaListY0 + 4 - (int) scroll + i * step
+                        + this.vanillaHeaderHeight - 2;
+                }
+                if (mouseY >= entryTop && mouseY < entryTop + step) return entry;
+            }
+        } catch (Throwable ignored) {
+        }
+        return null;
+    }
+
+    /** Los botones de editar/borrar de la fila no deben contar como doble clic para entrar. */
+    private boolean serverEntryControlAt(Object entry, double mouseX, double mouseY) {
+        if (entry == null) return false;
+        for (Class<?> type = entry.getClass(); type != null && type != Object.class;
+             type = type.getSuperclass()) {
+            for (Field field : type.getDeclaredFields()) {
+                if (!AbstractWidget.class.isAssignableFrom(field.getType())) continue;
+                try {
+                    field.setAccessible(true);
+                    Object value = field.get(entry);
+                    if (value instanceof AbstractWidget widget
+                            && widget.visible && widget.isMouseOver(mouseX, mouseY)) {
+                        return true;
+                    }
+                } catch (Throwable ignored) {
+                }
+            }
+        }
+        // Algunas versiones dibujan los dos iconos directamente en vez de
+        // conservarlos como widgets; ese canto ya queda fuera del texto propio.
+        try {
+            int rowRight = this.vanillaList.getRowLeft() + this.vanillaList.getRowWidth();
+            int actionWidth = Math.min(48, this.vanillaList.getRowWidth());
+            return mouseX >= rowRight - actionWidth && mouseX < rowRight;
+        } catch (Throwable ignored) {
+            return false;
+        }
     }
 
     @Override
