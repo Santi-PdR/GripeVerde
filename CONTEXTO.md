@@ -2,16 +2,13 @@
 
 ## Addendum operativo actual (2026-11-13)
 
-- Versión base verificada antes de esta entrega: **GripeVerde v0.398.0**, tag en
-  `2cb35565772601cd35dec5f449dbbc2ff1d5a6c4`; JAR de 10.844.004 bytes, SHA-256
-  `9919c43e993e740500f174a915b04394a440ac68ddeced5dc1f510226babc900`. El CI `44990762704` pasó en `build` y `publish`.
-- La v0.398.0 volvió a resolver las listas de Paquetes al inicializar la
-  pantalla, tomándolas de `children()` y ordenándolas por su coordenada x. La
-  publicación y su CI no acreditan cómo se ve o responde Paquetes en Minecraft.
-- **Versión de esta entrega: v0.399.0.** Mundos incluye en el guard los 2 px
-  que el hit-test nativo extiende a la izquierda de la fila dibujada, limita el
-  clic seguro al hitbox nativo y mide sus 650 ms con `System.nanoTime()`. No
-  cambia la apariencia de la pantalla.
+- **Última publicación verificada: GripeVerde v0.399.0**, tag dirigido a
+  `e486ec055d966763c9f270ec74edca30a08f2d79`; JAR de 10.848.114 bytes, SHA-256
+  `4b551cd8287f84785bb470b993dabd3111917d713d7682d97f3777d7da2178e3`. El CI
+  `44993011358` pasó en `build` y `publish`; [release v0.399.0](https://github.com/Santi-PdR/GripeVerde/releases/tag/v0.399.0).
+- v0.399.0 alinea el guard de Mundos con el hitbox nativo (incluidos los 2 px
+  a la izquierda de la fila dibujada), limita el clic seguro al hitbox y mide
+  sus 650 ms con `System.nanoTime()`. No cambia la apariencia de la pantalla.
 - **Pendiente de revisión en Minecraft:** Paquetes de recursos, los clics
   fantasma generales y la interfaz de Un Jugador siguen abiertos. El ajuste del
   hitbox y el reloj monotónico son cambios acotados; no equivalen a confirmar

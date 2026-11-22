@@ -9,14 +9,14 @@ que una seccion posterior lo mencione expresamente.
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
-- **Release base comprobado antes de esta entrega:** `v0.398.0`, tag en
-  `2cb35565772601cd35dec5f449dbbc2ff1d5a6c4`; JAR de 10.844.004 bytes, SHA-256
-  `9919c43e993e740500f174a915b04394a440ac68ddeced5dc1f510226babc900`. El CI `44990762704` pasó en `build` y `publish`.
-- **Versión de esta rama: `v0.399.0`.** Mundos incluye en el guard los 2 px
-  que el hit-test nativo extiende a la izquierda de la fila dibujada, limita el
-  clic seguro al hitbox de la lista y mide con reloj monotónico la ventana de
-  650 ms. Es un ajuste puntual, no una confirmación de que el reporte general
-  de clics fantasma esté resuelto.
+- **Última publicación verificada:** `v0.399.0`, tag dirigido al commit
+  `e486ec055d966763c9f270ec74edca30a08f2d79`; JAR de 10.848.114 bytes, SHA-256
+  `4b551cd8287f84785bb470b993dabd3111917d713d7682d97f3777d7da2178e3`. El CI
+  `44993011358` pasó en `build` y `publish`.
+- La v0.399.0 alinea el guard de Mundos con el hitbox nativo (incluidos los 2 px
+  a la izquierda de la fila dibujada), limita el clic seguro al hitbox y mide
+  con reloj monotónico la ventana de 650 ms. Es un ajuste puntual, no una
+  confirmación de que el reporte general de clics fantasma esté resuelto.
 - **Pendiente de confirmación en Minecraft:** Paquetes de recursos, clics
   fantasma e interfaz visual de Un Jugador, además de revisar los clics de
   Mundos. No se afirma que estén corregidos sin prueba en cliente.

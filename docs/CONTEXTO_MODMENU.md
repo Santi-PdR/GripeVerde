@@ -7,12 +7,13 @@ Actualizado: 2026-11-13
 - Repositorio: [Santi-PdR/GripeVerde](https://github.com/Santi-PdR/GripeVerde), público.
 - Rama activa de la sesión: `arena/48be547c-gripeverde`, basada en `02e85bc`.
   La plataforma fija el nombre: trabajar y publicar solamente en esta rama.
-- **Versión base publicada antes de esta entrega: v0.398.0**, tag dirigido a
-  `2cb35565772601cd35dec5f449dbbc2ff1d5a6c4`; CI `44990762704` verde en `build` y `publish`. JAR de
-  10.844.004 bytes, SHA-256 `9919c43e993e740500f174a915b04394a440ac68ddeced5dc1f510226babc900`.
-- **Versión de esta entrega: v0.399.0.** Mundos incluye en el guard los 2 px
-  que el hit-test nativo extiende a la izquierda de la fila dibujada, limita el
-  clic seguro al hitbox y mide la ventana de 650 ms con `System.nanoTime()`.
+- **Última publicación verificada: v0.399.0**, tag dirigido al commit
+  `e486ec055d966763c9f270ec74edca30a08f2d79`; CI `44993011358` verde en
+  `build` y `publish`. JAR de 10.848.114 bytes, SHA-256
+  `4b551cd8287f84785bb470b993dabd3111917d713d7682d97f3777d7da2178e3`.
+- v0.399.0 alinea el guard de Mundos con el hitbox nativo (incluidos los 2 px
+  a la izquierda de la fila dibujada), limita el clic seguro al hitbox y mide
+  la ventana de 650 ms con `System.nanoTime()`.
   No modifica el diseño visual, no confirma que se hayan resuelto los clics
   fantasma generales y deja pendiente la prueba dentro del juego. Un Jugador
   no se modifica en esta ronda.
