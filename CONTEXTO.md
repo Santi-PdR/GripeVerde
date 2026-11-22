@@ -4,16 +4,19 @@
 
 - **Continuación posterior a `d1d4e83`:** se repone el aviso de packs
   incompatibles que la banda opaca borraba. Reproduce las condiciones de
-  `PackEntry.render` 1.20.1: pack no compatible, no fijo y obligatorio a la vez,
+  `PackEntry.render` 1.20.1: pack incompatible y no simultáneamente fijo y obligatorio,
   más hover real de fila, selección con foco o modo táctil. Título traducido y
   descripción de compatibilidad en hasta dos líneas, ancladas a la fila.
   No toca activación, reordenación ni confirmación vanilla. Guardas de listas
   14/14 (once mutaciones nuevas), lint 72 Java, espejos 8/8, gate 7/7 e
   instalador 7/7 pasan. CI `45039654130` detectó acceso a la clase protegida
   `AbstractSelectionList.Entry`; se sustituyó por su interfaz pública
-  `GuiEventListener` y se añadió una guarda de regresión. Recompilación y
-  prueba en cliente pendientes. Sin bump ni release; no acredita resueltos
-  los clics fantasma.
+  `GuiEventListener` y se añadió una guarda de regresión. El candidato
+  `8708784` compiló y pasó las suites en
+  [CI 45039859475](https://github.com/Santi-PdR/GripeVerde/actions/runs/45039859475).
+  Falta prueba en cliente. Sin bump ni release: el asset `778229607` conserva
+  ID, tamaño y digest tras el job publish. No acredita resueltos los clics
+  fantasma. Artefacto del candidato: `GripeVerde-jar`, ID `14760749545`.
 
 - **Candidato `4d37582`, posterior a `0aa6a25`:** el repintado de Paquetes
   ancla texto y separador a `rowTop/rowBottom`, no al borde recortado del

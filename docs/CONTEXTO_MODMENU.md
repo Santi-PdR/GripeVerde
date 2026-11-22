@@ -10,9 +10,15 @@ Actualizado: 2026-11-13
   revisión 1.20.1 `c129e3e` enlazada más abajo. Conserva la condición
   `!isFixedPosition() || !isRequired()`, hover real dentro del viewport,
   selección con foco y modo táctil; no modifica handlers ni confirmaciones.
-- Guardas de listas: 14/14, con diez mutaciones nuevas de condiciones y
+- Guardas de listas: 14/14, con once mutaciones nuevas de condiciones y
   repintado; lint de 72 Java, espejos 8/8, gate 7/7 e instalador 7/7 pasan.
-  Compilación del delta y prueba en cliente pendientes; sin bump ni release.
+  El candidato `8708784` compiló y pasó las suites en
+  [CI 45039859475](https://github.com/Santi-PdR/GripeVerde/actions/runs/45039859475).
+  El primer intento falló por usar Entry protegida; ahora se consulta el hover
+  por la interfaz pública GuiEventListener y se protege esa decisión con lint.
+  Prueba en cliente pendiente; sin bump ni release. Asset v0.401.0 sin cambios
+  de ID, tamaño ni digest tras la CI. Artefacto actual: `GripeVerde-jar`,
+  ID `14760749545`; reemplaza al candidato de scroll como objeto de prueba.
 - Ampliar la prueba manual a packs compatibles e incompatibles, disponibles
   y seleccionados, hover de icono/texto/márgenes, navegación por teclado,
   modo táctil y entradas fijas/obligatorias. Verificar que el aviso aparece

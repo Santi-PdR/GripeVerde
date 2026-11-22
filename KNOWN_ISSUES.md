@@ -14,8 +14,10 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
   normal. Se repone el título de incompatibilidad y su descripción (dos líneas)
   con las condiciones visuales vanilla de hover/foco/táctil y de pack fijo y
   obligatorio. No modifica clics ni la confirmación de compatibilidad.
-  Guardas estáticas: 14/14; compilación de este delta y prueba en Minecraft
-  pendientes. No publicado como release.
+  Guardas estáticas: 14/14. El candidato `8708784` compiló y pasó las suites
+  en CI `45039859475` tras sustituir el acceso a Entry protegida por la interfaz
+  pública GuiEventListener. Prueba en Minecraft pendiente. No publicado como
+  release: asset v0.401.0 reconsultado, mismo ID, tamaño y digest.
 
 - **Candidato `4d37582`, posterior a `0aa6a25`:** al hacer scroll, las filas
   parcialmente visibles anclaban el texto a `drawTop`, desplazándolo respecto
