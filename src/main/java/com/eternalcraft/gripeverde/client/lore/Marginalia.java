@@ -69,19 +69,28 @@ public final class Marginalia {
     public static final String N_WITNESS      = "witness";
     public static final String N_CALL         = "call";
 
-    /** Encola una nota (persistente) si no hay ya una igual pendiente. */
+    /** Encola una nota (persistente) si hay espacio y no esta ya pendiente. */
     public static synchronized void queue(String noteId) {
+        enqueuePending(noteId);
+    }
+
+    /** True si la nota ya estaba pendiente o pudo agregarse sin exceder el limite. */
+    private static boolean enqueuePending(String noteId) {
+        if (noteId == null || noteId.isBlank()) return false;
         ChroniclerMemory.Data d = ChroniclerMemory.get();
-        if (d.pendingNotes.contains(noteId)) return;
+        if (d.pendingNotes.contains(noteId)) return true;
+        if (d.pendingNotes.size() >= ChroniclerMemory.MAX_PENDING_NOTES) return false;
         d.pendingNotes.add(noteId);
         ChroniclerMemory.save();
+        return true;
     }
 
     /** Encola solo si nunca fue encolada antes (marcador en contadores). */
     public static synchronized void queueOnce(String noteId) {
+        if (noteId == null || noteId.isBlank()) return;
         if (ChroniclerMemory.counter("note_" + noteId) > 0) return;
-        ChroniclerMemory.setCounter("note_" + noteId, 1);
-        queue(noteId);
+        // Una cola llena no debe consumir para siempre una nota no aceptada.
+        if (enqueuePending(noteId)) ChroniclerMemory.setCounter("note_" + noteId, 1);
     }
 
     // ── Estado de la nota activa en pantalla ──

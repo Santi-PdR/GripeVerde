@@ -2,6 +2,19 @@
 
 Actualizado: 2026-11-13
 
+- **Cola de notas en ejecución, posterior a `70af1da`:** `queue` y
+  `queueOnce` ignoran IDs nulos/vacíos/blancos antes de inicializar memoria.
+  La inserción respeta el mismo límite de 256 notas que la carga, sin expulsar
+  pendientes ni encolar guardados por duplicados o rechazos. `queueOnce`
+  marca la nota solo si se aceptó o ya estaba pendiente (también con cola
+  llena); un rechazo por falta de espacio permite reintentar más adelante.
+  Se conservan IDs desconocidos no blancos sin trim; no se añade whitelist.
+  Ampliada `verifyMemoryDataRegression` con las APIs reales y CONFIGDIR
+  temporal: inválidos sin E/S, deduplicación, marcador once, cola llena,
+  reintento y persistencia/recarga del orden y marcadores. Comprobaciones
+  locales estructurales aprobadas; compilación y ejecución pendientes de CI.
+  Sin cambio de versión/esquema ni release, ni prueba de Minecraft gráfico.
+
 - **Marginalia: distribución y caché, posterior a `c51733d`:** la caché
   incluye la identidad de fuente, texto y límites; nunca rescata líneas de
   otra nota cuando la nueva no cabe. Cada línea se ajusta al ancho, también

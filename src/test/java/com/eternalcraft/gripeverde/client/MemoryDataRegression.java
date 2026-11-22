@@ -1,6 +1,7 @@
 package com.eternalcraft.gripeverde.client;
 
 import com.eternalcraft.gripeverde.client.lore.ChroniclerMemory;
+import com.eternalcraft.gripeverde.client.lore.Marginalia;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
@@ -134,6 +135,75 @@ public final class MemoryDataRegression {
         check(read(primary).getAsJsonObject("counters").get("custom-key").getAsInt() == -7, "valid generic values persist");
     }
 
+    private static void pendingNoteApis(Path root) throws Exception {
+        Path primary = newConfig(root.resolve("note-apis"));
+        for (String id : new String[] {null, "", " \t\r\n", "\u2003"}) {
+            Marginalia.queue(id);
+            Marginalia.queueOnce(id);
+        }
+        check(field("data") == null, "invalid note ids do not initialize memory");
+        check(!(Boolean) field("savePending"), "invalid note ids schedule no save");
+        check(!Files.exists(primary), "invalid note ids create no file");
+
+        String id = Marginalia.N_READ_YOU;
+        String key = "note_" + id;
+        Marginalia.queue(id);
+        ChroniclerMemory.Data data = ChroniclerMemory.get();
+        check(data.pendingNotes.equals(java.util.List.of(id)), "ordinary note enqueued");
+        check(!data.counters.containsKey(key), "ordinary enqueue does not consume once marker");
+        writeNow();
+        Marginalia.queue(id);
+        check(data.pendingNotes.equals(java.util.List.of(id)), "duplicate queue preserves pending order");
+        check(!(Boolean) field("savePending"), "duplicate queue schedules no save");
+        Marginalia.queueOnce(id);
+        check(data.pendingNotes.equals(java.util.List.of(id)), "queueOnce accepts an already pending note without duplication");
+        check(ChroniclerMemory.counter(key) == 1, "already pending note receives once marker");
+        writeNow();
+        Marginalia.queueOnce(id);
+        check(!(Boolean) field("savePending"), "repeat queueOnce schedules no save");
+        data.pendingNotes.clear();
+        Marginalia.queueOnce(id);
+        check(data.pendingNotes.isEmpty(), "consumed once marker prevents a second enqueue");
+        check(!(Boolean) field("savePending"), "consumed once marker schedules no save");
+        // queue remains repeatable after the pending entry has been consumed.
+        Marginalia.queue(id);
+        check(data.pendingNotes.equals(java.util.List.of(id)), "ordinary queue remains repeatable");
+        String customId = "  custom-note  ";
+        Marginalia.queue(customId);
+        check(data.pendingNotes.get(1).equals(customId), "nonblank unknown ids are preserved without trimming");
+        for (int i = 2; i < 256; i++) Marginalia.queue("filler-" + i);
+        check(data.pendingNotes.size() == 256, "runtime queue reaches loading cap");
+        writeNow();
+        String fullFile = Files.readString(primary);
+        var originalOrder = java.util.List.copyOf(data.pendingNotes);
+        Marginalia.queue("overflow");
+        Marginalia.queueOnce(Marginalia.N_LANGUAGE);
+        check(data.pendingNotes.equals(originalOrder), "full queue rejects new notes without evicting existing ones");
+        check(!data.counters.containsKey("note_" + Marginalia.N_LANGUAGE), "full queue does not consume once marker");
+        check(!(Boolean) field("savePending"), "full queue rejection schedules no save");
+        check(Files.readString(primary).equals(fullFile), "full queue rejection leaves persisted bytes unchanged");
+        // A duplicate is still accepted at capacity, allowing its once marker.
+        Marginalia.queueOnce(customId);
+        check(data.pendingNotes.equals(originalOrder), "duplicate at capacity keeps exact queue order");
+        check(ChroniclerMemory.counter("note_" + customId) == 1, "already pending note can be marked once at capacity");
+        writeNow();
+        Marginalia.queueOnce(customId);
+        check(!(Boolean) field("savePending"), "marked duplicate at capacity is a no-op");
+        data.pendingNotes.remove(0);
+        Marginalia.queueOnce(Marginalia.N_LANGUAGE);
+        check(data.pendingNotes.size() == 256, "previously rejected note can retry after space opens");
+        check(data.pendingNotes.get(255).equals(Marginalia.N_LANGUAGE), "retry appends at tail");
+        check(ChroniclerMemory.counter("note_" + Marginalia.N_LANGUAGE) == 1, "accepted retry consumes once marker");
+        writeNow();
+        var expectedNotes = java.util.List.copyOf(data.pendingNotes);
+        set("data", null);
+        ChroniclerMemory.Data reloaded = ChroniclerMemory.get();
+        check(reloaded.pendingNotes.equals(expectedNotes), "runtime cap and order survive real save and reload");
+        check(ChroniclerMemory.counter("note_" + Marginalia.N_LANGUAGE) == 1, "retry marker survives real save and reload");
+        check(ChroniclerMemory.counter("note_" + customId) == 1, "unknown id marker survives reload unchanged");
+        check(!(Boolean) field("savePending"), "reloading accepted notes schedules no save");
+    }
+
     private static void counterBoundaries(Path root) throws Exception {
         Path primary = newConfig(root.resolve("counter-bounds"));
         Files.writeString(primary, "{\"version\":3,\"counters\":{\"max\":2147483647,\"near\":2147483646,\"negative\":-9,\"min\":-2147483648}}");
@@ -172,6 +242,7 @@ public final class MemoryDataRegression {
         try {
             collectionEntries(root);
             invalidApiIds(root);
+            pendingNoteApis(root);
             counterBoundaries(root);
             invalidOldVersions(root);
             ChroniclerMemory.flushForShutdown();

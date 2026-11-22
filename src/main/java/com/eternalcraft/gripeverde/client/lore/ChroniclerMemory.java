@@ -73,6 +73,7 @@ public final class ChroniclerMemory {
      * v0.23.1: version del esquema de la memoria. Cuando el esquema crezca hay
      * que subir esta constante y encadenar el paso N -> N+1 en migrate().
      */
+    static final int MAX_PENDING_NOTES = 256;
     private static final int MAX_FIELD_GUIDE_SCROLL = 100000;
     private static final int MAX_FIELD_GUIDE_SECTION = 100;
     private static final int MAX_FIELD_GUIDE_PROGRESS = 10000;
@@ -124,8 +125,8 @@ public final class ChroniclerMemory {
         parsed.pendingNotes.removeIf(id -> !validId(id));
         parsed.guestbook.removeIf(java.util.Objects::isNull);
         parsed.counters.entrySet().removeIf(entry -> !validId(entry.getKey()) || entry.getValue() == null);
-        if (parsed.pendingNotes.size() > 256) {
-            parsed.pendingNotes = new ArrayList<>(parsed.pendingNotes.subList(0, 256));
+        if (parsed.pendingNotes.size() > MAX_PENDING_NOTES) {
+            parsed.pendingNotes = new ArrayList<>(parsed.pendingNotes.subList(0, MAX_PENDING_NOTES));
         }
         if (parsed.guestbook.size() > 4096) {
             parsed.guestbook = new ArrayList<>(parsed.guestbook.subList(0, 4096));

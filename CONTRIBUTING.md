@@ -57,7 +57,9 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   desde una versión vieja del mod. Los cambios de esa sesión no se persisten.
 - `verifyMemoryDataRegression` se exige en check/build: nulls/IDs inválidos,
   limpieza antes de límites, contadores sin desbordamiento y versiones antiguas
-  inválidas, con la biblioteca y archivos reales en CONFIGDIR temporal.
+  inválidas, con la biblioteca y archivos reales en CONFIGDIR temporal. Incluye
+  `Marginalia.queue`/`queueOnce`: límite de 256 también en ejecución, rechazo
+  sin consumir el marcador once, duplicados y persistencia del reintento.
 - **Nunca dos pushes seguidos**: el CI cancela el run anterior por concurrencia.
 - Sin JDK local: la compilación semántica la hace el CI. No instalar Java 17
   en la máquina para publicar.
