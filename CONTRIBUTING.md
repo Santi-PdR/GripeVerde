@@ -34,6 +34,9 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   usa DispatchLibrary real y un config temporal de Forge para comprobar JSON,
   edición sin E/S, fallo de reemplazo, limpieza y recuperación. La suite Python
   de CEDA ejecuta los métodos de pantalla con reloj/almacén dobles, sin GUI.
+- `verifyDispatchLoadingRegression` verifica archivos propios/CopyL con campos
+  nulos o mal tipados, preservación de otras ranuras y teclas sin truncamiento
+  ni desbordamiento; también se exige en check/build, sin cliente gráfico.
 - **Nunca dos pushes seguidos**: el CI cancela el run anterior por concurrencia.
 - Sin JDK local: la compilación semántica la hace el CI. No instalar Java 17
   en la máquina para publicar.

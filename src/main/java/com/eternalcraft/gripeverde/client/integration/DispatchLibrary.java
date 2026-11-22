@@ -3,6 +3,7 @@ package com.eternalcraft.gripeverde.client.integration;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -14,6 +15,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.io.Reader;
 import java.io.Writer;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
@@ -88,17 +90,16 @@ public final class DispatchLibrary {
     private static boolean readOwn(Path own) {
         try (Reader reader = Files.newBufferedReader(own, StandardCharsets.UTF_8)) {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
-            if (root.has("openKey") && root.get("openKey").isJsonPrimitive()) {
-                openKey = sanitize(root.get("openKey").getAsInt(), GLFW.GLFW_KEY_RIGHT_ALT);
-            }
-            importedFrom = root.has("importedFrom") ? root.get("importedFrom").getAsString() : "";
-            JsonArray slots = root.has("slots") && root.get("slots").isJsonArray()
-                ? root.getAsJsonArray("slots") : new JsonArray();
+            openKey = readBinding(root.get("openKey"), GLFW.GLFW_KEY_RIGHT_ALT);
+            importedFrom = readText(root.get("importedFrom"), "");
+            JsonArray slots = readArray(root, "slots");
             for (int i = 0; i < SLOT_COUNT && i < slots.size(); i++) {
-                JsonObject slot = slots.get(i).getAsJsonObject();
-                names[i] = normalizeName(slot.has("name") ? slot.get("name").getAsString() : null, i);
-                messages[i] = normalizeMessage(slot.has("message") ? slot.get("message").getAsString() : "");
-                keys[i] = sanitize(slot.has("key") ? slot.get("key").getAsInt() : UNBOUND, UNBOUND);
+                JsonElement entry = slots.get(i);
+                if (!entry.isJsonObject()) continue;
+                JsonObject slot = entry.getAsJsonObject();
+                names[i] = normalizeName(readText(slot.get("name"), null), i);
+                messages[i] = normalizeMessage(readText(slot.get("message"), ""));
+                keys[i] = readBinding(slot.get("key"), UNBOUND);
             }
             return true;
         } catch (Exception exception) {
@@ -118,16 +119,13 @@ public final class DispatchLibrary {
         if (Files.exists(copyMessages)) {
             try (Reader reader = Files.newBufferedReader(copyMessages, StandardCharsets.UTF_8)) {
                 JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
-                JsonArray rawNames = root.has("names") && root.get("names").isJsonArray()
-                    ? root.getAsJsonArray("names") : new JsonArray();
-                JsonArray rawMessages = root.has("messages") && root.get("messages").isJsonArray()
-                    ? root.getAsJsonArray("messages") : new JsonArray();
-                JsonArray rawKeys = root.has("keyCodes") && root.get("keyCodes").isJsonArray()
-                    ? root.getAsJsonArray("keyCodes") : new JsonArray();
+                JsonArray rawNames = readArray(root, "names");
+                JsonArray rawMessages = readArray(root, "messages");
+                JsonArray rawKeys = readArray(root, "keyCodes");
                 for (int i = 0; i < SLOT_COUNT; i++) {
-                    if (i < rawNames.size()) names[i] = normalizeName(rawNames.get(i).getAsString(), i);
-                    if (i < rawMessages.size()) messages[i] = normalizeMessage(rawMessages.get(i).getAsString());
-                    if (i < rawKeys.size()) keys[i] = sanitize(rawKeys.get(i).getAsInt(), UNBOUND);
+                    if (i < rawNames.size()) names[i] = normalizeName(readText(rawNames.get(i), null), i);
+                    if (i < rawMessages.size()) messages[i] = normalizeMessage(readText(rawMessages.get(i), ""));
+                    if (i < rawKeys.size()) keys[i] = readBinding(rawKeys.get(i), UNBOUND);
                 }
                 imported = true;
                 importedFrom = COPYL_MESSAGES;
@@ -144,9 +142,9 @@ public final class DispatchLibrary {
             try (Reader reader = Files.newBufferedReader(copyConfig, StandardCharsets.UTF_8)) {
                 JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
                 if (root.has("openKey") && root.get("openKey").isJsonPrimitive()) {
-                    openKey = sanitize(root.get("openKey").getAsInt(), GLFW.GLFW_KEY_RIGHT_ALT);
-                } else if (root.has("wheelKey") && root.get("wheelKey").isJsonPrimitive()) {
-                    openKey = sanitize(root.get("wheelKey").getAsInt(), GLFW.GLFW_KEY_RIGHT_ALT);
+                    openKey = readBinding(root.get("openKey"), GLFW.GLFW_KEY_RIGHT_ALT);
+                } else if (root.has("wheelKey")) {
+                    openKey = readBinding(root.get("wheelKey"), GLFW.GLFW_KEY_RIGHT_ALT);
                 }
             } catch (Exception exception) {
                 LOGGER.warn("No pude leer {}: {}", copyConfig, exception.getMessage());
@@ -155,6 +153,27 @@ public final class DispatchLibrary {
 
         if (imported) {
             save();
+        }
+    }
+
+    // Un campo roto no debe descartar las otras ranuras ni provocar una
+    // reimportacion que reemplace mensajes propios por una copia mas antigua.
+    private static JsonArray readArray(JsonObject root, String field) {
+        JsonElement value = root.get(field);
+        return value != null && value.isJsonArray() ? value.getAsJsonArray() : new JsonArray();
+    }
+
+    private static String readText(JsonElement value, String fallback) {
+        return value != null && value.isJsonPrimitive() ? value.getAsString() : fallback;
+    }
+
+    private static int readBinding(JsonElement value, int fallback) {
+        if (value == null || !value.isJsonPrimitive() || value.getAsJsonPrimitive().isBoolean()) return fallback;
+        try {
+            // Gson.getAsInt trunca fracciones y desborda enteros grandes.
+            return sanitize(new BigDecimal(value.getAsString()).intValueExact(), fallback);
+        } catch (NumberFormatException | ArithmeticException exception) {
+            return fallback;
         }
     }
 

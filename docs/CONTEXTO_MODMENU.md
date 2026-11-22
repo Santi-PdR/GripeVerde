@@ -2,6 +2,21 @@
 
 Actualizado: 2026-11-13
 
+- **Carga parcial de CEDA/CopyL, posterior a `c578e0e`:** valores nulos,
+  objetos o arrays donde se esperaba un campo escalar, y ranuras que no son
+  objetos, ya no abortan la lectura completa. Solo ese campo/ranura vuelve a
+  su valor predeterminado; se conservan los mensajes válidos posteriores y
+  un archivo propio legible no dispara reimportación de CopyL. Las teclas se
+  convierten de forma exacta: fracciones y enteros fuera de rango no pueden
+  convertirse por truncamiento/desbordamiento en un atajo válido. Se admiten
+  enteros numéricos o en cadena y se mantiene la compatibilidad wheelKey.
+  Nueva tarea `verifyDispatchLoadingRegression`, requerida por check/build,
+  usa Gson/biblioteca/archivos reales y carpetas config aisladas, sin cliente.
+  Validación local pasa; compilación y ejecución Java pendientes de CI.
+  Alcance: JSON sintácticamente legible. Un documento totalmente ilegible
+  todavía sigue la recuperación histórica desde CopyL; no se afirma recuperar
+  archivos truncados ni se añade un sistema de backups. Sin bump/release.
+
 - **Cierre externo de CEDA, posterior a `5e6a5e5`:** `removed()` también
   vacía la cola de guardado al sustituir la pantalla sin pasar por onClose,
   por ejemplo al desconectarse. Respeta el backoff de un intento fallido

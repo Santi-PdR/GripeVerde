@@ -527,7 +527,19 @@ tasks.register('verifyDispatchPersistenceRegression', JavaExec) {
     }
 }
 
+tasks.register('verifyDispatchLoadingRegression', JavaExec) {
+    group = 'verification'
+    description = 'Checks partially malformed dispatch/CopyL files and exact binding conversion without a client.'
+    dependsOn tasks.named('testClasses')
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.eternalcraft.gripeverde.client.DispatchLoadingRegression'
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
 tasks.named('check').configure {
+    dependsOn tasks.named('verifyDispatchLoadingRegression')
     dependsOn tasks.named('verifyDispatchPersistenceRegression')
     dependsOn tasks.named('verifyServerAddressRegression')
     dependsOn tasks.named('verifyTextFieldGeometryRegression')
