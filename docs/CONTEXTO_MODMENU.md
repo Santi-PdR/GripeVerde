@@ -13,7 +13,11 @@ Actualizado: 2026-11-13
   volver a dividir las descripciones estables en cada fotograma. No es una
   medición de rendimiento ni acredita comportamiento del cliente.
 - Pasan guardas 16/16, lint 72 Java, espejos 8/8, gate 7/7 e instalador 7/7.
-  Compilación y prueba en cliente del delta pendientes. Sin bump ni release.
+  Candidato `e9e4896` compilado y suites aprobadas en
+  [CI 45040439067](https://github.com/Santi-PdR/GripeVerde/actions/runs/45040439067).
+  Artefacto actual `GripeVerde-jar`, ID `14760938281`: incluye los candidatos
+  anteriores de scroll y compatibilidad. Prueba en cliente pendiente.
+  Sin bump ni release; asset v0.401.0 conserva ID/tamaño/digest tras publish.
 - Añadir a la revisión en Minecraft: descripciones cortas, largas, vacías,
   con saltos explícitos y estilos; hover de incompatibilidad y vuelta al texto
   normal, escala/redimensión, salida/reapertura y recarga de packs. Confirmar

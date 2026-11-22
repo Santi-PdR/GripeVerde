@@ -10,8 +10,11 @@
   Caché por identidad de fila, máximo 256 entradas; invalida por texto/estilo
   o ancho y se limpia en init/removed. No cambia handlers ni confirmaciones.
   Guardas estáticas 16/16, lint 72 Java, espejos 8/8, gate 7/7 e instalador
-  7/7 pasan. Compilación de este delta y prueba en Minecraft pendientes.
-  Sin bump ni release; no confirma resueltos los clics fantasma.
+  7/7 pasan. El candidato `e9e4896` compiló y pasó las suites en
+  [CI 45040439067](https://github.com/Santi-PdR/GripeVerde/actions/runs/45040439067).
+  Artefacto `GripeVerde-jar`, ID `14760938281`. Prueba en Minecraft pendiente.
+  Sin bump ni release; asset v0.401.0 reconsultado tras publish, mismo ID,
+  tamaño y digest. No confirma resueltos los clics fantasma.
 
 - **Continuación posterior a `d1d4e83`:** se repone el aviso de packs
   incompatibles que la banda opaca borraba. Reproduce las condiciones de

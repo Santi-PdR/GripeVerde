@@ -14,8 +14,9 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
   vanilla. Ahora usa Component y MultiLineLabel de hasta dos líneas, con el
   título y la descripción anclados a la geometría vanilla. Añade caché local
   acotada e invalidada por contenido/ancho y ciclo de pantalla. Guardas 16/16;
-  compilación y prueba en Minecraft de este delta pendientes. Sin publicación
-  ni cambios de entrada. Revisar en cliente saltos de línea, estilos y scroll.
+  candidato `e9e4896` compilado y suites aprobadas en CI `45040439067`.
+  Prueba en Minecraft pendiente. Sin publicación ni cambios de entrada; asset
+  v0.401.0 conserva ID/tamaño/digest. Revisar saltos de línea, estilos y scroll.
 
 - **Avisos de packs incompatibles (candidato posterior a `d1d4e83`):**
   la banda opaca también borraba el aviso vanilla y siempre repintaba el nombre
