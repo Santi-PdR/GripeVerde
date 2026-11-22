@@ -115,7 +115,7 @@ tasks.register('verifyGripeVerdeLocalization') {
             throw new GradleException('en_us.json root must be a JSON object')
         }
         def baselineKeys = baseline.keySet() as Set
-        def expectedKeyCount = 191
+        def expectedKeyCount = 192
         def problems = []
         def packMetadata = json.parse(new File('src/main/resources/pack.mcmeta'))
         def declaredLanguages = (packMetadata.language ?: [:]).keySet() as Set
@@ -516,7 +516,19 @@ tasks.register('verifyTextFieldGeometryRegression', JavaExec) {
     }
 }
 
+tasks.register('verifyDispatchPersistenceRegression', JavaExec) {
+    group = 'verification'
+    description = 'Checks dispatch JSON persistence, deferred edits and failed-write recovery without a client.'
+    dependsOn tasks.named('testClasses')
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.eternalcraft.gripeverde.client.DispatchPersistenceRegression'
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
 tasks.named('check').configure {
+    dependsOn tasks.named('verifyDispatchPersistenceRegression')
     dependsOn tasks.named('verifyServerAddressRegression')
     dependsOn tasks.named('verifyTextFieldGeometryRegression')
 }

@@ -185,6 +185,7 @@
   "gripeverde.dispatch.slot.label": "Message %s",
   "gripeverde.dispatch.page": "▸ %s/%s",
   "gripeverde.dispatch.saved": "Saved",
+  "gripeverde.dispatch.save_failed": "Could not save; changes pending",
   "gripeverde.dispatch.slot.empty": "Type the message…",
   "gripeverde.dispatch.slot.count": "%s of %s voices have a message",
   "gripeverde.dispatch.slot.sent": "Sent",

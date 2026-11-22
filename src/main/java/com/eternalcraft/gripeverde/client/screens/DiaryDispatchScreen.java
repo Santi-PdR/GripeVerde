@@ -51,6 +51,7 @@ public class DiaryDispatchScreen extends Screen {
     private static final int GUTTER = 30;
     private static final int MAX_TEXT = 256;
     private static final long AUTOSAVE_MS = 700L;
+    private static final long SAVE_RETRY_MS = 3000L;
     private static final long STATUS_MS = 1500L;
 
     private final Screen parent;
@@ -81,8 +82,8 @@ public class DiaryDispatchScreen extends Screen {
 
     private int awaitingSlot = -1;
     private int hoveredSlot = -1;
-    private boolean dirty;
     private long lastEditMs;
+    private long nextSaveAttemptMs;
     private String statusKey = "";
     private long statusUntil;
 
@@ -214,8 +215,7 @@ public class DiaryDispatchScreen extends Screen {
     // ------------------------------------------------------------- guardado
 
     private void onTextChanged(int slot, String text) {
-        DispatchLibrary.setMessage(slot, text);
-        this.dirty = true;
+        if (!DispatchLibrary.updateMessage(slot, text)) return;
         this.lastEditMs = Util.getMillis();
         // v0.245.0: la primera voz escrita es una carta al barrio que no
         // responde; queda anotada en el archivo.
@@ -228,12 +228,18 @@ public class DiaryDispatchScreen extends Screen {
     }
 
     private void saveIfNeeded(boolean force) {
-        if (!this.dirty) return;
+        if (!DispatchLibrary.hasPendingSave()) return;
         long now = Util.getMillis();
-        if (!force && now - this.lastEditMs < AUTOSAVE_MS) return;
-        this.dirty = false;
-        DispatchLibrary.save();
-        this.setStatus("gripeverde.dispatch.saved");
+        if (!force && (now - this.lastEditMs < AUTOSAVE_MS || now < this.nextSaveAttemptMs)) return;
+        boolean saved = DispatchLibrary.save();
+        this.nextSaveAttemptMs = saved ? 0L : now + SAVE_RETRY_MS;
+        this.setStatus(saved ? "gripeverde.dispatch.saved" : "gripeverde.dispatch.save_failed");
+    }
+
+    private void setSaveStatus(String successKey) {
+        boolean pending = DispatchLibrary.hasPendingSave();
+        if (pending) this.nextSaveAttemptMs = Util.getMillis() + SAVE_RETRY_MS;
+        this.setStatus(pending ? "gripeverde.dispatch.save_failed" : successKey);
     }
 
     private void setStatus(String key) {
@@ -348,11 +354,10 @@ public class DiaryDispatchScreen extends Screen {
         if (button == 1 && overField >= 0) {
             int slot = this.rowSlots.get(overField);
             if (!DispatchLibrary.message(slot).isBlank()) {
-                DispatchLibrary.setMessage(slot, "");
                 DiaryTextField field = this.fields.get(overField);
                 field.setValue("");
                 this.saveIfNeeded(true);
-                this.setStatus("gripeverde.dispatch.slot.emptied");
+                this.setSaveStatus("gripeverde.dispatch.slot.emptied");
                 this.playSealSound();
                 return true;
             }
@@ -362,8 +367,7 @@ public class DiaryDispatchScreen extends Screen {
             int slot = this.rowSlots.get(row);
             if (button == 1) {
                 DispatchLibrary.setKey(slot, DispatchLibrary.UNBOUND);
-                this.saveIfNeeded(true);
-                this.setStatus("gripeverde.dispatch.slot.cleared");
+                this.setSaveStatus("gripeverde.dispatch.slot.cleared");
             } else if (button == 0) {
                 this.awaitingSlot = slot;
                 this.setStatus("gripeverde.dispatch.slot.listen");
@@ -374,8 +378,7 @@ public class DiaryDispatchScreen extends Screen {
                 if (encoded != DispatchLibrary.UNBOUND) {
                     DispatchLibrary.setKey(slot, encoded);
                     this.awaitingSlot = -1;
-                    this.saveIfNeeded(true);
-                    this.setStatus("gripeverde.dispatch.slot.bound");
+                    this.setSaveStatus("gripeverde.dispatch.slot.bound");
                     this.playSealSound();
                 }
             }
@@ -411,8 +414,7 @@ public class DiaryDispatchScreen extends Screen {
             if (keyCode == 261) { // Supr: borra la tecla
                 DispatchLibrary.setKey(this.awaitingSlot, DispatchLibrary.UNBOUND);
                 this.awaitingSlot = -1;
-                this.saveIfNeeded(true);
-                this.setStatus("gripeverde.dispatch.slot.cleared");
+                this.setSaveStatus("gripeverde.dispatch.slot.cleared");
                 return true;
             }
             if (isModifierKey(keyCode)) {
@@ -421,8 +423,7 @@ public class DiaryDispatchScreen extends Screen {
             }
             DispatchLibrary.setKey(this.awaitingSlot, keyCode);
             this.awaitingSlot = -1;
-            this.saveIfNeeded(true);
-            this.setStatus("gripeverde.dispatch.slot.bound");
+            this.setSaveStatus("gripeverde.dispatch.slot.bound");
             this.playSealSound();
             return true;
         }

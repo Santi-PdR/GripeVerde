@@ -13,12 +13,13 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   todas las comprobaciones.
 - Rama de trabajo vigente: `arena/48be547c-gripeverde`, un solo push por entrega.
 - Baseline medida por las herramientas: **72 archivos Java**, **25 locales con
-  191 claves** cada uno, 35 eventos de sonido, 42 referencias OGG y 42 archivos
+  192 claves** cada uno, 35 eventos de sonido, 42 referencias OGG y 42 archivos
   OGG, 4 piezas de música y **8/8 sellos espejo**.
 - Cada publicación es: `python3 tools/verify_mirrors.py` -> `python3 tools/lint_java.py`
   -> `python3 tools/test_list_render_guards.py` ->
   `python3 tools/test_smooth_scroll.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_language_screen.py --require-java` (en CI, con JDK 17) ->
+  `python3 tools/test_dispatch_save.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/ci/test_release_gate.py` ->
   `python3 tools/ci/test_installer.py` -> commit + push -> esperar el CI ->
   comprobar el release y el SHA-256. El job `publish` compara `release-tag.txt`
@@ -29,6 +30,10 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   de Minecraft sin red ni cliente gráfico. Puede correrse esa tarea sola.
 - También incluyen `verifyTextFieldGeometryRegression`: 12 comprobaciones
   del margen lógico con widgets reales y sin rendering ni eventos de mouse.
+- `verifyDispatchPersistenceRegression` también es obligatoria en check/build:
+  usa DispatchLibrary real y un config temporal de Forge para comprobar JSON,
+  edición sin E/S, fallo de reemplazo, limpieza y recuperación. La suite Python
+  de CEDA ejecuta los métodos de pantalla con reloj/almacén dobles, sin GUI.
 - **Nunca dos pushes seguidos**: el CI cancela el run anterior por concurrencia.
 - Sin JDK local: la compilación semántica la hace el CI. No instalar Java 17
   en la máquina para publicar.

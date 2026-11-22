@@ -15,8 +15,10 @@ import org.lwjgl.glfw.GLFW;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 /**
  * Los mensajes guardados del parte de CEDA, con importacion desde CopyL.
@@ -55,6 +57,7 @@ public final class DispatchLibrary {
     private static int openKey = GLFW.GLFW_KEY_RIGHT_ALT;
     private static String importedFrom = "";
     private static boolean loaded;
+    private static boolean pendingSave;
 
     private DispatchLibrary() {
     }
@@ -158,6 +161,8 @@ public final class DispatchLibrary {
     // ---------------------------------------------------------------- escritura
 
     public static synchronized boolean save() {
+        ensureLoaded();
+        pendingSave = true;
         Path own = configDir().resolve(OWN_FILE);
         JsonObject root = new JsonObject();
         root.addProperty("importedFrom", importedFrom);
@@ -171,15 +176,32 @@ public final class DispatchLibrary {
             slots.add(slot);
         }
         root.add("slots", slots);
+        Path temporary = null;
         try {
             Files.createDirectories(own.getParent());
-            try (Writer writer = Files.newBufferedWriter(own, StandardCharsets.UTF_8)) {
+            temporary = Files.createTempFile(own.getParent(), OWN_FILE + ".", ".tmp");
+            try (Writer writer = Files.newBufferedWriter(temporary, StandardCharsets.UTF_8)) {
                 GSON.toJson(root, writer);
             }
+            // No truncar el archivo anterior antes de terminar de serializar.
+            try {
+                Files.move(temporary, own, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+            } catch (AtomicMoveNotSupportedException unsupported) {
+                Files.move(temporary, own, StandardCopyOption.REPLACE_EXISTING);
+            }
+            pendingSave = false;
             return true;
         } catch (Exception exception) {
             LOGGER.warn("No pude guardar {}: {}", own, exception.getMessage());
             return false;
+        } finally {
+            if (temporary != null) {
+                try {
+                    Files.deleteIfExists(temporary);
+                } catch (Exception exception) {
+                    LOGGER.warn("No pude limpiar {}: {}", temporary, exception.getMessage());
+                }
+            }
         }
     }
 
@@ -238,8 +260,25 @@ public final class DispatchLibrary {
     public static synchronized boolean setMessage(int slot, String text) {
         ensureLoaded();
         if (!valid(slot)) return false;
-        messages[slot] = normalizeMessage(text);
+        updateMessage(slot, text);
         return save();
+    }
+
+    /** Actualiza la memoria sin E/S; la pantalla agrupa las pulsaciones. */
+    public static synchronized boolean updateMessage(int slot, String text) {
+        ensureLoaded();
+        if (!valid(slot)) return false;
+        String next = normalizeMessage(text);
+        if (next.equals(messages[slot])) return false;
+        messages[slot] = next;
+        pendingSave = true;
+        return true;
+    }
+
+    /** Sobrevive al cierre de la pantalla si una escritura falla. */
+    public static synchronized boolean hasPendingSave() {
+        ensureLoaded();
+        return pendingSave;
     }
 
     public static synchronized void setOpenKey(int keyCode) {

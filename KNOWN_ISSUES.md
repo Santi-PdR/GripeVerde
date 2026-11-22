@@ -9,6 +9,21 @@ que una seccion posterior lo mencione expresamente.
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
+- **Guardado del Parte/CEDA, posterior a `551329f`:** la edición usa
+  `updateMessage` sin E/S y agrupa las pulsaciones durante 700 ms. Se conserva
+  la API inmediata `setMessage` y el guardado de atajos. Un fallo mantiene
+  los cambios pendientes en la biblioteca (también tras cerrar la pantalla),
+  muestra un error localizado y reintenta como máximo cada 3 s en tick;
+  cerrar fuerza un intento. Los atajos ya no afirman éxito tras un fallo.
+  JSON se escribe en un temporal vecino y luego se reemplaza, atómicamente
+  si el sistema lo admite, sin truncar previamente el destino. No equivale
+  a garantía de durabilidad ante corte eléctrico; el fallback no es atómico.
+  Pruebas añadidas: métodos reales de pantalla con reloj/almacén dobles
+  (11 escenarios, más 3 guardas estructurales) y persistencia JSON/archivos
+  reales en un directorio aislado de Forge mediante tarea Gradle requerida
+  por check/build. Validación local pasa; Java pendiente de CI (sin JDK local).
+  Son 192 claves en los 25 locales. Sin bump/release ni prueba en Minecraft.
+
 - **Desfase de edición en DiaryTextField (posterior a `f173ab8`):** el margen
   dibujado de 4 px no coincidía con EditBox sin borde lógico. Se alinea el
   estado lógico con el renderer y se conserva frente a helpers que quitan
