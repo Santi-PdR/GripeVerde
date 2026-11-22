@@ -303,6 +303,15 @@ def check_world_row_click_safety(path, clean):
         return [(path, line,
                  'Mundos: mantener el clic seguro dentro del hitbox y lejos de la entrada inmediata')]
 
+    entry_lookup, entry_start = method_body('private Object entryAt(double mouseY)')
+    if ('Math.floor(mouseY - this.listTop)' not in entry_lookup
+            or '(int) scroll - 4' not in entry_lookup
+            or 'int idx = rowOffset / Math.max(1, step);' not in entry_lookup
+            or 'rowOffset < 0' not in entry_lookup):
+        line = clean[:entry_start].count(chr(10)) + 1 if entry_start >= 0 else 1
+        return [(path, line,
+                 'Mundos: replicar el redondeo de vanilla al resolver filas con scroll fraccionario')]
+
     handler, handler_start = method_body(
         'public boolean mouseClicked(double mouseX, double mouseY, int button)')
     if not handler:

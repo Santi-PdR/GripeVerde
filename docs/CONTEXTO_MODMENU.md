@@ -15,6 +15,9 @@ Actualizado: 2026-11-13
   en ventanas muy bajas. Es un guard acotado: no confirma que se hayan resuelto
   los clics fantasma generales ni sustituye la prueba en Minecraft. No modifica
   el diseño visual; Un Jugador no se modifica en esta ronda.
+- Candidato v0.401.0: el fallback de Mundos usa el mismo orden de redondeo
+  que vanilla cuando el scroll es fraccionario. No cambia el diseño visual ni
+  confirma el reporte general de clics fantasma sin prueba en cliente.
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
   El trabajo se hace sobre el repositorio; no se edita el proyecto local del usuario.
 - No se controla Minecraft ni la PC del usuario para pruebas visuales. El CI acredita

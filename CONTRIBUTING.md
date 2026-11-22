@@ -8,6 +8,8 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   `c863bb170571bcd99fd59443b4e3c20fe77a6875`; JAR de 10.851.157 bytes, SHA-256
   `7aabe04f1dffd20b03036e3915609b055f262a4381e56d647251fed838815635`.
   El CI de publicación `44995974436` pasó en `build` y `publish`.
+- Versión candidata de esta ronda: **v0.401.0**, ajuste de cálculo de filas
+  para el fallback de scroll de Mundos; todavía no publicada.
 - La próxima versión requiere sincronizar versión, marcador, CHANGELOG y las 25
   notas dentro del juego; el workflow publica automáticamente solo tras pasar
   todas las comprobaciones.

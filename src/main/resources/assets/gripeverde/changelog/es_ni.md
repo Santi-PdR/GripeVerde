@@ -1,3 +1,7 @@
+## Version 0.401.0 - Mundos conserva el redondeo nativo al buscar una fila
+
+- Mundos: el respaldo para localizar una fila ahora replica el orden vanilla: redondea Y, trunca el scroll fraccional, resta los 4 px de margen y divide por el alto. Evita que el fallback identifique otra fila cerca de un borde o tras arrastrar el scroll. No cambia la apariencia y no confirma por sí solo que el reporte general de clics fantasma esté resuelto; la prueba en Minecraft sigue pendiente.
+
 ## Version 0.400.0 - La portada no activa el emblema sobre un botón
 
 Portada: el punto invisible del emblema deja de disparar su hallazgo si coincide con un botón real, algo posible en ventanas muy bajas. El clic del botón sigue su ruta normal. Es una protección puntual: los clics fantasma generales, Paquetes y Un Jugador siguen pendientes de validar en Minecraft; esta entrega no cambia la apariencia de la pantalla.

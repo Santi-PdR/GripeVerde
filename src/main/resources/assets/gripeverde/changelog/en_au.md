@@ -1,3 +1,7 @@
+## Version 0.401.0 - World row lookup follows vanilla rounding
+
+- Worlds: fallback row lookup now follows vanilla’s operation order: floor Y, truncate fractional scroll, subtract the 4 px inset, then divide by row height. This prevents the fallback from choosing a different row near a boundary or after fractional scrolling. No visual change; it does not by itself resolve the general ghost-click report, and Minecraft validation remains pending.
+
 ## Version 0.400.0 - The title emblem hotspot no longer overlaps buttons
 
 Title screen: the invisible emblem hotspot no longer fires its discovery when it overlaps a real button, which can happen in very short windows. The button still follows its normal input path. This is a narrow guard only: general ghost clicks, Resource Packs, and Single Player still need Minecraft validation; this release does not change the screen’s appearance.

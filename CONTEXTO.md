@@ -10,6 +10,10 @@
   hallazgo cuando se superpone con un botón real en ventanas muy bajas. Es una
   protección puntual de entrada, no una corrección de los clics fantasma
   generales, y no cambia la apariencia de la pantalla.
+- **Candidato de esta ronda: v0.401.0.** Mundos ahora calcula su fila de
+  respaldo con el mismo redondeo y truncado de scroll que vanilla, incluso si
+  el arrastre deja una posición fraccionaria. No cambia el aspecto; no prueba
+  por sí solo que se haya resuelto el reporte general de clics fantasma.
 - **Pendiente de revisión en Minecraft:** Paquetes de recursos, los clics
   fantasma generales y la interfaz de Un Jugador siguen abiertos. Los guardas
   de entrada son cambios acotados; no equivalen a confirmar esos reportes.

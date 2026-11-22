@@ -1424,7 +1424,11 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             scroll = this.vanillaList.getScrollAmount();
         } catch (Throwable ignored) {
         }
-        int idx = (int) Math.floor((mouseY - (this.listTop + 4) + scroll) / Math.max(1, step));
+        // AbstractSelectionList floors y, truncates scroll to int, then subtracts
+        // the four-pixel row inset before dividing. Keeping the operations in that
+        // order also matches vanilla while a drag leaves fractional scroll behind.
+        int rowOffset = (int) Math.floor(mouseY - this.listTop) + (int) scroll - 4;
+        int idx = rowOffset / Math.max(1, step);
         if (this.rowTopMethod != null) {
             // v0.390.0: con la geometria de la propia lista, el clic cae en la
             // fila que se ve aunque el juego cambie el alto o meta cabecera.
@@ -1442,6 +1446,9 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             } catch (Throwable ignored) {
             }
             if (exact >= 0) idx = exact;
+            else if (rowOffset < 0) return null;
+        } else if (rowOffset < 0) {
+            return null;
         }
         if (idx < 0) return null;
         try {

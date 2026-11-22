@@ -5,7 +5,7 @@ de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
 que una seccion posterior lo mencione expresamente.
 
-## ESTADO: DESARROLLO ACTIVO (2026-11-13, rama v0.400.0)
+## ESTADO: DESARROLLO ACTIVO (2026-11-13, rama v0.401.0)
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
@@ -17,6 +17,10 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
   hallazgo al superponerse con un botón real en ventanas muy bajas. Es un guard
   puntual, no una confirmación de que el reporte general de clics fantasma esté
   resuelto.
+- **Candidato v0.401.0:** el fallback de Mundos ahora iguala el orden de
+  redondeo de vanilla para resolver filas con scroll fraccionario. Esto acota
+  una posible divergencia del guard; no cierra el reporte general ni reemplaza
+  una prueba dentro de Minecraft.
 - **Pendiente de confirmación en Minecraft:** Paquetes de recursos, clics
   fantasma e interfaz visual de Un Jugador, además de revisar los clics de
   Mundos. No se afirma que estén corregidos sin prueba en cliente.
