@@ -16,6 +16,7 @@ interactiva de la hoja de mundos:
   7. Las miniaturas de Mundos dibujan la imagen completa, ajustada sin recorte.
   8. Multiplayer libera favicons obsoletos, reintenta los pings pendientes y limita
      los PNG remotos antes de decodificar.
+  9. Mundos valida y limita icon.png antes de decodificarlo.
 
 Uso: python3 tools/lint_java.py [rutas...]
 Sale con codigo 1 si encuentra algo.
@@ -284,6 +285,40 @@ def check_world_icon_fits_box(path, clean):
     return []
 
 
+def check_world_icon_input_guard(path, clean):
+    """Mundos limita bytes y dimensiones del icon.png antes de decodificarlo."""
+    if not path.replace(chr(92), '/').endswith('/client/screens/DiarySelectWorldScreen.java'):
+        return []
+    read_start = clean.find('private static WorldIconData readWorldIconData(')
+    read_end = clean.find('private static int readWorldPngInt(', read_start)
+    icon_start = clean.find('private net.minecraft.resources.ResourceLocation worldIcon(', read_end)
+    if min(read_start, read_end, icon_start) < 0:
+        return [(path, 1, 'Mundos: falta la validación del icon.png')]
+    reader = clean[read_start:read_end]
+    required = (
+        'fileBytes > MAX_WORLD_ICON_BYTES',
+        'in.readNBytes(MAX_WORLD_ICON_BYTES + 1)',
+        '(bytes[0] & 0xFF) != 0x89',
+        'readWorldPngInt(bytes, 8) != 13',
+        'readWorldPngInt(bytes, 16)',
+        'readWorldPngInt(bytes, 20)',
+        'MAX_WORLD_ICON_DIMENSION',
+    )
+    if any(token not in reader for token in required):
+        line = clean[:read_start].count(chr(10)) + 1
+        return [(path, line, 'Mundos: limitar tamaño y dimensiones antes de decodificar')]
+    icon = clean[icon_start:]
+    read_at = icon.find('readWorldIconData(path)')
+    decode_at = icon.find('NativeImage.read(in)')
+    if read_at < 0 or decode_at < 0 or read_at >= decode_at:
+        line = clean[:icon_start].count(chr(10)) + 1
+        return [(path, line, 'Mundos: validar icon.png antes de decodificarlo')]
+    if 'imageWidth != source.width() || imageHeight != source.height()' not in icon:
+        line = clean[:icon_start].count(chr(10)) + 1
+        return [(path, line, 'Mundos: verificar dimensiones reales tras decodificar')]
+    return []
+
+
 def check_server_icon_safety_and_lifecycle(path, clean):
     """Multiplayer poda texturas obsoletas y limita PNG de favicons remotos."""
     if not path.replace(chr(92), '/').endswith('/client/screens/DiaryMultiplayerScreen.java'):
@@ -508,6 +543,7 @@ def main(argv):
         problems += check_world_archive_visibility(f, clean)
         problems += check_world_icon_cache_lifecycle(f, clean)
         problems += check_world_icon_fits_box(f, clean)
+        problems += check_world_icon_input_guard(f, clean)
         problems += check_server_icon_safety_and_lifecycle(f, clean)
         notas += notas_de_orden(f)
         notas += notas_de_puntos(f)

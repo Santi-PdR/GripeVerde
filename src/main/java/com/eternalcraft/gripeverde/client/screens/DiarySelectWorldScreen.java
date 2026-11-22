@@ -72,7 +72,10 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     private static final java.util.concurrent.atomic.AtomicLong WORLD_ICON_TEXTURE_IDS
         = new java.util.concurrent.atomic.AtomicLong();
     private static final java.util.Set<String> WORLD_ICONS_ABSENT = new java.util.HashSet<>();
+    private static final int MAX_WORLD_ICON_BYTES = 1024 * 1024;
+    private static final int MAX_WORLD_ICON_DIMENSION = 512;
     private record WorldIconSize(int width, int height) { }
+    private record WorldIconData(byte[] bytes, int width, int height) { }
     private int iconsThisFrame;
     private boolean worldIconCachePruned;
     // Recuerda el ultimo clic real sobre una fila para detener solamente el
@@ -1236,6 +1239,44 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         }
     }
 
+    /** Lee un PNG de mundo acotado y valida sus dimensiones antes de decodificarlo. */
+    private static WorldIconData readWorldIconData(java.nio.file.Path path) {
+        if (path == null) return null;
+        try {
+            if (!java.nio.file.Files.isRegularFile(path)) return null;
+            long fileBytes = java.nio.file.Files.size(path);
+            if (fileBytes < 24L || fileBytes > MAX_WORLD_ICON_BYTES) return null;
+            byte[] bytes;
+            try (java.io.InputStream in = java.nio.file.Files.newInputStream(path)) {
+                bytes = in.readNBytes(MAX_WORLD_ICON_BYTES + 1);
+            }
+            if (bytes.length < 24 || bytes.length > MAX_WORLD_ICON_BYTES
+                    || (bytes[0] & 0xFF) != 0x89 || bytes[1] != 'P' || bytes[2] != 'N'
+                    || bytes[3] != 'G' || (bytes[4] & 0xFF) != 0x0D
+                    || (bytes[5] & 0xFF) != 0x0A || (bytes[6] & 0xFF) != 0x1A
+                    || (bytes[7] & 0xFF) != 0x0A || readWorldPngInt(bytes, 8) != 13
+                    || bytes[12] != 'I' || bytes[13] != 'H'
+                    || bytes[14] != 'D' || bytes[15] != 'R') {
+                return null;
+            }
+            int width = readWorldPngInt(bytes, 16);
+            int height = readWorldPngInt(bytes, 20);
+            if (width <= 0 || height <= 0
+                    || width > MAX_WORLD_ICON_DIMENSION
+                    || height > MAX_WORLD_ICON_DIMENSION) {
+                return null;
+            }
+            return new WorldIconData(bytes, width, height);
+        } catch (Throwable ignored) {
+            return null;
+        }
+    }
+
+    private static int readWorldPngInt(byte[] bytes, int offset) {
+        return ((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16)
+            | ((bytes[offset + 2] & 0xFF) << 8) | (bytes[offset + 3] & 0xFF);
+    }
+
     /**
      * v0.372.0: la foto del mundo, sacada del icon.png de su carpeta.
      *
@@ -1256,17 +1297,19 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         try {
             java.nio.file.Path path = this.minecraft.gameDirectory.toPath()
                 .resolve("saves").resolve(levelId).resolve("icon.png");
-            if (!java.nio.file.Files.isRegularFile(path)) {
+            WorldIconData source = readWorldIconData(path);
+            if (source == null) {
                 WORLD_ICONS_ABSENT.add(levelId);
                 return null;
             }
             com.mojang.blaze3d.platform.NativeImage image;
-            try (java.io.InputStream in = java.nio.file.Files.newInputStream(path)) {
+            try (java.io.InputStream in = new java.io.ByteArrayInputStream(source.bytes())) {
                 image = com.mojang.blaze3d.platform.NativeImage.read(in);
             }
             int imageWidth = image.getWidth();
             int imageHeight = image.getHeight();
-            if (imageWidth <= 0 || imageHeight <= 0) {
+            if (imageWidth <= 0 || imageHeight <= 0
+                    || imageWidth != source.width() || imageHeight != source.height()) {
                 image.close();
                 WORLD_ICONS_ABSENT.add(levelId);
                 return null;
