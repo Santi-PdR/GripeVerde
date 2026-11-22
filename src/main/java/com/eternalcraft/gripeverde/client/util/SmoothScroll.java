@@ -15,6 +15,8 @@ public final class SmoothScroll {
     private final double snapThreshold;
     private double target = 0.0;
     private boolean initialized = false;
+    private AbstractSelectionList<?> attachedList;
+    private double lastApplied = 0.0;
 
     public SmoothScroll() {
         this(0.42D, 0.30D);
@@ -31,22 +33,27 @@ public final class SmoothScroll {
 
     public void attach(AbstractSelectionList<?> list) {
         if (list == null) return;
-        if (!initialized) {
-            this.target = list.getScrollAmount();
-            this.initialized = true;
+        double current = list.getScrollAmount();
+        if (!this.initialized || this.attachedList != list
+                || Double.compare(current, this.lastApplied) != 0) {
+            // La barra, el teclado o ensureVisible pueden mover la lista sin
+            // pasar por wheel. Ese cambio cancela la inercia anterior.
+            this.snapToCurrent(list);
         }
     }
 
     public void snapToCurrent(AbstractSelectionList<?> list) {
         if (list == null) return;
-        this.target = clamp(list.getScrollAmount(), list);
+        this.attachedList = list;
+        this.lastApplied = list.getScrollAmount();
+        this.target = clamp(this.lastApplied, list);
         this.initialized = true;
     }
 
     public void setTarget(AbstractSelectionList<?> list, double target) {
         if (list == null) return;
+        attach(list);
         this.target = clamp(target, list);
-        this.initialized = true;
     }
 
     public boolean wheel(AbstractSelectionList<?> list, double delta, double pixelsPerNotch) {
@@ -65,7 +72,8 @@ public final class SmoothScroll {
             // Scroll interactions stay immediate while a live world is open.
             this.target = clamp(this.target, list);
             list.setScrollAmount(this.target);
-            this.target = list.getScrollAmount();
+            this.lastApplied = list.getScrollAmount();
+            this.target = this.lastApplied;
             return;
         }
 
@@ -80,6 +88,7 @@ public final class SmoothScroll {
 
         list.setScrollAmount(next);
         double actual = list.getScrollAmount();
+        this.lastApplied = actual;
 
         // If the list clamped us, clamp the target too so the easing does not
         // keep pushing against an impossible boundary.

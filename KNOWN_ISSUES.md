@@ -9,6 +9,15 @@ que una seccion posterior lo mencione expresamente.
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
+- **Scroll compartido (posterior a `9f3f9a1`):** el controlador no detectaba
+  movimientos de barra/teclado externos a wheel y podía empujar la lista hacia
+  su destino anterior en el siguiente tick. Ahora resincroniza ante cambios
+  externos o sustitución de lista, sin cancelar la rueda acumulada normal.
+  El test Java cubre 15 escenarios con dobles de Minecraft/lista; omitido
+  localmente por falta de JDK, obligatorio en CI. Compilación y prueba en
+  Minecraft pendientes. Es un problema de desplazamiento identificado en el
+  código, no una causa confirmada de los reportes generales de clics fantasma.
+
 - **Ruta defensiva del scissor de Paquetes (posterior a `9dbd0ef`):** antes
   se tragaba un fallo de activación y se seguían dibujando filas sin recorte;
   además había operaciones entre adquirirlo y entrar al try/finally.

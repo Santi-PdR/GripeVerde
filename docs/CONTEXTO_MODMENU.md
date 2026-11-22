@@ -2,6 +2,28 @@
 
 Actualizado: 2026-11-13
 
+### Scroll compartido, posterior a `9f3f9a1`
+
+- SmoothScroll registra la lista y el último valor que escribió. Si barra,
+  teclado/ensureVisible u otro código desplaza la lista, descarta el destino
+  inercial antiguo; también lo hace al recibir otra instancia de lista.
+  Mantiene la acumulación de rueda, setTarget, snap y la rama sin easing
+  durante un mundo abierto. Afecta a los menús que ya usan este helper:
+  Idiomas, Accesibilidad, Chat, Sonidos, Online y Multijugador.
+- `python3 tools/test_smooth_scroll.py --require-java` compila el helper real
+  con dobles mínimos de Minecraft y AbstractSelectionList y ejecuta 15 casos
+  en procesos aislados: rueda/inercia, arrastre, teclado, lista nueva,
+  setTarget, mundo abierto, límites, fracciones, snap y entradas nulas.
+  No ejecuta el renderer ni eventos reales. En local se omitieron por falta
+  de JDK; se añadieron como paso obligatorio en CI y su plantilla.
+- Pasan espejos 8/8, lint 72 Java, guardas 18/18, gate 7/7 e instalador 7/7.
+  Compilación y ejecución Java de este candidato pendientes, igual que la
+  prueba en Minecraft. Sin bump, release ni cambios de gameplay.
+- Revisar manualmente: rueda y después arrastre de barra en ambos sentidos,
+  teclado que haga visible una fila fuera de pantalla, repetir con rueda aún
+  en movimiento, redimensionar y alternar menús con/sin mundo abierto. La
+  lista no debe saltar de vuelta al destino viejo. No acredita clics fantasma.
+
 ### Alcance del scissor, posterior a `9dbd0ef`
 
 - Geometría, children e índice inicial se resuelven antes de adquirir el

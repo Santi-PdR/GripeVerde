@@ -2,6 +2,17 @@
 
 ## Addendum operativo actual (2026-11-13)
 
+- **Scroll compartido, posterior a `9f3f9a1`:** SmoothScroll ahora detecta
+  desplazamientos externos (barra, teclado/ensureVisible) y cambio de lista,
+  cancelando el destino inercial viejo. Conserva la acumulación de rueda y
+  la rama sin easing mientras hay mundo abierto; no añade animaciones.
+  `tools/test_smooth_scroll.py` compila el Java real con dobles mínimos de
+  Minecraft/lista y ejecuta 15 escenarios. Localmente se omitieron por falta
+  de JDK; CI los exige con `--require-java`. Pasan guardas estáticas 18/18,
+  lint 72 Java, espejos 8/8, gate 7/7, instalador 7/7, py_compile y diff.
+  Compilación/ejecución Java y prueba en Minecraft pendientes. Sin bump ni
+  release. No confirma resueltos los clics fantasma generales.
+
 - **Recorte de Paquetes, posterior a `9dbd0ef`:** se resuelven geometría y
   entradas antes de adquirir el scissor. La banda opaca y las filas se dibujan
   solo después de activarlo, dentro de un try/finally que siempre solicita
