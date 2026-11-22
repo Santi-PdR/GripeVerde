@@ -4,25 +4,31 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
 
 ## Estado vigente de la entrega
 
-- Version publicada: **v0.394.0**, tag dirigido al commit construido `94e0908`;
-  JAR de 10.816.790 bytes, SHA-256
-  `351352ca283cecd3941666f554bd915f8ac1e1aa61aadec5679757f93bc5072d`.
-  El CI de publicación `44932587727` pasó en `build` y `publish`.
+- Release base verificado antes de esta entrega: **v0.397.0**, tag dirigido al commit construido
+  `19e73345e74b344720eab7e802ea41596f499a52`; JAR de 10.838.092 bytes,
+  SHA-256 `15280d711578937fbc8d77f609a9d0086e6bc4a61faf895a81d5af736d8affad`.
+  El CI de publicación `44987551290` pasó en `build` y `publish`.
+- Versión de esta entrega: **v0.398.0**. El workflow de GitHub Actions
+  compila y publica automáticamente solo si todas las comprobaciones pasan;
+  usarla únicamente cuando el run y el release queden verificados.
 - Rama de trabajo vigente: `arena/48be547c-gripeverde`, un solo push por entrega.
 - Baseline medida por las herramientas: **72 archivos Java**, **25 locales con
   191 claves** cada uno, 35 eventos de sonido, 42 referencias OGG y 42 archivos
   OGG, 4 piezas de música y **8/8 sellos espejo**.
 - Cada publicación es: `python3 tools/verify_mirrors.py` -> `python3 tools/lint_java.py`
-  -> commit + push -> esperar el CI -> comprobar el release y el SHA-256. El job
-  `publish` compara `release-tag.txt` con `build.gradle`, crea el tag sobre
-  `$GITHUB_SHA` (el commit que produjo el JAR) y no sobrescribe un release existente.
+  -> `python3 tools/ci/test_release_gate.py` ->
+  `python3 tools/ci/test_installer.py` -> commit + push -> esperar el CI ->
+  comprobar el release y el SHA-256. El job `publish` compara `release-tag.txt`
+  con `build.gradle`, crea el tag sobre `$GITHUB_SHA` (el commit que produjo el
+  JAR) y no sobrescribe un release existente.
 - **Nunca dos pushes seguidos**: el CI cancela el run anterior por concurrencia.
-- Sin JDK local: la compilación la hace el CI. No hace falta instalar Java 17 en
-  la máquina para publicar.
+- Sin JDK local: la compilación semántica la hace el CI. No instalar Java 17
+  en la máquina para publicar.
 - Deploy del owner: la carpeta
   `D:\Minecraft\SKLauncher\sklauncher-data-v4\instances\test-1\mods`, con JAR
   solamente y una sola versión del mod. El instalador verificado está en
-  `tools/install-latest.ps1` y enlazado desde el README.
+  `tools/install-latest.ps1` y enlazado desde el README; no se ejecuta desde el
+  sandbox en la PC del owner.
 - Las rutas antiguas que sobreviven en documentación histórica no son
   instrucciones de trabajo.
 

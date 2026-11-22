@@ -53,6 +53,8 @@ jobs:
         run: python3 tools/lint_java.py
       - name: Test release publishing gate
         run: python3 tools/ci/test_release_gate.py
+      - name: Test PowerShell installer safety
+        run: python3 tools/ci/test_installer.py
       - name: Build mod
         run: |
           chmod +x gradlew

@@ -1,3 +1,10 @@
+## v0.398.0 - Paquetes vuelve a localizar sus listas al redimensionar
+
+- Paquetes: cada inicialización borra las referencias antiguas y vuelve a encontrar las listas disponibles y aplicadas entre los controles actuales, ordenadas por su posición horizontal. Se conserva la lógica vanilla y se deja de depender de la reflexión sobre campos. La apariencia y los clics siguen pendientes de confirmación dentro de Minecraft. Instalador: valida tamaño, SHA-256 e identidad/versión interna del JAR antes de instalar; después quita los JAR antiguos de GripeVerde y la carpeta heredada de respaldos, sin crear copias.
+
+**English**
+- Resource packs: each screen initialization clears stale references and rediscovers the available and selected lists among current widgets, ordered by horizontal position. Vanilla selection logic is unchanged, and field reflection is no longer used. Appearance and clicks still need confirmation in Minecraft. The installer checks the download size, SHA-256, and JAR identity/version before installing, then removes older GripeVerde JARs and the legacy backup folder without creating backups.
+
 ## v0.397.0 - Packs sin doble trazo y clics de Mundos acotados
 
 - Recursos: se elimina el primer render vanilla que dejaba texto fantasma bajo el papel; listas y controles se pintan una sola vez y sin marcos duplicados. Mundos: se cubre la tinta nativa antes de repintar, se conserva visible el aviso experimental de Forge y los clics en márgenes del papel ya no seleccionan filas.

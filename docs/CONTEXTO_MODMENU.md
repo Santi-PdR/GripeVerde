@@ -7,38 +7,42 @@ Actualizado: 2026-11-13
 - Repositorio: [Santi-PdR/GripeVerde](https://github.com/Santi-PdR/GripeVerde), público.
 - Rama activa de la sesión: `arena/48be547c-gripeverde`, basada en `02e85bc`.
   La plataforma fija el nombre: trabajar y publicar solamente en esta rama.
-- **Versión actual: 0.394.0**, tag dirigido a `94e0908`; CI `44932587727` terminó
-  en verde en `build` y `publish`. Release:
-  <https://github.com/Santi-PdR/GripeVerde/releases/tag/v0.394.0>.
-  JAR de 10.816.790 bytes; SHA-256
-  `351352ca283cecd3941666f554bd915f8ac1e1aa61aadec5679757f93bc5072d`.
+- **Versión base publicada y verificada antes de esta entrega: 0.397.0**, tag dirigido a
+  `19e73345e74b344720eab7e802ea41596f499a52`; CI `44987551290` verde en
+  `build` y `publish`. JAR de 10.838.092 bytes, SHA-256
+  `15280d711578937fbc8d77f609a9d0086e6bc4a61faf895a81d5af736d8affad`.
+- **Versión de esta entrega: v0.398.0.** Paquetes limpia sus referencias de
+  listas en cada init y resuelve los hijos `AbstractSelectionList` por
+  coordenada x, sin buscar campos por reflexión. Esto mantiene la lógica vanilla,
+  pero no demuestra que estén corregidas la apariencia o los clics. Un Jugador
+  no se modifica en esta ronda. El workflow compila y publica automáticamente
+  solo si pasan todas las comprobaciones.
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
-  El trabajo se hace sobre el repositorio; no se clona ni se edita el proyecto local
-  del usuario.
+  El trabajo se hace sobre el repositorio; no se edita el proyecto local del usuario.
 - No se controla Minecraft ni la PC del usuario para pruebas visuales. El CI acredita
-  compilación, recursos y localización; no sustituye una revisión dentro del juego.
-  **Pendiente de confirmación del usuario:** las correcciones visuales e interactivas
-  de 0.393.0 y el foco de teclado del buscador de Mundos de 0.394.0 (Enter/Supr editan
-  la consulta sin actuar sobre la ficha elegida; tras salir del campo, la lista vuelve
-  a navegarse con flechas). No se han probado visualmente dentro del juego.
+  compilación, recursos y localización; no sustituye la revisión dentro del juego.
+  **Pendiente de confirmación del usuario:** Paquetes de recursos, clics fantasma,
+  interfaz de Un Jugador y revisión de Mundos de las entregas anteriores.
 - Las interfaces del juego se mantienen instantáneas: no se agregan animaciones al
   inventario, la pausa ni el mundo. Las únicas piezas animadas siguen siendo las del
   menú y respetan Movimiento reducido y Destellos reducidos.
-- **Entrega de cada versión:** cerrar con un script PowerShell para pegar que descarga
-  el JAR más reciente, verifica tamaño y SHA-256, sustituye el anterior sin guardar
-  copias de respaldo y elimina la carpeta heredada de respaldos si existe. No se guarda
-  JAR generado en el repositorio ni en el workspace.
-- `tools/install-latest.ps1` obtiene metadatos del API, descarga directamente del asset
-  público y verifica tamaño, digest, `META-INF/MANIFEST.MF` y `mods.toml`. El token es
-  opcional para el repo público; si se define, se reutiliza para el fallback al API
-  (por ejemplo, si el repo volviera a ser privado). Borra los `*gripeverde*.jar` viejos
-  y la carpeta heredada `<instancia>\gripeverde-jar-backups`; no hace backups.
+- **Entrega de cada versión:** instalador PowerShell para descargar el JAR más
+  reciente, verificar tamaño/SHA-256 y metadata interna, sustituir sin guardar
+  copias de respaldo y limpiar la carpeta heredada si existe. No se guarda JAR
+  generado en el repositorio ni en el workspace.
+- `tools/install-latest.ps1` consulta metadatos del API público, descarga el asset
+  directamente (API como fallback) y valida tamaño, digest, `META-INF/MANIFEST.MF`,
+  `mods.toml`, ID y versión antes de instalar. Comprueba el archivo instalado y
+  solo entonces retira JAR viejos de GripeVerde y la carpeta heredada
+  `<instancia>\gripeverde-jar-backups`; no crea backups. El usuario pidió que el
+  instalador no se ejecute desde este sandbox en su PC.
 - Los binarios de release no se descargan desde este sandbox: el host del asset no está
   en su allowlist. Los metadatos y digest sí se consultan por `api.github.com`.
-- `.github/workflows/build.yml` compila `main` y `arena/**` y publica automáticamente
-  cuando `release-tag.txt` coincide con la versión de `build.gradle`. Las operaciones
-  GitHub se hacen con `git`/`gh`; si falla la autenticación, pedir que el usuario
-  reconecte GitHub en Arena. Nunca pedir tokens ni credenciales por chat.
+- `.github/workflows/build.yml` compila `main` y `arena/**`, corre además los tests
+  estáticos del instalador y publica automáticamente cuando `release-tag.txt` coincide
+  con la versión de `build.gradle`. Las operaciones GitHub se hacen con `git`/`gh`;
+  si falla la autenticación, pedir que el usuario reconecte GitHub en Arena. Nunca
+  pedir tokens ni credenciales por chat.
 
 ## Estado histórico al retomar (0.209.0; 2026-11-13)
 

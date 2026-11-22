@@ -2,49 +2,45 @@
 
 ## Addendum operativo actual (2026-11-13)
 
-- Última versión publicada: **GripeVerde v0.395.0**. Release y JAR verificados:
-  10.831.158 bytes, SHA-256
-  `a09ad857a1f07600845683d242a05018f98a54782f15fcc7c07daf1152b04e21`.
-  El CI `44982484624` pasó en `build` y `publish`.
-- La v0.395.0 conserva el despacho vanilla de los clics de servidores/LAN,
-  devuelve el foco a Mundos al consumir un doble clic y hace modal el cierre de
-  inspección del reloj. Unirse directamente enfoca el campo al elegir una
-  dirección reciente y recorta la etiqueta visible sin perder la dirección
-  completa. También refresca y limita los iconos de servidores/mundos, libera
-  texturas obsoletas y descarta escaneos viejos del archivo de mundos.
-- La v0.394.0 corrigió el foco del buscador de Mundos: Enter y Supr se entregan
-  al campo en vez de actuar sobre el mundo seleccionado; las flechas vuelven a
-  navegar la lista al salir del campo. También se añadió Maven Central como
-  fuente canónica de dependencias auxiliares y `build.yml` fija el tag al SHA
-  construido (`--target "$GITHUB_SHA"`).
-- La v0.393.0 corrigió capas/clics de Multijugador y Mundos, conservó los estilos
-  nativos de tooltip, limitó JourneyMap al canto del minimapa y su rótulo de
-  coordenadas, y vació los buffers antes de repintar las listas de Paquetes.
-- **Pendiente de revisión en Minecraft:** las correcciones de clics en
-  servidores/LAN, búsqueda y doble clic de Mundos, inspección del reloj y
-  direcciones recientes aún no se han probado visual o interactivamente en el
-  cliente. El CI no sustituye esa comprobación; el checklist concreto vive en
-  `docs/CONTEXTO_MODMENU.md`.
+- Versión base verificada antes de esta entrega: **GripeVerde v0.397.0**, tag en
+  `19e73345e74b344720eab7e802ea41596f499a52`; JAR de 10.838.092 bytes,
+  SHA-256 `15280d711578937fbc8d77f609a9d0086e6bc4a61faf895a81d5af736d8affad`.
+  El CI `44987551290` pasó en `build` y `publish`.
+- La v0.397.0 evita el doble dibujo de Paquetes, cubre la tinta vanilla de
+  Mundos, conserva el aviso experimental de Forge y acota los clics en los
+  márgenes. Esas pantallas siguen pendientes de confirmación en Minecraft.
+- **Versión de esta entrega: v0.398.0.** Paquetes limpia y vuelve a resolver
+  sus referencias en cada `init()`, recogiendo las dos listas desde `children()`
+  y ordenándolas por su coordenada horizontal. No usa reflexión por campos ni
+  cambia la selección vanilla. El instalador ahora verifica digest y metadatos
+  internos del JAR antes de sustituirlo, y limpia JAR anteriores/carpeta
+  heredada solo después de comprobar la instalación. El workflow valida y
+  publica automáticamente solo si pasan todas las puertas.
+- **Pendiente de revisión en Minecraft:** el reporte de Paquetes de recursos,
+  los clics fantasma y la interfaz de Un Jugador siguen abiertos. Esta ronda no
+  modifica Un Jugador y no afirma que el hallazgo de listas haya corregido lo
+  visual o los clics de Paquetes. El CI no sustituye la prueba en cliente.
 - Las reglas de siempre siguen en pie: mod **solo de cliente**, sin bloques,
   sin ítems, sin gameplay ni resourcepacks; la identidad visual se hace con
   Java y los render/widgets propios.
 - Validar y publicar: `verify_mirrors.py` -> `lint_java.py` ->
-  `tools/ci/test_release_gate.py` -> commit + push -> esperar el CI.
-  Los PR nunca publican; `workflow_dispatch` requiere `publish_release=true`, y
-  en un push el marcador debe coincidir con `build.gradle`. **Nunca dos pushes
-  seguidos** (el CI cancela por concurrencia) y **no compilar en local** (este
-  entorno no tiene JDK; compila el CI).
+  `tools/ci/test_release_gate.py` -> `tools/ci/test_installer.py` -> commit +
+  push -> esperar el CI. Los PR nunca publican; en un push, el marcador debe
+  coincidir con `build.gradle`. **Nunca dos pushes seguidos** (el CI cancela
+  por concurrencia). No hay JDK en este entorno; la compilación semántica queda
+  a cargo del CI.
 - Baseline validada: 72 archivos Java, 25 locales x 191 claves, 35 eventos de
   sonido, 42 refs/42 OGG, 4 piezas de música y 8/8 sellos espejo.
 - Destino de instalación del owner:
   `D:\Minecraft\SKLauncher\sklauncher-data-v4\instances\test-1\mods`, con JAR
   solamente y una sola versión del mod. El instalador verificado es
-  `tools/install-latest.ps1`.
+  `tools/install-latest.ps1`; no se ejecuta en la PC del owner desde el sandbox.
 - La tabla de hojas, medidas, chapas `REG.` y paleta vive en
   `docs/CONTEXTO_MODMENU.md`; el estado operativo, en `KNOWN_ISSUES.md`; la
   guía para tocar el mod, en `CONTRIBUTING.md`.
-- **Lo que el CI no acredita**: cómo se ve la pantalla. Compilación, recursos,
-  localización y espejos sí; una revisión visual en Minecraft, no.
+- **Lo que el CI no acredita**: cómo se ve la pantalla o cómo responden sus
+  clics. Compilación, recursos, localización y espejos sí; revisión visual e
+  interactiva en Minecraft, no.
 
 ## Addendum operativo anterior (2026-10-27) - historico
 

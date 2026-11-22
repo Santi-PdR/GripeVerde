@@ -2,134 +2,186 @@ $ErrorActionPreference = 'Stop'
 $mods = 'D:\Minecraft\SKLauncher\sklauncher-data-v4\instances\test-1\mods'
 $repo = 'Santi-PdR/GripeVerde'
 $api = "https://api.github.com/repos/$repo/releases/latest"
-$dest = $null
 $temp = Join-Path $mods ('.gripeverde-download-' + [guid]::NewGuid().ToString('N') + '.tmp')
-# 2026-11-13: el script ya no guarda copias del JAR anterior. La carpeta de
-# respaldos que dejaban las versiones viejas se borra aqui, en la proxima pasada.
 $legacyBackupDir = Join-Path (Split-Path -Parent $mods) 'gripeverde-jar-backups'
+$token = $null
+
+function Get-GitHubToken {
+    if ($env:GITHUB_TOKEN) { return ([string]$env:GITHUB_TOKEN).Trim() }
+
+    if (Get-Command gh -ErrorAction SilentlyContinue) {
+        $candidate = (& gh auth token 2>$null | Select-Object -First 1)
+        if ($candidate) { return ([string]$candidate).Trim() }
+    }
+
+    if (Get-Command git -ErrorAction SilentlyContinue) {
+        $payload = "protocol=https`nhost=github.com`n`n"
+        $credentials = @($payload | & git credential fill 2>$null)
+        $passwordLine = $credentials |
+            Where-Object { $_ -like 'password=*' } |
+            Select-Object -First 1
+        if ($passwordLine) { return ([string]$passwordLine -replace '^password=', '').Trim() }
+    }
+
+    return $null
+}
 
 try {
     if (-not (Test-Path -LiteralPath $mods -PathType Container)) {
         throw "No existe la carpeta de mods: $mods"
     }
 
-    # El repo es privado: sin credenciales la API responde 404 aunque todo exista.
-    # Se reusa lo que ya haya en la maquina: GITHUB_TOKEN, la sesion de gh o la de git.
-    $token = $env:GITHUB_TOKEN
-    if (-not $token) {
-        if (Get-Command gh -ErrorAction SilentlyContinue) {
-            $token = (& gh auth token 2>$null | Select-Object -First 1)
-        }
+    # Windows PowerShell 5.1 puede usar TLS antiguo por defecto; GitHub requiere TLS 1.2.
+    if ($PSVersionTable.PSVersion.Major -lt 6) {
+        [System.Net.ServicePointManager]::SecurityProtocol =
+            [System.Net.ServicePointManager]::SecurityProtocol -bor
+            [System.Net.SecurityProtocolType]::Tls12
     }
-    if (-not $token) {
-        if (Get-Command git -ErrorAction SilentlyContinue) {
-            $payload = "protocol=https`nhost=github.com`n`n"
-            $lines = ($payload | & git credential fill 2>$null)
-            $line = @($lines) | Where-Object { $_ -like 'password=*' } | Select-Object -First 1
-            if ($line) { $token = [string]$line -replace '^password=', '' }
-        }
-    }
-    if ($token) { $token = ([string]$token).Trim() }
 
-    # 2026-11-13: el token deja de ser obligatorio. Los releases son publicos y
-    # la API contesta sin credenciales; antes, sin token, el script se plantaba
-    # aunque la descarga fuera a funcionar. Con token se sigue usando, que es lo
-    # que hace falta si el repo vuelve a privado.
+    # Los releases son públicos: consulta primero sin credenciales. Solo recurre a
+    # una sesión ya existente de gh/git si el API responde como para un repo privado.
     $headers = @{ Accept = 'application/vnd.github+json' }
-    if ($token) { $headers.Authorization = "Bearer $token" }
     try {
-        $release = Invoke-RestMethod -Uri $api -Headers $headers -UseBasicParsing
+        $release = Invoke-RestMethod -Uri $api -Headers $headers -UseBasicParsing -ErrorAction Stop
     }
     catch {
+        $token = Get-GitHubToken
         if (-not $token) {
-            throw "No pude leer el release ($($_.Exception.Message)). Si el repo es privado, defini `$env:GITHUB_TOKEN o logueate con 'gh auth login'."
+            throw "No pude leer el último release ($($_.Exception.Message)). Si el repositorio es privado, iniciá sesión con gh o definí GITHUB_TOKEN."
         }
-        throw
+        $headers.Authorization = "Bearer $token"
+        $release = Invoke-RestMethod -Uri $api -Headers $headers -UseBasicParsing -ErrorAction Stop
     }
-    $asset = @($release.assets) | Where-Object { $_.name -like 'gripeverde-*.jar' } | Select-Object -First 1
-    if (-not $asset) { throw "El release $($release.tag_name) no tiene un JAR de GripeVerde." }
+
+    $asset = @($release.assets) |
+        Where-Object { $_.name -match '^gripeverde-[0-9]+\.[0-9]+\.[0-9]+\.jar$' } |
+        Select-Object -First 1
+    if (-not $asset) { throw "El release $($release.tag_name) no tiene un JAR versionado de GripeVerde." }
+
+    $nameMatch = [regex]::Match([string]$asset.name, '^gripeverde-(?<version>[0-9]+\.[0-9]+\.[0-9]+)\.jar$')
+    $version = $nameMatch.Groups['version'].Value
+    if (-not $nameMatch.Success -or $release.tag_name -ne "v$version") {
+        throw "El nombre del JAR y el tag del release no coinciden; se canceló la instalación."
+    }
 
     $dest = Join-Path $mods $asset.name
     $expectedSize = [int64]$asset.size
     $expectedHash = ([string]$asset.digest) -replace '^sha256:', ''
-    if (-not $expectedHash) { throw 'GitHub no publico el digest del asset; no puedo verificar la descarga.' }
-
-    # JAR de GripeVerde que ya estuvieran puestos: se borran, no se respaldan.
-    $old = @(Get-ChildItem -LiteralPath $mods -File -Filter '*gripeverde*.jar' -ErrorAction SilentlyContinue)
-
-    # 2026-11-13: primero la descarga directa del asset, que no pide credenciales;
-    # si el repo fuera privado, se reintenta por la API con el token.
-    $direct = [string]$asset.browser_download_url
-    $downloaded = $false
-    if ($direct) {
-        try {
-            Invoke-WebRequest -Uri $direct -OutFile $temp -UseBasicParsing
-            $downloaded = $true
-        }
-        catch {
-            if (-not $token) { throw }
-        }
+    if ($expectedSize -le 0 -or $expectedHash -notmatch '^[0-9a-fA-F]{64}$') {
+        throw 'GitHub no publicó un tamaño o SHA-256 válido para el asset; no puedo verificar la descarga.'
     }
+
+    # Intenta el enlace público directo primero. Si falla, prueba el endpoint de
+    # assets sin credenciales y recién después reutiliza una sesión existente.
+    $downloaded = $false
+    try {
+        Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $temp -UseBasicParsing -ErrorAction Stop
+        $downloaded = $true
+    }
+    catch {
+        # Continúa con el endpoint de API; no se toca ningún JAR instalado.
+    }
+
     if (-not $downloaded) {
         $assetUrl = "https://api.github.com/repos/$repo/releases/assets/$($asset.id)"
-        $dlHeaders = @{ Accept = 'application/octet-stream' }
-        if ($token) { $dlHeaders.Authorization = "Bearer $token" }
-        Invoke-WebRequest -Uri $assetUrl -Headers $dlHeaders -OutFile $temp -UseBasicParsing
+        $assetHeaders = @{ Accept = 'application/octet-stream' }
+        try {
+            Invoke-WebRequest -Uri $assetUrl -Headers $assetHeaders -OutFile $temp -UseBasicParsing -ErrorAction Stop
+        }
+        catch {
+            if (-not $token) { $token = Get-GitHubToken }
+            if (-not $token) { throw }
+            $assetHeaders.Authorization = "Bearer $token"
+            Invoke-WebRequest -Uri $assetUrl -Headers $assetHeaders -OutFile $temp -UseBasicParsing -ErrorAction Stop
+        }
     }
 
-    $file = Get-Item -LiteralPath $temp
-    if ($file.Length -ne $expectedSize) {
-        throw "Tamano de descarga inesperado: $($file.Length) bytes (esperaba $expectedSize)."
+    $download = Get-Item -LiteralPath $temp
+    if ($download.Length -ne $expectedSize) {
+        throw "Tamaño inesperado: $($download.Length) bytes; se esperaban $expectedSize."
     }
-
     $hash = (Get-FileHash -LiteralPath $temp -Algorithm SHA256).Hash.ToLowerInvariant()
-    if ($hash -ne $expectedHash) {
-        throw "El SHA-256 no coincide con el que publica GitHub; se cancelo la instalacion."
+    if ($hash -ne $expectedHash.ToLowerInvariant()) {
+        throw 'El SHA-256 no coincide con el publicado por GitHub; se canceló la instalación.'
     }
 
+    # Además del hash, confirma que sea el JAR del mod y que su versión interna
+    # coincida con el tag antes de sustituir cualquier archivo de la instancia.
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     $zip = [System.IO.Compression.ZipFile]::OpenRead($temp)
     try {
-        $entries = @($zip.Entries | ForEach-Object { $_.FullName })
-        $hasManifest = $entries -contains 'META-INF/MANIFEST.MF'
-        $hasModsToml = @($entries | Where-Object { $_ -like '*mods.toml' }).Count -gt 0
-        if (-not $hasManifest -or -not $hasModsToml) {
-            throw 'El archivo descargado no parece ser el JAR del mod (falta MANIFEST o mods.toml).'
+        $manifestEntry = $zip.GetEntry('META-INF/MANIFEST.MF')
+        $modsEntry = $zip.GetEntry('META-INF/mods.toml')
+        if ($null -eq $manifestEntry -or $null -eq $modsEntry) {
+            throw 'El archivo no contiene MANIFEST.MF y mods.toml; no parece ser el JAR del mod.'
+        }
+
+        $manifestReader = [System.IO.StreamReader]::new($manifestEntry.Open())
+        try { $manifestText = $manifestReader.ReadToEnd() }
+        finally { $manifestReader.Dispose() }
+
+        $modsReader = [System.IO.StreamReader]::new($modsEntry.Open())
+        try { $modsText = $modsReader.ReadToEnd() }
+        finally { $modsReader.Dispose() }
+
+        $manifestVersion = [regex]::Match(
+            $manifestText, '(?im)^Implementation-Version:\s*([0-9]+\.[0-9]+\.[0-9]+)\s*$')
+        $modIdPresent = [regex]::IsMatch($modsText, '(?m)^\s*modId\s*=\s*"gripeverde"\s*$')
+        $modVersion = [regex]::Match(
+            $modsText, '(?m)^\s*version\s*=\s*"([0-9]+\.[0-9]+\.[0-9]+)"\s*$')
+        if (
+            -not $manifestVersion.Success -or
+            $manifestVersion.Groups[1].Value -ne $version -or
+            -not $modIdPresent -or
+            -not $modVersion.Success -or
+            $modVersion.Groups[1].Value -ne $version
+        ) {
+            throw "La versión interna del JAR no coincide con v$version; se canceló la instalación."
         }
     }
     finally {
         $zip.Dispose()
     }
 
-    # Se borra el JAR viejo ANTES de poner el nuevo: nunca puede quedar la carpeta
-    # con dos gripeverde a la vez, que impediria abrir el juego.
-    $removed = @()
-    foreach ($jar in $old) {
-        if ($jar.FullName -eq $dest) { continue }
-        Remove-Item -LiteralPath $jar.FullName -Force
-        $removed += $jar.Name
+    # El temporal está dentro de mods, en el mismo volumen. Primero instala el
+    # archivo ya verificado; solo después borra versiones anteriores. Si el
+    # reemplazo falla, el JAR anterior permanece intacto.
+    Move-Item -LiteralPath $temp -Destination $dest -Force -ErrorAction Stop
+    $installedHash = (Get-FileHash -LiteralPath $dest -Algorithm SHA256).Hash.ToLowerInvariant()
+    if ($installedHash -ne $expectedHash.ToLowerInvariant()) {
+        throw 'Falló la verificación posterior a la instalación; no se borraron otros JAR.'
     }
 
-    Move-Item -LiteralPath $temp -Destination $dest -Force
-    Write-Host "GripeVerde $($release.tag_name) instalado en: $dest" -ForegroundColor Green
-    if ($removed.Count -gt 0) { Write-Host ("JAR anterior borrado: " + ($removed -join ', ')) }
-    else { Write-Host "No habia JAR anterior en la carpeta de mods." }
-    Write-Host "SHA-256 verificado: $hash"
+    $cleanupFailures = @()
+    try {
+        $oldJars = @(Get-ChildItem -LiteralPath $mods -File -Filter 'gripeverde-*.jar' -ErrorAction Stop |
+            Where-Object { $_.FullName -ne $dest })
+        foreach ($jar in $oldJars) {
+            try { Remove-Item -LiteralPath $jar.FullName -Force -ErrorAction Stop }
+            catch { $cleanupFailures += $jar.Name }
+        }
+    }
+    catch {
+        Write-Warning "La instalación quedó verificada, pero no pude enumerar todos los JAR viejos: $($_.Exception.Message)"
+    }
 
-    # Limpieza de la carpeta de respaldos que dejaban las versiones anteriores.
     if (Test-Path -LiteralPath $legacyBackupDir -PathType Container) {
-        Remove-Item -LiteralPath $legacyBackupDir -Recurse -Force
-        Write-Host "Carpeta de respaldos vieja borrada: $legacyBackupDir"
+        try { Remove-Item -LiteralPath $legacyBackupDir -Recurse -Force -ErrorAction Stop }
+        catch { Write-Warning "No pude borrar la carpeta heredada de respaldos: $legacyBackupDir" }
+    }
+
+    Write-Host "GripeVerde $($release.tag_name) instalado y verificado en: $dest" -ForegroundColor Green
+    Write-Host "Tamaño: $expectedSize bytes  |  SHA-256: $hash"
+    if ($cleanupFailures.Count -gt 0) {
+        Write-Warning ('Cerrá Minecraft y quitá estos JAR anteriores para evitar duplicados: ' + ($cleanupFailures -join ', '))
     }
 }
 catch {
-    # Sin respaldos no hay nada que restaurar: si el fallo ocurre antes de tocar la
-    # carpeta de mods, la version que habia sigue tal cual.
-    Write-Host "No se completo la instalacion; revisa la carpeta de mods." -ForegroundColor Red
+    Write-Host "No se completó la instalación: $($_.Exception.Message)" -ForegroundColor Red
     throw
 }
 finally {
     if (Test-Path -LiteralPath $temp -PathType Leaf) {
-        Remove-Item -LiteralPath $temp -Force
+        Remove-Item -LiteralPath $temp -Force -ErrorAction SilentlyContinue
     }
 }

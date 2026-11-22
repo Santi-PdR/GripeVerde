@@ -37,7 +37,7 @@ Para instalar con PowerShell, cerrá Minecraft y ejecutá el [instalador verific
 powershell -ExecutionPolicy Bypass -File .\tools\install-latest.ps1
 ```
 
-El instalador consulta el último release y verifica el tamaño, el SHA-256 publicado por GitHub y la estructura del JAR antes de reemplazar los JAR de GripeVerde. No crea copias de respaldo. La ruta predeterminada es `D:\Minecraft\SKLauncher\sklauncher-data-v4\instances\test-1\mods`; si usás otra, ajustá `$mods` al principio del script.
+El instalador consulta el último release y verifica el tamaño, el SHA-256 publicado por GitHub, el ID del mod y la versión declarada en `MANIFEST.MF` y `mods.toml` antes de instalar. Comprueba el archivo instalado y recién entonces retira los JAR anteriores de GripeVerde y la carpeta heredada de respaldos. No crea copias de respaldo. La ruta predeterminada es `D:\Minecraft\SKLauncher\sklauncher-data-v4\instances\test-1\mods`; si usás otra, ajustá `$mods` al principio del script.
 
 ## Primeros pasos
 

@@ -9,23 +9,21 @@ import net.minecraft.client.gui.screens.packs.PackSelectionScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.repository.PackRepository;
 
-import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.function.Consumer;
 
 /**
  * Version Diary de PackSelectionScreen: el "archivador de materiales".
  *
- * Reimplementacion visual sobre la pantalla vanilla (misma estrategia que
- * DiarySoundOptionsScreen):
- *  - super.init() crea las dos listas vanilla y los botones (Done, abrir
- *    carpeta) — NO se mueve ni se toca su logica de seleccion.
- *  - Reflexion acotada sobre las dos listas para quitarles el fondo dirt.
- *    Fallback silencioso: si falla, las listas conservan su fondo vanilla.
- *  - El fondo se reemplaza por escena viva + pergamino de archivo + marco de
- *    acero; el titulo vanilla (y=16) queda sobre el pergamino.
- *  - Las scrollbars de las listas son las vanilla, ya estilizadas en acero
- *    por el resource pack "gripeverde_steel" (widget/scroller.png).
+ * Reimplementacion visual sobre la pantalla vanilla:
+ *  - super.init() conserva las listas y acciones originales, sin cambiar la
+ *    seleccion de packs ni el callback de aplicacion.
+ *  - Las dos listas se resuelven desde children() y se ordenan por su posicion
+ *    real: izquierda=disponibles, derecha=aplicados. No dependen de nombres de
+ *    campos ni del orden de reflexion al redimensionar la pantalla.
+ *  - El fondo se reemplaza por escena viva y pergamino; listas y controles se
+ *    dibujan una sola vez encima de la hoja.
+ *  - Las scrollbars siguen siendo las vanilla, vestidas con tinta y papel.
  */
 public class DiaryPackSelectionScreen extends PackSelectionScreen {
 
@@ -72,23 +70,11 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
             } catch (Throwable ignored) {
             }
         }
+        this.availableList = null;
+        this.selectedList = null;
+        this.dressed.clear();
         super.init();
-        // Localizar las dos listas por nombre o por tipo (AbstractSelectionList)
-        try {
-            Field[] fields = PackSelectionScreen.class.getDeclaredFields();
-            for (Field f : fields) {
-                f.setAccessible(true);
-                Object o = f.get(this);
-                if (!(o instanceof AbstractSelectionList<?> list)) continue;
-                if ("availableList".equals(f.getName()) || availableList == null) {
-                    availableList = list;
-                } else {
-                    selectedList = list;
-                }
-            }
-        } catch (Throwable ignored) {
-            // fallback: listas con fondo vanilla (funciona igual)
-        }
+        resolvePackLists();
         if (availableList != null) {
             availableList.setRenderBackground(false);
             availableList.setRenderTopAndBottom(false);
@@ -102,6 +88,24 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
             this.dressed.addAll(com.eternalcraft.gripeverde.client.render.PaperButtons.dressAll(this));
         } catch (Throwable ignored) {
         }
+    }
+
+    /**
+     * Las listas vanilla están en children(), aunque no en renderables. Se
+     * ordenan por su x real (izquierda=disponibles, derecha=aplicados), no por
+     * el orden de campos/reflexión, que puede cambiar al reiniciar la pantalla.
+     */
+    private void resolvePackLists() {
+        java.util.List<AbstractSelectionList<?>> lists = new java.util.ArrayList<>();
+        try {
+            for (var child : this.children()) {
+                if (child instanceof AbstractSelectionList<?> list) lists.add(list);
+            }
+        } catch (Throwable ignored) {
+        }
+        lists.sort((left, right) -> Integer.compare(left.getLeft(), right.getLeft()));
+        if (!lists.isEmpty()) this.availableList = lists.get(0);
+        if (lists.size() > 1) this.selectedList = lists.get(1);
     }
 
     /**

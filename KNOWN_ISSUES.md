@@ -5,35 +5,34 @@ de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
 que una seccion posterior lo mencione expresamente.
 
-## ESTADO: DESARROLLO ACTIVO (2026-11-13, GripeVerde v0.394.0)
+## ESTADO: DESARROLLO ACTIVO (2026-11-13, rama v0.398.0)
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
-- **Último release:** `v0.394.0`, tag dirigido al commit construido `94e0908`;
-  JAR de 10.816.790 bytes, SHA-256
-  `351352ca283cecd3941666f554bd915f8ac1e1aa61aadec5679757f93bc5072d`.
-  El CI de publicación `44932587727` pasó en `build` y `publish`.
-- **Cambio 0.394.0:** si el buscador de Mundos tiene foco, Enter y Supr se
-  delegan al campo antes que a los atajos de abrir/borrar el mundo elegido. La
-  regresión queda protegida por `tools/lint_java.py`.
-- **Pendiente de confirmación visual en cliente:** icono/capas de Multijugador;
-  clics, controles y navegación por teclado de Mundos (incluido el buscador);
-  respaldo geométrico de 64 px para controles de fila; canto/coordenadas de
-  JourneyMap; tooltips nativos; títulos/textos de Paquetes de recursos. No se ha
-  probado dentro de Minecraft. Ventanas bajas y escalas GUI también requieren
-  comprobación visual; no se registran como fallos reproducidos.
+- **Release base comprobado antes de esta entrega:** `v0.397.0`, tag en `19e73345e74b344720eab7e802ea41596f499a52`; JAR de 10.838.092 bytes, SHA-256
+  `15280d711578937fbc8d77f609a9d0086e6bc4a61faf895a81d5af736d8affad`.
+  El CI `44987551290` pasó en `build` y `publish`.
+- **Versión de esta rama: `v0.398.0`.** El workflow compila y publica solo
+  si pasan las comprobaciones. Paquetes reinicia las referencias de listas en
+  cada inicialización y las busca entre `children()`, ordenadas por posición
+  horizontal, sin reflexión por campos. Es un cambio de descubrimiento, no una
+  confirmación de que se haya corregido la apariencia ni la interacción.
+- **Pendiente de confirmación en Minecraft:** Paquetes de recursos, clics
+  fantasma e interfaz de Un Jugador, además de la revisión visual/interactiva
+  de Mundos de las entregas previas. Un Jugador no se modifica en esta ronda.
+  No afirmar que estos reclamos están resueltos hasta probarlos en cliente.
 - Las correcciones mantienen la lógica vanilla. El CI acredita compilación,
   recursos, localización y espejos, pero no cómo se ve o responde la interfaz.
 - El CI (`.github/workflows/build.yml`) corre `verify_mirrors.py`,
-  `lint_java.py`, `tools/ci/test_release_gate.py` y `./gradlew clean build`.
-  Los PR no publican; `workflow_dispatch` requiere `publish_release=true`, y
-  los pushes requieren que el marcador coincida con `build.gradle`. El job
-  crea tags sobre el SHA que produjo el JAR y no sobrescribe un release
-  existente. Maven Central está declarado como fuente canónica de dependencias
-  auxiliares no reflejadas en Forge Maven.
-- La carpeta de mods debe contener únicamente archivos JAR; al actualizar se
-  reemplazan las versiones anteriores de GripeVerde. El instalador verificado
-  está en `tools/install-latest.ps1`.
+  `lint_java.py`, `tools/ci/test_release_gate.py`, `tools/ci/test_installer.py`
+  y `./gradlew clean build`. El sandbox no dispone de Java; la compilación
+  semántica se confirma en el CI de cada entrega. Los PR nunca publican y el
+  job `publish` no sobrescribe un release existente.
+- El instalador verificado está en `tools/install-latest.ps1`: resuelve el
+  último release, valida tamaño, digest SHA-256 e identidad/versión del JAR,
+  instala y vuelve a comprobarlo antes de retirar otros JAR de GripeVerde y la
+  carpeta heredada de respaldos. No crea copias. El script no se ha ejecutado
+  desde este entorno en la PC del usuario.
 - **KI-79 (CEDA Dispatch / CopyL)** sigue fuera de este repositorio: la corrección
   está preparada en `tools/copyl/0001-copyl-3.9.5-one-text-pass.patch` y falta
   publicarla en `Santi-PdR/Lclient`, donde esta sesión no tiene permiso de escritura.

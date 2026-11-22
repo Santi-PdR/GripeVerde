@@ -389,6 +389,27 @@ def check_pack_selection_single_render(path, clean):
     if 'gripeverde.options.packs.subtitle' in page:
         line = clean[:page_start].count(chr(10)) + 1
         return [(path, line, 'Packs: dejar una sola linea secundaria en la cabecera')]
+
+    init, init_start = method_body('protected void init()')
+    resolver, resolver_start = method_body('private void resolvePackLists()')
+    reset = init.find('this.availableList = null;')
+    clear_dressed = init.find('this.dressed.clear();')
+    super_init = init.find('super.init();')
+    resolve = init.find('resolvePackLists();')
+    dress = init.find('PaperButtons.dressAll(this)')
+    if (not init or not resolver or reset < 0 or clear_dressed < 0
+            or super_init < max(reset, clear_dressed) or resolve < super_init or dress < resolve
+            or 'this.selectedList = null;' not in init
+            or 'this.children()' not in resolver
+            or 'instanceof AbstractSelectionList<?> list' not in resolver
+            or 'lists.sort(' not in resolver or 'left.getLeft()' not in resolver
+            or 'right.getLeft()' not in resolver
+            or 'this.availableList = lists.get(0)' not in resolver
+            or 'this.selectedList = lists.get(1)' not in resolver
+            or 'getDeclaredFields()' in resolver):
+        line = clean[:(init_start if init_start >= 0 else resolver_start)].count(chr(10)) + 1
+        return [(path, line,
+                 'Packs: reasignar y ordenar las listas vanilla en cada init sin depender de reflexion')]
     return []
 
 

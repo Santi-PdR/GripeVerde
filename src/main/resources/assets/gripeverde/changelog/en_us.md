@@ -1,3 +1,7 @@
+## Version 0.398.0 - Resource-pack lists are rediscovered after resize
+
+Resource packs: each screen initialization clears stale references and rediscovers the available and selected lists among the current widgets, ordered by horizontal position. Vanilla selection logic is unchanged, and field reflection is no longer used. Appearance and clicks still need confirmation in Minecraft. The installer checks the download size, SHA-256, and JAR identity/version before installing, then removes older GripeVerde JARs and the legacy backup folder without creating backups.
+
 ## Version 0.397.0 - Resource packs without double-drawn text
 
 Resource packs no longer render the vanilla screen underneath the paper: lists and controls are drawn once, without duplicate frames or ghost text. Worlds covers vanilla text before repainting, preserves Forge's experimental warning, and no longer turns clicks on paper margins into row selections.
