@@ -111,6 +111,33 @@ class ListRenderGuardTests(unittest.TestCase):
         self.assert_rejected(CHROME, 'top + 4 - (int) scroll + i * step + headerHeight;',
                              'top + 4 - (int) scroll + i * step;')
 
+    def test_compatibility_warning_conditions_are_preserved(self):
+        for old, new in (
+            ('entry.getCompatibility().isCompatible()) return false;',
+             'entry.getCompatibility().isCompatible()) return true;'),
+            ('entry.isFixedPosition() && entry.isRequired()) return false;',
+             'entry.isFixedPosition() || entry.isRequired()) return false;'),
+            ('list.isMouseOver(mouseX, mouseY)', 'true'),
+            ('row.isMouseOver(mouseX, mouseY)', 'false'),
+            ('this.minecraft.options.touchscreen().get() || hovered', 'hovered'),
+            ('list.getSelected() == child && list.isFocused()', 'list.getSelected() == child'),
+        ):
+            with self.subTest(old=old):
+                self.assert_rejected(PACK, old, new)
+
+    def test_compatibility_warning_is_repainted(self):
+        for old, new in (
+            ('showPackCompatibilityWarning(list, child, entry, mouseX, mouseY)', 'false'),
+            ('compatibilityDescription = entry.getCompatibility().getDescription();',
+             'compatibilityDescription = null;'),
+            ('MultiLineLabel.create(this.font, compatibilityDescription, textW, 2)',
+             'MultiLineLabel.create(this.font, compatibilityDescription, textW, 1)'),
+            ('.renderLeftAligned(g, textX, rowTop + 12, 10,',
+             '.renderLeftAligned(g, textX, drawTop + 12, 10,'),
+        ):
+            with self.subTest(old=old):
+                self.assert_rejected(PACK, old, new)
+
     def test_pack_mouse_override_is_rejected(self):
         self.assert_rejected(PACK, 'public class DiaryPackSelectionScreen extends PackSelectionScreen {',
                              'public class DiaryPackSelectionScreen extends PackSelectionScreen {\n'

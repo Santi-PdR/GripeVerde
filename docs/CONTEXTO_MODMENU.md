@@ -2,6 +2,23 @@
 
 Actualizado: 2026-11-13
 
+### Avisos de compatibilidad, posterior a `d1d4e83`
+
+- El repintado ahora repone el título `pack.incompatible` y la descripción de
+  `PackCompatibility` en dos líneas cuando vanilla muestra ese aviso.
+  Fuente contrastada: `TransferableSelectionList.PackEntry.render` en la
+  revisión 1.20.1 `c129e3e` enlazada más abajo. Conserva la condición
+  `!isFixedPosition() || !isRequired()`, hover real dentro del viewport,
+  selección con foco y modo táctil; no modifica handlers ni confirmaciones.
+- Guardas de listas: 14/14, con diez mutaciones nuevas de condiciones y
+  repintado; lint de 72 Java, espejos 8/8, gate 7/7 e instalador 7/7 pasan.
+  Compilación del delta y prueba en cliente pendientes; sin bump ni release.
+- Ampliar la prueba manual a packs compatibles e incompatibles, disponibles
+  y seleccionados, hover de icono/texto/márgenes, navegación por teclado,
+  modo táctil y entradas fijas/obligatorias. Verificar que el aviso aparece
+  solo donde vanilla lo mostraría, desaparece al perder hover/foco y que
+  la confirmación antes de activar un pack incompatible sigue funcionando.
+
 ### Candidato `4d37582`, posterior a `0aa6a25`
 
 - Paquetes mantiene texto y separador en las coordenadas reales de la fila

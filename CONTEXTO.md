@@ -2,6 +2,16 @@
 
 ## Addendum operativo actual (2026-11-13)
 
+- **Continuación posterior a `d1d4e83`:** se repone el aviso de packs
+  incompatibles que la banda opaca borraba. Reproduce las condiciones de
+  `PackEntry.render` 1.20.1: pack no compatible, no fijo y obligatorio a la vez,
+  más hover real de fila, selección con foco o modo táctil. Título traducido y
+  descripción de compatibilidad en hasta dos líneas, ancladas a la fila.
+  No toca activación, reordenación ni confirmación vanilla. Guardas de listas
+  14/14 (diez mutaciones nuevas), lint 72 Java, espejos 8/8, gate 7/7 e
+  instalador 7/7 pasan. Compilación de este delta pendiente; prueba en cliente
+  pendiente. Sin bump ni release; no acredita resueltos los clics fantasma.
+
 - **Candidato `4d37582`, posterior a `0aa6a25`:** el repintado de Paquetes
   ancla texto y separador a `rowTop/rowBottom`, no al borde recortado del
   viewport. Evita desplazar el texto y ocultar la descripción antes de tiempo

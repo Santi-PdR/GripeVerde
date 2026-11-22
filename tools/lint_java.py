@@ -499,6 +499,23 @@ def check_pack_selection_single_render(path, clean):
         line = clean[:rows_start].count(chr(10)) + 1
         return [(path, line,
                  'Packs: anclar texto y separador a la fila real, no al borde del viewport')]
+    warning, warning_start = method_body('private boolean showPackCompatibilityWarning(')
+    warning_tokens = (
+        'entry.getCompatibility().isCompatible()) return false;',
+        'entry.isFixedPosition() && entry.isRequired()) return false;',
+        'list.isMouseOver(mouseX, mouseY)',
+        'row.isMouseOver(mouseX, mouseY)',
+        'this.minecraft.options.touchscreen().get() || hovered',
+        'list.getSelected() == child && list.isFocused()',
+    )
+    if (not warning or any(token not in warning for token in warning_tokens)
+            or 'showPackCompatibilityWarning(list, child, entry, mouseX, mouseY)' not in rows_paint
+            or 'compatibilityDescription = entry.getCompatibility().getDescription();' not in rows_paint
+            or 'MultiLineLabel.create(this.font, compatibilityDescription, textW, 2)' not in rows_paint
+            or '.renderLeftAligned(g, textX, rowTop + 12, 10,' not in rows_paint):
+        line = clean[:max(0, warning_start)].count(chr(10)) + 1
+        return [(path, line,
+                 'Packs: reponer el aviso de incompatibilidad con hover, foco y pantalla táctil vanilla')]
     mouse_handler = re.search(
         r'\b(?:public|protected)\s+boolean\s+mouse(?:Clicked|Released|Dragged|Scrolled)\s*\(', clean)
     if mouse_handler:

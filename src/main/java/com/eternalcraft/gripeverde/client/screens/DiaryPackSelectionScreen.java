@@ -5,6 +5,7 @@ import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSelectionList;
+import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.screens.packs.PackSelectionScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.repository.PackRepository;
@@ -179,6 +180,7 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
                 String title = "";
                 String sub = "";
                 boolean chosen = false;
+                Component compatibilityDescription = null;
                 // v0.382.0: la fila del juego no ES una entrada del modelo, la
                 // lleva dentro. Con el instanceof directo no se reconocia ninguna
                 // fila y los nombres seguian en blanco bajo el papel.
@@ -199,6 +201,12 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
                         chosen = entry.isSelected();
                     } catch (Throwable ignored) {
                     }
+                    // La banda opaca también borra el aviso que vanilla acaba
+                    // de pintar. Reponerlo con sus condiciones de hover/foco.
+                    if (showPackCompatibilityWarning(list, child, entry, mouseX, mouseY)) {
+                        title = Component.translatable("pack.incompatible").getString();
+                        compatibilityDescription = entry.getCompatibility().getDescription();
+                    }
                 }
                 if (title.isEmpty()) continue;
                 if (chosen) {
@@ -216,8 +224,11 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
                 // El texto sigue a la fila, no al borde recortado del viewport.
                 // El scissor oculta los glifos fuera de pantalla sin desplazarlos.
                 g.drawString(this.font, DiaryChrome.fitCached(this.font, title, textW),
-                    textX, rowTop + 4, 0xFF1A1108, false);
-                if (!sub.isEmpty() && rowBottom - rowTop >= 24) {
+                    textX, rowTop + 4, compatibilityDescription != null ? 0xFF8C2A1E : 0xFF1A1108, false);
+                if (compatibilityDescription != null) {
+                    MultiLineLabel.create(this.font, compatibilityDescription, textW, 2)
+                        .renderLeftAligned(g, textX, rowTop + 12, 10, 0xFF8C2A1E);
+                } else if (!sub.isEmpty() && rowBottom - rowTop >= 24) {
                     g.drawString(this.font, DiaryChrome.fitCached(this.font, sub, textW),
                         textX, rowTop + 15, 0xFF6B5533, false);
                 }
@@ -231,6 +242,18 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
                 }
             }
         }
+    }
+
+    /** Mismas condiciones visuales que PackEntry.render de vanilla 1.20.1. */
+    private boolean showPackCompatibilityWarning(AbstractSelectionList<?> list, Object child,
+            net.minecraft.client.gui.screens.packs.PackSelectionModel.Entry entry,
+            int mouseX, int mouseY) {
+        if (entry.getCompatibility().isCompatible()) return false;
+        if (entry.isFixedPosition() && entry.isRequired()) return false;
+        boolean hovered = list.isMouseOver(mouseX, mouseY)
+            && child instanceof AbstractSelectionList.Entry<?> row && row.isMouseOver(mouseX, mouseY);
+        return this.minecraft.options.touchscreen().get() || hovered
+            || (list.getSelected() == child && list.isFocused());
     }
 
     /**

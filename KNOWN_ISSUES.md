@@ -9,6 +9,14 @@ que una seccion posterior lo mencione expresamente.
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
+- **Avisos de packs incompatibles (candidato posterior a `d1d4e83`):**
+  la banda opaca también borraba el aviso vanilla y siempre repintaba el nombre
+  normal. Se repone el título de incompatibilidad y su descripción (dos líneas)
+  con las condiciones visuales vanilla de hover/foco/táctil y de pack fijo y
+  obligatorio. No modifica clics ni la confirmación de compatibilidad.
+  Guardas estáticas: 14/14; compilación de este delta y prueba en Minecraft
+  pendientes. No publicado como release.
+
 - **Candidato `4d37582`, posterior a `0aa6a25`:** al hacer scroll, las filas
   parcialmente visibles anclaban el texto a `drawTop`, desplazándolo respecto
   del icono; el umbral de altura visible también ocultaba texto antes de tiempo.
