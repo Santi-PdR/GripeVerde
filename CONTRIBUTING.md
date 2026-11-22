@@ -4,12 +4,10 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
 
 ## Estado vigente de la entrega
 
-- Última publicación verificada: **v0.400.0**, tag dirigido al commit construido
-  `c863bb170571bcd99fd59443b4e3c20fe77a6875`; JAR de 10.851.157 bytes, SHA-256
-  `7aabe04f1dffd20b03036e3915609b055f262a4381e56d647251fed838815635`.
-  El CI de publicación `44995974436` pasó en `build` y `publish`.
-- Versión candidata de esta ronda: **v0.401.0**, ajuste de cálculo de filas
-  para el fallback de scroll de Mundos; todavía no publicada.
+- Última publicación verificada: **v0.401.0**, tag dirigido al commit construido
+  `e0f845007681e92e747e04127169f483e159456b`; JAR de 10.855.632 bytes, SHA-256
+  `dd37d443b7307c1b3d0d09fc5befdaee6d1dd887bfca002d6e7bc3670ef0ee88`.
+  El CI de publicación `44997077455` pasó en `build` y `publish`.
 - La próxima versión requiere sincronizar versión, marcador, CHANGELOG y las 25
   notas dentro del juego; el workflow publica automáticamente solo tras pasar
   todas las comprobaciones.

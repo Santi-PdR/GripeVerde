@@ -9,18 +9,13 @@ que una seccion posterior lo mencione expresamente.
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
-- **Última publicación verificada:** `v0.400.0`, tag dirigido al commit
-  `c863bb170571bcd99fd59443b4e3c20fe77a6875`; JAR de 10.851.157 bytes, SHA-256
-  `7aabe04f1dffd20b03036e3915609b055f262a4381e56d647251fed838815635`. El CI
-  `44995974436` pasó en `build` y `publish`.
-- La v0.400.0 evita que el punto invisible del emblema de la portada active un
-  hallazgo al superponerse con un botón real en ventanas muy bajas. Es un guard
-  puntual, no una confirmación de que el reporte general de clics fantasma esté
-  resuelto.
-- **Candidato v0.401.0:** el fallback de Mundos ahora iguala el orden de
-  redondeo de vanilla para resolver filas con scroll fraccionario. Esto acota
-  una posible divergencia del guard; no cierra el reporte general ni reemplaza
-  una prueba dentro de Minecraft.
+- **Última publicación verificada:** `v0.401.0`, tag dirigido al commit
+  `e0f845007681e92e747e04127169f483e159456b`; JAR de 10.855.632 bytes, SHA-256
+  `dd37d443b7307c1b3d0d09fc5befdaee6d1dd887bfca002d6e7bc3670ef0ee88`. El CI
+  `44997077455` pasó en `build` y `publish`.
+- La v0.401.0 alinea el fallback de Mundos con el orden de redondeo de vanilla
+  al resolver filas con scroll fraccionario. Es un ajuste puntual, no una
+  confirmación de que el reporte general de clics fantasma esté resuelto.
 - **Pendiente de confirmación en Minecraft:** Paquetes de recursos, clics
   fantasma e interfaz visual de Un Jugador, además de revisar los clics de
   Mundos. No se afirma que estén corregidos sin prueba en cliente.

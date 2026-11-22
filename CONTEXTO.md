@@ -2,18 +2,14 @@
 
 ## Addendum operativo actual (2026-11-13)
 
-- **Última publicación verificada: GripeVerde v0.400.0**, tag dirigido a
-  `c863bb170571bcd99fd59443b4e3c20fe77a6875`; JAR de 10.851.157 bytes, SHA-256
-  `7aabe04f1dffd20b03036e3915609b055f262a4381e56d647251fed838815635`. El CI
-  `44995974436` pasó en `build` y `publish`; [release v0.400.0](https://github.com/Santi-PdR/GripeVerde/releases/tag/v0.400.0).
-- v0.400.0 evita que el punto invisible del emblema de la portada active un
-  hallazgo cuando se superpone con un botón real en ventanas muy bajas. Es una
-  protección puntual de entrada, no una corrección de los clics fantasma
-  generales, y no cambia la apariencia de la pantalla.
-- **Candidato de esta ronda: v0.401.0.** Mundos ahora calcula su fila de
-  respaldo con el mismo redondeo y truncado de scroll que vanilla, incluso si
-  el arrastre deja una posición fraccionaria. No cambia el aspecto; no prueba
-  por sí solo que se haya resuelto el reporte general de clics fantasma.
+- **Última publicación verificada: GripeVerde v0.401.0**, tag dirigido a
+  `e0f845007681e92e747e04127169f483e159456b`; JAR de 10.855.632 bytes, SHA-256
+  `dd37d443b7307c1b3d0d09fc5befdaee6d1dd887bfca002d6e7bc3670ef0ee88`. El CI
+  `44997077455` pasó en `build` y `publish`; [release v0.401.0](https://github.com/Santi-PdR/GripeVerde/releases/tag/v0.401.0).
+- v0.401.0 hace que el fallback de Mundos calcule el índice de fila con el
+  mismo orden de redondeo/truncado que vanilla cuando el scroll es fraccionario.
+  Es una corrección de respaldo acotada, no confirma resueltos los clics
+  fantasma generales ni cambia el aspecto de la pantalla.
 - **Pendiente de revisión en Minecraft:** Paquetes de recursos, los clics
   fantasma generales y la interfaz de Un Jugador siguen abiertos. Los guardas
   de entrada son cambios acotados; no equivalen a confirmar esos reportes.

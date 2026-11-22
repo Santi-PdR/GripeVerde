@@ -7,17 +7,14 @@ Actualizado: 2026-11-13
 - Repositorio: [Santi-PdR/GripeVerde](https://github.com/Santi-PdR/GripeVerde), público.
 - Rama activa de la sesión: `arena/48be547c-gripeverde`, basada en `02e85bc`.
   La plataforma fija el nombre: trabajar y publicar solamente en esta rama.
-- **Última publicación verificada: v0.400.0**, tag dirigido al commit
-  `c863bb170571bcd99fd59443b4e3c20fe77a6875`; CI `44995974436` verde en
-  `build` y `publish`. JAR de 10.851.157 bytes, SHA-256
-  `7aabe04f1dffd20b03036e3915609b055f262a4381e56d647251fed838815635`.
-- v0.400.0 hace que el punto invisible del emblema ceda a los botones reales
-  en ventanas muy bajas. Es un guard acotado: no confirma que se hayan resuelto
-  los clics fantasma generales ni sustituye la prueba en Minecraft. No modifica
-  el diseño visual; Un Jugador no se modifica en esta ronda.
-- Candidato v0.401.0: el fallback de Mundos usa el mismo orden de redondeo
-  que vanilla cuando el scroll es fraccionario. No cambia el diseño visual ni
-  confirma el reporte general de clics fantasma sin prueba en cliente.
+- **Última publicación verificada: v0.401.0**, tag dirigido al commit
+  `e0f845007681e92e747e04127169f483e159456b`; CI `44997077455` verde en
+  `build` y `publish`. JAR de 10.855.632 bytes, SHA-256
+  `dd37d443b7307c1b3d0d09fc5befdaee6d1dd887bfca002d6e7bc3670ef0ee88`.
+- v0.401.0 alinea el fallback de Mundos con el orden de redondeo de vanilla
+  para el scroll fraccionario. Es acotado, no resuelve por sí solo el reporte
+  de clics fantasma y no cambia el diseño visual. Paquetes, Un Jugador y la
+  revisión de interacción siguen pendientes de prueba dentro de Minecraft.
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
   El trabajo se hace sobre el repositorio; no se edita el proyecto local del usuario.
 - No se controla Minecraft ni la PC del usuario para pruebas visuales. El CI acredita
