@@ -9,18 +9,14 @@ que una seccion posterior lo mencione expresamente.
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
-- **Última publicación verificada:** `v0.399.0`, tag dirigido al commit
-  `e486ec055d966763c9f270ec74edca30a08f2d79`; JAR de 10.848.114 bytes, SHA-256
-  `4b551cd8287f84785bb470b993dabd3111917d713d7682d97f3777d7da2178e3`. El CI
-  `44993011358` pasó en `build` y `publish`.
-- La v0.399.0 alinea el guard de Mundos con el hitbox nativo (incluidos los 2 px
-  a la izquierda de la fila dibujada), limita el clic seguro al hitbox y mide
-  con reloj monotónico la ventana de 650 ms. Es un ajuste puntual, no una
-  confirmación de que el reporte general de clics fantasma esté resuelto.
-- **Candidato v0.400.0:** la zona invisible del ojo del emblema cede a los
-  botones visibles de la portada, para que un solape en ventanas muy bajas no
-  dispare también un hallazgo. No se presenta como solución al reporte general
-  de clics fantasma.
+- **Última publicación verificada:** `v0.400.0`, tag dirigido al commit
+  `c863bb170571bcd99fd59443b4e3c20fe77a6875`; JAR de 10.851.157 bytes, SHA-256
+  `7aabe04f1dffd20b03036e3915609b055f262a4381e56d647251fed838815635`. El CI
+  `44995974436` pasó en `build` y `publish`.
+- La v0.400.0 evita que el punto invisible del emblema de la portada active un
+  hallazgo al superponerse con un botón real en ventanas muy bajas. Es un guard
+  puntual, no una confirmación de que el reporte general de clics fantasma esté
+  resuelto.
 - **Pendiente de confirmación en Minecraft:** Paquetes de recursos, clics
   fantasma e interfaz visual de Un Jugador, además de revisar los clics de
   Mundos. No se afirma que estén corregidos sin prueba en cliente.

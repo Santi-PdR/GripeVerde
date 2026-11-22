@@ -4,12 +4,10 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
 
 ## Estado vigente de la entrega
 
-- Última publicación verificada: **v0.399.0**, tag dirigido al commit construido
-  `e486ec055d966763c9f270ec74edca30a08f2d79`; JAR de 10.848.114 bytes, SHA-256
-  `4b551cd8287f84785bb470b993dabd3111917d713d7682d97f3777d7da2178e3`.
-  El CI de publicación `44993011358` pasó en `build` y `publish`.
-- Versión candidata de esta ronda: **v0.400.0**, con un guard de interacción
-  de la portada; aún no está publicada.
+- Última publicación verificada: **v0.400.0**, tag dirigido al commit construido
+  `c863bb170571bcd99fd59443b4e3c20fe77a6875`; JAR de 10.851.157 bytes, SHA-256
+  `7aabe04f1dffd20b03036e3915609b055f262a4381e56d647251fed838815635`.
+  El CI de publicación `44995974436` pasó en `build` y `publish`.
 - La próxima versión requiere sincronizar versión, marcador, CHANGELOG y las 25
   notas dentro del juego; el workflow publica automáticamente solo tras pasar
   todas las comprobaciones.

@@ -2,21 +2,18 @@
 
 ## Addendum operativo actual (2026-11-13)
 
-- **Última publicación verificada: GripeVerde v0.399.0**, tag dirigido a
-  `e486ec055d966763c9f270ec74edca30a08f2d79`; JAR de 10.848.114 bytes, SHA-256
-  `4b551cd8287f84785bb470b993dabd3111917d713d7682d97f3777d7da2178e3`. El CI
-  `44993011358` pasó en `build` y `publish`; [release v0.399.0](https://github.com/Santi-PdR/GripeVerde/releases/tag/v0.399.0).
-- v0.399.0 alinea el guard de Mundos con el hitbox nativo (incluidos los 2 px
-  a la izquierda de la fila dibujada), limita el clic seguro al hitbox y mide
-  sus 650 ms con `System.nanoTime()`. No cambia la apariencia de la pantalla.
-- **Candidato de esta ronda: v0.400.0.** En la portada, el punto invisible del
-  emblema no activa su hallazgo cuando coincide con un botón real en ventanas
-  muy bajas. Es un guard de entrada, no una corrección de clics fantasma
-  generales; no cambia la apariencia.
+- **Última publicación verificada: GripeVerde v0.400.0**, tag dirigido a
+  `c863bb170571bcd99fd59443b4e3c20fe77a6875`; JAR de 10.851.157 bytes, SHA-256
+  `7aabe04f1dffd20b03036e3915609b055f262a4381e56d647251fed838815635`. El CI
+  `44995974436` pasó en `build` y `publish`; [release v0.400.0](https://github.com/Santi-PdR/GripeVerde/releases/tag/v0.400.0).
+- v0.400.0 evita que el punto invisible del emblema de la portada active un
+  hallazgo cuando se superpone con un botón real en ventanas muy bajas. Es una
+  protección puntual de entrada, no una corrección de los clics fantasma
+  generales, y no cambia la apariencia de la pantalla.
 - **Pendiente de revisión en Minecraft:** Paquetes de recursos, los clics
-  fantasma generales y la interfaz de Un Jugador siguen abiertos. El ajuste del
-  hitbox y el reloj monotónico son cambios acotados; no equivalen a confirmar
-  esos reportes. Esta ronda no modifica el diseño visual de Un Jugador.
+  fantasma generales y la interfaz de Un Jugador siguen abiertos. Los guardas
+  de entrada son cambios acotados; no equivalen a confirmar esos reportes.
+  Esta ronda no modifica el diseño visual de Un Jugador.
 - Las reglas de siempre siguen en pie: mod **solo de cliente**, sin bloques,
   sin ítems, sin gameplay ni resourcepacks; la identidad visual se hace con
   Java y los render/widgets propios.

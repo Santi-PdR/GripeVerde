@@ -7,19 +7,14 @@ Actualizado: 2026-11-13
 - Repositorio: [Santi-PdR/GripeVerde](https://github.com/Santi-PdR/GripeVerde), público.
 - Rama activa de la sesión: `arena/48be547c-gripeverde`, basada en `02e85bc`.
   La plataforma fija el nombre: trabajar y publicar solamente en esta rama.
-- **Última publicación verificada: v0.399.0**, tag dirigido al commit
-  `e486ec055d966763c9f270ec74edca30a08f2d79`; CI `44993011358` verde en
-  `build` y `publish`. JAR de 10.848.114 bytes, SHA-256
-  `4b551cd8287f84785bb470b993dabd3111917d713d7682d97f3777d7da2178e3`.
-- v0.399.0 alinea el guard de Mundos con el hitbox nativo (incluidos los 2 px
-  a la izquierda de la fila dibujada), limita el clic seguro al hitbox y mide
-  la ventana de 650 ms con `System.nanoTime()`.
-- Candidato v0.400.0: el punto invisible del emblema de la portada cede a los
-  botones visibles en ventanas muy bajas; no se atribuye a esto una solución de
-  clics fantasma generales y no se cambia la apariencia.
-  No modifica el diseño visual, no confirma que se hayan resuelto los clics
-  fantasma generales y deja pendiente la prueba dentro del juego. Un Jugador
-  no se modifica en esta ronda.
+- **Última publicación verificada: v0.400.0**, tag dirigido al commit
+  `c863bb170571bcd99fd59443b4e3c20fe77a6875`; CI `44995974436` verde en
+  `build` y `publish`. JAR de 10.851.157 bytes, SHA-256
+  `7aabe04f1dffd20b03036e3915609b055f262a4381e56d647251fed838815635`.
+- v0.400.0 hace que el punto invisible del emblema ceda a los botones reales
+  en ventanas muy bajas. Es un guard acotado: no confirma que se hayan resuelto
+  los clics fantasma generales ni sustituye la prueba en Minecraft. No modifica
+  el diseño visual; Un Jugador no se modifica en esta ronda.
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
   El trabajo se hace sobre el repositorio; no se edita el proyecto local del usuario.
 - No se controla Minecraft ni la PC del usuario para pruebas visuales. El CI acredita
