@@ -14,7 +14,9 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
   además había operaciones entre adquirirlo y entrar al try/finally.
   Ahora se prepara la geometría antes y todo el repintado queda protegido
   inmediatamente por finally, sin continuar si activar el recorte falla.
-  Guardas estáticas 18/18. Compilación y prueba en Minecraft pendientes.
+  Guardas estáticas 18/18. El candidato `f152571` compiló y pasó las suites
+  en CI `45041210093`. Prueba en Minecraft pendiente. Asset v0.401.0
+  reconsultado tras publish: mismo ID, tamaño y digest.
   No se atribuye a esta ruta la causa de los clics fantasma ni un fallo de
   cliente confirmado. Sin cambios de entrada, versión o release.
 

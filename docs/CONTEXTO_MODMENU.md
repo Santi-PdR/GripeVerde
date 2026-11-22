@@ -13,7 +13,11 @@ Actualizado: 2026-11-13
   desprotegidas y liberación condicional, ausente o duplicada. No inyectan
   fallos en OpenGL ni ejecutan Minecraft. También pasan lint de 72 Java,
   espejos 8/8, gate 7/7, instalador 7/7, py_compile y diff.
-- Compilación y prueba en cliente del delta pendientes. No modifica versión,
+- El candidato `f152571` compiló y pasó las suites en
+  [CI 45041210093](https://github.com/Santi-PdR/GripeVerde/actions/runs/45041210093).
+  Artefacto actual `GripeVerde-jar`, ID `14761956917`, incluye los cambios
+  anteriores de Paquetes. Prueba en cliente pendiente. Asset v0.401.0
+  reconsultado tras publish: mismo ID, tamaño y digest. No modifica versión,
   release ni despacho de entrada. La prueba manual de scroll debe verificar
   también que encabezados y botones siguen visibles tras cada columna.
 

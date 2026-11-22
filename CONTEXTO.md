@@ -8,8 +8,11 @@
   liberarlo; no se continúa pintando si la activación lanza una excepción.
   Corrige una ruta defensiva, no demuestra un fallo observado en Minecraft.
   Guardas estáticas 18/18, lint 72 Java, espejos 8/8, gate 7/7, instalador
-  7/7, py_compile y diff pasan. Compilación del delta y prueba en cliente
-  pendientes. No modifica entrada ni versión y no publica release.
+  7/7, py_compile y diff pasan. El candidato `f152571` compiló y pasó las
+  suites en [CI 45041210093](https://github.com/Santi-PdR/GripeVerde/actions/runs/45041210093).
+  Artefacto `GripeVerde-jar`, ID `14761956917`. Prueba en cliente pendiente.
+  No modifica entrada ni versión; asset v0.401.0 conserva ID/tamaño/digest
+  tras publish. No hay release nuevo.
 
 - **Continuación posterior a `64261bb`:** las descripciones normales de packs
   recuperan las dos líneas de vanilla, igual que los avisos de incompatibilidad.
