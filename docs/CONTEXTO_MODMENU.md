@@ -2,6 +2,15 @@
 
 Actualizado: 2026-11-13
 
+- **Centro de cabecera Multijugador, posterior a `1874d7f`:** en ventanas
+  de menos de 284 px lógicos el recorte mantiene su mínimo de 64 px, pero el
+  centro sigue cambiando. La caché de título/subtítulo no tenía ese centro en
+  la clave, dejando posiciones viejas al redimensionar. Se incluye el centro
+  sin alterar el recorte ni el tamaño de la lista. La suite de cabecera añade
+  6 escenarios (centro con recorte fijo, cache hit, fuente, título, subtítulo y
+  ancho), total 16 escenarios Java y 3 guardas. Java pendiente de CI; son
+  pruebas del método real con fuente simulada, no rendering. Sin bump/release.
+
 - **Contador de conocidas en Multijugador, posterior a `8c8c2b8`:** la
   caché de cabecera omitía el tamaño del historial reciente. Al volver de una
   conexión directa podía conservar el valor antiguo mientras no cambiaran
@@ -11,8 +20,10 @@ Actualizado: 2026-11-13
   sin cambiar textos, reglas de espacio ni la lista vanilla. Nueva suite
   `tools/test_server_count.py`: 10 escenarios de método Java real con fuente
   simulada y 3 guardas estructurales; ambos workflows exigen JDK 17.
-  Compilación/Java pendientes de CI. No hay prueba de render, cliente o red.
-  Sin bump/release ni cambios en servers.dat.
+  El candidato `1874d7f` compiló y pasó los 10 escenarios y suites previas
+  en [CI 45059028352](https://github.com/Santi-PdR/GripeVerde/actions/runs/45059028352).
+  Sin JDK local ni prueba de render, cliente o red. Sin bump/release ni cambios
+  en servers.dat.
 
 - **Historial de servidores recientes, posterior a `f4c89b4`:** devuelve
   instantáneas inmutables (sin exponer la caché mutable), y lee en streaming

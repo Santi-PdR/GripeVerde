@@ -449,6 +449,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     // v0.201.0: cabecera memorizada (titulo, subtitulo y sus posiciones).
     private net.minecraft.client.gui.Font headerFont;
     private int headerMaxWidth = -1;
+    private int headerCenterX = Integer.MIN_VALUE;
     private String headerTitleSrc = "";
     private String headerSubSrc = "";
     private String headerTitle = "";
@@ -459,17 +460,18 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     private void refreshHeaderCache(int maxWidth) {
         String titleSrc = this.title.getString();
         String subSrc = "- " + DiaryChrome.tr("gripeverde.multiplayer.subtitle") + " -";
-        if (this.headerFont == this.font && this.headerMaxWidth == maxWidth
+        int cx = this.width / 2;
+        if (this.headerFont == this.font && this.headerMaxWidth == maxWidth && this.headerCenterX == cx
                 && this.headerTitleSrc.equals(titleSrc) && this.headerSubSrc.equals(subSrc)) {
             return;
         }
         this.headerFont = this.font;
         this.headerMaxWidth = maxWidth;
+        this.headerCenterX = cx;
         this.headerTitleSrc = titleSrc;
         this.headerSubSrc = subSrc;
         this.headerTitle = ellipsizeTo(titleSrc, maxWidth);
         this.headerSubtitle = ellipsizeTo(subSrc, maxWidth);
-        int cx = this.width / 2;
         this.headerTitleX = cx - this.font.width(this.headerTitle) / 2;
         this.headerSubX = cx - this.font.width(this.headerSubtitle) / 2;
     }

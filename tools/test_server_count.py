@@ -21,13 +21,26 @@ public class ServerCountHarness {
     String countText = "";
     int countWidth, countSrc = -1, countKnownSrc = -1, countLimit = Integer.MIN_VALUE;
     boolean countEnglish;
-    Font font = new Font(1), countFont;
+    Font font = new Font(1), countFont, headerFont;
+    int width = 260, headerMaxWidth = -1, headerCenterX = Integer.MIN_VALUE;
+    int headerTitleX, headerSubX;
+    String headerTitleSrc = "", headerSubSrc = "", headerTitle = "", headerSubtitle = "";
+    record Component(String text) { String getString() { return text; } }
+    Component title = new Component("Servers");
+    static class DiaryChrome {
+        static String subtitle = "Saved servers";
+        static String tr(String key) { return subtitle; }
+    }
+    String ellipsizeTo(String text, int maxWidth) {
+        return text.substring(0, Math.min(text.length(), Math.max(0, maxWidth / font.scale)));
+    }
     static class Font {
         int scale, calls;
         Font(int scale) { this.scale = scale; }
         int width(String text) { calls++; return scale * text.length(); }
     }
     __METHOD__
+    __HEADER__
     static void check(boolean condition) { if (!condition) throw new AssertionError(); }
     void expect(String text) {
         if (!countText.equals(text)) throw new AssertionError(countText + " != " + text);
@@ -78,6 +91,26 @@ public class ServerCountHarness {
             case "exact_fit":
                 s.refreshServerCountCache(2, 1, "2 entries  ·  1 known".length(), true);
                 s.expect("2 entries  ·  1 known"); break;
+            case "header_center_changes":
+                s.refreshHeaderCache(64);
+                int oldTitleX = s.headerTitleX, oldSubX = s.headerSubX;
+                s.width = 280; s.refreshHeaderCache(64);
+                check(s.headerTitleX == oldTitleX + 10 && s.headerSubX == oldSubX + 10); break;
+            case "header_cache_hit":
+                s.refreshHeaderCache(64); int headerCalls = s.font.calls;
+                s.refreshHeaderCache(64); check(s.font.calls == headerCalls); break;
+            case "header_font_changes":
+                s.refreshHeaderCache(64); s.font = new Font(2); s.refreshHeaderCache(64);
+                check(s.headerTitleX == s.width / 2 - "Servers".length()); break;
+            case "header_title_changes":
+                s.refreshHeaderCache(64); s.title = new Component("Other"); s.refreshHeaderCache(64);
+                check(s.headerTitle.equals("Other") && s.headerTitleX == s.width / 2 - 2); break;
+            case "header_subtitle_changes":
+                s.refreshHeaderCache(64); DiaryChrome.subtitle = "Other"; s.refreshHeaderCache(64);
+                check(s.headerSubtitle.equals("- Other -") && s.headerSubX == s.width / 2 - 4); break;
+            case "header_width_changes":
+                s.refreshHeaderCache(64); s.refreshHeaderCache(4);
+                check(s.headerTitle.equals("Serv") && s.headerTitleX == s.width / 2 - 2); break;
             default: throw new AssertionError(args[0]);
         }
     }
@@ -109,16 +142,19 @@ class Executable(unittest.TestCase):
                 self.fail('JDK 17 required')
             self.skipTest('JDK unavailable; CI requires executable checks')
         actual = method(SOURCE, 'private void refreshServerCountCache(')
+        header = method(SOURCE, 'private void refreshHeaderCache(')
         cases = ('known_changes', 'cache_hit', 'count_changes', 'language_changes', 'width_changes',
-                 'font_changes', 'empty_and_single', 'negative_space', 'hidden_known_updates', 'exact_fit')
+                 'font_changes', 'empty_and_single', 'negative_space', 'hidden_known_updates', 'exact_fit',
+                 'header_center_changes', 'header_cache_hit', 'header_font_changes', 'header_title_changes',
+                 'header_subtitle_changes', 'header_width_changes')
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / 'ServerCountHarness.java'
-            path.write_text(HARNESS.replace('__METHOD__', actual))
+            path.write_text(HARNESS.replace('__METHOD__', actual).replace('__HEADER__', header))
             subprocess.run(['javac', '--release', '17', '-encoding', 'UTF-8', '-d', tmp, str(path)], check=True, timeout=60)
             for case in cases:
                 with self.subTest(case=case):
                     subprocess.run(['java', '-cp', tmp, 'ServerCountHarness', case], check=True, timeout=15)
-            print(f'Server count cache: {len(cases)} executable scenarios passed')
+            print(f'Multiplayer header/count cache: {len(cases)} executable scenarios passed')
 
 
 if __name__ == '__main__':
