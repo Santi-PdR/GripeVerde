@@ -1,3 +1,18 @@
+## v0.395.0 - Clics fiables y direcciones recientes completas
+
+- Multijugador conserva el despacho nativo de los clics en servidores y LAN, sin un segundo handler que pueda intentar entrar dos veces. Mundos devuelve el foco a la lista tras consumir un doble clic; la inspección del reloj de la portada cierra y consume la entrada pendiente, sin activar controles ocultos.
+
+Unirse directamente devuelve el foco al campo al elegir una dirección reciente. Las direcciones largas se acortan solo en la etiqueta visible: al seleccionarlas se conserva y copia la dirección completa.
+
+Los iconos de servidores y mundos se refrescan cuando cambia su archivo, se limitan antes de decodificarse, se muestran sin recorte y liberan sus texturas cuando corresponde. Los escaneos antiguos del tamaño del archivo ya no pisan resultados nuevos.
+
+**English**
+- Multiplayer keeps native click dispatch for server and LAN rows, without a parallel handler that could attempt to join twice. Worlds restores list focus after consuming a double-click; watch inspection closes while consuming pending input, so hidden controls are not activated.
+
+Direct Join returns keyboard focus to the address field when a recent address is selected. Long addresses are shortened only in the visible label; selecting one still copies the complete address.
+
+Server and world icons refresh when their files change, are bounded before decoding, fit without cropping, and release cached textures when appropriate. Stale world-archive size scans no longer overwrite newer results.
+
 ## v0.394.0 - El buscador de Mundos se queda con Enter y Supr
 
 - Mundos guardados: si el campo de búsqueda tiene el foco, Enter y Supr se entregan al buscador antes que a los atajos del mundo seleccionado. Se puede editar o borrar la consulta sin abrir el mundo ni sacar por accidente la confirmación de borrado.

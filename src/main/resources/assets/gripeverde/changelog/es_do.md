@@ -1,3 +1,11 @@
+## Version 0.395.0 - Clics fiables y direcciones recientes completas
+
+Multijugador conserva el despacho nativo de los clics en servidores y LAN, sin un segundo handler que pueda intentar entrar dos veces. Mundos devuelve el foco a la lista tras consumir un doble clic; la inspección del reloj de la portada cierra y consume la entrada pendiente, sin activar controles ocultos.
+
+Unirse directamente devuelve el foco al campo al elegir una dirección reciente. Las direcciones largas se acortan solo en la etiqueta visible: al seleccionarlas se conserva y copia la dirección completa.
+
+Los iconos de servidores y mundos se refrescan cuando cambia su archivo, se limitan antes de decodificarse, se muestran sin recorte y liberan sus texturas cuando corresponde. Los escaneos antiguos del tamaño del archivo ya no pisan resultados nuevos.
+
 ## Version 0.394.0 - El buscador de Mundos se queda con Enter y Supr
 
 Mundos guardados: si el campo de búsqueda tiene el foco, Enter y Supr se entregan al buscador antes que a los atajos del mundo seleccionado. Se puede editar o borrar la consulta sin abrir un mundo ni sacar por accidente la confirmación de borrado. Al salir del campo, las flechas siguen recorriendo la lista y Enter/Supr conservan sus acciones sobre el mundo elegido.

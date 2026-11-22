@@ -1,3 +1,11 @@
+## Version 0.395.0 - Reliable clicks and complete recent addresses
+
+Multiplayer keeps native click dispatch for server and LAN rows, without a parallel handler that could attempt to join twice. Worlds restores list focus after consuming a double-click; watch inspection closes while consuming pending input, so hidden controls are not activated.
+
+Direct Join returns keyboard focus to the address field when a recent address is selected. Long addresses are shortened only in the visible label; selecting one still copies the complete address.
+
+Server and world icons refresh when their files change, are bounded before decoding, fit without cropping, and release cached textures when appropriate. Stale world-archive size scans no longer overwrite newer results.
+
 ## Version 0.394.0 - The Worlds search box keeps Enter and Delete
 
 Saved Worlds: while the search field has focus, Enter and Delete are routed to the field before the selected-world shortcuts. You can edit or clear a query without opening a world or unexpectedly showing its delete confirmation. Once focus leaves the field, arrow navigation and the Enter/Delete world actions remain available.
