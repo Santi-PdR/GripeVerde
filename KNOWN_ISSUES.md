@@ -23,7 +23,12 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
   Nueva tarea obligatoria check/build `verifyMemorySchemaRegression` con
   biblioteca/Gson/archivos reales: versiones numéricas, en cadena, enormes,
   campos con tipos futuros, las tres copias, guardados y recuperación normal.
-  Java pendiente de CI; sin cliente/red, bump/release ni cambio de esquema.
+  El candidato `f46025a` compiló y pasó las pruebas nuevas de preservación,
+  migración y recuperación, junto a todas las suites previas, en
+  [CI 45061015824](https://github.com/Santi-PdR/GripeVerde/actions/runs/45061015824).
+  Artefacto actual `GripeVerde-jar` ID `14769198919`. Sin JDK local ni prueba
+  Minecraft/red. Sin bump/release ni cambio de esquema. Asset v0.401.0
+  reconsultado tras publish: mismo ID/tamaño/digest.
   Alcance: metadatos version legibles; no sincroniza ediciones externas
   concurrentes con el reemplazo del archivo ni interpreta formatos futuros
   sin ese metadato.
