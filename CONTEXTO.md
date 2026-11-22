@@ -3,13 +3,18 @@
 ## Addendum operativo actual (2026-11-13)
 
 - **Centro de cabecera Multijugador, posterior a `1874d7f`:** en ventanas
-  de menos de 284 px lógicos el recorte mantiene su mínimo de 64 px, pero el
+  de hasta 284 px lógicos el recorte mantiene su mínimo de 64 px, pero el
   centro sigue cambiando. La caché de título/subtítulo no tenía ese centro en
   la clave, dejando posiciones viejas al redimensionar. Se incluye el centro
   sin alterar el recorte ni el tamaño de la lista. La suite de cabecera añade
   6 escenarios (centro con recorte fijo, cache hit, fuente, título, subtítulo y
-  ancho), total 16 escenarios Java y 3 guardas. Java pendiente de CI; son
-  pruebas del método real con fuente simulada, no rendering. Sin bump/release.
+  ancho), total 16 escenarios Java y 3 guardas. El candidato `16b3a9c`
+  compiló y pasó las pruebas nuevas y todas las suites anteriores en
+  [CI 45059302545](https://github.com/Santi-PdR/GripeVerde/actions/runs/45059302545).
+  Artefacto actual `GripeVerde-jar` ID `14768558762`. Son pruebas de métodos
+  reales con fuente simulada, no rendering; falta revisar en Minecraft. Sin
+  JDK local ni bump/release. Asset v0.401.0 reconsultado tras publish:
+  mismo ID/tamaño/digest.
 
 - **Contador de conocidas en Multijugador, posterior a `8c8c2b8`:** la
   caché de cabecera omitía el tamaño del historial reciente. Al volver de una
