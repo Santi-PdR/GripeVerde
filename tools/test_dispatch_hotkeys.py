@@ -94,16 +94,16 @@ public class DispatchHotkeyHarness {
                 mc.active = true; tick(); tick(); check(opens == 0);
                 release(346); press(346); check(opens == 1); break;
             case "overlay":
-                tick(); int baseline = reads; mc.overlay = new Object();
+                tick(); int overlayBaseline = reads; mc.overlay = new Object();
                 downKeys.add(65); downKeys.add(346); tick();
-                check(sends == 0 && opens == 0 && reads == baseline); break;
+                check(sends == 0 && opens == 0 && reads == overlayBaseline); break;
             case "overlay_resume_held":
                 tick(); mc.overlay = new Object(); tick(); downKeys.add(65);
                 mc.overlay = null; tick(); tick(); check(sends == 0);
                 release(65); press(65); check(sends == 1); break;
             case "copyl_suspended":
-                tick(); int baseline = reads; suspended = true; press(65);
-                check(sends == 0 && reads == baseline);
+                tick(); int copyBaseline = reads; suspended = true; press(65);
+                check(sends == 0 && reads == copyBaseline);
                 suspended = false; tick(); check(sends == 0);
                 release(65); press(65); check(sends == 1); break;
             case "screen_blocks":
