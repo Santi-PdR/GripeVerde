@@ -2,6 +2,20 @@
 
 ## Addendum operativo actual (2026-11-13)
 
+- **Idiomas, posterior a `d4109ba`:** al reconstruir la pantalla se conserva
+  el idioma pendiente y el scroll actual (incluido cero), en lugar de volver
+  al idioma aplicado/scroll de otra apertura. Primera apertura usa -1 como
+  sentinel y conserva el centrado inicial. Una selección eliminada por packs
+  vuelve al idioma aplicado. Se invalida la cabecera en init para recalcular
+  su centro aunque el panel conserve su ancho máximo. LanguageList.setSelected
+  sincroniza la edición pendiente para la navegación vanilla de teclado,
+  excluyendo la fila de Niebla, null y cambios durante aplicación. No aplica
+  al navegar: Listo confirma y Esc cancela como antes.
+  Test nuevo: 3 verificaciones de conexión locales pasan; 11 escenarios de
+  métodos Java reales extraídos pendientes de CI (sin JDK local). También
+  pasan guardas 18/18, lint 72 Java, espejos 8/8, gate 7/7, instalador 7/7,
+  py_compile y diff. Sin bump/release ni prueba en cliente.
+
 - **Scroll compartido, posterior a `9f3f9a1`:** SmoothScroll ahora detecta
   desplazamientos externos (barra, teclado/ensureVisible) y cambio de lista,
   cancelando el destino inercial viejo. Conserva la acumulación de rueda y

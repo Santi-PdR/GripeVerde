@@ -18,6 +18,7 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
 - Cada publicación es: `python3 tools/verify_mirrors.py` -> `python3 tools/lint_java.py`
   -> `python3 tools/test_list_render_guards.py` ->
   `python3 tools/test_smooth_scroll.py --require-java` (en CI, con JDK 17) ->
+  `python3 tools/test_language_screen.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/ci/test_release_gate.py` ->
   `python3 tools/ci/test_installer.py` -> commit + push -> esperar el CI ->
   comprobar el release y el SHA-256. El job `publish` compara `release-tag.txt`

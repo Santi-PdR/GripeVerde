@@ -9,6 +9,14 @@ que una seccion posterior lo mencione expresamente.
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
+- **Idiomas, posterior a `d4109ba`:** se corrigen tres fallos identificados en
+  código: perder selección pendiente/scroll al reconstruir, cabecera desplazada
+  tras redimensionar con panel de ancho máximo y selección de teclado que no
+  actualizaba el idioma pendiente. Se conservan Esc para cancelar y Listo para
+  aplicar. Tres verificaciones locales pasan; 11 casos de métodos Java reales
+  extraídos y compilación pendientes de CI. Falta prueba en Minecraft, incluido
+  cambio de fuente Unicode, redimensión, flechas y cancelación. Sin release.
+
 - **Scroll compartido (posterior a `9f3f9a1`):** el controlador no detectaba
   movimientos de barra/teclado externos a wheel y podía empujar la lista hacia
   su destino anterior en el siguiente tick. Ahora resincroniza ante cambios

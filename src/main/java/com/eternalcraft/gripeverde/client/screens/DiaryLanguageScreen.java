@@ -32,8 +32,8 @@ public class DiaryLanguageScreen extends Screen {
     private static final int LIST_ITEM_H = 20;
     private static final int FLAG_SLOT    = 22;
 
-    // Remember scroll position across reopens
-    private static double lastScrollAmount = 0.0; // px reservados a la izquierda para bandera
+    // -1 indica primera apertura; cero también es una posición que restaurar.
+    private static double lastScrollAmount = -1.0;
 
     // Tonos de tinta especificos de la lista de idiomas (no van al DiaryChrome
     // porque solo tienen sentido aqui)
@@ -85,8 +85,7 @@ public class DiaryLanguageScreen extends Screen {
             } catch (Throwable ignored) {
             }
         }
-        this.appliedLanguageCode = this.languageManager.getSelected();
-        this.pendingLanguageCode = this.appliedLanguageCode;
+        double restoredScroll = prepareLanguageRebuild();
 
         this.panelW = Math.min(PANEL_MAX_W, this.width - 24);
         this.panelH = Math.min(PANEL_MAX_H, this.height - 24);
@@ -104,9 +103,10 @@ public class DiaryLanguageScreen extends Screen {
 
         this.languageList = new LanguageList(this.minecraft, this.listX, this.listY, this.listW, this.listH);
         this.addWidget(this.languageList);
-        // Restore previous scroll position
-        if (lastScrollAmount > 0) {
-            this.languageList.setScrollAmount(lastScrollAmount);
+        // Al redimensionar prima el scroll de esta pantalla sobre el de otra
+        // apertura. Dejar a la lista centrar el idioma solo si nunca se guardó.
+        if (restoredScroll >= 0.0) {
+            this.languageList.setScrollAmount(restoredScroll);
         }
         this.smoothScroll.snapToCurrent(this.languageList);
 
@@ -133,6 +133,21 @@ public class DiaryLanguageScreen extends Screen {
                 DiaryButton.Variant.PRIMARY,
                 this::applyAndClose
         ));
+    }
+
+    /** Conservar la edición pendiente y el viewport al reconstruir los widgets. */
+    private double prepareLanguageRebuild() {
+        double restoredScroll = this.languageList != null
+            ? this.languageList.getScrollAmount() : lastScrollAmount;
+        this.appliedLanguageCode = this.languageManager.getSelected();
+        if (this.pendingLanguageCode == null
+                || !this.languageManager.getLanguages().containsKey(this.pendingLanguageCode)) {
+            this.pendingLanguageCode = this.appliedLanguageCode;
+        }
+        // El panel puede mantener su ancho máximo mientras cambia el centro
+        // de la ventana. Invalidar también las coordenadas de la cabecera.
+        this.headerFont = null;
+        return restoredScroll;
     }
 
     @Override
@@ -438,6 +453,16 @@ public class DiaryLanguageScreen extends Screen {
                     this.children().add(pos, fog);
                 }
             } catch (Throwable ignored) {}
+        }
+
+        @Override
+        public void setSelected(LanguageEntry entry) {
+            super.setSelected(entry);
+            // La navegación vanilla por flechas cambia la selección sin pasar
+            // por mouseClicked. Listo debe aplicar esa misma fila visible.
+            if (entry != null && !entry.fogTongue && !DiaryLanguageScreen.this.applyingLanguage) {
+                DiaryLanguageScreen.this.pendingLanguageCode = entry.code;
+            }
         }
 
         @Override

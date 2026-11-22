@@ -51,6 +51,8 @@ jobs:
       # repetidas y sentencias cortadas antes de gastar dos minutos de Gradle.
       - name: Lint Java structure
         run: python3 tools/lint_java.py
+      - name: Test language screen state
+        run: python3 tools/test_language_screen.py --require-java
       - name: Test Java scroll controller
         run: python3 tools/test_smooth_scroll.py --require-java
       - name: Test list rendering guards

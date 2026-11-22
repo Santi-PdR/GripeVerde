@@ -2,6 +2,26 @@
 
 Actualizado: 2026-11-13
 
+### Idiomas: reconstrucción y selección, posterior a `d4109ba`
+
+- init conserva el idioma pendiente válido y el scroll de la lista previa;
+  primera apertura (-1) centra el aplicado, y cero ya se restaura como scroll.
+  Si desapareció el idioma pendiente se usa el aplicado. Se invalida la caché
+  de cabecera para recalcular coordenadas al redimensionar, incluso cuando
+  panelW sigue limitado a 420 px.
+- LanguageList.setSelected sincroniza la selección pendiente de las flechas
+  vanilla, sin aplicar aún ni convertir la fila de Niebla en idioma. No cambia
+  Listo/Enter (confirma) ni Esc (cancela), ni aplica con solo mover el foco.
+- `tools/test_language_screen.py`: 3 verificaciones de conexión pasan en local;
+  11 casos compilan métodos reales extraídos con dobles de servicios/GUI, no la
+  pantalla entera ni su despacho real de foco. Requieren Java y quedan pendientes
+  de CI; `--require-java` impide omitirlos allí. Las demás suites locales pasan.
+- Revisión pendiente en cliente: elegir otro idioma, desplazar y redimensionar
+  (también mediante fuente Unicode), comprobar selección/scroll; volver al
+  principio y reabrir; flechas y Listo; flechas y Esc sin aplicar; aumentar el
+  ancho de ventana con panel ya al máximo y verificar cabecera centrada.
+  Sin bump/release y sin atribuir estos fallos a los clics fantasma generales.
+
 ### Scroll compartido, posterior a `9f3f9a1`
 
 - SmoothScroll registra la lista y el último valor que escribió. Si barra,
