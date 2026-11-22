@@ -440,6 +440,7 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         int by = 6;
         int bw = this.width - 20;
         int bh = this.height - 20;
+        int cx = this.width / 2;
         // v0.232.0: la hoja grande bajo las dos listas ya no es un rectangulo.
         PaperTexture.drawTornSheet(g, bx, by, bw, bh, PaperTexture.PaperKind.ARCHIVE);
         DiaryChrome.drawCornerOrnaments(g, bx, by, bw, bh);
