@@ -1,3 +1,7 @@
+## Version 0.396.0 - Seleccionar un mundo ya no lo abre por accidente
+
+Mundos: el clic de selección se dirige fuera de la zona de 32 px donde vanilla abre un mundo de inmediato al tocar su icono. Los clics derecho y central sobre la lista tampoco se transforman en clics sobre una fila. Se elimina la franja heurística de 64 px que podía saltarse la protección del doble clic, incluso sobre el aviso experimental de Forge.
+
 ## Version 0.395.0 - Clics fiables y direcciones recientes completas
 
 Multijugador conserva el despacho nativo de los clics en servidores y LAN, sin un segundo handler que pueda intentar entrar dos veces. Mundos devuelve el foco a la lista tras consumir un doble clic; la inspección del reloj de la portada cierra y consume la entrada pendiente, sin activar controles ocultos.

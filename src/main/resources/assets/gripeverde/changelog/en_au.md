@@ -1,3 +1,7 @@
+## Version 0.396.0 - Selecting a world no longer opens it by accident
+
+Worlds: selection clicks are routed outside vanilla’s 32 px hit area, where clicking the world icon opens it immediately. Right- and middle-clicks on the list are no longer remapped to a row either. The 64 px heuristic that could bypass double-click protection is removed, including around Forge’s experimental warning badge.
+
 ## Version 0.395.0 - Reliable clicks and complete recent addresses
 
 Multiplayer keeps native click dispatch for server and LAN rows, without a parallel handler that could attempt to join twice. Worlds restores list focus after consuming a double-click; watch inspection closes while consuming pending input, so hidden controls are not activated.

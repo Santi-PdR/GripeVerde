@@ -33,6 +33,8 @@ import java.util.List;
 public class DiarySelectWorldScreen extends SelectWorldScreen {
 
     private static final int HEADER_H = 46;
+    // Vanilla WorldListEntry entra al mundo de inmediato dentro del icono de 32 px.
+    private static final int WORLD_ROW_JOIN_HIT_WIDTH = 32;
 
     private final List<DiaryButton> dressed = new ArrayList<>();
     private WorldSelectionList vanillaList;
@@ -1417,6 +1419,12 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         return Math.min(hi, Math.max(lo, mouseX));
     }
 
+    /** Evita la zona del icono donde vanilla entra al mundo con un solo clic. */
+    private double rowSelectionClickX(double mouseX) {
+        if (this.rowLeft < 0) return mouseX;
+        return Math.max(mouseX, this.rowLeft + WORLD_ROW_JOIN_HIT_WIDTH + 1.0);
+    }
+
     private void drawFooterPaper(GuiGraphics g) {
         if (this.dressed.isEmpty()) return;
         // v0.354.0: si la hoja grande ya llega hasta los botones, no se pega
@@ -1606,7 +1614,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         return false;
     }
 
-    /** Detecta los botones Editar/Borrar que viven dentro de cada fila vanilla. */
+    /** Detecta un control widget real si alguna implementacion lo integra en una fila. */
     private boolean rowControlAt(Object row, double mouseX, double mouseY) {
         if (row == null) return false;
         for (Class<?> type = row.getClass(); type != null && type != Object.class;
@@ -1625,11 +1633,10 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 }
             }
         }
-        // Respaldo por geometria para las dos acciones pegadas al canto derecho
-        // si el juego ofusca tambien el campo del boton de la fila.
-        int actionWidth = Math.min(64, Math.max(0, this.rowRight - this.rowLeft));
-        return actionWidth > 0 && mouseX >= this.rowRight - actionWidth
-            && mouseX <= this.rowRight && mouseY >= this.listTop && mouseY <= this.listBottom;
+        // No se supone una zona de botones por geometria: en 1.20.1 Editar y
+        // Borrar viven en el pie, y la franja derecha de la fila tambien puede
+        // contener el aviso experimental de Forge.
+        return false;
     }
 
     /**
@@ -1640,14 +1647,34 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         PaperButtons.syncStates();
-        boolean inLedger = inLedger(mouseX, mouseY);
-        boolean inBody = button == 0 && this.listTop >= 0 && this.listBottom > this.listTop
+        if (button != 0) {
+            if (widgetAt(mouseX, mouseY)) {
+                return super.mouseClicked(mouseX, mouseY, button);
+            }
+            if (this.vanillaList != null && this.listTop >= 0
+                    && mouseY >= this.listTop && mouseY <= this.listBottom) {
+                try {
+                    double listLeft = this.vanillaList.getLeft();
+                    double listRight = listLeft + this.vanillaList.getWidth();
+                    if (mouseX >= listLeft && mouseX <= listRight) {
+                        if (rowControlAt(entryAt(mouseY), mouseX, mouseY)) {
+                            return super.mouseClicked(mouseX, mouseY, button);
+                        }
+                        return true;
+                    }
+                } catch (Throwable ignored) {
+                }
+            }
+            return super.mouseClicked(mouseX, mouseY, button);
+        }
+
+        boolean inBody = this.listTop >= 0 && this.listBottom > this.listTop
             && mouseY >= this.listTop && mouseY <= this.listBottom
             && mouseX >= this.ledgerLeft() - 6
             && mouseX <= (this.sheetLeft >= 0 && this.sheetWidth > 0
                 ? this.sheetLeft + this.sheetWidth : this.width) + 6;
         if (!inBody) {
-            return super.mouseClicked(inLedger ? ledgerX(mouseX) : mouseX, mouseY, button);
+            return super.mouseClicked(mouseX, mouseY, button);
         }
 
         if (widgetAt(mouseX, mouseY)) {
@@ -1673,12 +1700,14 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                     return true;
                 }
                 if (mouseX < listLeft || mouseX > listRight) {
-                    clickX = this.rowLeft + 2;
+                    clickX = this.rowSelectionClickX(
+                        this.rowLeft + WORLD_ROW_JOIN_HIT_WIDTH + 1.0);
                 } else {
-                    clickX = Math.max(mouseX, this.rowLeft + 2);
+                    clickX = this.rowSelectionClickX(mouseX);
                 }
             } catch (Throwable ignored) {
-                clickX = Math.max(mouseX, this.rowLeft + 2);
+                clickX = this.rowSelectionClickX(
+                    this.rowLeft + WORLD_ROW_JOIN_HIT_WIDTH + 1.0);
             }
         }
 

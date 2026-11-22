@@ -27,6 +27,8 @@ interactiva de la hoja de mundos:
      al campo de direccion.
  14. Las direcciones recientes largas caben en la ficha y conservan su valor real
      al seleccionarlas.
+ 15. Mundos no traduce clics de fila al icono de acceso rápido ni reserva una
+     franja geométrica sin controles que eluda la guarda del doble clic.
 
 Uso: python3 tools/lint_java.py [rutas...]
 Sale con codigo 1 si encuentra algo.
@@ -261,6 +263,65 @@ def check_world_click_suppression_focus(path, clean):
             'this.vanillaList.setFocused(true)')):
         line = clean[:focus_start].count(chr(10)) + 1
         return [(path, line, 'Mundos: desenfocar el buscador y enfocar la lista')]
+    return []
+
+
+def check_world_row_click_safety(path, clean):
+    """El papel de Mundos nunca sintetiza el clic unico que vanilla usa para entrar."""
+    if not path.replace(chr(92), '/').endswith('/client/screens/DiarySelectWorldScreen.java'):
+        return []
+    if 'private static final int WORLD_ROW_JOIN_HIT_WIDTH = 32;' not in clean:
+        return [(path, 1, 'Mundos: falta documentar el ancho del icono vanilla de entrada inmediata')]
+
+    def method_body(signature):
+        start = clean.find(signature)
+        if start < 0:
+            return '', -1
+        opening = clean.find('{', start + len(signature))
+        if opening < 0:
+            return '', start
+        depth = 0
+        for index in range(opening, len(clean)):
+            if clean[index] == '{':
+                depth += 1
+            elif clean[index] == '}':
+                depth -= 1
+                if depth == 0:
+                    return clean[start:index + 1], start
+        return '', start
+
+    helper, helper_start = method_body('private double rowSelectionClickX(double mouseX)')
+    if ('this.rowLeft + WORLD_ROW_JOIN_HIT_WIDTH + 1.0' not in helper
+            or 'Math.max(mouseX,' not in helper):
+        line = clean[:helper_start].count(chr(10)) + 1 if helper_start >= 0 else 1
+        return [(path, line,
+                 'Mundos: mover el clic sintético fuera de la zona vanilla de entrada inmediata')]
+
+    handler, handler_start = method_body(
+        'public boolean mouseClicked(double mouseX, double mouseY, int button)')
+    if not handler:
+        return [(path, 1, 'Mundos: falta el manejador de clics de filas')]
+    non_left = handler.find('if (button != 0)')
+    body = handler.find('boolean inBody =', non_left)
+    early_return = handler.find('return super.mouseClicked(mouseX, mouseY, button);', non_left)
+    if (non_left < 0 or body < 0 or early_return < non_left or early_return > body
+            or 'ledgerX(' in handler[non_left:body]):
+        line = clean[:handler_start].count(chr(10)) + 1
+        return [(path, line,
+                 'Mundos: los botones distintos del izquierdo no deben mapearse al icono de la fila')]
+    if (handler.count('this.rowSelectionClickX(') < 3
+            or handler.count('this.rowLeft + WORLD_ROW_JOIN_HIT_WIDTH + 1.0') < 2
+            or 'clickX = this.rowSelectionClickX(mouseX);' not in handler):
+        line = clean[:handler_start].count(chr(10)) + 1
+        return [(path, line,
+                 'Mundos: la selección debe evitar el hitbox de entrada inmediata de vanilla')]
+
+    row_control, row_control_start = method_body(
+        'private boolean rowControlAt(Object row, double mouseX, double mouseY)')
+    if not row_control or 'actionWidth' in row_control or 'Math.min(64' in row_control:
+        line = clean[:row_control_start].count(chr(10)) + 1 if row_control_start >= 0 else 1
+        return [(path, line,
+                 'Mundos: no reservar una franja de 64 px como control de fila sin hitbox real')]
     return []
 
 
@@ -796,6 +857,7 @@ def main(argv):
         problems += check_shadow(f, clean)
         problems += check_world_search_keys(f, clean)
         problems += check_world_click_suppression_focus(f, clean)
+        problems += check_world_row_click_safety(f, clean)
         problems += check_title_watch_inspection_modal(f, clean)
         problems += check_direct_join_recent_address_focus(f, clean)
         problems += check_direct_join_recent_address_fit(f, clean)
