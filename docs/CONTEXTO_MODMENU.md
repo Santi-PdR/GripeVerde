@@ -10,8 +10,14 @@ Actualizado: 2026-11-13
   explícito desde la ficha. Nueva suite `tools/test_dispatch_hotkeys.py` con
   17 escenarios que ejecutan métodos Java reales extraídos usando dobles de
   cliente/GLFW, más 3 guardas estructurales. Se exige JDK 17 en ambos workflows.
-  Validación local pasa; compilación/ejecución Java pendientes de CI. No es
-  prueba del foco del SO, input nativo, eventos Minecraft ni red. Sin bump/release.
+  El candidato `0cfc627` compiló y pasó los 17 escenarios, las guardas y
+  todas las suites previas en
+  [CI 45049746885](https://github.com/Santi-PdR/GripeVerde/actions/runs/45049746885).
+  Artefacto actual `GripeVerde-jar` ID `14764659379`. El primer run detectó
+  variables locales duplicadas en el switch del harness; corregido solo en
+  el test. No es prueba del foco del SO, input nativo, eventos Minecraft ni
+  red. Sin JDK local ni prueba en cliente. Sin bump/release: asset v0.401.0
+  reconsultado tras publish, mismo ID/tamaño/digest.
 
 - **Atajos duplicados al cargar CEDA, posterior a `042bcf6`:** se aplican
   también al cargar/importar las invariantes del editor: una sola ranura por
