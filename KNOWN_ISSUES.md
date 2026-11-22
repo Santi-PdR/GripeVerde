@@ -16,9 +16,11 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
   nota activa se difiere en vez de consumir tiempo invisible.
   Nueva suite `tools/test_marginalia_layout.py`: métodos reales de distribución
   y acortado con fuente doble, 16 escenarios más guardas de integración.
-  CI exige su ejecución con JDK 17. Validación local estructural únicamente
-  (sin JDK); compilación y escenarios pendientes de CI. No prueba rendering,
-  recarga de recursos sobre la misma instancia de fuente ni temporización real.
+  El candidato `14a1727` compiló y pasó los 16 escenarios nuevos y las suites
+  previas en [CI 45062755763](https://github.com/Santi-PdR/GripeVerde/actions/runs/45062755763).
+  Artefacto `GripeVerde-jar` ID `14770596108`. Localmente solo se ejecutaron
+  guardas estructurales (sin JDK). No prueba rendering, recarga de recursos
+  sobre la misma instancia de fuente ni temporización real.
   Sin cambio de versión, esquema de memoria ni publicación.
 
 - **Datos nulos y límites de memoria, posterior a `b48903e`:** se retiran
