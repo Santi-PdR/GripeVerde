@@ -21,8 +21,12 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
   vuelve a intentar guardar. Los fallos se registran en vez de silenciarse.
   Nueva tarea `verifyRecentAddressesRegression` obligatoria en check/build:
   biblioteca y archivos reales, orden/límite/duplicados, inmutabilidad,
-  Unicode, cola sin leer y fallo/reintento. Java pendiente de CI; no hay
-  garantía de durabilidad ante corte eléctrico, reintento automático ni
+  Unicode, cola sin leer y fallo/reintento. El candidato `82117d5` compiló
+  y pasó las pruebas nuevas y suites previas en
+  [CI 45053023880](https://github.com/Santi-PdR/GripeVerde/actions/runs/45053023880),
+  artefacto actual `GripeVerde-jar` ID `14765514124`. Sin JDK local ni prueba
+  Minecraft/red. Asset v0.401.0 reconsultado tras publish: mismo ID/tamaño/digest.
+  No hay garantía de durabilidad ante corte eléctrico, reintento automático ni
   persistencia de cambios pendientes al cerrar el proceso. Sin bump/release.
 
 - **Protección del original ilegible CEDA, posterior a `7884ead`:** si
