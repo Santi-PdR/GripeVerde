@@ -75,7 +75,10 @@ public final class DispatchLibrary {
 
         Path own = configDir().resolve(OWN_FILE);
         if (Files.exists(own)) {
-            if (readOwn(own)) return;
+            if (readOwn(own)) {
+                normalizeBindings();
+                return;
+            }
             LOGGER.warn("No pude leer {}; intento importar de CopyL.", own);
         }
         importFromCopyL();
@@ -151,8 +154,24 @@ public final class DispatchLibrary {
             }
         }
 
+        normalizeBindings();
         if (imported) {
             save();
+        }
+    }
+
+    /** Las mismas invariantes que setKey/setOpenKey, tambien al cargar. */
+    private static void normalizeBindings() {
+        for (int i = 0; i < SLOT_COUNT; i++) {
+            if (keys[i] == openKey) keys[i] = UNBOUND;
+            if (keys[i] == UNBOUND) continue;
+            // Conservar la primera ranura: el orden del archivo es estable.
+            for (int previous = 0; previous < i; previous++) {
+                if (keys[previous] == keys[i]) {
+                    keys[i] = UNBOUND;
+                    break;
+                }
+            }
         }
     }
 

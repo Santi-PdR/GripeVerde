@@ -9,6 +9,16 @@ que una seccion posterior lo mencione expresamente.
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
+- **Atajos duplicados al cargar CEDA, posterior a `042bcf6`:** se aplican
+  también al cargar/importar las invariantes del editor: una sola ranura por
+  tecla o botón, y la tecla de apertura reservada. En archivos con duplicados
+  conserva el atajo de la primera ranura y desasigna los posteriores, sin
+  borrar mensajes ni nombres. El archivo propio no se reescribe solo por
+  cargar; el siguiente guardado explícito usa los atajos normalizados. CopyL
+  sigue siendo de solo lectura. La suite de carga añade archivos propios y
+  CopyL con duplicados de teclado/ratón y apertura no predeterminada.
+  Validación Java pendiente de CI; sin bump/release ni prueba en Minecraft.
+
 - **Carga parcial de CEDA/CopyL, posterior a `c578e0e`:** valores nulos,
   objetos o arrays donde se esperaba un campo escalar, y ranuras que no son
   objetos, ya no abortan la lectura completa. Solo ese campo/ranura vuelve a
@@ -19,7 +29,11 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
   enteros numéricos o en cadena y se mantiene la compatibilidad wheelKey.
   Nueva tarea `verifyDispatchLoadingRegression`, requerida por check/build,
   usa Gson/biblioteca/archivos reales y carpetas config aisladas, sin cliente.
-  Validación local pasa; compilación y ejecución Java pendientes de CI.
+  El candidato `042bcf6` compiló y pasó todas las suites en
+  [CI 45048141199](https://github.com/Santi-PdR/GripeVerde/actions/runs/45048141199),
+  artefacto `GripeVerde-jar` ID `14764696211`. Sin JDK local. El primer run
+  `45047902634` detectó una constante equivocada solo en el test (Right Alt
+  no es Right Shift); se corrigió usando la constante GLFW, no un número.
   Alcance: JSON sintácticamente legible. Un documento totalmente ilegible
   todavía sigue la recuperación histórica desde CopyL; no se afirma recuperar
   archivos truncados ni se añade un sistema de backups. Sin bump/release.

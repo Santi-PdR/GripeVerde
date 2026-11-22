@@ -115,24 +115,24 @@ public final class DispatchLoadingRegression {
             "-4294967231", "\"oops\"", "null", "true", "{}", "[]", "-1", "1003", "999"};
         int[] expected = {65, 66, 65, 65, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1003, -1};
         for (boolean copy : new boolean[] {false, true}) {
-            Path config = newConfig(root.resolve(copy ? "copy-bindings" : "own-bindings"));
-            JsonArray entries = new JsonArray();
             for (int i = 0; i < values.length; i++) {
+                // Isolate each value: duplicate-key cleanup must not obscure
+                // the exact numeric conversion being tested here.
+                Path config = newConfig(root.resolve((copy ? "copy-binding-" : "own-binding-") + i));
+                JsonArray entries = new JsonArray();
                 if (copy) {
                     entries.add(JsonParser.parseString(values[i]));
                 } else {
                     JsonObject slot = new JsonObject();
-                    slot.addProperty("message", "Message " + i);
+                    slot.addProperty("message", "Keep text");
                     slot.add("key", JsonParser.parseString(values[i]));
                     entries.add(slot);
                 }
-            }
-            JsonObject data = new JsonObject();
-            data.add(copy ? "keyCodes" : "slots", entries);
-            Files.writeString(config.resolve(copy ? "copyl-messages.json" : "gripeverde-dispatch.json"), data.toString());
-            for (int i = 0; i < values.length; i++) {
-                check(DispatchLibrary.key(i) == expected[i], "exact binding conversion: " + values[i]);
-                if (!copy) check(DispatchLibrary.message(i).equals("Message " + i), "invalid binding does not discard text");
+                JsonObject data = new JsonObject();
+                data.add(copy ? "keyCodes" : "slots", entries);
+                Files.writeString(config.resolve(copy ? "copyl-messages.json" : "gripeverde-dispatch.json"), data.toString());
+                check(DispatchLibrary.key(0) == expected[i], "exact binding conversion: " + values[i]);
+                if (!copy) check(DispatchLibrary.message(0).equals("Keep text"), "invalid binding does not discard text");
             }
         }
         String[] invalidOpenKeys = {"null", "true", "{}", "[]", "65.5", "4294967361", "\"oops\""};
@@ -141,6 +141,51 @@ public final class DispatchLoadingRegression {
             Files.writeString(config.resolve("gripeverde-dispatch.json"), "{\"openKey\":" + invalidOpenKeys[i] + ",\"slots\":[{\"message\":\"Keep\"}]}");
             check(DispatchLibrary.openKey() == GLFW.GLFW_KEY_RIGHT_ALT, "invalid openKey uses default");
             check(DispatchLibrary.message(0).equals("Keep"), "invalid openKey does not discard messages");
+        }
+    }
+
+    private static void duplicateBindings(Path root) throws Exception {
+        for (boolean copy : new boolean[] {false, true}) {
+            Path config = newConfig(root.resolve(copy ? "copy-duplicates" : "own-duplicates"));
+            int[] bindings = {65, 65, 70, 1003, 1003, -1, 66, 66};
+            int[] expected = {65, -1, -1, 1003, -1, -1, 66, -1};
+            JsonArray keys = new JsonArray();
+            JsonArray messages = new JsonArray();
+            JsonArray slots = new JsonArray();
+            for (int i = 0; i < bindings.length; i++) {
+                keys.add(bindings[i]);
+                messages.add("Text " + i);
+                JsonObject slot = new JsonObject();
+                slot.addProperty("message", "Text " + i);
+                slot.addProperty("key", bindings[i]);
+                slots.add(slot);
+            }
+            JsonObject data = new JsonObject();
+            if (copy) {
+                data.add("keyCodes", keys);
+                data.add("messages", messages);
+                // Exercise reservation against the imported key, not the default.
+                Files.writeString(config.resolve("copyl.json"), "{\"openKey\":70}");
+            } else {
+                data.addProperty("openKey", 70);
+                data.add("slots", slots);
+            }
+            Path source = config.resolve(copy ? "copyl-messages.json" : "gripeverde-dispatch.json");
+            String original = data.toString();
+            Files.writeString(source, original);
+            for (int i = 0; i < expected.length; i++) {
+                check(DispatchLibrary.key(i) == expected[i], "loaded keys unique and open key reserved");
+                check(DispatchLibrary.message(i).equals("Text " + i), "binding repair preserves every message");
+            }
+            check(DispatchLibrary.openKey() == 70, "loaded opening key preserved");
+            check(Files.readString(source).equals(original), "loading never rewrites source file");
+            check(!DispatchLibrary.hasPendingSave(), "normalization does not mark an edit");
+            check(DispatchLibrary.save(), "normalized bindings can be persisted");
+            Path own = config.resolve("gripeverde-dispatch.json");
+            JsonArray persisted = JsonParser.parseString(Files.readString(own)).getAsJsonObject().getAsJsonArray("slots");
+            for (int i = 0; i < expected.length; i++) {
+                check(persisted.get(i).getAsJsonObject().get("key").getAsInt() == expected[i], "saved binding remains canonical");
+            }
         }
     }
 
@@ -159,6 +204,7 @@ public final class DispatchLoadingRegression {
             copyFields(root);
             bindingValues(root);
             legacyKeys(root);
+            duplicateBindings(root);
             System.out.println("Dispatch loading: " + checks + " checks passed");
         } finally {
             try (var files = Files.walk(root)) {
