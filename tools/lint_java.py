@@ -17,8 +17,8 @@ interactiva de la hoja de mundos:
   8. Multiplayer libera favicons obsoletos, reintenta los pings pendientes y limita
      los PNG remotos antes de decodificar.
   9. Mundos valida y limita icon.png antes de decodificarlo.
- 10. Multiplayer solo entra con doble clic real sobre la misma fila, no en el
-     margen, la cabecera LAN ni los controles de editar/borrar.
+ 10. Multiplayer deja al ServerSelectionList nativo gestionar una sola vez los
+     clics de servidor y LAN, sin falsos dobles clics en los márgenes.
  11. Mundos devuelve el foco a la lista al consumir un doble clic de fila, para
      que Enter no siga escribiendo en el buscador.
 
@@ -489,61 +489,36 @@ def check_server_icon_safety_and_lifecycle(path, clean):
     return []
 
 
-def check_multiplayer_double_click(path, clean):
-    """Solo una doble pulsacion sobre la misma fila debe entrar al servidor."""
+def check_multiplayer_native_click_handling(path, clean):
+    """La lista vanilla debe gestionar el doble clic y LAN una sola vez."""
     if not path.replace(chr(92), '/').endswith('/client/screens/DiaryMultiplayerScreen.java'):
         return []
     signature = 'public boolean mouseClicked(double mouseX, double mouseY, int button)'
     start = clean.find(signature)
-    entry_start = clean.find('private Object serverEntryAt(double mouseX, double mouseY)', start)
-    control_start = clean.find(
-        'private boolean serverEntryControlAt(Object entry, double mouseX, double mouseY)',
-        entry_start)
-    if min(start, entry_start, control_start) < 0:
-        return [(path, 1, 'Multiplayer: falta identificar la fila pulsada y sus controles')]
-
-    def method_body(method_start):
-        opening = clean.find('{', method_start)
+    if start >= 0:
+        opening = clean.find('{', start + len(signature))
         if opening < 0:
-            return ''
+            return [(path, clean[:start].count(chr(10)) + 1,
+                     'Multiplayer: manejador de clic incompleto')]
         depth = 0
+        closing = -1
         for index in range(opening, len(clean)):
             if clean[index] == '{':
                 depth += 1
             elif clean[index] == '}':
                 depth -= 1
                 if depth == 0:
-                    return clean[method_start:index + 1]
-        return ''
-
-    handler = method_body(start)
-    entry = method_body(entry_start)
-    control = method_body(control_start)
-    required_handler = (
-        'button == 0 ? serverEntryAt(mouseX, mouseY) : null',
-        'serverEntryControlAt(clickedEntry, mouseX, mouseY)',
-        'if (button != 0 || clickedEntry == null || rowControl)',
-        'after == clickedEntry && before == clickedEntry',
-        'clickedEntry == this.lastListClickEntry',
-        'now - this.lastListClickMs < 320L',
-        'this.lastListClickEntry = clickedEntry',
-        'onJoin();',
-    )
-    if not handler or any(token not in handler for token in required_handler):
-        line = clean[:start].count(chr(10)) + 1
-        return [(path, line,
-                 'Multiplayer: entrar solo tras doble clic en la misma fila, fuera de controles')]
-    if 'overServerList(' in clean:
-        line = clean[:start].count(chr(10)) + 1
-        return [(path, line, 'Multiplayer: no usar toda la banda de la lista como objetivo de doble clic')]
-    if any(token not in entry for token in (
-            'getTop()', 'getBottom()', 'getRowLeft()', 'getRowWidth()',
-            'extractServerDataFromEntry(entry) == null', 'return entry;')):
-        line = clean[:entry_start].count(chr(10)) + 1
-        return [(path, line, 'Multiplayer: limitar el doble clic a filas reales de servidor')]
-    if 'widget.isMouseOver(mouseX, mouseY)' not in control or 'actionWidth = Math.min(48' not in control:
-        line = clean[:control_start].count(chr(10)) + 1
-        return [(path, line, 'Multiplayer: excluir los controles de fila del doble clic')]
+                    closing = index + 1
+                    break
+        handler = clean[start:closing] if closing >= 0 else ''
+        if not handler or 'onJoin();' in handler:
+            line = clean[:start].count(chr(10)) + 1
+            return [(path, line,
+                     'Multiplayer: no duplicar el doble clic que ya maneja ServerSelectionList')]
+    stale_tokens = ('lastListClickEntry', 'lastListClickMs', 'serverEntryAt(')
+    if any(token in clean for token in stale_tokens):
+        return [(path, 1,
+                 'Multiplayer: quitar el hit-test duplicado y conservar los clics nativos de LAN')]
     return []
 
 
@@ -706,7 +681,7 @@ def main(argv):
         problems += check_world_icon_fits_box(f, clean)
         problems += check_world_icon_input_guard(f, clean)
         problems += check_server_icon_safety_and_lifecycle(f, clean)
-        problems += check_multiplayer_double_click(f, clean)
+        problems += check_multiplayer_native_click_handling(f, clean)
         notas += notas_de_orden(f)
         notas += notas_de_puntos(f)
         notas += notas_de_reflexion(f)
