@@ -14,8 +14,13 @@ Actualizado: 2026-11-13
   interrupción y rechazo), más 3 guardas; ambos workflows exigen JDK 17.
   `verifyMemoryShutdownRegression` añade 12 comprobaciones de la biblioteca,
   executor y JSON reales en CONFIGDIR temporal, requerida por check/build.
-  Compilación/Java pendientes de CI. No mide tiempos de cierre ni ejecuta
-  Minecraft; no es una garantía de persistencia ante corte eléctrico.
+  El candidato `02b2b3b` compiló y pasó los 8 escenarios, 3 guardas y
+  12 comprobaciones de persistencia real, junto con todas las suites previas,
+  en [CI 45059924937](https://github.com/Santi-PdR/GripeVerde/actions/runs/45059924937).
+  Artefacto actual `GripeVerde-jar` ID `14769047321`. Sin JDK local. No mide
+  tiempos de cierre ni ejecuta Minecraft; no es una garantía de persistencia
+  ante corte eléctrico. Asset v0.401.0 reconsultado tras publish: mismo
+  ID/tamaño/digest.
   Sin bump/release ni cambios de esquema de memoria.
 
 - **Centro de cabecera Multijugador, posterior a `1874d7f`:** en ventanas
