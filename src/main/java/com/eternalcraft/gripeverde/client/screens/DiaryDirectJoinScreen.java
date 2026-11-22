@@ -291,31 +291,42 @@ public class DiaryDirectJoinScreen extends Screen {
                     String head = en ? "recent: " : "recientes: ";
                     // v0.319.0: la fila de recientes se corta en el ancho de la
                     // hoja. Antes, con seis o siete puertas, se salia del papel.
+                    // Tambien se acorta la primera direccion si ella sola supera
+                    // el ancho; se conserva el valor completo al tocarla.
                     int maxW = Math.max(60, panelW - 48);
-                    java.util.List<String> fit = new java.util.ArrayList<>();
+                    java.util.List<String> fitAddresses = new java.util.ArrayList<>();
+                    java.util.List<String> fitLabels = new java.util.ArrayList<>();
                     int total = DiaryChrome.widthCached(this.font, head);
                     for (String r : recents) {
-                        int add = DiaryChrome.widthCached(this.font, r) + 10;
-                        if (total + add - 10 > maxW && !fit.isEmpty()) break;
-                        fit.add(r);
-                        total += add;
+                        int gapW = fitLabels.isEmpty() ? 0 : 10;
+                        int available = maxW - total - gapW;
+                        if (available <= 0) break;
+                        String label = ellipsizeTo(this.font, r, available);
+                        int labelW = DiaryChrome.widthCached(this.font, label);
+                        if (label.isEmpty() || labelW <= 0) break;
+                        total += gapW + labelW;
+                        fitAddresses.add(r);
+                        fitLabels.add(label);
+                        if (!label.equals(r)) break;
                     }
-                    total = Math.max(0, total - 10);
-                    recents = fit;
-                    int hx = Math.max(panelX + 24, centerX - total / 2);
-                    gfx.drawString(this.font, head, hx, noteY, DiaryChrome.INK_FLAVOR, false);
-                    int cx2 = hx + DiaryChrome.widthCached(this.font, head);
-                    for (String r : recents) {
-                        int rw = DiaryChrome.widthCached(this.font, r);
-                        gfx.drawString(this.font, r, cx2, noteY, DiaryChrome.INK_SUBTITLE, false);
-                        gfx.fill(cx2, noteY + 9, cx2 + rw, noteY + 10,
-                            DiaryChrome.INK_DIVIDER);
-                        this.recentXs.add(cx2);
-                        this.recentWs.add(rw);
-                        this.recentShown.add(r);
-                        cx2 += rw + 10;
+                    if (!fitLabels.isEmpty()) {
+                        int hx = Math.max(panelX + 24, centerX - total / 2);
+                        gfx.drawString(this.font, head, hx, noteY, DiaryChrome.INK_FLAVOR, false);
+                        int cx2 = hx + DiaryChrome.widthCached(this.font, head);
+                        for (int i = 0; i < fitLabels.size(); i++) {
+                            if (i > 0) cx2 += 10;
+                            String label = fitLabels.get(i);
+                            int rw = DiaryChrome.widthCached(this.font, label);
+                            gfx.drawString(this.font, label, cx2, noteY, DiaryChrome.INK_SUBTITLE, false);
+                            gfx.fill(cx2, noteY + 9, cx2 + rw, noteY + 10,
+                                DiaryChrome.INK_DIVIDER);
+                            this.recentXs.add(cx2);
+                            this.recentWs.add(rw);
+                            this.recentShown.add(fitAddresses.get(i));
+                            cx2 += rw;
+                        }
+                        this.recentY = noteY;
                     }
-                    this.recentY = noteY;
                 }
             } catch (Throwable ignored) {
             }

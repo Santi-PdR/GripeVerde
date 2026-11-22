@@ -25,6 +25,8 @@ interactiva de la hoja de mundos:
      sin activar controles ocultos.
  13. Al elegir una direccion reciente, Unirse vuelve a dar el foco de teclado
      al campo de direccion.
+ 14. Las direcciones recientes largas caben en la ficha y conservan su valor real
+     al seleccionarlas.
 
 Uso: python3 tools/lint_java.py [rutas...]
 Sale con codigo 1 si encuentra algo.
@@ -336,6 +338,43 @@ def check_direct_join_recent_address_focus(path, clean):
         line = clean[:start].count(chr(10)) + 1
         return [(path, line,
                  'Unirse: seleccionar una direccion reciente debe sincronizar foco y validacion')]
+    return []
+
+
+def check_direct_join_recent_address_fit(path, clean):
+    """La etiqueta reciente se recorta, pero el clic conserva la direccion real."""
+    if not path.replace(chr(92), '/').endswith('/client/screens/DiaryDirectJoinScreen.java'):
+        return []
+    render_signature = 'public void render(GuiGraphics gfx, int mouseX, int mouseY, float partial)'
+    render_start = clean.find(render_signature)
+    block_start = clean.find('int maxW = Math.max(60, panelW - 48);', render_start)
+    block_end = clean.find('this.recentY = noteY;', block_start)
+    if min(render_start, block_start, block_end) < 0:
+        line = clean[:render_start].count(chr(10)) + 1 if render_start >= 0 else 1
+        return [(path, line, 'Unirse: no se puede comprobar el ancho de direcciones recientes')]
+    block = clean[block_start:block_end]
+    required = (
+        'java.util.List<String> fitAddresses',
+        'java.util.List<String> fitLabels',
+        'int available = maxW - total - gapW;',
+        'String label = ellipsizeTo(this.font, r, available);',
+        'fitAddresses.add(r);',
+        'fitLabels.add(label);',
+        'for (int i = 0; i < fitLabels.size(); i++)',
+        'String label = fitLabels.get(i);',
+        'int rw = DiaryChrome.widthCached(this.font, label);',
+        'gfx.drawString(this.font, label, cx2, noteY, DiaryChrome.INK_SUBTITLE, false);',
+        'this.recentWs.add(rw);',
+        'this.recentShown.add(fitAddresses.get(i));',
+    )
+    cursor = 0
+    for token in required:
+        position = block.find(token, cursor)
+        if position < 0:
+            line = clean[:block_start].count(chr(10)) + 1
+            return [(path, line,
+                     'Unirse: limitar el ancho visible de recientes sin truncar su direccion')]
+        cursor = position + len(token)
     return []
 
 
@@ -759,6 +798,7 @@ def main(argv):
         problems += check_world_click_suppression_focus(f, clean)
         problems += check_title_watch_inspection_modal(f, clean)
         problems += check_direct_join_recent_address_focus(f, clean)
+        problems += check_direct_join_recent_address_fit(f, clean)
         problems += check_world_archive_visibility(f, clean)
         problems += check_world_icon_cache_lifecycle(f, clean)
         problems += check_world_icon_fits_box(f, clean)
