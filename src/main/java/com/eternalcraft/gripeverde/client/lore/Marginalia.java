@@ -91,6 +91,7 @@ public final class Marginalia {
     private static long lastPollMs = 0L;
     private static long lastDeferredMs = 0L;
     private static String cachedLayoutText;
+    private static Font cachedLayoutFont;
     private static int cachedLayoutWidth = -1;
     private static int cachedLayoutLimit = -1;
     private static int cachedLayoutLinesWidth = 0;
@@ -129,42 +130,38 @@ public final class Marginalia {
     }
 
     private static java.util.List<String> layoutLines(String text, Font font, int maxWidth, int maxLines) {
-        if (text.equals(cachedLayoutText) && maxWidth == cachedLayoutWidth && maxLines == cachedLayoutLimit) {
+        String content = text == null ? "" : text.trim();
+        if (font == cachedLayoutFont && content.equals(cachedLayoutText)
+                && maxWidth == cachedLayoutWidth && maxLines == cachedLayoutLimit) {
             return cachedLayoutLines;
         }
         java.util.List<String> lines = new java.util.ArrayList<>();
-        StringBuilder line = new StringBuilder();
-        for (String word : text.split("\\s+")) {
-            String candidate = line.length() == 0 ? word : line + " " + word;
-            if (line.length() > 0 && font.width(candidate) > maxWidth) {
-                lines.add(line.toString());
-                line.setLength(0);
-                line.append(word);
-            } else {
+        if (font != null && maxWidth > 0 && maxLines > 0 && !content.isEmpty()) {
+            StringBuilder line = new StringBuilder();
+            for (String word : content.split("\\s+")) {
+                String candidate = line.length() == 0 ? word : line + " " + word;
+                if (line.length() > 0 && font.width(candidate) > maxWidth) {
+                    lines.add(line.toString());
+                    line.setLength(0);
+                    if (lines.size() >= maxLines) break;
+                }
                 if (line.length() > 0) line.append(' ');
                 line.append(word);
             }
-        }
-        if (line.length() > 0) lines.add(line.toString());
-        if (lines.size() > maxLines) {
-            // v0.384.0: sin puntos suspensivos: el ultimo renglon se queda en la
-            // ultima palabra completa que entra y, si no entra ninguna, se quita.
-            lines = new java.util.ArrayList<>(lines.subList(0, maxLines));
-            String last = lines.get(maxLines - 1);
-            String shortLast = com.eternalcraft.gripeverde.client.render.DiaryChrome
-                .shorten(font, last, maxWidth);
-            if (shortLast.isEmpty()) {
-                lines.remove(maxLines - 1);
-                if (lines.isEmpty() && !cachedLayoutLines.isEmpty()) {
-                    lines = new java.util.ArrayList<>(cachedLayoutLines);
-                }
-            } else {
-                lines.set(maxLines - 1, shortLast);
+            if (line.length() > 0 && lines.size() < maxLines) lines.add(line.toString());
+            // Tambien una palabra sola puede exceder el ancho. Ajustar todas
+            // las lineas, nunca rescatar texto cacheado de otra nota/medida.
+            for (int i = 0; i < lines.size(); i++) {
+                String fitted = com.eternalcraft.gripeverde.client.render.DiaryChrome
+                    .shorten(font, lines.get(i), maxWidth);
+                if (fitted.isEmpty()) lines.remove(i--);
+                else lines.set(i, fitted);
             }
         }
         int widest = 0;
-        for (String line2 : lines) widest = Math.max(widest, font.width(line2));
-        cachedLayoutText = text;
+        for (String line : lines) widest = Math.max(widest, font.width(line));
+        cachedLayoutText = content;
+        cachedLayoutFont = font;
         cachedLayoutWidth = maxWidth;
         cachedLayoutLimit = maxLines;
         cachedLayoutLines = java.util.Collections.unmodifiableList(lines);
@@ -206,7 +203,10 @@ public final class Marginalia {
         }
         int maxLines = Math.max(1, Math.min(4, (availableHeight - 6) / lineHeight));
         java.util.List<String> lines = layoutLines(shown, mc.font, maxTextWidth, maxLines);
-        if (lines.isEmpty()) return;
+        if (lines.isEmpty()) {
+            deferActive();
+            return;
+        }
 
         // v0.211.0: el ancho del bloque ya se midio al repartir las lineas.
         int textWidth = cachedLayoutLinesWidth;

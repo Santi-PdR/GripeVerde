@@ -51,6 +51,8 @@ jobs:
       # repetidas y sentencias cortadas antes de gastar dos minutos de Gradle.
       - name: Lint Java structure
         run: python3 tools/lint_java.py
+      - name: Test marginalia text layout and cache
+        run: python3 tools/test_marginalia_layout.py --require-java
       - name: Test memory shutdown lock and writer
         run: python3 tools/test_memory_shutdown.py --require-java
       - name: Test multiplayer count cache

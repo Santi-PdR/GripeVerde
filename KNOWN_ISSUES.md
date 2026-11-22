@@ -9,6 +9,18 @@ que una seccion posterior lo mencione expresamente.
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
+- **Marginalia: distribución y caché, posterior a `c51733d`:** la caché
+  incluye la identidad de fuente, texto y límites; nunca rescata líneas de
+  otra nota cuando la nueva no cabe. Cada línea se ajusta al ancho, también
+  las palabras largas, sin puntos suspensivos. Si no cabe ningún texto, la
+  nota activa se difiere en vez de consumir tiempo invisible.
+  Nueva suite `tools/test_marginalia_layout.py`: métodos reales de distribución
+  y acortado con fuente doble, 16 escenarios más guardas de integración.
+  CI exige su ejecución con JDK 17. Validación local estructural únicamente
+  (sin JDK); compilación y escenarios pendientes de CI. No prueba rendering,
+  recarga de recursos sobre la misma instancia de fuente ni temporización real.
+  Sin cambio de versión, esquema de memoria ni publicación.
+
 - **Datos nulos y límites de memoria, posterior a `b48903e`:** se retiran
   IDs nulos/vacíos de descubrimientos, objetos y notas; entradas nulas del
   libro de firmas, y claves vacías/valores nulos de contadores. La limpieza
