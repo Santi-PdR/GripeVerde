@@ -15,8 +15,13 @@ Actualizado: 2026-11-13
   desde un entero negativo extremo. No cambia el esquema ni se mide tiempo.
   Nueva tarea obligatoria `verifyMemoryDataRegression`, con biblioteca/Gson/
   archivos reales: limpieza antes de límites, APIs, saturación y migración.
-  Java pendiente de CI; sin Minecraft/red ni bump/release. La protección de
-  esquemas futuros sigue aplicándose antes de interpretar estos campos.
+  El candidato `2fb0c67` compiló y pasó las pruebas nuevas de datos y
+  todas las suites previas en
+  [CI 45061875430](https://github.com/Santi-PdR/GripeVerde/actions/runs/45061875430).
+  Artefacto actual `GripeVerde-jar` ID `14770075729`. Sin JDK local ni prueba
+  Minecraft/red ni bump/release. La protección de esquemas futuros sigue
+  aplicándose antes de interpretar estos campos y sus regresiones pasan.
+  Asset v0.401.0 reconsultado tras publish: mismo ID/tamaño/digest.
 
 - **Memoria de esquema futuro, posterior a `0705ed6`:** migrate solo
   evitaba bajar el número de esquema, pero los guardados posteriores podían
