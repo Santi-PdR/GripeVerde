@@ -491,3 +491,20 @@ tasks.register('verifyGripeVerdeMenuFont') {
 tasks.named('processResources').configure {
     dependsOn tasks.named('verifyGripeVerdeMenuFont')
 }
+
+// Ejecuta los helpers del mod con el parser real de Minecraft, sin arrancar
+// el cliente ni usar DNS. JavaExec no necesita introducir una dependencia JUnit.
+tasks.register('verifyServerAddressRegression', JavaExec) {
+    group = 'verification'
+    description = 'Checks DNS/IDN, IPv4, IPv6 and ports using the actual Minecraft address parser.'
+    dependsOn tasks.named('testClasses')
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.eternalcraft.gripeverde.client.ServerAddressRegression'
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+tasks.named('check').configure {
+    dependsOn tasks.named('verifyServerAddressRegression')
+}

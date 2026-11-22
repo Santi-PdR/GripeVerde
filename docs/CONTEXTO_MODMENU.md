@@ -2,6 +2,24 @@
 
 Actualizado: 2026-11-13
 
+### Direcciones de servidor, posterior a `a1d58c7`
+
+- DiaryChrome valida con `ServerAddress.isValidAddress` y muestra host/puerto
+  con `parseString/getHost/getPort`, sin DNS. IPv6 entre corchetes ya no se
+  rechaza por la whitelist, y el último segmento de IPv6 desnuda no se toma
+  como puerto. Puertos numéricos fuera de rango se rechazan según vanilla;
+  se mantienen fuera los espacios y controles internos. Un host sintáctico
+  válido no garantiza existencia ni conectividad. Host IDN se muestra en ASCII.
+- Editar servidor guarda trim de la dirección validada, igual que Conexión
+  directa. No persiste cambios al cancelar ni modifica el proceso de conexión.
+- `./gradlew verifyServerAddressRegression` ejecuta 38 comprobaciones de los
+  helpers reales del mod contra el parser real de Minecraft: DNS/IDN, IPv4,
+  IPv6, puertos y readouts en ambos idiomas. No usa DNS, sockets ni renderer.
+  Requerido por check/build. Pendiente de CI; sin JDK local.
+- Validar en cliente Conexión directa y Editar servidor con IPv4/DNS, IPv6
+  con/sin puerto, puerto inválido y espacios exteriores. Revisar estado del
+  botón, ayuda de host/puerto y valor guardado; no se hizo esa prueba aquí.
+
 ### Idiomas: reconstrucción y selección, posterior a `d4109ba`
 
 - init conserva el idioma pendiente válido y el scroll de la lista previa;
@@ -14,8 +32,9 @@ Actualizado: 2026-11-13
   Listo/Enter (confirma) ni Esc (cancela), ni aplica con solo mover el foco.
 - `tools/test_language_screen.py`: 3 verificaciones de conexión pasan en local;
   11 casos compilan métodos reales extraídos con dobles de servicios/GUI, no la
-  pantalla entera ni su despacho real de foco. Requieren Java y quedan pendientes
-  de CI; `--require-java` impide omitirlos allí. Las demás suites locales pasan.
+  pantalla entera ni su despacho real de foco. Los 11 casos y la compilación
+  de `a1d58c7` pasaron en CI `45042270304`; `--require-java` impide omitirlos
+  allí. Las demás suites locales pasan.
 - Revisión pendiente en cliente: elegir otro idioma, desplazar y redimensionar
   (también mediante fuente Unicode), comprobar selección/scroll; volver al
   principio y reabrir; flechas y Listo; flechas y Esc sin aplicar; aumentar el

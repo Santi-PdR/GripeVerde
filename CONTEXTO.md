@@ -2,6 +2,16 @@
 
 ## Addendum operativo actual (2026-11-13)
 
+- **Direcciones de servidor, posterior a `a1d58c7`:** validación y readout
+  delegan en ServerAddress de Minecraft, admitiendo IPv6 entre corchetes y
+  evitando confundir su último bloque numérico con un puerto. Se rechazan
+  espacios/controles internos; la validación vanilla comprueba puertos.
+  Editar servidor guarda la IP con trim, igual que Conexión directa y que la
+  validación. Nueva tarea Gradle `verifyServerAddressRegression`, requerida
+  por check/build, ejecuta 38 comprobaciones con el parser real sin red.
+  Chequeos locales pasan; ejecución Gradle pendiente de CI por falta de JDK.
+  Sin bump/release ni prueba de conexión en cliente.
+
 - **Idiomas, posterior a `d4109ba`:** al reconstruir la pantalla se conserva
   el idioma pendiente y el scroll actual (incluido cero), en lugar de volver
   al idioma aplicado/scroll de otra apertura. Primera apertura usa -1 como
@@ -12,9 +22,10 @@
   excluyendo la fila de Niebla, null y cambios durante aplicación. No aplica
   al navegar: Listo confirma y Esc cancela como antes.
   Test nuevo: 3 verificaciones de conexión locales pasan; 11 escenarios de
-  métodos Java reales extraídos pendientes de CI (sin JDK local). También
-  pasan guardas 18/18, lint 72 Java, espejos 8/8, gate 7/7, instalador 7/7,
-  py_compile y diff. Sin bump/release ni prueba en cliente.
+  métodos Java reales extraídos pasaron en CI `45042270304` junto con la
+  compilación del candidato `a1d58c7` (sin JDK local). También pasan guardas
+  18/18, lint 72 Java, espejos 8/8, gate 7/7, instalador 7/7, py_compile y
+  diff. Sin bump/release ni prueba en cliente.
 
 - **Scroll compartido, posterior a `9f3f9a1`:** SmoothScroll ahora detecta
   desplazamientos externos (barra, teclado/ensureVisible) y cambio de lista,

@@ -169,7 +169,8 @@ public class DiaryEditServerScreen extends Screen {
 
     private void onDone() {
         this.serverData.name = this.nameEdit.getValue();
-        this.serverData.ip = this.ipEdit.getValue();
+        // Guardar exactamente la dirección normalizada que validó el botón.
+        this.serverData.ip = this.ipEdit.getValue().trim();
         this.callback.accept(true);
     }
 

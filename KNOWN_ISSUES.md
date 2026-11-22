@@ -9,12 +9,21 @@ que una seccion posterior lo mencione expresamente.
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
+- **Direcciones de servidor (posterior a `a1d58c7`):** la whitelist propia
+  rechazaba IPv6 entre corchetes, aceptaba puertos fuera de rango y el readout
+  confundía una IPv6 desnuda con host:puerto. Ahora se usa ServerAddress vanilla
+  para validar/mostrar (sin DNS), con rechazo de espacios/controles internos.
+  Editar servidor normaliza al guardar la IP, como el valor validado. Test
+  Gradle nuevo con 38 comprobaciones, aún pendiente de CI. Prueba de conexión
+  real no realizada. Sin cambios de servidores.dat hasta confirmar el formulario.
+
 - **Idiomas, posterior a `d4109ba`:** se corrigen tres fallos identificados en
   código: perder selección pendiente/scroll al reconstruir, cabecera desplazada
   tras redimensionar con panel de ancho máximo y selección de teclado que no
   actualizaba el idioma pendiente. Se conservan Esc para cancelar y Listo para
-  aplicar. Tres verificaciones locales pasan; 11 casos de métodos Java reales
-  extraídos y compilación pendientes de CI. Falta prueba en Minecraft, incluido
+  aplicar. Tres verificaciones locales y 11 casos de métodos Java reales
+  extraídos pasaron en CI `45042270304`, incluido el build de `a1d58c7`.
+  Falta prueba en Minecraft, incluido
   cambio de fuente Unicode, redimensión, flechas y cancelación. Sin release.
 
 - **Scroll compartido (posterior a `9f3f9a1`):** el controlador no detectaba

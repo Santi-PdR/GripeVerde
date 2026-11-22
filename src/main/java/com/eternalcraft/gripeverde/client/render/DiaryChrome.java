@@ -5,6 +5,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.multiplayer.resolver.ServerAddress;
 import net.minecraft.network.chat.Component;
 import com.eternalcraft.gripeverde.client.render.DiaryTypography;
 
@@ -112,38 +113,24 @@ public final class DiaryChrome {
      * de siempre. Sirve para el pie de los campos de direccion.
      */
     public static String addressReadout(String raw, boolean english) {
-        if (raw == null) return "";
-        String ip = raw.trim();
-        if (ip.isEmpty()) return "";
-        String host = ip;
-        String port = "25565";
-        int colon = ip.lastIndexOf(':');
-        if (colon > 0 && colon < ip.length() - 1) {
-            String tail = ip.substring(colon + 1);
-            boolean digits = true;
-            for (int i = 0; i < tail.length(); i++) {
-                if (!Character.isDigit(tail.charAt(i))) { digits = false; break; }
-            }
-            if (digits) {
-                host = ip.substring(0, colon);
-                port = tail;
-            }
-        }
-        return (english ? "host: " : "anfitrion: ") + host
-            + "  ·  " + (english ? "port: " : "puerto: ") + port;
+        if (!looksLikeAddress(raw)) return "";
+        ServerAddress address = ServerAddress.parseString(raw.trim());
+        return (english ? "host: " : "anfitrion: ") + address.getHost()
+            + "  ·  " + (english ? "port: " : "puerto: ") + address.getPort();
     }
 
-    /** v0.263.0: forma minima de una direccion: letras, digitos, punto, guion, dos puntos. */
+    /** Sintaxis vanilla (IPv4, DNS/IDN e IPv6); no consulta DNS ni abre sockets. */
     public static boolean looksLikeAddress(String raw) {
         if (raw == null) return false;
         String ip = raw.trim();
         if (ip.isEmpty()) return false;
         for (int i = 0; i < ip.length(); i++) {
             char c = ip.charAt(i);
-            boolean ok = Character.isLetterOrDigit(c) || c == '.' || c == '-' || c == ':' || c == '_';
-            if (!ok) return false;
+            if (Character.isWhitespace(c) || Character.isSpaceChar(c) || Character.isISOControl(c)) {
+                return false;
+            }
         }
-        return true;
+        return ServerAddress.isValidAddress(ip);
     }
 
     public static void drawRegistryTag(GuiGraphics gfx, int panelX, int panelY, int panelW,

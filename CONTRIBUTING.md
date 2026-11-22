@@ -24,6 +24,9 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   comprobar el release y el SHA-256. El job `publish` compara `release-tag.txt`
   con `build.gradle`, crea el tag sobre `$GITHUB_SHA` (el commit que produjo el
   JAR) y no sobrescribe un release existente.
+- `./gradlew check` y `build` incluyen `verifyServerAddressRegression`:
+  38 comprobaciones ejecutan los helpers de direcciones contra el parser real
+  de Minecraft sin red ni cliente gráfico. Puede correrse esa tarea sola.
 - **Nunca dos pushes seguidos**: el CI cancela el run anterior por concurrencia.
 - Sin JDK local: la compilación semántica la hace el CI. No instalar Java 17
   en la máquina para publicar.
