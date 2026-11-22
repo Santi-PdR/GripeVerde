@@ -15,7 +15,13 @@ Actualizado: 2026-11-13
   añade 12 comprobaciones con instancias reales de DiaryTextField/EditBox:
   constructor, cambio de ancho, helpers, petición de quitar borde y aislamiento
   entre instancias. Usa fuente nula solo para comprobar geometría; no dibuja,
-  no inyecta clics ni necesita una instancia de Minecraft. Pendiente de CI.
+  no inyecta clics ni necesita una instancia de Minecraft. El candidato
+  `ae796c7` compiló y pasó las suites en
+  [CI 45042852283](https://github.com/Santi-PdR/GripeVerde/actions/runs/45042852283),
+  incluidos 12 casos geométricos y 38 de direcciones. Artefacto actual
+  `GripeVerde-jar`, ID `14762691152`, incluye las correcciones previas de
+  Idiomas/scroll/Paquetes. Sin bump/release: asset v0.401.0 conserva
+  ID/tamaño/digest después de publish.
 - Prueba pendiente en cliente: texto largo, clic en cada extremo/interior,
   selección con Shift y ratón, desplazamiento horizontal y redimensión en
   Conexión directa/Editar servidor. Contrastar campos vanilla también.

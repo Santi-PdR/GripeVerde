@@ -9,9 +9,14 @@
   el renderer propio sigue evitando el fondo/borde vanilla. No cambia los
   EditBox vanilla. Nueva tarea Gradle `verifyTextFieldGeometryRegression`,
   requerida por check/build, comprueba 12 casos de ancho lógico reales sin
-  render ni eventos de mouse. Lint/espejos/guardas locales pasan. Compilación
-  y prueba Gradle pendientes de CI; prueba visual/en cliente pendiente.
-  No atribuir a este desfase los reportes generales de clics fantasma.
+  render ni eventos de mouse. Lint/espejos/guardas locales pasan. El candidato
+  `ae796c7` compiló y pasó las suites, incluidos los 12 casos geométricos y
+  los 38 de direcciones, en
+  [CI 45042852283](https://github.com/Santi-PdR/GripeVerde/actions/runs/45042852283).
+  Artefacto actual `GripeVerde-jar`, ID `14762691152`, incluye Idiomas,
+  direcciones, scroll compartido y Paquetes. Prueba visual/en cliente pendiente.
+  Asset v0.401.0 reconsultado tras publish: mismo ID/tamaño/digest; sin bump
+  ni release nuevo. No atribuir el desfase a los clics fantasma generales.
 
 - **Direcciones de servidor, posterior a `a1d58c7`:** validación y readout
   delegan en ServerAddress de Minecraft, admitiendo IPv6 entre corchetes y
@@ -33,7 +38,7 @@
   sincroniza la edición pendiente para la navegación vanilla de teclado,
   excluyendo la fila de Niebla, null y cambios durante aplicación. No aplica
   al navegar: Listo confirma y Esc cancela como antes.
-  Test nuevo: 3 verificaciones de conexión locales pasan; 11 escenarios de
+  Test nuevo: 3 verificaciones estructurales locales pasan; 11 escenarios de
   métodos Java reales extraídos pasaron en CI `45042270304` junto con la
   compilación del candidato `a1d58c7` (sin JDK local). También pasan guardas
   18/18, lint 72 Java, espejos 8/8, gate 7/7, instalador 7/7, py_compile y

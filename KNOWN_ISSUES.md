@@ -13,7 +13,8 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
   dibujado de 4 px no coincidía con EditBox sin borde lógico. Se alinea el
   estado lógico con el renderer y se conserva frente a helpers que quitan
   el borde vanilla; los EditBox vanilla no cambian. Test Gradle de 12 casos
-  geométricos reales añadido; CI pendiente. No ejecuta mouse ni rendering.
+  geométricos reales aprobado junto al build de `ae796c7` en CI `45042852283`.
+  No ejecuta mouse ni rendering. Asset v0.401.0 sin cambios de ID/tamaño/digest.
   Revisar clic/cursor, selección y desplazamiento de texto en cliente; no se
   afirma corregido el reporte general de clics fantasma. Sin bump/release.
 
