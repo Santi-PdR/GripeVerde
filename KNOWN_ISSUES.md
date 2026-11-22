@@ -14,8 +14,14 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
   por ejemplo al desconectarse. Respeta el backoff de un intento fallido
   reciente para no duplicarlo. La suite de métodos de pantalla se amplía
   a 14 escenarios (salida externa, cierre fallido seguido de removed y
-  salida limpia incluidos). Java pendiente de CI. Los cambios que no logren
-  escribirse solo permanecen en memoria: no sobreviven al cierre del proceso.
+  salida limpia incluidos). El candidato final `1510bd8` compiló y pasó
+  [CI 45045888583](https://github.com/Santi-PdR/GripeVerde/actions/runs/45045888583):
+  14 escenarios de pantalla, 3 guardas estructurales y 89 comprobaciones de
+  persistencia/Unicode, más las suites anteriores. Artefacto `GripeVerde-jar`
+  ID `14763760675`. Sin pruebas Minecraft. Asset v0.401.0 reconsultado tras
+  publish, mismo ID/tamaño/digest; no hubo bump ni release nuevo.
+  Los cambios que no logren escribirse solo permanecen en memoria: no
+  sobreviven al cierre del proceso.
 
 - **Recorte Unicode de CEDA, posterior a `b8004f2`:** los límites de
   256 unidades UTF-16 del mensaje y 24 del nombre podían separar un par
