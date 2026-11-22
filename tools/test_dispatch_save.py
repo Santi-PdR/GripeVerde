@@ -17,7 +17,8 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE = (ROOT / 'src/main/java/com/eternalcraft/gripeverde/client/screens/DiaryDispatchScreen.java').read_text()
 
 HARNESS = '''
-public class DispatchSaveHarness {
+class BaseScreen { public void removed() {} }
+public class DispatchSaveHarness extends BaseScreen {
     static final long AUTOSAVE_MS = 700L, SAVE_RETRY_MS = 3000L, STATUS_MS = 1500L;
     long lastEditMs, nextSaveAttemptMs, statusUntil;
     String statusKey = "";
@@ -94,6 +95,15 @@ public class DispatchSaveHarness {
                 check(DispatchLibrary.saves == 1); Util.now += 1300;
                 DispatchLibrary.fail = false; s.saveIfNeeded(false);
                 check(DispatchLibrary.saves == 2 && DispatchLibrary.message.equals("ab")); break;
+            case "external_remove":
+                s.onTextChanged(0, "a"); s.removed();
+                check(DispatchLibrary.saves == 1 && !DispatchLibrary.pending); break;
+            case "remove_after_failed_close":
+                s.onTextChanged(0, "a"); DispatchLibrary.fail = true;
+                s.saveIfNeeded(true); s.removed();
+                check(DispatchLibrary.saves == 1 && DispatchLibrary.pending); break;
+            case "remove_clean":
+                s.removed(); check(DispatchLibrary.saves == 0); break;
             default: throw new AssertionError(args[0]);
         }
     }
@@ -123,7 +133,7 @@ class Executable(unittest.TestCase):
                 self.fail('JDK 17 required')
             self.skipTest('JDK unavailable; CI requires executable checks')
         names = ('private void onTextChanged(', 'private void saveIfNeeded(',
-                 'private void setSaveStatus(', 'private void setStatus(')
+                 'private void setSaveStatus(', 'private void setStatus(', 'public void removed()')
         methods = '\n'.join(method(SOURCE, name) for name in names)
         with tempfile.TemporaryDirectory() as tmp:
             source = Path(tmp) / 'DispatchSaveHarness.java'
@@ -135,7 +145,8 @@ class Executable(unittest.TestCase):
                             'public static final String LETTERS = "letters"; public static void discover(String s) {} }')
             subprocess.run(['javac', '--release', '17', '-d', tmp, str(source), str(lore)], check=True)
             cases = ('clean', 'typing', 'no_op', 'force_close', 'failure', 'retry_success',
-                     'force_retry', 'reopen', 'binding_failure', 'binding_success', 'edit_during_backoff')
+                     'force_retry', 'reopen', 'binding_failure', 'binding_success', 'edit_during_backoff',
+                     'external_remove', 'remove_after_failed_close', 'remove_clean')
             for case in cases:
                 with self.subTest(case=case):
                     subprocess.run(['java', '-cp', tmp, 'DispatchSaveHarness', case], check=True)

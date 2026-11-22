@@ -632,6 +632,14 @@ public class DiaryDispatchScreen extends Screen {
         }
     }
 
+    @Override
+    public void removed() {
+        // Desconexion u otra sustitucion externa tambien puede cerrar la ficha.
+        // onClose ya intento guardar: respetar su backoff si acaba de fallar.
+        if (Util.getMillis() >= this.nextSaveAttemptMs) this.saveIfNeeded(true);
+        super.removed();
+    }
+
     private String ellipsize(String text, int maxWidth){
         // v0.384.0: sin puntos suspensivos.
         return com.eternalcraft.gripeverde.client.render.DiaryChrome.shorten(this.font, text, maxWidth);

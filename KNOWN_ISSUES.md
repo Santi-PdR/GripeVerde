@@ -9,6 +9,14 @@ que una seccion posterior lo mencione expresamente.
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
+- **Cierre externo de CEDA, posterior a `5e6a5e5`:** `removed()` también
+  vacía la cola de guardado al sustituir la pantalla sin pasar por onClose,
+  por ejemplo al desconectarse. Respeta el backoff de un intento fallido
+  reciente para no duplicarlo. La suite de métodos de pantalla se amplía
+  a 14 escenarios (salida externa, cierre fallido seguido de removed y
+  salida limpia incluidos). Java pendiente de CI. Los cambios que no logren
+  escribirse solo permanecen en memoria: no sobreviven al cierre del proceso.
+
 - **Recorte Unicode de CEDA, posterior a `b8004f2`:** los límites de
   256 unidades UTF-16 del mensaje y 24 del nombre podían separar un par
   sustituto después de limpiarlo, dejando una mitad inválida. El recorte
@@ -16,7 +24,10 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
   Se amplía `verifyDispatchPersistenceRegression` con límites exactos,
   caracteres suplementarios, sustitutos aislados, valores nulos y round trip
   JSON. No cambia los límites ni el EditBox vanilla; no garantiza soporte
-  visual de emojis por la fuente. Validación Java pendiente de CI.
+  visual de emojis por la fuente. El candidato `5e6a5e5` compiló y pasó
+  [CI 45045605899](https://github.com/Santi-PdR/GripeVerde/actions/runs/45045605899),
+  incluidas 89 comprobaciones de persistencia/normalización; artefacto
+  `GripeVerde-jar` ID `14763387599`. Release v0.401.0 reconsultado intacto.
 
 - **Guardado del Parte/CEDA, posterior a `551329f`:** la edición usa
   `updateMessage` sin E/S y agrupa las pulsaciones durante 700 ms. Se conserva
