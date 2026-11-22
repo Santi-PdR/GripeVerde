@@ -1,3 +1,7 @@
+## Version 0.399.0 - World clicks stay within the native row hitbox
+
+Worlds: the guard now covers the 2 px that vanilla's hit-test adds to the left of the drawn row; previously that narrow edge could reach the immediate-join icon unguarded. The selection click is also clamped to the native horizontal hitbox, and the 650 ms guard uses a monotonic timer. These are narrow input hardenings: general ghost clicks and the Single Player appearance still need Minecraft validation; this release does not change the visual design.
+
 ## Version 0.398.0 - Resource-pack lists are rediscovered after resize
 
 Resource packs: each screen initialization clears stale references and rediscovers the available and selected lists among the current widgets, ordered by horizontal position. Vanilla selection logic is unchanged, and field reflection is no longer used. Appearance and clicks still need confirmation in Minecraft. The installer checks the download size, SHA-256, and JAR identity/version before installing, then removes older GripeVerde JARs and the legacy backup folder without creating backups.

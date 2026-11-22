@@ -5,22 +5,21 @@ de versiones anteriores son instantaneas historicas: sus listas de "riesgos
 activos" solo conservan lo que se conocia entonces y no reabren un KI salvo
 que una seccion posterior lo mencione expresamente.
 
-## ESTADO: DESARROLLO ACTIVO (2026-11-13, rama v0.398.0)
+## ESTADO: DESARROLLO ACTIVO (2026-11-13, rama v0.399.0)
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
-- **Release base comprobado antes de esta entrega:** `v0.397.0`, tag en `19e73345e74b344720eab7e802ea41596f499a52`; JAR de 10.838.092 bytes, SHA-256
-  `15280d711578937fbc8d77f609a9d0086e6bc4a61faf895a81d5af736d8affad`.
-  El CI `44987551290` pasó en `build` y `publish`.
-- **Versión de esta rama: `v0.398.0`.** El workflow compila y publica solo
-  si pasan las comprobaciones. Paquetes reinicia las referencias de listas en
-  cada inicialización y las busca entre `children()`, ordenadas por posición
-  horizontal, sin reflexión por campos. Es un cambio de descubrimiento, no una
-  confirmación de que se haya corregido la apariencia ni la interacción.
+- **Release base comprobado antes de esta entrega:** `v0.398.0`, tag en
+  `2cb35565772601cd35dec5f449dbbc2ff1d5a6c4`; JAR de 10.844.004 bytes, SHA-256
+  `9919c43e993e740500f174a915b04394a440ac68ddeced5dc1f510226babc900`. El CI `44990762704` pasó en `build` y `publish`.
+- **Versión de esta rama: `v0.399.0`.** Mundos incluye en el guard los 2 px
+  que el hit-test nativo extiende a la izquierda de la fila dibujada, limita el
+  clic seguro al hitbox de la lista y mide con reloj monotónico la ventana de
+  650 ms. Es un ajuste puntual, no una confirmación de que el reporte general
+  de clics fantasma esté resuelto.
 - **Pendiente de confirmación en Minecraft:** Paquetes de recursos, clics
-  fantasma e interfaz de Un Jugador, además de la revisión visual/interactiva
-  de Mundos de las entregas previas. Un Jugador no se modifica en esta ronda.
-  No afirmar que estos reclamos están resueltos hasta probarlos en cliente.
+  fantasma e interfaz visual de Un Jugador, además de revisar los clics de
+  Mundos. No se afirma que estén corregidos sin prueba en cliente.
 - Las correcciones mantienen la lógica vanilla. El CI acredita compilación,
   recursos, localización y espejos, pero no cómo se ve o responde la interfaz.
 - El CI (`.github/workflows/build.yml`) corre `verify_mirrors.py`,

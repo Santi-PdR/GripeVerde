@@ -1,3 +1,10 @@
+## v0.399.0 - Mundos protege el hitbox nativo de las filas
+
+- Mundos: el guard ahora cubre los 2 px que el hit-test vanilla añade a la izquierda de la fila dibujada; antes ese borde estrecho podía llegar sin protección al icono de entrada inmediata. El clic de selección se limita además al hitbox horizontal nativo, y el freno de 650 ms usa reloj monotónico. Son protecciones acotadas: los clics fantasma generales y la apariencia de Un Jugador siguen pendientes de validar en Minecraft; esta entrega no cambia el diseño visual.
+
+**English**
+- Worlds: the guard now covers the 2 px that vanilla's hit-test adds to the left of the drawn row; previously that narrow edge could reach the immediate-join icon unguarded. The selection click is also clamped to the native horizontal hitbox, and the 650 ms guard uses a monotonic timer. These are narrow input hardenings: general ghost clicks and the Single Player appearance still need Minecraft validation; this release does not change the visual design.
+
 ## v0.398.0 - Paquetes vuelve a localizar sus listas al redimensionar
 
 - Paquetes: cada inicialización borra las referencias antiguas y vuelve a encontrar las listas disponibles y aplicadas entre los controles actuales, ordenadas por su posición horizontal. Se conserva la lógica vanilla y se deja de depender de la reflexión sobre campos. La apariencia y los clics siguen pendientes de confirmación dentro de Minecraft. Instalador: valida tamaño, SHA-256 e identidad/versión interna del JAR antes de instalar; después quita los JAR antiguos de GripeVerde y la carpeta heredada de respaldos, sin crear copias.

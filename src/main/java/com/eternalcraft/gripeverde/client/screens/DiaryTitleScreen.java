@@ -1284,14 +1284,6 @@ public class DiaryTitleScreen extends Screen {
             } catch (Throwable ignored) {}
         }
 
-        // Zona del logo: rectangulo central superior. Alto real del bloque ya
-        // escalado: con una caja fija hasta y=130, en ventanas de 240 px el
-        // borde de "Multijugador" (y=116) disparaba tambien el sello del emblema.
-        int logoCx = this.width / 2;
-        int logoBottom = logoBottom();
-        int logoHalf = LogoRenderer.BLOCK_W / 2 + 2;
-        boolean overLogo = mouseX >= logoCx - logoHalf && mouseX <= logoCx + logoHalf
-                        && mouseY >= LOGO_TOP && mouseY <= logoBottom;
         return super.mouseClicked(mouseX, mouseY, button);
     }
 

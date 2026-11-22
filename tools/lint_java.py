@@ -274,8 +274,9 @@ def check_world_row_click_safety(path, clean):
     """El papel de Mundos nunca sintetiza el clic unico que vanilla usa para entrar."""
     if not path.replace(chr(92), '/').endswith('/client/screens/DiarySelectWorldScreen.java'):
         return []
-    if 'private static final int WORLD_ROW_JOIN_HIT_WIDTH = 32;' not in clean:
-        return [(path, 1, 'Mundos: falta documentar el ancho del icono vanilla de entrada inmediata')]
+    if ('private static final int WORLD_ROW_JOIN_HIT_WIDTH = 32;' not in clean
+            or 'private static final int WORLD_ROW_VANILLA_HITBOX_INSET = 2;' not in clean):
+        return [(path, 1, 'Mundos: faltan las medidas del icono y del hitbox nativo de la fila')]
 
     def method_body(signature):
         start = clean.find(signature)
@@ -296,10 +297,11 @@ def check_world_row_click_safety(path, clean):
 
     helper, helper_start = method_body('private double rowSelectionClickX(double mouseX)')
     if ('this.rowLeft + WORLD_ROW_JOIN_HIT_WIDTH + 1.0' not in helper
-            or 'Math.max(mouseX,' not in helper):
+            or 'this.rowRight - WORLD_ROW_VANILLA_HITBOX_INSET' not in helper
+            or 'Math.min(safeRight, Math.max(safeLeft, mouseX))' not in helper):
         line = clean[:helper_start].count(chr(10)) + 1 if helper_start >= 0 else 1
         return [(path, line,
-                 'Mundos: mover el clic sintético fuera de la zona vanilla de entrada inmediata')]
+                 'Mundos: mantener el clic seguro dentro del hitbox y lejos de la entrada inmediata')]
 
     handler, handler_start = method_body(
         'public boolean mouseClicked(double mouseX, double mouseY, int button)')
@@ -316,16 +318,23 @@ def check_world_row_click_safety(path, clean):
     viewport = handler.find('boolean inBody =', body)
     viewport_end = handler.find('if (!inBody)', viewport)
     viewport_check = handler[viewport:viewport_end] if viewport >= 0 and viewport_end >= 0 else ''
-    row_bounds = handler.find('if (mouseX < this.rowLeft || mouseX > this.rowRight)', viewport_end)
+    row_bounds = handler.find(
+        'if (mouseX < this.rowLeft - WORLD_ROW_VANILLA_HITBOX_INSET', viewport_end)
+    row_right_bounds = handler.find('|| mouseX >= this.rowRight', row_bounds)
     row_lookup = handler.find('Object row = entryAt(mouseY)', viewport_end)
     if (not viewport_check or 'this.vanillaList.getLeft()' not in viewport_check
             or 'this.vanillaList.getWidth()' not in viewport_check
-            or row_bounds < viewport_end or row_lookup < row_bounds):
+            or 'mouseY >= this.listTop && mouseY <= this.listBottom' not in viewport_check
+            or 'mouseX >= this.vanillaList.getLeft()' not in viewport_check
+            or 'mouseX <= this.vanillaList.getLeft() + this.vanillaList.getWidth()' not in viewport_check
+            or 'mouseY >= this.listTop && mouseY <= this.listBottom' not in handler
+            or 'mouseX >= listLeft && mouseX <= listRight' not in handler
+            or row_bounds < viewport_end or row_right_bounds < row_bounds
+            or row_lookup < row_bounds):
         line = clean[:handler_start].count(chr(10)) + 1
         return [(path, line,
                  'Mundos: no proyectar clics de los margenes del papel sobre una fila')]
-    if (handler.count('this.rowSelectionClickX(') < 3
-            or handler.count('this.rowLeft + WORLD_ROW_JOIN_HIT_WIDTH + 1.0') < 2
+    if (handler.count('this.rowSelectionClickX(') != 1
             or 'clickX = this.rowSelectionClickX(mouseX);' not in handler):
         line = clean[:handler_start].count(chr(10)) + 1
         return [(path, line,
@@ -451,13 +460,32 @@ def check_world_list_overlay_and_hitbox(path, clean):
     handler, handler_start = method_body(
         'public boolean mouseClicked(double mouseX, double mouseY, int button)')
     viewport = handler.find('boolean inBody =')
-    bounds = handler.find('if (mouseX < this.rowLeft || mouseX > this.rowRight)', viewport)
+    bounds = handler.find(
+        'if (mouseX < this.rowLeft - WORLD_ROW_VANILLA_HITBOX_INSET', viewport)
+    bounds_right = handler.find('|| mouseX >= this.rowRight', bounds)
     row_lookup = handler.find('Object row = entryAt(mouseY)', viewport)
     if (viewport < 0 or 'this.vanillaList.getLeft()' not in handler[viewport:]
-            or bounds < viewport or row_lookup < bounds):
+            or 'mouseY >= this.listTop && mouseY <= this.listBottom' not in handler
+            or 'mouseX >= this.vanillaList.getLeft()' not in handler
+            or 'mouseX <= this.vanillaList.getLeft() + this.vanillaList.getWidth()' not in handler
+            or bounds < viewport or bounds_right < bounds or row_lookup < bounds
+            or handler.find('double clickX = this.rowSelectionClickX(mouseX);', row_lookup) < row_lookup):
         line = clean[:handler_start].count(chr(10)) + 1 if handler_start >= 0 else 1
         return [(path, line,
                  'Mundos: un clic en el margen de papel no debe proyectarse sobre una fila')]
+
+    guard_tokens = (
+        'private static final long WORLD_ROW_DOUBLE_CLICK_GUARD_NANOS = 650_000_000L;',
+        'private long lastForwardedNanos;',
+        'long now = System.nanoTime();',
+        'now - this.lastForwardedNanos < WORLD_ROW_DOUBLE_CLICK_GUARD_NANOS',
+        'this.lastForwardedNanos = now;',
+    )
+    if (any(token not in clean for token in guard_tokens)
+            or 'System.currentTimeMillis()' in handler):
+        line = clean[:handler_start].count(chr(10)) + 1 if handler_start >= 0 else 1
+        return [(path, line,
+                 'Mundos: medir el freno de doble clic con tiempo monotónico y unidades coherentes')]
     return []
 
 

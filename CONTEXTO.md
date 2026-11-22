@@ -2,24 +2,20 @@
 
 ## Addendum operativo actual (2026-11-13)
 
-- Versión base verificada antes de esta entrega: **GripeVerde v0.397.0**, tag en
-  `19e73345e74b344720eab7e802ea41596f499a52`; JAR de 10.838.092 bytes,
-  SHA-256 `15280d711578937fbc8d77f609a9d0086e6bc4a61faf895a81d5af736d8affad`.
-  El CI `44987551290` pasó en `build` y `publish`.
-- La v0.397.0 evita el doble dibujo de Paquetes, cubre la tinta vanilla de
-  Mundos, conserva el aviso experimental de Forge y acota los clics en los
-  márgenes. Esas pantallas siguen pendientes de confirmación en Minecraft.
-- **Versión de esta entrega: v0.398.0.** Paquetes limpia y vuelve a resolver
-  sus referencias en cada `init()`, recogiendo las dos listas desde `children()`
-  y ordenándolas por su coordenada horizontal. No usa reflexión por campos ni
-  cambia la selección vanilla. El instalador ahora verifica digest y metadatos
-  internos del JAR antes de sustituirlo, y limpia JAR anteriores/carpeta
-  heredada solo después de comprobar la instalación. El workflow valida y
-  publica automáticamente solo si pasan todas las puertas.
-- **Pendiente de revisión en Minecraft:** el reporte de Paquetes de recursos,
-  los clics fantasma y la interfaz de Un Jugador siguen abiertos. Esta ronda no
-  modifica Un Jugador y no afirma que el hallazgo de listas haya corregido lo
-  visual o los clics de Paquetes. El CI no sustituye la prueba en cliente.
+- Versión base verificada antes de esta entrega: **GripeVerde v0.398.0**, tag en
+  `2cb35565772601cd35dec5f449dbbc2ff1d5a6c4`; JAR de 10.844.004 bytes, SHA-256
+  `9919c43e993e740500f174a915b04394a440ac68ddeced5dc1f510226babc900`. El CI `44990762704` pasó en `build` y `publish`.
+- La v0.398.0 volvió a resolver las listas de Paquetes al inicializar la
+  pantalla, tomándolas de `children()` y ordenándolas por su coordenada x. La
+  publicación y su CI no acreditan cómo se ve o responde Paquetes en Minecraft.
+- **Versión de esta entrega: v0.399.0.** Mundos incluye en el guard los 2 px
+  que el hit-test nativo extiende a la izquierda de la fila dibujada, limita el
+  clic seguro al hitbox nativo y mide sus 650 ms con `System.nanoTime()`. No
+  cambia la apariencia de la pantalla.
+- **Pendiente de revisión en Minecraft:** Paquetes de recursos, los clics
+  fantasma generales y la interfaz de Un Jugador siguen abiertos. El ajuste del
+  hitbox y el reloj monotónico son cambios acotados; no equivalen a confirmar
+  esos reportes. Esta ronda no modifica el diseño visual de Un Jugador.
 - Las reglas de siempre siguen en pie: mod **solo de cliente**, sin bloques,
   sin ítems, sin gameplay ni resourcepacks; la identidad visual se hace con
   Java y los render/widgets propios.

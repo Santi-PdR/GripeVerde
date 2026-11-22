@@ -7,16 +7,15 @@ Actualizado: 2026-11-13
 - Repositorio: [Santi-PdR/GripeVerde](https://github.com/Santi-PdR/GripeVerde), público.
 - Rama activa de la sesión: `arena/48be547c-gripeverde`, basada en `02e85bc`.
   La plataforma fija el nombre: trabajar y publicar solamente en esta rama.
-- **Versión base publicada y verificada antes de esta entrega: 0.397.0**, tag dirigido a
-  `19e73345e74b344720eab7e802ea41596f499a52`; CI `44987551290` verde en
-  `build` y `publish`. JAR de 10.838.092 bytes, SHA-256
-  `15280d711578937fbc8d77f609a9d0086e6bc4a61faf895a81d5af736d8affad`.
-- **Versión de esta entrega: v0.398.0.** Paquetes limpia sus referencias de
-  listas en cada init y resuelve los hijos `AbstractSelectionList` por
-  coordenada x, sin buscar campos por reflexión. Esto mantiene la lógica vanilla,
-  pero no demuestra que estén corregidas la apariencia o los clics. Un Jugador
-  no se modifica en esta ronda. El workflow compila y publica automáticamente
-  solo si pasan todas las comprobaciones.
+- **Versión base publicada antes de esta entrega: v0.398.0**, tag dirigido a
+  `2cb35565772601cd35dec5f449dbbc2ff1d5a6c4`; CI `44990762704` verde en `build` y `publish`. JAR de
+  10.844.004 bytes, SHA-256 `9919c43e993e740500f174a915b04394a440ac68ddeced5dc1f510226babc900`.
+- **Versión de esta entrega: v0.399.0.** Mundos incluye en el guard los 2 px
+  que el hit-test nativo extiende a la izquierda de la fila dibujada, limita el
+  clic seguro al hitbox y mide la ventana de 650 ms con `System.nanoTime()`.
+  No modifica el diseño visual, no confirma que se hayan resuelto los clics
+  fantasma generales y deja pendiente la prueba dentro del juego. Un Jugador
+  no se modifica en esta ronda.
 - El usuario quiere seguir mejorando el mod de forma continua hasta que diga que pare.
   El trabajo se hace sobre el repositorio; no se edita el proyecto local del usuario.
 - No se controla Minecraft ni la PC del usuario para pruebas visuales. El CI acredita

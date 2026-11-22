@@ -4,13 +4,12 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
 
 ## Estado vigente de la entrega
 
-- Release base verificado antes de esta entrega: **v0.397.0**, tag dirigido al commit construido
-  `19e73345e74b344720eab7e802ea41596f499a52`; JAR de 10.838.092 bytes,
-  SHA-256 `15280d711578937fbc8d77f609a9d0086e6bc4a61faf895a81d5af736d8affad`.
-  El CI de publicación `44987551290` pasó en `build` y `publish`.
-- Versión de esta entrega: **v0.398.0**. El workflow de GitHub Actions
-  compila y publica automáticamente solo si todas las comprobaciones pasan;
-  usarla únicamente cuando el run y el release queden verificados.
+- Release base verificado antes de esta entrega: **v0.398.0**, tag dirigido al
+  commit construido `2cb35565772601cd35dec5f449dbbc2ff1d5a6c4`; JAR de 10.844.004 bytes, SHA-256
+  `9919c43e993e740500f174a915b04394a440ac68ddeced5dc1f510226babc900`. El CI de publicación `44990762704` pasó en `build` y `publish`.
+- Versión de esta entrega: **v0.399.0**. El workflow compila y publica
+  automáticamente solo si todas las comprobaciones pasan; usarla únicamente
+  cuando el run y el release queden verificados.
 - Rama de trabajo vigente: `arena/48be547c-gripeverde`, un solo push por entrega.
 - Baseline medida por las herramientas: **72 archivos Java**, **25 locales con
   191 claves** cada uno, 35 eventos de sonido, 42 referencias OGG y 42 archivos

@@ -35,8 +35,13 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     private static final int HEADER_H = 46;
     // Vanilla WorldListEntry entra al mundo de inmediato dentro del icono de 32 px.
     private static final int WORLD_ROW_JOIN_HIT_WIDTH = 32;
+    // Vanilla's entry hit-test extends 2 px left of getRowLeft() and ends 2 px
+    // before getRowLeft() + getRowWidth(); keep that inset aligned with the guard.
+    private static final int WORLD_ROW_VANILLA_HITBOX_INSET = 2;
     // Forge draws its experimental-warning icon in the final 36 px of a row.
     private static final int WORLD_ROW_EXPERIMENTAL_WARNING_WIDTH = 36;
+    // The row guard uses monotonic elapsed time, unaffected by system-clock changes.
+    private static final long WORLD_ROW_DOUBLE_CLICK_GUARD_NANOS = 650_000_000L;
 
     private final List<DiaryButton> dressed = new ArrayList<>();
     private WorldSelectionList vanillaList;
@@ -91,7 +96,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
     // doble clic sobre el mismo punto; los mandos de la fila siguen recibiendo
     // sus propios clics aunque se pulsen enseguida.
     private Object lastForwardedEntry;
-    private long lastForwardedMs;
+    private long lastForwardedNanos;
     // v0.374.0: lo que pesa cada mundo, medido con el archivo entero.
     private static final java.util.Map<String, Long> WORLD_SIZES = new java.util.HashMap<>();
 
@@ -1454,10 +1459,13 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         return Math.min(hi, Math.max(lo, mouseX));
     }
 
-    /** Evita la zona del icono donde vanilla entra al mundo con un solo clic. */
+    /** Evita la zona del icono y conserva el hitbox horizontal nativo de la fila. */
     private double rowSelectionClickX(double mouseX) {
-        if (this.rowLeft < 0) return mouseX;
-        return Math.max(mouseX, this.rowLeft + WORLD_ROW_JOIN_HIT_WIDTH + 1.0);
+        if (this.rowRight <= this.rowLeft) return mouseX;
+        double safeLeft = this.rowLeft + WORLD_ROW_JOIN_HIT_WIDTH + 1.0;
+        double safeRight = this.rowRight - WORLD_ROW_VANILLA_HITBOX_INSET;
+        if (safeRight < safeLeft) return safeRight + 1.0;
+        return Math.min(safeRight, Math.max(safeLeft, mouseX));
     }
 
     private void drawFooterPaper(GuiGraphics g) {
@@ -1712,16 +1720,18 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         // una fila. El papel y sus margenes no deben sintetizar un clic de fila.
         boolean inBody = this.vanillaList != null && this.listTop >= 0
             && this.listBottom > this.listTop
-            && mouseY >= this.listTop && mouseY < this.listBottom
+            && mouseY >= this.listTop && mouseY <= this.listBottom
             && mouseX >= this.vanillaList.getLeft()
-            && mouseX < this.vanillaList.getLeft() + this.vanillaList.getWidth();
+            && mouseX <= this.vanillaList.getLeft() + this.vanillaList.getWidth();
         if (!inBody) {
             return super.mouseClicked(mouseX, mouseY, button);
         }
 
-        // Los margenes vacios del viewport y la canaleta quedan en manos de
-        // vanilla; no se proyectan sobre una fila visible.
-        if (mouseX < this.rowLeft || mouseX > this.rowRight) {
+        // Coincide con los bordes inclusivos de AbstractSelectionList: su
+        // hitbox comienza 2 px antes de rowLeft. Esos píxeles tambien pasan
+        // por el guard para no activar el icono vanilla de entrada inmediata.
+        if (mouseX < this.rowLeft - WORLD_ROW_VANILLA_HITBOX_INSET
+                || mouseX >= this.rowRight) {
             return super.mouseClicked(mouseX, mouseY, button);
         }
 
@@ -1730,31 +1740,11 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             return true;
         }
 
-        // La canaleta del scroll es un mando propio: no participa en el freno
-        // de doble clic de las filas y conserva su posicion real.
-        double clickX = mouseX;
-        if (this.vanillaList != null) {
-            try {
-                double listLeft = this.vanillaList.getLeft();
-                double listRight = listLeft + this.vanillaList.getWidth();
-                if (this.rowRight >= this.rowLeft
-                        && mouseX > this.rowRight && mouseX <= listRight) {
-                    super.mouseClicked(mouseX, mouseY, button);
-                    return true;
-                }
-                if (mouseX < listLeft || mouseX > listRight) {
-                    clickX = this.rowSelectionClickX(
-                        this.rowLeft + WORLD_ROW_JOIN_HIT_WIDTH + 1.0);
-                } else {
-                    clickX = this.rowSelectionClickX(mouseX);
-                }
-            } catch (Throwable ignored) {
-                clickX = this.rowSelectionClickX(
-                    this.rowLeft + WORLD_ROW_JOIN_HIT_WIDTH + 1.0);
-            }
-        }
+        // El clic ya está en el hitbox nativo de la fila (incluido su borde);
+        // solo se aparta del icono de entrada inmediata de vanilla.
+        double clickX = this.rowSelectionClickX(mouseX);
 
-        long now = System.currentTimeMillis();
+        long now = System.nanoTime();
         boolean rowControl = rowControlAt(row, mouseX, mouseY);
         if (rowControl) {
             // Los controles conservan sus coordenadas reales: nunca se les
@@ -1769,7 +1759,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         } catch (Throwable ignored) {
         }
         if (row == selected || (row == this.lastForwardedEntry
-                && now - this.lastForwardedMs < 650L)) {
+                && now - this.lastForwardedNanos < WORLD_ROW_DOUBLE_CLICK_GUARD_NANOS)) {
             // Se consume el doble clic para no abrir por sorpresa, pero el
             // buscador deja de tener el foco como en un clic normal de fila.
             focusWorldList();
@@ -1784,7 +1774,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         // fila se consume arriba para que nunca se entre al mundo por sorpresa.
         super.mouseClicked(clickX, mouseY, button);
         this.lastForwardedEntry = row;
-        this.lastForwardedMs = now;
+        this.lastForwardedNanos = now;
         try {
             com.eternalcraft.gripeverde.client.audio.UiSounds.tab();
         } catch (Throwable ignored) {
