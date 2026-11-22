@@ -2,6 +2,21 @@
 
 ## Addendum operativo actual (2026-11-13)
 
+- **Continuación local, posterior a `0aa6a25`:** el repintado de Paquetes
+  ancla texto y separador a `rowTop/rowBottom`, no al borde recortado del
+  viewport. Evita desplazar el texto y ocultar la descripción antes de tiempo
+  en filas parcialmente visibles; no cambia entrada ni geometría de clics.
+  Guardas de listas ampliadas: 12/12, con cinco mutaciones de recorte y el
+  modelo aritmético reproducible de 4.536 casos. Suite conectada al workflow
+  y su plantilla. Pasan también espejos 8/8, lint completo de 72 Java,
+  gate 7/7, instalador 7/7 y py_compile. No hay compilación ni prueba en
+  Minecraft de este cambio; la CI anterior no lo cubre. Sin bump ni release.
+  Se reconcilió HEAD local con `0aa6a25` en la misma rama: antes se verificó
+  que solo diferían los ocho archivos de esta continuación, sin cambios en
+  staging ni archivos faltantes/adicionales. Un reset mixed actualizó solo
+  rama/índice; se comprobó SHA-256 de los 222 archivos antes/después para
+  acreditar que el workspace se conservó byte por byte.
+
 - **Última publicación verificada: GripeVerde v0.401.0**, tag dirigido a
   `e0f845007681e92e747e04127169f483e159456b`; JAR de 10.855.632 bytes, SHA-256
   `dd37d443b7307c1b3d0d09fc5befdaee6d1dd887bfca002d6e7bc3670ef0ee88`. El CI

@@ -490,6 +490,15 @@ def check_pack_selection_single_render(path, clean):
         line = clean[:line_start].count(chr(10)) + 1
         return [(path, line,
                  'Packs: respetar la zona de texto vanilla de 157 px y su descripción extendida')]
+    if ('textX, rowTop + 4,' not in rows_paint
+            or 'textX, rowTop + 15,' not in rows_paint
+            or 'rowBottom - rowTop >= 24' not in rows_paint
+            or 'if (drawBottom <= drawTop) continue;' not in rows_paint
+            or 'g.fill(x1 + 3, rowBottom - 1, x2 - 3, rowBottom,' not in rows_paint
+            or re.search(r'textX\s*,\s*drawTop\s*\+', rows_paint)):
+        line = clean[:rows_start].count(chr(10)) + 1
+        return [(path, line,
+                 'Packs: anclar texto y separador a la fila real, no al borde del viewport')]
     mouse_handler = re.search(
         r'\b(?:public|protected)\s+boolean\s+mouse(?:Clicked|Released|Dragged|Scrolled)\s*\(', clean)
     if mouse_handler:

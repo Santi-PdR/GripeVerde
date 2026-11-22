@@ -2,6 +2,18 @@
 
 Actualizado: 2026-11-13
 
+### Continuación local posterior a `0aa6a25`
+
+- Paquetes mantiene texto y separador en las coordenadas reales de la fila
+  al recortar por scroll. No recalcula el origen del texto con `drawTop` ni
+  oculta toda la fila cuando solo quedan unos píxeles visibles; usa el scissor.
+- `tools/test_list_render_guards.py`: 12/12, incluyendo mutaciones de las
+  cinco condiciones de recorte y el modelo de 4.536 casos antes ejecutado
+  de forma auxiliar. Conectado al workflow activo y a la plantilla de CI.
+- Pasan espejos 8/8, lint (72 Java), gate 7/7, instalador 7/7 y py_compile.
+  Este delta aún no compiló en CI ni se probó en Minecraft; la ejecución
+  verde de `0aa6a25` no lo cubre. No cambia la versión ni el release.
+
 ## Proyecto y reglas de trabajo
 
 - Repositorio: [Santi-PdR/GripeVerde](https://github.com/Santi-PdR/GripeVerde), público.

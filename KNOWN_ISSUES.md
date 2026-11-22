@@ -9,6 +9,15 @@ que una seccion posterior lo mencione expresamente.
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
+- **Candidato local posterior a `0aa6a25`:** al hacer scroll, las filas
+  parcialmente visibles anclaban el texto a `drawTop`, desplazándolo respecto
+  del icono; el umbral de altura visible también ocultaba texto antes de tiempo.
+  Ahora texto y separador usan las coordenadas reales de la fila y el scissor
+  hace el recorte. Pruebas estáticas de listas: 12/12 (incluido modelo de 4.536
+  casos), conectadas al CI. Sin compilación ni prueba en Minecraft de este
+  último cambio; no publicado. No cambia el despacho de ratón ni confirma
+  resueltos los clics fantasma.
+
 - **Última publicación verificada:** `v0.401.0`, tag dirigido al commit
   `e0f845007681e92e747e04127169f483e159456b`; JAR de 10.855.632 bytes, SHA-256
   `dd37d443b7307c1b3d0d09fc5befdaee6d1dd887bfca002d6e7bc3670ef0ee88`. El CI

@@ -51,6 +51,8 @@ jobs:
       # repetidas y sentencias cortadas antes de gastar dos minutos de Gradle.
       - name: Lint Java structure
         run: python3 tools/lint_java.py
+      - name: Test list rendering guards
+        run: python3 tools/test_list_render_guards.py
       - name: Test release publishing gate
         run: python3 tools/ci/test_release_gate.py
       - name: Test PowerShell installer safety

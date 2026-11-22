@@ -173,7 +173,7 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
                 if (rowBottom < top) continue;
                 int drawTop = Math.max(rowTop, top);
                 int drawBottom = Math.min(rowBottom, bottom);
-                if (drawBottom - drawTop < 12) continue;
+                if (drawBottom <= drawTop) continue;
 
                 Object child = children.get(i);
                 String title = "";
@@ -213,13 +213,15 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
                     g.fill(Math.max(x1, left - 9), drawTop, Math.min(x2, right + 9),
                         drawBottom, 0x22F3E7C8);
                 }
+                // El texto sigue a la fila, no al borde recortado del viewport.
+                // El scissor oculta los glifos fuera de pantalla sin desplazarlos.
                 g.drawString(this.font, DiaryChrome.fitCached(this.font, title, textW),
-                    textX, drawTop + 4, 0xFF1A1108, false);
-                if (!sub.isEmpty() && drawBottom - drawTop >= 24) {
+                    textX, rowTop + 4, 0xFF1A1108, false);
+                if (!sub.isEmpty() && rowBottom - rowTop >= 24) {
                     g.drawString(this.font, DiaryChrome.fitCached(this.font, sub, textW),
-                        textX, drawTop + 15, 0xFF6B5533, false);
+                        textX, rowTop + 15, 0xFF6B5533, false);
                 }
-                g.fill(x1 + 3, drawBottom - 1, x2 - 3, drawBottom, 0x2E6B5533);
+                g.fill(x1 + 3, rowBottom - 1, x2 - 3, rowBottom, 0x2E6B5533);
             }
         } finally {
             if (scissored) {
