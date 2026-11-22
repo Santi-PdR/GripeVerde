@@ -180,6 +180,7 @@ public class DiaryDirectJoinScreen extends Screen {
                         && mouseY >= this.recentY - 2 && mouseY <= this.recentY + 11) {
                     try {
                         this.ipEdit.setValue(this.recentShown.get(i));
+                        this.setFocused(this.ipEdit);
                         this.ipEdit.setFocused(true);
                         com.eternalcraft.gripeverde.client.audio.UiSounds.type();
                         updateSelectButton();

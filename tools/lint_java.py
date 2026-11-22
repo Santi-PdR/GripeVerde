@@ -23,6 +23,8 @@ interactiva de la hoja de mundos:
      que Enter no siga escribiendo en el buscador.
  12. La inspeccion del reloj en la portada es modal: clics y teclas la cierran
      sin activar controles ocultos.
+ 13. Al elegir una direccion reciente, Unirse vuelve a dar el foco de teclado
+     al campo de direccion.
 
 Uso: python3 tools/lint_java.py [rutas...]
 Sale con codigo 1 si encuentra algo.
@@ -301,6 +303,39 @@ def check_title_watch_inspection_modal(path, clean):
             line = clean[:start].count(chr(10)) + 1 if start >= 0 else 1
             return [(path, line,
                      'Portada: la inspeccion debe cerrar y consumir la entrada de ' + label)]
+    return []
+
+
+def check_direct_join_recent_address_focus(path, clean):
+    """Tocar una direccion recordada debe enfocar el campo de texto completo."""
+    if not path.replace(chr(92), '/').endswith('/client/screens/DiaryDirectJoinScreen.java'):
+        return []
+    signature = 'public boolean mouseClicked(double mouseX, double mouseY, int button)'
+    start = clean.find(signature)
+    if start < 0:
+        return [(path, 1, 'Unirse: falta el manejador de direcciones recientes')]
+    opening = clean.find('{', start + len(signature))
+    depth = 0
+    closing = -1
+    for index in range(opening, len(clean)):
+        if clean[index] == '{':
+            depth += 1
+        elif clean[index] == '}':
+            depth -= 1
+            if depth == 0:
+                closing = index + 1
+                break
+    handler = clean[start:closing] if closing >= 0 else ''
+    value = handler.find('this.ipEdit.setValue(this.recentShown.get(i));')
+    screen_focus = handler.find('this.setFocused(this.ipEdit);', value)
+    widget_focus = handler.find('this.ipEdit.setFocused(true);', value)
+    update_state = handler.find('updateSelectButton();', value)
+    consumed = handler.find('return true;', value)
+    if (value < 0 or screen_focus < value or widget_focus < screen_focus
+            or update_state < widget_focus or consumed < update_state):
+        line = clean[:start].count(chr(10)) + 1
+        return [(path, line,
+                 'Unirse: seleccionar una direccion reciente debe sincronizar foco y validacion')]
     return []
 
 
@@ -723,6 +758,7 @@ def main(argv):
         problems += check_world_search_keys(f, clean)
         problems += check_world_click_suppression_focus(f, clean)
         problems += check_title_watch_inspection_modal(f, clean)
+        problems += check_direct_join_recent_address_focus(f, clean)
         problems += check_world_archive_visibility(f, clean)
         problems += check_world_icon_cache_lifecycle(f, clean)
         problems += check_world_icon_fits_box(f, clean)
