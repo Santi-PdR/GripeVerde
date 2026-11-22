@@ -2,11 +2,17 @@
 
 ## Addendum operativo actual (2026-11-13)
 
-- Última versión publicada: **GripeVerde v0.394.0**. Release y JAR verificados:
-  10.816.790 bytes, SHA-256
-  `351352ca283cecd3941666f554bd915f8ac1e1aa61aadec5679757f93bc5072d`.
-  El CI `44932587727` pasó en `build` y `publish`.
-- La v0.394.0 corrige el foco del buscador de Mundos: Enter y Supr se entregan
+- Última versión publicada: **GripeVerde v0.395.0**. Release y JAR verificados:
+  10.831.158 bytes, SHA-256
+  `a09ad857a1f07600845683d242a05018f98a54782f15fcc7c07daf1152b04e21`.
+  El CI `44982484624` pasó en `build` y `publish`.
+- La v0.395.0 conserva el despacho vanilla de los clics de servidores/LAN,
+  devuelve el foco a Mundos al consumir un doble clic y hace modal el cierre de
+  inspección del reloj. Unirse directamente enfoca el campo al elegir una
+  dirección reciente y recorta la etiqueta visible sin perder la dirección
+  completa. También refresca y limita los iconos de servidores/mundos, libera
+  texturas obsoletas y descarta escaneos viejos del archivo de mundos.
+- La v0.394.0 corrigió el foco del buscador de Mundos: Enter y Supr se entregan
   al campo en vez de actuar sobre el mundo seleccionado; las flechas vuelven a
   navegar la lista al salir del campo. También se añadió Maven Central como
   fuente canónica de dependencias auxiliares y `build.yml` fija el tag al SHA
@@ -14,10 +20,11 @@
 - La v0.393.0 corrigió capas/clics de Multijugador y Mundos, conservó los estilos
   nativos de tooltip, limitó JourneyMap al canto del minimapa y su rótulo de
   coordenadas, y vació los buffers antes de repintar las listas de Paquetes.
-- **Pendiente de revisión en Minecraft:** las correcciones 0.393.0 y el nuevo
-  comportamiento de búsqueda de Mundos aún no se han probado visual o
-  interactivamente en el cliente. El CI no sustituye esa comprobación; el
-  checklist concreto vive en `docs/CONTEXTO_MODMENU.md`.
+- **Pendiente de revisión en Minecraft:** las correcciones de clics en
+  servidores/LAN, búsqueda y doble clic de Mundos, inspección del reloj y
+  direcciones recientes aún no se han probado visual o interactivamente en el
+  cliente. El CI no sustituye esa comprobación; el checklist concreto vive en
+  `docs/CONTEXTO_MODMENU.md`.
 - Las reglas de siempre siguen en pie: mod **solo de cliente**, sin bloques,
   sin ítems, sin gameplay ni resourcepacks; la identidad visual se hace con
   Java y los render/widgets propios.
