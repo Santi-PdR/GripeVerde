@@ -10,7 +10,13 @@
   cargar; el siguiente guardado explícito usa los atajos normalizados. CopyL
   sigue siendo de solo lectura. La suite de carga añade archivos propios y
   CopyL con duplicados de teclado/ratón y apertura no predeterminada.
-  Validación Java pendiente de CI; sin bump/release ni prueba en Minecraft.
+  El candidato `5187caf` compiló y pasó todas las suites en
+  [CI 45048410532](https://github.com/Santi-PdR/GripeVerde/actions/runs/45048410532),
+  incluido `verifyDispatchLoadingRegression` y las pruebas anteriores de
+  persistencia, autoguardado, direcciones y geometría. Artefacto actual
+  `GripeVerde-jar` ID `14764642088`. Sin JDK local ni prueba en Minecraft.
+  Sin bump/release: asset v0.401.0 reconsultado tras publish con el mismo
+  ID/tamaño/digest. Pendiente probar carga/importación y atajos en cliente.
 
 - **Carga parcial de CEDA/CopyL, posterior a `c578e0e`:** valores nulos,
   objetos o arrays donde se esperaba un campo escalar, y ranuras que no son
