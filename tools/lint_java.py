@@ -235,22 +235,46 @@ def check_world_icon_cache_lifecycle(path, clean):
         line = clean[:init_start].count(chr(10)) + 1
         return [(path, line, 'Mundos: limpiar el cache de iconos al abrir la hoja')]
 
+    release_start = clean.find('private void releaseWorldIcon(')
     prune_start = clean.find('private boolean pruneWorldIconCache()')
     icon_start = clean.find('private net.minecraft.resources.ResourceLocation worldIcon(', prune_start)
-    if prune_start < 0 or icon_start < 0:
+    if min(release_start, prune_start, icon_start) < 0 or release_start >= prune_start:
         return [(path, 1, 'Mundos: falta el liberador del cache de iconos')]
+    release = clean[release_start:prune_start]
     prune = clean[prune_start:icon_start]
-    required = (
-        'liveWorlds.contains(folder)',
+    release_tokens = (
         'WORLD_ICONS.remove(folder)',
         'WORLD_ICON_SIZES.remove(folder)',
+        'WORLD_ICON_FINGERPRINTS.remove(folder)',
         'getTextureManager().release(icon)',
+    )
+    prune_tokens = (
+        'liveWorlds.contains(folder)',
+        'worldIconFingerprint(saves.resolve(folder).resolve(""))',
+        'cached.equals(current)',
+        'releaseWorldIcon(folder)',
         'WORLD_ICONS_ABSENT.clear()',
     )
-    if any(token not in prune for token in required):
+    if (any(token not in release for token in release_tokens)
+            or any(token not in prune for token in prune_tokens)):
         line = clean[:prune_start].count(chr(10)) + 1
         return [(path, line,
-                 'Mundos: liberar texturas borradas y reintentar iconos ausentes')]
+                 'Mundos: liberar iconos borrados o modificados y reintentar ausentes')]
+    if 'WORLD_ICON_FINGERPRINTS.put(levelId, source.fingerprint())' not in clean:
+        line = clean[:prune_start].count(chr(10)) + 1
+        return [(path, line, 'Mundos: guardar la huella de cada icono cargado')]
+    fingerprint_start = clean.find('private static WorldIconFingerprint worldIconFingerprint(')
+    fingerprint_end = clean.find('private static WorldIconData readWorldIconData(', fingerprint_start)
+    if min(fingerprint_start, fingerprint_end) < 0:
+        return [(path, 1, 'Mundos: falta la huella de modificación del icono')]
+    fingerprint = clean[fingerprint_start:fingerprint_end]
+    if any(token not in fingerprint for token in (
+            'Files.readAttributes(path,',
+            'attributes.isRegularFile()',
+            'attributes.size()',
+            'attributes.lastModifiedTime()')):
+        line = clean[:fingerprint_start].count(chr(10)) + 1
+        return [(path, line, 'Mundos: guardar tamaño y fecha de icon.png')]
     return []
 
 
@@ -296,13 +320,15 @@ def check_world_icon_input_guard(path, clean):
         return [(path, 1, 'Mundos: falta la validación del icon.png')]
     reader = clean[read_start:read_end]
     required = (
-        'fileBytes > MAX_WORLD_ICON_BYTES',
+        'before.size() > MAX_WORLD_ICON_BYTES',
         'in.readNBytes(MAX_WORLD_ICON_BYTES + 1)',
+        'bytes.length != before.size()',
         '(bytes[0] & 0xFF) != 0x89',
         'readWorldPngInt(bytes, 8) != 13',
         'readWorldPngInt(bytes, 16)',
         'readWorldPngInt(bytes, 20)',
         'MAX_WORLD_ICON_DIMENSION',
+        '!before.equals(after)',
     )
     if any(token not in reader for token in required):
         line = clean[:read_start].count(chr(10)) + 1

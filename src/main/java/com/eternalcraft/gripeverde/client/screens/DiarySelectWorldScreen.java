@@ -69,13 +69,18 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         = new java.util.HashMap<>();
     private static final java.util.Map<String, WorldIconSize> WORLD_ICON_SIZES
         = new java.util.HashMap<>();
+    private static final java.util.Map<String, WorldIconFingerprint> WORLD_ICON_FINGERPRINTS
+        = new java.util.HashMap<>();
     private static final java.util.concurrent.atomic.AtomicLong WORLD_ICON_TEXTURE_IDS
         = new java.util.concurrent.atomic.AtomicLong();
     private static final java.util.Set<String> WORLD_ICONS_ABSENT = new java.util.HashSet<>();
     private static final int MAX_WORLD_ICON_BYTES = 1024 * 1024;
     private static final int MAX_WORLD_ICON_DIMENSION = 512;
     private record WorldIconSize(int width, int height) { }
-    private record WorldIconData(byte[] bytes, int width, int height) { }
+    private record WorldIconFingerprint(long size,
+                                        java.nio.file.attribute.FileTime modifiedTime) { }
+    private record WorldIconData(byte[] bytes, int width, int height,
+                                 WorldIconFingerprint fingerprint) { }
     private int iconsThisFrame;
     private boolean worldIconCachePruned;
     // Recuerda el ultimo clic real sobre una fila para detener solamente el
@@ -1181,12 +1186,30 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             && mouseX >= this.ledgerLeft() && mouseX <= this.ledgerRight();
     }
 
+    private void releaseWorldIcon(String folder) {
+        net.minecraft.resources.ResourceLocation icon = WORLD_ICONS.remove(folder);
+        WORLD_ICON_SIZES.remove(folder);
+        WORLD_ICON_FINGERPRINTS.remove(folder);
+        if (icon != null && this.minecraft != null) {
+            try {
+                this.minecraft.getTextureManager().release(icon);
+            } catch (Throwable ignored) {
+            }
+        }
+    }
+
     /**
-     * Evita retener texturas dinámicas de mundos que ya se borraron. Al abrir
-     * otra vez la hoja, los iconos ausentes se vuelven a comprobar una vez.
+     * Libera iconos de mundos borrados o reemplazados. Al reabrir, los iconos
+     * ausentes se vuelven a comprobar y los modificados se cargan de nuevo.
      */
     private boolean pruneWorldIconCache() {
         if (this.vanillaList == null || this.minecraft == null) return false;
+        final java.nio.file.Path saves;
+        try {
+            saves = this.minecraft.gameDirectory.toPath().resolve("saves");
+        } catch (Throwable ignored) {
+            return false;
+        }
         java.util.Set<String> liveWorlds = new java.util.HashSet<>();
         try {
             for (Object entry : this.vanillaList.children()) {
@@ -1198,15 +1221,11 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             return false;
         }
         for (String folder : new ArrayList<>(WORLD_ICONS.keySet())) {
-            if (liveWorlds.contains(folder)) continue;
-            net.minecraft.resources.ResourceLocation icon = WORLD_ICONS.remove(folder);
-            WORLD_ICON_SIZES.remove(folder);
-            if (icon != null) {
-                try {
-                    this.minecraft.getTextureManager().release(icon);
-                } catch (Throwable ignored) {
-                }
-            }
+            WorldIconFingerprint cached = WORLD_ICON_FINGERPRINTS.get(folder);
+            WorldIconFingerprint current = liveWorlds.contains(folder)
+                ? worldIconFingerprint(saves.resolve(folder).resolve("icon.png")) : null;
+            if (cached != null && cached.equals(current)) continue;
+            releaseWorldIcon(folder);
         }
         WORLD_ICONS_ABSENT.clear();
         return true;
@@ -1239,18 +1258,32 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         }
     }
 
+    private static WorldIconFingerprint worldIconFingerprint(java.nio.file.Path path) {
+        if (path == null) return null;
+        try {
+            java.nio.file.attribute.BasicFileAttributes attributes =
+                java.nio.file.Files.readAttributes(path,
+                    java.nio.file.attribute.BasicFileAttributes.class);
+            if (!attributes.isRegularFile()) return null;
+            return new WorldIconFingerprint(attributes.size(), attributes.lastModifiedTime());
+        } catch (Throwable ignored) {
+            return null;
+        }
+    }
+
     /** Lee un PNG de mundo acotado y valida sus dimensiones antes de decodificarlo. */
     private static WorldIconData readWorldIconData(java.nio.file.Path path) {
         if (path == null) return null;
         try {
-            if (!java.nio.file.Files.isRegularFile(path)) return null;
-            long fileBytes = java.nio.file.Files.size(path);
-            if (fileBytes < 24L || fileBytes > MAX_WORLD_ICON_BYTES) return null;
+            WorldIconFingerprint before = worldIconFingerprint(path);
+            if (before == null || before.size() < 24L
+                    || before.size() > MAX_WORLD_ICON_BYTES) return null;
             byte[] bytes;
             try (java.io.InputStream in = java.nio.file.Files.newInputStream(path)) {
                 bytes = in.readNBytes(MAX_WORLD_ICON_BYTES + 1);
             }
             if (bytes.length < 24 || bytes.length > MAX_WORLD_ICON_BYTES
+                    || bytes.length != before.size()
                     || (bytes[0] & 0xFF) != 0x89 || bytes[1] != 'P' || bytes[2] != 'N'
                     || bytes[3] != 'G' || (bytes[4] & 0xFF) != 0x0D
                     || (bytes[5] & 0xFF) != 0x0A || (bytes[6] & 0xFF) != 0x1A
@@ -1266,7 +1299,9 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                     || height > MAX_WORLD_ICON_DIMENSION) {
                 return null;
             }
-            return new WorldIconData(bytes, width, height);
+            WorldIconFingerprint after = worldIconFingerprint(path);
+            if (!before.equals(after)) return null;
+            return new WorldIconData(bytes, width, height, before);
         } catch (Throwable ignored) {
             return null;
         }
@@ -1321,9 +1356,11 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 .register(rl, new net.minecraft.client.renderer.texture.DynamicTexture(image));
             WORLD_ICONS.put(levelId, rl);
             WORLD_ICON_SIZES.put(levelId, new WorldIconSize(imageWidth, imageHeight));
+            WORLD_ICON_FINGERPRINTS.put(levelId, source.fingerprint());
             return rl;
         } catch (Throwable ignored) {
             WORLD_ICON_SIZES.remove(levelId);
+            WORLD_ICON_FINGERPRINTS.remove(levelId);
             WORLD_ICONS_ABSENT.add(levelId);
             return null;
         }
