@@ -623,7 +623,23 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     }
 
     private void onRefresh() {
+        invalidateServerIconCache();
         refreshList();
+    }
+
+    private void invalidateServerIconCache() {
+        if (this.minecraft != null) {
+            for (net.minecraft.resources.ResourceLocation icon
+                    : new java.util.ArrayList<>(SERVER_ICONS.values())) {
+                try {
+                    this.minecraft.getTextureManager().release(icon);
+                } catch (Throwable ignored) {
+                }
+            }
+        }
+        SERVER_ICONS.clear();
+        SERVER_ICON_SIZES.clear();
+        SERVER_ICON_RETRY_AT.clear();
     }
 
     private void onCancel() {

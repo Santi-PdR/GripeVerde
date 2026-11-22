@@ -349,6 +349,22 @@ def check_server_icon_safety_and_lifecycle(path, clean):
         line = clean[:prune_start].count(chr(10)) + 1
         return [(path, line, 'Multiplayer: liberar caches de servidores borrados')]
 
+    refresh_start = clean.find('private void onRefresh()')
+    invalidate_start = clean.find('private void invalidateServerIconCache()', refresh_start)
+    cancel_start = clean.find('private void onCancel()', invalidate_start)
+    if min(refresh_start, invalidate_start, cancel_start) < 0:
+        return [(path, 1, 'Multiplayer: refrescar favicon al actualizar la lista')]
+    refresh = clean[refresh_start:invalidate_start]
+    invalidate = clean[invalidate_start:cancel_start]
+    if (refresh.find('invalidateServerIconCache();') < 0
+            or refresh.find('invalidateServerIconCache();') > refresh.find('refreshList();')
+            or 'SERVER_ICONS.clear()' not in invalidate
+            or 'SERVER_ICON_SIZES.clear()' not in invalidate
+            or 'SERVER_ICON_RETRY_AT.clear()' not in invalidate
+            or 'getTextureManager().release(icon)' not in invalidate):
+        line = clean[:refresh_start].count(chr(10)) + 1
+        return [(path, line, 'Multiplayer: invalidar texturas antes de volver a consultar servidores')]
+
     header_start = clean.find('private static boolean hasSafeServerIconHeader(byte[] bytes)')
     header_end = clean.find('private static int readPngInt(', header_start)
     icon_start = clean.find('private net.minecraft.resources.ResourceLocation serverIcon(', header_end)
