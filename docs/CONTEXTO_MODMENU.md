@@ -2,6 +2,17 @@
 
 Actualizado: 2026-11-13
 
+- **Foco y overlays en atajos CEDA, posterior a `01bea15`:** el sondeo de
+  atajos se suspende si la ventana no está activa o hay un overlay de carga.
+  Se reinicia el estado de flancos, también sin cliente/ventana, para no
+  interpretar una tecla/botón ya mantenido al regresar como pulsación nueva.
+  Debe soltarse y pulsarse otra vez. No cambia teclas, options.txt ni el envío
+  explícito desde la ficha. Nueva suite `tools/test_dispatch_hotkeys.py` con
+  17 escenarios que ejecutan métodos Java reales extraídos usando dobles de
+  cliente/GLFW, más 3 guardas estructurales. Se exige JDK 17 en ambos workflows.
+  Validación local pasa; compilación/ejecución Java pendientes de CI. No es
+  prueba del foco del SO, input nativo, eventos Minecraft ni red. Sin bump/release.
+
 - **Atajos duplicados al cargar CEDA, posterior a `042bcf6`:** se aplican
   también al cargar/importar las invariantes del editor: una sola ranura por
   tecla o botón, y la tecla de apertura reservada. En archivos con duplicados

@@ -51,6 +51,8 @@ jobs:
       # repetidas y sentencias cortadas antes de gastar dos minutos de Gradle.
       - name: Lint Java structure
         run: python3 tools/lint_java.py
+      - name: Test dispatch hotkey focus and edges
+        run: python3 tools/test_dispatch_hotkeys.py --require-java
       - name: Test dispatch save scheduling
         run: python3 tools/test_dispatch_save.py --require-java
       - name: Test language screen state

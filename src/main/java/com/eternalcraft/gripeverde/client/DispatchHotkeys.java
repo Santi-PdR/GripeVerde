@@ -52,9 +52,15 @@ public final class DispatchHotkeys {
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft == null || minecraft.getWindow() == null) return;
+        if (minecraft == null || minecraft.getWindow() == null) {
+            reset();
+            return;
+        }
 
-        if (suspendedByCopyL()) {
+        // No sondear teclas fuera del juego ni durante una recarga superpuesta.
+        // reset hace que al regresar una tecla ya mantenida sea el estado base,
+        // no una pulsacion nueva: hay que soltarla y volverla a pulsar.
+        if (suspendedByCopyL() || !minecraft.isWindowActive() || minecraft.getOverlay() != null) {
             reset();
             return;
         }
