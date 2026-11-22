@@ -21,6 +21,8 @@ interactiva de la hoja de mundos:
      clics de servidor y LAN, sin falsos dobles clics en los márgenes.
  11. Mundos devuelve el foco a la lista al consumir un doble clic de fila, para
      que Enter no siga escribiendo en el buscador.
+ 12. La inspeccion del reloj en la portada es modal: clics y teclas la cierran
+     sin activar controles ocultos.
 
 Uso: python3 tools/lint_java.py [rutas...]
 Sale con codigo 1 si encuentra algo.
@@ -255,6 +257,50 @@ def check_world_click_suppression_focus(path, clean):
             'this.vanillaList.setFocused(true)')):
         line = clean[:focus_start].count(chr(10)) + 1
         return [(path, line, 'Mundos: desenfocar el buscador y enfocar la lista')]
+    return []
+
+
+def check_title_watch_inspection_modal(path, clean):
+    """La inspeccion del reloj no debe filtrar eventos a botones invisibles."""
+    if not path.replace(chr(92), '/').endswith('/client/screens/DiaryTitleScreen.java'):
+        return []
+
+    def method_body(signature):
+        start = clean.find(signature)
+        if start < 0:
+            return '', -1
+        opening = clean.find('{', start + len(signature))
+        if opening < 0:
+            return '', start
+        depth = 0
+        for index in range(opening, len(clean)):
+            if clean[index] == '{':
+                depth += 1
+            elif clean[index] == '}':
+                depth -= 1
+                if depth == 0:
+                    return clean[start:index + 1], start
+        return '', start
+
+    checks = (
+        ('public boolean keyPressed(int keyCode, int scanCode, int modifiers)',
+         'GLFW_KEY_S', 'teclado'),
+        ('public boolean charTyped(char codePoint, int modifiers)',
+         'super.charTyped(', 'texto'),
+        ('public boolean mouseClicked(double mouseX, double mouseY, int button)',
+         'if (button == 0)', 'raton'),
+    )
+    for signature, later_action, label in checks:
+        method, start = method_body(signature)
+        guard = method.find('PocketWatchRenderer.isInspecting()')
+        close = method.find('PocketWatchRenderer.closeInspection()', guard)
+        consumed = method.find('return true;', close)
+        action = method.find(later_action, consumed if consumed >= 0 else guard)
+        if (not method or start < 0 or guard < 0 or close < 0 or consumed < close
+                or action < 0 or guard > action or consumed > action):
+            line = clean[:start].count(chr(10)) + 1 if start >= 0 else 1
+            return [(path, line,
+                     'Portada: la inspeccion debe cerrar y consumir la entrada de ' + label)]
     return []
 
 
@@ -676,6 +722,7 @@ def main(argv):
         problems += check_shadow(f, clean)
         problems += check_world_search_keys(f, clean)
         problems += check_world_click_suppression_focus(f, clean)
+        problems += check_title_watch_inspection_modal(f, clean)
         problems += check_world_archive_visibility(f, clean)
         problems += check_world_icon_cache_lifecycle(f, clean)
         problems += check_world_icon_fits_box(f, clean)

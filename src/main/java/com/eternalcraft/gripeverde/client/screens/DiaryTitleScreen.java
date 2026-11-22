@@ -518,6 +518,12 @@ public class DiaryTitleScreen extends Screen {
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         lastInteractionMs = System.currentTimeMillis();
+        // La inspeccion es modal: la primera tecla la cierra sin activar controles
+        // invisibles que no se dibujan mientras el reloj ocupa la portada.
+        if (com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.isInspecting()) {
+            com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.closeInspection();
+            return true;
+        }
         // v0.269.0: fuera la tecla del modo cine. La unica llave sigue siendo
         // Ctrl+S; el resto se pide a los botones.
         // v0.265.0: Ctrl+S vuelve a abrir el registro de mundos propios. Sigue
@@ -536,6 +542,10 @@ public class DiaryTitleScreen extends Screen {
     @Override
     public boolean charTyped(char codePoint, int modifiers) {
         lastInteractionMs = System.currentTimeMillis();
+        if (com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.isInspecting()) {
+            com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.closeInspection();
+            return true;
+        }
         // v0.184.0: fuera el huevo de teclear cifras y fechas en la portada.
         // La vigilia ya no escucha lo que se escribe; los unicos secretos que
         // quedan viven en el fondo (imagenes y rincones de la avenida).
@@ -1161,18 +1171,22 @@ public class DiaryTitleScreen extends Screen {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         lastInteractionMs = System.currentTimeMillis();
 
+        if (com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.isInspecting()) {
+            if (button == 0) {
+                try {
+                    com.eternalcraft.gripeverde.client.audio.MenuAmbience.answerWhisper();
+                } catch (Throwable ignored) {
+                }
+            }
+            com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.closeInspection();
+            return true;
+        }
 
         if (button == 0) {
             try {
                 // ── v0.16.0: la vigilia responde ──
                 // Un gesto mientras el susurro sigue en el aire: alguien contesta.
                 com.eternalcraft.gripeverde.client.audio.MenuAmbience.answerWhisper();
-
-                // El reloj en la mano se cierra con cualquier gesto.
-                if (com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.isInspecting()) {
-                    com.eternalcraft.gripeverde.client.render.PocketWatchRenderer.closeInspection();
-                    return true;
-                }
                 int w = this.width, h = this.height;
                 boolean overButton = overAnyButton(mouseX, mouseY);
 
