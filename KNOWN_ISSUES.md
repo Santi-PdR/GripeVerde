@@ -9,6 +9,18 @@ que una seccion posterior lo mencione expresamente.
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
+- **Contador de conocidas en Multijugador, posterior a `8c8c2b8`:** la
+  caché de cabecera omitía el tamaño del historial reciente. Al volver de una
+  conexión directa podía conservar el valor antiguo mientras no cambiaran
+  servidores guardados, idioma, fuente o ancho. Se incluye conocidas en la
+  clave y se consulta el tamaño de la lista en memoria antes de refrescar.
+  La composición y ajuste del texto se extraen a `refreshServerCountCache`
+  sin cambiar textos, reglas de espacio ni la lista vanilla. Nueva suite
+  `tools/test_server_count.py`: 10 escenarios de método Java real con fuente
+  simulada y 3 guardas estructurales; ambos workflows exigen JDK 17.
+  Compilación/Java pendientes de CI. No hay prueba de render, cliente o red.
+  Sin bump/release ni cambios en servers.dat.
+
 - **Historial de servidores recientes, posterior a `f4c89b4`:** devuelve
   instantáneas inmutables (sin exponer la caché mutable), y lee en streaming
   hasta tres entradas únicas, en vez de cargar todo el archivo. `push` rechaza

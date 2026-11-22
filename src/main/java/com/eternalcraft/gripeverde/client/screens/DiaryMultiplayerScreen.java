@@ -919,10 +919,46 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
     private String countText = "";
     private int countWidth = 0;
     private int countSrc = -1;
+    private int countKnownSrc = -1;
     /** v0.328.0: hueco medido del ultimo recuento, para invalidar la cache. */
     private int countLimit = Integer.MIN_VALUE;
     private boolean countEnglish = false;
     private net.minecraft.client.gui.Font countFont;
+
+    /** Todas las entradas que afectan al texto deben formar parte de la clave. */
+    private void refreshServerCountCache(int count, int known, int limit, boolean english) {
+        if (this.countSrc == count && this.countKnownSrc == known && this.countEnglish == english
+                && this.countFont == this.font && this.countLimit == limit) return;
+        if (count <= 0) {
+            this.countText = english ? "none yet" : "ninguno anotado";
+        } else if (count == 1) {
+            this.countText = english ? "1 entry" : "1 anotado";
+        } else {
+            this.countText = english ? count + " entries" : count + " anotados";
+        }
+        // v0.313.0: cuantas de esas puertas ya se visitaron.
+        // v0.318.0: si el añadido no cabe entre el titulo y la chapa, se
+        // queda fuera. Antes se metia encima del titulo y se leia mezclado.
+        String base = this.countText;
+        String full = base;
+        if (known > 0) {
+            full = base + "  \u00b7  " + known
+                + (english ? " known" : " conocidas");
+        }
+        if (this.font.width(full) <= limit) {
+            this.countText = full;
+        } else if (this.font.width(base) <= limit) {
+            this.countText = base;
+        } else {
+            this.countText = "";
+        }
+        this.countWidth = this.font.width(this.countText);
+        this.countSrc = count;
+        this.countEnglish = english;
+        this.countFont = this.font;
+        this.countLimit = limit;
+        this.countKnownSrc = known;
+    }
 
     private void drawServerCount(GuiGraphics gfx, int panelX, int panelW, int titleY) {
         int count = 0;
@@ -931,50 +967,18 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         } catch (Throwable ignored) {}
         boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
         // v0.201.0: la frase y su ancho se armaban por cuadro; ahora sólo cuando
-        // cambia el numero de servidores anotados o el idioma.
+        // cambia el numero de servidores anotados/conocidos o el idioma.
         // v0.328.0: el hueco disponible tambien entra en la cuenta. Si no, al
         // cambiar el ancho de la ventana el recuento se quedaba con el texto
         // viejo (a veces vacio) hasta que cambiara el numero de puestos.
         int hueco = (panelX + panelW - 74)
             - Math.max(panelX + 20,
                 this.headerTitleX + this.font.width(this.headerTitle) + 10);
-        if (this.countSrc != count || this.countEnglish != english || this.countFont != this.font
-                || this.countLimit != hueco) {
-            if (count <= 0) {
-                this.countText = english ? "none yet" : "ninguno anotado";
-            } else if (count == 1) {
-                this.countText = english ? "1 entry" : "1 anotado";
-            } else {
-                this.countText = english ? count + " entries" : count + " anotados";
-            }
-            // v0.313.0: cuantas de esas puertas ya se visitaron.
-            // v0.318.0: si el añadido no cabe entre el titulo y la chapa, se
-            // queda fuera. Antes se metia encima del titulo y se leia mezclado.
-            String base = this.countText;
-            String full = base;
-            try {
-                int known = com.eternalcraft.gripeverde.client.integration
-                    .RecentAddresses.list().size();
-                if (known > 0) {
-                    full = base + "  \u00b7  " + known
-                        + (english ? " known" : " conocidas");
-                }
-            } catch (Throwable ignored) {
-            }
-            int limit = hueco;
-            if (this.font.width(full) <= limit) {
-                this.countText = full;
-            } else if (this.font.width(base) <= limit) {
-                this.countText = base;
-            } else {
-                this.countText = "";
-            }
-            this.countWidth = this.font.width(this.countText);
-            this.countSrc = count;
-            this.countEnglish = english;
-            this.countFont = this.font;
-            this.countLimit = hueco;
-        }
+        int knownCount = 0;
+        try {
+            knownCount = com.eternalcraft.gripeverde.client.integration.RecentAddresses.list().size();
+        } catch (Throwable ignored) {}
+        this.refreshServerCountCache(count, knownCount, hueco, english);
         String text = this.countText;
         int textW = this.countWidth;
         // v0.241.0: el recuento se corre a la izquierda de la chapa REG. X,
