@@ -2,6 +2,25 @@
 
 Actualizado: 2026-11-13
 
+### DiaryTextField: margen lógico, posterior a `f173ab8`
+
+- El renderer usa x+4 y ancho útil de EditBox; con bordered=false el clic
+  no descontaba esos 4 px y el ancho útil era 8 px mayor que el espacio de
+  texto. Se conserva bordered=true como geometría lógica, también cuando
+  los helpers compartidos invocan setBordered(false). No se dibuja marco
+  vanilla porque renderWidget no llama al renderer padre. Los EditBox vanilla
+  siguen permitiendo su modo sin borde. Fuente contrastada: EditBox 1.20.1,
+  métodos onClick/getInnerWidth, revisión `c129e3e` del repositorio citado.
+- `./gradlew verifyTextFieldGeometryRegression`, incluida en check/build,
+  añade 12 comprobaciones con instancias reales de DiaryTextField/EditBox:
+  constructor, cambio de ancho, helpers, petición de quitar borde y aislamiento
+  entre instancias. Usa fuente nula solo para comprobar geometría; no dibuja,
+  no inyecta clics ni necesita una instancia de Minecraft. Pendiente de CI.
+- Prueba pendiente en cliente: texto largo, clic en cada extremo/interior,
+  selección con Shift y ratón, desplazamiento horizontal y redimensión en
+  Conexión directa/Editar servidor. Contrastar campos vanilla también.
+  No se identifica este desfase como causa de los clics fantasma generales.
+
 ### Direcciones de servidor, posterior a `a1d58c7`
 
 - DiaryChrome valida con `ServerAddress.isValidAddress` y muestra host/puerto
@@ -15,7 +34,8 @@ Actualizado: 2026-11-13
 - `./gradlew verifyServerAddressRegression` ejecuta 38 comprobaciones de los
   helpers reales del mod contra el parser real de Minecraft: DNS/IDN, IPv4,
   IPv6, puertos y readouts en ambos idiomas. No usa DNS, sockets ni renderer.
-  Requerido por check/build. Pendiente de CI; sin JDK local.
+  Requerido por check/build. Aprobado junto al build de `f173ab8` en CI
+  `45042533041`; sin JDK local.
 - Validar en cliente Conexión directa y Editar servidor con IPv4/DNS, IPv6
   con/sin puerto, puerto inválido y espacios exteriores. Revisar estado del
   botón, ayuda de host/puerto y valor guardado; no se hizo esa prueba aquí.

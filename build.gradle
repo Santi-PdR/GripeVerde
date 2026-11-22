@@ -505,6 +505,18 @@ tasks.register('verifyServerAddressRegression', JavaExec) {
     }
 }
 
+tasks.register('verifyTextFieldGeometryRegression', JavaExec) {
+    group = 'verification'
+    description = 'Checks logical padding of DiaryTextField against the actual Minecraft EditBox.'
+    dependsOn tasks.named('testClasses')
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.eternalcraft.gripeverde.client.TextFieldGeometryRegression'
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
 tasks.named('check').configure {
     dependsOn tasks.named('verifyServerAddressRegression')
+    dependsOn tasks.named('verifyTextFieldGeometryRegression')
 }

@@ -27,6 +27,8 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
 - `./gradlew check` y `build` incluyen `verifyServerAddressRegression`:
   38 comprobaciones ejecutan los helpers de direcciones contra el parser real
   de Minecraft sin red ni cliente gráfico. Puede correrse esa tarea sola.
+- También incluyen `verifyTextFieldGeometryRegression`: 12 comprobaciones
+  del margen lógico con widgets reales y sin rendering ni eventos de mouse.
 - **Nunca dos pushes seguidos**: el CI cancela el run anterior por concurrencia.
 - Sin JDK local: la compilación semántica la hace el CI. No instalar Java 17
   en la máquina para publicar.

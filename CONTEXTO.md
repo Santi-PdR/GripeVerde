@@ -2,6 +2,17 @@
 
 ## Addendum operativo actual (2026-11-13)
 
+- **Geometría de DiaryTextField, posterior a `f173ab8`:** el renderer usaba
+  un margen de 4 px pero EditBox tenía bordered=false, haciendo que el ancho
+  editable y la traducción clic/cursor no coincidieran con el dibujo. Se
+  conserva bordered=true como estado lógico (incluidos helpers cosméticos);
+  el renderer propio sigue evitando el fondo/borde vanilla. No cambia los
+  EditBox vanilla. Nueva tarea Gradle `verifyTextFieldGeometryRegression`,
+  requerida por check/build, comprueba 12 casos de ancho lógico reales sin
+  render ni eventos de mouse. Lint/espejos/guardas locales pasan. Compilación
+  y prueba Gradle pendientes de CI; prueba visual/en cliente pendiente.
+  No atribuir a este desfase los reportes generales de clics fantasma.
+
 - **Direcciones de servidor, posterior a `a1d58c7`:** validación y readout
   delegan en ServerAddress de Minecraft, admitiendo IPv6 entre corchetes y
   evitando confundir su último bloque numérico con un puerto. Se rechazan
@@ -9,8 +20,9 @@
   Editar servidor guarda la IP con trim, igual que Conexión directa y que la
   validación. Nueva tarea Gradle `verifyServerAddressRegression`, requerida
   por check/build, ejecuta 38 comprobaciones con el parser real sin red.
-  Chequeos locales pasan; ejecución Gradle pendiente de CI por falta de JDK.
-  Sin bump/release ni prueba de conexión en cliente.
+  Chequeos locales pasan; `f173ab8` compiló y ejecutó las comprobaciones
+  Gradle en CI `45042533041` (sin JDK local). Sin bump/release ni prueba de
+  conexión en cliente.
 
 - **Idiomas, posterior a `d4109ba`:** al reconstruir la pantalla se conserva
   el idioma pendiente y el scroll actual (incluido cero), en lugar de volver

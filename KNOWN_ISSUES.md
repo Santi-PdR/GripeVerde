@@ -9,12 +9,21 @@ que una seccion posterior lo mencione expresamente.
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
+- **Desfase de edición en DiaryTextField (posterior a `f173ab8`):** el margen
+  dibujado de 4 px no coincidía con EditBox sin borde lógico. Se alinea el
+  estado lógico con el renderer y se conserva frente a helpers que quitan
+  el borde vanilla; los EditBox vanilla no cambian. Test Gradle de 12 casos
+  geométricos reales añadido; CI pendiente. No ejecuta mouse ni rendering.
+  Revisar clic/cursor, selección y desplazamiento de texto en cliente; no se
+  afirma corregido el reporte general de clics fantasma. Sin bump/release.
+
 - **Direcciones de servidor (posterior a `a1d58c7`):** la whitelist propia
   rechazaba IPv6 entre corchetes, aceptaba puertos fuera de rango y el readout
   confundía una IPv6 desnuda con host:puerto. Ahora se usa ServerAddress vanilla
   para validar/mostrar (sin DNS), con rechazo de espacios/controles internos.
   Editar servidor normaliza al guardar la IP, como el valor validado. Test
-  Gradle nuevo con 38 comprobaciones, aún pendiente de CI. Prueba de conexión
+  Gradle nuevo con 38 comprobaciones, aprobado con build de `f173ab8` en
+  CI `45042533041`. Prueba de conexión
   real no realizada. Sin cambios de servidores.dat hasta confirmar el formulario.
 
 - **Idiomas, posterior a `d4109ba`:** se corrigen tres fallos identificados en

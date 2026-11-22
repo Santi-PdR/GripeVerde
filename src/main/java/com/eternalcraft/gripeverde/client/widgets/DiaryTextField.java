@@ -39,10 +39,21 @@ public class DiaryTextField extends EditBox {
 
     public DiaryTextField(Font font, int x, int y, int w, int h, Component narration) {
         super(font, x, y, w, h, narration);
-        this.setBordered(false);
+        this.setBordered(true);
         this.setTextColor(DiaryTheme.INK);
         this.setTextColorUneditable(DiaryTheme.SEPIA_MID);
         initReflectionOnce();
+    }
+
+    /**
+     * En EditBox, bordered también controla el inset de clic y getInnerWidth.
+     * Nuestro renderer siempre usa 4 px de margen: conservar esa geometría
+     * aunque un helper cosmético quite el fondo de los EditBox vanilla.
+     * No aparece el borde vanilla, porque renderWidget no llama al del padre.
+     */
+    @Override
+    public void setBordered(boolean bordered) {
+        super.setBordered(true);
     }
 
     private static void initReflectionOnce() {
