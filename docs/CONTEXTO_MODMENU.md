@@ -12,8 +12,15 @@ Actualizado: 2026-11-13
   Guardados normales posteriores no crean nuevas copias del mismo original.
   La suite real `verifyDispatchLoadingRegression` añade JSON truncado,
   raíces inválidas y UTF-8 inválido, con/sin CopyL, backups previos, bloqueo
-  de recuperación y reintento. Compilación/Java pendientes de CI. No recupera
-  automáticamente el texto del archivo roto; permite rescate manual. No hay
+  de recuperación y reintento. Añade un escenario de permisos POSIX que se
+  omite explícitamente donde no se puedan aplicar (sin POSIX o proceso root).
+  El candidato `6c5fd5a` compiló y pasó las suites en
+  [CI 45051992150](https://github.com/Santi-PdR/GripeVerde/actions/runs/45051992150),
+  artefacto `GripeVerde-jar` ID `14765723276`. El primer run `45051605076`
+  compiló pero falló por timeout al resolver mappings en Maven Forge; no por
+  un fallo de compilación o aserción. Sin JDK local. Asset v0.401.0 reconsultado
+  tras publish: mismo ID/tamaño/digest. No recupera automáticamente el texto
+  del archivo roto; permite rescate manual. No hay
   garantía frente a corte eléctrico ni ediciones externas concurrentes.
   Sin bump/release ni prueba Minecraft.
 
