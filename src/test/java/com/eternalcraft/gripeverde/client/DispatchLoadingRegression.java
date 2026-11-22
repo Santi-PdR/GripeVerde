@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.minecraftforge.fml.loading.FMLPaths;
+import org.lwjgl.glfw.GLFW;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,7 +32,7 @@ public final class DispatchLoadingRegression {
         // exposed in production. ensureLoaded initializes all slot arrays.
         resetField("loaded", false);
         resetField("pendingSave", false);
-        resetField("openKey", 344);
+        resetField("openKey", GLFW.GLFW_KEY_RIGHT_ALT);
         resetField("importedFrom", "");
         return FMLPaths.CONFIGDIR.get();
     }
@@ -52,7 +53,7 @@ public final class DispatchLoadingRegression {
         String obsolete = "{\"messages\":[\"Obsolete CopyL text\"]}";
         Files.writeString(copy, obsolete);
         check(DispatchLibrary.message(0).equals("Keep first"), "own data wins over CopyL");
-        check(DispatchLibrary.openKey() == 344, "null open key defaults");
+        check(DispatchLibrary.openKey() == GLFW.GLFW_KEY_RIGHT_ALT, "null open key defaults");
         check(DispatchLibrary.importedFrom().isEmpty(), "malformed provenance defaults");
         check(DispatchLibrary.name(1).equals("Mensaje 2"), "null name defaults");
         check(DispatchLibrary.message(1).isEmpty(), "null message defaults");
@@ -138,7 +139,7 @@ public final class DispatchLoadingRegression {
         for (int i = 0; i < invalidOpenKeys.length; i++) {
             Path config = newConfig(root.resolve("open-" + i));
             Files.writeString(config.resolve("gripeverde-dispatch.json"), "{\"openKey\":" + invalidOpenKeys[i] + ",\"slots\":[{\"message\":\"Keep\"}]}");
-            check(DispatchLibrary.openKey() == 344, "invalid openKey uses default");
+            check(DispatchLibrary.openKey() == GLFW.GLFW_KEY_RIGHT_ALT, "invalid openKey uses default");
             check(DispatchLibrary.message(0).equals("Keep"), "invalid openKey does not discard messages");
         }
     }
