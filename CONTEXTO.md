@@ -10,8 +10,11 @@
   Minecraft/lista y ejecuta 15 escenarios. Localmente se omitieron por falta
   de JDK; CI los exige con `--require-java`. Pasan guardas estáticas 18/18,
   lint 72 Java, espejos 8/8, gate 7/7, instalador 7/7, py_compile y diff.
-  Compilación/ejecución Java y prueba en Minecraft pendientes. Sin bump ni
-  release. No confirma resueltos los clics fantasma generales.
+  El candidato `30d268f` compiló y ejecutó los 15 escenarios Java en
+  [CI 45041710607](https://github.com/Santi-PdR/GripeVerde/actions/runs/45041710607).
+  Artefacto `GripeVerde-jar`, ID `14762220269`. Prueba en Minecraft pendiente.
+  Sin bump ni release; asset v0.401.0 reconsultado tras publish, mismo
+  ID/tamaño/digest. No confirma resueltos los clics fantasma generales.
 
 - **Recorte de Paquetes, posterior a `9dbd0ef`:** se resuelven geometría y
   entradas antes de adquirir el scissor. La banda opaca y las filas se dibujan

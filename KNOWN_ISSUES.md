@@ -14,8 +14,10 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
   su destino anterior en el siguiente tick. Ahora resincroniza ante cambios
   externos o sustitución de lista, sin cancelar la rueda acumulada normal.
   El test Java cubre 15 escenarios con dobles de Minecraft/lista; omitido
-  localmente por falta de JDK, obligatorio en CI. Compilación y prueba en
-  Minecraft pendientes. Es un problema de desplazamiento identificado en el
+  localmente por falta de JDK, obligatorio en CI. El candidato `30d268f`
+  compiló y ejecutó los 15 escenarios en CI `45041710607`. Prueba en Minecraft
+  pendiente; asset v0.401.0 sin cambios de ID/tamaño/digest. Es un problema
+  de desplazamiento identificado en el
   código, no una causa confirmada de los reportes generales de clics fantasma.
 
 - **Ruta defensiva del scissor de Paquetes (posterior a `9dbd0ef`):** antes

@@ -17,8 +17,11 @@ Actualizado: 2026-11-13
   No ejecuta el renderer ni eventos reales. En local se omitieron por falta
   de JDK; se añadieron como paso obligatorio en CI y su plantilla.
 - Pasan espejos 8/8, lint 72 Java, guardas 18/18, gate 7/7 e instalador 7/7.
-  Compilación y ejecución Java de este candidato pendientes, igual que la
-  prueba en Minecraft. Sin bump, release ni cambios de gameplay.
+  El candidato `30d268f` compiló y ejecutó los 15 escenarios Java en
+  [CI 45041710607](https://github.com/Santi-PdR/GripeVerde/actions/runs/45041710607).
+  Prueba en Minecraft pendiente. Artefacto actual `GripeVerde-jar`, ID
+  `14762220269`, incluye las correcciones previas de Paquetes. Sin bump,
+  release ni cambios de gameplay; asset v0.401.0 conserva ID/tamaño/digest.
 - Revisar manualmente: rueda y después arrastre de barra en ambos sentidos,
   teclado que haga visible una fila fuera de pantalla, repetir con rueda aún
   en movimiento, redimensionar y alternar menús con/sin mundo abierto. La
