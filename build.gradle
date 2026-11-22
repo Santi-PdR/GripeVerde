@@ -560,7 +560,19 @@ tasks.register('verifyMemoryShutdownRegression', JavaExec) {
     }
 }
 
+tasks.register('verifyMemorySchemaRegression', JavaExec) {
+    group = 'verification'
+    description = 'Checks that newer chronicler memory schemas are preserved byte-for-byte without a client.'
+    dependsOn tasks.named('testClasses')
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.eternalcraft.gripeverde.client.MemorySchemaRegression'
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
 tasks.named('check').configure {
+    dependsOn tasks.named('verifyMemorySchemaRegression')
     dependsOn tasks.named('verifyMemoryShutdownRegression')
     dependsOn tasks.named('verifyRecentAddressesRegression')
     dependsOn tasks.named('verifyDispatchLoadingRegression')

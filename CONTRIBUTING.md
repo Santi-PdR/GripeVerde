@@ -50,6 +50,10 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
 - `verifyMemoryShutdownRegression` comprueba memoria/JSON/executor reales en
   un CONFIGDIR temporal; check/build la requieren. La suite Python de cierre
   vigila el monitor durante la espera con executor real y E/S simulada.
+- `verifyMemorySchemaRegression` se exige en check/build: prueba la protección
+  de esquemas futuros en principal/temporal/respaldo. Al detectarlos la memoria
+  es de solo lectura para toda la sesión; no eliminar ni reescribir esas copias
+  desde una versión vieja del mod. Los cambios de esa sesión no se persisten.
 - **Nunca dos pushes seguidos**: el CI cancela el run anterior por concurrencia.
 - Sin JDK local: la compilación semántica la hace el CI. No instalar Java 17
   en la máquina para publicar.

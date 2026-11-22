@@ -2,6 +2,25 @@
 
 ## Addendum operativo actual (2026-11-13)
 
+- **Memoria de esquema futuro, posterior a `0705ed6`:** migrate solo
+  evitaba bajar el número de esquema, pero los guardados posteriores podían
+  reescribir el JSON con Data y borrar campos desconocidos. Ahora se inspecciona
+  version antes de deserializar campos. Si principal, temporal o respaldo usa
+  un esquema mayor que 3, se activa solo lectura durante toda la sesión: los
+  cambios quedan únicamente en memoria de sesión y se avisa en el log. No se
+  interpreta el contenido futuro, migra, renombra como corrupto ni se guarda
+  encima. La comprobación se repite antes de escribir para detectar archivos
+  nuevos aparecidos tras cargar. Se conservan las migraciones 1/2 -> 3 y la
+  recuperación de copias conocidas. Para volver a persistir hace falta
+  reiniciar con archivos/mod compatibles; no borrar copias automáticamente.
+  Nueva tarea obligatoria check/build `verifyMemorySchemaRegression` con
+  biblioteca/Gson/archivos reales: versiones numéricas, en cadena, enormes,
+  campos con tipos futuros, las tres copias, guardados y recuperación normal.
+  Java pendiente de CI; sin cliente/red, bump/release ni cambio de esquema.
+  Alcance: metadatos version legibles; no sincroniza ediciones externas
+  concurrentes con el reemplazo del archivo ni interpreta formatos futuros
+  sin ese metadato.
+
 - **Espera del writer de memoria al cerrar, posterior a `53ba411`:**
   `flushForShutdown` era synchronized y esperaba al executor mientras retenía
   el monitor que `writeNow` necesita. Si había trabajo esperando el monitor,

@@ -2,9 +2,12 @@ package com.eternalcraft.gripeverde.client.lore;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
@@ -58,6 +61,7 @@ public final class ChroniclerMemory {
     }
 
     private static Data data = null;
+    private static boolean readOnlyForNewerSchema;
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final org.slf4j.Logger LOGGER = com.mojang.logging.LogUtils.getLogger();
     private static final String MEMORY_FILE = "gripeverde-memory.json";
@@ -148,9 +152,64 @@ public final class ChroniclerMemory {
         }
     }
 
+    private static final class NewerSchemaException extends IOException {
+        private NewerSchemaException(String version) {
+            super("Esquema de memoria no soportado: " + version);
+        }
+    }
+
+    private static void rejectNewerSchema(JsonElement root) throws NewerSchemaException {
+        if (root == null || !root.isJsonObject()) return;
+        JsonElement version = root.getAsJsonObject().get("version");
+        if (version == null || !version.isJsonPrimitive()) return;
+        try {
+            // Comprobar antes de deserializar Data: una version futura puede
+            // cambiar tambien el tipo de campos que este mod ya conoce.
+            if (new BigDecimal(version.getAsString()).compareTo(BigDecimal.valueOf(SCHEMA_VERSION)) > 0) {
+                throw new NewerSchemaException(version.getAsString());
+            }
+        } catch (NumberFormatException invalidVersion) {
+            // Los metadatos invalidos siguen la recuperacion habitual de JSON.
+        }
+    }
+
+    private static void protectNewerSchema(Path path, NewerSchemaException reason) {
+        if (!readOnlyForNewerSchema) {
+            LOGGER.warn("[GripeVerde] {} en {}. Memoria de solo lectura durante esta sesion; no se guardaran cambios.",
+                reason.getMessage(), path);
+        }
+        readOnlyForNewerSchema = true;
+        savePending = false;
+    }
+
+    /** Revisar tambien temporal y respaldo antes de truncarlos o reemplazarlos. */
+    private static boolean canWriteKnownSchemas() {
+        if (readOnlyForNewerSchema) return false;
+        if (data != null && data.version > SCHEMA_VERSION) {
+            protectNewerSchema(configPath(MEMORY_FILE), new NewerSchemaException(Integer.toString(data.version)));
+            return false;
+        }
+        for (String file : new String[] {MEMORY_FILE, TEMP_FILE, BACKUP_FILE}) {
+            Path path = configPath(file);
+            if (!Files.isRegularFile(path)) continue;
+            try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+                rejectNewerSchema(JsonParser.parseReader(reader));
+            } catch (NewerSchemaException newer) {
+                protectNewerSchema(path, newer);
+                return false;
+            } catch (Exception unreadable) {
+                // No confundir JSON danado con un esquema conocido mas nuevo.
+                // load/writeNow conservan su tratamiento de copias invalidas.
+            }
+        }
+        return true;
+    }
+
     private static Data readData(Path path) throws IOException {
         try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-            return sanitize(GSON.fromJson(reader, Data.class));
+            JsonElement root = JsonParser.parseReader(reader);
+            rejectNewerSchema(root);
+            return sanitize(GSON.fromJson(root, Data.class));
         }
     }
 
@@ -170,6 +229,7 @@ public final class ChroniclerMemory {
 
     private static synchronized void load() {
         data = new Data();
+        if (!canWriteKnownSchemas()) return;
         Path primary = configPath(MEMORY_FILE);
         Path temporary = configPath(TEMP_FILE);
         Path backup = configPath(BACKUP_FILE);
@@ -180,6 +240,9 @@ public final class ChroniclerMemory {
         if (primaryExists) {
             try {
                 data = readData(primary);
+                return;
+            } catch (NewerSchemaException newer) {
+                protectNewerSchema(primary, newer);
                 return;
             } catch (Throwable primaryFailure) {
                 primaryKnownCorrupt = true;
@@ -195,6 +258,9 @@ public final class ChroniclerMemory {
             try {
                 recovered = readData(temporary);
                 recoveredFrom = TEMP_FILE;
+            } catch (NewerSchemaException newer) {
+                protectNewerSchema(temporary, newer);
+                return;
             } catch (Throwable temporaryFailure) {
                 LOGGER.warn("[GripeVerde] El temporal de memoria interrumpido no es valido", temporaryFailure);
             }
@@ -203,6 +269,9 @@ public final class ChroniclerMemory {
             try {
                 recovered = readData(backup);
                 recoveredFrom = BACKUP_FILE;
+            } catch (NewerSchemaException newer) {
+                protectNewerSchema(backup, newer);
+                return;
             } catch (Throwable backupFailure) {
                 LOGGER.error("[GripeVerde] El respaldo de memoria tampoco es valido", backupFailure);
             }
@@ -221,7 +290,7 @@ public final class ChroniclerMemory {
     }
 
     public static synchronized void save() {
-        if (data == null) return;
+        if (data == null || readOnlyForNewerSchema) return;
         // Escritura diferida (maximo una cada 2 s); el cierre fuerza lo pendiente.
         savePending = true;
         long now = System.currentTimeMillis();
@@ -258,7 +327,7 @@ public final class ChroniclerMemory {
      * reemplaza el JSON principal atomicamente cuando el sistema lo permite.
      */
     private static synchronized void writeNow() {
-        if (data == null) return;
+        if (data == null || !canWriteKnownSchemas()) return;
         Path primary = configPath(MEMORY_FILE);
         Path backup = configPath(BACKUP_FILE);
         Path temporary = configPath(TEMP_FILE);
@@ -286,6 +355,9 @@ public final class ChroniclerMemory {
                         // A blocked backup must not prevent the new atomic save from completing.
                         LOGGER.warn("[GripeVerde] No se pudo actualizar el respaldo de memoria", backupFailure);
                     }
+                } catch (NewerSchemaException newer) {
+                    protectNewerSchema(primary, newer);
+                    return;
                 } catch (Throwable invalidPrimary) {
                     primaryKnownCorrupt = true;
                     LOGGER.warn("[GripeVerde] La memoria principal cambio fuera del juego y no es valida; no se reemplazara el respaldo", invalidPrimary);
