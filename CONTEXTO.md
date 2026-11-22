@@ -25,6 +25,11 @@
   Validación local: espejos 8/8, lint de 72 Java sin avisos, gate 7/7,
   instalador 7/7, guardas de listas 9/9, py_compile y diff sin errores.
   Las guardas son pruebas estáticas; no acreditan ejecución en cliente.
+  El commit `1532c19` pasó la compilación en CI
+  [44999893206](https://github.com/Santi-PdR/GripeVerde/actions/runs/44999893206).
+  Se reconsultó el asset después del job `publish`: digest, tamaño e ID sin
+  cambios. No hubo release nuevo. El modelo aritmético del viewport pasó
+  4.536 casos; no ejecuta Java ni reemplaza la prueba en Minecraft.
 - Las reglas de siempre siguen en pie: mod **solo de cliente**, sin bloques,
   sin ítems, sin gameplay ni resourcepacks; la identidad visual se hace con
   Java y los render/widgets propios.

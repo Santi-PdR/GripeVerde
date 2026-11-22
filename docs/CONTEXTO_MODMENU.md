@@ -33,7 +33,9 @@ Actualizado: 2026-11-13
   `python3 tools/test_list_render_guards.py` pasa 9/9: muta fuentes en memoria
   para comprobar que el lint rechaza regresiones; no compila ni ejecuta Java.
   También pasan espejos 8/8, lint completo (72 Java), gate 7/7, instalador 7/7,
-  py_compile y diff. La compilación del candidato queda por confirmar en CI.
+  py_compile y diff. El commit `1532c19` compiló correctamente en
+  [CI 44999893206](https://github.com/Santi-PdR/GripeVerde/actions/runs/44999893206).
+  El modelo aritmético del viewport pasó 4.536 casos, sin ejecutar Java.
 - El API de GitHub vuelve a informar el mismo tamaño y digest para el asset
   `778229607` de v0.401.0; el tag sigue en `e0f8450`. No se ha inspeccionado
   de nuevo su contenido binario. El candidato sigue separado del release.

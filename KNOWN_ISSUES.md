@@ -26,7 +26,9 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
   con las clases vanilla 1.20.1: encabezado 13 px, texto en `rowLeft + 34`,
   controles dentro del icono. Las guardas estáticas pasan 9/9 pruebas de regresión.
   La consulta del asset `778229607` confirma el tamaño y digest anteriores;
-  no se descargó ni inspeccionó de nuevo el JAR publicado.
+  no se descargó ni inspeccionó de nuevo el JAR publicado. El candidato
+  `1532c19` compiló en CI `44999893206`; tras el job `publish` se comprobó
+  que el asset mantiene su ID, tamaño y digest. No sustituye la v0.401.0.
 - **Pendiente de confirmación en Minecraft:** Paquetes de recursos, clics
   fantasma e interfaz visual de Un Jugador, además de revisar los clics de
   Mundos. No se afirma que estén corregidos sin prueba en cliente.
