@@ -2,6 +2,23 @@
 
 Actualizado: 2026-11-13
 
+### Descripciones de dos líneas, posterior a `64261bb`
+
+- Las descripciones normales y las de compatibilidad comparten MultiLineLabel
+  de hasta dos líneas. Se mantiene el Component original, con saltos/estilos;
+  título a `rowTop + 1` y descripción a `rowTop + 12`, interlínea de 10 px,
+  como vanilla 1.20.1. El scissor recorta sin desplazar el origen de la fila.
+- Caché por identidad de fila, acotada a 256 entradas; compara Component y
+  ancho, conserva una copia del texto y se limpia en init y removed. Evita
+  volver a dividir las descripciones estables en cada fotograma. No es una
+  medición de rendimiento ni acredita comportamiento del cliente.
+- Pasan guardas 16/16, lint 72 Java, espejos 8/8, gate 7/7 e instalador 7/7.
+  Compilación y prueba en cliente del delta pendientes. Sin bump ni release.
+- Añadir a la revisión en Minecraft: descripciones cortas, largas, vacías,
+  con saltos explícitos y estilos; hover de incompatibilidad y vuelta al texto
+  normal, escala/redimensión, salida/reapertura y recarga de packs. Confirmar
+  que los tres renglones caben, el último no se corta y el texto se actualiza.
+
 ### Avisos de compatibilidad, posterior a `d1d4e83`
 
 - El repintado ahora repone el título `pack.incompatible` y la descripción de

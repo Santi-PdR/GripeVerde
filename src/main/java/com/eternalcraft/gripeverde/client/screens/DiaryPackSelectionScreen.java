@@ -34,6 +34,12 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
 
     private AbstractSelectionList<?> availableList;
     private AbstractSelectionList<?> selectedList;
+    // Caché local y acotada: las filas viejas no sobreviven a init ni removed.
+    private final java.util.IdentityHashMap<Object, CachedPackDescription> packDescriptions =
+        new java.util.IdentityHashMap<>();
+
+    private record CachedPackDescription(Component text, int width, MultiLineLabel label) {
+    }
     // v0.264.0: nos quedamos con el archivador para poder contar las fichas.
     private final PackRepository repository;
 
@@ -78,6 +84,7 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         this.availableList = null;
         this.selectedList = null;
         this.dressed.clear();
+        this.packDescriptions.clear();
         super.init();
         resolvePackLists();
         if (availableList != null) {
@@ -179,7 +186,7 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
 
                 Object child = children.get(i);
                 String title = "";
-                String sub = "";
+                Component description = Component.empty();
                 boolean chosen = false;
                 Component compatibilityDescription = null;
                 // v0.382.0: la fila del juego no ES una entrada del modelo, la
@@ -195,7 +202,7 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
                     }
                     try {
                         Component d = entry.getExtendedDescription();
-                        sub = d == null ? "" : d.getString();
+                        description = d == null ? Component.empty() : d;
                     } catch (Throwable ignored) {
                     }
                     try {
@@ -225,14 +232,12 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
                 // El texto sigue a la fila, no al borde recortado del viewport.
                 // El scissor oculta los glifos fuera de pantalla sin desplazarlos.
                 g.drawString(this.font, DiaryChrome.fitCached(this.font, title, textW),
-                    textX, rowTop + 4, compatibilityDescription != null ? 0xFF8C2A1E : 0xFF1A1108, false);
-                if (compatibilityDescription != null) {
-                    MultiLineLabel.create(this.font, compatibilityDescription, textW, 2)
-                        .renderLeftAligned(g, textX, rowTop + 12, 10, 0xFF8C2A1E);
-                } else if (!sub.isEmpty() && rowBottom - rowTop >= 24) {
-                    g.drawString(this.font, DiaryChrome.fitCached(this.font, sub, textW),
-                        textX, rowTop + 15, 0xFF6B5533, false);
-                }
+                    textX, rowTop + 1, compatibilityDescription != null ? 0xFF8C2A1E : 0xFF1A1108, false);
+                Component shownDescription = compatibilityDescription != null
+                    ? compatibilityDescription : description;
+                packDescription(child, shownDescription, textW)
+                    .renderLeftAligned(g, textX, rowTop + 12, 10,
+                        compatibilityDescription != null ? 0xFF8C2A1E : 0xFF6B5533);
                 g.fill(x1 + 3, rowBottom - 1, x2 - 3, rowBottom, 0x2E6B5533);
             }
         } finally {
@@ -243,6 +248,24 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
                 }
             }
         }
+    }
+
+    /** Dos líneas como vanilla; recalcular solo si cambia texto, estilo o ancho. */
+    private MultiLineLabel packDescription(Object child, Component text, int width) {
+        CachedPackDescription cached = this.packDescriptions.get(child);
+        if (cached != null && cached.width() == width && cached.text().equals(text)) {
+            return cached.label();
+        }
+        if (this.packDescriptions.size() >= 256) this.packDescriptions.clear();
+        MultiLineLabel label = MultiLineLabel.create(this.font, text, width, 2);
+        this.packDescriptions.put(child, new CachedPackDescription(text.copy(), width, label));
+        return label;
+    }
+
+    @Override
+    public void removed() {
+        this.packDescriptions.clear();
+        super.removed();
     }
 
     /** Mismas condiciones visuales que PackEntry.render de vanilla 1.20.1. */

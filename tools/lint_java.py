@@ -490,9 +490,8 @@ def check_pack_selection_single_render(path, clean):
         line = clean[:line_start].count(chr(10)) + 1
         return [(path, line,
                  'Packs: respetar la zona de texto vanilla de 157 px y su descripción extendida')]
-    if ('textX, rowTop + 4,' not in rows_paint
-            or 'textX, rowTop + 15,' not in rows_paint
-            or 'rowBottom - rowTop >= 24' not in rows_paint
+    if ('textX, rowTop + 1,' not in rows_paint
+            or '.renderLeftAligned(g, textX, rowTop + 12, 10,' not in rows_paint
             or 'if (drawBottom <= drawTop) continue;' not in rows_paint
             or 'g.fill(x1 + 3, rowBottom - 1, x2 - 3, rowBottom,' not in rows_paint
             or re.search(r'textX\s*,\s*drawTop\s*\+', rows_paint)):
@@ -511,11 +510,31 @@ def check_pack_selection_single_render(path, clean):
     if (not warning or any(token not in warning for token in warning_tokens)
             or 'showPackCompatibilityWarning(list, child, entry, mouseX, mouseY)' not in rows_paint
             or 'compatibilityDescription = entry.getCompatibility().getDescription();' not in rows_paint
-            or 'MultiLineLabel.create(this.font, compatibilityDescription, textW, 2)' not in rows_paint
+            or 'packDescription(child, shownDescription, textW)' not in rows_paint
+            or '? compatibilityDescription : description;' not in rows_paint
             or '.renderLeftAligned(g, textX, rowTop + 12, 10,' not in rows_paint):
         line = clean[:max(0, warning_start)].count(chr(10)) + 1
         return [(path, line,
                  'Packs: reponer el aviso de incompatibilidad con hover, foco y pantalla táctil vanilla')]
+    description_cache, cache_start = method_body('private MultiLineLabel packDescription(')
+    cache_tokens = (
+        'cached.width() == width && cached.text().equals(text)',
+        'return cached.label();',
+        'this.packDescriptions.size() >= 256',
+        'MultiLineLabel.create(this.font, text, width, 2)',
+        'new CachedPackDescription(text.copy(), width, label)',
+    )
+    removed, _ = method_body('public void removed()')
+    init_cache, _ = method_body('protected void init()')
+    if (not description_cache or any(token not in description_cache for token in cache_tokens)
+            or 'this.packDescriptions.clear();' not in description_cache
+            or 'this.packDescriptions.clear();' not in init_cache
+            or 'this.packDescriptions.clear();' not in removed
+            or 'super.removed();' not in removed
+            or 'description = d == null ? Component.empty() : d;' not in rows_paint):
+        line = clean[:max(0, cache_start)].count(chr(10)) + 1
+        return [(path, line,
+                 'Packs: conservar dos líneas de descripción con caché acotada e invalidada')]
     mouse_handler = re.search(
         r'\b(?:public|protected)\s+boolean\s+mouse(?:Clicked|Released|Dragged|Scrolled)\s*\(', clean)
     if mouse_handler:

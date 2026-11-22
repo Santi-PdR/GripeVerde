@@ -80,9 +80,9 @@ class ListRenderGuardTests(unittest.TestCase):
 
     def test_partial_pack_rows_stay_anchored(self):
         for old, new in (
-            ('textX, rowTop + 4,', 'textX, drawTop + 4,'),
-            ('textX, rowTop + 15,', 'textX, drawTop + 15,'),
-            ('rowBottom - rowTop >= 24', 'drawBottom - drawTop >= 24'),
+            ('textX, rowTop + 1,', 'textX, drawTop + 1,'),
+            ('.renderLeftAligned(g, textX, rowTop + 12, 10,',
+             '.renderLeftAligned(g, textX, drawTop + 12, 10,'),
             ('if (drawBottom <= drawTop) continue;',
              'if (drawBottom - drawTop < 12) continue;'),
             ('g.fill(x1 + 3, rowBottom - 1, x2 - 3, rowBottom,',
@@ -132,10 +132,36 @@ class ListRenderGuardTests(unittest.TestCase):
             ('showPackCompatibilityWarning(list, child, entry, mouseX, mouseY)', 'false'),
             ('compatibilityDescription = entry.getCompatibility().getDescription();',
              'compatibilityDescription = null;'),
-            ('MultiLineLabel.create(this.font, compatibilityDescription, textW, 2)',
-             'MultiLineLabel.create(this.font, compatibilityDescription, textW, 1)'),
+            ('? compatibilityDescription : description;', '? description : description;'),
+            ('packDescription(child, shownDescription, textW)',
+             'packDescription(child, description, textW)'),
             ('.renderLeftAligned(g, textX, rowTop + 12, 10,',
              '.renderLeftAligned(g, textX, drawTop + 12, 10,'),
+        ):
+            with self.subTest(old=old):
+                self.assert_rejected(PACK, old, new)
+
+    def test_description_cache_is_bounded_and_content_sensitive(self):
+        for old, new in (
+            ('cached.width() == width && cached.text().equals(text)', 'cached.width() == width'),
+            ('return cached.label();', 'return MultiLineLabel.EMPTY;'),
+            ('this.packDescriptions.size() >= 256', 'this.packDescriptions.size() >= 1000000'),
+            ('MultiLineLabel.create(this.font, text, width, 2)',
+             'MultiLineLabel.create(this.font, text, width, 1)'),
+            ('new CachedPackDescription(text.copy(), width, label)',
+             'new CachedPackDescription(text, width, label)'),
+            ('description = d == null ? Component.empty() : d;',
+             'description = Component.literal(d.getString());'),
+        ):
+            with self.subTest(old=old):
+                self.assert_rejected(PACK, old, new)
+
+    def test_description_cache_clears_on_screen_lifecycle(self):
+        for old, new in (
+            ('this.packDescriptions.clear();\n        super.init();', 'super.init();'),
+            ('this.packDescriptions.clear();\n        super.removed();', 'super.removed();'),
+            ('if (this.packDescriptions.size() >= 256) this.packDescriptions.clear();',
+             'if (this.packDescriptions.size() >= 256) return MultiLineLabel.EMPTY;'),
         ):
             with self.subTest(old=old):
                 self.assert_rejected(PACK, old, new)

@@ -2,6 +2,17 @@
 
 ## Addendum operativo actual (2026-11-13)
 
+- **Continuación posterior a `64261bb`:** las descripciones normales de packs
+  recuperan las dos líneas de vanilla, igual que los avisos de incompatibilidad.
+  Se conserva el Component (incluidos saltos y estilos), sin convertirlo en
+  una cadena truncada. Título en `rowTop + 1`, descripción en `rowTop + 12`
+  con interlínea de 10 px: caben en los 32 px útiles de la fila vanilla.
+  Caché por identidad de fila, máximo 256 entradas; invalida por texto/estilo
+  o ancho y se limpia en init/removed. No cambia handlers ni confirmaciones.
+  Guardas estáticas 16/16, lint 72 Java, espejos 8/8, gate 7/7 e instalador
+  7/7 pasan. Compilación de este delta y prueba en Minecraft pendientes.
+  Sin bump ni release; no confirma resueltos los clics fantasma.
+
 - **Continuación posterior a `d1d4e83`:** se repone el aviso de packs
   incompatibles que la banda opaca borraba. Reproduce las condiciones de
   `PackEntry.render` 1.20.1: pack incompatible y no simultáneamente fijo y obligatorio,
