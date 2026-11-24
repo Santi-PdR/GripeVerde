@@ -2,6 +2,27 @@
 
 Actualizado: 2026-11-13
 
+- **Accesibilidad mínima y secretos de Sonido, posterior a `b79671d`:**
+  Accesibilidad recupera margen vertical en ventanas muy bajas y usa cabecera
+  mínima, toggles de 18 px y botón de regreso ajustado al panel. A 160x120
+  queda un viewport de al menos 25 px para opciones vanilla, sin invadir los
+  tres controles del pie. Subtítulo/sello/ojo decorativo ceden sitio; el ojo
+  oculto tampoco intercepta clics. El tamaño normal conserva su composición.
+  El diapasón calcula su hitbox desde el slider actual, también antes de
+  renderizar y tras resize; no guarda una zona de clic del frame anterior.
+  No se dibuja ni produce sonidos/descubrimientos en una partida activa ni
+  con slider oculto/inactivo. Cooldown de 700 ms monotónico, sellado antes de
+  efectos opcionales: clics repetidos/reentrantes no repiten ni extienden el tono.
+  El secreto de silencio usa Util.getMillis y un estado de espera explícito,
+  válido también desde tiempo cero o negativo. Recuperar volumen o entrar a
+  una partida cancela la espera; volver exige tres segundos completos nuevos.
+  Nueva `test_option_screen_safety.py`: 22 escenarios de ciclo/clic/config y
+  4.494 casos de init/render/resize de Accesibilidad (clase completa), 7 anchos,
+  alturas 120..440, ES/EN. Métodos reales extraídos de Sonido; GUI/config/audio/
+  lore/fuente dobles. No prueba audio audible, píxeles nativos ni E/S Forge.
+  Ambos workflows exigen Java. Local sin JDK: guardas aprobadas; Java/build
+  pendientes de CI. Sin bump/release ni afirmación sobre clics fantasma nativos.
+
 - **Navegación y archivos largos en Mundos, posterior a `82dbd86`:**
   Enter/KP Enter respeta el botón del pie enfocado (también los no vestidos),
   sin reemplazar Crear/Editar/Cancelar por Entrar. Supr con foco en un botón

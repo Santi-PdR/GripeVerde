@@ -319,12 +319,27 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     }
 
     // v0.16.0: el silencio escucha
-    private long silenceStartMs = 0L;
-    private boolean silenceHeard = false;
+    private long silenceStartMs;
+    private boolean silenceWaiting;
+    private boolean silenceHeard;
 
     // v0.24.0: el diapason del gabinete (secreto al margen del regulador de ambiente)
-    private int[] forkRect = null;
-    private long forkRingUntilMs = 0L;
+    private long forkRingUntilMs;
+    private boolean forkRinging;
+
+    private long remainingForkRingMs() {
+        return this.forkRinging
+            ? Math.max(0L, this.forkRingUntilMs - net.minecraft.Util.getMillis()) : 0L;
+    }
+
+    /** Derive hit geometry from current widgets, never a previous render/size. */
+    private int[] tuningForkBounds() {
+        if (this.ambienceSlider == null || !this.ambienceSlider.active || !this.ambienceSlider.visible
+                || com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.hasActiveWorld()) return null;
+        int fx = this.ambienceSlider.getX() - 16;
+        int fy = this.ambienceSlider.getY() + this.ambienceSlider.getHeight() / 2;
+        return new int[]{fx - 6, fy - 9, 14, 17};
+    }
 
     @Override
     public void tick() {
@@ -335,13 +350,16 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         // Si el gramofono queda del todo en cero y el lector se queda, algo late.
         if (com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.hasActiveWorld()) {
             // The record-room easter egg belongs to the title menu, never to a live session.
-            silenceStartMs = 0L;
+            silenceWaiting = false;
             return;
         }
         try {
             if (!silenceHeard && com.eternalcraft.gripeverde.client.audio.MenuMusic.getUserVolume() <= 0.004f) {
-                long now = System.currentTimeMillis();
-                if (silenceStartMs == 0L) silenceStartMs = now;
+                long now = net.minecraft.Util.getMillis();
+                if (!silenceWaiting) {
+                    silenceStartMs = now;
+                    silenceWaiting = true;
+                }
                 if (now - silenceStartMs >= 3000L) {
                     silenceHeard = true;
                     boolean first = com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
@@ -358,7 +376,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
                     }
                 }
             } else if (!silenceHeard) {
-                silenceStartMs = 0L;
+                silenceWaiting = false;
             }
         } catch (Throwable ignored) {}
     }
@@ -671,14 +689,14 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
 
     /** v0.24.0: un diapason al margen; pulsado, afina la sala entera. */
     private void drawTuningFork(GuiGraphics g, int mouseX, int mouseY) {
-        if (this.ambienceSlider == null) { this.forkRect = null; return; }
+        if (this.tuningForkBounds() == null) return;
         int fx = this.ambienceSlider.getX() - 16;
         int fy = this.ambienceSlider.getY() + this.ambienceSlider.getHeight() / 2;
-        long now = System.currentTimeMillis();
+        long remaining = this.remainingForkRingMs();
         boolean hot = mouseX >= fx - 4 && mouseX <= fx + 5 && mouseY >= fy - 8 && mouseY <= fy + 5;
-        boolean ringing = now < this.forkRingUntilMs;
+        boolean ringing = remaining > 0L;
         if (ringing && !MotionPolicy.isReduced())
-            fx += (int) Math.round(Math.sin((this.forkRingUntilMs - now) * 0.55) * 1.0);
+            fx += (int) Math.round(Math.sin(remaining * 0.55) * 1.0);
         int metal = (hot || ringing) ? 0xFFD8B56A : 0xFF8A6A3D;
         int dimm  = (hot || ringing) ? 0xFF6B4E22 : 0xFF54401F;
         int spread = (hot || ringing) ? 1 : 0;
@@ -688,7 +706,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         g.fill(fx - 2 - spread, fy - 6, fx - 1 - spread, fy - 5, dimm);  // puntas
         g.fill(fx + 1 + spread, fy - 6, fx + 2 + spread, fy - 5, dimm);
         if (ringing) {
-            float rr = (this.forkRingUntilMs - now) / 700f; // 1 -> 0
+            float rr = remaining / 700f; // 1 -> 0
             int ra = (int)(120 * rr);
             int rad = 3 + (int)((1f - rr) * 7f);
             int rc = (ra << 24) | 0xD8B56A;
@@ -697,11 +715,14 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             g.fill(fx - rad, fy - 2 - rad, fx - rad + 1, fy + rad, rc);
             g.fill(fx + rad - 1, fy - 2 - rad, fx + rad, fy + rad, rc);
         }
-        this.forkRect = new int[]{ fx - 6, fy - 9, 14, 17 };
     }
 
     /** v0.24.0: la prueba de tono del gabinete. */
     private void ringTuningFork() {
+        if (this.tuningForkBounds() == null || this.remainingForkRingMs() > 0L) return;
+        // Latch before optional sound/lore effects, including reentrant calls.
+        this.forkRinging = true;
+        this.forkRingUntilMs = net.minecraft.Util.getMillis() + 700L;
         try {
             com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
                 com.eternalcraft.gripeverde.client.audio.ModSounds.UI_SUCCESS.get(), 0.55f, 0.62f);
@@ -716,14 +737,14 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
                     com.eternalcraft.gripeverde.client.lore.Marginalia.N_TUNING);
             }
         } catch (Throwable ignored) {}
-        this.forkRingUntilMs = System.currentTimeMillis() + 700L;
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0 && this.forkRect != null
-                && mouseX >= this.forkRect[0] && mouseX <= this.forkRect[0] + this.forkRect[2]
-                && mouseY >= this.forkRect[1] && mouseY <= this.forkRect[1] + this.forkRect[3]) {
+        int[] bounds = this.tuningForkBounds();
+        if (button == 0 && bounds != null
+                && mouseX >= bounds[0] && mouseX <= bounds[0] + bounds[2]
+                && mouseY >= bounds[1] && mouseY <= bounds[1] + bounds[3]) {
             ringTuningFork();
             return true;
         }

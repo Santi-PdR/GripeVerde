@@ -42,12 +42,36 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         return this.panelH < 210;
     }
 
+    private boolean minimal() {
+        return this.panelH < 144;
+    }
+
     private int headerH() {
-        return tight() ? 34 : HEADER_H;
+        return minimal() ? 18 : (tight() ? 34 : HEADER_H);
     }
 
     private int footerH() {
-        return tight() ? 80 : FOOTER_H;
+        return minimal() ? 66 : (tight() ? 80 : FOOTER_H);
+    }
+
+    private int toggleHeight() {
+        return minimal() ? 18 : 24;
+    }
+
+    private int returnHeight() {
+        return minimal() ? 18 : 20;
+    }
+
+    private int returnY() {
+        return this.panelY + this.panelH - (minimal() ? 22 : (tight() ? 24 : 28));
+    }
+
+    private int flashesY() {
+        return minimal() ? returnY() - 22 : this.panelY + this.panelH - (tight() ? 50 : 66);
+    }
+
+    private int motionY() {
+        return minimal() ? flashesY() - 22 : this.panelY + this.panelH - (tight() ? 76 : 100);
     }
 
     public DiaryAccessibilityOptionsScreen(Screen parent, Options options) {
@@ -72,8 +96,11 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         super.init();
 
         // Panel adaptativo
-        this.panelW = Math.min(PANEL_MAX_W, this.width  - SCREEN_MARGIN * 2);
-        this.panelH = Math.min(PANEL_MAX_H, this.height - SCREEN_MARGIN * 2);
+        this.panelW = Math.max(1, Math.min(PANEL_MAX_W, this.width - SCREEN_MARGIN * 2));
+        // At 120 px height, reclaim decorative margins before sacrificing
+        // usable list space or putting toggles on top of vanilla controls.
+        int verticalMargin = Math.min(SCREEN_MARGIN, Math.max(4, (this.height - 112) / 2));
+        this.panelH = Math.max(1, Math.min(PANEL_MAX_H, this.height - verticalMargin * 2));
         this.panelX = (this.width  - this.panelW) / 2;
         this.panelY = (this.height - this.panelH) / 2;
 
@@ -85,8 +112,8 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
             // NO cambiar width - R-VANILLA-LIST-COORDS
             int listTop    = this.panelY + headerH();
             // v0.330.0: en hojas muy bajas el pie se comia la lista y quedaba
-            // un alto negativo. Se le deja al menos un renglon.
-            int listBottom = Math.max(listTop + 20,
+            // un alto negativo. Se le deja al menos un renglon de 25 px.
+            int listBottom = Math.max(listTop + 25,
                 this.panelY + this.panelH - footerH() - 6);
             // v0.337.0: la lista se cortaba a media ficha sobre el filete del
             // pie. Ahora el alto se ajusta a renglones enteros de 25 px.
@@ -108,11 +135,11 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         }
 
         // Opciones propias del mod: visibles junto a las opciones de accesibilidad vanilla.
-        int toggleW = Math.min(300, this.panelW - 32);
+        int toggleW = Math.max(1, Math.min(300, this.panelW - 32));
         int toggleX = (this.width - toggleW) / 2;
-        int toggleY = this.panelY + this.panelH - (tight() ? 76 : 100);
+        int toggleY = motionY();
         this.reducedMotionToggle = new DiaryToggle(
-            toggleX, toggleY, toggleW, 24,
+            toggleX, toggleY, toggleW, toggleHeight(),
             () -> ClientConfig.REDUCED_MOTION.get(),
             value -> {
                 ClientConfig.REDUCED_MOTION.set(value);
@@ -128,9 +155,9 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
 
         // v0.23.0: ayuda de fotosensibilidad separada (solo destellos/relampagos,
         // sin congelar movimiento). WCAG 2.3.1 recomienda control especifico.
-        int flashesY = this.panelY + this.panelH - (tight() ? 50 : 66);
+        int flashesY = flashesY();
         this.reduceFlashesToggle = new DiaryToggle(
-            toggleX, flashesY, toggleW, 24,
+            toggleX, flashesY, toggleW, toggleHeight(),
             () -> ClientConfig.REDUCE_FLASHES.get(),
             value -> {
                 ClientConfig.REDUCE_FLASHES.set(value);
@@ -145,10 +172,10 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         this.addRenderableWidget(this.reduceFlashesToggle);
 
         // Boton Volver propio
-        int btnW = 160;
-        int btnH = 20;
+        int btnW = Math.max(1, Math.min(160, this.panelW - 24));
+        int btnH = returnHeight();
         int btnX = (this.width - btnW) / 2;
-        int btnY = this.panelY + this.panelH - (tight() ? 24 : 28);
+        int btnY = returnY();
         this.btnVolver = new DiaryButton(
             btnX, btnY, btnW, btnH,
             Component.translatable("gripeverde.options.button.done"),
@@ -179,7 +206,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
 
         // Subtitulo
         int subtitleY = titleY + 12;
-        {
+        if (!minimal()) {
             String subC = "- " + DiaryChrome.tr("gripeverde.options.accessibility.subtitle") + " -";
             subC = DiaryChrome.fitCached(this.font, subC, Math.max(0, this.panelW - 32));
             int subW = DiaryChrome.widthCached(this.font, subC);
@@ -195,7 +222,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         }
 
         // Divisor superior
-        int divY1 = tight() ? subtitleY + 12 : flavorY + 12;
+        int divY1 = minimal() ? this.panelY + 18 : (tight() ? subtitleY + 12 : flavorY + 12);
         DiaryChrome.drawInkDivider(gfx, this.panelX, divY1, this.panelW);
 
         // Lista vanilla sin gradientes blancos ni bandejas extra
@@ -224,10 +251,12 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
         }
 
         // Cosmeticos
-        int divY2 = this.panelY + this.panelH - footerH() + 4;
+        int divY2 = this.panelY + this.panelH - footerH() + (minimal() ? -2 : 4);
         DiaryChrome.drawInkDivider(gfx, this.panelX, divY2, this.panelW);
         DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, this.panelW, this.panelH);
-        DiaryChrome.drawRegistryTag(gfx, this.panelX, this.panelY, this.panelW, this.panelH, "REG. VI");
+        if (!tight()) {
+            DiaryChrome.drawRegistryTag(gfx, this.panelX, this.panelY, this.panelW, this.panelH, "REG. VI");
+        }
 
         // v0.282.0: cuantos ajustes tiene la hoja y como se sale, en el margen.
         try {
@@ -272,6 +301,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
     private int eyeY() { return this.panelY + 16; }
 
     private void drawPerceptionEye(GuiGraphics gfx, int mouseX, int mouseY) {
+        if (tight()) return;
         int ex = eyeX(), ey = eyeY();
         boolean hover = mouseX >= ex - 8 && mouseX <= ex + 8 && mouseY >= ey - 6 && mouseY <= ey + 6;
         // Contorno almendrado
@@ -305,7 +335,7 @@ public class DiaryAccessibilityOptionsScreen extends AccessibilityOptionsScreen 
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0 && mouseX >= eyeX() - 8 && mouseX <= eyeX() + 8
+        if (!tight() && button == 0 && mouseX >= eyeX() - 8 && mouseX <= eyeX() + 8
                 && mouseY >= eyeY() - 6 && mouseY <= eyeY() + 6) {
             try {
                 boolean first = com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
