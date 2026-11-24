@@ -71,6 +71,8 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   la pulsación inicial, liberaciones ajenas/repetidas, reentrada y cancelación.
   La suite Python ejecuta la base compartida y métodos reales de los tres
   deslizadores con padres/audio dobles, incluyendo el handoff de foco vanilla.
+  Ambas verifican también que el teclado no modifique mandos ocultos/inactivos/
+  desenfocados aunque el padre retenga su modo de edición.
 - **Nunca dos pushes seguidos**: el CI cancela el run anterior por concurrencia.
 - Sin JDK local: la compilación semántica la hace el CI. No instalar Java 17
   en la máquina para publicar.

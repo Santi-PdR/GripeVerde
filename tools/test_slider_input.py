@@ -25,7 +25,7 @@ PARENT = '''package net.minecraft.client.gui.components;
 import net.minecraft.network.chat.Component;
 public abstract class AbstractSliderButton {
     public boolean active = true, visible = true;
-    private boolean focused;
+    private boolean focused, canChangeValue;
     protected double value;
     private int x, y, width, height;
     public static int vanillaClicks;
@@ -33,7 +33,7 @@ public abstract class AbstractSliderButton {
         this.x=x; this.y=y; width=w; height=h; this.value=value;
     }
     public void setMessage(Component c) {}
-    public void setFocused(boolean f) { focused=f; }
+    public void setFocused(boolean f) { focused=f; canChangeValue=f; }
     public boolean isFocused() { return focused; }
     protected boolean isValidClickButton(int b) { return b==0; }
     public boolean mouseClicked(double x, double y, int b) {
@@ -55,7 +55,14 @@ public abstract class AbstractSliderButton {
         if (old!=value) applyValue(); updateMessage();
     }
     public void onRelease(double x, double y) { vanillaClicks++; }
-    public boolean keyPressed(int code, int scan, int modifiers) { return false; }
+    public boolean keyPressed(int code, int scan, int modifiers) {
+        // Like vanilla, this fallback does not inspect active/visible.
+        if (canChangeValue && (code==262 || code==263)) {
+            double old=value; value=net.minecraft.util.Mth.clamp(value+(code==262 ? 0.01 : -0.01),0,1);
+            if (old!=value) applyValue(); updateMessage(); return true;
+        }
+        return false;
+    }
     protected abstract void applyValue();
     protected abstract void updateMessage();
 }
@@ -191,6 +198,17 @@ public class SliderInputHarness {
                 check(commits(kind)==1, "key failed to commit"); int calls=applications(kind);
                 check(!s.mouseReleased(50,10,0) && commits(kind)==1 && applications(kind)==calls, "mouse release repeated keyboard commit");
             }
+            case "inactive_key", "hidden_key", "unfocused_key" -> {
+                s.setFocused(true);
+                if (test.equals("inactive_key")) s.active=false;
+                else if (test.equals("hidden_key")) s.visible=false;
+                else s.setFocused(false);
+                for (int key : new int[] {262,263,266,267,268,269})
+                    check(!s.keyPressed(key,0,0), "noninteractive key consumed: " + key);
+                check(applications(kind)==0 && commits(kind)==0 && UiSounds.clicks==0, "noninteractive key had effects");
+                s.active=s.visible=true; s.setFocused(true);
+                check(s.keyPressed(262,0,0) && applications(kind)==1 && commits(kind)==1, "reenabled keyboard stopped working");
+            }
             case "deferred_click" -> {
                 press(s,50); check(changed==0 && released==0, "deferred initial click applied early");
                 finish(s,kind); check(changed==1, "deferred click must apply exactly once");
@@ -237,6 +255,12 @@ class Wiring(unittest.TestCase):
         self.assertLess(body.index('pointerPressed = true'), body.index('super.onClick('))
         self.assertIn('isPointerPressed() && !this.applyOnDrag', SOURCES['DiarySlider'])
 
+    def test_keyboard_guard_precedes_parent_fallback(self):
+        for source in SOURCES.values():
+            body = method(source, 'public boolean keyPressed(')
+            self.assertIn('!this.active || !this.visible || !this.isFocused()', body)
+            self.assertLess(body.index('return false;'), body.index('super.keyPressed('))
+
     def test_ci_requires_execution(self):
         for name in ('.github/workflows/build.yml', 'tools/ci/build.yml'):
             self.assertIn('python3 tools/test_slider_input.py --require-java', (ROOT / name).read_text())
@@ -250,7 +274,8 @@ class Executable(unittest.TestCase):
             self.skipTest('JDK unavailable; CI requires executable checks')
         common = ('bare_release', 'bare_drag', 'rejected_presses', 'click', 'drag', 'unchanged_drag',
                   'refocus_same', 'focus_loss', 'inactive_release', 'hidden_release', 'inactive_drag',
-                  'secondary_during_drag', 'keyboard', 'keyboard_cancels_pointer')
+                  'secondary_during_drag', 'keyboard', 'keyboard_cancels_pointer',
+                  'inactive_key', 'hidden_key', 'unfocused_key')
         cases = [(case, kind) for case in common for kind in ('generic', 'music', 'ambience')]
         cases += [(case, 'generic') for case in ('deferred_click', 'deferred_drag', 'deferred_keyboard', 'reentrant_release')]
         with tempfile.TemporaryDirectory() as tmp:

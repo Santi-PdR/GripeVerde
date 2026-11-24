@@ -25,7 +25,34 @@ public final class SliderPointerRegression {
         }
     }
 
-    public static void main(String[] args) {
+    private static void keyboardGuards() throws Exception {
+        int[] events = new int[2];
+        Probe slider = new Probe(true, events, null);
+        // Prime vanilla's retained editing state without invoking setFocused(true),
+        // which queries Minecraft.getLastInputType. No native focus is exercised.
+        var focus = net.minecraft.client.gui.components.AbstractWidget.class.getDeclaredField("focused");
+        focus.setAccessible(true);
+        var editing = net.minecraft.client.gui.components.AbstractSliderButton.class.getDeclaredField("canChangeValue");
+        editing.setAccessible(true);
+        for (int state = 0; state < 3; state++) {
+            slider.active = state != 0;
+            slider.visible = state != 1;
+            focus.setBoolean(slider, state != 2);
+            editing.setBoolean(slider, true);
+            for (int key : new int[] {262, 263, 266, 267, 268, 269}) {
+                check(!slider.keyPressed(key, 0, 0), "noninteractive keyboard input ignored");
+            }
+            check(slider.value() == 0.25 && events[0] == 0 && events[1] == 0,
+                "hidden/inactive/unfocused slider cannot change through vanilla fallback");
+        }
+        slider.active = slider.visible = true;
+        focus.setBoolean(slider, true);
+        check(slider.keyPressed(262, 0, 0), "reenabled focused keyboard still works");
+        check(events[0] == 1 && events[1] == 1, "reenabled key applies and commits once");
+        check(!slider.mouseReleased(50, 10, 0), "keyboard edit does not arm pointer gesture");
+    }
+
+    public static void main(String[] args) throws Exception {
         int[] liveEvents = new int[2];
         Probe live = new Probe(true, liveEvents, null);
         check(!live.mouseReleased(50, 10, 0), "bare release must not invoke vanilla sound/client or commit");
@@ -69,6 +96,7 @@ public final class SliderPointerRegression {
         disabled.visible = true;
         check(!disabled.mouseReleased(90, 10, 0), "hidden drag cannot commit after show");
         check(disabledEvents[0] == 0 && disabledEvents[1] == 0, "hidden gesture has no callbacks");
+        keyboardGuards();
         System.out.println("Slider pointer regression: " + checks + " checks passed (real vanilla parent, no client).");
     }
 }

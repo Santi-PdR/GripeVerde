@@ -9,6 +9,18 @@ que una seccion posterior lo mencione expresamente.
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
+- **Teclado de deslizadores, posterior a `3242de8`:** los tres mandos
+  rechazan teclas si no están activos, visibles y enfocados, antes de ejecutar
+  su código propio o delegar en AbstractSliderButton. Esto evita ajustes de
+  controles ocultos y el fallback vanilla que aún podía editar un control
+  desactivado si retenía canChangeValue. El evento rechazado también cancela
+  cualquier gesto de ratón pendiente; al reactivar se puede editar normalmente.
+  La suite Python añade nueve escenarios (55 totales) y modela el estado de
+  edición retenido del padre. La regresión Java real amplía los casos con
+  campos de foco/edición preparados por reflexión, sin cliente ni foco nativo.
+  Guardas locales aprobadas sin JDK; compilación y ejecución pendientes de CI.
+  Sin bump ni release, ni afirmación de clics fantasma resueltos en Minecraft.
+
 - **Gestos de deslizadores, posterior a `9e8b10e`:** base compartida
   DiaryPointerSlider para los tres mandos. Solo una pulsación propia habilita
   arrastre y commit; liberaciones ajenas/repetidas o botones secundarios no
@@ -22,7 +34,10 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
   métodos reales de entrada, padres/audio dobles. Nueva tarea obligatoria
   `verifySliderPointerRegression`: DiarySlider y padre vanilla reales, sin
   cliente/rendering/entrada nativa. Baseline pasa a 73 Java principales.
-  Guardas locales aprobadas sin JDK; compilación/ejecución pendientes de CI.
+  El candidato `3242de8` compiló y pasó los 46 escenarios nuevos, la tarea
+  Java con padre real y todas las suites previas en
+  [CI 45410770641](https://github.com/Santi-PdR/GripeVerde/actions/runs/45410770641).
+  Artefacto `GripeVerde-jar` ID `14927334748`. Guardas locales sin JDK.
   No prueba dispatch completo de pantalla, foco del SO ni causa de clics
   fantasma en Minecraft. Sin bump ni release.
 

@@ -104,6 +104,10 @@ public class DiarySlider extends DiaryPointerSlider {
      */
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (!this.active || !this.visible || !this.isFocused()) {
+            this.cancelPointerGesture();
+            return false;
+        }
         if (this.active && this.isFocused()) {
             double step = 0.05D;
             int dir = 0;
