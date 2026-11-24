@@ -14,8 +14,12 @@
   la lógica y archivos reales: primera visita, máximos, mismo día, huecos,
   aniversario, fechas ausentes/futuras y persistencia/consumo de recordatorios.
   Los premios de racha ya están registrados en las fixtures, sin activar
-  toasts, audio ni cliente. Compilación/ejecución pendientes de CI; guardas
-  locales aprobadas sin JDK. Sin bump, esquema nuevo ni release.
+  toasts, audio ni cliente. El candidato `aa0a154` compiló y pasó la suite
+  ampliada y todas las previas en
+  [CI 45399491030](https://github.com/Santi-PdR/GripeVerde/actions/runs/45399491030).
+  Artefacto `GripeVerde-jar` ID `14922627282`. Guardas locales aprobadas sin
+  JDK; sin prueba gráfica ni reloj del sistema alterado. Sin bump, esquema
+  nuevo ni release; v0.401.0 mantiene asset, tamaño y digest publicados.
 
 - **Cola de notas en ejecución, posterior a `70af1da`:** `queue` y
   `queueOnce` ignoran IDs nulos/vacíos/blancos antes de inicializar memoria.
