@@ -33,6 +33,7 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   `python3 tools/test_slider_input.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_button_input.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_house_audio.py --require-java` (en CI, con JDK 17) ->
+  `python3 tools/test_simple_option_screens.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_option_screen_safety.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_world_navigation.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_server_form_layout.py --require-java` (en CI, con JDK 17) ->
@@ -44,6 +45,13 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   comprobar el release y el SHA-256. El job `publish` compara `release-tag.txt`
   con `build.gradle`, crea el tag sobre `$GITHUB_SHA` (el commit que produjo el
   JAR) y no sobrescribe un release existente.
+- Chat/En línea: `test_simple_option_screens.py` compila las clases completas
+  con dobles GUI/Options. 8.428 casos init/render/resize desde 160x120, 12 casos
+  de footer en seis etiquetas traducidas, 2 retornos/persistencia y 8 estados del
+  helper de salto musical. El helper se ejecuta; su uso exclusivo en init/render
+  de Sonido se protege con guarda de fuente. `test_menu_music.py` añade dos
+  escenarios de salto durante entrada a un mundo (18 en total), antes del tick
+  de limpieza. Sin render, audio, navegación SO ni E/S de Minecraft reales.
 - Pantallas de opciones: `test_option_screen_safety.py` compila Accesibilidad
   completa con dobles GUI/config, y métodos de Sonido con reloj/audio/lore dobles.
   22 escenarios (hitbox actual antes de render/tras resize, cooldown/reentrada,

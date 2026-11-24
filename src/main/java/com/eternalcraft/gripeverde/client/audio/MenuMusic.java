@@ -322,7 +322,10 @@ public class MenuMusic {
      * Ignora el click si ya hay crossfade en curso o no hay musica activa.
      */
     public static void skipToNext() {
-        if (!active || crossfading) return;
+        // Input can arrive before the next tick stops menu music on world entry.
+        // Guard here too: never advance the playlist or trigger the ghost piece.
+        Minecraft mc = Minecraft.getInstance();
+        if (mc == null || mc.level != null || !active || crossfading) return;
         manualSkipsThisSession++;
         // La pieza fantasma: tras agotar las cuatro piezas, la quinta vuelta
         // del gramofono trae lo que el cronista nunca grabo.

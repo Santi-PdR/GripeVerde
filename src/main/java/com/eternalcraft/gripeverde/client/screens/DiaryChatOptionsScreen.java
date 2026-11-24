@@ -26,6 +26,10 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         super(parent, options);
     }
 
+    private boolean compactLayout() {
+        return this.panelH < 160;
+    }
+
     // v0.272.0: la hoja solo suena la primera vez que se abre, no al redimensionar.
     private boolean paperSoundDone = false;
 
@@ -43,18 +47,17 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         chatFlavorIndex = CHAT_RNG.nextInt(flavorPool.length);
         super.init();
 
-        this.panelW = Math.min(PANEL_W, this.width - 40);
-        this.panelH = Math.min(PANEL_H, this.height - 30);
+        this.panelW = Math.max(1, Math.min(PANEL_W, this.width - 40));
+        this.panelH = Math.max(1, Math.min(PANEL_H, this.height - 30));
         this.panelX = (this.width - this.panelW) / 2;
         this.panelY = (this.height - this.panelH) / 2;
 
         if (this.list != null) {
             this.list.setRenderBackground(false);
             this.list.setRenderTopAndBottom(false);
-            int listTop = this.panelY + 45;
-            // v0.355.0: en ventanas muy bajas el alto salia invertido y la lista
-            // se quedaba sin renglon. Se le deja siempre uno.
-            int listBottom = Math.max(listTop + 20, this.panelY + this.panelH - 45);
+            // Decoration yields to one full vanilla row in a short viewport.
+            int listTop = this.panelY + (compactLayout() ? 24 : 60);
+            int listBottom = Math.max(listTop + 25, this.panelY + this.panelH - 42);
             this.list.updateSize(this.width, this.height, listTop, listBottom);
             this.smoothScroll.snapToCurrent(this.list);
         }
@@ -74,7 +77,7 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         }
 
         // Boton Volver estilo diario
-        int btnW = 120;
+        int btnW = Math.max(1, Math.min(120, this.panelW - 24));
         int btnH = 20;
         int btnX = (this.width - btnW) / 2;
         int btnY = this.panelY + this.panelH - 30;
@@ -118,43 +121,47 @@ public class DiaryChatOptionsScreen extends ChatOptionsScreen {
         String titleStr = DiaryChrome.fitCached(this.font,
             DiaryChrome.tr("options.chat.title"), Math.max(0, this.panelW - 28));
         int titleX = this.width / 2;
-        int titleY = this.panelY + 10;
+        int titleY = this.panelY + (compactLayout() ? 6 : 10);
         {
         int _tw = DiaryChrome.widthCached(this.font, titleStr);
         g.drawString(this.font, titleStr, titleX - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
         }
 
-        // Subtitulo
-        String subtitle = "- " + DiaryChrome.tr("gripeverde.options.chat.subtitle") + " -";
-        // v0.304.0: el subtitulo se cortaba antes de la chapa REG. V.
-        subtitle = DiaryChrome.fitCached(this.font, subtitle, Math.max(0, this.panelW - 150));
-        int subWC = DiaryChrome.widthCached(this.font, subtitle);
-        g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
+        if (!compactLayout()) {
+            // Subtitulo
+            String subtitle = "- " + DiaryChrome.tr("gripeverde.options.chat.subtitle") + " -";
+            // v0.304.0: el subtitulo se cortaba antes de la chapa REG. V.
+            subtitle = DiaryChrome.fitCached(this.font, subtitle, Math.max(0, this.panelW - 150));
+            int subWC = DiaryChrome.widthCached(this.font, subtitle);
+            g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
-        // v0.310.0: en el renglon de la cita va el estado del chat en palabras.
-        // Antes iba al pie, justo debajo del boton de volver, y se encimaban.
-        String headerLine = "";
-        try {
-            headerLine = chatSummaryLine();
-        } catch (Throwable ignored) {
+            // v0.310.0: en el renglon de la cita va el estado del chat en palabras.
+            // Antes iba al pie, justo debajo del boton de volver, y se encimaban.
+            String headerLine = "";
+            try {
+                headerLine = chatSummaryLine();
+            } catch (Throwable ignored) {
+            }
+            if (headerLine.isEmpty()) {
+                headerLine = getRotatingChatFlavor();
+            }
+            String shownLine = DiaryChrome.fitCached(this.font, headerLine, Math.max(0, this.panelW - 150));
+            int flvWC = DiaryChrome.widthCached(this.font, shownLine);
+            g.drawString(this.font, shownLine, (this.width - flvWC) / 2, titleY + 24,
+                DiaryChrome.INK_FLAVOR, false);
         }
-        if (headerLine.isEmpty()) {
-            headerLine = getRotatingChatFlavor();
-        }
-        String shownLine = DiaryChrome.fitCached(this.font, headerLine, Math.max(0, this.panelW - 150));
-        int flvWC = DiaryChrome.widthCached(this.font, shownLine);
-        g.drawString(this.font, shownLine, (this.width - flvWC) / 2, titleY + 24,
-            DiaryChrome.INK_FLAVOR, false);
 
         // Divisor superior
-        int divY1 = titleY + 42;
+        int divY1 = this.panelY + (compactLayout() ? 20 : 52);
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY1);
 
         // Divisor inferior + esquineros
         int divY2 = this.panelY + this.panelH - 38;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
         DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
-        DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. V");
+        if (!compactLayout()) {
+            DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. V");
+        }
 
         // Lista vanilla sin gradientes blancos ni bandejas extra
         boolean listClipped = false;

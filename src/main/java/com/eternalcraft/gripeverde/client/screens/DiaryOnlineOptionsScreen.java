@@ -12,6 +12,7 @@ import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.SimpleOptionsSubScreen;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
 /**
@@ -37,6 +38,10 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
               });
     }
 
+    private boolean compactLayout() {
+        return this.panelH < 160;
+    }
+
     // v0.272.0: la hoja solo suena la primera vez que se abre, no al redimensionar.
     private boolean paperSoundDone = false;
 
@@ -52,16 +57,17 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
         }
         super.init();
 
-        this.panelW = Math.min(PANEL_W, this.width - 40);
-        this.panelH = Math.min(PANEL_H, this.height - 30);
+        this.panelW = Math.max(1, Math.min(PANEL_W, this.width - 40));
+        this.panelH = Math.max(1, Math.min(PANEL_H, this.height - 30));
         this.panelX = (this.width - this.panelW) / 2;
         this.panelY = (this.height - this.panelH) / 2;
 
         if (this.list != null) {
             this.list.setRenderBackground(false);
             this.list.setRenderTopAndBottom(false);
-            int listTop = this.panelY + 55;
-            int listBottom = this.panelY + this.panelH - 45;
+            // Decoration yields to one full vanilla row in a short viewport.
+            int listTop = this.panelY + (compactLayout() ? 24 : 60);
+            int listBottom = Math.max(listTop + 25, this.panelY + this.panelH - 42);
             this.list.updateSize(this.width, this.height, listTop, listBottom);
             this.smoothScroll.snapToCurrent(this.list);
         }
@@ -70,8 +76,7 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
         for (GuiEventListener child : this.children()) {
             if (child instanceof Button b) {
                 String label = b.getMessage().getString();
-                if (label.equalsIgnoreCase("Done") || label.equalsIgnoreCase("Aceptar")
-                    || label.equalsIgnoreCase("Listo") || label.equalsIgnoreCase("OK")) {
+                if (label.equals(CommonComponents.GUI_DONE.getString())) {
                     b.visible = false;
                     b.active = false;
                     b.setX(-10000);
@@ -80,7 +85,7 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
         }
 
         // Boton Volver Diary
-        int btnW = 130;
+        int btnW = Math.max(1, Math.min(130, this.panelW - 24));
         int btnH = 22;
         int btnX = this.width / 2 - btnW / 2;
         int btnY = this.panelY + this.panelH - btnH - 12;
@@ -120,39 +125,43 @@ public class DiaryOnlineOptionsScreen extends SimpleOptionsSubScreen {
         // Titulo
         String titleStr = DiaryChrome.fitCached(this.font, this.title.getString(), Math.max(0, this.panelW - 28));
         int titleX = this.width / 2;
-        int titleY = this.panelY + 12;
+        int titleY = this.panelY + (compactLayout() ? 6 : 12);
         int tw = DiaryChrome.widthCached(this.font, titleStr);
         g.drawString(this.font, titleStr, titleX - tw / 2, titleY, DiaryChrome.INK_TITLE, false);
 
-        // Subtitulo diegetico
-        String subtitle = "- " + DiaryChrome.tr("gripeverde.options.online.subtitle") + " -";
-        // v0.304.0: el subtitulo se cortaba antes de la chapa REG. VIII.
-        subtitle = DiaryChrome.fitCached(this.font, subtitle, Math.max(0, this.panelW - 150));
-        int subW = DiaryChrome.widthCached(this.font, subtitle);
-        g.drawString(this.font, subtitle, titleX - subW / 2, titleY + 14, DiaryChrome.INK_SUBTITLE, false);
-        // v0.310.0: el resumen de lo que queda encendido sube al renglon de la
-        // cita; al pie caia sobre el boton de volver.
-        String headerLine = "";
-        try {
-            headerLine = onlineSummaryLine();
-        } catch (Throwable ignored) {
+        if (!compactLayout()) {
+            // Subtitulo diegetico
+            String subtitle = "- " + DiaryChrome.tr("gripeverde.options.online.subtitle") + " -";
+            // v0.304.0: el subtitulo se cortaba antes de la chapa REG. VIII.
+            subtitle = DiaryChrome.fitCached(this.font, subtitle, Math.max(0, this.panelW - 150));
+            int subW = DiaryChrome.widthCached(this.font, subtitle);
+            g.drawString(this.font, subtitle, titleX - subW / 2, titleY + 14, DiaryChrome.INK_SUBTITLE, false);
+            // v0.310.0: el resumen de lo que queda encendido sube al renglon de la
+            // cita; al pie caia sobre el boton de volver.
+            String headerLine = "";
+            try {
+                headerLine = onlineSummaryLine();
+            } catch (Throwable ignored) {
+            }
+            if (headerLine.isEmpty()) {
+                headerLine = DiaryChrome.tr("gripeverde.options.online.flavor");
+            }
+            String shown = DiaryChrome.fitCached(this.font, headerLine, Math.max(0, this.panelW - 150));
+            int flavorW = DiaryChrome.widthCached(this.font, shown);
+            g.drawString(this.font, shown, titleX - flavorW / 2, titleY + 26, DiaryChrome.INK_FLAVOR, false);
         }
-        if (headerLine.isEmpty()) {
-            headerLine = DiaryChrome.tr("gripeverde.options.online.flavor");
-        }
-        String shown = DiaryChrome.fitCached(this.font, headerLine, Math.max(0, this.panelW - 150));
-        int flavorW = DiaryChrome.widthCached(this.font, shown);
-        g.drawString(this.font, shown, titleX - flavorW / 2, titleY + 26, DiaryChrome.INK_FLAVOR, false);
 
         // Divisor
-        int divY = titleY + 40;
+        int divY = this.panelY + (compactLayout() ? 20 : 52);
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY);
 
         // Divisor inferior + esquineros
         int divY2 = this.panelY + this.panelH - 40;
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
         DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
-        DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. VIII");
+        if (!compactLayout()) {
+            DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. VIII");
+        }
 
         // Lista vanilla
         // v0.385.0: la lista se pintaba tal cual la trae el juego: rotulos en

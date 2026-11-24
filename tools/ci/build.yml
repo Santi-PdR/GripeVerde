@@ -45,6 +45,8 @@ jobs:
 
       - name: Test confirmation decision safety and lifecycle
         run: python3 tools/test_confirm_screen.py --require-java
+      - name: Test Chat and Online layout, translated footer and skip state
+        run: python3 tools/test_simple_option_screens.py --require-java
       - name: Test accessibility geometry and sound secret lifecycle
         run: python3 tools/test_option_screen_safety.py --require-java
       - name: Test world selection focus, scroll and row lookup

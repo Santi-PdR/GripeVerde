@@ -193,7 +193,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
                 DiaryButton.SoundProfile.DEFAULT, MenuMusic::skipToNext);
             this.skipTrackButton.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
                 Component.translatable("gripeverde.options.sound.next_track_button.tooltip")));
-            this.skipTrackButton.active = MenuMusic.isActive() && !MenuMusic.isCrossfading();
+            this.skipTrackButton.active = this.canSkipMenuTrack();
             this.addRenderableWidget(this.skipTrackButton);
         }
 
@@ -403,6 +403,11 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
             : "gripeverde.options.sound.ambience_on");
     }
 
+    private boolean canSkipMenuTrack() {
+        return MenuMusic.isActive() && !MenuMusic.isCrossfading()
+            && !com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.hasActiveWorld();
+    }
+
     private Component musicToggleLabel() {
         return Component.translatable(MenuMusic.isMusicEnabled()
             ? "gripeverde.options.sound.music_toggle.pause"
@@ -439,8 +444,7 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         refreshMenuMusicToggleButton();
         if (this.skipTrackButton != null) {
-            this.skipTrackButton.active = MenuMusic.isActive() && !MenuMusic.isCrossfading()
-                && !com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.hasActiveWorld();
+            this.skipTrackButton.active = this.canSkipMenuTrack();
         }
         if (this.testAmbienceSoundButton != null) {
             this.testAmbienceSoundButton.active =
@@ -555,11 +559,6 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
         DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
         // v0.267.0: la hoja de sonido tambien lleva su chapa.
         DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. II");
-
-        // The soundtrack controls stay static in a live world; only enabled state is refreshed.
-        if (this.skipTrackButton != null) {
-            this.skipTrackButton.active = MenuMusic.isActive() && !MenuMusic.isCrossfading();
-        }
 
         // --- Slider + boton (renderables propios) ---
         for (Renderable r : this.renderables) {

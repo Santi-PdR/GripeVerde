@@ -2,6 +2,31 @@
 
 Actualizado: 2026-11-13
 
+- **Chat/En línea compactos y salto musical seguro, posterior a `0716360`:**
+  Chat y En línea reservan una fila vanilla de al menos 25 px sin invadir el
+  botón Volver a 160x120; comprimen cabecera y omiten decoración en paneles
+  bajos, ajustan el botón al ancho real y ponen el divisor encima de la lista
+  también a tamaño normal. Antes Chat forzaba un mínimo que pisaba el pie y
+  En línea podía invertir el viewport. Se conservan coordenadas horizontales
+  vanilla, opciones, retorno al padre y persistencia al retirar la pantalla.
+  El Done vanilla de En línea se reconoce por CommonComponents.GUI_DONE, no
+  por una lista cerrada de etiquetas ES/EN, evitando botones extra en otros
+  idiomas. Sonido calcula el estado de Siguiente pista con un único helper:
+  el segundo setter del render ya no anula la protección de partida activa.
+  MenuMusic.skipToNext también rechaza llamadas con mundo activo o sin cliente
+  antes de avanzar contadores, iniciar crossfade o disparar la pieza fantasma,
+  cubriendo el intervalo anterior al tick que detiene la música al entrar.
+  Nueva `test_simple_option_screens.py`: Chat/En línea completos con dobles,
+  8.428 casos init/render/resize (7 anchos, alturas 120..420, ES/EN), 12 casos
+  de footer traducido, 2 retornos/persistencia y 8 estados del helper de salto.
+  Orden de dibujo y posición de divisores comprobados con captura de llamadas,
+  no píxeles. Uso del helper de salto en init/render protegido por guarda de
+  fuente. Suite MenuMusic completa ampliada de 16 a 18 escenarios de motor
+  doble, incluidos salto ordinario/fantasma con mundo antes del siguiente tick.
+  Sin audio/render nativo, input SO, Realms ni E/S real de opciones.
+  Ambos workflows exigen Java; guardas locales aprobadas, Java/build pendientes
+  de CI. Sin bump/release ni afirmación sobre clics fantasma nativos.
+
 - **Accesibilidad mínima y secretos de Sonido, posterior a `b79671d`:**
   Accesibilidad recupera margen vertical en ventanas muy bajas y usa cabecera
   mínima, toggles de 18 px y botón de regreso ajustado al panel. A 160x120

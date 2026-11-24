@@ -150,6 +150,21 @@ public class MenuMusicHarness {
                 check(current() == null && mc.sounds.active.isEmpty(), "start retained menu record in world");
                 check(mc.sounds.plays == plays && !(Boolean)field("active"), "start played menu music in world");
             }
+            case "skip_in_world", "ghost_skip_in_world" -> {
+                MenuMusic.start();
+                if (args[0].equals("ghost_skip_in_world")) set("manualSkipsThisSession", 4);
+                int skipped = (Integer)field("manualSkipsThisSession");
+                int plays = mc.sounds.plays;
+                Object current = current();
+                mc.level = new Object();
+                // Input precedes MenuMusic.tick on the world-transition frame.
+                MenuMusic.skipToNext();
+                check(mc.sounds.plays == plays && current() == current, "skip advanced music inside a world");
+                check((Integer)field("manualSkipsThisSession") == skipped && !(Boolean)field("ghostPlayedThisSession"),
+                      "world skip consumed counter or triggered ghost piece");
+                MenuMusic.tick();
+                check(!MenuMusic.isActive() && mc.sounds.active.isEmpty(), "world tick failed to stop previous menu music");
+            }
             case "skip_in_gap" -> {
                 gap(); MenuMusic.skipToNext(); expectOneTrack();
                 int plays = mc.sounds.plays; Object sound = current();
@@ -260,7 +275,7 @@ class Executable(unittest.TestCase):
         cases = ('skip_in_gap', 'gap_expires', 'skip_failure_retry', 'registry_failure_retry',
                  'ghost_pause_skip', 'crossfade_ignores_skip', 'inactive_skip', 'stop_in_gap',
                  'world_entry', 'disabled_during_gap', 'regular_start', 'start_in_world', 'start_active_world',
-                 'stop_without_client', 'stop_failure', 'stop_clears_timers')
+                 'stop_without_client', 'stop_failure', 'stop_clears_timers', 'skip_in_world', 'ghost_skip_in_world')
         with tempfile.TemporaryDirectory() as tmp:
             work = Path(tmp)
             sources = dict(STUBS)
