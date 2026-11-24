@@ -25,7 +25,14 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
   futuros/executor/config/pantalla/audio/render dobles, sin sleeps: éxito/error,
   finalización inmediata, reintentos, navegación ajena, Unicode y aviso ES/EN.
   No ejecuta recarga de packs, fallback de Minecraft, fuentes ni E/S reales.
-  Guardas locales sin JDK aprobadas; ejecución/build pendientes de CI.
+  CI 45471176983 se detuvo compilando el harness: onClose usa UiSounds
+  plenamente cualificado y faltaba el doble de ese paquete (no error del mod).
+  Corregido en `c3790ce`: 23 escenarios, 29 de confirmación, regresión real y
+  suites anteriores/build aprobados en [CI 45471532731](https://github.com/Santi-PdR/GripeVerde/actions/runs/45471532731).
+  Artefacto `GripeVerde-jar` ID `14956687966`. Guardas locales sin JDK.
+  La ronda añade 52 escenarios con dobles y 14 checks nuevos con clases reales.
+  Release v0.401.0 reconsultada intacta (asset 778229607, 10855632 bytes,
+  SHA-256 dd37d443b7307c1b3d0d09fc5befdaee6d1dd887bfca002d6e7bc3670ef0ee88).
   Sin bump/release ni prueba nativa de Minecraft o de clics fantasma.
 
 - **Seguridad de confirmaciones, posterior a `519b08c`:** DiaryConfirmScreen
