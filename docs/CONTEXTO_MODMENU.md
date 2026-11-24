@@ -2,6 +2,20 @@
 
 Actualizado: 2026-11-13
 
+- **Música: salto durante una pausa, posterior a `ff7b8c4`:** al iniciar
+  una pista correctamente se cancela la espera anterior y su temporizador.
+  Antes, un salto manual durante el silencio normal o el de la pieza fantasma
+  dejaba esa espera armada y podía arrancar otra pista encima, perdiendo la
+  referencia de la que ya sonaba. Si el motor o registro falla se conserva
+  el reintento con pausa. No cambia la mezcla, duraciones ni premios.
+  Nueva suite `tools/test_menu_music.py` obligatoria en ambos workflows:
+  MenuMusic completo contra motor/registro/config/instancias dobles, con
+  plazos forzados sin sleeps. Once escenarios cubren salto en pausa, fin
+  natural de pausa, fallos y reintento, pieza fantasma, crossfade, inactivo,
+  stop, entrada al mundo, desactivación y arranque idempotente.
+  Guardas locales aprobadas; compilación y escenarios Java pendientes de CI.
+  Sin prueba auditiva ni motor OpenAL real, ni bump/esquema/release.
+
 - **Descubrimientos y avisos, posterior a `74d263d`:** `discover` rechaza
   IDs nulos/blancos antes de memoria, audio y notificaciones. `nameFor(null)`
   y `hintFor(null)` usan el mismo fallback `???` que un ID desconocido, sin
@@ -14,7 +28,10 @@ Actualizado: 2026-11-13
   clase Discoveries completa con cliente/fuente/memoria/audio dobles, método
   real de acortado, 15 escenarios de APIs, caché, límites, idiomas y colas.
   La suite real `verifyMemoryDataRegression` también cubre IDs inválidos sin
-  inicialización ni E/S. Guardas locales aprobadas; Java pendiente de CI.
+  inicialización ni E/S. El candidato `ff7b8c4` compiló y pasó los 15
+  escenarios nuevos y las suites previas en
+  [CI 45405235156](https://github.com/Santi-PdR/GripeVerde/actions/runs/45405235156).
+  Artefacto `GripeVerde-jar` ID `14924144815`. Localmente solo guardas sin JDK.
   Sin prueba gráfica/GPU/audio real ni cambio de versión/esquema/release.
 
 - **Sesiones: contadores y fechas, posterior a `36092e6`:** las visitas

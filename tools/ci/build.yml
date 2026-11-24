@@ -43,6 +43,8 @@ jobs:
       - name: Lint Java structure
         run: python3 tools/lint_java.py
 
+      - name: Test menu music playback lifecycle
+        run: python3 tools/test_menu_music.py --require-java
       - name: Test discovery APIs and notifications
         run: python3 tools/test_discoveries.py --require-java
       - name: Test marginalia text layout and cache

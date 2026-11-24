@@ -521,6 +521,11 @@ public class MenuMusic {
             currentInstance = new FadingMusicInstance(se, baseVol, TRACK_DURATIONS_MS[currentIndex]);
             mc.getSoundManager().play(currentInstance);
 
+            // Un salto manual tambien puede arrancar durante el silencio entre
+            // pistas. Cancelar esa espera solo tras reproducir con exito: de lo
+            // contrario su temporizador arrancaria otra pista encima de esta.
+            waitingForNext = false;
+            nextTrackAtMs = 0L;
             currentStartMs = nowMs();
             currentDurationMs = TRACK_DURATIONS_MS[currentIndex];
 
