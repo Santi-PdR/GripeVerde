@@ -2,6 +2,27 @@
 
 ## Addendum operativo actual (2026-11-13)
 
+- **Ronda de ciclo de vida del audio, posterior a `36d3e51`:** La casa
+  sincroniza sus interruptores con los gestores en ejecución: apagar música
+  detiene, encender arranca; ambiente usa setMuted y arranca si corresponde.
+  El reset restaura ganancias antes de reactivar y persiste cada interruptor
+  una vez, incluso si la caché de mute ya coincidía con el valor por defecto.
+  Ambos gestores rechazan start dentro de un mundo. Ambiente limpia estado
+  al entrar a un mundo también con volumen cero; cero retira los bucles y
+  subirlo permite reconstruirlos. No crea bucles en un arranque a cero.
+  El reloj y la respuesta al susurro respetan mute, volumen, actividad y mundo;
+  no se premia un susurro inaudible/obsoleto. Stop cancela ventanas transitorias.
+  La recuperación tras recursos retira bucles propios antes de reemplazarlos;
+  ambas clases marcan instancias terminadas aunque falte cliente o falle stop
+  del motor, y siguen limpiando las otras instancias. Música cancela timers.
+  Nueva suite `tools/test_menu_ambience.py`: clase completa y 31 escenarios.
+  Música amplía 11 a 16 y La casa 15 a 18: 39 escenarios nuevos, 65 en esas
+  tres suites. Motor, registros, configuración e instancias de sonido son
+  dobles; deadlines se inyectan por reflexión, sin esperas. La casa usa métodos
+  extraídos y gestores de ciclo de vida dobles.
+  No prueba audio audible, recarga real, E/S TOML ni GUI. Guardas locales
+  sin JDK aprobadas; ejecución Java/build pendientes de CI. Sin bump/release.
+
 - **Teclas en extremos de volumen, posterior a `a9ec068`:** los tres
   deslizadores consumen Inicio/Fin/flechas/RePág/AvPág sin repetir callbacks,
   guardados o sonidos si el valor ya está en el extremo pedido. La base

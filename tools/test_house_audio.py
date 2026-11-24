@@ -43,6 +43,7 @@ public class ForgeConfigSpec {
         public boolean value;
         public int saves;
         public BooleanValue(boolean value) { this.value=value; }
+        public boolean get() { return value; }
         public void set(boolean value) { this.value=value; }
         public void save() { saves++; }
     }
@@ -91,6 +92,9 @@ public class HouseAudioHarness {
         check(ClientConfig.MENU_MUSIC_ENABLED.value && ClientConfig.AMBIENCE_ENABLED.value && ClientConfig.HUD_WATCH_ENABLED.value
             && ClientConfig.REPLACE_PAUSE.value && ClientConfig.REPLACE_TITLE.value,"reset failed to enable default switches");
         check(!ClientConfig.REDUCED_MOTION.value && !ClientConfig.REDUCE_FLASHES.value,"reset failed to clear reduced effects");
+        check(MenuMusic.starts==1 && MenuAmbience.starts==1 && !MenuAmbience.muted,"reset did not resume audio");
+        check(ClientConfig.MENU_MUSIC_ENABLED.saves==1 && ClientConfig.AMBIENCE_ENABLED.saves==1,
+              "audio switches must persist once on reset");
         check(house.rebuilds==1,"reset must rebuild once after updating state");
         near(createMusicSlider(0,0,100).value,0.4); near(createAmbienceSlider(0,0,100).value,1.0);
     }
@@ -100,6 +104,33 @@ public class HouseAudioHarness {
         near(MenuMusic.getUserVolume(),0.4); near(MenuAmbience.getUserVolume(),1.0);
         String test=args[0],kind=args[1];
         HouseAudioHarness house=new HouseAudioHarness();
+        if (test.startsWith("switch_")) {
+            switch (test) {
+                case "switch_music_off_on" -> {
+                    setBool(ClientConfig.MENU_MUSIC_ENABLED,false);
+                    check(MenuMusic.stops==1 && MenuMusic.starts==0 && !ClientConfig.MENU_MUSIC_ENABLED.get(),"music disable not live");
+                    setBool(ClientConfig.MENU_MUSIC_ENABLED,true);
+                    check(MenuMusic.starts==1 && ClientConfig.MENU_MUSIC_ENABLED.get(),"music enable not live");
+                    check(ClientConfig.MENU_MUSIC_ENABLED.saves==2,"music switch persisted more than once per action");
+                    check(MenuAmbience.starts==0 && MenuAmbience.mutes==0,"music switch touched ambience");
+                }
+                case "switch_ambience_off_on" -> {
+                    setBool(ClientConfig.AMBIENCE_ENABLED,false);
+                    check(MenuAmbience.muted && MenuAmbience.starts==0 && !ClientConfig.AMBIENCE_ENABLED.get(),"ambience disable not live");
+                    setBool(ClientConfig.AMBIENCE_ENABLED,true);
+                    check(!MenuAmbience.muted && MenuAmbience.starts==1 && ClientConfig.AMBIENCE_ENABLED.get(),"ambience enable not live");
+                    check(ClientConfig.AMBIENCE_ENABLED.saves==2,"ambience switch persisted more than once per action");
+                    check(MenuMusic.starts==0 && MenuMusic.stops==0,"ambience switch touched music");
+                }
+                case "switch_non_audio" -> {
+                    setBool(ClientConfig.REDUCED_MOTION,false);
+                    check(!ClientConfig.REDUCED_MOTION.get() && ClientConfig.REDUCED_MOTION.saves==1,"generic switch changed");
+                    check(MenuMusic.starts==0 && MenuMusic.stops==0 && MenuAmbience.starts==0 && MenuAmbience.mutes==0,"visual switch touched audio");
+                }
+                default -> throw new AssertionError(test);
+            }
+            return;
+        }
         if (test.startsWith("reset")) {
             if (test.equals("reset_after_drag")) {
                 createMusicSlider(0,0,100).move(0.2); createAmbienceSlider(0,0,100).move(0.3);
@@ -168,6 +199,11 @@ class Wiring(unittest.TestCase):
         for name in ('MenuMusic', 'MenuAmbience'):
             self.assertLess(body.index(name + '.setUserVolume('), body.index('this.rebuildWidgets('))
 
+    def test_switch_callbacks_use_runtime_dispatch(self):
+        body = method(HOUSE, 'private void addToggle(')
+        self.assertIn('v -> setBool(value, v)', body)
+        self.assertNotIn('value.set(v)', body)
+
     def test_ci_requires_execution(self):
         for name in ('.github/workflows/build.yml', 'tools/ci/build.yml'):
             self.assertIn('python3 tools/test_house_audio.py --require-java', (ROOT / name).read_text())
@@ -181,7 +217,7 @@ class Executable(unittest.TestCase):
             self.skipTest('JDK unavailable; CI requires executable checks')
         cases = [(case, kind) for case in ('initial_cache', 'live_no_save', 'release', 'rebuild', 'round_trip', 'zero_volume')
                  for kind in ('music', 'ambience')]
-        cases += [(case, 'music') for case in ('reset', 'reset_after_drag', 'reset_labels')]
+        cases += [(case, 'music') for case in ('reset', 'reset_after_drag', 'reset_labels', 'switch_music_off_on', 'switch_ambience_off_on', 'switch_non_audio')]
         with tempfile.TemporaryDirectory() as tmp:
             work=Path(tmp)
             prefix='com/eternalcraft/gripeverde/'
@@ -198,8 +234,14 @@ class Executable(unittest.TestCase):
                               if name=='MenuMusic' else 'private static float userVolume=1.0f; private static boolean userVolumeLoadedFromConfig;')
                 methods='\n'.join(method(source,sig) for sig in ('public static float getUserVolume(',
                                        'public static void setUserVolumeLive(', 'public static void setUserVolume('))
+                # Lifecycle calls are doubles here: real managers have separate full-class suites.
+                lifecycle = ('public static int starts,stops; public static void start(){starts++;} public static void stop(){stops++;}'
+                             if name=='MenuMusic' else '''public static int starts,mutes; public static boolean muted=true;
+                             public static void start(){starts++;}
+                             public static void setMuted(boolean m){mutes++; muted=m;
+                                 ClientConfig.AMBIENCE_ENABLED.set(!m); ClientConfig.AMBIENCE_ENABLED.save();}''')
                 sources[prefix+f'client/audio/{name}.java'] = ('package com.eternalcraft.gripeverde.client.audio; '
-                    'import com.eternalcraft.gripeverde.config.ClientConfig; public class '+name+' { '+declarations+methods+' }')
+                    'import com.eternalcraft.gripeverde.config.ClientConfig; public class '+name+' { '+declarations+methods+lifecycle+' }')
             paths=[]
             for name,text in sources.items():
                 path=work/name; path.parent.mkdir(parents=True,exist_ok=True); path.write_text(text); paths.append(str(path))

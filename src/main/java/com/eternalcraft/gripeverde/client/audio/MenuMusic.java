@@ -180,6 +180,11 @@ public class MenuMusic {
     public static void start() {
         Minecraft mc = Minecraft.getInstance();
         if (mc == null) return;
+        // Sound options are also reachable from a world: never start menu music there.
+        if (mc.level != null) {
+            stop();
+            return;
+        }
         if (!isMusicEnabled()) {
             stop();
             suppressVanillaMenuMusic(mc);
@@ -210,24 +215,26 @@ public class MenuMusic {
         if (DEBUG_LOGGING) LOGGER.info("[MenuMusic v3] Iniciado");
     }
 
-    public static void stop() {
-        if (!active) return;
+    private static void retireInstance(Minecraft mc, FadingMusicInstance instance) {
+        if (instance == null) return;
+        // The engine may be unavailable during teardown/reload. Retire the
+        // tickable instance regardless, so an engine failure cannot orphan it.
+        instance.markDone();
+        try { if (mc != null) mc.getSoundManager().stop(instance); } catch (Exception ignored) {}
+    }
 
+    public static void stop() {
         Minecraft mc = Minecraft.getInstance();
-        if (mc != null) {
-            if (currentInstance != null) {
-                try { mc.getSoundManager().stop(currentInstance); currentInstance.markDone(); } catch (Exception ignored) {}
-            }
-            if (previousInstance != null) {
-                try { mc.getSoundManager().stop(previousInstance); previousInstance.markDone(); } catch (Exception ignored) {}
-            }
-        }
+        retireInstance(mc, currentInstance);
+        retireInstance(mc, previousInstance);
 
         active = false;
         currentInstance = null;
         previousInstance = null;
         currentIndex = -1;
         waitingForNext = false;
+        nextTrackAtMs = 0L;
+        ghostWhisperAtMs = 0L;
         crossfading = false;
         duckUntilMs = 0L;
         duckStartMs = 0L;
@@ -279,7 +286,7 @@ public class MenuMusic {
             if (crossElapsed >= CROSSFADE_MS) {
                 // Crossfade termino: eliminar la instancia anterior
                 if (previousInstance != null) {
-                    try { mc.getSoundManager().stop(previousInstance); previousInstance.markDone(); } catch (Exception ignored) {}
+                    retireInstance(mc, previousInstance);
                     previousInstance = null;
                 }
                 crossfading = false;
@@ -342,7 +349,7 @@ public class MenuMusic {
         if (mc == null) return;
         // Detener la pieza actual de golpe: el gramofono se queda sin cuerda.
         if (currentInstance != null) {
-            try { mc.getSoundManager().stop(currentInstance); currentInstance.markDone(); } catch (Exception ignored) {}
+            retireInstance(mc, currentInstance);
         }
         currentInstance = null;
         previousInstance = null;

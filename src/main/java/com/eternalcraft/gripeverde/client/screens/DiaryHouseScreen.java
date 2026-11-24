@@ -226,10 +226,7 @@ public class DiaryHouseScreen extends Screen {
         DiaryToggle toggle = new DiaryToggle(
             x, y, this.toggleW, TOGGLE_H,
             value::get,
-            v -> {
-                value.set(v);
-                value.save();
-            },
+            v -> setBool(value, v),
             label(es, english),
             (v) -> v ? Component.literal(en() ? "on" : "si") : Component.literal(en() ? "off" : "no"),
             null);
@@ -286,8 +283,6 @@ public class DiaryHouseScreen extends Screen {
 
     /** v0.297.0: vuelve a los valores de fabrica de la casa (los del archivo). */
     private void resetHouse() {
-        setBool(ClientConfig.MENU_MUSIC_ENABLED, true);
-        setBool(ClientConfig.AMBIENCE_ENABLED, true);
         setBool(ClientConfig.REDUCED_MOTION, false);
         setBool(ClientConfig.REDUCE_FLASHES, false);
         setBool(ClientConfig.HUD_WATCH_ENABLED, true);
@@ -297,14 +292,26 @@ public class DiaryHouseScreen extends Screen {
         ClientConfig.HUD_WATCH_CORNER.save();
         MenuMusic.setUserVolume(0.4f);
         MenuAmbience.setUserVolume(1.0f);
+        // Restore gains before restarting audio, not after a burst at the old gain.
+        setBool(ClientConfig.MENU_MUSIC_ENABLED, true);
+        setBool(ClientConfig.AMBIENCE_ENABLED, true);
         ClientConfig.UI_VOLUME.set(1.0);
         ClientConfig.UI_VOLUME.save();
         this.rebuildWidgets();
     }
 
     private static void setBool(net.minecraftforge.common.ForgeConfigSpec.BooleanValue value, boolean v) {
+        if (value == ClientConfig.AMBIENCE_ENABLED) {
+            MenuAmbience.setMuted(!v);
+            if (v) MenuAmbience.start();
+            return;
+        }
         value.set(v);
         value.save();
+        if (value == ClientConfig.MENU_MUSIC_ENABLED) {
+            if (v) MenuMusic.start();
+            else MenuMusic.stop();
+        }
     }
 
     @Override

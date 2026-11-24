@@ -99,12 +99,16 @@ public class Minecraft {
     public static class SoundManager {
         public java.util.Set<FadingMusicInstance> active = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
         public int plays, stops;
-        public boolean failNext;
+        public boolean failNext, failNextStop;
         public void play(FadingMusicInstance sound) {
             if (failNext) { failNext = false; throw new IllegalStateException("play failed"); }
             active.add(sound); plays++;
         }
-        public void stop(FadingMusicInstance sound) { active.remove(sound); stops++; }
+        public void stop(FadingMusicInstance sound) {
+            stops++;
+            if (failNextStop) { failNextStop=false; throw new IllegalStateException("stop failed"); }
+            active.remove(sound);
+        }
         public boolean isActive(FadingMusicInstance sound) { return active.contains(sound); }
     }
 }''',
@@ -138,6 +142,14 @@ public class MenuMusicHarness {
     public static void main(String[] args) throws Exception {
         Minecraft mc = Minecraft.instance;
         switch (args[0]) {
+            case "start_in_world", "start_active_world" -> {
+                if (args[0].equals("start_active_world")) MenuMusic.start();
+                mc.level = new Object();
+                int plays = mc.sounds.plays;
+                MenuMusic.start();
+                check(current() == null && mc.sounds.active.isEmpty(), "start retained menu record in world");
+                check(mc.sounds.plays == plays && !(Boolean)field("active"), "start played menu music in world");
+            }
             case "skip_in_gap" -> {
                 gap(); MenuMusic.skipToNext(); expectOneTrack();
                 int plays = mc.sounds.plays; Object sound = current();
@@ -184,6 +196,21 @@ public class MenuMusicHarness {
             }
             case "inactive_skip" -> {
                 MenuMusic.skipToNext(); check(mc.sounds.plays == 0 && !MenuMusic.isActive(), "inactive skip started music");
+            }
+            case "stop_without_client", "stop_failure", "stop_clears_timers" -> {
+                MenuMusic.start(); MenuMusic.skipToNext();
+                FadingMusicInstance a=current(), b=(FadingMusicInstance)field("previousInstance");
+                check(a!=null && b!=null,"fixture did not crossfade");
+                set("ghostWhisperAtMs",Long.MAX_VALUE); set("nextTrackAtMs",Long.MAX_VALUE);
+                if (args[0].equals("stop_without_client")) Minecraft.instance=null;
+                if (args[0].equals("stop_failure")) mc.sounds.failNextStop=true;
+                int stops=mc.sounds.stops;
+                MenuMusic.stop();
+                check(a.isStopped() && b.isStopped(),"retired music left tickable instances alive");
+                check(current()==null && field("previousInstance")==null && !MenuMusic.isActive(),"stop retained ownership");
+                check((Long)field("ghostWhisperAtMs")==0L && (Long)field("nextTrackAtMs")==0L,"stop left scheduled audio");
+                if (!args[0].equals("stop_without_client")) check(mc.sounds.stops==stops+2,"one engine failure prevented second retirement");
+                stops=mc.sounds.stops; MenuMusic.stop(); check(mc.sounds.stops==stops,"repeated stop touched engine");
             }
             case "stop_in_gap" -> {
                 gap(); MenuMusic.stop(); set("nextTrackAtMs", 0L); MenuMusic.tick();
@@ -232,7 +259,8 @@ class Executable(unittest.TestCase):
             self.skipTest('JDK unavailable; CI requires executable checks')
         cases = ('skip_in_gap', 'gap_expires', 'skip_failure_retry', 'registry_failure_retry',
                  'ghost_pause_skip', 'crossfade_ignores_skip', 'inactive_skip', 'stop_in_gap',
-                 'world_entry', 'disabled_during_gap', 'regular_start')
+                 'world_entry', 'disabled_during_gap', 'regular_start', 'start_in_world', 'start_active_world',
+                 'stop_without_client', 'stop_failure', 'stop_clears_timers')
         with tempfile.TemporaryDirectory() as tmp:
             work = Path(tmp)
             sources = dict(STUBS)

@@ -129,7 +129,8 @@ public class MenuAmbience {
         // silencio queda en silencio. Solo el susurro abierto contesta.
         if(!isWhisperOpen()) return;
         whisperRespondableUntilMs=0L;
-        Minecraft mc=Minecraft.getInstance(); if(mc==null) return;
+        Minecraft mc=Minecraft.getInstance();
+        if(mc==null||mc.level!=null||!active||muted||getUserVolume()<0.01f) return;
         try{
             // El susurro responde: dos voces, una mas grave.
             mc.getSoundManager().play(ambientOneShot(ModSounds.MENU_AMBIENT_OCCASIONAL.get(),0.50f,0.20f*getUserVolume()));
@@ -150,13 +151,16 @@ public class MenuAmbience {
 
     public static void recoverAfterResourceReload(){
         Minecraft mc=Minecraft.getInstance(); if(mc==null||mc.level!=null) return;
-        for(BaseLoop bl:BASE_LOOPS) bl.instance=null;
-        active=false; lastAppliedVolume=-1f; start();
+        // A reload callback can arrive while old channels are still alive.
+        // Retire owned loops before replacing their references.
+        stop();
+        lastAppliedVolume=-1f;
+        start();
     }
     public static void setPocketWatchVisible(boolean v){pocketWatchVisible=v;}
     public static void onSecondTick(){
-        if(!active||!pocketWatchVisible) return;
-        Minecraft mc=Minecraft.getInstance(); if(mc==null) return;
+        if(!active||muted||!pocketWatchVisible||getUserVolume()<0.01f) return;
+        Minecraft mc=Minecraft.getInstance(); if(mc==null||mc.level!=null) return;
         try{
             SoundEvent se=ModSounds.MENU_TICK.get();
             float pitch=randomFloatBetween(TICK_PITCH_MIN,TICK_PITCH_MAX);
@@ -165,21 +169,16 @@ public class MenuAmbience {
     }
 
     public static void setMuted(boolean m){
-        if(muted==m) return; muted=m;
+        boolean changed=muted!=m;
+        muted=m;
+        // Persist even if the cache already matches (e.g. factory reset).
         try{ com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_ENABLED.set(!m); com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_ENABLED.save(); }catch(Exception ignored){}
-        if(!active) return;
-        Minecraft mc=Minecraft.getInstance(); if(mc==null) return;
-        if(muted){
-            for(BaseLoop bl:BASE_LOOPS){ if(bl.instance!=null){ mc.getSoundManager().stop(bl.instance); bl.instance=null; } }
-        }else{
-            for(BaseLoop bl:BASE_LOOPS){
-                try{
-                    SoundEvent se=bl.sound.get();
-                    bl.instance=buildLoopInstance(se, loopGain(bl));
-                    mc.getSoundManager().play(bl.instance);
-                }catch(Exception e){ bl.instance=null; }
-            }
-        }
+        if(muted) whisperRespondableUntilMs=0L;
+        if(!changed||!active) return;
+        Minecraft mc=Minecraft.getInstance();
+        if(mc!=null&&mc.level!=null){ stop(); return; }
+        if(muted) stopBaseLoops(mc);
+        else if(mc!=null) ensureBaseLoopsAlive(mc,getUserVolume());
     }
 
     private static float userVolume=1.0f;
@@ -243,19 +242,13 @@ public class MenuAmbience {
     }
 
     public static void start(){
-        try{ muted=!com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_ENABLED.get(); }catch(Exception ignored){}
+        Minecraft mc=Minecraft.getInstance();
+        if(mc==null) return;
+        if(mc.level!=null){ stop(); return; }
         if(active){ if(DEBUG_LOGGING) LOGGER.info("[MenuAmbience] start ignorado ya activo"); return; }
-        Minecraft mc=Minecraft.getInstance(); if(mc==null||mc.level!=null) return;
+        try{ muted=!com.eternalcraft.gripeverde.config.ClientConfig.AMBIENCE_ENABLED.get(); }catch(Exception ignored){}
         active=true; pocketWatchVisible=false;
-        if(!muted){
-            for(BaseLoop bl:BASE_LOOPS){
-                try{
-                    SoundEvent se=bl.sound.get();
-                    bl.instance=buildLoopInstance(se, loopGain(bl));
-                    mc.getSoundManager().play(bl.instance);
-                }catch(Exception e){ bl.instance=null; }
-            }
-        }
+        ensureBaseLoopsAlive(mc,getUserVolume());
         long now=nowMs();
         lastEventTriggerMs=now; nextEventDelayMs=randomBetween(EVENT_MIN_MS,EVENT_MAX_MS);
         lastRareTriggerMs=now; nextRareDelayMs=rareDelay();
@@ -263,28 +256,37 @@ public class MenuAmbience {
         lastAppliedVolume=getUserVolume();
     }
 
+    private static void stopBaseLoops(Minecraft mc){
+        for(BaseLoop bl:BASE_LOOPS){
+            LoopingAmbienceInstance old=bl.instance;
+            bl.instance=null;
+            if(old==null) continue;
+            old.markDone();
+            try{ if(mc!=null) mc.getSoundManager().stop(old); }catch(Exception ignored){}
+        }
+    }
+
     public static void stop(){
-        if(!active) return;
-        Minecraft mc=Minecraft.getInstance(); if(mc==null) return;
-        for(BaseLoop bl:BASE_LOOPS){ if(bl.instance!=null){ mc.getSoundManager().stop(bl.instance); bl.instance=null; } }
+        // Clear ownership even during client teardown or a sound-engine failure.
         active=false; pocketWatchVisible=false; lastEventTriggered=null; lastRareTriggered=null;
+        whisperRespondableUntilMs=0L;
+        crowsPlayingUntilMs=0L;
+        stopBaseLoops(Minecraft.getInstance());
     }
 
     public static void tick(){
-        float ambVol=getUserVolume();
-        if(ambVol<0.01f){
-            if(active&&!muted){
-                Minecraft mc=Minecraft.getInstance();
-                if(mc!=null){ for(BaseLoop bl:BASE_LOOPS){ if(bl.instance!=null){ mc.getSoundManager().stop(bl.instance); bl.instance=null; } } }
-            }
-            return;
-        }
-        updateLoopVolumes();
         Minecraft mc=Minecraft.getInstance(); if(mc==null) return;
         // v0.24.0: la calle del gabinete calla cuando el lector entra a un mundo
         // (antes los loops seguian sonando bajo el gameplay). Al volver al
         // titulo, DiaryTitleScreen.init() llama a start() y todo se rearma.
         if(mc.level!=null){ stop(); return; }
+        float ambVol=getUserVolume();
+        if(ambVol<0.01f){
+            whisperRespondableUntilMs=0L;
+            stopBaseLoops(mc);
+            return;
+        }
+        updateLoopVolumes();
         // v0.24.0: la tormenta se presenta una sola vez, con o sin sonido.
         if(isStormNight() && !stormAnnounced){
             stormAnnounced=true;

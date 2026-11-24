@@ -26,6 +26,7 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   `python3 tools/test_marginalia_layout.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_discoveries.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_menu_music.py --require-java` (en CI, con JDK 17) ->
+  `python3 tools/test_menu_ambience.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_title_open_count.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_slider_input.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_house_audio.py --require-java` (en CI, con JDK 17) ->
@@ -34,6 +35,11 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   comprobar el release y el SHA-256. El job `publish` compara `release-tag.txt`
   con `build.gradle`, crea el tag sobre `$GITHUB_SHA` (el commit que produjo el
   JAR) y no sobrescribe un release existente.
+- Audio de menú: probar mute/reanudación, cero/subida, reloj y susurros sin
+  sonido, entrada a mundo y recargas repetidas. `test_menu_ambience.py` compila
+  la clase completa con motor/registro/config dobles (31 escenarios); música
+  tiene 16 y La casa 18 (callbacks extraídos y ciclo de vida doble). Esas
+  pruebas no certifican audio audible ni recargas de recursos de Minecraft.
 - `./gradlew check` y `build` incluyen `verifyServerAddressRegression`:
   38 comprobaciones ejecutan los helpers de direcciones contra el parser real
   de Minecraft sin red ni cliente gráfico. Puede correrse esa tarea sola.
