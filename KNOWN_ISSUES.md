@@ -23,7 +23,13 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
   padre/política dobles, para aceptación, remapeo, límites, hidden/disabled y
   movimiento reducido. SliderPointerRegression añade 16 checks de rechazo y
   estado de animación en botones reales con padre vanilla, sin cliente/render.
-  Las guardas locales sin JDK pasan; ejecución/build pendientes de CI.
+  El candidato `d25457b` pasó 20 escenarios de botones, 21 de scroll, 62 de
+  texto/formularios, las regresiones reales y las suites anteriores/build en
+  [CI 45446875578](https://github.com/Santi-PdR/GripeVerde/actions/runs/45446875578).
+  Artefacto `GripeVerde-jar` ID `14945779099`. Guardas locales sin JDK.
+  La ronda añade 88 escenarios con dobles (62+20+6) y extiende pruebas con
+  clases reales. Release v0.401.0 reconsultada intacta (asset 778229607,
+  10855632 bytes, SHA-256 dd37d443b7307c1b3d0d09fc5befdaee6d1dd887bfca002d6e7bc3670ef0ee88).
   Esto evita una falsa animación, no confirma la causa global de clics fantasma.
   Sin bump/release ni prueba gráfica, nativa o de accesibilidad con usuario.
 
