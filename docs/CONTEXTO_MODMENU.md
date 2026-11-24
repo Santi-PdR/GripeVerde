@@ -10,9 +10,12 @@ Actualizado: 2026-11-13
   callback diferido y el commit por gesto propio, sin nuevo guardado al mover.
   La suite Python añade 15 escenarios (145 totales) con anchos 1/4/8/9/12,
   centro y extremos; la regresión Java con padre real cubre los mismos anchos.
-  Guardas locales aprobadas sin JDK; compilación y ejecución pendientes de CI.
+  El candidato `e5a7694` compiló y pasó los 145 escenarios, la tarea Java
+  con padre/contenedor reales y todas las suites anteriores en
+  [CI 45416748767](https://github.com/Santi-PdR/GripeVerde/actions/runs/45416748767).
+  Artefacto `GripeVerde-jar` ID `14930979375`. Guardas locales sin JDK.
   No se ha validado el aspecto visual de controles tan estrechos en Minecraft.
-  Sin bump ni release.
+  Sin bump ni release; asset/tamaño/digest de v0.401.0 reconsultados intactos.
 
 - **Liberación fuera del deslizador, posterior a `873b650`:** Sonido,
   Opciones y La casa encaminan primero la liberación al DiaryPointerSlider
@@ -30,9 +33,10 @@ Actualizado: 2026-11-13
   [CI 45416014268](https://github.com/Santi-PdR/GripeVerde/actions/runs/45416014268),
   pero Gradle falló configurando Forge antes de compilar: `Invalid patcher
   dependency, could not resolve universal: null`. No hubo JAR del candidato
-  `2546bd7`; el reintento del run no estuvo habilitado. La siguiente entrega
-  debe validar también la tarea Java real de contenedor. Guardas locales
-  aprobadas sin JDK. Sin bump, formato nuevo ni release.
+  `2546bd7`; el reintento del run no estuvo habilitado. El siguiente
+  candidato `e5a7694` sí compiló y pasó también la tarea Java real de
+  contenedor en CI 45416748767 (enlace arriba); el fallo de resolución de
+  Forge no se repitió. Guardas locales sin JDK. Sin bump/formato/release.
 
 - **Teclado de deslizadores, posterior a `3242de8`:** los tres mandos
   rechazan teclas si no están activos, visibles y enfocados, antes de ejecutar
