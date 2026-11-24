@@ -22,6 +22,15 @@ public class Minecraft {
     public static Minecraft getInstance() { return instance; }
 }
 '''
+CONFIG = """package com.eternalcraft.gripeverde.config;
+public class ClientConfig {
+    public static final Value REDUCED_MOTION = new Value();
+    public static class Value {
+        public boolean value,fail;
+        public boolean get(){if(fail)throw new IllegalStateException("not loaded");return value;}
+    }
+}
+"""
 LIST = '''package net.minecraft.client.gui.components;
 public class AbstractSelectionList<E> {
     private double scroll;
@@ -36,6 +45,7 @@ public class AbstractSelectionList<E> {
 HARNESS = '''import com.eternalcraft.gripeverde.client.util.SmoothScroll;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractSelectionList;
+import com.eternalcraft.gripeverde.config.ClientConfig;
 
 public class ScrollHarness {
     static void at(AbstractSelectionList<?> list, double expected) {
@@ -123,6 +133,36 @@ public class ScrollHarness {
                 scroll.tick(list); at(list, 100);
                 scroll.tick(list); at(list, 150);
                 break;
+            case "reduced_no_easing":
+                ClientConfig.REDUCED_MOTION.value = true;
+                scroll.wheel(list, -1, 200); scroll.tick(list); at(list, 200);
+                scroll.wheel(list, 1, 100); scroll.tick(list); at(list, 100);
+                break;
+            case "reduced_toggle_midflight":
+                scroll.wheel(list, -1, 200); scroll.tick(list); at(list, 100);
+                ClientConfig.REDUCED_MOTION.value = true;
+                scroll.tick(list); at(list, 200);
+                list.setScrollAmount(400); scroll.tick(list); at(list, 400);
+                ClientConfig.REDUCED_MOTION.value = false;
+                scroll.wheel(list, -1, 100); scroll.tick(list); at(list, 450);
+                break;
+            case "reduced_set_target":
+                ClientConfig.REDUCED_MOTION.value = true;
+                scroll.setTarget(list, 300); scroll.tick(list); at(list, 300);
+                scroll.setTarget(list, -10); scroll.tick(list); at(list, 0);
+                break;
+            case "null_minecraft_reduced":
+                Minecraft.instance = null; ClientConfig.REDUCED_MOTION.value = true;
+                scroll.wheel(list, -1, 100); scroll.tick(list); at(list, 100);
+                break;
+            case "unloaded_motion_config":
+                ClientConfig.REDUCED_MOTION.fail = true;
+                scroll.wheel(list, -1, 100); scroll.tick(list); at(list, 50);
+                break;
+            case "world_unloaded_motion_config":
+                Minecraft.instance.level = new Object(); ClientConfig.REDUCED_MOTION.fail = true;
+                scroll.wheel(list, -1, 100); scroll.tick(list); at(list, 100);
+                break;
             case "null_minecraft":
                 Minecraft.instance = null;
                 scroll.wheel(list, -1, 100); scroll.tick(list); at(list, 50);
@@ -132,6 +172,15 @@ public class ScrollHarness {
     }
 }
 '''
+
+
+class Wiring(unittest.TestCase):
+    def test_shared_motion_policy(self):
+        self.assertIn('if (MotionPolicy.isReduced())', SOURCE.read_text())
+
+    def test_ci_requires_execution(self):
+        for path in ('.github/workflows/build.yml', 'tools/ci/build.yml'):
+            self.assertIn('python3 tools/test_smooth_scroll.py --require-java', (ROOT / path).read_text())
 
 
 class SmoothScrollJavaTests(unittest.TestCase):
@@ -145,6 +194,9 @@ class SmoothScrollJavaTests(unittest.TestCase):
         sources = []
         for name, content in (
             ('net/minecraft/client/Minecraft.java', MINECRAFT),
+            ('com/eternalcraft/gripeverde/config/ClientConfig.java', CONFIG),
+            ('com/eternalcraft/gripeverde/client/util/MotionPolicy.java',
+             (ROOT / 'src/main/java/com/eternalcraft/gripeverde/client/util/MotionPolicy.java').read_text()),
             ('net/minecraft/client/gui/components/AbstractSelectionList.java', LIST),
             ('ScrollHarness.java', HARNESS),
         ):
@@ -166,7 +218,8 @@ for _case in (
     'keyboard_scroll', 'replacement_list_same_position', 'set_target_fresh',
     'set_target_after_drag', 'world_no_easing', 'bounds_and_shrinking_list',
     'null_list', 'snap_cancels_target', 'fractional_external_change',
-    'accumulated_wheel', 'null_minecraft',
+    'accumulated_wheel', 'null_minecraft', 'reduced_no_easing', 'reduced_toggle_midflight',
+    'reduced_set_target', 'null_minecraft_reduced', 'unloaded_motion_config', 'world_unloaded_motion_config',
 ):
     def _test(self, name=_case):
         self.run_case(name)

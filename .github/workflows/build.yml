@@ -55,6 +55,8 @@ jobs:
         run: python3 tools/test_text_fields.py --require-java
       - name: Test house audio volume wiring
         run: python3 tools/test_house_audio.py --require-java
+      - name: Test button click animation acceptance
+        run: python3 tools/test_button_input.py --require-java
       - name: Test slider pointer and keyboard gestures
         run: python3 tools/test_slider_input.py --require-java
       - name: Test title opening counter boundaries

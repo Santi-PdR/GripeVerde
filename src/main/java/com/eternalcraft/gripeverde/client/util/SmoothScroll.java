@@ -1,6 +1,5 @@
 package com.eternalcraft.gripeverde.client.util;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractSelectionList;
 
 /**
@@ -67,9 +66,10 @@ public final class SmoothScroll {
         if (list == null) return;
         attach(list);
 
-        Minecraft mc = Minecraft.getInstance();
-        if (mc != null && mc.level != null) {
-            // Scroll interactions stay immediate while a live world is open.
+        if (MotionPolicy.isReduced()) {
+            // Reduced motion applies to functional scrolling too, including a
+            // pending animation when the preference changes mid-flight.
+            // The shared policy also keeps live-world scrolling immediate.
             this.target = clamp(this.target, list);
             list.setScrollAmount(this.target);
             this.lastApplied = list.getScrollAmount();

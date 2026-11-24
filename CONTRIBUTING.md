@@ -30,6 +30,7 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   `python3 tools/test_ui_sounds.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_title_open_count.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_slider_input.py --require-java` (en CI, con JDK 17) ->
+  `python3 tools/test_button_input.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_house_audio.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_text_fields.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/ci/test_release_gate.py` ->
@@ -46,6 +47,11 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   la clase completa con motor/registro/config dobles (31 escenarios); música
   tiene 16 y La casa 18 (callbacks extraídos y ciclo de vida doble). Esas
   pruebas no certifican audio audible ni recargas de recursos de Minecraft.
+- Scroll debe consultar MotionPolicy también en el menú, no solo comprobar
+  si hay mundo: 21 escenarios de SmoothScroll/MotionPolicy reales con dobles.
+  Las animaciones de clic deben respetar isValidClickButton; los 20 escenarios
+  de `test_button_input.py` prueban métodos extraídos y una política remapeada.
+  La tarea de sliders añade 16 checks de rechazo en botones reales sin cliente.
 - `./gradlew check` y `build` incluyen `verifyServerAddressRegression`:
   38 comprobaciones ejecutan los helpers de direcciones contra el parser real
   de Minecraft sin red ni cliente gráfico. Puede correrse esa tarea sola.

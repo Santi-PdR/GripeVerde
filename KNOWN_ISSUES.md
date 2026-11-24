@@ -9,6 +9,24 @@ que una seccion posterior lo mencione expresamente.
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
+- **Scroll accesible y animación de botones, posterior a `accb83e`:**
+  SmoothScroll consulta MotionPolicy: la preferencia de movimiento reducido
+  aplica también a las listas, y al activarla se completa el objetivo pendiente
+  sin interpolación. Se conserva scroll inmediato en mundo, límites, arrastre
+  externo y easing normal cuando no se reduce movimiento. Su suite compila
+  también MotionPolicy real con config doble: 15→21 escenarios (toggle durante
+  animación, target explícito, cliente nulo y configuración aún no cargada).
+  DiaryButton y GreenFluButton solo arman pulsación/sello si isValidClickButton
+  acepta el botón recibido; antes animaban clic derecho/central rechazado por
+  el padre. Se respeta una eventual política de botón remapeada, no un 0 fijo.
+  Nueva `test_button_input.py`: 20 escenarios de métodos reales extraídos,
+  padre/política dobles, para aceptación, remapeo, límites, hidden/disabled y
+  movimiento reducido. SliderPointerRegression añade 16 checks de rechazo y
+  estado de animación en botones reales con padre vanilla, sin cliente/render.
+  Las guardas locales sin JDK pasan; ejecución/build pendientes de CI.
+  Esto evita una falsa animación, no confirma la causa global de clics fantasma.
+  Sin bump/release ni prueba gráfica, nativa o de accesibilidad con usuario.
+
 - **Campos de texto y formularios de servidor, posterior a `4ffac3c`:** se
   corrigen seis bindings SRG de EditBox 1.20.1 que no correspondían a los campos
   esperados (o apuntaban a miembros inexistentes): highlightPos=f_94102_,
@@ -29,7 +47,9 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
   una ejecución del JAR reobfuscado ni del recorrido real de foco de Screen.
   `verifyTextFieldGeometryRegression` amplía 12 a 33 comprobaciones con EditBox
   real (selección, bindings oficiales y formatters), sin rendering/cliente.
-  Guardas locales sin JDK aprobadas; ejecución/build pendientes de CI.
+  El candidato `accb83e` pasó la suite de 62 escenarios, las 33 comprobaciones
+  reales y las suites anteriores/build en [CI 45445809024](https://github.com/Santi-PdR/GripeVerde/actions/runs/45445809024).
+  Artefacto `GripeVerde-jar` ID `14945179790`. Guardas locales sin JDK.
   Sin bump/release y sin prueba nativa de Minecraft o causa de clics fantasma.
 
 - **Sonidos de interfaz, posterior a `b8f1739`:** hover y volver ya no

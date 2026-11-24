@@ -42,7 +42,7 @@ public class GreenFluButton extends AbstractButton {
     @Override public void onPress(){ UiSounds.playClick(); onClick.run(); }
     @Override public void playDownSound(SoundManager sm){}
     @Override public boolean mouseClicked(double mx,double my,int btn){
-        if(!MotionPolicy.isReduced()&&active&&visible&&clicked(mx,my)) { pressTicks=7; sealTicks=SEAL_TICKS; }
+        if(isValidClickButton(btn)&&!MotionPolicy.isReduced()&&active&&visible&&clicked(mx,my)) { pressTicks=7; sealTicks=SEAL_TICKS; }
         return super.mouseClicked(mx,my,btn);
     }
 

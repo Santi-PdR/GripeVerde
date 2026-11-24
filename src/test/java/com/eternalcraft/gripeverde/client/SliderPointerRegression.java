@@ -213,6 +213,34 @@ public final class SliderPointerRegression {
         check(deferred.keyPressed(268, 0, 0) && deferredEvents[1] == 1, "finished deferred edit is now a no-op");
     }
 
+    private static void buttonPressGuards() {
+        int[] actions = {0};
+        var diary = new com.eternalcraft.gripeverde.client.widgets.DiaryButton(
+            0, 0, 100, 20, net.minecraft.network.chat.Component.literal("Diary"), () -> actions[0]++);
+        var green = new com.eternalcraft.gripeverde.client.widgets.GreenFluButton(
+            0, 0, 100, 20, net.minecraft.network.chat.Component.literal("Green"),
+            net.minecraft.network.chat.Component.literal("Sub"), null, () -> actions[0]++);
+        net.minecraft.client.gui.components.AbstractWidget[] buttons = {diary, green};
+        String[] pressFields = {"pressAnimTicks", "pressTicks"};
+        try {
+            for (int i = 0; i < buttons.length; i++) {
+                var press = buttons[i].getClass().getDeclaredField(pressFields[i]);
+                var seal = buttons[i].getClass().getDeclaredField("sealTicks");
+                press.setAccessible(true);
+                seal.setAccessible(true);
+                for (int button : new int[] {1, 2}) {
+                    // Rejected buttons never reach vanilla's SoundManager lookup.
+                    check(!buttons[i].mouseClicked(50, 10, button), "Secondary/middle click not rejected");
+                    check(press.getInt(buttons[i]) == 0, "Rejected click armed press animation");
+                    check(seal.getInt(buttons[i]) == 0, "Rejected click armed seal animation");
+                    check(actions[0] == 0, "Rejected click invoked action");
+                }
+            }
+        } catch (ReflectiveOperationException failure) {
+            throw new AssertionError("Cannot inspect real button animation state", failure);
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         int[] liveEvents = new int[2];
         Probe live = new Probe(true, liveEvents, null);
@@ -261,6 +289,7 @@ public final class SliderPointerRegression {
         capturedRelease();
         keyboardGuards();
         keyboardEndpoints();
+        buttonPressGuards();
         System.out.println("Slider pointer regression: " + checks + " checks passed (real vanilla parent, no client).");
     }
 }
