@@ -72,6 +72,8 @@ public class ChatOptionsScreen extends SimpleOptionsSubScreen {
     PREFIX+'client/audio/MenuMusic.java': '''package com.eternalcraft.gripeverde.client.audio;
 public class MenuMusic {public static boolean active,cross;public static boolean isActive(){return active;}public static boolean isCrossfading(){return cross;}}''',
 })
+name = PREFIX+'client/util/SmoothScroll.java'
+STUBS[name] = STUBS[name].replace('public class SmoothScroll {', 'public class SmoothScroll {public SmoothScroll(){}public SmoothScroll(double easing,double threshold){}')
 name = 'net/minecraft/client/gui/components/AbstractWidget.java'
 STUBS[name] = STUBS[name].replace('implements Renderable', 'implements Renderable,net.minecraft.client.gui.components.events.GuiEventListener').replace('public void setX(int x){this.x=x;}', 'public void setX(int x){this.x=x;}public void setY(int y){this.y=y;}')
 name = 'net/minecraft/client/gui/components/OptionsList.java'
