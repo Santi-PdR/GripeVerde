@@ -18,8 +18,13 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
   La suite Python añade nueve escenarios (55 totales) y modela el estado de
   edición retenido del padre. La regresión Java real amplía los casos con
   campos de foco/edición preparados por reflexión, sin cliente ni foco nativo.
-  Guardas locales aprobadas sin JDK; compilación y ejecución pendientes de CI.
-  Sin bump ni release, ni afirmación de clics fantasma resueltos en Minecraft.
+  El candidato `cc2dca6` compiló y pasó los 55 escenarios de entrada,
+  la regresión con padre vanilla real ampliada y las suites previas en
+  [CI 45411620584](https://github.com/Santi-PdR/GripeVerde/actions/runs/45411620584).
+  Artefacto `GripeVerde-jar` ID `14927831766`. Guardas locales sin JDK.
+  Sin bump ni release; asset/tamaño/digest de v0.401.0 siguen intactos.
+  Sin afirmación de clics fantasma resueltos en Minecraft; sigue pendiente
+  probar dispatch de Screen y liberación fuera del widget en el cliente.
 
 - **Gestos de deslizadores, posterior a `9e8b10e`:** base compartida
   DiaryPointerSlider para los tres mandos. Solo una pulsación propia habilita
