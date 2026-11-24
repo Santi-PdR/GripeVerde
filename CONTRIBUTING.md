@@ -73,6 +73,9 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   deslizadores con padres/audio dobles, incluyendo el handoff de foco vanilla.
   Ambas verifican también que el teclado no modifique mandos ocultos/inactivos/
   desenfocados aunque el padre retenga su modo de edición.
+  La captura de liberación fuera del widget se integra en Sonido/Opciones/La
+  casa: probar también con ContainerEventHandler real y no solo mouseReleased
+  del widget. La suite Python ejecuta los métodos reales de esas pantallas.
 - **Nunca dos pushes seguidos**: el CI cancela el run anterior por concurrencia.
 - Sin JDK local: la compilación semántica la hace el CI. No instalar Java 17
   en la máquina para publicar.

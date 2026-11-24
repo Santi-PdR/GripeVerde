@@ -4,7 +4,8 @@
 Parent double follows Minecraft 1.20.1 AbstractWidget/AbstractSliderButton:
 release accepts any left button, onClick/onDrag apply changed values, and the
 container assigns focus after clicking (including false -> true on reselect).
-This does not launch Minecraft or test OS focus, screen dispatch or rendering.
+Screen release methods are extracted too; container dispatch is simulated.
+This does not launch Minecraft or test OS focus, rendering or native input.
 """
 from pathlib import Path
 import shutil
@@ -21,9 +22,43 @@ BASE = (WIDGETS / 'DiaryPointerSlider.java').read_text()
 SOURCES = {name: (WIDGETS / f'{name}.java').read_text()
            for name in ('DiarySlider', 'DiaryMusicSlider', 'DiaryAmbienceSlider')}
 
+SCREENS = {name: (ROOT / f'src/main/java/com/eternalcraft/gripeverde/client/screens/{name}.java').read_text()
+           for name in ('DiaryOptionsScreen', 'DiaryHouseScreen', 'DiarySoundOptionsScreen')}
+
+LISTENER = """package net.minecraft.client.gui.components.events;
+public interface GuiEventListener {
+    void setFocused(boolean focused);
+    boolean isFocused();
+    default boolean mouseReleased(double x,double y,int button) { return false; }
+    default boolean isMouseOver(double x,double y) { return false; }
+}
+"""
+CONTAINER = """package net.minecraft.client.gui.components.events;
+public interface ContainerEventHandler {
+    GuiEventListener getFocused();
+    void setDragging(boolean dragging);
+}
+"""
+SCREEN = """package net.minecraft.client.gui.screens;
+import net.minecraft.client.gui.components.events.*;
+public class Screen implements ContainerEventHandler {
+    public java.util.List<GuiEventListener> widgets = new java.util.ArrayList<>();
+    public GuiEventListener focused;
+    public boolean dragging;
+    public GuiEventListener getFocused() { return focused; }
+    public void setDragging(boolean value) { dragging=value; }
+    public boolean mouseReleased(double x,double y,int button) {
+        // Minecraft 1.20.1 ContainerEventHandler: hit-test release, not capture.
+        setDragging(false);
+        return widgets.stream().filter(w -> w.isMouseOver(x,y)).findFirst()
+            .filter(w -> w.mouseReleased(x,y,button)).isPresent();
+    }
+}
+"""
+
 PARENT = '''package net.minecraft.client.gui.components;
 import net.minecraft.network.chat.Component;
-public abstract class AbstractSliderButton {
+public abstract class AbstractSliderButton implements net.minecraft.client.gui.components.events.GuiEventListener {
     public boolean active = true, visible = true;
     private boolean focused, canChangeValue;
     protected double value;
@@ -31,6 +66,9 @@ public abstract class AbstractSliderButton {
     public static int vanillaClicks;
     public AbstractSliderButton(int x, int y, int w, int h, Component label, double value) {
         this.x=x; this.y=y; width=w; height=h; this.value=value;
+    }
+    public boolean isMouseOver(double x,double y) {
+        return active && visible && x>=this.x && x<this.x+width && y>=this.y && y<this.y+height;
     }
     public void setMessage(Component c) {}
     public void setFocused(boolean f) { focused=f; canChangeValue=f; }
@@ -131,9 +169,61 @@ public class SliderInputHarness {
         check(!slider.mouseReleased(80,10,0), "repeated release accepted");
         check(commits(kind)==1 && UiSounds.clicks==1 && applications(kind)==calls, "repeated release had effects");
     }
+    static class OtherWidget implements net.minecraft.client.gui.components.events.GuiEventListener {
+        int releases;
+        public void setFocused(boolean focused) {}
+        public boolean isFocused() { return false; }
+        public boolean isMouseOver(double x,double y) { return x>=200 && x<300 && y>=0 && y<40; }
+        public boolean mouseReleased(double x,double y,int button) { releases++; return true; }
+    }
+    static void capture(DiaryPointerSlider s,String kind,String test,String screenName) {
+        net.minecraft.client.gui.screens.Screen screen=switch(screenName) {
+            case "DiaryOptionsScreen" -> new com.eternalcraft.gripeverde.client.screens.DiaryOptionsScreen();
+            case "DiaryHouseScreen" -> new com.eternalcraft.gripeverde.client.screens.DiaryHouseScreen();
+            case "DiarySoundOptionsScreen" -> new com.eternalcraft.gripeverde.client.screens.DiarySoundOptionsScreen();
+            default -> throw new AssertionError(screenName);
+        };
+        OtherWidget other=new OtherWidget();
+        screen.widgets.add(other); screen.widgets.add(s); screen.focused=s;
+        if (test.equals("capture_no_press")) {
+            check(screen.mouseReleased(250,10,0) && other.releases==1 && commits(kind)==0, "unowned release did not fall back");
+            return;
+        }
+        press(s,50); screen.dragging=true;
+        if (test.equals("capture_focus_loss")) {
+            s.setFocused(false); screen.focused=other;
+            check(screen.mouseReleased(250,10,0) && other.releases==1 && commits(kind)==0, "lost-focus gesture captured");
+            return;
+        }
+        if (test.equals("capture_inactive") || test.equals("capture_hidden")) {
+            if (test.equals("capture_inactive")) s.active=false; else s.visible=false;
+            check(screen.mouseReleased(250,10,0), "canceled owned release not consumed");
+            check(other.releases==0 && commits(kind)==0 && !screen.dragging, "canceled release leaked into another widget");
+            s.active=s.visible=true;
+            check(!s.mouseReleased(50,10,0), "canceled capture retained gesture"); return;
+        }
+        if (test.equals("capture_secondary")) {
+            check(screen.mouseReleased(250,10,1) && other.releases==1, "secondary release should follow parent");
+            check(commits(kind)==0, "secondary release committed left gesture");
+        }
+        boolean outside=test.equals("capture_outside") || test.equals("capture_repeat");
+        double x=outside ? 500 : 250;
+        check(s.mouseDragged(x,10,0,x-50,0), "owned drag outside rejected");
+        if (test.equals("capture_deferred")) check(changed==0 && released==0, "deferred capture applied early");
+        check(screen.mouseReleased(x,10,0), "outside owned release not captured");
+        check(commits(kind)==1 && !screen.dragging && UiSounds.clicks==1, "captured release must commit once and end dragging");
+        int expectedOther=test.equals("capture_secondary") ? 1 : 0;
+        check(other.releases==expectedOther, "owned release reached foreign hovered widget");
+        check(AbstractSliderButton.vanillaClicks==0, "captured release emitted vanilla sound");
+        if (test.equals("capture_deferred")) check(changed==1, "deferred captured value not applied once");
+        if (test.equals("capture_repeat")) {
+            check(!screen.mouseReleased(x,10,0) && commits(kind)==1 && UiSounds.clicks==1, "repeat outside release committed twice");
+        }
+    }
     public static void main(String[] args) {
         String test=args[0], kind=args[1];
-        DiaryPointerSlider s=create(kind,!test.startsWith("deferred")); target=s;
+        DiaryPointerSlider s=create(kind,!test.contains("deferred")); target=s;
+        if (test.startsWith("capture_")) { capture(s,kind,test,args[2]); return; }
         switch(test) {
             case "bare_release" -> {
                 check(!s.mouseReleased(50,10,0), "release without press accepted");
@@ -261,6 +351,16 @@ class Wiring(unittest.TestCase):
             self.assertIn('!this.active || !this.visible || !this.isFocused()', body)
             self.assertLess(body.index('return false;'), body.index('super.keyPressed('))
 
+    def test_all_slider_screens_capture_before_parent(self):
+        screen_dir = ROOT / 'src/main/java/com/eternalcraft/gripeverde/client/screens'
+        import re
+        users = {path.stem for path in screen_dir.glob('*.java')
+                 if re.search(r'new Diary(?:Music|Ambience)?Slider\(', path.read_text())}
+        self.assertEqual(users, set(SCREENS))
+        for source in SCREENS.values():
+            body = method(source, 'public boolean mouseReleased(')
+            self.assertLess(body.index('DiaryPointerSlider.releaseCaptured('), body.index('super.mouseReleased('))
+
     def test_ci_requires_execution(self):
         for name in ('.github/workflows/build.yml', 'tools/ci/build.yml'):
             self.assertIn('python3 tools/test_slider_input.py --require-java', (ROOT / name).read_text())
@@ -278,6 +378,11 @@ class Executable(unittest.TestCase):
                   'inactive_key', 'hidden_key', 'unfocused_key')
         cases = [(case, kind) for case in common for kind in ('generic', 'music', 'ambience')]
         cases += [(case, 'generic') for case in ('deferred_click', 'deferred_drag', 'deferred_keyboard', 'reentrant_release')]
+        capture_cases = [(case, kind, screen) for case in ('capture_outside', 'capture_over_other',
+                         'capture_no_press', 'capture_focus_loss', 'capture_inactive', 'capture_hidden',
+                         'capture_secondary', 'capture_repeat')
+                         for kind in ('generic', 'music', 'ambience') for screen in SCREENS]
+        capture_cases += [('capture_deferred', 'generic', screen) for screen in SCREENS]
         with tempfile.TemporaryDirectory() as tmp:
             work = Path(tmp)
             prefix = 'com/eternalcraft/gripeverde/client/'
@@ -285,11 +390,19 @@ class Executable(unittest.TestCase):
                 prefix + 'widgets/DiaryPointerSlider.java': BASE,
                 prefix + 'widgets/SliderInputHarness.java': HARNESS,
                 'net/minecraft/client/gui/components/AbstractSliderButton.java': PARENT,
+                'net/minecraft/client/gui/components/events/GuiEventListener.java': LISTENER,
+                'net/minecraft/client/gui/components/events/ContainerEventHandler.java': CONTAINER,
+                'net/minecraft/client/gui/screens/Screen.java': SCREEN,
                 'net/minecraft/network/chat/Component.java': 'package net.minecraft.network.chat; public class Component { public static Component literal(String s) { return new Component(); } }',
                 'net/minecraft/util/Mth.java': 'package net.minecraft.util; public class Mth { public static double clamp(double v,double min,double max) { return Math.max(min,Math.min(max,v)); } }',
                 'org/lwjgl/glfw/GLFW.java': 'package org.lwjgl.glfw; public class GLFW { public static final int GLFW_KEY_LEFT=263, GLFW_KEY_RIGHT=262, GLFW_KEY_PAGE_DOWN=267, GLFW_KEY_PAGE_UP=266, GLFW_KEY_HOME=268, GLFW_KEY_END=269; }',
                 prefix + 'audio/UiSounds.java': 'package com.eternalcraft.gripeverde.client.audio; public class UiSounds { public static int clicks; public static void playClick() { clicks++; } }',
             }
+            for name, source in SCREENS.items():
+                body = method(source, 'public boolean mouseReleased(')
+                sources[prefix + f'screens/{name}.java'] = ('package com.eternalcraft.gripeverde.client.screens; '
+                    'import com.eternalcraft.gripeverde.client.widgets.DiaryPointerSlider; public class ' + name
+                    + ' extends net.minecraft.client.gui.screens.Screen { ' + body + ' }')
             for name, source in SOURCES.items():
                 sources[prefix + f'widgets/{name}.java'] = slider_source(name, source)
             for name in ('MenuMusic', 'MenuAmbience'):
@@ -304,7 +417,10 @@ class Executable(unittest.TestCase):
             for case, kind in cases:
                 with self.subTest(case=case, kind=kind):
                     subprocess.run(['java', '-cp', tmp, 'com.eternalcraft.gripeverde.client.widgets.SliderInputHarness', case, kind], check=True, timeout=15)
-            print(f'Slider input: {len(cases)} executable scenarios passed')
+            for case, kind, screen in capture_cases:
+                with self.subTest(case=case, kind=kind, screen=screen):
+                    subprocess.run(['java', '-cp', tmp, 'com.eternalcraft.gripeverde.client.widgets.SliderInputHarness', case, kind, screen], check=True, timeout=15)
+            print(f'Slider input: {len(cases) + len(capture_cases)} executable scenarios passed')
 
 
 if __name__ == '__main__':

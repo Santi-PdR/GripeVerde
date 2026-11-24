@@ -6,6 +6,7 @@ import com.eternalcraft.gripeverde.client.render.DiaryTypography;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import com.eternalcraft.gripeverde.client.widgets.DiarySlider;
+import com.eternalcraft.gripeverde.client.widgets.DiaryPointerSlider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
@@ -428,6 +429,12 @@ public class DiaryOptionsScreen extends Screen {
         g.fill(x + m, y + h - m - len, x + m + th, y + h - m, ink);
         g.fill(x + w - m - len, y + h - m - th, x + w - m, y + h - m, ink);
         g.fill(x + w - m - th, y + h - m - len, x + w - m, y + h - m, ink);
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (DiaryPointerSlider.releaseCaptured(this, mouseX, mouseY, button)) return true;
+        return super.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer;
 import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import com.eternalcraft.gripeverde.client.widgets.DiarySlider;
+import com.eternalcraft.gripeverde.client.widgets.DiaryPointerSlider;
 import com.eternalcraft.gripeverde.client.widgets.DiaryToggle;
 import com.eternalcraft.gripeverde.config.ClientConfig;
 import net.minecraft.client.gui.GuiGraphics;
@@ -299,6 +300,12 @@ public class DiaryHouseScreen extends Screen {
     private static void setBool(net.minecraftforge.common.ForgeConfigSpec.BooleanValue value, boolean v) {
         value.set(v);
         value.save();
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (DiaryPointerSlider.releaseCaptured(this, mouseX, mouseY, button)) return true;
+        return super.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override

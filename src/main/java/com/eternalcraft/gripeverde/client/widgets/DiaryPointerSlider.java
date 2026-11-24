@@ -1,15 +1,30 @@
 package com.eternalcraft.gripeverde.client.widgets;
 
 import net.minecraft.client.gui.components.AbstractSliderButton;
+import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.network.chat.Component;
 
 /** Tracks an accepted pointer gesture before allowing a slider to commit it. */
-abstract class DiaryPointerSlider extends AbstractSliderButton {
+public abstract class DiaryPointerSlider extends AbstractSliderButton {
     private boolean pointerPressed;
     private boolean awaitingPointerFocus;
 
     protected DiaryPointerSlider(int x, int y, int width, int height, Component label, double value) {
         super(x, y, width, height, label, value);
+    }
+
+    /**
+     * Route release to the focused slider that owns the press, even outside its
+     * bounds. Vanilla otherwise routes release to the child under the cursor.
+     * True also consumes a canceled (hidden/disabled) gesture, so it cannot fall
+     * through to an unrelated widget. Secondary/unowned releases remain vanilla.
+     */
+    public static boolean releaseCaptured(ContainerEventHandler owner, double mouseX, double mouseY, int button) {
+        if (!(owner.getFocused() instanceof DiaryPointerSlider slider)
+                || !slider.pointerPressed || !slider.isValidClickButton(button)) return false;
+        owner.setDragging(false);
+        slider.mouseReleased(mouseX, mouseY, button);
+        return true;
     }
 
     protected final boolean isPointerPressed() {

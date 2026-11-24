@@ -1,6 +1,9 @@
 package com.eternalcraft.gripeverde.client;
 
 import com.eternalcraft.gripeverde.client.widgets.DiarySlider;
+import com.eternalcraft.gripeverde.client.widgets.DiaryPointerSlider;
+import net.minecraft.client.gui.components.events.ContainerEventHandler;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 
 /** Real generic slider/vanilla parent, no client, rendering or native input. */
 public final class SliderPointerRegression {
@@ -23,6 +26,117 @@ public final class SliderPointerRegression {
         private double value() {
             return this.value;
         }
+    }
+
+    private static final class OtherWidget implements GuiEventListener {
+        private int releases;
+        private boolean focused;
+
+        @Override
+        public void setFocused(boolean focused) {
+            this.focused = focused;
+        }
+
+        @Override
+        public boolean isFocused() {
+            return this.focused;
+        }
+
+        @Override
+        public boolean isMouseOver(double x, double y) {
+            return x >= 200 && x < 300 && y >= 0 && y < 40;
+        }
+
+        @Override
+        public boolean mouseReleased(double x, double y, int button) {
+            this.releases++;
+            return true;
+        }
+    }
+
+    private static final class ReleaseContainer implements ContainerEventHandler {
+        private final Probe slider;
+        private final OtherWidget other = new OtherWidget();
+        private GuiEventListener focused;
+        private boolean dragging = true;
+
+        private ReleaseContainer(Probe slider) {
+            this.slider = slider;
+            // Focus ownership only: avoid querying Minecraft's last input type.
+            this.focused = slider;
+        }
+
+        @Override
+        public java.util.List<? extends GuiEventListener> children() {
+            return java.util.List.of(this.other, this.slider);
+        }
+
+        @Override
+        public GuiEventListener getFocused() {
+            return this.focused;
+        }
+
+        @Override
+        public void setFocused(GuiEventListener listener) {
+            this.focused = listener;
+        }
+
+        @Override
+        public boolean isDragging() {
+            return this.dragging;
+        }
+
+        @Override
+        public void setDragging(boolean dragging) {
+            this.dragging = dragging;
+        }
+
+        @Override
+        public boolean mouseReleased(double x, double y, int button) {
+            if (DiaryPointerSlider.releaseCaptured(this, x, y, button)) return true;
+            // Real vanilla hit-test dispatch, not a reimplementation.
+            return ContainerEventHandler.super.mouseReleased(x, y, button);
+        }
+    }
+
+    private static void capturedRelease() {
+        int[] events = new int[2];
+        Probe slider = new Probe(true, events, null);
+        ReleaseContainer container = new ReleaseContainer(slider);
+        slider.onClick(30, 10);
+        check(slider.mouseDragged(250, 10, 0, 220, 0), "outside drag reaches real slider");
+        check(slider.value() == 1.0, "outside drag clamps at endpoint");
+        check(container.mouseReleased(250, 10, 0), "release over another widget captured");
+        check(events[0] == 3 && events[1] == 1, "outside release commits last preview once");
+        check(container.other.releases == 0 && !container.isDragging(), "capture bypasses hovered widget and clears dragging");
+        check(!container.mouseReleased(500, 10, 0), "repeat outside release falls back without another commit");
+        check(events[1] == 1, "repeat outside release preserves commit count");
+
+        int[] fallbackEvents = new int[2];
+        ReleaseContainer fallback = new ReleaseContainer(new Probe(true, fallbackEvents, null));
+        check(fallback.mouseReleased(250, 10, 0), "unowned release uses vanilla hit-test route");
+        check(fallback.other.releases == 1 && fallbackEvents[1] == 0, "unowned release belongs to hovered widget");
+
+        int[] disabledEvents = new int[2];
+        Probe disabled = new Probe(false, disabledEvents, null);
+        ReleaseContainer canceled = new ReleaseContainer(disabled);
+        disabled.onClick(30, 10);
+        disabled.active = false;
+        check(canceled.mouseReleased(250, 10, 0), "disabled owned release consumed");
+        check(disabledEvents[0] == 0 && disabledEvents[1] == 0 && canceled.other.releases == 0,
+            "disabled capture neither commits nor falls through");
+        disabled.active = true;
+        check(!disabled.mouseReleased(30, 10, 0), "disabled capture clears gesture");
+
+        int[] deferredEvents = new int[2];
+        Probe deferred = new Probe(false, deferredEvents, null);
+        ReleaseContainer secondary = new ReleaseContainer(deferred);
+        deferred.onClick(30, 10);
+        check(secondary.mouseReleased(250, 10, 1), "secondary release keeps vanilla route");
+        check(deferredEvents[1] == 0 && secondary.other.releases == 1, "secondary release does not finish left gesture");
+        check(secondary.mouseReleased(500, 10, 0), "left capture survives cleared container dragging state");
+        check(deferredEvents[0] == 1 && deferredEvents[1] == 1 && secondary.other.releases == 1,
+            "deferred value commits once outside all children");
     }
 
     private static void keyboardGuards() throws Exception {
@@ -96,6 +210,7 @@ public final class SliderPointerRegression {
         disabled.visible = true;
         check(!disabled.mouseReleased(90, 10, 0), "hidden drag cannot commit after show");
         check(disabledEvents[0] == 0 && disabledEvents[1] == 0, "hidden gesture has no callbacks");
+        capturedRelease();
         keyboardGuards();
         System.out.println("Slider pointer regression: " + checks + " checks passed (real vanilla parent, no client).");
     }

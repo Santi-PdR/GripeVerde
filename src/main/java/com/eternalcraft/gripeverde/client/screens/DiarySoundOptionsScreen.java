@@ -10,6 +10,7 @@ import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import com.eternalcraft.gripeverde.client.widgets.DiaryMusicSlider;
 import com.eternalcraft.gripeverde.client.widgets.DiaryAmbienceSlider;
 import com.eternalcraft.gripeverde.client.widgets.DiarySlider;
+import com.eternalcraft.gripeverde.client.widgets.DiaryPointerSlider;
 import com.eternalcraft.gripeverde.config.ClientConfig;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Options;
@@ -732,6 +733,12 @@ public class DiarySoundOptionsScreen extends SoundOptionsScreen {
     @Override
     public void renderBackground(GuiGraphics g) {
         // Bypass del fondo dirt vanilla
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (DiaryPointerSlider.releaseCaptured(this, mouseX, mouseY, button)) return true;
+        return super.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override

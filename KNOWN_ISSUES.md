@@ -9,6 +9,21 @@ que una seccion posterior lo mencione expresamente.
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
+- **Liberación fuera del deslizador, posterior a `873b650`:** Sonido,
+  Opciones y La casa encaminan primero la liberación al DiaryPointerSlider
+  enfocado que conserve una pulsación propia. Así el commit final también
+  se ejecuta al soltar fuera de su rectángulo o encima de otro control.
+  Se limpia el dragging del contenedor antes del callback. Si el deslizador
+  se ocultó/desactivó, el gesto se cancela sin caer sobre otro widget; los
+  eventos sin dueño o de botón secundario conservan la ruta vanilla.
+  La suite Python extrae también los tres métodos de pantalla y añade 75
+  escenarios (130 totales), con guardas que detectan nuevas pantallas con
+  deslizadores sin captura. La tarea Java real añade ContainerEventHandler
+  real y su hit-test, sin cliente: captura, fallback, cancelación y secundario.
+  No reproduce foco nativo ni Screen/rendering reales; no confirma la causa
+  global de clics fantasma. Guardas locales aprobadas sin JDK; Java/build
+  pendientes de CI. Sin bump, formato nuevo ni release.
+
 - **Teclado de deslizadores, posterior a `3242de8`:** los tres mandos
   rechazan teclas si no están activos, visibles y enfocados, antes de ejecutar
   su código propio o delegar en AbstractSliderButton. Esto evita ajustes de
