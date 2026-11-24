@@ -31,6 +31,8 @@ public class DiaryEditServerScreen extends Screen {
     private DiaryTextField nameEdit;
     private DiaryTextField ipEdit;
     private DiaryButton doneButton;
+    private DiaryButton cancelButton;
+    private boolean formCompleted;
     private boolean justOpened = true;
 
     private int panelWidth() {
@@ -120,23 +122,25 @@ public class DiaryEditServerScreen extends Screen {
         this.doneButton.setTooltip(Tooltip.create(Component.translatable("addServer.add")));
         this.addRenderableWidget(this.doneButton);
 
-        DiaryButton cancel = new DiaryButton(startX + btnW + gap, btnY, btnW, btnH,
+        this.cancelButton = new DiaryButton(startX + btnW + gap, btnY, btnW, btnH,
                 Component.translatable("gui.cancel"),
                 DiaryButton.Icon.DOOR, DiaryButton.Variant.SECONDARY,
                 this::onCancel);
-        cancel.setTooltip(Tooltip.create(Component.translatable("gui.cancel")));
-        this.addRenderableWidget(cancel);
+        this.cancelButton.setTooltip(Tooltip.create(Component.translatable("gui.cancel")));
+        this.addRenderableWidget(this.cancelButton);
 
         this.updateDoneButton();
     }
 
+    private boolean canSubmit() {
+        return !this.formCompleted && this.nameEdit != null && this.ipEdit != null
+            && !this.nameEdit.getValue().isEmpty()
+            && DiaryChrome.looksLikeAddress(this.ipEdit.getValue());
+    }
+
     private void updateDoneButton() {
-        if (this.doneButton != null && this.ipEdit != null && this.nameEdit != null) {
-            // v0.263.0: la ficha solo se firma si los dos campos tienen algo y
-            // la direccion tiene forma de direccion.
-            this.doneButton.active = !this.nameEdit.getValue().isEmpty()
-                && DiaryChrome.looksLikeAddress(this.ipEdit.getValue());
-        }
+        if (this.doneButton != null) this.doneButton.active = this.canSubmit();
+        if (this.cancelButton != null) this.cancelButton.active = !this.formCompleted;
     }
 
     /**
@@ -145,6 +149,7 @@ public class DiaryEditServerScreen extends Screen {
      */
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (this.formCompleted) return true;
         boolean onName = this.nameEdit != null && this.getFocused() == this.nameEdit;
         boolean onIp = this.ipEdit != null && this.getFocused() == this.ipEdit;
         // Leave Tab/Shift+Tab to Screen's traversal, including footer buttons.
@@ -163,6 +168,13 @@ public class DiaryEditServerScreen extends Screen {
     }
 
     private void onDone() {
+        if (!this.canSubmit()) {
+            this.updateDoneButton();
+            return;
+        }
+        // Complete before mutations/callbacks so reentry cannot submit twice.
+        this.formCompleted = true;
+        this.updateDoneButton();
         this.serverData.name = this.nameEdit.getValue();
         // Guardar exactamente la dirección normalizada que validó el botón.
         this.serverData.ip = this.ipEdit.getValue().trim();
@@ -170,6 +182,9 @@ public class DiaryEditServerScreen extends Screen {
     }
 
     private void onCancel() {
+        if (this.formCompleted) return;
+        this.formCompleted = true;
+        this.updateDoneButton();
         this.callback.accept(false);
     }
 
@@ -192,10 +207,14 @@ public class DiaryEditServerScreen extends Screen {
         DiaryTextField.EditingState nameState = this.nameEdit == null ? null : this.nameEdit.snapshotEditingState();
         DiaryTextField.EditingState ipState = this.ipEdit == null ? null : this.ipEdit.snapshotEditingState();
         boolean focusedIp = this.ipEdit != null && this.getFocused() == this.ipEdit;
+        boolean focusedDone = this.doneButton != null && this.getFocused() == this.doneButton;
+        boolean focusedCancel = this.cancelButton != null && this.getFocused() == this.cancelButton;
         super.resize(mc, w, h);
         this.nameEdit.restoreEditingState(nameState);
         this.ipEdit.restoreEditingState(ipState);
-        if (focusedIp) this.setFocused(this.ipEdit);
+        if (focusedCancel) this.setFocused(this.cancelButton);
+        else if (focusedDone) this.setFocused(this.doneButton);
+        else if (focusedIp) this.setFocused(this.ipEdit);
     }
 
     @Override
@@ -311,11 +330,12 @@ public class DiaryEditServerScreen extends Screen {
 
     @Override
     public void onClose() {
+        if (this.formCompleted) return;
         // v0.264.0: salir de una hoja suena a puerta, como el resto de la casa.
         try {
             com.eternalcraft.gripeverde.client.audio.UiSounds.back();
         } catch (Throwable ignored) {
         }
-        this.callback.accept(false);
+        this.onCancel();
     }
 }

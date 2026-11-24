@@ -2,6 +2,25 @@
 
 Actualizado: 2026-11-13
 
+- **Conexión directa y editor de servidores, posterior a `9c06a33`:**
+  los handlers finales vuelven a validar y cierran la decisión antes de mutar
+  ServerData, guardar recientes/options o entregar callbacks. Un envío válido
+  no puede cancelarse después ni repetirse desde callbacks reentrantes;
+  cancelar tampoco permite un envío tardío. Botones permanecen inactivos tras
+  responders o resize de una decisión ya terminada. Resize conserva el foco
+  de Aceptar/Cancelar además de borrador, cursor y selección de los campos.
+  Los chips recientes solo aceptan clic si el campo sigue vacío, visible y
+  activo; se invalidan también en init, sin esperar al render tras un resize.
+  La dirección especial conserva su easter egg sin conectar/guardar y usa
+  cooldown de 6 s con Util.getMillis; mantener Enter no repite audio/lore ni
+  prolonga el aviso. La siguiente advertencia se permite al vencer el plazo.
+  Nueva suite `test_server_forms.py`: 57 escenarios de métodos extraídos con
+  dobles de Screen/widgets/parser/clock/lore/historial/options; no comprueba
+  conexión real, render ni E/S. Suite text_fields ampliada de 62 a 70 escenarios
+  official/SRG, con foco de ambos botones tras varios resize. CI requerido en
+  ambos workflows. Guardas locales pasan; ejecución Java/build pendientes de CI.
+  Sin bump, release ni afirmación sobre clics fantasma en Minecraft nativo.
+
 - **Recarga de idioma y foco de Unicode, posterior a `f9a43a9`:** Enter/KP
   Enter sobre el botón Unicode accionan ese control (si activo/visible), sin
   aplicar otro idioma ni cerrar. El resto conserva Enter para aplicar.

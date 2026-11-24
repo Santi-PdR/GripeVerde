@@ -216,15 +216,15 @@ public class ServerFormHarness {
     }
     static class Button {boolean active=true;}
     static class Editor extends Parent {
-        DiaryTextField nameEdit,ipEdit; Button doneButton=new Button(); int submits;
-        void rebuild(){nameEdit=field("saved name");ipEdit=field("saved ip");setFocused(nameEdit);}
+        DiaryTextField nameEdit,ipEdit; Button doneButton=new Button(),cancelButton=new Button(); int submits;boolean formCompleted;
+        void rebuild(){nameEdit=field("saved name");ipEdit=field("saved ip");doneButton=new Button();cancelButton=new Button();setFocused(nameEdit);}
         void onDone(){submits++;}
         __EDITOR_RESIZE__
         __EDITOR_KEYS__
     }
     static class Direct extends Parent {
-        DiaryTextField ipEdit;
-        void rebuild(){ipEdit=field("last ip");setFocused(ipEdit);}
+        DiaryTextField ipEdit;Button selectButton=new Button(),cancelButton=new Button();
+        void rebuild(){ipEdit=field("last ip");selectButton=new Button();cancelButton=new Button();setFocused(ipEdit);}
         __DIRECT_RESIZE__
     }
     public static void main(String[] args){
@@ -239,20 +239,25 @@ public class ServerFormHarness {
         }
         if(test.startsWith("direct")){
             Direct screen=new Direct();screen.rebuild(); screen.ipEdit.setValue("unsubmitted:25565");
+            if(test.equals("direct_resize_select"))screen.setFocused(screen.selectButton);
+            if(test.equals("direct_resize_cancel"))screen.setFocused(screen.cancelButton);
             screen.ipEdit.setCursorPosition(4);screen.ipEdit.setHighlightPos(12); var expected=screen.ipEdit.snapshotEditingState();
             screen.resize(mc,200,120);screen.resize(mc,800,600);
-            check(screen.ipEdit.snapshotEditingState().equals(expected),"direct resize lost draft/cursor/selection");return;
+            check(screen.ipEdit.snapshotEditingState().equals(expected),"direct resize lost draft/cursor/selection");
+            if(test.equals("direct_resize_select"))check(screen.getFocused()==screen.selectButton,"direct resize lost Select focus");
+            if(test.equals("direct_resize_cancel"))check(screen.getFocused()==screen.cancelButton,"direct resize lost Cancel focus");return;
         }
         Editor screen=new Editor();screen.rebuild();
         switch(test){
-            case "editor_resize_name", "editor_resize_ip" -> {
+            case "editor_resize_name", "editor_resize_ip", "editor_resize_done", "editor_resize_cancel" -> {
                 screen.nameEdit.setValue("unsaved name");screen.nameEdit.setCursorPosition(2);screen.nameEdit.setHighlightPos(8);
                 screen.ipEdit.setValue("unfinished:");screen.ipEdit.setCursorPosition(7);screen.ipEdit.setHighlightPos(3);
                 var name=screen.nameEdit.snapshotEditingState();var ip=screen.ipEdit.snapshotEditingState();
-                boolean focusIp=test.equals("editor_resize_ip");screen.setFocused(focusIp?screen.ipEdit:screen.nameEdit);
+                boolean focusIp=test.equals("editor_resize_ip"),focusDone=test.equals("editor_resize_done"),focusCancel=test.equals("editor_resize_cancel");
+                screen.setFocused(focusCancel?screen.cancelButton:focusDone?screen.doneButton:focusIp?screen.ipEdit:screen.nameEdit);
                 screen.resize(mc,200,120);screen.resize(mc,800,600);
                 check(screen.nameEdit.snapshotEditingState().equals(name)&&screen.ipEdit.snapshotEditingState().equals(ip),"editor resize lost draft/cursor/selection");
-                check(screen.getFocused()==(focusIp?screen.ipEdit:screen.nameEdit),"editor resize changed field focus");
+                check(screen.getFocused()==(focusCancel?screen.cancelButton:focusDone?screen.doneButton:focusIp?screen.ipEdit:screen.nameEdit),"editor resize changed focus");
                 check(screen.submits==0,"resize submitted draft");
             }
             case "tab_name", "tab_ip", "shift_tab_name", "shift_tab_ip" -> {
@@ -278,7 +283,7 @@ CASES = ('reflection_fields', 'selection_forward', 'selection_reverse', 'selecti
          'formatter_null', 'formatter_throws', 'formatter_recovery', 'formatter_offsets', 'render_hint',
          'render_readonly', 'render_scroll', 'render_blink')
 FORM_CASES = ('direct_resize', 'direct_uninitialized', 'editor_uninitialized', 'editor_resize_name', 'editor_resize_ip', 'tab_name', 'tab_ip',
-              'shift_tab_name', 'shift_tab_ip', 'enter_name', 'enter_ip', 'keypad_enter_ip', 'enter_invalid')
+              'shift_tab_name', 'shift_tab_ip', 'enter_name', 'enter_ip', 'keypad_enter_ip', 'enter_invalid', 'direct_resize_select', 'direct_resize_cancel', 'editor_resize_done', 'editor_resize_cancel')
 
 
 class Wiring(unittest.TestCase):

@@ -33,6 +33,7 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   `python3 tools/test_slider_input.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_button_input.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_house_audio.py --require-java` (en CI, con JDK 17) ->
+  `python3 tools/test_server_forms.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_text_fields.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_confirm_screen.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/ci/test_release_gate.py` ->
@@ -40,6 +41,13 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   comprobar el release y el SHA-256. El job `publish` compara `release-tag.txt`
   con `build.gradle`, crea el tag sobre `$GITHUB_SHA` (el commit que produjo el
   JAR) y no sobrescribe un release existente.
+- Formularios de servidor: `test_server_forms.py` ejecuta 57 escenarios sobre
+  métodos reales extraídos: validación final, aceptación/cancelación únicas,
+  reentrada desde callback/historial/options, foco de pie tras resize, chips
+  recientes obsoletos y cooldown monotónico de la dirección especial.
+  Usa dobles de widgets, Screen, parser, reloj, historial, options y lore; no
+  certifica conexión, E/S real ni entrada nativa. `test_text_fields.py` conserva
+  sus dobles official/SRG del widget completo y ahora ejecuta 70 escenarios.
 - Feedback UI: `test_ui_sounds.py` ejecuta 22 escenarios con UiSounds completo
   y motor/registro/config dobles. No introducir relojes de pared en cooldowns
   ni consumir la ventana de reintento cuando la reproducción falla; un sonido

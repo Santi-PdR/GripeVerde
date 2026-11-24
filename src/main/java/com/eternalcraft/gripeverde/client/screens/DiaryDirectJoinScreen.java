@@ -28,6 +28,8 @@ public class DiaryDirectJoinScreen extends Screen {
 
     private DiaryTextField ipEdit;
     private DiaryButton selectButton;
+    private DiaryButton cancelButton;
+    private boolean formCompleted;
     private boolean justOpened = true;
 
     private int panelWidth() {
@@ -59,6 +61,7 @@ public class DiaryDirectJoinScreen extends Screen {
 
     @Override
     protected void init() {
+        this.clearRecentHits();
         // v0.272.0: la hoja se abre con ruido de papel, una vez por apertura.
         if (!this.paperSoundDone) {
             this.paperSoundDone = true;
@@ -106,22 +109,28 @@ public class DiaryDirectJoinScreen extends Screen {
         this.selectButton.setTooltip(Tooltip.create(Component.translatable("selectServer.select")));
         this.addRenderableWidget(this.selectButton);
 
-        DiaryButton cancel = new DiaryButton(startX + btnW + gap, btnY, btnW, btnH,
+        this.cancelButton = new DiaryButton(startX + btnW + gap, btnY, btnW, btnH,
                 Component.translatable("gui.cancel"),
                 DiaryButton.Icon.DOOR, DiaryButton.Variant.SECONDARY,
                 this::onCancel);
-        cancel.setTooltip(Tooltip.create(Component.translatable("gui.cancel")));
-        this.addRenderableWidget(cancel);
+        this.cancelButton.setTooltip(Tooltip.create(Component.translatable("gui.cancel")));
+        this.addRenderableWidget(this.cancelButton);
 
         this.updateSelectButton();
     }
 
+    private boolean canSubmit() {
+        return !this.formCompleted && this.serverData != null && this.ipEdit != null
+            && DiaryChrome.looksLikeAddress(this.ipEdit.getValue());
+    }
+
     private void updateSelectButton() {
+        if (this.cancelButton != null) this.cancelButton.active = !this.formCompleted;
         if (this.selectButton == null || this.ipEdit == null) return;
         String ip = this.ipEdit.getValue() == null ? "" : this.ipEdit.getValue().trim();
         // v0.263.0: una direccion con espacios o simbolos raros no entra; el
         // boton se apaga antes de que el juego intente conectarse a la nada.
-        boolean ok = !ip.isEmpty() && DiaryChrome.looksLikeAddress(ip);
+        boolean ok = this.canSubmit();
         this.selectButton.active = ok;
         this.selectButton.setTooltip(Tooltip.create(Component.literal(ok
             ? (com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
@@ -129,7 +138,13 @@ public class DiaryDirectJoinScreen extends Screen {
             : Component.translatable("selectServer.select").getString())));
     }
 
-    private long unmappedWarnUntilMs = 0L;
+    private long unmappedWarnUntilMs;
+    private boolean unmappedWarnShown;
+
+    private long remainingUnmappedWarningMs() {
+        return this.unmappedWarnShown
+            ? Math.max(0L, this.unmappedWarnUntilMs - net.minecraft.Util.getMillis()) : 0L;
+    }
 
     // v0.284.0: las direcciones recordadas se pintan como fichas y se tocan.
     private final java.util.List<Integer> recentXs = new java.util.ArrayList<>();
@@ -137,11 +152,24 @@ public class DiaryDirectJoinScreen extends Screen {
     private final java.util.List<String> recentShown = new java.util.ArrayList<>();
     private int recentY = -1;
 
+    private void clearRecentHits() {
+        this.recentXs.clear();
+        this.recentWs.clear();
+        this.recentShown.clear();
+        this.recentY = -1;
+    }
+
     private void onSelect() {
+        if (!this.canSubmit()) {
+            this.updateSelectButton();
+            return;
+        }
         String ip = this.ipEdit.getValue() == null ? "" : this.ipEdit.getValue().trim();
         // v0.16.0: la direccion que no esta en ningun mapa.
         if ("13.13.13.13".equals(ip)) {
-            this.unmappedWarnUntilMs = System.currentTimeMillis() + 6000L;
+            if (this.remainingUnmappedWarningMs() > 0L) return;
+            this.unmappedWarnShown = true;
+            this.unmappedWarnUntilMs = net.minecraft.Util.getMillis() + 6000L;
             try {
                 boolean first = com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
                     com.eternalcraft.gripeverde.client.lore.Discoveries.ADDRESS_13);
@@ -154,6 +182,9 @@ public class DiaryDirectJoinScreen extends Screen {
             } catch (Throwable ignored) {}
             return;
         }
+        // Latch before persistence and callbacks, not after a navigation event.
+        this.formCompleted = true;
+        this.updateSelectButton();
         this.serverData.ip = ip;
         // v0.284.0: la casa recuerda por donde se entro.
         try {
@@ -166,13 +197,18 @@ public class DiaryDirectJoinScreen extends Screen {
     }
 
     private void onCancel() {
+        if (this.formCompleted) return;
+        this.formCompleted = true;
+        this.updateSelectButton();
         this.callback.accept(false);
     }
 
     /** v0.284.0: tocar una direccion recordada la pone en el campo. */
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0 && this.recentY >= 0) {
+        if (this.formCompleted) return true;
+        if (button == 0 && this.recentY >= 0 && this.ipEdit != null
+                && this.ipEdit.active && this.ipEdit.visible && this.ipEdit.getValue().trim().isEmpty()) {
             for (int i = 0; i < this.recentXs.size(); i++) {
                 int x = this.recentXs.get(i);
                 int w = this.recentWs.get(i);
@@ -195,9 +231,10 @@ public class DiaryDirectJoinScreen extends Screen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (this.formCompleted) return true;
         if (super.keyPressed(keyCode, scanCode, modifiers)) return true;
         if (keyCode == 257 || keyCode == 335) { // ENTER, KP_ENTER
-            if (this.selectButton.active) {
+            if (this.selectButton != null && this.selectButton.active) {
                 this.onSelect();
                 return true;
             }
@@ -221,8 +258,12 @@ public class DiaryDirectJoinScreen extends Screen {
     @Override
     public void resize(net.minecraft.client.Minecraft mc, int w, int h) {
         DiaryTextField.EditingState state = this.ipEdit == null ? null : this.ipEdit.snapshotEditingState();
+        boolean focusedSelect = this.selectButton != null && this.getFocused() == this.selectButton;
+        boolean focusedCancel = this.cancelButton != null && this.getFocused() == this.cancelButton;
         super.resize(mc, w, h);
         this.ipEdit.restoreEditingState(state);
+        if (focusedCancel) this.setFocused(this.cancelButton);
+        else if (focusedSelect) this.setFocused(this.selectButton);
     }
 
     @Override
@@ -278,10 +319,7 @@ public class DiaryDirectJoinScreen extends Screen {
         int fieldY = panelY + ipFieldOffset();
         int noteY = fieldY + 26;
         int btnTop = panelY + panelH - 20 - 16;
-        this.recentXs.clear();
-        this.recentWs.clear();
-        this.recentShown.clear();
-        this.recentY = -1;
+        this.clearRecentHits();
         // v0.284.0: si no se escribio nada, la hoja ofrece las ultimas puertas.
         if (typed.isEmpty() && noteY + 10 < btnTop && panelW >= 200) {
             try {
@@ -367,13 +405,13 @@ public class DiaryDirectJoinScreen extends Screen {
         
         // v0.16.0: aviso de la direccion sin mapa
         try {
-            if (System.currentTimeMillis() < this.unmappedWarnUntilMs) {
+            long remain = this.remainingUnmappedWarningMs();
+            if (remain > 0L) {
                 String warn = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
                     ? "That address is on no map. The door is not there anymore."
                     : "Esa direccion no esta en ningun mapa. La puerta ya no esta ahi.";
                 warn = ellipsizeTo(this.font, warn, Math.max(48, panelW - 24));
                 int ww = DiaryChrome.widthCached(this.font, warn);
-                long remain = this.unmappedWarnUntilMs - System.currentTimeMillis();
                 int alpha = remain < 900L ? (int)(210 * remain / 900L) : 210;
                 int warnY = panelY + Math.min(ipFieldOffset() + 24, panelH - 52);
                 gfx.drawString(this.font, warn, centerX - ww / 2, warnY,
@@ -393,11 +431,12 @@ public class DiaryDirectJoinScreen extends Screen {
 
     @Override
     public void onClose() {
+        if (this.formCompleted) return;
         // v0.264.0: salir de una hoja suena a puerta, como el resto de la casa.
         try {
             com.eternalcraft.gripeverde.client.audio.UiSounds.back();
         } catch (Throwable ignored) {
         }
-        this.callback.accept(false);
+        this.onCancel();
     }
 }
