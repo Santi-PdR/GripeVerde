@@ -11,7 +11,11 @@
   La suite de entrada añade diez escenarios (155 totales), incluidos teclas
   mantenidas, extremos y ratón diferido seguido de Inicio al mismo valor.
   La tarea Java con padre real comprueba también extremos y edición diferida.
-  Guardas locales aprobadas sin JDK; ejecución/build pendientes de CI.
+  El candidato `a37fac0` pasó las suites de entrada, la regresión Java con
+  clases reales y la compilación en [CI 45438029950](https://github.com/Santi-PdR/GripeVerde/actions/runs/45438029950).
+  Artefacto `GripeVerde-jar` ID `14941729162`. Guardas locales sin JDK.
+  Release `v0.401.0` verificada intacta por metadatos de API (asset `778229607`,
+  10855632 bytes, SHA-256 `dd37d443b7307c1b3d0d09fc5befdaee6d1dd887bfca002d6e7bc3670ef0ee88`).
   Sin medición de latencia/disco ni prueba GUI; sin bump ni release.
 
 - **Volumen de La casa, posterior a `fc85ac8`:** los mandos de música y
