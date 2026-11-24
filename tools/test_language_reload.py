@@ -19,6 +19,8 @@ PREFIX = 'com/eternalcraft/gripeverde/'
 STUBS = {
     'org/lwjgl/glfw/GLFW.java': '''package org.lwjgl.glfw;
 public class GLFW {public static final int GLFW_KEY_ENTER=257,GLFW_KEY_KP_ENTER=335,GLFW_KEY_ESCAPE=256,GLFW_KEY_BACKSPACE=259;}''',
+    PREFIX+'client/audio/UiSounds.java': '''package com.eternalcraft.gripeverde.client.audio;
+public class UiSounds {public static int successes,errors,backs;public static void success(){successes++;}public static void error(){errors++;}public static void back(){backs++;}}''',
     PREFIX+'client/lore/Marginalia.java': '''package com.eternalcraft.gripeverde.client.lore;
 public class Marginalia {public static final String N_LANGUAGE="language";public static void queueOnce(String id){}}''',
     PREFIX+'client/lore/Discoveries.java': '''package com.eternalcraft.gripeverde.client.lore;
@@ -33,6 +35,7 @@ HARNESS = r'''import java.util.*;
 import java.util.concurrent.*;
 import com.eternalcraft.gripeverde.client.audio.MenuAmbience;
 import com.eternalcraft.gripeverde.client.audio.MenuMusic;
+import com.eternalcraft.gripeverde.client.audio.UiSounds;
 class Parent {
     Object focused;int delegated;
     Object getFocused(){return focused;}
@@ -51,7 +54,6 @@ public class LanguageReloadHarness extends Parent {
     Font font=new Font();DiaryButton unicodeButton=new DiaryButton();
     int toggles;
     LanguageReloadHarness(){minecraft.screen=this;unicodeButton.action=()->toggles++;}
-    static class UiSounds {static int successes,errors,backs;static void success(){successes++;}static void error(){errors++;}static void back(){backs++;}}
     static class Options {String languageCode="en_us";int saves;void save(){saves++;}}
     static class LanguageManager {String selected="en_us";int sets;String getSelected(){return selected;}void setSelected(String code){selected=code;sets++;}}
     static class LanguageList {double getScrollAmount(){return 48.5;}}
