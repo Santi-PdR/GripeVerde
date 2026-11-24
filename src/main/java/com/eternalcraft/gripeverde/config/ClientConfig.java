@@ -14,6 +14,7 @@ public final class ClientConfig {
     public static final ForgeConfigSpec.BooleanValue AMBIENCE_ENABLED;
     public static final ForgeConfigSpec.DoubleValue AMBIENCE_VOLUME;
     public static final ForgeConfigSpec.DoubleValue UI_VOLUME;
+    public static final int MAX_OPEN_COUNT = 999999;
     public static final ForgeConfigSpec.IntValue OPEN_COUNT;
     public static final ForgeConfigSpec.BooleanValue REDUCED_MOTION;
     public static final ForgeConfigSpec.BooleanValue REDUCE_FLASHES;
@@ -44,7 +45,7 @@ public final class ClientConfig {
             .defineInRange("uiVolume", 1.0, 0.0, 1.0);
         OPEN_COUNT = b
             .comment("Numero de veces que se abrio el juego (contador persistente).")
-            .defineInRange("openCount", 0, 0, 999999);
+            .defineInRange("openCount", 0, 0, MAX_OPEN_COUNT);
         b.pop();
         b.push("visual");
         REDUCED_MOTION = b

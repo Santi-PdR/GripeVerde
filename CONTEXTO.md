@@ -2,6 +2,19 @@
 
 ## Addendum operativo actual (2026-11-13)
 
+- **Aperturas de portada, posterior a `46d48a6`:** el contador TOML
+  `openCount` satura en su máximo declarado de 999999 en vez de intentar
+  guardar 1000000 fuera del rango de Forge. Config y pantalla comparten
+  `MAX_OPEN_COUNT`; en el máximo no se solicita un guardado inútil, pero
+  siguen evaluándose los hitos de 50/100 aperturas. Se mantiene la guarda
+  estática para no contar otra vez al redimensionar o reconstruir portada.
+  Nueva suite `tools/test_title_open_count.py` obligatoria en CI: método real
+  de registro con config/premios dobles y rango extraído de ClientConfig.
+  Diez escenarios cubren umbrales, máximo, reinit y config aún no disponible.
+  No simula fallos de disco tras un set exitoso ni prueba el TOML real.
+  Guardas locales aprobadas; ejecución Java y build pendientes de CI.
+  Sin bump, cambio de formato ni publicación.
+
 - **Música: salto durante una pausa, posterior a `ff7b8c4`:** al iniciar
   una pista correctamente se cancela la espera anterior y su temporizador.
   Antes, un salto manual durante el silencio normal o el de la pieza fantasma
@@ -13,7 +26,9 @@
   plazos forzados sin sleeps. Once escenarios cubren salto en pausa, fin
   natural de pausa, fallos y reintento, pieza fantasma, crossfade, inactivo,
   stop, entrada al mundo, desactivación y arranque idempotente.
-  Guardas locales aprobadas; compilación y escenarios Java pendientes de CI.
+  El candidato `46d48a6` compiló y pasó los 11 escenarios nuevos y todas las
+  suites previas en [CI 45406093930](https://github.com/Santi-PdR/GripeVerde/actions/runs/45406093930).
+  Artefacto `GripeVerde-jar` ID `14926660347`. Localmente solo guardas sin JDK.
   Sin prueba auditiva ni motor OpenAL real, ni bump/esquema/release.
 
 - **Descubrimientos y avisos, posterior a `74d263d`:** `discover` rechaza

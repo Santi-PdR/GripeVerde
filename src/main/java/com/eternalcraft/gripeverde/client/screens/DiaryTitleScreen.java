@@ -131,28 +131,37 @@ public class DiaryTitleScreen extends Screen {
         }
     }
 
+    /** Count one opening per process without exceeding the Forge config range. */
+    private static void recordOpening() {
+        if (!openCountIncremented) {
+            int cur = com.eternalcraft.gripeverde.config.ClientConfig.OPEN_COUNT.get();
+            int next = cur >= com.eternalcraft.gripeverde.config.ClientConfig.MAX_OPEN_COUNT
+                ? com.eternalcraft.gripeverde.config.ClientConfig.MAX_OPEN_COUNT : Math.max(0, cur) + 1;
+            if (next != cur) {
+                com.eternalcraft.gripeverde.config.ClientConfig.OPEN_COUNT.set(next);
+                com.eternalcraft.gripeverde.config.ClientConfig.OPEN_COUNT.save();
+            }
+            if (next >= 50) {
+                // v0.21.3: el archivo que se adelgaza (solo texto, sin mecanica nueva)
+                com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                    com.eternalcraft.gripeverde.client.lore.Discoveries.ARCHIVE_THINNING);
+            }
+            if (next >= 100) {
+                // v0.21.5: marginalia de las cien aperturas
+                com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                    com.eternalcraft.gripeverde.client.lore.Marginalia.N_OPEN_COUNT);
+            }
+            openCountIncremented = true;
+        }
+    }
+
     @Override
     protected void init() {
         this.ticks = 0;
         this.skipTooltipInitialized = false;
         // Incrementar contador de aperturas (solo una vez por sesion)
         try {
-            if (!openCountIncremented) {
-                int cur = com.eternalcraft.gripeverde.config.ClientConfig.OPEN_COUNT.get();
-                com.eternalcraft.gripeverde.config.ClientConfig.OPEN_COUNT.set(cur + 1);
-                com.eternalcraft.gripeverde.config.ClientConfig.OPEN_COUNT.save();
-                if (cur + 1 >= 50) {
-                    // v0.21.3: el archivo que se adelgaza (solo texto, sin mecanica nueva)
-                    com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
-                        com.eternalcraft.gripeverde.client.lore.Discoveries.ARCHIVE_THINNING);
-                }
-                if (cur + 1 >= 100) {
-                    // v0.21.5: marginalia de las cien aperturas
-                    com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
-                        com.eternalcraft.gripeverde.client.lore.Marginalia.N_OPEN_COUNT);
-                }
-                openCountIncremented = true;
-            }
+            recordOpening();
         } catch (Throwable ignored) {}
 
         // ── v0.16.0: la sesion entra en la memoria del gabinete ──

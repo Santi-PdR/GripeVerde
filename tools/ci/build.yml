@@ -43,6 +43,8 @@ jobs:
       - name: Lint Java structure
         run: python3 tools/lint_java.py
 
+      - name: Test title opening counter boundaries
+        run: python3 tools/test_title_open_count.py --require-java
       - name: Test menu music playback lifecycle
         run: python3 tools/test_menu_music.py --require-java
       - name: Test discovery APIs and notifications

@@ -26,6 +26,7 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   `python3 tools/test_marginalia_layout.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_discoveries.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_menu_music.py --require-java` (en CI, con JDK 17) ->
+  `python3 tools/test_title_open_count.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/ci/test_release_gate.py` ->
   `python3 tools/ci/test_installer.py` -> commit + push -> esperar el CI ->
   comprobar el release y el SHA-256. El job `publish` compara `release-tag.txt`
