@@ -593,7 +593,19 @@ tasks.register('verifySliderPointerRegression', JavaExec) {
     }
 }
 
+tasks.register('verifyConfirmationRegression', JavaExec) {
+    group = 'verification'
+    description = 'Checks real confirmation button hooks, delay and cancellation without a client.'
+    dependsOn tasks.named('testClasses')
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.eternalcraft.gripeverde.client.ConfirmationRegression'
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
 tasks.named('check').configure {
+    dependsOn tasks.named('verifyConfirmationRegression')
     dependsOn tasks.named('verifySliderPointerRegression')
     dependsOn tasks.named('verifyMemoryDataRegression')
     dependsOn tasks.named('verifyMemorySchemaRegression')

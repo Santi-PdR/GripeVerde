@@ -8,14 +8,10 @@ import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-
-import java.lang.reflect.Field;
-import java.util.List;
 
 /**
  * Confirmacion generica del cronista.
@@ -31,6 +27,10 @@ public class DiaryConfirmScreen extends ConfirmScreen {
     // Guardamos el mensaje propio porque ConfirmScreen.message es private
     private final Component ownMessage;
     private MultiLineLabel ownMultilineMessage;
+    private DiaryButton diaryYes;
+    private DiaryButton diaryNo;
+    private int decisionDelay;
+    private boolean decisionMade;
 
     public DiaryConfirmScreen(BooleanConsumer callback, Component title, Component message, Screen parent) {
         super(callback, title, message);
@@ -55,74 +55,92 @@ public class DiaryConfirmScreen extends ConfirmScreen {
             this.paperSoundDone = true;
             try {
                 com.eternalcraft.gripeverde.client.audio.UiSounds.open();
+                UiSounds.notification();
             } catch (Throwable ignored) {
             }
         }
+        this.ownMultilineMessage = null;
         super.init();
-        UiSounds.notification();
+    }
 
-        // Ocultar botones vanilla via reflection sobre exitButtons
-        try {
-            Field f = null;
-            // Cascada: nombre oficial -> SRG -> scan por tipo (List)
-            try { f = ConfirmScreen.class.getDeclaredField("exitButtons"); } catch (NoSuchFieldException ignored) {}
-            if (f == null) try { f = ConfirmScreen.class.getDeclaredField("f_169251_"); } catch (NoSuchFieldException ignored) {}
-            if (f == null) {
-                for (Field cand : ConfirmScreen.class.getDeclaredFields()) {
-                    if (cand.getType().equals(List.class)) { f = cand; break; }
-                }
-            }
-            if (f != null) {
-                f.setAccessible(true);
-                @SuppressWarnings("unchecked")
-                List<Button> exit = (List<Button>) f.get(this);
-                for (Button b : exit) {
-                    b.visible = false;
-                    b.active = false;
-                    b.setX(-10000);
-                }
-            }
-        } catch (Throwable t) {
-            // Silencioso. Fallback: botones vanilla quedan visibles.
-        }
+    private int panelWidth() {
+        return Math.min(PANEL_MAX_W, Math.max(1, this.width - 40));
+    }
 
+    private int panelHeight() {
+        return Math.min(PANEL_MAX_H, Math.max(1, this.height - 30));
+    }
+
+    /** Use the parent's supported hook: no hidden duplicate buttons/reflection. */
+    @Override
+    protected void addButtons(int ignoredY) {
         // Botones Diary propios
-        int btnW = 100;
-        int btnH = 20;
-        int panelY = (this.height - PANEL_MAX_H) / 2;
-        int btnY = panelY + PANEL_MAX_H - btnH - 16;
         int gap = 12;
+        int btnW = Math.max(1, Math.min(100, (this.panelWidth() - 32 - gap) / 2));
+        int btnH = 20;
+        int panelH = this.panelHeight();
+        int panelY = (this.height - panelH) / 2;
+        int btnY = panelY + panelH - btnH - 16;
         int totalW = btnW * 2 + gap;
         int startX = (this.width - totalW) / 2;
 
-        DiaryButton diaryYes = new DiaryButton(startX, btnY, btnW, btnH,
+        this.diaryYes = new DiaryButton(startX, btnY, btnW, btnH,
                 this.yesButton, DiaryButton.Icon.NONE, DiaryButton.Variant.PRIMARY,
-                () -> {
-                    // v0.16.0: el gabinete cuenta lo que el lector destruye.
-                    try {
-                        int n = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.bump("destroys");
-                        com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
-                            com.eternalcraft.gripeverde.client.audio.ModSounds.UI_CLICK_DESTROY.get(), 0.26f, 0.72f);
-                        if (n >= 3) {
-                            com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
-                                com.eternalcraft.gripeverde.client.lore.Discoveries.DESTROYER);
-                            com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
-                                com.eternalcraft.gripeverde.client.lore.Marginalia.N_DESTROY);
-                        }
-                    } catch (Throwable ignored) {}
-                    this.callback.accept(true);
-                });
-        DiaryButton diaryNo = new DiaryButton(startX + btnW + gap, btnY, btnW, btnH,
+                () -> this.finishDecision(true));
+        this.diaryNo = new DiaryButton(startX + btnW + gap, btnY, btnW, btnH,
                 this.noButton, DiaryButton.Icon.DOOR, DiaryButton.Variant.SECONDARY,
-                () -> this.callback.accept(false));
+                () -> this.finishDecision(false));
+        this.addRenderableWidget(this.diaryYes);
+        this.addRenderableWidget(this.diaryNo);
+        this.updateDecisionButtons();
+    }
 
-        this.addRenderableWidget(diaryYes);
-        this.addRenderableWidget(diaryNo);
+    private void updateDecisionButtons() {
+        boolean enabled = !this.decisionMade && this.decisionDelay == 0;
+        if (this.diaryYes != null) this.diaryYes.active = enabled;
+        if (this.diaryNo != null) this.diaryNo.active = enabled;
+    }
+
+    @Override
+    public void setDelay(int ticks) {
+        this.decisionDelay = Math.max(0, ticks);
+        this.updateDecisionButtons();
+    }
+
+    private void finishDecision(boolean accepted) {
+        if (this.decisionMade || (accepted && this.decisionDelay > 0)) return;
+        // Latch before lore/audio/callbacks: reentry cannot repeat destruction.
+        this.decisionMade = true;
+        this.updateDecisionButtons();
+        if (accepted) {
+            try {
+                int n = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.bump("destroys");
+                com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
+                    com.eternalcraft.gripeverde.client.audio.ModSounds.UI_CLICK_DESTROY.get(), 0.26f, 0.72f);
+                if (n >= 3) {
+                    com.eternalcraft.gripeverde.client.lore.Discoveries.discover(
+                        com.eternalcraft.gripeverde.client.lore.Discoveries.DESTROYER);
+                    com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
+                        com.eternalcraft.gripeverde.client.lore.Marginalia.N_DESTROY);
+                }
+            } catch (Throwable ignored) {}
+        }
+        this.callback.accept(accepted);
+    }
+
+    @Override
+    public void resize(net.minecraft.client.Minecraft mc, int width, int height) {
+        boolean focusedYes = this.diaryYes != null && this.getFocused() == this.diaryYes;
+        boolean focusedNo = this.diaryNo != null && this.getFocused() == this.diaryNo;
+        super.resize(mc, width, height);
+        if (focusedNo) this.setFocused(this.diaryNo);
+        else if (focusedYes) this.setFocused(this.diaryYes);
     }
 
     @Override
     public void tick() {
         super.tick();
+        if (this.decisionDelay > 0 && --this.decisionDelay == 0) this.updateDecisionButtons();
         // Mantener escena, musica y ambiente en un unico tick fijo.
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.tick(1.0f / 20.0f);
     }
@@ -137,8 +155,8 @@ public class DiaryConfirmScreen extends ConfirmScreen {
         } catch (Throwable ignored) {
         }
 
-        int panelW = Math.min(PANEL_MAX_W, this.width - 40);
-        int panelH = Math.min(PANEL_MAX_H, this.height - 30);
+        int panelW = this.panelWidth();
+        int panelH = this.panelHeight();
         int panelX = (this.width - panelW) / 2;
         int panelY = (this.height - panelH) / 2;
 
@@ -195,20 +213,18 @@ public class DiaryConfirmScreen extends ConfirmScreen {
     }
 
     /**
-     * v0.266.0: la hoja de confirmacion se maneja con el teclado: Enter firma
-     * el si y Esc se va sin tocar nada. Antes habia que ir al raton.
+     * Enter activates the focused decision (Yes only as the no-focus default).
+     * Escape always cancels, including during the activation delay.
      */
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (this.decisionMade) return true;
         if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER || keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_KP_ENTER) {
-            String yes = this.yesButton == null ? "" : this.yesButton.getString();
-            for (var child : this.children()) {
-                if (child instanceof DiaryButton button && button.active && button.visible
-                        && button.getMessage().getString().equals(yes)) {
-                    button.onPress();
-                    return true;
-                }
-            }
+            if (this.decisionDelay > 0) return true;
+            // Enter follows the focused decision, not a translated label match.
+            DiaryButton target = this.getFocused() == this.diaryNo ? this.diaryNo : this.diaryYes;
+            if (target != null && target.active && target.visible) target.onPress();
+            return true;
         }
         if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE) {
             this.onClose();
@@ -224,11 +240,14 @@ public class DiaryConfirmScreen extends ConfirmScreen {
 
     @Override
     public void onClose() {
-        // v0.264.0: salir de una hoja suena a puerta, como el resto de la casa.
+        if (this.decisionMade) return;
         try {
             com.eternalcraft.gripeverde.client.audio.UiSounds.back();
         } catch (Throwable ignored) {
         }
-        this.minecraft.setScreen(parent);
+        this.finishDecision(false);
+        // A callback may navigate elsewhere. Only supply the old parent fallback
+        // when it left this confirmation on screen.
+        if (this.minecraft != null && this.minecraft.screen == this) this.minecraft.setScreen(this.parent);
     }
 }

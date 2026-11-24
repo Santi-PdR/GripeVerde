@@ -43,6 +43,8 @@ jobs:
       - name: Lint Java structure
         run: python3 tools/lint_java.py
 
+      - name: Test confirmation decision safety and lifecycle
+        run: python3 tools/test_confirm_screen.py --require-java
       - name: Test text field state, Forge names and server form input
         run: python3 tools/test_text_fields.py --require-java
       - name: Test house audio volume wiring

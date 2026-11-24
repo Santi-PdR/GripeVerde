@@ -2,6 +2,28 @@
 
 ## Addendum operativo actual (2026-11-13)
 
+- **Seguridad de confirmaciones, posterior a `519b08c`:** DiaryConfirmScreen
+  usa el hook protegido addButtons del padre, sin botones vanilla ocultos ni
+  reflexión sobre una lista privada. Enter/KP Enter activan la decisión enfocada
+  por identidad, incluso si ambas etiquetas coinciden; sin foco se conserva Sí
+  como valor histórico. Un No oculto/deshabilitado no cae sobre Sí. Resize
+  restaura el foco de la decisión y vuelve a envolver el mensaje al nuevo ancho.
+  setDelay controla los dos botones propios antes/después de init, sobrevive a
+  resize y permite cancelación por Esc durante la espera, como vanilla.
+  Un latch se fija antes de efectos/callbacks: solo una decisión por instancia,
+  incluso con reentrada, callback fallido, botones antiguos o reconstrucción.
+  Esc/onClose notifican false una vez; el fallback al padre solo se usa si el
+  callback dejó esta pantalla activa. No se pisa un destino elegido por él.
+  El aviso de apertura no se repite al reconstruir; geometría de botones usa
+  el panel real, evitando salir por debajo de ventanas compactas de 160x120.
+  Nueva suite `test_confirm_screen.py`: clase completa, 29 escenarios con
+  pantalla/widgets/motor de lore y render dobles; sin borrar ni desconectar.
+  Nueva tarea obligatoria `verifyConfirmationRegression`: 14 comprobaciones
+  de hook, retraso y cancelación con ConfirmScreen/DiaryButton reales, sin
+  init/render/cliente, y sin ejecutar efectos de aceptación o E/S de memoria.
+  Guardas locales sin JDK aprobadas; ejecución/build pendientes de CI.
+  Sin bump/release ni prueba nativa de Minecraft; no resuelve clics fantasma.
+
 - **Scroll accesible y animación de botones, posterior a `accb83e`:**
   SmoothScroll consulta MotionPolicy: la preferencia de movimiento reducido
   aplica también a las listas, y al activarla se completa el objetivo pendiente

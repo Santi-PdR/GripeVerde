@@ -33,6 +33,7 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   `python3 tools/test_button_input.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_house_audio.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_text_fields.py --require-java` (en CI, con JDK 17) ->
+  `python3 tools/test_confirm_screen.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/ci/test_release_gate.py` ->
   `python3 tools/ci/test_installer.py` -> commit + push -> esperar el CI ->
   comprobar el release y el SHA-256. El job `publish` compara `release-tag.txt`
@@ -52,6 +53,12 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   Las animaciones de clic deben respetar isValidClickButton; los 20 escenarios
   de `test_button_input.py` prueban métodos extraídos y una política remapeada.
   La tarea de sliders añade 16 checks de rechazo en botones reales sin cliente.
+- Confirmaciones: usar el hook addButtons (sin duplicados ocultos), respetar
+  setDelay en controles propios y dirigir Enter por identidad/foco, nunca por
+  texto traducido. Fijar el latch de decisión antes de efectos/callbacks.
+  `test_confirm_screen.py` tiene 29 escenarios con dobles. Check/build requieren
+  además `verifyConfirmationRegression`: 14 checks con padre y botones reales,
+  sin init/render/cliente ni efectos de aceptación/E/S de memoria.
 - `./gradlew check` y `build` incluyen `verifyServerAddressRegression`:
   38 comprobaciones ejecutan los helpers de direcciones contra el parser real
   de Minecraft sin red ni cliente gráfico. Puede correrse esa tarea sola.
