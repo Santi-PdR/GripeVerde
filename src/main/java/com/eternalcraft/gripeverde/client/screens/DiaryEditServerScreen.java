@@ -47,12 +47,16 @@ public class DiaryEditServerScreen extends Screen {
         return panelHeight() < 190;
     }
 
+    private boolean minimalLayout() {
+        return panelHeight() < 144;
+    }
+
     private int nameFieldOffset() {
-        return compactLayout() ? 52 : 62;
+        return minimalLayout() ? 32 : (compactLayout() ? 52 : 62);
     }
 
     private int ipFieldOffset() {
-        return compactLayout() ? 88 : 108;
+        return minimalLayout() ? 64 : (compactLayout() ? 88 : 108);
     }
 
     private static String ellipsizeTo(net.minecraft.client.gui.Font font, String text, int maxWidth){
@@ -239,24 +243,30 @@ public class DiaryEditServerScreen extends Screen {
 
         // Cosmetica
         DiaryChrome.drawCornerOrnaments(gfx, panelX, panelY, panelW, panelH);
-        DiaryChrome.drawRegistryTag(gfx, panelX, panelY, panelW, panelH, "REG. XI");
+        if (!minimalLayout()) {
+            DiaryChrome.drawRegistryTag(gfx, panelX, panelY, panelW, panelH, "REG. XI");
+        }
 
         // Titulo
-        int titleY = panelY + (compactLayout() ? 10 : 18);
+        int titleY = panelY + (minimalLayout() ? 6 : (compactLayout() ? 10 : 18));
         int centerX = panelX + panelW / 2;
         String titleStr = ellipsizeTo(this.font, this.title.getString(), Math.max(48, panelW - 28));
         int titleW = DiaryChrome.widthCached(this.font, titleStr);
         gfx.drawString(this.font, titleStr, centerX - titleW / 2, titleY, DiaryChrome.INK_TITLE, false);
 
-        // Subtitulo
-        String subtitle = "- " + DiaryChrome.tr("gripeverde.edit.subtitle") + " -";
-        subtitle = ellipsizeTo(this.font, subtitle, Math.max(48, panelW - 28));
-        int subW = DiaryChrome.widthCached(this.font, subtitle);
-        gfx.drawString(this.font, subtitle, centerX - subW / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
+        // On the shortest sheet, keep the title and both labelled fields;
+        // decoration must yield space before inputs can collide with the footer.
+        if (!minimalLayout()) {
+            // Subtitulo
+            String subtitle = "- " + DiaryChrome.tr("gripeverde.edit.subtitle") + " -";
+            subtitle = ellipsizeTo(this.font, subtitle, Math.max(48, panelW - 28));
+            int subW = DiaryChrome.widthCached(this.font, subtitle);
+            gfx.drawString(this.font, subtitle, centerX - subW / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
-        // Divisor con rombo
-        DiaryChrome.drawInkDivider(gfx, panelX + 20, titleY + 26, panelW - 40);
-        DiaryChrome.drawDivisorLozenge(gfx, centerX, titleY + 26);
+            // Divisor con rombo
+            DiaryChrome.drawInkDivider(gfx, panelX + 20, titleY + 26, panelW - 40);
+            DiaryChrome.drawDivisorLozenge(gfx, centerX, titleY + 26);
+        }
 
         // Labels de los EditBox
         int fieldInset = Math.min(24, Math.max(12, (panelW - 64) / 2));

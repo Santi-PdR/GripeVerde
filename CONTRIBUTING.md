@@ -33,6 +33,7 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   `python3 tools/test_slider_input.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_button_input.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_house_audio.py --require-java` (en CI, con JDK 17) ->
+  `python3 tools/test_server_form_layout.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_server_forms.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_text_fields.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_confirm_screen.py --require-java` (en CI, con JDK 17) ->
@@ -41,6 +42,11 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   comprobar el release y el SHA-256. El job `publish` compara `release-tag.txt`
   con `build.gradle`, crea el tag sobre `$GITHUB_SHA` (el commit que produjo el
   JAR) y no sobrescribe un release existente.
+- Layout de formularios: `test_server_form_layout.py` compila las dos clases
+  completas con dobles GUI/servicios y registra controles y texto emitidos por
+  init/render. Barre 7 anchos, todas las alturas de 120 a 320, ES/EN, tres entradas
+  y el aviso antes/después de resize y al expirar: 50.652 casos geométricos.
+  La fuente doble es monoespaciada 6x9: no sustituye prueba de glifos/render real.
 - Formularios de servidor: `test_server_forms.py` ejecuta 57 escenarios sobre
   métodos reales extraídos: validación final, aceptación/cancelación únicas,
   reentrada desde callback/historial/options, foco de pie tras resize, chips

@@ -45,6 +45,8 @@ jobs:
 
       - name: Test confirmation decision safety and lifecycle
         run: python3 tools/test_confirm_screen.py --require-java
+      - name: Test server form layout at compact heights
+        run: python3 tools/test_server_form_layout.py --require-java
       - name: Test server form completion and recent address input
         run: python3 tools/test_server_forms.py --require-java
       - name: Test text field state, Forge names and server form input

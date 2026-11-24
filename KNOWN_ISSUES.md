@@ -9,6 +9,22 @@ que una seccion posterior lo mencione expresamente.
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
+- **Layout de formularios a altura mínima, posterior a `009c22b`:**
+  el editor superponía el campo IP (88..106) con botones (90..108) en una hoja
+  de 120 px. Por debajo de 144 px de panel usa campos a 32/64, conserva ambos
+  rótulos y título, y omite subtítulo/divisor/sello decorativo; controles y
+  textos mantienen espacios sin invadir el pie. El aviso de dirección especial
+  de conexión directa reemplaza temporalmente el subtítulo, con el mismo fade,
+  en vez de dibujarse encima del campo o de la lectura anfitrión/puerto.
+  Nueva `test_server_form_layout.py` compila las dos clases completas contra
+  dobles y barre 50.652 casos de geometría init/render: 7 anchos, alturas
+  120..320 inclusivas, ES/EN, vacío/válido/inválido, aviso activo/resize/fade/
+  vencimiento. Fuente doble 6x9; no son píxeles ni input reales de Minecraft.
+  Java/build de esta ampliación pendientes de CI. La tanda anterior ya pasó
+  [CI 45476286647](https://github.com/Santi-PdR/GripeVerde/actions/runs/45476286647)
+  en `009c22b` (57 escenarios de formularios + 70 de campos, suites y build).
+  Sin bump ni publicación nueva.
+
 - **Conexión directa y editor de servidores, posterior a `9c06a33`:**
   los handlers finales vuelven a validar y cierran la decisión antes de mutar
   ServerData, guardar recientes/options o entregar callbacks. Un envío válido
@@ -25,7 +41,7 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
   dobles de Screen/widgets/parser/clock/lore/historial/options; no comprueba
   conexión real, render ni E/S. Suite text_fields ampliada de 62 a 70 escenarios
   official/SRG, con foco de ambos botones tras varios resize. CI requerido en
-  ambos workflows. Guardas locales pasan; ejecución Java/build pendientes de CI.
+  ambos workflows. Java/build aprobados en CI 45476286647 para `009c22b`.
   Sin bump, release ni afirmación sobre clics fantasma en Minecraft nativo.
 
 - **Recarga de idioma y foco de Unicode, posterior a `f9a43a9`:** Enter/KP

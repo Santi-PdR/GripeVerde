@@ -298,11 +298,23 @@ public class DiaryDirectJoinScreen extends Screen {
         int titleW = DiaryChrome.widthCached(this.font, titleStr);
         gfx.drawString(this.font, titleStr, centerX - titleW / 2, titleY, DiaryChrome.INK_TITLE, false);
 
-        // Subtitulo
-        String subtitle = "- " + DiaryChrome.tr("gripeverde.direct.subtitle") + " -";
+        // The warning replaces decoration, never text inside/under an input.
+        // This slot exists even when the sheet is too short for a readout.
+        long warningRemaining = this.remainingUnmappedWarningMs();
+        String subtitle;
+        int subtitleInk = DiaryChrome.INK_SUBTITLE;
+        if (warningRemaining > 0L) {
+            subtitle = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
+                ? "That address is on no map. The door is not there anymore."
+                : "Esa direccion no esta en ningun mapa. La puerta ya no esta ahi.";
+            int alpha = warningRemaining < 900L ? (int)(210 * warningRemaining / 900L) : 210;
+            subtitleInk = (alpha << 24) | 0xB8A888;
+        } else {
+            subtitle = "- " + DiaryChrome.tr("gripeverde.direct.subtitle") + " -";
+        }
         subtitle = ellipsizeTo(this.font, subtitle, Math.max(48, panelW - 28));
         int subW = DiaryChrome.widthCached(this.font, subtitle);
-        gfx.drawString(this.font, subtitle, centerX - subW / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
+        gfx.drawString(this.font, subtitle, centerX - subW / 2, titleY + 12, subtitleInk, false);
 
         // Divisor con rombo
         DiaryChrome.drawInkDivider(gfx, panelX + 20, titleY + 26, panelW - 40);
@@ -401,22 +413,7 @@ public class DiaryDirectJoinScreen extends Screen {
             }
         }
 
-        // Widgets
-        
-        // v0.16.0: aviso de la direccion sin mapa
         try {
-            long remain = this.remainingUnmappedWarningMs();
-            if (remain > 0L) {
-                String warn = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish()
-                    ? "That address is on no map. The door is not there anymore."
-                    : "Esa direccion no esta en ningun mapa. La puerta ya no esta ahi.";
-                warn = ellipsizeTo(this.font, warn, Math.max(48, panelW - 24));
-                int ww = DiaryChrome.widthCached(this.font, warn);
-                int alpha = remain < 900L ? (int)(210 * remain / 900L) : 210;
-                int warnY = panelY + Math.min(ipFieldOffset() + 24, panelH - 52);
-                gfx.drawString(this.font, warn, centerX - ww / 2, warnY,
-                    (alpha << 24) | 0xB8A888, false);
-            }
             com.eternalcraft.gripeverde.client.lore.Discoveries.drawToast(gfx, this.width);
         } catch (Throwable ignored) {}
         // v0.383.0: las fichas y los campos, encima de la hoja.
