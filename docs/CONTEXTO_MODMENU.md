@@ -12,8 +12,14 @@ Actualizado: 2026-11-13
   de registro con config/premios dobles y rango extraído de ClientConfig.
   Diez escenarios cubren umbrales, máximo, reinit y config aún no disponible.
   No simula fallos de disco tras un set exitoso ni prueba el TOML real.
-  Guardas locales aprobadas; ejecución Java y build pendientes de CI.
-  Sin bump, cambio de formato ni publicación.
+  El candidato `c013800` compiló y pasó los diez escenarios nuevos y todas
+  las suites anteriores en
+  [CI 45406889147](https://github.com/Santi-PdR/GripeVerde/actions/runs/45406889147).
+  Artefacto `GripeVerde-jar` ID `14925562874`. Guardas locales aprobadas sin
+  JDK. Sin bump, cambio de formato ni publicación; asset/tamaño/digest de
+  v0.401.0 reconsultados sin cambios. Los tres bloques actuales añaden 36
+  escenarios Java (10 portada + 11 música + 15 descubrimientos/avisos),
+  sin prueba de GUI ni reproducción de audio real.
 
 - **Música: salto durante una pausa, posterior a `ff7b8c4`:** al iniciar
   una pista correctamente se cancela la espera anterior y su temporizador.
