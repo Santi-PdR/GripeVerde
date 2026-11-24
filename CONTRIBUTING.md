@@ -33,6 +33,7 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   `python3 tools/test_slider_input.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_button_input.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_house_audio.py --require-java` (en CI, con JDK 17) ->
+  `python3 tools/test_world_navigation.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_server_form_layout.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_server_forms.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_text_fields.py --require-java` (en CI, con JDK 17) ->
@@ -42,6 +43,12 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   comprobar el release y el SHA-256. El job `publish` compara `release-tag.txt`
   con `build.gradle`, crea el tag sobre `$GITHUB_SHA` (el commit que produjo el
   JAR) y no sobrescribe un release existente.
+- Navegación de Mundos: `test_world_navigation.py` ejecuta métodos reales
+  extraídos con dobles de listas/GUI: foco de botones/buscador, scroll hacia la
+  selección y estabilidad en viewport pequeño, búsqueda sin corte de 128 y
+  primer índice visible sin corte de 64. 45 escenarios, 72.000 puntos de hit
+  test y 360 rangos de filas contra oráculos lineales. Los recorridos de render
+  tienen guardas de fuente; no se ejecuta el render ni carga/borrado de mundos.
 - Layout de formularios: `test_server_form_layout.py` compila las dos clases
   completas con dobles GUI/servicios y registra controles y texto emitidos por
   init/render. Barre 7 anchos, todas las alturas de 120 a 320, ES/EN, tres entradas

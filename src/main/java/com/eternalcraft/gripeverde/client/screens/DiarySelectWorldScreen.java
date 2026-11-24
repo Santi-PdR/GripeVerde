@@ -334,6 +334,19 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         return this.listTop + 4 - (int) scroll + index * rowStep();
     }
 
+    /** First row whose body can intersect the viewport, including partial rows. */
+    private int firstVisibleRow(int count, double scroll) {
+        int lo = 0;
+        int hi = count;
+        int step = rowStep();
+        while (lo < hi) {
+            int mid = lo + (hi - lo) / 2;
+            if ((long) rowTopAt(mid, scroll) + step < this.listTop) lo = mid + 1;
+            else hi = mid;
+        }
+        return lo;
+    }
+
     private static int readIntField(Object target, String officialName, String srgName) {
         try {
             java.lang.reflect.Field f = null;
@@ -564,13 +577,14 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             int dateW = Math.max(30, x2 - 10 - dateLeft);
             this.iconsThisFrame = 0;
             boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
-            for (int i = 0; i < children.size(); i++) {
+            for (int i = firstVisibleRow(children.size(), scroll); i < children.size(); i++) {
+                int entryTop = rowTopAt(i, scroll);
+                if (entryTop > listBottom) break;
+                int entryBottom = entryTop + rowStep();
+                if (entryBottom < listTop) continue;
                 Object entry = children.get(i);
                 net.minecraft.world.level.storage.LevelSummary summary = summaryOf(entry);
                 if (summary == null) continue;
-                int entryTop = rowTopAt(i, scroll);
-                int entryBottom = entryTop + rowStep();
-                if (entryBottom < listTop || entryTop > listBottom) continue;
                 int drawTop = Math.max(entryTop, listTop);
                 int drawBottom = Math.min(entryBottom, listBottom);
                 if (drawBottom - drawTop < 12) continue;
@@ -976,10 +990,11 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             count = this.vanillaList.children().size();
         } catch (Throwable ignored) {
         }
-        for (int i = 0; i < count && i < 64; i++) {
+        for (int i = firstVisibleRow(count, scroll); i < count; i++) {
             int top = rowTopAt(i, scroll);
+            if (top > this.listBottom) break;
             int bottom = top + step - 4;
-            if (bottom < this.listTop || top > this.listBottom) continue;
+            if (bottom < this.listTop) continue;
             int drawTop = Math.max(top, this.listTop);
             int drawBottom = Math.min(bottom, this.listBottom);
             if (drawBottom - drawTop < 12) continue;
@@ -1076,10 +1091,11 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             chosen = this.vanillaList == null ? null : this.vanillaList.getSelected();
         } catch (Throwable ignored) {
         }
-        for (int i = 0; i < count && i < 64; i++) {
+        for (int i = firstVisibleRow(count, scroll); i < count; i++) {
             int rowTop = rowTopAt(i, scroll);
+            if (rowTop > this.listBottom) break;
             int rowBottom = rowTop + step - 4;
-            if (rowBottom < this.listTop || rowTop > this.listBottom) continue;
+            if (rowBottom < this.listTop) continue;
             int drawTop = Math.max(rowTop, this.listTop);
             int drawBottom = Math.min(rowBottom, this.listBottom);
             if (drawBottom - drawTop < 12) continue;
@@ -1430,23 +1446,22 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         int rowOffset = (int) Math.floor(mouseY - this.listTop) + (int) scroll - 4;
         int idx = rowOffset / Math.max(1, step);
         if (this.rowTopMethod != null) {
-            // v0.390.0: con la geometria de la propia lista, el clic cae en la
-            // fila que se ve aunque el juego cambie el alto o meta cabecera.
-            int exact = -1;
+            // Row tops are ordered. Search the whole list, not just the first
+            // 128 entries; the fallback arithmetic cannot account for headers.
             try {
-                int total = this.vanillaList.children().size();
-                int h = this.rowStepExact > 0 ? this.rowStepExact : step;
-                for (int i = 0; i < total && i < 128; i++) {
-                    int top = rowTopAt(i, scroll);
-                    if (mouseY >= top && mouseY < top + h) {
-                        exact = i;
-                        break;
-                    }
+                int lo = 0;
+                int hi = this.vanillaList.children().size();
+                while (lo < hi) {
+                    int mid = lo + (hi - lo) / 2;
+                    if (rowTopAt(mid, scroll) <= mouseY) lo = mid + 1;
+                    else hi = mid;
                 }
+                idx = lo - 1;
+                int h = this.rowStepExact > 0 ? this.rowStepExact : step;
+                if (idx < 0 || mouseY >= (long) rowTopAt(idx, scroll) + h) return null;
             } catch (Throwable ignored) {
+                return null;
             }
-            if (exact >= 0) idx = exact;
-            else if (rowOffset < 0) return null;
         } else if (rowOffset < 0) {
             return null;
         }
@@ -1534,6 +1549,14 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         // El campo enfocado recibe Enter/Supr para editar o aceptar su consulta;
         // los atajos de abrir y borrar un mundo no deben adelantarse al widget.
         if (isSearchBoxFocused()) return super.keyPressed(keyCode, scanCode, modifiers);
+        // A focused footer control owns activation. Enter must not turn
+        // Create/Edit/Cancel into Join, nor Delete invoke a different control.
+        if ((keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER
+                || keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_KP_ENTER
+                || keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE)
+                && this.getFocused() instanceof net.minecraft.client.gui.components.AbstractButton button) {
+            return !button.active || !button.visible || super.keyPressed(keyCode, scanCode, modifiers);
+        }
         if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER
                 || keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_KP_ENTER) {
             String want = net.minecraft.network.chat.Component.translatable("selectWorld.select").getString();
@@ -1608,8 +1631,10 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             int rowTop = rowTopAt(index, scroll);
             int rowBottom = rowTop + rowStep();
             double wanted = scroll;
-            if (rowTop < this.listTop + 2) {
-                wanted += this.listTop + 2 - rowTop;
+            if (rowTop < this.listTop + 2 || rowStep() > this.listBottom - this.listTop - 4) {
+                // Reducing scroll moves an above-viewport row down. A row taller
+                // than the viewport stays top-aligned instead of oscillating.
+                wanted += rowTop - (this.listTop + 2);
             } else if (rowBottom > this.listBottom - 2) {
                 wanted += rowBottom - (this.listBottom - 2);
             }

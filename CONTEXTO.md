@@ -2,6 +2,29 @@
 
 ## Addendum operativo actual (2026-11-13)
 
+- **Navegación y archivos largos en Mundos, posterior a `82dbd86`:**
+  Enter/KP Enter respeta el botón del pie enfocado (también los no vestidos),
+  sin reemplazar Crear/Editar/Cancelar por Entrar. Supr con foco en un botón
+  tampoco dispara la acción global de borrar otro control; controles ocultos
+  o inactivos consumen esas teclas sin caer al atajo. Se conserva la prioridad
+  del buscador y los atajos de lista cuando no hay un botón enfocado.
+  Mostrar una selección por encima del viewport ahora reduce el scroll; antes
+  lo aumentaba y alejaba la fila. Filas más altas que el viewport se alinean
+  arriba sin oscilar. Mantiene fracción, clamp y coordenadas medidas/cabecera.
+  entryAt busca por binaria entre todas las filas medidas, sin el corte de 128
+  ni el fallback erróneo sobre huecos/cabecera. Decoración y cinta seleccionada
+  ya no desaparecen después de la fila 64: los tres recorridos de dibujo parten
+  de la primera fila visible y terminan al salir del viewport; la tinta tampoco
+  consulta summaries de cada mundo fuera de pantalla en cada frame.
+  Nueva suite `test_world_navigation.py`: 45 escenarios de métodos extraídos,
+  72.000 comparaciones de hit test contra oráculo lineal y 360 rangos visibles,
+  incluidos scroll fraccionario, cabeceras, huecos y 10.000 entradas. Dobles de
+  GUI/lista/sonidos; no carga ni borra mundos, no verifica píxeles ni eventos SO.
+  Los helpers y teclado se ejecutan; el uso de los helpers en render tiene
+  guardas de código, no ejecución del render completo. Ambos workflows exigen
+  Java. Local sin JDK: guardas aprobadas; ejecución Java/build pendientes de CI.
+  Sin bump/release ni afirmación sobre clics fantasma en Minecraft real.
+
 - **Layout de formularios a altura mínima, posterior a `009c22b`:**
   el editor superponía el campo IP (88..106) con botones (90..108) en una hoja
   de 120 px. Por debajo de 144 px de panel usa campos a 32/64, conserva ambos
