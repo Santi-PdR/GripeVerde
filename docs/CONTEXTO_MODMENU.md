@@ -14,7 +14,12 @@ Actualizado: 2026-11-13
   límites exactos y origen negativo, familias independientes, volver/hover,
   fallos/reintentos y supervivencia del callback, volumen, configuración no
   cargada y API raw/custom. Deadlines inyectados, sin sleeps ni cambiar el SO.
-  Guardas locales aprobadas sin JDK; ejecución/build pendientes de CI.
+  El candidato `361da96` pasó los 22 escenarios nuevos, las suites anteriores
+  y build en [CI 45443207870](https://github.com/Santi-PdR/GripeVerde/actions/runs/45443207870).
+  Artefacto `GripeVerde-jar` ID `14943469810`. Guardas locales sin JDK.
+  La ronda completa añade 61 escenarios: 87 entre UI, ambiente, música y casa.
+  Release `v0.401.0` reconsultada intacta: asset `778229607`, 10855632 bytes,
+  SHA-256 `dd37d443b7307c1b3d0d09fc5befdaee6d1dd887bfca002d6e7bc3670ef0ee88`.
   No prueba salida de sonido, callback de un widget real ni recarga nativa.
   Sin bump ni release; no confirma la causa global de clics fantasma.
 
