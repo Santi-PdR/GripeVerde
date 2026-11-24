@@ -2,6 +2,22 @@
 
 Actualizado: 2026-11-13
 
+- **Sonidos de interfaz, posterior a `b8f1739`:** hover y volver ya no
+  mezclan reloj de pared con cooldowns monotónicos. Volver reutiliza el límite
+  de 140 ms de su familia; hover conserva su puerta global de 55 ms y las
+  capas individuales. El primer sonido no presupone un nanoTime positivo.
+  La reproducción es best-effort: un fallo del motor no interrumpe la acción
+  que pidió feedback; faltar cliente/motor o fallar play no consume el cooldown
+  de familia y permite reintento inmediato. Raw/custom conservan su API sin
+  cooldown, con volumen UI y guardas ante evento/cliente/motor nulos.
+  Nueva suite `tools/test_ui_sounds.py`, clase completa con dobles, 22 escenarios:
+  límites exactos y origen negativo, familias independientes, volver/hover,
+  fallos/reintentos y supervivencia del callback, volumen, configuración no
+  cargada y API raw/custom. Deadlines inyectados, sin sleeps ni cambiar el SO.
+  Guardas locales aprobadas sin JDK; ejecución/build pendientes de CI.
+  No prueba salida de sonido, callback de un widget real ni recarga nativa.
+  Sin bump ni release; no confirma la causa global de clics fantasma.
+
 - **Ronda de ciclo de vida del audio, posterior a `36d3e51`:** La casa
   sincroniza sus interruptores con los gestores en ejecución: apagar música
   detiene, encender arranca; ambiente usa setMuted y arranca si corresponde.
@@ -20,8 +36,10 @@ Actualizado: 2026-11-13
   tres suites. Motor, registros, configuración e instancias de sonido son
   dobles; deadlines se inyectan por reflexión, sin esperas. La casa usa métodos
   extraídos y gestores de ciclo de vida dobles.
-  No prueba audio audible, recarga real, E/S TOML ni GUI. Guardas locales
-  sin JDK aprobadas; ejecución Java/build pendientes de CI. Sin bump/release.
+  El candidato `b8f1739` pasó esas tres suites, las anteriores y build en
+  [CI 45442151263](https://github.com/Santi-PdR/GripeVerde/actions/runs/45442151263),
+  artefacto `GripeVerde-jar` ID `14945091139`. Guardas locales sin JDK.
+  No prueba audio audible, recarga real, E/S TOML ni GUI. Sin bump/release.
 
 - **Teclas en extremos de volumen, posterior a `a9ec068`:** los tres
   deslizadores consumen Inicio/Fin/flechas/RePág/AvPág sin repetir callbacks,

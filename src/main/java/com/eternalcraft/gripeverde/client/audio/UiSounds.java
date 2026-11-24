@@ -69,14 +69,9 @@ public class UiSounds {
         safePlay("button_section", ModSounds.UI_BUTTON_SECTION, VOL_CLICK_SECTION, 0.99f + rand(0.03f));
     }
 
-    private static long lastBackMs = 0L;
-
     public static void back() {
-        // v0.264.0: el boton de volver ya suena al pulsarse; si la pantalla
-        // cierra con el suyo, el segundo aviso llegaba pisado. Uno cada 140 ms.
-        long now = System.currentTimeMillis();
-        if (now - lastBackMs < 140L) return;
-        lastBackMs = now;
+        // The shared monotonic "back" cooldown already deduplicates button
+        // and screen-close feedback. A wall-clock guard could silence it after NTP.
         safePlay("back", ModSounds.UI_BACK, VOL_BACK, 0.97f + rand(0.05f));
     }
 
@@ -164,22 +159,24 @@ public class UiSounds {
 
     public static void playRaw(SoundEvent sound, float volume, float pitch) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc == null) return;
-        mc.getSoundManager().play(SimpleSoundInstance.forUI(sound, pitch, scaledVolume(volume)));
+        if (sound == null || mc == null || mc.getSoundManager() == null) return;
+        try {
+            mc.getSoundManager().play(SimpleSoundInstance.forUI(sound, pitch, scaledVolume(volume)));
+        } catch (Exception ignored) {
+            // Optional feedback must not abort the action that requested it.
+        }
     }
 
     public static void playCustom(SoundEvent s, float v, float p) { playRaw(s, v, p); }
 
     // ── Hover dispatcher used by buttons ──
     // DiaryButton = main, GreenFlu = main, other subtle = section
-    private static long lastHoverMs = 0L;
-
     public static void playHover() {
         // v0.262.0: al barrer el puntero por una rejilla de botones el aviso
         // sonaba como una ametralladora. Se limita a uno cada 55 ms.
-        long now = System.currentTimeMillis();
-        if (now - lastHoverMs < 55L) return;
-        lastHoverMs = now;
+        long now = System.nanoTime() / 1_000_000L;
+        if (isCoolingDown("hover_dispatch", now, 55L)) return;
+        lastPlayed.put("hover_dispatch", now);
         // Default hover is main family (most buttons are DiaryButton)
         hoverMain();
     }
@@ -189,16 +186,27 @@ public class UiSounds {
     }
 
     // ── Internal helpers ──
+    private static boolean isCoolingDown(String key, long now, long cooldown) {
+        Long last = lastPlayed.get(key);
+        // nanoTime has an arbitrary origin, which may be negative. Absence of
+        // a timestamp is not timestamp zero: the first request must be allowed.
+        return last != null && now - last < cooldown;
+    }
+
     private static void play(String key, SoundEvent sound, float volume, float pitch) {
         // v0.23.0: reloj monotonico para los cooldowns (nanoTime, no se ajusta con el SO).
         long now = System.nanoTime() / 1_000_000L;
         long cd = COOLDOWNS.getOrDefault(key, 100L);
-        long last = lastPlayed.getOrDefault(key, 0L);
-        if (now - last < cd) return;
-        lastPlayed.put(key, now);
+        if (isCoolingDown(key, now, cd)) return;
         Minecraft mc = Minecraft.getInstance();
         if (mc == null || mc.getSoundManager() == null) return;
-        mc.getSoundManager().play(SimpleSoundInstance.forUI(sound, pitch, scaledVolume(volume)));
+        try {
+            mc.getSoundManager().play(SimpleSoundInstance.forUI(sound, pitch, scaledVolume(volume)));
+            // A missing/reloading engine must not consume the retry window.
+            lastPlayed.put(key, now);
+        } catch (Exception ignored) {
+            // Sound is best-effort; the caller's UI action must still run.
+        }
     }
 
     private static void safePlay(String key, net.minecraftforge.registries.RegistryObject<SoundEvent> ro,

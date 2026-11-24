@@ -27,6 +27,7 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   `python3 tools/test_discoveries.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_menu_music.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_menu_ambience.py --require-java` (en CI, con JDK 17) ->
+  `python3 tools/test_ui_sounds.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_title_open_count.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_slider_input.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_house_audio.py --require-java` (en CI, con JDK 17) ->
@@ -35,6 +36,10 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   comprobar el release y el SHA-256. El job `publish` compara `release-tag.txt`
   con `build.gradle`, crea el tag sobre `$GITHUB_SHA` (el commit que produjo el
   JAR) y no sobrescribe un release existente.
+- Feedback UI: `test_ui_sounds.py` ejecuta 22 escenarios con UiSounds completo
+  y motor/registro/config dobles. No introducir relojes de pared en cooldowns
+  ni consumir la ventana de reintento cuando la reproducción falla; un sonido
+  opcional no debe impedir que se ejecute la acción de interfaz.
 - Audio de menú: probar mute/reanudación, cero/subida, reloj y susurros sin
   sonido, entrada a mundo y recargas repetidas. `test_menu_ambience.py` compila
   la clase completa con motor/registro/config dobles (31 escenarios); música

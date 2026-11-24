@@ -49,6 +49,8 @@ jobs:
         run: python3 tools/test_slider_input.py --require-java
       - name: Test title opening counter boundaries
         run: python3 tools/test_title_open_count.py --require-java
+      - name: Test UI sound cooldowns and failure isolation
+        run: python3 tools/test_ui_sounds.py --require-java
       - name: Test menu ambience lifecycle and silent guards
         run: python3 tools/test_menu_ambience.py --require-java
       - name: Test menu music playback lifecycle
