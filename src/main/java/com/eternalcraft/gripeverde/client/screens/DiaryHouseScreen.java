@@ -1,6 +1,8 @@
 package com.eternalcraft.gripeverde.client.screens;
 
 import com.eternalcraft.gripeverde.client.lore.Discoveries;
+import com.eternalcraft.gripeverde.client.audio.MenuMusic;
+import com.eternalcraft.gripeverde.client.audio.MenuAmbience;
 import com.eternalcraft.gripeverde.client.render.DiaryChrome;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer;
@@ -118,20 +120,11 @@ public class DiaryHouseScreen extends Screen {
         int cursor = row(3);
         boolean roomy = this.panelH >= 300;
         if (roomy) {
-            DiarySlider music = new DiarySlider(
-                col1, cursor, this.toggleW, 20, ClientConfig.MUSIC_VOLUME.get(),
-                v -> (en() ? "music " : "musica ") + pct(v),
-                v -> ClientConfig.MUSIC_VOLUME.set(v),
-                // v0.358.0: el JSON se guarda al soltar, no en cada cuadro.
-                true, () -> ClientConfig.MUSIC_VOLUME.save());
+            DiarySlider music = createMusicSlider(col1, cursor, this.toggleW);
             addWithHelp(music, help("Volumen del gramofono de la portada.",
                 "Volume of the title screen gramophone."));
 
-            DiarySlider ambience = new DiarySlider(
-                col2, cursor, this.toggleW, 20, ClientConfig.AMBIENCE_VOLUME.get(),
-                v -> (en() ? "ambience " : "ambiente ") + pct(v),
-                v -> ClientConfig.AMBIENCE_VOLUME.set(v),
-                true, () -> ClientConfig.AMBIENCE_VOLUME.save());
+            DiarySlider ambience = createAmbienceSlider(col2, cursor, this.toggleW);
             addWithHelp(ambience, help("Volumen de los ruidos de la casa.",
                 "Volume of the house's noises."));
 
@@ -178,6 +171,20 @@ public class DiaryHouseScreen extends Screen {
             DiaryButton.Icon.DOOR, DiaryButton.Variant.PRIMARY, DiaryButton.SoundProfile.BACK,
             this::onClose
         ));
+    }
+
+    private static DiarySlider createMusicSlider(int x, int y, int width) {
+        return new DiarySlider(x, y, width, 20, MenuMusic.getUserVolume(),
+            v -> (en() ? "music " : "musica ") + pct(v),
+            v -> MenuMusic.setUserVolumeLive((float) v),
+            true, () -> MenuMusic.setUserVolume(MenuMusic.getUserVolume()));
+    }
+
+    private static DiarySlider createAmbienceSlider(int x, int y, int width) {
+        return new DiarySlider(x, y, width, 20, MenuAmbience.getUserVolume(),
+            v -> (en() ? "ambience " : "ambiente ") + pct(v),
+            v -> MenuAmbience.setUserVolumeLive((float) v),
+            true, () -> MenuAmbience.setUserVolume(MenuAmbience.getUserVolume()));
     }
 
     private void addWithHelp(AbstractWidget widget, String helpLine) {
@@ -288,10 +295,8 @@ public class DiaryHouseScreen extends Screen {
         setBool(ClientConfig.REPLACE_TITLE, true);
         ClientConfig.HUD_WATCH_CORNER.set(0);
         ClientConfig.HUD_WATCH_CORNER.save();
-        ClientConfig.MUSIC_VOLUME.set(0.4);
-        ClientConfig.MUSIC_VOLUME.save();
-        ClientConfig.AMBIENCE_VOLUME.set(1.0);
-        ClientConfig.AMBIENCE_VOLUME.save();
+        MenuMusic.setUserVolume(0.4f);
+        MenuAmbience.setUserVolume(1.0f);
         ClientConfig.UI_VOLUME.set(1.0);
         ClientConfig.UI_VOLUME.save();
         this.rebuildWidgets();

@@ -2,6 +2,20 @@
 
 Actualizado: 2026-11-13
 
+- **Volumen de La casa, posterior a `fc85ac8`:** los mandos de música y
+  ambiente usan ahora los getters/setters live de sus gestores de audio,
+  no escrituras directas al TOML que dejaban intacta la caché de volumen.
+  Se previsualiza sin E/S durante el movimiento y el callback final persiste
+  mediante setUserVolume; al reconstruir se muestra el estado live actual.
+  Restaurar valores también actualiza caché y configuración de ambos canales,
+  conservando el reset de interfaz, interruptores y esquina del reloj.
+  Nueva suite `tools/test_house_audio.py` obligatoria en ambos workflows:
+  fábricas/reset y getters/setters reales extraídos, con slider/config dobles.
+  Quince escenarios cubren caché ya cargada, preview sin guardado, commit,
+  reconstrucción, extremos, reset tras preview y etiquetas de reset.
+  Guardas locales aprobadas sin JDK; ejecución y build pendientes de CI.
+  No prueba audio audible ni E/S TOML real. Sin bump, formato nuevo ni release.
+
 - **Deslizadores de hasta 8 píxeles, posterior a `2546bd7`:** se usa
   todo el ancho del control para mapear el puntero solo cuando width<=8.
   Vanilla divide por width-8, lo que producía NaN al pulsar el centro de
