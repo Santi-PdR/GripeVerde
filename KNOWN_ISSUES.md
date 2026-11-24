@@ -31,8 +31,15 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
   fuente. Suite MenuMusic completa ampliada de 16 a 18 escenarios de motor
   doble, incluidos salto ordinario/fantasma con mundo antes del siguiente tick.
   Sin audio/render nativo, input SO, Realms ni E/S real de opciones.
-  Ambos workflows exigen Java; guardas locales aprobadas, Java/build pendientes
-  de CI. Sin bump/release ni afirmación sobre clics fantasma nativos.
+  Ambos workflows exigen Java. CI 45496055765 detectó un constructor faltante
+  en el doble de SmoothScroll, antes de compilar el mod; corregido en `cda0372`.
+  Suite nueva, anteriores, regresiones Gradle y build aprobados por
+  [CI 45496159527](https://github.com/Santi-PdR/GripeVerde/actions/runs/45496159527).
+  Artefacto GripeVerde-jar ID `14970025223`. Local: 107 tests OK (23 skips sin
+  JDK), mirrors 8/8, lint 73 archivos, release gate 7, installer 7 y diff limpios.
+  Release v0.401.0 reconsultada intacta: asset 778229607, 10855632 bytes,
+  SHA-256 dd37d443b7307c1b3d0d09fc5befdaee6d1dd887bfca002d6e7bc3670ef0ee88.
+  Sin bump/release ni afirmación sobre clics fantasma nativos.
 
 - **Accesibilidad mínima y secretos de Sonido, posterior a `b79671d`:**
   Accesibilidad recupera margen vertical en ventanas muy bajas y usa cabecera
