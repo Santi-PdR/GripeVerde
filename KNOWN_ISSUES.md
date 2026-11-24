@@ -28,8 +28,13 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
   No instala, cambia ramas ni publica. Runner probado con 10 tests de shell y
   ejecutables dobles; ejecución local real: 120 tests OK (24 skips por JDK),
   mirrors 8/8, lint 73 archivos, release gate 7, installer 7 y diff limpios.
-  Java/build de la tanda pendientes de CI. Sin bump/release ni afirmación sobre
-  clics fantasma en Minecraft nativo.
+  Java, suites anteriores, regresiones Gradle y build aprobados en `c9e326b`
+  por [CI 45501891485](https://github.com/Santi-PdR/GripeVerde/actions/runs/45501891485).
+  Artefacto GripeVerde-jar ID `14972145652`. Modo --require-java comprobado en
+  local: rechaza JDK ausente con exit 1 antes de pruebas. Release v0.401.0
+  reconsultada intacta: asset 778229607, 10855632 bytes,
+  SHA-256 dd37d443b7307c1b3d0d09fc5befdaee6d1dd887bfca002d6e7bc3670ef0ee88.
+  Sin bump/release ni afirmación sobre clics fantasma en Minecraft nativo.
 
 - **Chat/En línea compactos y salto musical seguro, posterior a `0716360`:**
   Chat y En línea reservan una fila vanilla de al menos 25 px sin invadir el
