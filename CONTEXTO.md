@@ -20,8 +20,14 @@
   4.494 casos de init/render/resize de Accesibilidad (clase completa), 7 anchos,
   alturas 120..440, ES/EN. Métodos reales extraídos de Sonido; GUI/config/audio/
   lore/fuente dobles. No prueba audio audible, píxeles nativos ni E/S Forge.
-  Ambos workflows exigen Java. Local sin JDK: guardas aprobadas; Java/build
-  pendientes de CI. Sin bump/release ni afirmación sobre clics fantasma nativos.
+  Ambos workflows exigen Java. Suite nueva, anteriores, regresiones Gradle y
+  build aprobados en `7c87e63` por
+  [CI 45487663213](https://github.com/Santi-PdR/GripeVerde/actions/runs/45487663213).
+  Artefacto GripeVerde-jar ID `14964508868`. Local: 104 tests OK (22 skips por
+  ausencia de JDK), mirrors 8/8, lint 73 archivos, release gate 7, installer 7,
+  diff limpio. Release v0.401.0 reconsultada intacta tras CI: asset 778229607,
+  10855632 bytes, SHA-256 dd37d443b7307c1b3d0d09fc5befdaee6d1dd887bfca002d6e7bc3670ef0ee88.
+  Sin bump/release ni afirmación sobre clics fantasma nativos.
 
 - **Navegación y archivos largos en Mundos, posterior a `82dbd86`:**
   Enter/KP Enter respeta el botón del pie enfocado (también los no vestidos),
