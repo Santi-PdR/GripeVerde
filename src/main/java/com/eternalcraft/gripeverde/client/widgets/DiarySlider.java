@@ -7,7 +7,6 @@ import com.eternalcraft.gripeverde.client.render.DiaryTypography;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.network.chat.Component;
@@ -25,17 +24,13 @@ import java.util.function.DoubleFunction;
  *       v -> myConfig.setVolume(v)
  *   );
  */
-public class DiarySlider extends AbstractSliderButton {
+public class DiarySlider extends DiaryPointerSlider {
 
     private final DoubleFunction<String> labelFormatter;
     private final DoubleConsumer onValueChanged;
     private final boolean applyOnDrag;
     // v0.358.0: el aviso final (guardar config) va al soltar, no en cada cuadro.
     private final Runnable onRelease;
-    // v0.358.0: mientras se arrastra, vanilla ya llama applyValue() por cada
-    // cambio; volver a llamarlo desde onDrag guardaba la config dos veces por
-    // cuadro y hacia tirones.
-    private boolean dragging;
     // v0.246.0: el mando tambien avisa cuando la mano se le acerca.
     private boolean wasHovered = false;
 
@@ -79,19 +74,14 @@ public class DiarySlider extends AbstractSliderButton {
      * avisaba al acercarse y quedaba mudo al elegir el valor.
      */
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        boolean released = super.mouseReleased(mouseX, mouseY, button);
-        if (released) {
-            this.dragging = false;
-            // v0.358.0: al soltar se avisa una sola vez, con el valor final.
-            this.fireValueChanged();
-            this.fireRelease();
-            try {
-                com.eternalcraft.gripeverde.client.audio.UiSounds.playClick();
-            } catch (Throwable ignored) {
-            }
+    protected void commitPointerValue() {
+        // Al soltar una pulsacion propia se avisa una vez con el valor final.
+        this.fireValueChanged();
+        this.fireRelease();
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.playClick();
+        } catch (Throwable ignored) {
         }
-        return released;
     }
 
     private void fireValueChanged() {
@@ -132,7 +122,7 @@ public class DiarySlider extends AbstractSliderButton {
                 // v0.359.0: Inicio y Fin llevan el mando a tope de un golpe.
                 this.value = keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_HOME ? 0.0D : 1.0D;
                 this.updateMessage();
-                this.dragging = false;
+                this.cancelPointerGesture();
                 this.applyValue();
                 this.fireRelease();
                 try {
@@ -146,7 +136,7 @@ public class DiarySlider extends AbstractSliderButton {
                 // el campo value es protegido y se remienda a mano.
                 this.value = net.minecraft.util.Mth.clamp(this.value + dir * step, 0.0D, 1.0D);
                 this.updateMessage();
-                this.dragging = false;
+                this.cancelPointerGesture();
                 this.applyValue();
                 this.fireRelease();
                 try {
@@ -162,15 +152,8 @@ public class DiarySlider extends AbstractSliderButton {
     @Override
     protected void applyValue() {
         // Con applyOnDrag en falso el valor solo se avisa al soltar.
-        if (this.dragging && !this.applyOnDrag) return;
+        if (this.isPointerPressed() && !this.applyOnDrag) return;
         this.fireValueChanged();
-    }
-
-    @Override
-    protected void onDrag(double mouseX, double mouseY, double dragX, double dragY) {
-        this.dragging = true;
-        // vanilla ya guarda el valor y llama a applyValue() dentro de onDrag.
-        super.onDrag(mouseX, mouseY, dragX, dragY);
     }
 
     @Override

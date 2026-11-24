@@ -12,7 +12,7 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   notas dentro del juego; el workflow publica automáticamente solo tras pasar
   todas las comprobaciones.
 - Rama de trabajo vigente: `arena/48be547c-gripeverde`, un solo push por entrega.
-- Baseline medida por las herramientas: **72 archivos Java**, **25 locales con
+- Baseline medida por las herramientas: **73 archivos Java**, **25 locales con
   192 claves** cada uno, 35 eventos de sonido, 42 referencias OGG y 42 archivos
   OGG, 4 piezas de música y **8/8 sellos espejo**.
 - Cada publicación es: `python3 tools/verify_mirrors.py` -> `python3 tools/lint_java.py`
@@ -27,6 +27,7 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   `python3 tools/test_discoveries.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_menu_music.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_title_open_count.py --require-java` (en CI, con JDK 17) ->
+  `python3 tools/test_slider_input.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/ci/test_release_gate.py` ->
   `python3 tools/ci/test_installer.py` -> commit + push -> esperar el CI ->
   comprobar el release y el SHA-256. El job `publish` compara `release-tag.txt`
@@ -65,6 +66,11 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   sin consumir el marcador once, duplicados y persistencia del reintento.
   Las sesiones se prueban con días explícitos: visitas/racha saturadas, fechas
   ausentes/futuras, saludos y recordatorios persistentes, sin cliente gráfico.
+- `verifySliderPointerRegression` también es obligatoria en check/build: usa
+  DiarySlider y padre vanilla reales, sin cliente, para callback diferido desde
+  la pulsación inicial, liberaciones ajenas/repetidas, reentrada y cancelación.
+  La suite Python ejecuta la base compartida y métodos reales de los tres
+  deslizadores con padres/audio dobles, incluyendo el handoff de foco vanilla.
 - **Nunca dos pushes seguidos**: el CI cancela el run anterior por concurrencia.
 - Sin JDK local: la compilación semántica la hace el CI. No instalar Java 17
   en la máquina para publicar.

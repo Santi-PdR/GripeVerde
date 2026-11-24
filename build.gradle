@@ -582,7 +582,19 @@ tasks.register('verifyMemoryDataRegression', JavaExec) {
     }
 }
 
+tasks.register('verifySliderPointerRegression', JavaExec) {
+    group = 'verification'
+    description = 'Checks real generic slider pointer callbacks against the vanilla parent without a client.'
+    dependsOn tasks.named('testClasses')
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.eternalcraft.gripeverde.client.SliderPointerRegression'
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
 tasks.named('check').configure {
+    dependsOn tasks.named('verifySliderPointerRegression')
     dependsOn tasks.named('verifyMemoryDataRegression')
     dependsOn tasks.named('verifyMemorySchemaRegression')
     dependsOn tasks.named('verifyMemoryShutdownRegression')

@@ -6,7 +6,6 @@ import com.eternalcraft.gripeverde.client.render.DiaryTheme;
 import com.eternalcraft.gripeverde.client.render.PaperTexture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 
@@ -14,7 +13,7 @@ import net.minecraft.network.chat.Component;
  * Slider estilizado pergamino para el volumen de los sonidos ambientales.
  * Reemplaza al boton AMB del Title. Persiste via ClientConfig.AMBIENCE_VOLUME.
  */
-public class DiaryAmbienceSlider extends AbstractSliderButton {
+public class DiaryAmbienceSlider extends DiaryPointerSlider {
 
     public DiaryAmbienceSlider(int x, int y, int w, int h) {
         super(x, y, w, h, buildLabel(MenuAmbience.getUserVolume()), MenuAmbience.getUserVolume());
@@ -72,6 +71,7 @@ public class DiaryAmbienceSlider extends AbstractSliderButton {
                 // v0.359.0: Inicio y Fin llevan el mando a tope de un golpe.
                 this.value = keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_HOME ? 0.0D : 1.0D;
                 this.updateMessage();
+                this.cancelPointerGesture();
                 this.applyValue();
                 // Salto discreto: se persiste al acto, como las flechas.
                 MenuAmbience.setUserVolume((float) this.value);
@@ -80,6 +80,7 @@ public class DiaryAmbienceSlider extends AbstractSliderButton {
             if (dir != 0) {
                 this.value = net.minecraft.util.Mth.clamp(this.value + dir * step, 0.0D, 1.0D);
                 this.updateMessage();
+                this.cancelPointerGesture();
                 this.applyValue();
                 // v0.358.0: con el teclado el valor es discreto, se guarda al acto.
                 MenuAmbience.setUserVolume((float) this.value);
@@ -93,32 +94,18 @@ public class DiaryAmbienceSlider extends AbstractSliderButton {
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
-    /** v0.267.0: el aviso de volumen, sin tocar el guardado. */
-    private void livePreview() {
-        MenuAmbience.setUserVolumeLive((float) this.value);
-    }
-
-    @Override
-    protected void onDrag(double mouseX, double mouseY, double dragX, double dragY) {
-        super.onDrag(mouseX, mouseY, dragX, dragY);
-        MenuAmbience.setUserVolumeLive((float) this.value);
-    }
-
     private boolean wasHovered = false;
 
     /** v0.267.0: el mando avisa al acercarse y golpea al soltarse. */
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        boolean released = super.mouseReleased(mouseX, mouseY, button);
-        if (released) {
-            // v0.358.0: el valor final se persiste una sola vez, al soltar.
-            MenuAmbience.setUserVolume((float) this.value);
-            try {
-                com.eternalcraft.gripeverde.client.audio.UiSounds.playClick();
-            } catch (Throwable ignored) {
-            }
+    protected void commitPointerValue() {
+        // Persistir solo al finalizar una pulsacion propia, no al recibir
+        // una liberacion ajena o repetida del contenedor.
+        MenuAmbience.setUserVolume((float) this.value);
+        try {
+            com.eternalcraft.gripeverde.client.audio.UiSounds.playClick();
+        } catch (Throwable ignored) {
         }
-        return released;
     }
 
     @Override

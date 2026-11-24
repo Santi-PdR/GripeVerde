@@ -51,6 +51,8 @@ jobs:
       # repetidas y sentencias cortadas antes de gastar dos minutos de Gradle.
       - name: Lint Java structure
         run: python3 tools/lint_java.py
+      - name: Test slider pointer and keyboard gestures
+        run: python3 tools/test_slider_input.py --require-java
       - name: Test title opening counter boundaries
         run: python3 tools/test_title_open_count.py --require-java
       - name: Test menu music playback lifecycle

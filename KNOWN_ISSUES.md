@@ -9,6 +9,23 @@ que una seccion posterior lo mencione expresamente.
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
+- **Gestos de deslizadores, posterior a `9e8b10e`:** base compartida
+  DiaryPointerSlider para los tres mandos. Solo una pulsación propia habilita
+  arrastre y commit; liberaciones ajenas/repetidas o botones secundarios no
+  guardan ni suenan. Se cancela al perder foco real, desactivar/ocultar al
+  recibir el siguiente evento, o cambiar por teclado. Se conserva el handoff
+  false -> true que vanilla hace tras hacer clic incluso en el mismo control.
+  Se elimina el clic vanilla duplicado al soltar y la doble previsualización
+  durante arrastre de música/ambiente. `applyOnDrag=false` ahora difiere también
+  la pulsación inicial, no solo los movimientos posteriores.
+  Nueva suite Python obligatoria: 46 escenarios con la base compartida y
+  métodos reales de entrada, padres/audio dobles. Nueva tarea obligatoria
+  `verifySliderPointerRegression`: DiarySlider y padre vanilla reales, sin
+  cliente/rendering/entrada nativa. Baseline pasa a 73 Java principales.
+  Guardas locales aprobadas sin JDK; compilación/ejecución pendientes de CI.
+  No prueba dispatch completo de pantalla, foco del SO ni causa de clics
+  fantasma en Minecraft. Sin bump ni release.
+
 - **Aperturas de portada, posterior a `46d48a6`:** el contador TOML
   `openCount` satura en su máximo declarado de 999999 en vez de intentar
   guardar 1000000 fuera del rango de Forge. Config y pantalla comparten
