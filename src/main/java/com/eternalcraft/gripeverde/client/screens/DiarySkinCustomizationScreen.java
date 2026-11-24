@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class DiarySkinCustomizationScreen extends Screen {
 
-    // 6 partes del cuerpo + 1 mano principal = 7 toggles en grid 2x4
+    // 7 partes del cuerpo + mano principal = 8 controles en grid 2x4
     private static final int PANEL_MAX_W = 340;
     private static final int PANEL_MAX_H = 235;
 
@@ -37,11 +37,29 @@ public class DiarySkinCustomizationScreen extends Screen {
     // v0.266.0: alto real de las fichas y linea del pie, para el recuento.
     private int gridBtnH = BTN_H;
     private int footerDivY = -1;
+    private int gridBottom;
 
     public DiarySkinCustomizationScreen(Screen parent, Options options) {
         super(Component.translatable("options.skinCustomisation"));
         this.parent = parent;
         this.options = options;
+    }
+
+    private int panelWidth() {
+        return Math.max(1, Math.min(PANEL_MAX_W, this.width - 24));
+    }
+
+    private int panelHeight() {
+        int margin = Math.min(15, Math.max(4, (this.height - 112) / 2));
+        return Math.max(1, Math.min(PANEL_MAX_H, this.height - margin * 2));
+    }
+
+    private boolean compactLayout() {
+        return panelHeight() < 224;
+    }
+
+    private boolean fullHeaderFits() {
+        return panelHeight() >= 142;
     }
 
     // v0.272.0: la hoja solo suena la primera vez que se abre, no al redimensionar.
@@ -57,38 +75,24 @@ public class DiarySkinCustomizationScreen extends Screen {
             } catch (Throwable ignored) {
             }
         }
-        int panelW = Math.min(PANEL_MAX_W, this.width - 40);
-        int panelH = Math.min(PANEL_MAX_H, this.height - 30);
+        int panelW = panelWidth();
+        int panelH = panelHeight();
         this.panelX = (this.width  - panelW) / 2;
         this.panelY = (this.height - panelH) / 2;
 
-        // v0.266.0: la rejilla se mide contra la hoja. En ventanas bajas las
-        // cuatro filas se salian del papel y tapaban el pie y el boton de
-        // volver; ahora el alto de cada ficha y el hueco se ajustan para que
-        // entren siempre.
-        int rows = 4;
-        int gridTop = this.panelY + 74;  // titulo + subtitulo + flavor + divisor
-        int footerH = 46;
-        int gapY = BTN_GAP_Y;
-        int btnH = BTN_H;
-        int avail = panelH - 74 - footerH;
-        int need = rows * btnH + (rows - 1) * gapY;
-        if (need > avail) {
-            gapY = 3;
-            btnH = Math.max(14, (avail - (rows - 1) * gapY) / rows);
-            int used = rows * btnH + (rows - 1) * gapY;
-            // v0.330.0: la rejilla se ancla al pie, no al titulo. Antes, con la
-            // hoja muy baja, la ultima fila aterrizaba sobre el divisor y el
-            // boton Volver: se partia de 74 y no se miraba donde terminaba.
-            int footerTop = this.panelY + panelH - footerH;
-            int maxTop = footerTop - 4 - used - this.panelY;
-            gridTop = this.panelY + Math.max(48, Math.min(74, maxTop));
-        }
+        // Four rows, including the main hand. Header/footer decoration must
+        // yield before controls overlap; even a 160x120 viewport keeps all nine.
+        this.partButtons.clear();
+        int rows = (PlayerModelPart.values().length + 2) / 2;
+        int gapY = compactLayout() ? 3 : BTN_GAP_Y;
+        int btnH = compactLayout() ? 14 : BTN_H;
+        int gridTop = this.panelY + (compactLayout()
+            ? Math.min(52, Math.max(22, panelH - 90)) : 74);
+        this.gridBottom = gridTop + rows * btnH + (rows - 1) * gapY;
         this.gridBtnH = btnH;
-        int availableGridW = Math.max(BTN_W, panelW - 28);
-        int effectiveBtnW = Math.min(BTN_W, Math.max(110, (availableGridW - BTN_GAP_X) / 2));
-        int col1X   = this.panelX + (panelW - (effectiveBtnW * 2 + BTN_GAP_X)) / 2;
-        int col2X   = col1X + effectiveBtnW + BTN_GAP_X;
+        int effectiveBtnW = Math.max(1, Math.min(BTN_W, (panelW - 32) / 2));
+        int col1X = this.panelX + (panelW - (effectiveBtnW * 2 + BTN_GAP_X)) / 2;
+        int col2X = col1X + effectiveBtnW + BTN_GAP_X;
 
         PlayerModelPart[] parts = PlayerModelPart.values();
 
@@ -133,16 +137,17 @@ public class DiarySkinCustomizationScreen extends Screen {
         this.addRenderableWidget(this.armButton);
 
         // Boton Volver
-        int btnW = 160;
+        int btnW = Math.max(1, Math.min(160, panelW - 24));
         int btnX = (this.width - btnW) / 2;
-        int btnY = this.panelY + panelH - 28;
+        int backH = compactLayout() ? 18 : BTN_H;
+        int btnY = this.panelY + panelH - (compactLayout() ? 22 : 28);
         this.addRenderableWidget(new DiaryButton(
-            btnX, btnY, btnW, BTN_H,
+            btnX, btnY, btnW, backH,
             Component.translatable("gripeverde.options.button.done"),
             Icon.DOOR, Variant.PRIMARY,
             this::onClose
         ));
-        this.footerDivY = this.panelY + panelH - 38;
+        this.footerDivY = btnY - (compactLayout() ? 2 : 10);
     }
 
     /**
@@ -150,6 +155,7 @@ public class DiarySkinCustomizationScreen extends Screen {
      * encima con la misma lista de partes que usa el juego.
      */
     private void drawWornCount(GuiGraphics g, int panelW, int divY) {
+        if (this.gridBottom + 4 > divY - 11) return;
         int worn = 0;
         PlayerModelPart[] parts = PlayerModelPart.values();
         for (PlayerModelPart part : parts) {
@@ -168,7 +174,7 @@ public class DiarySkinCustomizationScreen extends Screen {
         if (model.isEmpty()) return;
         String cut2 = DiaryChrome.fitText(this.font, model, Math.max(60, panelW - 40));
         int w2 = DiaryChrome.widthCached(this.font, cut2);
-        if (divY - 21 > this.panelY + 24) {
+        if (divY - 21 >= this.gridBottom + 4) {
             g.drawString(this.font, cut2, this.panelX + (panelW - w2) / 2, divY - 21,
                 DiaryChrome.INK_FLAVOR, false);
         }
@@ -246,41 +252,45 @@ public class DiarySkinCustomizationScreen extends Screen {
         com.eternalcraft.gripeverde.client.render.QuarantineSceneRenderer.renderDiaryBackground(gfx, this.width, this.height);
 
         // Pergamino
-        int panelW = Math.min(PANEL_MAX_W, this.width - 40);
-        int panelH = Math.min(PANEL_MAX_H, this.height - 30);
+        int panelW = panelWidth();
+        int panelH = panelHeight();
         DiaryChrome.drawPanelShadow(gfx, this.panelX, this.panelY, panelW, panelH);
         PaperTexture.drawTornSheet(gfx, this.panelX, this.panelY, panelW, panelH, PaperTexture.PaperKind.MEDICAL);
 
         // Titulo
         int cx = this.width / 2;
-        int titleY = this.panelY + 12;
+        int titleY = this.panelY + (compactLayout() ? 6 : 12);
         {
             String titleText = DiaryChrome.fitCached(this.font, this.title.getString(), Math.max(0, panelW - 28));
             int tw = DiaryChrome.widthCached(this.font, titleText);
             gfx.drawString(this.font, titleText, cx - tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
         }
 
-        // Subtitulo
-        int subtitleY = titleY + 12;
-        {
-            String subC = "- " + DiaryChrome.tr("gripeverde.options.skin.subtitle") + " -";
-            subC = DiaryChrome.fitCached(this.font, subC, Math.max(0, panelW - 28));
-            int sw = DiaryChrome.widthCached(this.font, subC);
-            gfx.drawString(this.font, subC, cx - sw / 2, subtitleY, DiaryChrome.INK_SUBTITLE, false);
-        }
+        if (fullHeaderFits()) {
+            // Subtitulo
+            int subtitleY = titleY + 12;
+            {
+                String subC = "- " + DiaryChrome.tr("gripeverde.options.skin.subtitle") + " -";
+                subC = DiaryChrome.fitCached(this.font, subC, Math.max(0, panelW - 28));
+                int sw = DiaryChrome.widthCached(this.font, subC);
+                gfx.drawString(this.font, subC, cx - sw / 2, subtitleY, DiaryChrome.INK_SUBTITLE, false);
+            }
 
-        // Flavor
-        int flavorY = subtitleY + 13;
-        {
-            String flvC = DiaryChrome.fitCached(this.font,
-                DiaryChrome.tr("gripeverde.options.skin.flavor"), Math.max(0, panelW - 28));
-            int fw = DiaryChrome.widthCached(this.font, flvC);
-            gfx.drawString(this.font, flvC, cx - fw / 2, flavorY, DiaryChrome.INK_FLAVOR, false);
-        }
+            // Flavor
+            int flavorY = subtitleY + 13;
+            {
+                String flvC = DiaryChrome.fitCached(this.font,
+                    DiaryChrome.tr("gripeverde.options.skin.flavor"), Math.max(0, panelW - 28));
+                int fw = DiaryChrome.widthCached(this.font, flvC);
+                gfx.drawString(this.font, flvC, cx - fw / 2, flavorY, DiaryChrome.INK_FLAVOR, false);
+            }
 
-        // Divisor superior
-        int divY1 = flavorY + 12;
-        DiaryChrome.drawInkDivider(gfx, this.panelX, divY1, panelW);
+            // Divisor superior
+            int divY1 = flavorY + 12;
+            DiaryChrome.drawInkDivider(gfx, this.panelX, divY1, panelW);
+        } else {
+            DiaryChrome.drawInkDivider(gfx, this.panelX, this.panelY + 18, panelW);
+        }
 
         // Widgets (DiaryButtons propios)
         
@@ -301,11 +311,11 @@ public class DiarySkinCustomizationScreen extends Screen {
             String note = wornNow == 0
                 ? (en ? "nothing worn: the street will see all" : "sin prendas: la calle lo vera todo")
                 : "";
-            if (!note.isEmpty() && panelW >= 240) {
+            if (!note.isEmpty() && panelW >= 240 && this.gridBottom + 4 <= divY2 - 31) {
                 String cut = DiaryChrome.fitCached(this.font, note, panelW - 32);
                 int nw = DiaryChrome.widthCached(this.font, cut);
                 gfx.drawString(this.font, cut, this.panelX + (panelW - nw) / 2,
-                    divY2 + 2, 0xFF8E2A20, false);
+                    divY2 - 31, 0xFF8E2A20, false);
             }
             // v0.306.0: el folio del pie caia sobre el boton Volver; la hoja
             // se queda sin esa linea antes que taparlo.
@@ -315,7 +325,9 @@ public class DiarySkinCustomizationScreen extends Screen {
         DiaryChrome.drawCornerOrnaments(gfx, this.panelX, this.panelY, panelW, panelH);
         // v0.385.0: esta hoja llevaba la chapa REG. VIII, que es la de Opciones
         // de red: dos hojas distintas con el mismo numero. La de Aspecto es XX.
-        DiaryChrome.drawRegistryTagLeft(gfx, this.panelX, this.panelY, "REG. XX");
+        if (!compactLayout()) {
+            DiaryChrome.drawRegistryTagLeft(gfx, this.panelX, this.panelY, "REG. XX");
+        }
 
         // v0.240.0: fuera el espejo de la esquina (el "ojo"): la ficha de
         // aspecto queda con sus botones y nada mas.

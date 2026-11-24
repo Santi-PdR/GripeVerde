@@ -45,6 +45,10 @@ jobs:
 
       - name: Test confirmation decision safety and lifecycle
         run: python3 tools/test_confirm_screen.py --require-java
+      - name: Test Controls and Skin grids at compact sizes
+        run: python3 tools/test_grid_option_screens.py --require-java
+      - name: Test local shell check runner
+        run: python3 tools/test_check_local.py
       - name: Test Chat and Online layout, translated footer and skip state
         run: python3 tools/test_simple_option_screens.py --require-java
       - name: Test accessibility geometry and sound secret lifecycle

@@ -155,6 +155,13 @@ public class DiaryToggle extends AbstractButton {
             this.cachedValStr = valLabel == null ? "" : valLabel.getString();
         }
         String valStr = this.cachedValStr;
+        if (w < 150 || h < 18) {
+            int contentY = y + (h - font.lineHeight) / 2;
+            int labelColor = this.active ? DiaryTheme.INK : DiaryTheme.withAlpha(DiaryTheme.SEPIA_MID, 120);
+            int valueColor = this.active && value ? DiaryTheme.REDCOAT : labelColor;
+            renderCompactText(g, font, x, contentY, w, labelStr, valStr, labelColor, valueColor);
+            return;
+        }
         int plateW = 66;
         int paddingH = 10;
         int maxLabelW = Math.max(24, w - plateW - paddingH * 2 - 8);
@@ -202,6 +209,20 @@ public class DiaryToggle extends AbstractButton {
             g.fill(x + paddingH, underlineY, x + paddingH + Math.min(maxLabelW, DiaryChrome.widthCached(font, labelStr)), underlineY + 1,
                 DiaryTheme.withAlpha(accent, underlineAlpha));
         }
+    }
+
+    /** Keep the state readable first; the full label remains in narration. */
+    private static void renderCompactText(GuiGraphics g, Font font, int x, int y, int width,
+                                          String label, String value, int labelColor, int valueColor) {
+        int padding = Math.min(6, Math.max(0, width / 4));
+        int available = Math.max(0, width - padding * 2);
+        String shownValue = DiaryTypography.fitString(font, value, available);
+        int valueWidth = DiaryChrome.widthCached(font, shownValue);
+        int labelRoom = Math.max(0, available - valueWidth - 6);
+        String shownLabel = DiaryTypography.fitString(font, label, labelRoom);
+        if (!shownLabel.isEmpty()) DiaryTypography.draw(g, font, shownLabel, x + padding, y, labelColor);
+        if (!shownValue.isEmpty()) DiaryTypography.draw(g, font, shownValue,
+            x + width - padding - valueWidth, y, valueColor);
     }
 
     @Override

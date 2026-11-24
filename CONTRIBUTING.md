@@ -2,6 +2,25 @@
 
 Guia corta para tocar el mod sin romper las reglas del proyecto.
 
+## Shell de comprobación
+
+```bash
+# Guardas y pruebas locales (avisa explícitamente si falta JDK):
+bash tools/check-local.sh
+
+# Exigir que puedan ejecutarse los escenarios Java:
+bash tools/check-local.sh --require-java
+
+# Añadir la compilación y regresiones Gradle (requiere JDK y dependencias):
+bash tools/check-local.sh --build
+```
+
+Se puede lanzar desde otro directorio usando la ruta absoluta al script. Falla
+al primer error, propaga el código de salida y no ejecuta Gradle si una prueba
+falla. No instala herramientas, no cambia ramas ni publica releases. Sin JDK,
+el modo por defecto es **parcial**: no valida los escenarios Java ni el build.
+`test_check_local.py` cubre 10 contratos con ejecutables dobles (sin builds reales).
+
 ## Estado vigente de la entrega
 
 - Última publicación verificada: **v0.401.0**, tag dirigido al commit construido
@@ -33,6 +52,8 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   `python3 tools/test_slider_input.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_button_input.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_house_audio.py --require-java` (en CI, con JDK 17) ->
+  `python3 tools/test_grid_option_screens.py --require-java` (en CI, con JDK 17) ->
+  `python3 tools/test_check_local.py` ->
   `python3 tools/test_simple_option_screens.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_option_screen_safety.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_world_navigation.py --require-java` (en CI, con JDK 17) ->
@@ -45,6 +66,12 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   comprobar el release y el SHA-256. El job `publish` compara `release-tag.txt`
   con `build.gradle`, crea el tag sobre `$GITHUB_SHA` (el commit que produjo el
   JAR) y no sobrescribe un release existente.
+- Rejillas Controles/Aspecto: `test_grid_option_screens.py` compila las dos
+  clases completas con dobles de widgets/options/lore, barre 16.856 casos de
+  init/render/resize, y prueba handlers de prendas/mano, regreso y badge oculto.
+  El helper real de texto compacto de DiaryToggle se ejecuta en 1.620 casos de
+  ancho/etiqueta/valor; su rama temprana se protege por guarda de fuente. No
+  ejecuta el renderer completo de DiaryToggle, glifos ni persistencia reales.
 - Chat/En línea: `test_simple_option_screens.py` compila las clases completas
   con dobles GUI/Options. 8.428 casos init/render/resize desde 160x120, 12 casos
   de footer en seis etiquetas traducidas, 2 retornos/persistencia y 8 estados del

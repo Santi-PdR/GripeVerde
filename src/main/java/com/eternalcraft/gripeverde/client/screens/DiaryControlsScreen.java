@@ -65,6 +65,10 @@ public class DiaryControlsScreen extends Screen {
     private String conflictSample = "";
     private int keyAuditTicks = 0;
 
+    private boolean compactLayout() {
+        return this.panelH < 190;
+    }
+
     @Override
     protected void init() {
         // v0.272.0: la hoja se abre con ruido de papel, una vez por apertura.
@@ -75,18 +79,19 @@ public class DiaryControlsScreen extends Screen {
             } catch (Throwable ignored) {
             }
         }
-        this.panelW = Math.min(PANEL_W, this.width - 40);
-        this.panelH = Math.min(PANEL_H, this.height - 30);
+        this.panelW = Math.max(1, Math.min(PANEL_W, this.width - 24));
+        int verticalMargin = Math.min(15, Math.max(4, (this.height - 112) / 2));
+        this.panelH = Math.max(1, Math.min(PANEL_H, this.height - verticalMargin * 2));
         this.panelX = (this.width - this.panelW) / 2;
         this.panelY = (this.height - this.panelH) / 2;
 
         // Grid 2 columnas x 3 filas dentro del panel
-        int gridTop = this.panelY + 50;
-        int rowH = 24;
+        int gridTop = this.panelY + (compactLayout() ? 24 : 60);
+        int rowH = compactLayout() ? 22 : 24;
         // v0.264.0: 150 fijos se salian del panel en ventanas angostas; ahora
         // la rejilla se mide contra el panel y nunca lo desborda.
-        int btnW = Math.max(96, Math.min(150, (this.panelW - 40) / 2));
-        int btnH = 20;
+        int btnW = Math.max(1, Math.min(150, (this.panelW - 32) / 2));
+        int btnH = compactLayout() ? 18 : 20;
         int col1X = this.panelX + (this.panelW / 2) - btnW - 4;
         int col2X = this.panelX + (this.panelW / 2) + 4;
 
@@ -135,8 +140,8 @@ public class DiaryControlsScreen extends Screen {
             col2X, gridTop + rowH * 2, btnW, btnH);
 
         // Boton Volver Diary
-        int backW = 120;
-        int backY = this.panelY + this.panelH - 30;
+        int backW = Math.max(1, Math.min(120, this.panelW - 24));
+        int backY = this.panelY + this.panelH - (compactLayout() ? 22 : 30);
         this.addRenderableWidget(new DiaryButton(
             (this.width - backW) / 2, backY, backW, btnH,
             Component.translatable("gripeverde.options.button.done"),
@@ -211,58 +216,64 @@ public class DiaryControlsScreen extends Screen {
         // Titulo
         String titleStr = DiaryChrome.fitCached(this.font, this.title.getString(), Math.max(0, this.panelW - 28));
         int titleX = this.width / 2;
-        int titleY = this.panelY + 10;
+        int titleY = this.panelY + (compactLayout() ? 6 : 10);
         {
         int _tw = DiaryChrome.widthCached(this.font, titleStr);
         g.drawString(this.font, titleStr, titleX - _tw / 2,     titleY,     DiaryChrome.INK_TITLE,  false);
         }
 
-        // Subtitulo
-        String subtitle = "- " + DiaryChrome.tr("gripeverde.options.controls.subtitle") + " -";
-        subtitle = DiaryChrome.fitCached(this.font, subtitle, Math.max(0, this.panelW - 28));
-        int subWC = DiaryChrome.widthCached(this.font, subtitle);
-        g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
+        if (!compactLayout()) {
+            // Subtitulo
+            String subtitle = "- " + DiaryChrome.tr("gripeverde.options.controls.subtitle") + " -";
+            subtitle = DiaryChrome.fitCached(this.font, subtitle, Math.max(0, this.panelW - 28));
+            int subWC = DiaryChrome.widthCached(this.font, subtitle);
+            g.drawString(this.font, subtitle, titleX - subWC / 2, titleY + 12, DiaryChrome.INK_SUBTITLE, false);
 
-        // Flavor
-        String flavor = DiaryChrome.fitCached(this.font,
-            DiaryChrome.tr("gripeverde.options.controls.flavor"), Math.max(0, this.panelW - 28));
-        int flvWC = DiaryChrome.widthCached(this.font, flavor);
-        g.drawString(this.font, flavor, (this.width - flvWC) / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
+            // Flavor
+            String flavor = DiaryChrome.fitCached(this.font,
+                DiaryChrome.tr("gripeverde.options.controls.flavor"), Math.max(0, this.panelW - 28));
+            int flvWC = DiaryChrome.widthCached(this.font, flavor);
+            g.drawString(this.font, flavor, (this.width - flvWC) / 2, titleY + 24, DiaryChrome.INK_FLAVOR, false);
+        }
 
         // Divisores + esquineros
-        int divY1 = titleY + 42;
+        int divY1 = this.panelY + (compactLayout() ? 20 : 52);
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY1);
-        int divY2 = this.panelY + this.panelH - 38;
+        int divY2 = this.panelY + this.panelH - (compactLayout() ? 24 : 38);
         DiaryChrome.drawInkDividerBetween(g, this.panelX + 14, this.panelX + this.panelW - 14, divY2);
         DiaryChrome.drawCornerOrnaments(g, this.panelX, this.panelY, this.panelW, this.panelH);
-        DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. III");
+        if (!compactLayout()) {
+            DiaryChrome.drawRegistryTag(g, this.panelX, this.panelY, this.panelW, this.panelH, "REG. III");
+        }
         // v0.306.0: fuera el folio del pie; caia sobre el boton Volver.
 
 
-        // v0.273.0: el estado de las teclas, en el margen izquierdo de la hoja.
-        try {
-            boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
-            String line1 = this.conflictCount <= 0
-                ? (en ? "no clashes" : "sin choques")
-                : (en ? this.conflictCount + " clashes" : this.conflictCount + " choques");
-            int col1 = this.conflictCount <= 0 ? DiaryChrome.INK_FLAVOR : 0xFF8E2A20;
-            int x1 = this.panelX + 12;
-            int y1 = this.panelY + 8;
-            int limit = Math.max(40, this.width / 2 - 60);
-            String fit1 = DiaryChrome.fitCached(this.font, line1, limit);
-            g.drawString(this.font, fit1, x1, y1, col1, false);
-            boolean overBadge = mouseX >= x1 - 2 && mouseX <= x1 + DiaryChrome.widthCached(this.font, fit1) + 2
-                && mouseY >= y1 - 2 && mouseY <= y1 + 12;
-            if (overBadge && this.conflictCount > 0 && !this.conflictSample.isEmpty()) {
-                g.drawString(this.font, this.conflictSample, x1, y1 + 20, 0xFF5C0A08, false);
+        if (!compactLayout()) {
+            // v0.273.0: el estado de las teclas, en el margen izquierdo de la hoja.
+            try {
+                boolean en = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+                String line1 = this.conflictCount <= 0
+                    ? (en ? "no clashes" : "sin choques")
+                    : (en ? this.conflictCount + " clashes" : this.conflictCount + " choques");
+                int col1 = this.conflictCount <= 0 ? DiaryChrome.INK_FLAVOR : 0xFF8E2A20;
+                int x1 = this.panelX + 12;
+                int y1 = this.panelY + 8;
+                int limit = Math.max(40, this.width / 2 - 60);
+                String fit1 = DiaryChrome.fitCached(this.font, line1, limit);
+                g.drawString(this.font, fit1, x1, y1, col1, false);
+                boolean overBadge = mouseX >= x1 - 2 && mouseX <= x1 + DiaryChrome.widthCached(this.font, fit1) + 2
+                    && mouseY >= y1 - 2 && mouseY <= y1 + 12;
+                if (overBadge && this.conflictCount > 0 && !this.conflictSample.isEmpty()) {
+                    g.drawString(this.font, this.conflictSample, x1, y1 + 20, 0xFF5C0A08, false);
+                }
+                if (this.unassignedCount > 0) {
+                    String line2 = en ? this.unassignedCount + " unbound"
+                        : this.unassignedCount + " sin tecla";
+                    String fit2 = DiaryChrome.fitCached(this.font, line2, limit);
+                    g.drawString(this.font, fit2, x1, y1 + 10, 0xFF8E2A20, false);
+                }
+            } catch (Throwable ignored) {
             }
-            if (this.unassignedCount > 0) {
-                String line2 = en ? this.unassignedCount + " unbound"
-                    : this.unassignedCount + " sin tecla";
-                String fit2 = DiaryChrome.fitCached(this.font, line2, limit);
-                g.drawString(this.font, fit2, x1, y1 + 10, 0xFF8E2A20, false);
-            }
-        } catch (Throwable ignored) {
         }
 
         // Widgets
@@ -302,7 +313,7 @@ public class DiaryControlsScreen extends Screen {
     /** v0.273.0: el aviso de choques lleva a la lista de teclas. */
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0 && this.panelW >= 220) {
+        if (!compactLayout() && button == 0 && this.panelW >= 220) {
             int x1 = this.panelX + 12;
             int y1 = this.panelY + 8;
             if (mouseX >= x1 - 2 && mouseX <= x1 + Math.max(70, this.width / 2 - 60)

@@ -9,6 +9,28 @@ que una seccion posterior lo mencione expresamente.
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
+- **Rejillas compactas y shell local, posterior a `1636030`:** Controles y
+  Aspecto ya no fuerzan columnas de 96/110 px fuera de una ventana estrecha.
+  Recuperan margen vertical, reducen controles y decoración en paneles bajos y
+  separan rejilla, divisores y regreso a 160x120. El badge de atajos oculto no
+  intercepta clics. En Aspecto, recuento/modelo/aviso de prendas solo se dibujan
+  si caben fuera de la rejilla y del botón; el mapa de botones se vacía al init.
+  DiaryToggle tiene texto compacto para ancho menor de 150 o alto menor de 18:
+  prioriza el valor ajustado y usa el espacio restante para la etiqueta, sin
+  placa mecánica fija de 66 px sobresaliendo; narración completa sin cambios.
+  `test_grid_option_screens.py`: dos clases completas con dobles, 16.856 casos
+  de init/render/resize, handlers de prendas/mano y labels/guardado, navegación
+  de controles/regreso/badge oculto; helper real de texto en 1.620 casos.
+  No ejecuta el render completo de DiaryToggle ni Minecraft; fuente/GUI/options/
+  lore dobles, sin píxeles, input SO ni E/S real. Ambos workflows exigen Java.
+  `tools/check-local.sh` ofrece comprobaciones desde cualquier cwd, fail-fast,
+  advertencia de ejecución parcial sin JDK, --require-java y --build opcionales.
+  No instala, cambia ramas ni publica. Runner probado con 10 tests de shell y
+  ejecutables dobles; ejecución local real: 120 tests OK (24 skips por JDK),
+  mirrors 8/8, lint 73 archivos, release gate 7, installer 7 y diff limpios.
+  Java/build de la tanda pendientes de CI. Sin bump/release ni afirmación sobre
+  clics fantasma en Minecraft nativo.
+
 - **Chat/En línea compactos y salto musical seguro, posterior a `0716360`:**
   Chat y En línea reservan una fila vanilla de al menos 25 px sin invadir el
   botón Volver a 160x120; comprimen cabecera y omiten decoración en paneles
