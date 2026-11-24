@@ -70,6 +70,8 @@ public abstract class AbstractSliderButton implements net.minecraft.client.gui.c
     public boolean isMouseOver(double x,double y) {
         return active && visible && x>=this.x && x<this.x+width && y>=this.y && y<this.y+height;
     }
+    public int getX() { return x; }
+    public int getWidth() { return width; }
     public void setMessage(Component c) {}
     public void setFocused(boolean f) { focused=f; canChangeValue=f; }
     public boolean isFocused() { return focused; }
@@ -114,8 +116,8 @@ public class DiarySlider extends DiaryPointerSlider {
     private final DoubleConsumer onValueChanged;
     private final boolean applyOnDrag;
     private final Runnable onRelease;
-    public DiarySlider(DoubleConsumer changed, boolean live, Runnable released) {
-        super(0,0,108,20,Component.literal("test"),0.25);
+    public DiarySlider(DoubleConsumer changed, boolean live, Runnable released, int width) {
+        super(0,0,width,20,Component.literal("test"),0.25);
         onValueChanged=changed; applyOnDrag=live; onRelease=released;
     }
     __METHODS__
@@ -125,7 +127,7 @@ AUDIO = '''package com.eternalcraft.gripeverde.client.widgets;
 import net.minecraft.network.chat.Component;
 import com.eternalcraft.gripeverde.client.audio.__MANAGER__;
 public class __CLASS__ extends DiaryPointerSlider {
-    public __CLASS__() { super(0,0,108,20,Component.literal("test"),0.25); }
+    public __CLASS__(int width) { super(0,0,width,20,Component.literal("test"),0.25); }
     private static Component buildLabel(double value) { return Component.literal("value " + value); }
     __METHODS__
 }
@@ -139,14 +141,14 @@ public class SliderInputHarness {
     static boolean reenter;
     static DiaryPointerSlider target;
     static void check(boolean value, String why) { if (!value) throw new AssertionError(why); }
-    static DiaryPointerSlider create(String kind, boolean live) {
+    static DiaryPointerSlider create(String kind, boolean live, int width) {
         return switch(kind) {
             case "generic" -> new DiarySlider(v -> changed++, live, () -> {
                 released++;
                 if (reenter) check(!target.mouseReleased(50,10,0), "reentrant release committed");
-            });
-            case "music" -> new DiaryMusicSlider();
-            case "ambience" -> new DiaryAmbienceSlider();
+            }, width);
+            case "music" -> new DiaryMusicSlider(width);
+            case "ambience" -> new DiaryAmbienceSlider(width);
             default -> throw new AssertionError(kind);
         };
     }
@@ -220,11 +222,21 @@ public class SliderInputHarness {
             check(!screen.mouseReleased(x,10,0) && commits(kind)==1 && UiSounds.clicks==1, "repeat outside release committed twice");
         }
     }
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         String test=args[0], kind=args[1];
-        DiaryPointerSlider s=create(kind,!test.contains("deferred")); target=s;
+        int width=switch(test) { case "width_one" -> 1; case "width_four" -> 4; case "width_eight" -> 8;
+            case "width_nine" -> 9; case "width_twelve" -> 12; default -> 108; };
+        DiaryPointerSlider s=create(kind,!test.contains("deferred"),width); target=s;
         if (test.startsWith("capture_")) { capture(s,kind,test,args[2]); return; }
         switch(test) {
+            case "width_one", "width_four", "width_eight", "width_nine", "width_twelve" -> {
+                java.lang.reflect.Field value=AbstractSliderButton.class.getDeclaredField("value"); value.setAccessible(true);
+                press(s,width/2.0);
+                check(value.getDouble(s)==0.5, "center click must be finite midpoint at width " + width);
+                check(s.mouseDragged(-100,10,0,-100,0) && value.getDouble(s)==0.0, "left drag reversed or nonfinite at width " + width);
+                check(s.mouseDragged(200,10,0,300,0) && value.getDouble(s)==1.0, "right drag reversed or nonfinite at width " + width);
+                finish(s,kind);
+            }
             case "bare_release" -> {
                 check(!s.mouseReleased(50,10,0), "release without press accepted");
                 check(commits(kind)==0 && applications(kind)==0 && UiSounds.clicks==0 && AbstractSliderButton.vanillaClicks==0,
@@ -375,7 +387,8 @@ class Executable(unittest.TestCase):
         common = ('bare_release', 'bare_drag', 'rejected_presses', 'click', 'drag', 'unchanged_drag',
                   'refocus_same', 'focus_loss', 'inactive_release', 'hidden_release', 'inactive_drag',
                   'secondary_during_drag', 'keyboard', 'keyboard_cancels_pointer',
-                  'inactive_key', 'hidden_key', 'unfocused_key')
+                  'inactive_key', 'hidden_key', 'unfocused_key',
+                  'width_one', 'width_four', 'width_eight', 'width_nine', 'width_twelve')
         cases = [(case, kind) for case in common for kind in ('generic', 'music', 'ambience')]
         cases += [(case, 'generic') for case in ('deferred_click', 'deferred_drag', 'deferred_keyboard', 'reentrant_release')]
         capture_cases = [(case, kind, screen) for case in ('capture_outside', 'capture_over_other',

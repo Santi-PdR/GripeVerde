@@ -16,7 +16,11 @@ public final class SliderPointerRegression {
 
     private static final class Probe extends DiarySlider {
         private Probe(boolean live, int[] events, Runnable released) {
-            super(0, 0, 108, 20, 0.25, value -> "Value " + value,
+            this(108, live, events, released);
+        }
+
+        private Probe(int width, boolean live, int[] events, Runnable released) {
+            super(0, 0, width, 20, 0.25, value -> "Value " + value,
                 value -> events[0]++, live, () -> {
                     events[1]++;
                     if (released != null) released.run();
@@ -139,6 +143,21 @@ public final class SliderPointerRegression {
             "deferred value commits once outside all children");
     }
 
+    private static void narrowGeometry() {
+        for (int width : new int[] {1, 4, 8, 9, 12}) {
+            int[] events = new int[2];
+            Probe slider = new Probe(width, true, events, null);
+            slider.onClick(width / 2.0, 10);
+            check(slider.value() == 0.5, "center click is finite midpoint at width " + width);
+            check(slider.mouseDragged(-100, 10, 0, -100, 0), "left narrow drag accepted");
+            check(slider.value() == 0.0, "left narrow drag clamps to zero, not one");
+            check(slider.mouseDragged(200, 10, 0, 300, 0), "right narrow drag accepted");
+            check(slider.value() == 1.0, "right narrow drag clamps to one, not zero");
+            check(slider.mouseReleased(200, 10, 0), "narrow release accepted");
+            check(events[1] == 1, "narrow release commits once");
+        }
+    }
+
     private static void keyboardGuards() throws Exception {
         int[] events = new int[2];
         Probe slider = new Probe(true, events, null);
@@ -210,6 +229,7 @@ public final class SliderPointerRegression {
         disabled.visible = true;
         check(!disabled.mouseReleased(90, 10, 0), "hidden drag cannot commit after show");
         check(disabledEvents[0] == 0 && disabledEvents[1] == 0, "hidden gesture has no callbacks");
+        narrowGeometry();
         capturedRelease();
         keyboardGuards();
         System.out.println("Slider pointer regression: " + checks + " checks passed (real vanilla parent, no client).");

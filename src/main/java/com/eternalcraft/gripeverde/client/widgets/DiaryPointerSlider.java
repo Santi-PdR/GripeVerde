@@ -41,7 +41,25 @@ public abstract class DiaryPointerSlider extends AbstractSliderButton {
         // Set before vanilla applies the initial click, not just the first drag.
         this.pointerPressed = true;
         this.awaitingPointerFocus = true;
-        super.onClick(mouseX, mouseY);
+        if (this.getWidth() <= 8) this.applyNarrowPointerValue(mouseX);
+        else super.onClick(mouseX, mouseY);
+    }
+
+    private void applyNarrowPointerValue(double mouseX) {
+        // Vanilla divides by width - 8: at 8px the center becomes NaN and
+        // below 8px the direction reverses. Use the whole narrow control.
+        double next = net.minecraft.util.Mth.clamp(
+            (mouseX - this.getX()) / Math.max(1, this.getWidth()), 0.0D, 1.0D);
+        double previous = this.value;
+        this.value = next;
+        if (previous != next) this.applyValue();
+        this.updateMessage();
+    }
+
+    @Override
+    protected void onDrag(double mouseX, double mouseY, double dragX, double dragY) {
+        if (this.getWidth() <= 8) this.applyNarrowPointerValue(mouseX);
+        else super.onDrag(mouseX, mouseY, dragX, dragY);
     }
 
     @Override

@@ -2,6 +2,18 @@
 
 Actualizado: 2026-11-13
 
+- **Deslizadores de hasta 8 píxeles, posterior a `2546bd7`:** se usa
+  todo el ancho del control para mapear el puntero solo cuando width<=8.
+  Vanilla divide por width-8, lo que producía NaN al pulsar el centro de
+  un mando de 8px e invertía la dirección al arrastrar uno más estrecho.
+  Los tamaños normales siguen usando el método vanilla. Se conserva el
+  callback diferido y el commit por gesto propio, sin nuevo guardado al mover.
+  La suite Python añade 15 escenarios (145 totales) con anchos 1/4/8/9/12,
+  centro y extremos; la regresión Java con padre real cubre los mismos anchos.
+  Guardas locales aprobadas sin JDK; compilación y ejecución pendientes de CI.
+  No se ha validado el aspecto visual de controles tan estrechos en Minecraft.
+  Sin bump ni release.
+
 - **Liberación fuera del deslizador, posterior a `873b650`:** Sonido,
   Opciones y La casa encaminan primero la liberación al DiaryPointerSlider
   enfocado que conserve una pulsación propia. Así el commit final también
@@ -14,8 +26,13 @@ Actualizado: 2026-11-13
   deslizadores sin captura. La tarea Java real añade ContainerEventHandler
   real y su hit-test, sin cliente: captura, fallback, cancelación y secundario.
   No reproduce foco nativo ni Screen/rendering reales; no confirma la causa
-  global de clics fantasma. Guardas locales aprobadas sin JDK; Java/build
-  pendientes de CI. Sin bump, formato nuevo ni release.
+  global de clics fantasma. Los 130 escenarios Python/Java pasaron en
+  [CI 45416014268](https://github.com/Santi-PdR/GripeVerde/actions/runs/45416014268),
+  pero Gradle falló configurando Forge antes de compilar: `Invalid patcher
+  dependency, could not resolve universal: null`. No hubo JAR del candidato
+  `2546bd7`; el reintento del run no estuvo habilitado. La siguiente entrega
+  debe validar también la tarea Java real de contenedor. Guardas locales
+  aprobadas sin JDK. Sin bump, formato nuevo ni release.
 
 - **Teclado de deslizadores, posterior a `3242de8`:** los tres mandos
   rechazan teclas si no están activos, visibles y enfocados, antes de ejecutar
