@@ -50,6 +50,7 @@ public class DiaryLanguageScreen extends Screen {
     private DiaryButton unicodeButton;
     private final SmoothScroll smoothScroll = new SmoothScroll(0.58D, 0.22D);
     private boolean applyingLanguage = false;
+    private boolean languageReloadFailed;
     private String searchBuffer = "";
     private long searchBufferUntilMs = 0L;
 
@@ -253,9 +254,13 @@ public class DiaryLanguageScreen extends Screen {
      */
 
     private void drawSearchBuffer(GuiGraphics g) {
-        if (this.searchBuffer.isEmpty() || System.currentTimeMillis() > this.searchBufferUntilMs) return;
+        if (!this.languageReloadFailed
+                && (this.searchBuffer.isEmpty() || System.currentTimeMillis() > this.searchBufferUntilMs)) return;
         boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
-        String msg = (english ? "Search: " : "Buscar: ") + this.searchBuffer;
+        String msg = this.languageReloadFailed
+            ? (english ? "Reload failed; Done retries" : "Fallo al recargar; Listo reintenta")
+            : (english ? "Search: " : "Buscar: ") + this.searchBuffer;
+        msg = DiaryChrome.fitText(this.font, msg, Math.max(1, this.panelW - PANEL_PAD * 2 - 14));
         int w = this.font.width(msg) + 14;
         int x = this.panelX + this.panelW - w - PANEL_PAD;
         int y = this.listY - 16;
@@ -339,6 +344,10 @@ public class DiaryLanguageScreen extends Screen {
         }
         if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER
                 || keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_KP_ENTER) {
+            if (this.unicodeButton != null && this.getFocused() == this.unicodeButton) {
+                if (this.unicodeButton.active && this.unicodeButton.visible) this.unicodeButton.onPress();
+                return true;
+            }
             this.applyAndClose();
             return true;
         }
@@ -388,8 +397,10 @@ public class DiaryLanguageScreen extends Screen {
         }
 
         if (this.pendingLanguageCode != null
-                && !Objects.equals(this.pendingLanguageCode, this.languageManager.getSelected())) {
+                && (this.languageReloadFailed
+                    || !Objects.equals(this.pendingLanguageCode, this.languageManager.getSelected()))) {
             this.applyingLanguage = true;
+            this.languageReloadFailed = false;
             this.options.languageCode = this.pendingLanguageCode;
             this.languageManager.setSelected(this.pendingLanguageCode);
             this.options.save();
@@ -399,17 +410,35 @@ public class DiaryLanguageScreen extends Screen {
                 com.eternalcraft.gripeverde.client.lore.Marginalia.queueOnce(
                     com.eternalcraft.gripeverde.client.lore.Marginalia.N_LANGUAGE);
             } catch (Throwable ignored) {}
-            this.minecraft.reloadResourcePacks().thenRun(() ->
-                this.minecraft.execute(() -> {
-                    com.eternalcraft.gripeverde.client.audio.MenuAmbience.recoverAfterResourceReload();
-                    com.eternalcraft.gripeverde.client.audio.MenuMusic.recoverAfterResourceReload();
-                    this.minecraft.setScreen(this.parent);
-                })
-            );
+            try {
+                this.minecraft.reloadResourcePacks().whenComplete((ignored, failure) ->
+                    this.minecraft.execute(() -> this.finishLanguageReload(failure)));
+            } catch (RuntimeException failure) {
+                this.finishLanguageReload(failure);
+            }
             return;
         }
 
         this.options.save();
+        this.minecraft.setScreen(this.parent);
+    }
+
+    private void finishLanguageReload(Throwable failure) {
+        this.applyingLanguage = false;
+        this.languageReloadFailed = failure != null;
+        // Reload completion may arrive after another screen/world took over.
+        if (this.minecraft == null || this.minecraft.screen != this) return;
+        if (failure != null) {
+            UiSounds.error();
+            return;
+        }
+        // Optional audio recovery must not strand the language UI either.
+        try {
+            com.eternalcraft.gripeverde.client.audio.MenuAmbience.recoverAfterResourceReload();
+        } catch (Throwable ignored) {}
+        try {
+            com.eternalcraft.gripeverde.client.audio.MenuMusic.recoverAfterResourceReload();
+        } catch (Throwable ignored) {}
         this.minecraft.setScreen(this.parent);
     }
 

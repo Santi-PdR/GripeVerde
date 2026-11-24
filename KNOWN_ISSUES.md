@@ -9,6 +9,25 @@ que una seccion posterior lo mencione expresamente.
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
+- **Recarga de idioma y foco de Unicode, posterior a `f9a43a9`:** Enter/KP
+  Enter sobre el botón Unicode accionan ese control (si activo/visible), sin
+  aplicar otro idioma ni cerrar. El resto conserva Enter para aplicar.
+  La recarga usa whenComplete y el executor del cliente tanto en éxito como
+  en error. También se maneja fallo síncrono al solicitarla. Se retira el overlay
+  al fallar, se muestra aviso ajustado al ancho y Listo puede reintentar aunque
+  LanguageManager ya contenga el código solicitado; no queda un bloqueo mudo.
+  No es rollback transaccional: se conserva la preferencia ya seleccionada y
+  guardada, y se reintenta recargar. Esc posterior al fallo permite salir.
+  Una finalización tardía no cambia otra pantalla ni reinicia audio fuera de
+  la hoja de idioma. Fallar la recuperación opcional de un canal de audio no
+  impide intentar el otro ni cerrar una aplicación de idioma exitosa.
+  Nueva `test_language_reload.py`: 23 escenarios de métodos reales extraídos,
+  futuros/executor/config/pantalla/audio/render dobles, sin sleeps: éxito/error,
+  finalización inmediata, reintentos, navegación ajena, Unicode y aviso ES/EN.
+  No ejecuta recarga de packs, fallback de Minecraft, fuentes ni E/S reales.
+  Guardas locales sin JDK aprobadas; ejecución/build pendientes de CI.
+  Sin bump/release ni prueba nativa de Minecraft o de clics fantasma.
+
 - **Seguridad de confirmaciones, posterior a `519b08c`:** DiaryConfirmScreen
   usa el hook protegido addButtons del padre, sin botones vanilla ocultos ni
   reflexión sobre una lista privada. Enter/KP Enter activan la decisión enfocada
@@ -28,7 +47,9 @@ Estado comprobado en la rama `arena/48be547c-gripeverde`:
   Nueva tarea obligatoria `verifyConfirmationRegression`: 14 comprobaciones
   de hook, retraso y cancelación con ConfirmScreen/DiaryButton reales, sin
   init/render/cliente, y sin ejecutar efectos de aceptación o E/S de memoria.
-  Guardas locales sin JDK aprobadas; ejecución/build pendientes de CI.
+  El candidato `f9a43a9` pasó los 29 escenarios, la regresión real de 14
+  checks y las suites anteriores/build en [CI 45470056873](https://github.com/Santi-PdR/GripeVerde/actions/runs/45470056873).
+  Artefacto `GripeVerde-jar` ID `14956557440`. Guardas locales sin JDK.
   Sin bump/release ni prueba nativa de Minecraft; no resuelve clics fantasma.
 
 - **Scroll accesible y animación de botones, posterior a `accb83e`:**

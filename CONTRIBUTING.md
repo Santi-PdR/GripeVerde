@@ -19,6 +19,7 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   -> `python3 tools/test_list_render_guards.py` ->
   `python3 tools/test_smooth_scroll.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_language_screen.py --require-java` (en CI, con JDK 17) ->
+  `python3 tools/test_language_reload.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_dispatch_save.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_dispatch_hotkeys.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_server_count.py --require-java` (en CI, con JDK 17) ->
@@ -53,6 +54,11 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   Las animaciones de clic deben respetar isValidClickButton; los 20 escenarios
   de `test_button_input.py` prueban métodos extraídos y una política remapeada.
   La tarea de sliders añade 16 checks de rechazo en botones reales sin cliente.
+- Recarga de idiomas: `test_language_reload.py` cubre 23 escenarios con
+  métodos extraídos y futuros/executor/pantalla/audio dobles. Manejar ambas
+  finalizaciones en el hilo cliente, desbloquear error con reintento y no
+  navegar ni recuperar audio si otra pantalla tomó el control. Esto no prueba
+  packs reales ni rollback; se conserva la preferencia que ya fue guardada.
 - Confirmaciones: usar el hook addButtons (sin duplicados ocultos), respetar
   setDelay en controles propios y dirigir Enter por identidad/foco, nunca por
   texto traducido. Fijar el latch de decisión antes de efectos/callbacks.
