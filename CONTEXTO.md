@@ -2,6 +2,18 @@
 
 ## Addendum operativo actual (2026-11-13)
 
+- **Teclas en extremos de volumen, posterior a `a9ec068`:** los tres
+  deslizadores consumen Inicio/Fin/flechas/RePág/AvPág sin repetir callbacks,
+  guardados o sonidos si el valor ya está en el extremo pedido. La base
+  compartida normaliza el valor y cancela el gesto de ratón antes de aplicar.
+  Si había una pulsación propia pendiente, sí se confirma una vez, incluso
+  con valor igual, para no perder una edición con applyOnDrag=false.
+  La suite de entrada añade diez escenarios (155 totales), incluidos teclas
+  mantenidas, extremos y ratón diferido seguido de Inicio al mismo valor.
+  La tarea Java con padre real comprueba también extremos y edición diferida.
+  Guardas locales aprobadas sin JDK; ejecución/build pendientes de CI.
+  Sin medición de latencia/disco ni prueba GUI; sin bump ni release.
+
 - **Volumen de La casa, posterior a `fc85ac8`:** los mandos de música y
   ambiente usan ahora los getters/setters live de sus gestores de audio,
   no escrituras directas al TOML que dejaban intacta la caché de volumen.
@@ -13,7 +25,9 @@
   fábricas/reset y getters/setters reales extraídos, con slider/config dobles.
   Quince escenarios cubren caché ya cargada, preview sin guardado, commit,
   reconstrucción, extremos, reset tras preview y etiquetas de reset.
-  Guardas locales aprobadas sin JDK; ejecución y build pendientes de CI.
+  El candidato `a9ec068` compiló y pasó los 15 escenarios nuevos y todas las
+  suites anteriores en [CI 45437221199](https://github.com/Santi-PdR/GripeVerde/actions/runs/45437221199).
+  Artefacto `GripeVerde-jar` ID `14941972949`. Guardas locales sin JDK.
   No prueba audio audible ni E/S TOML real. Sin bump, formato nuevo ni release.
 
 - **Deslizadores de hasta 8 píxeles, posterior a `2546bd7`:** se usa

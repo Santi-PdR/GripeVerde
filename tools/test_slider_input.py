@@ -290,6 +290,42 @@ public class SliderInputHarness {
                 check(!s.mouseDragged(80,10,1,30,0) && !s.mouseReleased(80,10,1), "secondary event accepted");
                 check(applications(kind)==calls && commits(kind)==0, "secondary event changed value"); finish(s,kind);
             }
+            case "keyboard_endpoints" -> {
+                s.setFocused(true); check(s.keyPressed(268,0,0), "Home not handled");
+                check(applications(kind)==1 && commits(kind)==1, "Home must commit changed value");
+                int sounds=UiSounds.clicks;
+                for (int i=0;i<10;i++) for (int key:new int[] {268,263,267})
+                    check(s.keyPressed(key,0,0), "endpoint key must remain consumed");
+                check(applications(kind)==1 && commits(kind)==1 && UiSounds.clicks==sounds, "zero endpoint repeated no-op callbacks");
+                check(s.keyPressed(269,0,0), "End not handled"); sounds=UiSounds.clicks;
+                for (int i=0;i<10;i++) for (int key:new int[] {269,262,266})
+                    check(s.keyPressed(key,0,0), "endpoint key must remain consumed");
+                check(applications(kind)==2 && commits(kind)==2 && UiSounds.clicks==sounds, "one endpoint repeated no-op callbacks");
+            }
+            case "keyboard_repeated_step" -> {
+                s.setFocused(true);
+                for (int i=0;i<100;i++) s.keyPressed(262,0,0);
+                int apps=applications(kind), writes=commits(kind), sounds=UiSounds.clicks;
+                for (int i=0;i<20;i++) check(s.keyPressed(262,0,0), "saturated arrow must be consumed");
+                check(applications(kind)==apps && commits(kind)==writes && UiSounds.clicks==sounds, "held arrow kept applying at maximum");
+                for (int i=0;i<100;i++) s.keyPressed(263,0,0);
+                apps=applications(kind); writes=commits(kind); sounds=UiSounds.clicks;
+                for (int i=0;i<20;i++) check(s.keyPressed(263,0,0), "saturated arrow must be consumed");
+                check(applications(kind)==apps && commits(kind)==writes && UiSounds.clicks==sounds, "held arrow kept applying at minimum");
+            }
+            case "keyboard_finishes_same_value" -> {
+                press(s,0); int apps=applications(kind);
+                check(s.keyPressed(268,0,0), "Home not handled during pointer gesture");
+                check(applications(kind)==apps+1 && commits(kind)==1, "unchanged key must finish pending pointer gesture once");
+                check(!s.mouseReleased(0,10,0), "key left pointer gesture armed");
+                check(s.keyPressed(268,0,0) && applications(kind)==apps+1 && commits(kind)==1, "finished gesture repeated endpoint commit");
+            }
+            case "deferred_keyboard_same_value" -> {
+                press(s,0); check(changed==0 && released==0, "deferred pointer preview applied early");
+                check(s.keyPressed(268,0,0), "deferred Home not handled");
+                check(changed==1 && released==1, "same-value key discarded pending deferred edit");
+                check(!s.mouseReleased(0,10,0), "deferred edit remained armed after keyboard commit");
+            }
             case "keyboard" -> {
                 s.setFocused(true); check(s.keyPressed(262,0,0), "right key not handled");
                 check(applications(kind)==1 && commits(kind)==1, "key must apply/commit once");
@@ -388,9 +424,10 @@ class Executable(unittest.TestCase):
                   'refocus_same', 'focus_loss', 'inactive_release', 'hidden_release', 'inactive_drag',
                   'secondary_during_drag', 'keyboard', 'keyboard_cancels_pointer',
                   'inactive_key', 'hidden_key', 'unfocused_key',
-                  'width_one', 'width_four', 'width_eight', 'width_nine', 'width_twelve')
+                  'width_one', 'width_four', 'width_eight', 'width_nine', 'width_twelve',
+                  'keyboard_endpoints', 'keyboard_repeated_step', 'keyboard_finishes_same_value')
         cases = [(case, kind) for case in common for kind in ('generic', 'music', 'ambience')]
-        cases += [(case, 'generic') for case in ('deferred_click', 'deferred_drag', 'deferred_keyboard', 'reentrant_release')]
+        cases += [(case, 'generic') for case in ('deferred_click', 'deferred_drag', 'deferred_keyboard', 'reentrant_release', 'deferred_keyboard_same_value')]
         capture_cases = [(case, kind, screen) for case in ('capture_outside', 'capture_over_other',
                          'capture_no_press', 'capture_focus_loss', 'capture_inactive', 'capture_hidden',
                          'capture_secondary', 'capture_repeat')

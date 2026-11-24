@@ -36,6 +36,17 @@ public abstract class DiaryPointerSlider extends AbstractSliderButton {
         this.awaitingPointerFocus = false;
     }
 
+    /** Consume endpoint keys without repeating callbacks unless a pointer edit is pending. */
+    protected final boolean updateKeyboardValue(double next) {
+        next = net.minecraft.util.Mth.clamp(next, 0.0D, 1.0D);
+        boolean hadPointer = this.pointerPressed;
+        this.cancelPointerGesture();
+        if (next == this.value && !hadPointer) return false;
+        this.value = next;
+        this.updateMessage();
+        return true;
+    }
+
     @Override
     public void onClick(double mouseX, double mouseY) {
         // Set before vanilla applies the initial click, not just the first drag.

@@ -124,9 +124,8 @@ public class DiarySlider extends DiaryPointerSlider {
             } else if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_HOME
                     || keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_END) {
                 // v0.359.0: Inicio y Fin llevan el mando a tope de un golpe.
-                this.value = keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_HOME ? 0.0D : 1.0D;
-                this.updateMessage();
-                this.cancelPointerGesture();
+                if (!this.updateKeyboardValue(
+                        keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_HOME ? 0.0D : 1.0D)) return true;
                 this.applyValue();
                 this.fireRelease();
                 try {
@@ -138,9 +137,7 @@ public class DiarySlider extends DiaryPointerSlider {
             if (dir != 0) {
                 // v0.264.0: AbstractSliderButton no expone setValue en 1.20.1;
                 // el campo value es protegido y se remienda a mano.
-                this.value = net.minecraft.util.Mth.clamp(this.value + dir * step, 0.0D, 1.0D);
-                this.updateMessage();
-                this.cancelPointerGesture();
+                if (!this.updateKeyboardValue(this.value + dir * step)) return true;
                 this.applyValue();
                 this.fireRelease();
                 try {

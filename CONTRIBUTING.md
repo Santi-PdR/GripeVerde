@@ -79,6 +79,8 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   del widget. La suite Python ejecuta los métodos reales de esas pantallas.
   Se cubren también anchos 1/4/8/9/12 para evitar dividir por width-8
   en mandos de 8px o invertir el arrastre en mandos más estrechos.
+  Las teclas en los extremos deben consumirse sin callbacks/guardados de más,
+  salvo una edición de ratón pendiente que deba confirmarse una sola vez.
 - **Nunca dos pushes seguidos**: el CI cancela el run anterior por concurrencia.
 - Sin JDK local: la compilación semántica la hace el CI. No instalar Java 17
   en la máquina para publicar.

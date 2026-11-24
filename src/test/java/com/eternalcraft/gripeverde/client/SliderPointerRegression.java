@@ -185,6 +185,34 @@ public final class SliderPointerRegression {
         check(!slider.mouseReleased(50, 10, 0), "keyboard edit does not arm pointer gesture");
     }
 
+    private static void keyboardEndpoints() throws Exception {
+        int[] events = new int[2];
+        Probe slider = new Probe(true, events, null);
+        var focus = net.minecraft.client.gui.components.AbstractWidget.class.getDeclaredField("focused");
+        focus.setAccessible(true);
+        focus.setBoolean(slider, true);
+        check(slider.keyPressed(268, 0, 0), "Home moves to minimum");
+        for (int i = 0; i < 10; i++) {
+            for (int key : new int[] {268, 263, 267}) check(slider.keyPressed(key, 0, 0), "minimum endpoint key consumed");
+        }
+        check(events[0] == 1 && events[1] == 1 && slider.value() == 0.0, "minimum endpoint does not repeat callbacks");
+        check(slider.keyPressed(269, 0, 0), "End moves to maximum");
+        for (int i = 0; i < 10; i++) {
+            for (int key : new int[] {269, 262, 266}) check(slider.keyPressed(key, 0, 0), "maximum endpoint key consumed");
+        }
+        check(events[0] == 2 && events[1] == 2 && slider.value() == 1.0, "maximum endpoint does not repeat callbacks");
+
+        int[] deferredEvents = new int[2];
+        Probe deferred = new Probe(false, deferredEvents, null);
+        deferred.onClick(4, 10);
+        focus.setBoolean(deferred, true);
+        check(deferred.value() == 0.0 && deferredEvents[0] == 0, "deferred pointer value not yet applied");
+        check(deferred.keyPressed(268, 0, 0), "same-value key finishes pending pointer gesture");
+        check(deferredEvents[0] == 1 && deferredEvents[1] == 1, "pending deferred pointer edit commits despite unchanged value");
+        check(!deferred.mouseReleased(4, 10, 0), "keyboard completion cancels pointer release");
+        check(deferred.keyPressed(268, 0, 0) && deferredEvents[1] == 1, "finished deferred edit is now a no-op");
+    }
+
     public static void main(String[] args) throws Exception {
         int[] liveEvents = new int[2];
         Probe live = new Probe(true, liveEvents, null);
@@ -232,6 +260,7 @@ public final class SliderPointerRegression {
         narrowGeometry();
         capturedRelease();
         keyboardGuards();
+        keyboardEndpoints();
         System.out.println("Slider pointer regression: " + checks + " checks passed (real vanilla parent, no client).");
     }
 }
