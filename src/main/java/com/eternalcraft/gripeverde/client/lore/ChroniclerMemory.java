@@ -417,9 +417,13 @@ public final class ChroniclerMemory {
 
     /** Debe llamarse UNA vez por sesion (init del Title). Calcula saludo, racha, polvo. */
     public static synchronized void beginSession() {
+        beginSessionOn(LocalDate.now().toEpochDay());
+    }
+
+    /** Called under the memory monitor; explicit day keeps boundary checks deterministic. */
+    private static void beginSessionOn(long today) {
         Data d = get();
-        long today = LocalDate.now().toEpochDay();
-        d.visitCount++;
+        if (d.visitCount < Long.MAX_VALUE) d.visitCount++;
 
         if (d.firstVisitDay < 0) {
             d.firstVisitDay = today;
@@ -429,11 +433,13 @@ public final class ChroniclerMemory {
             sessionAbsenceDays = 0L;
         } else {
             long prev = d.lastVisitDay;
-            sessionAbsenceDays = today - prev;
-            if (sessionAbsenceDays <= 0) {
-                sessionGreetingKind = 3; // mismo dia, otra vigilia
+            // Una fecha ausente no demuestra una ausencia larga; una fecha
+            // futura (p. ej. por cambio del reloj) tampoco cuenta dias negativos.
+            sessionAbsenceDays = prev < 0L ? 0L : Math.max(0L, today - prev);
+            if (sessionAbsenceDays == 0L) {
+                sessionGreetingKind = 3; // mismo dia o sin ausencia comprobable
             } else if (sessionAbsenceDays == 1L) {
-                d.streak++;
+                if (d.streak < Integer.MAX_VALUE) d.streak++;
                 sessionGreetingKind = 2;
             } else {
                 d.streak = 1;

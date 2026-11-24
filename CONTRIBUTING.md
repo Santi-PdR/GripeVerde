@@ -60,6 +60,8 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   inválidas, con la biblioteca y archivos reales en CONFIGDIR temporal. Incluye
   `Marginalia.queue`/`queueOnce`: límite de 256 también en ejecución, rechazo
   sin consumir el marcador once, duplicados y persistencia del reintento.
+  Las sesiones se prueban con días explícitos: visitas/racha saturadas, fechas
+  ausentes/futuras, saludos y recordatorios persistentes, sin cliente gráfico.
 - **Nunca dos pushes seguidos**: el CI cancela el run anterior por concurrencia.
 - Sin JDK local: la compilación semántica la hace el CI. No instalar Java 17
   en la máquina para publicar.

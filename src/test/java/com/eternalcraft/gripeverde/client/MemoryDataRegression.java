@@ -1,6 +1,7 @@
 package com.eternalcraft.gripeverde.client;
 
 import com.eternalcraft.gripeverde.client.lore.ChroniclerMemory;
+import com.eternalcraft.gripeverde.client.lore.Discoveries;
 import com.eternalcraft.gripeverde.client.lore.Marginalia;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
@@ -224,6 +225,73 @@ public final class MemoryDataRegression {
         check(counters.get("negative").getAsInt() == -8, "signed increment survives persistence");
     }
 
+    private static void sessionCase(Path root, String name, long firstDay, long lastDay,
+                                    long visits, int streak, long expectedVisits, int expectedStreak,
+                                    long expectedAbsence, int expectedKind, boolean dust, boolean anniversary) throws Exception {
+        final long today = 20000L;
+        Path primary = newConfig(root.resolve("session-" + name));
+        JsonObject source = new JsonObject();
+        source.addProperty("version", 3);
+        source.addProperty("firstVisitDay", firstDay);
+        source.addProperty("lastVisitDay", lastDay);
+        source.addProperty("visitCount", visits);
+        source.addProperty("streak", streak);
+        // Existing rewards keep this a memory/filesystem test, with no new
+        // discovery toast/audio/client initialization during long streaks.
+        JsonArray discovered = new JsonArray();
+        discovered.add(Discoveries.STREAK3);
+        source.add("discovered", discovered);
+        JsonObject counters = new JsonObject();
+        counters.addProperty("note_" + Marginalia.N_STREAK7, 1);
+        source.add("counters", counters);
+        Files.writeString(primary, source.toString());
+        var begin = ChroniclerMemory.class.getDeclaredMethod("beginSessionOn", long.class);
+        begin.setAccessible(true);
+        synchronized (ChroniclerMemory.class) {
+            begin.invoke(null, today);
+        }
+        ChroniclerMemory.Data data = ChroniclerMemory.get();
+        check(data.visitCount == expectedVisits, name + ": visits saturate/increment");
+        check(data.streak == expectedStreak, name + ": streak saturates/increments/resets");
+        check(data.lastVisitDay == today, name + ": last visit advances to current day");
+        long expectedFirst = firstDay >= 0 ? firstDay : lastDay >= 0 ? lastDay : today;
+        check(data.firstVisitDay == expectedFirst, name + ": first visit is preserved or initialized");
+        check(ChroniclerMemory.sessionAbsenceDays() == expectedAbsence, name + ": absence days");
+        check(ChroniclerMemory.sessionGreetingKind() == expectedKind, name + ": greeting kind");
+        check(data.dustPending == dust, name + ": dust only for a verified week-long absence");
+        check(data.anniversaryPending == anniversary, name + ": anniversary remains exact");
+        check((Boolean) field("savePending"), name + ": session changes request persistence");
+        writeNow();
+        set("data", null);
+        data = ChroniclerMemory.get();
+        check(data.visitCount == expectedVisits && data.streak == expectedStreak, name + ": counts survive real reload");
+        check(data.lastVisitDay == today && data.firstVisitDay == expectedFirst, name + ": dates survive real reload");
+        check(data.dustPending == dust && data.anniversaryPending == anniversary, name + ": reminders survive reload");
+        check(ChroniclerMemory.consumeDust() == dust, name + ": dust consumed only if pending");
+        check(!ChroniclerMemory.consumeDust(), name + ": dust consumed once");
+        check(ChroniclerMemory.consumeAnniversary() == anniversary, name + ": anniversary consumed only if pending");
+        check(!ChroniclerMemory.consumeAnniversary(), name + ": anniversary consumed once");
+        writeNow();
+    }
+
+    private static void sessionBoundaries(Path root) throws Exception {
+        sessionCase(root, "first", -1, -1, 0, 0, 1, 1, 0, 1, false, false);
+        sessionCase(root, "near-max", 19000, 19999, Long.MAX_VALUE - 1, Integer.MAX_VALUE - 1,
+                    Long.MAX_VALUE, Integer.MAX_VALUE, 1, 2, false, false);
+        sessionCase(root, "at-max", 19000, 19999, Long.MAX_VALUE, Integer.MAX_VALUE,
+                    Long.MAX_VALUE, Integer.MAX_VALUE, 1, 2, false, false);
+        sessionCase(root, "same-day", 19000, 20000, 41, Integer.MAX_VALUE,
+                    42, Integer.MAX_VALUE, 0, 3, false, false);
+        sessionCase(root, "two-day-gap", 19000, 19998, 41, 9, 42, 1, 2, 2, false, false);
+        sessionCase(root, "six-day-gap", 19000, 19994, 41, 9, 42, 1, 6, 2, false, false);
+        sessionCase(root, "week-gap", 19000, 19993, 41, 9, 42, 1, 7, 2, true, false);
+        sessionCase(root, "anniversary", 19635, 19999, 41, 1, 42, 2, 1, 2, false, true);
+        sessionCase(root, "missing-last", 19000, -1, 41, 4, 42, 4, 0, 3, false, false);
+        sessionCase(root, "future-last", 19000, Long.MAX_VALUE, 41, 4, 42, 4, 0, 3, false, false);
+        sessionCase(root, "future-first", Long.MAX_VALUE, 19999, 41, 1, 42, 2, 1, 2, false, false);
+        sessionCase(root, "missing-first", -1, 19999, 41, 1, 42, 2, 1, 2, false, false);
+    }
+
     private static void invalidOldVersions(Path root) throws Exception {
         int index = 0;
         for (int version : new int[] {0, -1, -100, Integer.MIN_VALUE}) {
@@ -244,6 +312,7 @@ public final class MemoryDataRegression {
             invalidApiIds(root);
             pendingNoteApis(root);
             counterBoundaries(root);
+            sessionBoundaries(root);
             invalidOldVersions(root);
             ChroniclerMemory.flushForShutdown();
             System.out.println("Memory data: " + checks + " checks passed");

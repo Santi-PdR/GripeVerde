@@ -2,6 +2,21 @@
 
 ## Addendum operativo actual (2026-11-13)
 
+- **Sesiones: contadores y fechas, posterior a `36092e6`:** las visitas
+  saturan en Long.MAX_VALUE y la racha consecutiva en Integer.MAX_VALUE,
+  evitando negativos y pérdida de progreso al volver a cargar. Una última
+  visita ausente no genera una falsa ausencia de miles de días; una fecha
+  futura tampoco expone días negativos. En ambos casos se informa ausencia
+  cero, se conserva la racha y se actualiza la última visita al día actual.
+  No se corrige ni borra una primera visita futura. El aniversario sigue
+  siendo exacto a los 365 días y el polvo requiere al menos siete días reales.
+  `verifyMemoryDataRegression` añade 12 escenarios de fechas fijas usando
+  la lógica y archivos reales: primera visita, máximos, mismo día, huecos,
+  aniversario, fechas ausentes/futuras y persistencia/consumo de recordatorios.
+  Los premios de racha ya están registrados en las fixtures, sin activar
+  toasts, audio ni cliente. Compilación/ejecución pendientes de CI; guardas
+  locales aprobadas sin JDK. Sin bump, esquema nuevo ni release.
+
 - **Cola de notas en ejecución, posterior a `70af1da`:** `queue` y
   `queueOnce` ignoran IDs nulos/vacíos/blancos antes de inicializar memoria.
   La inserción respeta el mismo límite de 256 notas que la carga, sin expulsar
