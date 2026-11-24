@@ -13,7 +13,14 @@
   dobles y barre 50.652 casos de geometría init/render: 7 anchos, alturas
   120..320 inclusivas, ES/EN, vacío/válido/inválido, aviso activo/resize/fade/
   vencimiento. Fuente doble 6x9; no son píxeles ni input reales de Minecraft.
-  Java/build de esta ampliación pendientes de CI. La tanda anterior ya pasó
+  Java/build aprobados en `ed7f4dd` por
+  [CI 45477354914](https://github.com/Santi-PdR/GripeVerde/actions/runs/45477354914),
+  incluidas las suites anteriores y las tareas Gradle. Artefacto GripeVerde-jar
+  ID `14960347974`. Local: 97 tests OK (20 skips por JDK ausente), mirrors 8/8,
+  lint 73 archivos y diff limpios; Java ejecutado obligatoriamente en CI.
+  Release v0.401.0 reconsultada intacta tras el build: asset 778229607,
+  10855632 bytes, SHA-256 dd37d443b7307c1b3d0d09fc5befdaee6d1dd887bfca002d6e7bc3670ef0ee88.
+  La tanda anterior ya pasó
   [CI 45476286647](https://github.com/Santi-PdR/GripeVerde/actions/runs/45476286647)
   en `009c22b` (57 escenarios de formularios + 70 de campos, suites y build).
   Sin bump ni publicación nueva.
