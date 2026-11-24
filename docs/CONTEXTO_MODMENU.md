@@ -22,7 +22,13 @@ Actualizado: 2026-11-13
   GUI/lista/sonidos; no carga ni borra mundos, no verifica píxeles ni eventos SO.
   Los helpers y teclado se ejecutan; el uso de los helpers en render tiene
   guardas de código, no ejecución del render completo. Ambos workflows exigen
-  Java. Local sin JDK: guardas aprobadas; ejecución Java/build pendientes de CI.
+  Java. Comprobado en `1799987` por
+  [CI 45485076143](https://github.com/Santi-PdR/GripeVerde/actions/runs/45485076143):
+  suite nueva, anteriores, regresiones Gradle y build aprobados; artefacto
+  GripeVerde-jar ID `14963642159`. Local: 101 tests OK (21 skips sin JDK),
+  mirrors 8/8, lint 73 archivos, release gate 7, installer 7 y diff limpios.
+  Release v0.401.0 reconsultada intacta tras CI (asset 778229607, 10855632 bytes,
+  SHA-256 dd37d443b7307c1b3d0d09fc5befdaee6d1dd887bfca002d6e7bc3670ef0ee88).
   Sin bump/release ni afirmación sobre clics fantasma en Minecraft real.
 
 - **Layout de formularios a altura mínima, posterior a `009c22b`:**
