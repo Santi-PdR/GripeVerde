@@ -82,6 +82,7 @@ public final class Discoveries {
      * Devuelve true si fue nuevo.
      */
     public static boolean discover(String id) {
+        if (id == null || id.isBlank()) return false;
         if (ChroniclerMemory.isDiscovered(id)) return false;
         ChroniclerMemory.markDiscovered(id);
         toastName = nameFor(id);
@@ -116,6 +117,7 @@ public final class Discoveries {
     private static net.minecraft.client.gui.Font memToastFont;
     private static int memToastWidth = -1;
     private static String memToastName = "";
+    private static String memToastHeader = "";
     private static boolean memToastEnglish = false;
     private static String memVisibleHeader = "";
     private static String memVisibleName = "";
@@ -155,10 +157,12 @@ public final class Discoveries {
         String visibleName;
         int bw;
         if (memToastFont != mc.font || memToastWidth != contentWidth
-                || !memToastName.equals(name) || memToastEnglish != english) {
+                || !memToastName.equals(name) || !memToastHeader.equals(header)
+                || memToastEnglish != english) {
             memToastFont = mc.font;
             memToastWidth = contentWidth;
             memToastName = name;
+            memToastHeader = header;
             memToastEnglish = english;
             memVisibleHeader = DiaryChrome.fitText(mc.font, header, contentWidth);
             memVisibleName = DiaryChrome.fitText(mc.font, name, contentWidth);
@@ -217,7 +221,7 @@ public final class Discoveries {
     private static long gameUntilMs = 0L;
 
     public static void enqueueGameToast(String name) {
-        if (name == null || name.isEmpty()) return;
+        if (name == null || name.isBlank()) return;
         synchronized (gameQueue) {
             if (gameQueue.size() >= 4) gameQueue.pollFirst();
             gameQueue.addLast(name);
@@ -273,6 +277,7 @@ public final class Discoveries {
 
     // ── Nombres (ES/EN) ──
     public static String nameFor(String id) {
+        if (id == null) return "???";
         boolean en = isEnglish();
         switch (id) {
             case WATCH_INSCRIPTION: return en ? "The inscription beneath the glass" : "La inscripción bajo el cristal";
@@ -324,6 +329,7 @@ public final class Discoveries {
 
     /** Pista breve de la ficha. */
     public static String hintFor(String id) {
+        if (id == null) return "???";
         boolean en = isEnglish();
         switch (id) {
             case WATCH_INSCRIPTION: return en ? "Stop the swing. Read what hangs." : "Detén el vaivén. Lee lo que cuelga.";

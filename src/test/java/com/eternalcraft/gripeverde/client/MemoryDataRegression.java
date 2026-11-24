@@ -122,6 +122,8 @@ public final class MemoryDataRegression {
             ChroniclerMemory.markDiscovered(id);
             ChroniclerMemory.addCollectible(id);
             ChroniclerMemory.setCounter(id, 5);
+            check(!Discoveries.discover(id), "invalid discovery API returns false without effects");
+            check(!Discoveries.hasActiveToast(), "invalid discovery API starts no toast");
         }
         check(field("data") == null, "invalid ids do not initialize memory");
         check(!Files.exists(primary), "invalid ids create no file");

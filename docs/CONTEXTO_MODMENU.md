@@ -2,6 +2,21 @@
 
 Actualizado: 2026-11-13
 
+- **Descubrimientos y avisos, posterior a `74d263d`:** `discover` rechaza
+  IDs nulos/blancos antes de memoria, audio y notificaciones. `nameFor(null)`
+  y `hintFor(null)` usan el mismo fallback `???` que un ID desconocido, sin
+  consultar el cliente. Los IDs desconocidos no blancos siguen admitidos.
+  La caché del sello incluye el texto de cabecera completo (con el recuento),
+  para no reutilizar cifras antiguas si cambia el total sin cambiar el nombre.
+  La cola de avisos en partida rechaza nombres solo blancos; mantiene su
+  política existente de cuatro pendientes y descarte del más antiguo.
+  Nueva suite `tools/test_discoveries.py` obligatoria en ambos workflows:
+  clase Discoveries completa con cliente/fuente/memoria/audio dobles, método
+  real de acortado, 15 escenarios de APIs, caché, límites, idiomas y colas.
+  La suite real `verifyMemoryDataRegression` también cubre IDs inválidos sin
+  inicialización ni E/S. Guardas locales aprobadas; Java pendiente de CI.
+  Sin prueba gráfica/GPU/audio real ni cambio de versión/esquema/release.
+
 - **Sesiones: contadores y fechas, posterior a `36092e6`:** las visitas
   saturan en Long.MAX_VALUE y la racha consecutiva en Integer.MAX_VALUE,
   evitando negativos y pérdida de progreso al volver a cargar. Una última
