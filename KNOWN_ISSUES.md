@@ -9,6 +9,29 @@ que una seccion posterior lo mencione expresamente.
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
+- **Campos de texto y formularios de servidor, posterior a `4ffac3c`:** se
+  corrigen seis bindings SRG de EditBox 1.20.1 que no correspondían a los campos
+  esperados (o apuntaban a miembros inexistentes): highlightPos=f_94102_,
+  frame=f_94095_, displayPos=f_94100_, isEditable=f_94098_, hint=f_256828_,
+  formatter=f_94091_. Se mantienen nombre oficial primero y validación de tipo;
+  no se adivinan campos por tipo ni se añade dependencia de mappings en runtime.
+  Se elimina la caché de resultados del formateador: como vanilla, se consulta
+  el actual en cada petición, incluso si su estado externo cambió. Null o error
+  devuelven texto plano sin bloquear la recuperación del siguiente intento.
+  EditingState conserva texto/cursor/selección orientada al reconstruir campos.
+  Conexión directa y editor lo restauran tras resize; el editor mantiene foco IP
+  si estaba ahí. La API normal limita longitud y extremos y notifica validación.
+  Tab/Shift+Tab del editor vuelven a Screen para alcanzar los botones; Enter
+  conserva avance nombre→IP y confirmación solo si el formulario es válido.
+  Nueva suite `test_text_fields.py`: 62 escenarios con clase completa, nombres
+  oficiales y fixture SRG (MCPConfig blob 4434b02cbbed8dd360b320d20b1298045cd4deaa),
+  render capturado con dobles y métodos reales de formularios extraídos. No es
+  una ejecución del JAR reobfuscado ni del recorrido real de foco de Screen.
+  `verifyTextFieldGeometryRegression` amplía 12 a 33 comprobaciones con EditBox
+  real (selección, bindings oficiales y formatters), sin rendering/cliente.
+  Guardas locales sin JDK aprobadas; ejecución/build pendientes de CI.
+  Sin bump/release y sin prueba nativa de Minecraft o causa de clics fantasma.
+
 - **Sonidos de interfaz, posterior a `b8f1739`:** hover y volver ya no
   mezclan reloj de pared con cooldowns monotónicos. Volver reutiliza el límite
   de 140 ms de su familia; hover conserva su puerta global de 55 ms y las

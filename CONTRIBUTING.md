@@ -31,6 +31,7 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
   `python3 tools/test_title_open_count.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_slider_input.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_house_audio.py --require-java` (en CI, con JDK 17) ->
+  `python3 tools/test_text_fields.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/ci/test_release_gate.py` ->
   `python3 tools/ci/test_installer.py` -> commit + push -> esperar el CI ->
   comprobar el release y el SHA-256. El job `publish` compara `release-tag.txt`
@@ -48,8 +49,14 @@ Guia corta para tocar el mod sin romper las reglas del proyecto.
 - `./gradlew check` y `build` incluyen `verifyServerAddressRegression`:
   38 comprobaciones ejecutan los helpers de direcciones contra el parser real
   de Minecraft sin red ni cliente gráfico. Puede correrse esa tarea sola.
-- También incluyen `verifyTextFieldGeometryRegression`: 12 comprobaciones
-  del margen lógico con widgets reales y sin rendering ni eventos de mouse.
+- También incluyen `verifyTextFieldGeometryRegression`: 33 comprobaciones
+  del margen lógico, bindings oficiales, estado de selección y formateadores
+  con widgets reales, sin rendering ni eventos de mouse. `test_text_fields.py`
+  añade 62 escenarios con nombres oficiales/SRG dobles y métodos de formularios
+  extraídos: no ejecuta el JAR reobfuscado ni la navegación real de Screen.
+  Al tocar reflexión de EditBox, verificar ambos namespaces: desarrollo por sí
+  solo oculta errores de nombres SRG. No cachear resultados de formatters que
+  pueden depender de estado externo. Resize debe mantener cursor y selección.
 - `verifyDispatchPersistenceRegression` también es obligatoria en check/build:
   usa DispatchLibrary real y un config temporal de Forge para comprobar JSON,
   edición sin E/S, fallo de reemplazo, limpieza y recuperación. La suite Python

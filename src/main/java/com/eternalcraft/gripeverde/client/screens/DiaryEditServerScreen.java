@@ -7,7 +7,6 @@ import com.eternalcraft.gripeverde.client.widgets.DiaryButton;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.components.EditBox;
 import com.eternalcraft.gripeverde.client.widgets.DiaryTextField;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ServerData;
@@ -29,8 +28,8 @@ public class DiaryEditServerScreen extends Screen {
     private final BooleanConsumer callback;
     private final ServerData serverData;
 
-    private EditBox nameEdit;
-    private EditBox ipEdit;
+    private DiaryTextField nameEdit;
+    private DiaryTextField ipEdit;
     private DiaryButton doneButton;
     private boolean justOpened = true;
 
@@ -141,19 +140,15 @@ public class DiaryEditServerScreen extends Screen {
     }
 
     /**
-     * v0.263.0: el nombre y la direccion se recorren con Tab y con Enter, sin
-     * soltar el teclado. Enter con todo en orden firma la ficha.
+     * Enter moves from name to address, then submits a valid form. Tab and
+     * Shift+Tab retain vanilla traversal through fields and footer buttons.
      */
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         boolean onName = this.nameEdit != null && this.getFocused() == this.nameEdit;
         boolean onIp = this.ipEdit != null && this.getFocused() == this.ipEdit;
-        if ((onName || onIp) && (keyCode == 258 || keyCode == 257 || keyCode == 335)) {
-            if (keyCode == 258) { // TAB
-                if (onName) { this.setFocused(this.ipEdit); return true; }
-                this.setFocused(this.nameEdit);
-                return true;
-            }
+        // Leave Tab/Shift+Tab to Screen's traversal, including footer buttons.
+        if ((onName || onIp) && (keyCode == 257 || keyCode == 335)) {
             if (onName) {
                 this.setFocused(this.ipEdit);
                 return true;
@@ -194,11 +189,13 @@ public class DiaryEditServerScreen extends Screen {
 
     @Override
     public void resize(net.minecraft.client.Minecraft mc, int w, int h) {
-        String nameVal = this.nameEdit != null ? this.nameEdit.getValue() : "";
-        String ipVal = this.ipEdit != null ? this.ipEdit.getValue() : "";
+        DiaryTextField.EditingState nameState = this.nameEdit == null ? null : this.nameEdit.snapshotEditingState();
+        DiaryTextField.EditingState ipState = this.ipEdit == null ? null : this.ipEdit.snapshotEditingState();
+        boolean focusedIp = this.ipEdit != null && this.getFocused() == this.ipEdit;
         super.resize(mc, w, h);
-        this.nameEdit.setValue(nameVal);
-        this.ipEdit.setValue(ipVal);
+        this.nameEdit.restoreEditingState(nameState);
+        this.ipEdit.restoreEditingState(ipState);
+        if (focusedIp) this.setFocused(this.ipEdit);
     }
 
     @Override

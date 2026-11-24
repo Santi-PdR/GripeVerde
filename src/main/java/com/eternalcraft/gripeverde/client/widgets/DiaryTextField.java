@@ -23,8 +23,8 @@ import java.util.function.BiFunction;
  * Estrategia: usar getters publicos donde existen (getValue, getCursorPosition,
  * getInnerWidth) y reflection SOLO para los pocos campos privados que
  * necesitamos (highlightPos, frame, displayPos, isEditable, hint, formatter),
- * resueltos por scan de fields declarados en EditBox.class (sin herencia)
- * filtrando por tipo esperado. Esto evita colisiones con fields ambiguos.
+ * resueltos por nombre oficial/SRG en EditBox.class (sin herencia), validando
+ * el tipo esperado. No se adivinan campos por tipo: varios int son ambiguos.
  */
 public class DiaryTextField extends EditBox {
 
@@ -60,13 +60,13 @@ public class DiaryTextField extends EditBox {
         if (REFLECTION_INITED) return;
         REFLECTION_INITED = true;
 
-        // Buscar por nombre oficial primero, luego SRG, luego scan por tipo
-        FIELD_HIGHLIGHT   = findIntField("highlightPos", "f_94105_");
-        FIELD_FRAME       = findIntField("frame",        "f_94100_");
-        FIELD_DISPLAY_POS = findIntField("displayPos",   "f_94103_");
-        FIELD_IS_EDITABLE = findBoolField("isEditable",  "f_94101_");
-        FIELD_HINT        = findObjField("hint",         "f_169007_", Component.class);
-        FIELD_FORMATTER   = findObjField("formatter",    "f_94108_",  BiFunction.class);
+        // Minecraft 1.20.1: nombre oficial primero, luego SRG exacto y tipo.
+        FIELD_HIGHLIGHT   = findIntField("highlightPos", "f_94102_");
+        FIELD_FRAME       = findIntField("frame",        "f_94095_");
+        FIELD_DISPLAY_POS = findIntField("displayPos",   "f_94100_");
+        FIELD_IS_EDITABLE = findBoolField("isEditable",  "f_94098_");
+        FIELD_HINT        = findObjField("hint",         "f_256828_", Component.class);
+        FIELD_FORMATTER   = findObjField("formatter",    "f_94091_",  BiFunction.class);
     }
 
     private static Field findIntField(String official, String srg) {
@@ -207,7 +207,7 @@ public class DiaryTextField extends EditBox {
 
             FormattedCharSequence preSeq = formatSafe(pre, displayPos);
             int afterX = g.drawString(font, preSeq, innerX, innerY, textColor, false);
-            cursorX = cursorInside ? afterX : afterX;
+            cursorX = afterX;
 
             if (!post.isEmpty()) {
                 FormattedCharSequence postSeq = formatSafe(post, cursor);
@@ -234,40 +234,35 @@ public class DiaryTextField extends EditBox {
         }
     }
 
-    // v0.215.0: el campo pregunta dos veces por cuadro -tramo previo y posterior al
-    // cursor- y cada respuesta armaba un objeto nuevo. Dos casillas alcanzan: una
-    // para cada tramo, y se renuevan solas cuando el texto cambia.
-    private String fmtTextA;
-    private String fmtTextB;
-    private int fmtStartA = Integer.MIN_VALUE;
-    private int fmtStartB = Integer.MIN_VALUE;
-    private FormattedCharSequence fmtSeqA;
-    private FormattedCharSequence fmtSeqB;
-
     private FormattedCharSequence formatSafe(String text, int startPos) {
-        if (startPos == fmtStartA && fmtSeqA != null && (text == fmtTextA || text.equals(fmtTextA))) return fmtSeqA;
-        if (startPos == fmtStartB && fmtSeqB != null && (text == fmtTextB || text.equals(fmtTextB))) return fmtSeqB;
-        FormattedCharSequence seq = formatSafeUncached(text, startPos);
-        fmtTextB = fmtTextA;
-        fmtStartB = fmtStartA;
-        fmtSeqB = fmtSeqA;
-        fmtTextA = text;
-        fmtStartA = startPos;
-        fmtSeqA = seq;
-        return seq;
+        // Like vanilla, invoke the current formatter on every request. Its
+        // result can depend on external state, not only text/cursor offsets.
+        if (FIELD_FORMATTER != null) {
+            try {
+                @SuppressWarnings("unchecked")
+                BiFunction<String, Integer, FormattedCharSequence> fn =
+                    (BiFunction<String, Integer, FormattedCharSequence>) FIELD_FORMATTER.get(this);
+                FormattedCharSequence seq = fn == null ? null : fn.apply(text, startPos);
+                if (seq != null) return seq;
+            } catch (Throwable ignored) {}
+        }
+        return FormattedCharSequence.forward(text, Style.EMPTY);
     }
 
-    private FormattedCharSequence formatSafeUncached(String text, int startPos) {
-        if (FIELD_FORMATTER == null) {
-            return FormattedCharSequence.forward(text, Style.EMPTY);
-        }
-        try {
-            @SuppressWarnings("unchecked")
-            BiFunction<String, Integer, FormattedCharSequence> fn =
-                    (BiFunction<String, Integer, FormattedCharSequence>) FIELD_FORMATTER.get(this);
-            if (fn != null) return fn.apply(text, startPos);
-        } catch (Throwable ignored) {}
-        return FormattedCharSequence.forward(text, Style.EMPTY);
+    /** Text and both selection endpoints, independent of screen geometry/focus. */
+    public record EditingState(String value, int cursor, int highlight) {}
+
+    public EditingState snapshotEditingState() {
+        int cursor = this.getCursorPosition();
+        return new EditingState(this.getValue(), cursor, readInt(FIELD_HIGHLIGHT, cursor));
+    }
+
+    /** Restore only after the new field's max length and responders are set. */
+    public void restoreEditingState(EditingState state) {
+        if (state == null) return;
+        this.setValue(state.value());
+        this.setCursorPosition(state.cursor());
+        this.setHighlightPos(state.highlight());
     }
 
     @Override

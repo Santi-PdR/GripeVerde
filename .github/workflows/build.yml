@@ -51,6 +51,8 @@ jobs:
       # repetidas y sentencias cortadas antes de gastar dos minutos de Gradle.
       - name: Lint Java structure
         run: python3 tools/lint_java.py
+      - name: Test text field state, Forge names and server form input
+        run: python3 tools/test_text_fields.py --require-java
       - name: Test house audio volume wiring
         run: python3 tools/test_house_audio.py --require-java
       - name: Test slider pointer and keyboard gestures

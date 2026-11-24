@@ -220,9 +220,9 @@ public class DiaryDirectJoinScreen extends Screen {
 
     @Override
     public void resize(net.minecraft.client.Minecraft mc, int w, int h) {
-        String ipVal = this.ipEdit != null ? this.ipEdit.getValue() : "";
+        DiaryTextField.EditingState state = this.ipEdit == null ? null : this.ipEdit.snapshotEditingState();
         super.resize(mc, w, h);
-        this.ipEdit.setValue(ipVal);
+        this.ipEdit.restoreEditingState(state);
     }
 
     @Override
