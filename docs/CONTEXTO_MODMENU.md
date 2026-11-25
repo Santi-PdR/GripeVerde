@@ -2,6 +2,27 @@
 
 Actualizado: 2026-11-13
 
+- **Listas sin segunda capa visible, posterior a `bb5d018`:**
+  A partir de las capturas del usuario se elimina la franja transparente del
+  registro de mundos que exponía el fondo/selección vanilla. El pase nativo
+  se ejecuta con clip vacío (mantiene carga asíncrona/pings), con flush antes
+  de liberar el clip incluso si falla. Solo se ve la capa de papel propia.
+  Forge experimental se indica con ! y tooltip propio, sin dejar un hueco.
+  Mundos comparte hitbox de hover/clic a todo el ancho visible de la fila,
+  excluye huecos, márgenes y carril; hover usa sombra/línea sin seleccionar.
+  El clic llama setSelected, nunca WorldListEntry.mouseClicked: ni la foto ni
+  repetir clic pueden abrir un mundo. Respeta mundos deshabilitados y conserva
+  botones/Enter. Multijugador deja de dibujar el contorno nativo sobre la imagen
+  y muestra Consultando/Sin conexión/Incompatible/En línea con latencia; el
+  recuento no sustituye al estado ni se conserva cuando el ping falla.
+  `test_list_interaction.py` ejecuta métodos reales con dobles: clip anidado
+  y fallos, papel sin ranura, hover/huecos, 1.560 posiciones de puntero más
+  casos de botones/mundos deshabilitados y 60 estados/idiomas de servidor.
+  Guardas lint adaptadas al nuevo modelo con mutaciones negativas. Sin píxeles,
+  input SO, pings reales ni carga de mundos; Java/build pendientes de CI.
+  Local: 127 tests OK, 26 skips sin JDK; mirrors 8/8, lint 73, release gate 7,
+  installer 7 y diff limpio. Sin bump ni nueva release.
+
 - **Pausa compacta y salida ligada a sesión, posterior a `4eb96fd`:**
   La pausa usa separadores/rejilla compartidos y cabecera mínima en ventanas
   bajas, conserva los 55 px inferiores y ajusta título/ornamentos al ancho.

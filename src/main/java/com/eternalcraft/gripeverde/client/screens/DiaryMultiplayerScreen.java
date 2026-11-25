@@ -791,23 +791,9 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         // Lista vanilla (con sus favicons, ping, MOTD, etc.)
         if (this.vanillaList != null) {
             try {
-                // Aplicar scissor para ocultar LAN header cuando hay servers
-                int scissorBottom = computeVisibleBottom();
-                if (scissorBottom > 0 && scissorBottom < this.vanillaList.getBottom()) {
-                    gfx.enableScissor(0, this.vanillaList.getTop(), this.width, scissorBottom);
-                    // Banda sepia detras de cada server (contraste para texto blanco vanilla)
-                    drawEntryBackgrounds(gfx, mouseX, mouseY);
-                    this.vanillaList.render(gfx, mouseX, mouseY, partial);
-                    // La lista usa texto y texturas en buffers diferidos. Se
-                    // asienta antes de cubrirla para que sus MOTD, contadores e
-                    // iconos no aparezcan otra vez por encima de la banda.
-                    gfx.flush();
-                    gfx.disableScissor();
-                } else {
-                    drawEntryBackgrounds(gfx, mouseX, mouseY);
-                    this.vanillaList.render(gfx, mouseX, mouseY, partial);
-                    gfx.flush();
-                }
+                // Entry rendering starts vanilla's pings. Clip its drawing completely:
+                // repainting only the text left native selection frames over the favicon.
+                renderNativeListHidden(gfx, partial);
                 // v0.386.0: el subrayado de cada puesto se pinta dentro de
                 // paintServerRowsInk, despues de la banda: antes se dibujaba
                 // aqui y la banda de papel lo tapaba entero.
@@ -1064,7 +1050,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         } catch (Throwable ignored) {
         }
         String date = stampedToday();
-        
+
         if (weight.isEmpty()) return date;
         if (date.isEmpty()) return weight;
         return weight + "  ·  " + date;
@@ -1141,57 +1127,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         } catch (Throwable ignored) {}
     }
 
-    private void drawEntryBackgrounds(GuiGraphics gfx, int mouseX, int mouseY) {
-        if (this.vanillaList == null) return;
-        try {
-            var children = this.vanillaList.children();
-            if (children == null || children.isEmpty()) return;
 
-            int itemHeight = vanillaItemHeight;
-            int y0 = vanillaListY0;
-            int headerHeight = vanillaHeaderHeight;
-
-            if (itemHeight <= 0) return;
-
-            int rowLeft = this.vanillaList.getRowLeft();
-            int rowRight = rowLeft + this.vanillaList.getRowWidth();
-            int listTop = this.vanillaList.getTop();
-            int listBottom = this.vanillaList.getBottom();
-            double scrollAmount = 0.0;
-            try { scrollAmount = this.vanillaList.getScrollAmount(); } catch (Throwable ignored) {}
-
-            for (int i = 0; i < children.size(); i++) {
-                var entry = children.get(i);
-                // v0.367.0: la cabecera de red local se reconoce por no traer
-                // ficha de servidor, no por el nombre de su clase.
-                boolean lan = extractServerDataFromEntry(entry) == null;
-
-                int entryTop = this.rowTopMethod != null
-                    ? rowTopOf(i)
-                    : y0 + 4 - (int) scrollAmount + i * itemHeight + headerHeight - 2;
-                int entryBottom = entryTop + rowStepNow();
-
-                if (entryBottom < listTop || entryTop > listBottom) continue;
-                int drawTop = Math.max(entryTop, listTop);
-                int drawBottom = Math.min(entryBottom, listBottom);
-                if (drawBottom <= drawTop) continue;
-
-                // v0.241.0: el puesto se monta sobre un recorte de papel, con
-                // su margen alrededor; la placa oscura del juego queda adentro
-                // como si fuera la foto pegada en la ficha.
-                com.eternalcraft.gripeverde.client.render.PaperTexture.drawTornSlip(
-                    gfx, rowLeft - 9, drawTop - 1, rowRight - rowLeft + 18,
-                    drawBottom - drawTop + 2,
-                    lan ? 0x33180C : 0xE6D2A6, lan ? 0xF0E2C0 : 0x422810, lan ? 236 : 210);
-                if (lan) continue;
-
-                // v0.384.0: el brillo de la fila bajo la mano y el lacre del
-                // puesto oficial se pintaban AQUI, y despues la ficha se cubria
-                // entera con la banda de papel: o sea que el brillo y el lacre no
-                // se veian nunca. Ahora los pinta la banda, despues de taparla.
-            }
-        } catch (Throwable ignored) {}
-    }
 
     /**
      * v0.303.0: el juego escribe el nombre y el cartel de cada puesto en blanco
@@ -1218,7 +1154,7 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
             } catch (Throwable ignored) {
             }
             int textLeft = rowLeft + 42;
-            int textRight = rowLeft + rowWidth - 46;
+            int textRight = rowLeft + rowWidth - 6;
             int textW = Math.max(40, textRight - textLeft);
             for (int i = 0; i < children.size(); i++) {
                 var entry = children.get(i);
@@ -1352,15 +1288,17 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
 
                 // v0.382.0: los jugadores activos, en el canto derecho de la
                 // ficha, como el recuento de un libro de visitas.
-                String players = serverPlayers(sd);
-                int playersW = players.isEmpty() ? 0 : this.font.width(players);
-                int nameLimit = Math.max(40, textW - (playersW > 0 ? playersW + 10 : 0));
+                boolean english = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
+                String connection = serverConnectionLabel(sd, english);
+                String players = sd.pinged && sd.ping >= 0 ? serverPlayers(sd) : "";
+                String status = players.isEmpty() ? connection : players + "  ·  " + connection;
+                status = DiaryChrome.fitText(this.font, status, Math.max(1, textW / 2));
+                int statusW = this.font.width(status);
+                int nameLimit = Math.max(1, textW - statusW - 10);
                 String shownName = DiaryChrome.fitText(this.font, name, nameLimit);
                 gfx.drawString(this.font, shownName, textLeft, slipTop + 2, 0xFF1A1108, false);
-                if (playersW > 0) {
-                    gfx.drawString(this.font, players, textLeft + textW - playersW, slipTop + 2,
-                        0xFF6B5533, false);
-                }
+                gfx.drawString(this.font, status, textLeft + textW - statusW, slipTop + 2,
+                    serverConnectionColor(sd), false);
 
                 String motd = motdText(sd);
                 String extra = "";
@@ -1586,6 +1524,32 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
      * juego: se busca el texto con forma de recuento entre sus campos, sin
      * depender del nombre del campo.
      */
+    private static String serverConnectionLabel(ServerData data, boolean english) {
+        if (data == null || !data.pinged || data.ping == -2) return english ? "Pinging..." : "Consultando...";
+        if (data.ping < 0) return english ? "Unreachable" : "Sin conexión";
+        if (data.protocol != net.minecraft.SharedConstants.getCurrentVersion().getProtocolVersion()) {
+            return "Incompatible";
+        }
+        return (english ? "Online · " : "En línea · ") + data.ping + " ms";
+    }
+
+    private static int serverConnectionColor(ServerData data) {
+        if (data == null || !data.pinged || data.ping == -2) return 0xFF6B5533;
+        return data.ping < 0 || data.protocol != net.minecraft.SharedConstants.getCurrentVersion().getProtocolVersion()
+            ? 0xFF8C2A1E : 0xFF355326;
+    }
+
+    /** Pings still start in vanilla render, but only the paper rows are visible. */
+    private void renderNativeListHidden(GuiGraphics g, float partial) {
+        g.flush();
+        g.enableScissor(0, 0, 0, 0);
+        try {
+            this.vanillaList.render(g, -1, -1, partial);
+        } finally {
+            try { g.flush(); } finally { g.disableScissor(); }
+        }
+    }
+
     private static String serverPlayers(ServerData data) {
         if (data == null) return "";
         try {
@@ -1612,46 +1576,6 @@ public class DiaryMultiplayerScreen extends JoinMultiplayerScreen {
         }
     }
 
-    /**
-     * Dibuja un subrayado sutil bajo cada server (estilo tarjeta de biblioteca).
-     * No dibuja marco completo - solo una linea horizontal fina de tinta.
-     */
-
-    /**
-     * Calcula la coord Y hasta la cual se debe mostrar la lista (recorta LAN header
-     * cuando hay servers reales). Devuelve 0 si no hay que recortar.
-     */
-    private int computeVisibleBottom() {
-        if (this.vanillaList == null || this.vanillaServers == null) return 0;
-        if (this.vanillaServers.size() == 0) return 0; // sin servers, mostrar todo
-        try {
-            var children = this.vanillaList.children();
-            if (children == null) return 0;
-            int itemHeight = vanillaItemHeight;
-            int y0 = vanillaListY0;
-            int headerHeight = vanillaHeaderHeight;
-            if (itemHeight <= 0) return 0;
-            double scrollAmount = 0.0;
-            try { scrollAmount = this.vanillaList.getScrollAmount(); } catch (Throwable ignored) {}
-
-            // Buscar el indice de la primera entry LAN
-            int lanIdx = -1;
-            for (int i = 0; i < children.size(); i++) {
-                if (extractServerDataFromEntry(children.get(i)) == null) {
-                    lanIdx = i;
-                    break;
-                }
-            }
-            if (lanIdx == -1) return 0; // no hay LAN header, no hay que recortar
-
-            // Y donde empieza la entry LAN (todo abajo se oculta)
-            int lanTop = this.rowTopMethod != null
-                ? rowTopOf(lanIdx)
-                : y0 + 4 - (int) scrollAmount + lanIdx * itemHeight + headerHeight;
-            return Math.max(lanTop - 2, this.vanillaList.getTop());
-        } catch (Throwable ignored) {}
-        return 0;
-    }
 
     /**
      * Reflect once after the list is laid out, then reuse the row metrics while rendering.

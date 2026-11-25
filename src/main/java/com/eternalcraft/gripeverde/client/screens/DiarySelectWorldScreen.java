@@ -33,16 +33,6 @@ import java.util.List;
 public class DiarySelectWorldScreen extends SelectWorldScreen {
 
     private static final int HEADER_H = 46;
-    // Vanilla WorldListEntry entra al mundo de inmediato dentro del icono de 32 px.
-    private static final int WORLD_ROW_JOIN_HIT_WIDTH = 32;
-    // Vanilla's entry hit-test extends 2 px left of getRowLeft() and ends 2 px
-    // before getRowLeft() + getRowWidth(); keep that inset aligned with the guard.
-    private static final int WORLD_ROW_VANILLA_HITBOX_INSET = 2;
-    // Forge draws its experimental-warning icon in the final 36 px of a row.
-    private static final int WORLD_ROW_EXPERIMENTAL_WARNING_WIDTH = 36;
-    // The row guard uses monotonic elapsed time, unaffected by system-clock changes.
-    private static final long WORLD_ROW_DOUBLE_CLICK_GUARD_NANOS = 650_000_000L;
-
     private final List<DiaryButton> dressed = new ArrayList<>();
     private WorldSelectionList vanillaList;
     private List<EditBox> searchBoxes = new ArrayList<>();
@@ -92,11 +82,6 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                                  WorldIconFingerprint fingerprint) { }
     private int iconsThisFrame;
     private boolean worldIconCachePruned;
-    // Recuerda el ultimo clic real sobre una fila para detener solamente el
-    // doble clic sobre el mismo punto; los mandos de la fila siguen recibiendo
-    // sus propios clics aunque se pulsen enseguida.
-    private Object lastForwardedEntry;
-    private long lastForwardedNanos;
     // v0.374.0: lo que pesa cada mundo, medido con el archivo entero.
     private static final java.util.Map<String, Long> WORLD_SIZES = new java.util.HashMap<>();
 
@@ -422,7 +407,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         // Lista y busqueda del juego, tal cual, encima de la pagina.
         try {
             if (this.vanillaList != null) {
-                this.vanillaList.render(g, mouseX, mouseY, partial);
+                renderNativeListHidden(g, partial);
                 // v0.364.0: hoja opaca encima del fondo del juego y, sobre ella,
                 // las fichas de la casa.
                 paintListPaper(g, mouseX, mouseY);
@@ -432,6 +417,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 // derecha de la lista, y eso partia la hoja en vertical. Se
                 // repinta el margen en papel y la aguja pasa a ser de tinta.
                 paintScrollMargin(g);
+                drawWorldWarningTooltip(g, mouseX, mouseY);
                 // v0.364.0: la nota de archivo vacio va despues del papel, si no
                 // la tapaba la hoja pegada encima de la lista.
                 drawEmptyNote(g);
@@ -572,7 +558,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             int textLeft = photoX + photoSize + 8;
             boolean withPhoto = dateLeft - textLeft >= 90;
             if (!withPhoto) textLeft = numRight + 10;
-            int nameRight = (dateLeft > textLeft + 60 ? dateLeft : x2) - 10;
+            int nameRight = (dateLeft > textLeft + 60 ? dateLeft - 14 : x2) - 10;
             int textW = Math.max(40, nameRight - textLeft);
             int dateW = Math.max(30, x2 - 10 - dateLeft);
             this.iconsThisFrame = 0;
@@ -594,6 +580,9 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
                 String mode = levelGameMode(summary, english);
                 String when = levelStamp(summary);
                 String folder = levelFolder(summary);
+                if (summary.isLifecycleExperimental() && dateLeft > textLeft + 60) {
+                    g.drawString(this.font, "!", dateLeft - 10, drawTop + 4, 0xFF8C2A1E, false);
+                }
 
                 if (withPhoto && drawBottom - drawTop >= 26) {
                     // v0.382.0: la foto iba centrada y su marco caia sobre la
@@ -1030,19 +1019,8 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         // Vuelca primero el texto del juego y lo cubre por completo: con un
         // velo translucido quedaban letras fantasma debajo de la tinta nueva.
         g.flush();
-        boolean preserveForgeWarning = this.rowRight > this.rowLeft
-            && this.rowRight - WORLD_ROW_EXPERIMENTAL_WARNING_WIDTH > x1
-            && this.rowRight < x2;
-        int warningLeft = this.rowRight - WORLD_ROW_EXPERIMENTAL_WARNING_WIDTH;
-        int opaquePaper = com.eternalcraft.gripeverde.client.render.DiaryTheme
-            .withAlpha(paper, 255);
-        if (preserveForgeWarning) {
-            // No pintar encima del icono/tooltip experimental de Forge.
-            g.fill(x1, top, warningLeft, bottom, opaquePaper);
-            g.fill(this.rowRight, top, x2, bottom, opaquePaper);
-        } else {
-            g.fill(x1, top, x2, bottom, opaquePaper);
-        }
+        int opaquePaper = com.eternalcraft.gripeverde.client.render.DiaryTheme.withAlpha(paper, 255);
+        g.fill(x1, top, x2, bottom, opaquePaper);
         int numRight = x1 + 34;
         // v0.370.0: los rotulos de las columnas, en el hueco entre el buscador
         // y la primera ficha: el pliego pasa a leerse como un libro de
@@ -1091,6 +1069,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             chosen = this.vanillaList == null ? null : this.vanillaList.getSelected();
         } catch (Throwable ignored) {
         }
+        Object hovered = worldRowAt(mouseX, mouseY);
         for (int i = firstVisibleRow(count, scroll); i < count; i++) {
             int rowTop = rowTopAt(i, scroll);
             if (rowTop > this.listBottom) break;
@@ -1107,34 +1086,17 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             if (marked) {
                 g.fill(x1 + 3, drawTop, x1 + 6, drawBottom, 0xFF8C2A1E);
             }
-            // Los filetes y velos se dibujan a ambos lados del distintivo
-            // experimental para no tapar el icono que Forge añade a la fila.
             int bandLeft = x1 + 6;
             int bandRight = x2 - 6;
-            int beforeWarning = preserveForgeWarning ? warningLeft : bandRight;
-            int afterWarning = preserveForgeWarning ? this.rowRight : bandRight;
             if ((i & 1) == 1) {
-                if (beforeWarning > bandLeft) {
-                    g.fill(bandLeft, drawTop, beforeWarning, drawBottom, 0x0E6B5533);
-                }
-                if (bandRight > afterWarning) {
-                    g.fill(afterWarning, drawTop, bandRight, drawBottom, 0x0E6B5533);
-                }
+                g.fill(bandLeft, drawTop, bandRight, drawBottom, 0x0E6B5533);
             }
-            if (beforeWarning > bandLeft) {
-                g.fill(bandLeft, drawBottom - 1, beforeWarning, drawBottom, 0x2E6B5533);
+            if (hovered == this.vanillaList.children().get(i)) {
+                // A dark wash and lower edge remain visible on pale paper.
+                g.fill(bandLeft, drawTop, bandRight, drawBottom, 0x286B5533);
+                g.fill(bandLeft, drawBottom - 2, bandRight, drawBottom, 0x666B5533);
             }
-            if (bandRight > afterWarning) {
-                g.fill(afterWarning, drawBottom - 1, bandRight, drawBottom, 0x2E6B5533);
-            }
-            if (mouseX >= x1 && mouseX <= x2 && mouseY >= drawTop && mouseY < drawBottom) {
-                if (beforeWarning > bandLeft) {
-                    g.fill(bandLeft, drawTop, beforeWarning, drawBottom, 0x22F3E7C8);
-                }
-                if (bandRight > afterWarning) {
-                    g.fill(afterWarning, drawTop, bandRight, drawBottom, 0x22F3E7C8);
-                }
-            }
+            g.fill(bandLeft, drawBottom - 1, bandRight, drawBottom, 0x2E6B5533);
             if (drawBottom - drawTop >= 14) {
                 String idx = (i + 1 < 10 ? "0" : "") + (i + 1);
                 int iw = DiaryChrome.widthCached(this.font, idx);
@@ -1481,15 +1443,6 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         return Math.min(hi, Math.max(lo, mouseX));
     }
 
-    /** Evita la zona del icono y conserva el hitbox horizontal nativo de la fila. */
-    private double rowSelectionClickX(double mouseX) {
-        if (this.rowRight <= this.rowLeft) return mouseX;
-        double safeLeft = this.rowLeft + WORLD_ROW_JOIN_HIT_WIDTH + 1.0;
-        double safeRight = this.rowRight - WORLD_ROW_VANILLA_HITBOX_INSET;
-        if (safeRight < safeLeft) return safeRight + 1.0;
-        return Math.min(safeRight, Math.max(safeLeft, mouseX));
-    }
-
     private void drawFooterPaper(GuiGraphics g) {
         if (this.dressed.isEmpty()) return;
         // v0.354.0: si la hoja grande ya llega hasta los botones, no se pega
@@ -1601,7 +1554,6 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
             boolean handled = super.keyPressed(keyCode, scanCode, modifiers);
             if (handled) {
                 if (this.vanillaList.getSelected() != before) keepSelectedRowVisible();
-                this.lastForwardedEntry = null;
                 try {
                     com.eternalcraft.gripeverde.client.audio.UiSounds.tab();
                 } catch (Throwable ignored) {
@@ -1689,129 +1641,61 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         return false;
     }
 
-    /** Detecta un control widget real si alguna implementacion lo integra en una fila. */
-    private boolean rowControlAt(Object row, double mouseX, double mouseY) {
-        if (row == null) return false;
-        for (Class<?> type = row.getClass(); type != null && type != Object.class;
-             type = type.getSuperclass()) {
-            for (Field field : type.getDeclaredFields()) {
-                if (!net.minecraft.client.gui.components.AbstractWidget.class
-                        .isAssignableFrom(field.getType())) continue;
-                try {
-                    field.setAccessible(true);
-                    Object value = field.get(row);
-                    if (value instanceof net.minecraft.client.gui.components.AbstractWidget widget
-                            && widget.visible && widget.isMouseOver(mouseX, mouseY)) {
-                        return true;
-                    }
-                } catch (Throwable ignored) {
-                }
-            }
-        }
-        // No se supone una zona de botones por geometria: en 1.20.1 Editar y
-        // Borrar viven en el pie, y la franja derecha de la fila tambien puede
-        // contener el aviso experimental de Forge.
-        return false;
+    /** Same half-open hit region for hover and selection; the scroll rail is not a row. */
+    private Object worldRowAt(double mouseX, double mouseY) {
+        if (this.vanillaList == null || this.listBottom <= this.listTop
+                || mouseX < ledgerLeft() + 6 || mouseX >= ledgerRight() - 12
+                || mouseY < this.listTop || mouseY >= this.listBottom) return null;
+        Object row = entryAt(mouseY);
+        if (summaryOf(row) == null) return null;
+        int index = this.vanillaList.children().indexOf(row);
+        double scroll = this.vanillaList.getScrollAmount();
+        int top = rowTopAt(index, scroll);
+        return mouseY >= top && mouseY < top + rowStep() - 4 ? row : null;
     }
 
-    /**
-     * Los botones y Enter son las unicas formas de abrir un mundo. Un doble
-     * clic sobre una fila se consume; un clic rapido en otra parte de la misma
-     * fila (por ejemplo Editar o Borrar) sigue llegando a su control.
-     */
+    /** Select directly, never dispatch to WorldListEntry's icon/double-click join action. */
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         PaperButtons.syncStates();
-        if (button != 0) {
-            if (widgetAt(mouseX, mouseY)) {
-                return super.mouseClicked(mouseX, mouseY, button);
+        if (widgetAt(mouseX, mouseY)) return super.mouseClicked(mouseX, mouseY, button);
+        Object row = worldRowAt(mouseX, mouseY);
+        if (row instanceof WorldSelectionList.Entry entry) {
+            if (button == 0 && !summaryOf(row).isDisabled()) {
+                this.vanillaList.setSelected(entry);
+                focusWorldList();
+                PaperButtons.syncStates();
+                try { com.eternalcraft.gripeverde.client.audio.UiSounds.tab(); }
+                catch (Throwable ignored) { }
             }
-            if (this.vanillaList != null && this.listTop >= 0
-                    && mouseY >= this.listTop && mouseY <= this.listBottom) {
-                try {
-                    double listLeft = this.vanillaList.getLeft();
-                    double listRight = listLeft + this.vanillaList.getWidth();
-                    if (mouseX >= listLeft && mouseX <= listRight) {
-                        if (rowControlAt(entryAt(mouseY), mouseX, mouseY)) {
-                            return super.mouseClicked(mouseX, mouseY, button);
-                        }
-                        return true;
-                    }
-                } catch (Throwable ignored) {
-                }
-            }
-            return super.mouseClicked(mouseX, mouseY, button);
-        }
-
-        if (widgetAt(mouseX, mouseY)) {
-            super.mouseClicked(mouseX, mouseY, button);
             return true;
         }
+        // Native row hitboxes live in a different, narrow column. Do not let
+        // blank paper, gaps or the old icon locations reach those invisible actions.
+        if (this.listTop >= 0 && mouseY >= this.listTop && mouseY < this.listBottom) return true;
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
 
-        // Solo un clic dentro del viewport real de la lista puede seleccionar
-        // una fila. El papel y sus margenes no deben sintetizar un clic de fila.
-        boolean inBody = this.vanillaList != null && this.listTop >= 0
-            && this.listBottom > this.listTop
-            && mouseY >= this.listTop && mouseY <= this.listBottom
-            && mouseX >= this.vanillaList.getLeft()
-            && mouseX <= this.vanillaList.getLeft() + this.vanillaList.getWidth();
-        if (!inBody) {
-            return super.mouseClicked(mouseX, mouseY, button);
-        }
-
-        // Coincide con los bordes inclusivos de AbstractSelectionList: su
-        // hitbox comienza 2 px antes de rowLeft. Esos píxeles tambien pasan
-        // por el guard para no activar el icono vanilla de entrada inmediata.
-        if (mouseX < this.rowLeft - WORLD_ROW_VANILLA_HITBOX_INSET
-                || mouseX >= this.rowRight) {
-            return super.mouseClicked(mouseX, mouseY, button);
-        }
-
-        Object row = entryAt(mouseY);
-        if (row == null) {
-            return true;
-        }
-
-        // El clic ya está en el hitbox nativo de la fila (incluido su borde);
-        // solo se aparta del icono de entrada inmediata de vanilla.
-        double clickX = this.rowSelectionClickX(mouseX);
-
-        long now = System.nanoTime();
-        boolean rowControl = rowControlAt(row, mouseX, mouseY);
-        if (rowControl) {
-            // Los controles conservan sus coordenadas reales: nunca se les
-            // desplaza el puntero para evitar el icono de entrada del mundo.
-            super.mouseClicked(mouseX, mouseY, button);
-            this.lastForwardedEntry = null;
-            return true;
-        }
-        Object selected = null;
+    /** Keep vanilla's asynchronous world-list refresh without drawing a second UI. */
+    private void renderNativeListHidden(GuiGraphics g, float partial) {
+        g.flush();
+        g.enableScissor(0, 0, 0, 0);
         try {
-            selected = this.vanillaList == null ? null : this.vanillaList.getSelected();
-        } catch (Throwable ignored) {
+            this.vanillaList.render(g, -1, -1, partial);
+        } finally {
+            try { g.flush(); } finally { g.disableScissor(); }
         }
-        if (row == selected || (row == this.lastForwardedEntry
-                && now - this.lastForwardedNanos < WORLD_ROW_DOUBLE_CLICK_GUARD_NANOS)) {
-            // Se consume el doble clic para no abrir por sorpresa, pero el
-            // buscador deja de tener el foco como en un clic normal de fila.
-            focusWorldList();
-            try {
-                com.eternalcraft.gripeverde.client.audio.UiSounds.tab();
-            } catch (Throwable ignored) {
-            }
-            return true;
-        }
+    }
 
-        // Solo se entrega una vez a la lista. El segundo clic sobre esa misma
-        // fila se consume arriba para que nunca se entre al mundo por sorpresa.
-        super.mouseClicked(clickX, mouseY, button);
-        this.lastForwardedEntry = row;
-        this.lastForwardedNanos = now;
-        try {
-            com.eternalcraft.gripeverde.client.audio.UiSounds.tab();
-        } catch (Throwable ignored) {
+    private void drawWorldWarningTooltip(GuiGraphics g, int mouseX, int mouseY) {
+        int warningX = ledgerRight() - 106;
+        Object row = worldRowAt(mouseX, mouseY);
+        var summary = summaryOf(row);
+        if (summary != null && summary.isLifecycleExperimental()
+                && mouseX >= warningX - 4 && mouseX < warningX + 8) {
+            g.renderTooltip(this.font, this.font.split(
+                Component.translatable("forge.experimentalsettings.tooltip"), 200), mouseX, mouseY);
         }
-        return true;
     }
 
     @Override

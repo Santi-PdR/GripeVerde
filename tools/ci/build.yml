@@ -45,6 +45,8 @@ jobs:
 
       - name: Test confirmation decision safety and lifecycle
         run: python3 tools/test_confirm_screen.py --require-java
+      - name: Test list clipping, hover selection and server connection state
+        run: python3 tools/test_list_interaction.py --require-java
       - name: Test pause geometry, hidden input and session-safe exit
         run: python3 tools/test_pause_safety.py --require-java
       - name: Test Controls and Skin grids at compact sizes
