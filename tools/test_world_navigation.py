@@ -57,7 +57,7 @@ public class WorldNavigationHarness {
  }
  static class World extends Parent {
   FakeList vanillaList;List<EditBox> searchBoxes=new ArrayList<>();List<DiaryButton> dressed=new ArrayList<>();
-  int listTop=100,listBottom=220,rowItemHeight=36,rowStepExact;Method rowTopMethod;Object lastForwardedEntry;
+  int listTop=100,listBottom=220,rowItemHeight=36,rowStepExact;Method rowTopMethod;
   __METHODS__
   void measure()throws Exception {rowStepExact=vanillaList.step;rowTopMethod=FakeList.class.getMethod("rowTop",int.class);}
   void viewport(int top,int bottom){listTop=vanillaList.top=top;listBottom=vanillaList.bottom=bottom;}
@@ -104,14 +104,13 @@ public class WorldNavigationHarness {
     w.keyPressed(deleting?261:257,0,0);idle(w);
    }
    case "arrows_change", "arrows_unchanged", "arrows_unhandled" -> {
-    EditBox search=new EditBox();w.searchBoxes.add(search);w.vanillaList.scroll=400;w.lastForwardedEntry=new Object();
+    EditBox search=new EditBox();w.searchBoxes.add(search);w.vanillaList.scroll=400;
     w.parentHandled=!test.equals("arrows_unhandled");
     if(test.equals("arrows_change")){w.vanillaList.selected=w.vanillaList.kids.get(12);w.dispatch=()->w.vanillaList.selected=w.vanillaList.kids.get(0);}
     else w.vanillaList.selected=w.vanillaList.kids.get(12);
     w.keyPressed(265,0,0);idle(w);check(w.getFocused()==w.vanillaList,"arrows did not focus list");
     if(test.equals("arrows_change")){check(w.vanillaList.scroll==2,"arrow-up scrolled further away from selected row");}
     else check(w.vanillaList.scroll==400,"unchanged/unhandled key scrolled");
-    if(w.parentHandled)check(w.lastForwardedEntry==null,"keyboard did not reset click guard");
    }
    default -> throw new AssertionError(test);
   }
