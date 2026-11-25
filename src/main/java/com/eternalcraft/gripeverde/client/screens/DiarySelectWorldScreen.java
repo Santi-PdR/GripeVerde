@@ -1672,7 +1672,7 @@ public class DiarySelectWorldScreen extends SelectWorldScreen {
         }
         // Native row hitboxes live in a different, narrow column. Do not let
         // blank paper, gaps or the old icon locations reach those invisible actions.
-        if (this.listTop >= 0 && mouseY >= this.listTop && mouseY < this.listBottom) return true;
+        if (this.listTop >= 0 && mouseY >= this.listTop && mouseY <= this.listBottom) return true;
         return super.mouseClicked(mouseX, mouseY, button);
     }
 

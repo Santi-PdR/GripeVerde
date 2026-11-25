@@ -69,7 +69,7 @@ public class ListInteractionHarness {
   int parentClicks,footerActions;
   public boolean mouseClicked(double x,double y,int button){parentClicks++;if(this instanceof World w){
    if(w.widgetAt(x,y)){footerActions++;return true;}
-   if(x>=200&&x<470&&y>=100&&y<220)w.vanillaList.launches++;
+   if(x>=200&&x<=470&&y>=100&&y<=220)w.vanillaList.launches++;
   }return false;}
  }
  static class World extends Parent {

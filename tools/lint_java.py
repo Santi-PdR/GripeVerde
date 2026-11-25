@@ -254,7 +254,8 @@ def check_world_row_click_safety(path, clean):
     handler = java_method_body(clean, 'public boolean mouseClicked(')
     hit = java_method_body(clean, 'private Object worldRowAt(')
     required = ('widgetAt(mouseX, mouseY)', 'Object row = worldRowAt(mouseX, mouseY);',
-                'button == 0 && !summaryOf(row).isDisabled()', 'this.vanillaList.setSelected(entry);')
+                'button == 0 && !summaryOf(row).isDisabled()', 'this.vanillaList.setSelected(entry);',
+                'mouseY >= this.listTop && mouseY <= this.listBottom) return true;')
     if (any(t not in handler for t in required)
             or handler.count('super.mouseClicked(') != 2
             or 'rowSelectionClickX' in handler or 'joinWorld(' in handler
