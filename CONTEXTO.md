@@ -16,7 +16,12 @@
   resize más transiciones de caché. No ejecuta clase/render decorativo completo,
   Minecraft, teclado nativo, red, portapapeles o guardado reales. Ambos workflows
   exigen JDK; local: 123 tests OK, 25 skips sin JDK, mirrors 8/8, lint 73,
-  release gate 7, installer 7, diff limpio. Java y build pendientes de CI.
+  release gate 7, installer 7, diff limpio. Métodos Java, suites anteriores,
+  regresiones Gradle y compilación real del mod aprobados en `72092f7` por
+  [CI 45629730516](https://github.com/Santi-PdR/GripeVerde/actions/runs/45629730516).
+  Artefacto GripeVerde-jar ID `15029509867`. Release v0.401.0 reconsultada
+  intacta: asset 778229607, 10855632 bytes, SHA-256
+  dd37d443b7307c1b3d0d09fc5befdaee6d1dd887bfca002d6e7bc3670ef0ee88.
   Sin bump ni publicación; esta prueba no demuestra resolver clics fantasma.
 
 - **Rejillas compactas y shell local, posterior a `1636030`:** Controles y
