@@ -19,9 +19,19 @@ Actualizado: 2026-11-13
   y fallos, papel sin ranura, hover/huecos, 1.560 posiciones de puntero más
   casos de botones/mundos deshabilitados y 60 estados/idiomas de servidor.
   Guardas lint adaptadas al nuevo modelo con mutaciones negativas. Sin píxeles,
-  input SO, pings reales ni carga de mundos; Java/build pendientes de CI.
-  Local: 127 tests OK, 26 skips sin JDK; mirrors 8/8, lint 73, release gate 7,
-  installer 7 y diff limpio. Sin bump ni nueva release.
+  input SO, pings reales ni carga de mundos. El borde inferior inclusivo de
+  vanilla también se consume sin seleccionar una fila invisible.
+  CI 45683907743 detectó una aserción vieja del temporizador eliminado en el
+  arnés de navegación; se retiró esa aserción, no las pruebas de foco/teclado.
+  Java, suites anteriores, regresiones Gradle y compilación real aprobados en
+  `454ab68` por [CI 45684306918](https://github.com/Santi-PdR/GripeVerde/actions/runs/45684306918).
+  Artefacto GripeVerde-jar ID `15055204588` para instalar en test-1; no confundir
+  con el release anterior. Local: 127 tests OK, 26 skips sin JDK; mirrors 8/8,
+  lint 73, release gate 7, installer 7 y diff limpio. Pendiente prueba visual
+  del usuario en Minecraft. Avisos nuevos: Forge marca isLifecycleExperimental
+  como deprecated; se usa para mantener el aviso que antes pintaba vanilla.
+  Sin bump ni nueva release: v0.401.0 reconsultada intacta (asset 778229607,
+  10855632 bytes, SHA-256 dd37d443b7307c1b3d0d09fc5befdaee6d1dd887bfca002d6e7bc3670ef0ee88).
 
 - **Pausa compacta y salida ligada a sesión, posterior a `4eb96fd`:**
   La pausa usa separadores/rejilla compartidos y cabecera mínima en ventanas
