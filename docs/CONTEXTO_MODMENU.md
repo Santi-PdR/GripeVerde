@@ -2,6 +2,23 @@
 
 Actualizado: 2026-11-13
 
+- **Pausa compacta y salida ligada a sesión, posterior a `4eb96fd`:**
+  La pausa usa separadores/rejilla compartidos y cabecera mínima en ventanas
+  bajas, conserva los 55 px inferiores y ajusta título/ornamentos al ancho.
+  La fecha se oculta en modo compacto; la caché distingue cabecera mínima.
+  Con mundo activo, los clics pasan a los widgets sin activar decoraciones
+  que el renderer seguro no dibuja. Vela/cuervo ocultos en compacto tampoco
+  reciben clics; se elimina la copia de semilla desde una línea ya retirada.
+  Salir rechaza confirmaciones duplicadas y reentrada de desconexión; una
+  respuesta tardía no puede desconectar otro ClientLevel ni reabrir la pausa.
+  `test_pause_safety.py` extrae métodos reales con dobles GUI/sesión: 19 casos
+  de input/ciclo de vida y barrido de 5.334 geometrías init/header/render seguro/
+  resize más transiciones de caché. No ejecuta clase/render decorativo completo,
+  Minecraft, teclado nativo, red, portapapeles o guardado reales. Ambos workflows
+  exigen JDK; local: 123 tests OK, 25 skips sin JDK, mirrors 8/8, lint 73,
+  release gate 7, installer 7, diff limpio. Java y build pendientes de CI.
+  Sin bump ni publicación; esta prueba no demuestra resolver clics fantasma.
+
 - **Rejillas compactas y shell local, posterior a `1636030`:** Controles y
   Aspecto ya no fuerzan columnas de 96/110 px fuera de una ventana estrecha.
   Recuperan margen vertical, reducen controles y decoración en paneles bajos y

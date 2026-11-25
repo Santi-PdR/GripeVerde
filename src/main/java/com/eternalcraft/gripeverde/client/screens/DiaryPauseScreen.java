@@ -49,8 +49,12 @@ public class DiaryPauseScreen extends PauseScreen {
     }
     private int panelH() {
         // Preserve the hotbar and the minimum top margin while adapting the paper to the viewport.
-        int available = this.height - MARGIN_TOP - MARGIN_BOTTOM_MIN;
+        int available = this.height - panelY() - MARGIN_BOTTOM_MIN;
         return Math.max(0, Math.min(PANEL_MAX_H, available));
+    }
+
+    private boolean minimalPauseLayout() {
+        return panelH() < 140;
     }
 
     private boolean compactPauseLayout() {
@@ -58,11 +62,11 @@ public class DiaryPauseScreen extends PauseScreen {
     }
 
     private int separatorTopOffset() {
-        return panelH() < 250 ? 60 : ORN_SEP_TOP;
+        return minimalPauseLayout() ? 16 : (panelH() < 250 ? 60 : ORN_SEP_TOP);
     }
 
     private int separatorBottomOffset() {
-        return panelH() < 250 ? 30 : ORN_SEP_BOT_FROM_BOT;
+        return minimalPauseLayout() ? 4 : (panelH() < 250 ? 30 : ORN_SEP_BOT_FROM_BOT);
     }
 
     private static final int BTN_W = 240;
@@ -78,8 +82,6 @@ public class DiaryPauseScreen extends PauseScreen {
 
     // ── v0.16.0: la pausa responde ──
     private boolean candleOut = false;
-    // v0.291.0: la semilla se copia con un golpe y la hoja lo agradece.
-    private long seedCopiedUntilMs = 0L;
     private long candleSmokeUntilMs = 0L;
     private static long nextBreathMs = System.currentTimeMillis() + 20_000L;
     private static long breathUntilMs = 0L;
@@ -112,7 +114,7 @@ public class DiaryPauseScreen extends PauseScreen {
     private int panelX() { return (this.width - panelW()) / 2; }
     private int panelY() {
         // Pegar el panel al margen superior; si sobra espacio, dejarlo abajo para hotbar
-        return MARGIN_TOP;
+        return this.height < 220 ? 4 : MARGIN_TOP;
     }
 
     // v0.272.0: la hoja solo suena la primera vez que se abre, no al redimensionar.
@@ -135,8 +137,8 @@ public class DiaryPauseScreen extends PauseScreen {
 
         // Short viewports use a two-column menu so every action stays above the hotbar.
         boolean compactGrid = ph < 250;
-        int topSeparator = compactGrid ? 60 : ORN_SEP_TOP;
-        int bottomSeparator = compactGrid ? 30 : ORN_SEP_BOT_FROM_BOT;
+        int topSeparator = separatorTopOffset();
+        int bottomSeparator = separatorBottomOffset();
         int contentTop = py + topSeparator + 6;
         int contentBot = py + ph - bottomSeparator - 6;
         int contentH = Math.max(0, contentBot - contentTop);
@@ -269,6 +271,9 @@ public class DiaryPauseScreen extends PauseScreen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        // The live-world renderer omits these decorations. Their old hit boxes
+        // must not consume input or copy an invisible seed behind the buttons.
+        if (hasActiveWorld()) return super.mouseClicked(mouseX, mouseY, button);
         if (button == 0) {
             try {
                 int spotPx = panelX();
@@ -282,26 +287,11 @@ public class DiaryPauseScreen extends PauseScreen {
                     return true;
                 }
                 int px = panelX(), py = panelY();
-                // v0.291.0: un golpe en el estado de la partida copia la semilla.
-                if (!overAnyButton(mouseX, mouseY) && !compactPauseLayout()
-                        && mouseY >= py + 32 && mouseY <= py + 62
-                        && mouseX >= px + 8 && mouseX <= px + panelW() - 10) {
-                    try {
-                        net.minecraft.server.MinecraftServer server = this.minecraft.getSingleplayerServer();
-                        if (server != null) {
-                            this.minecraft.keyboardHandler.setClipboard(
-                                Long.toString(server.overworld().getSeed()));
-                            this.seedCopiedUntilMs = System.currentTimeMillis() + 2200L;
-                            com.eternalcraft.gripeverde.client.audio.UiSounds.type();
-                            return true;
-                        }
-                    } catch (Throwable ignored) {
-                    }
-                }
+                // The old seed/status line is no longer drawn; it has no hitbox.
                 // La vela: apagarla revela lo que lee la oscuridad.
                 int candleX = px + 20, candleY = py + panelH() - 32;
                 boolean overButton = overAnyButton(mouseX, mouseY);
-                if (!overButton && mouseX >= candleX - 6 && mouseX <= candleX + 20
+                if (!compactPauseLayout() && !overButton && mouseX >= candleX - 6 && mouseX <= candleX + 20
                         && mouseY >= candleY - 14 && mouseY <= candleY + 28) {
                     candleOut = !candleOut;
                     if (candleOut) {
@@ -318,7 +308,7 @@ public class DiaryPauseScreen extends PauseScreen {
                 }
                 // El cuervo cobra su peaje.
                 int ravenX = px + 14, ravenY = py + 22;
-                if (!overButton && mouseX >= ravenX - 4 && mouseX <= ravenX + 24
+                if (!compactPauseLayout() && !overButton && mouseX >= ravenX - 4 && mouseX <= ravenX + 24
                         && mouseY >= ravenY - 4 && mouseY <= ravenY + 22) {
                     int n = com.eternalcraft.gripeverde.client.lore.ChroniclerMemory.bump("ravenClicks");
                     com.eternalcraft.gripeverde.client.audio.UiSounds.playCustom(
@@ -345,13 +335,22 @@ public class DiaryPauseScreen extends PauseScreen {
         this.minecraft.setScreen(new DiaryOptionsScreen(this));
     }
 
+    private boolean leaveConfirmationOpen;
+    private boolean disconnecting;
+
     private void onLeave() {
-        if (this.minecraft == null || this.minecraft.level == null) {
+        if (this.disconnecting || this.leaveConfirmationOpen
+                || this.minecraft == null || this.minecraft.level == null) {
             return;
         }
 
         if (!this.minecraft.isLocalServer()) {
+            var leavingLevel = this.minecraft.level;
+            this.leaveConfirmationOpen = true;
             this.minecraft.setScreen(new DiaryConfirmScreen(accepted -> {
+                this.leaveConfirmationOpen = false;
+                // A late decision belongs only to the session it was opened for.
+                if (this.minecraft == null || this.minecraft.level != leavingLevel) return;
                 if (accepted) {
                     disconnectAndReturnToTitle();
                 } else {
@@ -370,7 +369,8 @@ public class DiaryPauseScreen extends PauseScreen {
     }
 
     private void disconnectAndReturnToTitle() {
-        if (this.minecraft == null || this.minecraft.level == null) return;
+        if (this.disconnecting || this.minecraft == null || this.minecraft.level == null) return;
+        this.disconnecting = true;
 
         // In Forge 1.20.1, disconnect through clearLevel and set the title explicitly.
         boolean isLocal = this.minecraft.isLocalServer();
@@ -522,7 +522,7 @@ public class DiaryPauseScreen extends PauseScreen {
             DiaryTheme.withAlpha(DiaryTheme.INK_BLACK, 30));
 
         drawPanelTitle(g, px, py);
-        drawDateStamp(g, px, py);
+        if (!compactPauseLayout()) drawDateStamp(g, px, py);
         // v0.340.0: fuera la franja de dia, hora, clima y coordenadas. El
         // usuario no la quiere en la pausa; la hoja se queda con su titulo, su
         // fecha y sus fichas.
@@ -657,6 +657,8 @@ public class DiaryPauseScreen extends PauseScreen {
     private int headerPanelW = -1;
     private boolean headerCompact = false;
     private String headerTitleSrc = "";
+    private String headerTitleShown = "";
+    private boolean headerMinimal;
     private String headerSubSrc = "";
     private int headerTitleW = 0;
     private float headerScale = 1f;
@@ -668,7 +670,7 @@ public class DiaryPauseScreen extends PauseScreen {
         String subtitle = DiaryChrome.tr("gripeverde.pause.subtitle");
 
         int centerX = px + panelW() / 2;
-        int compactTitleY = compactPauseLayout() ? 14 : 24;
+        int compactTitleY = minimalPauseLayout() ? 4 : (compactPauseLayout() ? 14 : 24);
         int subtitleY = py + (compactPauseLayout() ? 39 : 58);
         int titleY = py + compactTitleY;
 
@@ -677,17 +679,19 @@ public class DiaryPauseScreen extends PauseScreen {
         int panelWidth = panelW();
         boolean compact = compactPauseLayout();
         if (this.headerFont != this.font || this.headerPanelW != panelWidth
-                || this.headerCompact != compact
+                || this.headerCompact != compact || this.headerMinimal != minimalPauseLayout()
                 || !this.headerTitleSrc.equals(title) || !this.headerSubSrc.equals(subtitle)) {
             this.headerFont = this.font;
             this.headerPanelW = panelWidth;
             this.headerCompact = compact;
             this.headerTitleSrc = title;
             this.headerSubSrc = subtitle;
-            this.headerTitleW = this.font.width(title);
-            this.headerScale = compact
-                ? Math.min(1.45f, Math.max(1.0f, (panelWidth - 36.0f) / Math.max(1, this.headerTitleW)))
-                : 1.75f;
+            this.headerMinimal = minimalPauseLayout();
+            this.headerTitleShown = ellipsizeTo(this.font, title, Math.max(1, panelWidth - 48));
+            this.headerTitleW = this.font.width(this.headerTitleShown);
+            this.headerScale = this.headerMinimal ? 1.0f : (compact
+                ? Math.min(1.45f, (panelWidth - 48.0f) / Math.max(1, this.headerTitleW))
+                : Math.min(1.75f, (panelWidth - 48.0f) / Math.max(1, this.headerTitleW)));
             this.headerSubtitle = ellipsizeTo(this.font, subtitle, Math.max(40, panelWidth - 28));
             this.headerSubW = this.font.width(this.headerSubtitle);
         }
@@ -696,9 +700,10 @@ public class DiaryPauseScreen extends PauseScreen {
         g.pose().pushPose();
         g.pose().translate(centerX, titleY, 0);
         g.pose().scale(titleScale, titleScale, 1f);
-        g.drawString(this.font, title, -tw / 2, 0, DiaryTheme.INK, false);
+        g.drawString(this.font, this.headerTitleShown, -tw / 2, 0, DiaryTheme.INK, false);
         g.pose().popPose();
 
+        if (minimalPauseLayout()) return;
         int scaledTw = (int)(tw * titleScale);
         int ornY = titleY + 5;
         drawFlourish(g, centerX - scaledTw / 2 - 20, ornY, DiaryTheme.BRONZE, false);
