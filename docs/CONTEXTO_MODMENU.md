@@ -12,6 +12,10 @@ Actualizado: 2026-11-13
   Se vacían los buffers antes de soltar cada recorte para que letras de filas
   parciales no reaparezcan encima de cabecera/pie. Barra propia sobre el mismo
   carril de seis píxeles que usa TransferableSelectionList para arrastrar.
+  También se desactiva el marco negro/blanco de selección vanilla: el foco
+  de teclado lleva una sombra de papel propia. El recuento lee las columnas
+  actuales, no los IDs del repositorio que solo cambian al pulsar Aceptar;
+  refleja activar/quitar sin aplicar ni recargar recursos por su cuenta.
   No se reemplaza el despacho de ratón/teclado ni el modelo de packs. Aviso de
   incompatibilidad y descripción extendida conservados con guardas anteriores.
   `test_pack_screen.py` compila la clase completa con dobles GUI/modelo/wrappers:
@@ -19,7 +23,16 @@ Actualizado: 2026-11-13
   de carpeta/Aceptar, fallo de una lista y balance de recortes. Texto diferido
   simulado; sin píxeles, input SO ni aplicación/recarga real de recursos.
   Local: 130 tests OK, 27 skips sin JDK; mirrors 8/8, lint 73, release gate 7,
-  installer 7 y diff limpio. Java y build pendientes de CI. Sin bump ni release.
+  installer 7 y diff limpio. Clase completa con dobles, suites anteriores,
+  regresiones Gradle y compilación real del mod aprobados en `ca2a5cd` por
+  [CI 45825551700](https://github.com/Santi-PdR/GripeVerde/actions/runs/45825551700).
+  Artefacto GripeVerde-jar ID `15119957685` para test-1. CI 45825097475 había
+  detectado que la mutación de la guarda de incompatibilidad tenía dos blancos
+  tras añadir el foco propio; se separaron ambas condiciones sin retirar guardas.
+  Pendiente validación visual dentro de Minecraft. Release v0.401.0 reconsultada
+  intacta: asset 778229607, 10855632 bytes, SHA-256
+  dd37d443b7307c1b3d0d09fc5befdaee6d1dd887bfca002d6e7bc3670ef0ee88.
+  Sin bump ni nueva publicación.
 
 - **Listas sin segunda capa visible, posterior a `bb5d018`:**
   A partir de las capturas del usuario se elimina la franja transparente del
