@@ -395,7 +395,7 @@ def check_pack_selection_single_render(path, clean):
                  'Packs: respetar la zona de texto vanilla de 157 px y su descripción extendida')]
     clip_scope = re.search(
         r'g\.enableScissor\(x1, top, x2, bottom\);\s*try\s*\{', rows_paint)
-    clip_release = re.search(r'\}\s*finally\s*\{\s*g\.disableScissor\(\);\s*\}', rows_paint)
+    clip_release = re.search(r'\}\s*finally\s*\{\s*try\s*\{\s*g\.flush\(\);\s*\}\s*finally\s*\{\s*g\.disableScissor\(\);\s*\}', rows_paint)
     if (not clip_scope or not clip_release
             or rows_paint.count('g.enableScissor(') != 1
             or rows_paint.count('g.disableScissor();') != 1

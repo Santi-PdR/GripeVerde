@@ -87,6 +87,7 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         this.packDescriptions.clear();
         super.init();
         resolvePackLists();
+        layoutPackContents();
         if (availableList != null) {
             availableList.setRenderBackground(false);
             availableList.setRenderTopAndBottom(false);
@@ -99,6 +100,45 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         try {
             this.dressed.addAll(com.eternalcraft.gripeverde.client.render.PaperButtons.dressAll(this));
         } catch (Throwable ignored) {
+        }
+    }
+
+    private int packHeaderBottom() {
+        return this.height < 180 ? 30 : 42;
+    }
+
+    /** Resize actual vanilla controls before wrapping them; hitboxes follow their drawing. */
+    private void layoutPackContents() {
+        int gap = 8;
+        int columnW = Math.max(48, Math.min(200, (this.width - 40 - gap) / 2));
+        int left = (this.width - columnW * 2 - gap) / 2;
+        int buttonY = this.height - 44;
+        int top = packHeaderBottom() + 2;
+        int bottom = Math.max(top + 1, buttonY - 8);
+        int column = 0;
+        for (AbstractSelectionList<?> list : java.util.Arrays.asList(this.availableList, this.selectedList)) {
+            if (list != null) {
+                list.updateSize(columnW, this.height, top, bottom);
+                list.setLeftPos(left + column * (columnW + gap));
+            }
+            column++;
+        }
+        java.util.List<net.minecraft.client.gui.components.AbstractWidget> buttons = new java.util.ArrayList<>();
+        for (var child : this.children()) {
+            if (child instanceof net.minecraft.client.gui.components.AbstractButton button && button.visible) {
+                buttons.add(button);
+            }
+        }
+        buttons.sort((a, b) -> Integer.compare(a.getX(), b.getX()));
+        int buttonW = Math.max(1, Math.min(150, (this.width - 40 - gap) / 2));
+        int buttonH = Math.min(20, Math.max(12, this.height / 10));
+        int start = (this.width - buttonW * buttons.size() - gap * Math.max(0, buttons.size() - 1)) / 2;
+        for (int i = 0; i < buttons.size(); i++) {
+            var button = buttons.get(i);
+            button.setX(start + i * (buttonW + gap));
+            button.setY(buttonY);
+            button.setWidth(buttonW);
+            button.setHeight(buttonH);
         }
     }
 
@@ -134,14 +174,14 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         int bottom = list.getBottom();
         int left = list.getRowLeft();
         int right = left + list.getRowWidth();
-        if (bottom - top < 24 || right - left < 90) return;
+        if (bottom <= top || right - left < 44) return;
         // Las flechas vanilla viven sobre el icono de 32 px, no a la derecha.
         // Se tapa desde el fin de ese icono hasta el fin del texto nativo.
         int x1 = left + 33;            // fuera del hitbox incluyente del icono
         int textX = left + 34;
         int x2 = right - 8;
         int textW = x2 - textX - 1;     // 157 px con la fila vanilla de 200 px
-        if (textW < 60) return;
+        if (textW < 1) return;
         int paper = PaperTexture.paperColor(PaperTexture.PaperKind.ARCHIVE);
         // Resolver geometría y entradas antes de adquirir el recorte gráfico.
         int step = packRowStep(list);
@@ -237,7 +277,7 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
                 g.fill(x1 + 3, rowBottom - 1, x2 - 3, rowBottom, 0x2E6B5533);
             }
         } finally {
-            g.disableScissor();
+            try { g.flush(); } finally { g.disableScissor(); }
         }
     }
 
@@ -281,7 +321,16 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
                 this.availableList, this.selectedList)) {
             if (list == null) continue;
             try {
-                list.render(g, mouseX, mouseY, partial);
+                // Only vanilla icons/arrows remain visible. Its cached 157 px
+                // text would spill into the next column at narrow GUI scales.
+                g.flush();
+                g.enableScissor(list.getRowLeft(), list.getTop(),
+                    Math.min(list.getRowLeft() + 33, list.getLeft() + list.getWidth() - 6), list.getBottom());
+                try {
+                    list.render(g, mouseX, mouseY, partial);
+                } finally {
+                    try { g.flush(); } finally { g.disableScissor(); }
+                }
             } catch (Throwable ignored) {
             }
         }
@@ -356,10 +405,10 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         int bottom = list.getBottom();
         int w = list.getWidth();
         int h = bottom - top;
-        if (w < 80 || h < 60) return;
+        if (w < 40 || h < 16) return;
         int x1 = Math.max(2, left - 6);
         int x2 = Math.min(this.width - 2, left + w + 6);
-        int y1 = Math.max(2, top - 16);
+        int y1 = Math.max(2, top - 2);
         int y2 = Math.min(this.height - 2, bottom + 6);
         if (x2 <= x1 || y2 <= y1) return;
         int paper = PaperTexture.paperColor(PaperTexture.PaperKind.ARCHIVE);
@@ -390,7 +439,7 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         int x2 = Math.min(this.width - 2, list.getLeft() + list.getWidth() + 6);
         int top = Math.max(2, list.getTop());
         int bottom = Math.min(this.height - 2, top + PACK_LIST_HEADER_HEIGHT);
-        if (x2 - x1 < 80 || bottom - top < 10) return;
+        if (x2 - x1 < 40 || bottom - top < 10) return;
 
         // Borra el encabezado blanco del juego sin invadir la primera fila;
         // el pixel de cada borde lateral queda intacto.
@@ -443,11 +492,13 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
             // cada lista y se reescribe en tinta y sepia, como en Mundos.
             inkPackRows(g, this.availableList, mouseX, mouseY);
             inkPackRows(g, this.selectedList, mouseX, mouseY);
+            drawPackScroll(g, this.availableList);
+            drawPackScroll(g, this.selectedList);
         } catch (Throwable ignored) {
         }
         try {
             String title = this.title.getString();
-            int limit = Math.max(80, this.width - 200);
+            int limit = Math.max(1, this.width - 40);
             String cut = com.eternalcraft.gripeverde.client.render.DiaryChrome
                 .fitCached(this.font, title, limit);
             int w = com.eternalcraft.gripeverde.client.render.DiaryChrome
@@ -465,7 +516,7 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
             // vanilla y escribir una sola pareja de titulo y subtitulo.
             g.flush();
             int bandTop = 6;
-            int bandBottom = 42;
+            int bandBottom = packHeaderBottom();
             int bandLeft = 14;
             int bandRight = this.width - 14;
             if (bandRight - bandLeft > 80 && bandBottom > bandTop + 10) {
@@ -483,8 +534,10 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
                 .fitCached(this.font, sub, Math.max(60, bandRight - bandLeft - 8));
             int subW = com.eternalcraft.gripeverde.client.render.DiaryChrome
                 .widthCached(this.font, subCut);
-            g.drawString(this.font, subCut, cx - subW / 2, y + 13,
-                com.eternalcraft.gripeverde.client.render.DiaryChrome.INK_SUBTITLE, false);
+            if (bandBottom >= 42) {
+                g.drawString(this.font, subCut, cx - subW / 2, y + 13,
+                    com.eternalcraft.gripeverde.client.render.DiaryChrome.INK_SUBTITLE, false);
+            }
             // Los rótulos de las columnas se restauran después de todas las
             // capas opacas que tapan el encabezado vanilla.
             g.flush();
@@ -518,7 +571,7 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         int bx = 10;
         int by = 6;
         int bw = this.width - 20;
-        int bh = this.height - 20;
+        int bh = this.height - 12;
         int cx = this.width / 2;
         // v0.232.0: la hoja grande bajo las dos listas ya no es un rectangulo.
         PaperTexture.drawTornSheet(g, bx, by, bw, bh, PaperTexture.PaperKind.ARCHIVE);
@@ -526,45 +579,11 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
 
         // La cabecera (titulo y una sola indicacion de arrastre) se pinta al
         // final de render(), despues de las listas, para sustituir la de vanilla.
-        DiaryChrome.drawInkDivider(g, bx + 24, by + 40, bw - 48);
 
         // Chapa de registro del archivador
         DiaryChrome.drawRegistryTag(g, bx, by, bw, bh, "REG. XVI");
 
-        // Pie: sello institucional y, cuando hay ancho, el recuento del cajon.
-        String footer = "EC-QV/1897";
-        int fw = DiaryChrome.widthCached(this.font, footer);
-        DiaryChrome.drawInkDivider(g, bx + 24, by + bh - 36, bw - 48);
-        String count = archiveCount(com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish());
-        boolean wide = bw >= 420 && !count.isEmpty();
-        if (wide) {
-            String cut = DiaryChrome.fitCached(this.font, count, Math.max(0, bw - 200));
-            g.drawString(this.font, cut, bx + 24, by + bh - 30, DiaryChrome.INK_FLAVOR, false);
-            g.drawString(this.font, footer, bx + bw - 24 - fw, by + bh - 30,
-                DiaryChrome.INK_FLAVOR, false);
-        } else {
-            g.drawString(this.font, footer, cx - fw / 2, by + bh - 30, DiaryChrome.INK_FLAVOR, false);
-        }
-
-        // v0.280.0: folio del cajon y recordatorio de salida, en el pie.
-        boolean enP = com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish();
-        String folio = enP ? "sheet 1" : "hoja 1";
-        String hint = enP ? "Esc goes back" : "Esc vuelve";
-        boolean room = bw >= 360;
-        // v0.311.0: si los botones vestidos llegan a esa franja, se callan.
-        int topDeBoton = Integer.MAX_VALUE;
-        for (com.eternalcraft.gripeverde.client.widgets.DiaryButton b : this.dressed) {
-            if (b.visible) topDeBoton = Math.min(topDeBoton, b.getY());
-        }
-        if (topDeBoton != Integer.MAX_VALUE && by + bh - 19 + 10 > topDeBoton - 4) {
-            room = false;
-        }
-        if (room) {
-            g.drawString(this.font, folio, bx + 24, by + bh - 19, DiaryChrome.INK_FLAVOR, false);
-            int hw = DiaryChrome.widthCached(this.font, hint);
-            g.drawString(this.font, hint, bx + bw - 24 - hw, by + bh - 19,
-                DiaryChrome.INK_FLAVOR, false);
-        }
+        drawPackFooter(g);
 
         // v0.380.0: los dos cajones del archivador, sobre la hoja y bajo las
         // filas del juego. Se dibujan aqui, al final, para que se vean.
@@ -572,6 +591,43 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
             drawPackColumns(g);
         } catch (Throwable ignored) {
         }
+    }
+
+    /** Footer has its own row below buttons, never behind their hitboxes. */
+    private void drawPackFooter(GuiGraphics g) {
+        int y = this.height - 17;
+        int left = 20;
+        int right = this.width - 20;
+        int width = Math.max(1, right - left);
+        String count = archiveCount(com.eternalcraft.gripeverde.client.lore.Discoveries.isEnglish());
+        String stamp = "EC-QV/1897";
+        int stampW = DiaryChrome.widthCached(this.font, stamp);
+        DiaryChrome.drawInkDivider(g, left, y - 4, width);
+        if (!count.isEmpty() && width >= 360) {
+            String cut = DiaryChrome.fitCached(this.font, count, Math.max(1, width - stampW - 12));
+            g.drawString(this.font, cut, left, y, DiaryChrome.INK_FLAVOR, false);
+            g.drawString(this.font, stamp, right - stampW, y, DiaryChrome.INK_FLAVOR, false);
+        } else {
+            String cut = DiaryChrome.fitCached(this.font, count.isEmpty() ? stamp : count, width);
+            int tw = DiaryChrome.widthCached(this.font, cut);
+            g.drawString(this.font, cut, (this.width - tw) / 2, y, DiaryChrome.INK_FLAVOR, false);
+        }
+    }
+
+    /** Same six-pixel rail that TransferableSelectionList uses for native dragging. */
+    private void drawPackScroll(GuiGraphics g, AbstractSelectionList<?> list) {
+        if (list == null || list.getMaxScroll() <= 0) return;
+        int x = list.getLeft() + list.getWidth() - 6;
+        int top = list.getTop();
+        int viewH = list.getBottom() - top;
+        if (viewH <= 0) return;
+        int max = list.getMaxScroll();
+        int thumbH = Math.min(viewH, Math.max(8, (int) ((long) viewH * viewH / ((long) viewH + max))));
+        double fraction = Math.max(0.0, Math.min(1.0, list.getScrollAmount() / max));
+        int thumbY = top + (int) ((viewH - thumbH) * fraction);
+        g.fill(x, top, x + 6, top + viewH, 0xFFE3D5AB);
+        g.fill(x + 2, top, x + 4, top + viewH, 0x336B5533);
+        g.fill(x + 1, thumbY, x + 5, thumbY + thumbH, 0xCC3D2A18);
     }
 
     // v0.272.0: cerrar la hoja suena a puerta, una vez, despues de dibujar.

@@ -52,6 +52,7 @@ el modo por defecto es **parcial**: no valida los escenarios Java ni el build.
   `python3 tools/test_slider_input.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_button_input.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_house_audio.py --require-java` (en CI, con JDK 17) ->
+  `python3 tools/test_pack_screen.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_list_interaction.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_pause_safety.py --require-java` (en CI, con JDK 17) ->
   `python3 tools/test_grid_option_screens.py --require-java` (en CI, con JDK 17) ->

@@ -182,12 +182,12 @@ class ListRenderGuardTests(unittest.TestCase):
 
     def test_pack_clip_is_always_released(self):
         for old, new in (
-            ('} finally {\n            g.disableScissor();',
-             '} finally {\n            if (false) g.disableScissor();'),
-            ('} finally {\n            g.disableScissor();',
-             '} finally {\n            g.flush();'),
-            ('} finally {\n            g.disableScissor();',
-             '} finally {\n            g.disableScissor(); g.disableScissor();'),
+            ('\n        } finally {\n            try { g.flush(); } finally { g.disableScissor(); }',
+             '\n        } finally {\n            try { g.flush(); } finally { if (false) g.disableScissor(); }'),
+            ('\n        } finally {\n            try { g.flush(); } finally { g.disableScissor(); }',
+             '\n        } finally {\n            g.flush();'),
+            ('\n        } finally {\n            try { g.flush(); } finally { g.disableScissor(); }',
+             '\n        } finally {\n            try { g.flush(); } finally { g.disableScissor(); g.disableScissor(); }'),
         ):
             with self.subTest(old=old, new=new):
                 self.assert_rejected(PACK, old, new)

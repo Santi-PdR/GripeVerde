@@ -9,6 +9,25 @@ que una seccion posterior lo mencione expresamente.
 
 Estado comprobado en la rama `arena/48be547c-gripeverde`:
 
+- **Packs: pie separado y recorte de iconos, posterior a `4fb3041`:**
+  Las listas y botones vanilla se recolocan antes de vestir los controles:
+  columnas adaptadas al ancho, cabecera mínima con poca altura, pie exclusivo
+  bajo la botonera y cajones que terminan antes de sus hitboxes. Se elimina
+  la nota de folio duplicada y el recuento ya no se pinta detrás de Abrir/Aceptar.
+  El pase nativo solo dibuja iconos/flechas dentro de su recorte; nombres y
+  descripciones se pintan una vez en tinta con ancho real, también en estrecho.
+  Se vacían los buffers antes de soltar cada recorte para que letras de filas
+  parciales no reaparezcan encima de cabecera/pie. Barra propia sobre el mismo
+  carril de seis píxeles que usa TransferableSelectionList para arrastrar.
+  No se reemplaza el despacho de ratón/teclado ni el modelo de packs. Aviso de
+  incompatibilidad y descripción extendida conservados con guardas anteriores.
+  `test_pack_screen.py` compila la clase completa con dobles GUI/modelo/wrappers:
+  5.334 tamaños/idiomas con render inicial, scroll fraccionario y resize, callbacks
+  de carpeta/Aceptar, fallo de una lista y balance de recortes. Texto diferido
+  simulado; sin píxeles, input SO ni aplicación/recarga real de recursos.
+  Local: 130 tests OK, 27 skips sin JDK; mirrors 8/8, lint 73, release gate 7,
+  installer 7 y diff limpio. Java y build pendientes de CI. Sin bump ni release.
+
 - **Listas sin segunda capa visible, posterior a `bb5d018`:**
   A partir de las capturas del usuario se elimina la franja transparente del
   registro de mundos que exponía el fondo/selección vanilla. El pase nativo
