@@ -255,7 +255,7 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
                     }
                 }
                 if (title.isEmpty()) continue;
-                if (list.getSelected() == child && list.isFocused()) {
+                if (list.isFocused() && child == list.getSelected()) {
                     g.fill(x1, drawTop, x2, drawBottom, 0x286B5533);
                 }
                 if (chosen) {
