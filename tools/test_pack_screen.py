@@ -24,14 +24,14 @@ public class AbstractButton extends AbstractWidget {public AbstractButton(int x,
     'net/minecraft/client/gui/components/AbstractSelectionList.java': '''package net.minecraft.client.gui.components;
 import java.util.*;import net.minecraft.client.gui.*;import net.minecraft.client.gui.screens.packs.*;
 public class AbstractSelectionList<T> extends AbstractWidget {
- public List<T> kids=new ArrayList<>();public double scroll;public int renders,selections;public boolean fail;
+ public List<T> kids=new ArrayList<>();public double scroll;public int renders,selections;public boolean fail,renderSelection=true,focused;
  public AbstractSelectionList(){super(0,32,200,300,net.minecraft.network.chat.Component.literal("list"));}
  public void updateSize(int w,int h,int top,int bottom){width=w;y=top;height=bottom-top;x=0;}
  public void setLeftPos(int left){x=left;}public int getLeft(){return x;}public int getTop(){return y;}public int getBottom(){return y+height;}
  public int getRowLeft(){return x+2;}public int getRowWidth(){return width;}public int rowTop(int i){return y+17-(int)scroll+i*36;}
  public double getScrollAmount(){return scroll;}public int getMaxScroll(){return Math.max(0,kids.size()*36+17-height);}
- public void setRenderBackground(boolean b){}public void setRenderTopAndBottom(boolean b){}
- public List<T> children(){return kids;}public T getSelected(){return kids.isEmpty()?null:kids.get(0);}public boolean isFocused(){return false;}
+ public void setRenderSelection(boolean b){renderSelection=b;}public void setRenderBackground(boolean b){}public void setRenderTopAndBottom(boolean b){}
+ public List<T> children(){return kids;}public T getSelected(){return kids.isEmpty()?null:kids.get(0);}public boolean isFocused(){return focused;}
  public boolean isMouseOver(double mx,double my){return mx>=x&&mx<x+width&&my>=y&&my<y+height;}
  public void render(GuiGraphics g,int mx,int my,float partial){renders++;g.enableScissor(x,y,x+width,y+height);
   try {for(int i=0;i<kids.size();i++){int top=rowTop(i);if(top>getBottom())break;if(top+32<y)continue;
@@ -130,6 +130,7 @@ public class PackScreenHarness {
  static List<AbstractWidget> buttons(DiaryPackSelectionScreen s){return s.children().stream().filter(w->w instanceof AbstractButton&&w.visible).toList();}
  static void verify(DiaryPackSelectionScreen s){
   var a=s.available;var b=s.selected;var buttons=buttons(s);check(buttons.size()==2,"missing pack controls");
+  check(!a.renderSelection&&!b.renderSelection,"native selection frame still enabled");
   check(a.x+a.width<=b.x&&a.x>=0&&b.x+b.width<=s.width,"pack columns overlap or escape screen");
   check(a.y>=32&&a.getBottom()<=buttons.get(0).y-8,"list covers footer controls");
   for(var w:buttons){check(w.x>=0&&w.x+w.width<=s.width&&w.y>=a.getBottom()&&w.y+w.height<=s.height-22,"button outside safe row");}
@@ -154,6 +155,8 @@ public class PackScreenHarness {
  static void actions(){int[] calls={0};var s=new DiaryPackSelectionScreen(new PackRepository(),repo->calls[0]++,Path.of("packs"),Component.literal("packs"));s.rebuild(160,120);
   var buttons=buttons(s);((com.eternalcraft.gripeverde.client.widgets.DiaryButton)buttons.get(0)).onPress();check(s.folders==1&&calls[0]==0,"folder callback changed");
   ((com.eternalcraft.gripeverde.client.widgets.DiaryButton)buttons.get(1)).onPress();check(s.applies==1&&calls[0]==1,"Done callback changed");
+  s.rebuild(800,600);s.selected.focused=true;GuiGraphics focus=new GuiGraphics();s.render(focus,0,0,0);focus.flush();
+  check(focus.rectangles.stream().anyMatch(r->r.color()==0x286B5533),"keyboard focus lost its paper marker");
   s.rebuild(800,600);s.available.fail=true;GuiGraphics g=new GuiGraphics();s.render(g,0,0,0);g.flush();check(g.clips.isEmpty(),"exception left native/outer clip active");
   check(s.selected.renders==1,"one list failure skipped the other list");
  }

@@ -91,10 +91,12 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         if (availableList != null) {
             availableList.setRenderBackground(false);
             availableList.setRenderTopAndBottom(false);
+            availableList.setRenderSelection(false);
         }
         if (selectedList != null) {
             selectedList.setRenderBackground(false);
             selectedList.setRenderTopAndBottom(false);
+            selectedList.setRenderSelection(false);
         }
         // v0.311.0: los botones del archivador se visten como los de la casa.
         try {
@@ -253,6 +255,9 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
                     }
                 }
                 if (title.isEmpty()) continue;
+                if (list.getSelected() == child && list.isFocused()) {
+                    g.fill(x1, drawTop, x2, drawBottom, 0x286B5533);
+                }
                 if (chosen) {
                     g.fill(x1, drawTop, x1 + 3, drawBottom, 0xFF8C2A1E);
                 }
@@ -572,7 +577,6 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
         int by = 6;
         int bw = this.width - 20;
         int bh = this.height - 12;
-        int cx = this.width / 2;
         // v0.232.0: la hoja grande bajo las dos listas ya no es un rectangulo.
         PaperTexture.drawTornSheet(g, bx, by, bw, bh, PaperTexture.PaperKind.ARCHIVE);
         DiaryChrome.drawCornerOrnaments(g, bx, by, bw, bh);
