@@ -153,6 +153,11 @@ public class PackScreenHarness {
   System.out.println("Pack screen: "+cases+" complete-class layout/render/scroll/resize cases passed");
  }
  static void actions(){int[] calls={0};var s=new DiaryPackSelectionScreen(new PackRepository(),repo->calls[0]++,Path.of("packs"),Component.literal("packs"));s.rebuild(160,120);
+  Discoveries.english=false;
+  s.selected.kids.add(s.available.kids.remove(0));
+  GuiGraphics live=new GuiGraphics();s.render(live,0,0,0);live.flush();
+  check(live.texts.stream().anyMatch(t->t.value().contains("101 de 200")),"footer still shows committed repository count");
+  check(calls[0]==0,"live count committed resource changes");
   var buttons=buttons(s);((com.eternalcraft.gripeverde.client.widgets.DiaryButton)buttons.get(0)).onPress();check(s.folders==1&&calls[0]==0,"folder callback changed");
   ((com.eternalcraft.gripeverde.client.widgets.DiaryButton)buttons.get(1)).onPress();check(s.applies==1&&calls[0]==1,"Done callback changed");
   s.rebuild(800,600);s.selected.focused=true;GuiGraphics focus=new GuiGraphics();s.render(focus,0,0,0);focus.flush();

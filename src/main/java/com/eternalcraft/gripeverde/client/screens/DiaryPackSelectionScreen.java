@@ -55,8 +55,17 @@ public class DiaryPackSelectionScreen extends PackSelectionScreen {
      */
     private String archiveCount(boolean english) {
         try {
-            int total = this.repository == null ? 0 : this.repository.getAvailablePacks().size();
-            int chosen = this.repository == null ? 0 : this.repository.getSelectedIds().size();
+            // Repository selection is committed only on Done. Read the live
+            // columns while editing, and count the same visible entries as the UI.
+            int chosen;
+            int total;
+            if (this.availableList != null && this.selectedList != null) {
+                chosen = this.selectedList.children().size();
+                total = chosen + this.availableList.children().size();
+            } else {
+                total = this.repository == null ? 0 : this.repository.getAvailablePacks().size();
+                chosen = this.repository == null ? 0 : this.repository.getSelectedIds().size();
+            }
             if (total <= 0) return "";
             return english
                 ? chosen + " of " + total + " materials filed"
